@@ -10,11 +10,13 @@ function AddConsoleVariable(name, value)
 	Vars.ConsoleWindowVariables[name] = value
 end
 
-AddConsoleVariable("Common", Common)
-AddConsoleVariable("GameHelpers", GameHelpers)
-AddConsoleVariable("CombatLog", CombatLog)
-AddConsoleVariable("inspect", Lib.inspect)
-AddConsoleVariable("serpent", Lib.serpent)
+if Vars.DebugMode then
+	AddConsoleVariable("Common", Common)
+	AddConsoleVariable("GameHelpers", GameHelpers)
+	AddConsoleVariable("CombatLog", CombatLog)
+	AddConsoleVariable("inspect", Lib.inspect)
+	AddConsoleVariable("serpent", Lib.serpent)
+end
 
 if not isClient then
 	local me = {}

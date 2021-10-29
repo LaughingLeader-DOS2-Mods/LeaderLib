@@ -24,7 +24,7 @@
 ---@field Value boolean|any
 ---@field Last boolean|any
 
----@alias ModMenuButtonCallback fun(entry:ButtonData, uuid:string, character:EclCharacter):void
+---@alias ModMenuButtonCallback fun(entry:ButtonData, modUUID:string, character:EclCharacter):void
 
 ---@class ModMenuButtonEntryData
 ---@field Entry ButtonData
@@ -92,8 +92,8 @@ local function AddControl(entry, uuid, value)
 	ModMenuManager.LastID = ModMenuManager.LastID + 1
 end
 
-local function AddButton(entry, uuid)
-	ModMenuManager.Buttons[ModMenuManager.LastID] = {Entry=entry, UUID=uuid}
+local function AddButton(entry, modUUID)
+	ModMenuManager.Buttons[ModMenuManager.LastID] = {Entry=entry, UUID=modUUID}
 	ModMenuManager.LastID = ModMenuManager.LastID + 1
 end
 
@@ -101,8 +101,8 @@ end
 ---@param mainMenu MainMenuMC
 ---@param name string
 ---@param v FlagData|VariableData
----@param uuid string The mod's UUID
-local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
+---@param modUUID string The mod's UUID
+local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 	local debugEnabled = false
 	local LeaderLibSettings = GlobalSettings.Mods["7e737d2f-31d2-4751-963f-be6ccc59cd0c"]
 	if LeaderLibSettings ~= nil and LeaderLibSettings.Global:FlagEquals("LeaderLib_DebugModeEnabled", true) then
@@ -119,7 +119,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 			end
 			local displayName, tooltip = PrepareText(name, v)
 			mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
-			AddControl(v, uuid, v.Enabled)
+			AddControl(v, modUUID, v.Enabled)
 		elseif v.Type == "VariableData" then
 			local varType = type(v.Value)
 			if varType == "number" then
@@ -128,7 +128,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 				local max = v.Max or 999
 				local displayName, tooltip = PrepareText(name, v)
 				mainMenu.addMenuSlider(ModMenuManager.LastID, displayName, v.Value, min, max, interval, false, tooltip)
-				AddControl(v, uuid, v.Value)
+				AddControl(v, modUUID, v.Value)
 				
 				local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
 				if slider ~= nil and slider.slider_mc ~= nil then
@@ -141,12 +141,12 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 				local state = v.Value == true and 1 or 0
 				local displayName, tooltip = PrepareText(name, v, true)
 				mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
-				AddControl(v, uuid, v.Value)
+				AddControl(v, modUUID, v.Value)
 			elseif varType == "table" then
 				if v.Value.Entries ~= nil and type(v.Value.Entries) == "table" then
 					local displayName, tooltip = PrepareText(name, v)
 					mainMenu.addMenuDropDown(ModMenuManager.LastID, displayName, tooltip)
-					AddControl(v, uuid, v.Value.Selected)
+					AddControl(v, modUUID, v.Value.Selected)
 					for _,entry in pairs(v.Value.Entries) do
 						local entryName,_ = PrepareText(entry)
 						mainMenu.addMenuDropDownEntry(ModMenuManager.LastID, entryName)
@@ -164,7 +164,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 				--addMenuButton(param1:Number, param2:String, param3:Boolean)
 				mainMenu.addMenuButton(ModMenuManager.LastID, displayName, enableControl, tooltip)
 			end
-			AddButton(v, uuid)
+			AddButton(v, modUUID)
 		end
 		return true
 	end
@@ -333,9 +333,8 @@ end
 function ModMenuManager.OnButtonPressed(id)
 	local controlData = ModMenuManager.Buttons[id]
 	if controlData ~= nil then
-		PrintDebug("ModMenuManager.OnButtonPressed", id)
 		if controlData.Entry and controlData.Entry.Invoke then
-			controlData.Entry:Invoke(controlData.Entry, controlData.UUID, controlData.Callback)
+			controlData.Entry:Invoke(controlData.Entry, controlData.UUID, Client:GetCharacter())
 		end
 	end
 end

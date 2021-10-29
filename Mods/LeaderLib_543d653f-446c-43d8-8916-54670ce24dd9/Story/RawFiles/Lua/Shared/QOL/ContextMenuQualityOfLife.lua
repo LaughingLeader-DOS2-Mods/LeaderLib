@@ -20,6 +20,7 @@ if isClient then
 	local registeredListeners = false
 
 	local NETID_TO_UUID = {}
+	local NETID_TO_ROTATION = {}
 
 	Ext.RegisterListener("SessionLoaded", function()
 		if not registeredListeners then
@@ -48,7 +49,7 @@ if isClient then
 					if cursor then
 						local target = GameHelpers.TryGetObject(cursor.HoverCharacter or cursor.HoverItem)
 						if target then
-							if StringHelpers.IsNullOrEmpty(target.MyGuid) then
+							if StringHelpers.IsNullOrEmpty(target.MyGuid) or GameHelpers.Item.IsObject(target) then
 								Ext.PostMessageToServer("LeaderLib_ContextMenu_RequestUUID", target.NetID)
 							else
 								NETID_TO_UUID[target.NetID] = target.MyGuid
@@ -83,6 +84,10 @@ if isClient then
 										existingEntry.RootTemplate = obj.RootTemplate.Id
 										existingEntry.StatsId = GameHelpers.Ext.ObjectIsItem(obj) and obj.StatsId or obj.Stats.Name
 										existingEntry.Tags = StringHelpers.Join(";", obj:GetTags())
+										if GameHelpers.Ext.ObjectIsItem(obj) then
+											existingEntry.WorldPos = obj.WorldPos
+											existingEntry.Rotation = NETID_TO_ROTATION[handle]
+										end
 										Ext.SaveFile("LeaderLib_UUIDHelper.json", Ext.JsonStringify(data))
 									end
 								end
@@ -100,6 +105,7 @@ if isClient then
 		local data = Common.JsonParse(payload)
 		if data then
 			NETID_TO_UUID[data.NetID] = data.UUID
+			NETID_TO_ROTATION[data.NetID] = data.Rotation
 		end
 	end)
 else
@@ -107,7 +113,7 @@ else
 		local netid = tonumber(payload)
 		local object = GameHelpers.TryGetObject(netid)
 		if object then
-			Ext.PostMessageToUser(userid, "LeaderLib_ContextMenu_SetUUID", Ext.JsonStringify({NetID = netid, UUID = object.MyGuid}))
+			Ext.PostMessageToUser(userid, "LeaderLib_ContextMenu_SetUUID", Ext.JsonStringify({NetID = netid, UUID = object.MyGuid, Rotation={GetRotation(object.MyGuid)}}))
 		end
 	end)
 end

@@ -270,7 +270,8 @@ function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRol
     end
     
     local critChance = attacker.CriticalChance
-    if (Features.SpellsCanCrit or attacker.TALENT_ViolentMagic) and hitType == "Magic" then
+    
+    if (Features.SpellsCanCrit or attacker.TALENT_ViolentMagic or GameSettings.Settings.SpellsCanCritWithoutTalent) and hitType == "Magic" then
         critChance = critChance * Ext.ExtraData.TalentViolentMagicCriticalChancePercent * 0.01
         critChance = math.max(critChance, 1)
     else

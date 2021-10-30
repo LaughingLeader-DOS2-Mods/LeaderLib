@@ -140,6 +140,8 @@ local text = {
 	MainTitle_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_MainTitle_Description"),
 	StarterTierOverrides = ts:CreateFromKey("LeaderLib_UI_GameSettings_StarterTierOverrides"),
 	StarterTierOverrides_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_StarterTierOverrides_Description"),
+	SpellsCanCritWithoutTalent = ts:CreateFromKey("LeaderLib_UI_GameSettings_SpellsCanCritWithoutTalent"),
+	SpellsCanCritWithoutTalent_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_SpellsCanCritWithoutTalent_Description"),
 	LowerMemorizationRequirements = ts:CreateFromKey("LeaderLib_UI_GameSettings_LowerMemorizationRequirements"),
 	LowerMemorizationRequirements_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_LowerMemorizationRequirements_Description"),
 	APSettings_Group_Player = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_AP_Player"),
@@ -254,6 +256,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 
 		mainMenu.addMenuCheckbox(AddControl(settings, "StarterTierSkillOverrides"), text.StarterTierOverrides.Value, controlsEnabled, settings.StarterTierSkillOverrides and 1 or 0, false, text.StarterTierOverrides_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings, "LowerMemorizationRequirements"), text.LowerMemorizationRequirements.Value, controlsEnabled, settings.LowerMemorizationRequirements and 1 or 0, false, text.LowerMemorizationRequirements_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings, "SpellsCanCritWithoutTalent"), text.SpellsCanCritWithoutTalent.Value, controlsEnabled, settings.SpellsCanCritWithoutTalent and 1 or 0, false, text.SpellsCanCritWithoutTalent_Description.Value)
 		
 		local apSliderMax = 30
 		

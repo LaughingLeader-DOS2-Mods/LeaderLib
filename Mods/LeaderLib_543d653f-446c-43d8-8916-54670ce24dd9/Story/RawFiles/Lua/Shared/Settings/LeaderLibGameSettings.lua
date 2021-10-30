@@ -2,6 +2,7 @@
 local DefaultSettings = {
 	StarterTierSkillOverrides = false,
 	LowerMemorizationRequirements = false,
+	SpellsCanCritWithoutTalent = false,
 	APSettings = {
 		Player = {
 			Enabled = false,

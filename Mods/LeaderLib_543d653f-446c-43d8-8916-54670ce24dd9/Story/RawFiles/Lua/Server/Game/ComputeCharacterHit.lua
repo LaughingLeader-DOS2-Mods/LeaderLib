@@ -368,7 +368,7 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
             goto hit_done
         end
 
-        if alwaysBackstab or (HitOverrides.CanBackstab(attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
+        if alwaysBackstab or (HitOverrides.CanBackstab(target, attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
             hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
             backstabbed = true
         end

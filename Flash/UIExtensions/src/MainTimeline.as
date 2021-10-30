@@ -37,7 +37,7 @@ package
 		public var mainPanel_mc:MainPanel;
 		public var panels_mc:PanelManager;
 		public var context_menu:ContextMenu.ContextMenuMC;
-		public var screenScalingTest:MovieClip;
+		public var screenScaleHelper:MovieClip;
 		
 		public var curTooltip:String;
 	  	public var hasTooltip:Boolean;
@@ -167,17 +167,17 @@ package
 				this.screenHeight = h;
 				this.uiScaling = h / this.designResolution.y;
 
-				this.screenScalingTest.width = w;
-				this.screenScalingTest.height = h;
+				// this.screenScaleHelper.width = w;
+				// this.screenScaleHelper.height = h;
 
-				/* if (this.screenScalingTest.visible) {
+				/* if (this.screenScaleHelper.visible) {
 					// var dx:Number = (this.designResolution.x - this.screenWidth)/2;
 					// var dy:Number = (this.designResolution.y - this.screenHeight)/2;
 					var rect:Rectangle = new Rectangle(0, 0, this.stage.stageWidth, this.stage.stageHeight);
-					this.screenScalingTest.width = rect.width;
-					this.screenScalingTest.height = rect.height;
-					this.screenScalingTest.x = rect.x;
-					this.screenScalingTest.y = rect.y;
+					this.screenScaleHelper.width = rect.width;
+					this.screenScaleHelper.height = rect.height;
+					this.screenScaleHelper.x = rect.x;
+					this.screenScaleHelper.y = rect.y;
 					//trace(rect);
 				} */
 				//ExternalInterface.call("setMcSize", w, h);
@@ -536,14 +536,14 @@ package
 			this.panels_mc = new PanelManager();
 			this.addChild(this.panels_mc);
 
-			this.screenScalingTest.visible = false;
-			this.screenScalingTest.mouseEnabled = false;
-			this.screenScalingTest.mouseChildren = false;
-			this.screenScalingTest.buttonMode = false;
-			this.screenScalingTest.enabled = false;
-			this.screenScalingTest.doubleClickEnabled = false;
-			this.screenScalingTest.tabEnabled = false;
-			this.screenScalingTest.tabChildren = false;
+			this.screenScaleHelper.visible = false;
+			this.screenScaleHelper.mouseEnabled = false;
+			this.screenScaleHelper.mouseChildren = false;
+			this.screenScaleHelper.buttonMode = false;
+			this.screenScaleHelper.enabled = false;
+			this.screenScaleHelper.doubleClickEnabled = false;
+			this.screenScaleHelper.tabEnabled = false;
+			this.screenScaleHelper.tabChildren = false;
 
 			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
 			//this.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove, true);

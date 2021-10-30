@@ -175,8 +175,11 @@ function UIExtensions.SetupInstance()
 		end
 		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
 		if not UIExtensions.Instance then
-			print("Creating LeaderLibUIExtensions")
-			UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer, defaultUIFlags)
+			if Vars.DebugMode and not Vars.ControllerEnabled then
+				UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer, defaultUIFlags)
+			else
+				UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
+			end
 			UIExtensions.RegisteredListeners = false
 			UIExtensions.Visible = true
 		else

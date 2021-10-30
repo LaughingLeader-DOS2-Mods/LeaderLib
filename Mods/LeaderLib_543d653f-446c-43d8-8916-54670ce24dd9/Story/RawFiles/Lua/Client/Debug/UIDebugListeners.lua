@@ -146,9 +146,15 @@ local defaultIgnored = {
 	setInputDevice = true
 }
 
+local lastTimeSinceIgnored = {}
+
 Ext.RegisterListener("UICall", function(ui, event, ...)
 	if defaultIgnored[event] then
-		return
+		local lastTime = lastTimeSinceIgnored[event] or 0
+		if Ext.MonotonicTime() - lastTime < 1000 then
+			lastTimeSinceIgnored[event] = Ext.MonotonicTime()
+			return
+		end
 	end
 	local t = ui:GetTypeId()
 	local listener = typeListeners[t]
@@ -159,7 +165,11 @@ end)
 
 Ext.RegisterListener("UIInvoke", function(ui, event, ...)
 	if defaultIgnored[event] then
-		return
+		local lastTime = lastTimeSinceIgnored[event] or 0
+		if Ext.MonotonicTime() - lastTime < 1000 then
+			lastTimeSinceIgnored[event] = Ext.MonotonicTime()
+			return
+		end
 	end
 	local t = ui:GetTypeId()
 	local listener = typeListeners[t]
@@ -284,8 +294,7 @@ end
 -- 	Ext.Print(method,Lib.serpent.block(buttons))
 -- end
 
-local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar)
-hotbar.Enabled = true
+local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, enabledParam)
 --[[
 ---@param ui UIObject
 hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)

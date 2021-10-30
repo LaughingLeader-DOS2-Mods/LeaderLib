@@ -485,9 +485,9 @@ end)
 
 Ext.RegisterConsoleCommand("fx", function(cmd, effect, bone, target)
 	if target == nil then target = CharacterGetHostCharacter() end
-	if bone == nil then bone = "" end
+	if bone == nil then bone = "Dummy_OverheadFX" end
 	PlayEffect(target, effect, bone)
-	fprint(LOGLEVEL.TRACE, "PlayEffect(%s, %s, %s)", target, effect, bone)
+	fprint(LOGLEVEL.TRACE, "PlayEffect(\"%s\", \"%s\", \"%s\")", target, effect, bone)
 end)
 
 Ext.RegisterConsoleCommand("sfx", function(cmd, soundevent, target)

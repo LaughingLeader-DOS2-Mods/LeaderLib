@@ -31,7 +31,7 @@ if not isClient then
 			end
 			local v = char[k]
 			if type(v) == "function" then
-				return function(...)
+				return function(meTable, ...)
 					local b,result = pcall(v, char, ...)
 					return result
 				end

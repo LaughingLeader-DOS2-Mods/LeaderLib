@@ -1,69 +1,3 @@
-Ext.Require("BootstrapShared.lua")
-
----@alias UUID string
----@alias NETID integer
-
----@class LeaderLibPersistentVars
-local defaultPersistentVars = {
-	---Associates a unique timer name (uuid-concatenated) with a general timer name.
-	---@type table<string,string>
-	TimerNameMap = {},
-	---@type table<string,table[]>
-	TimerData = {},
-	StatusSource = {},
-	ForceMoveData = {},
-	SceneData = {
-		ActiveScene = {},
-		Queue = {}
-	},
-	SkillData = {},
-	SkillPropertiesAction = {
-		---Stores a UUID and AP to restore.
-		---@type table<UUID,integer>
-		MoveToTarget = {}
-	},
-	---@type table<UUID,string>
-	IsPreparingSkill = {},
-	---@type table<UUID,TurnCounterData>
-	TurnCounterData = {},
-	---@type table<UUID, number>
-	ScaleOverride = {},
-	---@type table<UUID,UUID[]>
-	Summons = {},
-	---@type table<UUID,table<string,number>>
-	BuffStatuses = {},
-
-	---@type table<UUID,LeaderLibObjectLoopEffectSaveData[]>
-	ObjectLoopEffects = {},
-
-	---@type table<string,LeaderLibWorldLoopEffectSaveData[]>
-	WorldLoopEffects = {},
-
-	---@type table<UUID,string>
-	LastUsedHealingSkill = {},
-
-	---@class LeaderLibNextGenericHealStatusSourceData
-	---@field StatusId string
-	---@field Source UUID
-	---@field Time number
-
-	---@type table<UUID,LeaderLibNextGenericHealStatusSourceData>
-	NextGenericHealStatusSource = {},
-}
-
----@private
----@type LeaderLibPersistentVars
-PersistentVars = Common.CloneTable(defaultPersistentVars, true)
-
----@type LeaderLibPersistentVars
-LeaderLibPersistentVars = PersistentVars
-
-function LoadPersistentVars()
-	Common.InitializeTableFromSource(PersistentVars, defaultPersistentVars)
-	SkillSystem.LoadSaveData()
-	InvokeListenerCallbacks(Listeners.PersistentVarsLoaded)
-end
-
 TotalSkillListeners = 0
 
 ---@alias LeaderLibSkillListenerCallback fun(skill:string, char:string, state:SKILL_STATE, data:SkillEventData|HitData|ProjectileHitData)
@@ -177,6 +111,72 @@ function RegisterProtectedExtenderListener(event, listener, anyLevelType)
 			end
 		end
 	end)
+end
+
+Ext.Require("BootstrapShared.lua")
+
+---@alias UUID string
+---@alias NETID integer
+
+---@class LeaderLibPersistentVars
+local defaultPersistentVars = {
+	---Associates a unique timer name (uuid-concatenated) with a general timer name.
+	---@type table<string,string>
+	TimerNameMap = {},
+	---@type table<string,table[]>
+	TimerData = {},
+	StatusSource = {},
+	ForceMoveData = {},
+	SceneData = {
+		ActiveScene = {},
+		Queue = {}
+	},
+	SkillData = {},
+	SkillPropertiesAction = {
+		---Stores a UUID and AP to restore.
+		---@type table<UUID,integer>
+		MoveToTarget = {}
+	},
+	---@type table<UUID,string>
+	IsPreparingSkill = {},
+	---@type table<UUID,TurnCounterData>
+	TurnCounterData = {},
+	---@type table<UUID, number>
+	ScaleOverride = {},
+	---@type table<UUID,UUID[]>
+	Summons = {},
+	---@type table<UUID,table<string,number>>
+	BuffStatuses = {},
+
+	---@type table<UUID,LeaderLibObjectLoopEffectSaveData[]>
+	ObjectLoopEffects = {},
+
+	---@type table<string,LeaderLibWorldLoopEffectSaveData[]>
+	WorldLoopEffects = {},
+
+	---@type table<UUID,string>
+	LastUsedHealingSkill = {},
+
+	---@class LeaderLibNextGenericHealStatusSourceData
+	---@field StatusId string
+	---@field Source UUID
+	---@field Time number
+
+	---@type table<UUID,LeaderLibNextGenericHealStatusSourceData>
+	NextGenericHealStatusSource = {},
+}
+
+---@private
+---@type LeaderLibPersistentVars
+PersistentVars = Common.CloneTable(defaultPersistentVars, true)
+
+---@type LeaderLibPersistentVars
+LeaderLibPersistentVars = PersistentVars
+
+function LoadPersistentVars()
+	Common.InitializeTableFromSource(PersistentVars, defaultPersistentVars)
+	SkillSystem.LoadSaveData()
+	InvokeListenerCallbacks(Listeners.PersistentVarsLoaded)
 end
 
 -- local function LeaderLib_GameSessionLoad()

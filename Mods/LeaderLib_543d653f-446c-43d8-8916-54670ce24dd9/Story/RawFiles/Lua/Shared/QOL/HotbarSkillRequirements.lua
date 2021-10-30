@@ -115,6 +115,45 @@ else
 		end
 	end)
 
+	RegisterProtectedOsirisListener("ItemEquipped", Data.OsirisEvents.ItemEquipped, "after", function(item,character)
+		if ObjectExists(character) == 0 or ObjectExists(item) == 0 then
+			return
+		end
+		if ObjectIsCharacter(character) == 1 
+		and CharacterIsControlled(character) == 1 
+		and Features.FixSkillTagRequirements then
+			local item = Ext.GetItem(item)
+			if item and not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) then
+				local tags = StringHelpers.Split(item.Stats.Tags, ";")
+				for i,tag in pairs(tags) do
+					if Data.SkillRequirementTags[tag] then
+						GameHelpers.UI.RefreshSkillBar(character)
+						break
+					end
+				end
+			end
+		end
+	end)
+	RegisterProtectedOsirisListener("ItemUnEquipped", Data.OsirisEvents.ItemUnEquipped, "after", function(item,character)
+		if ObjectExists(character) == 0 or ObjectExists(item) == 0 then
+			return
+		end
+		if ObjectIsCharacter(character) == 1 
+		and CharacterIsControlled(character) == 1 
+		and Features.FixSkillTagRequirements then
+			local item = Ext.GetItem(item)
+			if item and not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) then
+				local tags = StringHelpers.Split(item.Stats.Tags, ";")
+				for i,tag in pairs(tags) do
+					if Data.SkillRequirementTags[tag] and IsTagged(character, tag) ~= 1 then
+						GameHelpers.UI.RefreshSkillBar(character)
+						break
+					end
+				end
+			end
+		end
+	end)
+
 	Ext.RegisterListener("SessionLoaded", function()
 		for _,id in pairs(Ext.GetStatEntries("SkillData")) do
 			---@type StatEntrySkillData

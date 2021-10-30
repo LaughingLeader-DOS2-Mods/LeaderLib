@@ -36,6 +36,7 @@
 	<content contentuid="h15ce233fgbe8fg46adg94eagff09e732a307">Pull Party Into Combat</content>
 	<content contentuid="h162538f5g21e7g4848g97a6g576ab6238d19">Timed autosaving will pause while in combat.</content>
 	<content contentuid="h16793f3dgb128g4b51g9e24g7b19ef78b894">Loading menus...</content>
+	<content contentuid="h16ec7750gfd5dg4cfaga64fg991869fa3dfb">Enable Spell Critical Hits</content>
 	<content contentuid="h17380891g0e8eg42d3gbb55g9478bba4f684">Hold [1] for More Info</content>
 	<content contentuid="h17519925gf609g4110gbe37g25a3aae8b390">Unchain all chained characters under your control that are within [1].</content>
 	<content contentuid="h17e6d1bbgbe95g4944gb37dgfe5059a58a2d">&lt;font color=&apos;#9A00FF&apos;&gt;Chaos Resistance&lt;/font&gt;</content>
@@ -297,6 +298,7 @@
 	<content contentuid="hb2822093gaf6ag417dgab70g447f0b730fb4">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
 	<content contentuid="hb2e82c9dg3175g429cga865g3c670288b3c6">Always display the &quot;Scales With x&quot; text that isn&apos;t visible if the weapon has an attribute requirement above 0.</content>
 	<content contentuid="hb48f1258g4031g4ab2g8d73gbb24956d5d74">I definitely activated these mods at one point! Why are they no longer active?</content>
+	<content contentuid="hb4a1f383gc0b5g449bgb28egc09586c81b68">If enabled, spells can critical hit without the Savage Sortilege talent.</content>
 	<content contentuid="hb5265b58gcf15g40dfg8769gb5dcc430a99f">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="hb62538b3gfff2g4bb4g9b70g7463f658f4f7">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
 	<content contentuid="hb6a0d65bga210g4882g939ega32f65189909">[HOST] Enable Balanced Experience for All Parties - Every player character will be brought up to the highest player level across all parties. (Currently Disabled)</content>

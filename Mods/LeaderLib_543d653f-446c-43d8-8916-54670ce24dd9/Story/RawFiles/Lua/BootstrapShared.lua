@@ -56,7 +56,7 @@ Ext.Require("Shared/QOL/WingsWorkaround.lua")
 Ext.Require("Shared/QOL/SkipTutorial.lua")
 Ext.Require("Shared/QOL/WorldTooltips.lua")
 Ext.Require("Shared/QOL/ContextMenuQualityOfLife.lua")
-Ext.Require("Shared/QOL/HotbarSkillRequirements.lua")
+Ext.Require("Shared/QOL/HotbarSkillTagRequirements.lua")
 if Vars.DebugMode then
 	--Ext.Require("Shared/Debug/GameMathTracing.lua")
 	Ext.Require("Shared/Debug/TestingSystem.lua")

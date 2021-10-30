@@ -58,9 +58,10 @@ Vars = {
 
 function PrintDebug(...)
 	if Vars.DebugMode then
+		
 		--local lineNum = debug.getinfo(1).currentline
 		--local lineInfo = string.format("[%s:%s]", currentFileName(), debug.getinfo(1).currentline)
-		print(...)
+		--print(...)
 	end
 end
 
@@ -111,7 +112,7 @@ function fprint(severity, str, ...)
 			Ext.Print(msg)
 		end
 	else
-		print(severity,str,...)
+		Ext.Print(severity,str,...)
 	end
 end
 

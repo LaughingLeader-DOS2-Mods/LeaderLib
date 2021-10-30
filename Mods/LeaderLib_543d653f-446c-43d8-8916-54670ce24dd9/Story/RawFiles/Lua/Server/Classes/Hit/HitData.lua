@@ -202,6 +202,45 @@ function HitData:MultiplyDamage(multiplier, aggregate)
 	self:ApplyDamageList(true)
 end
 
+---Redirects damage to another target.
+---@param target UUID|EsvCharacter|EsvItem
+---@param multiplier number Multiplier value to reduce damage by (0.01 - 1.0), i.e 0.15 would multiply damage by 0.85 and deal 0.15 of the original damage to the target.
+---@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
+function HitData:RedirectDamage(target, multiplier, aggregate)
+	if aggregate then
+		self.DamageList:AggregateSameTypeDamages()
+	end
+	local newDamage = Ext.NewDamageList()
+	for _,v in pairs(self.DamageList:ToTable()) do
+		newDamage:Add(v.DamageType, Ext.Round(v.Amount * multiplier))
+	end
+	local reduceBy = math.max(0, 1.0 - multiplier)
+	if reduceBy == 0 then
+		for damageType,_ in pairs(Data.DamageTypeEnums) do
+			self.DamageList:Clear(damageType)
+		end
+	else
+		self.DamageList:Multiply(reduceBy)
+	end
+	self:ApplyDamageList(true)
+
+	local uuid = GameHelpers.GetUUID(target)
+	local handle = NRD_HitPrepare(uuid, self.Attacker)
+	if self.HitContext then
+		NRD_HitSetString(handle, "CriticalRoll", self.HitContext.CriticalRoll)
+		NRD_HitSetString(handle, "HitType", self.HitContext.HitType)
+	else
+		NRD_HitSetInt(handle, "CriticalRoll", 0)
+	end
+	NRD_HitSetInt(handle, "SimulateHit", 1)
+	NRD_HitSetInt(handle, "HitType", 6)
+	NRD_HitSetInt(handle, "NoHitRoll", 1)
+	for _,v in pairs(newDamage:ToTable()) do
+		NRD_HitAddDamage(handle, v.DamageType, v.Amount)
+	end
+	NRD_HitExecute(handle)
+end
+
 ---Converts specific damage types to another.
 ---@param damageType string Target damage type to convert.
 ---@param toDamageType string Damage type to convert to.

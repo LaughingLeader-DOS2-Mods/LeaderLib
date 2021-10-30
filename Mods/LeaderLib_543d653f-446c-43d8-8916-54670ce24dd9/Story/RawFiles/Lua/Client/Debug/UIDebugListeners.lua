@@ -216,6 +216,8 @@ local partyInventory = UIListenerWrapper:Create(Data.UIType.partyInventory, enab
 local playerInfo = UIListenerWrapper:Create(Data.UIType.playerInfo, {Enabled=true, Ignored={updateStatuses=true}})
 local possessionBar = UIListenerWrapper:Create(Data.UIType.possessionBar)
 local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
+local reward = UIListenerWrapper:Create(Data.UIType.reward, enabledParam)
+local reward_c = UIListenerWrapper:Create(Data.UIType.reward_c, enabledParam)
 local skills = UIListenerWrapper:Create(Data.UIType.skills)
 local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole)
 local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip)

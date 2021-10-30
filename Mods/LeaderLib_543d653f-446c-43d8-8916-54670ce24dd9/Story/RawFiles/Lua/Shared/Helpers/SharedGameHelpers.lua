@@ -170,6 +170,44 @@ function GameHelpers.Item.GetOwner(item, returnNilUUID)
 	return nil
 end
 
+---@param item StatItem
+---@param weaponType string|string[]
+---@return boolean
+function GameHelpers.Item.IsWeaponType(item, weaponType)
+	if type(item) == "table" then
+		local hasMatch = false
+		for i,v in pairs(item) do
+			if GameHelpers.Item.IsWeaponType(v, weaponType) then
+				hasMatch = true
+			end
+		end
+		return hasMatch
+	else
+		if item == nil then
+			return false
+		end
+		if GameHelpers.Ext.ObjectIsItem(item) and not GameHelpers.Item.IsObject(item) then
+			item = item.Stats
+		end
+		if not GameHelpers.Ext.ObjectIsStatItem(item) then
+			return false
+		end
+		local t = type(weaponType)
+		if t == "table" then
+			for _,v in pairs(weaponType) do
+				if GameHelpers.Item.IsWeaponType(item, v) then
+					return true
+				end
+			end
+		elseif t == "string" then
+			if item.WeaponType == weaponType then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 ---@param statItem StatItem
 ---@param tag string|string[]
 function GameHelpers.StatItemHasTag(statItem, tag)

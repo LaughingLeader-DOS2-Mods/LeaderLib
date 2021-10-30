@@ -114,3 +114,37 @@ function GameHelpers.Client.TryGetCharacterFromDouble(double)
 	end, debug.traceback)
 	return character
 end
+
+local function _pairs(t, var)
+	var = var + 1
+	local value = t[var]
+	if value == nil then return end
+	return var, value
+end
+
+---@param arr FlashArray
+---@return table
+function GameHelpers.Client.TableFromFlashArray(arr)
+	local value = nil
+	local i = 0
+	local tbl = {}
+
+	repeat
+		value = arr[i]
+		i = i + 1
+		if value ~= nil then
+			tbl[#tbl+1] = value
+		end
+	until value == nil
+
+	return tbl
+end
+
+---@param tbl table
+---@param arr FlashArray
+---@return table
+function GameHelpers.Client.WriteTableToFlashArray(tbl, arr)
+	for i=1,#tbl do
+		arr[i-1] = tbl[i]
+	end
+end

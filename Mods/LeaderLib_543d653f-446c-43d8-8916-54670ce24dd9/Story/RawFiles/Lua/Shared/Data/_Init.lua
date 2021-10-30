@@ -1299,3 +1299,13 @@ Data.Difficulty = {
 }
 
 CreateEnum(Data.Difficulty)
+
+Data.SkillRequirement = {
+    MeleeWeapon = "MeleeWeapon",
+    RangedWeapon = "RangedWeapon",
+    StaffWeapon = "StaffWeapon",
+    DaggerWeapon = "DaggerWeapon",
+    ShieldWeapon = "ShieldWeapon",
+    RifleWeapon = "RifleWeapon",
+    ArrowWeapon = "ArrowWeapon",
+}

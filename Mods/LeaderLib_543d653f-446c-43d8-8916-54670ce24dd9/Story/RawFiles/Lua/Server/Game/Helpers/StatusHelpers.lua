@@ -228,13 +228,14 @@ function GameHelpers.Status.ExtendTurns(obj, statusId, addTurns, allInstances, a
 end
 
 ---Applies statuses in order of the table supplied. Use this for tiered statuses (i.e. MYMOD_POWERLEVEL1, MYMOD_POWERLEVEL2).
----@param obj string
+---@param obj UUID|EsvCharacter|EsvItem
 ---@param statusTable string[] An array of tiered statuses (must be ipairs-friendly via regular integer indexes).
 ---@param duration number The status duration. Defaults to -1.0 for a regular permanent status.
 ---@param force boolean|nil Whether to force the status to apply.
 ---@param source string|nil The source of the status. Defaults to the target object.
 ---@return integer,integer Returns the next tier / last tier.
 function GameHelpers.Status.ApplyTieredStatus(obj, statusTable, duration, force, source)
+	local obj = GameHelpers.GetUUID(obj)
 	local maxTier = #statusTable
 	local maxStatus = statusTable[maxTier]
 	-- We're at the max tier, so skip the iteration

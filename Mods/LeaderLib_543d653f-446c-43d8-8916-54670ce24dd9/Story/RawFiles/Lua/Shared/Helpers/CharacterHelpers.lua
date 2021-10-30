@@ -497,3 +497,14 @@ if not isClient then
 	end
 	return false
 end
+
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+function GameHelpers.Character.IsImmobile(character)
+	local character = GameHelpers.GetCharacter(character)
+	if character then
+		if character.Stats.Movement <= 0 then
+			return true
+		end
+	end
+	return false
+end

@@ -1210,2109 +1210,2123 @@
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Items_Blunderbuss_2H_Unique_A" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_BattleBook_1H_Unique_AnatomyBook_A" type="22" />
                     <attribute id="U1" value="0.718872" type="6" />
                     <attribute id="U2" value="0.734253" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.046753" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Blunderbuss_2H_Unique_A" type="22" />
+                    <attribute id="U1" value="0.734497" type="6" />
+                    <attribute id="U2" value="0.749878" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Bokken_A" type="22" />
-                    <attribute id="U1" value="0.734497" type="6" />
-                    <attribute id="U2" value="0.749878" type="6" />
+                    <attribute id="U1" value="0.750122" type="6" />
+                    <attribute id="U2" value="0.765503" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Blackring_A" type="22" />
-                    <attribute id="U1" value="0.750122" type="6" />
-                    <attribute id="U2" value="0.765503" type="6" />
+                    <attribute id="U1" value="0.765747" type="6" />
+                    <attribute id="U2" value="0.781128" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Common_A" type="22" />
-                    <attribute id="U1" value="0.765747" type="6" />
-                    <attribute id="U2" value="0.781128" type="6" />
+                    <attribute id="U1" value="0.781372" type="6" />
+                    <attribute id="U2" value="0.796753" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Dwarves_A" type="22" />
-                    <attribute id="U1" value="0.781372" type="6" />
-                    <attribute id="U2" value="0.796753" type="6" />
+                    <attribute id="U1" value="0.796997" type="6" />
+                    <attribute id="U2" value="0.812378" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Elves_B" type="22" />
-                    <attribute id="U1" value="0.796997" type="6" />
-                    <attribute id="U2" value="0.812378" type="6" />
+                    <attribute id="U1" value="0.812622" type="6" />
+                    <attribute id="U2" value="0.828003" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Humans_A" type="22" />
-                    <attribute id="U1" value="0.812622" type="6" />
-                    <attribute id="U2" value="0.828003" type="6" />
+                    <attribute id="U1" value="0.828247" type="6" />
+                    <attribute id="U2" value="0.843628" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Lizards_C" type="22" />
-                    <attribute id="U1" value="0.828247" type="6" />
-                    <attribute id="U2" value="0.843628" type="6" />
+                    <attribute id="U1" value="0.843872" type="6" />
+                    <attribute id="U2" value="0.859253" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Lizards_D" type="22" />
-                    <attribute id="U1" value="0.843872" type="6" />
-                    <attribute id="U2" value="0.859253" type="6" />
+                    <attribute id="U1" value="0.859497" type="6" />
+                    <attribute id="U2" value="0.874878" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Flask_Empty_A" type="22" />
-                    <attribute id="U1" value="0.859497" type="6" />
-                    <attribute id="U2" value="0.874878" type="6" />
+                    <attribute id="U1" value="0.875122" type="6" />
+                    <attribute id="U2" value="0.890503" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Flask_Weakness_Air_A" type="22" />
-                    <attribute id="U1" value="0.875122" type="6" />
-                    <attribute id="U2" value="0.890503" type="6" />
+                    <attribute id="U1" value="0.890747" type="6" />
+                    <attribute id="U2" value="0.906128" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Flask_Weakness_Chaos_A" type="22" />
-                    <attribute id="U1" value="0.890747" type="6" />
-                    <attribute id="U2" value="0.906128" type="6" />
+                    <attribute id="U1" value="0.906372" type="6" />
+                    <attribute id="U2" value="0.921753" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Flask_Weakness_Earth_A" type="22" />
-                    <attribute id="U1" value="0.906372" type="6" />
-                    <attribute id="U2" value="0.921753" type="6" />
+                    <attribute id="U1" value="0.921997" type="6" />
+                    <attribute id="U2" value="0.937378" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Flask_Weakness_Fire_A" type="22" />
-                    <attribute id="U1" value="0.921997" type="6" />
-                    <attribute id="U2" value="0.937378" type="6" />
+                    <attribute id="U1" value="0.937622" type="6" />
+                    <attribute id="U2" value="0.953003" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Flask_Weakness_Poison_A" type="22" />
-                    <attribute id="U1" value="0.937622" type="6" />
-                    <attribute id="U2" value="0.953003" type="6" />
+                    <attribute id="U1" value="0.953247" type="6" />
+                    <attribute id="U2" value="0.968628" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Flask_Weakness_Water_A" type="22" />
-                    <attribute id="U1" value="0.953247" type="6" />
-                    <attribute id="U2" value="0.968628" type="6" />
+                    <attribute id="U1" value="0.968872" type="6" />
+                    <attribute id="U2" value="0.984253" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Glaive_2H_A" type="22" />
-                    <attribute id="U1" value="0.968872" type="6" />
-                    <attribute id="U2" value="0.984253" type="6" />
+                    <attribute id="U1" value="0.984497" type="6" />
+                    <attribute id="U2" value="0.999878" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.046753" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Greatbow_Unique_Lightning_A" type="22" />
-                    <attribute id="U1" value="0.984497" type="6" />
-                    <attribute id="U2" value="0.999878" type="6" />
-                    <attribute id="V1" value="0.0313721" type="6" />
-                    <attribute id="V2" value="0.046753" type="6" />
+                    <attribute id="U1" value="0.000122" type="6" />
+                    <attribute id="U2" value="0.015503" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Halberd_2H_A" type="22" />
-                    <attribute id="U1" value="0.000122" type="6" />
-                    <attribute id="U2" value="0.015503" type="6" />
+                    <attribute id="U1" value="0.015747" type="6" />
+                    <attribute id="U2" value="0.031128" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Halberd_2H_B" type="22" />
-                    <attribute id="U1" value="0.015747" type="6" />
-                    <attribute id="U2" value="0.031128" type="6" />
+                    <attribute id="U1" value="0.031372" type="6" />
+                    <attribute id="U2" value="0.046753" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Halberd_2H_C" type="22" />
-                    <attribute id="U1" value="0.031372" type="6" />
-                    <attribute id="U2" value="0.046753" type="6" />
+                    <attribute id="U1" value="0.046997" type="6" />
+                    <attribute id="U2" value="0.062378" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Halberd_2H_D" type="22" />
-                    <attribute id="U1" value="0.046997" type="6" />
-                    <attribute id="U2" value="0.062378" type="6" />
+                    <attribute id="U1" value="0.062622" type="6" />
+                    <attribute id="U2" value="0.078003" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Halberd_2H_Unique_Warchief_A" type="22" />
-                    <attribute id="U1" value="0.062622" type="6" />
-                    <attribute id="U2" value="0.078003" type="6" />
+                    <attribute id="U1" value="0.078247" type="6" />
+                    <attribute id="U2" value="0.093628" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Halberd_2H_Unique_Warchief_B" type="22" />
-                    <attribute id="U1" value="0.078247" type="6" />
-                    <attribute id="U2" value="0.093628" type="6" />
+                    <attribute id="U1" value="0.093872" type="6" />
+                    <attribute id="U2" value="0.109253" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Hammer_Runesmith_A" type="22" />
-                    <attribute id="U1" value="0.093872" type="6" />
-                    <attribute id="U2" value="0.109253" type="6" />
+                    <attribute id="U1" value="0.109497" type="6" />
+                    <attribute id="U2" value="0.124878" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_HandCrossbow_Bolts_Air" type="22" />
-                    <attribute id="U1" value="0.109497" type="6" />
-                    <attribute id="U2" value="0.124878" type="6" />
+                    <attribute id="U1" value="0.125122" type="6" />
+                    <attribute id="U2" value="0.140503" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_HandCrossbow_Bolts_Corrosive" type="22" />
-                    <attribute id="U1" value="0.125122" type="6" />
-                    <attribute id="U2" value="0.140503" type="6" />
+                    <attribute id="U1" value="0.140747" type="6" />
+                    <attribute id="U2" value="0.156128" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_HandCrossbow_Bolts_Earth" type="22" />
-                    <attribute id="U1" value="0.140747" type="6" />
-                    <attribute id="U2" value="0.156128" type="6" />
+                    <attribute id="U1" value="0.156372" type="6" />
+                    <attribute id="U2" value="0.171753" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_HandCrossbow_Bolts_Fire" type="22" />
-                    <attribute id="U1" value="0.156372" type="6" />
-                    <attribute id="U2" value="0.171753" type="6" />
+                    <attribute id="U1" value="0.171997" type="6" />
+                    <attribute id="U2" value="0.187378" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_HandCrossbow_Bolts_Ice" type="22" />
-                    <attribute id="U1" value="0.171997" type="6" />
-                    <attribute id="U2" value="0.187378" type="6" />
+                    <attribute id="U1" value="0.187622" type="6" />
+                    <attribute id="U2" value="0.203003" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_HandCrossbow_Bolts_Piercing" type="22" />
-                    <attribute id="U1" value="0.187622" type="6" />
-                    <attribute id="U2" value="0.203003" type="6" />
+                    <attribute id="U1" value="0.203247" type="6" />
+                    <attribute id="U2" value="0.218628" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_HandCrossbow_Bolts_Poison" type="22" />
-                    <attribute id="U1" value="0.203247" type="6" />
-                    <attribute id="U2" value="0.218628" type="6" />
+                    <attribute id="U1" value="0.218872" type="6" />
+                    <attribute id="U2" value="0.234253" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_HandCrossbow_Bolts_Shadow" type="22" />
-                    <attribute id="U1" value="0.218872" type="6" />
-                    <attribute id="U2" value="0.234253" type="6" />
+                    <attribute id="U1" value="0.234497" type="6" />
+                    <attribute id="U2" value="0.249878" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_HandCrossbow_Bolts_Silver" type="22" />
-                    <attribute id="U1" value="0.234497" type="6" />
-                    <attribute id="U2" value="0.249878" type="6" />
+                    <attribute id="U1" value="0.250122" type="6" />
+                    <attribute id="U2" value="0.265503" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_1H_A" type="22" />
-                    <attribute id="U1" value="0.250122" type="6" />
-                    <attribute id="U2" value="0.265503" type="6" />
+                    <attribute id="U1" value="0.265747" type="6" />
+                    <attribute id="U2" value="0.281128" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_1H_Unique_Runeblade_Fire_A" type="22" />
-                    <attribute id="U1" value="0.265747" type="6" />
-                    <attribute id="U2" value="0.281128" type="6" />
+                    <attribute id="U1" value="0.281372" type="6" />
+                    <attribute id="U2" value="0.296753" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_2H_A" type="22" />
-                    <attribute id="U1" value="0.281372" type="6" />
-                    <attribute id="U2" value="0.296753" type="6" />
+                    <attribute id="U1" value="0.296997" type="6" />
+                    <attribute id="U2" value="0.312378" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_2H_B" type="22" />
-                    <attribute id="U1" value="0.296997" type="6" />
-                    <attribute id="U2" value="0.312378" type="6" />
+                    <attribute id="U1" value="0.312622" type="6" />
+                    <attribute id="U2" value="0.328003" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_2H_ShuraSamuraI_A" type="22" />
-                    <attribute id="U1" value="0.312622" type="6" />
-                    <attribute id="U2" value="0.328003" type="6" />
+                    <attribute id="U1" value="0.328247" type="6" />
+                    <attribute id="U2" value="0.343628" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_2H_Unique_Muramasa_A" type="22" />
-                    <attribute id="U1" value="0.328247" type="6" />
-                    <attribute id="U2" value="0.343628" type="6" />
+                    <attribute id="U1" value="0.343872" type="6" />
+                    <attribute id="U2" value="0.359253" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_2H_Unique_Raizan_1_A" type="22" />
-                    <attribute id="U1" value="0.343872" type="6" />
-                    <attribute id="U2" value="0.359253" type="6" />
+                    <attribute id="U1" value="0.359497" type="6" />
+                    <attribute id="U2" value="0.374878" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_2H_Unique_Raizan_2_A" type="22" />
-                    <attribute id="U1" value="0.359497" type="6" />
-                    <attribute id="U2" value="0.374878" type="6" />
+                    <attribute id="U1" value="0.375122" type="6" />
+                    <attribute id="U2" value="0.390503" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_2H_Unique_Raizan_3_A" type="22" />
-                    <attribute id="U1" value="0.375122" type="6" />
-                    <attribute id="U2" value="0.390503" type="6" />
+                    <attribute id="U1" value="0.390747" type="6" />
+                    <attribute id="U2" value="0.406128" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_MasteryScroll_A" type="22" />
-                    <attribute id="U1" value="0.390747" type="6" />
-                    <attribute id="U2" value="0.406128" type="6" />
+                    <attribute id="U1" value="0.406372" type="6" />
+                    <attribute id="U2" value="0.421753" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Orb_Thunder_A" type="22" />
-                    <attribute id="U1" value="0.406372" type="6" />
-                    <attribute id="U2" value="0.421753" type="6" />
+                    <attribute id="U1" value="0.421997" type="6" />
+                    <attribute id="U2" value="0.437378" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Orb_Thunder_B" type="22" />
-                    <attribute id="U1" value="0.421997" type="6" />
-                    <attribute id="U2" value="0.437378" type="6" />
+                    <attribute id="U1" value="0.437622" type="6" />
+                    <attribute id="U2" value="0.453003" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Orb_Thunder_C" type="22" />
-                    <attribute id="U1" value="0.437622" type="6" />
-                    <attribute id="U2" value="0.453003" type="6" />
+                    <attribute id="U1" value="0.453247" type="6" />
+                    <attribute id="U2" value="0.468628" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_A" type="22" />
-                    <attribute id="U1" value="0.453247" type="6" />
-                    <attribute id="U2" value="0.468628" type="6" />
+                    <attribute id="U1" value="0.468872" type="6" />
+                    <attribute id="U2" value="0.484253" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_Bullets_Air" type="22" />
-                    <attribute id="U1" value="0.468872" type="6" />
-                    <attribute id="U2" value="0.484253" type="6" />
+                    <attribute id="U1" value="0.484497" type="6" />
+                    <attribute id="U2" value="0.499878" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_Bullets_Corrosive" type="22" />
-                    <attribute id="U1" value="0.484497" type="6" />
-                    <attribute id="U2" value="0.499878" type="6" />
+                    <attribute id="U1" value="0.500122" type="6" />
+                    <attribute id="U2" value="0.515503" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_Bullets_Earth" type="22" />
-                    <attribute id="U1" value="0.500122" type="6" />
-                    <attribute id="U2" value="0.515503" type="6" />
+                    <attribute id="U1" value="0.515747" type="6" />
+                    <attribute id="U2" value="0.531128" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_Bullets_Fire" type="22" />
-                    <attribute id="U1" value="0.515747" type="6" />
-                    <attribute id="U2" value="0.531128" type="6" />
+                    <attribute id="U1" value="0.531372" type="6" />
+                    <attribute id="U2" value="0.546753" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_Bullets_Ice" type="22" />
-                    <attribute id="U1" value="0.531372" type="6" />
-                    <attribute id="U2" value="0.546753" type="6" />
+                    <attribute id="U1" value="0.546997" type="6" />
+                    <attribute id="U2" value="0.562378" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_Bullets_Piercing" type="22" />
-                    <attribute id="U1" value="0.546997" type="6" />
-                    <attribute id="U2" value="0.562378" type="6" />
+                    <attribute id="U1" value="0.562622" type="6" />
+                    <attribute id="U2" value="0.578003" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_Bullets_Poison" type="22" />
-                    <attribute id="U1" value="0.562622" type="6" />
-                    <attribute id="U2" value="0.578003" type="6" />
+                    <attribute id="U1" value="0.578247" type="6" />
+                    <attribute id="U2" value="0.593628" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_Bullets_Shadow" type="22" />
-                    <attribute id="U1" value="0.578247" type="6" />
-                    <attribute id="U2" value="0.593628" type="6" />
+                    <attribute id="U1" value="0.593872" type="6" />
+                    <attribute id="U2" value="0.609253" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_Bullets_Silver" type="22" />
-                    <attribute id="U1" value="0.593872" type="6" />
-                    <attribute id="U2" value="0.609253" type="6" />
+                    <attribute id="U1" value="0.609497" type="6" />
+                    <attribute id="U2" value="0.624878" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Pistol_Isshin_A" type="22" />
-                    <attribute id="U1" value="0.609497" type="6" />
-                    <attribute id="U2" value="0.624878" type="6" />
+                    <attribute id="U1" value="0.625122" type="6" />
+                    <attribute id="U2" value="0.640503" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Quarterstaff_Metal_A" type="22" />
-                    <attribute id="U1" value="0.625122" type="6" />
-                    <attribute id="U2" value="0.640503" type="6" />
+                    <attribute id="U1" value="0.640747" type="6" />
+                    <attribute id="U2" value="0.656128" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Quarterstaff_Metal_B" type="22" />
-                    <attribute id="U1" value="0.640747" type="6" />
-                    <attribute id="U2" value="0.656128" type="6" />
+                    <attribute id="U1" value="0.656372" type="6" />
+                    <attribute id="U2" value="0.671753" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Quarterstaff_Unique_PowerPole" type="22" />
-                    <attribute id="U1" value="0.656372" type="6" />
-                    <attribute id="U2" value="0.671753" type="6" />
+                    <attribute id="U1" value="0.671997" type="6" />
+                    <attribute id="U2" value="0.687378" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Quarterstaff_Wood_A" type="22" />
-                    <attribute id="U1" value="0.671997" type="6" />
-                    <attribute id="U2" value="0.687378" type="6" />
+                    <attribute id="U1" value="0.687622" type="6" />
+                    <attribute id="U2" value="0.703003" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Quarterstaff_Wood_B" type="22" />
-                    <attribute id="U1" value="0.687622" type="6" />
-                    <attribute id="U2" value="0.703003" type="6" />
+                    <attribute id="U1" value="0.703247" type="6" />
+                    <attribute id="U2" value="0.718628" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rapier_Common_A" type="22" />
-                    <attribute id="U1" value="0.703247" type="6" />
-                    <attribute id="U2" value="0.718628" type="6" />
+                    <attribute id="U1" value="0.718872" type="6" />
+                    <attribute id="U2" value="0.734253" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rapier_Common_B" type="22" />
-                    <attribute id="U1" value="0.718872" type="6" />
-                    <attribute id="U2" value="0.734253" type="6" />
+                    <attribute id="U1" value="0.734497" type="6" />
+                    <attribute id="U2" value="0.749878" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rapier_Unique_Runeblade_Ice" type="22" />
-                    <attribute id="U1" value="0.734497" type="6" />
-                    <attribute id="U2" value="0.749878" type="6" />
+                    <attribute id="U1" value="0.750122" type="6" />
+                    <attribute id="U2" value="0.765503" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rapier_Unique_Runeblade_Ice_2" type="22" />
-                    <attribute id="U1" value="0.750122" type="6" />
-                    <attribute id="U2" value="0.765503" type="6" />
+                    <attribute id="U1" value="0.765747" type="6" />
+                    <attribute id="U2" value="0.781128" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rapier_Unique_Runeblade_Ice_3" type="22" />
-                    <attribute id="U1" value="0.765747" type="6" />
-                    <attribute id="U2" value="0.781128" type="6" />
+                    <attribute id="U1" value="0.781372" type="6" />
+                    <attribute id="U2" value="0.796753" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_RemoteMine_Breach_A" type="22" />
-                    <attribute id="U1" value="0.781372" type="6" />
-                    <attribute id="U2" value="0.796753" type="6" />
+                    <attribute id="U1" value="0.796997" type="6" />
+                    <attribute id="U2" value="0.812378" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_RemoteMine_Displacement_A" type="22" />
-                    <attribute id="U1" value="0.796997" type="6" />
-                    <attribute id="U2" value="0.812378" type="6" />
+                    <attribute id="U1" value="0.812622" type="6" />
+                    <attribute id="U2" value="0.828003" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_RemoteMine_Explosive_A" type="22" />
-                    <attribute id="U1" value="0.812622" type="6" />
-                    <attribute id="U2" value="0.828003" type="6" />
+                    <attribute id="U1" value="0.828247" type="6" />
+                    <attribute id="U2" value="0.843628" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_RemoteMine_PoisonGas_A" type="22" />
-                    <attribute id="U1" value="0.828247" type="6" />
-                    <attribute id="U2" value="0.843628" type="6" />
+                    <attribute id="U1" value="0.843872" type="6" />
+                    <attribute id="U2" value="0.859253" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_RemoteMine_Shrapnel_A" type="22" />
-                    <attribute id="U1" value="0.843872" type="6" />
-                    <attribute id="U2" value="0.859253" type="6" />
+                    <attribute id="U1" value="0.859497" type="6" />
+                    <attribute id="U2" value="0.874878" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_RemoteMine_Tar_A" type="22" />
-                    <attribute id="U1" value="0.859497" type="6" />
-                    <attribute id="U2" value="0.874878" type="6" />
+                    <attribute id="U1" value="0.875122" type="6" />
+                    <attribute id="U2" value="0.890503" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rifle_2H_A" type="22" />
-                    <attribute id="U1" value="0.875122" type="6" />
-                    <attribute id="U2" value="0.890503" type="6" />
+                    <attribute id="U1" value="0.890747" type="6" />
+                    <attribute id="U2" value="0.906128" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rifle_2H_B" type="22" />
-                    <attribute id="U1" value="0.890747" type="6" />
-                    <attribute id="U2" value="0.906128" type="6" />
+                    <attribute id="U1" value="0.906372" type="6" />
+                    <attribute id="U2" value="0.921753" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rifle_2H_B_NoScope" type="22" />
-                    <attribute id="U1" value="0.906372" type="6" />
-                    <attribute id="U2" value="0.921753" type="6" />
+                    <attribute id="U1" value="0.921997" type="6" />
+                    <attribute id="U2" value="0.937378" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rifle_2H_C" type="22" />
-                    <attribute id="U1" value="0.921997" type="6" />
-                    <attribute id="U2" value="0.937378" type="6" />
+                    <attribute id="U1" value="0.937622" type="6" />
+                    <attribute id="U2" value="0.953003" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rifle_2H_D" type="22" />
-                    <attribute id="U1" value="0.937622" type="6" />
-                    <attribute id="U2" value="0.953003" type="6" />
+                    <attribute id="U1" value="0.953247" type="6" />
+                    <attribute id="U2" value="0.968628" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rock_A" type="22" />
-                    <attribute id="U1" value="0.953247" type="6" />
-                    <attribute id="U2" value="0.968628" type="6" />
+                    <attribute id="U1" value="0.968872" type="6" />
+                    <attribute id="U2" value="0.984253" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Runeblade_Dwarves_A" type="22" />
-                    <attribute id="U1" value="0.968872" type="6" />
-                    <attribute id="U2" value="0.984253" type="6" />
+                    <attribute id="U1" value="0.984497" type="6" />
+                    <attribute id="U2" value="0.999878" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.062378" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Runeblade_Dwarves_B" type="22" />
-                    <attribute id="U1" value="0.984497" type="6" />
-                    <attribute id="U2" value="0.999878" type="6" />
-                    <attribute id="V1" value="0.0469971" type="6" />
-                    <attribute id="V2" value="0.062378" type="6" />
+                    <attribute id="U1" value="0.000122" type="6" />
+                    <attribute id="U2" value="0.015503" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Runeblade_Elves_A" type="22" />
-                    <attribute id="U1" value="0.000122" type="6" />
-                    <attribute id="U2" value="0.015503" type="6" />
+                    <attribute id="U1" value="0.015747" type="6" />
+                    <attribute id="U2" value="0.031128" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Runeblade_Humans_A" type="22" />
-                    <attribute id="U1" value="0.015747" type="6" />
-                    <attribute id="U2" value="0.031128" type="6" />
+                    <attribute id="U1" value="0.031372" type="6" />
+                    <attribute id="U2" value="0.046753" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Runeblade_Humans_B" type="22" />
-                    <attribute id="U1" value="0.031372" type="6" />
-                    <attribute id="U2" value="0.046753" type="6" />
+                    <attribute id="U1" value="0.046997" type="6" />
+                    <attribute id="U2" value="0.062378" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Runeblade_Inert_1H_A" type="22" />
-                    <attribute id="U1" value="0.046997" type="6" />
-                    <attribute id="U2" value="0.062378" type="6" />
+                    <attribute id="U1" value="0.062622" type="6" />
+                    <attribute id="U2" value="0.078003" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Runeblade_Lizards_A" type="22" />
-                    <attribute id="U1" value="0.062622" type="6" />
-                    <attribute id="U2" value="0.078003" type="6" />
+                    <attribute id="U1" value="0.078247" type="6" />
+                    <attribute id="U2" value="0.093628" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Runeblade_Unique_ChaosEdge" type="22" />
-                    <attribute id="U1" value="0.078247" type="6" />
-                    <attribute id="U2" value="0.093628" type="6" />
+                    <attribute id="U1" value="0.093872" type="6" />
+                    <attribute id="U2" value="0.109253" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Scythe_2H_Unique_BurialBlade_A" type="22" />
-                    <attribute id="U1" value="0.093872" type="6" />
-                    <attribute id="U2" value="0.109253" type="6" />
+                    <attribute id="U1" value="0.109497" type="6" />
+                    <attribute id="U2" value="0.124878" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Scythe_2H_Unique_DeathEdge_A" type="22" />
-                    <attribute id="U1" value="0.109497" type="6" />
-                    <attribute id="U2" value="0.124878" type="6" />
+                    <attribute id="U1" value="0.125122" type="6" />
+                    <attribute id="U2" value="0.140503" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Scythe_2H_Unique_SoulHarvest_A" type="22" />
-                    <attribute id="U1" value="0.125122" type="6" />
-                    <attribute id="U2" value="0.140503" type="6" />
+                    <attribute id="U1" value="0.140747" type="6" />
+                    <attribute id="U2" value="0.156128" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Shuriken_A" type="22" />
-                    <attribute id="U1" value="0.140747" type="6" />
-                    <attribute id="U2" value="0.156128" type="6" />
+                    <attribute id="U1" value="0.156372" type="6" />
+                    <attribute id="U2" value="0.171753" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Shuriken_A_Explosive" type="22" />
-                    <attribute id="U1" value="0.156372" type="6" />
-                    <attribute id="U2" value="0.171753" type="6" />
+                    <attribute id="U1" value="0.171997" type="6" />
+                    <attribute id="U2" value="0.187378" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Shuriken_A_Poison" type="22" />
-                    <attribute id="U1" value="0.171997" type="6" />
-                    <attribute id="U2" value="0.187378" type="6" />
+                    <attribute id="U1" value="0.187622" type="6" />
+                    <attribute id="U2" value="0.203003" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_SmugglersBag_A" type="22" />
-                    <attribute id="U1" value="0.187622" type="6" />
-                    <attribute id="U2" value="0.203003" type="6" />
+                    <attribute id="U1" value="0.203247" type="6" />
+                    <attribute id="U2" value="0.218628" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.078003" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Sword_1H_Unique_SwordofVictory_A" type="22" />
+                    <attribute id="U1" value="0.218872" type="6" />
+                    <attribute id="U2" value="0.234253" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Sword_2H_Unique_Beholder_A" type="22" />
-                    <attribute id="U1" value="0.203247" type="6" />
-                    <attribute id="U2" value="0.218628" type="6" />
+                    <attribute id="U1" value="0.234497" type="6" />
+                    <attribute id="U2" value="0.249878" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Tanto_A" type="22" />
-                    <attribute id="U1" value="0.218872" type="6" />
-                    <attribute id="U2" value="0.234253" type="6" />
+                    <attribute id="U1" value="0.250122" type="6" />
+                    <attribute id="U2" value="0.265503" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Constitution" type="22" />
-                    <attribute id="U1" value="0.234497" type="6" />
-                    <attribute id="U2" value="0.249878" type="6" />
+                    <attribute id="U1" value="0.265747" type="6" />
+                    <attribute id="U2" value="0.281128" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Finesse" type="22" />
-                    <attribute id="U1" value="0.250122" type="6" />
-                    <attribute id="U2" value="0.265503" type="6" />
+                    <attribute id="U1" value="0.281372" type="6" />
+                    <attribute id="U2" value="0.296753" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Intelligence" type="22" />
-                    <attribute id="U1" value="0.265747" type="6" />
-                    <attribute id="U2" value="0.281128" type="6" />
+                    <attribute id="U1" value="0.296997" type="6" />
+                    <attribute id="U2" value="0.312378" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Memory" type="22" />
-                    <attribute id="U1" value="0.281372" type="6" />
-                    <attribute id="U2" value="0.296753" type="6" />
+                    <attribute id="U1" value="0.312622" type="6" />
+                    <attribute id="U2" value="0.328003" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Reset" type="22" />
-                    <attribute id="U1" value="0.296997" type="6" />
-                    <attribute id="U2" value="0.312378" type="6" />
+                    <attribute id="U1" value="0.328247" type="6" />
+                    <attribute id="U2" value="0.343628" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Strength" type="22" />
-                    <attribute id="U1" value="0.312622" type="6" />
-                    <attribute id="U2" value="0.328003" type="6" />
+                    <attribute id="U1" value="0.343872" type="6" />
+                    <attribute id="U2" value="0.359253" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Wits" type="22" />
-                    <attribute id="U1" value="0.328247" type="6" />
-                    <attribute id="U2" value="0.343628" type="6" />
+                    <attribute id="U1" value="0.359497" type="6" />
+                    <attribute id="U2" value="0.374878" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_AnvilMace_2H_A" type="22" />
-                    <attribute id="U1" value="0.343872" type="6" />
-                    <attribute id="U2" value="0.359253" type="6" />
+                    <attribute id="U1" value="0.375122" type="6" />
+                    <attribute id="U2" value="0.390503" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Banner_DivineOrder_2H_A" type="22" />
-                    <attribute id="U1" value="0.359497" type="6" />
-                    <attribute id="U2" value="0.374878" type="6" />
+                    <attribute id="U1" value="0.390747" type="6" />
+                    <attribute id="U2" value="0.406128" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Banner_Dwarves_2H_A" type="22" />
-                    <attribute id="U1" value="0.375122" type="6" />
-                    <attribute id="U2" value="0.390503" type="6" />
+                    <attribute id="U1" value="0.406372" type="6" />
+                    <attribute id="U2" value="0.421753" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_BattleScroll_2H_A" type="22" />
-                    <attribute id="U1" value="0.390747" type="6" />
-                    <attribute id="U2" value="0.406128" type="6" />
+                    <attribute id="U1" value="0.421997" type="6" />
+                    <attribute id="U2" value="0.437378" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Bible_2H_A" type="22" />
-                    <attribute id="U1" value="0.406372" type="6" />
-                    <attribute id="U2" value="0.421753" type="6" />
+                    <attribute id="U1" value="0.437622" type="6" />
+                    <attribute id="U2" value="0.453003" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_BurialBlade_SplitForm_A" type="22" />
-                    <attribute id="U1" value="0.421997" type="6" />
-                    <attribute id="U2" value="0.437378" type="6" />
+                    <attribute id="U1" value="0.453247" type="6" />
+                    <attribute id="U2" value="0.468628" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Dagger_Basilus_A" type="22" />
-                    <attribute id="U1" value="0.437622" type="6" />
-                    <attribute id="U2" value="0.453003" type="6" />
+                    <attribute id="U1" value="0.468872" type="6" />
+                    <attribute id="U2" value="0.484253" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Flamethrower_2H_A" type="22" />
-                    <attribute id="U1" value="0.453247" type="6" />
-                    <attribute id="U2" value="0.468628" type="6" />
+                    <attribute id="U1" value="0.484497" type="6" />
+                    <attribute id="U2" value="0.499878" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_HandCrossbow_A" type="22" />
-                    <attribute id="U1" value="0.468872" type="6" />
-                    <attribute id="U2" value="0.484253" type="6" />
+                    <attribute id="U1" value="0.500122" type="6" />
+                    <attribute id="U2" value="0.515503" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_A" type="22" />
-                    <attribute id="U1" value="0.484497" type="6" />
-                    <attribute id="U2" value="0.499878" type="6" />
+                    <attribute id="U1" value="0.515747" type="6" />
+                    <attribute id="U2" value="0.531128" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_Nails" type="22" />
-                    <attribute id="U1" value="0.500122" type="6" />
-                    <attribute id="U2" value="0.515503" type="6" />
+                    <attribute id="U1" value="0.531372" type="6" />
+                    <attribute id="U2" value="0.546753" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_Oil" type="22" />
-                    <attribute id="U1" value="0.515747" type="6" />
-                    <attribute id="U2" value="0.531128" type="6" />
+                    <attribute id="U1" value="0.546997" type="6" />
+                    <attribute id="U2" value="0.562378" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_Poison" type="22" />
-                    <attribute id="U1" value="0.531372" type="6" />
-                    <attribute id="U2" value="0.546753" type="6" />
+                    <attribute id="U1" value="0.562622" type="6" />
+                    <attribute id="U2" value="0.578003" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Mask_Tengu_A" type="22" />
-                    <attribute id="U1" value="0.546997" type="6" />
-                    <attribute id="U2" value="0.562378" type="6" />
+                    <attribute id="U1" value="0.578247" type="6" />
+                    <attribute id="U2" value="0.593628" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Pistol_A_Isshin_A" type="22" />
-                    <attribute id="U1" value="0.562622" type="6" />
-                    <attribute id="U2" value="0.578003" type="6" />
+                    <attribute id="U1" value="0.593872" type="6" />
+                    <attribute id="U2" value="0.609253" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Wraithblade_2H_A" type="22" />
-                    <attribute id="U1" value="0.578247" type="6" />
-                    <attribute id="U2" value="0.593628" type="6" />
+                    <attribute id="U1" value="0.609497" type="6" />
+                    <attribute id="U2" value="0.624878" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Wakizashi_1H_A" type="22" />
-                    <attribute id="U1" value="0.593872" type="6" />
-                    <attribute id="U2" value="0.609253" type="6" />
+                    <attribute id="U1" value="0.625122" type="6" />
+                    <attribute id="U2" value="0.640503" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Wakizashi_1H_B" type="22" />
-                    <attribute id="U1" value="0.609497" type="6" />
-                    <attribute id="U2" value="0.624878" type="6" />
+                    <attribute id="U1" value="0.640747" type="6" />
+                    <attribute id="U2" value="0.656128" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Wand_Unique_MagicMissile_A" type="22" />
-                    <attribute id="U1" value="0.625122" type="6" />
-                    <attribute id="U2" value="0.640503" type="6" />
+                    <attribute id="U1" value="0.656372" type="6" />
+                    <attribute id="U2" value="0.671753" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Weapon_Unique_ArmCannon_A" type="22" />
-                    <attribute id="U1" value="0.640747" type="6" />
-                    <attribute id="U2" value="0.656128" type="6" />
+                    <attribute id="U1" value="0.671997" type="6" />
+                    <attribute id="U2" value="0.687378" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Recipes_Orb_Upgrade_A" type="22" />
-                    <attribute id="U1" value="0.656372" type="6" />
-                    <attribute id="U2" value="0.671753" type="6" />
+                    <attribute id="U1" value="0.687622" type="6" />
+                    <attribute id="U2" value="0.703003" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_AnvilMace_SunderTheMountain" type="22" />
-                    <attribute id="U1" value="0.671997" type="6" />
-                    <attribute id="U2" value="0.687378" type="6" />
+                    <attribute id="U1" value="0.703247" type="6" />
+                    <attribute id="U2" value="0.718628" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_BalrinsThrowingAxe_Prepare" type="22" />
-                    <attribute id="U1" value="0.687622" type="6" />
-                    <attribute id="U2" value="0.703003" type="6" />
+                    <attribute id="U1" value="0.718872" type="6" />
+                    <attribute id="U2" value="0.734253" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_BalrinsThrowingAxe_Throw" type="22" />
-                    <attribute id="U1" value="0.703247" type="6" />
-                    <attribute id="U2" value="0.718628" type="6" />
+                    <attribute id="U1" value="0.734497" type="6" />
+                    <attribute id="U2" value="0.749878" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Banner_Rally_DivineOrder" type="22" />
-                    <attribute id="U1" value="0.718872" type="6" />
-                    <attribute id="U2" value="0.734253" type="6" />
+                    <attribute id="U1" value="0.750122" type="6" />
+                    <attribute id="U2" value="0.765503" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Banner_Rally_Dwarves" type="22" />
-                    <attribute id="U1" value="0.734497" type="6" />
-                    <attribute id="U2" value="0.749878" type="6" />
+                    <attribute id="U1" value="0.765747" type="6" />
+                    <attribute id="U2" value="0.781128" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Banner_Rally_Teleport" type="22" />
-                    <attribute id="U1" value="0.750122" type="6" />
-                    <attribute id="U2" value="0.765503" type="6" />
+                    <attribute id="U1" value="0.781372" type="6" />
+                    <attribute id="U2" value="0.796753" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Banner_WarCharge" type="22" />
-                    <attribute id="U1" value="0.765747" type="6" />
-                    <attribute id="U2" value="0.781128" type="6" />
+                    <attribute id="U1" value="0.796997" type="6" />
+                    <attribute id="U2" value="0.812378" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_Cannonball" type="22" />
-                    <attribute id="U1" value="0.781372" type="6" />
-                    <attribute id="U2" value="0.796753" type="6" />
+                    <attribute id="U1" value="0.812622" type="6" />
+                    <attribute id="U2" value="0.828003" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_LaunchDud" type="22" />
-                    <attribute id="U1" value="0.796997" type="6" />
-                    <attribute id="U2" value="0.812378" type="6" />
+                    <attribute id="U1" value="0.828247" type="6" />
+                    <attribute id="U2" value="0.843628" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_Scattershot" type="22" />
-                    <attribute id="U1" value="0.812622" type="6" />
-                    <attribute id="U2" value="0.828003" type="6" />
+                    <attribute id="U1" value="0.843872" type="6" />
+                    <attribute id="U2" value="0.859253" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_Shoot_Bullet_Air" type="22" />
-                    <attribute id="U1" value="0.828247" type="6" />
-                    <attribute id="U2" value="0.843628" type="6" />
+                    <attribute id="U1" value="0.859497" type="6" />
+                    <attribute id="U2" value="0.874878" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_Shoot_Bullet_Blood" type="22" />
-                    <attribute id="U1" value="0.843872" type="6" />
-                    <attribute id="U2" value="0.859253" type="6" />
+                    <attribute id="U1" value="0.875122" type="6" />
+                    <attribute id="U2" value="0.890503" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_Shoot_Bullet_Earth" type="22" />
-                    <attribute id="U1" value="0.859497" type="6" />
-                    <attribute id="U2" value="0.874878" type="6" />
+                    <attribute id="U1" value="0.890747" type="6" />
+                    <attribute id="U2" value="0.906128" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_Shoot_Bullet_Fire" type="22" />
-                    <attribute id="U1" value="0.875122" type="6" />
-                    <attribute id="U2" value="0.890503" type="6" />
+                    <attribute id="U1" value="0.906372" type="6" />
+                    <attribute id="U2" value="0.921753" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_Shoot_Bullet_Ice" type="22" />
-                    <attribute id="U1" value="0.890747" type="6" />
-                    <attribute id="U2" value="0.906128" type="6" />
+                    <attribute id="U1" value="0.921997" type="6" />
+                    <attribute id="U2" value="0.937378" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_Shoot_Bullet_Poison" type="22" />
-                    <attribute id="U1" value="0.906372" type="6" />
-                    <attribute id="U2" value="0.921753" type="6" />
+                    <attribute id="U1" value="0.937622" type="6" />
+                    <attribute id="U2" value="0.953003" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_Shoot_Bullet_Water" type="22" />
-                    <attribute id="U1" value="0.921997" type="6" />
-                    <attribute id="U2" value="0.937378" type="6" />
+                    <attribute id="U1" value="0.953247" type="6" />
+                    <attribute id="U2" value="0.968628" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Bokken_ChangeStance_1H" type="22" />
-                    <attribute id="U1" value="0.937622" type="6" />
-                    <attribute id="U2" value="0.953003" type="6" />
+                    <attribute id="U1" value="0.968872" type="6" />
+                    <attribute id="U2" value="0.984253" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Bokken_ChangeStance_2H" type="22" />
-                    <attribute id="U1" value="0.953247" type="6" />
-                    <attribute id="U2" value="0.968628" type="6" />
+                    <attribute id="U1" value="0.984497" type="6" />
+                    <attribute id="U2" value="0.999878" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.078003" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_BurialBlade_Transform" type="22" />
-                    <attribute id="U1" value="0.968872" type="6" />
-                    <attribute id="U2" value="0.984253" type="6" />
-                    <attribute id="V1" value="0.0626221" type="6" />
-                    <attribute id="V2" value="0.078003" type="6" />
+                    <attribute id="U1" value="0.000122" type="6" />
+                    <attribute id="U2" value="0.015503" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_ChaosBolt" type="22" />
-                    <attribute id="U1" value="0.984497" type="6" />
-                    <attribute id="U2" value="0.999878" type="6" />
-                    <attribute id="V1" value="0.0626221" type="6" />
-                    <attribute id="V2" value="0.078003" type="6" />
+                    <attribute id="U1" value="0.015747" type="6" />
+                    <attribute id="U2" value="0.031128" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_ChaosPentaSlash" type="22" />
-                    <attribute id="U1" value="0.000122" type="6" />
-                    <attribute id="U2" value="0.015503" type="6" />
+                    <attribute id="U1" value="0.031372" type="6" />
+                    <attribute id="U2" value="0.046753" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_ChaosSlash" type="22" />
-                    <attribute id="U1" value="0.015747" type="6" />
-                    <attribute id="U2" value="0.031128" type="6" />
+                    <attribute id="U1" value="0.046997" type="6" />
+                    <attribute id="U2" value="0.062378" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_DarkFireball" type="22" />
-                    <attribute id="U1" value="0.031372" type="6" />
-                    <attribute id="U2" value="0.046753" type="6" />
+                    <attribute id="U1" value="0.062622" type="6" />
+                    <attribute id="U2" value="0.078003" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_DarkFlamebreath" type="22" />
-                    <attribute id="U1" value="0.046997" type="6" />
-                    <attribute id="U2" value="0.062378" type="6" />
+                    <attribute id="U1" value="0.078247" type="6" />
+                    <attribute id="U2" value="0.093628" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_DualShield_ShieldBash" type="22" />
-                    <attribute id="U1" value="0.062622" type="6" />
-                    <attribute id="U2" value="0.078003" type="6" />
+                    <attribute id="U1" value="0.093872" type="6" />
+                    <attribute id="U2" value="0.109253" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_DualShield_ShieldToss" type="22" />
-                    <attribute id="U1" value="0.078247" type="6" />
-                    <attribute id="U2" value="0.093628" type="6" />
+                    <attribute id="U1" value="0.109497" type="6" />
+                    <attribute id="U2" value="0.124878" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_ElementalBullets" type="22" />
-                    <attribute id="U1" value="0.093872" type="6" />
-                    <attribute id="U2" value="0.109253" type="6" />
+                    <attribute id="U1" value="0.125122" type="6" />
+                    <attribute id="U2" value="0.140503" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Flamethrower_PyroDance" type="22" />
-                    <attribute id="U1" value="0.109497" type="6" />
-                    <attribute id="U2" value="0.124878" type="6" />
+                    <attribute id="U1" value="0.140747" type="6" />
+                    <attribute id="U2" value="0.156128" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_GnaksIncantation" type="22" />
-                    <attribute id="U1" value="0.125122" type="6" />
-                    <attribute id="U2" value="0.140503" type="6" />
+                    <attribute id="U1" value="0.156372" type="6" />
+                    <attribute id="U2" value="0.171753" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Greatbow_CushionForce" type="22" />
-                    <attribute id="U1" value="0.140747" type="6" />
-                    <attribute id="U2" value="0.156128" type="6" />
+                    <attribute id="U1" value="0.171997" type="6" />
+                    <attribute id="U2" value="0.187378" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Greatbow_DragonsBane" type="22" />
-                    <attribute id="U1" value="0.156372" type="6" />
-                    <attribute id="U2" value="0.171753" type="6" />
+                    <attribute id="U1" value="0.187622" type="6" />
+                    <attribute id="U2" value="0.203003" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Greatbow_FutureBarrage" type="22" />
-                    <attribute id="U1" value="0.171997" type="6" />
-                    <attribute id="U2" value="0.187378" type="6" />
+                    <attribute id="U1" value="0.203247" type="6" />
+                    <attribute id="U2" value="0.218628" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_HandCrossbow_Assassinate" type="22" />
-                    <attribute id="U1" value="0.187622" type="6" />
-                    <attribute id="U2" value="0.203003" type="6" />
+                    <attribute id="U1" value="0.218872" type="6" />
+                    <attribute id="U2" value="0.234253" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_HandCrossbow_Reload" type="22" />
-                    <attribute id="U1" value="0.203247" type="6" />
-                    <attribute id="U2" value="0.218628" type="6" />
+                    <attribute id="U1" value="0.234497" type="6" />
+                    <attribute id="U2" value="0.249878" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_HandCrossbow_Shoot" type="22" />
-                    <attribute id="U1" value="0.218872" type="6" />
-                    <attribute id="U2" value="0.234253" type="6" />
+                    <attribute id="U1" value="0.250122" type="6" />
+                    <attribute id="U2" value="0.265503" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_IronMaiden" type="22" />
-                    <attribute id="U1" value="0.234497" type="6" />
-                    <attribute id="U2" value="0.249878" type="6" />
+                    <attribute id="U1" value="0.265747" type="6" />
+                    <attribute id="U2" value="0.281128" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Katana_HelmSplitter" type="22" />
-                    <attribute id="U1" value="0.250122" type="6" />
-                    <attribute id="U2" value="0.265503" type="6" />
+                    <attribute id="U1" value="0.281372" type="6" />
+                    <attribute id="U2" value="0.296753" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Katana_Iaido" type="22" />
-                    <attribute id="U1" value="0.265747" type="6" />
-                    <attribute id="U2" value="0.281128" type="6" />
+                    <attribute id="U1" value="0.296997" type="6" />
+                    <attribute id="U2" value="0.312378" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Katana_VanquishersPath" type="22" />
-                    <attribute id="U1" value="0.281372" type="6" />
-                    <attribute id="U2" value="0.296753" type="6" />
+                    <attribute id="U1" value="0.312622" type="6" />
+                    <attribute id="U2" value="0.328003" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_LegSweep" type="22" />
-                    <attribute id="U1" value="0.296997" type="6" />
-                    <attribute id="U2" value="0.312378" type="6" />
+                    <attribute id="U1" value="0.328247" type="6" />
+                    <attribute id="U2" value="0.343628" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_MagicCripplingStrike" type="22" />
-                    <attribute id="U1" value="0.312622" type="6" />
-                    <attribute id="U2" value="0.328003" type="6" />
+                    <attribute id="U1" value="0.343872" type="6" />
+                    <attribute id="U2" value="0.359253" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_MagicMissile_ChangeMode" type="22" />
-                    <attribute id="U1" value="0.328247" type="6" />
-                    <attribute id="U2" value="0.343628" type="6" />
+                    <attribute id="U1" value="0.359497" type="6" />
+                    <attribute id="U2" value="0.374878" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_MagicRush" type="22" />
-                    <attribute id="U1" value="0.343872" type="6" />
-                    <attribute id="U2" value="0.359253" type="6" />
+                    <attribute id="U1" value="0.375122" type="6" />
+                    <attribute id="U2" value="0.390503" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Placeholder_Banners" type="22" />
-                    <attribute id="U1" value="0.359497" type="6" />
-                    <attribute id="U2" value="0.374878" type="6" />
+                    <attribute id="U1" value="0.390747" type="6" />
+                    <attribute id="U2" value="0.406128" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Placeholder_Greatbows" type="22" />
-                    <attribute id="U1" value="0.375122" type="6" />
-                    <attribute id="U2" value="0.390503" type="6" />
+                    <attribute id="U1" value="0.406372" type="6" />
+                    <attribute id="U2" value="0.421753" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Placeholder_Katanas" type="22" />
-                    <attribute id="U1" value="0.390747" type="6" />
-                    <attribute id="U2" value="0.406128" type="6" />
+                    <attribute id="U1" value="0.421997" type="6" />
+                    <attribute id="U2" value="0.437378" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Placeholder_Rapiers" type="22" />
-                    <attribute id="U1" value="0.406372" type="6" />
-                    <attribute id="U2" value="0.421753" type="6" />
+                    <attribute id="U1" value="0.437622" type="6" />
+                    <attribute id="U2" value="0.453003" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Placeholder_Throwing" type="22" />
-                    <attribute id="U1" value="0.421997" type="6" />
-                    <attribute id="U2" value="0.437378" type="6" />
+                    <attribute id="U1" value="0.453247" type="6" />
+                    <attribute id="U2" value="0.468628" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_PowerPole_Smash" type="22" />
-                    <attribute id="U1" value="0.437622" type="6" />
-                    <attribute id="U2" value="0.453003" type="6" />
-                    <attribute id="V1" value="0.0782471" type="6" />
-                    <attribute id="V2" value="0.093628" type="6" />
-                </node>
-                <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Quiver_DrawArrow" type="22" />
-                    <attribute id="U1" value="0.453247" type="6" />
-                    <attribute id="U2" value="0.468628" type="6" />
-                    <attribute id="V1" value="0.0782471" type="6" />
-                    <attribute id="V2" value="0.093628" type="6" />
-                </node>
-                <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Rapier_DizzyingSmash" type="22" />
                     <attribute id="U1" value="0.468872" type="6" />
                     <attribute id="U2" value="0.484253" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Rapier_DuelistStance" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Quiver_DrawArrow" type="22" />
                     <attribute id="U1" value="0.484497" type="6" />
                     <attribute id="U2" value="0.499878" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Rapier_FlickerStrike" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Rapier_DizzyingSmash" type="22" />
                     <attribute id="U1" value="0.500122" type="6" />
                     <attribute id="U2" value="0.515503" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Rapier_SweepKick" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Rapier_DuelistStance" type="22" />
                     <attribute id="U1" value="0.515747" type="6" />
                     <attribute id="U2" value="0.531128" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_RemoteMine_Add" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Rapier_FlickerStrike" type="22" />
                     <attribute id="U1" value="0.531372" type="6" />
                     <attribute id="U2" value="0.546753" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_RemoteMine_Detonate" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Rapier_SweepKick" type="22" />
                     <attribute id="U1" value="0.546997" type="6" />
                     <attribute id="U2" value="0.562378" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Air" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_RemoteMine_Add" type="22" />
                     <attribute id="U1" value="0.562622" type="6" />
                     <attribute id="U2" value="0.578003" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Chaos" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_RemoteMine_Detonate" type="22" />
                     <attribute id="U1" value="0.578247" type="6" />
                     <attribute id="U2" value="0.593628" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Earth" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Air" type="22" />
                     <attribute id="U1" value="0.593872" type="6" />
                     <attribute id="U2" value="0.609253" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Fire" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Chaos" type="22" />
                     <attribute id="U1" value="0.609497" type="6" />
                     <attribute id="U2" value="0.624878" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Ice" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Earth" type="22" />
                     <attribute id="U1" value="0.625122" type="6" />
                     <attribute id="U2" value="0.640503" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Poison" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Fire" type="22" />
                     <attribute id="U1" value="0.640747" type="6" />
                     <attribute id="U2" value="0.656128" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Reverb" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Ice" type="22" />
                     <attribute id="U1" value="0.656372" type="6" />
                     <attribute id="U2" value="0.671753" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Water" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Poison" type="22" />
                     <attribute id="U1" value="0.671997" type="6" />
                     <attribute id="U2" value="0.687378" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_PoisonBurst" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Reverb" type="22" />
                     <attribute id="U1" value="0.687622" type="6" />
                     <attribute id="U2" value="0.703003" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_RunicCannon_AbsorbSurface" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_Activate_Water" type="22" />
                     <attribute id="U1" value="0.703247" type="6" />
                     <attribute id="U2" value="0.718628" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_RunicCannon_Disperse" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Runeblade_PoisonBurst" type="22" />
                     <attribute id="U1" value="0.718872" type="6" />
                     <attribute id="U2" value="0.734253" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_RunicCannon_Shoot" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_RunicCannon_AbsorbSurface" type="22" />
                     <attribute id="U1" value="0.734497" type="6" />
                     <attribute id="U2" value="0.749878" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Scramble" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_RunicCannon_Disperse" type="22" />
                     <attribute id="U1" value="0.750122" type="6" />
                     <attribute id="U2" value="0.765503" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ShieldCover" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_RunicCannon_Shoot" type="22" />
                     <attribute id="U1" value="0.765747" type="6" />
                     <attribute id="U2" value="0.781128" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ShieldPrison" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Scramble" type="22" />
                     <attribute id="U1" value="0.781372" type="6" />
                     <attribute id="U2" value="0.796753" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ShootPistol" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ShieldCover" type="22" />
                     <attribute id="U1" value="0.796997" type="6" />
                     <attribute id="U2" value="0.812378" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ShootRod" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ShieldPrison" type="22" />
                     <attribute id="U1" value="0.812622" type="6" />
                     <attribute id="U2" value="0.828003" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_SlayHidden" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ShootPistol" type="22" />
                     <attribute id="U1" value="0.828247" type="6" />
                     <attribute id="U2" value="0.843628" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_SniperShot" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ShootRod" type="22" />
                     <attribute id="U1" value="0.843872" type="6" />
                     <attribute id="U2" value="0.859253" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_SoulHarvest" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_SlayHidden" type="22" />
                     <attribute id="U1" value="0.859497" type="6" />
                     <attribute id="U2" value="0.874878" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ThrowObject" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_SniperShot" type="22" />
                     <attribute id="U1" value="0.875122" type="6" />
                     <attribute id="U2" value="0.890503" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ThrowWeapon" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_SoulHarvest" type="22" />
                     <attribute id="U1" value="0.890747" type="6" />
                     <attribute id="U2" value="0.906128" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Warchief_ChangeStance" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ThrowObject" type="22" />
                     <attribute id="U1" value="0.906372" type="6" />
                     <attribute id="U2" value="0.921753" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Warchief_CripplingBlow" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ThrowWeapon" type="22" />
                     <attribute id="U1" value="0.921997" type="6" />
                     <attribute id="U2" value="0.937378" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Warchief_Whirlwind" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Warchief_ChangeStance" type="22" />
                     <attribute id="U1" value="0.937622" type="6" />
                     <attribute id="U2" value="0.953003" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_WaterSpout" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Warchief_CripplingBlow" type="22" />
                     <attribute id="U1" value="0.953247" type="6" />
                     <attribute id="U2" value="0.968628" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Antiheal" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Warchief_Whirlwind" type="22" />
                     <attribute id="U1" value="0.968872" type="6" />
                     <attribute id="U2" value="0.984253" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Banner_WarCharge" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_WaterSpout" type="22" />
                     <attribute id="U1" value="0.984497" type="6" />
                     <attribute id="U2" value="0.999878" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.093628" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Concussion" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Antiheal" type="22" />
                     <attribute id="U1" value="0.000122" type="6" />
                     <attribute id="U2" value="0.015503" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Cooldown_Dust" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Banner_WarCharge" type="22" />
                     <attribute id="U1" value="0.015747" type="6" />
                     <attribute id="U2" value="0.031128" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Cooldown_Gas" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Concussion" type="22" />
                     <attribute id="U1" value="0.031372" type="6" />
                     <attribute id="U2" value="0.046753" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Cooldown_Thunderbolt" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Cooldown_Dust" type="22" />
                     <attribute id="U1" value="0.046997" type="6" />
                     <attribute id="U2" value="0.062378" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Covered" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Cooldown_Gas" type="22" />
                     <attribute id="U1" value="0.062622" type="6" />
                     <attribute id="U2" value="0.078003" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Covered_Shell" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Cooldown_Thunderbolt" type="22" />
                     <attribute id="U1" value="0.078247" type="6" />
                     <attribute id="U2" value="0.093628" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Covering" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Covered" type="22" />
                     <attribute id="U1" value="0.093872" type="6" />
                     <attribute id="U2" value="0.109253" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_DeathSentence" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Covered_Shell" type="22" />
                     <attribute id="U1" value="0.109497" type="6" />
                     <attribute id="U2" value="0.124878" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_DeathSentence_Blocked" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Covering" type="22" />
                     <attribute id="U1" value="0.125122" type="6" />
                     <attribute id="U2" value="0.140503" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_DeflectProjectiles" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_DeathSentence" type="22" />
                     <attribute id="U1" value="0.140747" type="6" />
                     <attribute id="U2" value="0.156128" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_DelayedDaze" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_DeathSentence_Blocked" type="22" />
                     <attribute id="U1" value="0.156372" type="6" />
                     <attribute id="U2" value="0.171753" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_DemonicSurge" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_DeflectProjectiles" type="22" />
                     <attribute id="U1" value="0.171997" type="6" />
                     <attribute id="U2" value="0.187378" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Dizzy" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_DelayedDaze" type="22" />
                     <attribute id="U1" value="0.187622" type="6" />
                     <attribute id="U2" value="0.203003" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_DragonsBane" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_DemonicSurge" type="22" />
                     <attribute id="U1" value="0.203247" type="6" />
                     <attribute id="U2" value="0.218628" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Flamethrower_PyroDance" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Dizzy" type="22" />
                     <attribute id="U1" value="0.218872" type="6" />
                     <attribute id="U2" value="0.234253" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Flamethrower_PyroDance_Hasted" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_DragonsBane" type="22" />
                     <attribute id="U1" value="0.234497" type="6" />
                     <attribute id="U2" value="0.249878" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_FrenzyCharge" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Flamethrower_PyroDance" type="22" />
                     <attribute id="U1" value="0.250122" type="6" />
                     <attribute id="U2" value="0.265503" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo01" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Flamethrower_PyroDance_Hasted" type="22" />
                     <attribute id="U1" value="0.265747" type="6" />
                     <attribute id="U2" value="0.281128" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo02" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_FrenzyCharge" type="22" />
                     <attribute id="U1" value="0.281372" type="6" />
                     <attribute id="U2" value="0.296753" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo03" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo01" type="22" />
                     <attribute id="U1" value="0.296997" type="6" />
                     <attribute id="U2" value="0.312378" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo04" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo02" type="22" />
                     <attribute id="U1" value="0.312622" type="6" />
                     <attribute id="U2" value="0.328003" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo05" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo03" type="22" />
                     <attribute id="U1" value="0.328247" type="6" />
                     <attribute id="U2" value="0.343628" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo06" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo04" type="22" />
                     <attribute id="U1" value="0.343872" type="6" />
                     <attribute id="U2" value="0.359253" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo07" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo05" type="22" />
                     <attribute id="U1" value="0.359497" type="6" />
                     <attribute id="U2" value="0.374878" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo08" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo06" type="22" />
                     <attribute id="U1" value="0.375122" type="6" />
                     <attribute id="U2" value="0.390503" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo09" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo07" type="22" />
                     <attribute id="U1" value="0.390747" type="6" />
                     <attribute id="U2" value="0.406128" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_MarkoftheWraith" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo08" type="22" />
                     <attribute id="U1" value="0.406372" type="6" />
                     <attribute id="U2" value="0.421753" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Mending" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo09" type="22" />
                     <attribute id="U1" value="0.421997" type="6" />
                     <attribute id="U2" value="0.437378" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Quiver_Recharging" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_MarkoftheWraith" type="22" />
                     <attribute id="U1" value="0.437622" type="6" />
                     <attribute id="U2" value="0.453003" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rally_DivineOrder" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Mending" type="22" />
                     <attribute id="U1" value="0.453247" type="6" />
                     <attribute id="U2" value="0.468628" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rally_DivineOrder_Bonus" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Quiver_Recharging" type="22" />
                     <attribute id="U1" value="0.468872" type="6" />
                     <attribute id="U2" value="0.484253" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rally_Dwarves" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rally_DivineOrder" type="22" />
                     <attribute id="U1" value="0.484497" type="6" />
                     <attribute id="U2" value="0.499878" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rally_Dwarves_Bonus" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rally_DivineOrder_Bonus" type="22" />
                     <attribute id="U1" value="0.500122" type="6" />
                     <attribute id="U2" value="0.515503" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rapier_DuelistStance" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rally_Dwarves" type="22" />
                     <attribute id="U1" value="0.515747" type="6" />
                     <attribute id="U2" value="0.531128" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_RemoteMine_Recharging" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rally_Dwarves_Bonus" type="22" />
                     <attribute id="U1" value="0.531372" type="6" />
                     <attribute id="U2" value="0.546753" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Revenant" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rapier_DuelistStance" type="22" />
                     <attribute id="U1" value="0.546997" type="6" />
                     <attribute id="U2" value="0.562378" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Air" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_RemoteMine_Recharging" type="22" />
                     <attribute id="U1" value="0.562622" type="6" />
                     <attribute id="U2" value="0.578003" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Avalanche" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Revenant" type="22" />
                     <attribute id="U1" value="0.578247" type="6" />
                     <attribute id="U2" value="0.593628" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Blood" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Air" type="22" />
                     <attribute id="U1" value="0.593872" type="6" />
                     <attribute id="U2" value="0.609253" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Bloodstorm" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Avalanche" type="22" />
                     <attribute id="U1" value="0.609497" type="6" />
                     <attribute id="U2" value="0.624878" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Chaos" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Blood" type="22" />
                     <attribute id="U1" value="0.625122" type="6" />
                     <attribute id="U2" value="0.640503" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Conduction" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Bloodstorm" type="22" />
                     <attribute id="U1" value="0.640747" type="6" />
                     <attribute id="U2" value="0.656128" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Contaminated" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Chaos" type="22" />
                     <attribute id="U1" value="0.656372" type="6" />
                     <attribute id="U2" value="0.671753" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Contamination" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Conduction" type="22" />
                     <attribute id="U1" value="0.671997" type="6" />
                     <attribute id="U2" value="0.687378" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Death" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Contaminated" type="22" />
                     <attribute id="U1" value="0.687622" type="6" />
                     <attribute id="U2" value="0.703003" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Disease" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Contamination" type="22" />
                     <attribute id="U1" value="0.703247" type="6" />
                     <attribute id="U2" value="0.718628" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Dust" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Death" type="22" />
                     <attribute id="U1" value="0.718872" type="6" />
                     <attribute id="U2" value="0.734253" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Earth" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Disease" type="22" />
                     <attribute id="U1" value="0.734497" type="6" />
                     <attribute id="U2" value="0.749878" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Explosive" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Dust" type="22" />
                     <attribute id="U1" value="0.750122" type="6" />
                     <attribute id="U2" value="0.765503" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Fire" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Earth" type="22" />
                     <attribute id="U1" value="0.765747" type="6" />
                     <attribute id="U2" value="0.781128" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Gas" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Explosive" type="22" />
                     <attribute id="U1" value="0.781372" type="6" />
                     <attribute id="U2" value="0.796753" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Grave" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Fire" type="22" />
                     <attribute id="U1" value="0.796997" type="6" />
                     <attribute id="U2" value="0.812378" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Heatburst" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Gas" type="22" />
                     <attribute id="U1" value="0.812622" type="6" />
                     <attribute id="U2" value="0.828003" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Heatburst_Spread" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Grave" type="22" />
                     <attribute id="U1" value="0.828247" type="6" />
                     <attribute id="U2" value="0.843628" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Ice" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Heatburst" type="22" />
                     <attribute id="U1" value="0.843872" type="6" />
                     <attribute id="U2" value="0.859253" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Inferno" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Heatburst_Spread" type="22" />
                     <attribute id="U1" value="0.859497" type="6" />
                     <attribute id="U2" value="0.874878" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Lava" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Ice" type="22" />
                     <attribute id="U1" value="0.875122" type="6" />
                     <attribute id="U2" value="0.890503" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Lifeblood" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Inferno" type="22" />
                     <attribute id="U1" value="0.890747" type="6" />
                     <attribute id="U2" value="0.906128" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Necromantic" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Lava" type="22" />
                     <attribute id="U1" value="0.906372" type="6" />
                     <attribute id="U2" value="0.921753" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Poison" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Lifeblood" type="22" />
                     <attribute id="U1" value="0.921997" type="6" />
                     <attribute id="U2" value="0.937378" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Quake" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Necromantic" type="22" />
                     <attribute id="U1" value="0.937622" type="6" />
                     <attribute id="U2" value="0.953003" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Searing" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Poison" type="22" />
                     <attribute id="U1" value="0.953247" type="6" />
                     <attribute id="U2" value="0.968628" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Soul" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Quake" type="22" />
                     <attribute id="U1" value="0.968872" type="6" />
                     <attribute id="U2" value="0.984253" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Tar" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Searing" type="22" />
                     <attribute id="U1" value="0.984497" type="6" />
                     <attribute id="U2" value="0.999878" type="6" />
                     <attribute id="V1" value="0.0938721" type="6" />
                     <attribute id="V2" value="0.109253" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Thunderbolt" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Soul" type="22" />
                     <attribute id="U1" value="0.000122" type="6" />
                     <attribute id="U2" value="0.015503" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Venom" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Tar" type="22" />
                     <attribute id="U1" value="0.015747" type="6" />
                     <attribute id="U2" value="0.031128" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Water" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Thunderbolt" type="22" />
                     <attribute id="U1" value="0.031372" type="6" />
                     <attribute id="U2" value="0.046753" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rupture" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Venom" type="22" />
                     <attribute id="U1" value="0.046997" type="6" />
                     <attribute id="U2" value="0.062378" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_ShieldPrison" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rune_Water" type="22" />
                     <attribute id="U1" value="0.062622" type="6" />
                     <attribute id="U2" value="0.078003" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_ShieldPrisonBuff" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Rupture" type="22" />
                     <attribute id="U1" value="0.078247" type="6" />
                     <attribute id="U2" value="0.093628" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulBurn01" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_ShieldPrison" type="22" />
                     <attribute id="U1" value="0.093872" type="6" />
                     <attribute id="U2" value="0.109253" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulBurn02" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_ShieldPrisonBuff" type="22" />
                     <attribute id="U1" value="0.109497" type="6" />
                     <attribute id="U2" value="0.124878" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulBurn03" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulBurn01" type="22" />
                     <attribute id="U1" value="0.125122" type="6" />
                     <attribute id="U2" value="0.140503" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulBurn04" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulBurn02" type="22" />
                     <attribute id="U1" value="0.140747" type="6" />
                     <attribute id="U2" value="0.156128" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulBurn05" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulBurn03" type="22" />
                     <attribute id="U1" value="0.156372" type="6" />
                     <attribute id="U2" value="0.171753" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulHarvest_DamageBonus01" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulBurn04" type="22" />
                     <attribute id="U1" value="0.171997" type="6" />
                     <attribute id="U2" value="0.187378" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulHarvest_DamageBonus02" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulBurn05" type="22" />
                     <attribute id="U1" value="0.187622" type="6" />
                     <attribute id="U2" value="0.203003" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulHarvest_DamageBonus03" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulHarvest_DamageBonus01" type="22" />
                     <attribute id="U1" value="0.203247" type="6" />
                     <attribute id="U2" value="0.218628" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulHarvest_DamageBonus04" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulHarvest_DamageBonus02" type="22" />
                     <attribute id="U1" value="0.218872" type="6" />
                     <attribute id="U2" value="0.234253" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulHarvest_DamageBonus05" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulHarvest_DamageBonus03" type="22" />
                     <attribute id="U1" value="0.234497" type="6" />
                     <attribute id="U2" value="0.249878" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus01" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulHarvest_DamageBonus04" type="22" />
                     <attribute id="U1" value="0.250122" type="6" />
                     <attribute id="U2" value="0.265503" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus02" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SoulHarvest_DamageBonus05" type="22" />
                     <attribute id="U1" value="0.265747" type="6" />
                     <attribute id="U2" value="0.281128" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus03" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus01" type="22" />
                     <attribute id="U1" value="0.281372" type="6" />
                     <attribute id="U2" value="0.296753" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus04" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus02" type="22" />
                     <attribute id="U1" value="0.296997" type="6" />
                     <attribute id="U2" value="0.312378" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus05" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus03" type="22" />
                     <attribute id="U1" value="0.312622" type="6" />
                     <attribute id="U2" value="0.328003" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_Tripping" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus04" type="22" />
                     <attribute id="U1" value="0.328247" type="6" />
                     <attribute id="U2" value="0.343628" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_WarCharge_Bonus" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus05" type="22" />
                     <attribute id="U1" value="0.343872" type="6" />
                     <attribute id="U2" value="0.359253" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_WarCharge_DamageBoost" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_Tripping" type="22" />
                     <attribute id="U1" value="0.359497" type="6" />
                     <attribute id="U2" value="0.374878" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_WarchiefMark" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_WarCharge_Bonus" type="22" />
                     <attribute id="U1" value="0.375122" type="6" />
                     <attribute id="U2" value="0.390503" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_WaterBurn" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_WarCharge_DamageBoost" type="22" />
                     <attribute id="U1" value="0.390747" type="6" />
                     <attribute id="U2" value="0.406128" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Status_WeaponMastery_Runeblade_A" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_WarchiefMark" type="22" />
                     <attribute id="U1" value="0.406372" type="6" />
                     <attribute id="U2" value="0.421753" type="6" />
+                    <attribute id="V1" value="0.1094971" type="6" />
+                    <attribute id="V2" value="0.124878" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_WaterBurn" type="22" />
+                    <attribute id="U1" value="0.421997" type="6" />
+                    <attribute id="U2" value="0.437378" type="6" />
+                    <attribute id="V1" value="0.1094971" type="6" />
+                    <attribute id="V2" value="0.124878" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_WeaponMastery_Runeblade_A" type="22" />
+                    <attribute id="U1" value="0.437622" type="6" />
+                    <attribute id="U2" value="0.453003" type="6" />
                     <attribute id="V1" value="0.1094971" type="6" />
                     <attribute id="V2" value="0.124878" type="6" />
                 </node>

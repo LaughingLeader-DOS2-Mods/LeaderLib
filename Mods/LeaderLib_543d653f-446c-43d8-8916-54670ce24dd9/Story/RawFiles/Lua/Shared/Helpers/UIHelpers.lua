@@ -37,27 +37,6 @@ end
 
 SetSkillEnabled = GameHelpers.UI.SetSkillEnabled
 
----Refresh the whole active skillbar. Useful for refreshing if a skill is clickable from tag requirements changing.
----@param client string|integer|EsvCharacter Client character UUID, user ID, or EsvCharacter.
-function GameHelpers.UI.RefreshSkillBar(client)
-	local t = type(client)
-	if t == "string" then
-		if CharacterIsPlayer(client) == 1 and Ext.GetGameState() == "Running" then
-			local id = CharacterGetReservedUserID(client)
-			if id ~= nil then
-				--Ext.PostMessageToClient(client, "LeaderLib_Hotbar_Refresh", "")
-				Ext.PostMessageToUser(id, "LeaderLib_Hotbar_Refresh", "")
-			end
-		end
-	elseif t == "number" then
-		Ext.PostMessageToUser(client, "LeaderLib_Hotbar_Refresh", "")
-	elseif  t == "userdata" and client.NetID then
-		Ext.PostMessageToUser(client.NetID, "LeaderLib_Hotbar_Refresh", "")
-	end
-end
-
-RefreshSkillBar = GameHelpers.UI.RefreshSkillBar
-
 ---@param client string Client character UUID.
 ---@param skill string
 function GameHelpers.UI.RefreshSkillBarSkillCooldown(client, skill)
@@ -102,6 +81,20 @@ function GameHelpers.UI.RefreshSkillBarCooldowns(client)
 end
 
 RefreshSkillBarCooldowns = GameHelpers.UI.RefreshSkillBarCooldowns
+
+---Refresh the skillbar's cooldowns.
+---@param client UUID|NETID|EsvCharacter
+---@param delay integer
+function GameHelpers.UI.RefreshSkillBarAfterDelay(client, delay)
+	local uuid = GameHelpers.GetUUID(client)
+	if uuid then
+		local timerName = string.format("LeaderLib_RefreshSkillbar_%s", uuid)
+		Timer.Cancel(timerName)
+		Timer.StartOneshot(timerName, delay, function()
+			GameHelpers.UI.RefreshSkillBar(uuid)
+		end)
+	end
+end
 
 ---@param text string
 ---@param filter integer
@@ -241,3 +234,31 @@ else
 		return nil
 	end
 end
+
+---Refresh the whole active skillbar. Useful for refreshing if a skill is clickable from tag requirements changing.
+---@param client string|integer|EsvCharacter Client character UUID, user ID, or EsvCharacter.
+function GameHelpers.UI.RefreshSkillBar(client)
+	if not Vars.IsClient then
+		local t = type(client)
+		if t == "string" then
+			if CharacterIsPlayer(client) == 1 and Ext.GetGameState() == "Running" then
+				local id = CharacterGetReservedUserID(client)
+				if id ~= nil then
+					--Ext.PostMessageToClient(client, "LeaderLib_Hotbar_Refresh", "")
+					Ext.PostMessageToUser(id, "LeaderLib_Hotbar_Refresh", "")
+				end
+			end
+		elseif t == "number" then
+			Ext.PostMessageToUser(client, "LeaderLib_Hotbar_Refresh", "")
+		elseif  t == "userdata" and client.NetID then
+			Ext.PostMessageToUser(client.NetID, "LeaderLib_Hotbar_Refresh", "")
+		end
+	else
+		local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.hotBar) or Vars.ControllerEnabled and Ext.GetBuiltinUI(Data.UIType.bottomBar_c)
+		if ui then
+			ui:ExternalInterfaceCall("updateSlots", ui:GetValue("maxSlots", "number"))
+		end
+	end
+end
+
+RefreshSkillBar = GameHelpers.UI.RefreshSkillBar

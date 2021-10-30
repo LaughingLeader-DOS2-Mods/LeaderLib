@@ -103,7 +103,8 @@ else
 		and CharacterIsControlled(uuid) == 1 
 		and Features.FixSkillTagRequirements
 		and Data.SkillRequirementTags[tag] then
-			GameHelpers.UI.RefreshSkillBar(uuid)
+			--Delay slightly to aggregate quick changes
+			GameHelpers.UI.RefreshSkillBarAfterDelay(uuid, 50)
 		end
 	end)
 	RegisterProtectedOsirisListener("ObjectLostTag", 2, "after", function(uuid, tag)
@@ -111,7 +112,7 @@ else
 		and CharacterIsControlled(uuid) == 1 
 		and Features.FixSkillTagRequirements
 		and Data.SkillRequirementTags[tag] then
-			GameHelpers.UI.RefreshSkillBar(uuid)
+			GameHelpers.UI.RefreshSkillBarAfterDelay(uuid, 50)
 		end
 	end)
 
@@ -127,7 +128,8 @@ else
 				local tags = StringHelpers.Split(item.Stats.Tags, ";")
 				for i,tag in pairs(tags) do
 					if Data.SkillRequirementTags[tag] then
-						GameHelpers.UI.RefreshSkillBar(character)
+						--Delay slightly to aggregate quick changes
+						GameHelpers.UI.RefreshSkillBarAfterDelay(character, 250)
 						break
 					end
 				end
@@ -146,7 +148,7 @@ else
 				local tags = StringHelpers.Split(item.Stats.Tags, ";")
 				for i,tag in pairs(tags) do
 					if Data.SkillRequirementTags[tag] and IsTagged(character, tag) ~= 1 then
-						GameHelpers.UI.RefreshSkillBar(character)
+						GameHelpers.UI.RefreshSkillBarAfterDelay(character, 250)
 						break
 					end
 				end

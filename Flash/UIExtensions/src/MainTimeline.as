@@ -167,6 +167,9 @@ package
 				this.screenHeight = h;
 				this.uiScaling = h / this.designResolution.y;
 
+				this.screenScalingTest.width = w;
+				this.screenScalingTest.height = h;
+
 				/* if (this.screenScalingTest.visible) {
 					// var dx:Number = (this.designResolution.x - this.screenWidth)/2;
 					// var dy:Number = (this.designResolution.y - this.screenHeight)/2;

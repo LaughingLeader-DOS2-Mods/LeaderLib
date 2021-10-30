@@ -153,7 +153,7 @@ Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force
 	ApplyStatus(target,status,duration,force,source)
 end)
 
--- !removestatus LLLICH_DOMINATED_BEAM_FX 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0
+-- !statusremove LLLICH_DOMINATED_BEAM_FX 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0
 Ext.RegisterConsoleCommand("statusremove", function(command,status,target)
 	local host = CharacterGetHostCharacter()
 	if target == nil or target == "host" then

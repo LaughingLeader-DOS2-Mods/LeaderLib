@@ -130,6 +130,7 @@ Ext.Require("Client/UI/Tooltips/Handlers/TooltipFormatting.lua")
 
 Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Item", nil, TooltipHandler.OnItemTooltip)
+	Game.Tooltip.RegisterListener("Skill", nil, HotbarFixer.UpdateSkillRequirements)
 	Game.Tooltip.RegisterListener("Skill", nil, TooltipHandler.OnSkillTooltip)
 	Game.Tooltip.RegisterListener("Status", nil, TooltipHandler.OnStatusTooltip)
 	Game.Tooltip.RegisterListener("Stat", nil, TooltipHandler.OnStatTooltip)

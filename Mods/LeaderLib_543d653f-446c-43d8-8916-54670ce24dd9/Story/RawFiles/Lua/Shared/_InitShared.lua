@@ -209,6 +209,8 @@ Features = {
 	TooltipGrammarHelper = false,
 	---Enables a workaround for requiring WINGS or PURE to make characters play the flying animation when moving around.
 	WingsWorkaround = false,
+	---Fixed tag requirements for skills being ignored by skills granted by items. Also fixes tag changes not updating the hotbar.
+	FixSkillTagRequirements = false,
 }
 
 Importer = {

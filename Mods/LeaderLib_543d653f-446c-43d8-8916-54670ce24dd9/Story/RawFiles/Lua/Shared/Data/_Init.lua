@@ -2,6 +2,8 @@ if Data == nil then
 	Data = {}
 end
 
+Data.SkillRequirementTags = {}
+
 local function CreateEnum(target)
 	local integers = {}
 	local names = {}

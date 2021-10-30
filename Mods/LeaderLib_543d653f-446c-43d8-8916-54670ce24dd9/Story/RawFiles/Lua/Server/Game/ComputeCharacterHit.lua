@@ -69,8 +69,9 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
 	
 	local res = character[damageType .. "Resistance"]
 
-    --FIX Workaround for PhysicalResistance in StatCharacter being double what it actually is
-    if extVersion <= 55 and damageType == "Physical" then
+    --Fixed in latest Extender
+    --Workaround for PhysicalResistance in StatCharacter being double what it actually is
+    --[[ if extVersion <= 55 and damageType == "Physical" then
         local stat = Ext.GetStat(character.Name)
         if stat then
             res = stat.PhysicalResistance
@@ -83,7 +84,7 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
                 res = res + v.PhysicalResistance
             end
         end
-    end
+    end ]]
 
 	if res > 0 and resistancePenetration ~= nil and resistancePenetration > 0 then
 		--PrintDebug(res, " => ", math.max(res - resistancePenetration, 0))
@@ -305,6 +306,7 @@ function HitOverrides.ComputeOverridesEnabled()
     end
     return Features.BackstabCalculation == true 
     or Features.SpellsCanCrit == true 
+    or GameSettings.Settings.SpellsCanCritWithoutTalent == true 
     or Features.ResistancePenetration == true 
     or #Listeners.ComputeCharacterHit > 0
 end
@@ -360,7 +362,7 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
 
         hit.DamageMultiplier = 1.0 + Game.Math.GetAttackerDamageMultiplier(target, attacker, highGroundFlag)
         if hitType == "Magic" or hitType == "Surface" or hitType == "DoT" or hitType == "Reflected" then
-            if Features.SpellsCanCrit then
+            if Features.SpellsCanCrit or GameSettings.Settings.SpellsCanCritWithoutTalent then
                 HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
             else
                 Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
@@ -421,7 +423,7 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
         end
 
         if not hitBlocked then
-            if Features.SpellsCanCrit then
+            if Features.SpellsCanCrit or GameSettings.Settings.SpellsCanCritWithoutTalent then
                 HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
             else
                 Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)

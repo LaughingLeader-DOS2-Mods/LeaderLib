@@ -111,7 +111,9 @@ Ext.RegisterOsirisListener("ItemDestroying", Data.OsirisEvents.ItemDestroying, "
 
 local function OnObjectEvent(event, ...)
 	InvokeListenerCallbacks(Listeners.ObjectEvent[event], ...)
-	InvokeListenerCallbacks(Listeners.ObjectEvent._All, ...)
+	if event ~= "All" then
+		InvokeListenerCallbacks(Listeners.ObjectEvent.All, ...)
+	end
 end
 
 Ext.RegisterOsirisListener("StoryEvent", Data.OsirisEvents.StoryEvent, "before", function(object, event)

@@ -930,8 +930,8 @@ end)
 
 Ext.RegisterConsoleCommand("lldebug_music", function(command, mType, theme)
 	Ext.BroadcastMessage("LeaderLib_Debug_MusicTest", Ext.JsonStringify({
-	Type = mType or "Explo",
-	Theme = theme or "Fort_Joy"
+		Type = mType or "Explo",
+		Theme = theme or "Fort_Joy"
 	}))
 end)
 

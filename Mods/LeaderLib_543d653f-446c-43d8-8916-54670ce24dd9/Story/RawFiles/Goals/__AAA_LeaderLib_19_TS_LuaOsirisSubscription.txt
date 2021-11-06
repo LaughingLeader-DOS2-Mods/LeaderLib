@@ -44,6 +44,7 @@ LeaderLog_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
 
 IF
 CharacterItemEvent(_Char, _Item, "EventThatWillNeverRun")
+AND ItemGetLevel(_Item, _Level)
 AND PlayLoopEffect(_Char, "", "", _Handle)
 AND LeaderLib_Array_Debug_QRY_Print("")
 AND LeaderLib_Array_Internal_QRY_ClearArrayEntries("")

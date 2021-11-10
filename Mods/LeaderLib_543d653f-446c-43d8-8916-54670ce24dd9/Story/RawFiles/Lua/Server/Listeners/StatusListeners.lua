@@ -379,5 +379,5 @@ end
 
 RegisterProtectedOsirisListener("CharacterStatusApplied", 3, "after", ParseStatusApplied)
 RegisterProtectedOsirisListener("ItemStatusChange", 3, "after", ParseStatusApplied)
-RegisterProtectedOsirisListener("CharacterStatusRemoved", 3, "after", ParseStatusRemoved)
-RegisterProtectedOsirisListener("ItemStatusRemoved", 3, "after", ParseStatusRemoved)
+RegisterProtectedOsirisListener("CharacterStatusRemoved", 3, "before", ParseStatusRemoved)
+RegisterProtectedOsirisListener("ItemStatusRemoved", 3, "before", ParseStatusRemoved)

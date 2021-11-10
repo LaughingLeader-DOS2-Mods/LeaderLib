@@ -76,16 +76,6 @@ local function GetArrayIndexStart(ui, arrayName, checkType, offset)
 	return -1
 end
 
-local function OnCharacterSheetUpdateDone(ui)
-	local this = ui:GetRoot()
-	if this.isGameMasterChar then
-		this.stats_mc.setVisibilityStatButtons(true)
-		this.stats_mc.setVisibilityAbilityButtons(true, true)
-		this.stats_mc.setVisibilityAbilityButtons(false, true)
-		this.stats_mc.setVisibilityTalentButtons(true)
-	end
-end
-
 local pointEvents = {
 	"minusAbility",
 	"plusAbility",
@@ -152,7 +142,6 @@ local function RegisterListeners()
 			Ext.RegisterUITypeCall(Data.UIType.characterSheet, v, OnSheetEvent)
 		end
 		--Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnCharacterSheetUpdating)
-		Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", OnCharacterSheetUpdateDone)
 
 		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setHelmetOptionState", OnSetHelmetOptionState)
 

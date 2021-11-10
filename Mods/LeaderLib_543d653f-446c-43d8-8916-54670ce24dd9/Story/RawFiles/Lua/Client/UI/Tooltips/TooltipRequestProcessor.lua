@@ -194,17 +194,6 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 	return request
 end
 
---[[ 
-Ext.RegisterUINameCall("characterSheetUpdateDone", function(ui, event)
-	local this = ui:GetRoot()
-	local customStats_mc = this.stats_mc.customStats_mc
-	for i=0,#customStats_mc.stats_array-1 do
-		local cstat_mc = customStats_mc.stats_array[i]
-		fprint(LOGLEVEL.DEFAULT, "[%s] label(%s) statID(%s)", i, cstat_mc.text_txt.htmlText, cstat_mc.statID)
-	end
-end)
-]]
-
 function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHandle, statOrWidth, ...)
 	local params = {...}
 

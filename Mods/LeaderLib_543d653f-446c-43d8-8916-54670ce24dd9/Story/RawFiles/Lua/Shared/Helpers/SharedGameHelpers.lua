@@ -127,10 +127,6 @@ function GameHelpers.Item.IsObject(item)
 			if not item.Stats then
 				return true
 			end
-		elseif GameHelpers.Ext.ObjectIsStatItem(item) then
-			if Data.ObjectStats[item.Name] then
-				return true
-			end
 		end
 	elseif t == "string" then
 		return Data.ObjectStats[item] == true

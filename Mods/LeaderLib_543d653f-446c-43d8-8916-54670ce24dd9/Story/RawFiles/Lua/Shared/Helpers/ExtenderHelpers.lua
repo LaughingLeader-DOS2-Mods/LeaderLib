@@ -534,7 +534,7 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage)
 			-- Skill doesn't exist?
 			return nil
 		end
-		if useWeaponDamage == true then skill["UseWeaponDamage"] = "Yes" end
+		if useWeaponDamage == true then skill.UseWeaponDamage = "Yes" end
 		local skillProperties = GameHelpers.Stats.GetSkillProperties(skillName)
 		if skillProperties ~= nil then
 			for _,tbl in pairs(skillProperties) do

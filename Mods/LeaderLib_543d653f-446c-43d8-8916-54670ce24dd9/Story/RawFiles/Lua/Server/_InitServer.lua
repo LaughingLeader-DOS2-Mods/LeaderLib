@@ -21,6 +21,7 @@ Ext.Require("Server/Game/VisualElementManager.lua")
 Ext.Require("Server/Game/EffectManager.lua")
 Ext.Require("Server/Game/TurnCounter.lua")
 Ext.Require("Server/Game/OriginFixes.lua")
+Ext.Require("Server/Game/StatusManager.lua")
 Ext.Require("Server/Game/TagManager.lua")
 if coroutine then
 Ext.Require("Server/Game/SceneManager.lua")

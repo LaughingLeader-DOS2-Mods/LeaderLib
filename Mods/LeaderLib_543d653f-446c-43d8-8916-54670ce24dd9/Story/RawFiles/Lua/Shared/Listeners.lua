@@ -22,6 +22,7 @@ Listeners.ClientCharacterChanged = {}
 
 ---@alias LeaderLibGetTooltipSkillDamageCallback fun(skill:SkillEventData, character:StatCharacter):string
 ---@alias LeaderLibGetTooltipSkillParam fun(skill:SkillEventData, character:StatCharacter, param:string):string
+---@alias LeaderLibGetTextPlaceholder fun(character:StatCharacter, param:string, vararg string):string
 
 ---Called from GameHelpers.Tooltip.ReplacePlaceholders when [SkillDamage:SkillId] text exists in the string.
 ---@type LeaderLibGetTooltipSkillDamageCallback[]
@@ -29,6 +30,9 @@ Listeners.GetTooltipSkillDamage = {}
 ---Called from GameHelpers.Tooltip.ReplacePlaceholders when [Skill:SkillId:Param] text exists in the string.
 ---@type LeaderLibGetTooltipSkillParam[]
 Listeners.GetTooltipSkillParam = {}
+---Called from GameHelpers.Tooltip.ReplacePlaceholders when [Special:ID] text exists in the string.
+---@type LeaderLibGetTextPlaceholder[]
+Listeners.GetTextPlaceholder = {}
 
 --Debug listeners
 Listeners.LuaReset = {}

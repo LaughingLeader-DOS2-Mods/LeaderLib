@@ -181,7 +181,7 @@ function GameHelpers.Skill.SetCooldown(char, skill, cooldown)
     char = GameHelpers.GetUUID(char)
     if CharacterHasSkill(char, skill) == 1 then
         if cooldown ~= 0 then
-            --Cooldown 0 makes the engine stop sending updateSlotData invokes to hotBar.fla
+            --Cooldown 0 makes the engine stop sending updateSlotData invokes to hotBar.swf
             NRD_SkillSetCooldown(char, skill, 0)
             --Set the actual cooldown after a frame, now that the previous engine cooldown timer is done
             Timer.StartOneshot("", 1, function()

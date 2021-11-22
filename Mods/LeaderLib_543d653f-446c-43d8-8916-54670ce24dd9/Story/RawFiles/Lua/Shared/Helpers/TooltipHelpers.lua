@@ -3,27 +3,25 @@ if GameHelpers.Tooltip == nil then
 end
 
 local function GetTextParamValues(output, character)
-	local length = Listeners.GetTextPlaceholder and #Listeners.GetTextPlaceholder or 0
-	if length > 0 then
+	for v in string.gmatch(output, "%[Special:.-%]") do
 		local value = ""
-		for v in string.gmatch(output, "%[Special:.-%]") do
-			local fullParam = v:gsub("%[Special:", ""):gsub("%]", "")
-			local props = StringHelpers.Split(fullParam, ":")
-			local param = ""
-			local skipUnpack = false
-			if #props >= 0 then
-				param = props[1]
-				table.remove(props, 1)
-				if #props == 0 then
-					skipUnpack = true
-				end
+		local fullParam = v:gsub("%[Special:", ""):gsub("%]", "")
+		local props = StringHelpers.Split(fullParam, ":")
+		local param = ""
+		local skipUnpack = false
+		if #props >= 0 then
+			param = props[1]
+			table.remove(props, 1)
+			if #props == 0 then
+				skipUnpack = true
 			end
-			if character == nil then
-				character = Client:GetCharacter()
-			end
-			if character ~= nil and character.Stats ~= nil then
-				for i=1,length do
-					local callback = Listeners.GetTextPlaceholder[i]
+		end
+		if character == nil then
+			character = Client:GetCharacter()
+		end
+		if character ~= nil and character.Stats ~= nil then
+			if Listeners.GetTextPlaceholder[param] then
+				for _,callback in pairs(Listeners.GetTextPlaceholder[param]) do
 					local b = true
 					local result = nil
 					if skipUnpack then
@@ -37,17 +35,34 @@ local function GetTextParamValues(output, character)
 						value = result
 					end
 				end
-			end		
-			if value ~= nil and value ~= "" then
-				if type(value) == "number" then
-					value = string.format("%i", math.floor(value))
-				end
-			elseif value == nil then
-				value = ""
 			end
-			local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-			output = string.gsub(output, escapedReplace, value)
+			if Listeners.GetTextPlaceholder.All then
+				for _,callback in pairs(Listeners.GetTextPlaceholder.All) do
+					local b = true
+					local result = nil
+					if skipUnpack then
+						b,result = xpcall(callback, debug.traceback, param, character.Stats)
+					else
+						b,result = xpcall(callback, debug.traceback, param, character.Stats, table.unpack(props))
+					end
+					if not b then
+						Ext.PrintError("[LeaderLib:ReplacePlaceholders] Error calling function for 'GetTextPlaceholder':\n", result)
+					elseif result ~= nil then
+						value = result
+					end
+				end
+			end
+
+		end		
+		if value ~= nil and value ~= "" then
+			if type(value) == "number" then
+				value = string.format("%i", math.floor(value))
+			end
+		elseif value == nil then
+			value = ""
 		end
+		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+		output = string.gsub(output, escapedReplace, value)
 	end
 	return output
 end

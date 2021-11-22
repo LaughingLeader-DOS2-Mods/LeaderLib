@@ -31,8 +31,10 @@ Listeners.GetTooltipSkillDamage = {}
 ---@type LeaderLibGetTooltipSkillParam[]
 Listeners.GetTooltipSkillParam = {}
 ---Called from GameHelpers.Tooltip.ReplacePlaceholders when [Special:ID] text exists in the string.
----@type LeaderLibGetTextPlaceholder[]
-Listeners.GetTextPlaceholder = {}
+---@type table<string, LeaderLibGetTextPlaceholder[]>
+Listeners.GetTextPlaceholder = {
+	All = {}
+}
 
 --Debug listeners
 Listeners.LuaReset = {}

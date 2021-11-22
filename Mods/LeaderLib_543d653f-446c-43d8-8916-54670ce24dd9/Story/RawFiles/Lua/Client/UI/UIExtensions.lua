@@ -11,9 +11,8 @@
 
 ---@class UIExtensions
 ---@field Root UIExtensionsMain
+---@field Instance LeaderLibUIExtensions
 UIExtensions = {
-	---@type LeaderLibUIExtensions
-	Instance = nil,
 	Controls = {},
 	---@type table<string, FlashTimerCallback[]>
 	Timers = {},
@@ -39,17 +38,22 @@ setmetatable(UIExtensions, {
 			if ui then
 				return ui:GetRoot()
 			end
+		elseif k == "Instance" then
+			local ui = UIExtensions.GetInstance()
+			if ui then
+				return ui
+			end
 		end
 	end
 })
 
 local function DestroyInstance(force)
-	if UIExtensions.Instance then
+	local instance = UIExtensions.GetInstance()
+	if instance then
 		if force or Common.TableLength(UIExtensions.Controls, true) + Common.TableLength(UIExtensions.Timers, true) == 0 then
-			UIExtensions.Instance:Invoke("dispose")
-			UIExtensions.Instance:Hide()
-			UIExtensions.Instance:Destroy()
-			UIExtensions.Instance = nil
+			instance:Invoke("dispose")
+			instance:Hide()
+			instance:Destroy()
 			UIExtensions.Visible = false
 		end
 	end
@@ -58,9 +62,7 @@ local function DestroyInstance(force)
 end
 
 RegisterListener("BeforeLuaReset", function()
-	if UIExtensions.Instance then
-		DestroyInstance(true)
-	end	
+	DestroyInstance(true)
 end)
 
 RegisterListener("LuaReset", function()
@@ -73,9 +75,11 @@ end)
 
 local function OnControlAdded(ui, call, id, index, ...)
 	--PrintDebug("OnControlAdded", id, listid, Ext.JsonStringify({...}))
-	local main = UIExtensions.Instance:GetRoot()
-	local control = main.mainPanel_mc.elements[index]
-	InvokeListenerCallbacks(Listeners.UIExtensionsControlAdded, main, control, id, index, ...)
+	local main = ui:GetRoot()
+	if main then
+		local control = main.mainPanel_mc.elements[index]
+		InvokeListenerCallbacks(Listeners.UIExtensionsControlAdded, main, control, id, index, ...)
+	end
 end
 
 local function OnTimerComplete(ui, call, timerCallbackName)
@@ -168,29 +172,25 @@ function UIExtensions.SetupInstance()
 	if Ext.GetGameState() == "Menu" then
 		Ext.PrintError("[UIExtensions.SetupInstance] Game not ready yet.")
 	end
-	if not UIExtensions.Instance or UIExtensions.Instance:GetRoot() == nil then
+	local instance = Ext.GetUI("LeaderLibUIExtensions")
+	if not instance then
 		if Vars.ControllerEnabled then
 			----Needs to be less than 9
 			UIExtensions.Layer = 7
 		end
-		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
-		if not UIExtensions.Instance then
-			if Vars.DebugMode and not Vars.ControllerEnabled then
-				UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer, defaultUIFlags)
-			else
-				UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
-			end
-			UIExtensions.RegisteredListeners = false
-			UIExtensions.Visible = true
+		if Vars.DebugMode and not Vars.ControllerEnabled then
+			instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer, defaultUIFlags)
 		else
-			print("Found existing LeaderLibUIExtensions")
+			instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
 		end
+		UIExtensions.RegisteredListeners = false
+		UIExtensions.Visible = true
 	end
-	if UIExtensions.Instance then
-		UIExtensions.Instance:Show()
+	if instance then
+		instance:Show()
 		UIExtensions.Visible = true
 		if not UIExtensions.Initialized then
-			local main = UIExtensions.Instance:GetRoot()
+			local main = instance:GetRoot()
 			if main then
 				main.clearElements()
 				main.controllerEnabled = Vars.ControllerEnabled
@@ -208,17 +208,17 @@ function UIExtensions.SetupInstance()
 			end
 		end
 		if not UIExtensions.RegisteredListeners then
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_OnControl", OnControl)
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_ControlAdded", OnControlAdded)
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_InputEvent", Input.OnFlashEvent)
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_TimerComplete", OnTimerComplete)
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_TimerTick", OnTimerTick)
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_MouseMoved", OnMouseMoved)
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_MouseClicked", OnMouseClicked)
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_RightMouseDown", OnRightMouseDown)
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_RightMouseUp", OnRightMouseUp)
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_KeyboardEvent", Input.OnKeyboardEvent)
-			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_OnEventResolution", function(ui, call, w, h)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_OnControl", OnControl)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_ControlAdded", OnControlAdded)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_InputEvent", Input.OnFlashEvent)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_TimerComplete", OnTimerComplete)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_TimerTick", OnTimerTick)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_MouseMoved", OnMouseMoved)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_MouseClicked", OnMouseClicked)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_RightMouseDown", OnRightMouseDown)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_RightMouseUp", OnRightMouseUp)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_KeyboardEvent", Input.OnKeyboardEvent)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_OnEventResolution", function(ui, call, w, h)
 				if Vars.DebugMode and Vars.Print.UI then
 					local root = ui:GetRoot()
 					fprint(LOGLEVEL.DEFAULT, "[UIExtensions:onEventResolution] width(%s) height(%s) stage.width(%s) stage.height(%s)", w, h, root.stage.width, root.stage.height)
@@ -242,19 +242,18 @@ function UIExtensions.SetupInstance()
 end
 
 function UIExtensions.GetInstance()
-	if not UIExtensions.Instance then
-		UIExtensions.SetupInstance()
+	local instance = Ext.GetUI("LeaderLibUIExtensions")
+	if not instance then
+		instance = UIExtensions.SetupInstance()
 	end
-	return UIExtensions.Instance
+	return instance
 end
 
 RegisterListener("ClientDataSynced", function(modData, sharedData)
-	if UIExtensions.Instance then
-		local main = UIExtensions.Instance:GetRoot()
-		if main then
-			main.controllerEnabled = Vars.ControllerEnabled
-			main.isInCharacterCreation = sharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
-		end
+	local main = UIExtensions.Root
+	if main then
+		main.controllerEnabled = Vars.ControllerEnabled
+		main.isInCharacterCreation = sharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
 	end
 end)
 
@@ -278,7 +277,7 @@ end)
 function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBool, enabled)
 	UIExtensions.SetupInstance()
 	local id = #UIExtensions.Controls
-	local main = UIExtensions.Instance:GetRoot()
+	local main = UIExtensions.Root
 	if main then
 		UIExtensions.Controls[id] = onClick or true
 		if filterBool == nil then
@@ -299,7 +298,7 @@ end
 ---@return boolean
 function UIExtensions.RemoveControl(id)
 	UIExtensions.Controls[id] = nil
-	local main = UIExtensions.Instance:GetRoot()
+	local main = UIExtensions.Root
 	if main then
 		return main.removeControl(id) == true
 	end
@@ -310,8 +309,9 @@ end
 ---@return boolean
 function UIExtensions.RemoveAllControls()
 	UIExtensions.Controls = {}
-	if UIExtensions.Instance then
-		UIExtensions.Instance:Invoke("clearElements")
+	local main = UIExtensions.Root
+	if main then
+		main.clearElements()
 		return true
 	end
 	return false
@@ -322,13 +322,12 @@ end
 ---@param callbackFunction FlashTimerCallback The callback to invoke when the timer is complete, or when it ticks (if repeatTimer > 1).
 ---@param repeatTimer integer|nil The number of times to repeat the timer. If > 1 then the callback will be called each time the timer ticks.
 function UIExtensions.StartTimer(id, delay, callbackFunction, repeatTimer)
-	UIExtensions.SetupInstance()
 	if UIExtensions.Timers[id] == nil then
 		UIExtensions.Timers[id] = {}
 	end
 	if not Common.TableHasEntry(UIExtensions.Timers[id], callbackFunction) then
 		table.insert(UIExtensions.Timers[id], callbackFunction)
-		UIExtensions.Instance:Invoke("launchTimer", delay, id, repeatTimer or 1)
+		UIExtensions.Invoke("launchTimer", delay, id, repeatTimer or 1)
 	end
 end
 
@@ -343,22 +342,27 @@ function UIExtensions.RemoveTimerCallback(id, callbackFunction)
 end
 
 function UIExtensions.Invoke(method, ...)
-	UIExtensions.SetupInstance()
-	UIExtensions.Instance:Invoke(method, ...)
+	local instance = UIExtensions.GetInstance()
+	if instance then
+		instance:Invoke(method, ...)
+	end
 end
 
 function UIExtensions.EnableMouseListeners(enabled)
 	if enabled == nil then
 		enabled = true
 	end
-	UIExtensions.SetupInstance()
-	UIExtensions.Instance:Invoke("enableMouseListeners", enabled)
-	UIExtensions.MouseEnabled = enabled
+	local main = UIExtensions.Root
+	if main then
+		main.enableMouseListeners(enabled)
+		UIExtensions.MouseEnabled = enabled
+	else
+		UIExtensions.MouseEnabled = false
+	end
 end
 
 function UIExtensions.GetMousePosition()
-	UIExtensions.SetupInstance()
-	local main = UIExtensions.Instance:GetRoot()
+	local main = UIExtensions.Root
 	if main then
 		local x = main.mouseX
 		local y = main.mouseY
@@ -378,8 +382,7 @@ function UIExtensions.GetMousePosition()
 end
 
 function UIExtensions.GlobalToLocalPosition(x, y)
-	UIExtensions.SetupInstance()
-	local main = UIExtensions.Instance:GetRoot()
+	local main = UIExtensions.Root
 	if main then
 		main.setGlobalToLocalPosition(x, y)
 		return main.globalToLocalX,main.globalToLocalY
@@ -391,16 +394,19 @@ local function SetVisibility(b)
 	if Vars.DebugMode and UIExtensions.Visible ~= b then
 		fprint(LOGLEVEL.DEFAULT, "[LeaderLib] UIExtensions.Visible (%s) => (%s)", UIExtensions.Visible, b)
 	end
+	local instance = UIExtensions.GetInstance()
 	if not b then
-		if UIExtensions.Instance and UIExtensions.Visible then
-			UIExtensions.GetInstance():Hide()
-			UIExtensions.Visible = false
+		if instance then
+			instance:Hide()
 		end
+		UIExtensions.Visible = false
 	else
 		if UIExtensions.Visible ~= true then
-			UIExtensions.GetInstance():Show()
-			UIExtensions.Visible = true
+			if instance then
+				instance:Show()
+			end
 		end
+		UIExtensions.Visible = true
 	end
 end
 

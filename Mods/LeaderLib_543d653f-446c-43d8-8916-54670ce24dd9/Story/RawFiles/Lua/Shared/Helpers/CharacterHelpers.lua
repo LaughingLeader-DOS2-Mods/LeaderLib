@@ -24,7 +24,7 @@ function GameHelpers.Character.IsPlayer(character)
 			end
 		else
 			if t == "userdata" then
-				if ObjectIsCharacter(character.MyGuid) == 1 and character.IsPlayer then
+				if ObjectIsCharacter(character.MyGuid) == 1 and (character.IsPlayer or character.IsGameMaster) then
 					return true
 				end
 				character = character.MyGuid

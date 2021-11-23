@@ -22,7 +22,7 @@ Listeners.ClientCharacterChanged = {}
 
 ---@alias LeaderLibGetTooltipSkillDamageCallback fun(skill:SkillEventData, character:StatCharacter):string
 ---@alias LeaderLibGetTooltipSkillParam fun(skill:SkillEventData, character:StatCharacter, param:string):string
----@alias LeaderLibGetTextPlaceholder fun(character:StatCharacter, param:string, vararg string):string
+---@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter, vararg string):string
 
 ---Called from GameHelpers.Tooltip.ReplacePlaceholders when [SkillDamage:SkillId] text exists in the string.
 ---@type LeaderLibGetTooltipSkillDamageCallback[]
@@ -31,7 +31,7 @@ Listeners.GetTooltipSkillDamage = {}
 ---@type LeaderLibGetTooltipSkillParam[]
 Listeners.GetTooltipSkillParam = {}
 ---Called from GameHelpers.Tooltip.ReplacePlaceholders when [Special:ID] text exists in the string.
----@type table<string, LeaderLibGetTextPlaceholder[]>
+---@type table<string, LeaderLibGetTextPlaceholderCallback[]>
 Listeners.GetTextPlaceholder = {
 	All = {}
 }
@@ -124,6 +124,8 @@ if Ext.IsServer() then
 	Listeners.OnTurnCounter = {}
 	---@type table<string, TurnCounterCallback>
 	Listeners.OnNamedTurnCounter = {}
+	---@type table<string, fun(id:string, uuid:UUID):void>
+	Listeners.OnTurnEnded = {All = {}}
 	---Called when a summon is created or destroyed. Includes items like mines.
 	---@type table<string, fun(summon:EsvCharacter, owner:EsvCharacter, isDying:boolean, isItem:boolean)>
 	Listeners.OnSummonChanged = {}

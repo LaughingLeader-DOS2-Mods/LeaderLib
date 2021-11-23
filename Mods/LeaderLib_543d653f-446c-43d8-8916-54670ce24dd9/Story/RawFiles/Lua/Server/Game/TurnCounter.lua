@@ -30,7 +30,7 @@ end
 
 ---@param id string Identifier for this countdown.
 ---@param turns integer How many turns to count.
----@param targetTurns integer The target turns, like 0 in decrement mode.
+---@param targetTurns integer The target turns when the counting should be complete, such as 0 in decrement mode.
 ---@param mode TURNCOUNTER_MODE
 ---@param combat integer The combat id or character to get the combat id from.
 ---@param params TurnCounterData|nil
@@ -104,6 +104,28 @@ function TurnCounter.CountdownDone(data, uniqueId, lastTurn)
 	TurnCounter.CleanupData(uniqueId)
 end
 
+---@param uuid UUID
+---@param id string The id to use in the callback.
+function TurnCounter.ListenForTurnEnding(uuid, id)
+	if PersistentVars.WaitForTurnEnding[uuid] == nil then
+		PersistentVars.WaitForTurnEnding[uuid] = {}
+	end
+	PersistentVars.WaitForTurnEnding[uuid][id] = true
+end
+
+---@param uuid UUID
+function TurnCounter.InvokeTurnEndedListeners(uuid)
+	if PersistentVars.WaitForTurnEnding[uuid] then
+		for id,b in pairs(PersistentVars.WaitForTurnEnding[uuid]) do
+			if b then
+				InvokeListenerCallbacks(Listeners.OnTurnEnded[id], uuid, id)
+				InvokeListenerCallbacks(Listeners.OnTurnEnded.All, uuid, id)
+			end
+		end
+		PersistentVars.WaitForTurnEnding[uuid] = nil
+	end
+end
+
 ---@param data TurnCounterData
 ---@param uniqueId string
 function TurnCounter.TickTurn(data, uniqueId)
@@ -128,11 +150,13 @@ end
 
 local justSkippedTurn = {}
 
+---@private
 function TurnCounter.OnTurnEnded(uuid)
 	if justSkippedTurn[uuid] then
 		justSkippedTurn[uuid] = nil
 		return false
 	end
+	TurnCounter.InvokeTurnEndedListeners(uuid)
 	local id = CombatGetIDForCharacter(uuid)
 	if id then
 		for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
@@ -143,6 +167,7 @@ function TurnCounter.OnTurnEnded(uuid)
 	end
 end
 
+---@private
 function TurnCounter.OnTurnSkipped(uuid)
 	local id = CombatGetIDForCharacter(uuid)
 	if id then
@@ -154,6 +179,7 @@ function TurnCounter.OnTurnSkipped(uuid)
 	end
 end
 
+---@private
 function TurnCounter.OnTimerFinished(uniqueId)
 	local data = PersistentVars.TurnCounterData[uniqueId]
 	if data then
@@ -165,6 +191,7 @@ function TurnCounter.OnTimerFinished(uniqueId)
 	end
 end
 
+---@private
 function TurnCounter.OnCombatStarted(id)
 	local characters = GameHelpers.GetCombatCharacters(id)
 	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
@@ -186,6 +213,7 @@ function TurnCounter.OnCombatStarted(id)
 	end
 end
 
+---@private
 function TurnCounter.OnCombatEnded(id)
 	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
 		if data.Combat == id and data.Turns > 0 then
@@ -194,7 +222,13 @@ function TurnCounter.OnCombatEnded(id)
 	end
 end
 
+---@private
+function TurnCounter.OnLeftCombat(uuid, id)
+	TurnCounter.InvokeTurnEndedListeners(uuid)
+end
+
 Ext.RegisterOsirisListener("CombatStarted", Data.OsirisEvents.CombatStarted, "after", TurnCounter.OnCombatStarted)
 Ext.RegisterOsirisListener("CombatEnded", Data.OsirisEvents.CombatEnded, "after", TurnCounter.OnCombatEnded)
 Ext.RegisterOsirisListener("ObjectTurnEnded", Data.OsirisEvents.ObjectTurnEnded, "after", function(uuid) TurnCounter.OnTurnEnded(StringHelpers.GetUUID(uuid)) end)
 Ext.RegisterOsirisListener("CharacterGuarded", Data.OsirisEvents.CharacterGuarded, "after", function(uuid) TurnCounter.OnTurnSkipped(StringHelpers.GetUUID(uuid)) end)
+Ext.RegisterOsirisListener("ObjectLeftCombat", Data.OsirisEvents.ObjectLeftCombat, "after", function(uuid, id) TurnCounter.OnLeftCombat(StringHelpers.GetUUID(uuid), id) end)

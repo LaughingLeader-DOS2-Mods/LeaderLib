@@ -141,6 +141,8 @@ local defaultPersistentVars = {
 	IsPreparingSkill = {},
 	---@type table<UUID,TurnCounterData>
 	TurnCounterData = {},
+	---@type table<UUID,table<string,boolean>>
+	WaitForTurnEnding = {},
 	---@type table<UUID, number>
 	ScaleOverride = {},
 	---@type table<UUID,UUID[]>

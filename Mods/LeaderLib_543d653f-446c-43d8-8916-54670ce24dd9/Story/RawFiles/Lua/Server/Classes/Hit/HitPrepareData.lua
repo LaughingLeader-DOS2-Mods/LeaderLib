@@ -134,15 +134,16 @@ local function CreateDamageMetaList(handle)
 			error(string.format("%s is not a valid damage type!", k), 2)
 		end
 	end
-	meta.__pairs = function (_)
-		local function iter(_,k)
-			local damageType,i = next(Data.DamageTypeEnums, k)
-			if i ~= nil then
+	meta.__pairs = function (tbl)
+		local i = 0
+		local function iter(tbl)
+			local damageType = Data.DamageTypeEnums[i]
+			if damageType ~= nil then
+				i = i + 1
 				return damageType,NRD_HitGetDamage(handle, damageType) or 0
 			end
 		end
-		-- Return an iterator function, the table, starting point
-		return iter, damageList, nil
+		return iter, tbl, 0
 	end
 	setmetatable(damageList, meta)
 	return damageList
@@ -257,8 +258,8 @@ end
 ---Recalculates total damage done and updates all related variables.
 function HitPrepareData:Recalculate()
 	local total = 0
-	for k,v in pairs(self.DamageList) do
-		total = total + v
+	for damageType,amount in pairs(self.DamageList) do
+		total = total + amount
 	end
 	self.TotalDamageDone = total
 end

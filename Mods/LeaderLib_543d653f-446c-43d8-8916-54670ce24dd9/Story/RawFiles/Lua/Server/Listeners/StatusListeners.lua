@@ -47,11 +47,12 @@ Vars.RegisteredIgnoredStatus = {}
 function RegisterStatusListener(event, status, callback)
     local statusEventHolder = StatusListeners[event]
 	if statusEventHolder then
-        if type(status) == "table" then
+		local t = type(status)
+        if t == "table" then
 			for i,v in pairs(status) do
 				RegisterStatusListener(event, v, callback)
             end
-        else
+        elseif t == "string" then
             if StringHelpers.Equals(status, "All", true) then
                 status = "All"
             elseif Data.IgnoredStatus[status] == true then
@@ -61,7 +62,9 @@ function RegisterStatusListener(event, status, callback)
                 statusEventHolder[status] = {}
             end
             table.insert(statusEventHolder[status], callback)
-        end
+        else
+			error(string.format("%s is not a valid status! type(%s)", status, t), 2)
+		end
     else
 		error(string.format("%s is not a valid status event!", event), 2)
 	end

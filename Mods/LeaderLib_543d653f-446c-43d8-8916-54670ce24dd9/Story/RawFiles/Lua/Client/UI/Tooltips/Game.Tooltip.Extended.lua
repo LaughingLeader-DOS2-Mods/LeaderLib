@@ -1539,8 +1539,11 @@ function TooltipData:RemoveElement(ele)
 	end
 end
 
+---@param ele TooltipElement
+---@return TooltipElement
 function TooltipData:AppendElement(ele)
 	table.insert(self.Data, ele)
+	return ele
 end
 
 ---@param ele TooltipElement

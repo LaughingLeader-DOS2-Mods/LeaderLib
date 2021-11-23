@@ -777,6 +777,13 @@ function GameHelpers.Ext.ObjectIsCharacter(obj)
 	return false
 end
 
+function GameHelpers.Ext.ObjectIsStatCharacter(obj)
+	if type(obj) == "userdata" then
+		return getmetatable(obj) == Data.ExtenderClass.StatCharacter
+	end
+	return false
+end
+
 ---@param obj EsvItem|EclItem|StatItem
 ---@return string
 function GameHelpers.Ext.GetItemStatName(obj)

@@ -426,8 +426,15 @@ end
 ---@return EsvCharacter|EclCharacter
 function GameHelpers.GetCharacter(object)
 	local t = type(object)
-	if t == "userdata" and GameHelpers.Ext.ObjectIsCharacter(object) then
-		return object
+	if t == "userdata" then
+		if GameHelpers.Ext.ObjectIsCharacter(object) then
+			return object
+		elseif GameHelpers.Ext.ObjectIsStatCharacter(object) then
+			return object.Character
+		else
+			--Object handle?
+			return Ext.GetCharacter(object)
+		end
 	elseif t == "string" or t == "number" then
 		local obj = Ext.GetCharacter(object)
 		if obj then

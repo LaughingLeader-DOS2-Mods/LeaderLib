@@ -306,8 +306,9 @@ local defaultHitFlags = {
 ---@param getDamageFunction function|nil
 ---@param skillDataParamModifiers StatEntrySkillData|nil
 function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, mainWeapon, offhandWeapon, applySkillProperties, getDamageFunction, skillDataParamModifiers)
+    target = GameHelpers.GetUUID(target)
     if type(source) == "string" or type(source) == "number" then
-        source = Ext.GetCharacter(source)
+        source = GameHelpers.TryGetObject(source)
     end
     local hit = NRD_HitPrepare(target, source.MyGuid)
     NRD_HitSetInt(hit, "SimulateHit", 1)

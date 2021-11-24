@@ -1103,8 +1103,15 @@ function TooltipHooks:OnRequestExamineUITooltip(ui, method, typeIndex, id, ...)
 		request.Type = "Ability"
 		request.Ability = Ext.EnumIndexToLabel("AbilityType", id)
 	elseif typeIndex == 3 then
-		request.Type = "Talent"
-		request.Talent = Ext.EnumIndexToLabel("TalentType", id)
+		if id == 0 then
+			--Tooltip for "This character has no talents" doesn't exist.
+			self.Last.Event = method
+			self.Last.UIType = ui:GetTypeId()
+			return
+		else
+			request.Type = "Talent"
+			request.Talent = Ext.EnumIndexToLabel("TalentType", id)
+		end
 	elseif typeIndex == 7 then
 		request.Type = "Status"
 		local handle = Ext.DoubleToHandle(id)
@@ -1112,7 +1119,22 @@ function TooltipHooks:OnRequestExamineUITooltip(ui, method, typeIndex, id, ...)
 			request.Status = Ext.GetStatus(request.Character.Handle, handle)
 		end
 	else
-		return
+		local text = typeIndex
+		local x = id
+		local y, width, height, side, allowDelay = table.unpack({...})
+		--text, x, y, width, height, side, allowDelay
+		--Generic type
+		request.Type = "Generic"
+		request.Text = text
+		request.CallingUI = ui:GetTypeId()
+		if x then
+			request.X = x
+			request.Y = y
+			request.Width = width
+			request.Height = height
+			request.Side = side
+			request.AllowDelay = allowDelay
+		end
 	end
 
 	if self.NextRequest ~= nil then
@@ -1214,7 +1236,7 @@ end
 ---@param ui UIObject
 function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	if self.NextRequest == nil then
-		Ext.PrintWarning("Got tooltip render request, but did not find original tooltip info!")
+		fprint(LOGLEVEL.WARNING, "[Game.Tooltip] Got tooltip render request, but did not find original tooltip info! method(%s)", method)
 		return
 	end
 

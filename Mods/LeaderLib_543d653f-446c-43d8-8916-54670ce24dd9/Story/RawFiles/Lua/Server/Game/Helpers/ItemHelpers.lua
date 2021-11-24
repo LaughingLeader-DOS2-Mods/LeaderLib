@@ -171,8 +171,8 @@ function GameHelpers.Item.GetSupportedGenerationValues(itemGroupId, minLevel, ma
                     end
                     return level,fallbackRarity,v.RootGroups
                 else
-                    local rarityVal = Data.RarityEnum[v.Name]
-                    local lastRarityVal = Data.RarityEnum[rarity]
+                    local rarityVal = Data.ItemRarity[v.Name]
+                    local lastRarityVal = Data.ItemRarity[rarity]
                     if rarityVal > lastRarityVal then
                         level = math.max(1, math.max(v.MinLevel, v.MaxLevel))
                         rarity = v.Name

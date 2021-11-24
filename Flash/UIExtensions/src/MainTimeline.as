@@ -323,7 +323,7 @@ package
 			globalToLocalY = localPt.y;
 		}
 
-		public function setLocalToGlobalPosition(x:Number, y:Number, width:Number, height:Number) : *
+		public function setLocalToGlobalPosition(x:Number, y:Number) : *
 		{
 			var localPt:Point = new Point(x,y);
 			var globalPt:Point = this.localToGlobal(localPt);

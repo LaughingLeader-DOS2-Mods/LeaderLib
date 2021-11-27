@@ -114,6 +114,7 @@ end
 ---@private
 ---@return ClientCharacterData
 function ClientCharacterData:Export()
+	self:UpdatePoints()
 	local data = {
 		UUID = self.UUID,
 		NetID = self.NetID,

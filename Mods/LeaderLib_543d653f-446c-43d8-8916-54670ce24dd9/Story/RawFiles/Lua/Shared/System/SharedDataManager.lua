@@ -259,6 +259,12 @@ if Ext.IsServer() then
 		return false
 	end
 
+	function GameHelpers.Data.UpdateCharacterPoints()
+		for profile,cdata in pairs(SharedData.CharacterData) do
+			cdata:UpdatePoints()
+		end
+	end
+
 	Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, profileId)
 		if UserIds[id] ~= true then
 			UserIds[id] = true

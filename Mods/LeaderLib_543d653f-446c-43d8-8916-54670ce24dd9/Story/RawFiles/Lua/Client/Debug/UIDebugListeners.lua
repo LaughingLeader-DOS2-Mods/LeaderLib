@@ -150,11 +150,12 @@ local lastTimeSinceIgnored = {}
 
 Ext.RegisterListener("UICall", function(ui, event, ...)
 	if defaultIgnored[event] then
-		local lastTime = lastTimeSinceIgnored[event] or 0
-		if Ext.MonotonicTime() - lastTime < 1000 then
-			lastTimeSinceIgnored[event] = Ext.MonotonicTime()
-			return
-		end
+		return
+		-- local lastTime = lastTimeSinceIgnored[event] or 0
+		-- if Ext.MonotonicTime() - lastTime <= 1000 then
+		-- 	lastTimeSinceIgnored[event] = Ext.MonotonicTime()
+		-- 	return
+		-- end
 	end
 	local t = ui:GetTypeId()
 	local listener = typeListeners[t]
@@ -204,7 +205,7 @@ local containerInventory = UIListenerWrapper:Create(Data.UIType.containerInvento
 local contextMenu = UIListenerWrapper:Create(Data.UIType.contextMenu, enabledParam)
 local dialog = UIListenerWrapper:Create(Data.UIType.dialog,enabledParam)
 local enemyHealthBar = UIListenerWrapper:Create(Data.UIType.enemyHealthBar)
-local examine = UIListenerWrapper:Create(Data.UIType.examine)
+local examine = UIListenerWrapper:Create(Data.UIType.examine, enabledParam)
 local gmPanelHUD = UIListenerWrapper:Create(Data.UIType.GMPanelHUD)
 local journal_csp = UIListenerWrapper:Create(Data.UIType.journal_csp)
 local LeaderLib_UIExtensions = UIListenerWrapper:Create("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf", enabledParam)

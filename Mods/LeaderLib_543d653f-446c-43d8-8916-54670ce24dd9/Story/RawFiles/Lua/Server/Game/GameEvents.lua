@@ -161,45 +161,47 @@ function OnLeaderLibInitialized(region)
 	end
 end
 
-function OnLuaReset()
-	pcall(function()
-		local fileStr = Ext.LoadFile("LeaderLib_Debug_PersistentVars.json")
-		if fileStr ~= nil then
-			local varData = Common.JsonParse(fileStr)
-			if varData ~= nil then
-				if varData._PrintSettings then
-					for k,v in pairs(varData._PrintSettings) do
-						Vars.Print[k] = v
-					end
-					varData._PrintSettings = nil
+local function DebugLoadPersistentVars()
+	local fileStr = Ext.LoadFile("LeaderLib_Debug_PersistentVars.json")
+	if fileStr ~= nil then
+		local varData = Common.JsonParse(fileStr)
+		if varData ~= nil then
+			if varData._PrintSettings then
+				for k,v in pairs(varData._PrintSettings) do
+					Vars.Print[k] = v
 				end
-				if varData._CommandSettings then
-					for k,v in pairs(varData._CommandSettings) do
-						Vars.Commands[k] = v
-					end
-					varData._CommandSettings = nil
+				varData._PrintSettings = nil
+			end
+			if varData._CommandSettings then
+				for k,v in pairs(varData._CommandSettings) do
+					Vars.Commands[k] = v
 				end
-				for name,data in pairs(varData) do
-					if Mods[name] ~= nil and Mods[name].PersistentVars ~= nil then
-						for k,v in pairs(data) do
-							Mods[name].PersistentVars[k] = v
-						end
+				varData._CommandSettings = nil
+			end
+			for name,data in pairs(varData) do
+				if Mods[name] ~= nil and Mods[name].PersistentVars ~= nil then
+					for k,v in pairs(data) do
+						Mods[name].PersistentVars[k] = v
 					end
 				end
 			end
 		end
-	end)
+	end
+end
+
+function OnLuaReset()
 	Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled)
 	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
 	GameHelpers.Data.SetRegion(region)
 	GameHelpers.Data.SetGameMode()
 	OnInitialized(region, true)
-	InvokeListenerCallbacks(Listeners.LuaReset, region)
+	pcall(DebugLoadPersistentVars)
 	if IsCharacterCreationLevel(region) == 1 then
 		SkipTutorial.Initialize()
 		SkipTutorial.OnLeaderLibInitialized(region)
 	end
 	IterateUsers("LeaderLib_StoreUserData")
+	InvokeListenerCallbacks(Listeners.LuaReset, region)
 	local payload = Ext.JsonStringify({Event="LuaReset", Args={region}, _PrintSettings=Vars.Print, _CommandSettings = Vars.Commands})
 	Ext.BroadcastMessage("LeaderLib_Client_InvokeListeners", payload)
 end

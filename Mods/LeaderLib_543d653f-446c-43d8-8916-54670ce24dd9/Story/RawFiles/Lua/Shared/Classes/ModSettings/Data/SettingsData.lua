@@ -65,11 +65,15 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 		local existing = self.Flags[flag]
 		local changed = existing.Enabled ~= enabled
 		existing.ID = flag
-		existing.Enabled = enabled ~= nil and enabled or existing.Enabled
+		if enabled ~= nil then
+			existing.Enabled = enabled
+		end
+		if canExport ~= nil then
+			existing.CanExport = canExport
+		end
 		existing.FlagType = flagType or existing.FlagType
 		existing.DisplayName = displayName or existing.DisplayName
 		existing.Tooltip = tooltip or existing.Tooltip
-		existing.CanExport = canExport ~= nil and canExport or existing.CanExport
 		if isFromFile == false then
 			existing.IsFromFile = false
 		end
@@ -230,8 +234,8 @@ function SettingsData:UpdateFlags()
 		if data.FlagType == "Global" then
 			data.Enabled = GlobalGetFlag(flag) == 1
 		elseif data.FlagType == "User" or data.FlagType == "Character" then
-			for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
-				local uuid = GetUUID(db[1])
+			for player in GameHelpers.Character.GetPlayers(false) do
+				local uuid = player.MyGuid
 				if data.FlagType == "User" then
 					local id = CharacterGetReservedUserID(uuid)
 					if id then

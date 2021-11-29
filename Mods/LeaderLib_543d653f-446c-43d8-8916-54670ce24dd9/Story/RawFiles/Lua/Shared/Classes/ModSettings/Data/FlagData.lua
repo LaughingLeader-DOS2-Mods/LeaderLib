@@ -23,20 +23,20 @@ function FlagData:Create(flag, flagType, enabled, displayName, tooltip, isFromFi
     {
 		ID = flag,
 		FlagType = flagType or "Global",
-		Enabled = enabled or false,
+		Enabled = false,
 		IsFromFile = false,
 		DebugOnly = false,
 		CanExport = true,
+		Default = false
 	}
+	if enabled ~= nil then
+		this.Enabled = enabled
+	end
 	if isFromFile ~= nil then
 		this.IsFromFile = isFromFile
 	end
 	if string.find(string.lower(flag), "disable") then
 		this.Default = true
-	elseif string.find(string.lower(flag), "enable") then
-		this.Default = false
-	else
-		this.Default = this.Enabled
 	end
 	if displayName ~= nil then
 		this.DisplayName = displayName

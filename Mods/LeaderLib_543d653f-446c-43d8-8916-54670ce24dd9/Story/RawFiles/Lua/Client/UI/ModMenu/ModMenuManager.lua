@@ -84,6 +84,9 @@ local function PrepareText(name, v, isCheckbox)
 	if Vars.ControllerEnabled and isCheckbox == true then
 		displayName = string.gsub(displayName, "Enable ", ""):gsub("Disable ", "")
 	end
+	if Vars.DebugMode and v.Type == "FlagData" then
+		tooltip = string.format("%s<br><font color='#44AAFF'>(Flag: <font color='#FFAA33'>%s</font>)</font>", tooltip, v.ID)
+	end
 	return displayName, tooltip
 end
 

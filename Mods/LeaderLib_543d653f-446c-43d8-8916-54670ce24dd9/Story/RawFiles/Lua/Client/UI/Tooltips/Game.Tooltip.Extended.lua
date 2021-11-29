@@ -1570,59 +1570,67 @@ end
 
 ---@param ele TooltipElement
 ---@param appendAfter TooltipElement
+---@return TooltipElement
 function TooltipData:AppendElementAfter(ele, appendAfter)
 	for i,element in pairs(self.Data) do
 		if element == appendAfter then
 			table.insert(self.Data, i+1, ele)
-			return
+			return ele
 		end
 	end
 
 	table.insert(self.Data, ele)
+	return ele
 end
 
 ---@param ele TooltipElement
 ---@param appendAfter TooltipElement
+---@return TooltipElement
 function TooltipData:AppendElementBefore(ele, appendBefore)
 	for i=1,#self.Data do
 		local element = self.Data[i]
 		if element == appendBefore then
 			table.insert(self.Data, i-1, ele)
-			return
+			return ele
 		end
 	end
 
 	table.insert(self.Data, ele)
+	return ele
 end
 
 ---@param ele TooltipElement
 ---@param elementType string|table<string,boolean>
+---@return TooltipElement
 function TooltipData:AppendElementAfterType(ele, elementType)
 	local t = type(elementType)
 	for i=1,#self.Data do
 		local element = self.Data[i]
 		if (t == "string" and element.Type == elementType) or (t == "table" and elementType[element.Type] == true) then
 			table.insert(self.Data, i+1, ele)
-			return
+			return ele
 		end
 	end
 
 	table.insert(self.Data, ele)
+	return ele
 end
 
 ---@param ele TooltipElement
 ---@param elementType string|table<string,boolean>
+---@return TooltipElement
 function TooltipData:AppendElementBeforeType(ele, elementType)
 	local t = type(elementType)
 	for i=1,#self.Data do
 		local element = self.Data[i]
 		if (t == "string" and element.Type == elementType) or (t == "table" and elementType[element.Type] == true) then
 			table.insert(self.Data, i-1, ele)
-			return
+			return ele
 		end
 	end
 
 	table.insert(self.Data, ele)
+	return ele
 end
 
 function Game.Tooltip.RegisterListener(...)

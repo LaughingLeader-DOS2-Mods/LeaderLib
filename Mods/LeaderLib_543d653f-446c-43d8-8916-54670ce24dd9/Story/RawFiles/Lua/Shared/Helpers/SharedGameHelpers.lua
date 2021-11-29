@@ -318,9 +318,9 @@ end
 ---@param tag string
 function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	if type(character) ~= "userdata" then
-		character = Ext.GetCharacter(character)
+		character = GameHelpers.GetCharacter(character)
 		if not character then
-			error("GameHelpers.CharacterOrEquipmentHasTag requires a uuid, netid, ObjectHandle, or EsvCharacter/EclCharacter", 1)
+			fprint(LOGLEVEL.ERROR, "GameHelpers.CharacterOrEquipmentHasTag requires a uuid, netid, ObjectHandle, or EsvCharacter/EclCharacter. Values provided: character(%s) tag(%s)", character, tag)
 			return false
 		end
 	end

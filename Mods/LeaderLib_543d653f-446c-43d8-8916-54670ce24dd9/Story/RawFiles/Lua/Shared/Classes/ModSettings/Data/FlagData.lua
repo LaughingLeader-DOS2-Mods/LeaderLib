@@ -35,6 +35,7 @@ function FlagData:Create(flag, flagType, enabled, displayName, tooltip, isFromFi
 	if isFromFile ~= nil then
 		this.IsFromFile = isFromFile
 	end
+	--An "inverse" flag. It'll display as being checked when the global flag isn't actually set.
 	if string.find(string.lower(flag), "disable") then
 		this.Default = true
 	end

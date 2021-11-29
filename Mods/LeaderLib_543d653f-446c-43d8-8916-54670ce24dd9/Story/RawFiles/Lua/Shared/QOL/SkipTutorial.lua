@@ -368,7 +368,7 @@ if Ext.IsServer() then
 			end
 		end)
 	end
-elseif Ext.IsClient() then
+else
 	local createdCheckboxID = -1
 
 	---@param ui LeaderLibUIExtensions

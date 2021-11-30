@@ -309,6 +309,33 @@ function GameHelpers.Status.RemoveHarmful(obj, ignorePermanent)
 	end
 end
 
+---@param target string
+---@param status string
+---@param duration number
+---@param force boolean
+---@param source string
+local function FinallyApplyStatus(target, status, duration, force, source)
+	if source == nil then
+		source = StringHelpers.NULL_UUID
+	end
+	if duration == -2 then
+		local statusObject = Ext.PrepareStatus(target, status, duration)
+		if not StringHelpers.IsNullOrEmpty(source) then
+			local sourceObj = GameHelpers.TryGetObject(source)
+			if sourceObj then
+				statusObject.StatusSourceHandle = sourceObj.Handle
+			end
+		end
+		statusObject.KeepAlive = true
+		if force == true then
+			statusObject.ForceStatus = true
+		end
+		Ext.ApplyStatus(statusObject)
+	else
+		ApplyStatus(target, status, duration, force == true and 1 or 0, source)
+	end
+end
+
 ---Applies a status to a target, or targets around a position.
 ---@param target EsvGameObject|UUID|number|number[]|nil
 ---@param status string|string[]
@@ -348,7 +375,7 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 		if targetType ~= "table" then
 			target = GameHelpers.GetUUID(target)
 			if target then
-				ApplyStatus(target, status, duration, force, source)
+				FinallyApplyStatus(target, status, duration, force, source)
 			end
 		else
 			radius = radius or 1.0
@@ -362,10 +389,10 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 					if canApplyCallback then
 						local b,result = pcall(canApplyCallback, v, source, status, false)
 						if b and result == true then
-							ApplyStatus(v, status, duration, force, source)
+							FinallyApplyStatus(v, status, duration, force, source)
 						end
 					else
-						ApplyStatus(v, status, duration, force, source)
+						FinallyApplyStatus(v, status, duration, force, source)
 					end
 				end
 			end
@@ -375,10 +402,10 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 						if canApplyCallback then
 							local b,result = pcall(canApplyCallback, v, source, status, true)
 							if b and result == true then
-								ApplyStatus(v, status, duration, force, source)
+								FinallyApplyStatus(v, status, duration, force, source)
 							end
 						else
-							ApplyStatus(v, status, duration, force, source)
+							FinallyApplyStatus(v, status, duration, force, source)
 						end
 					end
 				end

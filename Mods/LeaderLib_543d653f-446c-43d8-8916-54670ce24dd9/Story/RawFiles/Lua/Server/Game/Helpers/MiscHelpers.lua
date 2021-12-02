@@ -53,10 +53,10 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 		if v.Type == "Status" then
 			if v.Action == "EXPLODE" then
 				if v.StatusChance >= 1.0 then
-					GameHelpers.Skill.Explode(source, v.StatsId, actionTarget)
+					GameHelpers.Skill.Explode(actionTarget, v.StatsId, source)
 				elseif v.StatusChance > 0 then
 					if Ext.Random(0.0, 1.0) <= v.StatusChance then
-						GameHelpers.Skill.Explode(source, v.StatsId, actionTarget)
+						GameHelpers.Skill.Explode(actionTarget, v.StatsId, source)
 					end
 				end
 			else
@@ -94,7 +94,9 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 			TransformSurfaceAtPosition(x, y, z, v.Action, "Ground", 1.0, 6.0, source)
 		elseif v.Type == "Force" then
 			local distance = math.floor(v.Arg2/6) or 1.0
-			GameHelpers.ForceMoveObject(source, actionTarget, distance, nil, actionTarget.WorldPos)
+			if distance > 0 then
+				GameHelpers.ForceMoveObject(source, actionTarget, distance, nil, actionTarget.WorldPos)
+			end
 		end
 	end
 	return true

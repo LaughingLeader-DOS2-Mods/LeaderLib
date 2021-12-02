@@ -124,7 +124,7 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 
 	if Features.ApplyBonusWeaponStatuses == true and source then
 		if skill then
-			local canApplyStatuses = target and skill.UseWeaponProperties == "Yes"
+			local canApplyStatuses = skill.UseWeaponProperties == "Yes"
 			if canApplyStatuses then
 				GameHelpers.ApplyBonusWeaponStatuses(source, target, skillId)
 			end

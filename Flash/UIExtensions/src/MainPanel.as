@@ -12,14 +12,14 @@ package
 			this.addFrameScript(0,this.frame1);
 		}
 
-		public function addElement(obj:MovieClip) : *
+		public function addElement(obj:MovieClip) : void
 		{
 			obj.list_id = this.elements.length;
 			elements.push(obj);
 			this.addChild(obj);
 		}
 
-		public function removeElement(obj:MovieClip) : *
+		public function removeElement(obj:MovieClip) : void
 		{
 			this.removeChild(obj);
 			var index:uint = 0;
@@ -54,7 +54,7 @@ package
 			return success;
 		}
 
-		public function clearElements() : *
+		public function clearElements() : void
 		{
 			var obj:MovieClip = null;
 			var index:uint = 0;
@@ -70,7 +70,7 @@ package
 			this.elements = new Array();
 		}
 		
-		public function frame1() : void
+		private function frame1() : void
 		{
 			this.stop();
 			this.elements = new Array();

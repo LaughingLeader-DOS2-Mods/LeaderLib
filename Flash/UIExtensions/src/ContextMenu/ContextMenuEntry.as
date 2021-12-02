@@ -23,7 +23,7 @@ package ContextMenu
 			this.addFrameScript(0,this.frame1);
 		}
 		
-		public function deselectElement(e:MouseEvent) : *
+		public function deselectElement(e:MouseEvent) : void
 		{
 			this.hl_mc.alpha = 0;
 			this.text_txt.textColor = this.deSelectedColor;
@@ -31,14 +31,14 @@ package ContextMenu
 			ExternalInterface.call("PlaySound","UI_Generic_Over");
 		}
 		
-		public function selectElement(e:MouseEvent) : *
+		public function selectElement(e:MouseEvent) : void
 		{
 			this.hl_mc.alpha = 1;
 			this.text_txt.textColor = this.selectedColor;
 			this.text_txt.htmlText = this.text;
 		}
 		
-		public function pressedButton() : *
+		public function pressedButton() : void
 		{
 			if(!this.disabled)
 			{
@@ -46,7 +46,7 @@ package ContextMenu
 			}
 		}
 		
-		public function buttonUp(e:MouseEvent) : *
+		public function buttonUp(e:MouseEvent) : void
 		{
 			this.removeEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
 			if(this.clickSound)
@@ -56,23 +56,23 @@ package ContextMenu
 			this.pressedButton();
 		}
 		
-		public function buttonDown(e:MouseEvent) : *
+		public function buttonDown(e:MouseEvent) : void
 		{
 			this.addEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
 		}
 		
-		public function buttonOver(e:MouseEvent) : *
+		public function buttonOver(e:MouseEvent) : void
 		{
 			this.base.selectButton(this);
 		}
 		
-		public function buttonOut(e:MouseEvent) : *
+		public function buttonOut(e:MouseEvent) : void
 		{
 			this.removeEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
 			this.base.selectButton(null);
 		}
 		
-		public function frame1() : void
+		private function frame1() : void
 		{
 			this.addEventListener(MouseEvent.MOUSE_DOWN,this.buttonDown);
 			this.addEventListener(MouseEvent.ROLL_OVER,this.buttonOver);

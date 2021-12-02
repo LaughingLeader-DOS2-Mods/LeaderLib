@@ -2,30 +2,28 @@ package fl.motion.easing
 {
 	public class Quartic
 	{
-		 
-		
 		public function Quartic()
 		{
 			super();
 		}
 		
-		public static function easeIn(param1:Number, param2:Number, param3:Number, param4:Number) : Number
+		public static function easeIn(a:Number, b:Number, c:Number, d:Number) : Number
 		{
-			return param3 * (param1 = param1 / param4) * param1 * param1 * param1 + param2;
+			return c * (a = a / d) * a * a * a + b;
 		}
 		
-		public static function easeOut(param1:Number, param2:Number, param3:Number, param4:Number) : Number
+		public static function easeOut(a:Number, b:Number, c:Number, d:Number) : Number
 		{
-			return -param3 * ((param1 = param1 / param4 - 1) * param1 * param1 * param1 - 1) + param2;
+			return -c * ((a = a / d - 1) * a * a * a - 1) + b;
 		}
 		
-		public static function easeInOut(param1:Number, param2:Number, param3:Number, param4:Number) : Number
+		public static function easeInOut(a:Number, b:Number, c:Number, d:Number) : Number
 		{
-			if((param1 = param1 / (param4 / 2)) < 1)
+			if((a = a / (d / 2)) < 1)
 			{
-				return param3 / 2 * param1 * param1 * param1 * param1 + param2;
+				return c / 2 * a * a * a * a + b;
 			}
-			return -param3 / 2 * ((param1 = param1 - 2) * param1 * param1 * param1 - 2) + param2;
+			return -c / 2 * ((a = a - 2) * a * a * a - 2) + b;
 		}
 	}
 }

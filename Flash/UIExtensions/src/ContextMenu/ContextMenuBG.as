@@ -28,7 +28,7 @@ package ContextMenu
 			this.addFrameScript(0,this.frame1);
 		}
 		
-		public function setHeight(height:Number, contextContent:MovieClip) : *
+		public function setHeight(height:Number, contextContent:MovieClip) : void
 		{
 			var tweenHeight:uint = 0;
 			if(contextContent)
@@ -44,7 +44,7 @@ package ContextMenu
 			}
 		}
 		
-		public function animateOpening(height:uint) : *
+		public function animateOpening(height:uint) : void
 		{
 			var frameHeight:uint = height;
 			if(this.scaleTween != null)
@@ -66,13 +66,13 @@ package ContextMenu
 			addEventListener(Event.ENTER_FRAME,this.animationLoop);
 		}
 		
-		public function animationLoop() : *
+		public function animationLoop() : void
 		{
 			this.contextContent.scrollRect = new Rectangle(0,0,this.contextContent.width,this.mid_mc.height);
 			this.bottom_mc.y = this.mid_mc.y + this.mid_mc.height - this.bottomOffset;
 		}
 		
-		public function frame1() : void
+		private function frame1() : void
 		{
 			this.contextContent = null;
 			this.scaleTween = null;

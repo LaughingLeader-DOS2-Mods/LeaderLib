@@ -9,19 +9,19 @@ package fl.motion.easing
 			super();
 		}
 		
-		public static function easeIn(param1:Number, param2:Number, param3:Number, param4:Number) : Number
+		public static function easeIn(a:Number, b:Number, c:Number, d:Number) : Number
 		{
-			return -param3 * Math.cos(param1 / param4 * (Math.PI / 2)) + param3 + param2;
+			return -c * Math.cos(a / d * (Math.PI / 2)) + c + b;
 		}
 		
-		public static function easeOut(param1:Number, param2:Number, param3:Number, param4:Number) : Number
+		public static function easeOut(a:Number, b:Number, c:Number, d:Number) : Number
 		{
-			return param3 * Math.sin(param1 / param4 * (Math.PI / 2)) + param2;
+			return c * Math.sin(a / d * (Math.PI / 2)) + b;
 		}
 		
-		public static function easeInOut(param1:Number, param2:Number, param3:Number, param4:Number) : Number
+		public static function easeInOut(a:Number, b:Number, c:Number, d:Number) : Number
 		{
-			return -param3 / 2 * (Math.cos(Math.PI * param1 / param4) - 1) + param2;
+			return -c / 2 * (Math.cos(Math.PI * a / d) - 1) + b;
 		}
 	}
 }

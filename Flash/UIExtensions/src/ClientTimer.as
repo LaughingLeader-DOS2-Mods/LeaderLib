@@ -23,18 +23,18 @@ package
 			this.removeOnTick = repeat != 1;
 		}
 
-		public function onComplete(event:TimerEvent) : *
+		public function onComplete(event:TimerEvent) : void
 		{
 			ExternalInterface.call("LeaderLib_UIExtensions_TimerComplete", this.name);
 			this.dispose(true);
 		}
 
-		public function onTick(event:TimerEvent) : *
+		public function onTick(event:TimerEvent) : void
 		{
 			ExternalInterface.call("LeaderLib_UIExtensions_TimerTick", this.name);
 		}
 
-		public function dispose(removeFromArray:Boolean = false) : *
+		public function dispose(removeFromArray:Boolean = false) : void
 		{
 			this.removeEventListener(TimerEvent.TIMER_COMPLETE, this.onComplete);
 			if(this.removeOnTick) {

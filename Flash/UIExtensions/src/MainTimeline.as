@@ -72,7 +72,7 @@ package
 			return instance;
 		}
 		
-		public function onEventUp(id:Number) : *
+		public function onEventUp(id:Number) : Boolean
 		{
 			this.CtrlDown = false;
 			var isHandled:Boolean = false;
@@ -147,18 +147,18 @@ package
 			return isHandled;
 		}
 		
-		public function onEventInit() : *
+		public function onEventInit() : void
 		{
 			ExternalInterface.call("registeranchorId","LeaderLib_UIExtensions");
 			ExternalInterface.call("setAnchor",this.anchorPos,this.anchorTarget,this.anchorPos);
 		}
 
-		public function onEventResize() : *
+		public function onEventResize() : void
 		{
 			ExternalInterface.call("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
 		}
 
-		public function onEventResolution(w:Number, h:Number) : *
+		public function onEventResolution(w:Number, h:Number) : void
 		{
 			if(this.screenWidth != w || this.screenHeight != h)
 			{
@@ -201,13 +201,13 @@ package
 			return mainPanel_mc.removeElementWithID(id);
 		}
 
-		public function clearElements() : * 
+		public function clearElements() : void 
 		{
 			//mainPanel_mc.list.clearElements();
 			mainPanel_mc.clearElements();
 		}
 
-		private function onMouseOverTooltip(e:MouseEvent) : *
+		private function onMouseOverTooltip(e:MouseEvent) : void
 		{
 			var obj:MovieClip = e.target as MovieClip;
 			if(obj.tooltip != null && obj.tooltip != "")
@@ -219,7 +219,7 @@ package
 			}
 		}
 
-		private function onMouseOutTooltip(e:MouseEvent) : *
+		private function onMouseOutTooltip(e:MouseEvent) : void
 		{
 			if(this.curTooltip == e.target.name && this.hasTooltip)
 			{
@@ -229,7 +229,7 @@ package
 			this.curTooltip = "";
 		}
 
-		private function setupControlForTooltip(obj:MovieClip) : *
+		private function setupControlForTooltip(obj:MovieClip) : void
 		{
 			obj.addEventListener(MouseEvent.MOUSE_OVER, this.onMouseOverTooltip);
 			obj.addEventListener(MouseEvent.MOUSE_OUT, this.onMouseOutTooltip);
@@ -257,7 +257,7 @@ package
 			return checkbox.list_id;
 		}
 
-		public function setCheckboxState(id:Number, state:Number): *
+		public function setCheckboxState(id:Number, state:Number): void
 		{
 			var obj:MovieClip = mainPanel_mc.elements[id];
 			if(obj != null)
@@ -270,7 +270,7 @@ package
 			}
 		}
 
-		public function toggleCheckbox(id:Number): *
+		public function toggleCheckbox(id:Number): void
 		{
 			var obj:MovieClip = mainPanel_mc.elements[id];
 			if(obj != null)
@@ -283,7 +283,7 @@ package
 			}
 		}
 
-		public function addBar(id:Number, label:String, tooltip:String = "", x:Number=0, y:Number=0, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : *
+		public function addBar(id:Number, label:String, tooltip:String = "", x:Number=0, y:Number=0, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : void
 		{
 			var bar:BarHolder = new BarHolder();
 			bar.id = id;
@@ -299,7 +299,7 @@ package
 			ExternalInterface.call("LeaderLib_UIExtensions_ControlAdded", "bar", id, bar.list_id);
 		}
 
-		public function setBar(id:Number, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : *
+		public function setBar(id:Number, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : void
 		{
 			var obj:MovieClip = mainPanel_mc.elements[id];
 			if(obj != null)
@@ -315,7 +315,7 @@ package
 			}
 		}
 
-		public function setGlobalToLocalPosition(x:Number, y:Number) : *
+		public function setGlobalToLocalPosition(x:Number, y:Number) : void
 		{
 			var globalPt:Point = new Point(x,y);
 			var localPt:Point = this.globalToLocal(globalPt);
@@ -323,7 +323,7 @@ package
 			globalToLocalY = localPt.y;
 		}
 
-		public function setLocalToGlobalPosition(x:Number, y:Number) : *
+		public function setLocalToGlobalPosition(x:Number, y:Number) : void
 		{
 			var localPt:Point = new Point(x,y);
 			var globalPt:Point = this.localToGlobal(localPt);
@@ -337,7 +337,7 @@ package
 			return this.globalToLocal(globalPt);
 		}
 
-		public function removeTimer(timer:ClientTimer, removeFromArray:Boolean = false) : *
+		public function removeTimer(timer:ClientTimer, removeFromArray:Boolean = false) : void
 		{
 			if(removeFromArray) {
 				var index:uint = 0;
@@ -355,7 +355,7 @@ package
 			timer = null;
 		}
 
-		public function destroyTimers() : * 
+		public function destroyTimers() : void 
 		{
 			var index:uint = 0;
 			while(index < this.timers.length)
@@ -370,39 +370,39 @@ package
 			this.timers = new Array();
 		}
 
-		public function launchTimer(delay:Number, name:String, repeat:int=1) : *
+		public function launchTimer(delay:Number, name:String, repeat:int=1) : void
 		{
 			var timer:ClientTimer = new ClientTimer(name, delay, repeat, this);
 			this.timers.push(timer);
 			timer.start();
 		}
 
-		public function fireOnMouseClick(e:MouseEvent) : *
+		public function fireOnMouseClick(e:MouseEvent) : void
 		{
 			ExternalInterface.call("LeaderLib_UIExtensions_MouseClicked", e.stageX, e.stageY);
 		}
 		
-		public function fireOnMouseMove(e:MouseEvent) : *
+		public function fireOnMouseMove(e:MouseEvent) : void
 		{
 			ExternalInterface.call("LeaderLib_UIExtensions_MouseMoved", e.stageX, e.stageY);
 		}
 
-		public function onRightMouseDown(e:Event) : *
+		public function onRightMouseDown(e:Event) : void
 		{
 			ExternalInterface.call("LeaderLib_UIExtensions_RightMouseDown", stage.mouseX, stage.mouseY);
 		}
 
-		public function onRightMouseUp(e:Event) : *
+		public function onRightMouseUp(e:Event) : void
 		{
 			ExternalInterface.call("LeaderLib_UIExtensions_RightMouseUp", stage.mouseX, stage.mouseY);
 		}
 
-		public function fireMouseClicked(eventName:String = "") : *
+		public function fireMouseClicked(eventName:String = "") : void
 		{
 			ExternalInterface.call("LeaderLib_UIExtensions_MouseClicked", stage.mouseX, stage.mouseY);
 		}
 
-		public function dispose(): *
+		public function dispose(): void
 		{
 			if (this.listeningForMouse) {
 				stage.removeEventListener(MouseEvent.CLICK,this.fireOnMouseClick);
@@ -413,7 +413,7 @@ package
 			this.disableKeyboardListeners();
 		}
 
-		public function enableMouseListeners(b:Boolean) : * {
+		public function enableMouseListeners(b:Boolean) : void {
 			this.mouseChildren = b;
 			this.mouseEnabled = b;
 			if (!b && this.listeningForMouse) {
@@ -430,7 +430,7 @@ package
 			this.listeningForMouse = b;
 		}
 
-		public function showContextMenu(b:Boolean = true) : *
+		public function showContextMenu(b:Boolean = true) : void
 		{
 			if (b)
 			{
@@ -442,7 +442,7 @@ package
 			}
 		}
 
-		private function onKeyboardDown(e:KeyboardEvent) : *
+		private function onKeyboardDown(e:KeyboardEvent) : void
 		{
 			var inputName:String = workingKeys[e.keyCode];
 			if(inputName != null)
@@ -455,7 +455,7 @@ package
 			}
 		}
 
-		private function onKeyboardUp(e:KeyboardEvent) : *
+		private function onKeyboardUp(e:KeyboardEvent) : void
 		{
 			var inputName:String = workingKeys[e.keyCode];
 			if(inputName != null)
@@ -470,7 +470,7 @@ package
 
 		private var workingKeys:Dictionary = new Dictionary();
 
-		public function enableKeyboardListeners() : *
+		public function enableKeyboardListeners() : void
 		{
 			//Experimental, doesn't quite seem to work yet.
 			//ExternalInterface.call("inputFocus");
@@ -479,7 +479,7 @@ package
 			this.stage.focus = this;
 		}
 
-		public function disableKeyboardListeners() : *
+		public function disableKeyboardListeners() : void
 		{
 			//ExternalInterface.call("inputFocusLost");
 			this.stage.removeEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown);

@@ -25,19 +25,21 @@ package System
 			return obj.list_id;
 		}
 
-		public function removePanel(obj:MovieClip) : *
+		public function removePanel(obj:MovieClip) : Boolean
 		{
-			this.removeChild(obj);
+			var success:Boolean = this.removeChild(obj) != null;
 			var index:uint = 0;
 			while(index < this.panels.length)
 			{
 				if(this.panels[index] == obj)
 				{
 					panels.splice(index, 1);
+					success = true;
 					break;
 				}
 				index++;
 			}
+			return success;
 		}
 
 		public function removePanelWithID(id:Number) : Boolean
@@ -60,9 +62,8 @@ package System
 			return success;
 		}
 
-		public function clearPanels() : *
+		public function clearPanels() : void
 		{
-			trace("clearPanels");
 			var obj:MovieClip = null;
 			var index:uint = 0;
 			while(index < this.panels.length)

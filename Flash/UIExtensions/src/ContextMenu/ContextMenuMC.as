@@ -27,7 +27,7 @@ package ContextMenu
 			this.addFrameScript(0,this.frame1);
 		}
 
-		public function frame1() : void
+		private function frame1() : void
 		{
 			this.list = new listDisplay();
 			this.list.EL_SPACING = 0;
@@ -43,12 +43,12 @@ package ContextMenu
 			this.buttonArr = new Array();
 		}
 		
-		public function setTitle(text:String) : *
+		public function setTitle(text:String) : void
 		{
 			this.bg_mc.title_txt.htmlText = text;
 		}
 		
-		public function addEntry(id:Number, actionID:String, clickSound:Boolean, text:String, disabled:Boolean, legal:Boolean) : *
+		public function addEntry(id:Number, actionID:String, clickSound:Boolean, text:String, disabled:Boolean, legal:Boolean) : void
 		{
 			var entry:MovieClip = this.list.getElementByNumber("id",id);
 			if(entry == null)
@@ -86,7 +86,7 @@ package ContextMenu
 			entry.hl_mc.height = Math.floor(entry.text_txt.textHeight) + 2;
 		}
 		
-		public function updateDone() : *
+		public function updateDone() : void
 		{
 			this.list.positionElements();
 			this.bg_mc.setHeight(this.bg_mc.container_mc.height,this.list);
@@ -99,20 +99,20 @@ package ContextMenu
 			//ExternalInterface.call("setMcSize",this.x + this.bg_mc.x + this.bg_mc.width,this.y + this.bg_mc.y + this.bg_mc.container_mc.y + this.bg_mc.container_mc.height + this.bg_mc.bottom_mc.height);
 		}
 
-		public function setListLoopable(b:Boolean) : *
+		public function setListLoopable(b:Boolean) : void
 		{
 			this.list.m_cyclic = b;
 		}
 
 		// Stuff that used to be in MainTimeline
-		public function next() : *
+		public function next() : void
 		{
 			ExternalInterface.call("PlaySound","UI_Gen_CursorMove");
 			this.list.next();
 			this.setListLoopable(false);
 		}
 		
-		public function previous() : *
+		public function previous() : void
 		{
 			ExternalInterface.call("PlaySound","UI_Gen_CursorMove");
 			this.list.previous();
@@ -201,7 +201,7 @@ package ContextMenu
 			return isHandled;
 		}
 
-		public function open(targetX:Number=0, targetY:Number=0) : *
+		public function open(targetX:Number=0, targetY:Number=0) : void
 		{
 			this.x = targetX;
 			this.y = targetY;
@@ -218,7 +218,7 @@ package ContextMenu
 			ExternalInterface.call("LeaderLib_ContextMenu_Opened");
 		}
 
-		public function close() : *
+		public function close() : void
 		{
 			if(this.visible)
 			{
@@ -234,7 +234,7 @@ package ContextMenu
 			ExternalInterface.call("LeaderLib_ContextMenu_Closed");
 		}
 
-		public function onCloseUI(e:MouseEvent) : *
+		public function onCloseUI(e:MouseEvent) : void
 		{
 			if(!e.target.isButton)
 			{
@@ -242,17 +242,17 @@ package ContextMenu
 			}
 		}
 
-		public function clearButtons() : *
+		public function clearButtons() : void
 		{
 			this.list.clearElements();
 		}
 		
-		public function selectButton(button:MovieClip) : *
+		public function selectButton(button:MovieClip) : void
 		{
 			this.list.selectMC(button);
 		}
 
-		public function updateButtons() : *
+		public function updateButtons() : void
 		{
 			var id:Number = NaN;
 			var actionID:String = "";

@@ -132,13 +132,19 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 		OnSkillHit(skill, target, source, hitRequest.TotalDamageDone, hitRequest, hitContext, hitStatus, data)
 	end
 
+	local isFromWeapon = GameHelpers.Hit.IsFromWeapon(hitStatus, skill)
+
+	if isFromWeapon then
+		AttackManager.InvokeOnHit(true, source, target, data, skill)
+	end
+
 	if Features.ApplyBonusWeaponStatuses == true and source then
 		if skill then
 			local canApplyStatuses = skill.UseWeaponProperties == "Yes"
 			if canApplyStatuses then
 				GameHelpers.ApplyBonusWeaponStatuses(source, target, skillId)
 			end
-		elseif GameHelpers.Hit.IsFromWeapon(hitStatus) then
+		elseif isFromWeapon then
 			GameHelpers.ApplyBonusWeaponStatuses(source, target)
 		end
 	end

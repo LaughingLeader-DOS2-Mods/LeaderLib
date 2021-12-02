@@ -25,7 +25,7 @@ end)
 
 function GameHelpers.ApplyBonusWeaponStatuses(source, target)
 	if type(source) ~= "userdata" then
-		source = Ext.GetGameObject(source)
+		source = GameHelpers.TryGetObject(source)
 	end
 	if source and source.GetStatuses then
 		for i,status in pairs(source:GetStatuses()) do
@@ -83,11 +83,9 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 	local sourceId = GameHelpers.GetUUID(source, true)
 
 	local applySkillProperties = Vars.ApplyZoneSkillProperties[hitStatus.SkillId]
-	if applySkillProperties then
-		if applySkillProperties[sourceId] then
-			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, targetId, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
-			Timer.RestartOneShot(applySkillProperties[sourceId], 1)
-		end
+	if applySkillProperties and applySkillProperties[sourceId] then
+		Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, targetId, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
+		Timer.RestartOneShot(applySkillProperties[sourceId], 1)
 	end
 
 	---@type HitRequest

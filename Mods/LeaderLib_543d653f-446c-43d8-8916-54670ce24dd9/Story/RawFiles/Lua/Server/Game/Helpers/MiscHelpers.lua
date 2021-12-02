@@ -18,36 +18,36 @@ end
 ---@param radius number|nil
 ---@param skill string|nil
 function GameHelpers.ApplyProperties(source, target, properties, targetPosition, radius, skill)
+	local canTargetItems = false
 	local t = type(target)
 	if skill then
 		local stat = Ext.GetStat(skill)
-		if t == "table" then
-			radius = radius or math.max(stat.ExplodeRadius or stat.AreaRadius or 3)
-			Ext.ExecuteSkillPropertiesOnPosition(skill, source.MyGuid, target, radius, "AoE", false)
-		elseif t == "userdata" then
-			Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
-		else
-			target = Ext.GetGameObject(target)
-			Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
+		if stat then
+			if t == "table" then
+				radius = radius or math.max(stat.ExplodeRadius or stat.AreaRadius or 3)
+				Ext.ExecuteSkillPropertiesOnPosition(skill, source.MyGuid, target, radius, "AoE", false)
+			elseif t == "userdata" then
+				Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
+			else
+				target = Ext.GetGameObject(target)
+				Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
+			end
+			canTargetItems = stat.CanTargetItems == "Yes"
 		end
-		return true
 	end
-	local canTargetItems = false
-	if skill then
-		if Ext.StatGetAttribute(skill, "CanTargetItems") == "Yes" then
-			canTargetItems = true
-		end
+	if not properties then
+		return true
 	end
 	for i,v in pairs(properties) do
 		local actionTarget = target
-		if ContextContains(v.Context, "Target") then
+		if ContextContains(v.Context, "target") then
 			actionTarget = target
-		elseif ContextContains(v.Context, "Self") then
+		elseif ContextContains(v.Context, "self") then
 			actionTarget = source
 		end
 		local aType = type(actionTarget)
 		if aType == "string" or aType == "number" then
-			actionTarget = Ext.GetGameObject(actionTarget) or actionTarget
+			actionTarget = GameHelpers.TryGetObject(actionTarget, true)
 			aType = type(actionTarget)
 		end
 		if v.Type == "Status" then

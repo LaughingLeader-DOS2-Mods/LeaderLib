@@ -26,10 +26,19 @@ end)
 ---@private
 ---@param uuid string
 function GameHelpers.TrackBonusWeaponPropertiesApplied(uuid, skill)
-	if not PersistentVars.JustAppliedBonusWeaponStatuses[uuid] or skill then
-		PersistentVars.JustAppliedBonusWeaponStatuses[uuid] = skill or true
+	--[[If a skill is specified, switch into "block skills" mode to 
+	skip applying BonusWeapon if the source skill was already applied via BonusWeapon.
+	This is to prevent infinite loops from an exploded skill procing GameHelpers.ApplyBonusWeaponStatuses
+	]]
+	if skill then
+		if type(PersistentVars.JustAppliedBonusWeaponStatuses[uuid]) ~= "table" then
+			PersistentVars.JustAppliedBonusWeaponStatuses[uuid] = {}
+		end
+		PersistentVars.JustAppliedBonusWeaponStatuses[uuid][skill] = true
+	elseif not PersistentVars.JustAppliedBonusWeaponStatuses[uuid] then
+		PersistentVars.JustAppliedBonusWeaponStatuses[uuid] = true
 	end
-	Timer.StartObjectTimer("LeaderLib_ClearJustAppliedBonusWeaponStatuses", uuid, 250)
+	Timer.StartObjectTimer("LeaderLib_ClearJustAppliedBonusWeaponStatuses", uuid, 400)
 end
 
 Timer.RegisterListener("LeaderLib_ClearJustAppliedBonusWeaponStatuses", function(timerName, uuid)
@@ -45,7 +54,7 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 	end
 	if source and source.GetStatuses then
 		if PersistentVars.JustAppliedBonusWeaponStatuses[source.MyGuid] == true 
-		or (fromSkill and PersistentVars.JustAppliedBonusWeaponStatuses[source.MyGuid] == fromSkill) then
+		or (fromSkill and PersistentVars.JustAppliedBonusWeaponStatuses[source.MyGuid][fromSkill] == true) then
 			return false
 		end
 		for i,status in pairs(source:GetStatuses()) do

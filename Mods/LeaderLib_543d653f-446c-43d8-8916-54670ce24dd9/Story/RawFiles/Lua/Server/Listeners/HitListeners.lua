@@ -23,11 +23,31 @@ RegisterProtectedOsirisListener("NRD_OnPrepareHit", 4, "before", function(target
 	OnPrepareHit(StringHelpers.GetUUID(target), StringHelpers.GetUUID(attacker), damage, handle)
 end)
 
-function GameHelpers.ApplyBonusWeaponStatuses(source, target)
+---@private
+---@param uuid string
+function GameHelpers.TrackBonusWeaponPropertiesApplied(uuid, skill)
+	if not PersistentVars.JustAppliedBonusWeaponStatuses[uuid] or skill then
+		PersistentVars.JustAppliedBonusWeaponStatuses[uuid] = skill or true
+	end
+	Timer.StartObjectTimer("LeaderLib_ClearJustAppliedBonusWeaponStatuses", uuid, 250)
+end
+
+Timer.RegisterListener("LeaderLib_ClearJustAppliedBonusWeaponStatuses", function(timerName, uuid)
+	PersistentVars.JustAppliedBonusWeaponStatuses[uuid] = nil
+end)
+
+---@param source EsvCharacter|EsvItem|UUID|NETID
+---@param target EsvCharacter|EsvItem|UUID|NETID
+---@param fromSkill string If this is resulting from a skill hit.
+function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 	if type(source) ~= "userdata" then
 		source = GameHelpers.TryGetObject(source)
 	end
 	if source and source.GetStatuses then
+		if PersistentVars.JustAppliedBonusWeaponStatuses[source.MyGuid] == true 
+		or (fromSkill and PersistentVars.JustAppliedBonusWeaponStatuses[source.MyGuid] == fromSkill) then
+			return false
+		end
 		for i,status in pairs(source:GetStatuses()) do
 			if type(status) ~= "string" and status.StatusId ~= nil then
 				status = status.StatusId
@@ -40,11 +60,13 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target)
 					potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
 				end
 				if potion ~= nil and potion ~= "" then
-					local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
-					if bonusWeapon ~= nil and bonusWeapon ~= "" then
-						local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
-						if extraProps and #extraProps > 0 then
-							GameHelpers.ApplyProperties(source, target, extraProps)
+					if not Ext.OsirisIsCallable() or NRD_StatExists(potion) then
+						local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
+						if bonusWeapon ~= nil and bonusWeapon ~= "" then
+							local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
+							if extraProps and #extraProps > 0 then
+								GameHelpers.ApplyProperties(source, target, extraProps, nil, nil, fromSkill)
+							end
 						end
 					end
 				end
@@ -101,7 +123,12 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 	end
 
 	if Features.ApplyBonusWeaponStatuses == true and source then
-		if GameHelpers.Hit.IsFromWeapon(hitStatus, skill) then
+		if skill then
+			local canApplyStatuses = target and skill.UseWeaponProperties == "Yes"
+			if canApplyStatuses then
+				GameHelpers.ApplyBonusWeaponStatuses(source, target, skillId)
+			end
+		elseif GameHelpers.Hit.IsFromWeapon(hitStatus) then
 			GameHelpers.ApplyBonusWeaponStatuses(source, target)
 		end
 	end

@@ -166,6 +166,10 @@ local defaultPersistentVars = {
 
 	---@type table<UUID,LeaderLibNextGenericHealStatusSourceData>
 	NextGenericHealStatusSource = {},
+
+	---Used to avoid exploding projectiles caused from applying BonusWeapon properties triggering further BonusWeapon hits, which makes for endless loops.
+	---@type table<UUID,boolean|string>
+	JustAppliedBonusWeaponStatuses = {},
 }
 
 ---@private

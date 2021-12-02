@@ -296,30 +296,6 @@ function OnSkillHit(skill, target, source, damage, hit, context, hitStatus, data
 			end
 		end
 		InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skill.Name, SKILL_STATE.HIT, data)
-
-		if Features.ApplyBonusWeaponStatuses == true then
-			local canApplyStatuses = target and skill.UseWeaponProperties == "Yes"
-			if canApplyStatuses then
-				for i,status in pairs(source:GetStatuses()) do
-					local potion = nil
-					if type(status) ~= "string" and status.StatusId ~= nil then
-						status = status.StatusId
-					end
-					if Data.EngineStatus[status] ~= true then
-						potion = Ext.StatGetAttribute(status, "StatsId")
-						if potion ~= nil and potion ~= "" then
-							local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
-							if bonusWeapon ~= nil and bonusWeapon ~= "" then
-								local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
-								if extraProps and #extraProps > 0 then
-									GameHelpers.ApplyProperties(source, target, extraProps)
-								end
-							end
-						end
-					end
-				end
-			end
-		end
 	end
 end
 

@@ -16,27 +16,31 @@ end
 ---@param properties StatProperty[]
 ---@param targetPosition number[]|nil
 ---@param radius number|nil
----@param skill string|nil
-function GameHelpers.ApplyProperties(source, target, properties, targetPosition, radius, skill)
+---@param fromSkill string|nil
+function GameHelpers.ApplyProperties(source, target, properties, targetPosition, radius, fromSkill)
 	local canTargetItems = false
 	local t = type(target)
-	if skill then
-		local stat = Ext.GetStat(skill)
-		if stat then
+	if fromSkill then
+		canTargetItems = Ext.StatGetAttribute(fromSkill, "CanTargetItems") == "Yes"
+		--[[
 			if t == "table" then
 				radius = radius or math.max(stat.ExplodeRadius or stat.AreaRadius or 3)
+				GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
 				Ext.ExecuteSkillPropertiesOnPosition(skill, source.MyGuid, target, radius, "AoE", false)
 			elseif t == "userdata" then
+				GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
 				Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
 			else
-				target = Ext.GetGameObject(target)
-				Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
+				target = GameHelpers.TryGetObject(target)
+				if target then
+					GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
+					Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
+				end
 			end
-			canTargetItems = stat.CanTargetItems == "Yes"
-		end
+		]]
 	end
 	if not properties then
-		return true
+		return false
 	end
 	for i,v in pairs(properties) do
 		local actionTarget = target
@@ -53,15 +57,18 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 		if v.Type == "Status" then
 			if v.Action == "EXPLODE" then
 				if v.StatusChance >= 1.0 then
+					GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid, v.StatsId)
 					GameHelpers.Skill.Explode(actionTarget, v.StatsId, source)
 				elseif v.StatusChance > 0 then
 					if Ext.Random(0.0, 1.0) <= v.StatusChance then
+						GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid, v.StatsId)
 						GameHelpers.Skill.Explode(actionTarget, v.StatsId, source)
 					end
 				end
 			else
 				if actionTarget then
 					if v.StatusChance >= 1.0 then
+						GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
 						GameHelpers.Status.Apply(actionTarget, v.Action, v.Duration, 0, source, radius, canTargetItems)
 					elseif v.StatusChance > 0 then
 						local statusObject = {
@@ -73,6 +80,7 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 							CanEnterChance = Ext.Round(v.StatusChance * 100)
 						}
 						if Ext.Random(0,100) <= Game.Math.StatusGetEnterChance(statusObject, true) then
+							GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
 							GameHelpers.Status.Apply(actionTarget, v.Action, v.Duration, 0, source, radius, canTargetItems)
 						end
 					end
@@ -91,10 +99,12 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 					x,y,z = GetPosition(actionTarget)
 				end
 			end
+			GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
 			TransformSurfaceAtPosition(x, y, z, v.Action, "Ground", 1.0, 6.0, source)
 		elseif v.Type == "Force" then
 			local distance = math.floor(v.Arg2/6) or 1.0
 			if distance > 0 then
+				GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
 				GameHelpers.ForceMoveObject(source, actionTarget, distance, nil, actionTarget.WorldPos)
 			end
 		end

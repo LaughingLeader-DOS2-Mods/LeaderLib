@@ -756,7 +756,7 @@ end
 function GameHelpers.Ext.ObjectIsStatItem(obj)
 	if type(obj) == "userdata" then
 		local meta = getmetatable(obj)
-		return meta == Data.ExtenderClass.StatItem or meta == Data.ExtenderClass.StatItemWeapon or meta == Data.ExtenderClass.StatItemArmor
+		return meta == Data.ExtenderClass.StatItem or meta == Data.ExtenderClass.StatItemArmor
 	end
 	return false
 end

@@ -53,8 +53,9 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 		source = GameHelpers.TryGetObject(source)
 	end
 	if source and source.GetStatuses then
-		if PersistentVars.JustAppliedBonusWeaponStatuses[source.MyGuid] == true 
-		or (fromSkill and PersistentVars.JustAppliedBonusWeaponStatuses[source.MyGuid][fromSkill] == true) then
+		local justApplied = PersistentVars.JustAppliedBonusWeaponStatuses[source.MyGuid]
+		if justApplied == true 
+		or (fromSkill and type(justApplied) == "table" and justApplied[fromSkill] == true) then
 			return false
 		end
 		for i,status in pairs(source:GetStatuses()) do

@@ -137,36 +137,7 @@ local function OnRightMouseUp(ui, call, x, y)
 	Input.OnMouseEvent(UIExtensions.MouseEvent.RightMouseUp)
 end
 
-local uiFlags = {
-	OF_Load = 0x1,
-	OF_Loaded = 0x2,
-	OF_RequestDelete = 0x4,
-	OF_Visible = 0x8,
-	OF_Activated = 0x10,
-	OF_PlayerInput1 = 0x20,
-	OF_PlayerInput2 = 0x40,
-	OF_PlayerInput3 = 0x80,
-	OF_PlayerInput4 = 0x100,
-	OF_PlayerModal1 = 0x200,
-	OF_PlayerModal2 = 0x400,
-	OF_PlayerModal3 = 0x800,
-	OF_PlayerModal4 = 0x1000,
-	OF_KeepInScreen = 0x8000,
-	OF_KeepCustomInScreen = 0x10000,
-	OF_DeleteOnChildDestroy = 0x20000,
-	OF_PauseRequest = 0x40000,
-	OF_SortOnAdd = 0x80000,
-	OF_FullScreen = 0x400000,
-	OF_PlayerTextInput1 = 0x800000,
-	OF_PlayerTextInput2 = 0x1000000,
-	OF_PlayerTextInput3 = 0x2000000,
-	OF_PlayerTextInput4 = 0x4000000,
-	OF_DontHideOnDelete = 0x10000000,
-	OF_PrecacheUIData = 0x20000000,
-	OF_PreventCameraMove = 0x40000000,
-}
-
-local defaultUIFlags = uiFlags.OF_Load | uiFlags.OF_PlayerInput1 | uiFlags.OF_DeleteOnChildDestroy | uiFlags.OF_FullScreen
+local defaultUIFlags = Data.DefaultUIFlags | Data.UIFlags.OF_FullScreen
 
 function UIExtensions.SetupInstance()
 	if Ext.GetGameState() == "Menu" then

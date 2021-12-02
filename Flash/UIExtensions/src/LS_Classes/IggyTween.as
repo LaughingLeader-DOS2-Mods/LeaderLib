@@ -27,19 +27,19 @@ package LS_Classes
 		private var _obj:Object;
 		private var _prop:String;
 		
-		public function IggyTween(param1:Object, param2:String, param3:Function, param4:Number, param5:Number, param6:Number, param7:Boolean = false, param8:Boolean = false, param9:Boolean = false)
+		public function IggyTween(target:Object, propertyName:String, tweenFunc:Function, beginAt:Number, finishAt:Number, durationNum:Number, bUseSeconds:Boolean = false, bUseWeakRef:Boolean = false, bManageCollisions:Boolean = false)
 		{
 			var d:Dictionary = null;
 			var t:IggyTween = null;
-			var obj:Object = param1;
-			var prop:String = param2;
-			var func:Function = param3;
-			var begin:Number = param4;
-			var finish:Number = param5;
-			var duration:Number = param6;
-			var useSeconds:Boolean = param7;
-			var useWeakRef:Boolean = param8;
-			var manageCollisions:Boolean = param9;
+			var obj:Object = target;
+			var prop:String = propertyName;
+			var func:Function = tweenFunc;
+			var begin:Number = beginAt;
+			var finish:Number = finishAt;
+			var duration:Number = durationNum;
+			var useSeconds:Boolean = bUseSeconds;
+			var useWeakRef:Boolean = bUseWeakRef;
+			var manageCollisions:Boolean = bManageCollisions;
 			super();
 			if(manageCollisions)
 			{
@@ -68,9 +68,9 @@ package LS_Classes
 			}
 			else
 			{
-				this.func = function(param1:Number, param2:Number, param3:Number, param4:Number):*
+				this.func = function(a:Number, b:Number, c:Number, d:Number):Number
 				{
-					return param2 + param3 * (param1 / param4);
+					return b + c * (a / d);
 				};
 			}
 			if(isNaN(begin))
@@ -95,27 +95,27 @@ package LS_Classes
 			this.start();
 		}
 		
-		public function motionStart() : *
+		public function motionStart() : void
 		{
 		}
 		
-		public function motionStop() : *
+		public function motionStop() : void
 		{
 		}
 		
-		public function motionResume() : *
+		public function motionResume() : void
 		{
 		}
 		
-		public function motionLoop() : *
+		public function motionLoop() : void
 		{
 		}
 		
-		public function motionOverride() : *
+		public function motionOverride() : void
 		{
 		}
 		
-		public function motionFinish() : *
+		public function motionFinish() : void
 		{
 			if(this.motionFinishCallback != null)
 			{
@@ -138,17 +138,17 @@ package LS_Classes
 			return this._time;
 		}
 		
-		public function set time(param1:Number) : *
+		public function set time(amount:Number) : void
 		{
 			var val2:* = undefined;
-			if(param1 <= this.duration)
+			if(amount <= this.duration)
 			{
-				if(param1 < 0)
+				if(amount < 0)
 				{
-					param1 = 0;
+					amount = 0;
 				}
-				val2 = this.func(param1,this.begin,this._cachedDelta,this.duration);
-				this._time = param1;
+				val2 = this.func(amount,this.begin,this._cachedDelta,this.duration);
+				this._time = amount;
 				this.position = val2;
 				this._obj[this._prop] = val2;
 			}
@@ -168,24 +168,24 @@ package LS_Classes
 			}
 		}
 		
-		public function continueTo(param1:Number, param2:Number = NaN) : *
+		public function continueTo(finishAt:Number, duration:Number = NaN) : void
 		{
 			this.begin = this.position;
-			this.finish = param1;
+			this.finish = finishAt;
 			this._cachedDelta = this.finish - this.begin;
-			if(!isNaN(param2))
+			if(!isNaN(duration))
 			{
-				this.duration = param2;
+				this.duration = duration;
 			}
 			this.start();
 		}
 		
-		public function fforward() : *
+		public function fforward() : void
 		{
 			this._settime(this.duration);
 		}
 		
-		public function nextFrame() : *
+		public function nextFrame() : void
 		{
 			if(this.useSeconds)
 			{
@@ -197,7 +197,7 @@ package LS_Classes
 			}
 		}
 		
-		public function prevFrame() : *
+		public function prevFrame() : void
 		{
 			if(!this.useSeconds)
 			{
@@ -205,7 +205,7 @@ package LS_Classes
 			}
 		}
 		
-		public function resume() : *
+		public function resume() : void
 		{
 			if(!this._obj)
 			{
@@ -220,13 +220,13 @@ package LS_Classes
 			this.motionResume();
 		}
 		
-		public function rewind(param1:Number = 0) : *
+		public function rewind(time:Number = 0) : void
 		{
-			this._settime(param1);
+			this._settime(time);
 			this.time = this._time;
 		}
 		
-		public function start() : *
+		public function start() : void
 		{
 			if(!this._obj)
 			{
@@ -240,32 +240,32 @@ package LS_Classes
 			}
 		}
 		
-		public function stop() : *
+		public function stop() : void
 		{
 			this._stopPlaying();
 			this.motionStop();
 		}
 		
-		public function yoyo() : *
+		public function yoyo() : void
 		{
 			this.continueTo(this.begin,this.time);
 		}
 		
-		private function _settime(param1:Number) : *
+		private function _settime(time:Number) : void
 		{
-			this._time = param1;
+			this._time = time;
 			if(this.useSeconds)
 			{
-				this._beginTime = getTimer() - param1 * 1000;
+				this._beginTime = getTimer() - time * 1000;
 			}
 		}
 		
-		private function _cancel() : *
+		private function _cancel() : void
 		{
 			this._obj = null;
 		}
 		
-		private function _startPlaying() : *
+		private function _startPlaying() : void
 		{
 			this.isPlaying = true;
 			this._sprite.addEventListener(Event.ENTER_FRAME,this._onEnterFrame,false,0,this._useWeakRef);
@@ -275,7 +275,7 @@ package LS_Classes
 			}
 		}
 		
-		private function _stopPlaying() : *
+		private function _stopPlaying() : void
 		{
 			this.isPlaying = false;
 			this._sprite.removeEventListener(Event.ENTER_FRAME,this._onEnterFrame);
@@ -285,7 +285,7 @@ package LS_Classes
 			}
 		}
 		
-		private function _onEnterFrame(param1:Event) : *
+		private function _onEnterFrame(e:Event) : void
 		{
 			this.nextFrame();
 		}

@@ -17,51 +17,51 @@ package LS_Classes
       public var m_FinishCallbackParams:Object = null;
       private var delayTimer:Timer = null;
       
-      public function larTween(target:Object, properyName:String, param3:Function, param4:Number, param5:Number, param6:Number, param7:Function = null, param8:Object = null, param9:Number = 0.0)
+      public function larTween(target:Object, properyName:String, tweenFunc:Function, beginAt:Number, finishAt:Number, duration:Number, finishCallback:Function = null, finishParams:Object = null, delay:Number = 0.0)
       {
-         var _loc12_:MovieClip = null;
-         var _loc10_:Boolean = true;
-         var _loc11_:DisplayObject = target as DisplayObject;
-         if(_loc11_)
+         var topParent:MovieClip = null;
+         var isValid:Boolean = true;
+         var targetObject:DisplayObject = target as DisplayObject;
+         if(targetObject)
          {
-            if(!_loc11_.stage)
+            if(!targetObject.stage)
             {
-               _loc12_ = _loc11_.parent as MovieClip;
-               while(_loc12_)
+               topParent = targetObject.parent as MovieClip;
+               while(topParent)
                {
-                  _loc12_ = _loc12_.parent as MovieClip;
+                  topParent = topParent.parent as MovieClip;
                }
-               ExternalInterface.call("UIAssert","using tween on displayObject that is not attached to the stage :" + _loc11_.name + " parent:" + (_loc11_.parent as MovieClip).name);
-               _loc10_ = false;
+               ExternalInterface.call("UIAssert","using tween on displayObject that is not attached to the stage :" + targetObject.name + " parent:" + (targetObject.parent as MovieClip).name);
+               isValid = false;
             }
          }
-         if(_loc10_)
+         if(isValid)
          {
-            super(target,properyName,param3,param4,param5,param6,true,true,true);
-            if(param9 > 0)
+            super(target,properyName,tweenFunc,beginAt,finishAt,duration,true,true,true);
+            if(delay > 0)
             {
                super.stop();
-               this.delayTimer = new Timer(param9 * 1000,1);
+               this.delayTimer = new Timer(delay * 1000,1);
                this.delayTimer.addEventListener(TimerEvent.TIMER_COMPLETE,this.delayedStart);
                this.delayTimer.start();
             }
-            this.m_FinishCallback = param7;
-            this.m_FinishCallbackParams = param8;
+            this.m_FinishCallback = finishCallback;
+            this.m_FinishCallbackParams = finishParams;
          }
       }
       
-      private function removedFromStageHandler(param1:Event) : *
+      private function removedFromStageHandler(e:Event) : void
       {
-         var _loc2_:DisplayObject = param1.currentTarget as DisplayObject;
-         if(_loc2_)
+         var target:DisplayObject = e.currentTarget as DisplayObject;
+         if(target)
          {
-            _loc2_.removeEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler);
+            target.removeEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler);
          }
          this.stop();
          this.cleanupTimer();
       }
       
-      private function cleanupTimer() : *
+      private function cleanupTimer() : void
       {
          if(this.delayTimer != null)
          {
@@ -71,7 +71,7 @@ package LS_Classes
          }
       }
       
-      override public function resume() : *
+      override public function resume() : void
       {
          if(this.delayTimer != null)
          {
@@ -83,7 +83,7 @@ package LS_Classes
          }
       }
       
-      override public function stop() : *
+      override public function stop() : void
       {
          if(isPlaying)
          {
@@ -95,38 +95,38 @@ package LS_Classes
          }
       }
       
-      override public function motionStart() : *
+      override public function motionStart() : void
       {
-         var _loc1_:DisplayObject = null;
+         var target:DisplayObject = null;
          super.motionStart();
-         if(obj)
+         if(this.obj)
          {
-            _loc1_ = obj as DisplayObject;
-            if(_loc1_)
+            target = this.obj as DisplayObject;
+            if(target)
             {
-               if(_loc1_.stage)
+               if(target.stage)
                {
-                  _loc1_.addEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler,false,0,true);
+                  target.addEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler,false,0,true);
                }
             }
          }
       }
       
-      override public function motionStop() : *
+      override public function motionStop() : void
       {
-         var _loc1_:DisplayObject = null;
+         var target:DisplayObject = null;
          super.motionStop();
-         if(obj)
+         if(this.obj)
          {
-            _loc1_ = obj as DisplayObject;
-            if(_loc1_)
+            target = this.obj as DisplayObject;
+            if(target)
             {
-               _loc1_.removeEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler);
+               target.removeEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler);
             }
          }
       }
       
-      override public function motionFinish() : *
+      override public function motionFinish() : void
       {
          if(this.m_FinishCallback != null)
          {
@@ -141,7 +141,7 @@ package LS_Classes
          }
       }
       
-      override public function motionResume() : *
+      override public function motionResume() : void
       {
          super.motionResume();
          if(this.m_ResumeCallback != null)
@@ -150,16 +150,16 @@ package LS_Classes
          }
       }
       
-      override public function set time(param1:Number) : *
+      override public function set time(time:Number) : void
       {
-         super.time = param1;
+         super.time = time;
          if(this.m_UpdateCallback != null)
          {
             this.m_UpdateCallback();
          }
       }
       
-      override public function motionOverride() : *
+      override public function motionOverride() : void
       {
          if(this.m_OverrideCallback != null)
          {
@@ -167,15 +167,15 @@ package LS_Classes
          }
       }
       
-      private function delayedStart(param1:TimerEvent) : *
+      private function delayedStart(e:TimerEvent) : void
       {
          this.cleanupTimer();
          super.resume();
       }
       
-      public function set onComplete(param1:Function) : *
+      public function set onComplete(callback:Function) : void
       {
-         this.m_FinishCallback = param1;
+         this.m_FinishCallback = callback;
       }
       
       public function get onComplete() : Function
@@ -183,9 +183,9 @@ package LS_Classes
          return this.m_FinishCallback;
       }
       
-      public function set onUpdate(param1:Function) : *
+      public function set onUpdate(callback:Function) : void
       {
-         this.m_UpdateCallback = param1;
+         this.m_UpdateCallback = callback;
       }
       
       public function get onUpdate() : Function

@@ -24,9 +24,7 @@ Ext.Require("Server/System/TurnCounter.lua")
 Ext.Require("Server/System/StatusManager.lua")
 Ext.Require("Server/System/TagManager.lua")
 Ext.Require("Server/System/AttackManager.lua")
-if coroutine then
-	Ext.Require("Server/Game/SceneManager.lua")
-end
+Ext.Require("Server/System/SceneManager.lua")
 Ext.Require("Server/Listeners/_Init.lua")
 Ext.Require("Server/ModMenu/ModMenuServerCommands.lua")
 Ext.Require("Server/OsirisHelpers.lua")

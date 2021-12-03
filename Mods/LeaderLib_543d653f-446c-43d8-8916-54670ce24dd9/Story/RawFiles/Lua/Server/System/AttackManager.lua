@@ -125,7 +125,7 @@ end
 function AttackManager.InvokeCallbacks(tbl, ...)
 	for k,v in pairs(tbl) do
 		local b,err = xpcall(v.Callback, debug.traceback, ...)
-		if not be then
+		if not b then
 			Ext.PrintError(err)
 		end
 	end
@@ -160,8 +160,8 @@ Ext.RegisterOsirisListener("CharacterStartAttackObject", 3, "after", OnBasicAtta
 local function OnBasicAttackPosition(x, y, z, owner, attacker)
 	attacker = GameHelpers.GetCharacter(attacker)
 	local target = {x,y,z}
-	PersistentVars.StartAttackPosition[attacker] = target
-	if attacker and target then
+	PersistentVars.StartAttackPosition[attacker.MyGuid] = target
+	if attacker then
 		AttackManager.InvokeCallbacks(AttackManager.OnStart.Listeners, attacker, target, false)
 	end
 end
@@ -175,7 +175,7 @@ Ext.RegisterOsirisListener("CharacterStartAttackPosition", 5, "after", OnBasicAt
 function AttackManager.InvokeOnHit(isFromHit, attacker, target, data, skill)
 	local targetIsObject = type(target) == "userdata"
 	AttackManager.InvokeCallbacks(AttackManager.OnHit.Listeners, attacker, target, data, targetIsObject, skill)
-	if attacker and GameHelpers.Ext.ObjectIsCharacter(attacker) then
+	if GameHelpers.Ext.ObjectIsCharacter(attacker) then
 		for tag,callbacks in pairs(AttackManager.OnWeaponTagHit.Listeners) do
 			if GameHelpers.CharacterOrEquipmentHasTag(attacker, tag) then
 				AttackManager.InvokeCallbacks(callbacks, tag, attacker, target, data, targetIsObject, skill)

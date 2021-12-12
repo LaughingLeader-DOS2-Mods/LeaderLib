@@ -6,30 +6,17 @@ package LS_Classes
    
    public class coverFlow extends listDisplay
    {
-       
-      
       public var frameWidth:Number = 200;
-      
       public var frameHeight:Number = 100;
-      
       public var currentWidth:Number = 180;
-      
       public var currentHeight:Number = 180;
-      
       public var scaleMod:Number = 0.96;
-      
       public var selectedScale:Number = 1;
-      
       public var foldedXscale:Number = 0.9;
-      
       public var foldedYscale:Number = 0.9;
-      
       public var centerSpacing:Number = 10;
-      
       public var listY:Number = 30;
-      
       protected var m_displaySideCards:Number = 6;
-      
       private var TweenDuration:Number = 0.4;
       
       public function coverFlow()

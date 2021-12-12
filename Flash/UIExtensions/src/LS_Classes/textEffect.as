@@ -5,8 +5,6 @@ package LS_Classes
    
    public class textEffect
    {
-       
-      
       public function textEffect()
       {
          super();

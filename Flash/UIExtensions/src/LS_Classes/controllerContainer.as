@@ -7,32 +7,18 @@ package LS_Classes
 	
 	public class controllerContainer extends horizontalList
 	{
-		 
-		
 		public var centerButtons:Boolean = false;
-		
 		public var alignLeft:Boolean = false;
-		
 		public var buttonhintContY:int = -1;
-		
 		public var centerPanelPosX:int = -1;
-		
 		public var leftPanelPosX:int = -1;
-		
 		public var buttonhintFrameWidth:int = -1;
-		
 		public var bounceTreshHold:int = 50;
-		
 		public var bounceInterval:Number = 1.5;
-		
 		public var bounceTime:Number = 50;
-		
 		private var m_BounceAmount:int = -1;
-		
 		private var m_BounceTween:larTween = null;
-		
 		public var m_CurrBounce:Number = 0;
-		
 		public var containerMaxWidth:uint = 0;
 		
 		public function controllerContainer()

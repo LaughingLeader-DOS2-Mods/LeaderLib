@@ -11,62 +11,33 @@ package LS_Classes
       
    public dynamic class larCombo extends MovieClip
    {
-       
-      
       public var SND_Over:String = "UI_Generic_Over";
-      
       public var SND_Open:String = "UI_MainMenu_MenuDrop_Open";
-      
       public var SND_Close:String = "UI_MainMenu_MenuDrop_Close";
-      
       public var SND_Click:String = "UI_Gen_XButton_Click";
-      
       private var m_selIndex:int;
-      
       private var _rowCount:uint = 8;
-      
       private var m_items_array:Array;
-      
       private var m_scrollList:scrollList;
-      
       public var m_isOpen:Boolean = false;
-      
       private var _elH:Number = 30;
-      
       private var _editable:Boolean = false;
-      
       private var m_bg_mc:MovieClip;
-      
       public var top_mc:MovieClip;
-      
       public var bgTopSizeDiff:Number = -6;
-      
       public var bgTopDisplacement:Number = 0;
-      
       public var m_dropOutYDisplacement:Number = 0;
-      
       public var m_forceUpdate:Boolean = false;
-      
       private var m_enabled:Boolean;
-      
       private var m_selectContainer:MovieClip;
-      
       private var m_bgHSpacing:Number = 6;
-      
       public var m_listTopHSpacing:Number = 4;
-      
       private var cmbElement:Class;
-      
       private var m_mouseWheelEnabledWhenClosed:Boolean = false;
-      
-      public var divider_mc;
-      
+      public var divider_mc:MovieClip;
       public var onOver:Function = null;
-      
       public var onOut:Function = null;
-      
       private var hasDeactivateListener:Boolean = false;
-      
       private var pressedFunc:Function;
       
       public function larCombo(param1:String = "comboElement", param2:String = "comboDDBG")
@@ -97,7 +68,6 @@ package LS_Classes
             _loc4_ = new this.cmbElement();
             this.m_scrollList.setFrame(this.top_mc.width + this.bgTopSizeDiff,_loc4_.height * this._rowCount);
             this.m_bg_mc.width = this.top_mc.width + this.bgTopSizeDiff;
-            MainTimeline.SetTextFormat(this.top_mc.text_txt);
          }
          this.m_scrollList.addEventListener(MouseEvent.ROLL_OUT,this.scrollListOut);
          this.m_scrollList.addEventListener(Event.CHANGE,this.comboScrolled);
@@ -458,7 +428,6 @@ package LS_Classes
          comboEntry.Combo = this;
          comboEntry._item = entryObject;
          comboEntry.text_txt.htmlText = entryObject.label;
-         MainTimeline.SetTextFormat(comboEntry.text_txt);
          if(entryObject.id != null)
          {
             comboEntry.id = entryObject.id;

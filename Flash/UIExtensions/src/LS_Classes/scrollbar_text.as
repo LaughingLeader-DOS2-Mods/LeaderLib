@@ -11,80 +11,42 @@ package LS_Classes
 		
 	public class scrollbar_text extends MovieClip
 	{
-		 
-		
 		public var SND_Over:String = "";
-		
 		public var SND_Press:String = "";
-		
 		public var SND_Release:String = "";
-		
 		private var m_disabled:Boolean = false;
-		
 		private var m_content_txt:TextField;
-		
 		public var m_SCROLLSPEED:Number = 2;
-		
 		private var m_last_Y:Number = 0;
-		
 		private var m_scrollerDiff:Number = 0;
-		
 		public var m_down_mc:MovieClip;
-		
 		public var m_up_mc:MovieClip;
-		
 		public var m_handle_mc:MovieClip;
-		
 		public var m_FFdown_mc:MovieClip = null;
-		
 		public var m_FFup_mc:MovieClip = null;
-		
 		private var m_ffUpH:Number = 0;
-		
 		private var m_ffDownH:Number = 0;
-		
 		public var m_bg_mc:MovieClip;
-		
 		private var m_mouseWheelEnabled:Boolean = false;
-		
 		private var m_HasMouseWheelEvent:Boolean = true;
-		
 		public var m_mouseWheelWhenOverEnabled:Boolean = false;
-		
 		public var m_hideWhenDisabled:Boolean = true;
-		
 		public var m_disabledAlpha:Number = 0.3;
-		
 		public var m_tweenY:Number = 0;
-		
 		public var m_scaleBG:Boolean = true;
-		
 		private var m_handleResizable:Boolean = false;
-		
 		public var m_scrolledY:Number = 0;
-		
 		public var m_positionButtons:Boolean = true;
-		
 		public var m_animateScrolling:Boolean = false;
-		
 		private var m_scrollTimer:Timer;
-		
 		private var m_initialScrollDelay:Number = 400;
-		
 		private var m_scrollMultiplier:Number = 0.55;
-		
 		private var m_currentScrollDelay:Number = 400;
-		
 		private var m_currentScrollDown:Boolean = true;
-		
 		private var m_minScrollDelay:Number = 20;
-		
 		private var m_sbSpacing:Number = 0;
-		
 		public var m_scrollFunc:Function;
-		
 		public var m_scrollTime:Number = 0.2;
-		
 		private var m_scrollTween:larTween;
 		
 		public function scrollbar_text(param1:String = "down_id", param2:String = "up_id", param3:String = "handle_id", param4:String = "scrollBg_id", param5:String = "", param6:String = "")

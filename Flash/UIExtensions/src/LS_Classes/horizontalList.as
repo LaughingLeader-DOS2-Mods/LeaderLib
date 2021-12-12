@@ -5,20 +5,12 @@ package LS_Classes
 	
 	public class horizontalList extends listDisplay
 	{
-		 
-		
 		public var rightSided:Boolean = true;
-		
 		public var m_MaxWidth:int = -1;
-		
 		public var m_MaxRowElements:int = -1;
-		
 		public var m_RowSpacing:int = 0;
-		
 		public var m_CenterHolders:Boolean = false;
-		
 		public var m_RowHeight:Number = -1;
-		
 		private var m_holderArray:Array;
 		
 		public function horizontalList()

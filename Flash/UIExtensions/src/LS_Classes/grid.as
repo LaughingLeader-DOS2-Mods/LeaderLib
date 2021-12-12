@@ -5,20 +5,12 @@ package LS_Classes
 	
 	public class grid extends listDisplay
 	{
-		 
-		
 		protected var m_row:uint = 3;
-		
 		protected var m_col:uint = 9;
-		
 		protected var m_maxPages:uint = 1;
-		
 		protected var m_currpage:uint = 1;
-		
 		public var ROW_SPACING:Number = 4;
-		
 		public var m_centered:Boolean = false;
-		
 		public var m_gridAlign:Number = 0;
 		
 		public function grid()

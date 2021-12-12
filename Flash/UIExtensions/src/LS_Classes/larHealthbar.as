@@ -7,26 +7,15 @@ package LS_Classes
 	
 	public class larHealthbar extends MovieClip
 	{
-		 
-		
 		public var hBar_mc:MovieClip;
-		
 		public var hBar2_mc:MovieClip;
-		
 		public var easingFunction:Function;
-		
 		private var timeline:larTween;
-		
 		private var percHB:Number = 0;
-		
 		private var percTemp:Number = 0;
-		
 		private var m_BarColour:uint;
-		
 		public var tweenDelay:Number = 0.8;
-		
 		public var tweenTime:Number = 0.5;
-		
 		private var m_FinishCallback:Function = null;
 		
 		public function larHealthbar()

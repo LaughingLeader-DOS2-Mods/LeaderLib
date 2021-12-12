@@ -4,10 +4,7 @@ package LS_Classes
 		
 	public class controllerBtnHint extends MovieClip
 	{
-		 
-		
 		public var iconHL_mc:MovieClip;
-		
 		public var icon_mc:MovieClip;
 		
 		public function controllerBtnHint()

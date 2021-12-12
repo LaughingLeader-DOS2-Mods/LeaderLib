@@ -2,69 +2,37 @@ package LS_Classes
 {
 	public class controllerHelper
 	{
-		
 		public static const BTN_B:uint = 1;
-		
 		public static const BTN_A:uint = 2;
-		
 		public static const BTN_X:uint = 3;
-		
 		public static const BTN_Y:uint = 4;
-		
 		public static const BTN_LT:uint = 5;
-		
 		public static const BTN_RT:uint = 6;
-		
 		public static const BTN_StickLeft:uint = 7;
-		
 		public static const BTN_StickRight:uint = 8;
-		
 		public static const BTN_StickLeft_up:uint = 9;
-		
 		public static const BTN_StickLeft_down:uint = 10;
-		
 		public static const BTN_StickLeft_left:uint = 11;
-		
 		public static const BTN_StickLeft_right:uint = 12;
-		
 		public static const BTN_StickLeft_horiz:uint = 13;
-		
 		public static const BTN_StickLeft_vert:uint = 14;
-		
 		public static const BTN_StickRight_up:uint = 15;
-		
 		public static const BTN_StickRight_down:uint = 16;
-		
 		public static const BTN_StickRight_left:uint = 17;
-		
 		public static const BTN_StickRight_right:uint = 18;
-		
 		public static const BTN_StickRight_horiz:uint = 19;
-		
 		public static const BTN_StickRight_vert:uint = 20;
-		
 		public static const BTN_DPad_up:uint = 21;
-		
 		public static const BTN_DPad_down:uint = 22;
-		
 		public static const BTN_DPad_left:uint = 23;
-		
 		public static const BTN_DPad_right:uint = 24;
-		
 		public static const BTN_DPad_horiz:uint = 25;
-		
 		public static const BTN_DPad_vert:uint = 26;
-		
 		public static const BTN_Back:uint = 27;
-		
 		public static const BTN_Start:uint = 28;
-		
 		public static const BTN_StickLeft_press:uint = 29;
-		
 		public static const BTN_StickRight_press:uint = 30;
-		
 		public static const BTN_LB:uint = 31;
-		
 		public static const BTN_RB:uint = 32;
 		 
 		

@@ -497,18 +497,18 @@ package LS_Classes
 			}
 		}
 		
-		function onOver(param1:Event) : *
+		public function onOver(e:Event) : *
 		{
-			var val2:MovieClip = param1.currentTarget as MovieClip;
+			var val2:MovieClip = e.currentTarget as MovieClip;
 			if(!this.m_disabled)
 			{
 				val2.gotoAndStop(2);
 			}
 		}
 		
-		function onOut(param1:Event) : *
+		public function onOut(e:Event) : *
 		{
-			var val2:MovieClip = param1.currentTarget as MovieClip;
+			var val2:MovieClip = e.currentTarget as MovieClip;
 			if(!this.m_disabled)
 			{
 				val2.gotoAndStop(1);

@@ -252,7 +252,8 @@ package LS_Classes
 			val4 = 0;
 			while(val4 < content_array.length)
 			{
-				if((val5 = content_array[val4]) && val5.visible)
+				val5 = content_array[val4];
+				if(val5 != null && val5.visible)
 				{
 					val6 = getElementHeight(val5);
 					if(val5.y <= param1 && val5.y + val6 > param1)

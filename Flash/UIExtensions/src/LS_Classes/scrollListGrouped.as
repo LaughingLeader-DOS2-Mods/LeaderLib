@@ -165,8 +165,8 @@ package LS_Classes
 		
 		public function addGroupElement(param1:Number, param2:MovieClip, param3:Boolean = true) : MovieClip
 		{
-			var val4:MovieClip;
-			if(val4 = getElementByNumber("groupId",param1))
+			var val4:MovieClip = getElementByNumber("groupId",param1);
+			if(val4 != null)
 			{
 				param2.gId = this.gIdCounter++;
 				param2.groupId = param1;
@@ -345,7 +345,8 @@ package LS_Classes
 									val3 = val1.list_pos + 1;
 									while(val3 < content_array.length)
 									{
-										if((val4 = content_array[val3]) && val4.visible && val4._isOpen && val4.list.visibleLength > 0)
+										val4 = content_array[val3];
+										if(val4 != null && val4.visible && val4._isOpen && val4.list.visibleLength > 0)
 										{
 											val1.list.selectMC(null);
 											this.select(val3);
@@ -404,7 +405,8 @@ package LS_Classes
 				val7 = 0;
 				while(val7 < content_array.length)
 				{
-					if((val8 = content_array[val7]) && val8.visible && val8._isOpen && val8.list.length > 0)
+					val8 = content_array[val7];
+					if(val8 != null && val8.visible && val8._isOpen && val8.list.length > 0)
 					{
 						select(val7);
 						if(val8.deselectElement)
@@ -501,7 +503,8 @@ package LS_Classes
 					}
 					else if(m_cyclic)
 					{
-						if(val4 = getLastVisible())
+						val4 = getLastVisible();
+						if(val4 != null)
 						{
 							this.selectMC(val4);
 							this.m_preventScrollUpdate = false;
@@ -521,7 +524,8 @@ package LS_Classes
 					val6 = val2.list_pos - 1;
 					while(val6 >= 0)
 					{
-						if((val7 = content_array[val6]) && val7.visible && val7._isOpen && val7.list.length > 0)
+						val7 = content_array[val6];
+						if(val7 != null && val7.visible && val7._isOpen && val7.list.length > 0)
 						{
 							val2.list.selectMC(null);
 							select(val6);
@@ -677,7 +681,8 @@ package LS_Classes
 			}
 			else if(this.m_FixedSelectionPosition != -1)
 			{
-				if(val6 = this.getCurrentMovieClip())
+				val6 = this.getCurrentMovieClip();
+				if(val6 != null)
 				{
 					val7 = LSDisplayObjectHelpers.getRelativePosition(val6,containerContent_mc);
 					val8 = 0;
@@ -689,7 +694,8 @@ package LS_Classes
 					val10 = 0;
 					if(!this.m_SelectGroups)
 					{
-						if(val11 = getFirstVisible())
+						val11 = getFirstVisible();
+						if(val11 != null)
 						{
 							val10 = val11.listContainer_mc.y;
 						}
@@ -769,7 +775,8 @@ package LS_Classes
 			val4 = 0;
 			while(val4 < content_array.length)
 			{
-				if((val5 = content_array[val4]) && val5.visible)
+				val5 = content_array[val4];
+				if(val5 != null && val5.visible)
 				{
 					val6 = this.getElementHeight(val5);
 					if(val5.y <= param1 && val5.y + val6 > param1)

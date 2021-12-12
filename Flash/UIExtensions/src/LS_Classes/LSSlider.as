@@ -413,7 +413,7 @@ package LS_Classes
          this.m_handleDown = false;
       }
       
-      private function handleMove(param1:Event) : *
+      private function handleMove(e:Event) : *
       {
          var _loc2_:Number = NaN;
          if(!this.m_disabled)
@@ -445,7 +445,7 @@ package LS_Classes
          }
       }
       
-      private function handleOff(param1:Event) : *
+      private function handleOff(e:Event) : *
       {
          this.m_handleOver = false;
          if(!this.m_handleDown)
@@ -458,7 +458,7 @@ package LS_Classes
          }
       }
       
-      function handleOn(param1:Event) : *
+     public  function handleOn(e:Event) : *
       {
          if(!this.m_disabled)
          {
@@ -475,7 +475,7 @@ package LS_Classes
          }
       }
       
-      function upOff(param1:Event) : *
+      public function upOff(e:Event) : *
       {
          if(!this.m_disabled)
          {
@@ -483,7 +483,7 @@ package LS_Classes
          }
       }
       
-      function upOn(param1:Event) : *
+      public function upOn(e:Event) : *
       {
          if(!this.m_disabled)
          {
@@ -492,7 +492,7 @@ package LS_Classes
          }
       }
       
-      private function upPressed(param1:Event) : *
+      private function upPressed(e:Event) : *
       {
          if(!this.m_disabled)
          {
@@ -512,7 +512,7 @@ package LS_Classes
          this.adjustScrollHandle(this.m_SCROLLSPEED);
       }
       
-      private function BGPressed(param1:Event) : *
+      private function BGPressed(e:Event) : *
       {
          if(!this.m_disabled)
          {
@@ -532,7 +532,7 @@ package LS_Classes
          }
       }
       
-      function downOn(param1:Event) : *
+      public function downOn(e:Event) : *
       {
          if(!this.m_disabled)
          {
@@ -545,7 +545,7 @@ package LS_Classes
          }
       }
       
-      function downOff(param1:Event) : *
+      public function downOff(e:Event) : *
       {
          if(!this.m_disabled)
          {
@@ -557,11 +557,11 @@ package LS_Classes
          }
       }
       
-      private function onUp(param1:Event) : *
+      private function onUp(e:Event) : *
       {
          if(!this.m_disabled)
          {
-            param1.currentTarget.gotoAndStop(1);
+            e.currentTarget.gotoAndStop(1);
          }
       }
    }

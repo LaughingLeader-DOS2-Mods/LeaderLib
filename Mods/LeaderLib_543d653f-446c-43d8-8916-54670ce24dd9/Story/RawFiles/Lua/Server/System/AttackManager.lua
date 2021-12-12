@@ -155,7 +155,7 @@ local function OnBasicAttackTarget(target, owner, attacker)
 		AttackManager.InvokeCallbacks(AttackManager.OnStart.Listeners, attacker, target, true)
 	end
 end
-Ext.RegisterOsirisListener("CharacterStartAttackObject", 3, "after", OnBasicAttackTarget)
+RegisterProtectedOsirisListener("CharacterStartAttackObject", 3, "after", OnBasicAttackTarget)
 
 local function OnBasicAttackPosition(x, y, z, owner, attacker)
 	attacker = GameHelpers.GetCharacter(attacker)
@@ -165,7 +165,7 @@ local function OnBasicAttackPosition(x, y, z, owner, attacker)
 		AttackManager.InvokeCallbacks(AttackManager.OnStart.Listeners, attacker, target, false)
 	end
 end
-Ext.RegisterOsirisListener("CharacterStartAttackPosition", 5, "after", OnBasicAttackPosition)
+RegisterProtectedOsirisListener("CharacterStartAttackPosition", 5, "after", OnBasicAttackPosition)
 
 --- @param isFromHit boolean
 --- @param attacker EsvCharacter|EsvItem

@@ -46,7 +46,7 @@ end
 
 ---@param target string
 function SkillEventData:AddTargetObject(target)
-	self.TargetObjects[#self.TargetObjects+1] = GetUUID(target)
+	self.TargetObjects[#self.TargetObjects+1] = StringHelpers.GetUUID(target)
 	self.TotalTargetObjects = self.TotalTargetObjects + 1
 end
 
@@ -87,8 +87,8 @@ function SkillEventData:ForEach(func, mode)
 	local runOnObjects = mode ~= 1 and self.TotalTargetObjects > 0
 	if runOnObjects then
 		for i,v in pairs(self.TargetObjects) do
-			local status,err = xpcall(func, debug.traceback, v, "string", self)
-			if not status then
+			local b,err = xpcall(func, debug.traceback, v, "string", self)
+			if not b then
 				Ext.PrintError("[LeaderLib:SkillEventData:ForEach] Error:")
 				Ext.PrintError(err)
 			end
@@ -97,8 +97,8 @@ function SkillEventData:ForEach(func, mode)
 	local runOnPositions = mode ~= 0 and self.TotalTargetPositions > 0
 	if runOnPositions then
 		for i,v in pairs(self.TargetPositions) do
-			local status,err = xpcall(func, debug.traceback, v, "table", self)
-			if not status then
+			local b,err = xpcall(func, debug.traceback, v, "table", self)
+			if not b then
 				Ext.PrintError("[LeaderLib:SkillEventData:ForEach] Error:")
 				Ext.PrintError(err)
 			end

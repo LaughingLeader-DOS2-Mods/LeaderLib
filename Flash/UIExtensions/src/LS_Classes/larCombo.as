@@ -40,19 +40,19 @@ package LS_Classes
       private var hasDeactivateListener:Boolean = false;
       private var pressedFunc:Function;
       
-      public function larCombo(param1:String = "comboElement", param2:String = "comboDDBG")
+      public function larCombo(elementClass:String = "LS_Symbols.comboElement", bgClass:String = "LS_Symbols.comboDDBG")
       {
-         var _loc4_:MovieClip = null;
+         var comboElement_mc:MovieClip = null;
          this.m_selectContainer = new MovieClip();
          super();
          this.m_items_array = new Array();
-         this.m_scrollList = new scrollList("down_id_small","up_id_small","handle_id_small","scrollBg_id_small");
+         this.m_scrollList = new scrollList("LS_Symbols.down_id_small","LS_Symbols.up_id_small","LS_Symbols.handle_id_small","LS_Symbols.scrollBg_id_small");
          this.m_scrollList.x = 2;
-         this.cmbElement = Registry.GetClass(param1);
+         this.cmbElement = Registry.GetClass(elementClass);
          this.m_scrollList.EL_SPACING = 1;
          this.m_scrollList.SB_SPACING = -(this.m_scrollList.m_scrollbar_mc.width + 9);
-         var _loc3_:Class = Registry.GetClass(param2);
-         this.m_bg_mc = new _loc3_();
+         var bgClassType:Class = Registry.GetClass(bgClass);
+         this.m_bg_mc = new bgClassType();
          this.m_selectContainer.addChild(this.m_bg_mc);
          this.m_selectContainer.addChild(this.m_scrollList);
          this.m_scrollList.m_scrollbar_mc.addCustomStage(this.stage);
@@ -65,8 +65,8 @@ package LS_Classes
             this.top_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.topDown);
             this.top_mc.addEventListener(MouseEvent.ROLL_OUT,this.topOut);
             this.top_mc.addEventListener(MouseEvent.ROLL_OVER,this.topOver);
-            _loc4_ = new this.cmbElement();
-            this.m_scrollList.setFrame(this.top_mc.width + this.bgTopSizeDiff,_loc4_.height * this._rowCount);
+            comboElement_mc = new this.cmbElement();
+            this.m_scrollList.setFrame(this.top_mc.width + this.bgTopSizeDiff,comboElement_mc.height * this._rowCount);
             this.m_bg_mc.width = this.top_mc.width + this.bgTopSizeDiff;
          }
          this.m_scrollList.addEventListener(MouseEvent.ROLL_OUT,this.scrollListOut);
@@ -74,9 +74,9 @@ package LS_Classes
 
       }
 
-      public function set divider(param1:MovieClip) : *
+      public function set divider(mc:MovieClip) : *
       {
-         this.divider_mc = param1;
+         this.divider_mc = mc;
          if(this.divider_mc)
          {
             this.m_selectContainer.addChild(this.divider_mc);
@@ -85,15 +85,15 @@ package LS_Classes
          }
       }
       
-      public function set bgHSpacing(param1:Number) : *
+      public function set bgHSpacing(value:Number) : *
       {
-         this.m_bgHSpacing = param1;
+         this.m_bgHSpacing = value;
          this._resizeDDBg();
       }
       
-      public function set SB_SPACING(param1:Number) : *
+      public function set SB_SPACING(value:Number) : *
       {
-         this.m_scrollList.SB_SPACING = param1;
+         this.m_scrollList.SB_SPACING = value;
       }
       
       public function get SB_SPACING() : Number
@@ -101,9 +101,9 @@ package LS_Classes
          return this.m_scrollList.SB_SPACING;
       }
       
-      public function init(param1:Function) : *
+      public function init(pressedCallback:Function) : *
       {
-         this.pressedFunc = param1;
+         this.pressedFunc = pressedCallback;
       }
       
       public function next() : *
@@ -132,11 +132,11 @@ package LS_Classes
          }
       }
       
-      public function setElementClass(param1:String = "comboElement") : *
+      public function setElementClass(elementClass:String = "LS_Symbols.comboElement") : *
       {
-         this.cmbElement = Registry.GetClass(param1);
-         var _loc2_:MovieClip = new this.cmbElement();
-         this.m_scrollList.setFrame(this.top_mc.width + this.bgTopSizeDiff,_loc2_.height * this._rowCount);
+         this.cmbElement = Registry.GetClass(elementClass);
+         var mc:MovieClip = new this.cmbElement();
+         this.m_scrollList.setFrame(this.top_mc.width + this.bgTopSizeDiff,mc.height * this._rowCount);
       }
       
       public function close() : *

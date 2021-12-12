@@ -22,7 +22,7 @@ package LS_Classes
 		private var m_bgTile1_mc:MovieClip = null;
 		private var m_bgTile2_mc:MovieClip = null;
 		
-		public function scrollList(param1:String = "down_id", param2:String = "up_id", param3:String = "handle_id", param4:String = "scrollBg_id", param5:String = "", param6:String = "")
+		public function scrollList(param1:String = "LS_Symbols.down_id", param2:String = "LS_Symbols.up_id", param3:String = "LS_Symbols.handle_id", param4:String = "LS_Symbols.scrollBg_id", param5:String = "", param6:String = "")
 		{
 			this.m_scrollbar_mc = new scrollbar(param1,param2,param3,param4,param5,param6);
 			super();

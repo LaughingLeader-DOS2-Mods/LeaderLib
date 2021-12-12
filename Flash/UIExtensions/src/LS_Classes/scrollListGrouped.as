@@ -36,7 +36,7 @@ package LS_Classes
 		public var m_ToggleSelections:Boolean = false;
 		public var m_ClearClosedGroups:Boolean = false;
 		
-		public function scrollListGrouped(downClassName:String = "down_id", upClassName:String = "up_id", handleClassName:String = "handle_id", bgClassName:String = "scrollBg_id", ffDownClassName:String = "", ffUpClassName:String = "")
+		public function scrollListGrouped(downClassName:String = "LS_Symbols.down_id", upClassName:String = "LS_Symbols.up_id", handleClassName:String = "LS_Symbols.handle_id", bgClassName:String = "LS_Symbols.scrollBg_id", ffDownClassName:String = "", ffUpClassName:String = "")
 		{
 			this.groupClass = MovieClip;
 			this.m_frameHit_mc = new MovieClip();

@@ -49,112 +49,112 @@ package LS_Classes
 				case BTN_B:
 					if(param2)
 					{
-						val3 = "iconBigCircle";
+						val3 = "LS_Symbols.consoleHints.iconBigCircle";
 					}
 					else
 					{
-						val3 = "iconCircle";
+						val3 = "LS_Symbols.consoleHints.iconCircle";
 					}
 					break;
 				case BTN_A:
 					if(param2)
 					{
-						val3 = "iconBigCross";
+						val3 = "LS_Symbols.consoleHints.iconBigCross";
 					}
 					else
 					{
-						val3 = "iconCross";
+						val3 = "LS_Symbols.consoleHints.iconCross";
 					}
 					break;
 				case BTN_X:
-					val3 = "iconSquare";
+					val3 = "LS_Symbols.consoleHints.iconSquare";
 					break;
 				case BTN_Y:
-					val3 = "iconTriangle";
+					val3 = "LS_Symbols.consoleHints.iconTriangle";
 					break;
 				case BTN_LT:
-					val3 = "iconLT";
+					val3 = "LS_Symbols.consoleHints.iconLT";
 					break;
 				case BTN_RT:
-					val3 = "iconRT";
+					val3 = "LS_Symbols.consoleHints.iconRT";
 					break;
 				case BTN_StickLeft:
-					val3 = "iconStickLeft";
+					val3 = "LS_Symbols.consoleHints.iconStickLeft";
 					break;
 				case BTN_StickRight:
-					val3 = "iconStickRight";
+					val3 = "LS_Symbols.consoleHints.iconStickRight";
 					break;
 				case BTN_StickLeft_up:
-					val3 = "iconStickLeft_up";
+					val3 = "LS_Symbols.consoleHints.iconStickLeft_up";
 					break;
 				case BTN_StickLeft_down:
-					val3 = "iconStickLeft_down";
+					val3 = "LS_Symbols.consoleHints.iconStickLeft_down";
 					break;
 				case BTN_StickLeft_left:
-					val3 = "iconStickLeft_left";
+					val3 = "LS_Symbols.consoleHints.iconStickLeft_left";
 					break;
 				case BTN_StickLeft_right:
-					val3 = "iconStickLeft_right";
+					val3 = "LS_Symbols.consoleHints.iconStickLeft_right";
 					break;
 				case BTN_StickLeft_horiz:
-					val3 = "iconStickLeft_horiz";
+					val3 = "LS_Symbols.consoleHints.iconStickLeft_horiz";
 					break;
 				case BTN_StickLeft_vert:
-					val3 = "iconStickLeft_vert";
+					val3 = "LS_Symbols.consoleHints.iconStickLeft_vert";
 					break;
 				case BTN_StickRight_up:
-					val3 = "iconStickRight_up";
+					val3 = "LS_Symbols.consoleHints.iconStickRight_up";
 					break;
 				case BTN_StickRight_down:
-					val3 = "iconStickRight_down";
+					val3 = "LS_Symbols.consoleHints.iconStickRight_down";
 					break;
 				case BTN_StickRight_left:
-					val3 = "iconStickRight_left";
+					val3 = "LS_Symbols.consoleHints.iconStickRight_left";
 					break;
 				case BTN_StickRight_right:
-					val3 = "iconStickRight_right";
+					val3 = "LS_Symbols.consoleHints.iconStickRight_right";
 					break;
 				case BTN_StickRight_horiz:
-					val3 = "iconStickRight_horiz";
+					val3 = "LS_Symbols.consoleHints.iconStickRight_horiz";
 					break;
 				case BTN_StickRight_vert:
-					val3 = "iconStickRight_vert";
+					val3 = "LS_Symbols.consoleHints.iconStickRight_vert";
 					break;
 				case BTN_DPad_up:
-					val3 = "iconDpad_up";
+					val3 = "LS_Symbols.consoleHints.iconDpad_up";
 					break;
 				case BTN_DPad_down:
-					val3 = "iconDpad_down";
+					val3 = "LS_Symbols.consoleHints.iconDpad_down";
 					break;
 				case BTN_DPad_left:
-					val3 = "iconDpad_left";
+					val3 = "LS_Symbols.consoleHints.iconDpad_left";
 					break;
 				case BTN_DPad_right:
-					val3 = "iconDpad_right";
+					val3 = "LS_Symbols.consoleHints.iconDpad_right";
 					break;
 				case BTN_DPad_horiz:
-					val3 = "iconDpad_horiz";
+					val3 = "LS_Symbols.consoleHints.iconDpad_horiz";
 					break;
 				case BTN_DPad_vert:
-					val3 = "iconDpad_vert";
+					val3 = "LS_Symbols.consoleHints.iconDpad_vert";
 					break;
 				case BTN_Back:
-					val3 = "iconBack";
+					val3 = "LS_Symbols.consoleHints.iconBack";
 					break;
 				case BTN_Start:
-					val3 = "iconStart";
+					val3 = "LS_Symbols.consoleHints.iconStart";
 					break;
 				case BTN_StickLeft_press:
-					val3 = "iconStickLeft_press";
+					val3 = "LS_Symbols.consoleHints.iconStickLeft_press";
 					break;
 				case BTN_StickRight_press:
-					val3 = "iconStickRight_press";
+					val3 = "LS_Symbols.consoleHints.iconStickRight_press";
 					break;
 				case BTN_LB:
-					val3 = "iconLB";
+					val3 = "LS_Symbols.consoleHints.iconLB";
 					break;
 				case BTN_RB:
-					val3 = "iconRB";
+					val3 = "LS_Symbols.consoleHints.iconRB";
 			}
 			return val3;
 		}
@@ -165,10 +165,10 @@ package LS_Classes
 			switch(param1)
 			{
 				case BTN_LT:
-					val3 = "iconLTHL";
+					val3 = "LS_Symbols.consoleHints.iconLTHL";
 					break;
 				case BTN_RT:
-					val3 = "iconRTHL";
+					val3 = "LS_Symbols.consoleHints.iconRTHL";
 			}
 			return val3;
 		}

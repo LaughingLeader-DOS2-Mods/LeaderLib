@@ -28,7 +28,7 @@ package ContextMenu
 			this.hl_mc.alpha = 0;
 			this.text_txt.textColor = this.deSelectedColor;
 			this.text_txt.htmlText = this.text;
-			ExternalInterface.call("PlaySound","UI_Generic_Over");
+			Registry.ExtCall("PlaySound","UI_Generic_Over");
 		}
 		
 		public function selectElement(e:MouseEvent) : void
@@ -42,7 +42,7 @@ package ContextMenu
 		{
 			if(!this.disabled)
 			{
-				ExternalInterface.call("LeaderLib_ContextMenu_EntryPressed",this.id,this.actionID,this.handle);
+				Registry.ExtCall("LeaderLib_ContextMenu_EntryPressed",this.id,this.actionID,this.handle);
 			}
 		}
 		
@@ -51,7 +51,7 @@ package ContextMenu
 			this.removeEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
 			if(this.clickSound)
 			{
-				ExternalInterface.call("PlaySound","UI_GM_Generic_Click");
+				Registry.ExtCall("PlaySound","UI_GM_Generic_Click");
 			}
 			this.pressedButton();
 		}

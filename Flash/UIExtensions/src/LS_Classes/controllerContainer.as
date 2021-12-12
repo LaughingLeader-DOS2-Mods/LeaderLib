@@ -61,7 +61,7 @@ package LS_Classes
 			}
 			else
 			{
-				ExternalInterface.call("UIAssert","addBtnHint failed again because the flash exporter is CRAP");
+				Registry.ExtCall("UIAssert","addBtnHint failed again because the flash exporter is CRAP");
 			}
 			return val6;
 		}

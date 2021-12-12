@@ -42,8 +42,8 @@ package Controls
             this.stateID = 0;
          }
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
-         ExternalInterface.call("PlaySound","UI_Gen_XButton_Click");
-         ExternalInterface.call("LeaderLib_UIExtensions_OnControl", "checkbox", this.id, this.stateID);
+         Registry.ExtCall("PlaySound","UI_Gen_XButton_Click");
+         Registry.ExtCall("LeaderLib_UIExtensions_OnControl", "checkbox", this.id, this.stateID);
       }
       
       public function onClick(e:MouseEvent) : void

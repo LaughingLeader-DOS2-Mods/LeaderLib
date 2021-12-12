@@ -11,8 +11,7 @@ package LS_Classes
    import flash.external.ExternalInterface;
    import flash.geom.Rectangle;
    import flash.utils.Timer;
-   import flash.utils.getDefinitionByName;
-   
+      
    public class scrollbar extends MovieClip
    {
       public var SND_Over:String = "UI_Generic_Over";
@@ -83,10 +82,10 @@ package LS_Classes
          this.m_scrollWheelTimer = new Timer(100);
          super();
          this.m_tweenY = 0;
-         var downClass:Class = downClassName == "" ? MovieClip: getDefinitionByName(downClassName) as Class;
-         var upClass:Class = upClassName == "" ? MovieClip: getDefinitionByName(upClassName) as Class;
-         var handleClass:Class = getDefinitionByName(handleClassName) as Class;
-         var bgClass:Class = getDefinitionByName(bgClassName) as Class;
+         var downClass:Class = downClassName == "" ? MovieClip: Registry.GetClass(downClassName);
+         var upClass:Class = upClassName == "" ? MovieClip: Registry.GetClass(upClassName);
+         var handleClass:Class = Registry.GetClass(handleClassName);
+         var bgClass:Class = Registry.GetClass(bgClassName);
          this.m_down_mc = new downClass();
          this.m_up_mc = new upClass();
          this.m_handle_mc = new handleClass();
@@ -125,7 +124,7 @@ package LS_Classes
          this.m_frameHit_mc.width = widthVal;
          if(ffDownClassName != "")
          {
-            ffDownClass = getDefinitionByName(ffDownClassName) as Class;
+            ffDownClass = Registry.GetClass(ffDownClassName);
             this.m_FFdown_mc = new ffDownClass();
             addChild(this.m_FFdown_mc);
             this.m_FFdown_mc.addEventListener("mouseUp",this.onUp);
@@ -137,7 +136,7 @@ package LS_Classes
          }
          if(ffUpClassName != "")
          {
-            ffUpClass = getDefinitionByName(ffUpClassName) as Class;
+            ffUpClass = Registry.GetClass(ffUpClassName);
             this.m_FFup_mc = new ffUpClass();
             addChild(this.m_FFup_mc);
             this.m_FFup_mc.addEventListener("mouseUp",this.onUp);
@@ -198,7 +197,7 @@ package LS_Classes
          }
          else
          {
-            ExternalInterface.call("UIAssert","LS_Classes.scrollbar addContent done for a movieclip without scrollRect");
+            Registry.ExtCall("UIAssert","LS_Classes.scrollbar addContent done for a movieclip without scrollRect");
          }
       }
       
@@ -241,7 +240,7 @@ package LS_Classes
             }
             else
             {
-               ExternalInterface.call("UIAssert","mouseWheelEnabled in scrollbar class is missing not working, missing stage");
+               Registry.ExtCall("UIAssert","mouseWheelEnabled in scrollbar class is missing not working, missing stage");
             }
          }
       }
@@ -772,7 +771,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Click);
+            Registry.ExtCall("PlaySound",this.SND_Click);
             this.m_handle_mc.gotoAndStop(3);
             this.m_last_Y = mouseY - this.m_handle_mc.y;
             stage.addEventListener("mouseUp",this.handleReleased);
@@ -785,7 +784,7 @@ package LS_Classes
          var val2:Number = NaN;
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Release);
+            Registry.ExtCall("PlaySound",this.SND_Release);
             this.m_handle_mc.gotoAndStop(1);
             stage.removeEventListener("mouseUp",this.handleReleased);
             stage.removeEventListener("mouseMove",this.handleMove);
@@ -830,7 +829,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Click);
+            Registry.ExtCall("PlaySound",this.SND_Click);
             this.m_up_mc.gotoAndStop(3);
             this.startAutoScroll(false);
          }
@@ -840,7 +839,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Click);
+            Registry.ExtCall("PlaySound",this.SND_Click);
             this.m_down_mc.gotoAndStop(3);
             this.startAutoScroll(true);
          }
@@ -860,7 +859,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Click);
+            Registry.ExtCall("PlaySound",this.SND_Click);
             this.scrollTo(this.getContDiff(),this.m_animateScrolling);
             this.m_FFdown_mc.gotoAndStop(3);
          }
@@ -870,7 +869,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Click);
+            Registry.ExtCall("PlaySound",this.SND_Click);
             this.scrollTo(0,this.m_animateScrolling);
             this.m_FFup_mc.gotoAndStop(3);
          }
@@ -881,7 +880,7 @@ package LS_Classes
          var mc:MovieClip = e.currentTarget as MovieClip;
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Over);
+            Registry.ExtCall("PlaySound",this.SND_Over);
             mc.gotoAndStop(2);
          }
       }
@@ -904,7 +903,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Release);
+            Registry.ExtCall("PlaySound",this.SND_Release);
             e.currentTarget.gotoAndStop(1);
          }
          this.stopAutoScroll();
@@ -976,7 +975,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Click);
+            Registry.ExtCall("PlaySound",this.SND_Click);
             this.scrollToPercent((this.mouseY - (this.m_up_mc.y + this.m_up_mc.height)) / this.m_scrollerDiff,this.m_animateScrolling);
          }
       }

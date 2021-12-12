@@ -21,7 +21,7 @@ package System
 			obj.list_id = this.panels.length;
 			this.panels.push(obj);
 			this.addChild(obj);
-			//ExternalInterface.call("LeaderLib_PanelAdded", obj.list_id, obj.id);
+			//Registry.ExtCall("LeaderLib_PanelAdded", obj.list_id, obj.id);
 			return obj.list_id;
 		}
 

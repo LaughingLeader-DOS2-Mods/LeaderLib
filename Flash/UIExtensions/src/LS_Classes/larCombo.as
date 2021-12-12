@@ -8,8 +8,7 @@ package LS_Classes
    import flash.events.MouseEvent;
    import flash.external.ExternalInterface;
    import flash.geom.Point;
-   import flash.utils.getDefinitionByName;
-   
+      
    public dynamic class larCombo extends MovieClip
    {
        
@@ -78,10 +77,10 @@ package LS_Classes
          this.m_items_array = new Array();
          this.m_scrollList = new scrollList("down_id_small","up_id_small","handle_id_small","scrollBg_id_small");
          this.m_scrollList.x = 2;
-         this.cmbElement = getDefinitionByName(param1) as Class;
+         this.cmbElement = Registry.GetClass(param1);
          this.m_scrollList.EL_SPACING = 1;
          this.m_scrollList.SB_SPACING = -(this.m_scrollList.m_scrollbar_mc.width + 9);
-         var _loc3_:Class = getDefinitionByName(param2) as Class;
+         var _loc3_:Class = Registry.GetClass(param2);
          this.m_bg_mc = new _loc3_();
          this.m_selectContainer.addChild(this.m_bg_mc);
          this.m_selectContainer.addChild(this.m_scrollList);
@@ -165,14 +164,14 @@ package LS_Classes
       
       public function setElementClass(param1:String = "comboElement") : *
       {
-         this.cmbElement = getDefinitionByName(param1) as Class;
+         this.cmbElement = Registry.GetClass(param1);
          var _loc2_:MovieClip = new this.cmbElement();
          this.m_scrollList.setFrame(this.top_mc.width + this.bgTopSizeDiff,_loc2_.height * this._rowCount);
       }
       
       public function close() : *
       {
-         ExternalInterface.call("PlaySound",this.SND_Close);
+         Registry.ExtCall("PlaySound",this.SND_Close);
          this.m_isOpen = false;
          this.top_mc.button_mc.gotoAndStop(1);
          dispatchEvent(new Event(Event.CLOSE,true));
@@ -202,7 +201,7 @@ package LS_Classes
          var _loc2_:MovieClip = null;
          if(this.m_enabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Open);
+            Registry.ExtCall("PlaySound",this.SND_Open);
             this.m_isOpen = true;
             this.top_mc.button_mc.gotoAndStop(3);
             _loc1_ = this.localToGlobal(new Point(0,0));
@@ -575,7 +574,7 @@ package LS_Classes
          }
          if(this.m_enabled && !this.m_isOpen)
          {
-            ExternalInterface.call("PlaySound",this.SND_Over);
+            Registry.ExtCall("PlaySound",this.SND_Over);
             this.top_mc.button_mc.gotoAndStop(2);
          }
       }
@@ -588,7 +587,7 @@ package LS_Classes
          }
          if(this.m_enabled && !this.m_isOpen)
          {
-            ExternalInterface.call("PlaySound",this.SND_Over);
+            Registry.ExtCall("PlaySound",this.SND_Over);
             this.top_mc.button_mc.gotoAndStop(1);
          }
       }
@@ -598,7 +597,7 @@ package LS_Classes
          var _loc2_:MovieClip = param1.currentTarget as MovieClip;
          if(_loc2_)
          {
-            ExternalInterface.call("PlaySound",this.SND_Click);
+            Registry.ExtCall("PlaySound",this.SND_Click);
             this.selectedIndex = _loc2_.list_pos;
             if(this.pressedFunc != null)
             {
@@ -612,7 +611,7 @@ package LS_Classes
       {
          var _loc2_:MovieClip = param1.currentTarget as MovieClip;
          this.m_scrollList.select(_loc2_.list_pos);
-         ExternalInterface.call("PlaySound",this.SND_Over);
+         Registry.ExtCall("PlaySound",this.SND_Over);
       }
       
       private function scrollListOut(param1:MouseEvent) : *

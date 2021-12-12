@@ -19,7 +19,7 @@ package Controls.Panels
 		
 		public function onUp(e:MouseEvent) : *
 		{
-			//ExternalInterface.call("onStopDraggingOnSkills");
+			//Registry.ExtCall("onStopDraggingOnSkills");
 		}
 		
 		private function frame1() : *

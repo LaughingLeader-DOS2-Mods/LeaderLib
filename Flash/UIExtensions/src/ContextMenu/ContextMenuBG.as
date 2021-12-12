@@ -36,11 +36,11 @@ package ContextMenu
 				this.contextContent = contextContent;
 				tweenHeight = this.container_mc.y + this.container_mc.height;
 				this.animateOpening(tweenHeight);
-				//ExternalInterface.call("setHeight", height + this.bottom_mc.height);
+				//Registry.ExtCall("setHeight", height + this.bottom_mc.height);
 			}
 			else
 			{
-				ExternalInterface.call("UIAssert","There is an empty content list in the contextmenu!");
+				Registry.ExtCall("UIAssert","There is an empty content list in the contextmenu!");
 			}
 		}
 		

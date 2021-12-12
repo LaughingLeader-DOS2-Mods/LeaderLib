@@ -153,7 +153,7 @@ package LS_Classes
             this.activeBG_mc.gotoAndStop(2);
             if(this.SND_Over != null)
             {
-               ExternalInterface.call("PlaySound",this.SND_Over);
+               Registry.ExtCall("PlaySound",this.SND_Over);
             }
             if(this.text_txt)
             {
@@ -198,7 +198,7 @@ package LS_Classes
          {
             if(this.SND_Press != null)
             {
-               ExternalInterface.call("PlaySound",this.SND_Press);
+               Registry.ExtCall("PlaySound",this.SND_Press);
             }
             if(this.hitArea_mc)
             {
@@ -233,7 +233,7 @@ package LS_Classes
          }
          if(this.SND_Click != null)
          {
-            ExternalInterface.call("PlaySound",this.SND_Click);
+            Registry.ExtCall("PlaySound",this.SND_Click);
          }
          if(!this.m_Disabled && this.m_AllowToggleActive && !this.m_Active)
          {

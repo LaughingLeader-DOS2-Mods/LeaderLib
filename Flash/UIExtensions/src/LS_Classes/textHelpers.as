@@ -11,8 +11,7 @@ package LS_Classes
 	import flash.text.TextFieldType;
 	import flash.text.TextFormat;
 	import flash.text.TextLineMetrics;
-	import flash.utils.getDefinitionByName;
-	
+		
 	public class textHelpers
 	{
 		public function textHelpers()
@@ -167,8 +166,8 @@ package LS_Classes
 			var val27:TextFormat = null;
 			var val28:uint = 0;
 			var val29:Number = NaN;
-			var val5:Class = getDefinitionByName(param3) as Class;
-			var val6:Class = getDefinitionByName(param4) as Class;
+			var val5:Class = Registry.GetClass(param3);
+			var val6:Class = Registry.GetClass(param4);
 			var val7:Font = new val5();
 			var val8:Font = new val6();
 			var val9:TextFormat = param1.getTextFormat();
@@ -563,7 +562,7 @@ package LS_Classes
 				param1.removeEventListener(FocusEvent.FOCUS_OUT,onFocusOutModalInputField);
 				if(param1.selectionBeginIndex != -1)
 				{
-					ExternalInterface.call("inputFocusLost");
+					Registry.ExtCall("inputFocusLost");
 				}
 			}
 		}
@@ -578,7 +577,7 @@ package LS_Classes
 				{
 					val2.removeEventListener(FocusEvent.FOCUS_IN,onFocusInModalInputField);
 					val2.addEventListener(FocusEvent.FOCUS_OUT,onFocusOutModalInputField);
-					ExternalInterface.call("inputFocus");
+					Registry.ExtCall("inputFocus");
 				}
 			}
 		}
@@ -593,7 +592,7 @@ package LS_Classes
 				{
 					val2.addEventListener(FocusEvent.FOCUS_IN,onFocusInModalInputField);
 					val2.removeEventListener(FocusEvent.FOCUS_OUT,onFocusOutModalInputField);
-					ExternalInterface.call("inputFocusLost");
+					Registry.ExtCall("inputFocusLost");
 				}
 			}
 		}

@@ -63,6 +63,7 @@ package
 		public function MainTimeline()
 		{
 			super();
+			Registry.Init();
 			instance = this;
 			this.addFrameScript(0,this.frame1);
 		}
@@ -79,7 +80,7 @@ package
 			var input:String = this.events[id];
 			if (input != null)
 			{
-				ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", false, input, id);
+				Registry.ExtCall("LeaderLib_UIExtensions_InputEvent", false, input, id);
 				if(isInCharacterCreation)
 				{
 					switch(input)
@@ -104,7 +105,7 @@ package
 			var input:String = this.events[id];
 			if (input != null)
 			{
-				ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", true, input, id);
+				Registry.ExtCall("LeaderLib_UIExtensions_InputEvent", true, input, id);
 				if(!controllerEnabled)
 				{
 					// if(!isInCharacterCreation)
@@ -114,7 +115,7 @@ package
 					// 		case "IE UICopy":
 					// 			this.CtrlDown = true;
 					// 			isHandled = true;
-					// 			ExternalInterface.call("LeaderLib_ToggleChainGroup");
+					// 			Registry.ExtCall("LeaderLib_ToggleChainGroup");
 					// 	}
 					// }
 				}
@@ -149,20 +150,20 @@ package
 		
 		public function onEventInit() : void
 		{
-			ExternalInterface.call("registeranchorId","LeaderLib_UIExtensions");
-			ExternalInterface.call("setAnchor",this.anchorPos,this.anchorTarget,this.anchorPos);
+			Registry.ExtCall("registeranchorId","LeaderLib_UIExtensions");
+			Registry.ExtCall("setAnchor",this.anchorPos,this.anchorTarget,this.anchorPos);
 		}
 
 		public function onEventResize() : void
 		{
-			ExternalInterface.call("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+			Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
 		}
 
 		public function onEventResolution(w:Number, h:Number) : void
 		{
 			if(this.screenWidth != w || this.screenHeight != h)
 			{
-				ExternalInterface.call("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+				Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
 				this.screenWidth = w;
 				this.screenHeight = h;
 				this.uiScaling = h / this.designResolution.y;
@@ -180,8 +181,8 @@ package
 					this.screenScaleHelper.y = rect.y;
 					//trace(rect);
 				} */
-				//ExternalInterface.call("setMcSize", w, h);
-				ExternalInterface.call("LeaderLib_UIExtensions_OnEventResolution", w, h);
+				//Registry.ExtCall("setMcSize", w, h);
+				Registry.ExtCall("LeaderLib_UIExtensions_OnEventResolution", w, h);
 				
 			}
 			// var ratioHeight:Number = 1080 / h;
@@ -223,7 +224,7 @@ package
 		{
 			if(this.curTooltip == e.target.name && this.hasTooltip)
 			{
-				ExternalInterface.call("hideTooltip");
+				Registry.ExtCall("hideTooltip");
 				this.hasTooltip = false;
 			}
 			this.curTooltip = "";
@@ -253,7 +254,7 @@ package
 				checkbox.alpha = 0.3;
 			}
 			mainPanel_mc.addElement(checkbox);
-			ExternalInterface.call("LeaderLib_UIExtensions_ControlAdded", "checkbox", id, checkbox.list_id);
+			Registry.ExtCall("LeaderLib_UIExtensions_ControlAdded", "checkbox", id, checkbox.list_id);
 			return checkbox.list_id;
 		}
 
@@ -296,7 +297,7 @@ package
 			}
 			//setupControlForTooltip(bar);
 			mainPanel_mc.addElement(bar);
-			ExternalInterface.call("LeaderLib_UIExtensions_ControlAdded", "bar", id, bar.list_id);
+			Registry.ExtCall("LeaderLib_UIExtensions_ControlAdded", "bar", id, bar.list_id);
 		}
 
 		public function setBar(id:Number, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : void
@@ -379,27 +380,27 @@ package
 
 		public function fireOnMouseClick(e:MouseEvent) : void
 		{
-			ExternalInterface.call("LeaderLib_UIExtensions_MouseClicked", e.stageX, e.stageY);
+			Registry.ExtCall("LeaderLib_UIExtensions_MouseClicked", e.stageX, e.stageY);
 		}
 		
 		public function fireOnMouseMove(e:MouseEvent) : void
 		{
-			ExternalInterface.call("LeaderLib_UIExtensions_MouseMoved", e.stageX, e.stageY);
+			Registry.ExtCall("LeaderLib_UIExtensions_MouseMoved", e.stageX, e.stageY);
 		}
 
 		public function onRightMouseDown(e:Event) : void
 		{
-			ExternalInterface.call("LeaderLib_UIExtensions_RightMouseDown", stage.mouseX, stage.mouseY);
+			Registry.ExtCall("LeaderLib_UIExtensions_RightMouseDown", stage.mouseX, stage.mouseY);
 		}
 
 		public function onRightMouseUp(e:Event) : void
 		{
-			ExternalInterface.call("LeaderLib_UIExtensions_RightMouseUp", stage.mouseX, stage.mouseY);
+			Registry.ExtCall("LeaderLib_UIExtensions_RightMouseUp", stage.mouseX, stage.mouseY);
 		}
 
 		public function fireMouseClicked(eventName:String = "") : void
 		{
-			ExternalInterface.call("LeaderLib_UIExtensions_MouseClicked", stage.mouseX, stage.mouseY);
+			Registry.ExtCall("LeaderLib_UIExtensions_MouseClicked", stage.mouseX, stage.mouseY);
 		}
 
 		public function dispose(): void
@@ -447,11 +448,11 @@ package
 			var inputName:String = workingKeys[e.keyCode];
 			if(inputName != null)
 			{
-				ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, inputName, true);
+				Registry.ExtCall("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, inputName, true);
 			}
 			else
 			{
-				ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, KeyCodeNames.GetName(e.keyCode), true);
+				Registry.ExtCall("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, KeyCodeNames.GetName(e.keyCode), true);
 			}
 		}
 
@@ -460,11 +461,11 @@ package
 			var inputName:String = workingKeys[e.keyCode];
 			if(inputName != null)
 			{
-				ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, inputName, false);
+				Registry.ExtCall("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, inputName, false);
 			}
 			else
 			{
-				ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, KeyCodeNames.GetName(e.keyCode), false);
+				Registry.ExtCall("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, KeyCodeNames.GetName(e.keyCode), false);
 			}
 		}
 
@@ -473,7 +474,7 @@ package
 		public function enableKeyboardListeners() : void
 		{
 			//Experimental, doesn't quite seem to work yet.
-			//ExternalInterface.call("inputFocus");
+			//Registry.ExtCall("inputFocus");
 			this.stage.addEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown);
 			this.stage.addEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp);
 			this.stage.focus = this;
@@ -481,7 +482,7 @@ package
 
 		public function disableKeyboardListeners() : void
 		{
-			//ExternalInterface.call("inputFocusLost");
+			//Registry.ExtCall("inputFocusLost");
 			this.stage.removeEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown);
 			this.stage.removeEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp);
 		}

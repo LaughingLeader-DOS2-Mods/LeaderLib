@@ -48,7 +48,7 @@ package Controls
 		{
 			if(mc.base.curTooltip == mc.name && mc.base.hasTooltip)
 			{
-				ExternalInterface.call("hideTooltip");
+				Registry.ExtCall("hideTooltip");
 				mc.base.hasTooltip = false;
 				mc.base.curTooltip = "";
 			}

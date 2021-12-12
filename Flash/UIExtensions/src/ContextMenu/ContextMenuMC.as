@@ -96,7 +96,7 @@ package ContextMenu
 			if (MainTimeline.Instance.controllerEnabled) {
 				this.list.select(0);
 			}
-			//ExternalInterface.call("setMcSize",this.x + this.bg_mc.x + this.bg_mc.width,this.y + this.bg_mc.y + this.bg_mc.container_mc.y + this.bg_mc.container_mc.height + this.bg_mc.bottom_mc.height);
+			//Registry.ExtCall("setMcSize",this.x + this.bg_mc.x + this.bg_mc.width,this.y + this.bg_mc.y + this.bg_mc.container_mc.y + this.bg_mc.container_mc.height + this.bg_mc.bottom_mc.height);
 		}
 
 		public function setListLoopable(b:Boolean) : void
@@ -107,14 +107,14 @@ package ContextMenu
 		// Stuff that used to be in MainTimeline
 		public function next() : void
 		{
-			ExternalInterface.call("PlaySound","UI_Gen_CursorMove");
+			Registry.ExtCall("PlaySound","UI_Gen_CursorMove");
 			this.list.next();
 			this.setListLoopable(false);
 		}
 		
 		public function previous() : void
 		{
-			ExternalInterface.call("PlaySound","UI_Gen_CursorMove");
+			Registry.ExtCall("PlaySound","UI_Gen_CursorMove");
 			this.list.previous();
 			this.setListLoopable(false);
 		}
@@ -150,11 +150,11 @@ package ContextMenu
 					}
 					break;
 				case "IE UILeft":
-					ExternalInterface.call("LeaderLib_ContextMenu_PreviousContext");
+					Registry.ExtCall("LeaderLib_ContextMenu_PreviousContext");
 					isHandled = true;
 					break;
 				case "IE UIRight":
-					ExternalInterface.call("LeaderLib_ContextMenu_NextContext");
+					Registry.ExtCall("LeaderLib_ContextMenu_NextContext");
 					isHandled = true;
 					break;
 				case "IE UIBack":
@@ -206,7 +206,7 @@ package ContextMenu
 			this.x = targetX;
 			this.y = targetY;
 			
-			ExternalInterface.call("PlaySound","UI_GM_Generic_Slide_Open");
+			Registry.ExtCall("PlaySound","UI_GM_Generic_Slide_Open");
 			this.visible = true;
 
 			if(!this.isOpen)
@@ -215,7 +215,7 @@ package ContextMenu
 				stage.addEventListener(MouseEvent.CLICK,this.onCloseUI);
 				this.isOpen = true;
 			}
-			ExternalInterface.call("LeaderLib_ContextMenu_Opened");
+			Registry.ExtCall("LeaderLib_ContextMenu_Opened");
 		}
 
 		public function close() : void
@@ -223,7 +223,7 @@ package ContextMenu
 			if(this.visible)
 			{
 				this.visible = false;
-				ExternalInterface.call("PlaySound","UI_GM_Generic_Slide_Close");
+				Registry.ExtCall("PlaySound","UI_GM_Generic_Slide_Close");
 			}
 			if(this.isOpen)
 			{
@@ -231,7 +231,7 @@ package ContextMenu
 				stage.removeEventListener(MouseEvent.CLICK,this.onCloseUI);
 				this.isOpen = false;
 			}
-			ExternalInterface.call("LeaderLib_ContextMenu_Closed");
+			Registry.ExtCall("LeaderLib_ContextMenu_Closed");
 		}
 
 		public function onCloseUI(e:MouseEvent) : void

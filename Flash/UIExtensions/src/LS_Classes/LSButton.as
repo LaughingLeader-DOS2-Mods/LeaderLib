@@ -156,7 +156,7 @@ package LS_Classes
 			{
 				if(this.SND_Over != null)
 				{
-					ExternalInterface.call("PlaySound",this.SND_Over);
+					Registry.ExtCall("PlaySound",this.SND_Over);
 				}
 				if(this.text_txt)
 				{
@@ -193,7 +193,7 @@ package LS_Classes
 			}
 			if(this.tooltip != null)
 			{
-				ExternalInterface.call("hideTooltip");
+				Registry.ExtCall("hideTooltip");
 			}
 			this.bg_mc.gotoAndStop(1);
 			if(this.onOutFunc != null)
@@ -238,7 +238,7 @@ package LS_Classes
 				this.bg_mc.gotoAndStop(3);
 				if(this.SND_Press != null)
 				{
-					ExternalInterface.call("PlaySound",this.SND_Press);
+					Registry.ExtCall("PlaySound",this.SND_Press);
 				}
 				if(this.onDownFunc != null)
 				{
@@ -275,7 +275,7 @@ package LS_Classes
 			this.bg_mc.gotoAndStop(2);
 			if(this.SND_Click != null)
 			{
-				ExternalInterface.call("PlaySound",this.SND_Click);
+				Registry.ExtCall("PlaySound",this.SND_Click);
 			}
 			if(this.onUpFunc != null)
 			{

@@ -40,7 +40,7 @@ package LS_Classes
             contextParam = target.contextParam;
          }
          var pos:Point = getGlobalPositionOfMC(target,parentRoot);
-         ExternalInterface.call("showItemTooltip",target.itemHandle,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,contextParam,tooltipSide);
+         Registry.ExtCall("showItemTooltip",target.itemHandle,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,contextParam,tooltipSide);
          var base:MovieClip = parentRoot as MovieClip;
          base.hasTooltip = true;
       }
@@ -76,7 +76,7 @@ package LS_Classes
                offsetY = target.tooltipYOffset;
             }
             pos = getGlobalPositionOfMC(target,parentRoot);
-            ExternalInterface.call("showTooltip",target.tooltip,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,tooltipSide,fadeTooltip);
+            Registry.ExtCall("showTooltip",target.tooltip,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,tooltipSide,fadeTooltip);
             base = parentRoot as MovieClip;
             base.hasTooltip = true;
          }
@@ -113,7 +113,7 @@ package LS_Classes
                offsetY = target.tooltipYOffset;
             }
             pos = getGlobalPositionOfMC(target,parentRoot);
-            ExternalInterface.call("showStatusTooltip",target.owner,target.id,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,tooltipSide);
+            Registry.ExtCall("showStatusTooltip",target.owner,target.id,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,tooltipSide);
             base = parentRoot as MovieClip;
             base.hasTooltip = true;
          }

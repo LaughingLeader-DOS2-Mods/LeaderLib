@@ -5,34 +5,20 @@ package LS_Classes
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	import flash.utils.getDefinitionByName;
-	
+		
 	public dynamic class controllerBtnElement extends MovieClip
 	{
-		 
-		
 		public var icon_mc:controllerBtnHint;
-		
 		public var text_txt:TextField;
-		
 		public const strokeW:Number = 2.5;
-		
 		public var iconY:Number;
-		
 		public var iconId:Number;
-		
 		public var id:Number;
-		
 		public var list_pos:Number;
-		
 		public var list_id:Number;
-		
 		public var selectable:Boolean;
-		
 		public var m_filteredObject:Boolean;
-		
 		public var ownerList:MovieClip;
-		
 		public var btnEnabled:Boolean = true;
 		
 		public function controllerBtnElement()
@@ -42,7 +28,7 @@ package LS_Classes
 			addChild(this.icon_mc);
 			this.text_txt = new TextField();
 			addChild(this.text_txt);
-			var val1:Class = getDefinitionByName("$Title") as Class;
+			var val1:Class = Registry.GetClass("$Title");
 			var val2:Font = new val1();
 			var val3:TextFormat = this.text_txt.getTextFormat();
 			val3.font = val2.fontName;

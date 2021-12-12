@@ -3,8 +3,7 @@ package LS_Classes
 	import flash.display.MovieClip;
 	import flash.external.ExternalInterface;
 	import flash.text.TextFieldAutoSize;
-	import flash.utils.getDefinitionByName;
-	
+		
 	public class LSTooltipClass extends MovieClip
 	{
 		public var tooltipW:Number = 441;
@@ -183,7 +182,7 @@ package LS_Classes
 			}
 			else
 			{
-				ExternalInterface.call("UIAssert","addButtonHint in LSTooltipClass failed again because the flash exporter is CRAP");
+				Registry.ExtCall("UIAssert","addButtonHint in LSTooltipClass failed again because the flash exporter is CRAP");
 			}
 		}
 		
@@ -333,7 +332,7 @@ package LS_Classes
 			var val2:Class = null;
 			if(this.equipHeader == null && param1)
 			{
-				val2 = getDefinitionByName("tt_EquipHeader") as Class;
+				val2 = Registry.GetClass("tt_EquipHeader");
 				this.equipHeader = new val2();
 				this.equipHeader.orderId = this.grpsEnum.EqHeader;
 				this.equipHeader.init();
@@ -449,7 +448,7 @@ package LS_Classes
 		private function addGroup(param1:Number) : MovieClip
 		{
 			var val2:int = 0;
-			var val3:Class = getDefinitionByName("tt_groupHolder") as Class;
+			var val3:Class = Registry.GetClass("tt_groupHolder");
 			var val4:* = new val3();
 			val4.init();
 			val4.base = this;
@@ -618,7 +617,7 @@ package LS_Classes
 		private function addGroupSurface(param1:Number) : MovieClip
 		{
 			var val2:int = 0;
-			var val3:Class = getDefinitionByName("tt_surfaceGroup") as Class;
+			var val3:Class = Registry.GetClass("tt_surfaceGroup");
 			var val4:* = new val3();
 			val4.init();
 			val4.base = this;
@@ -826,7 +825,7 @@ package LS_Classes
 							val5 = param1[val16++];
 							if(this.isIdentified)
 							{
-								val23 = getDefinitionByName("tt_description") as Class;
+								val23 = Registry.GetClass("tt_description");
 								val15 = new val23();
 								if(val15)
 								{
@@ -1287,7 +1286,7 @@ package LS_Classes
 							val6 = param1[val16++];
 							val7 = param1[val16++];
 							this.isIdentified = false;
-							val27 = getDefinitionByName("tt_unidentified") as Class;
+							val27 = Registry.GetClass("tt_unidentified");
 							this.unidentifiedMC = new val27();
 							if(this.unidentifiedMC)
 							{
@@ -1325,7 +1324,7 @@ package LS_Classes
 						case this.codeEnum.Engraving:
 							val6 = param1[val16++];
 							val7 = param1[val16++];
-							val28 = getDefinitionByName("tt_description") as Class;
+							val28 = Registry.GetClass("tt_description");
 							val15 = new val28();
 							if(val15)
 							{
@@ -1459,7 +1458,7 @@ package LS_Classes
 							break;
 						case this.codeEnum.SkillDescription:
 							val5 = param1[val16++];
-							val29 = getDefinitionByName("tt_skillDescription") as Class;
+							val29 = Registry.GetClass("tt_skillDescription");
 							val15 = new val29();
 							if(val15)
 							{
@@ -1687,7 +1686,7 @@ package LS_Classes
 							val34 = param1[val16++];
 							val35 = param1[val16++];
 							val36 = param1[val16++];
-							val37 = getDefinitionByName("tt_statsIcon") as Class;
+							val37 = Registry.GetClass("tt_statsIcon");
 							val38 = new val37();
 							if(val38)
 							{
@@ -1743,7 +1742,7 @@ package LS_Classes
 							val19 = param1[val16++];
 							val20 = param1[val16++];
 							val21 = param1[val16++];
-							val22 = getDefinitionByName("tt_statsIcon") as Class;
+							val22 = Registry.GetClass("tt_statsIcon");
 							val38 = new val22();
 							if(val38)
 							{
@@ -2180,7 +2179,7 @@ package LS_Classes
 							val50 = param1[val16++];
 							if(val50 > 0)
 							{
-								val51 = getDefinitionByName("tt_statsIcon") as Class;
+								val51 = Registry.GetClass("tt_statsIcon");
 								val52 = new val51();
 								if(val52)
 								{
@@ -2392,13 +2391,13 @@ package LS_Classes
 							}
 							break;
 						default:
-							ExternalInterface.call("UIAssert","LSTooltipClass::setupTooltip error UNKNOWN TYPE PLEASE IMPLEMENT:" + val17);
+							Registry.ExtCall("UIAssert","LSTooltipClass::setupTooltip error UNKNOWN TYPE PLEASE IMPLEMENT:" + val17);
 							val14 = true;
 					}
 				}
 				else
 				{
-					ExternalInterface.call("UIAssert","LSTooltipClass::setupTooltip error param:" + param1[val16++]);
+					Registry.ExtCall("UIAssert","LSTooltipClass::setupTooltip error param:" + param1[val16++]);
 					val14 = true;
 				}
 			}

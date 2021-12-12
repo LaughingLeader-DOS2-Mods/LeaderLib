@@ -4,8 +4,7 @@ package LS_Classes
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
-	import flash.utils.getDefinitionByName;
-	
+		
 	public class scrollList extends listDisplay
 	{
 		public var m_scrollbar_mc:scrollbar;
@@ -97,7 +96,7 @@ package LS_Classes
 		
 		public function set setTileableBG(param1:String) : *
 		{
-			var val2:Class = getDefinitionByName(param1) as Class;
+			var val2:Class = Registry.GetClass(param1);
 			this.m_bgTile1_mc = new val2();
 			this.m_bgTile2_mc = new val2();
 			this.m_bgTile1_mc.id = 1;

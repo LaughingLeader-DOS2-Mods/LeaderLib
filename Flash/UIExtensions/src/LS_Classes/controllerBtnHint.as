@@ -1,8 +1,7 @@
 package LS_Classes
 {
 	import flash.display.MovieClip;
-	import flash.utils.getDefinitionByName;
-	
+		
 	public class controllerBtnHint extends MovieClip
 	{
 		 
@@ -30,7 +29,7 @@ package LS_Classes
 			var val4:String = controllerHelper.getIconClassName(param1,param2);
 			if(!val5 && val4 != "")
 			{
-				val7 = getDefinitionByName(val4) as Class;
+				val7 = Registry.GetClass(val4);
 				val5 = new val7();
 			}
 			if(val5)
@@ -39,7 +38,7 @@ package LS_Classes
 			}
 			if(!val6 && val3 != "")
 			{
-				val8 = getDefinitionByName(val3) as Class;
+				val8 = Registry.GetClass(val3);
 				val6 = new val8();
 			}
 			if(val6)

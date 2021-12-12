@@ -32,8 +32,8 @@ package LS_Classes
 				if(targetMC.dragStartMP.x + startDragDiff > targetMC.stage.mouseX || targetMC.dragStartMP.y + startDragDiff > targetMC.stage.mouseY || targetMC.dragStartMP.x - startDragDiff < targetMC.stage.mouseX || targetMC.dragStartMP.y - startDragDiff < targetMC.stage.mouseY)
 				{
 					targetMC.stage.focus = null;
-					ExternalInterface.call("hideTooltip");
-					ExternalInterface.call("startMoveWindow");
+					Registry.ExtCall("hideTooltip");
+					Registry.ExtCall("startMoveWindow");
 					targetMC.stage.removeEventListener(MouseEvent.MOUSE_MOVE,targetMC.dragPanelMove);
 					targetMC.windowDragStarted = true;
 				}
@@ -42,7 +42,7 @@ package LS_Classes
 			{
 				if(targetMC.windowDragStarted)
 				{
-					ExternalInterface.call("cancelMoveWindow");
+					Registry.ExtCall("cancelMoveWindow");
 				}
 				else
 				{

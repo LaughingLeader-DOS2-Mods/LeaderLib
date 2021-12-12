@@ -7,8 +7,7 @@ package LS_Classes
 	import flash.external.ExternalInterface;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flash.utils.getDefinitionByName;
-	
+		
 	public class scrollListGrouped extends listDisplay
 	{
 		public var m_scrollbar_mc:scrollbar;
@@ -111,7 +110,7 @@ package LS_Classes
 		
 		public function setGroupMC(param1:String) : *
 		{
-			this.groupClass = getDefinitionByName(param1) as Class;
+			this.groupClass = Registry.GetClass(param1);
 		}
 		
 		override public function set canPositionInvisibleElements(param1:Boolean) : *
@@ -185,7 +184,7 @@ package LS_Classes
 			}
 			else
 			{
-				ExternalInterface.call("UIAssert","scrollListGrouped::addGroupElement groupId:" + param1 + " GROUP NOT FOUND");
+				Registry.ExtCall("UIAssert","scrollListGrouped::addGroupElement groupId:" + param1 + " GROUP NOT FOUND");
 			}
 			return val4;
 		}
@@ -651,7 +650,7 @@ package LS_Classes
 							{
 								if(!val2.m_GroupElementHeight)
 								{
-									ExternalInterface.call("UIAssert","Group element height is undefined (groupClass.m_GroupElementHeight)");
+									Registry.ExtCall("UIAssert","Group element height is undefined (groupClass.m_GroupElementHeight)");
 								}
 								val4 += val2.m_GroupElementHeight;
 							}

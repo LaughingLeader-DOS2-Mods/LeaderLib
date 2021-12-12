@@ -5,8 +5,7 @@ package LS_Classes
    import flash.events.Event;
    import flash.events.MouseEvent;
    import flash.external.ExternalInterface;
-   import flash.utils.getDefinitionByName;
-   
+      
    public class LSSlider extends MovieClip
    {
       public var SND_Over:String = "UI_Generic_Over";
@@ -119,7 +118,7 @@ package LS_Classes
          var _loc7_:MovieClip = null;
          if(this.m_notchStr != "" && this.m_useNotches && param1 != 0)
          {
-            _loc2_ = getDefinitionByName(this.m_notchStr) as Class;
+            _loc2_ = Registry.GetClass(this.m_notchStr);
             this.removeChildrenOf(this.m_notches_mc);
             _loc3_ = int((this.m_max - this.m_min) / param1) + 1;
             if(_loc3_ > 1 && _loc2_)
@@ -369,7 +368,7 @@ package LS_Classes
          this.m_handleDown = true;
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Down);
+            Registry.ExtCall("PlaySound",this.SND_Down);
             this.m_handle_mc.gotoAndStop(3);
             this.m_last_X = mouseX - this.m_handle_mc.x;
             stage.addEventListener(MouseEvent.MOUSE_UP,this.handleReleased);
@@ -381,7 +380,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Up);
+            Registry.ExtCall("PlaySound",this.SND_Up);
             if(this.m_handleOver)
             {
                this.m_handle_mc.gotoAndStop(2);
@@ -466,7 +465,7 @@ package LS_Classes
             this.m_handleOver = true;
             if(!this.m_handleDown)
             {
-               ExternalInterface.call("PlaySound",this.SND_Over);
+               Registry.ExtCall("PlaySound",this.SND_Over);
                this.m_handle_mc.gotoAndStop(2);
                if(this.m_visualBG_mc)
                {
@@ -488,7 +487,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Over);
+            Registry.ExtCall("PlaySound",this.SND_Over);
             this.m_left_mc.gotoAndStop(2);
          }
       }
@@ -497,7 +496,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Up);
+            Registry.ExtCall("PlaySound",this.SND_Up);
             this.m_left_mc.gotoAndStop(3);
             this.moveLeft();
          }
@@ -517,7 +516,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Up);
+            Registry.ExtCall("PlaySound",this.SND_Up);
             this.scrollTo(this.m_bg_mc.mouseX - this.m_handle_mc.width * 0.5);
             dispatchEvent(new Event("bgPressed"));
          }
@@ -527,7 +526,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Up);
+            Registry.ExtCall("PlaySound",this.SND_Up);
             this.moveRight();
             this.m_right_mc.gotoAndStop(3);
          }
@@ -537,7 +536,7 @@ package LS_Classes
       {
          if(!this.m_disabled)
          {
-            ExternalInterface.call("PlaySound",this.SND_Over);
+            Registry.ExtCall("PlaySound",this.SND_Over);
             this.m_right_mc.gotoAndStop(2);
             if(this.m_visualBG_mc)
             {

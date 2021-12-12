@@ -50,8 +50,8 @@ package Controls.Panels
 					this.dragStartMP.x = this.targetStage.mouseX - this.x;
 					this.dragStartMP.y = this.targetStage.mouseY - this.y;
 					this.targetStage.focus = null;
-					ExternalInterface.call("hideTooltip");
-					//ExternalInterface.call("startMoveWindow");
+					Registry.ExtCall("hideTooltip");
+					//Registry.ExtCall("startMoveWindow");
 					//this.targetStage.removeEventListener(MouseEvent.MOUSE_MOVE,this.dragPanelMove);
 					this.windowDragStarted = true;
 				}

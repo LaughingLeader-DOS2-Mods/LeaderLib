@@ -65,7 +65,7 @@ package Controls.Panels
 
 		public function onClose(): void
 		{
-			ExternalInterface.call("hideTooltip");
+			Registry.ExtCall("hideTooltip");
 			if(this.list != null)
 			{
 				this.list.clearElements();

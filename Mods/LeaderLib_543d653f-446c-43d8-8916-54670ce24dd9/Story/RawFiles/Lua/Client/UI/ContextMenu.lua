@@ -487,7 +487,7 @@ function ContextMenu:Close()
 	local instance = UIExtensions.GetInstance()
 	if instance then
 		local main = instance:GetRoot()
-		local contextMenu = main.context_menu
+		local contextMenu = main.contextMenuMC
 		contextMenu.close()
 	end
 end
@@ -497,7 +497,7 @@ function ContextMenu:MoveAndRebuild(x,y)
 	local instance = UIExtensions.GetInstance()
 	if instance then
 		local main = instance:GetRoot()
-		local contextMenu = main.context_menu
+		local contextMenu = main.contextMenuMC
 		contextMenu.clearButtons()
 
 		if #self.Entries > 1 then
@@ -548,7 +548,7 @@ function ContextMenu:Open()
 	local instance = UIExtensions.GetInstance()
 	if instance then
 		local main = instance:GetRoot()
-		local contextMenu = main.context_menu
+		local contextMenu = main.contextMenuMC
 		contextMenu.clearButtons()
 
 		local totalEntries = #self.Entries

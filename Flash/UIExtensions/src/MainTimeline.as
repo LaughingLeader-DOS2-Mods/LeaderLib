@@ -1,5 +1,9 @@
 package
 {
+	import controls.*;
+	import controls.contextMenu.ContextMenuMC;
+	import controls.bars.BarHolder;
+	import controls.panels.DraggablePanelDark;
 	import fl.motion.Color;
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
@@ -9,17 +13,14 @@ package
 	import flash.events.TimerEvent;
 	import flash.external.ExternalInterface;
 	import flash.geom.Point;
-	import ContextMenu.ContextMenuMC;
-	import Controls.*;
-	import Controls.Bars.BarHolder;
-	import Controls.Panels.DraggablePanelDark;
-	import LS_Classes.tooltipHelper;
-	import System.PanelManager;
-	import flash.ui.Keyboard;
-	import System.KeyCodeNames;
-	import flash.utils.Dictionary;
 	import flash.geom.Rectangle;
 	import flash.text.TextFieldAutoSize;
+	import flash.ui.Keyboard;
+	import flash.utils.Dictionary;
+	import LS_Classes.tooltipHelper;
+	import system.KeyCodeNames;
+	import system.PanelManager;
+	import util.ClientTimer;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		
@@ -36,7 +37,7 @@ package
 		
 		public var mainPanel_mc:MainPanel;
 		public var panels_mc:PanelManager;
-		public var context_menu:ContextMenu.ContextMenuMC;
+		public var contextMenuMC:ContextMenuMC;
 		public var screenScaleHelper:MovieClip;
 		
 		public var curTooltip:String;
@@ -90,9 +91,9 @@ package
 							break;
 					}
 				}
-				if (!isHandled && this.context_menu.visible)
+				if (!isHandled && this.contextMenuMC.visible)
 				{
-					isHandled = this.context_menu.onInputUp(input);
+					isHandled = this.contextMenuMC.onInputUp(input);
 				}
 			}
 
@@ -139,9 +140,9 @@ package
 						}
 					}
 				}
-				if (!isHandled && this.context_menu.visible)
+				if (!isHandled && this.contextMenuMC.visible)
 				{
-					isHandled = this.context_menu.onInputDown(input);
+					isHandled = this.contextMenuMC.onInputDown(input);
 				}
 			}
 
@@ -435,11 +436,11 @@ package
 		{
 			if (b)
 			{
-				context_menu.open(mouseX, mouseY);
+				contextMenuMC.open(mouseX, mouseY);
 			}
 			else
 			{
-				context_menu.close();
+				contextMenuMC.close();
 			}
 		}
 
@@ -530,9 +531,9 @@ package
 			this.screenWidth = this.width;
 			this.screenHeight = this.height;
 
-			this.context_menu = new ContextMenu.ContextMenuMC();
-			this.addChild(context_menu);
-			this.context_menu.visible = false;
+			this.contextMenuMC = new ContextMenuMC();
+			this.addChild(contextMenuMC);
+			this.contextMenuMC.visible = false;
 
 			this.panels_mc = new PanelManager();
 			this.addChild(this.panels_mc);

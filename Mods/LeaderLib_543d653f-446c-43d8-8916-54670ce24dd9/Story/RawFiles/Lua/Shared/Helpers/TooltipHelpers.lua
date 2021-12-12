@@ -210,16 +210,22 @@ local function ReplacePlaceholders(str, character)
 	output = GetTextParamValues(output, character)
 	
 	for v in string.gmatch(output, "%[Key:.-%]") do
-		local key = v:gsub("%[Key:", ""):gsub("%]", "")
-		local translatedText,handle = Ext.GetTranslatedStringFromKey(key)
-		if translatedText == nil then 
-			translatedText = "" 
-		else
-			translatedText = string.gsub(translatedText, "%%", "%%%%")
-			translatedText = ReplacePlaceholders(translatedText, character)
+		local text = v:gsub("%[Key:", ""):gsub("%]", "")
+		local key,fallback = table.unpack(StringHelpers.Split(text, ":"))
+		if fallback == nil then 
+			fallback = key
 		end
-		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-		output = string.gsub(output, escapedReplace, translatedText)
+		if not StringHelpers.IsNullOrWhitespace(key) then
+			local translatedText,handle = Ext.GetTranslatedStringFromKey(key, fallback)
+			if translatedText == nil then 
+				translatedText = "" 
+			else
+				translatedText = string.gsub(translatedText, "%%", "%%%%")
+				translatedText = ReplacePlaceholders(translatedText, character)
+			end
+			local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+			output = string.gsub(output, escapedReplace, translatedText)
+		end
 	end
 	for v in string.gmatch(output, "%[Handle:.-%]") do
 		local text = v:gsub("%[Handle:", ""):gsub("%]", "")

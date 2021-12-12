@@ -1,4 +1,4 @@
-package
+package util
 {
 	import flash.external.ExternalInterface;
 	import flash.utils.Timer;

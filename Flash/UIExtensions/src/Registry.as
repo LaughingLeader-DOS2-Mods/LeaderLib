@@ -7,6 +7,7 @@ package
 	import font.QuadraatBoldFont;
 	import font.QuadraatFont;
 	import font.QuadraatItalicFont;
+	import flash.utils.getQualifiedClassName;
 
 	public class Registry
 	{
@@ -38,11 +39,12 @@ package
 			ClassMap["$Title_Italic"] = QuadraatItalicFont;
 		}
 
-		public static function ExtCall(name:String, ...args) : *
+		public static function ExtCall(name:String, ...args:Array) : *
 		{
 			if(_canCallExternally)
 			{
-				return ExternalInterface.call.apply(name, args);
+				args.unshift(name);
+				return ExternalInterface.call.apply(null, args);
 			}
 			return false;
 		}

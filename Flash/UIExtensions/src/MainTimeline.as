@@ -21,6 +21,8 @@ package
 	import system.KeyCodeNames;
 	import system.PanelManager;
 	import util.ClientTimer;
+	import flash.display.StageScaleMode;
+	import flash.display.StageDisplayState;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		
@@ -239,7 +241,7 @@ package
 		
 		public function addCheckbox(id:Number, label:String, tooltip:String, stateID:Number=0, x:Number=0, y:Number=0, filterBool:Boolean = false, enabled:Boolean = true) : uint
 		{
-			var checkbox:MovieClip = new Checkbox();
+			var checkbox:Checkbox = new Checkbox();
 			checkbox.x = x;
 			checkbox.y = y;
 			checkbox.setText(label);
@@ -509,6 +511,9 @@ package
 			this.curTooltip = "";
 		 	this.hasTooltip = false;
 			this.uiScaling = 1;
+
+			this.stage.scaleMode = StageScaleMode.EXACT_FIT;
+			//this.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE; 
 
 			KeyCodeNames.Init();
 			workingKeys[8] = "FlashBackspace";

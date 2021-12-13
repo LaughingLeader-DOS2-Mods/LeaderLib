@@ -7,18 +7,22 @@ package controls
 	
 	public class TooltipHandler
 	{
-		public static function init(mc:MovieClip) : void
+		public static function init(mc:MovieClip, mouseTarget:MovieClip = null) : void
 		{
 			mc.base = mc.root as MovieClip;
-			mc.addEventListener(MouseEvent.MOUSE_OVER, function(e:MouseEvent) : void
+			if(mouseTarget == null)
 			{
-				TooltipHandler.showTooltip(mc, mc.base.hasTooltip == false);
+				mouseTarget = mc;
+			}
+			mouseTarget.addEventListener(MouseEvent.MOUSE_OVER, function(e:MouseEvent) : void
+			{
+				TooltipHandler.showTooltip(mc);
 				if (mc.mouseOver != null)
 				{
 					mc.mouseOver(e);
 				}
 			});
-			mc.addEventListener(MouseEvent.MOUSE_OUT, function(e:MouseEvent) : void
+			mouseTarget.addEventListener(MouseEvent.MOUSE_OUT, function(e:MouseEvent) : void
 			{
 				TooltipHandler.hideTooltip(mc);
 				if (mc.mouseOut != null)
@@ -27,30 +31,35 @@ package controls
 				}
 			});
 
-			mc.tooltip = "";
 			mc.tooltipOverrideW = 0;
 			mc.tooltipYOffset = 0;
-			mc.tooltipSide = "bottom";
+			if(mc.tooltipSide == null)
+			{
+				mc.tooltipSide = "topRight";
+			}
 		}
 
 		public static function showTooltip(mc:MovieClip, fade:Boolean=true) : void
 		{
-			if(mc.tooltip != null && mc.tooltip != "")
+			var base:MovieClip = mc.base || mc.root as MovieClip;
+			if(base != null && mc.tooltip != null && mc.tooltip != "")
 			{
-				mc.base.curTooltip = mc.name;
+				fade = base.hasTooltip == true;
+				base.curTooltip = mc.tooltip;
 				mc.tooltipOverrideW = mc.base.ElW;
 				mc.tooltipYOffset = -4;
-				tooltipHelper.ShowTooltipForMC(mc,mc.base,mc.tooltipSide,fade);
+				tooltipHelper.ShowTooltipForMC(mc,base,mc.tooltipSide,fade);
 			}
 		}
 
 		public static function hideTooltip(mc:MovieClip) : void
 		{
-			if(mc.base.curTooltip == mc.name && mc.base.hasTooltip)
+			var base:MovieClip = mc.base || mc.root as MovieClip;
+			if(base != null && base.curTooltip == mc.tooltip && base.hasTooltip)
 			{
 				Registry.ExtCall("hideTooltip");
-				mc.base.hasTooltip = false;
-				mc.base.curTooltip = "";
+				base.hasTooltip = false;
+				base.curTooltip = "";
 			}
 		}
 	}

@@ -14,6 +14,9 @@ package controls
       public var label_txt:TextField;
       public var label_bg_mc:MovieClip;
       public var mHeight:Number;
+      public var filterBool:Boolean = false;
+      public var stateID:Number = 0;
+      public var tooltip:String = "";
       
       public function Checkbox()
       {
@@ -24,7 +27,7 @@ package controls
       public function onDown(e:MouseEvent) : void
       {
          this.bg_mc.gotoAndStop(this.stateID * 3 + 3);
-         bg_mc.addEventListener(MouseEvent.MOUSE_UP,this.onClick);
+         this.bg_mc.addEventListener(MouseEvent.MOUSE_UP,this.onClick);
       }
 
       public function toggle() : void 
@@ -52,12 +55,12 @@ package controls
          {
             toggle();
          }
-         removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
+         this.removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
       }
       
       public function deselectElement(e:MouseEvent) : void
       {
-         bg_mc.removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
+         this.bg_mc.removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
       }
       
@@ -68,7 +71,7 @@ package controls
       
       public function onMouseOut(e:MouseEvent) : void
       {
-         bg_mc.removeEventListener(MouseEvent.MOUSE_UP, this.onClick);
+         this.bg_mc.removeEventListener(MouseEvent.MOUSE_UP, this.onClick);
       }
       
       public function setState(state:Number) : void
@@ -91,12 +94,14 @@ package controls
       
       public function frame1() : void
       {
-         TooltipHandler.init(this);
+         this.mouseOver = this.selectElement;
+         this.mouseOut = this.deselectElement;
+         TooltipHandler.init(this, this.bg_mc);
          this.mHeight = 30;
 
          this.bg_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onDown);
-         this.bg_mc.addEventListener(MouseEvent.MOUSE_OVER,this.selectElement);
-         this.bg_mc.addEventListener(MouseEvent.MOUSE_OUT,this.deselectElement);
+         //this.bg_mc.addEventListener(MouseEvent.MOUSE_OVER,this.selectElement);
+         //this.bg_mc.addEventListener(MouseEvent.MOUSE_OUT,this.deselectElement);
 
          this.label_txt.defaultTextFormat.size = 16;
          this.label_txt.defaultTextFormat.color = 0xFFFFFF;

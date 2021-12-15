@@ -305,7 +305,7 @@ end
 function UIExtensions.RemoveTimerCallback(id, callbackFunction)
 	if UIExtensions.Timers[id] then
 		for i,v in pairs(UIExtensions.Timers[id]) do
-			if v == callbackFunction then
+			if not callbackFunction or v == callbackFunction then
 				table.remove(UIExtensions.Timers[id], i)
 			end
 		end

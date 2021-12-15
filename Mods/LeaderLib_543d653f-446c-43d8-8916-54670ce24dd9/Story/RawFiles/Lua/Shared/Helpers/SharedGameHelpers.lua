@@ -327,9 +327,12 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	if character:HasTag(tag) then
 		return true
 	end
+	if isClient and Ext.Version() >= 56 then
+		return false
+	end
 	for _,slot in Data.VisibleEquipmentSlots:Get() do
-		if not isClient and Ext.OsirisIsCallable() then
-			local uuid = CharacterGetEquippedItem(character.MyGuid, slot)
+		if isClient then
+			local uuid = character:GetItemBySlot(slot)
 			if not StringHelpers.IsNullOrEmpty(uuid) then
 				local item = Ext.GetItem(uuid)
 				if item and GameHelpers.ItemHasTag(item, tag) then
@@ -337,8 +340,8 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 				end
 			end
 		else
-			if isClient then
-				local uuid = character:GetItemBySlot(slot)
+			if Ext.OsirisIsCallable() then
+				local uuid = CharacterGetEquippedItem(character.MyGuid, slot)
 				if not StringHelpers.IsNullOrEmpty(uuid) then
 					local item = Ext.GetItem(uuid)
 					if item and GameHelpers.ItemHasTag(item, tag) then

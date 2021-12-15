@@ -127,34 +127,22 @@ function HitOverrides.GetResistancePenetration(character, attacker)
     local resistancePenetration = {}
         
     if attacker ~= nil and attacker.Character ~= nil then
-        ---@type EsvItem[]
-        local resPenItems = {}
-        for i,itemId in pairs(attacker.Character:GetInventoryItems()) do
-            ---@type EsvItem
-            local item = Ext.GetItem(itemId)
-            if item.Slot < 15 and item:HasTag("LeaderLib_HasResistancePenetration") then
-                resPenItems[#resPenItems+1] = item
-            elseif item.Slot >= 15 then
-                break
-            end
-        end
-        if #resPenItems > 0 then
-            for i,item in pairs(resPenItems) do
-                for damageType,tags in pairs(Data.ResistancePenetrationTags) do
-                    for i,tagEntry in pairs(tags) do
-                        if item:HasTag(tagEntry.Tag) then
-                            if resistancePenetration[damageType] == nil then
-                                resistancePenetration[damageType] = 0
-                            end
-                            resistancePenetration[damageType] = resistancePenetration[damageType] + tagEntry.Amount
-                        end
+        for damageType,tags in pairs(Data.ResistancePenetrationTags) do
+            for i,tagEntry in pairs(tags) do
+                if GameHelpers.CharacterOrEquipmentHasTag(attacker.Character, tagEntry.Tag) then
+                    if resistancePenetration[damageType] == nil then
+                        resistancePenetration[damageType] = 0
                     end
+                    resistancePenetration[damageType] = resistancePenetration[damageType] + tagEntry.Amount
                 end
             end
         end
         
-        if attacker.Character:HasTag("LeaderLib_IgnoreUndeadPoisonResistance") and character.TALENT_Zombie then
-            resistancePenetration["Poison"] = 200
+        if GameHelpers.CharacterOrEquipmentHasTag(attacker.Character, "LeaderLib_IgnoreUndeadPoisonResistance") and character.TALENT_Zombie then
+            if not resistancePenetration["Poison"] then
+                resistancePenetration["Poison"] = 0
+            end
+            resistancePenetration["Poison"] = resistancePenetration["Poison"] + 200
         end
     end
     return resistancePenetration

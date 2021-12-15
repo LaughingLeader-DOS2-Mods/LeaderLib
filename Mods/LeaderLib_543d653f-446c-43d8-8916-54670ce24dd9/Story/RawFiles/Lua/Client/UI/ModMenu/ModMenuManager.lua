@@ -65,11 +65,11 @@ local function PrepareText(name, v, isCheckbox)
 		end
 	end
 	if displayName == name or displayName == "stringkey" then
-		local stringKeyText = Ext.GetTranslatedStringFromKey(name)
+		local stringKeyText = GameHelpers.GetStringKeyText(name)
 		if stringKeyText ~= nil and stringKeyText ~= "" then
 			displayName = stringKeyText
 			if tooltip == "" then
-				local tooltipStringKeyText = Ext.GetTranslatedStringFromKey(name.."_Description")
+				local tooltipStringKeyText = GameHelpers.GetStringKeyText(name.."_Description")
 				if tooltipStringKeyText ~= nil and tooltipStringKeyText ~= "" then
 					tooltip = tooltipStringKeyText
 				end

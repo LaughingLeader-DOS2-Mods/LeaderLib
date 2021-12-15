@@ -216,7 +216,7 @@ local function ReplacePlaceholders(str, character)
 			fallback = key
 		end
 		if not StringHelpers.IsNullOrWhitespace(key) then
-			local translatedText,handle = Ext.GetTranslatedStringFromKey(key, fallback)
+			local translatedText = GameHelpers.GetStringKeyText(key, fallback)
 			if translatedText == nil then 
 				translatedText = "" 
 			else

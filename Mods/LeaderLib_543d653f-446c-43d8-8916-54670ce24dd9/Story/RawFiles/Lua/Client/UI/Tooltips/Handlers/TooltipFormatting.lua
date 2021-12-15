@@ -69,7 +69,7 @@ local function GetTagTooltipText(tag, data, tooltipType)
 	local tagName = ""
 	local tagDesc = ""
 	if data.Title == nil then
-		tagName = Ext.GetTranslatedStringFromKey(tag)
+		tagName = GameHelpers.GetStringKeyText(tag)
 	else
 		local t = type(data.Title)
 		if t == "string" then
@@ -86,7 +86,7 @@ local function GetTagTooltipText(tag, data, tooltipType)
 		end
 	end
 	if data.Description == nil then
-		tagDesc = Ext.GetTranslatedStringFromKey(tag.."_Description")
+		tagDesc = GameHelpers.GetStringKeyText(tag.."_Description")
 	else
 		local t = type(data.Description)
 		if t == "string" then

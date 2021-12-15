@@ -35,8 +35,8 @@ end
 
 --- Shortcut to get the string key text without handle.
 local function skey(key)
-	local text,_ = Ext.GetTranslatedStringFromKey(key)
-	if text ~= nil and text ~= "" then
+	local text = GameHelpers.GetStringKeyText(key)
+	if not StringHelpers.IsNullOrEmpty(text) then
 		text = GameHelpers.Tooltip.ReplacePlaceholders(text)
 	end
 	return text

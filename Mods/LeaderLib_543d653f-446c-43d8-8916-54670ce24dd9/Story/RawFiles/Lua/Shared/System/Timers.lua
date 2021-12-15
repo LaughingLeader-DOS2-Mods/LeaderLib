@@ -1,6 +1,4 @@
-if Timer == nil then
-	Timer = {}
-end
+Timer = {}
 
 local IsClient = Ext.IsClient()
 
@@ -54,22 +52,45 @@ function Timer.StartOneshot(timerName, delay, callback)
 		TimerCancel(timerName)
 		TimerLaunch(timerName, delay)
 	else
-		UIExtensions.StartTimer(timerName, delay, callback)
+		if Ext.Version() >= 56 then
+			if OneshotTimerData[timerName] == nil then
+				OneshotTimerData[timerName] = {}
+			end
+			table.insert(OneshotTimerData[timerName], callback)
+			Timer.WaitForTick[#Timer.WaitForTick+1] = {
+				ID = timerName,
+				TargetTime = Ext.MonotonicTime() + delay,
+				Delay = delay
+			}
+		else
+			UIExtensions.StartTimer(timerName, delay, callback)
+		end
 	end
 	return true
 end
 
 ---@param timerName string
 ---@param delay integer
-function Timer.RestartOneShot(timerName, delay)
+function Timer.RestartOneshot(timerName, delay)
 	if OneshotTimerData[timerName] then
-		TimerCancel(timerName)
-		TimerLaunch(timerName, delay)
+		if not IsClient then
+			TimerCancel(timerName)
+			TimerLaunch(timerName, delay)
+		elseif Ext.Version() >= 56 then
+			for i,v in pairs(Timer.WaitForTick) do
+				if v.ID == timerName then
+					v.TargetTime = Ext.MonotonicTime() + (delay or v.Delay)
+				end
+			end
+		end
 		return true
 	end
 	return false
 end
 
+--Whoops
+---@private
+Timer.RestartOneShot = Timer.RestartOneshot
 StartOneshotTimer = Timer.StartOneshot
 
 ---Cancels a timer with an optional UUID for object timers.
@@ -94,7 +115,15 @@ function Timer.Cancel(timerName, object)
 			PersistentVars.TimerData[timerName] = nil
 		end
 	else
-		--UIExtensions.RemoveTimerCallback(timerName)
+		OneshotTimerData[timerName] = nil
+		UIExtensions.RemoveTimerCallback(timerName)
+		if Ext.Version() >= 56 then
+			for i,v in pairs(Timer.WaitForTick) do
+				if v.ID == timerName then
+					table.remove(Timer.WaitForTick, i)
+				end
+			end
+		end
 	end
 end
 
@@ -147,6 +176,56 @@ function Timer.RegisterListener(name, callback, fetchGameObjects)
 	elseif t == "table" then
 		for _,v in pairs(name) do
 			Timer.RegisterListener(v, callback)
+		end
+	end
+end
+
+local function InvokeTimerListeners(tbl, timerName, data)
+	if data ~= nil then
+		if type(data) == "table" then
+			InvokeListenerCallbacks(tbl, timerName, table.unpack(data))
+		else
+			InvokeListenerCallbacks(tbl, timerName, data)
+		end
+	else
+		InvokeListenerCallbacks(tbl, timerName)
+	end
+end
+
+local function OnTimerFinished(timerName)
+	if not IsClient then
+		local data = PersistentVars.TimerData[timerName]
+		PersistentVars.TimerData[timerName] = nil
+		
+		if PersistentVars.TimerNameMap[timerName] then
+			local realTimerName = PersistentVars.TimerNameMap[timerName]
+			PersistentVars.TimerNameMap[timerName] = nil
+			timerName = realTimerName
+		end
+		if type(data) == "table" then
+			for i=1,#data do
+				local timerData = Lib.smallfolk.loads(data[i])
+				if OneshotTimerData[timerName] ~= nil then
+					InvokeTimerListeners(OneshotTimerData[timerName], timerName, timerData)
+					OneshotTimerData[timerName] = nil
+				end
+				InvokeTimerListeners(Listeners.TimerFinished, timerName, timerData)
+				InvokeTimerListeners(Listeners.NamedTimerFinished[timerName], timerName, timerData)
+			end
+		else
+			if OneshotTimerData[timerName] ~= nil then
+				InvokeTimerListeners(OneshotTimerData[timerName], timerName, data)
+				OneshotTimerData[timerName] = nil
+			end
+			InvokeTimerListeners(Listeners.TimerFinished, timerName, data)
+			InvokeTimerListeners(Listeners.NamedTimerFinished[timerName], timerName, data)
+		end
+	
+		TurnCounter.OnTimerFinished(timerName)
+	else
+		if OneshotTimerData[timerName] ~= nil then
+			InvokeTimerListeners(OneshotTimerData[timerName], timerName)
+			OneshotTimerData[timerName] = nil
 		end
 	end
 end
@@ -208,45 +287,6 @@ if not IsClient then
 		Timer.StoreData(uniqueTimerName, data)
 	end
 
-	local function InvokeTimerListeners(tbl, timerName, data)
-		if type(data) == "table" then
-			InvokeListenerCallbacks(tbl, timerName, table.unpack(data))
-		else
-			InvokeListenerCallbacks(tbl, timerName, data)
-		end
-	end
-
-	local function OnTimerFinished(timerName)
-		local data = PersistentVars.TimerData[timerName]
-		PersistentVars.TimerData[timerName] = nil
-		
-		if PersistentVars.TimerNameMap[timerName] then
-			local realTimerName = PersistentVars.TimerNameMap[timerName]
-			PersistentVars.TimerNameMap[timerName] = nil
-			timerName = realTimerName
-		end
-		if type(data) == "table" then
-			for i=1,#data do
-				local timerData = Lib.smallfolk.loads(data[i])
-				if OneshotTimerData[timerName] ~= nil then
-					InvokeTimerListeners(OneshotTimerData[timerName], timerName, timerData)
-					OneshotTimerData[timerName] = nil
-				end
-				InvokeTimerListeners(Listeners.TimerFinished, timerName, timerData)
-				InvokeTimerListeners(Listeners.NamedTimerFinished[timerName], timerName, timerData)
-			end
-		else
-			if OneshotTimerData[timerName] ~= nil then
-				InvokeTimerListeners(OneshotTimerData[timerName], timerName, data)
-				OneshotTimerData[timerName] = nil
-			end
-			InvokeTimerListeners(Listeners.TimerFinished, timerName, data)
-			InvokeTimerListeners(Listeners.NamedTimerFinished[timerName], timerName, data)
-		end
-
-		TurnCounter.OnTimerFinished(timerName)
-	end
-
 	Ext.RegisterOsirisListener("TimerFinished", 1, "after", OnTimerFinished)
 
 	local function OnProcObjectTimerFinished(object, timerName)
@@ -257,4 +297,34 @@ if not IsClient then
 	end
 	
 	Ext.RegisterOsirisListener("ProcObjectTimerFinished", 2, "after", OnProcObjectTimerFinished)
+end
+
+--Extener Updates
+if Ext.Version() >= 56 then
+	---@class ExtGameTime
+	---@field Time number
+	---@field DeltaTime number
+	---@field Ticks integer
+
+	---@class WaitForTickData
+	---@field ID string
+	---@field TargetTime integer
+	---@field Delay integer
+	
+	---@private
+	---@type WaitForTickData[] 
+	Timer.WaitForTick = {}
+
+	---@param tickData ExtGameTime
+	local function OnTick(tickData)
+		local time = Ext.MonotonicTime()
+		for i=1,#Timer.WaitForTick do
+			local data = Timer.WaitForTick[i]
+			if data and data.TargetTime <= time then
+				table.remove(Timer.WaitForTick, i)
+				OnTimerFinished(data.ID)
+			end
+		end
+	end
+	Ext.Events.Tick:Subscribe(function(data) OnTick(data.Time) end)
 end

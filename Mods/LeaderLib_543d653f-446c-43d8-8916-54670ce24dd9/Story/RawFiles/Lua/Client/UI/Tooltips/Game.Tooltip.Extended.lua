@@ -774,6 +774,12 @@ TooltipHooks = {
 	GlobalListeners = {},
 	TypeListeners = {},
 	ObjectListeners = {},
+	RequestListeners = {
+		All = {}
+	},
+	BeforeNotifyListeners = {
+		All = {},
+	},
 }
 
 --Auto-completion
@@ -1291,16 +1297,11 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 	local params = ParseTooltipArray(tt)
 	if params ~= nil then
 		local tooltip = TooltipData:Create(params)
+		self:InvokeBeforeNotifyListeners(req, ui, method, tooltip, ...)
 		if req.Type == "Stat" then
 			self:NotifyListeners("Stat", req.Stat, req, tooltip, req.Character, req.Stat)
 		elseif req.Type == "CustomStat" then
 			if Mods.CharacterExpansionLib then
-				local CustomStatSystem = Mods.CharacterExpansionLib.CustomStatSystem
-				if req.RequestUpdate then
-					CustomStatSystem:UpdateStatTooltipArray(ui, req.Stat, tooltip, req)
-					req.RequestUpdate = false
-				end
-
 				local statData = req.StatData or CustomStatSystem:GetStatByDouble(req.Stat)
 				if statData ~= nil then
 					req.StatData = statData
@@ -1403,17 +1404,54 @@ function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id, characterHa
 	self.Last.UIType = ui:GetTypeId()
 end
 
----@param type string
+local function InvokeListenerTable(tbl, ...)
+	if tbl then
+		for _,v in pairs(tbl) do
+			local b,err = xpcall(v, debug.traceback, ...)
+			if not b then
+				Ext.PrintError(err)
+			end
+		end
+	end
+end
+
+---@param requestType string
+---@param listener fun(req:TooltipRequest):void
+function TooltipHooks:RegisterBeforeNotifyListener(requestType, listener)
+	if requestType == nil or requestType == "all" then
+		requestType = "All"
+	end
+	if self.BeforeNotifyListeners[requestType] == nil then
+		self.BeforeNotifyListeners[requestType] = {}
+	end
+	if self.BeforeNotifyListeners[requestType] == nil then
+		self.BeforeNotifyListeners[requestType] = {}
+	end
+	table.insert(self.BeforeNotifyListeners[requestType], listener)
+end
+
+---@param request TooltipRequest
+---@param tooltip TooltipData
+---@vararg any
+function TooltipHooks:InvokeBeforeNotifyListeners(request, ...)
+    local rTypeTable = self.BeforeNotifyListeners[request.Type]
+	if rTypeTable then
+		InvokeListenerTable(rTypeTable, request, ...)
+	end
+	InvokeListenerTable(self.BeforeNotifyListeners.All, request, ...)
+end
+
+---@param requestType string
 ---@param name string
 ---@param request TooltipRequest
 ---@param tooltip TooltipData
 ---@vararg any
-function TooltipHooks:NotifyListeners(type, name, request, tooltip, ...)
+function TooltipHooks:NotifyListeners(requestType, name, request, tooltip, ...)
     local args = {...}
     table.insert(args, tooltip)
-    self:NotifyAll(self.TypeListeners[type], table.unpack(args))
-    if name ~= nil and self.ObjectListeners[type] ~= nil then
-        self:NotifyAll(self.ObjectListeners[type][name], table.unpack(args))
+    self:NotifyAll(self.TypeListeners[requestType], table.unpack(args))
+    if name ~= nil and self.ObjectListeners[requestType] ~= nil then
+        self:NotifyAll(self.ObjectListeners[requestType][name], table.unpack(args))
     end
 
     self:NotifyAll(self.GlobalListeners, request, tooltip)
@@ -1463,6 +1501,36 @@ function TooltipHooks:RegisterListener(type, name, listener)
 			end
 		end
 	end
+end
+
+---@param requestType string
+---@param listener fun(req:TooltipRequest):void
+---@param state string
+function TooltipHooks:RegisterRequestListener(requestType, listener, state)
+	if requestType == nil or requestType == "all" then
+		requestType = "All"
+	end
+	if self.RequestListeners[requestType] == nil then
+		self.RequestListeners[requestType] = {}
+	end
+	if state and type(state) == "string" then
+		state = string.lower(state)
+		state = state == "before" and "before" or "after"
+	else
+		state = "after"
+	end
+	if self.RequestListeners[requestType][state] == nil then
+		self.RequestListeners[requestType][state] = {}
+	end
+	table.insert(self.RequestListeners[requestType][state], listener)
+end
+
+function TooltipHooks:InvokeRequestListeners(request, state, ...)
+	local rTypeTable = self.RequestListeners[request.Type]
+	if rTypeTable then
+		InvokeListenerTable(rTypeTable[state], request, ...)
+	end
+	InvokeListenerTable(self.RequestListeners.All[state], request, ...)
 end
 
 ---@class TooltipData
@@ -1641,6 +1709,33 @@ function Game.Tooltip.RegisterListener(...)
 		TooltipHooks:RegisterListener(args[1], nil, args[2])
 	else
 		TooltipHooks:RegisterListener(args[1], args[2], args[3])
+	end
+end
+
+---@param typeOrCallback string|function
+---@param callbackOrNil function
+---@param state string The function state, either "before" or "after".
+function Game.Tooltip.RegisterRequestListener(typeOrCallback, callbackOrNil, state)
+	state = state or "after"
+	local args = {...}
+	local t = type(typeOrCallback)
+	if t == "string" then
+		assert(type(callbackOrNil) == "function", "Second parameter must be a function.")
+		TooltipHooks:RegisterRequestListener(typeOrCallback, callbackOrNil, state)
+	elseif t == "function" then
+		TooltipHooks:RegisterRequestListener(nil, typeOrCallback, state)
+	end
+end
+
+---@param typeOrCallback string|function Request type or the callback to register.
+---@param callbackOrNil function The callback to register if the first parameter is a string.
+function Game.Tooltip.RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil)
+	local t = type(typeOrCallback)
+	if t == "string" then
+		assert(type(callbackOrNil) == "function", "Second parameter must be a function.")
+		TooltipHooks:RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil)
+	elseif t == "function" then
+		TooltipHooks:RegisterBeforeNotifyListener("All", typeOrCallback)
 	end
 end
 

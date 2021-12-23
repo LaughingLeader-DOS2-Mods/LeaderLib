@@ -141,26 +141,16 @@ RequestProcessor.CallbackHandler[TooltipCalls.CustomStat] = function(request, ui
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Ability] = function(request, ui, uiType, event, id)
-	if Mods.CharacterExpansionLib then
-		local stat = Mods.CharacterExpansionLib.SheetManager:GetEntryByGeneratedID(id, "Ability")
-		if stat then
-			request.Ability = stat.ID
-			return request
-		end
+	if not request.Ability then
+		request.Ability = Ext.EnumIndexToLabel("AbilityType", id)
 	end
-	request.Ability = Ext.EnumIndexToLabel("AbilityType", id)
 	return request
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Talent] = function(request, ui, uiType, event, id, ...)
-	if Mods.CharacterExpansionLib then
-		local stat = Mods.CharacterExpansionLib.SheetManager:GetEntryByGeneratedID(id, "Talent")
-		if stat then
-			request.Talent = stat.ID
-			return request
-		end
+	if not request.Talent then
+		request.Talent = Ext.EnumIndexToLabel("TalentType", id)
 	end
-	request.Talent = Ext.EnumIndexToLabel("TalentType", id)
 	return request
 end
 
@@ -282,6 +272,7 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHan
 	request.Type = requestType
 	request.CharacterNetID = character.NetID
 
+	RequestProcessor.Tooltip:InvokeRequestListeners(RequestProcessor.Tooltip.NextRequest, "before", ui, uiType, event, id, statOrWidth, ...)
 	if RequestProcessor.CallbackHandler[event] then
 		local b,r = xpcall(RequestProcessor.CallbackHandler[event], debug.traceback, request, ui, uiType, event, id, statOrWidth, ...)
 		if b then
@@ -296,11 +287,7 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHan
 	RequestProcessor.Tooltip.Last.Event = event
 	RequestProcessor.Tooltip.Last.UIType = uiType
 
-	if event == "showCustomStatTooltip" then
-		if Mods.CharacterExpansionLib then
-			Mods.CharacterExpansionLib.CustomStatSystem:OnRequestTooltip(ui, event, request.Stat, request.Character, table.unpack(params))
-		end
-	end
+	RequestProcessor.Tooltip:InvokeRequestListeners(RequestProcessor.Tooltip.NextRequest, "after", ui, uiType, event, id, statOrWidth, ...)
 end
 
 ---@param tooltip TooltipHooks

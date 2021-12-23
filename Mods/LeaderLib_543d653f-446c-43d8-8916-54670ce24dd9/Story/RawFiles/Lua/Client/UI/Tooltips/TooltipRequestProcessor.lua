@@ -135,8 +135,9 @@ RequestProcessor.CallbackHandler[TooltipCalls.Stat] = function(request, ui, uiTy
 	return request
 end
 
-RequestProcessor.CallbackHandler[TooltipCalls.CustomStat] = function(request, ui, uiType, event, id)
-	request.Stat = id
+RequestProcessor.CallbackHandler[TooltipCalls.CustomStat] = function(request, ui, uiType, event, id, index)
+	request.Stat = id or -1
+	request.StatIndex = index or -1
 	return request
 end
 
@@ -272,11 +273,12 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHan
 	request.Type = requestType
 	request.CharacterNetID = character.NetID
 
-	RequestProcessor.Tooltip:InvokeRequestListeners(RequestProcessor.Tooltip.NextRequest, "before", ui, uiType, event, id, statOrWidth, ...)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "before", ui, uiType, event, id, statOrWidth, ...)
 	if RequestProcessor.CallbackHandler[event] then
 		local b,r = xpcall(RequestProcessor.CallbackHandler[event], debug.traceback, request, ui, uiType, event, id, statOrWidth, ...)
 		if b then
 			RequestProcessor.Tooltip.NextRequest = r
+			request = RequestProcessor.Tooltip.NextRequest
 		else
 			Ext.PrintError(string.format("[LeaderLib:RequestProcessor] Error invoking tooltip handler for event (%s):\n%s", event, r))
 		end
@@ -287,7 +289,7 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHan
 	RequestProcessor.Tooltip.Last.Event = event
 	RequestProcessor.Tooltip.Last.UIType = uiType
 
-	RequestProcessor.Tooltip:InvokeRequestListeners(RequestProcessor.Tooltip.NextRequest, "after", ui, uiType, event, id, statOrWidth, ...)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, uiType, event, id, statOrWidth, ...)
 end
 
 ---@param tooltip TooltipHooks

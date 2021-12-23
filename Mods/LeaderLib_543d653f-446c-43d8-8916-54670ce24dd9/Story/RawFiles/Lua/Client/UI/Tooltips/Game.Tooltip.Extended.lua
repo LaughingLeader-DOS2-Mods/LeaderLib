@@ -1174,7 +1174,7 @@ function TooltipHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay,
 	req.AnchorEnum = anchorEnum
 	req.BackgroundType = backgroundType
 
-	local tooltip = TooltipData:Create(req)
+	local tooltip = TooltipData:Create(req, ui:GetTypeId())
 	self:NotifyListeners("Generic", nil, req, tooltip)
 
 	if tooltip.Data.Text ~= text or tooltip.Data.X ~= x or tooltip.Data.Y ~= y then
@@ -1397,22 +1397,14 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 	local tt = TableFromFlash(ui, propertyName)
 	local params = ParseTooltipArray(tt)
 	if params ~= nil then
-		local tooltip = TooltipData:Create(params)
+		local tooltip = TooltipData:Create(params, ui:GetTypeId())
 		self:InvokeBeforeNotifyListeners(req, ui, method, tooltip, ...)
 		if req.Type == "Stat" then
 			self:NotifyListeners("Stat", req.Stat, req, tooltip, req.Character, req.Stat)
 		elseif req.Type == "CustomStat" then
-			if Mods.CharacterExpansionLib then
-				local statData = req.StatData or CustomStatSystem:GetStatByDouble(req.Stat)
-				if statData ~= nil then
-					req.StatData = statData
-					self:NotifyListeners("CustomStat", statData.ID or statData.UUID, req, tooltip, req.Character, statData)
-					CustomStatSystem:OnTooltip(ui, req.Character, statData, tooltip)
-				else
-					self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, {ID=req.Stat})
-				end
+			if req.StatData ~= nil then
+				self:NotifyListeners("CustomStat", req.StatData.ID or req.StatData.UUID, req, tooltip, req.Character, req.StatData)
 			else
-				req.RequestUpdate = false
 				self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, {ID=req.Stat})
 			end
 		elseif req.Type == "Skill" then
@@ -1570,35 +1562,31 @@ function TooltipHooks:NotifyAll(listeners, ...)
 	end
 end
 
-function TooltipHooks:RegisterListener(type, name, listener)
-	--[[ if not self.Initialized then
-		if self.SessionLoaded then
-			self:Init()
-		else
-			self.InitializationRequested = true
-		end
-	end ]]
+---@param tooltipType string|nil
+---@param tooltipID string|nil
+---@param listener function
+function TooltipHooks:RegisterListener(tooltipType, tooltipID, listener)
 	if not self.Initialized then
 		self:Init()
 	end
 
-	if type == nil then
+	if tooltipType == nil then
 		table.insert(self.GlobalListeners, listener)
-	elseif name == nil then
-		if self.TypeListeners[type] == nil then
-			self.TypeListeners[type] = {listener}
+	elseif tooltipID == nil then
+		if self.TypeListeners[tooltipType] == nil then
+			self.TypeListeners[tooltipType] = {listener}
 		else
-			table.insert(self.TypeListeners[type], listener)
+			table.insert(self.TypeListeners[tooltipType], listener)
 		end
 	else
-		local listeners = self.ObjectListeners[type]
+		local listeners = self.ObjectListeners[tooltipType]
 		if listeners == nil then
-			self.ObjectListeners[type] = {[name] = {listener}}
+			self.ObjectListeners[tooltipType] = {[tooltipID] = {listener}}
 		else
-			if listeners[name] == nil then
-				listeners[name] = {listener}
+			if listeners[tooltipID] == nil then
+				listeners[tooltipID] = {listener}
 			else
-				table.insert(listeners[name], listener)
+				table.insert(listeners[tooltipID], listener)
 			end
 		end
 	end
@@ -1638,18 +1626,34 @@ end
 ---@field Data TooltipElement[]
 ---@field ControllerEnabled boolean
 ---@field IsExtended boolean Simple variable a mod can check to see if this is a LeaderLib tooltip.
+---@field UIType integer
+---@field Instance UIObject
+---@field Root FlashMainTimeline
 TooltipData = {}
 
 ---@class GenericTooltipData:TooltipData
 ---@field Data TooltipGenericRequest
 
-function TooltipData:Create(data)
+function TooltipData:Create(data, uiType)
 	local tt = {
 		Data = data,
 		ControllerEnabled = ControllerVars.Enabled or false,
-		IsExtended = true
+		IsExtended = true,
+		UIType = uiType
 	}
-	setmetatable(tt, {__index = self})
+	setmetatable(tt, {
+		__index = function(tbl, k)
+			if k == "Instance" then
+				return Ext.GetUIByType(tbl.UIType)
+			elseif k == "Root" then
+				local ui = Ext.GetUIByType(tbl.UIType)
+				if ui then
+					return ui:GetRoot()
+				end
+			end
+			return TooltipData[k]
+		end
+	})
 	return tt
 end
 
@@ -1802,19 +1806,38 @@ function TooltipData:AppendElementBeforeType(ele, elementType)
 	return ele
 end
 
-function Game.Tooltip.RegisterListener(...)
-	local args = {...}
-	if #args == 1 then
-		TooltipHooks:RegisterListener(nil, nil, args[1])
-	elseif #args == 2 then
-		TooltipHooks:RegisterListener(args[1], nil, args[2])
+---@alias GameTooltipType string|'"Ability"'|'"CustomStat"'|'"Generic"'|'"Item"'|'"Pyramid"'|'"Rune"'|'"Skill"'|'"Stat"'|'"Status"'|'"Tag"'|'"Talent"'
+
+---Register a function to call when a tooltip occurs.
+---Examples:
+---Game.Tooltip.RegisterListener("Skill", nil, myFunction) - Register a function for skill type tooltips.
+---Game.Tooltip.RegisterListener("Status", "HASTED", myFunction) - Register a function for a HASTED status tooltip.
+---Game.Tooltip.RegisterListener(myFunction) - Register a function for every kind of tooltip.
+---@param tooltipTypeOrCallback GameTooltipType|function The tooltip type, such as "Skill".
+---@param idOrNil string|function The tooltip ID, such as "Projectile_Fireball".
+---@param callbackOrNil function If the first two parameters are set, this is the function to invoke.
+function Game.Tooltip.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
+	if type(callbackOrNil) == "function" then
+		assert(type(tooltipTypeOrCallback) == "string", "If the third parameter is a function, the first parameter must be a string (TooltipType).")
+		--assert(type(tooltipID) == "string", "If the third parameter is a function, the second parameter must be a string.")
+		TooltipHooks:RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
+	elseif type(idOrNil) == "function" then
+		assert(type(tooltipTypeOrCallback) == "string", "If the second parameter is a function, the first parameter must be a string (TooltipType).")
+		TooltipHooks:RegisterListener(tooltipTypeOrCallback, nil, idOrNil)
+	elseif type(tooltipTypeOrCallback) == "function" then
+		TooltipHooks:RegisterListener(nil, nil, tooltipTypeOrCallback)
 	else
-		TooltipHooks:RegisterListener(args[1], args[2], args[3])
+		local t1 = type(tooltipTypeOrCallback)
+		local t2 = type(idOrNil)
+		local t3 = type(callbackOrNil)
+		Ext.PrintError(string.format("[Game.Tooltip.RegisterListener] Invalid arguments - 1: [%s](%s), 2: [%s](%s), 3: [%s](%s)", tooltipTypeOrCallback, t1, idOrNil, t2, callbackOrNil, t3))
 	end
 end
 
----@param typeOrCallback string|function
----@param callbackOrNil function
+---@alias GameTooltipRequestListener fun(request:TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTagRequest|TooltipCustomStatRequest|TooltipGenericRequest, ui:UIObject, uiType:integer, event:string, id:any, vararg any):void
+
+---@param typeOrCallback string|GameTooltipRequestListener
+---@param callbackOrNil GameTooltipRequestListener
 ---@param state string The function state, either "before" or "after".
 function Game.Tooltip.RegisterRequestListener(typeOrCallback, callbackOrNil, state)
 	state = state or "after"
@@ -1827,8 +1850,10 @@ function Game.Tooltip.RegisterRequestListener(typeOrCallback, callbackOrNil, sta
 	end
 end
 
----@param typeOrCallback string|function Request type or the callback to register.
----@param callbackOrNil function The callback to register if the first parameter is a string.
+---@alias GameTooltipBeforeNotifyListener fun(request:TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTagRequest|TooltipCustomStatRequest|TooltipGenericRequest, ui:UIObject, method:string, tooltip:TooltipData):void
+
+---@param typeOrCallback string|GameTooltipBeforeNotifyListener Request type or the callback to register.
+---@param callbackOrNil GameTooltipBeforeNotifyListener The callback to register if the first parameter is a string.
 function Game.Tooltip.RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil)
 	local t = type(typeOrCallback)
 	if t == "string" then

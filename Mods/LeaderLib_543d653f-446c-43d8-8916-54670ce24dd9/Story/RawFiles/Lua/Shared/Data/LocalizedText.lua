@@ -492,21 +492,3 @@ local function GetResistanceNameFromDamageType(damageType)
 end
 
 GameHelpers.GetResistanceNameFromDamageType = GetResistanceNameFromDamageType
-
----Get the final value of a string key.
----This uses the handle returned from Ext.GetTranslatedStringFromKey to then get the text from Ext.GetTranslatedString.
----@param key string The string key.
----@param fallback string Text to use if the key does not exist.
----@return string
-local function GetStringKeyText(key,fallback)
-	if fallback == nil then
-		fallback = key
-	end
-	local text,handle = Ext.GetTranslatedStringFromKey(key)
-	if text == nil or handle == nil then
-		return fallback
-	end
-	return text
-end
-
-GameHelpers.GetStringKeyText = GetStringKeyText

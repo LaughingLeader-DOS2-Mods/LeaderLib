@@ -1,6 +1,8 @@
 if GameHelpers == nil then GameHelpers = {} end
 if GameHelpers.Skill == nil then GameHelpers.Skill = {} end
 
+
+
 local projectileCreationProperties = {
     SkillId = "String",
     CleanseStatuses = "String",

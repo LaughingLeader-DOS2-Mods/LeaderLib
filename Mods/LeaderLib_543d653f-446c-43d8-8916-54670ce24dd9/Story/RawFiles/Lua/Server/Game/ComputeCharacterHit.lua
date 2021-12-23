@@ -69,9 +69,8 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
 	
 	local res = character[damageType .. "Resistance"]
 
-    --Fixed in latest Extender
     --Workaround for PhysicalResistance in StatCharacter being double what it actually is
-    --[[ if extVersion <= 55 and damageType == "Physical" then
+    if extVersion <= 55 and damageType == "Physical" then
         local stat = Ext.GetStat(character.Name)
         if stat then
             res = stat.PhysicalResistance
@@ -84,7 +83,7 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
                 res = res + v.PhysicalResistance
             end
         end
-    end ]]
+    end
 
 	if res > 0 and resistancePenetration ~= nil and resistancePenetration > 0 then
 		--PrintDebug(res, " => ", math.max(res - resistancePenetration, 0))

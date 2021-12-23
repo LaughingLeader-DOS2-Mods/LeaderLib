@@ -29,14 +29,56 @@ local ControllerCharacterCreationCalls = {
 	Pyramid = "pyramidOver"
 }
 
+local function GetNetID(obj)
+	if obj then
+		return obj.NetID
+	end
+	return nil
+end
+
+---@return TooltipRequest
+local function CreateRequest()
+	local request = {
+		Type = ""
+	}
+	setmetatable(request, {
+		__index = function(tbl,k)
+			if k == "Character" then
+				if request.CharacterNetID then
+					return Ext.GetCharacter(request.CharacterNetID)
+				end
+			elseif k == "Item" then
+				if request.ItemNetID then
+					return Ext.GetItem(request.ItemNetID)
+				end
+			elseif k == "Status" then
+				if request.StatusHandle and request.CharacterNetID then
+					return Ext.GetStatus(request.CharacterNetID, Ext.DoubleToHandle(request.StatusHandle))
+				end
+			elseif k == "StatusId" then
+				if request.StatusHandle and request.CharacterNetID then
+					local status = Ext.GetStatus(request.CharacterNetID, Ext.DoubleToHandle(request.StatusHandle))
+					if status then
+						request.StatusId = status.StatusId
+					end
+				end
+			end
+		end
+	})
+	return request
+end
+
 RequestProcessor.CallbackHandler[TooltipCalls.Skill] = function(request, ui, uiType, event, id)
 	request.Skill = id
 	return request
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Status] = function(request, ui, uiType, event, id)
-	request.Status = Ext.GetStatus(request.Character.Handle, Ext.DoubleToHandle(id))
-	request.StatusId = request.Status and request.Status.StatusId or ""
+	request.StatusHandle = id
+	local status = Ext.GetStatus(request.Character.Handle, Ext.DoubleToHandle(id))
+	if status then
+		request.StatusId = status and status.StatusId or ""
+	end
 	return request
 end
 
@@ -76,14 +118,14 @@ RequestProcessor.CallbackHandler[TooltipCalls.Item] = function (request, ui, uiT
 			fprint(LOGLEVEL.WARNING, "[LeaderLib:TooltipRequestProcessor] Item handle (%s) is nil? UI(%s) Event(%s)", id, uiType, event)
 			return request
 		end
-		request.Item = Ext.GetItem(Ext.DoubleToHandle(id))
+		request.ItemNetID = GetNetID(Ext.GetItem(Ext.DoubleToHandle(id)))
 	end
 	return request
 end
 
 --ExternalInterface.call("pyramidOver",param1.id,val2.x,val2.y,param1.width,param1.height,"bottom");
 RequestProcessor.CallbackHandler[TooltipCalls.Pyramid] = function(request, ui, uiType, event, id, x, y, width, height, side)
-	request.Item = Ext.GetItem(Ext.DoubleToHandle(id))
+	request.ItemNetID = GetNetID(Ext.GetItem(Ext.DoubleToHandle(id)))
 	return request
 end
 
@@ -142,7 +184,6 @@ RequestProcessor.CallbackHandler[TooltipCalls.Tag] = function(request, ui, uiTyp
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiType, event, slot)
-	request.Item = nil
 	request.Rune = nil
 	request.Slot = slot
 	request.StatsId = nil
@@ -152,7 +193,7 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 		if uiType == Data.UIType.uiCraft then
 			local item = Ext.GetItem(Ext.DoubleToHandle(this.craftPanel_mc.runesPanel_mc.targetHit_mc.itemHandle))
 			if item then
-				request.Item = item
+				request.ItemNetID = GetNetID(item)
 				local runeBoost = item.Stats.DynamicStats[3+slot]
 				request.Rune = Ext.GetStat(runeBoost.BoostName)
 				request.StatsId = runeBoost.BoostName
@@ -161,12 +202,10 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 			local runePanel = this.craftPanel_mc.runePanel_mc
 			if runePanel then
 				local item = Ext.GetItem(Ext.DoubleToHandle(runePanel.runes_mc.runeTargetHandle))
+				request.ItemNetID = GetNetID(item)
 				if slot == 0 then
 					-- The target item is selected instead of a rune, so this should be an item tooltip
-					request = {
-						Type = "Item",
-						Item = item
-					}
+					request.Type = "Item"
 					return request
 				else
 					slot = slot - 1
@@ -174,8 +213,6 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 					--local item = Ext.GetItem(Ext.DoubleToHandle(runePanel.item_array[runePanel.currentHLSlot].itemHandle))
 					local rune = Ext.GetItem(Ext.DoubleToHandle(runePanel.item_array[runePanel.currentHLSlot].itemHandle))
 					--local rune = Ext.GetItem(Ext.DoubleToHandle(runePanel.currMC.itemHandle))
-		
-					request.Item = item
 		
 					if rune then
 						request.Rune = Ext.GetStat(rune.StatsId)
@@ -241,10 +278,10 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHan
 		id = statOrWidth
 	end
 	
-	local request = {
-		Type = requestType,
-		Character = character
-	}
+	local request = CreateRequest()
+	request.Type = requestType
+	request.CharacterNetID = character.NetID
+
 	if RequestProcessor.CallbackHandler[event] then
 		local b,r = xpcall(RequestProcessor.CallbackHandler[event], debug.traceback, request, ui, uiType, event, id, statOrWidth, ...)
 		if b then

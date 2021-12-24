@@ -1253,6 +1253,24 @@ userDataProps["eoc::ProjectileTemplate"] = {
 	PathRepeat = "number",
 }
 
+userDataProps["CRPGStats_Object"] = function(stat)
+	if Ext.OsirisIsCallable() then
+		local statType = NRD_StatGetType(stat.Name)
+		local attributeNames = statType and Data.StatAttributes[statType] or nil
+		if attributeNames then
+			local attributes = {}
+			for _,k in pairs(attributeNames) do
+				local v = stat[k]
+				if v then
+					attributes[k] = v
+				end
+			end
+			return attributes
+		end
+	end
+	return stat
+end
+
 DebugHelpers.userDataProps = userDataProps
 
 local function TryGetValue(obj,k,v)
@@ -1321,10 +1339,10 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 	end
 	local meta = getmetatable(obj)
 	local props = userDataProps[meta]
+	if meta == "CDivinityStats_Equipment_Attributes" and obj.ItemSlot == "Weapon" then
+		props = userDataProps.CDivinityStats_Weapon_Attributes
+	end
 	if props then
-		if meta == "CDivinityStats_Equipment_Attributes" and obj.ItemSlot == "Weapon" then
-			props = userDataProps.CDivinityStats_Weapon_Attributes
-		end
 		if type(props) == "function" then
 			local b,result = xpcall(props, debug.traceback, obj)
 			if b then

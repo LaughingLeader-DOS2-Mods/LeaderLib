@@ -420,6 +420,14 @@ function GameHelpers.Character.GetWeaponRange(character, asMeters)
 	return range
 end
 
+---@param character EsvCharacter|EclCharacter
+---@param target EsvCharacter|EsvItem|number[]
+---@return boolean
+function GameHelpers.Character.IsWithinWeaponRange(character, target)
+	local weaponRange = GameHelpers.Character.GetWeaponRange(target, true)
+	return GameHelpers.Math.GetDistance(character, target) <= weaponRange
+end
+
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsUnsheathed(character)
 	if not isClient and Ext.OsirisIsCallable() then

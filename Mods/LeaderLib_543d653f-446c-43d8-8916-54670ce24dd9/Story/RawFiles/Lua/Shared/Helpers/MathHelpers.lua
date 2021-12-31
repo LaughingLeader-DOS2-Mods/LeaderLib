@@ -2,24 +2,48 @@ if GameHelpers.Math == nil then
 	GameHelpers.Math = {}
 end
 
----@return number,number,number
-local function TryGetPos(x)
-    local t = type(x)
-    if t == "string" then
-        if Ext.IsServer() then
-            return GetPosition(x)
-        else
-            local obj = Ext.GetGameObject(x)
-            if obj and obj.WorldPos then
-                return table.unpack(obj.WorldPos)
-            end
+---Tries to get the position from whatever the variable is.
+---@param obj number[]|UUID|EsvCharacter|EsvItem|Vector3
+---@param unpackResult boolean If true, the position value is returned as separate numbers.
+---@param fallback number[] If no position is found, this value or {0,0,0} is returned.
+---@return number,number,number|number[]
+function GameHelpers.Math.GetPosition(obj, unpackResult, fallback)
+    local t = type(obj)
+    local pos = nil
+    if t == "string" and Ext.OsirisIsCallable() then
+        local x,y,z = GetPosition(obj)
+        if x then
+            pos = {x,y,z}
         end
-    elseif t == "userdata" and t.WorldPos then
-        return table.unpack(x.WorldPos)
-    elseif t == "table" and #x == 3 then
-        table.unpack(x)
+    elseif t == "string" or t == "number" then
+        obj = GameHelpers.TryGetObject(obj)
+        if obj then
+            t = "userdata"
+        end
     end
-    return nil
+    if t == "userdata" and obj.WorldPos then
+        pos = {obj.WorldPos[1], obj.WorldPos[2], obj.WorldPos[3]}
+    elseif t == "table" then
+        if obj.Type == "Vector3" and obj.Unpack then
+            pos = {obj:Unpack()}
+        else
+            pos = obj
+        end
+    end
+    if pos then
+        if unpackResult then
+            return table.unpack(pos)
+        end
+        return pos
+    end
+    if fallback == nil then
+        if unpackResult then
+            return 0,0,0
+        else
+            return {0,0,0}
+        end
+    end
+    return fallback
 end
 
 ---Get a position derived from a character's forward facing direction.
@@ -146,18 +170,8 @@ end
 ---@param pos2 number[]|string
 ---@return number
 function GameHelpers.Math.GetDistance(pos1, pos2)
-    local x,y,z = 0,0,0
-    local tx,ty,tz = 0,0,0
-    if type(pos1) == "table" then
-        x,y,z = table.unpack(pos1)
-    elseif type(pos2) == "string" then
-        x,y,z = TryGetPos(pos1)
-    end
-    if type(pos2) == "table" then
-        tx,ty,tz = table.unpack(pos2)
-    elseif type(pos2) == "string" then
-        tx,ty,tz = TryGetPos(pos2)
-    end
+    local x,y,z = GameHelpers.Math.GetPosition(pos1, true)
+    local tx,ty,tz = GameHelpers.Math.GetPosition(pos2, true)
     local diff = {
         x - tx,
         y - ty,
@@ -216,18 +230,8 @@ end
 ---@return number[]
 function GameHelpers.Math.GetDirectionVector(pos1, pos2, reverse)
     local vec = Classes.Vector3
-    local x,y,z = 0,0,0
-    local x2,y2,z2 = 0,0,0
-    if type(pos1) == "table" then
-        x,y,z = table.unpack(pos1)
-    elseif type(pos2) == "string" then
-        x,y,z = TryGetPos(pos1)
-    end
-    if type(pos2) == "table" then
-        x2,y2,z2 = table.unpack(pos2)
-    elseif type(pos2) == "string" then
-        x2,y2,z2 = TryGetPos(pos2)
-    end
+    local x,y,z = GameHelpers.Math.GetPosition(pos1, true)
+    local x2,y2,z2 = GameHelpers.Math.GetPosition(pos2, true)
     local a = vec(x,y,z)
     local b = vec(x2,y2,z2)
     a:Sub(b)
@@ -254,26 +258,6 @@ function GameHelpers.Math.ScaleToRange(val, minRange, maxRange, minScale, maxSca
     local diffMult = diff/(maxRange - minRange)
     local result = diffMult*(maxScale - minScale)
     return math.min(maxScale, math.max(result, minScale))
-end
-
-function GameHelpers.Math.GetPosition(obj, unpack, fallback)
-    local t = type(obj)
-    if t == "table" then
-        if #obj >= 3 then
-            return unpack and table.unpack(obj) or obj
-        end
-        for k,v in pairs(obj) do
-            if type(k) == "string" and string.find(k, "Pos") then
-                return unpack and table.unpack(v) or v
-            end
-        end
-    elseif t == "userdata" and obj.WorldPos then
-        return unpack and table.unpack(obj.WorldPos) or obj.WorldPos
-    end
-    if unpack and fallback and type(fallback) == "table" then
-        return table.unpack(fallback)
-    end
-    return fallback
 end
 
 ---Returns true if a number is NaN, probably.

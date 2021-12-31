@@ -65,8 +65,8 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
     local sourceObject = GameHelpers.TryGetObject(source)
     local targetObject = GameHelpers.TryGetObject(target)
 
-    local sourcePos = GameHelpers.Math.GetPosition(sourceObject or source, false, {0,0,0})
-    local targetPos = GameHelpers.Math.GetPosition(targetObject or target, false, {0,0,0})
+    local sourcePos = GameHelpers.Math.GetPosition(sourceObject or source, false)
+    local targetPos = GameHelpers.Math.GetPosition(targetObject or target, false)
 
     local isFromItem = false
     ---@type EsvShootProjectileRequest
@@ -502,7 +502,7 @@ function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
     props.GrowStep = skill.SurfaceGrowStep
     props.GrowTimer = skill.SurfaceGrowInterval * 0.01
     props.MaxHeight = 2.4
-    props.Target = GameHelpers.Math.GetPosition(target, false, {0,0,0})
+    props.Target = GameHelpers.Math.GetPosition(target, false)
     props.Shape = skill.Shape == "Square" and 1 or 0
     props.Radius = skill.Range
     --Inherited properties

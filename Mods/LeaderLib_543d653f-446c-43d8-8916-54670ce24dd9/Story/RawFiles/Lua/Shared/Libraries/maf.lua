@@ -20,6 +20,7 @@ local vtmp2
 local qtmp1
 
 Vector3 = {
+	Type = "Vector3",
 	__call = function(_, x, y, z)
 		return setmetatable({ x = x or 0, y = y or 0, z = z or 0 }, Vector3)
 	end,
@@ -199,6 +200,7 @@ function Vector3:Rotate(q, out)
 end
 
 Quaternion = {
+	Type = "Quaternion",
 	__call = function(_, x, y, z, w)
 		return setmetatable({ x = x or 0.0, y = y or 0.0, z = z or 0.0, w = w or 1.0 }, Quaternion)
 	end,

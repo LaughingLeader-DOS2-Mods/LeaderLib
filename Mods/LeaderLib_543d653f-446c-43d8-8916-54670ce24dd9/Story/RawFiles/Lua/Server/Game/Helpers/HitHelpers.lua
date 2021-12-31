@@ -188,6 +188,22 @@ function GameHelpers.Hit.IsFromWeapon(hit, skill)
     return false
 end
 
+---Returns true if a hit is from the source directly (not from a surface, DoT etc).
+---@param hit EsvStatusHit
+---@return boolean
+function GameHelpers.Hit.IsDirect(hit)
+    if not hit then
+        return false
+    end
+    local hitReason = GameHelpers.Hit.GetHitReason(hit.HitReason, true)
+    if hitReason >= 4 then
+        return false
+    end
+
+    local damageSourceType = Ext.EnumLabelToIndex(hit.DamageSourceType, "DamageSourceType")
+    return damageSourceType == 0 or damageSourceType == 6 or damageSourceType == 7
+end
+
 local hitFlag = Game.Math.HitFlag
 
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.

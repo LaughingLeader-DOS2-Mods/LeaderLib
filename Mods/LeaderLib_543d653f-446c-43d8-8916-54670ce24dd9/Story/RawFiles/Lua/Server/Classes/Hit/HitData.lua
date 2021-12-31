@@ -322,4 +322,9 @@ function HitData:IsFromWeapon()
 	return GameHelpers.Hit.IsFromWeapon(self.HitStatus, self.SkillData)
 end
 
+---Returns true if the hit isn't from a surface, DoT, status tick, etc.
+function HitData:IsDirect()
+	return GameHelpers.Hit.IsDirect(self.HitStatus)
+end
+
 Classes.HitData = HitData

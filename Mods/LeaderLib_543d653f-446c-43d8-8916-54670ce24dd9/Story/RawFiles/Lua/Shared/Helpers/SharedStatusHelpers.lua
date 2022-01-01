@@ -359,3 +359,64 @@ function GameHelpers.Status.IsBeneficial(statusId, ignoreItemPotions, ignoreStat
 	end
 	return false
 end
+
+---Returns true if the object has any of the given statuses.
+---@param object EsvGameObject|UUID|NETID
+---@param statusId string|string[]
+---@param checkAll boolean If true, only return true if every given status is active.
+---@return boolean
+function GameHelpers.Status.IsActive(object, statusId, checkAll)
+	local uuid = GameHelpers.GetUUID(object)
+	if uuid then
+		local t = type(statusId)
+		if t == "table" then
+			local totalActive = 0
+			local total = 0
+			for _,v in pairs(statusId) do
+				total = total + 1
+				if GameHelpers.Status.IsActive(uuid, v) then
+					if not checkAll then
+						return true
+					end
+					totalActive = totalActive + 1
+				end
+			end
+			return totalActive >= total
+		elseif t == "string" then
+			if Ext.OsirisIsCallable() then
+				return HasActiveStatus(uuid, statusId) == 1
+			else
+				local target = GameHelpers.TryGetObject(uuid)
+				if target and target.GetStatus then
+					return target:GetStatus(statusId) ~= nil
+				end
+			end
+		end
+	end
+	return false
+end
+
+---Returns true if the object has a status with a specific type.
+---@param object EsvGameObject|UUID|NETID
+---@param statusType string|string[]
+---@return boolean
+function GameHelpers.Status.HasStatusType(object, statusType)
+	object = GameHelpers.TryGetObject(object)
+	if object and object.GetStatusObjects then
+		local t = type(statusType)
+		if t == "table" then
+			for i,v in pairs(statusType) do
+				if GameHelpers.Status.HasStatusType(object, v) then
+					return true
+				end
+			end
+		elseif t == "string" and not StringHelpers.IsNullOrWhitespace(statusType) then
+			for _,v in pairs(object:GetStatusObjects()) do
+				if v.StatusId == statusType or v.StatusType == statusType then
+					return true
+				end
+			end
+		end
+	end
+    return false
+end

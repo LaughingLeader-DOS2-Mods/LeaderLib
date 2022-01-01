@@ -70,6 +70,16 @@ Vars = {
 	IsEditorMode = false,
 	IsClient = Ext.IsClient(),
 	ConsoleWindowVariables = {},
+	RaceData = {
+		Dwarf = {Tag="DWARF", BaseTag = "DWARF"},
+		Elf = {Tag="ELF", BaseTag = "ELF"},
+		Human = {Tag="HUMAN", BaseTag = "HUMAN"},
+		Lizard = {Tag="LIZARD", BaseTag = "LIZARD"},
+		Undead_Dwarf = {Tag="UNDEAD_DWARF", BaseTag = "DWARF"},
+		Undead_Elf = {Tag="UNDEAD_ELF", BaseTag = "ELF"},
+		Undead_Human = {Tag="UNDEAD_HUMAN", BaseTag = "HUMAN"},
+		Undead_Lizard = {Tag="UNDEAD_LIZARD", BaseTag = "LIZARD"},
+	}
 }
 
 function PrintDebug(...)

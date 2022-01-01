@@ -223,6 +223,24 @@ function GameHelpers.Character.IsUndead(character)
 	return false
 end
 
+---Returns true if the character is one of the regular humanoid races.
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+---@return boolean
+function GameHelpers.Character.IsHumanoid(character)
+	character = GameHelpers.GetCharacter(character)
+	if character and character.HasTag then
+		for raceId,raceData in pairs(Vars.RaceData) do
+			if character:HasTag(raceData.Tag) 
+			or character:HasTag(raceData.BaseTag)
+			or string.find(character.RootTemplate.TemplateName, raceId)
+			or (character.PlayerCustomData and character.PlayerCustomData.Race == raceId) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 ---@return boolean
 function GameHelpers.Character.GetDisplayName(character)
@@ -444,12 +462,86 @@ function GameHelpers.Character.IsUnsheathed(character)
 	return false
 end
 
+---Returns true if the character is disabled by a status.
+---@param character EsvCharacter|string
+---@param checkForLoseControl boolean
+---@return boolean
+function GameHelpers.Character.IsDisabled(character, checkForLoseControl)
+	if type(character) == "string" then
+		character = Ext.GetCharacter(character)
+	end
+	if character == nil then
+		return false
+	end
+	if ObjectHasStatusType(character.MyGuid, {"KNOCKED_DOWN", "INCAPACITATED"}) then
+		return true
+	elseif checkForLoseControl == true then -- LoseControl on items is a good way to crash
+		for _,status in pairs(character:GetStatusObjects()) do
+			if status.StatusId == "CHARMED" then
+				return GameHelpers.Status.IsFromEnemy(status, character)
+			end
+			if Data.EngineStatus[status.StatusId] ~= true then
+				local stat = Ext.GetStat(status.StatusId)
+				if stat and stat.LoseControl == "Yes" then
+					if GameHelpers.Status.IsFromEnemy(status, character) then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
+end
+
+GameHelpers.Status.IsDisabled = GameHelpers.Character.IsDisabled
+
+---Returns true if the object is sneaking or has an INVISIBLE type status.
+---@param character EsvCharacter|string
+---@return boolean
+function GameHelpers.Character.IsSneakingOrInvisible(character)
+	character = GameHelpers.GetCharacter(character)
+	if character then
+		if GameHelpers.Status.IsActive(character, "SNEAKING")
+		or GameHelpers.Status.IsActive(character, "INVISIBLE")
+		or GameHelpers.Status.HasStatusType(character, "INVISIBLE")
+		then
+			return true
+		end
+	end
+    return false
+end
+
 if not isClient then
-	---Equips an item to its stats Slot using NRD_CharacterEquipItem, and moves any existing item in that slot to the character's inventory.
-	---@param character EsvCharacter|UUID
-	---@param item EclItem|UUID
-	---@return boolean
-	function GameHelpers.Character.EquipItem(character, item)
+	Ext.NewQuery(GameHelpers.Character.IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "[in](GUIDSTRING)_Object, [out](INTEGER)_Bool")
+end
+
+GameHelpers.Status.IsSneakingOrInvisible = GameHelpers.Character.IsSneakingOrInvisible
+
+---Shortcut for GameHelpers.Surface.HasSurface, using the character's position.
+---@param character EsvCharacter|EclCharacter
+---@param matchNames string|string[] Surface names to look for.
+---@param maxRadius number|nil
+---@param containingName boolean Look for surfaces containing the name, instead of explicit matching.
+---@param onlyLayer integer Look only on layer 0 (ground) or 1 (clouds).
+---@param grid AiGrid|nil
+---@return boolean
+function GameHelpers.Character.IsInSurface(character, matchNames, maxRadius, containingName, onlyLayer, grid)
+	local pos = GameHelpers.Math.GetPosition(character, false, false)
+	if pos then
+		if containingName == nil then
+			containingName = true
+		end
+		return GameHelpers.Surface.HasSurface(pos[1], pos[3], matchNames, maxRadius or 6.0, containingName, onlyLayer, grid)
+	end
+	return false
+end
+
+---Equips an item to its stats Slot using NRD_CharacterEquipItem, and moves any existing item in that slot to the character's inventory.
+---@param character EsvCharacter|UUID
+---@param item EclItem|UUID
+---@return boolean
+function GameHelpers.Character.EquipItem(character, item)
+	if not isClient then
 		local uuid = GameHelpers.GetUUID(character)
 		fassert(not StringHelpers.IsNullOrEmpty(uuid) and ObjectExists(uuid) == 1, "Character (%s) must be a valid UUID or EsvCharacter", character)
 		item = GameHelpers.GetItem(item)
@@ -512,6 +604,19 @@ function GameHelpers.Character.IsImmobile(character)
 	if character then
 		if character.Stats.Movement <= 0 then
 			return true
+		end
+	end
+	return false
+end
+
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+function GameHelpers.Character.HasFlag(character, flag)
+	if not isClient and Ext.OsirisIsCallable() then
+		local uuid = GameHelpers.GetUUID(character)
+		if uuid then
+			return ObjectGetFlag(uuid, flag) == 1
+			or PartyGetFlag(uuid, flag) == 1
+			or UserGetFlag(uuid, flag) == 1
 		end
 	end
 	return false

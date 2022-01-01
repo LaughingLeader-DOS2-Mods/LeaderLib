@@ -2,41 +2,7 @@ if GameHelpers.Status == nil then
 	GameHelpers.Status = {}
 end
 
----Returns true if the object is sneaking or has an INVISIBLE type status.
----@param obj string
----@return boolean
-function GameHelpers.Status.IsSneakingOrInvisible(obj)
-    if HasActiveStatus(obj, "SNEAKING") == 1 or HasActiveStatus(obj, "INVISIBLE") == 1 or NRD_ObjectHasStatusType(obj, "INVISIBLE") == 1 then
-        return true
-    end
-    return false
-end
-
-Ext.NewQuery(GameHelpers.Status.IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "[in](GUIDSTRING)_Object, [out](INTEGER)_Bool")
-
----Returns true if the object has a status with a specific type.
----@param obj string
----@param statusType string
----@return boolean
-local function ObjectHasStatusType(obj, statusType)
-	if type(statusType) == "table" then
-		for i,v in pairs(statusType) do
-			local check = string.upper(v)
-			if HasActiveStatus(obj, check) == 1 or NRD_ObjectHasStatusType(obj, check) == 1 then
-				return true
-			end
-		end
-	elseif not StringHelpers.IsNullOrWhitespace(statusType) then
-		if HasActiveStatus(obj, statusType) == 1 or NRD_ObjectHasStatusType(obj, statusType) == 1 then
-			return true
-		end
-	end
-    return false
-end
-
-GameHelpers.Status.HasStatusType = ObjectHasStatusType
-
-Ext.NewQuery(ObjectHasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool")
+Ext.NewQuery(GameHelpers.Status.HasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool")
 
 ---@param status EsvStatus
 ---@param target EsvCharacter|nil
@@ -47,37 +13,6 @@ function GameHelpers.Status.IsFromEnemy(status, target, source)
 	source = source or (status.StatusSourceHandle ~= nil and Ext.GetGameObject(status.StatusSourceHandle) or nil)
 	if target ~= nil and source ~= nil then
 		return CharacterIsEnemy(target.MyGuid, source.MyGuid) == 1
-	end
-	return false
-end
-
----Returns true if the character is disabled by a status.
----@param character EsvCharacter|string
----@param checkForLoseControl boolean
----@return boolean
-function GameHelpers.Status.IsDisabled(character, checkForLoseControl)
-	if type(character) == "string" then
-		character = Ext.GetCharacter(character)
-	end
-	if character == nil then
-		return false
-	end
-	if ObjectHasStatusType(character.MyGuid, {"KNOCKED_DOWN", "INCAPACITATED"}) then
-		return true
-	elseif checkForLoseControl == true then -- LoseControl on items is a good way to crash
-		for _,status in pairs(character:GetStatusObjects()) do
-			if status.StatusId == "CHARMED" then
-				return GameHelpers.Status.IsFromEnemy(status, character)
-			end
-			if Data.EngineStatus[status.StatusId] ~= true then
-				local stat = Ext.GetStat(status.StatusId)
-				if stat and stat.LoseControl == "Yes" then
-					if GameHelpers.Status.IsFromEnemy(status, character) then
-						return true
-					end
-				end
-			end
-		end
 	end
 	return false
 end
@@ -418,37 +353,21 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 	end
 end
 
----Returns true if the object has any of the given statuses.
----@param object EsvGameObject|UUID|NETID
----@param statusId string|string[]
----@param checkAll boolean If true, only return true if every given status is active.
----@return boolean
-function GameHelpers.Status.IsActive(object, statusId, checkAll)
-	local uuid = GameHelpers.GetUUID(object)
-	if uuid then
-		local t = type(statusId)
-		if t == "table" then
-			local totalActive = 0
-			local total = 0
-			for _,v in pairs(statusId) do
-				total = total + 1
-				if GameHelpers.Status.IsActive(uuid, v) then
-					if not checkAll then
-						return true
-					end
-					totalActive = totalActive + 1
-				end
+---Applies a status to a target, or targets around a position.
+---@param target EsvGameObject|UUID|NETID
+---@param status string|string[]
+function GameHelpers.Status.Remove(target, status)
+	target = GameHelpers.GetUUID(target)
+	if target then
+		local t = type(status)
+		if t == "string" then
+			RemoveStatus(target, status)
+			return true
+		elseif t == "table" then
+			for k,v in pairs(status) do
+				GameHelpers.Status.Remove(target, v)
 			end
-			return totalActive >= total
-		elseif t == "string" then
-			if Ext.OsirisIsCallable() then
-				return HasActiveStatus(uuid, statusId) == 1
-			else
-				local target = GameHelpers.TryGetObject(uuid)
-				if target and target.GetStatus then
-					return target:GetStatus(statusId) ~= nil
-				end
-			end
+			return true
 		end
 	end
 	return false

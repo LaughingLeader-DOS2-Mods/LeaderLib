@@ -570,3 +570,17 @@ function GameHelpers.GetGameDifficulty()
 	--int to string
 	return Data.Difficulty(Ext.GetDifficulty())	
 end
+
+---@param character EsvCharacter|EsvItem|UUID|NETID
+function GameHelpers.ObjectHasFlag(obj, flag)
+	if not isClient and Ext.OsirisIsCallable() then
+		local uuid = GameHelpers.GetUUID(obj)
+		if uuid then
+			return ObjectGetFlag(uuid, flag) == 1
+			or (ObjectIsCharacter(uuid) == 1
+			and PartyGetFlag(uuid, flag) == 1
+			or UserGetFlag(uuid, flag) == 1)
+		end
+	end
+	return false
+end

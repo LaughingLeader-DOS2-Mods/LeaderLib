@@ -140,9 +140,9 @@ end
 local defaultUIFlags = Data.DefaultUIFlags | Data.UIFlags.OF_FullScreen
 
 function UIExtensions.SetupInstance()
-	if Ext.GetGameState() == "Menu" then
-		Ext.PrintError("[UIExtensions.SetupInstance] Game not ready yet.")
-	end
+	-- if Ext.GetGameState() == "Menu" then
+	-- 	Ext.PrintError("[UIExtensions.SetupInstance] Game not ready yet.")
+	-- end
 	local instance = Ext.GetUI("LeaderLibUIExtensions")
 	if not instance then
 		if Vars.ControllerEnabled then

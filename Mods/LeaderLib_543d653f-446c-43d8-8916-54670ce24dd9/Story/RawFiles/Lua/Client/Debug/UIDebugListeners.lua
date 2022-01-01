@@ -148,6 +148,7 @@ local defaultIgnored = {
 
 local lastTimeSinceIgnored = {}
 
+---@param ui UIObject
 Ext.RegisterListener("UICall", function(ui, event, ...)
 	if defaultIgnored[event] then
 		return

@@ -1,24 +1,25 @@
 ---A wrapper around common character queries with additional character-related helpers.
----@class CharacterData
----@field NetID integer
+---@class CharacterData:EsvCharacter
+---@field UUID string
 ---@field Region string
 local CharacterData = {
 	Type = "CharacterData",
-	UUID = "",
-	NetID = -1,
-	Region = ""
-}
-
-local customAccessors = {
-	NetID = function(tbl) local char = Ext.GetCharacter(tbl.UUID); return char and char.NetID or nil end,
-	Region = function(tbl) return GetRegion(tbl.UUID) end
 }
 
 CharacterData.__index = function(tbl, k)
-	if customAccessors[k] then
-		return customAccessors[k](tbl)
+	if CharacterData[k] then
+		return CharacterData[k]
 	end
-	return CharacterData[k]
+	local uuid = rawget(tbl, "UUID")
+	if uuid then
+		if k == "Region" and Ext.OsirisIsCallable() then
+			return GetRegion(uuid)
+		end
+		local char = GameHelpers.GetCharacter(uuid)
+		if char then
+			return char[k]
+		end
+	end
 end
 
 ---@param uuid string
@@ -107,16 +108,18 @@ function CharacterData:GetPosition(asVector3)
 end
 
 ---@param status string|string[]
+---@param checkAll boolean Only return true if all statuses are found.
 ---@return boolean
-function CharacterData:HasActiveStatus(status)
-	if type(status) == "table" then
-		for i,v in pairs(status) do
-			if self:IsStatusActive(v) then
-				return true
-			end
-		end
-	else
-		return HasActiveStatus(self.UUID, status) == 1
+function CharacterData:HasActiveStatus(status, checkAll)
+	return GameHelpers.Status.IsActive(self.UUID, status, checkAll)
+end
+
+---Checks for an object, party, or user flag on the character.
+---@param flag string
+---@return boolean
+function CharacterData:HasFlag(flag)
+	if Ext.OsirisIsCallable() then
+		return GameHelpers.Character.HasFlag(self.UUID, flag)
 	end
 	return false
 end
@@ -154,8 +157,8 @@ function CharacterData:ApplyOrSetStatus(status, duration, force, source)
 			self:ApplyOrSetStatus(v, duration, force, source)
 		end
 	else
-		if HasActiveStatus(self.UUID, status) == 0 then
-			ApplyStatus(self.UUID, status, duration or 6.0, force and 1 or 0, source or self.UUID)
+		if not self:HasActiveStatus(status) then
+			GameHelpers.Status.Apply(self.UUID, status, duration or 6.0, force, source or self.UUID)
 		else
 			local char = self:GetCharacter()
 			if char then

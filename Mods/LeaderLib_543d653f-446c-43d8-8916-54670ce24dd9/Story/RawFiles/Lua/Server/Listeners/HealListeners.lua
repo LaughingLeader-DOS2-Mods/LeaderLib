@@ -1,4 +1,4 @@
-local healingStatusToSkills = {}
+Vars.HealingStatusToSkills = {}
 
 local function CalculateHealAmount(healValue, level)
 	local averageLevelDamage = Game.Math.GetAverageLevelDamage(level)
@@ -47,7 +47,7 @@ Ext.RegisterOsirisListener("NRD_OnHeal", 4, "after", function(target, source, am
 			-- 	sourceStatusId = healingSourceData.StatusId
 			-- end
 		end
-		local skills = healingStatusToSkills[statusId]
+		local skills = Vars.HealingStatusToSkills[statusId]
 		local lastUsedSkill = PersistentVars.LastUsedHealingSkill[source.MyGuid]
 		if skills and skills[lastUsedSkill] == true then
 			skill = lastUsedSkill
@@ -81,7 +81,8 @@ function RegisterHealListener(callback)
 	RegisterListener("OnHeal", callback)
 end
 
-RegisterListener("Initialized", function()
+---@private
+function ParseHealingStatusToSkills()
 	for _,skillId in pairs(Ext.GetStatEntries("SkillData")) do
 		local props = GameHelpers.Stats.GetSkillProperties(skillId)
 		if props then
@@ -89,16 +90,28 @@ RegisterListener("Initialized", function()
 				if v.Type == "Status" and v.Action ~= "" and not Data.EngineStatus[v.Action] and v.Action ~= "TryKill" then
 					local statusType = GameHelpers.Status.GetStatusType(v.Action)
 					if statusType == "HEAL" or statusType == "HEALING" then
-						if not healingStatusToSkills[v.Action] then
-							healingStatusToSkills[v.Action] = {}
+						if not Vars.HealingStatusToSkills[v.Action] then
+							Vars.HealingStatusToSkills[v.Action] = {}
 						end
-						healingStatusToSkills[v.Action][skillId] = true
+						Vars.HealingStatusToSkills[v.Action][skillId] = true
 					end
 				end
 			end
 		end
 	end
+end
+
+--local parsedSkills = false
+-- RegisterListener("RegionChanged", function(region, state, levelType)
+-- 	if state == REGIONSTATE.GAME and not parsedSkills then
+-- 		ParseHealingStatusToSkills()
+--		parsedSkills = true
+-- 	end
+-- end)
+Ext.RegisterListener("SessionLoaded", function()
+	ParseHealingStatusToSkills()
 end)
+
 -- RegisterHealListener(function(target, source, heal, originalAmount, handle, skill, healingSourceStatus)
 -- 	print("OnHeal", Lib.serpent.block({
 -- 		target = target.DisplayName,

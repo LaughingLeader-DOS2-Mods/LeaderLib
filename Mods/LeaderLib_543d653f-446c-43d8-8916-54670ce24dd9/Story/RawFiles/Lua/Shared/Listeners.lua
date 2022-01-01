@@ -13,6 +13,7 @@ end
 Listeners.FeatureEnabled = {}
 Listeners.FeatureDisabled = {}
 Listeners.Initialized = {}
+Listeners.RegionChanged = {}
 Listeners.ModuleResume = {}
 Listeners.SessionLoaded = {}
 Listeners.TurnDelayed = {}

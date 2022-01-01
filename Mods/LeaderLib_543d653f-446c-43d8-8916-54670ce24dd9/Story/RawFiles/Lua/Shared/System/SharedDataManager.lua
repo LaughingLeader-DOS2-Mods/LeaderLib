@@ -4,6 +4,8 @@ end
 
 local ClientCharacterData = Classes.ClientCharacterData
 
+local isClient = Ext.IsClient()
+
 ---@class LEVELTYPE
 LEVELTYPE = {
 	GAME = 1,
@@ -21,12 +23,24 @@ GAMEMODE = {
 
 local UserIds = {}
 
+---@class REGIONSTATE
+REGIONSTATE = {
+	NONE = 0,
+	STARTED = 1,
+	GAME = 2,
+	ENDED = 3
+}
+
 ---@class SharedData
 SharedData = {
 	RegionData = {
 		Current = "",
 		---@type LEVELTYPE
-		LevelType = LEVELTYPE.GAME
+		LevelType = LEVELTYPE.GAME,
+		---@type LEVELTYPE
+		LastLevelType = -1,
+		---@type REGIONSTATE
+		State = REGIONSTATE.NONE
 	},
 	---@type table<string, ClientCharacterData>
 	CharacterData = {},
@@ -34,12 +48,10 @@ SharedData = {
 	GameMode = GAMEMODE.CAMPAIGN
 }
 
-if Ext.IsClient() then
+if isClient then
 	---@type ClientData
 	Client = Classes.ClientData:Create("")
-end
-
-if Ext.IsServer() then
+else
 	---@param id integer
 	---@param profile string
 	---@param uuid string
@@ -146,7 +158,8 @@ if Ext.IsServer() then
 	end
 
 	function GameHelpers.Data.SetRegion(region)
-		local lastType = SharedData.RegionData.LevelType
+		SharedData.RegionData.LastLevelType = SharedData.RegionData.LevelType
+
 		SharedData.RegionData.Current = region
 		if IsCharacterCreationLevel(region) == 1 then
 			SharedData.RegionData.LevelType = LEVELTYPE.CHARACTER_CREATION
@@ -158,7 +171,24 @@ if Ext.IsServer() then
 			SharedData.RegionData.LevelType = LEVELTYPE.EDITOR
 		end
 	end
-	Ext.RegisterOsirisListener("RegionStarted", 1, "after", GameHelpers.Data.SetRegion)
+
+	Ext.RegisterOsirisListener("RegionStarted", 1, "after", function(region)
+		SharedData.RegionData.State = REGIONSTATE.STARTED
+		GameHelpers.Data.SetRegion(region)
+		InvokeListenerCallbacks(Listeners.RegionChanged, region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+	end)
+	
+	Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region)
+		SharedData.RegionData.State = REGIONSTATE.GAME
+		GameHelpers.Data.SetRegion(region)
+		InvokeListenerCallbacks(Listeners.RegionChanged, region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+	end)
+	
+	Ext.RegisterOsirisListener("RegionEnded", 1, "after", function(region)
+		SharedData.RegionData.State = REGIONSTATE.ENDED
+		GameHelpers.Data.SetRegion(region)
+		InvokeListenerCallbacks(Listeners.RegionChanged, region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+	end)
 
 	function GameHelpers.Data.SetGameMode(gameMode)
 		if not gameMode then
@@ -408,7 +438,7 @@ function GameHelpers.Data.GetPersistentVars(modTable, createIfMissing, ...)
 	return nil
 end
 
-if Ext.IsClient() then
+if isClient then
 	local defaultEmptyCharacter = Classes.ClientCharacterData:Create()
 
 	local function GetClientCharacter(profile, netid)
@@ -469,6 +499,7 @@ if Ext.IsClient() then
 			if Client.Character.NetID ~= last then
 				ActiveCharacterChanged(Client.Character, last)
 			end
+			InvokeListenerCallbacks(Listeners.RegionChanged, SharedData.RegionData.State, SharedData.RegionData.Current, SharedData.RegionData.LevelType)
 			return true
 		else
 			error("Error parsing json?", payload)

@@ -2,6 +2,8 @@ if not GameHelpers.Hit then
     GameHelpers.Hit = {}
 end
 
+local version = Ext.Version()
+
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.
 ---Pass in an object if this is a status.
 ---@param target string
@@ -213,14 +215,20 @@ function GameHelpers.Hit.Succeeded(hit)
     if getmetatable(hit) == "esv::HStatus" then
         hit = hit.Hit
     end
-    if (hit.EffectFlags & hitFlag.Dodged) ~= 0 then
-        return false
-    end
-    if (hit.EffectFlags & hitFlag.Missed) ~= 0 then
-        return false
-    end
-    if (hit.EffectFlags & hitFlag.Blocked) ~= 0 then
-        return false
+    if version < 56 then
+        if (hit.EffectFlags & hitFlag.Dodged) ~= 0 then
+            return false
+        end
+        if (hit.EffectFlags & hitFlag.Missed) ~= 0 then
+            return false
+        end
+        if (hit.EffectFlags & hitFlag.Blocked) ~= 0 then
+            return false
+        end
+    else
+        if hit.Dodged or hit.Missed or hit.Blocked then
+            return false
+        end
     end
     return true
 end
@@ -234,7 +242,7 @@ function GameHelpers.Hit.HasFlag(hit, flag)
         error(string.format("Invalid hit (%s) or flag (%s)", hit, flag), 2)
     end
     local t = type(flag)
-    if t == "string" then
+    if t == "string" and version < 56 then
         flag = hitFlag[flag]
     elseif t == "table" then
         for i,v in pairs(flag) do
@@ -244,7 +252,11 @@ function GameHelpers.Hit.HasFlag(hit, flag)
         end
         return false
     end
-    return (hit.EffectFlags & flag) ~= 0
+    if version < 56 then
+        return (hit.EffectFlags & flag) ~= 0
+    else
+        return hit[flag] == true
+    end
 end
 
 ---@param hit HitRequest
@@ -255,7 +267,7 @@ function GameHelpers.Hit.SetFlag(hit, flag, b)
         error(string.format("Invalid hit (%s) or flag (%s)", hit, flag), 2)
     end
     local t = type(flag)
-    if t == "string" then
+    if t == "string" and version < 56 then
         flag = hitFlag[flag]
     elseif t == "table" then
         for i,v in pairs(flag) do
@@ -263,10 +275,14 @@ function GameHelpers.Hit.SetFlag(hit, flag, b)
         end
         return
     end
-    if b then
-        hit.EffectFlags = hit.EffectFlags | flag
+    if version < 56 then
+        if b then
+            hit.EffectFlags = hit.EffectFlags | flag
+        else
+            hit.EffectFlags = hit.EffectFlags & ~flag
+        end
     else
-        hit.EffectFlags = hit.EffectFlags & ~flag
+        hit[flag] = b
     end
 end
 

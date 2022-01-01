@@ -8,6 +8,7 @@ HitOverrides = {
 --- This script tweaks Game.Math functions to allow lowering resistance with Resistance Penetration tags on items of the attacker.
 
 local extVersion = Ext.Version()
+local HitFlag = Game.Math.HitFlag
 
 --region Game.Math functions
 
@@ -263,7 +264,7 @@ function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRol
         critChance = critChance * Ext.ExtraData.TalentViolentMagicCriticalChancePercent * 0.01
         critChance = math.max(critChance, 1)
     else
-        if (hit.EffectFlags & HitFlag.Backstab) ~= 0 then
+        if GameHelpers.Hit.HasFlag(hit, "Backstab") then
             return true
         end
 
@@ -276,14 +277,32 @@ function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRol
 end
 
 --- @param hit HitRequest
+--- @param attacker StatCharacter
+--- @param damageMultiplier number
+function HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier)
+    local mainWeapon = attacker.MainWeapon
+    if mainWeapon ~= nil then
+        hit.CriticalHit = true
+        damageMultiplier = damageMultiplier + (Game.Math.GetCriticalHitMultiplier(mainWeapon, attacker, 0, 0) - 1.0)
+    end
+    return damageMultiplier
+end
+
+--- @param hit HitRequest
 --- @param target StatCharacter
 --- @param attacker StatCharacter
 --- @param hitType string HitType enumeration
 --- @param criticalRoll string CriticalRoll enumeration
-function HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
-    if HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll) then
-        Game.Math.ApplyCriticalHit(hit, attacker)
+--- @param damageMultiplier number
+function HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier)
+    if Features.SpellsCanCrit or GameSettings.Settings.SpellsCanCritWithoutTalent then
+        if HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll) then
+            damageMultiplier = HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier)
+        end
+    else
+        damageMultiplier = damageMultiplier or Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier)
     end
+    return damageMultiplier
 end
 --endregion
 
@@ -298,17 +317,29 @@ function HitOverrides.ComputeOverridesEnabled()
     or #Listeners.ComputeCharacterHit > 0
 end
 
---- @param hit HitRequest
+--- @param hitRequest HitRequest
 --- @param damageList DamageList
 --- @param statusBonusDmgTypes DamageList
 --- @param hitType string HitType enumeration
 --- @param target StatCharacter
 --- @param attacker StatCharacter
-function HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+--- @param damageMultiplier number
+function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+    local hit = hitRequest
+    if extVersion < 56 then
+        hit.damageMultiplier = damageMultiplier
+    else
+        --TODO Waiting for a v56 Game.Math update for hit.DamageMultiplier
+        local hitTable = {
+            DamageMultiplier = damageMultiplier
+        }
+        setmetatable(hitTable, {__index = hitRequest})
+        hit = hitTable
+    end
     -- We're basically calling Game.Math.DoHit here, but it may be a modified version from a mod.
-    HitOverrides.DoHitModified(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+    HitOverrides.DoHitModified(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     InvokeListenerCallbacks(Listeners.DoHit, hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-	return hit
+	return hitRequest
 end
 
 --- @param target StatCharacter
@@ -322,110 +353,117 @@ end
 --- @param alwaysBackstab boolean
 --- @param highGroundFlag HighGroundFlag HighGround enumeration
 --- @param criticalRoll CriticalRollFlag CriticalRoll enumeration
-function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-    if HitOverrides.ComputeOverridesEnabled() then
-        hit.DamageMultiplier = 1.0
-        --Declare locals here so goto works
-        local statusBonusDmgTypes = {}
-        local backstabbed = false
-        local hitBlocked = false
+local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+    --Ext.Dump({Before={hit=hit, weapon=weapon.Name, damageList=damageList:ToTable(), hitType=hitType, noHitRoll=noHitRoll,  forceReduceDurability=forceReduceDurability, alwaysBackstab=alwaysBackstab, highGroundFlag=highGroundFlag, criticalRoll=criticalRoll}}, true, true)
+    local damageMultiplier = 1.0
+    --Declare locals here so goto works
+    local statusBonusDmgTypes = {}
+    local backstabbed = false
+    local hitBlocked = false
 
-        if attacker == nil then
-            HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-            goto hit_done
-        end
-        
-        if weapon == nil then
-            weapon = attacker.MainWeapon
-        end
-        
-        if hitType == "Magic" and HitOverrides.BackstabSpellMechanicsEnabled(attacker) then
-            local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-            if alwaysBackstab or (canBackstab and (skipPositionCheck or Game.Math.CanBackstab(target, attacker))) then
-                hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
-                backstabbed = true
-            end
-        end
+    if attacker == nil then
+        HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+        return hit
+    end
 
-        hit.DamageMultiplier = 1.0 + Game.Math.GetAttackerDamageMultiplier(target, attacker, highGroundFlag)
-        if hitType == "Magic" or hitType == "Surface" or hitType == "DoT" or hitType == "Reflected" then
-            if Features.SpellsCanCrit or GameSettings.Settings.SpellsCanCritWithoutTalent then
-                HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
-            else
-                Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
-            end
-            HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-            goto hit_done
-        end
+    if weapon == nil then
+        weapon = attacker.MainWeapon
+    end
 
-        if alwaysBackstab or (HitOverrides.CanBackstab(target, attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
-            hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
+    if hitType == "Magic" and HitOverrides.BackstabSpellMechanicsEnabled(attacker) then
+        local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+        if alwaysBackstab or (canBackstab and (skipPositionCheck or Game.Math.CanBackstab(target, attacker))) then
+            GameHelpers.Hit.SetFlag(hit, "Backstab", true)
             backstabbed = true
         end
+    end
 
-        if hitType == "Melee" then
-            if Game.Math.IsInFlankingPosition(target, attacker) then
-                hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Flanking
-            end
-        
-            -- Apply Sadist talent
-            if attacker.TALENT_Sadist then
-                if (hit.EffectFlags & Game.Math.HitFlag.Poisoned) ~= 0 then
-                    table.insert(statusBonusDmgTypes, "Poison")
-                end
-                if (hit.EffectFlags & Game.Math.HitFlag.Burning) ~= 0 then
-                    table.insert(statusBonusDmgTypes, "Fire")
-                end
-                if (hit.EffectFlags & Game.Math.HitFlag.Bleeding) ~= 0 then
-                    table.insert(statusBonusDmgTypes, "Physical")
-                end
-            end
+    damageMultiplier = 1.0 + Game.Math.GetAttackerDamageMultiplier(target, attacker, highGroundFlag)
+    if hitType == "Magic" or hitType == "Surface" or hitType == "DoT" or hitType == "Reflected" then
+        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier)
+        HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+        return hit
+    end
+
+    if alwaysBackstab or (HitOverrides.CanBackstab(target, attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
+        GameHelpers.Hit.SetFlag(hit, "Backstab", true)
+        backstabbed = true
+    end
+
+    if hitType == "Melee" then
+        if Game.Math.IsInFlankingPosition(target, attacker) then
+            GameHelpers.Hit.SetFlag(hit, "Flanking", true)
         end
 
-        if attacker.TALENT_Damage then
-            hit.DamageMultiplier = hit.DamageMultiplier + 0.1
+        -- Apply Sadist talent
+        if attacker.TALENT_Sadist then
+            if GameHelpers.Hit.HasFlag(hit, "Poisoned") then
+                table.insert(statusBonusDmgTypes, "Poison")
+            end
+            if GameHelpers.Hit.HasFlag(hit, "Burning") ~= 0 then
+                table.insert(statusBonusDmgTypes, "Fire")
+            end
+            if GameHelpers.Hit.HasFlag(hit, "Bleeding") ~= 0 then
+                table.insert(statusBonusDmgTypes, "Physical")
+            end
         end
+    end
 
-        if not noHitRoll then
-            local hitChance = Game.Math.CalculateHitChance(attacker, target)
-            local hitRoll = math.random(0, 99)
-            if hitRoll >= hitChance then
-                if target.TALENT_RangerLoreEvasionBonus and hitRoll < hitChance + 10 then
-                    hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Dodged
-                else
-                    hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Missed
-                end
+    if attacker.TALENT_Damage then
+        damageMultiplier = damageMultiplier + 0.1
+    end
+
+    if not noHitRoll then
+        local hitChance = Game.Math.CalculateHitChance(attacker, target)
+        local hitRoll = math.random(0, 99)
+        if hitRoll >= hitChance then
+            if target.TALENT_RangerLoreEvasionBonus and hitRoll < hitChance + 10 then
+                GameHelpers.Hit.SetFlag(hit, "Dodged", true)
+            else
+                GameHelpers.Hit.SetFlag(hit, "Missed", true)
+            end
+            hitBlocked = true
+        else
+            local blockChance = target.BlockChance
+            if not backstabbed and blockChance > 0 and math.random(0, 99) < blockChance then
+                GameHelpers.Hit.SetFlag(hit, "Blocked", true)
                 hitBlocked = true
-            else
-                local blockChance = target.BlockChance
-                if not backstabbed and blockChance > 0 and math.random(0, 99) < blockChance then
-                    hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Blocked;
-                    hitBlocked = true
-                end
             end
         end
+    end
 
-        if weapon ~= nil and weapon.Name ~= "DefaultWeapon" and hitType ~= "Magic" and forceReduceDurability and (hit.EffectFlags & (Game.Math.HitFlag.Missed|Game.Math.HitFlag.Dodged)) == 0 then
-            Game.Math.ConditionalDamageItemDurability(attacker, weapon)
-        end
+    if weapon ~= nil and weapon.Name ~= "DefaultWeapon" and hitType ~= "Magic" and forceReduceDurability 
+    and not GameHelpers.Hit.HasFlag(hit, {"Missed", "Dodged"}) then
+        Game.Math.ConditionalDamageItemDurability(attacker, weapon)
+    end
 
-        if not hitBlocked then
-            if Features.SpellsCanCrit or GameSettings.Settings.SpellsCanCritWithoutTalent then
-                HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
-            else
-                Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
-            end
-            HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-        end
+    if not hitBlocked then
+        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier)
+        HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+    end
 
-        ::hit_done::
+    return hit
+end
 
+
+function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+    if HitOverrides.ComputeOverridesEnabled() then
+        hit = ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
         InvokeListenerCallbacks(Listeners.ComputeCharacterHit, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
         return hit
     end
 end
 
-Ext.RegisterListener("ComputeCharacterHit", HitOverrides.ComputeCharacterHit)
+if extVersion < 56 then
+    Ext.RegisterListener("ComputeCharacterHit", HitOverrides.ComputeCharacterHit)
+else
+    Ext.Events.ComputeCharacterHit:Subscribe(function(event)
+        local hit = HitOverrides.ComputeCharacterHit(event.Target, event.Attacker, event.Weapon, event.DamageList, event.HitType, event.NoHitRoll, event.ForceReduceDurability, event.Hit, event.AlwaysBackstab, event.HighGround, event.CriticalRoll)
+        if hit then
+            return hit
+        end
+    end)
+end
 
 Ext.RegisterListener("SessionLoaded", function()
     -- Set to Game.Math.DoHit here, instead of immediately, in case a mod has overwritten it.

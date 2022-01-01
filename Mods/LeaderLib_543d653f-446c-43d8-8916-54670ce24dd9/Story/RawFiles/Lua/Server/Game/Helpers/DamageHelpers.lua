@@ -2,6 +2,8 @@ if GameHelpers.Damage == nil then
 	GameHelpers.Damage = {}
 end
 
+local version = Ext.Version()
+
 ---Reduce damage by a percentage (ex. 0.5)
 ---@param target string
 ---@param attacker string
@@ -266,6 +268,13 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
         HitWithWeapon = skillData.UseWeaponDamage == "Yes",
         DamageList = damageList,
     }
+
+    if version >= 56 then
+        for k,v in pairs(Game.Math.HitFlag) do
+            hit[k] = false
+        end
+        hit.Hit = true
+    end
     
     local hitType = GetSkillHitType(skill)
     local criticalRoll = "Roll"
@@ -283,11 +292,21 @@ end
 ---@param target string|StatCharacter
 ---@param handle integer
 function GameHelpers.Damage.ApplyHitRequestFlags(hit, target, handle)
-    for flag,num in pairs(Game.Math.HitFlag) do
-        if hit.EffectFlags & num ~= 0 then
-            NRD_StatusSetInt(target, handle, flag, 1)
-        else
-            NRD_StatusSetInt(target, handle, flag, 0)
+    if version < 56 then
+        for flag,num in pairs(Game.Math.HitFlag) do
+            if hit.EffectFlags & num ~= 0 then
+                NRD_StatusSetInt(target, handle, flag, 1)
+            else
+                NRD_StatusSetInt(target, handle, flag, 0)
+            end
+        end
+    else
+        for flag,num in pairs(Game.Math.HitFlag) do
+            if hit[flag] == true then
+                NRD_StatusSetInt(target, handle, flag, 1)
+            else
+                NRD_StatusSetInt(target, handle, flag, 0)
+            end
         end
     end
 end

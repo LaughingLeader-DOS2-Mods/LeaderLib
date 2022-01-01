@@ -287,6 +287,14 @@ if not IsClient then
 		Timer.StoreData(uniqueTimerName, data)
 	end
 
+	---@private
+	function Timer.ClearObjectData(timerName, object)
+		local uniqueTimerName = string.format("%s%s", timerName, GameHelpers.GetUUID(object))
+		if uniqueTimerName then
+			PersistentVars.TimerData[uniqueTimerName] = nil
+		end
+	end
+
 	Ext.RegisterOsirisListener("TimerFinished", 1, "after", OnTimerFinished)
 
 	local function OnProcObjectTimerFinished(object, timerName)

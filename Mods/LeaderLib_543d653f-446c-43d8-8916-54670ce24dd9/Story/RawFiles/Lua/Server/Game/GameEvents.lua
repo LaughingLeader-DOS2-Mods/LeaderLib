@@ -137,9 +137,6 @@ function OnInitialized_CheckGameState(region)
 end
 
 Ext.RegisterListener("GameStateChanged", function(from, to)
-	if Vars.DebugMode then
-		Ext.Print(string.format("[LeaderLib:GameStateChanged] %s => %s", from, to))
-	end
 	if to == "Running" and Ext.OsirisIsCallable() then
 		if not Vars.Initialized then
 			OnInitialized("", true)

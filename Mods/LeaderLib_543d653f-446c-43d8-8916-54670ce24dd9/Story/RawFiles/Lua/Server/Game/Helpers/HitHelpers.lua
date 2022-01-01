@@ -309,7 +309,14 @@ function GameHelpers.Hit.RecalculateLifeSteal(hit, target, attacker, hitType, se
             lifesteal = hit.TotalDamageDone - hit.ArmorAbsorption
         end
 
-        if (hit.EffectFlags & (Game.Math.HitFlag.FromShacklesOfPain|Game.Math.HitFlag.NoDamageOnOwner|Game.Math.HitFlag.Reflection)) ~= 0 then
+        local applyReflectionModifier = false
+        if version < 56 then
+            applyReflectionModifier = hit.EffectFlags & (Game.Math.HitFlag.FromShacklesOfPain|Game.Math.HitFlag.NoDamageOnOwner|Game.Math.HitFlag.Reflection) ~= 0
+        else
+            applyReflectionModifier = hit.FromShacklesOfPain or hit.NoDamageOnOwner or hit.Reflection
+        end
+
+        if applyReflectionModifier then
             local modifier = Ext.ExtraData.LifestealFromReflectionModifier
             lifesteal = math.floor(lifesteal * modifier)
         end
@@ -322,6 +329,10 @@ function GameHelpers.Hit.RecalculateLifeSteal(hit, target, attacker, hitType, se
             hit.LifeSteal = math.max(math.ceil(lifesteal * attacker.LifeSteal / 100), 0)
         end
     elseif setFlags then
-        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DontCreateBloodSurface
+        if version < 56 then
+            hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DontCreateBloodSurface
+        else
+            hit.DontCreateBloodSurface = true
+        end
     end
 end

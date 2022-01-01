@@ -52,7 +52,6 @@ local function SetMeta(this)
 				return this.HitStatus.StatusHandle
 			elseif k == "Success" then
 				if this.TargetObject == nil then
-					tbl.Success = false
 					return false
 				end
 				return GameHelpers.Hit.Succeeded(this.HitRequest)

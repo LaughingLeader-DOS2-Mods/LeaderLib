@@ -205,7 +205,9 @@ TranslatedStringEntries = {}
 
 ---@type table<string,boolean>
 Features = {
-	---Enables backstabs to happen with various conditions, depending on game settings
+	---Applies ExtraProperties from BonusWeapon stats in active statuses, on basic attack or hit with a skill that has UseWeaponProperties.
+	ApplyBonusWeaponStatuses = false,
+	---Allows backstabs to happen with various conditions (like from spells or non-daggers), depending on game settings.
 	BackstabCalculation = false,
 	---Fixes the lack of a damage name for chaos damage in skills/statuses
 	FixChaosDamageDisplay = true,
@@ -221,6 +223,8 @@ Features = {
 	FixPureDamageDisplay = true,
 	---Fixes tooltips not displaying "Requires a Rifle" when they have a RifleRequirement
 	FixRifleWeaponRequirement = false,
+	---Fixed tag requirements for skills being ignored by skills granted by items. Also fixes tag changes not updating the hotbar.
+	FixSkillTagRequirements = false,
 	---Condenses item tooltips by simplifying the ExtraProperties text.
 	ReduceTooltipSize = true,
 	---Replaces various LeaderLib placeholders in tooltips.
@@ -235,8 +239,6 @@ Features = {
 	TooltipGrammarHelper = false,
 	---Enables a workaround for requiring WINGS or PURE to make characters play the flying animation when moving around.
 	WingsWorkaround = false,
-	---Fixed tag requirements for skills being ignored by skills granted by items. Also fixes tag changes not updating the hotbar.
-	FixSkillTagRequirements = false,
 }
 
 Importer = {

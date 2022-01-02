@@ -29,6 +29,16 @@ Ext.RegisterOsirisListener("NRD_OnHeal", 4, "after", function(target, source, am
 	local target = GameHelpers.TryGetObject(target)
 	local source = GameHelpers.TryGetObject(source)
 
+	if source == nil and healStatus then
+		--Applied from Statuses.gameScript, source is nil for these.
+		--BonusFromAbility uses the target of the heal, so it uses Perseverance on the target.
+		if healStatus.StatusId == "POST_PHYS_CONTROL" or healStatus.StatusId == "POST_MAGIC_CONTROL" then
+			source = target
+		elseif healStatus.StatusSourceHandle then
+			source = Ext.GetGameObject(healStatus.StatusSourceHandle)
+		end
+	end
+
 	local skill = nil
 	local statusId = healStatus.StatusId
 	---@type EsvStatusHealing

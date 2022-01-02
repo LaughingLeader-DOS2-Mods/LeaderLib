@@ -19,24 +19,24 @@ end
 
 ---@param status string
 ---@param checkForLoseControl boolean
----@return boolean
+---@return boolean,boolean
 function GameHelpers.Status.IsDisablingStatus(status, checkForLoseControl)
 	local statusType = GameHelpers.Status.GetStatusType(status)
 	if statusType == "KNOCKED_DOWN" or statusType == "INCAPACITATED" then
-		return true
+		return true,false
 	end
 	if checkForLoseControl == true then
 		if status == "CHARMED" then
-			return true
+			return true,true
 		end
 		if not Data.EngineStatus[status] then
 			local stat = Ext.GetStat(status)
 			if stat and stat.LoseControl == "Yes" then
-				return true
+				return true,true
 			end
 		end
 	end
-	return false
+	return false,false
 end
 
 ---Returns true if the object is affected by a "LoseControl" status.

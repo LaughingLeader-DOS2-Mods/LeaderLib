@@ -66,7 +66,7 @@
 ---@field resetListPos fun():void
 ---@field stopElementTweens fun(param1:number):void
 ---@field fadeOutAndRemoveElement fun(param1:number, param2:number, param3:number, param4:boolean, param5:boolean):void
----@field removeElement fun(param1:number, param2:boolean, param3:boolean, param4:number.3):void
+---@field removeElement fun(param1:number, param2:boolean, param3:boolean, param4:number):void
 ---@field removeElementByListId fun(param1:number, param2:boolean):boolean
 ---@field clearElements fun():void
 ---@field next fun():void
@@ -171,7 +171,7 @@
 ---@field textOrder number
 ---@field currentText string
 ---@field isMouseOver boolean
----@field dragStartMP Point
+---@field dragStartMP FlashPoint
 ---@field windowDragStarted boolean
 ---@field acceptInput boolean
 ---@field constrBoxX number
@@ -192,22 +192,22 @@
 ---@field clearAll fun():void
 ---@field clearAllTexts fun():void
 ---@field clearFilter fun(param1:number):void
----@field dragInv fun(param1:MouseEvent):void
----@field dragInvMove fun(param1:MouseEvent):void
+---@field dragInv fun(param1:FlashMouseEvent):void
+---@field dragInvMove fun(param1:FlashMouseEvent):void
 ---@field filterInput fun(param1:number, param2:boolean):void
 ---@field getFilter fun(param1:number):CombatLogFlashFilter
----@field mouseLeave fun(param1:Event):void
----@field onBgHide fun(param1:MouseEvent):void
----@field onBgMouseOut fun(param1:MouseEvent):void
----@field onBgMouseOver fun(param1:MouseEvent):void
----@field onBgShow fun(param1:MouseEvent):void
----@field onMoveResize fun(param1:MouseEvent):void
----@field onResizeOut fun(param1:MouseEvent):void
----@field onResizeOver fun(param1:MouseEvent):void
----@field onResizeStartDrag fun(param1:MouseEvent):void
----@field onResizeStopDrag fun(param1:MouseEvent):void
----@field onSBOut fun(param1:MouseEvent):void
----@field onSBOver fun(param1:MouseEvent):void
+---@field mouseLeave fun(param1:FlashEvent):void
+---@field onBgHide fun(param1:FlashMouseEvent):void
+---@field onBgMouseOut fun(param1:FlashMouseEvent):void
+---@field onBgMouseOver fun(param1:FlashMouseEvent):void
+---@field onBgShow fun(param1:FlashMouseEvent):void
+---@field onMoveResize fun(param1:FlashMouseEvent):void
+---@field onResizeOut fun(param1:FlashMouseEvent):void
+---@field onResizeOver fun(param1:FlashMouseEvent):void
+---@field onResizeStartDrag fun(param1:FlashMouseEvent):void
+---@field onResizeStopDrag fun(param1:FlashMouseEvent):void
+---@field onSBOut fun(param1:FlashMouseEvent):void
+---@field onSBOver fun(param1:FlashMouseEvent):void
 ---@field refreshText fun():void
 ---@field removeFilterEntriesFromList fun(param1:number):void
 ---@field removeOldLines fun():void
@@ -220,7 +220,7 @@
 ---@field setLogSize fun(param1:number, param2:number):void
 ---@field setScrollWheelEnabled fun(param1:boolean):void
 ---@field stopDragging fun():void
----@field stopDragInv fun(param1:MouseEvent):void
+---@field stopDragInv fun(param1:FlashMouseEvent):void
 ---@field toggleFadeVisibility fun():void
 ---@field toggleLock fun():void
 
@@ -233,6 +233,6 @@
 ---@field selectedB boolean
 ---@field timeline TweensyTimelineZero
 ---@field textContent string
----@field onDown fun(param1:MouseEvent):void
----@field onOut fun(param1:MouseEvent):void
----@field onOver fun(param1:MouseEvent):void
+---@field onDown fun(param1:FlashMouseEvent):void
+---@field onOut fun(param1:FlashMouseEvent):void
+---@field onOver fun(param1:FlashMouseEvent):void

@@ -59,9 +59,6 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 			return false
 		end
 		for i,status in pairs(source:GetStatuses()) do
-			if type(status) ~= "string" and status.StatusId ~= nil then
-				status = status.StatusId
-			end
 			if not Data.EngineStatus[status] then
 				local potion = nil
 				if type(status) == "string" then
@@ -69,10 +66,10 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 				elseif status.StatusId ~= nil then
 					potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
 				end
-				if potion ~= nil and potion ~= "" then
+				if not StringHelpers.IsNullOrWhitespace(potion) then
 					if not Ext.OsirisIsCallable() or NRD_StatExists(potion) then
 						local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
-						if bonusWeapon ~= nil and bonusWeapon ~= "" then
+						if StringHelpers.IsNullOrWhitespace(bonusWeapon) then
 							local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
 							if extraProps and #extraProps > 0 then
 								GameHelpers.ApplyProperties(source, target, extraProps, nil, nil, fromSkill)

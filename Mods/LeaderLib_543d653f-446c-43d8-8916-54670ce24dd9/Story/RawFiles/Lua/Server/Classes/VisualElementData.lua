@@ -54,7 +54,8 @@ Classes.VisualResourceData = VisualResourceData
 ---@param item EsvItem
 ---@param equipped boolean
 local function OnEquipmentChanged(self, char, item, equipped)
-	local armorType = item.Stats.ArmorType
+	local stat = Ext.GetStat(item.Stats.Name)
+	local armorType = stat.ArmorType
 	local slot = GameHelpers.Item.GetEquippedSlot(char.MyGuid, item.MyGuid) or item.Stats.Slot
 	if not equipped then
 		armorType = "None"
@@ -118,7 +119,6 @@ end
 
 ---@param armorType string
 ---@param visuals table<string,VisualResourceData[]>
----@param params table|nil
 ---@return VisualElementData
 function VisualElementData:AddVisualsForType(armorType, visuals)
 	if self == nil or armorType == nil or visuals == nil then

@@ -49,8 +49,7 @@ function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, s
 	return table.unpack(startPos)
 end
 
----@param startX number
----@param startZ number
+---@param startPos number[]
 ---@param maxRadius number|nil
 ---@param pointsInCircle number|nil
 ---@return number,number,number|nil
@@ -246,7 +245,7 @@ end
 ---@field Cell table<integer, table<integer, ExtenderGridCellInfo>>
 ---@field Ground LeaderLibRadiusDataSurfaceEntry[]
 ---@field Cloud LeaderLibRadiusDataSurfaceEntry[]
----@field SurfaceMap table<string, EsvSurface[]>
+---@field SurfaceMap table<string, LeaderLibRadiusDataSurfaceEntry[]>
 ---@field HasSurface fun(name:string, containingName:boolean|nil, onlyLayer:integer|nil):boolean
 
 ---@param data LeaderLibCellSurfaceData
@@ -370,8 +369,7 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 						data.Cell[tx][tz] = cell
 							
 						if cell.GroundSurface then
-							local surfaceData = 
-							{
+							local surfaceData = {
 								Surface = Ext.GetSurface(cell.GroundSurface),
 								Position = {tx,cell.Height,tz}
 							}
@@ -379,11 +377,10 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 							if not data.SurfaceMap[surfaceData.Surface.SurfaceType] then
 								data.SurfaceMap[surfaceData.Surface.SurfaceType] = {}
 							end
-							table.insert(data.SurfaceMap[surfaceData.Surface.SurfaceType], surfaceData.Surface)
+							table.insert(data.SurfaceMap[surfaceData.Surface.SurfaceType], surfaceData)
 						end
 						if cell.CloudSurface then
-							local cloudData = 
-							{
+							local cloudData = {
 								Surface = Ext.GetSurface(cell.CloudSurface),
 								Position = {tx,cell.Height,tz}
 							}
@@ -391,7 +388,7 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 							if not data.SurfaceMap[cloudData.Surface.SurfaceType] then
 								data.SurfaceMap[cloudData.Surface.SurfaceType] = {}
 							end
-							table.insert(data.SurfaceMap[cloudData.Surface.SurfaceType], cloudData.Surface)
+							table.insert(data.SurfaceMap[cloudData.Surface.SurfaceType], cloudData)
 						end
 					end
 				end

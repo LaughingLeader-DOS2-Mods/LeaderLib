@@ -106,9 +106,8 @@ end
 ---@param layer integer
 ---@param duration number
 ---@param ownerHandle userdata
----@param ignoreCursed boolean
+---@param originSurface string
 ---@param statusChance number
----@param deathType string
 ---@return EsvSurfaceAction
 function GameHelpers.Surface.Transform(pos, action, layer, duration, ownerHandle, originSurface, statusChance)
 	if type(pos) == "string" then

@@ -202,7 +202,7 @@ function GameHelpers.Item.CreateItemByStat(statName, properties, ...)
             properties = {}
         end
     end
-    ---@type StatEntryWeapon
+    ---@type StatEntryWeapon|StatEntryArmor|StatEntryShield|StatEntryObject|StatEntryPotion
     local stat = nil
     local statType = ""
     local level = properties and properties.StatsLevel or 1
@@ -307,7 +307,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     local constructor = Ext.CreateItemConstructor(template)
     ---@type ItemDefinition
     local props = constructor[1]
-    props:ResetProgression(props)
+    props:ResetProgression()
     -- if type(template) == "String" then
     --     props.RootTemplate = template
     --     props.OriginalRootTemplate = template
@@ -590,8 +590,6 @@ end
 
 ---Gets an array of items with specific tag(s) on a character.
 ---@param item EsvItem|UUID|NETID
----@param tag string|string[]
----@param asEsvItem boolean
 ---@return string[]|EsvItem[]
 function GameHelpers.Item.GetTags(item)
     local item = GameHelpers.GetItem(item)

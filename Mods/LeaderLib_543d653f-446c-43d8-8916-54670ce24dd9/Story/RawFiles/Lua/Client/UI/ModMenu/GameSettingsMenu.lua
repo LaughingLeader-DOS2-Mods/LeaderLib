@@ -7,7 +7,7 @@
 ---@field Reversed boolean|nil
 
 GameSettingsMenu = {
-	---@type table<int, GameSettingsEntryData>
+	---@type table<integer, GameSettingsEntryData>
 	Controls = {},
 	LastID = 2000,
 	LastScrollPosition = 0

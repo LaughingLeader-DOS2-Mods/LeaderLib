@@ -70,7 +70,7 @@ function Input.RegisterMouseListener(callbackOrEventName, callbackOrNil)
 	end
 end
 
----@param callbackOrEventName InputEventCallback
+---@param callbackOrInputName InputEventCallback
 ---@param callbackOrNil InputEventCallback|nil
 function Input.RemoveListener(callbackOrInputName, callbackOrNil)
 	local t = type(callbackOrInputName)
@@ -147,7 +147,7 @@ function Input.JustPressed(name, threshold)
 	local t = type(name)
 	if t == "table" then
 		for _,v in pairs(name) do
-			if Input.IsJustPressed(v, threshold) then
+			if Input.JustPressed(v, threshold) then
 				return true
 			end
 		end
@@ -176,11 +176,11 @@ function Input.GetKeyState(name, t)
 			if type(actualName) == "table" then
 				for _,n in pairs(actualName) do
 					local state = Input.Keys[n]
-					if state ~= KEYSTATE.INACTIVE then
+					if state ~= KEYSTATE.UNREGISTERED then
 						return state
 					end
 				end
-				return KEYSTATE.INACTIVE
+				return KEYSTATE.UNREGISTERED
 			else
 				return Input.Keys[actualName] or KEYSTATE.UNREGISTERED
 			end

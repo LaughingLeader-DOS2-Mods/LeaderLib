@@ -10,7 +10,6 @@ local QuestStateData = {
 }
 QuestStateData.__index = QuestStateData
 
----@param parent QuestData
 ---@param id string
 ---@param params table<string,any>
 ---@return QuestStateData

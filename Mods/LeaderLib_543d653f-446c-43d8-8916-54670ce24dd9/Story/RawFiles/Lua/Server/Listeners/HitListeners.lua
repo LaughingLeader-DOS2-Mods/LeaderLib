@@ -1,7 +1,7 @@
----@type target string
----@type source string
----@type damage integer
----@type handle integer
+---@param target string
+---@param source string
+---@param damage integer
+---@param handle integer
 local function OnPrepareHit(target, source, damage, handle)
 	local data = Classes.HitPrepareData:Create(handle, damage, target, source, true)
 	if Features.FixChaosWeaponProjectileDamage and data:IsBuggyChaosDamage() then
@@ -60,12 +60,7 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 		end
 		for i,status in pairs(source:GetStatuses()) do
 			if not Data.EngineStatus[status] then
-				local potion = nil
-				if type(status) == "string" then
-					potion = Ext.StatGetAttribute(status, "StatsId")
-				elseif status.StatusId ~= nil then
-					potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
-				end
+				local potion = Ext.StatGetAttribute(status, "StatsId")
 				if not StringHelpers.IsNullOrWhitespace(potion) then
 					if not Ext.OsirisIsCallable() or NRD_StatExists(potion) then
 						local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
@@ -100,7 +95,7 @@ local function TryGetObject(data, property)
 end
 
 ---@param hitStatus EsvStatusHit
----@param context HitContext
+---@param hitContext HitContext
 RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitContext)
 	local target,source = TryGetObject(hitStatus, "TargetHandle"),TryGetObject(hitStatus, "StatusSourceHandle")
 

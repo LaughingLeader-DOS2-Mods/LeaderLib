@@ -31,7 +31,6 @@ end
 
 ---@param target number[]
 ---@param effect string
----@param bone string
 ---@param handle integer
 function EffectManager.SaveWorldEffectData(target, effect, handle)
 	local region = SharedData.RegionData.Current
@@ -55,7 +54,7 @@ EffectManager.Callbacks = {
 ---@alias EffectManagerLoopEffectStartedCallback fun(effect:string, target:LeaderLibEffectManagerTarget, handle:integer, bone:string|nil):void
 
 EffectManager.Register = {
-	---@param callback EffectManagerTagObjectCallback
+	---@param callback EffectManagerLoopEffectStartedCallback
 	LoopEffectStarted = function(callback)
 		table.insert(EffectManager.Callbacks.TagObject, callback)
 	end

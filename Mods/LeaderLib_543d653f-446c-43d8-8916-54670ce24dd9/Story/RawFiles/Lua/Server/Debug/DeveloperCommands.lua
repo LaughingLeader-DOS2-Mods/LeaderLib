@@ -223,18 +223,18 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			stat.UseWeaponProperties = "No"
 			stat["Damage Multiplier"]= 0
 			
-			---@type StatusStatProperty
+			---@type StatPropertyStatus
 			local prop = {
-			Type = "Status",
-			Action = "EXPLODE",
-			Context = {"Target", "AoE"},
-			Duration = 0,
-			StatusChance = 1.0,
-			StatsId = "Projectile_Test_FlurryDamage",
-			SurfaceBoost = false,
-			SurfaceBoosts = {},
-			Arg4 = -1,
-			Arg5 = -1,
+				Type = "Status",
+				Action = "EXPLODE",
+				Context = {"Target", "AoE"},
+				Duration = 0,
+				StatusChance = 1.0,
+				StatsId = "Projectile_Test_FlurryDamage",
+				SurfaceBoost = false,
+				SurfaceBoosts = {},
+				Arg4 = -1,
+				Arg5 = -1,
 			}
 			stat.SkillProperties = {prop}
 			stat.Requirement = "MeleeWeapon"

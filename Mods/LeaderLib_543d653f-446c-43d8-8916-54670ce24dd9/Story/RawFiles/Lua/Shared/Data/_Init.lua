@@ -55,7 +55,7 @@ end
 Ext.Require("Shared/Data/Colors.lua")
 
 Data.OriginalSkillTiers = {}
----@type table<string,bool>
+---@type table<string,boolean>
 Data.ObjectStats = {}
 --Valid items with a Stats table can still have an empty StatsId for some reason.
 --Data.ObjectStats = {[""] = true}
@@ -847,7 +847,7 @@ Data.UIType = {
 	connectionMenu = 33,
 	containerInventory = 37,
 	containerInventoryGM = 143,
-	contextMenu = 11,
+	contextMenu = {10, 11},
 	contextMenu_c = {12, 96},
 	craftPanel_c = 84,
 	dialog = 14,
@@ -922,7 +922,6 @@ Data.UIType = {
 	vignette = 114,
 	waypoints = 47,
 	worldTooltip = 48,
-	contextMenu = { Default = 10, Alt = 11},
 	optionsSettings = {
 		Default = 45,
 		Video = 45,

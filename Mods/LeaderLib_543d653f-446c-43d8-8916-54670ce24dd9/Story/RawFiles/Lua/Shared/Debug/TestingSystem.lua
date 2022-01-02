@@ -12,7 +12,7 @@ Testing.Active = false
 local LuaTest = Ext.Require("Shared/Debug/LuaTest.lua")
 
 ---@param name string
----@param operationCallback LuaTestOperationCallback
+---@param operation LuaTestOperationCallback
 ---@return LuaTest
 function Testing.CreateTest(name, operation)
 	return LuaTest:Create(name, operation)
@@ -110,7 +110,7 @@ function Testing.RunTests(tbl, delay, testingName, ...)
 	else
 		for k,v in pairs(tbl) do
 			v:Run()
-			table.insert(testTextResults, "%s: %s", v.Name, v.Success == 1 and "Passed" or "Failed")
+			table.insert(testTextResults, string.format("%s: %s", v.Name, v.Success == 1 and "Passed" or "Failed"))
 			v:Dispose()
 		end
 		Testing.WriteResults(testUUID)

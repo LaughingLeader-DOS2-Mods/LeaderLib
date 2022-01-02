@@ -29,8 +29,8 @@ local UIType = {
 	connectionMenu = 33,
 	containerInventory = 37,
 	containerInventoryGM = 143,
-	contextMenu = 11,
-	contextMenu_c = {12, 96},
+	contextMenu = {Default = 10, Alt = 11},
+	contextMenu_c = {Default = 12, Alt = 96},
 	craftPanel_c = 84,
 	dialog = 14,
 	dummyOverhead = 15,
@@ -104,7 +104,6 @@ local UIType = {
 	vignette = 114,
 	waypoints = 47,
 	worldTooltip = 48,
-	contextMenu = { Default = 10, Alt = 11},
 	optionsSettings = {
 		Default = 45,
 		Video = 45,
@@ -309,6 +308,7 @@ local _Unused = {nil, nil}
 local BoostSpec = {_Label, _NumValue, _Unused}
 
 ---@class TooltipElement:table
+---@field Type string
 
 ---@class BoostSpec:TooltipElement
 ---@field Label string
@@ -746,7 +746,7 @@ function EncodeTooltipArmorSet(tt, element)
 	end
 end
 
---- @param tt table Flash tooltip array
+--- @param elements table Flash tooltip array
 --- @return table
 function EncodeTooltipArray(elements)
 	local tt = {}
@@ -819,6 +819,7 @@ end
 ---@class TooltipStatusRequest:TooltipRequest
 ---@field Character EclCharacter
 ---@field Status EclStatus
+---@field StatusId string
 
 ---@class TooltipStatRequest:TooltipRequest
 ---@field Character EclCharacter
@@ -840,7 +841,7 @@ end
 ---@class TooltipCustomStatRequest:TooltipRequest
 ---@field Character EclCharacter
 ---@field Stat number The stat handle.
----@field StatData CustomStatData
+---@field StatData table
 
 ---@class TooltipGenericRequest:table
 ---@field Type string
@@ -1391,7 +1392,7 @@ end
 
 ---@param ui UIObject
 ---@param propertyName string
----@param req TooltipRequest
+---@param req TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTagRequest|TooltipCustomStatRequest
 ---@param method string
 function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 	local tt = TableFromFlash(ui, propertyName)
@@ -1524,7 +1525,6 @@ function TooltipHooks:RegisterBeforeNotifyListener(requestType, listener)
 end
 
 ---@param request TooltipRequest
----@param tooltip TooltipData
 ---@vararg any
 function TooltipHooks:InvokeBeforeNotifyListeners(request, ...)
     local rTypeTable = self.BeforeNotifyListeners[request.Type]
@@ -1757,7 +1757,7 @@ function TooltipData:AppendElementAfter(ele, appendAfter)
 end
 
 ---@param ele TooltipElement
----@param appendAfter TooltipElement
+---@param appendBefore TooltipElement
 ---@return TooltipElement
 function TooltipData:AppendElementBefore(ele, appendBefore)
 	for i=1,#self.Data do
@@ -1834,7 +1834,7 @@ function Game.Tooltip.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackO
 	end
 end
 
----@alias GameTooltipRequestListener fun(request:TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTagRequest|TooltipCustomStatRequest|TooltipGenericRequest, ui:UIObject, uiType:integer, event:string, id:any, vararg any):void
+---@alias GameTooltipRequestListener fun(request:TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTagRequest|TooltipCustomStatRequest|TooltipGenericRequest, ui:UIObject, uiType:integer, event:string, id:any, vararg):void
 
 ---@param typeOrCallback string|GameTooltipRequestListener
 ---@param callbackOrNil GameTooltipRequestListener

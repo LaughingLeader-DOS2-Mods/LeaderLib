@@ -1,5 +1,5 @@
 ---@class UIExtensionsMain:FlashMainTimeline
----@field addCheckbox fun(id:number, label:string, tooltip:string, stateID:number|nil, x:number|nil, y:number|nil, filterBool:boolean|nil, enabled:boolean|nil):MovieClip
+---@field addCheckbox fun(id:number, label:string, tooltip:string, stateID:number|nil, x:number|nil, y:number|nil, filterBool:boolean|nil, enabled:boolean|nil):FlashMovieClip
 ---@field removeControl fun(id:number):boolean
 ---@field addBar fun(id:number, label:string, tooltip:string|nil, x:number|nil, y:number|nil, percentage:number|nil, doTween:boolean|nil, color:number|nil):void
 
@@ -289,7 +289,7 @@ function UIExtensions.RemoveAllControls()
 end
 
 ---@param id string The timer name/id.
----@param delay Number The delay of the timer in milliseconds.
+---@param delay number The delay of the timer in milliseconds.
 ---@param callbackFunction FlashTimerCallback The callback to invoke when the timer is complete, or when it ticks (if repeatTimer > 1).
 ---@param repeatTimer integer|nil The number of times to repeat the timer. If > 1 then the callback will be called each time the timer ticks.
 function UIExtensions.StartTimer(id, delay, callbackFunction, repeatTimer)

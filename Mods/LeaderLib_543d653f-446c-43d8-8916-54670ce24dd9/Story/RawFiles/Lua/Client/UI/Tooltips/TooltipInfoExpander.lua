@@ -124,7 +124,7 @@ local function RebuildTooltip(eventName, pressed, id, inputMap, controllerEnable
 				local ui = Ext.GetUIByType(Data.UIType.tooltip)
 				local text, x, y, width, height, side, allowDelay = table.unpack(TooltipExpander.CallData.Args)
 
-				---@type GenericTooltipRequest
+				---@type TooltipGenericRequest
 				local request = {
 					Type = "Generic",
 					Text = text,

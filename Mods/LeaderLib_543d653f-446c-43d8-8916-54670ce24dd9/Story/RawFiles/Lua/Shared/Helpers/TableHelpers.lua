@@ -2,7 +2,7 @@ if TableHelpers == nil then
 	TableHelpers = {}
 end
 
----@param orgin table
+---@param orig table
 ---@param deep boolean|nil If true, metatables are copied as well.
 function TableHelpers.Clone(orig, deep)
 	if deep ~= true then
@@ -52,7 +52,7 @@ local validTypes = {
 	boolean = true,
 }
 ---Prepares a table for PersistentVars saving by removing invalid values.
----@param tbk table
+---@param tbl table
 ---@return table<string|number|boolean,string|number|boolean|table>
 function TableHelpers.SanitizeTable(tbl)
 	if type(tbl) ~= "table" then

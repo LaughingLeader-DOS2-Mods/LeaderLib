@@ -473,7 +473,7 @@ function GameHelpers.Character.IsDisabled(character, checkForLoseControl)
 	if character == nil then
 		return false
 	end
-	if ObjectHasStatusType(character.MyGuid, {"KNOCKED_DOWN", "INCAPACITATED"}) then
+	if GameHelpers.Status.HasStatusType(character.MyGuid, {"KNOCKED_DOWN", "INCAPACITATED"}) then
 		return true
 	elseif checkForLoseControl == true then -- LoseControl on items is a good way to crash
 		for _,status in pairs(character:GetStatusObjects()) do

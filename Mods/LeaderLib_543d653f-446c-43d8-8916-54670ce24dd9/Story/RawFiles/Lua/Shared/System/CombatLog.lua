@@ -163,7 +163,7 @@ if isClient then
 	end
 
 	---@param id string
-	---@param tooltip string
+	---@param text string
 	function CombatLog.AddTextToFilter(id, text)
 		local this = self.GetInstance()
 		if this then 
@@ -184,7 +184,7 @@ if isClient then
 	end
 
 	---@param index integer
-	---@param tooltip string
+	---@param text string
 	function CombatLog.AddTextToIndex(index, text)
 		local this = self.GetInstance()
 		if this then 

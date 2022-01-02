@@ -64,11 +64,11 @@ local unarmedHitMatchProperties = {
 }
 
 ---Returns true if the hit is an unarmed hit. This is for an actual hit handle during NRD_OnPrepareHit.
----@param hitHandle integer 
+---@param hitHandle integer
 ---@return boolean
 function GameHelpers.Hit.IsPreparedUnarmedHit(hitHandle)
     for prop,val in pairs(unarmedHitMatchProperties) do
-        if NRD_HitGetInt(handle, prop) ~= val then
+        if NRD_HitGetInt(hitHandle, prop) ~= val then
             return false
         end
     end

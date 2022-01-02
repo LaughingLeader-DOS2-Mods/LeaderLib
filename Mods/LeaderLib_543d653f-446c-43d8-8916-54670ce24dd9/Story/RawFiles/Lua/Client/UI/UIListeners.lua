@@ -1,4 +1,4 @@
----@param ui UIObject
+---@param callingUI UIObject
 Ext.RegisterListener("UIObjectCreated", function (callingUI)
 	local t,name,path = UI.TryFindUIByType(callingUI, callingUI:GetTypeId())
 	if t then

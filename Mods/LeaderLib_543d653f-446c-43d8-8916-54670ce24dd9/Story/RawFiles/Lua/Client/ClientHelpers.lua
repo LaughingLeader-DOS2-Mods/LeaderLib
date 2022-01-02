@@ -87,7 +87,7 @@ function GameHelpers.Client.IsGameMaster(ui, this)
 	if not Vars.ControllerEnabled then
 		local ui = ui or Ext.GetUIByType(Data.UIType.characterSheet)
 		if ui then
-			---@type CharacterSheetMainTimeline
+			---@type FlashMainTimeline
 			local this = this or ui:GetRoot()
 			if this and this.isGameMasterChar then
 				return true

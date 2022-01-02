@@ -56,7 +56,7 @@ function VersionIsLessThan(past_version,major,minor,revision,build)
 end
 
 function StringToVersionIntegers(version_str)
-	local a,b,c,d = -1
+	local a,b,c,d = -1,-1,-1,-1
 	local vals = {}
 	for s in string.gmatch(version_str, "([^.]+)") do
 		table.insert(vals, tonumber(s))
@@ -125,7 +125,7 @@ local function Register_Mod_Table(tbl)
 	local author = tbl["author"]
 	local version = tbl["version"]
 	local b = false
-	local major,minor,revision,build = 0
+	local major,minor,revision,build = 0,0,0,0
 	if id ~= nil and author ~= nil then
 		if version == nil then
 			Osi.LeaderUpdater_Register_Mod(id, author, 0,0,0,0);

@@ -64,8 +64,6 @@ function GameHelpers.Combat.GetCharacters(id, filter, filterReference)
 				return objects[i]
 			end
 		end
-
-		return objects
 	end
 	return nil
 end

@@ -88,7 +88,7 @@ if Ext.IsServer() then
 			Windego = "d783285f-d3be-4cba-8333-db8976cef182"
 		}
 	
-		---@param settings LeaderLibDefaultSettings
+		---@param settings table
 		local function SkipTutorial_MainSetup(settings, region)
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping tutorial and going to region (%s).", region)
 	
@@ -385,7 +385,7 @@ else
 	---@param eventName string
 	---@param pressed boolean
 	---@param id integer
-	---@param inputMap table<int,boolean>
+	---@param inputMap table<integer,boolean>
 	---@param controllerEnabled boolean
 	local function OnInput(eventName, pressed, id, inputMap, controllerEnabled)
 		if controllerEnabled and createdCheckboxID > -1 and 

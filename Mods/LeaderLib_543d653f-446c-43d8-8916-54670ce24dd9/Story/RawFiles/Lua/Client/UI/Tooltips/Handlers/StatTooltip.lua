@@ -1,4 +1,3 @@
----@module LeaderLibStatTooltipHandler
 ---@param character EclCharacter
 ---@param stat string
 ---@param tooltip TooltipData

@@ -31,9 +31,9 @@
 ---@field UUID string
 
 ModMenuManager = {
-	---@type table<int, ModMenuEntryData>
+	---@type table<integer, ModMenuEntryData>
 	Controls = {},
-	---@type table<int, ModMenuButtonEntryData>
+	---@type table<integer, ModMenuButtonEntryData>
 	Buttons = {},
 	LastID = 1000,
 	LastScrollPosition = 0
@@ -399,7 +399,7 @@ function ModMenuManager.SetScrollPosition(ui)
 	end
 end
 
-local function SyncControl(control)
+local function SyncControl(control, enabled)
 	if control.Type == "FlagData" then
 		local data = {ID=control.ID, FlagType=control.FlagType, Enabled=enabled, User=Client.Character.ID}
 		Ext.PostMessageToServer("LeaderLib_ModMenu_FlagChanged", Ext.JsonStringify(data))

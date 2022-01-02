@@ -506,7 +506,7 @@ Ext.RegisterListener("SessionLoaded", function()
 		Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu_c, "openMenu", onOpenMenu)
 	end
 
-	---@param ui UIObject
+	---@param invokedUI UIObject
 	Ext.RegisterUINameInvokeListener("parseUpdateArray", function(invokedUI, method, ...)
 		local ui = GetOptionsGUI() or invokedUI
 		if ui ~= nil then

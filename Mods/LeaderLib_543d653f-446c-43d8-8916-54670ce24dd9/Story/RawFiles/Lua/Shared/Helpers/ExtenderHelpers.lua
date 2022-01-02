@@ -476,7 +476,7 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 			local boosts = StringHelpers.Split(boostsString, ";")
 			for i,boostStat in pairs(boosts) do
 				if boostStat ~= nil and boostStat ~= "" then
-					local boostWeaponStat = CreateWeaponTable(boostStat, level, attribute, weaponType, nil, true, damage)
+					local boostWeaponStat = GameHelpers.Ext.CreateWeaponTable(boostStat, level, attribute, weaponType, nil, true, damage)
 					if boostWeaponStat ~= nil then
 						table.insert(weapon.DynamicStats, boostWeaponStat.DynamicStats[1])
 					end
@@ -535,6 +535,7 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage)
 			return nil
 		end
 		if useWeaponDamage == true then skill.UseWeaponDamage = "Yes" end
+		---@type StatPropertyStatus[]
 		local skillProperties = GameHelpers.Stats.GetSkillProperties(skillName)
 		if skillProperties ~= nil then
 			for _,tbl in pairs(skillProperties) do

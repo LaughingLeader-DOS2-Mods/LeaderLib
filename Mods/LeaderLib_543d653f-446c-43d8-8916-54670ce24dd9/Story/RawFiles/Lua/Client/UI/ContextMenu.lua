@@ -467,7 +467,7 @@ end
 function ContextMenu:AddBuiltinEntry(actionId, callback, label, visible, useClickSound, disabled, isLegal, handle)
 	local entry = {
 		ID = lastBuiltinID,
-		ActionID = GetVar(actionId, string.format("Entry%s", id)),
+		ActionID = GetVar(actionId, string.format("Entry%s", lastBuiltinID)),
 		ClickSound = GetVar(useClickSound, true),
 		Label = GetVar(label, "Entry"),
 		Disabled = GetVar(disabled, false),

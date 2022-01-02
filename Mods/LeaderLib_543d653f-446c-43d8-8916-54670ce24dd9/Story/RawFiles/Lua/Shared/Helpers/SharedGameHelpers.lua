@@ -18,7 +18,7 @@ function GameHelpers.GetPickpocketPricing(pickpocketSkill)
 	  priceGrowthExp = priceGrowthExp * Ext.ExtraData.FourthPriceLeapGrowth / Ext.ExtraData.PriceGrowth
 	end
 	local price = math.ceil(Ext.ExtraData.PickpocketGoldValuePerPoint * priceGrowthExp * Ext.ExtraData.GlobalGoldValueMultiplier)
-	return 50 * round(price / 50.0)
+	return 50 * Ext.Round(price / 50.0)
 end
 
 --- Get an ExtraData entry, with an optional fallback value if the key does not exist.
@@ -166,7 +166,7 @@ function GameHelpers.Item.GetOwner(item, returnNilUUID)
 	return nil
 end
 
----@param item StatItem
+---@param item StatItem|EsvItem|EclItem
 ---@param weaponType string|string[]
 ---@return boolean
 function GameHelpers.Item.IsWeaponType(item, weaponType)
@@ -425,7 +425,7 @@ function GameHelpers.GetCharacterID(object)
 end
 
 ---Tries to get an Esv/EclCharacter from whatever the value is.
----@param object EsvGameObject|EclGameObject|string|number
+---@param object EsvGameObject|EclGameObject|string|number|StatCharacter
 ---@return EsvCharacter|EclCharacter
 function GameHelpers.GetCharacter(object)
 	local t = type(object)
@@ -465,7 +465,8 @@ end
 
 ---Checks if a character or item exists.
 ---@param object EsvGameObject|EclGameObject|string|number
----@return false
+---@param returnNullId boolean
+---@return boolean
 function GameHelpers.ObjectExists(object, returnNullId)
 	local t = type(object)
 	if t == "string" and StringHelpers.IsNullOrWhitespace(object) then
@@ -571,7 +572,8 @@ function GameHelpers.GetGameDifficulty()
 	return Data.Difficulty(Ext.GetDifficulty())	
 end
 
----@param character EsvCharacter|EsvItem|UUID|NETID
+---@param obj EsvCharacter|EsvItem|UUID|NETID
+---@param flag string
 function GameHelpers.ObjectHasFlag(obj, flag)
 	if not isClient and Ext.OsirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(obj)

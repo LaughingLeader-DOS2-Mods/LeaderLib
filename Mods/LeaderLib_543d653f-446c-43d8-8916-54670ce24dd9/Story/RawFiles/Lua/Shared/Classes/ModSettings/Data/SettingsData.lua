@@ -172,8 +172,7 @@ function SettingsData:AddLocalizedVariable(name, key, value, min, max, interval,
 	self:AddVariable(name, value, skey(key), skey(tooltipKey), min, max, interval, canExport, isFromFile)
 end
 
----@param name string
----@param key string The string key to use.
+---@param id string
 ---@param callback ModMenuButtonCallback
 ---@param displayName string|nil
 ---@param tooltip string|nil
@@ -212,7 +211,7 @@ function SettingsData:AddButton(id, callback, displayName, tooltip, enabled, hos
 	end
 end
 
----@param name string
+---@param id string
 ---@param key string The string key to use.
 ---@param callback ModMenuButtonCallback
 ---@param enabled boolean|nil

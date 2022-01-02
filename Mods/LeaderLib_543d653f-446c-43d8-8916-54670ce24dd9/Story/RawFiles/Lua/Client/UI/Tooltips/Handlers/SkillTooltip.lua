@@ -118,7 +118,8 @@ end
 --- @param skill StatEntrySkillData
 --- @param character StatCharacter
 --- @param isFromItem boolean
---- @param param string
+--- @param param1 string
+--- @param param2 string
 local function SkillGetDescriptionParam(skill, character, isFromItem, param1, param2)
 	if Features.ReplaceTooltipPlaceholders then
 		if param1 == "ExtraData" then

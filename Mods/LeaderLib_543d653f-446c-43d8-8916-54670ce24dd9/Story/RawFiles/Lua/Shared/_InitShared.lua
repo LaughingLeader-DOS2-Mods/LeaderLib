@@ -185,7 +185,7 @@ IgnoredMods = {
 	["3da57b9d-8b41-46c7-a33c-afb31eea38a3"] = true,--Armor Sets
 }
 
----@alias DoHitCallback fun(hit:HitRequest, damageList:DamageList, statusBonusDmgTypes:DamageList, string:HitType, target:StatCharacter, attacker:StatCharacter):HitRequest
+---@alias DoHitCallback fun(hit:HitRequest, damageList:DamageList, statusBonusDmgTypes:DamageList, hitType:string, target:StatCharacter, attacker:StatCharacter):HitRequest
 
 ---@alias ApplyDamageCharacterBonusesCallback fun(character:StatCharacter, attacker:StatCharacter, damageList:DamageList, preModifiedDamageList:DamageItem[], resistancePenetration:table<string,integer>)
 
@@ -203,32 +203,31 @@ LocalizedText = {}
 ---@type TranslatedString[]
 TranslatedStringEntries = {}
 
----@type table<string,boolean>
 Features = {
 	---Applies ExtraProperties from BonusWeapon stats in active statuses, on basic attack or hit with a skill that has UseWeaponProperties.
 	ApplyBonusWeaponStatuses = false,
 	---Allows backstabs to happen with various conditions (like from spells or non-daggers), depending on game settings.
 	BackstabCalculation = false,
-	---Fixes the lack of a damage name for chaos damage in skills/statuses
+	---Fixes the lack of a damage name for chaos damage in skills/statuses.
 	FixChaosDamageDisplay = true,
 	---Fixes chaos damage not being applied correctly when from projectile weapons (wands).
 	FixChaosWeaponProjectileDamage = true,
 	---Changes Corrosive/Magic damage tooltip text from "Reduce Armor" to proper damage names.
 	FixCorrosiveMagicDamageDisplay = false,
-	---Fixes the incorrect skill tooltip range when you have Far Out Man
+	---Fixes the incorrect skill tooltip range when you have Far Out Man.
 	FixFarOutManSkillRangeTooltip = false,
 	---Fixes the item tooltip AP cost being incorrect when a character has statuses that reduce AP costs.
 	FixItemAPCost = true,
 	---Fixes the lack of a damage name for pure type damage in tooltips.
 	FixPureDamageDisplay = true,
-	---Fixes tooltips not displaying "Requires a Rifle" when they have a RifleRequirement
+	---Fixes tooltips not displaying "Requires a Rifle" when they have a RifleRequirement.
 	FixRifleWeaponRequirement = false,
 	---Fixed tag requirements for skills being ignored by skills granted by items. Also fixes tag changes not updating the hotbar.
 	FixSkillTagRequirements = false,
 	---Condenses item tooltips by simplifying the ExtraProperties text.
 	ReduceTooltipSize = true,
 	---Replaces various LeaderLib placeholders in tooltips.
-	ReplaceTooltipPlaceholders = false,
+	ReplaceTooltipPlaceholders = true,
 	---Linked to a GameSettings option, allows various percentages of resistances to be ignored.
 	ResistancePenetration = false,
 	---Linked to a GameSettings option, allows spells to crit without the associated talent.

@@ -5,7 +5,7 @@ local ProfileSettings = {
 	Type = "ProfileSettings",
 	ID = "",
 	---@type SettingsData
-	Settings = nll
+	Settings = nil
 }
 
 ProfileSettings.__index = ProfileSettings

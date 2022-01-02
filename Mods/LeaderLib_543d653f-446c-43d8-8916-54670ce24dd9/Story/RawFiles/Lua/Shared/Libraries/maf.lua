@@ -29,20 +29,20 @@ Vector3 = {
 		return string.format('(%f, %f, %f)', v.x, v.y, v.z)
 	end,
 
-	__add = function(v, u) return self:Add(u, Vector3()) end,
-	__sub = function(v, u) return self:Sub(u, Vector3()) end,
+	__add = function(v, u) return v:Add(u, Vector3()) end,
+	__sub = function(v, u) return v:Sub(u, Vector3()) end,
 	__mul = function(v, u)
-		if Vector3.IsVector3(u) then return self:Mul(u, Vector3())
-		elseif type(u) == 'number' then return self:Scale(u, Vector3())
+		if Vector3.IsVector3(u) then return v:Mul(u, Vector3())
+		elseif type(u) == 'number' then return v:Scale(u, Vector3())
 		else error('vec3s can only be multiplied by vec3s and numbers') end
 	end,
 	__div = function(v, u)
-		if Vector3.IsVector3(u) then return self:Div(u, Vector3())
-		elseif type(u) == 'number' then return self:Scale(1 / u, Vector3())
+		if Vector3.IsVector3(u) then return v:Div(u, Vector3())
+		elseif type(u) == 'number' then return v:Scale(1 / u, Vector3())
 		else error('vec3s can only be divided by vec3s and numbers') end
 	end,
-	__unm = function(v) return self:Scale(-1) end,
-	__len = function(v) return self:Length() end
+	__unm = function(v) return v:Scale(-1) end,
+	__len = function(v) return v:Length() end
 }
 Vector3.__index = Vector3
 
@@ -135,7 +135,7 @@ end
 ---@param u Vector3
 ---@return number
 function Vector3:Distance(u)
-	return Vector3.sub(u, vtmp1):Length()
+	return Vector3.Sub(u, vtmp1):Length()
 end
 
 ---@param u Vector3
@@ -303,7 +303,7 @@ function Quaternion:SetBetween(u, v)
 	end
 	
 	self.x, self.y, self.z = u.x, u.y, u.z
-	Vector3.cross(v)
+	Vector3.Cross(v)
 	self.w = 1 + dot
 	return self:Normalize()
 end

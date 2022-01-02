@@ -47,7 +47,7 @@ local function SetMeta(this)
 end
 
 ---@param id integer
----@param params UIWrapper|nil
+---@param params LeaderLibUIWrapper
 ---@return LeaderLibUIWrapper
 function UIWrapper:CreateFromType(id, params)
 	local this = {
@@ -70,7 +70,7 @@ function UIWrapper:CreateFromType(id, params)
 end
 
 ---@param path string
----@param params UIWrapper|nil
+---@param params LeaderLibUIWrapper
 ---@return LeaderLibUIWrapper
 function UIWrapper:CreateFromPath(path, params)
 	local this = {
@@ -95,7 +95,7 @@ function UIWrapper:CreateFromPath(path, params)
 end
 
 ---@alias UIWrapperEventContextType string|'"Keyboard"'|'"Controller"'|'"All"'
----@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, ui:UIObject, event:string, vararg any):void
+---@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, ui:UIObject, event:string, vararg):void
 
 ---@param event string The method name.
 ---@param callback UIWrapperCallbackHandler

@@ -14,6 +14,7 @@ for _,g in ipairs({'coroutine', 'debug', 'io', 'math', 'string', 'table', 'os'})
 local function merge(a, b) if b then for k,v in pairs(b) do a[k] = v end end; return a; end
 
 local function s(t, opts)
+  local level = 0
   local name, indent, fatal, maxnum = opts.name, opts.indent, opts.fatal, opts.maxnum
   local sparse, custom, huge = opts.sparse, opts.custom, not opts.nohuge
   local space, maxl = (opts.compact and '' or ' '), (opts.maxlevel or math.huge)

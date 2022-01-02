@@ -1,6 +1,6 @@
 ---@class TooltipRequestProcessor
 local RequestProcessor = {
-	---@type table<string,fun(request:TooltipRequest, ui:UIObject, uiType:integer, event:string, vararg any):Request>
+	---@type table<string,fun(request:TooltipRequest, ui:UIObject, uiType:integer, event:string, vararg):TooltipRequest>
 	CallbackHandler = {},
 	---@type TooltipHooks
 	Tooltip = nil

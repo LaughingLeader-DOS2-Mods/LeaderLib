@@ -5,7 +5,7 @@ end
 StatusManager.Register = {}
 
 ---If false is returned, the status will be blocked.
----@alias StatusManagerBeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):bool
+---@alias StatusManagerBeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):boolean
 ---@alias StatusManagerAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):void
 ---@alias StatusManagerRemovedCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):void
 ---@alias StatusManagerAppliedCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):void
@@ -45,7 +45,7 @@ function StatusManager.Register.BeforeAttempt(status, callback, ...)
 			if not b then
 				error(result, 2)
 			elseif result then
-				NRD_StatusPreventApply(target.MyGuid, status.StatusId, handle, 1)
+				NRD_StatusPreventApply(target.MyGuid, handle, 1)
 			end
 		end
 		RegisterStatusListener(Vars.StatusEvent.BeforeAttempt, status, callbackWrapper)
@@ -139,7 +139,7 @@ StatusManager.Register.Type = {
 				if not b then
 					error(result, 2)
 				elseif result then
-					NRD_StatusPreventApply(target.MyGuid, statusType.StatusId, handle, 1)
+					NRD_StatusPreventApply(target.MyGuid, handle, 1)
 				end
 			end
 			RegisterStatusTypeListener(Vars.StatusEvent.BeforeAttempt, statusType, callbackWrapper)
@@ -238,7 +238,7 @@ Ext.RegisterListener("SessionLoaded", function()
 end)
 
 ---If false is returned, the status will be blocked.
----@alias StatusManagerBeforeStatusAttemptDisablingStatusCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID, loseControl:boolean):bool
+---@alias StatusManagerBeforeStatusAttemptDisablingStatusCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID, loseControl:boolean):boolean
 ---@alias StatusManagerAttemptDisablingStatusCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID, loseControl:boolean):void
 ---@alias StatusManagerRemovedDisablingStatusCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID, loseControl:boolean):void
 ---@alias StatusManagerAppliedDisablingStatusCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID, loseControl:boolean):void

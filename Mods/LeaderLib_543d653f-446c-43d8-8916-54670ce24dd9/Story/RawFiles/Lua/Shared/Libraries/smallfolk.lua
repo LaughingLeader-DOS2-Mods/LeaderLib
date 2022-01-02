@@ -161,7 +161,7 @@ local expect_object_head = {
 		return expect_number(string, i - 1)
 	end,
 	['{'] = function(string, i, tables)
-		local nt, k, v = {}
+		local nt, k, v = {}, nil, nil
 		local j = 1
 		tables[#tables + 1] = nt
 		if string:sub(i, i) == '}' then

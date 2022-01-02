@@ -79,7 +79,7 @@ Ext.AddPathOverride("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Stats
 ---@param stat StatEntryCharacter
 ---@param attribute string
 ---@param nextVal number|integer|string|table
----@param syncMode boolean
+---@param force boolean
 local function AdjustStat(stat, attribute, nextVal, force)
 	if stat[attribute] and (stat[attribute] ~= nextVal or force) then
 		stat[attribute] = nextVal

@@ -118,12 +118,8 @@ end
 function HitData:PrintTargets()
 	PrintDebug("[LeaderLib:HitData]")
 	PrintDebug("============")
-	self:PrintTargets()
-	PrintDebug("============")
-end
-
-function HitData:PrintTargets()
 	fprint(LOGLEVEL.TRACE, "[HitData:%s] Target(%s)", self.Handle, self.Target)
+	PrintDebug("============")
 end
 
 ---Updates HitStatus.Hit and HitContext.Hit to HitRequest, so property changes are applied.

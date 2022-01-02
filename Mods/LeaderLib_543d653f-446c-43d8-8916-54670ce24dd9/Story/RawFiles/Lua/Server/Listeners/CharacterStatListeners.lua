@@ -142,10 +142,10 @@ Ext.RegisterNetListener("LeaderLib_CharacterSheet_AbilityChanged", function(cmd,
 	end
 end)
 
----@type uuid string
----@type ability string
----@type old integer
----@type new integer
+---@param uuid string
+---@param ability string
+---@param old integer
+---@param new integer
 local function OnCharacterBaseAbilityChanged(uuid, ability, old, new)
 	if CharacterIsPlayer(uuid) == 1 then
 		uuid = StringHelpers.GetUUID(uuid)

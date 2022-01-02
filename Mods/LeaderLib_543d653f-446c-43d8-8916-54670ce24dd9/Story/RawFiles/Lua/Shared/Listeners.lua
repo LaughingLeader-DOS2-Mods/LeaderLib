@@ -23,7 +23,7 @@ Listeners.ClientCharacterChanged = {}
 
 ---@alias LeaderLibGetTooltipSkillDamageCallback fun(skill:SkillEventData, character:StatCharacter):string
 ---@alias LeaderLibGetTooltipSkillParam fun(skill:SkillEventData, character:StatCharacter, param:string):string
----@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter, vararg string):string
+---@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter, vararg):string
 
 ---Called from GameHelpers.Tooltip.ReplacePlaceholders when [SkillDamage:SkillId] text exists in the string.
 ---@type LeaderLibGetTooltipSkillDamageCallback[]
@@ -130,7 +130,7 @@ if Ext.IsServer() then
 	---Called when a summon is created or destroyed. Includes items like mines.
 	---@type table<string, fun(summon:EsvCharacter, owner:EsvCharacter, isDying:boolean, isItem:boolean)>
 	Listeners.OnSummonChanged = {}
-	---@type table<string, fun(event:string, vararg string)>
+	---@type table<string, fun(event:string, vararg)>
 	Listeners.ObjectEvent = {}
 
 	---Called when PersistentVars should be initialized from a table of default values.
@@ -151,7 +151,7 @@ if Ext.IsClient() then
 	---@type fun(ui:UIObject, player:EclCharacter, startIndex:integer, talentEnumReference:table<string,integer>):void[]
 	Listeners.OnTalentArrayUpdating = {}
 
-	---@alias InputEventCallback fun(eventName:string, pressed:boolean, id:integer, inputMap:table<int,boolean>, controllerEnabled:boolean):void
+	---@alias InputEventCallback fun(eventName:string, pressed:boolean, id:integer, inputMap:table<integer,boolean>, controllerEnabled:boolean):void
 	---@type InputEventCallback[]
 	Listeners.InputEvent = {}
 	---@type table<string, InputEventCallback>

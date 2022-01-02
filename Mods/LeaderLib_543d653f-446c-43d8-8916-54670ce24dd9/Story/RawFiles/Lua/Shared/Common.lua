@@ -14,7 +14,7 @@ end
 ---Flattens a nested table.
 ---@param t table Either an array-like int indiced table, or any key-value pair type if deep is true.
 ---@param deep boolean If true, key-value pair types of tables will be flattened as well.
----@return table<int,any>
+---@return table<integer,any>
 function Common.FlattenTable(t, deep)
 	local queque = { t }
 	local result = table()
@@ -236,7 +236,7 @@ function Common.TableHasEntry(tbl, value, caseInsensitive)
 		if type(v) == t then
 			if t == "string" and StringHelpers.Equals(value, v, caseInsensitive) then
 				return true
-			elseif t == "table" and Common.TableHasAnyEntry(v, value, caseInsensitive) then
+			elseif t == "table" and Common.TableHasEntry(v, value, caseInsensitive) then
 				return true
 			elseif v == value then
 				return true
@@ -473,7 +473,7 @@ function Common.Split(s, sep)
 	local fields = {}
 	local sep = sep or " "
 	local pattern = string.format("([^%s]+)", sep)
-	string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
+	local _ = string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
 	if #fields == 0 then
 		return s
 	else

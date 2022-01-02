@@ -1,6 +1,6 @@
 ScriptManager = {
 	RegisteredListenerLookup = {},
-	---@type table<name, CallbackHandler[]>
+	---@type table<string, CallbackHandler[]>
 	RegisteredHandlers = {},
 }
 ScriptManager.__index = ScriptManager

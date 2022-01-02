@@ -65,7 +65,7 @@ function GameHelpers.UI.RefreshSkillBarCooldowns(client)
 		local character = Ext.GetCharacter(client)
 		local data = {NetID = GameHelpers.GetNetID(client), Slots = {}}
 		for i=0,144,1 do
-			local skill = NRD_SkillBarGetSkill(client, i, true)
+			local skill = NRD_SkillBarGetSkill(client, i)
 			if skill ~= nil then
 				local info = character:GetSkillInfo(skill)
 				if info ~= nil and info.ActiveCooldown > 0 then
@@ -119,7 +119,6 @@ function GameHelpers.UI.CombatLog(text, filter, specificCharacters)
 end
 
 ---@param text string
----@param title string|nil
 ---@param specificCharacters string|string[]|nil
 ---@param boxType integer|nil
 ---@param title string|nil

@@ -7,7 +7,7 @@
 ---@field m_RowHeight number
 ---@field m_holderArray table
 ---@field positionElements fun():void
----@field moveElementsToPosition fun(param1:number.8, param2:boolean):void
+---@field moveElementsToPosition fun(param1:number, param2:boolean):void
 ---@field getContainerWidth fun():number
 
 ---@class FlashListDisplay:FlashMovieClip
@@ -26,14 +26,14 @@
 ---@field m_CurrentSelection FlashMovieClip
 ---@field idInc integer
 ---@field m_hasScrollRect boolean
----@field OnSelectionChanged Function
----@field m_AlphaTweenFunc Function
----@field m_PositionTweenFunc Function
+---@field OnSelectionChanged function
+---@field m_AlphaTweenFunc function
+---@field m_PositionTweenFunc function
 ---@field m_tweeningMcs integer
 ---@field m_visibleLength number
 ---@field m_NeedsSorting boolean
----@field m_SortOnFieldName Object
----@field m_SortOnOptions Object
+---@field m_SortOnFieldName FlashObject
+---@field m_SortOnOptions FlashObject
 ---@field m_positionInvisibleElements boolean
 ---@field m_height number
 ---@field m_width number
@@ -56,13 +56,13 @@
 ---@field getElementWidth fun(param1:FlashMovieClip):number
 ---@field getElementHeight fun(param1:FlashMovieClip):number
 ---@field getContentHeight fun():number
----@field moveElementsToPosition fun(param1:number.8, param2:boolean):void
+---@field moveElementsToPosition fun(param1:number, param2:boolean):void
 ---@field moveElementToPosition fun(param1:number, param2:number):boolean
 ---@field moveElementToBack fun(param1:number):void
----@field onRemovedFromStage fun(param1:Event):void
----@field addElement fun(param1:DisplayObject, param2:boolean, param3:boolean):void
----@field addElementOnPosition fun(param1:DisplayObject, param2:integer, param3:boolean, param4:boolean):void
----@field addElementToFront fun(param1:DisplayObject, param2:boolean):void
+---@field onRemovedFromStage fun(param1:FlashEvent):void
+---@field addElement fun(param1:FlashDisplayObject, param2:boolean, param3:boolean):void
+---@field addElementOnPosition fun(param1:FlashDisplayObject, param2:integer, param3:boolean, param4:boolean):void
+---@field addElementToFront fun(param1:FlashDisplayObject, param2:boolean):void
 ---@field resetListPos fun():void
 ---@field stopElementTweens fun(param1:number):void
 ---@field fadeOutAndRemoveElement fun(param1:number, param2:number, param3:number, param4:boolean, param5:boolean):void
@@ -81,17 +81,17 @@
 ---@field filterHideBoolean fun(param1:string, param2:boolean):void
 ---@field filterShowBoolean fun(param1:string, param2:boolean, param3:boolean):void
 ---@field filterBySubString fun(param1:string, param2:string):void
----@field filterShowType fun(param1:string, param2:Object, param3:boolean):void
----@field filterHideType fun(param1:string, param2:Object):void
----@field filterType fun(param1:string, param2:Object):void
+---@field filterShowType fun(param1:string, param2:FlashObject, param3:boolean):void
+---@field filterHideType fun(param1:string, param2:FlashObject):void
+---@field filterType fun(param1:string, param2:FlashObject):void
 ---@field getFirstElement fun(param1:boolean, param2:boolean):FlashMovieClip
 ---@field getFirstVisible fun(param1:boolean):FlashMovieClip
 ---@field getLastElement fun(param1:boolean, param2:boolean):FlashMovieClip
 ---@field getLastVisible fun(param1:boolean):FlashMovieClip
 ---@field selectFirstVisible fun(param1:boolean):void
----@field sortOn fun(param1:Object, param2:Object, param3:boolean):void
+---@field sortOn fun(param1:FlashObject, param2:FlashObject, param3:boolean):void
 ---@field redoSort fun():void
----@field sortOnce fun(param1:Object, param2:Object, param3:boolean):void
+---@field sortOnce fun(param1:FlashObject, param2:FlashObject, param3:boolean):void
 ---@field cursorLeft fun():void
 ---@field cursorRight fun():void
 ---@field cursorUp fun():void

@@ -118,7 +118,7 @@ function LeaderLibGameSettings:Create()
     return this
 end
 
----@param tbl LeaderLibDefaultSettings
+---@param tbl table
 function LeaderLibGameSettings:MigrateSettings(tbl)
 	if tbl.MaxAP ~= nil then
 		if tbl.MaxAPGroup == "Player" or tbl.MaxAPGroup == "All" then
@@ -159,7 +159,7 @@ local function ParseTableValue(settings, k, v)
 	end
 end
 
----@param source table
+---@param tbl table
 ---@return boolean
 function LeaderLibGameSettings:LoadTable(tbl)
 	local b,result = xpcall(function()

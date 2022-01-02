@@ -26,6 +26,7 @@ local UIListenerWrapper = {
 	ID = -1,
 	Enabled = false,
 	CustomCallback = {},
+	Ignored = {},
 }
 UIListenerWrapper.__index = UIListenerWrapper
 
@@ -188,6 +189,7 @@ Ext.RegisterListener("UIObjectCreated", function(ui)
 			data.ID = ui2:GetTypeId()
 			deferredRegistrations[path] = nil
 			if data.Initialized then
+				local this = ui2:GetRoot()
 				local b,err = xpcall(this.Initialized, debug.traceback, ui)
 				if not b then
 					Ext.PrintError(err)

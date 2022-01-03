@@ -269,7 +269,6 @@ function StatusManager.DisablingStatuses.UpdateStatuses()
 		StatusManager.DisablingStatuses.IsLoseControl[statusId] = isLoseControl
 	end
 	table.sort(StatusManager.DisablingStatuses.Statuses)
-	Ext.Dump(StatusManager.DisablingStatuses.DeferredListeners)
 	for eventType,listeners in pairs(StatusManager.DisablingStatuses.DeferredListeners) do
 		for _,callback in pairs(listeners) do
 			StatusManager.DisablingStatuses.RegisterCallback(eventType, callback)
@@ -299,7 +298,6 @@ StatusManager.Register.DisablingStatus = {
 
 	---@param callback StatusManagerAppliedDisablingStatusCallback
 	Applied = function(callback)
-		Ext.PrintError("StatusManager.DisablingStatuses.Initialized", StatusManager.DisablingStatuses.Initialized)
 		if StatusManager.DisablingStatuses.Initialized then
 			StatusManager.DisablingStatuses.RegisterCallback(Vars.StatusEvent.Applied, callback)
 		else

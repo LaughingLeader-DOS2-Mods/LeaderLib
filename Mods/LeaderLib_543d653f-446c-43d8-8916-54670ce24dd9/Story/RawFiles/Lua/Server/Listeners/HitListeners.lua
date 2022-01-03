@@ -115,15 +115,14 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 	---@type HitRequest
 	local hitRequest = hitContext.Hit or hitStatus.Hit
 
-	local skillId = hitStatus.SkillId
-	if not StringHelpers.IsNullOrEmpty(skillId) then
-		skillId = GetSkillEntryName(skillId)
+	local skill = nil
+	if not StringHelpers.IsNullOrEmpty(hitStatus.SkillId) then
+		skill = Ext.GetStat(GetSkillEntryName(hitStatus.SkillId))
 	end
-	local skill = skillId and Ext.GetStat(skillId) or nil
 
 	local data = Classes.HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill)
 
-	if skillId then
+	if skill then
 		OnSkillHit(skill, target, source, hitRequest.TotalDamageDone, hitRequest, hitContext, hitStatus, data)
 	end
 

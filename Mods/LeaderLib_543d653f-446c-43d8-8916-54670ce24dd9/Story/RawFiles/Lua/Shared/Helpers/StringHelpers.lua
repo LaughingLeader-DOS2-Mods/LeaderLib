@@ -190,7 +190,6 @@ function StringHelpers.Trim(s)
 end
 
 local _cachedParsedGUID = {}
-setmetatable(_cachedParsedGUID, {__mode = "kv"})
 
 ---Get the UUID from a template, GUIDSTRING, etc.
 ---@param str string
@@ -233,7 +232,6 @@ function ParseVersion(version)
 end
 
 local _versionIntToString = {}
-setmetatable(_versionIntToString, {__mode = "kv"})
 
 --- Turn a version integer into a string.
 ---@param version integer
@@ -364,3 +362,20 @@ function StringHelpers.DelimitedStringContains(str, delimiter, value)
 	local values = StringHelpers.Split(str, delimiter)
 	return Common.TableHasValue(values, value)
 end
+
+local _skillPrototypeToId = {}
+--setmetatable(_skillPrototypeToId, {__mode = "kv"})
+
+---Get a skill's real entry name. Formats away _-1, _10, etc.
+---@param skillPrototype string A skill id like Projectile_Fireball_-1
+---@return string
+function StringHelpers.GetSkillEntryName(skillPrototype)
+	local result = _skillPrototypeToId[skillPrototype]
+	if result == nil then
+		result = string.gsub(skillPrototype, "_%-?%d+$", "")
+		_skillPrototypeToId[skillPrototype] = result
+	end
+	return result
+end
+
+GetSkillEntryName = StringHelpers.GetSkillEntryName

@@ -65,7 +65,7 @@ local StatusToType = {
 }
 
 local _statusIdToStatusType = {}
-setmetatable(_statusIdToStatusType, {__mode = "kv", __index = StatusToType})
+setmetatable(_statusIdToStatusType, {__index = StatusToType})
 
 ---@param statusId string
 ---@return string

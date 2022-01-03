@@ -8,23 +8,6 @@ end)
 
 Ext.RegisterListener("SessionLoaded", function()
 	Vars.LeaderDebugMode = Ext.LoadFile("LeaderDebug") ~= nil
-	local count = #TranslatedStringEntries
-	if TranslatedStringEntries ~= nil and count > 0 then
-		for i,v in pairs(TranslatedStringEntries) do
-			if v == nil then
-				table.remove(TranslatedStringEntries, i)
-			else
-				local status,err = xpcall(function()
-					v:Update()
-				end, debug.traceback)
-				if not status then
-					Ext.PrintError("[LeaderLib:SessionLoaded] Error updating TranslatedString entry:")
-					Ext.PrintError(err)
-				end
-			end
-		end
-		PrintDebug(string.format("[LeaderLib_Shared_SessionLoaded] Updated %s TranslatedString entries.", count))
-	end
 	for _,stat in pairs(Ext.GetStatEntries("Object")) do
 		Data.ObjectStats[stat] = true
 	end

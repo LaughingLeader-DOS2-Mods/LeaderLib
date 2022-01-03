@@ -307,15 +307,9 @@ local _Warning = {"Warning", "string"}
 local _Unused = {nil, nil}
 local BoostSpec = {_Label, _NumValue, _Unused}
 
----@class TooltipElement:table
----@field Type string
-
----@class BoostSpec:TooltipElement
----@field Label string
----@field Value number
-
----@class ItemName:TooltipElement
----@field Label string
+---@alias TooltipElement { Type:string }
+---@alias BoostSpec { Type:string, Value:number }
+---@alias ItemName { Type:string, Label:string }
 
 TooltipSpecs = {
 	ItemName = {_Label},
@@ -1682,6 +1676,7 @@ end
 
 ---@param t string|string[] The tooltip element type.
 ---@param fallback TooltipElement|nil If an element of the type isn't found, the fallback is appended and returned, if set.
+---@return TooltipElement
 function TooltipData:GetElement(t, fallback)
 	local isTable = type(t) == "table"
 	for i,element in pairs(self.Data) do

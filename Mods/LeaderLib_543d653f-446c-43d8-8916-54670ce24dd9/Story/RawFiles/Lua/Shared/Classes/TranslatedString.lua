@@ -1,3 +1,7 @@
+local _translatedStringUpdate = {}
+--Turn into a weak table since we don't care to update variables that were deleted.
+setmetatable(_translatedStringUpdate, {__mode = "kv"})
+
 ---@class TranslatedString
 local TranslatedString = {
 	Type = "TranslatedString",
@@ -29,7 +33,7 @@ function TranslatedString:Create(handle,content)
 	}
 	setmetatable(this, self)
 	this.Update(this)
-	table.insert(TranslatedStringEntries, this)
+	_translatedStringUpdate[#_translatedStringUpdate+1] = this
 	return this
 end
 
@@ -53,7 +57,7 @@ function TranslatedString:CreateFromKey(stringKey, fallback)
 	}
 	setmetatable(this, self)
 	this.Update(this)
-	table.insert(TranslatedStringEntries, this)
+	_translatedStringUpdate[#_translatedStringUpdate+1] = this
 	return this
 end
 
@@ -154,3 +158,14 @@ end
 
 Classes["TranslatedString"] = TranslatedString
 --local TranslatedString = Classes["TranslatedString"]
+
+Ext.RegisterListener("SessionLoaded", function()
+	local length = #_translatedStringUpdate
+	for i=1,length do
+		local entry = _translatedStringUpdate[i]
+		if entry then
+			TranslatedString.Update(entry)
+		end
+	end
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:TranslatedString:%s] Updated %s TranslatedString entries.", Ext.IsClient and "CLIENT" or "SERVER", length)
+end)

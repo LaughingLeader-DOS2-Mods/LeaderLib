@@ -68,7 +68,7 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
         return 0
 	end
 	
-	local res = character[damageType .. "Resistance"]
+	local res = character[damageType .. "Resistance"] or 0
 
     --Workaround for PhysicalResistance in StatCharacter being double what it actually is
     if extVersion <= 55 and damageType == "Physical" then

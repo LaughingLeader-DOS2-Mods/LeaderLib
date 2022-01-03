@@ -12,6 +12,9 @@ GameHelpers = {
 	Internal = {}
 }
 
+local _stringKeyText = {}
+setmetatable(_stringKeyText, {__mode = "kv"})
+
 ---Get the final value of a string key.
 ---This uses the handle returned from Ext.GetTranslatedStringFromKey to then get the text from Ext.GetTranslatedString.
 ---@param key string The string key.
@@ -21,9 +24,13 @@ function GameHelpers.GetStringKeyText(key,fallback)
 	if fallback == nil then
 		fallback = key
 	end
-	local text,handle = Ext.GetTranslatedStringFromKey(key)
-	if text == nil or handle == nil then
-		return fallback
+	local text = _stringKeyText[key]
+	if text == nil then
+		local text,handle = Ext.GetTranslatedStringFromKey(key)
+		if text == nil or handle == nil then
+			text = fallback
+		end
+		_stringKeyText[key] = text
 	end
 	return text
 end

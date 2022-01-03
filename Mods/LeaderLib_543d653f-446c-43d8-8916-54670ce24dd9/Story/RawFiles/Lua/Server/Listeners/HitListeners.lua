@@ -115,7 +115,10 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 	---@type HitRequest
 	local hitRequest = hitContext.Hit or hitStatus.Hit
 
-	local skillId = not StringHelpers.IsNullOrWhitespace(hitStatus.SkillId) and string.gsub(hitStatus.SkillId, "_%-?%d+$", "") or nil
+	local skillId = hitStatus.SkillId
+	if not StringHelpers.IsNullOrEmpty(skillId) then
+		skillId = GetSkillEntryName(skillId)
+	end
 	local skill = skillId and Ext.GetStat(skillId) or nil
 
 	local data = Classes.HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill)

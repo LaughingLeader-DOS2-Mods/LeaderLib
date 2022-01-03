@@ -64,21 +64,25 @@ local StatusToType = {
 	WIND_WALKER = "WIND_WALKER",
 }
 
+local _statusIdToStatusType = {}
+setmetatable(_statusIdToStatusType, {__mode = "kv", __index = StatusToType})
+
 ---@param statusId string
 ---@return string
 function GameHelpers.Status.GetStatusType(statusId)
-	if StatusToType[statusId] then
-		return StatusToType[statusId]
-	end
-	if not isClient and Ext.OsirisIsCallable() then
-		return GetStatusType(statusId)
-	elseif not Data.EngineStatus[statusId] then
-		local stat = Ext.GetStat(statusId)
-		if stat then
-			return stat.StatusType
+	local statusType = _statusIdToStatusType[statusId]
+	if statusType == nil then
+		if not isClient and Ext.OsirisIsCallable() then
+			statusType = GetStatusType(statusId)
+		elseif not Data.EngineStatus[statusId] then
+			local stat = Ext.GetStat(statusId)
+			if stat then
+				statusType = stat.StatusType
+			end
 		end
+		_statusIdToStatusType[statusId] = statusType
 	end
-	return ""
+	return statusType
 end
 
 local potionProperties = {

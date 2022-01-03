@@ -288,56 +288,55 @@ function GameHelpers.Tooltip.FormatDamageRange(damageRange)
 	return ""
 end
 
-if Ext.IsClient() then
+if Vars.IsClient then
+	local extraPropStatusTurnsPattern = "Set (.+) for (%d+) turn%(s%).-%((%d+)%% Chance%)"
 
-local extraPropStatusTurnsPattern = "Set (.+) for (%d+) turn%(s%).-%((%d+)%% Chance%)"
-
----@param tooltip TooltipData
----@param inputElements table
----@param addColor boolean|nil
-function GameHelpers.Tooltip.CondensePropertiesText(tooltip, inputElements, addColor)
-	local entries = {}
-	for i,v in pairs(inputElements) do
-		v.Label = string.gsub(v.Label, "  ", " ")
-		local a,b,status,turns,chance = string.find(v.Label, extraPropStatusTurnsPattern)
-		if status ~= nil and turns ~= nil and chance ~= nil then
-			local color = ""
-			tooltip:RemoveElement(v)
-			if addColor == true then
-				
-			end
-			table.insert(entries, {Status = status, Turns = turns, Chance = chance, Color = color})
-		end
-	end
-	
-	if #entries > 0 then
-		local finalStatusText = ""
-		local finalTurnsText = ""
-		local finalChanceText = ""
-		for i,v in pairs(entries) do
-			finalStatusText = finalStatusText .. v.Status
-			finalTurnsText = finalTurnsText .. v.Turns
-			finalChanceText = finalChanceText .. v.Chance.."%"
-			if i >= 1 and i < #entries then
-				finalStatusText = finalStatusText .. "/"
-				finalTurnsText = finalTurnsText .. "/"
-				finalChanceText = finalChanceText .. "/"
+	---@param tooltip TooltipData
+	---@param inputElements table
+	---@param addColor boolean|nil
+	function GameHelpers.Tooltip.CondensePropertiesText(tooltip, inputElements, addColor)
+		local entries = {}
+		for i,v in pairs(inputElements) do
+			v.Label = string.gsub(v.Label, "  ", " ")
+			local a,b,status,turns,chance = string.find(v.Label, extraPropStatusTurnsPattern)
+			if status ~= nil and turns ~= nil and chance ~= nil then
+				local color = ""
+				tooltip:RemoveElement(v)
+				if addColor == true then
+					
+				end
+				table.insert(entries, {Status = status, Turns = turns, Chance = chance, Color = color})
 			end
 		end
-		return LocalizedText.Tooltip.ExtraPropertiesOnHit:ReplacePlaceholders(finalStatusText, finalTurnsText, finalChanceText)
+		
+		if #entries > 0 then
+			local finalStatusText = ""
+			local finalTurnsText = ""
+			local finalChanceText = ""
+			for i,v in pairs(entries) do
+				finalStatusText = finalStatusText .. v.Status
+				finalTurnsText = finalTurnsText .. v.Turns
+				finalChanceText = finalChanceText .. v.Chance.."%"
+				if i >= 1 and i < #entries then
+					finalStatusText = finalStatusText .. "/"
+					finalTurnsText = finalTurnsText .. "/"
+					finalChanceText = finalChanceText .. "/"
+				end
+			end
+			return LocalizedText.Tooltip.ExtraPropertiesOnHit:ReplacePlaceholders(finalStatusText, finalTurnsText, finalChanceText)
+		end
 	end
-end
 
----@alias TooltipElementParam table<string,string|number>
+	---@alias TooltipElementParam table<string,string|number>
 
----@param element TooltipElementParam
----@param attribute string
----@param fallback any|nil An optional fallback value to use. Returns an empty string by default.
----@return string|number
-function GameHelpers.Tooltip.GetElementAttribute(element, attribute, fallback)
-	if element ~= nil and element[attribute] ~= nil then
-		return element[attribute]
+	---@param element TooltipElementParam
+	---@param attribute string
+	---@param fallback any|nil An optional fallback value to use. Returns an empty string by default.
+	---@return string|number
+	function GameHelpers.Tooltip.GetElementAttribute(element, attribute, fallback)
+		if element ~= nil and element[attribute] ~= nil then
+			return element[attribute]
+		end
+		return fallback or ""
 	end
-	return fallback or ""
-end
 end

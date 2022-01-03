@@ -280,11 +280,14 @@ function RemoveListener(event, callback, param)
 end
 
 function InvokeListenerCallbacks(callbacks, ...)
+	local invoke = xpcall
+	local messageFunc = debug.traceback
+	
 	local length = callbacks and #callbacks or 0
 	if length > 0 then
 		for i=1,length do
 			local callback = callbacks[i]
-			local b,err = xpcall(callback, debug.traceback, ...)
+			local b,err = invoke(callback, messageFunc, ...)
 			if not b then
 				Ext.PrintError(err)
 			end

@@ -167,7 +167,7 @@ local function TraceStatusType(obj, handle, attribute, attribute_type)
 	if attribute == "SkillId" then
 		local skillprototype = NRD_StatusGetString(obj, handle, "SkillId")
 		if skillprototype ~= "" and skillprototype ~= nil then
-			local skill = string.gsub(skillprototype, "_%-?%d+$", "")
+			local skill = GetSkillEntryName(skillprototype)
 			PrintDebug("["..attribute.."] = "..skillprototype.." => "..skill.."")
 		end
 	end

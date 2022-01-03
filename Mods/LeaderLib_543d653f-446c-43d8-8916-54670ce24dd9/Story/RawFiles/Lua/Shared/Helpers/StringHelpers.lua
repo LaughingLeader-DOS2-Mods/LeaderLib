@@ -189,25 +189,37 @@ function StringHelpers.Trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+local _cachedParsedGUID = {}
+setmetatable(_cachedParsedGUID, {__mode = "kv"})
+
 ---Get the UUID from a template, GUIDSTRING, etc.
 ---@param str string
 ---@return string
 function StringHelpers.GetUUID(str)
-	if StringHelpers.IsNullOrEmpty(str) then
+	if str == nil
+	or str == ""
+	or str == "NULL_00000000-0000-0000-0000-000000000000"
+	or str == "00000000-0000-0000-0000-000000000000"
+	then
 		return str
 	end
-	local start = string.find(str, "_[^_]*$") or 0
-	if start > 0 then
-		return string.sub(str, start+1)
-	else
-		return str
+	local result = _cachedParsedGUID[str]
+	if result == nil then
+		local start = string.find(str, "_[^_]*$") or 0
+		if start > 0 then
+			result = string.sub(str, start+1)
+		else
+			result = str
+		end
+		_cachedParsedGUID[str] = result
 	end
+	return result
 end
 
 --- Split a version integer into separate values
 ---@param version integer
 ---@return integer,integer,integer,integer
-local function ParseVersion(version)
+function ParseVersion(version)
 	if type(version) == "string" then
 		version = math.floor(tonumber(version))
 	elseif type(version) == "number" then
@@ -220,19 +232,33 @@ local function ParseVersion(version)
 	return major,minor,revision,build
 end
 
+local _versionIntToString = {}
+setmetatable(_versionIntToString, {__mode = "kv"})
+
 --- Turn a version integer into a string.
 ---@param version integer
 ---@return string
 function StringHelpers.VersionIntegerToVersionString(version)
-	if version == -1 then return "-1" end
-	local major,minor,revision,build = ParseVersion(version)
-	if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
-		return tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
-	elseif major == -1 and minor == -1 and revision == -1 and build == -1 then
-		return "-1"
+	local result = _versionIntToString[version]
+	if result == nil then
+		if version == -1 then
+			_versionIntToString[-1] = "-1"
+			return "-1"
+		end
+		local major,minor,revision,build = ParseVersion(version)
+		if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
+			result = string.format("%s.%s.%s.%s", major, minor, revision, build)
+			_versionIntToString[version] = result
+		elseif major == -1 and minor == -1 and revision == -1 and build == -1 then
+			result = "-1"
+			_versionIntToString[version] = result
+		end
 	end
-	return nil
+	return result
 end
+
+---@deprecated
+VersionIntegerToVersionString = StringHelpers.VersionIntegerToVersionString
 
 ---Appends two strings together with some text if the first string is not empty, otherwise returns the second string.
 ---@param a string

@@ -501,7 +501,7 @@ local function TryGetObject(id)
 	local t = type(id)
 	local isHandle = t == "userdata" and getmetatable(id) == nil
 	if Ext.OsirisIsCallable() and t == "string" then
-		if ObjectExists(id) == 0 then 
+		if ObjectExists(id) == 0 then
 			return nil
 		end
 		if ObjectIsCharacter(id) == 1 then

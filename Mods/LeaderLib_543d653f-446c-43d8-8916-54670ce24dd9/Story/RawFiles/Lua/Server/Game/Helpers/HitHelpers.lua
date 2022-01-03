@@ -105,7 +105,7 @@ function GameHelpers.HitWithWeapon(target, handle, is_hit, allowSkills, source)
             if allowSkills == true then
                 local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
                 if skillprototype ~= "" and skillprototype ~= nil then
-                    local skill = string.gsub(skillprototype, "_%-?%d+$", "")
+                    local skill = GetSkillEntryName(skillprototype)
                     hitReasonFromWeapon = Ext.StatGetAttribute(skill, "UseWeaponDamage") == "Yes" and (hitReason <= 1 or hitReason == 3)
                     if hitReasonFromWeapon then
                         hasWeaponHandle = true

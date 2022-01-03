@@ -81,11 +81,20 @@ function SetCustomNameWithLocalization(char,handle,fallback)
 	CharacterSetCustomName(char, name)
 end
 
+local _skillPrototypeToId = {}
+--Store weak references so recycling is done automatically by the garbage collector
+setmetatable(_skillPrototypeToId, {__mode = "kv"})
+
 ---Get a skill's real entry name. Formats away _-1, _10, etc.
 ---@param skillPrototype string A skill id like Projectile_Fireball_-1
 ---@return string
 function GetSkillEntryName(skillPrototype)
-	return string.gsub(skillPrototype, "_%-?%d+$", "")
+	local result = _skillPrototypeToId[skillPrototype]
+	if result == nil then
+		result = string.gsub(skillPrototype, "_%-?%d+$", "")
+		_skillPrototypeToId[skillPrototype] = result
+	end
+	return result
 end
 Ext.NewQuery(GetSkillEntryName, "LeaderLib_Ext_QRY_GetSkillEntryName", "[in](STRING)_SkillPrototype, [out](STRING)_SkillId")
 

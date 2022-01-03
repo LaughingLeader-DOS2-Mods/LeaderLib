@@ -62,7 +62,7 @@ end
 local replaceText = {}
 
 ---@param tag string
----@param data TagTooltipData
+---@param data TagTooltipData|TranslatedString
 ---@return string
 local function GetTagTooltipText(tag, data, tooltipType)
 	local finalText = ""

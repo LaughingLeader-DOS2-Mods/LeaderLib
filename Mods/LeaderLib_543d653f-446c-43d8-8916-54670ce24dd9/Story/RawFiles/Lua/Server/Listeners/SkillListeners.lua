@@ -139,7 +139,7 @@ end
 
 function OnSkillPreparing(char, skillprototype)
 	char = StringHelpers.GetUUID(char)
-	local skill = string.gsub(skillprototype, "_%-?%d+$", "")
+	local skill = GetSkillEntryName(skillprototype)
 	-- if CharacterIsControlled(char) == 0 then
 	-- 	Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
 	-- end
@@ -164,7 +164,7 @@ function OnSkillPreparing(char, skillprototype)
 end
 
 function SkillSystem.OnSkillPreparingCancel(char, skillprototype, skill, skipRemoval)
-	skill = skill or string.gsub(skillprototype, "_%-?%d+$", "")
+	skill = skill or GetSkillEntryName(skillprototype)
 	for callback in GetListeners(skill) do
 		--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
 		local status,err = xpcall(callback, debug.traceback, skill, char, SKILL_STATE.CANCEL)
@@ -182,7 +182,7 @@ function SkillSystem.CheckPreparingState(uuid)
 	local last = PersistentVars.IsPreparingSkill[uuid]
 	if last then
 		local action = NRD_CharacterGetCurrentAction(uuid) or ""
-		local skill = string.gsub(NRD_ActionStateGetString(uuid, "SkillId") or "", "_%-?%d+$", "")
+		local skill = GetSkillEntryName(NRD_ActionStateGetString(uuid, "SkillId") or "")
 		if StringHelpers.IsNullOrEmpty(skill) or (action ~= "PrepareSkill" and action ~= "UseSkill") or skill ~= last then
 			SkillSystem.OnSkillPreparingCancel(uuid, "", last)
 		end

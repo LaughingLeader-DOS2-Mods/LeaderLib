@@ -312,11 +312,11 @@ local forceStatuses = {
 local function OnStatusApplied(target,status,source)
 	local statusType = GameHelpers.Status.GetStatusType(status)
 	if status == "SUMMONING" then
-		local summon = Ext.GetGameObject(target)
+		local summon = GameHelpers.TryGetObject(target)
 		if summon then
 			local owner = nil
 			if summon.OwnerHandle then
-				owner = Ext.GetGameObject(summon.OwnerHandle)
+				owner = GameHelpers.TryGetObject(summon.OwnerHandle)
 			end
 			if owner then
 				if not PersistentVars.Summons[owner.MyGuid] then

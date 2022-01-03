@@ -60,6 +60,13 @@ end
 
 --region Resistance Stuff
 
+local function GetResistanceName(damageType)
+    if Data.DamageTypeToResistance[damageType] then
+        return Data.DamageTypeToResistance[damageType]
+    end
+    return damageType .. "Resistance"
+end
+
 --- @param character StatCharacter
 --- @param damageType string DamageType enumeration
 --- @param resistancePenetration integer
@@ -68,7 +75,7 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
         return 0
 	end
 	
-	local res = character[damageType .. "Resistance"] or 0
+	local res = character[GetResistanceName(damageType)] or 0
 
     --Workaround for PhysicalResistance in StatCharacter being double what it actually is
     if extVersion <= 55 and damageType == "Physical" then

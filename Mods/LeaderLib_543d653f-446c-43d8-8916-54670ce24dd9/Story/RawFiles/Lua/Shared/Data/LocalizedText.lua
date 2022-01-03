@@ -394,21 +394,6 @@ end
 
 GameHelpers.GetAbilityName = GetAbilityName
 
-local damageTypeToResistanceName = {
-	None = "PureResistance", -- Special LeaderLib Addition
-	Physical = "PhysicalResistance",
-	Piercing = "PiercingResistance",
-	Corrosive = "CorrosiveResistance",
-	Magic = "MagicResistance",
-	Chaos = "ChaosResistance",-- Special LeaderLib Addition
-	Air = "AirResistance",
-	Earth = "EarthResistance",
-	Fire = "FireResistance",
-	Poison = "PoisonResistance",
-	Shadow = "ShadowResistance", -- Technically Tenebrium
-	Water = "WaterResistance",
-}
-
 ---@class ResistanceTextEntry
 ---@field Text TranslatedString
 ---@field Color string
@@ -426,6 +411,8 @@ LocalizedText.ResistanceNames = {
 	PoisonResistance = {Text=ts:Create("he526af2ag192cg4a71g8247gb306eb0eb97d","Poison Resistance"), Color="#65C900"},
 	ShadowResistance = {Text=ts:Create("hef0c737eg2a72g4564ga5cfg088484ac8b45","Shadow Resistance"), Color="#797980"}, -- Technically Tenebrium
 	WaterResistance = {Text=ts:Create("he5441d99gdb3cg40acga0c4g24379b8b09f7","Water Resistance"), Color="#4197E2"},
+	CustomResistance = {Text=ts:Create("h95b9aa7bg9ca3g46ecga152gbed2951313b4","Sulfur Resistance"), Color="#C7A758"}, -- Special LeaderLib handle
+	SentinelResistance = {Text=ts:Create("h3e9f92b4g5634g425egb6f8g75b06a572a2c","Unknown Resistance"), Color="#008858"}, -- Special LeaderLib handle
 }
 
 LocalizedText.MessageBox = {
@@ -450,9 +437,10 @@ LocalizedText.CombatLog = {
 ---@param amount integer
 ---@return string
 local function GetResistanceText(resistance, amount)
+	---@type ResistanceTextEntry
 	local entry = LocalizedText.ResistanceNames[resistance]
 	if entry == nil then
-		local damageTypeToResistance = damageTypeToResistanceName[resistance]
+		local damageTypeToResistance = Data.DamageTypeToResistance[resistance]
 		if damageTypeToResistance ~= nil then
 			entry = LocalizedText.ResistanceNames[damageTypeToResistance]
 		end

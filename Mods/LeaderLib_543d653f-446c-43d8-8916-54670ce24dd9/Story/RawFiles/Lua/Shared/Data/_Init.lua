@@ -120,34 +120,27 @@ Data.DamageTypeEnums = {
 CreateEnum(Data.DamageTypeEnums)
 
 Data.DamageTypeToResistance = {
-	--None = "PureResistance", -- Special LeaderLib Addition
-	Physical = "PhysicalResistance",
-	Piercing = "PiercingResistance",
-	--Corrosive = "CorrosiveResistance",
-	--Magic = "MagicResistance",
-	--Chaos = "ChaosResistance",-- Special LeaderLib Addition
-	Air = "AirResistance",
-	Earth = "EarthResistance",
-	Fire = "FireResistance",
-	Poison = "PoisonResistance",
-	--Shadow = "ShadowResistance", -- Technically Tenebrium
-	Water = "WaterResistance",
-}
-
-Data.DamageTypeToResistanceWithExtras = {
-	None = "PureResistance", -- Special LeaderLib Addition
 	Physical = "PhysicalResistance",
 	Piercing = "PiercingResistance",
 	Corrosive = "CorrosiveResistance",
 	Magic = "MagicResistance",
-	Chaos = "ChaosResistance",-- Special LeaderLib Addition
 	Air = "AirResistance",
 	Earth = "EarthResistance",
 	Fire = "FireResistance",
 	Poison = "PoisonResistance",
 	Shadow = "ShadowResistance", -- Technically Tenebrium
 	Water = "WaterResistance",
+	Sulfur = "CustomResistance",
 }
+
+--Not real resistances
+Data.DamageTypeToResistanceWithExtras = {
+	None = "PureResistance",
+	Chaos = "ChaosResistance",
+	Sentinel = "SentinelResistance",
+}
+
+setmetatable(Data.DamageTypeToResistanceWithExtras, Data.DamageTypeToResistance)
 
 Data.DamageTypes = setmetatable({},{__index = damageTypes})
 function Data.DamageTypes:Get()

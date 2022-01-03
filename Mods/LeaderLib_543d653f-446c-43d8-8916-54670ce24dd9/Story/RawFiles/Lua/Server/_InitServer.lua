@@ -82,7 +82,7 @@ function SetCustomNameWithLocalization(char,handle,fallback)
 end
 
 local _skillPrototypeToId = {}
---Store weak references so recycling is done automatically by the garbage collector
+--Store weak references for easy recycling
 setmetatable(_skillPrototypeToId, {__mode = "kv"})
 
 ---Get a skill's real entry name. Formats away _-1, _10, etc.

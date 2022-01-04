@@ -10,8 +10,8 @@ LocalizedText.DamageTypeHandles = {
 	None = {Text=ts:Create("h8a070775gc251g4f34g9086gb1772f7e2cff","pure damage"), Color="#13D177"},
 	Physical = {Text=ts:Create("h40782d69gbfaeg40cegbe3cg370ef44e3980","physical damage"), Color="#AE9F95"},
 	Piercing = {Text=ts:Create("hd05581a1g83a7g4d95gb59fgfa5ef68f5c90","piercing damage"), Color="#CD1F1F"},
-	Corrosive = {Text=ts:Create("h161d5479g06d6g408egade2g37a203e3361f","corrosive damage"), Color="#88A25B"},
-	Magic = {Text=ts:Create("hdb4307b4g1a6fg4c05g9602g6a4a6e7a29d9","magic damage"), Color="#7F00FF"},
+	Corrosive = {Text=ts:Create("h161d5479g06d6g408egade2g37a203e3361f","Physical Armour"), Color="#88A25B"},
+	Magic = {Text=ts:Create("hdb4307b4g1a6fg4c05g9602g6a4a6e7a29d9","Magic Armour"), Color="#7F00FF"},
 	Chaos = {Text=ts:Create("h2bc14afag7627g4db8gaaa6g19c26b9820d5","chaos damage"), Color="#9A00FF"},-- Special LeaderLib handle
 	Air = {Text=ts:Create("hdd80e44fg9585g48b8ga34dgab20dc18f077","air damage"), Color="#7D71D9"},
 	Earth = {Text=ts:Create("h68b77a37g9c43g4436gb360gd651af08d7bb","earth damage"), Color="#F7BA14"},
@@ -19,7 +19,7 @@ LocalizedText.DamageTypeHandles = {
 	Poison = {Text=ts:Create("ha77d36b3ge969g4461g9b30gfff624024b18","poison damage"), Color="#65C900"},
 	Shadow = {Text=ts:Create("h256557fbg1d49g45d9g8690gb86b39d2a135","shadow damage"), Color="#797980"},
 	Water = {Text=ts:Create("h8cdcfeedg357eg4877ga69egc05dbe9c68a4","water damage"), Color="#4197E2"},
-	Sulfur = {Text=ts:Create("h12d0bc64gdf1dg424egaf04g644417604184","sulfur damage"), Color="#C7A758"},-- Special LeaderLib handle
+	Sulfuric = {Text=ts:Create("h12d0bc64gdf1dg424egaf04g644417604184","sulfuric damage"), Color="#C7A758"},-- Special LeaderLib handle
 	Sentinel = {Text=ts:Create("h972f1d0cgbce6g4a8fg8ab4g02430e78b2b4","unknown damage"), Color="#008858"}, -- Special LeaderLib handle
 }
 
@@ -37,7 +37,7 @@ LocalizedText.DamageTypeNames = {
 	Poison = {Text=ts:Create("haa64cdb8g22d6g40d6g9918g61961514f70f","Poison"), Color="#65C900"},
 	Shadow = {Text=ts:Create("hf4632a8fg42a7g4d53gbe26gd203f28e3d5e","Shadow"), Color="#797980"},
 	Water = {Text=ts:Create("hd30196cdg0253g434dga42ag12be43dac4ec","Water"), Color="#4197E2"},
-	Sulfur = {Text=ts:Create("h1da479e7gc4e2g4748g8234g754e97a4b680","Sulfur"), Color="#C7A758"},-- Special LeaderLib handle
+	Sulfuric = {Text=ts:Create("h1da479e7gc4e2g4748g8234g754e97a4b680","Sulfuric"), Color="#C7A758"},-- Special LeaderLib handle
 	Sentinel = {Text=ts:Create("h00b235c6gdd0bg494fg997cga2d204f060a8","Unknown"), Color="#008858"}, -- Special LeaderLib handle
 }
 
@@ -415,7 +415,7 @@ LocalizedText.ResistanceNames = {
 	PoisonResistance = {Text=ts:Create("he526af2ag192cg4a71g8247gb306eb0eb97d","Poison Resistance"), Color="#65C900"},
 	ShadowResistance = {Text=ts:Create("hef0c737eg2a72g4564ga5cfg088484ac8b45","Shadow Resistance"), Color="#797980"}, -- Technically Tenebrium
 	WaterResistance = {Text=ts:Create("he5441d99gdb3cg40acga0c4g24379b8b09f7","Water Resistance"), Color="#4197E2"},
-	CustomResistance = {Text=ts:Create("h95b9aa7bg9ca3g46ecga152gbed2951313b4","Sulfur Resistance"), Color="#C7A758"}, -- Special LeaderLib handle
+	CustomResistance = {Text=ts:Create("h95b9aa7bg9ca3g46ecga152gbed2951313b4","Sulfuric Resistance"), Color="#C7A758"}, -- Special LeaderLib handle
 	SentinelResistance = {Text=ts:Create("h3e9f92b4g5634g425egb6f8g75b06a572a2c","Unknown Resistance"), Color="#008858"}, -- Special LeaderLib handle
 }
 

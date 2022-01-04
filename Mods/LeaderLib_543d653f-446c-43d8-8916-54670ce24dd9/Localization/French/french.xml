@@ -1,4 +1,5 @@
 <contentList>
+	<content contentuid="h00b235c6gdd0bg494fg997cga2d204f060a8">Unknown</content>
 	<content contentuid="h00cfaa9cg1ba7g4699gb353g07d1570afea6">*He snorts.* Unfortunately, the thought of hanging around on that stuffy island, with all that death underneath, did not appeal to me. </content>
 	<content contentuid="h00d3459bg4562g42dbgbe1fg0eba1a0e9f6c">*You take a look at the trader&apos;s wares.*</content>
 	<content contentuid="h00eb1825gdc83g454dga263g5e7088c50ef1">[+] Next Page</content>
@@ -21,6 +22,7 @@
 	<content contentuid="h109e781dg2032g4b77gacdagce8034c4e49e">Okay.</content>
 	<content contentuid="h1145733eg9ec6g4f50ga44bg313f8a4e1cb2">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
 	<content contentuid="h12a0d291g8a48g4448g97adgf3dd1d053aa6">Me? Oh, I&apos;m nobody... Just an old bag of bones, keen on seeing the sights. I hear this cruise ship has a great buffet. *He snorts.*</content>
+	<content contentuid="h12d0bc64gdf1dg424egaf04g644417604184">sulfuric damage</content>
 	<content contentuid="h12ee330bga8a5g4b43gba26g78b5fad1727a">If enabled, two-handed weapons can backstab.&lt;br&gt;(Default: Disabled)</content>
 	<content contentuid="h135cea8bg36f7g48a7g83e0g79394989e50b">Change your preset to [LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068]? Your items, skills, and talents will be preserved.</content>
 	<content contentuid="h13979ba5g4916g465fga3f0ge92a3c72c887">[GLOBAL] Enable Timed Autosaves</content>
@@ -48,6 +50,7 @@
 	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee">[LOAD] Load Global Settings - These are global extender mod settings LeaderLib manages.&lt;br&gt;Path: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GlobalSettings.json&lt;/b&gt;</content>
 	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc">Control Summon</content>
 	<content contentuid="h1d68f897g1430g4ed6gb61dg88018af310e8">Enable Buff Status Preservation</content>
+	<content contentuid="h1da479e7gc4e2g4748g8234g754e97a4b680">Sulfuric</content>
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c">Character is selling new items.</content>
 	<content contentuid="h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba">[1]&lt;br&gt;Created by [2]</content>
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
@@ -243,9 +246,10 @@
 	<content contentuid="h943fc926g7822g4ed0g8f23g217d384bf9d2">Selecting menu option...</content>
 	<content contentuid="h950f9baege3b1g428agbb4dgf70a45676c5a">Chain All</content>
 	<content contentuid="h951be36bg6ed7g49e4ga343gaa5c47a4c98e">*Lothar grunts, rubbing his lower back as he chews on something.* Once I saw this beautiful ship in the distance, I knew it was my chance to escape. I swam like a fish.</content>
-	<content contentuid="h95b9aa7bg9ca3g46ecga152gbed2951313b4">Sulfur Resistance</content>
+	<content contentuid="h95b9aa7bg9ca3g46ecga152gbed2951313b4">Sulfuric Resistance</content>
 	<content contentuid="h966d6fabgc29cg4602gad0dg0c50f9418e24">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
 	<content contentuid="h96c19068g066dg429bgb939g91ec46051b34">Clear the status whitelist, which is used to show statuses next to portraits when &lt;font color=&apos;#CCAA00&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideStatuses]&lt;/font&gt; is enabled.</content>
+	<content contentuid="h972f1d0cgbce6g4a8fg8ab4g02430e78b2b4">unknown damage</content>
 	<content contentuid="h975b62eagb7acg46c2gb917g0d5218e2e8ca">Always Expand Tooltips</content>
 	<content contentuid="h97e93b5eg2e78g46f0gac84g8250aeaa1984">*The old man looks to you as you approach.* Welcome! *He looks around.* Bit of a dreary place now, mm?</content>
 	<content contentuid="h9863bb3eg058dg45acg8926gefb0f24ece72">Autosave When Combat Starts</content>

@@ -218,6 +218,10 @@ Features = {
 	FixItemAPCost = true,
 	---Fixes the lack of a damage name for pure type damage in tooltips.
 	FixPureDamageDisplay = true,
+	---Fixes the lack of a damage name for Sulfuric damage in tooltips.
+	FixSulfuricDamageDisplay = true,
+	---Fixes the lack of a damage name for Sentinel damage in tooltips.
+	FixSentinelDamageDisplay = true,
 	---Fixes tooltips not displaying "Requires a Rifle" when they have a RifleRequirement.
 	FixRifleWeaponRequirement = false,
 	---Fixed tag requirements for skills being ignored by skills granted by items. Also fixes tag changes not updating the hotbar.

@@ -66,27 +66,20 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 			end
 		end
 
-		if Features.FixPureDamageDisplay then
-			if not GameHelpers.Item.IsObject(item) and item.Stats.ItemType == "Weapon" then
-				local hasPureDamage = false
-				if item.Stats["Damage Type"] == "None" then
-					hasPureDamage = true
-				end
-				if not hasPureDamage then
-					for i,v in pairs(item.Stats.DynamicStats) do
-						if v.DamageType == "None" then
-							hasPureDamage = true
-							break
-						end
-					end
-				end
-				if hasPureDamage then
-					for i,v in pairs(tooltip:GetElements("WeaponDamage")) do
-						if v.Label == "" then
-							local entry = LocalizedText.DamageTypeNames.None
-							--v.Label = string.format("<font color='%s'>%s</font>", entry.Color, entry.Text.Value)
-							v.Label = entry.Text.Value
-						end
+		local fixPure = Features.FixPureDamageDisplay
+		local fixSulfur = Features.FixSulfuricDamageDisplay
+		local fixSentinel = Features.FixSentinelDamageDisplay
+
+		if fixPure or fixSulfur or fixSentinel then
+			for i,v in pairs(tooltip:GetElements("WeaponDamage")) do
+				local damageType = Ext.EnumIndexToLabel("DamageType", v.DamageType)
+				if v.Label == "" then
+					if damageType == "None" and fixPure then
+						v.Label = LocalizedText.DamageTypeNames.None.Text.Value
+					elseif damageType == "Sulfuric" and fixSulfur then
+						v.Label = LocalizedText.DamageTypeNames.Sulfuric.Text.Value
+					elseif damageType == "Sentinel" and fixSentinel then
+						v.Label = LocalizedText.DamageTypeNames.Sentinel.Text.Value
 					end
 				end
 			end

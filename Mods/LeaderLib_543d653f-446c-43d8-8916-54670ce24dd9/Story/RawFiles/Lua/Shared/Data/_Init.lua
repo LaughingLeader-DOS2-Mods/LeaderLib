@@ -130,7 +130,7 @@ Data.DamageTypeToResistance = {
 	Poison = "PoisonResistance",
 	Shadow = "ShadowResistance", -- Technically Tenebrium
 	Water = "WaterResistance",
-	Sulfur = "CustomResistance",
+	Sulfuric = "CustomResistance",
 }
 
 --Not real resistances

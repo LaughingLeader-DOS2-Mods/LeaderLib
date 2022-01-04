@@ -4,19 +4,85 @@ local FarOutManFixSkillTypes = {
 	Zone = "Range",
 }
 
+local DamageNameFixing = {
+	Chaos = {
+		IsActive = function(skill) return Features.FixChaosDamageDisplay == true end,
+		Pattern = "<font color=\"#C80030\">([%d-%s]+)</font>",
+		Name = LocalizedText.DamageTypeHandles.Chaos.Text,
+		Replace = function (self, damageType, element)
+			local startPos,endPos,damageText = string.find(element.Label, self.Pattern)
+			if damageText ~= nil then
+				damageText = string.gsub(damageText, "%s+", "")
+				local removeText = string.gsub(string.sub(element.Label, startPos, endPos), "%-", "%%-")
+				element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText(damageType, damageText))
+			end
+		end
+	},
+	Magic = {
+		IsActive = function(skill) return Features.FixCorrosiveMagicDamageDisplay == true end,
+		Name = LocalizedText.DamageTypeHandles.Magic.Text,
+		Replace = function (self, damageType, element)
+			local startPos,endPos = StringHelpers.Find(element.Label, "destroy <font.->[%d-]+ "..self.Name.Value..".-</font> on")
+			if startPos and endPos then
+				local str = string.sub(element.Label, startPos, endPos)
+				local replacement = string.gsub(str, "Destroy","Deal"):gsub("destroy","deal"):gsub(" on"," to")
+				element.Label = replacement..string.sub(element.Label, endPos+1)
+			end
+		end
+	},
+	Corrosive = {
+		IsActive = function(skill) return Features.FixCorrosiveMagicDamageDisplay == true end,
+		Name = LocalizedText.DamageTypeHandles.Corrosive.Text,
+		Replace = function (self, damageType, element)
+			local startPos,endPos = StringHelpers.Find(element.Label, "destroy <font.->[%d-]+ "..self.Name.Value..".-</font> on")
+			if startPos and endPos then
+				local str = string.sub(element.Label, startPos, endPos)
+				local replacement = string.gsub(str, "Destroy","Deal"):gsub("destroy","deal"):gsub(" on"," to")
+				element.Label = replacement..string.sub(element.Label, endPos+1)
+			end
+		end
+	},
+	-- None = {
+	-- 	IsActive = function() return Features.FixPureDamageDisplay == true end,
+	-- 	Name = LocalizedText.DamageTypeHandles.None.Text,
+	-- 	Pattern = "<font color=\"#C7A758\">([%d-%s]+)</font>",
+	-- 	Replace = function (self, element)
+	-- 		local startPos,endPos,damageText = string.find(element.Label, self.Pattern)
+	-- 		if damageText ~= nil then
+	-- 			damageText = string.gsub(damageText, "%s+", "")
+	-- 			local removeText = string.gsub(string.sub(element.Label, startPos, endPos), "%-", "%%-")
+	-- 			element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText(self.DamageType, damageText))
+	-- 		end
+	-- 	end
+	-- },
+	Sulfuric = {
+		IsActive = function(skill) return Features.FixSulfuricDamageDisplay == true end,
+		Name = LocalizedText.DamageTypeHandles.Sulfuric.Text,
+		Pattern = "<font color=\"#C7A758\">([%d-%s]+)</font>",
+		Replace = function (self, damageType, element)
+			local startPos,endPos,damageText = string.find(element.Label, self.Pattern)
+			if damageText ~= nil then
+				damageText = StringHelpers.Trim(damageText)
+				local removeText = string.gsub(string.sub(element.Label, startPos, endPos), "%-", "%%-")
+				print(damageText, removeText)
+				element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText(damageType, damageText))
+			end
+		end
+	},
+}
+
+local function FixDamageNames(skill, element)
+	for damageType,data in pairs(DamageNameFixing) do
+		if data.IsActive(skill) then
+			data:Replace(damageType, element)
+		end
+	end
+end
+
 ---@param character EclCharacter
 ---@param skill string
 ---@param tooltip TooltipData
 function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
-	if Vars.DebugMode and skill == "ActionSkillFlee" then
-		tooltip:MarkDirty()
-		if tooltip:IsExpanded() then
-			--tooltip:AppendElement({Type="SkillDescription", Label="<font color='#3399FF'>It's not fleeing, it's a tactical retreat!</font>"})
-			local element = tooltip:GetElement("SkillDescription")
-			element.Label=element.Label .. "<br><font color='#3399FF'>It's not fleeing, it's a tactical retreat!</font>"
-		end
-	end
-
 	if Features.TooltipGrammarHelper then
 		-- This fixes the double spaces from removing the "tag" part of Requires tag
 		for i,element in pairs(tooltip:GetElements("SkillRequiredEquipment")) do
@@ -49,54 +115,18 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 		end
 	end
 
-	if Features.ReplaceTooltipPlaceholders
-	or (Features.FixChaosDamageDisplay or Features.FixCorrosiveMagicDamageDisplay)
-	or Features.TooltipGrammarHelper then
-		for i,element in pairs(tooltip:GetElements("SkillDescription")) do
-			if element ~= nil then
-				if Features.TooltipGrammarHelper == true then
-					element.Label = string.gsub(element.Label, "a 8", "an 8")
-					local startPos,endPos = string.find(element.Label , "a <font.->8")
-					if startPos then
-						local text = string.sub(element.Label, startPos, endPos)
-						element.Label = string.gsub(element.Label, text, text:gsub("a ", "an "))
-					end
-				end
-				if Features.FixChaosDamageDisplay == true and not string.find(element.Label:lower(), LocalizedText.DamageTypeHandles.Chaos.Text.Value) then
-					local startPos,endPos,damage = string.find(element.Label, TooltipHandler.ChaosDamagePattern)
-					if damage ~= nil then
-						damage = string.gsub(damage, "%s+", "")
-						local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
-						element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
-					end
-				end
-				if Features.FixCorrosiveMagicDamageDisplay == true then
-					local status,err = xpcall(function()
-						local lowerLabel = string.lower(element.Label)
-						local damageText = ""
-						if string.find(lowerLabel, LocalizedText.DamageTypeHandles.Corrosive.Text.Value) then
-							damageText = LocalizedText.DamageTypeHandles.Corrosive.Text.Value
-						elseif string.find(lowerLabel, LocalizedText.DamageTypeHandles.Magic.Text.Value) then
-							damageText = LocalizedText.DamageTypeHandles.Magic.Text.Value
-						end
-						if damageText ~= "" then
-							local startPos,endPos = string.find(lowerLabel, "destroy <font.->[%d-]+ "..damageText..".-</font> on")
-							if startPos and endPos then
-								local str = string.sub(element.Label, startPos, endPos)
-								local replacement = string.gsub(str, "Destroy","Deal"):gsub("destroy","deal"):gsub(" on"," to")
-							element.Label = replacement..string.sub(element.Label, endPos+1)
-							end
-						end
-						return true
-					end, debug.traceback)
-					if not status then
-						Ext.PrintError(err)
-					end
-				end
-				if Features.ReplaceTooltipPlaceholders == true then
-					element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
-				end
+	for i,element in pairs(tooltip:GetElements("SkillDescription")) do
+		FixDamageNames(skill, element)
+		if Features.TooltipGrammarHelper == true then
+			element.Label = string.gsub(element.Label, "a 8", "an 8")
+			local startPos,endPos = string.find(element.Label , "a <font.->8")
+			if startPos then
+				local text = string.sub(element.Label, startPos, endPos)
+				element.Label = string.gsub(element.Label, text, text:gsub("a ", "an "))
 			end
+		end
+		if Features.ReplaceTooltipPlaceholders == true then
+			element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
 		end
 	end
 
@@ -113,6 +143,8 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 			end
 		end
 	end
+
+	Ext.Dump(tooltip.Data)
 end
 
 --- @param skill StatEntrySkillData

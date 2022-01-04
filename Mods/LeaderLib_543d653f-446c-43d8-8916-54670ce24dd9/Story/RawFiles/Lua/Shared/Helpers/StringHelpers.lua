@@ -379,3 +379,24 @@ function StringHelpers.GetSkillEntryName(skillPrototype)
 end
 
 GetSkillEntryName = StringHelpers.GetSkillEntryName
+
+---Helper for string.find with some additional options.
+---@param s string
+---@param pattern string
+---@param caseInsensitive ?boolean Searches for a string.lower version of s.
+---@param startPos ?integer If set, start the find from this position.
+---@param endPos ?integer If set, end the find at this position.
+---@param findStartPos ?integer
+---@param findPlain ?boolean
+---@return integer,integer,string
+function StringHelpers.Find(s, pattern, caseInsensitive, startPos, endPos, findStartPos, findPlain)
+	if caseInsensitive then
+		s = string.lower(s)
+	end
+	if startPos then
+		local subText = string.sub(s, startPos, endPos)
+		return string.find(subText, pattern, findStartPos, findPlain)
+	else
+		return string.find(s, pattern, findStartPos, findPlain)
+	end
+end

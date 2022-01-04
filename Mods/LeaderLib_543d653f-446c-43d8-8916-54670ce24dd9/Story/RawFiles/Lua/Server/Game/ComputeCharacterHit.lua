@@ -71,10 +71,6 @@ end
 --- @param damageType string DamageType enumeration
 --- @param resistancePenetration integer
 function HitOverrides.GetResistance(character, damageType, resistancePenetration)
-    if damageType == "None" or damageType == "Chaos" then
-        return 0
-	end
-	
 	local res = character[GetResistanceName(damageType)] or 0
 
     --Workaround for PhysicalResistance in StatCharacter being double what it actually is
@@ -94,7 +90,6 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
     end
 
 	if res > 0 and resistancePenetration ~= nil and resistancePenetration > 0 then
-		--PrintDebug(res, " => ", math.max(res - resistancePenetration, 0))
 		res = math.max(res - resistancePenetration, 0)
 	end
     local length = #Listeners.GetHitResistanceBonus

@@ -19,6 +19,8 @@ LocalizedText.DamageTypeHandles = {
 	Poison = {Text=ts:Create("ha77d36b3ge969g4461g9b30gfff624024b18","poison damage"), Color="#65C900"},
 	Shadow = {Text=ts:Create("h256557fbg1d49g45d9g8690gb86b39d2a135","shadow damage"), Color="#797980"},
 	Water = {Text=ts:Create("h8cdcfeedg357eg4877ga69egc05dbe9c68a4","water damage"), Color="#4197E2"},
+	Sulfur = {Text=ts:Create("h12d0bc64gdf1dg424egaf04g644417604184","sulfur damage"), Color="#C7A758"},-- Special LeaderLib handle
+	Sentinel = {Text=ts:Create("h972f1d0cgbce6g4a8fg8ab4g02430e78b2b4","unknown damage"), Color="#008858"}, -- Special LeaderLib handle
 }
 
 ---@type table<string, ColoredTranslatedStringEntry>
@@ -28,13 +30,15 @@ LocalizedText.DamageTypeNames = {
 	Piercing = {Text=ts:Create("h22f6b7bcgc548g49cbgbc04g9532e893fb55","Piercing"), Color="#CD1F1F"},
 	Corrosive = {Text=ts:Create("h727b2365g5cd3g4557g8627ge9612ab59420","Corrosive"), Color="#88A25B"},
 	Magic = {Text=ts:Create("h02e0fcacg670eg4d35g9f20gcf5cddab7fd1","Magic"), Color="#7F00FF"},
-	Chaos = {Text=ts:Create("hf43ec8a1gb6c4g421dg983cg01535ee1bcdf","Chaos"), Color="#9A00FF"},-- Special LeaderLib handle
+	Chaos = {Text=ts:Create("hf43ec8a1gb6c4g421dg983cg01535ee1bcdf","Chaos"), Color="#9A00FF"},-- Special LeaderLib color
 	Air = {Text=ts:Create("h1cea7e28gc8f1g4915ga268g31f90767522c","Air"), Color="#7D71D9"},
 	Earth = {Text=ts:Create("h85fee3f4g0226g41c6g9d38g83b7b5bf96ba","Earth"), Color="#F7BA14"},
 	Fire = {Text=ts:Create("h051b2501g091ag4c93ga699g407cd2b29cdc","Fire"), Color="#FE6E27"},
 	Poison = {Text=ts:Create("haa64cdb8g22d6g40d6g9918g61961514f70f","Poison"), Color="#65C900"},
 	Shadow = {Text=ts:Create("hf4632a8fg42a7g4d53gbe26gd203f28e3d5e","Shadow"), Color="#797980"},
 	Water = {Text=ts:Create("hd30196cdg0253g434dga42ag12be43dac4ec","Water"), Color="#4197E2"},
+	Sulfur = {Text=ts:Create("h1da479e7gc4e2g4748g8234g754e97a4b680","Sulfur"), Color="#C7A758"},-- Special LeaderLib handle
+	Sentinel = {Text=ts:Create("h00b235c6gdd0bg494fg997cga2d204f060a8","Unknown"), Color="#008858"}, -- Special LeaderLib handle
 }
 
 --MagicArmorMasteryDescription = ts:Create("h211cb400g5881g4b90g8bc8g0399d0288e00","Willpower determines how resistant you are to mental statuses like Fear or Charm."),

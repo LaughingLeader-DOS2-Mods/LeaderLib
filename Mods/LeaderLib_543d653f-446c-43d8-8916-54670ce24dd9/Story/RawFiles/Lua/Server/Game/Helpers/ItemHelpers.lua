@@ -190,16 +190,14 @@ end
 
 ---Creates an item by stat, provided it has an ItemGroup set (for equipment).
 ---@param statName string
----@param properties ItemDefinition|nil
+---@param creationProperties ItemDefinition|nil
 ---@return string,EsvItem
-function GameHelpers.Item.CreateItemByStat(statName, properties, ...)
-    if type(properties) == "boolean" then
+function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
+    local properties = creationProperties or {}
+    if type(creationProperties) == "boolean" then
         local args = {...}
         if #args > 0 and type(args[1]) == "table" then
             properties = args[1]
-        end
-        if type(properties) == "boolean" then
-            properties = {}
         end
     end
     ---@type StatEntryWeapon|StatEntryArmor|StatEntryShield|StatEntryObject|StatEntryPotion

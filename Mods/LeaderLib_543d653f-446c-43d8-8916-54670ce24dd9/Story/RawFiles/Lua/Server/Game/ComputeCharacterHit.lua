@@ -284,7 +284,7 @@ end
 function HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier)
     local mainWeapon = attacker.MainWeapon
     if mainWeapon ~= nil then
-        hit.CriticalHit = true
+        GameHelpers.Hit.SetFlag(hit, "CriticalHit", true)
         damageMultiplier = damageMultiplier + (Game.Math.GetCriticalHitMultiplier(mainWeapon, attacker, 0, 0) - 1.0)
     end
     return damageMultiplier
@@ -329,7 +329,7 @@ end
 function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     local hit = hitRequest
     if extVersion < 56 then
-        hit.damageMultiplier = damageMultiplier
+        hit.DamageMultiplier = damageMultiplier
     else
         --TODO Waiting for a v56 Game.Math update for hit.DamageMultiplier
         local hitTable = {

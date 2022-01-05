@@ -42,19 +42,6 @@ local DamageNameFixing = {
 			end
 		end
 	},
-	-- None = {
-	-- 	IsActive = function() return Features.FixPureDamageDisplay == true end,
-	-- 	Name = LocalizedText.DamageTypeHandles.None.Text,
-	-- 	Pattern = "<font color=\"#C7A758\">([%d-%s]+)</font>",
-	-- 	Replace = function (self, element)
-	-- 		local startPos,endPos,damageText = string.find(element.Label, self.Pattern)
-	-- 		if damageText ~= nil then
-	-- 			damageText = string.gsub(damageText, "%s+", "")
-	-- 			local removeText = string.gsub(string.sub(element.Label, startPos, endPos), "%-", "%%-")
-	-- 			element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText(self.DamageType, damageText))
-	-- 		end
-	-- 	end
-	-- },
 	Sulfuric = {
 		IsActive = function(skill) return Features.FixSulfuricDamageDisplay == true end,
 		Name = LocalizedText.DamageTypeHandles.Sulfuric.Text,
@@ -64,8 +51,20 @@ local DamageNameFixing = {
 			if damageText ~= nil then
 				damageText = StringHelpers.Trim(damageText)
 				local removeText = string.gsub(string.sub(element.Label, startPos, endPos), "%-", "%%-")
-				print(damageText, removeText)
 				element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText(damageType, damageText))
+			end
+		end
+	},
+	--Replacing just the color
+	None = {
+		IsActive = function(skill) return Features.FixPureDamageDisplay == true end,
+		Name = LocalizedText.DamageTypeHandles.None.Text,
+		Replace = function (self, damageType, element)
+			local pattern = "(<font color=\"#C80030\">.-"..self.Name.Value.."</font>)"
+			local startPos,endPos,damageText = string.find(element.Label, pattern)
+			if damageText ~= nil then
+				local replaceText = string.gsub(damageText, "#C80030", LocalizedText.DamageTypeHandles.None.Color)
+				element.Label = StringHelpers.Replace(element.Label, damageText, replaceText)
 			end
 		end
 	},
@@ -143,8 +142,6 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 			end
 		end
 	end
-
-	Ext.Dump(tooltip.Data)
 end
 
 --- @param skill StatEntrySkillData

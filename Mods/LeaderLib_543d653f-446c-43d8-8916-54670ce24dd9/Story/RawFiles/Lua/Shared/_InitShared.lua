@@ -80,7 +80,9 @@ Vars = {
 		Undead_Elf = {Tag="UNDEAD_ELF", BaseTag = "ELF"},
 		Undead_Human = {Tag="UNDEAD_HUMAN", BaseTag = "HUMAN"},
 		Undead_Lizard = {Tag="UNDEAD_LIZARD", BaseTag = "LIZARD"},
-	}
+	},
+	---Table of base game stat fixes.
+	StatFixes = {}
 }
 
 function PrintDebug(...)
@@ -442,3 +444,8 @@ local function ImportUnsafeOld(targetModTable, skipExistingCheck)
 	end
 end
 ]]
+
+--Outdated editor version
+if Ext.GameVersion() == "v3.6.51.9303" then
+	Vars.IsEditorMode = true
+end

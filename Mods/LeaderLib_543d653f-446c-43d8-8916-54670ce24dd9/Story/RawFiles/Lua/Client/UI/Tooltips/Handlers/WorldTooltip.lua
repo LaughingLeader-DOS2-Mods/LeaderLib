@@ -1,4 +1,4 @@
-local canGetTooltipItem = Ext.GetPickingState ~= nil
+local canGetTooltipItem = Ext.GetPickingState ~= nil and not Vars.IsEditorMode
 
 local function InvokeWorldTooltipCallbacks(ui, text, x, y, isFromItem, item)
 	local textResult = text

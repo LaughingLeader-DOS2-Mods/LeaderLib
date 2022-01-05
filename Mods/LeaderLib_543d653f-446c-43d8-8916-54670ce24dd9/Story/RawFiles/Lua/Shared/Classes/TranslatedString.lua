@@ -76,7 +76,10 @@ function TranslatedString:Update()
 		end
 	else
 		if not StringHelpers.IsNullOrEmpty(self.Handle) then
-			self.Value = Ext.GetTranslatedString(self.Handle, self.Content) or self.Content
+			self.Value = Ext.GetTranslatedString(self.Handle, self.Content)
+			if StringHelpers.IsNullOrWhitespace(self.Value) then
+				self.Value = self.Content
+			end
 		else
 			self.Value = self.Content
 		end

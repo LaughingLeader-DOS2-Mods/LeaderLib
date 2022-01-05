@@ -1,6 +1,6 @@
 local isClient = Ext.IsClient()
 
-local skip_stats = {
+local skipCharacterStats = {
 	["StoryPlayer"] = true,
 	["CasualPlayer"] = true,
 	["NormalPlayer"] = true,
@@ -13,7 +13,7 @@ local skip_stats = {
 	["PlaceholderStatEntry"] = true,
 }
 
-local player_stats = {
+local playerStats = {
 	["HumanFemaleHero"] = true,
 	["HumanMaleHero"] = true,
 	["DwarfFemaleHero"] = true,
@@ -38,7 +38,96 @@ local player_stats = {
 	["Player_Fane"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
 }
 
-local ignore_skill_names = {
+local _loadedStatuses = {}
+
+---@param stat StatEntrySkillData
+local _SkillPropertiesActionMissing = function (stat)
+	for i,v in pairs(stat.SkillProperties) do
+		if not _loadedStatuses[v.Action] then
+			return true
+		end
+	end
+	return false
+end
+
+local StatFixes = {
+	--Original: "Burning,0,2;Melt" - Seems like it was meant to not apply BURNING, but Burning isn't a status.
+	Projectile_TrapEarthballNoIgnite = {
+		---@param stat StatEntrySkillData
+		CanChange = _SkillPropertiesActionMissing,
+		Changes = {
+			SkillProperties = {{
+				Action = "Melt",
+				Context = {"AoE", "Target"},
+				Lifetime = 0.0,
+				Radius = -1.0,
+				StatusChance = 0.0,
+				SurfaceChance = 1.0,
+				Type = "SurfaceChange",
+			}}
+		}
+	},
+	--Original: "EMPTY". This isn't a status.
+	Rain_EnemyWater_Blessed = {
+		CanChange = _SkillPropertiesActionMissing,
+		Changes = {
+			SkillProperties = {}
+		}
+	},
+	--Original: OILED,100,1 - OILED isn't a status.
+	Rain_Oil = {
+		CanChange = _SkillPropertiesActionMissing,
+		Changes = {
+			SkillProperties = {{
+				Type = "Status",
+				Action = "SLOWED",
+				Context = {"AoE", "Target"},
+				Duration = 6.0,
+				StatusChance = 1.0,
+				StatsId = "",
+				Arg4 = -1,
+				Arg5 = -1,
+				SurfaceBoost = false
+			}}
+		}
+	},
+	--Original: MARK_OF_DEATH,100,3. This isn't a status that exists, so we swap to LIVING_BOMB.
+	Target_EnemyMarkOfDeath = {
+		CanChange = _SkillPropertiesActionMissing,
+		Changes = {
+			SkillProperties = {{
+				Type = "Status",
+				Action = "LIVING_BOMB",
+				Context = {"AoE", "Target"},
+				Duration = 18.0,
+				StatusChance = 1.0,
+				StatsId = "",
+				Arg4 = -1,
+				Arg5 = -1,
+				SurfaceBoost = false
+			}}
+		}
+	},
+	--Original: "_Vitality_ShieldBoost". This isn't a status that exists.
+	WPN_UNIQUE_WithermooreShield = {
+		CanChange = function (stat)
+			for i,v in pairs(stat.ExtraProperties) do
+				if not _loadedStatuses[v.Action] then
+					return true
+				end
+			end
+			return false
+		end,
+		Changes = {
+			ExtraProperties = {},
+			VitalityBoost = "20",
+		}
+	},
+}
+
+Vars.StatFixes = StatFixes
+
+local ignoreSkillNames = {
 	Enemy = true,
 	Quest = true,
 	QUEST = true,
@@ -61,7 +150,7 @@ local function CanChangeSkillTier(stat, tier)
 		if Ext.StatGetAttribute(stat, "IsEnemySkill") == "Yes" then
 			return false
 		end
-		for str,b in pairs(ignore_skill_names) do
+		for str,b in pairs(ignoreSkillNames) do
 			if string.find(stat, str) then
 				return false
 			end
@@ -258,7 +347,7 @@ local function OverrideStats(data, statsLoadedState)
 
 	if data.Settings.APSettings.Player.Enabled then
 		local settings = data.Settings.APSettings.Player
-		for id,b in pairs(player_stats) do
+		for id,b in pairs(playerStats) do
 			if b == true or (type(b) == "string" and Ext.IsModLoaded(b)) then
 				---@type StatEntryCharacter
 				local stat = Ext.GetStat(id)
@@ -285,7 +374,7 @@ local function OverrideStats(data, statsLoadedState)
 		-- }
 		local settings = data.Settings.APSettings.NPC
 		for _,id in pairs(Ext.GetStatEntries("Character")) do
-			local skip = skip_stats[id] == true or player_stats[id] ~= nil
+			local skip = skipCharacterStats[id] == true or playerStats[id] ~= nil
 			if not skip then
 				local max = Ext.StatGetAttribute(id, "APMaximum")
 				--local start = Ext.StatGetAttribute(id, "APStart")
@@ -314,6 +403,32 @@ local function OverrideStats(data, statsLoadedState)
 	end
 	OverrideWings(not isClient and not statsLoadedState)
 	OverrideForce(not isClient and not statsLoadedState, skills)
+
+	for _,v in pairs(Ext.GetStatEntries("StatusData")) do
+		_loadedStatuses[v] = true
+		local statusType = Ext.StatGetAttribute(v, "StatusType")
+		if statusType then
+			Data.StatusToType[v] = statusType
+		end
+	end
+
+	for statId,data in pairs(StatFixes) do
+		local stat = Ext.GetStat(statId)
+		if stat and data.CanChange(stat) then
+			for attribute,value in pairs(data.Changes) do
+				if not isClient and not statsLoadedState then
+					stat[attribute] = value
+				else
+					Ext.StatSetAttribute(statId, attribute, value)
+				end
+			end
+			if not isClient and not statsLoadedState then
+				Ext.SyncStat(statId, false)
+			end
+		end
+	end
+
+	_loadedStatuses = {}
 end
 
 Ext.RegisterListener("StatsLoaded", function()

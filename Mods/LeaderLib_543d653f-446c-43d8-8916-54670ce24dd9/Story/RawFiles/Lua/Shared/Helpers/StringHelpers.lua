@@ -189,6 +189,23 @@ function StringHelpers.Trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+--- Escapes all magic characters, such as -
+--- @param s string
+--- @return string
+function StringHelpers.EscapeMagic(s)
+	return (s:gsub('[%^%$%(%)%%%.%[%]%*%+%-%?]','%%%1'))
+end
+
+--- Similar to string.gsub, but escapes all magic characters in the pattern beforehand.
+--- @param s string
+--- @param pattern string
+--- @param repl string|table|function
+--- @param n ?integer
+--- @return string
+function StringHelpers.Replace(s, pattern, repl, n)
+	return string.gsub(s, StringHelpers.EscapeMagic(pattern), repl, n)
+end
+
 local _cachedParsedGUID = {}
 
 ---Get the UUID from a template, GUIDSTRING, etc.

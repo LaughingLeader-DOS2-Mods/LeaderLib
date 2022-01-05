@@ -52,8 +52,6 @@ local function CreateEnum(target)
 	})
 end
 
-Ext.Require("Shared/Data/Colors.lua")
-
 Data.OriginalSkillTiers = {}
 ---@type table<string,boolean>
 Data.ObjectStats = {}
@@ -631,9 +629,10 @@ SKILL_STATE = {
 }
 
 Ext.Require("Shared/Data/ResistancePenetrationTags.lua")
-Ext.Require("Shared/Data/LocalizedText.lua")
 Ext.Require("Shared/Data/ValueTypes.lua")
 Ext.Require("Shared/Data/ExtenderUserData.lua")
+Ext.Require("Shared/Data/Colors.lua")
+Ext.Require("Shared/Data/ColorNames.lua")
 
 Data.EngineStatus = {
 	ACTIVE_DEFENSE = true,
@@ -702,6 +701,66 @@ setmetatable(Data.EngineStatus, {
 		return Data.EngineStatus[status] == true
 	end
 })
+
+Data.StatusToType = {
+	ACTIVE_DEFENSE = "ACTIVE_DEFENSE",
+	ADRENALINE = "ADRENALINE",
+	AOO = "AOO",
+	BOOST = "BOOST",
+	CHANNELING = "CHANNELING",
+	CHARMED = "CHARMED",
+	CLEAN = "CLEAN",
+	CLIMBING = "CLIMBING",
+	COMBAT = "COMBAT",
+	COMBUSTION = "COMBUSTION",
+	CONSTRAINED = "CONSTRAINED",
+	CONSUME = "CONSUME",
+	DAMAGE = "DAMAGE",
+	DARK_AVENGER = "DARK_AVENGER",
+	DECAYING_TOUCH = "DECAYING_TOUCH",
+	DRAIN = "DRAIN",
+	DYING = "DYING",
+	EFFECT = "EFFECT",
+	ENCUMBERED = "ENCUMBERED",
+	EXPLODE = "EXPLODE",
+	FLANKED = "FLANKED",
+	FLOATING = "FLOATING",
+	FORCE_MOVE = "FORCE_MOVE",
+	HIT = "HIT",
+	IDENTIFY = "IDENTIFY",
+	INCAPACITATED = "INCAPACITATED",
+	INFECTIOUS_DISEASED = "INFECTIOUS_DISEASED",
+	INFUSED = "INFUSED",
+	INSURFACE = "INSURFACE",
+	LEADERSHIP = "LEADERSHIP",
+	LINGERING_WOUNDS = "LINGERING_WOUNDS",
+	LYING = "LYING",
+	MATERIAL = "MATERIAL",
+	OVERPOWER = "OVERPOWER",
+	POLYMORPHED = "POLYMORPHED",
+	REMORSE = "REMORSE",
+	REPAIR = "REPAIR",
+	ROTATE = "ROTATE",
+	SHACKLES_OF_PAIN = "SHACKLES_OF_PAIN",
+	SHACKLES_OF_PAIN_CASTER = "SHACKLES_OF_PAIN_CASTER",
+	SITTING = "SITTING",
+	SMELLY = "SMELLY",
+	SNEAKING = "SNEAKING",
+	SOURCE_MUTED = "SOURCE_MUTED",
+	SPARK = "SPARK",
+	SPIRIT = "SPIRIT",
+	SPIRIT_VISION = "SPIRIT_VISION",
+	STANCE = "STANCE",
+	STORY_FROZEN = "STORY_FROZEN",
+	SUMMONING = "SUMMONING",
+	TELEPORT_FALLING = "TELEPORT_FALLING",
+	THROWN = "THROWN",
+	TUTORIAL_BED = "TUTORIAL_BED",
+	UNHEALABLE = "UNHEALABLE",
+	UNLOCK = "UNLOCK",
+	UNSHEATHED = "UNSHEATHED",
+	WIND_WALKER = "WIND_WALKER",
+}
 
 ---Statuses ignored by default in status listeners
 ---If a mod registers a callback for one of these, it will no longer be ignored in listeners.

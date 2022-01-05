@@ -107,5 +107,3 @@ Data.Colors.General = {
 	OutlineMoveItemDestination = "#FFFF00",
 	PeaceOutline = "#FFFFFF",
 }
-
-Ext.Require("Shared/Data/ColorNames.lua")

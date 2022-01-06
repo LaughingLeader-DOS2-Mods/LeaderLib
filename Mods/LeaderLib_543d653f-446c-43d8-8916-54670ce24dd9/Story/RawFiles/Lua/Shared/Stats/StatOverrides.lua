@@ -120,7 +120,7 @@ local StatFixes = {
 		end,
 		Changes = {
 			ExtraProperties = {},
-			VitalityBoost = "20",
+			VitalityBoost = 20,
 		}
 	},
 }

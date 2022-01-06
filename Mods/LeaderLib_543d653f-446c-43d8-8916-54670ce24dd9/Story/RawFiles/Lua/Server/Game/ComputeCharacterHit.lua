@@ -308,11 +308,54 @@ function HitOverrides.ComputeOverridesEnabled()
     if Features.DisableHitOverrides == true then
         return false
     end
-    return Features.BackstabCalculation == true 
-    or Features.SpellsCanCrit == true 
-    or GameSettings.Settings.SpellsCanCritWithoutTalent == true 
-    or Features.ResistancePenetration == true 
+    return Features.BackstabCalculation == true
+    or Features.SpellsCanCrit == true
+    or GameSettings.Settings.SpellsCanCritWithoutTalent == true
+    or Features.ResistancePenetration == true
     or #Listeners.ComputeCharacterHit > 0
+end
+
+---@param hit HitRequest
+local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+    hit.Hit = true
+    damageList:AggregateSameTypeDamages()
+    damageList:Multiply(damageMultiplier)
+
+    local totalDamage = 0
+    for i,damage in pairs(damageList:ToTable()) do
+        totalDamage = totalDamage + damage.Amount
+    end
+
+    if totalDamage < 0 then
+        damageList:Clear()
+    end
+
+    Game.Math.ApplyDamageCharacterBonuses(target, attacker, damageList)
+    damageList:AggregateSameTypeDamages()
+
+    hit.DamageList:CopyFrom(Ext.NewDamageList())
+
+    for i,damageType in pairs(statusBonusDmgTypes) do
+        damageList.Add(damageType, math.ceil(totalDamage * 0.1))
+    end
+
+    Game.Math.ApplyDamagesToHitInfo(damageList, hit)
+    hit.ArmorAbsorption = hit.ArmorAbsorption + Game.Math.ComputeArmorDamage(damageList, target.CurrentArmor)
+    hit.ArmorAbsorption = hit.ArmorAbsorption + Game.Math.ComputeMagicArmorDamage(damageList, target.CurrentMagicArmor)
+
+    if hit.TotalDamageDone > 0 then
+        Game.Math.ApplyLifeSteal(hit, target, attacker, hitType)
+    else
+        hit.DontCreateBloodSurface = true
+    end
+
+    if hitType == "Surface" then
+        hit.Surface = true
+    end
+
+    if hitType == "DoT" then
+        hit.DoT = true
+    end
 end
 
 --- @param hitRequest HitRequest
@@ -326,16 +369,12 @@ function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType
     local hit = hitRequest
     if extVersion < 56 then
         hit.DamageMultiplier = damageMultiplier
+        --We're basically calling Game.Math.DoHit here, but it may be a modified version from a mod.
+        HitOverrides.DoHitModified(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     else
         --TODO Waiting for a v56 Game.Math update for hit.DamageMultiplier
-        local hitTable = {
-            DamageMultiplier = damageMultiplier
-        }
-        setmetatable(hitTable, {__index = hitRequest})
-        hit = hitTable
+        DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     end
-    -- We're basically calling Game.Math.DoHit here, but it may be a modified version from a mod.
-    HitOverrides.DoHitModified(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     InvokeListenerCallbacks(Listeners.DoHit, hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
 	return hitRequest
 end

@@ -297,12 +297,8 @@ end
 --- @param criticalRoll string CriticalRoll enumeration
 --- @param damageMultiplier number
 function HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier)
-    if Features.SpellsCanCrit or GameSettings.Settings.SpellsCanCritWithoutTalent then
-        if HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll) then
-            damageMultiplier = HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier)
-        end
-    else
-        damageMultiplier = damageMultiplier or Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier)
+    if HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll) then
+        damageMultiplier = HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier)
     end
     return damageMultiplier
 end

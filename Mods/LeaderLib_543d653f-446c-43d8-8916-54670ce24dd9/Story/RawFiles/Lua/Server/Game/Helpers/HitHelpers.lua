@@ -264,7 +264,8 @@ end
 ---@param b boolean Whether a flag is enabled or disabled.
 function GameHelpers.Hit.SetFlag(hit, flag, b)
     if not flag or not hit or not hit.EffectFlags then
-        error(string.format("Invalid hit (%s) or flag (%s)", hit, flag), 2)
+        fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.Hit.SetFlag] Invalid hit (%s) or flag (%s)", hit, flag)
+        return false
     end
     local t = type(flag)
     if t == "string" and version < 56 then

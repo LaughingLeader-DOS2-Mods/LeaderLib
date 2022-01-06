@@ -401,8 +401,6 @@ local function OverrideStats(data, statsLoadedState)
 			end
 		end
 	end
-	OverrideWings(not isClient and not statsLoadedState)
-	OverrideForce(not isClient and not statsLoadedState, skills)
 
 	for _,v in pairs(Ext.GetStatEntries("StatusData")) do
 		_loadedStatuses[v] = true
@@ -411,6 +409,9 @@ local function OverrideStats(data, statsLoadedState)
 			Data.StatusToType[v] = statusType
 		end
 	end
+
+	OverrideWings(not isClient and not statsLoadedState)
+	OverrideForce(not isClient and not statsLoadedState, skills)
 
 	for statId,data in pairs(StatFixes) do
 		local stat = Ext.GetStat(statId)

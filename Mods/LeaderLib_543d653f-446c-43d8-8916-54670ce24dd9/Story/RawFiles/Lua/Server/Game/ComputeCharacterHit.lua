@@ -399,7 +399,7 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
     local hitBlocked = false
 
     if attacker == nil then
-        HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+        HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
         return hit
     end
 

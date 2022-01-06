@@ -206,8 +206,6 @@ function GameHelpers.Hit.IsDirect(hit)
     return damageSourceType == 0 or damageSourceType == 6 or damageSourceType == 7
 end
 
-local hitFlag = Game.Math.HitFlag
-
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.
 ---@param hit HitRequest
 ---@return boolean
@@ -216,13 +214,13 @@ function GameHelpers.Hit.Succeeded(hit)
         hit = hit.Hit
     end
     if version < 56 then
-        if (hit.EffectFlags & hitFlag.Dodged) ~= 0 then
+        if (hit.EffectFlags & Game.Math.HitFlag.Dodged) ~= 0 then
             return false
         end
-        if (hit.EffectFlags & hitFlag.Missed) ~= 0 then
+        if (hit.EffectFlags & Game.Math.HitFlag.Missed) ~= 0 then
             return false
         end
-        if (hit.EffectFlags & hitFlag.Blocked) ~= 0 then
+        if (hit.EffectFlags & Game.Math.HitFlag.Blocked) ~= 0 then
             return false
         end
     else
@@ -243,12 +241,12 @@ function GameHelpers.Hit.HasFlag(hit, flag)
     end
     local t = type(flag)
     if t == "string" and version < 56 then
-        flag = hitFlag[flag]
+        flag = Game.Math.HitFlag[flag]
     elseif t == "table" then
         for i,v in pairs(flag) do
             if GameHelpers.Hit.HasFlag(hit, v) then
                 return true
-            end 
+            end
         end
         return false
     end
@@ -269,7 +267,7 @@ function GameHelpers.Hit.SetFlag(hit, flag, b)
     end
     local t = type(flag)
     if t == "string" and version < 56 then
-        flag = hitFlag[flag]
+        flag = Game.Math.HitFlag[flag]
     elseif t == "table" then
         for i,v in pairs(flag) do
             GameHelpers.Hit.SetFlag(hit, v, b)

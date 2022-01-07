@@ -8,7 +8,7 @@ function Common.InitSeed()
 	_G["LEADERLIB_RAN_SEED"] = seed
 	--PrintDebug("[LeaderLib:Common.lua] Set LEADERLIB_RAN_SEED to ("..tostring(seed)..")")
 	if Ext.IsServer() then
-		Ext.BroadcastMessage("LeaderLib_SyncRanSeed", tostring(seed), nil)
+		GameHelpers.Net.Broadcast("LeaderLib_SyncRanSeed", tostring(seed), nil)
 	end
 end
 

@@ -420,7 +420,7 @@ Ext.RegisterConsoleCommand("printalldeltamods", function(command, ...)
 end)
 
 Ext.RegisterConsoleCommand("clearcombatlog", function(command, text)
-	GameHelpers.Net.TryPostToUser(CharacterGetHostCharacter(), "LeaderLib_ClearCombatLog", "0")
+	GameHelpers.Net.PostToUser(CharacterGetHostCharacter(), "LeaderLib_ClearCombatLog", "0")
 end)
 
 Ext.RegisterConsoleCommand("refreshskill", function(command, skill, enabled)
@@ -431,7 +431,7 @@ Ext.RegisterConsoleCommand("sethelmetoption", function(command, param)
 	local host = CharacterGetHostCharacter()
 	local enabled = param == "true"
 	PrintDebug("[sethelmetoption]",host,enabled)
-	GameHelpers.Net.TryPostToUser(host, "LeaderLib_SetHelmetOption", MessageData:CreateFromTable("HelmetOption", {UUID = host, Enabled = enabled}):ToString())
+	GameHelpers.Net.PostToUser(host, "LeaderLib_SetHelmetOption", MessageData:CreateFromTable("HelmetOption", {UUID = host, Enabled = enabled}):ToString())
 end)
 
 Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
@@ -570,7 +570,7 @@ end)
 
 Ext.RegisterConsoleCommand("hidestatusmc", function(command, visible)
 	visible = visible or "false"
-	GameHelpers.Net.TryPostToUser(CharacterGetHostCharacter(), "LeaderLib_UI_HideStatuses", visible)
+	GameHelpers.Net.PostToUser(CharacterGetHostCharacter(), "LeaderLib_UI_HideStatuses", visible)
 end)
 
 --[[

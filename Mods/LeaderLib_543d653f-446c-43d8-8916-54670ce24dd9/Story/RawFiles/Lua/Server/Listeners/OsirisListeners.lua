@@ -32,7 +32,7 @@ end)
 
 Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
 	if event == "Iterators_LeaderLib_UI_UnlockPartyInventory" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
-		GameHelpers.Net.TryPostToUser(id, "LeaderLib_UnlockCharacterInventory", "")
+		GameHelpers.Net.PostToUser(id, "LeaderLib_UnlockCharacterInventory", "")
 	end
 end)
 
@@ -46,7 +46,7 @@ end)
 
 Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
 	Vars.IsEditorMode = isEditorMode
-	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Common.JsonStringify(Features), nil)
+	GameHelpers.Net.Broadcast("LeaderLib_SyncFeatures", Common.JsonStringify(Features), nil)
 end)
 
 local function OnLog(logType, ...)

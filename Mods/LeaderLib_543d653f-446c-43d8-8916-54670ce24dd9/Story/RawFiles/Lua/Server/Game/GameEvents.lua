@@ -200,5 +200,5 @@ function OnLuaReset()
 	IterateUsers("LeaderLib_StoreUserData")
 	InvokeListenerCallbacks(Listeners.LuaReset, region)
 	local payload = Common.JsonStringify({Event="LuaReset", Args={region}, _PrintSettings=Vars.Print, _CommandSettings = Vars.Commands})
-	Ext.BroadcastMessage("LeaderLib_Client_InvokeListeners", payload)
+	GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", payload)
 end

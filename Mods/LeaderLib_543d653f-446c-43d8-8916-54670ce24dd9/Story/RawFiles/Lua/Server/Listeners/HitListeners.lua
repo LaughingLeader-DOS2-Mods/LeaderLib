@@ -113,6 +113,10 @@ end
 local function OnHit(hitStatus, hitContext)
 	local target,source = TryGetObject(hitStatus, "TargetHandle"),TryGetObject(hitStatus, "StatusSourceHandle")
 
+	-- if hitContext.HitType ~= "Surface" and hitContext.HitType ~= "DoT" then
+	-- 	Ext.Dump({Context="StatusHitEnter", Damage=hitStatus.Hit.DamageList:ToTable(), TotalDamageDone=hitStatus.Hit.TotalDamageDone, HitType=hitContext.HitType})
+	-- end
+
 	if not target then
 		return
 	end

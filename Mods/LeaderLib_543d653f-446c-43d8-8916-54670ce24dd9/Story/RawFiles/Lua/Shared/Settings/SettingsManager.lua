@@ -203,7 +203,7 @@ end
 
 if Ext.IsServer() then
 	function SettingsManager.SyncGlobalSettings()
-		Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Common.JsonStringify(ExportGlobalSettings(true)), nil)
+		GameHelpers.Net.Broadcast("LeaderLib_SyncGlobalSettings", Common.JsonStringify(ExportGlobalSettings(true)), nil)
 	end
 	
 	function SettingsManager.SyncAllSettings(id, skipSyncStatOverrides)
@@ -214,9 +214,9 @@ if Ext.IsServer() then
 			GameSettings = GameSettings
 		}
 		if type(id) == "number" then
-			GameHelpers.Net.TryPostToUser(id, "LeaderLib_SyncAllSettings", Common.JsonStringify(data))
+			GameHelpers.Net.PostToUser(id, "LeaderLib_SyncAllSettings", Common.JsonStringify(data))
 		else
-			Ext.BroadcastMessage("LeaderLib_SyncAllSettings", Common.JsonStringify(data), nil)
+			GameHelpers.Net.Broadcast("LeaderLib_SyncAllSettings", Common.JsonStringify(data), nil)
 		end
 		if skipSyncStatOverrides ~= true then
 			SyncStatOverrides(GameSettings, true)

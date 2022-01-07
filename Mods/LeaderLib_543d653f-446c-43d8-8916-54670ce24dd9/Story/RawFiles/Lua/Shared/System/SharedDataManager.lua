@@ -92,7 +92,7 @@ else
 		end
 		if client == nil then
 			local totalUsers = Common.TableLength(UserIds, true)
-			--Ext.BroadcastMessage("LeaderLib_SharedData_StoreData", Common.JsonStringify(SharedData), nil)
+			--GameHelpers.Net.Broadcast("LeaderLib_SharedData_StoreData", Common.JsonStringify(SharedData), nil)
 			if totalUsers <= 0 then
 				IterateUsers("LeaderLib_StoreUserData")
 			else
@@ -110,7 +110,7 @@ else
 						local netid = GetNetID(uuid)
 						local data = PrepareSharedData(profile, isHost, id, netid)
 						SendSyncListenerEvent(id, profile, uuid, isHost)
-						GameHelpers.Net.TryPostToUser(id, "LeaderLib_SharedData_StoreData", Common.JsonStringify(data))
+						GameHelpers.Net.PostToUser(id, "LeaderLib_SharedData_StoreData", Common.JsonStringify(data))
 						GameSettingsManager.Sync(id)
 					end
 				end
@@ -136,7 +136,7 @@ else
 				local netid = GetNetID(uuid)
 				local data = PrepareSharedData(profile, isHost, id, netid)
 				SendSyncListenerEvent(id, profile, uuid, isHost)
-				GameHelpers.Net.TryPostToUser(id, "LeaderLib_SharedData_StoreData", Common.JsonStringify(data))
+				GameHelpers.Net.PostToUser(id, "LeaderLib_SharedData_StoreData", Common.JsonStringify(data))
 				GameSettingsManager.Sync(id)
 			end
 		end

@@ -57,7 +57,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			delay = nil
 		end
 		InvokeListenerCallbacks(Listeners.BeforeLuaReset)
-		Ext.BroadcastMessage("LeaderLib_Client_InvokeListeners", "BeforeLuaReset")
+		GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", "BeforeLuaReset")
 		delay = delay or 1000
 		if delay ~= nil then
 			delay = tonumber(delay)
@@ -119,7 +119,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			text = "Test Status Text!"
 		end
 		local host = CharacterGetHostCharacter()
-		Ext.BroadcastMessage("LeaderLib_DisplayStatusText", MessageData:CreateFromTable("StatusTextData", {
+		GameHelpers.Net.Broadcast("LeaderLib_DisplayStatusText", MessageData:CreateFromTable("StatusTextData", {
 			UUID = host,
 			Text = text,
 			Duration = 5.0,
@@ -157,7 +157,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			state = math.tointeger(tonumber(param))
 		end
 		PrintDebug("[setarmoroption]",host,state)
-		GameHelpers.Net.TryPostToUser(host, "LeaderLib_SetArmorOption", MessageData:CreateFromTable("ArmorOption", {UUID = host, State = state}):ToString())
+		GameHelpers.Net.PostToUser(host, "LeaderLib_SetArmorOption", MessageData:CreateFromTable("ArmorOption", {UUID = host, State = state}):ToString())
 	end)
 	
 	Ext.RegisterConsoleCommand("llshoot", function(cmd, forceHit, source, target, skill)
@@ -678,7 +678,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	
 	Ext.RegisterConsoleCommand("refreshui", function(cmd)
 		local host = CharacterGetHostCharacter()
-		GameHelpers.Net.TryPostToUser(host, "LeaderLib_UI_RefreshAll", host)
+		GameHelpers.Net.PostToUser(host, "LeaderLib_UI_RefreshAll", host)
 	end)
 	
 	Ext.RegisterConsoleCommand("permaboosttest", function(cmd)
@@ -697,7 +697,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		for i,v in pairs(weapon:GetGeneratedBoosts()) do
 			PrintDebug(i,v)
 		end
-		GameHelpers.Net.TryPostToUser(host.MyGuid, "LeaderLib_UI_RefreshAll", host.MyGuid)
+		GameHelpers.Net.PostToUser(host.MyGuid, "LeaderLib_UI_RefreshAll", host.MyGuid)
 	end)
 	
 	
@@ -929,7 +929,7 @@ Ext.RegisterConsoleCommand("lldebug_keepAlive", function(command)
 end)
 
 Ext.RegisterConsoleCommand("lldebug_music", function(command, mType, theme)
-	Ext.BroadcastMessage("LeaderLib_Debug_MusicTest", Common.JsonStringify({
+	GameHelpers.Net.Broadcast("LeaderLib_Debug_MusicTest", Common.JsonStringify({
 		Type = mType or "Explo",
 		Theme = theme or "Fort_Joy"
 	}))

@@ -27,12 +27,3 @@ local function TurnSystem_GetRemainingTurns(object, event)
 	return 0
 end
 Ext.NewQuery(TurnSystem_GetRemainingTurns, "LeaderLib_Turns_QRY_GetRemainingTurns", "[in](GUIDSTRING)_Object, [in](STRING)_CompletionEvent, [out](INTEGER)_Turns")
-
-function BroadcastToClient(channel, character, ...)
-	local payload = ""
-	local params = {...}
-	if params ~= nil and #params > 0 then
-		payload = Common.JsonStringify(params)
-	end
-	GameHelpers.Net.TryPostToUser(character, channel, payload)
-end

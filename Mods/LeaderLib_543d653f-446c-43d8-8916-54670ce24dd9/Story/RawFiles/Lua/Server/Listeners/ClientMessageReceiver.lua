@@ -29,7 +29,7 @@ Ext.RegisterNetListener("LeaderLib_DeferUICapture", function(cmd, userId)
 		userId = tonumber(userId)
 	end
 	Timer.StartOneshot(string.format("LeaderLib_DeferUICapture_%s", userId), 1, function()
-		GameHelpers.Net.TryPostToUser(userId, "LeaderLib_CaptureActiveUIs", "")
+		GameHelpers.Net.PostToUser(userId, "LeaderLib_CaptureActiveUIs", "")
 	end)
 end)
 

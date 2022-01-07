@@ -364,7 +364,7 @@ if Ext.IsServer() then
 
 		Ext.RegisterOsirisListener("RegionEnded", 1, "before", function(region)
 			if IsCharacterCreationLevel(region) == 1 then
-				Ext.BroadcastMessage("LeaderLib_ClearSkipTutorialUI", "")
+				GameHelpers.Net.Broadcast("LeaderLib_ClearSkipTutorialUI", "")
 			end
 		end)
 	end

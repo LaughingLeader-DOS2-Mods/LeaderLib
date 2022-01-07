@@ -5,7 +5,7 @@ end
 if Ext.IsServer() then
 
 function SetSlotEnabled(client, slot, enabled)
-	GameHelpers.Net.TryPostToUser(client, "LeaderLib_Hotbar_SetSlotEnabled", Common.JsonStringify({
+	GameHelpers.Net.PostToUser(client, "LeaderLib_Hotbar_SetSlotEnabled", Common.JsonStringify({
 		Slot = slot,
 		Enabled = enabled,
 		UUID = client
@@ -24,7 +24,7 @@ function GameHelpers.UI.SetSkillEnabled(client, skill, enabled)
 		end
 		local slots = GameHelpers.Skill.GetSkillSlots(client, skill, true)
 		if #slots > 0 then
-			GameHelpers.Net.TryPostToUser(client, "LeaderLib_Hotbar_SetSlotEnabled", Common.JsonStringify({
+			GameHelpers.Net.PostToUser(client, "LeaderLib_Hotbar_SetSlotEnabled", Common.JsonStringify({
 				Slots = slots,
 				Enabled = enabled,
 				UUID = client
@@ -49,7 +49,7 @@ function GameHelpers.UI.RefreshSkillBarSkillCooldown(client, skill)
 					Cooldown = math.ceil(cd/6)
 				})
 			end
-			GameHelpers.Net.TryPostToUser(client, "LeaderLib_Hotbar_RefreshCooldowns", Common.JsonStringify(data))
+			GameHelpers.Net.PostToUser(client, "LeaderLib_Hotbar_RefreshCooldowns", Common.JsonStringify(data))
 		end
 	end
 end
@@ -74,7 +74,7 @@ function GameHelpers.UI.RefreshSkillBarCooldowns(client)
 				end
 			end
 		end
-		GameHelpers.Net.TryPostToUser(client, "LeaderLib_Hotbar_RefreshCooldowns", Common.JsonStringify(data))
+		GameHelpers.Net.PostToUser(client, "LeaderLib_Hotbar_RefreshCooldowns", Common.JsonStringify(data))
 	end
 end
 
@@ -103,14 +103,14 @@ function GameHelpers.UI.CombatLog(text, filter, specificCharacters)
 		Text = GameHelpers.Tooltip.ReplacePlaceholders(text)
 	})
 	if specificCharacters == nil then
-		Ext.BroadcastMessage("LeaderLib_AddTextToCombatLog", data, nil)
+		GameHelpers.Net.Broadcast("LeaderLib_AddTextToCombatLog", data, nil)
 	else
 		local charType = type(specificCharacters)
 		if charType == "string" then
-			GameHelpers.Net.TryPostToUser(specificCharacters, "LeaderLib_AddTextToCombatLog", data)
+			GameHelpers.Net.PostToUser(specificCharacters, "LeaderLib_AddTextToCombatLog", data)
 		elseif charType == "table" then
 			for i,v in pairs(specificCharacters) do
-				GameHelpers.Net.TryPostToUser(v, "LeaderLib_AddTextToCombatLog", data)
+				GameHelpers.Net.PostToUser(v, "LeaderLib_AddTextToCombatLog", data)
 			end
 		end
 	end
@@ -127,14 +127,14 @@ function GameHelpers.UI.ShowMessageBox(text, specificCharacters, boxType, title)
 		Title = title
 	})
 	if specificCharacters == nil then
-		Ext.BroadcastMessage("LeaderLib_DisplayMessageBox", data, nil)
+		GameHelpers.Net.Broadcast("LeaderLib_DisplayMessageBox", data, nil)
 	else
 		local charType = type(specificCharacters)
 		if charType == "string" then
-			GameHelpers.Net.TryPostToUser(specificCharacters, "LeaderLib_DisplayMessageBox", data)
+			GameHelpers.Net.PostToUser(specificCharacters, "LeaderLib_DisplayMessageBox", data)
 		elseif charType == "table" then
 			for i,v in pairs(specificCharacters) do
-				GameHelpers.Net.TryPostToUser(v, "LeaderLib_DisplayMessageBox", data)
+				GameHelpers.Net.PostToUser(v, "LeaderLib_DisplayMessageBox", data)
 			end
 		end
 	end
@@ -150,7 +150,7 @@ function GameHelpers.UI.RefreshStatusTurns(player, status, turns)
 			Status = status,
 			Turns = turns
 		})
-		Ext.BroadcastMessage("LeaderLib_UI_RefreshStatusTurns", data, nil)
+		GameHelpers.Net.Broadcast("LeaderLib_UI_RefreshStatusTurns", data, nil)
 	end
 end
 
@@ -182,7 +182,7 @@ end)
 function GameHelpers.UI.SetStatusVisibility(visible, client)
 	visible = visible ~= nil and tostring(visible) or tostring(GameSettings.Settings.Client.HideStatuses)
 	client = client or CharacterGetHostCharacter()
-	GameHelpers.Net.TryPostToUser(client, "LeaderLib_UI_UpdateStatusVisibility", visible)
+	GameHelpers.Net.PostToUser(client, "LeaderLib_UI_UpdateStatusVisibility", visible)
 end
 
 Ext.RegisterNetListener("LeaderLib_UI_Server_RefreshPlayerInfo", function(cmd, netid)
@@ -241,14 +241,14 @@ function GameHelpers.UI.RefreshSkillBar(client)
 			if CharacterIsPlayer(client) == 1 and Ext.GetGameState() == "Running" then
 				local id = CharacterGetReservedUserID(client)
 				if id ~= nil then
-					--GameHelpers.Net.TryPostToUser(client, "LeaderLib_Hotbar_Refresh", "")
-					GameHelpers.Net.TryPostToUser(id, "LeaderLib_Hotbar_Refresh", "")
+					--GameHelpers.Net.PostToUser(client, "LeaderLib_Hotbar_Refresh", "")
+					GameHelpers.Net.PostToUser(id, "LeaderLib_Hotbar_Refresh", "")
 				end
 			end
 		elseif t == "number" then
-			GameHelpers.Net.TryPostToUser(client, "LeaderLib_Hotbar_Refresh", "")
+			GameHelpers.Net.PostToUser(client, "LeaderLib_Hotbar_Refresh", "")
 		elseif  t == "userdata" and client.NetID then
-			GameHelpers.Net.TryPostToUser(client.NetID, "LeaderLib_Hotbar_Refresh", "")
+			GameHelpers.Net.PostToUser(client.NetID, "LeaderLib_Hotbar_Refresh", "")
 		end
 	else
 		local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.hotBar) or Vars.ControllerEnabled and Ext.GetBuiltinUI(Data.UIType.bottomBar_c)

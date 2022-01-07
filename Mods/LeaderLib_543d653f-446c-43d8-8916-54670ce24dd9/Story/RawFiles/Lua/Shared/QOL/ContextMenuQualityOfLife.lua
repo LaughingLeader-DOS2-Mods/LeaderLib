@@ -113,7 +113,7 @@ else
 		local netid = tonumber(payload)
 		local object = GameHelpers.TryGetObject(netid)
 		if object then
-			GameHelpers.Net.TryPostToUser(userid, "LeaderLib_ContextMenu_SetUUID", Common.JsonStringify({NetID = netid, UUID = object.MyGuid, Rotation={GetRotation(object.MyGuid)}}))
+			GameHelpers.Net.PostToUser(userid, "LeaderLib_ContextMenu_SetUUID", Common.JsonStringify({NetID = netid, UUID = object.MyGuid, Rotation={GetRotation(object.MyGuid)}}))
 		end
 	end)
 end

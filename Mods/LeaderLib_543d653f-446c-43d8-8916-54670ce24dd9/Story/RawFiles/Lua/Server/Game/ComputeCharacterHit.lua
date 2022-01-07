@@ -516,6 +516,7 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
     if HitOverrides.ComputeOverridesEnabled() then
         ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
         InvokeListenerCallbacks(Listeners.ComputeCharacterHit, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+        -- Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=hitType, ["event.DamageList"]=damageList:ToTable()})
         return hit
     end
 end

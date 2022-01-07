@@ -83,7 +83,7 @@ end
 ---@param source string|nil
 ---@return boolean
 function GameHelpers.HitWithWeapon(target, handle, is_hit, allowSkills, source)
-    if handle == nil or handle == -1 then 
+    if handle == nil or handle == -1 then
         return false
     end
     if is_hit == 1 or is_hit == true then

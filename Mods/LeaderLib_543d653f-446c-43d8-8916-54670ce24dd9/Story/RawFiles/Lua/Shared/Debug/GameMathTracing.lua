@@ -864,14 +864,14 @@ end
 
 --- @param damageList DamageList
 --- @param armor integer
-local function ComputeArmorDamage(damageList, armor)
+function Game.Math.ComputeArmorDamage(damageList, armor)
     local damage = damageList:GetByType("Corrosive") + damageList:GetByType("Physical") + damageList:GetByType("Sulfuric")
     return math.min(armor, damage)
 end
 
 --- @param damageList DamageList
 --- @param magicArmor integer
-local function ComputeMagicArmorDamage(damageList, magicArmor)
+function Game.Math.ComputeMagicArmorDamage(damageList, magicArmor)
     local damage = damageList:GetByType("Magic") 
         + damageList:GetByType("Fire") 
         + damageList:GetByType("Water")

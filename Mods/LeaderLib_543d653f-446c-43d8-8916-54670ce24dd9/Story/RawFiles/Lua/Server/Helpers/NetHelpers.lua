@@ -1,5 +1,12 @@
-if GameHelpers == nil then GameHelpers = {} end
 if GameHelpers.Net == nil then GameHelpers.Net = {} end
+
+local _postToUser = Ext.PostMessageToUser
+local _broadcast = Ext.BroadcastMessage
+
+if Ext.Version() >= 56 then
+	_postToUser = Ext.Net.PostMessageToUser
+	_broadcast = Ext.Net.BroadcastMessage
+end
 
 local function EnsureString(payload)
 	local t = type(payload)
@@ -30,7 +37,7 @@ end
 function GameHelpers.Net.PostToUser(user, channel, payload)
 	local id = GameHelpers.GetUserID(user)
 	if id then
-		Ext.PostMessageToUser(id, channel, EnsureString(payload))
+		_postToUser(id, channel, EnsureString(payload))
 		return true
 	end
 	return false
@@ -43,9 +50,9 @@ end
 --- @return boolean
 function GameHelpers.Net.Broadcast(channel, payload, excludeCharacter)
 	if excludeCharacter then
-		Ext.BroadcastMessage(channel, EnsureString(payload), GameHelpers.GetUUID(excludeCharacter, true))
+		_broadcast(channel, EnsureString(payload), GameHelpers.GetUUID(excludeCharacter, true))
 	else
-		Ext.BroadcastMessage(channel, EnsureString(payload), "")
+		_broadcast(channel, EnsureString(payload))
 	end
 	return true
 end

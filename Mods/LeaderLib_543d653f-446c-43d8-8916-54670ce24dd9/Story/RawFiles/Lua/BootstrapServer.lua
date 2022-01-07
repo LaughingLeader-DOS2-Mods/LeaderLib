@@ -178,7 +178,6 @@ local defaultPersistentVars = {
 	StartAttackPosition = {},
 }
 
-Ext.Require("Server/Helpers/NetHelpers.lua")
 Ext.Require("BootstrapShared.lua")
 
 ---@private
@@ -239,6 +238,7 @@ function SetModIsActiveFlag(uuid, modid)
 	end
 end
 
+Ext.Require("Server/Helpers/NetHelpers.lua")
 Ext.Require("Server/Classes/_Init.lua")
 Ext.Require("Server/Data/BasePresets.lua")
 Ext.Require("Server/Helpers/MiscHelpers.lua")

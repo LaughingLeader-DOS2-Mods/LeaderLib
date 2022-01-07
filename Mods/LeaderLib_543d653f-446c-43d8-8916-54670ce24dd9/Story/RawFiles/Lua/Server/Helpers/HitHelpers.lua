@@ -286,6 +286,7 @@ end
 ---@param hit HitRequest
 ---@param flag integer|string|table A flag value or key in Game.Math.HitFlags.
 ---@param b boolean Whether a flag is enabled or disabled.
+---@return boolean
 function GameHelpers.Hit.SetFlag(hit, flag, b)
     if not flag or not hit or not hit.EffectFlags then
         fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.Hit.SetFlag] Invalid hit (%s) or flag (%s)", hit, flag)
@@ -298,7 +299,7 @@ function GameHelpers.Hit.SetFlag(hit, flag, b)
         for i,v in pairs(flag) do
             GameHelpers.Hit.SetFlag(hit, v, b)
         end
-        return
+        return true
     end
     if version < 56 then
         if b then
@@ -309,6 +310,7 @@ function GameHelpers.Hit.SetFlag(hit, flag, b)
     else
         hit[flag] = b
     end
+    return true
 end
 
 ---Calculates LifeSteal like Game.Math.ApplyLifeSteal, but with extra options.

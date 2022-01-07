@@ -286,7 +286,7 @@ function HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier)
     local mainWeapon = attacker.MainWeapon
     if mainWeapon ~= nil then
         GameHelpers.Hit.SetFlag(hit, "CriticalHit", true)
-        damageMultiplier = damageMultiplier + (Game.Math.GetCriticalHitMultiplier(mainWeapon, attacker, 0, 0) - 1.0)
+        damageMultiplier = damageMultiplier + (Game.Math.GetCriticalHitMultiplier(mainWeapon, attacker) - 1.0)
     end
     return damageMultiplier
 end

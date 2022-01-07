@@ -314,12 +314,12 @@ function HitData:HasHitFlag(flag, value)
 end
 
 function HitData:IsFromWeapon()
-	return GameHelpers.Hit.IsFromWeapon(self.HitStatus, self.SkillData)
+	return GameHelpers.Hit.IsFromWeapon(self.HitContext, self.SkillData, self.HitStatus)
 end
 
 ---Returns true if the hit isn't from a surface, DoT, status tick, etc.
 function HitData:IsDirect()
-	return GameHelpers.Hit.IsDirect(self.HitStatus)
+	return GameHelpers.Hit.IsDirect(self.HitContext.HitType)
 end
 
 Classes.HitData = HitData

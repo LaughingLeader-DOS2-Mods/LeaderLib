@@ -1,3 +1,5 @@
+local version = Ext.Version()
+
 ---@param target string
 ---@param source string
 ---@param damage integer
@@ -12,6 +14,9 @@ local function OnPrepareHit(target, source, damage, handle)
 			fprint(LOGLEVEL.DEFAULT, "Fixing bad damage type in Chaos basic ranged attack None => %s (%s)", data.DamageType, amount)
 		end
 	end
+
+	--Ext.Dump({Context="OnPrepareHit", Damage=data.DamageList:ToTable(), TotalDamageDone=data.TotalDamageDone, HitType=data.HitType})
+
 	-- if Vars.DebugMode and (Vars.Print.HitPrepare or Vars.LeaderDebugMode) 
 	-- and (Vars.Print.SpammyHits or (data.HitType ~= "Surface" --[[ and data.HitType ~= "DoT" ]])) then
 	-- 	Ext.Print("[HitPrepareData]", data:ToDebugString())
@@ -96,7 +101,16 @@ end
 
 ---@param hitStatus EsvStatusHit
 ---@param hitContext HitContext
-RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitContext)
+local function GetHitRequest(hitStatus, hitContext)
+	if version < 56 then
+		return hitContext.Hit or hitStatus.Hit
+	end
+	return hitStatus.Hit
+end
+
+---@param hitStatus EsvStatusHit
+---@param hitContext HitContext
+local function OnHit(hitStatus, hitContext)
 	local target,source = TryGetObject(hitStatus, "TargetHandle"),TryGetObject(hitStatus, "StatusSourceHandle")
 
 	if not target then
@@ -113,8 +127,9 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 	end
 
 	---@type HitRequest
-	local hitRequest = hitContext.Hit or hitStatus.Hit
+	local hitRequest = GetHitRequest(hitStatus, hitContext)
 
+	---@type StatEntrySkillData
 	local skill = nil
 	if not StringHelpers.IsNullOrEmpty(hitStatus.SkillId) then
 		skill = Ext.GetStat(GetSkillEntryName(hitStatus.SkillId))
@@ -126,7 +141,7 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 		OnSkillHit(skill, target, source, hitRequest.TotalDamageDone, hitRequest, hitContext, hitStatus, data)
 	end
 
-	local isFromWeapon = GameHelpers.Hit.IsFromWeapon(hitStatus, skill)
+	local isFromWeapon = GameHelpers.Hit.IsFromWeapon(hitContext, skill, hitStatus)
 
 	if isFromWeapon then
 		AttackManager.InvokeOnHit(true, source, target, data, skill)
@@ -136,35 +151,22 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 		if skill then
 			local canApplyStatuses = skill.UseWeaponProperties == "Yes"
 			if canApplyStatuses then
-				GameHelpers.ApplyBonusWeaponStatuses(source, target, skillId)
+				GameHelpers.ApplyBonusWeaponStatuses(source, target, skill.Name)
 			end
 		elseif isFromWeapon then
 			GameHelpers.ApplyBonusWeaponStatuses(source, target)
 		end
 	end
 
-	-- if Vars.LeaderDebugMode then
-	-- 	local dataString = "local data = " .. Lib.serpent.block({
-	-- 		EsvStatusHit = hitStatus,
-	-- 		HitContext = hitContext, 	
-	-- 	})
-	-- 	if skill then
-	-- 		Ext.SaveFile(string.format("Logs/HitTracing/%s_%s.lua", skill.Name, Ext.MonotonicTime()), dataString)
-	-- 	else
-	-- 		Ext.SaveFile(string.format("Logs/HitTracing/%s_%s.lua", hitStatus.DamageSourceType, Ext.MonotonicTime()), dataString)
-	-- 	end
-	-- 	--Ext.Print("hitStatus", getmetatable(hitStatus), Lib.serpent.block(hitStatus))
-	-- 	--Ext.Print("hitContext", getmetatable(hitContext), hitContext, Lib.serpent.block(hitContext))
-	-- end
-
-	if Vars.DebugMode and Vars.Print.Hit then
-		local wpn = hitStatus.WeaponHandle and Ext.GetItem(hitStatus.WeaponHandle) or nil
-		fprint(LOGLEVEL.DEFAULT, "[StatusHitEnter:%s] Damage(%s) HitReason[%s](%s) DamageSourceType(%s) WeaponHandle(%s) Skill(%s)", hitContext.HitId, hitRequest.TotalDamageDone, hitStatus.HitReason, Data.HitReason[hitStatus.HitReason] or "", hitStatus.DamageSourceType, wpn and wpn.DisplayName or "nil", skillId or "nil")
-		fprint(LOGLEVEL.TRACE, "hitRequest.HitWithWeapon(%s) hitRequest.Equipment(%s) hitContext.Weapon(%s), hitRequest.LifeSteal(%s)", hitRequest.HitWithWeapon, hitRequest.Equipment, hitContext.Weapon, hitRequest.LifeSteal)
-		fprint(LOGLEVEL.TRACE, "hitRequest.DamageType(%s) hitRequest.TotalDamageDone(%s) DamageList:\n%s", hitRequest.DamageType, hitRequest.TotalDamageDone, Lib.inspect(hitRequest.DamageList:ToTable()))
-	end
-
 	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, data, hitStatus)
 	--Old listener
-	InvokeListenerCallbacks(Listeners.OnHit, targetId, sourceId, hitRequest.TotalDamageDone, hitStatus.StatusHandle, skillId, hitStatus, hitContext, data)
-end)
+	InvokeListenerCallbacks(Listeners.OnHit, targetId, sourceId, hitRequest.TotalDamageDone, hitStatus.StatusHandle, skill and skill.Name or nil, hitStatus, hitContext, data)
+end
+
+if version < 56 then
+	RegisterProtectedExtenderListener("StatusHitEnter", OnHit)
+else
+	Ext.Events.StatusHitEnter:Subscribe(function (event)
+		OnHit(event.Hit, event.Context)
+	end)
+end

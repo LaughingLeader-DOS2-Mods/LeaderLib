@@ -1319,7 +1319,7 @@ Data.LevelExperience = {
 	[35] = 1341723000
 }
 
-Data.HitReason = {
+Data.HitType = {
     Melee = 0,
     Magic = 1,
     Ranged = 2,
@@ -1334,6 +1334,31 @@ Data.HitReason = {
     [4] = "Surface",
     [5] = "DoT",
     [6] = "Reflected",
+}
+CreateEnum(Data.HitType)
+
+---More of an informal association rather than an actual enum.
+Data.HitReason = {
+	[0] = "ASAttack",
+	--Character::ApplyDamage, StatusDying, ExecPropertyDamage, StatusDamage
+	[1] = "ApplyDamage|StatusDying|ExecPropertyDamage|StatusDamage",
+	[2] = "AIHitTest",
+	[3] = "Explode",
+	[4] = "Trap",
+	[5] = "InSurface",
+	[6] = "SetHP|OsiApplyDamage|StatusConsume",
+	ASAttack = 0,
+	ApplyDamage = 1,
+	StatusDying = 1,
+	ExecPropertyDamage = 1,
+	StatusDamage = 1,
+	AIHitTest = 2,
+	Explode = 3,
+	Trap = 4,
+	InSurface = 5,
+	SetHP = 6,
+	OsiApplyDamage = 6,
+	StatusConsume = 6,
 }
 
 CreateEnum(Data.HitReason)

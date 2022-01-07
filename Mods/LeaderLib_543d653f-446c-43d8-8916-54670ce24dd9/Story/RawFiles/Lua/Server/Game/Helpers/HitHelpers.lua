@@ -132,7 +132,7 @@ end
 -- }
 
 local WeaponHitProperties = {
-    HitReason = {
+    HitType = {
         Melee = true,
         Magic = true,
     },
@@ -140,77 +140,103 @@ local WeaponHitProperties = {
         Attack = true,
         Offhand = true
     },
-    SkillHitReason = {
+    SkillHitType = {
         Melee = true,
         Magic = true,
         WeaponDamage = true,
     }
 }
 
----@param hitReason string|integer
----@param toInteger boolean|nil
+---@param hitType string|integer|HitContext
+---@param toInteger ?boolean
+---@param t ?string The variable type for hitType, usually passed along automatically.
 ---@return string|integer
-function GameHelpers.Hit.GetHitReason(hitReason, toInteger)
-    if hitReason then
-        if type(hitReason) == "string" then
-            if not toInteger then
-                return hitReason
+function GameHelpers.Hit.GetHitType(hitType, toInteger, t)
+    if hitType then
+        t = t or type(hitType)
+        if t == "userdata" then
+            if GameHelpers.Ext.UserDataIsType(hitType, Data.ExtenderClass.HitContext) then
+                hitType = hitType.HitType
+                t = "string"
             end
-            return Data.HitReason[hitReason]
-        else
+        end
+        if t == "string" then
             if not toInteger then
-                return Data.HitReason[hitReason]
+                return hitType
             end
-            return hitReason
+            return Data.HitType[hitType]
+        elseif t == "number" then
+            if not toInteger then
+                return Data.HitType[hitType]
+            end
+            return hitType
         end
     end
-    return hitReason
+    return nil
 end
 
 ---Returns true if a hit is from a basic attack or weapon skill, if a skill is provided.
----@param hit EsvStatusHit
----@param skill StatEntrySkillData|nil
+---@param hit HitContext
+---@param skill ?StatEntrySkillData
+---@param hitStatus ?EsvStatusHit
 ---@return boolean
-function GameHelpers.Hit.IsFromWeapon(hit, skill)
+function GameHelpers.Hit.IsFromWeapon(hit, skill, hitStatus)
     if not hit then
         return false
     end
-    local hitReason = GameHelpers.Hit.GetHitReason(hit.HitReason)
-    if hitReason == "Melee" then
+    local hitType = GameHelpers.Hit.GetHitType(hit)
+    if hitType == "Melee" then
         return true
     end
 
-    if skill and skill.UseWeaponDamage == "Yes" and WeaponHitProperties.SkillHitReason[hitReason] == true then
+    if skill and skill.UseWeaponDamage == "Yes" and WeaponHitProperties.SkillHitType[hitType] == true then
         return true
     end
-    
-    if WeaponHitProperties.DamageSourceType[hit.DamageSourceType] == true and hitReason then
-        return WeaponHitProperties.HitReason[hitReason] == true and hit.WeaponHandle ~= nil
+
+    if hitStatus then
+        if WeaponHitProperties.DamageSourceType[hitStatus.DamageSourceType] == true and hitType then
+            return WeaponHitProperties.HitType[hitType] == true and hitStatus.WeaponHandle ~= nil
+        end
     end
     return false
 end
 
 ---Returns true if a hit is from the source directly (not from a surface, DoT etc).
----@param hit EsvStatusHit
+---@param hit EsvStatusHit|HitContext
 ---@return boolean
 function GameHelpers.Hit.IsDirect(hit)
     if not hit then
         return false
     end
-    local hitReason = GameHelpers.Hit.GetHitReason(hit.HitReason, true)
-    if hitReason >= 4 then
-        return false
+    local t = type(hit)
+    if t == "userdata" then
+        local meta = getmetatable(hit)
+        if GameHelpers.Ext.UserDataIsType(hit, Data.ExtenderClass.EsvStatusHit, meta) then
+            if hit.HitReason == "ASAttack" then
+                return true
+            end
+            local damageSourceType = Ext.EnumLabelToIndex(hit.DamageSourceType, "DamageSourceType")
+            return damageSourceType == 0 or damageSourceType == 6 or damageSourceType == 7
+        elseif GameHelpers.Ext.UserDataIsType(hit, Data.ExtenderClass.HitContext, meta) then
+            return Data.HitType[hit.HitType] < 4
+        end
     end
-
-    local damageSourceType = Ext.EnumLabelToIndex(hit.DamageSourceType, "DamageSourceType")
-    return damageSourceType == 0 or damageSourceType == 6 or damageSourceType == 7
+    if t == "string" then
+        local hitType = GameHelpers.Hit.GetHitType(hit, true)
+        if hitType >= 4 then
+            return false
+        end
+    elseif t == "number" then
+        return hit < 4
+    end
+    return false
 end
 
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.
----@param hit HitRequest
+---@param hit HitRequest|EsvStatusHit
 ---@return boolean
 function GameHelpers.Hit.Succeeded(hit)
-    if getmetatable(hit) == "esv::HStatus" then
+    if GameHelpers.Ext.UserDataIsType(hit, Data.ExtenderClass.EsvStatusHit) then
         hit = hit.Hit
     end
     if version < 56 then

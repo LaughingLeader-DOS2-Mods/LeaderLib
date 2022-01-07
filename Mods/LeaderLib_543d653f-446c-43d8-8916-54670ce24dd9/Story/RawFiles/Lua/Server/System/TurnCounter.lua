@@ -227,8 +227,8 @@ function TurnCounter.OnLeftCombat(uuid, id)
 	TurnCounter.InvokeTurnEndedListeners(uuid)
 end
 
-Ext.RegisterOsirisListener("CombatStarted", Data.OsirisEvents.CombatStarted, "after", TurnCounter.OnCombatStarted)
-Ext.RegisterOsirisListener("CombatEnded", Data.OsirisEvents.CombatEnded, "after", TurnCounter.OnCombatEnded)
-Ext.RegisterOsirisListener("ObjectTurnEnded", Data.OsirisEvents.ObjectTurnEnded, "after", function(uuid) TurnCounter.OnTurnEnded(StringHelpers.GetUUID(uuid)) end)
-Ext.RegisterOsirisListener("CharacterGuarded", Data.OsirisEvents.CharacterGuarded, "after", function(uuid) TurnCounter.OnTurnSkipped(StringHelpers.GetUUID(uuid)) end)
-Ext.RegisterOsirisListener("ObjectLeftCombat", Data.OsirisEvents.ObjectLeftCombat, "after", function(uuid, id) TurnCounter.OnLeftCombat(StringHelpers.GetUUID(uuid), id) end)
+RegisterProtectedOsirisListener("CombatStarted", Data.OsirisEvents.CombatStarted, "after", TurnCounter.OnCombatStarted)
+RegisterProtectedOsirisListener("CombatEnded", Data.OsirisEvents.CombatEnded, "after", TurnCounter.OnCombatEnded)
+RegisterProtectedOsirisListener("ObjectTurnEnded", Data.OsirisEvents.ObjectTurnEnded, "after", function(uuid) TurnCounter.OnTurnEnded(StringHelpers.GetUUID(uuid)) end)
+RegisterProtectedOsirisListener("CharacterGuarded", Data.OsirisEvents.CharacterGuarded, "after", function(uuid) TurnCounter.OnTurnSkipped(StringHelpers.GetUUID(uuid)) end)
+RegisterProtectedOsirisListener("ObjectLeftCombat", Data.OsirisEvents.ObjectLeftCombat, "after", function(uuid, id) TurnCounter.OnLeftCombat(StringHelpers.GetUUID(uuid), id) end)

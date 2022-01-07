@@ -114,10 +114,25 @@ local function CreateDamageMetaList(handle)
 	local damageList = {}
 	local meta = {}
 	meta.__index = function(tbl,k)
-		if Data.DamageTypeEnums[k] then
-			return NRD_HitGetDamage(handle, k)
+		if k == "ToTable" then
+			return function ()
+				local newTable = {}
+				for k,v in pairs(Data.DamageTypeEnums) do
+					if NRD_HitGetDamage(handle, k) > 0 then
+						newTable[#newTable+1] = {
+							Amount = NRD_HitGetDamage(handle, k),
+							DamageType = k
+						}
+					end
+				end
+				return newTable
+			end
 		else
-			error(string.format("%s is not a valid damage type!", k), 2)
+			if Data.DamageTypeEnums[k] then
+				return NRD_HitGetDamage(handle, k)
+			else
+				error(string.format("%s is not a valid damage type!", k), 2)
+			end
 		end
 	end
 	meta.__newindex = function(tbl,k,value)

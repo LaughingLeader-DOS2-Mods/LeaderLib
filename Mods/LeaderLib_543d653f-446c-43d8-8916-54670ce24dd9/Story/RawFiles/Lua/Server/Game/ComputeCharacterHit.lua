@@ -450,8 +450,13 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     local damageMultiplier = 1.0
 	local criticalMultiplier = 0.0
     local statusBonusDmgTypes = {}
+
 	local damageList = Ext.NewDamageList()
-	damageList:CopyFrom(preDamageList)
+    if extVersion >= 56 then
+	    damageList:CopyFrom(preDamageList)
+    else
+        damageList:Merge(preDamageList)
+    end
     local statusBonusDmgTypes = {}
     local hitBlocked = false
 

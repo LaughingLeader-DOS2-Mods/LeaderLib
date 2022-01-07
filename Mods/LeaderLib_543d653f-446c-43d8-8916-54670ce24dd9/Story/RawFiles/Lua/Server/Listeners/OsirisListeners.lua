@@ -32,7 +32,7 @@ end)
 
 Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
 	if event == "Iterators_LeaderLib_UI_UnlockPartyInventory" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
-		Ext.PostMessageToUser(id, "LeaderLib_UnlockCharacterInventory", "")
+		GameHelpers.Net.TryPostToUser(id, "LeaderLib_UnlockCharacterInventory", "")
 	end
 end)
 

@@ -59,7 +59,7 @@ SaveGameSettings = GameSettingsManager.Save
 function GameSettingsManager.Sync(id)
 	if not isClient then
 		if id ~= nil then
-			Ext.PostMessageToUser(id, "LeaderLib_SyncGameSettings", GameSettings:ToString())
+			GameHelpers.Net.TryPostToUser(id, "LeaderLib_SyncGameSettings", GameSettings:ToString())
 		else
 			Ext.BroadcastMessage("LeaderLib_SyncGameSettings", GameSettings:ToString())
 		end

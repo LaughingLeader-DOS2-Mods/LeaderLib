@@ -110,7 +110,7 @@ else
 						local netid = GetNetID(uuid)
 						local data = PrepareSharedData(profile, isHost, id, netid)
 						SendSyncListenerEvent(id, profile, uuid, isHost)
-						Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Common.JsonStringify(data))
+						GameHelpers.Net.TryPostToUser(id, "LeaderLib_SharedData_StoreData", Common.JsonStringify(data))
 						GameSettingsManager.Sync(id)
 					end
 				end
@@ -136,7 +136,7 @@ else
 				local netid = GetNetID(uuid)
 				local data = PrepareSharedData(profile, isHost, id, netid)
 				SendSyncListenerEvent(id, profile, uuid, isHost)
-				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Common.JsonStringify(data))
+				GameHelpers.Net.TryPostToUser(id, "LeaderLib_SharedData_StoreData", Common.JsonStringify(data))
 				GameSettingsManager.Sync(id)
 			end
 		end

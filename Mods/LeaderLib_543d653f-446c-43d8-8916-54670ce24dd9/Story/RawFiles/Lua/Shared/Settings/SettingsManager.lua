@@ -214,7 +214,7 @@ if Ext.IsServer() then
 			GameSettings = GameSettings
 		}
 		if type(id) == "number" then
-			Ext.PostMessageToUser(id, "LeaderLib_SyncAllSettings", Common.JsonStringify(data))
+			GameHelpers.Net.TryPostToUser(id, "LeaderLib_SyncAllSettings", Common.JsonStringify(data))
 		else
 			Ext.BroadcastMessage("LeaderLib_SyncAllSettings", Common.JsonStringify(data), nil)
 		end

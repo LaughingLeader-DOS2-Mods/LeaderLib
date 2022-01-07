@@ -34,5 +34,5 @@ function BroadcastToClient(channel, character, ...)
 	if params ~= nil and #params > 0 then
 		payload = Common.JsonStringify(params)
 	end
-	Ext.PostMessageToClient(character, channel, payload)
+	GameHelpers.Net.TryPostToUser(character, channel, payload)
 end

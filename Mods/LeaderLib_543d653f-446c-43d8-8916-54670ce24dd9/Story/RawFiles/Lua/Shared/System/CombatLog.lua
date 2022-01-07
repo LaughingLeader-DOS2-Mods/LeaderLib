@@ -239,9 +239,9 @@ else
 	---@param text string
 	function CombatLog.AddTextToHost(filterId, text)
 		if type(filterId) == "number" then
-			Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToIndex", Common.JsonStringify({ID=filterId, Text=text}))
+			GameHelpers.Net.TryPostToUser(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToIndex", Common.JsonStringify({ID=filterId, Text=text}))
 		else
-			Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToFilter", Common.JsonStringify({ID=filterId, Text=text}))
+			GameHelpers.Net.TryPostToUser(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToFilter", Common.JsonStringify({ID=filterId, Text=text}))
 		end
 	end
 
@@ -251,9 +251,9 @@ else
 	function CombatLog.AddTextToPlayer(client, filterId, text)
 		local uuid = GameHelpers.GetUUID(client)
 		if type(filterId) == "number" then
-			Ext.PostMessageToClient(uuid, "LeaderLib_CombatLog_AddTextToIndex", Common.JsonStringify({ID=filterId, Text=text}))
+			GameHelpers.Net.TryPostToUser(uuid, "LeaderLib_CombatLog_AddTextToIndex", Common.JsonStringify({ID=filterId, Text=text}))
 		else
-			Ext.PostMessageToClient(uuid, "LeaderLib_CombatLog_AddTextToFilter", Common.JsonStringify({ID=filterId, Text=text}))
+			GameHelpers.Net.TryPostToUser(uuid, "LeaderLib_CombatLog_AddTextToFilter", Common.JsonStringify({ID=filterId, Text=text}))
 		end
 	end
 

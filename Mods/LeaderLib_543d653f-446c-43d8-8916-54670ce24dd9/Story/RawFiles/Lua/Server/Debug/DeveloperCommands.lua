@@ -157,7 +157,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			state = math.tointeger(tonumber(param))
 		end
 		PrintDebug("[setarmoroption]",host,state)
-		Ext.PostMessageToClient(host, "LeaderLib_SetArmorOption", MessageData:CreateFromTable("ArmorOption", {UUID = host, State = state}):ToString())
+		GameHelpers.Net.TryPostToUser(host, "LeaderLib_SetArmorOption", MessageData:CreateFromTable("ArmorOption", {UUID = host, State = state}):ToString())
 	end)
 	
 	Ext.RegisterConsoleCommand("llshoot", function(cmd, forceHit, source, target, skill)
@@ -678,7 +678,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	
 	Ext.RegisterConsoleCommand("refreshui", function(cmd)
 		local host = CharacterGetHostCharacter()
-		Ext.PostMessageToClient(host, "LeaderLib_UI_RefreshAll", host)
+		GameHelpers.Net.TryPostToUser(host, "LeaderLib_UI_RefreshAll", host)
 	end)
 	
 	Ext.RegisterConsoleCommand("permaboosttest", function(cmd)
@@ -697,7 +697,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		for i,v in pairs(weapon:GetGeneratedBoosts()) do
 			PrintDebug(i,v)
 		end
-		Ext.PostMessageToClient(host.MyGuid, "LeaderLib_UI_RefreshAll", host.MyGuid)
+		GameHelpers.Net.TryPostToUser(host.MyGuid, "LeaderLib_UI_RefreshAll", host.MyGuid)
 	end)
 	
 	

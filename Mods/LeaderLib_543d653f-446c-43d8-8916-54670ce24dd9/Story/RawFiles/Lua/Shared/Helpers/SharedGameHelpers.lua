@@ -56,24 +56,26 @@ function GameHelpers.GetEnemiesInRange(uuid,radius)
 	return 0
 end
 
+local _UNSET_USERID = 65535
+
 ---Get a character's user id, if any.
----@param uuid UUID|EsvCharacter|EclCharacter
+---@param obj UUID|EsvCharacter|EclCharacter
 ---@return integer|nil
-function GameHelpers.GetUserID(uuid)
-	if Ext.IsServer() then
-		local id = CharacterGetReservedUserID(GameHelpers.GetUUID(uuid))
-		if id ~= -65536 then
-			return id
+function GameHelpers.GetUserID(obj)
+	local t = type(obj)
+	local id = nil
+	if t == "number" then
+		return obj
+	elseif t == "string" then
+		local character = Ext.GetCharacter(obj)
+		if character then
+			id = math.max(character.UserID, character.ReservedUserID)
 		end
-	elseif Ext.IsClient() then
-		local character = Ext.GetCharacter(uuid)
-		if character ~= nil then
-			if character.UserID ~= -65536 then
-				return character.UserID
-			elseif Ext.Version() >= 53 and character.ReservedUserID ~= nil and character.ReservedUserID ~= -65536 then
-				return character.ReservedUserID
-			end
-		end
+	elseif t == "userdata" or t == "table" and obj.UserID and obj.ReservedUserID then
+		id = math.max(obj.UserID, obj.ReservedUserID)
+	end
+	if id ~= _UNSET_USERID then
+		return id
 	end
 	return nil
 end

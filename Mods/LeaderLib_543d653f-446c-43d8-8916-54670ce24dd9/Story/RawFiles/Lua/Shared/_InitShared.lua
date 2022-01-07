@@ -1,16 +1,21 @@
-Classes = {}
-Common = {}
----@class GameHelpers
-GameHelpers = {
-	Item = {},
-	Math = {},
-	Skill = {},
-	Status = {},
-	Tooltip = {},
-	UI = {},
-	Ext = {},
-	Internal = {}
-}
+if GameHelpers == nil then
+	GameHelpers = {}
+end
+
+local function InitTable(name, target)
+	target = target or Mods.LeaderLib
+	if type(name) == "table" then
+		for k,v in pairs(name) do
+			InitTable(v, target)
+		end
+	elseif target[name] == nil then
+		target[name] = {}
+	end
+end
+
+InitTable("Classes")
+InitTable("Common")
+InitTable({"Item", "Math", "Skill", "Status", "Tooltip", "UI", "Ext", "Internal", "Net"}, GameHelpers)
 
 local _stringKeyText = {}
 

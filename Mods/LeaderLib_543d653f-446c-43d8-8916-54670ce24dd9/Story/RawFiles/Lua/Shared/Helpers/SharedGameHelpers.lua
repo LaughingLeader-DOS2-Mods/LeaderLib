@@ -57,11 +57,11 @@ function GameHelpers.GetEnemiesInRange(uuid,radius)
 end
 
 ---Get a character's user id, if any.
----@param uuid string
+---@param uuid UUID|EsvCharacter|EclCharacter
 ---@return integer|nil
 function GameHelpers.GetUserID(uuid)
 	if Ext.IsServer() then
-		local id = CharacterGetReservedUserID(uuid)
+		local id = CharacterGetReservedUserID(GameHelpers.GetUUID(uuid))
 		if id ~= -65536 then
 			return id
 		end

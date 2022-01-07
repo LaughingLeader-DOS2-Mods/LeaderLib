@@ -27,9 +27,12 @@ function GameHelpers.Client.GetCharacterCreationCharacter(main)
 	local character = nil
 	if main == nil then
 		if not Vars.ControllerEnabled then
-			main = Ext.GetUIByType(Data.UIType.characterCreation):GetRoot()
+			main = Ext.GetUIByType(Data.UIType.characterCreation)
 		else
-			main = Ext.GetUIByType(Data.UIType.characterCreation_c):GetRoot()
+			main = Ext.GetUIByType(Data.UIType.characterCreation_c)
+		end
+		if main ~= nil then
+			main = main:GetRoot()
 		end
 	end
 	if main ~= nil then

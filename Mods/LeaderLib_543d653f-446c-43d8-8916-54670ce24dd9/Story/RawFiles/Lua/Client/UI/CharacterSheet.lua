@@ -14,7 +14,7 @@ local function OnSetHelmetOptionState(ui, method, state)
 				NetID = id,
 				State = state
 			}
-			Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Ext.JsonStringify(data))
+			Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Common.JsonStringify(data))
 			lastHelmetState[id] = state
 		end
 	end
@@ -36,7 +36,7 @@ local function OnSheetEvent(ui, call, param1, ...)
 		if index ~= nil then
 			local stat = Data.Ability[index]
 			PrintDebug(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusAbility] A point was added to the ability [%s](%s).", index, stat))
-			local payload = Ext.JsonStringify({Stat=stat, NetID=character.NetID})
+			local payload = Common.JsonStringify({Stat=stat, NetID=character.NetID})
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_AbilityChanged", payload)
 			FireCharacterSheetPointListeners(character, stat, "ability")
 		end
@@ -45,7 +45,7 @@ local function OnSheetEvent(ui, call, param1, ...)
 		if index ~= nil then
 			local stat = Data.Attribute[index]
 			PrintDebug(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusStat] A point was added to the attribute [%s](%s).", index, stat))
-			local payload = Ext.JsonStringify({Stat=stat, NetID=character.NetID})
+			local payload = Common.JsonStringify({Stat=stat, NetID=character.NetID})
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_AttributeChanged", payload)
 			FireCharacterSheetPointListeners(character, stat, "attribute")
 		end
@@ -60,7 +60,7 @@ local function OnSheetEvent(ui, call, param1, ...)
 			NetID = character.NetID,
 			State = state
 		}
-		Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Ext.JsonStringify(data))
+		Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Common.JsonStringify(data))
 	end
 end
 

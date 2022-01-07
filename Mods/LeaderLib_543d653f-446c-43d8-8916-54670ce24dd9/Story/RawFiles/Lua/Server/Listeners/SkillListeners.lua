@@ -242,7 +242,7 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 		for callback in GetListeners(skill) do
 			if Vars.DebugMode then
 				--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") data(",data:ToString(),")")
-				--PrintDebug("params(",Ext.JsonStringify({...}),")")
+				--PrintDebug("params(",Common.JsonStringify({...}),")")
 			end
 			status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.USED, data)
 			if not status then

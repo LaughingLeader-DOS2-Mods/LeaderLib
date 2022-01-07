@@ -366,7 +366,7 @@ function ModMenuManager.CommitChanges()
 			end
 		end
 	end
-	Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Ext.JsonStringify(changes))
+	Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
 end
 
 function ModMenuManager.UndoChanges()
@@ -402,9 +402,9 @@ end
 local function SyncControl(control, enabled)
 	if control.Type == "FlagData" then
 		local data = {ID=control.ID, FlagType=control.FlagType, Enabled=enabled, User=Client.Character.ID}
-		Ext.PostMessageToServer("LeaderLib_ModMenu_FlagChanged", Ext.JsonStringify(data))
+		Ext.PostMessageToServer("LeaderLib_ModMenu_FlagChanged", Common.JsonStringify(data))
 	elseif control.Type == "VariableData" then
 		local data = {ID=control.ID, Value=control.Value, User=Client.Character.ID}
-		Ext.PostMessageToServer("LeaderLib_ModMenu_VariableChanged", Ext.JsonStringify(data))
+		Ext.PostMessageToServer("LeaderLib_ModMenu_VariableChanged", Common.JsonStringify(data))
 	end
 end

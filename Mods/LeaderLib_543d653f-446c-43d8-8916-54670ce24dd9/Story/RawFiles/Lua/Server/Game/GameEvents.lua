@@ -37,7 +37,7 @@ local function OverrideLeaveActionStatuses()
 		end
 
 		PrintDebug("[LeaderLib:OverrideLeaveActionStatuses] Saved statuses to the Vars.LeaveActionData table.")
-		--PrintDebug(Ext.JsonStringify(Vars.LeaveActionData))
+		--PrintDebug(Common.JsonStringify(Vars.LeaveActionData))
 	end
 end
 
@@ -199,6 +199,6 @@ function OnLuaReset()
 	end
 	IterateUsers("LeaderLib_StoreUserData")
 	InvokeListenerCallbacks(Listeners.LuaReset, region)
-	local payload = Ext.JsonStringify({Event="LuaReset", Args={region}, _PrintSettings=Vars.Print, _CommandSettings = Vars.Commands})
+	local payload = Common.JsonStringify({Event="LuaReset", Args={region}, _PrintSettings=Vars.Print, _CommandSettings = Vars.Commands})
 	Ext.BroadcastMessage("LeaderLib_Client_InvokeListeners", payload)
 end

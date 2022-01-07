@@ -190,7 +190,7 @@ end
 function SaveGlobalSettings()
 	local status,err = xpcall(function()
 		local export = ExportGlobalSettings()
-		local json = Ext.JsonStringify(export)
+		local json = Common.JsonStringify(export)
 		Ext.SaveFile("LeaderLib_GlobalSettings.json", json)
 		PrintDebug("[LeaderLib] Saved LeaderLib_GlobalSettings.json")
 		return true
@@ -203,7 +203,7 @@ end
 
 if Ext.IsServer() then
 	function SettingsManager.SyncGlobalSettings()
-		Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Ext.JsonStringify(ExportGlobalSettings(true)), nil)
+		Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Common.JsonStringify(ExportGlobalSettings(true)), nil)
 	end
 	
 	function SettingsManager.SyncAllSettings(id, skipSyncStatOverrides)
@@ -214,9 +214,9 @@ if Ext.IsServer() then
 			GameSettings = GameSettings
 		}
 		if type(id) == "number" then
-			Ext.PostMessageToUser(id, "LeaderLib_SyncAllSettings", Ext.JsonStringify(data))
+			Ext.PostMessageToUser(id, "LeaderLib_SyncAllSettings", Common.JsonStringify(data))
 		else
-			Ext.BroadcastMessage("LeaderLib_SyncAllSettings", Ext.JsonStringify(data), nil)
+			Ext.BroadcastMessage("LeaderLib_SyncAllSettings", Common.JsonStringify(data), nil)
 		end
 		if skipSyncStatOverrides ~= true then
 			SyncStatOverrides(GameSettings, true)

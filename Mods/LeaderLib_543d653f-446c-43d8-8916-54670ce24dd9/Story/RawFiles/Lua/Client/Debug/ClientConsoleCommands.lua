@@ -36,7 +36,7 @@ if Vars.DebugMode then
         if not pressed and Input.IsPressed("FlashCtrl") then
             Vars.Commands.Teleporting = not Vars.Commands.Teleporting
             local text = string.format("<font color='#76FF00'>Click to Teleport %s</font>", Vars.Commands.Teleporting and "Enabled" or "Disabled")
-            Ext.PostMessageToServer("LeaderLib_CharacterStatusText", Ext.JsonStringify({
+            Ext.PostMessageToServer("LeaderLib_CharacterStatusText", Common.JsonStringify({
                 Target = Client.Character.UUID,
                 Text = text
             }))
@@ -51,7 +51,7 @@ if Vars.DebugMode then
         if Vars.Commands.Teleporting then
             local state = Ext.GetPickingState()
             if state and state.WalkablePosition then
-                Ext.PostMessageToServer("LeaderLib_TeleportToPosition", Ext.JsonStringify({
+                Ext.PostMessageToServer("LeaderLib_TeleportToPosition", Common.JsonStringify({
                     Target = GameHelpers.GetNetID(Client:GetCharacter()),
                     Pos = state.WalkablePosition
                 }))

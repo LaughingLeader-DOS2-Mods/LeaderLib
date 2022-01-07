@@ -10,8 +10,8 @@ end)
 Ext.RegisterConsoleCommand("pos2", function()
 	---@type StatCharacter
 	local character = Ext.GetCharacter(CharacterGetHostCharacter()).Stats
-	fprint("Position:", Ext.JsonStringify(character.Position))
-	fprint("Rotation:", Ext.JsonStringify(character.Rotation))
+	fprint("Position:", Common.JsonStringify(character.Position))
+	fprint("Rotation:", Common.JsonStringify(character.Rotation))
 end)
 
 Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelfParam, charactersOnlyParam)
@@ -592,7 +592,7 @@ function CloneItemWithDeltaMods(item, deltamods)
 	if newItem then
 		PrintDebug("NewItem:", newItem.MyGuid, newItem.StatsId, newItem.ItemType)
 		PrintDebug("DeltaMods")
-		PrintDebug(Ext.JsonStringify(newItem:GetDeltaMods()))
+		PrintDebug(Common.JsonStringify(newItem:GetDeltaMods()))
 	end
 	return newItem
 end

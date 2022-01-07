@@ -165,7 +165,7 @@ function LoadMods()
 	PrintDebug("[LeaderLib:Bootstrap.lua] Registering LeaderLib's mod info.")
 	-- LeaderLib
 	local mod = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c")
-	--PrintDebug(Ext.JsonStringify(mod))
+	--PrintDebug(Common.JsonStringify(mod))
 	local versionInt = tonumber(mod.Version)
 	local major = math.floor(versionInt >> 28)
 	local minor = math.floor(versionInt >> 24) & 0x0F

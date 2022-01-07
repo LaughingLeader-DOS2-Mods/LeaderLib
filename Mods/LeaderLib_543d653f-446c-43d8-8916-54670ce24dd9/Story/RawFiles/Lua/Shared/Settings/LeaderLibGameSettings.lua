@@ -105,7 +105,7 @@ function LeaderLibGameSettings:ToString()
 	local copy = {
 		Settings = self.Settings
 	}
-    return Ext.JsonStringify(copy)
+    return Common.JsonStringify(copy)
 end
 
 ---@return LeaderLibGameSettings

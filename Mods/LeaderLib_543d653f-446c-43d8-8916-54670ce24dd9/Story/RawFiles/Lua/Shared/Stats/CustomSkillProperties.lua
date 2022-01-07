@@ -131,7 +131,7 @@ end
 ---@param prop StatPropertyExtender
 local function MoveToTarget(object, position, areaRadius, skill, prop)
 	local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(position, math.max(3, areaRadius))
-	PrintDebug("Context", Ext.JsonStringify(prop.Context))
+	PrintDebug("Context", Common.JsonStringify(prop.Context))
 	--if not Common.TableHasValue(prop.Context, "Target") then
 	if ObjectIsCharacter(object.MyGuid) == 1 then
 		if not PersistentVars.SkillPropertiesAction.MoveToTarget[object.MyGuid] then

@@ -784,12 +784,12 @@ function DebugTooltipEncoding(ui)
 		tooltipArray2[i] = s
 	end
 
-	Ext.Print("tooltip_array: " .. Ext.JsonStringify(tooltipArray2))
+	Ext.Print("tooltip_array: " .. Common.JsonStringify(tooltipArray2))
 	local parsed = ParseTooltipArray(tooltipArray)
-	Ext.Print("Parsed: " .. Ext.JsonStringify(parsed))
+	Ext.Print("Parsed: " .. Common.JsonStringify(parsed))
 	local encoded = EncodeTooltipArray(parsed)
 	local parsed2 = ParseTooltipArray(encoded)
-	Ext.Print("Encoding matches: ", Ext.JsonStringify(parsed2) == Ext.JsonStringify(parsed))
+	Ext.Print("Encoding matches: ", Common.JsonStringify(parsed2) == Common.JsonStringify(parsed))
 end
 
 ---@class TooltipRequest:table

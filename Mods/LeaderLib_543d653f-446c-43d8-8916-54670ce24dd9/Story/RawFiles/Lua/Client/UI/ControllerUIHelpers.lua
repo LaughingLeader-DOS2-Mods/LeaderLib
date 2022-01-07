@@ -276,13 +276,13 @@ local function RegisterControllerTooltipEvents()
 				local id = ui:GetTypeId()
 				for name,type in pairs(UITYPE) do
 					if type == id then
-						--print(string.format("[%s(%s)]:%s params(%s)", name, id, method, Ext.JsonStringify({...})))
+						--print(string.format("[%s(%s)]:%s params(%s)", name, id, method, Common.JsonStringify({...})))
 						matched = true
 						break
 					end
 				end
 				if not matched then
-					--print(string.format("[%s(%s)]:%s params(%s)", ui:GetRoot().name, id, method, Ext.JsonStringify({...})))
+					--print(string.format("[%s(%s)]:%s params(%s)", ui:GetRoot().name, id, method, Common.JsonStringify({...})))
 				end
 				if method == "updateEquipTooltip" then
 					UI.PrintArray(ui, "equipTooltip_array")

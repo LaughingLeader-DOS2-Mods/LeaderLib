@@ -190,7 +190,7 @@ function GameHelpers.SyncScale(object)
 		object = Ext.GetGameObject(object)
 	end
 	if object then
-		Ext.BroadcastMessage("LeaderLib_SyncScale", Ext.JsonStringify({
+		Ext.BroadcastMessage("LeaderLib_SyncScale", Common.JsonStringify({
 			UUID = object.MyGuid,
 			Scale = object.Scale,
 			Handle = object.NetID

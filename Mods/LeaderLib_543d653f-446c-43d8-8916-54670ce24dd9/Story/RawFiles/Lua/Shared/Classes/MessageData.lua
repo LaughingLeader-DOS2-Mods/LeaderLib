@@ -8,7 +8,7 @@ MessageData.__index = MessageData
 ---Prepares a message for data transfer and converts it to string.
 ---@return string
 function MessageData:ToString()
-    return Ext.JsonStringify(self)
+    return Common.JsonStringify(self)
 end
 
 local function TryParseTable(str)

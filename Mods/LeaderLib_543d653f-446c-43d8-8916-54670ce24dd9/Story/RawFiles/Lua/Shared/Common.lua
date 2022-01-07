@@ -1,5 +1,7 @@
 if Common == nil then Common = {} end
 
+local version = Ext.Version()
+
 function Common.InitSeed()
 	local rnd = Ext.Random(9999)
 	local seed = (Ext.Random(9999) * 214013) + 2531011
@@ -387,12 +389,26 @@ function Common.ConvertTableKeysToNumbers(tbl, recursive)
 	end
 end
 
+local _jsonParse = Ext.JsonParse
+if version >= 56 then
+	_jsonParse = Ext.Json.Parse
+end
+
 function Common.JsonParse(str)
-	local tbl = Ext.JsonParse(str)
+	local tbl = _jsonParse(str)
 	if tbl ~= nil then
 		Common.ConvertTableKeysToNumbers(tbl, true)
 	end
 	return tbl
+end
+
+local _jsonStringify = Ext.JsonStringify
+if version >= 56 then
+	_jsonStringify = Ext.Json.Stringify
+end
+
+function Common.JsonStringify(tbl)
+	return _jsonStringify(tbl)
 end
 
 ---@param max integer

@@ -74,7 +74,7 @@ Ext.RegisterConsoleCommand("llresetuiext", function(cmd)
 end)
 
 local function OnControlAdded(ui, call, id, index, ...)
-	--PrintDebug("OnControlAdded", id, listid, Ext.JsonStringify({...}))
+	--PrintDebug("OnControlAdded", id, listid, Common.JsonStringify({...}))
 	local main = ui:GetRoot()
 	if main then
 		local control = main.mainPanel_mc.elements[index]
@@ -231,7 +231,7 @@ end)
 -- Ext.RegisterListener("SessionLoaded", function()
 -- 	--SetupInstance()
 -- 	-- Ext.RegisterUINameInvokeListener("onEventUp", function(ui, ...)
--- 	-- 	print(Ext.JsonStringify({...}))
+-- 	-- 	print(Common.JsonStringify({...}))
 -- 	-- end)
 -- end)
 

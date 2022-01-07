@@ -46,7 +46,7 @@ end)
 
 Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
 	Vars.IsEditorMode = isEditorMode
-	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Ext.JsonStringify(Features), nil)
+	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Common.JsonStringify(Features), nil)
 end)
 
 local function OnLog(logType, ...)

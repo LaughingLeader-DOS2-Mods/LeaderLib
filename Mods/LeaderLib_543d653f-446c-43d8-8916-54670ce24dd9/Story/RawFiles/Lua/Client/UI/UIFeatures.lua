@@ -2,7 +2,7 @@
 
 ---@param ui UIObject
 local function PrintCall(ui, call, ...)
-	PrintDebug("[PrintCall]",call, Ext.JsonStringify({...}))
+	PrintDebug("[PrintCall]",call, Common.JsonStringify({...}))
 end
 
 function UI.GetArrayIndexStart(ui, arrayName, offset)

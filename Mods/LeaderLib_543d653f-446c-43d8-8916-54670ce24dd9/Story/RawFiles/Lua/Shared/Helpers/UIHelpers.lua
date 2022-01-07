@@ -6,7 +6,7 @@ if Ext.IsServer() then
 
 function SetSlotEnabled(client, slot, enabled)
 	if CharacterGetReservedUserID(client) ~= nil then
-		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", Ext.JsonStringify({
+		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", Common.JsonStringify({
 			Slot = slot,
 			Enabled = enabled,
 			UUID = client
@@ -26,7 +26,7 @@ function GameHelpers.UI.SetSkillEnabled(client, skill, enabled)
 		end
 		local slots = GameHelpers.Skill.GetSkillSlots(client, skill, true)
 		if #slots > 0 then
-			Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", Ext.JsonStringify({
+			Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", Common.JsonStringify({
 				Slots = slots,
 				Enabled = enabled,
 				UUID = client
@@ -51,7 +51,7 @@ function GameHelpers.UI.RefreshSkillBarSkillCooldown(client, skill)
 					Cooldown = math.ceil(cd/6)
 				})
 			end
-			Ext.PostMessageToClient(client, "LeaderLib_Hotbar_RefreshCooldowns", Ext.JsonStringify(data))
+			Ext.PostMessageToClient(client, "LeaderLib_Hotbar_RefreshCooldowns", Common.JsonStringify(data))
 		end
 	end
 end
@@ -76,7 +76,7 @@ function GameHelpers.UI.RefreshSkillBarCooldowns(client)
 				end
 			end
 		end
-		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_RefreshCooldowns", Ext.JsonStringify(data))
+		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_RefreshCooldowns", Common.JsonStringify(data))
 	end
 end
 
@@ -100,7 +100,7 @@ end
 ---@param filter integer
 ---@param specificCharacters string|string[]|nil
 function GameHelpers.UI.CombatLog(text, filter, specificCharacters)
-	local data = Ext.JsonStringify({
+	local data = Common.JsonStringify({
 		Filter = filter or 0,
 		Text = GameHelpers.Tooltip.ReplacePlaceholders(text)
 	})
@@ -123,7 +123,7 @@ end
 ---@param boxType integer|nil
 ---@param title string|nil
 function GameHelpers.UI.ShowMessageBox(text, specificCharacters, boxType, title)
-	local data = Ext.JsonStringify({
+	local data = Common.JsonStringify({
 		Type = boxType or 1,
 		Text = text,
 		Title = title
@@ -147,7 +147,7 @@ end
 ---@param turns integer
 function GameHelpers.UI.RefreshStatusTurns(player, status, turns)
 	if CharacterIsPlayer(player) == 1 then
-		local data = Ext.JsonStringify({
+		local data = Common.JsonStringify({
 			UUID = GetUUID(player),
 			Status = status,
 			Turns = turns
@@ -157,7 +157,7 @@ function GameHelpers.UI.RefreshStatusTurns(player, status, turns)
 end
 
 Ext.RegisterNetListener("LeaderLib_OnDelayTurnClicked", function(call, uuid, ...)
-	--print(call, uuid, "DB_LeaderLib_Combat_ActiveObject", Ext.JsonStringify(Osi.DB_LeaderLib_Combat_ActiveObject:Get(nil,nil)))
+	--print(call, uuid, "DB_LeaderLib_Combat_ActiveObject", Common.JsonStringify(Osi.DB_LeaderLib_Combat_ActiveObject:Get(nil,nil)))
 	-- local charMatch = false
 	-- for i,v in pairs(Osi.DB_LeaderLib_Combat_ActiveObject:Get(nil,nil)) do
 	-- 	if GetUUID(v[2]) == uuid then

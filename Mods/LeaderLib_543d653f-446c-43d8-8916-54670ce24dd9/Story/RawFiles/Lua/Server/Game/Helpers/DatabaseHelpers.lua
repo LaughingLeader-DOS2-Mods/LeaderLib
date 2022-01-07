@@ -71,7 +71,7 @@ local function SortDatabase(name, arity, sortColumn)
 			for i,v in pairs(result) do
 				Osi[name][i](v)
 			end
-			--PrintDebug(name, Ext.JsonStringify(Osi[name]:Get(GetArity(arity))))
+			--PrintDebug(name, Common.JsonStringify(Osi[name]:Get(GetArity(arity))))
 		end
 	end
 end
@@ -94,7 +94,7 @@ function SortDictionary(id)
 			Osi.DB_LeaderLib_Dictionary_Data(id, index, v[3], v[4])
 			index = index + 1
 		end
-		--PrintDebug(id, Ext.JsonStringify(Osi.DB_LeaderLib_Dictionary_Data:Get(id, nil, nil, nil)))
+		--PrintDebug(id, Common.JsonStringify(Osi.DB_LeaderLib_Dictionary_Data:Get(id, nil, nil, nil)))
 		return true
 	end, debug.traceback)
 	if not b then
@@ -103,7 +103,7 @@ function SortDictionary(id)
 	end
 end
 
---print(Ext.JsonStringify(Osi.DB_LeaderLib_Dictionary_Data:Get(nil, nil, nil, nil)))
+--print(Common.JsonStringify(Osi.DB_LeaderLib_Dictionary_Data:Get(nil, nil, nil, nil)))
 
 ---@param db table
 ---@param value any

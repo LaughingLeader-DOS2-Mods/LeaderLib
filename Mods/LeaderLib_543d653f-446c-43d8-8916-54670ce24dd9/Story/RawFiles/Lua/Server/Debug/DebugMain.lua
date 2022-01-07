@@ -258,7 +258,7 @@ end
 function PrintModDB()
 	PrintDebug("[LeaderLib_Debug.lua:PrintDB] Printing database DB_LeaderLib_Mods_Registered.")
 	local values = Osi.DB_LeaderLib_Mods_Registered:Get(nil, nil, nil, nil, nil, nil, nil, nil)
-	PrintDebug(Ext.JsonStringify(values))
+	PrintDebug(Common.JsonStringify(values))
 end
 
 function PrintDB(name, arity)
@@ -309,8 +309,8 @@ function Debug_Iterator_PrintCharacter(uuid)
 	PrintDebug("Name:", CharacterGetDisplayName(uuid))
 	PrintDebug("Stat:", characterStats.Name)
 	PrintDebug("Archetype:", character.Archetype)
-	PrintDebug("Pos:", Ext.JsonStringify(characterStats.Position))
-	PrintDebug("Rot:", Ext.JsonStringify(characterStats.Rotation))
+	PrintDebug("Pos:", Common.JsonStringify(characterStats.Position))
+	PrintDebug("Rot:", Common.JsonStringify(characterStats.Rotation))
 	PrintDebug("===============")
 end
 
@@ -462,7 +462,7 @@ local statusHitAttributes = {
 			-- 			end
 		-- 		end
 		-- 		table.sort(data)
-		-- 		print(Ext.JsonStringify(data))
+		-- 		print(Common.JsonStringify(data))
 		-- 		print("=========")
 	-- 	end
 -- end)

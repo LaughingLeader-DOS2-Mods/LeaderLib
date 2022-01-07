@@ -82,7 +82,8 @@ Vars = {
 		Undead_Lizard = {Tag="UNDEAD_LIZARD", BaseTag = "LIZARD"},
 	},
 	---Table of base game stat fixes.
-	StatFixes = {}
+	StatFixes = {},
+	Version = Ext.Version()
 }
 
 function PrintDebug(...)

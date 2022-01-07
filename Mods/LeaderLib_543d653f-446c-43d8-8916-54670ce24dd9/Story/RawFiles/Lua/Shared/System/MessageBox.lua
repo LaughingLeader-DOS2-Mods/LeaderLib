@@ -8,7 +8,7 @@ function MessageBox:FireEvent(id, isConfirmed, character)
 		if not character then
 			character = Client:GetCharacter()
 		end
-		Ext.PostMessageToServer("LeaderLib_MessageBoxEvent", Ext.JsonStringify({ID=id, IsConfirmed=isConfirmed, NetID=character.NetID}))
+		Ext.PostMessageToServer("LeaderLib_MessageBoxEvent", Common.JsonStringify({ID=id, IsConfirmed=isConfirmed, NetID=character.NetID}))
 	end
 	InvokeListenerCallbacks(Listeners.MessageBoxEvent.All, id, isConfirmed, character)
 	InvokeListenerCallbacks(Listeners.MessageBoxEvent[id], id, isConfirmed, character)

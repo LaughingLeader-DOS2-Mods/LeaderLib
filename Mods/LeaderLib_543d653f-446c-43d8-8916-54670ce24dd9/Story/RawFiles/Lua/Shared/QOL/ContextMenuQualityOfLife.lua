@@ -88,7 +88,7 @@ if isClient then
 											existingEntry.WorldPos = obj.WorldPos
 											existingEntry.Rotation = NETID_TO_ROTATION[handle]
 										end
-										Ext.SaveFile("LeaderLib_UUIDHelper.json", Ext.JsonStringify(data))
+										Ext.SaveFile("LeaderLib_UUIDHelper.json", Common.JsonStringify(data))
 									end
 								end
 							end, "Save Info to File", true, true, false, true, target.NetID)
@@ -113,7 +113,7 @@ else
 		local netid = tonumber(payload)
 		local object = GameHelpers.TryGetObject(netid)
 		if object then
-			Ext.PostMessageToUser(userid, "LeaderLib_ContextMenu_SetUUID", Ext.JsonStringify({NetID = netid, UUID = object.MyGuid, Rotation={GetRotation(object.MyGuid)}}))
+			Ext.PostMessageToUser(userid, "LeaderLib_ContextMenu_SetUUID", Common.JsonStringify({NetID = netid, UUID = object.MyGuid, Rotation={GetRotation(object.MyGuid)}}))
 		end
 	end)
 end

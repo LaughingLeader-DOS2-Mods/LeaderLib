@@ -164,7 +164,7 @@ if not isClient then
 			for _,v in pairs(GameHelpers.GetParty(CharacterGetHostCharacter(), false, false, false, true)) do
 				data[v] = GameHelpers.Character.GetDisplayName(v)
 			end
-			return Ext.JsonStringify(data)
+			return Common.JsonStringify(data)
 		end
 	})
 	AddConsoleVariable("party", party)
@@ -217,7 +217,7 @@ if not isClient then
 						end
 						text[v] = entry
 					end
-					return Ext.JsonStringify(text)
+					return Common.JsonStringify(text)
 				end
 			})
 			if exportToFileName then

@@ -374,7 +374,7 @@ function GameSettingsMenu.CommitChanges()
 	if Client.IsHost then
 		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", GameSettings:ToString())
 	end
-	--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Ext.JsonStringify(changes))
+	--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
 end
 
 function GameSettingsMenu.UndoChanges()

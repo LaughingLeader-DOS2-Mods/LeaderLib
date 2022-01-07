@@ -166,11 +166,11 @@ local overheadFunctions = {
 }
 
 local function TraceCall(ui, ...)
-	PrintDebug(Ext.JsonStringify({...}))
+	PrintDebug(Common.JsonStringify({...}))
 end
 
 local function TraceTooltip(call, val, tooltipdata)
-	PrintDebug(call, val, Ext.JsonStringify(tooltipdata))
+	PrintDebug(call, val, Common.JsonStringify(tooltipdata))
 end
 
 local allUIFiles = {

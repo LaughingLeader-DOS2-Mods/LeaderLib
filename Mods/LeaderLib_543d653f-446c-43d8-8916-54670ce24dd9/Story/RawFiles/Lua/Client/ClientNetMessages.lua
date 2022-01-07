@@ -345,7 +345,7 @@ function UI.ToggleChainGroup()
 		end
 	end
 	if groupData.Leader then
-		Ext.PostMessageToServer("LeaderLib_ToggleChainGroup", Ext.JsonStringify(groupData))
+		Ext.PostMessageToServer("LeaderLib_ToggleChainGroup", Common.JsonStringify(groupData))
 	end
 end
 

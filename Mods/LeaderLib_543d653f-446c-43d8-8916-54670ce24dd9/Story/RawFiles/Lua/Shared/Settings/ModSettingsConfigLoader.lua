@@ -114,7 +114,7 @@ local function LoadModSettingsConfig(uuid, file)
 				end
 			end
 		end
-		--print(Ext.JsonStringify(config), Common.Dump(settings.Global))
+		--print(Common.JsonStringify(config), Common.Dump(settings.Global))
 		if config.MenuOrder ~= nil and type(config.MenuOrder) == "table" then
 			settings.GetMenuOrder = function()
 				return config.MenuOrder

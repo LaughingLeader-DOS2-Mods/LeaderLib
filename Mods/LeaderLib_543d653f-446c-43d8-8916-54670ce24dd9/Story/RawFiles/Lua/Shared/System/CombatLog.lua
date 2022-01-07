@@ -239,9 +239,9 @@ else
 	---@param text string
 	function CombatLog.AddTextToHost(filterId, text)
 		if type(filterId) == "number" then
-			Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToIndex", Ext.JsonStringify({ID=filterId, Text=text}))
+			Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToIndex", Common.JsonStringify({ID=filterId, Text=text}))
 		else
-			Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+			Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToFilter", Common.JsonStringify({ID=filterId, Text=text}))
 		end
 	end
 
@@ -251,9 +251,9 @@ else
 	function CombatLog.AddTextToPlayer(client, filterId, text)
 		local uuid = GameHelpers.GetUUID(client)
 		if type(filterId) == "number" then
-			Ext.PostMessageToClient(uuid, "LeaderLib_CombatLog_AddTextToIndex", Ext.JsonStringify({ID=filterId, Text=text}))
+			Ext.PostMessageToClient(uuid, "LeaderLib_CombatLog_AddTextToIndex", Common.JsonStringify({ID=filterId, Text=text}))
 		else
-			Ext.PostMessageToClient(uuid, "LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+			Ext.PostMessageToClient(uuid, "LeaderLib_CombatLog_AddTextToFilter", Common.JsonStringify({ID=filterId, Text=text}))
 		end
 	end
 
@@ -261,9 +261,9 @@ else
 	---@param text string
 	function CombatLog.AddTextToAllPlayers(filterId, text)
 		if type(filterId) == "number" then
-			Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToIndex", Ext.JsonStringify({ID=filterId, Text=text}))
+			Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToIndex", Common.JsonStringify({ID=filterId, Text=text}))
 		else
-			Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+			Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToFilter", Common.JsonStringify({ID=filterId, Text=text}))
 		end
 	end
 
@@ -280,9 +280,9 @@ else
 		local damageText = GameHelpers.GetDamageText(damageType, damageAmount)
 		local text = not isFromSurface and LocalizedText.CombatLog.WasHitFor:ReplacePlaceholders(targetDisplayName, LocalizedText.Keywords.Hit, damageText) or LocalizedText.CombatLog.WasHitBySurface:ReplacePlaceholders(targetDisplayName, LocalizedText.Keywords.Hit, damageText)
 		if type(filterId) == "number" then
-			Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToIndex", Ext.JsonStringify({ID=filterId, Text=text}))
+			Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToIndex", Common.JsonStringify({ID=filterId, Text=text}))
 		else
-			Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+			Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToFilter", Common.JsonStringify({ID=filterId, Text=text}))
 		end
 	end
 end

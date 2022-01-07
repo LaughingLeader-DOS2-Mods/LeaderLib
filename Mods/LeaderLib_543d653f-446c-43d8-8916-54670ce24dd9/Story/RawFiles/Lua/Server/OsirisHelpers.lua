@@ -32,7 +32,7 @@ function BroadcastToClient(channel, character, ...)
 	local payload = ""
 	local params = {...}
 	if params ~= nil and #params > 0 then
-		payload = Ext.JsonStringify(params)
+		payload = Common.JsonStringify(params)
 	end
 	Ext.PostMessageToClient(character, channel, payload)
 end

@@ -44,7 +44,7 @@ function DialogEx.FindKeywords(ui, event, text)
 			end
 		end
 	end
-	PrintDebug(event, Ext.JsonStringify(keywordPositions))
+	PrintDebug(event, Common.JsonStringify(keywordPositions))
 end
 
 function DialogEx.OnSetPosition(ui, event, side1, side2, side3)

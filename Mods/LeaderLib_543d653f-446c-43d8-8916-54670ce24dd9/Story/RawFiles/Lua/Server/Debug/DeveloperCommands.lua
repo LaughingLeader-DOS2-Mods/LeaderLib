@@ -23,7 +23,7 @@ end)
 Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	if skill ~= nil then
 		RegisterSkillListener(skill, function(skill, uuid, state, ...)
-			PrintDebug("[LeaderLib:DebugMain.lua:SkillListener] skill(",skill,") caster(",uuid,") state(",state,") params(",Ext.JsonStringify({...}),")")
+			PrintDebug("[LeaderLib:DebugMain.lua:SkillListener] skill(",skill,") caster(",uuid,") state(",state,") params(",Common.JsonStringify({...}),")")
 		end)
 		PrintDebug("[LeaderLib:listenskill] Registered listener function for skill ", skill)
 		else
@@ -43,7 +43,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			end
 		end
 		if varData ~= nil then
-			Ext.SaveFile("LeaderLib_Debug_PersistentVars.json", Ext.JsonStringify(varData))
+			Ext.SaveFile("LeaderLib_Debug_PersistentVars.json", Common.JsonStringify(varData))
 		end
 		TimerCancel("Timers_LeaderLib_Debug_LuaReset")
 		TimerLaunch("Timers_LeaderLib_Debug_LuaReset", 500)
@@ -285,7 +285,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	Ext.RegisterConsoleCommand("llprintskilledits", function(cmd, skill)
 		local changes = changedSkillAttributes[skill]
 		if changes ~= nil then
-			PrintDebug("[llprintskilledits]", skill, Ext.JsonStringify(changedSkillAttributes))
+			PrintDebug("[llprintskilledits]", skill, Common.JsonStringify(changedSkillAttributes))
 		end
 	end)
 	
@@ -527,7 +527,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 				end
 			end
 			PrintDebug("[llprintskill]")
-			PrintDebug(Ext.JsonStringify(skillProps))
+			PrintDebug(Common.JsonStringify(skillProps))
 		end
 	end)
 	
@@ -536,14 +536,14 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	Ext.RegisterConsoleCommand("llupdaterules", function(cmd)
 		GameHelpers.Surface.UpdateRules()
 		local rules = Ext.GetSurfaceTransformRules()
-		PrintDebug(Ext.JsonStringify(rules["Fire"]))
-		PrintDebug(Ext.JsonStringify(rules["Poison"]))
+		PrintDebug(Common.JsonStringify(rules["Fire"]))
+		PrintDebug(Common.JsonStringify(rules["Poison"]))
 	end)
 	
 	Ext.RegisterConsoleCommand("llresetrules", function(cmd)
 		Ext.UpdateSurfaceTransformRules(defaultRules)
 		PrintDebug("[llresetrules] Reset surface rules.")
-		PrintDebug(Ext.JsonStringify(Ext.GetSurfaceTransformRules()["Fire"][1]))
+		PrintDebug(Common.JsonStringify(Ext.GetSurfaceTransformRules()["Fire"][1]))
 	end)
 	
 	
@@ -929,7 +929,7 @@ Ext.RegisterConsoleCommand("lldebug_keepAlive", function(command)
 end)
 
 Ext.RegisterConsoleCommand("lldebug_music", function(command, mType, theme)
-	Ext.BroadcastMessage("LeaderLib_Debug_MusicTest", Ext.JsonStringify({
+	Ext.BroadcastMessage("LeaderLib_Debug_MusicTest", Common.JsonStringify({
 		Type = mType or "Explo",
 		Theme = theme or "Fort_Joy"
 	}))
@@ -1237,7 +1237,7 @@ Ext.RegisterConsoleCommand("createitemtest", function()
 	end
 	--item:SetGeneratedBoosts(boosts)
 	--print(Lib.inspect(item:GetGeneratedBoosts()))
-	--print(Ext.JsonStringify(boosts))
+	--print(Common.JsonStringify(boosts))
 	--item:SetDeltaMods(deltamods)
 	ItemToInventory(uuid, CharacterGetHostCharacter(), 1, 1, 1)
 else

@@ -65,6 +65,11 @@ local function CanInvokeListener(anyLevelType)
 	return Ext.GetGameState() == "Running" and (anyLevelType or ((not anyLevelType and SharedData.RegionData.LevelType == LEVELTYPE.GAME)))
 end
 
+local _OsirisEventSubscribe = Ext.RegisterOsirisListener
+if Ext.Version() >= 56 then
+	_OsirisEventSubscribe = Ext.Osiris.RegisterListener
+end
+
 --- Registers a function that is called when certain Osiris functions are called, but only when a game level is loaded and the gamestate is running.
 --- Supports events, built-in queries, DBs, PROCs, QRYs (user queries).
 --- @param name string Osiris function/database name
@@ -77,7 +82,7 @@ function RegisterProtectedOsirisListener(name, arity, event, handler, anyLevelTy
 	if (arity == "before" or arity == "after") and type(event) == "function" and handler == nil then
 		local eventArity = Data.OsirisEvents[name]
 		if eventArity then
-			Ext.RegisterOsirisListener(name, eventArity, arity, function(...)
+			_OsirisEventSubscribe(name, eventArity, arity, function(...)
 				if CanInvokeListener(anyLevelType) then
 					local b,result = xpcall(event, debug.traceback, ...)
 					if not b then
@@ -87,7 +92,7 @@ function RegisterProtectedOsirisListener(name, arity, event, handler, anyLevelTy
 			end)
 		end
 	else
-		Ext.RegisterOsirisListener(name, arity, event, function(...)
+		_OsirisEventSubscribe(name, arity, event, function(...)
 			if CanInvokeListener(anyLevelType) then
 				local b,result = xpcall(handler, debug.traceback, ...)
 				if not b then

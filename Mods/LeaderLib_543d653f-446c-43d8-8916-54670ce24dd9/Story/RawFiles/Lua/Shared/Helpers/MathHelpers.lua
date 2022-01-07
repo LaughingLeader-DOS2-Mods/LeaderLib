@@ -149,7 +149,7 @@ function GameHelpers.Math.SetRotation(uuid, rotx, rotz, turnTo)
             ItemToTransform(uuid, x, y, z, pitch, 0.0, roll, amount, owner)
         end
     else
-        Ext.PostMessageToServer("LeaderLib_Helpers_SetRotation", Ext.JsonStringify({
+        Ext.PostMessageToServer("LeaderLib_Helpers_SetRotation", Common.JsonStringify({
             UUID = uuid,
             X = rotx,
             Z = rotz,

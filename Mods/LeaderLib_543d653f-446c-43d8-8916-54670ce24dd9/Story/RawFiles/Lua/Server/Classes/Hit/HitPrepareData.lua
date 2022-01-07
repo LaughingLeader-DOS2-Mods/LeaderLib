@@ -344,7 +344,7 @@ function HitPrepareData:ToDebugString(indentChar)
 			data[k] = target[k]
 		end
 	end
-	--return Ext.JsonStringify(data)
+	--return Common.JsonStringify(data)
 	return Lib.inspect(data)
 end
 

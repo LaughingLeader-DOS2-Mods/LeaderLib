@@ -139,7 +139,7 @@ function SkillEventData:ToString()
 			end
 		end
 	end
-	return Ext.JsonStringify(printableData)
+	return Common.JsonStringify(printableData)
 end
 
 function SkillEventData:PrintTargets()

@@ -8,14 +8,16 @@ HitOverrides = {
 --- This script tweaks Game.Math functions to allow lowering resistance with Resistance Penetration tags on items of the attacker.
 
 local extVersion = Ext.Version()
-local HitFlag = Game.Math.HitFlag
 
 --region Game.Math functions
+
+
 
 --- @param character StatCharacter
 --- @param attacker StatCharacter
 --- @param damageList DamageList
 function HitOverrides.ApplyDamageCharacterBonuses(character, attacker, damageList)
+    damageList:AggregateSameTypeDamages()
     local preModifiedDamageList = damageList:ToTable()
     local resistancePenetration = HitOverrides.GetResistancePenetration(character, attacker)
 
@@ -24,14 +26,13 @@ function HitOverrides.ApplyDamageCharacterBonuses(character, attacker, damageLis
         -- The reason we're not overriding this in the first place is that Game.Math.ApplyHitResistances doesn't have a reference to the attacker character.
         local funcOriginal = Game.Math.ApplyHitResistances
         Game.Math.ApplyHitResistances = function(c, d)
-            HitOverrides.ApplyHitResistances(c, d, resistancePenetration)
+            HitOverrides.ApplyHitResistances(c, d, resistancePenetration, preModifiedDamageList)
         end
         HitOverrides.ApplyDamageCharacterBonusesModified(character, attacker, damageList)
         -- Reset it back so we don't have other characters benefitting from this specific resistancePenetration table.
         Game.Math.ApplyHitResistances = funcOriginal
     else
-        damageList:AggregateSameTypeDamages()
-        HitOverrides.ApplyHitResistances(character, damageList, resistancePenetration)
+        HitOverrides.ApplyHitResistances(character, damageList, resistancePenetration, preModifiedDamageList)
         Game.Math.ApplyDamageSkillAbilityBonuses(damageList, attacker)
     end
  
@@ -113,8 +114,8 @@ end
 --- @param character StatCharacter
 --- @param damageList DamageList
 --- @param resistancePenetration table<string,integer>
-function HitOverrides.ApplyHitResistances(character, damageList, resistancePenetration)
-	for i,damage in pairs(damageList:ToTable()) do
+function HitOverrides.ApplyHitResistances(character, damageList, resistancePenetration, preModifiedDamageList)
+	for i,damage in pairs(preModifiedDamageList) do
         local resistance = HitOverrides.GetResistance(character, damage.DamageType, resistancePenetration[damage.DamageType])
         local modAmount = math.floor(damage.Amount * -resistance / 100.0)
         damageList:Add(damage.DamageType, modAmount)
@@ -315,6 +316,34 @@ function HitOverrides.ComputeOverridesEnabled()
     or #Listeners.ComputeCharacterHit > 0
 end
 
+--- @param hit HitRequest
+--- @param target StatCharacter
+--- @param attacker StatCharacter
+--- @param hitType string HitType enumeration
+local function ApplyLifeSteal(hit, target, attacker, hitType)
+    if attacker == nil or hitType == "DoT" or hitType == "Surface" then
+        return
+    end
+
+    local magicDmg = hit.DamageList:GetByType("Magic")
+    local corrosiveDmg = hit.DamageList:GetByType("Corrosive")
+    local lifesteal = hit.TotalDamageDone - hit.ArmorAbsorption - corrosiveDmg - magicDmg
+
+    if hit.FromShacklesOfPain or hit.NoDamageOnOwner or hit.Reflection then
+        local modifier = Ext.ExtraData.LifestealFromReflectionModifier
+        lifesteal = math.floor(lifesteal * modifier)
+    end
+
+    if lifesteal > target.CurrentVitality then
+        lifesteal = target.CurrentVitality
+    end
+
+    if lifesteal > 0 then
+        hit.LifeSteal = math.max(math.ceil(lifesteal * attacker.LifeSteal / 100), 0)
+    end
+end
+
+---@param damageList DamageList
 ---@param hit HitRequest
 local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     hit.Hit = true
@@ -330,7 +359,7 @@ local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, targe
         damageList:Clear()
     end
 
-    Game.Math.ApplyDamageCharacterBonuses(target, attacker, damageList)
+    HitOverrides.ApplyDamageCharacterBonuses(target, attacker, damageList)
     damageList:AggregateSameTypeDamages()
 
     hit.DamageList:CopyFrom(Ext.NewDamageList())
@@ -340,11 +369,12 @@ local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, targe
     end
 
     Game.Math.ApplyDamagesToHitInfo(damageList, hit)
+    
     hit.ArmorAbsorption = hit.ArmorAbsorption + Game.Math.ComputeArmorDamage(damageList, target.CurrentArmor)
     hit.ArmorAbsorption = hit.ArmorAbsorption + Game.Math.ComputeMagicArmorDamage(damageList, target.CurrentMagicArmor)
 
     if hit.TotalDamageDone > 0 then
-        Game.Math.ApplyLifeSteal(hit, target, attacker, hitType)
+        ApplyLifeSteal(hit, target, attacker, hitType)
     else
         hit.DontCreateBloodSurface = true
     end
@@ -366,16 +396,15 @@ end
 --- @param attacker StatCharacter
 --- @param damageMultiplier number
 function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
-    local hit = hitRequest
     if extVersion < 56 then
-        hit.DamageMultiplier = damageMultiplier
+        hitRequest.DamageMultiplier = damageMultiplier
         --We're basically calling Game.Math.DoHit here, but it may be a modified version from a mod.
-        HitOverrides.DoHitModified(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+        HitOverrides.DoHitModified(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     else
         --TODO Waiting for a v56 Game.Math update for hit.DamageMultiplier
-        DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+        DoHitUpdated(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     end
-    InvokeListenerCallbacks(Listeners.DoHit, hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+    InvokeListenerCallbacks(Listeners.DoHit, hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker)
 	return hitRequest
 end
 
@@ -469,7 +498,7 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
         end
     end
 
-    if weapon ~= nil and weapon.Name ~= "DefaultWeapon" and hitType ~= "Magic" and forceReduceDurability 
+    if weapon ~= nil and weapon.Name ~= "DefaultWeapon" and hitType ~= "Magic" and forceReduceDurability
     and not GameHelpers.Hit.HasFlag(hit, {"Missed", "Dodged"}) then
         Game.Math.ConditionalDamageItemDurability(attacker, weapon)
     end
@@ -485,7 +514,7 @@ end
 
 function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     if HitOverrides.ComputeOverridesEnabled() then
-        hit = ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+        ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
         InvokeListenerCallbacks(Listeners.ComputeCharacterHit, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
         return hit
     end
@@ -497,6 +526,14 @@ else
     Ext.Events.ComputeCharacterHit:Subscribe(function(event)
         local hit = HitOverrides.ComputeCharacterHit(event.Target, event.Attacker, event.Weapon, event.DamageList, event.HitType, event.NoHitRoll, event.ForceReduceDurability, event.Hit, event.AlwaysBackstab, event.HighGround, event.CriticalRoll)
         if hit then
+            --TODO Extender bug fix for negative damage resulting in 0 damage
+            event.DamageList:CopyFrom(hit.DamageList)
+            for _,v in pairs(event.DamageList:ToTable()) do
+                if v.Amount < 0 then
+                    event.DamageList:Add(v.DamageType, -v.Amount * 2)
+                end
+            end
+            --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})
             return hit
         end
     end)

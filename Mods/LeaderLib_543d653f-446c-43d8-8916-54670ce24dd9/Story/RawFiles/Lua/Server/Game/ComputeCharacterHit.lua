@@ -279,14 +279,39 @@ function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRol
     return math.random(0, 99) < critChance
 end
 
+--- @param weapon StatItem
+--- @param character StatCharacter
+--- @param criticalMultiplier number
+--- @return number
+function HitOverrides.GetCriticalHitMultiplier(weapon, character, criticalMultiplier)
+	criticalMultiplier = criticalMultiplier or 0
+    if weapon.ItemType == "Weapon" then
+        for i,stat in pairs(weapon.DynamicStats) do
+            criticalMultiplier = criticalMultiplier + stat.CriticalDamage
+        end
+  
+        if character ~= nil then
+            local ability = Game.Math.GetWeaponAbility(character, weapon)
+            criticalMultiplier = criticalMultiplier + Game.Math.GetAbilityCriticalHitMultiplier(character, ability) + Game.Math.GetAbilityCriticalHitMultiplier(character, "RogueLore")
+                
+            if character.TALENT_Human_Inventive then
+                criticalMultiplier = criticalMultiplier + Ext.ExtraData.TalentHumanCriticalMultiplier
+            end
+        end
+    end
+  
+    return criticalMultiplier * 0.01
+end
+
 --- @param hit HitRequest
 --- @param attacker StatCharacter
 --- @param damageMultiplier number
-function HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier)
+--- @param criticalMultiplier number
+function HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier, criticalMultiplier)
     local mainWeapon = attacker.MainWeapon
     if mainWeapon ~= nil then
         GameHelpers.Hit.SetFlag(hit, "CriticalHit", true)
-        damageMultiplier = damageMultiplier + (Game.Math.GetCriticalHitMultiplier(mainWeapon, attacker) - 1.0)
+        damageMultiplier = damageMultiplier + (HitOverrides.GetCriticalHitMultiplier(mainWeapon, attacker, criticalMultiplier) - 1.0)
     end
     return damageMultiplier
 end
@@ -297,9 +322,10 @@ end
 --- @param hitType string HitType enumeration
 --- @param criticalRoll string CriticalRoll enumeration
 --- @param damageMultiplier number
-function HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier)
+--- @param criticalMultiplier number
+function HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier)
     if HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll) then
-        damageMultiplier = HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier)
+        damageMultiplier = HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier, criticalMultiplier)
     end
     return damageMultiplier
 end
@@ -411,7 +437,7 @@ end
 --- @param target StatCharacter
 --- @param attacker StatCharacter
 --- @param weapon StatItem
---- @param damageList DamageList
+--- @param preDamageList DamageList
 --- @param hitType string HitType enumeration
 --- @param noHitRoll boolean
 --- @param forceReduceDurability boolean
@@ -419,12 +445,14 @@ end
 --- @param alwaysBackstab boolean
 --- @param highGroundFlag HighGroundFlag HighGround enumeration
 --- @param criticalRoll CriticalRollFlag CriticalRoll enumeration
-local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     --Ext.Dump({Before={hit=hit, weapon=weapon.Name, damageList=damageList:ToTable(), hitType=hitType, noHitRoll=noHitRoll,  forceReduceDurability=forceReduceDurability, alwaysBackstab=alwaysBackstab, highGroundFlag=highGroundFlag, criticalRoll=criticalRoll}}, true, true)
     local damageMultiplier = 1.0
-    --Declare locals here so goto works
+	local criticalMultiplier = 0.0
     local statusBonusDmgTypes = {}
-    local backstabbed = false
+	local damageList = Ext.NewDamageList()
+	damageList:CopyFrom(preDamageList)
+    local statusBonusDmgTypes = {}
     local hitBlocked = false
 
     if attacker == nil then
@@ -440,20 +468,18 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
         local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
         if alwaysBackstab or (canBackstab and (skipPositionCheck or Game.Math.CanBackstab(target, attacker))) then
             GameHelpers.Hit.SetFlag(hit, "Backstab", true)
-            backstabbed = true
         end
     end
 
     damageMultiplier = 1.0 + Game.Math.GetAttackerDamageMultiplier(target, attacker, highGroundFlag)
     if hitType == "Magic" or hitType == "Surface" or hitType == "DoT" or hitType == "Reflected" then
-        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier)
+        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier)
         HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
         return hit
     end
 
     if alwaysBackstab or (HitOverrides.CanBackstab(target, attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
         GameHelpers.Hit.SetFlag(hit, "Backstab", true)
-        backstabbed = true
     end
 
     if hitType == "Melee" then
@@ -466,10 +492,10 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
             if GameHelpers.Hit.HasFlag(hit, "Poisoned") then
                 table.insert(statusBonusDmgTypes, "Poison")
             end
-            if GameHelpers.Hit.HasFlag(hit, "Burning") ~= 0 then
+            if GameHelpers.Hit.HasFlag(hit, "Burning") then
                 table.insert(statusBonusDmgTypes, "Fire")
             end
-            if GameHelpers.Hit.HasFlag(hit, "Bleeding") ~= 0 then
+            if GameHelpers.Hit.HasFlag(hit, "Bleeding") then
                 table.insert(statusBonusDmgTypes, "Physical")
             end
         end
@@ -491,7 +517,7 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
             hitBlocked = true
         else
             local blockChance = target.BlockChance
-            if not backstabbed and blockChance > 0 and math.random(0, 99) < blockChance then
+            if not GameHelpers.Hit.HasFlag(hit, "Backstab") and blockChance > 0 and math.random(0, 99) < blockChance then
                 GameHelpers.Hit.SetFlag(hit, "Blocked", true)
                 hitBlocked = true
             end
@@ -504,7 +530,7 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
     end
 
     if not hitBlocked then
-        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier)
+        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier)
         HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     end
 
@@ -527,15 +553,8 @@ else
     Ext.Events.ComputeCharacterHit:Subscribe(function(event)
         local hit = HitOverrides.ComputeCharacterHit(event.Target, event.Attacker, event.Weapon, event.DamageList, event.HitType, event.NoHitRoll, event.ForceReduceDurability, event.Hit, event.AlwaysBackstab, event.HighGround, event.CriticalRoll)
         if hit then
-            --TODO Extender bug fix for negative damage resulting in 0 damage
-            event.DamageList:CopyFrom(hit.DamageList)
-            for _,v in pairs(event.DamageList:ToTable()) do
-                if v.Amount < 0 then
-                    event.DamageList:Add(v.DamageType, -v.Amount * 2)
-                end
-            end
+            event.Handled = true
             --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})
-            return hit
         end
     end)
 end

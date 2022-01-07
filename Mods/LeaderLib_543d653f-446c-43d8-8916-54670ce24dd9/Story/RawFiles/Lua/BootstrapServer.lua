@@ -241,7 +241,6 @@ end
 
 Ext.Require("Server/Classes/_Init.lua")
 Ext.Require("Server/Data/BasePresets.lua")
-Ext.Require("Server/ScriptManager.lua")
 Ext.Require("Server/Helpers/MiscHelpers.lua")
 Ext.Require("Server/Helpers/DatabaseHelpers.lua")
 Ext.Require("Server/Helpers/DamageHelpers.lua")
@@ -267,7 +266,6 @@ Ext.Require("Server/System/AttackManager.lua")
 Ext.Require("Server/System/SceneManager.lua")
 Ext.Require("Server/Listeners/_Init.lua")
 Ext.Require("Server/ModMenu/ModMenuServerCommands.lua")
-Ext.Require("Server/OsirisHelpers.lua")
 Ext.Require("Server/Versioning.lua")
 Ext.Require("Server/Debug/ConsoleCommands.lua")
 if Vars.DebugMode then

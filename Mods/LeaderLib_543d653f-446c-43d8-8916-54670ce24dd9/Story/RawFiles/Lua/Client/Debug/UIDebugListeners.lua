@@ -148,9 +148,10 @@ local defaultIgnored = {
 }
 
 local lastTimeSinceIgnored = {}
+local version = Ext.Version()
 
 ---@param ui UIObject
-Ext.RegisterListener("UICall", function(ui, event, ...)
+Ext.RegisterListener("UICall", function(ui, event, arg1, ...)
 	if defaultIgnored[event] then
 		return
 		-- local lastTime = lastTimeSinceIgnored[event] or 0
@@ -162,22 +163,33 @@ Ext.RegisterListener("UICall", function(ui, event, ...)
 	local t = ui:GetTypeId()
 	local listener = typeListeners[t]
 	if listener then
-		OnUIListener(listener, "call", ui, event, ...)
+		if version < 56 then
+			OnUIListener(listener, "call", ui, event, arg1, ...)
+		else
+			--arg1 is "When" now.
+			OnUIListener(listener, "call", ui, event, ...)
+		end
 	end
 end)
 
-Ext.RegisterListener("UIInvoke", function(ui, event, ...)
+Ext.RegisterListener("UIInvoke", function(ui, event, arg1, ...)
 	if defaultIgnored[event] then
-		local lastTime = lastTimeSinceIgnored[event] or 0
-		if Ext.MonotonicTime() - lastTime < 1000 then
-			lastTimeSinceIgnored[event] = Ext.MonotonicTime()
-			return
-		end
+		return
+		-- local lastTime = lastTimeSinceIgnored[event] or 0
+		-- if Ext.MonotonicTime() - lastTime < 1000 then
+		-- 	lastTimeSinceIgnored[event] = Ext.MonotonicTime()
+		-- 	return
+		-- end
 	end
 	local t = ui:GetTypeId()
 	local listener = typeListeners[t]
 	if listener then
-		OnUIListener(listener, "method", ui, event, ...)
+		if version < 56 then
+			OnUIListener(listener, "method", ui, event, arg1, ...)
+		else
+			--arg1 is "When" now.
+			OnUIListener(listener, "method", ui, event, ...)
+		end
 	end
 end)
 
@@ -222,6 +234,7 @@ local possessionBar = UIListenerWrapper:Create(Data.UIType.possessionBar)
 local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
 local reward = UIListenerWrapper:Create(Data.UIType.reward, enabledParam)
 local reward_c = UIListenerWrapper:Create(Data.UIType.reward_c, enabledParam)
+local optionsSettings = UIListenerWrapper:Create(Data.UIType.optionsSettings, enabledParam)
 local skills = UIListenerWrapper:Create(Data.UIType.skills)
 local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole)
 local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip)

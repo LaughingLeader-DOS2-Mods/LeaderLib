@@ -67,7 +67,7 @@ package
 			}
 		}
 		
-		public function handleEvent(eventId:String, param2:Boolean) : Boolean
+		public function handleEvent(eventId:String, isDown:Boolean) : Boolean
 		{
 			var isHandled:Boolean = false;
 			switch(eventId)
@@ -95,7 +95,7 @@ package
 			return isHandled;
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.label_txt.filters = textEffect.createStrokeFilter(0,1.2,1,1.4,3);
 			this.textY = 24;

@@ -134,7 +134,7 @@ local function CreateModMenuButton(ui, method, ...)
 		---@type MainMenuMC
 		local mainMenu = main.mainMenu_mc
 		if mainMenu then
-			mainMenu.addOptionButton(ModMenuTabButtonText.Value, "switchToModMenu", MOD_MENU_ID, switchToModMenu)
+			mainMenu.addOptionButton(ModMenuTabButtonText.Value, "switchToModMenu", MOD_MENU_ID, switchToModMenu, true)
 			if switchToModMenu then
 				--ui:ExternalInterfaceCall("switchMenu", MOD_MENU_ID)
 				main.clearAll()
@@ -158,8 +158,7 @@ end
 local function CreateModMenuButton_Controller(ui, method, ...)
 	local main = ui:GetRoot()
 	if main ~= nil then
-		main.addMenuButton(MOD_MENU_ID, ModMenuTabButtonText.Value, ModMenuTabButtonTooltip.Value, true)
-
+		main.addMenuButton(MOD_MENU_ID, ModMenuTabButtonText.Value, true, ModMenuTabButtonTooltip.Value)
 		local arr = main.mainMenu_mc.btnList.content_array
 		for i=0,#arr do
 			local button = arr[i]
@@ -169,7 +168,7 @@ local function CreateModMenuButton_Controller(ui, method, ...)
 			end
 		end
 	else
-		ui:Invoke("addMenuButton", MOD_MENU_ID, ModMenuTabButtonText.Value, ModMenuTabButtonTooltip.Value, true)
+		ui:Invoke("addMenuButton", MOD_MENU_ID, ModMenuTabButtonText.Value, true, ModMenuTabButtonTooltip.Value)
 	end
 end
 
@@ -309,12 +308,22 @@ local function OnSwitchMenu(ui, call, id)
 	end
 end
 
+local function OnUpdateArrayParsingStarted(ui, call, arrayName)
+	if arrayName == "baseUpdate_Array" then
+		CreateModMenuButton(ui, call, arrayName)
+	end
+end
+
 local function OnUpdateArrayParsed(ui, call, arrayName)
 	if arrayName == "baseUpdate_Array" then
 		if currentMenu == LarianMenuID.Gameplay then
 			GameSettingsMenu.SetScrollPosition(ui)
 		end
+		CreateModMenuButton(ui, call, arrayName)
+
 		ui:GetRoot().positionElements()
+	else
+	
 	end
 end
 
@@ -484,8 +493,9 @@ Ext.RegisterListener("SessionLoaded", function()
 		local gameButtonText = Ext.GetTranslatedString("h12fb7af4ga5abg47f4g9120ga63d33b2b71d", "Game")
 		Ext.RegisterUINameInvokeListener("addMenuButton", function(invokedUI, method, id, label, tooltip, enabled)
 			if id == 4 and label == gameButtonText then
-				UIExtensions.StartTimer("addModMenuOptionsButton", 10, function()
-					local ui = Ext.GetUIByType(Data.UIType.mainMenu_c) or invokedUI
+				local typeId = invokedUI:GetTypeId()
+				Timer.StartOneshot("addModMenuOptionsButton", 10, function()
+					local ui = Ext.GetUIByType(Data.UIType.mainMenu_c) or Ext.GetUIByType(typeId)
 					if ui ~= nil then
 						CreateModMenuButton_Controller(ui, method)
 					end
@@ -649,6 +659,7 @@ Ext.RegisterListener("SessionLoaded", function()
 
 		-- LeaderLib additions
 		Ext.RegisterUITypeCall(uiType, "controlAdded", onControlAdded)
+		Ext.RegisterUITypeCall(uiType, "arrayParsing", OnUpdateArrayParsingStarted)
 		Ext.RegisterUITypeCall(uiType, "arrayParsed", OnUpdateArrayParsed)
 		Ext.RegisterUITypeCall(uiType, "llbuttonPressed", OnButton)
 		Ext.RegisterUITypeCall(uiType, "llmenuSliderID", OnSlider)

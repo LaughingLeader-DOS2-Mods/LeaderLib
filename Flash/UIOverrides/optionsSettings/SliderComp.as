@@ -118,7 +118,7 @@ package
 			return isHandled;
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.slider_mc.addEventListener(Event.CHANGE,this.onChange);
 			this.slider_mc.addEventListener("handleReleased",this.onHandleUp);

@@ -58,24 +58,65 @@ package optionsSettings_fla
 			this.list.mouseWheelEnabled = param1;
 		}
 		
-		public function addOptionButton(param1:String, param2:String, param3:Number, param4:Boolean) : *
+		public function moveOptionButtonTo(id:Number, index:Number = 0) : *
 		{
-			var text:String = param1;
-			var callBack:String = param2;
-			var buttonID:Number = param3;
-			var isCurrent:Boolean = param4;
-			var btn:MovieClip = new menuButton();
-			btn.interactiveTextOnClick = true;
-			btn.SND_Click = "UI_Gen_BigButton_Click";
-			btn.initialize(text.toUpperCase(),function(param1:Array):*
+			var btn:MovieClip = this.menuBtnList.getElementByNumber("buttonID", id);
+			if (btn != null)
 			{
-				ExternalInterface.call(callBack,buttonID);
-			},null,isCurrent,-1,isCurrent);
-			btn.buttonID = buttonID;
-			this.menuBtnList.addElement(btn,true);
-			this.menuButtonContainer_mc.x = this.menuButtonContainerCenterPos.x - this.menuBtnList.width * 0.5;
-			this.menuButtonContainer_mc.y = this.menuButtonContainerCenterPos.y;
-			ExternalInterface.call("controlAdded", "optionButton", btn.buttonID, btn.list_pos, "menuBtnList");
+				this.menuBtnList.content_array.splice(btn.list_pos, 1);
+				if (index <= 0)
+				{
+					this.menuBtnList.content_array.unshift(btn);
+				}
+				else
+				{
+					this.menuBtnList.content_array.splice(index, 1, btn);
+				}
+				btn.list_pos = index;
+				var i:uint = 0;
+				while(i < this.menuBtnList.content_array.length)
+				{
+					btn = this.menuBtnList.content_array[i];
+					if (btn != null)
+					{
+						btn.list_pos = i;
+					}
+					i++;
+				}
+			}
+		}
+
+		public function addOptionButton(label:String, actionID:String, buttonID:Number, isCurrent:Boolean, addToStart:Boolean = false) : *
+		{
+			var btn:MovieClip = this.menuBtnList.getElementByNumber("buttonID", buttonID);
+			if (btn == null)
+			{
+				btn = new menuButton();
+				btn.interactiveTextOnClick = true;
+				btn.SND_Click = "UI_Gen_BigButton_Click";
+				btn.initialize(label.toUpperCase(),function(arr:Array):*
+				{
+					ExternalInterface.call(actionID,buttonID);
+				},null,isCurrent,-1,isCurrent);
+				btn.buttonID = buttonID;
+				if(addToStart) {
+					this.menuBtnList.addElementToFront(btn, true);
+					btn.list_id = 0;
+				} else {
+					this.menuBtnList.addElement(btn,true);
+				}
+				this.menuButtonContainer_mc.x = this.menuButtonContainerCenterPos.x - this.menuBtnList.width * 0.5;
+				this.menuButtonContainer_mc.y = this.menuButtonContainerCenterPos.y;
+				ExternalInterface.call("controlAdded", "optionButton", btn.buttonID, btn.list_pos, "menuBtnList");
+			}
+			else
+			{
+				btn.text_txt.htmlText = label.toUpperCase();
+				// btn.bg_mc.visible = !isCurrent;
+				// btn.activeBG_mc.visible = isCurrent;
+				// btn.m_Active = isCurrent;
+				// btn.setEnabled(!isCurrent);
+			}
 		}
 		
 		public function cancelPressed() : *
@@ -562,22 +603,22 @@ package optionsSettings_fla
 			this.maxWidth = 0;
 		}
 		
-		public function resetMenuButtons(param1:Number) : *
+		public function resetMenuButtons(activeButtonID:Number) : *
 		{
-			var val3:uint = 0;
-			var val4:MovieClip = null;
-			var val2:Number = this.menuBtnList.length;
-			if(val2 > 0)
+			var i:uint = 0;
+			var btn:MovieClip = null;
+			var length:Number = this.menuBtnList.length;
+			if(length > 0)
 			{
-				val3 = 0;
-				while(val3 < val2)
+				i = 0;
+				while(i < length)
 				{
-					val4 = this.menuBtnList.getAt(val3);
-					if(val4 && val4.buttonID != param1)
+					btn = this.menuBtnList.getAt(i);
+					if(btn && btn.buttonID != activeButtonID)
 					{
-						val4.setActive(false);
+						btn.setActive(false);
 					}
-					val3++;
+					i++;
 				}
 			}
 		}
@@ -617,7 +658,7 @@ package optionsSettings_fla
 			}
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.title_txt.filters = textEffect.createStrokeFilter(0,2,0.75,1.4,3);
 			this.cancel_mc.text_txt.filters = textEffect.createStrokeFilter(0,2,0.75,1.4,3);

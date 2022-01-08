@@ -27,6 +27,9 @@ package optionsSettings_fla
 		public const anchorPos:String = "center";
 		public const anchorTPos:String = "center";
 		public const anchorTarget:String = "screen";
+
+		//LeaderLib
+		public var addedModSettingsButton:Boolean = false;
 		
 		public function MainTimeline()
 		{
@@ -155,6 +158,9 @@ package optionsSettings_fla
 		
 		public function parseBaseUpdateArray() : *
 		{
+			//ExternalInterface.call("arrayParsing", "baseUpdate_Array");
+			this.addModSettingsButton();
+
 			var val2:uint = 0;
 			var val3:Number = NaN;
 			var val4:String = null;
@@ -173,7 +179,7 @@ package optionsSettings_fla
 							val3 = this.baseUpdate_Array[val2++];
 							val4 = this.baseUpdate_Array[val2++];
 							val5 = this.baseUpdate_Array[val2++];
-							this.mainMenu_mc.addOptionButton(val4,"switchMenu",val3,val5);
+							this.addOptionButton(val4,"switchMenu",val3,val5);
 							continue;
 						case 1:
 							val6 = this.baseUpdate_Array[val2++];
@@ -291,11 +297,13 @@ package optionsSettings_fla
 		
 		public function closeMenu() : *
 		{
+			this.addedModSettingsButton = false;
 			this.mainMenu_mc.closeMenu();
 		}
 		
 		public function cancelChanges() : *
 		{
+			this.addedModSettingsButton = false;
 			this.mainMenu_mc.cancelPressed();
 		}
 		
@@ -348,10 +356,24 @@ package optionsSettings_fla
 		{
 			this.mainMenu_mc.setMenuSlider(param1,param2);
 		}
-		
-		public function addOptionButton(param1:String, param2:String, param3:Function, param4:Boolean) : *
+
+		public function addModSettingsButton(force:Boolean = false) : void
 		{
-			this.mainMenu_mc.addOptionButton(param1,param2,param3,param4);
+			if(!addModSettingsButton || force)
+			{
+				this.mainMenu_mc.addOptionButton("Mod Settings", "switchToModMenu", 210, false);
+				this.addedModSettingsButton = true;
+			}
+		}
+		
+		public function addOptionButton(label:String, actionID:String, id:Number, isCurrent:Boolean, addToStart:Boolean = false) : *
+		{
+			this.mainMenu_mc.addOptionButton(label, actionID, id, isCurrent, addToStart);
+		}
+		
+		public function moveOptionButtonTo(id:Number, index:Number) : *
+		{
+			this.mainMenu_mc.moveOptionButtonTo(id, index);
 		}
 		
 		public function setButtonEnabled(param1:Number, param2:Boolean) : *
@@ -409,9 +431,10 @@ package optionsSettings_fla
 			}
 		}
 		
-		public function resetMenuButtons(param1:Number) : *
+		public function resetMenuButtons(activeButtonID:Number) : *
 		{
-			this.mainMenu_mc.resetMenuButtons(param1);
+			this.addedModSettingsButton = false;
+			this.mainMenu_mc.resetMenuButtons(activeButtonID);
 		}
 
 		// LeaderLib Addition
@@ -477,7 +500,7 @@ package optionsSettings_fla
 			}
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.events = new Array("IE UIUp","IE UIDown","IE UICancel", "IE UILeft", "IE UIRight");
 			this.layout = "fixed";
@@ -487,6 +510,7 @@ package optionsSettings_fla
 			this.baseUpdate_Array = new Array();
 			this.button_array = new Array(this.mainMenu_mc.ok_mc,this.mainMenu_mc.cancel_mc,this.mainMenu_mc.apply_mc);
 			this.enableButtonOverride_array = new Array(false,false,false);
+			this.addedModSettingsButton = false;
 		}
 	}
 }

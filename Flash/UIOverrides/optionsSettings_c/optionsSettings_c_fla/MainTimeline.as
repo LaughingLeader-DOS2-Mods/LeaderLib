@@ -19,6 +19,9 @@ package optionsSettings_c_fla
 		public const anchorPos:String = "center";
 		public const anchorTPos:String = "center";
 		public const anchorTarget:String = "screen";
+
+		//LeaderLib
+		public var addedModSettingsButton:Boolean = false;
 		
 		public function MainTimeline()
 		{
@@ -382,6 +385,10 @@ package optionsSettings_c_fla
 		//LeaderLib: Added tooltip
 		public function addMenuButton(id:Number, displayName:String, enabled:Boolean, tooltip:String="") : *
 		{
+			if(!this.addedModSettingsButton) {
+				this.mainMenu_mc.addMenuButton(210, "Mod Settings", true, "Various mod options for active mods.");
+				this.addedModSettingsButton = true;
+			}
 			this.mainMenu_mc.addMenuButton(id,displayName,enabled,tooltip);
 		}
 		
@@ -404,6 +411,7 @@ package optionsSettings_c_fla
 		
 		public function resetMenuButtons() : *
 		{
+			this.addedModSettingsButton = false;
 		}
 
 		// LeaderLib Addition
@@ -468,7 +476,7 @@ package optionsSettings_c_fla
 			this.removeItems();
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.events = new Array("IE UIUp","IE UIDown","IE UICancel","IE UIAccept","IE UILeft","IE UIRight","IE UIShowInfo","IE UISetSlot");
 			this.layout = "fitVertical";

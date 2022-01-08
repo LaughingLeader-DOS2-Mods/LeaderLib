@@ -179,7 +179,7 @@ package
 			return val3;
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.selList.addEventListener(Event.CHANGE,this.onChange);
 			this.selList.m_cyclic = true;

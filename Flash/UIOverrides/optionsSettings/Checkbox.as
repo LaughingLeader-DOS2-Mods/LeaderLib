@@ -93,7 +93,7 @@ package
 			this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 			this.mHeight = 30;

@@ -544,33 +544,48 @@ package optionsSettings_c_fla
 		
 		public function addMenuButton(id:Number, displayName:String, enabled:Boolean, tooltip:String = "") : *
 		{
-			var button:MovieClip = new Menu_button();
-			button.heightOverride = this.elementHeight;
-			button.x = this.elementX;
-			button.label_txt.htmlText = displayName;
-			button.id = id;
-			button.name = "item" + this.list.length + "_mc";
-			if (tooltip != "") {
-				button.enabledTooltip = tooltip;
-				button.onOver = this.ddShowTooltip;
-				button.onOut = this.ddHideTooltip;
-			}
-			if(button.label_txt.textWidth > this.minWidth)
+			var button:MovieClip = this.list.getElementByNumber("id", id);
+			if (button == null)
 			{
-				if(this.maxWidth < button.label_txt.textWidth)
-				{
-					this.maxWidth = button.label_txt.textWidth;
+				button = new Menu_button();
+				button.heightOverride = this.elementHeight;
+				button.x = this.elementX;
+				button.label_txt.htmlText = displayName;
+				button.id = id;
+				button.name = "item" + this.list.length + "_mc";
+				if (tooltip != "") {
+					button.enabledTooltip = tooltip;
+					button.onOver = this.ddShowTooltip;
+					button.onOut = this.ddHideTooltip;
 				}
+				if(button.label_txt.textWidth > this.minWidth)
+				{
+					if(this.maxWidth < button.label_txt.textWidth)
+					{
+						this.maxWidth = button.label_txt.textWidth;
+					}
+				}
+				else
+				{
+					this.maxWidth = this.minWidth;
+				}
+				button.disable_mc.visible = !enabled;
+				button.bg_mc.visible = enabled;
+				this.list.addElement(button);
+				this.resetBG();
+				ExternalInterface.call("controlAdded", "button", button.id, button.list_pos, "list");
 			}
 			else
 			{
-				this.maxWidth = this.minWidth;
+				button.label_txt.htmlText = displayName;
+				if (tooltip != "") {
+					button.enabledTooltip = tooltip;
+					button.onOver = this.ddShowTooltip;
+					button.onOut = this.ddHideTooltip;
+				}
+				button.disable_mc.visible = !enabled;
+				button.bg_mc.visible = enabled;
 			}
-			button.disable_mc.visible = !enabled;
-			button.bg_mc.visible = enabled;
-			this.list.addElement(button);
-			this.resetBG();
-			ExternalInterface.call("controlAdded", "button", button.id, button.list_pos, "list");
 		}
 		
 		public function setButtonEnabled(param1:Number, param2:Boolean) : *
@@ -627,7 +642,7 @@ package optionsSettings_c_fla
 			this.maxWidth = 0;
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.title_txt.filters = textEffect.createStrokeFilter(0,1.2,1,1.4,3);
 			this.checkBoxOptions = new Array();

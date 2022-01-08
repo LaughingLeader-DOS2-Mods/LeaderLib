@@ -87,7 +87,7 @@ package
 			this.base.curTooltip = -1;
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.label_txt.filters = textEffect.createStrokeFilter(0,2,0.75,1.4,3);
 			this.textY = 20;

@@ -49,7 +49,7 @@ package
 			this.base.curTooltip = -1;
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 			this.label_txt.filters = textEffect.createStrokeFilter(0,1.2,1,1.4,3);

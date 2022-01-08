@@ -64,7 +64,7 @@ package
 			this.base.curTooltip = -1;
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 			addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);

@@ -61,7 +61,7 @@ package
 			this.base.curTooltip = -1;
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.selList.addEventListener(Event.CHANGE,this.onChange);
 			this.base = root as MovieClip;

@@ -440,7 +440,7 @@ LocalizedText.CombatLog = {
 ---@param resistance string
 ---@param amount integer
 ---@return string
-local function GetResistanceText(resistance, amount)
+function GameHelpers.GetResistanceText(resistance, amount)
 	---@type ResistanceTextEntry
 	local entry = LocalizedText.ResistanceNames[resistance]
 	if entry == nil then
@@ -465,12 +465,10 @@ local function GetResistanceText(resistance, amount)
 	return ""
 end
 
-GameHelpers.GetResistanceText = GetResistanceText
-
 ---Get the localized resistance name for a damage type.
 ---@param damageType string
 ---@return string
-local function GetResistanceNameFromDamageType(damageType)
+function GameHelpers.GetResistanceNameFromDamageType(damageType)
 	local resistance = Data.DamageTypeToResistanceWithExtras[damageType]
 	if resistance ~= nil then
 		local entry = LocalizedText.ResistanceNames[resistance]
@@ -482,5 +480,3 @@ local function GetResistanceNameFromDamageType(damageType)
 	end
 	return ""
 end
-
-GameHelpers.GetResistanceNameFromDamageType = GetResistanceNameFromDamageType

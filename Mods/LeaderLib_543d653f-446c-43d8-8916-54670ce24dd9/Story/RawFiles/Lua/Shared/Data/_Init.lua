@@ -138,7 +138,7 @@ Data.DamageTypeToResistanceWithExtras = {
 	Sentinel = "SentinelResistance",
 }
 
-setmetatable(Data.DamageTypeToResistanceWithExtras, Data.DamageTypeToResistance)
+setmetatable(Data.DamageTypeToResistanceWithExtras, {__index = Data.DamageTypeToResistance})
 
 Data.DamageTypes = setmetatable({},{__index = damageTypes})
 function Data.DamageTypes:Get()

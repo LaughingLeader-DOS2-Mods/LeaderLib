@@ -87,14 +87,14 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 
 		if Features.ResistancePenetration == true then
 			-- Resistance Penetration display
-			if item:HasTag("LeaderLib_HasResistancePenetration") then
+			if GameHelpers.ItemHasTag(item, "LeaderLib_HasResistancePenetration") then
 				local tagsCheck = {}
 				for _,damageType in Data.DamageTypes:Get() do
 					local tags = Data.ResistancePenetrationTags[damageType]
 					if tags ~= nil then
 						local totalResPen = 0
 						for i,tagEntry in pairs(tags) do
-							if item:HasTag(tagEntry.Tag) then
+							if GameHelpers.ItemHasTag(item, tagEntry.Tag) then
 								totalResPen = totalResPen + tagEntry.Amount
 								tagsCheck[#tagsCheck+1] = tagEntry.Tag
 							end
@@ -103,13 +103,15 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 						if totalResPen > 0 then
 							local tString = LocalizedText.ItemBoosts.ResistancePenetration
 							local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
-							local result = tString:ReplacePlaceholders(GameHelpers.GetResistanceNameFromDamageType(damageType))
-							local element = {
-								Type = "ResistanceBoost",
-								Label = result,
-								Value = totalResPen,
-							}
-							tooltip:AppendElement(element)
+							if not StringHelpers.IsNullOrWhitespace(resistanceText) then
+								local result = tString:ReplacePlaceholders(resistanceText)
+								local element = {
+									Type = "ResistanceBoost",
+									Label = result,
+									Value = totalResPen,
+								}
+								tooltip:AppendElement(element)
+							end
 						end
 					end
 				end

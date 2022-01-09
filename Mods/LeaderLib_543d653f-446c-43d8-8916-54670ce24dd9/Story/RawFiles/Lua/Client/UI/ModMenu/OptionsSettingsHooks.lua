@@ -76,9 +76,9 @@ local function SetCurrentMenu(id)
 	if currentMenu ~= id then
 		lastMenu = currentMenu
 		currentMenu = math.floor(id)
-		if Vars.DebugMode then
-			fprint(LOGLEVEL.WARNING, "[LeaderLib] Options menu changed: lastMenu(%s) currentMenu(%s)", lastMenu, currentMenu)
-		end
+		-- if Vars.DebugMode then
+		-- 	fprint(LOGLEVEL.WARNING, "[LeaderLib] Options menu changed: lastMenu(%s) currentMenu(%s)", lastMenu, currentMenu)
+		-- end
 	end
 end
 

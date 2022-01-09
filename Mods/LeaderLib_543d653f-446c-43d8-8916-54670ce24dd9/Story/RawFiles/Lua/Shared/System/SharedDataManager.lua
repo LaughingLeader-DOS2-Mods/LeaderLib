@@ -499,6 +499,10 @@ if isClient then
 			if Client.Character.NetID ~= last then
 				ActiveCharacterChanged(Client.Character, last)
 			end
+			if not Vars.Initialized then
+				InvokeListenerCallbacks(Listeners.Initialized, SharedData.RegionData.Current)
+				Vars.Initialized = true
+			end
 			InvokeListenerCallbacks(Listeners.RegionChanged, SharedData.RegionData.State, SharedData.RegionData.Current, SharedData.RegionData.LevelType)
 			return true
 		else

@@ -8,7 +8,7 @@ package optionsSettings_fla
 	
 	public dynamic class MainTimeline extends MovieClip
 	{
-		public var mainMenu_mc:MovieClip;
+		public var mainMenu_mc:overview_mc_1;
 		public var selectedInfo_txt:TextField;
 		public var events:Array;
 		public var layout:String;
@@ -264,20 +264,20 @@ package optionsSettings_fla
 			return this.mainMenu_mc.width;
 		}
 		
-		public function setX(param1:Number) : void
+		public function setX(xPos:Number) : void
 		{
-			this.mainMenu_mc.x = param1;
+			this.mainMenu_mc.x = xPos;
 		}
 		
-		public function setY(param1:Number) : void
+		public function setY(yPos:Number) : void
 		{
-			this.mainMenu_mc.y = param1;
+			this.mainMenu_mc.y = yPos;
 		}
 		
-		public function setPos(param1:Number, param2:Number) : void
+		public function setPos(xPos:Number, yPos:Number) : void
 		{
-			this.mainMenu_mc.x = param1;
-			this.mainMenu_mc.y = param2;
+			this.mainMenu_mc.x = xPos;
+			this.mainMenu_mc.y = yPos;
 		}
 		
 		public function getX() : Number
@@ -307,24 +307,24 @@ package optionsSettings_fla
 			this.mainMenu_mc.cancelPressed();
 		}
 		
-		public function addMenuInfoLabel(param1:Number, param2:String, param3:String) : *
+		public function addMenuInfoLabel(id:Number, displayName:String, infoText:String) : *
 		{
-			this.mainMenu_mc.addMenuInfoLabel(param1,param2,param3);
+			this.mainMenu_mc.addMenuInfoLabel(id,displayName,infoText);
 		}
 		
-		public function setMenuCheckbox(param1:Number, param2:Boolean, param3:Number) : *
+		public function setMenuCheckbox(id:Number, param2:Boolean, param3:Number) : *
 		{
-			this.mainMenu_mc.setMenuCheckbox(param1,param2,param3);
+			this.mainMenu_mc.setMenuCheckbox(id,param2,param3);
 		}
 		
-		public function addMenuSelector(param1:Number, param2:String) : *
+		public function addMenuSelector(id:Number, param2:String) : *
 		{
-			this.mainMenu_mc.addMenuSelector(param1,param2);
+			this.mainMenu_mc.addMenuSelector(id,param2);
 		}
 		
-		public function addMenuSelectorEntry(param1:Number, param2:String) : *
+		public function addMenuSelectorEntry(id:Number, param2:String) : *
 		{
-			this.mainMenu_mc.addMenuSelectorEntry(param1,param2);
+			this.mainMenu_mc.addMenuSelectorEntry(id,param2);
 		}
 
 		public function addMenuButton(id:Number, label:String, clickSound:String, enabled:Boolean, tooltip:String) : *
@@ -332,29 +332,29 @@ package optionsSettings_fla
 			this.mainMenu_mc.addMenuButton(id, label, clickSound, enabled, tooltip);
 		}
 		
-		public function selectMenuDropDownEntry(param1:Number, param2:Number) : *
+		public function selectMenuDropDownEntry(id:Number, param2:Number) : *
 		{
-			this.mainMenu_mc.selectMenuDropDownEntry(param1,param2);
+			this.mainMenu_mc.selectMenuDropDownEntry(id,param2);
 		}
 		
-		public function clearMenuDropDownEntries(param1:Number) : *
+		public function clearMenuDropDownEntries(id:Number) : *
 		{
-			this.mainMenu_mc.clearMenuDropDownEntries(param1);
+			this.mainMenu_mc.clearMenuDropDownEntries(id);
 		}
 		
-		public function setMenuDropDownEnabled(param1:Number, param2:Boolean) : *
+		public function setMenuDropDownEnabled(id:Number, param2:Boolean) : *
 		{
-			this.mainMenu_mc.setMenuDropDownEnabled(param1,param2);
+			this.mainMenu_mc.setMenuDropDownEnabled(id,param2);
 		}
 		
-		public function setMenuDropDownDisabledTooltip(param1:Number, param2:String) : *
+		public function setMenuDropDownDisabledTooltip(id:Number, param2:String) : *
 		{
-			this.mainMenu_mc.setMenuDropDownDisabledTooltip(param1,param2);
+			this.mainMenu_mc.setMenuDropDownDisabledTooltip(id,param2);
 		}
 		
-		public function setMenuSlider(param1:Number, param2:Number) : *
+		public function setMenuSlider(id:Number, param2:Number) : *
 		{
-			this.mainMenu_mc.setMenuSlider(param1,param2);
+			this.mainMenu_mc.setMenuSlider(id,param2);
 		}
 
 		public function addModSettingsButton(force:Boolean = false) : void
@@ -376,9 +376,9 @@ package optionsSettings_fla
 			this.mainMenu_mc.moveOptionButtonTo(id, index);
 		}
 		
-		public function setButtonEnabled(param1:Number, param2:Boolean) : *
+		public function setButtonEnabled(id:Number, enabled:Boolean) : *
 		{
-			this.mainMenu_mc.setButtonEnabled(param1,param2);
+			this.mainMenu_mc.setButtonEnabled(id, enabled);
 		}
 		
 		public function removeItems() : *

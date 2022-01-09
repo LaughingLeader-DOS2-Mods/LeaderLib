@@ -216,61 +216,61 @@ package optionsSettings_fla
 			}
 		}
 		
-		public function addMenuInfoLabel(param1:Number, param2:String, param3:String) : *
+		public function addMenuInfoLabel(id:Number, displayName:String, infoText:String) : *
 		{
-			var val4:MovieClip = this.getElementByID(param1);
-			if(!val4)
+			var label_mc:MovieClip = this.getElementByID(id);
+			if(!label_mc)
 			{
-				val4 = new LabelInfo();
-				val4.id = param1;
-				val4.info_txt.autoSize = TextFieldAutoSize.LEFT;
+				label_mc = new LabelInfo();
+				label_mc.id = id;
+				label_mc.info_txt.autoSize = TextFieldAutoSize.LEFT;
 			}
-			if(val4)
+			if(label_mc)
 			{
-				val4.x = this.elementX;
-				val4.label_txt.htmlText = param2;
-				val4.info_txt.htmlText = param3;
-				val4.name = "item" + this.list.length + "_mc";
-				this.totalHeight = this.totalHeight + (val4.mHeight + this.elementHSpacing);
-				if(val4.label_txt.textWidth > this.minWidth)
+				label_mc.x = this.elementX;
+				label_mc.label_txt.htmlText = displayName;
+				label_mc.info_txt.htmlText = infoText;
+				label_mc.name = "item" + this.list.length + "_mc";
+				this.totalHeight = this.totalHeight + (label_mc.mHeight + this.elementHSpacing);
+				if(label_mc.label_txt.textWidth > this.minWidth)
 				{
-					if(this.maxWidth < val4.label_txt.textWidth)
+					if(this.maxWidth < label_mc.label_txt.textWidth)
 					{
-						this.maxWidth = val4.label_txt.textWidth;
+						this.maxWidth = label_mc.label_txt.textWidth;
 					}
 				}
 				else
 				{
 					this.maxWidth = this.minWidth;
 				}
-				this.list.addElement(val4);
+				this.list.addElement(label_mc);
 				this.HLCounter = 0;
-				ExternalInterface.call("controlAdded", "menuInfoLabel", val4.id, val4.list_pos, "list");
+				ExternalInterface.call("controlAdded", "menuInfoLabel", label_mc.id, label_mc.list_pos, "list");
 			}
 		}
 		
 		public function addMenuLabel(text:String) : *
 		{
-			var val2:MovieClip = new Label();
-			val2.x = this.elementX;
-			val2.label_txt.htmlText = text;
-			val2.name = "item" + this.list.length + "_mc";
+			var label_mc:MovieClip = new Label();
+			label_mc.x = this.elementX;
+			label_mc.label_txt.htmlText = text;
+			label_mc.name = "item" + this.list.length + "_mc";
 			//val2.mHeight = 40;
-			this.totalHeight = this.totalHeight + (val2.mHeight + this.elementHSpacing);
-			if(val2.label_txt.textWidth > this.minWidth)
+			this.totalHeight = this.totalHeight + (label_mc.mHeight + this.elementHSpacing);
+			if(label_mc.label_txt.textWidth > this.minWidth)
 			{
-				if(this.maxWidth < val2.label_txt.textWidth)
+				if(this.maxWidth < label_mc.label_txt.textWidth)
 				{
-					this.maxWidth = val2.label_txt.textWidth;
+					this.maxWidth = label_mc.label_txt.textWidth;
 				}
 			}
 			else
 			{
 				this.maxWidth = this.minWidth;
 			}
-			this.list.addElement(val2);
+			this.list.addElement(label_mc);
 			this.HLCounter = 0;
-			ExternalInterface.call("controlAdded", "menuLabel", val2.name, val2.list_pos, "list", text);
+			ExternalInterface.call("controlAdded", "menuLabel", label_mc.name, label_mc.list_pos, "list", text);
 		}
 		
 		public function addMenuSelector(param1:Number, param2:String) : *
@@ -279,66 +279,66 @@ package optionsSettings_fla
 		
 		public function addMenuSelectorEntry(param1:Number, param2:String) : *
 		{
-			var val4:MovieClip = null;
-			var val3:MovieClip = this.getElementByID(param1);
-			if(val3)
+			var select_mc:MovieClip = null;
+			var selector_mc:MovieClip = this.getElementByID(param1);
+			if(selector_mc)
 			{
-				val4 = new SelectElement();
-				val4.label_txt.htmlText = param2;
-				val3.selList.addElement(val4);
-				ExternalInterface.call("controlAdded", "menuLabel", val4.id, val4.list_pos, "selList", param1);
+				select_mc = new SelectElement();
+				select_mc.label_txt.htmlText = param2;
+				selector_mc.selList.addElement(select_mc);
+				ExternalInterface.call("controlAdded", "menuLabel", select_mc.id, select_mc.list_pos, "selList", param1);
 			}
 		}
 		
-		public function onComboClose(param1:Event) : *
+		public function onComboClose(e:Event) : *
 		{
 			(root as MovieClip).selectedInfo_txt.visible = false;
 			this.setMainScrolling(true);
 		}
 		
-		public function onComboOpen(param1:Event) : *
+		public function onComboOpen(e:Event) : *
 		{
 			this.setMainScrolling(false);
 		}
 		
-		public function onComboScrolled(param1:Event) : *
+		public function onComboScrolled(e:Event) : *
 		{
 			(root as MovieClip).selectedInfo_txt.visible = false;
 		}
 		
-		public function clearMenuDropDownEntries(param1:Number) : *
+		public function clearMenuDropDownEntries(id:Number) : *
 		{
-			var val2:MovieClip = this.getElementByID(param1);
+			var val2:MovieClip = this.getElementByID(id);
 			if(val2 && val2.combo_mc)
 			{
 				val2.combo_mc.removeAll();
 			}
 		}
 		
-		public function setMenuDropDownEnabled(param1:Number, param2:Boolean) : *
+		public function setMenuDropDownEnabled(id:Number, enabled:Boolean) : *
 		{
-			var val3:MovieClip = this.getElementByID(param1);
-			if(val3 && val3.combo_mc)
+			var dropdown_mc:MovieClip = this.getElementByID(id);
+			if(dropdown_mc && dropdown_mc.combo_mc)
 			{
-				val3.combo_mc.enabled = param2;
-				if(param2)
+				dropdown_mc.combo_mc.enabled = enabled;
+				if(enabled)
 				{
-					val3.combo_mc.alpha = 1;
+					dropdown_mc.combo_mc.alpha = 1;
 				}
 				else
 				{
-					val3.combo_mc.alpha = 0.3;
+					dropdown_mc.combo_mc.alpha = 0.3;
 				}
 			}
 		}
 		
-		public function setMenuDropDownDisabledTooltip(param1:Number, param2:String) : *
+		public function setMenuDropDownDisabledTooltip(id:Number, tooltip:String) : *
 		{
-			var val3:MovieClip = this.getElementByID(param1);
+			var val3:MovieClip = this.getElementByID(id);
 			if(val3 && val3.combo_mc)
 			{
-				val3.combo_mc.tooltip = param2;
-				if(param2 != "")
+				val3.combo_mc.tooltip = tooltip;
+				if(tooltip != "")
 				{
 					val3.combo_mc.onOver = this.ddShowTooltip;
 					val3.combo_mc.onOut = this.ddHideTooltip;
@@ -351,9 +351,9 @@ package optionsSettings_fla
 			}
 		}
 		
-		public function ddShowTooltip(param1:MouseEvent) : *
+		public function ddShowTooltip(e:MouseEvent) : *
 		{
-			var val2:MovieClip = param1.currentTarget.parent as MovieClip;
+			var val2:MovieClip = e.currentTarget.parent as MovieClip;
 			if(val2 && !val2.enabled)
 			{
 				if(val2.tooltip != null && val2.tooltip != "")
@@ -365,9 +365,9 @@ package optionsSettings_fla
 			}
 		}
 		
-		public function ddHideTooltip(param1:MouseEvent) : *
+		public function ddHideTooltip(e:MouseEvent) : *
 		{
-			var val2:MovieClip = param1.currentTarget.parent as MovieClip;
+			var val2:MovieClip = e.currentTarget.parent as MovieClip;
 			if(val2 && !val2.enabled && val2.tooltip && val2.tooltip != "")
 			{
 				if(this.base.hasTooltip)

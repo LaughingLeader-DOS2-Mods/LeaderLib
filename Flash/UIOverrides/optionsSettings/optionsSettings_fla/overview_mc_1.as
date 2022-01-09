@@ -86,7 +86,7 @@ package optionsSettings_fla
 			}
 		}
 
-		public function addOptionButton(label:String, actionID:String, buttonID:Number, isCurrent:Boolean, addToStart:Boolean = false) : *
+		public function addOptionButton(label:String, actionID:String, buttonID:Number, isCurrent:Boolean, addToStart:Boolean = false, setDisabled:Boolean = false) : *
 		{
 			var btn:MovieClip = this.menuBtnList.getElementByNumber("buttonID", buttonID);
 			if (btn == null)
@@ -112,10 +112,14 @@ package optionsSettings_fla
 			else
 			{
 				btn.text_txt.htmlText = label.toUpperCase();
-				// btn.bg_mc.visible = !isCurrent;
-				// btn.activeBG_mc.visible = isCurrent;
-				// btn.m_Active = isCurrent;
-				// btn.setEnabled(!isCurrent);
+			}
+
+			if(btn && setDisabled)
+			{
+				btn.bg_mc.visible = true;
+				btn.activeBG_mc.visible = false;
+				btn.m_Active = false;
+				btn.setEnabled(false);
 			}
 		}
 		

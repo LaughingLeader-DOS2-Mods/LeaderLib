@@ -363,7 +363,7 @@ package optionsSettings_fla
 		{
 			if(!addModSettingsButton || force)
 			{
-				this.mainMenu_mc.addOptionButton("Mod Settings", "switchToModMenu", 210, false);
+				this.mainMenu_mc.addOptionButton("Mod Settings", "switchToModMenu", this.MOD_MENU_ID, false);
 				this.addedModSettingsButton = true;
 			}
 		}

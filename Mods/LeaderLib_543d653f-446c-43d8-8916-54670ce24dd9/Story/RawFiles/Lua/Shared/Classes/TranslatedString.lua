@@ -162,7 +162,7 @@ end
 Classes["TranslatedString"] = TranslatedString
 --local TranslatedString = Classes["TranslatedString"]
 
-Ext.RegisterListener("SessionLoaded", function()
+function UpdateTranslatedStrings()
 	local length = #_translatedStringUpdate
 	for i=1,length do
 		local entry = _translatedStringUpdate[i]
@@ -170,5 +170,11 @@ Ext.RegisterListener("SessionLoaded", function()
 			TranslatedString.Update(entry)
 		end
 	end
-	fprint(LOGLEVEL.TRACE, "[LeaderLib:TranslatedString:%s] Updated %s TranslatedString entries.", Ext.IsClient and "CLIENT" or "SERVER", length)
-end)
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:TranslatedString:%s] Updated %s TranslatedString entries.", Ext.IsClient() and "CLIENT" or "SERVER", length)
+end
+
+if not Vars.IsEditorMode then
+	Ext.RegisterListener("SessionLoaded", UpdateTranslatedStrings)
+else
+	RegisterListener("Initialized", UpdateTranslatedStrings)
+end

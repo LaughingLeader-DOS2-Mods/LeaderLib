@@ -30,7 +30,7 @@ package optionsSettings_fla
 		public const menuButtonContainerCenterPos:Point = new Point(176,156);
 		public var closeTimeLine:larTween;
 		public var opened:Boolean;
-		public var Root;
+		public var Root:MovieClip;
 		public var selectedID:Number;
 		public var totalHeight:Number;
 		public var maxWidth:Number;
@@ -126,18 +126,36 @@ package optionsSettings_fla
 		
 		public function applyPressed() : *
 		{
-			ExternalInterface.call("applyPressed");
-			ExternalInterface.call("PlaySound","UI_Gen_Apply");
-			this.apply_mc.onOut();
-			if (this.applyCopy && this.applyCopy.bg_mc.visible)
+			if(base.currentMenuID == base.MOD_MENU_ID)
 			{
-				this.applyCopy.onOut();
+				//Prevent the engine from commiting changes from other menus
+				ExternalInterface.call("applyModMenuChanges");
+
+				if (this.applyCopy && this.applyCopy.bg_mc.visible)
+				{
+					this.applyCopy.onOut();
+				}
 			}
+			else
+			{
+				this.apply_mc.onOut();
+				ExternalInterface.call("applyPressed");
+			}
+			
+			ExternalInterface.call("PlaySound","UI_Gen_Apply");
 		}
 		
 		public function okPressed() : *
 		{
-			ExternalInterface.call("acceptPressed");
+			if(base.currentMenuID == base.MOD_MENU_ID)
+			{
+				//Prevent the engine from commiting changes from other menus
+				ExternalInterface.call("commitModMenuChanges");
+			}
+			else
+			{
+				ExternalInterface.call("acceptPressed");
+			}
 			ExternalInterface.call("PlaySound","UI_Gen_Accept");
 		}
 		

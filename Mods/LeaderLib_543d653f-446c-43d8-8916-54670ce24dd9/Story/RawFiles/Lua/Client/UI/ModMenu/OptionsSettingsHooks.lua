@@ -172,112 +172,6 @@ local function CreateModMenuButton_Controller(ui, method, ...)
 	end
 end
 
-local debugEvents = {
-	"onEventInit",
-	"parseUpdateArray",
-	"parseBaseUpdateArray",
-	"onEventResize",
-	"onEventUp",
-	"onEventDown",
-	"hideWin",
-	"showWin",
-	"getHeight",
-	"getWidth",
-	"setX",
-	"setY",
-	"setPos",
-	"getX",
-	"getY",
-	"openMenu",
-	"closeMenu",
-	"cancelChanges",
-	"addMenuInfoLabel",
-	"setMenuCheckbox",
-	"addMenuSelector",
-	"addMenuSelectorEntry",
-	"selectMenuDropDownEntry",
-	"clearMenuDropDownEntries",
-	"setMenuDropDownEnabled",
-	"setMenuDropDownDisabledTooltip",
-	"setMenuSlider",
-	"addOptionButton",
-	"setButtonEnabled",
-	"removeItems",
-	--"setButtonDisable",
-	"resetMenuButtons",
-}
-
-local debugCalls = {
-	"switchToModMenu",
-	"switchToModMenuFromInput",
-	"requestCloseUI",
-	"acceptPressed",
-	"applyPressed",
-	"checkBoxID",
-	"comboBoxID",
-	"selectorID",
-	"menuSliderID",
-	"buttonPressed",
-	"llcheckBoxID",
-	"llcomboBoxID",
-	"llselectorID",
-	"llmenuSliderID",
-	"llbuttonPressed",
-	"switchMenu",
-	--"PlaySound",
-}
-
-local debugEvents_c = {
-	"onEventInit",
-	"onEventResize",
-	"onEventUp",
-	"addingDone",
-	"addCheckBoxOptions",
-	"onEventDown",
-	"addBtnHint",
-	"clearBtnHints",
-	"hideWin",
-	"showWin",
-	"getHeight",
-	"getWidth",
-	"setX",
-	"setY",
-	"setPos",
-	"getX",
-	"getY",
-	"openMenu",
-	"closeMenu",
-	"addMenuLabel",
-	"addMenuInfoLabel",
-	"setTitle",
-	"setTopTitle",
-	"parseUpdateArray",
-	"addMenuCheckbox",
-	"setMenuCheckbox",
-	"addMenuSelector",
-	"addMenuSelectorEntry",
-	"selectMenuSelectorEntry",
-	"addMenuDropDown",
-	"addMenuDropDownEntry",
-	"selectMenuDropDownEntry",
-	"clearMenuDropDownEntries",
-	"setMenuDropDownEnabled",
-	"setMenuDropDownDisabledTooltip",
-	"addMenuSlider",
-	"setMenuSlider",
-	"addMenuButton",
-	"setButtonEnabled",
-	"setButtonText",
-	"removeItems",
-	"setButtonDisable",
-	"resetMenuButtons",
-}
-
-local debugCalls_c = {
-	"menuButtonOver",
-	"buttonPressed",
-}
-
 Ext.RegisterNetListener("LeaderLib_ModMenu_CreateMenuButton", function(cmd, payload)
 	local ui = GetOptionsGUI()
 	if ui ~= nil then
@@ -384,41 +278,10 @@ local function OnCancelChanges(ui, call)
 	OnOptionsClosed()
 end
 
-local function setupDebugListeners()
-	if Vars.DebugMode then
-		if Vars.ControllerEnabled then
-			for i,v in pairs(debugEvents_c) do
-				Ext.RegisterUINameInvokeListener(v, function(ui, ...)
-					PrintDebug(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
-				end)
-			end
-			for i,v in pairs(debugCalls_c) do
-				Ext.RegisterUINameCall(v, function(ui, ...)
-					PrintDebug(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
-				end)
-			end
-		else
-			for i,v in pairs(debugEvents) do
-				---@param ui UIObject
-				Ext.RegisterUINameInvokeListener(v, function(ui, ...)
-					PrintDebug(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
-				end)
-			end
-			for i,v in pairs(debugCalls) do
-				---@param ui UIObject
-				Ext.RegisterUINameCall(v, function(ui, ...)
-					PrintDebug(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
-				end)
-			end
-		end
-	end
-end
-
 Ext.RegisterListener("SessionLoaded", function()
 	--Override here so the settings in the main menu works
 	Ext.AddPathOverride("Public/Game/GUI/optionsSettings.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings.swf")
 	Ext.AddPathOverride("Public/Game/GUI/optionsSettings_c.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings_c.swf")
-	--setupDebugListeners()
 
 	local onMessageBoxButton = function(ui, call, id, device)
 		-- Are you sure you want to discard your changes?
@@ -651,7 +514,12 @@ Ext.RegisterListener("SessionLoaded", function()
 		Ext.RegisterUITypeCall(uiType, "requestCloseUI", OnCancelChanges)
 
 		Ext.RegisterUITypeCall(uiType, "applyPressed", OnApplyPressed)
+		Ext.RegisterUITypeCall(uiType, "applyModMenuChanges", OnApplyPressed)
 		Ext.RegisterUITypeCall(uiType, "acceptPressed", OnAcceptChanges)
+		Ext.RegisterUITypeCall(uiType, "commitModMenuChanges", function(ui, ...)
+			OnAcceptChanges(ui, ...)
+			ui:ExternalInterfaceCall("requestCloseUI");
+		end)
 
 		if not Vars.ControllerEnabled then
 			Ext.RegisterUITypeCall(uiType, "switchMenu", OnSwitchMenu)

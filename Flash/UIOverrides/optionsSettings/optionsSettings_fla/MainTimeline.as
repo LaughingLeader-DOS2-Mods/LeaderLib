@@ -30,6 +30,8 @@ package optionsSettings_fla
 
 		//LeaderLib
 		public var addedModSettingsButton:Boolean = false;
+		public var currentMenuID:Number = 0;
+		public const MOD_MENU_ID:int = 210;
 		
 		public function MainTimeline()
 		{
@@ -433,6 +435,7 @@ package optionsSettings_fla
 		
 		public function resetMenuButtons(activeButtonID:Number) : *
 		{
+			this.currentMenuID = activeButtonID;
 			this.addedModSettingsButton = false;
 			this.mainMenu_mc.resetMenuButtons(activeButtonID);
 		}

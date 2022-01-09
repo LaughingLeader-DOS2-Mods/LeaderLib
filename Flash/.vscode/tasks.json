@@ -5,7 +5,7 @@
 			"label": "Build SWF Overrides",
 			"type": "shell",
 			"command": "py",
-			"args": ["${workspaceFolder}\\build.py"],
+			"args": ["${workspaceFolder}\\UIOverrides\\build.py"],
 			"problemMatcher": [],
 			"presentation": {
 				"echo": true,

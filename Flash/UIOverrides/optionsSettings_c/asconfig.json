@@ -1,0 +1,10 @@
+{
+	"mainClass": "MainTimeline",
+	"compilerOptions": {
+		"source-path": [".", "D:\\Modding\\DOS2DE\\UI_Modding\\_GUI_FLA\\_Controller\\optionsSettings_c"],
+		"target-player": "10.3"
+	},
+	"files": [
+		"optionsSettings_c_fla/MainTimeline.as"
+	]
+}

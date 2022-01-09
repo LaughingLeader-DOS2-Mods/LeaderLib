@@ -96,8 +96,9 @@ else
 			if totalUsers <= 0 then
 				IterateUsers("LeaderLib_StoreUserData")
 			else
+				local host = CharacterGetHostCharacter()
 				if SharedData.GameMode == GAMEMODE.GAMEMASTER then
-					local gm = Ext.GetCharacter(CharacterGetHostCharacter())
+					local gm = Ext.GetCharacter(host)
 					if gm then
 						UserIds[gm.ReservedUserID] = true
 					end
@@ -106,7 +107,7 @@ else
 					local profile = GetUserProfileID(id)
 					if profile ~= ignoreProfile then
 						local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
-						local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
+						local isHost = host ~= nil and CharacterGetReservedUserID(host) == id or false
 						local netid = GetNetID(uuid)
 						local data = PrepareSharedData(profile, isHost, id, netid)
 						SendSyncListenerEvent(id, profile, uuid, isHost)

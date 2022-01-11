@@ -67,14 +67,14 @@ function GameHelpers.GetUserID(obj)
 	if t == "number" then
 		return obj
 	elseif t == "string" then
-		local character = Ext.GetCharacter(obj)
+		local character = GameHelpers.GetCharacter(obj)
 		if character then
 			id = math.max(character.UserID, character.ReservedUserID)
 		end
-	elseif t == "userdata" or t == "table" and obj.UserID and obj.ReservedUserID then
+	elseif (t == "userdata" or t == "table") and obj.UserID and obj.ReservedUserID then
 		id = math.max(obj.UserID, obj.ReservedUserID)
 	end
-	if id ~= _UNSET_USERID then
+	if id and id ~= _UNSET_USERID then
 		return id
 	end
 	return nil

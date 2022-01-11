@@ -135,6 +135,7 @@ local WeaponHitProperties = {
     HitType = {
         Melee = true,
         Magic = true,
+        Ranged = true,
     },
     DamageSourceType = {
         Attack = true,

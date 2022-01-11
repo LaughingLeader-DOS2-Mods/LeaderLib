@@ -33,7 +33,7 @@ package
 		public var anchorPos:String;
 		public var anchorTPos:String;
 		public var anchorTarget:String;
-		public var uiScaling:Number;
+		public var uiScaling:Number = 1.0;
 
 		public const designResolution:Point = new Point(1920,1080);
 		

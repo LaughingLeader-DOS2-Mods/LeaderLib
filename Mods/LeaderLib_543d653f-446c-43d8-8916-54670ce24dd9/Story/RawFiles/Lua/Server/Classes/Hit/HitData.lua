@@ -51,18 +51,17 @@ local function SetMeta(this)
 			elseif k == "Handle" then
 				return this.HitStatus.StatusHandle
 			elseif k == "Success" then
-				if this.TargetObject == nil then
+				if this.Target == nil then
 					return false
 				end
 				return GameHelpers.Hit.Succeeded(this.HitRequest)
-			elseif k == "Target" then
-				local target = GameHelpers.GetUUID(this.TargetObject, true)
-				tbl.Target = target
-				return target
-			elseif k == "Attacker" then
-				local source = GameHelpers.GetUUID(this.AttackerObject, true)
-				tbl.Attacker = source
-				return source
+			elseif k == "TargetObject" then
+				return GameHelpers.TryGetObject(tbl.Target)
+			elseif k == "AttackerObject" then
+				if not StringHelpers.IsNullOrEmpty(tbl.Attacker) then
+					return GameHelpers.TryGetObject(tbl.Attacker)
+				end
+				return nil
 			end
 			return HitData[k]
 		end,
@@ -92,8 +91,8 @@ function HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill
 	---@type HitData
     local this =
     {
-		TargetObject = target,
-		AttackerObject = source,
+		Target = target.MyGuid,
+		Attacker = source and source.MyGuid or "",
 		HitStatus = hitStatus,
 		HitContext = hitContext,
 		HitRequest = hitRequest,

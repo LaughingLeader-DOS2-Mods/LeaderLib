@@ -1,6 +1,6 @@
 --[[
 ==============
-    Notes
+	Notes
 ==============
 The options setting menu is optionsSettings.swf
 When clicking on the Controls tab, the game switches the menu to optionsInput.swf and recreates the menu buttons.
@@ -202,26 +202,26 @@ local function OnSwitchMenu(ui, call, id)
 	end
 end
 
-local function OnUpdateArrayParsingStarted(ui, call, arrayName)
-	if arrayName == "baseUpdate_Array" then
-		CreateModMenuButton(ui, call, arrayName)
-	end
-end
-
 local function OnUpdateArrayParsed(ui, call, arrayName)
 	if arrayName == "baseUpdate_Array" then
 		if currentMenu == LarianMenuID.Gameplay then
 			GameSettingsMenu.SetScrollPosition(ui)
 		end
+		--Update the localized name
 		CreateModMenuButton(ui, call, arrayName)
 
-		ui:GetRoot().positionElements()
-	else
-	
+		local this = ui:GetRoot()
+		if this then
+			this.positionElements()
+		end
+	elseif arrayName == "update_Array" then
+		if currentMenu == LarianMenuID.Gameplay then
+			GameSettingsMenu.AddSettings(ui, true)
+		end
 	end
 end
 
-local function OnAcceptChanges(ui, call)
+local function OnAcceptChanges(ui)
 	if currentMenu == MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
 		ModMenuManager.CommitChanges()
@@ -316,13 +316,6 @@ Ext.RegisterListener("SessionLoaded", function()
 
 		Ext.RegisterUITypeCall(Data.UIType.msgBox, "ButtonPressed", onMessageBoxButton)
 
-		Ext.RegisterUINameInvokeListener("parseBaseUpdateArray", function(invokedUI, method, ...)
-			local ui = GetOptionsGUI() or invokedUI
-			if ui ~= nil then
-				CreateModMenuButton(ui, method, ...)
-			end
-		end)
-
 		---optionsInput.swf version.
 		---@param ui UIObject
 		Ext.RegisterUINameInvokeListener("addMenuButtons", function(ui, method, ...)
@@ -378,16 +371,6 @@ Ext.RegisterListener("SessionLoaded", function()
 
 		Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu_c, "openMenu", onOpenMenu)
 	end
-
-	---@param invokedUI UIObject
-	Ext.RegisterUINameInvokeListener("parseUpdateArray", function(invokedUI, method, ...)
-		local ui = GetOptionsGUI() or invokedUI
-		if ui ~= nil then
-			if currentMenu == LarianMenuID.Gameplay then
-				GameSettingsMenu.AddSettings(ui, true)
-			end
-		end
-	end)
 
 	local controlOriginalCalls = {
 		llbuttonPressed = "buttonPressed",
@@ -510,14 +493,13 @@ Ext.RegisterListener("SessionLoaded", function()
 
 	local uiTypes = not Vars.ControllerEnabled and OPTIONS_UI_TYPE or OPTIONS_UI_TYPE_C
 	for _,uiType in pairs(uiTypes) do
-		
 		Ext.RegisterUITypeCall(uiType, "requestCloseUI", OnCancelChanges)
 
 		Ext.RegisterUITypeCall(uiType, "applyPressed", OnApplyPressed)
 		Ext.RegisterUITypeCall(uiType, "applyModMenuChanges", OnApplyPressed)
 		Ext.RegisterUITypeCall(uiType, "acceptPressed", OnAcceptChanges)
-		Ext.RegisterUITypeCall(uiType, "commitModMenuChanges", function(ui, ...)
-			OnAcceptChanges(ui, ...)
+		Ext.RegisterUITypeCall(uiType, "commitModMenuChanges", function(ui, call, ...)
+			OnAcceptChanges(ui)
 			ui:ExternalInterfaceCall("requestCloseUI");
 		end)
 
@@ -527,7 +509,6 @@ Ext.RegisterListener("SessionLoaded", function()
 
 		-- LeaderLib additions
 		Ext.RegisterUITypeCall(uiType, "controlAdded", onControlAdded)
-		Ext.RegisterUITypeCall(uiType, "arrayParsing", OnUpdateArrayParsingStarted)
 		Ext.RegisterUITypeCall(uiType, "arrayParsed", OnUpdateArrayParsed)
 		Ext.RegisterUITypeCall(uiType, "llbuttonPressed", OnButton)
 		Ext.RegisterUITypeCall(uiType, "llmenuSliderID", OnSlider)

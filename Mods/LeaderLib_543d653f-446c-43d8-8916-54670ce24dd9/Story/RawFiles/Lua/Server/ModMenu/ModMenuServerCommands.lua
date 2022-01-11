@@ -43,22 +43,6 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_CreateSidebarButton", function(cmd, p
 	GameHelpers.Net.PostToUser(id, "LeaderLib_ModMenu_CreateMenuButton", "")
 end)
 
-Ext.RegisterNetListener("LeaderLib_ModMenu_CreateMenuButtonAfterDelay", function(cmd, payload)
-	local id = tonumber(payload)
-	if Ext.GetGameState() == "Paused" then
-		GameHelpers.Net.PostToUser(id, "LeaderLib_ModMenu_CreateMenuButton", "")
-	else
-		Timer.StartOneshot("Timers_LeaderLib_ModMenu_CreateSidebarButton", 1, function()
-			GameHelpers.Net.PostToUser(id, "LeaderLib_ModMenu_CreateMenuButton", "")
-		end)
-	end
-end)
-
-Ext.RegisterNetListener("LeaderLib_ModMenu_SendParseUpdateArrayMethod", function(cmd, payload)
-	local id = tonumber(payload)
-	GameHelpers.Net.PostToUser(id, "LeaderLib_ModMenu_RunParseUpdateArrayMethod", "")
-end)
-
 Ext.RegisterNetListener("LeaderLib_ModMenu_RequestOpen", function(cmd, payload)
 	local id = tonumber(payload)
 	LoadGlobalSettings()

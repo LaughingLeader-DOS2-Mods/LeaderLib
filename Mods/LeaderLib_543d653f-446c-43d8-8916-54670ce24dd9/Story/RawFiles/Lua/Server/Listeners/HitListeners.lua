@@ -69,7 +69,7 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 				if not StringHelpers.IsNullOrWhitespace(potion) then
 					if not Ext.OsirisIsCallable() or NRD_StatExists(potion) then
 						local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
-						if StringHelpers.IsNullOrWhitespace(bonusWeapon) then
+						if not StringHelpers.IsNullOrWhitespace(bonusWeapon) then
 							local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
 							if extraProps and #extraProps > 0 then
 								GameHelpers.ApplyProperties(source, target, extraProps, nil, nil, fromSkill)
@@ -142,7 +142,7 @@ local function OnHit(hitStatus, hitContext)
 	local data = Classes.HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill)
 
 	if skill then
-		OnSkillHit(skill, target, source, hitRequest.TotalDamageDone, hitRequest, hitContext, hitStatus, data)
+		OnSkillHit(skill.Name, target, source, hitRequest.TotalDamageDone, hitRequest, hitContext, hitStatus, data)
 	end
 
 	local isFromWeapon = GameHelpers.Hit.IsFromWeapon(hitContext, skill, hitStatus)

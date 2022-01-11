@@ -402,10 +402,10 @@ function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParam
     ProcessProjectileProps(props)
 end
 
----@param target string|number[]|EsvCharacter|EsvItem
----@param skillId string
----@param source string|EsvCharacter|EsvItem
----@param extraParams LeaderLibProjectileCreationProperties Optional table of properties to apply on top of the properties set from the skill stat.
+---@param target UUID|EsvCharacter|EsvItem|number[] The target character, item, or position.
+---@param skillId string The skill to use for damage.
+---@param source UUID|EsvCharacter|EsvItem The source of the damage, either a character, item, or UUID.
+---@param extraParams ?LeaderLibProjectileCreationProperties Optional table of properties to apply on top of the properties set from the skill stat.
 function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
     --Support for older usage
     if extraParams == true then

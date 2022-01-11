@@ -359,6 +359,7 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
         local timerName = string.format("Timers_LeaderLib_ProjectileStrike%s%s", id, Ext.MonotonicTime())
         local onTimer = nil
         onTimer = function()
+            local skill = Ext.GetStat(skillId)
             if skill.SingleSource ~= "Yes" and positions ~= nil then
                 local x,y,z = table.unpack(positions[i])
                 props.TargetPosition = {x,y,z}

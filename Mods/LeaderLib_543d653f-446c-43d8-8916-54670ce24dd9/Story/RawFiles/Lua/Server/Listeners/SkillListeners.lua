@@ -280,22 +280,22 @@ local function IgnoreHitTarget(target)
 	return false
 end
 
---- @param skill StatEntrySkillData
+--- @param skillId string
 --- @param target EsvCharacter|EsvItem
 --- @param source EsvCharacter|EsvItem
 --- @param damage integer
 --- @param hit HitRequest
 --- @param context HitContext
 --- @param hitStatus EsvStatusHit
-function OnSkillHit(skill, target, source, damage, hit, context, hitStatus, data)
+function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, data)
 	if not IgnoreHitTarget(target.MyGuid) then
-		for callback in GetListeners(skill.Name) do
-			local b,err = xpcall(callback, debug.traceback, skill.Name, source.MyGuid, SKILL_STATE.HIT, data)
+		for callback in GetListeners(skillId) do
+			local b,err = xpcall(callback, debug.traceback, skillId, source.MyGuid, SKILL_STATE.HIT, data)
 			if not b then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
 		end
-		InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skill.Name, SKILL_STATE.HIT, data)
+		InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skillId, SKILL_STATE.HIT, data)
 	end
 end
 

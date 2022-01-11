@@ -14,6 +14,7 @@ local table = table
 local tostring = tostring
 local type = type
 local xpcall = xpcall
+local version = Ext.Version()
 
 local UIType = {
 	actionProgression = 0,
@@ -1916,9 +1917,8 @@ Ext.RegisterListener("SessionLoaded", function()
 	EnableHooks()
 end)
 
-
 ---@param ui UIObject
-Ext.RegisterListener("UIObjectCreated", function (ui)
+local function OnUICreated(ui)
 	ui:CaptureExternalInterfaceCalls()
 	-- Has the 'no flash player' warning if the root is nil
 	if ui:GetRoot() ~= nil then
@@ -1926,7 +1926,16 @@ Ext.RegisterListener("UIObjectCreated", function (ui)
 	elseif Ext.GetGameState() == "Running" then
 		Ext.PostMessageToServer("LeaderLib_DeferUICapture", tostring(Mods.LeaderLib.Client.ID))
 	end
-end)
+end
+
+if version < 56 then
+	---@param ui UIObject
+	Ext.RegisterListener("UIObjectCreated", OnUICreated)
+else
+	Ext.Events.UIObjectCreated:Subscribe(function (e)
+		OnUICreated(e.UI)
+	end)
+end
 
 Ext.RegisterNetListener("LeaderLib_CaptureActiveUIs", function()
 	CaptureBuiltInUIs()

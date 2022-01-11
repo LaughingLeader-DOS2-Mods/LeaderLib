@@ -56,7 +56,7 @@ function GameHelpers.GetEnemiesInRange(uuid,radius)
 	return 0
 end
 
-local _UNSET_USERID = 65535
+local _UNSET_USERID = -65536
 
 ---Get a character's user id, if any.
 ---@param obj UUID|EsvCharacter|EclCharacter

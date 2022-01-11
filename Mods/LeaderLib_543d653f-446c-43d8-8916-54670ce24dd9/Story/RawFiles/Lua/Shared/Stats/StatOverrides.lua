@@ -43,7 +43,7 @@ local _loadedStatuses = {}
 ---@param stat StatEntrySkillData
 local _SkillPropertiesActionMissing = function (stat)
 	for i,v in pairs(stat.SkillProperties) do
-		if not _loadedStatuses[v.Action] then
+		if v.Type == "Status" and not _loadedStatuses[v.Action] then
 			return true
 		end
 	end

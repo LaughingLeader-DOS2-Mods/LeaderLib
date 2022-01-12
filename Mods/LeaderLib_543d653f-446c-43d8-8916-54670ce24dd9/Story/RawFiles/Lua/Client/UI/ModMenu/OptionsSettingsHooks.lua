@@ -209,7 +209,6 @@ local function OnUpdateArrayParsed(ui, call, arrayName)
 		end
 		--Update the localized name
 		CreateModMenuButton(ui, call, arrayName)
-
 		local this = ui:GetRoot()
 		if this then
 			this.positionElements()

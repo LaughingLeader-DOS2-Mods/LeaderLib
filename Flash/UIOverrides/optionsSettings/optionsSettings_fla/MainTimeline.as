@@ -161,8 +161,9 @@ package optionsSettings_fla
 		public function parseBaseUpdateArray() : *
 		{
 			ExternalInterface.call("arrayParsing", "baseUpdate_Array");
+			this.addedModSettingsButton = false;
 			//Add the Mod Settings button before anything else
-			this.addModSettingsButton();
+			this.addModSettingsButton(true);
 
 			var val2:uint = 0;
 			var val3:Number = NaN;

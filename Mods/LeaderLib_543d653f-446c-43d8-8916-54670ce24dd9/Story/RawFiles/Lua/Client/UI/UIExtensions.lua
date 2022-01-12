@@ -191,6 +191,7 @@ function UIExtensions.SetupInstance()
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_KeyboardEvent", Input.OnKeyboardEvent)
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_OnEventResolution", function(ui, call, w, h)
 				if Vars.DebugMode and Vars.Print.UI then
+					--ui:Resize(w,h)
 					local root = ui:GetRoot()
 					fprint(LOGLEVEL.DEFAULT, "[UIExtensions:onEventResolution] width(%s) height(%s) stage.width(%s) stage.height(%s)", w, h, root.stage.width, root.stage.height)
 				end

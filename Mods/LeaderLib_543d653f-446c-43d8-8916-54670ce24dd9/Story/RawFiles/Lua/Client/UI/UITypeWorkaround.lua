@@ -345,7 +345,7 @@ function UI.TryFindUIByType(ui, tryFindId)
 			local builtInID = builtInUI:GetTypeId()
 			--print(id, v, builtInID, builtInUI:GetRoot().stage)
 			if builtInID == id or builtInUI == ui then
-				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID)
+				fprint(LOGLEVEL.TRACE, "[LeaderLib:UI.TryFindUIByType] %s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID)
 				return builtInID,v,path
 			end
 		end
@@ -355,7 +355,7 @@ function UI.TryFindUIByType(ui, tryFindId)
 		if customUI then
 			local customID = customUI:GetTypeId()
 			if customID == id or customID == ui then
-				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", v, customID)
+				fprint(LOGLEVEL.TRACE, "[LeaderLib:UI.TryFindUIByType] %s = %s,", v, customID)
 				return customID,v
 			end
 		elseif t ~= "number" then
@@ -369,13 +369,13 @@ function UI.TryFindUIByType(ui, tryFindId)
 		if type(v) == "table" then
 			for _,v2 in pairs(v) do
 				if v2 == id then
-					fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", k, v2)
+					fprint(LOGLEVEL.TRACE, "[LeaderLib:UI.TryFindUIByType] %s = %s,", k, v2)
 					return v2,k
 				end
 			end
 		else
 			if v == id then
-				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", k, id)
+				fprint(LOGLEVEL.TRACE, "[LeaderLib:UI.TryFindUIByType] %s = %s,", k, id)
 				return id,k
 			end
 		end

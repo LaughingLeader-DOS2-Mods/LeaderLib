@@ -323,114 +323,15 @@ local customUIs = {
 	["LeaderLibUIExtensions"] = "LeaderLib_UIExtensions"
 }
 
----@param ui UIObject
-local function TryFindUI(ui, tryFindId)
-	local id = tryFindId
-	local t = type(ui)
-	if t == "number" then
-		id = ui
-	else
-		id = ui:GetTypeId() or tryFindId
-	end
-	-- if id == Data.UIType.characterSheet then
-	-- 	ui:Invoke("setGameMasterMode", true, true, true)
-	-- end
-	-- if id == nil then
-	-- 	return nil
-	-- end
-	for i,v in ipairs(allUIFiles) do
-		local builtInUI = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
-		if builtInUI ~= nil then
-			local builtInID = builtInUI:GetTypeId()
-			--print(id, v, builtInID, builtInUI:GetRoot().stage)
-			if builtInID == id or builtInUI == ui then
-				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID)
-				return builtInID,v
-			end
-		end
-	end
-	for k,v in pairs(customUIs) do
-		local customUI = Ext.GetUI(k)
-		if customUI then
-			local customID = customUI:GetTypeId()
-			if customID == id or customID == ui then
-				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", v, customID)
-				return customID,v
-			end
-		elseif t ~= "number" then
-			local main = ui:GetRoot()
-			if main and main.anchorId == v then
-				return id,k
-			end
-		end
-	end
-	for k,v in pairs(Data.UIType) do
-		if type(v) == "table" then
-			for _,v2 in pairs(v) do
-				if v2 == id then
-					fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", k, v2)
-					return v2,k
-				end
-			end
-		else
-			if v == id then
-				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", k, id)
-				return id,k
-			end
-		end
-	end
-	fprint(LOGLEVEL.WARNING, "Failed to find UI file for UI", ui, id)
-end
-
---[[ Ext.RegisterListener("UIObjectCreated", function(ui)
-	TryFindUI(ui)
-end) ]]
-
 local function PrintAllUITypeID()
 	for i,v in ipairs(allUIFiles) do
 		local ui = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
 		if ui ~= nil then
-			--print(v, ui:GetTypeId())
 			fprint(LOGLEVEL.TRACE, "%s = %s,", string.gsub(v, "GM/", ""):gsub(".swf", ""), ui:GetTypeId())
 		end
 	end
 end
 
-local foundUITypeIds = {}
-
 Ext.RegisterConsoleCommand("printuitypeids", function(cmd, ...)
 	PrintAllUITypeID()
 end)
-
-Ext.RegisterConsoleCommand("tryfindui", function(cmd, uiType)
-	uiType = tonumber(uiType)
-	local ui = Ext.GetUIByType(uiType)
-	TryFindUI(ui, uiType)
-end)
-
-Ext.RegisterConsoleCommand("tooltiptest", function(cmd, delay)
-	local removeOld = false
-	delay = tonumber(delay or "250")
-	UIExtensions.StartTimer("worldTooltipTest", delay, function(timerName, isComplete)
-	PrintDebug(timerName, isComplete)
-		local worldTooltip = Ext.GetUIByType(Data.UIType.worldTooltip)
-		if worldTooltip then
-			removeOld = not removeOld
-			worldTooltip:Invoke("updateTooltips", removeOld)
-		end
-	end, 50)
-end)
-
---[[ Ext.RegisterListener("SessionLoaded", function()
-	local tryFindUI = function(ui, ...)
-		if not foundUITypeIds[ui:GetTypeId()] then
-			local id,file = TryFindUI(ui)
-			if file ~= nil then
-				foundUITypeIds[id] = file
-			end
-		end
-	end
-
-	Ext.RegisterUINameCall("PlaySound", tryFindUI)
-	Ext.RegisterUINameCall("UIAssert", tryFindUI)
-end) ]]

@@ -111,7 +111,11 @@ package optionsSettings_fla
 			}
 			else
 			{
-				btn.text_txt.htmlText = label.toUpperCase();
+				//btn.text_txt.htmlText = label.toUpperCase();
+				btn.initialize(label.toUpperCase(),function(arr:Array):*
+				{
+					ExternalInterface.call(actionID,buttonID);
+				},null,isCurrent,-1,isCurrent);
 			}
 
 			if(btn && setDisabled)

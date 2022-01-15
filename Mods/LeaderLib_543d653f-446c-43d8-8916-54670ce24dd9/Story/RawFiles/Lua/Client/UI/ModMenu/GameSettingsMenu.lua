@@ -70,51 +70,51 @@ local CONTROL_TYPE = {
 	INFOLABEL = 10,
 }
 
-local array = nil
-local index = 0
+local itemsArray = nil
+local itemsArrayIndex = 0
 
 local function AddTitleToArray(text)
-	array[index] = CONTROL_TYPE.LABEL
-	array[index+1] = text
-	index = index+2
+	itemsArray[itemsArrayIndex] = CONTROL_TYPE.LABEL
+	itemsArray[itemsArrayIndex+1] = text
+	itemsArrayIndex = itemsArrayIndex+2
 end
 
 local function AddInfoToArray(id, titleText, infoText)
-	array[index] = CONTROL_TYPE.INFOLABEL
-	array[index+1] = id
-	array[index+2] = titleText
-	array[index+3] = infoText
-	index = index+4
+	itemsArray[itemsArrayIndex] = CONTROL_TYPE.INFOLABEL
+	itemsArray[itemsArrayIndex+1] = id
+	itemsArray[itemsArrayIndex+2] = titleText
+	itemsArray[itemsArrayIndex+3] = infoText
+	itemsArrayIndex = itemsArrayIndex+4
 end
 
 local function AddCheckboxToArray(id, displayName, enabled, state, filterBool, tooltip)
 	if filterBool == nil then
 		filterBool = false
 	end
-	array[index] = CONTROL_TYPE.CHECKBOX
-	array[index+1] = id
-	array[index+2] = displayName
-	array[index+3] = enabled
-	array[index+4] = state
-	array[index+5] = filterBool
-	array[index+6] = tooltip or ""
-	index = index+7
+	itemsArray[itemsArrayIndex] = CONTROL_TYPE.CHECKBOX
+	itemsArray[itemsArrayIndex+1] = id
+	itemsArray[itemsArrayIndex+2] = displayName
+	itemsArray[itemsArrayIndex+3] = enabled
+	itemsArray[itemsArrayIndex+4] = state
+	itemsArray[itemsArrayIndex+5] = filterBool
+	itemsArray[itemsArrayIndex+6] = tooltip or ""
+	itemsArrayIndex = itemsArrayIndex+7
 end
 
 local function AddSliderToArray(id, label, amount, min, max, snapInterval, hide, tooltip)
 	if hide == nil then
 		hide = false
 	end
-	array[index] = CONTROL_TYPE.SLIDER
-	array[index+1] = id
-	array[index+2] = label
-	array[index+3] = amount
-	array[index+4] = min or 0
-	array[index+5] = max or 99
-	array[index+6] = snapInterval or 1
-	array[index+7] = hide
-	array[index+8] = tooltip or ""
-	index = index+9
+	itemsArray[itemsArrayIndex] = CONTROL_TYPE.SLIDER
+	itemsArray[itemsArrayIndex+1] = id
+	itemsArray[itemsArrayIndex+2] = label
+	itemsArray[itemsArrayIndex+3] = amount
+	itemsArray[itemsArrayIndex+4] = min or 0
+	itemsArray[itemsArrayIndex+5] = max or 99
+	itemsArray[itemsArrayIndex+6] = snapInterval or 1
+	itemsArray[itemsArrayIndex+7] = hide
+	itemsArray[itemsArrayIndex+8] = tooltip or ""
+	itemsArrayIndex = itemsArrayIndex+9
 end
 
 local function AddButtonToArray(id, label, amount, soundUp, enabled, tooltip)
@@ -122,14 +122,14 @@ local function AddButtonToArray(id, label, amount, soundUp, enabled, tooltip)
 		enabled = true
 	end
 	--id:integer, label:string, soundUp:string, enabled:boolean, tooltip:string
-	array[index] = CONTROL_TYPE.BUTTON
-	array[index+1] = id
-	array[index+2] = label
-	array[index+3] = amount
-	array[index+4] = soundUp or ""
-	array[index+5] = enabled
-	array[index+6] = tooltip or ""
-	index = index+7
+	itemsArray[itemsArrayIndex] = CONTROL_TYPE.BUTTON
+	itemsArray[itemsArrayIndex+1] = id
+	itemsArray[itemsArrayIndex+2] = label
+	itemsArray[itemsArrayIndex+3] = amount
+	itemsArray[itemsArrayIndex+4] = soundUp or ""
+	itemsArray[itemsArrayIndex+5] = enabled
+	itemsArray[itemsArrayIndex+6] = tooltip or ""
+	itemsArrayIndex = itemsArrayIndex+7
 end
 
 ---@type TranslatedString
@@ -242,11 +242,11 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		---@type MainMenuMC
 		local mainMenu = main.mainMenu_mc
 		if addToArray == true then
-			array = main.update_Array
-			if array == nil then
+			itemsArray = main.update_Array
+			if itemsArray == nil then
 				return false
 			end
-			index = #array
+			itemsArrayIndex = #itemsArray
 			mainMenu = mainMenuArrayAccess
 		end
 

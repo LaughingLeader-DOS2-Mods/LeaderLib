@@ -215,7 +215,7 @@ local function OnUpdateArrayParsed(ui, call, arrayName)
 		end
 	elseif arrayName == "update_Array" then
 		if currentMenu == LarianMenuID.Gameplay then
-			GameSettingsMenu.AddSettings(ui, true)
+			GameSettingsMenu.AddSettings(ui, false)
 		end
 	end
 end

@@ -586,33 +586,11 @@ function GameHelpers.Item.FindTaggedItems(character, tag, asEsvItem)
 	return items
 end
 
----Gets an array of items with specific tag(s) on a character.
+---Gets an item's tags in a table.
 ---@param item EsvItem|UUID|NETID
----@return string[]|EsvItem[]
+---@return string[]
 function GameHelpers.Item.GetTags(item)
-    local item = GameHelpers.GetItem(item)
-    local tags = {}
-    if item then
-        local tagDict = {}
-        for _,v in pairs(item:GetTags()) do
-            if not tagDict[v] then
-                tagDict[v] = true
-            end
-        end
-        if not GameHelpers.Item.IsObject(item) then
-            local statTags = StringHelpers.Split(item.Stats.Tags, ";")
-            for _,v in pairs(statTags) do
-                if not tagDict[v] then
-                    tagDict[v] = true
-                end
-            end
-        end
-        for tag,_ in pairs(tagDict) do
-            table.insert(tags, tag)
-        end
-        table.sort(tags)
-    end
-	return tags
+    return GameHelpers.GetItemTags(item, false, false)
 end
 
 --- Checks if an item is locked from unequip.

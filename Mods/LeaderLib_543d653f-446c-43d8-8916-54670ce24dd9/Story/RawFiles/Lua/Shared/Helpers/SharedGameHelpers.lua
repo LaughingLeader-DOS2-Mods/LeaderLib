@@ -365,6 +365,71 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	return false
 end
 
+---@param object EsvCharacter|EsvItem|EclCharacter|EclItem The character or item to get tags from.
+---@param inDictionaryFormat ?boolean If true, tags will be set as tbl[tag] = true, for easier checking.
+---@param addEquipmentTags ?boolean If the object is a character, all tags found on equipped items will be added to the table.
+---@return string[]
+function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
+	local tags = {}
+	local t = type(object)
+	if (t == "userdata" or t == "table") and object.GetTags then
+		for _,v in pairs(object:GetTags()) do
+			if inDictionaryFormat then
+				tags[v] = true
+			else
+				tags[#tags+1] = v
+			end
+		end
+	end
+	if addEquipmentTags and GameHelpers.Ext.ObjectIsCharacter(object) then
+		local items = {}
+		for _,slot in Data.VisibleEquipmentSlots:Get() do
+			if isClient then
+				local uuid = object:GetItemBySlot(slot)
+				if not StringHelpers.IsNullOrEmpty(uuid) then
+					local item = Ext.GetItem(uuid)
+					if item then
+						items[#items+1] = item
+					end
+				end
+			else
+				if Ext.OsirisIsCallable() then
+					local uuid = CharacterGetEquippedItem(object.MyGuid, slot)
+					if not StringHelpers.IsNullOrEmpty(uuid) then
+						local item = Ext.GetItem(uuid)
+						if item then
+							items[#items+1] = item
+						end
+					end
+				else
+					local inventoryItems = object:GetInventoryItems()
+					local count = math.min(#inventoryItems, 14)
+					for i=1,count do
+						local item = Ext.GetItem(inventoryItems[i])
+						if item and Data.VisibleEquipmentSlots[item.Slot] then
+							items[#items+1] = item
+						end
+					end
+				end
+			end
+		end
+		for i=1,#items do
+			local item = items[i]
+			for tag,b in pairs(GameHelpers.GetItemTags(item, true, false)) do
+				if inDictionaryFormat then
+					tags[tag] = true
+				else
+					tags[#tags+1] = tag
+				end
+			end
+		end
+	end
+	if not inDictionaryFormat then
+		table.sort(tags)
+	end
+	return tags
+end
+
 ---Tries to get a string UUID from whatever variable type object is.
 ---@param object EsvGameObject|EclGameObject|string|number
 ---@param returnNullId boolean|nil If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.

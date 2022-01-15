@@ -139,14 +139,19 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 		self:InvokeListenerCallbacks(name, value, self.Variables[name])
 	else
 		local existing = self.Variables[name]
-		local changed = existing.Value ~= value
-		existing.Value = value ~= nil and value or existing.Value
+		local changed = false
+		if value ~= nil then
+			changed = existing.Value ~= value
+			existing.Value = value
+		end
 		existing.DisplayName = displayName or existing.DisplayName
 		existing.Tooltip = tooltip or existing.Tooltip
 		existing.Min = min or existing.Min
 		existing.Max = max or existing.Max
 		existing.Interval = interval or existing.Interval
-		existing.CanExport = canExport ~= nil and canExport or existing.CanExport
+		if canExport ~= nil then
+			existing.CanExport = canExport
+		end
 		if isFromFile == false then
 			existing.IsFromFile = false
 		end

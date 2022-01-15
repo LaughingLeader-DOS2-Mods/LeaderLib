@@ -14,8 +14,8 @@ end
 
 local dirty = false
 local rebuildingTooltip = false
-local keyboardKey = Data.Input.SplitItemToggle
-local controllerKey = Data.Input.ToggleMap
+local keyboardKey = "SplitItemToggle"--Data.Input.SplitItemToggle
+local controllerKey = "ToggleMap"
 
 TooltipExpander.CallData = {
 	---@type integer
@@ -44,6 +44,7 @@ function TooltipExpander.IsExpanded()
 		return true
 	end
 	if not Vars.ControllerEnabled then
+		Ext.Print("Input.IsPressed(keyboardKey)", Input.IsPressed(keyboardKey))
 		return Input.IsPressed(keyboardKey)
 	else
 		return Input.IsPressed(controllerKey)
@@ -115,7 +116,7 @@ Ext.RegisterUINameCall("hideTooltip", OnHideTooltip)
 --playerInfo/summonInfo.as
 Ext.RegisterUINameCall("hidetooltip", OnHideTooltip)
 
-local function RebuildTooltip(eventName, pressed, id, inputMap, controllerEnabled)
+local function RebuildTooltip()
 	if dirty then
 		if TooltipExpander.CallData.Args ~= nil then
 			if TooltipExpander.CallData.LastCall == "showTooltip" then
@@ -125,17 +126,16 @@ local function RebuildTooltip(eventName, pressed, id, inputMap, controllerEnable
 				local text, x, y, width, height, side, allowDelay = table.unpack(TooltipExpander.CallData.Args)
 
 				---@type TooltipGenericRequest
-				local request = {
-					Type = "Generic",
-					Text = text,
-					CallingUI = TooltipExpander.CallData.UI,
-					X = x,
-					Y = y,
-					Width = width,
-					Height = height,
-					Side = side,
-					AllowDelay = allowDelay
-				}
+				local request = Game.Tooltip.RequestProcessor.CreateRequest()
+				request.Type = "Generic"
+				request.Text = text
+				request.UIType = TooltipExpander.CallData.UI
+				request.X = x
+				request.Y = y
+				request.Width = width
+				request.Height = height
+				request.Side = side
+				request.AllowDelay = allowDelay
 
 				local this = ui:GetRoot()
 				if this and this.tf then
@@ -173,9 +173,67 @@ local function RebuildTooltip(eventName, pressed, id, inputMap, controllerEnable
 	rebuildingTooltip = false
 end
 
-Input.RegisterListener(keyboardKey, RebuildTooltip)
+function TooltipExpander.OnShiftKey(pressed)
+	--RebuildTooltip()
+end
+
+Input.RegisterListener(keyboardKey, function (eventName, pressed, id, inputMap, controllerEnabled)
+	RebuildTooltip()
+end)
 Input.RegisterListener(controllerKey, function(eventName, pressed, id, inputMap, controllerEnabled)
 	if controllerEnabled then
-		RebuildTooltip(eventName, pressed, id, inputMap, controllerEnabled)
+		RebuildTooltip()
 	end
 end)
+
+local tooltipTypeToElement = {
+	Ability = "AbilityDescription",
+	CustomStat = "StatsDescription",
+	Item = "ItemDescription",
+	Rune = "ItemDescription",
+	Skill = "SkillDescription",
+	Stat = "StatsDescription",
+	Status = "StatusDescription",
+	Tag = "TagDescription",
+	Talent = "TalentDescription",
+}
+
+---@param request TooltipRequest
+---@param tooltip TooltipData
+function TooltipExpander.AppendHelpText(request, tooltip)
+	local canShowText = not GameSettings.Settings.Client.AlwaysExpandTooltips and (not Vars.ControllerEnabled or Vars.DebugMode)
+	if canShowText and TooltipExpander.IsDirty() then
+		local keyText = not Vars.ControllerEnabled and LocalizedText.Input.Shift.Value or LocalizedText.Input.Select.Value
+		if request.Type == "Generic" then
+			local format = "<br><br><p align='center'><font color='#44CC00'>%s</font></p>"
+			if TooltipExpander.IsExpanded() then
+				tooltip.Data.Text = tooltip.Data.Text .. string.format(format, LocalizedText.Tooltip.ExpanderActive:ReplacePlaceholders(keyText))
+			else
+				tooltip.Data.Text = tooltip.Data.Text .. string.format(format, LocalizedText.Tooltip.ExpanderInactive:ReplacePlaceholders(keyText))
+			end
+		else
+			local elementType = tooltipTypeToElement[request.Type]
+			local element = tooltip:GetLastElement(elementType)
+			if element then
+				local target = element.Label or element.Description
+				if target then
+					local nextText = target
+					local format = "<br><p align='center'><font color='#44CC00'>%s</font></p>"
+					if not string.find(nextText, "<br>", #nextText-5, true) then
+						format = "<br>"..format
+					end
+					if TooltipExpander.IsExpanded() then
+						nextText = nextText .. string.format(format, LocalizedText.Tooltip.ExpanderActive:ReplacePlaceholders(keyText))
+					else
+						nextText = nextText .. string.format(format, LocalizedText.Tooltip.ExpanderInactive:ReplacePlaceholders(keyText))
+					end
+					if element.Label then
+						element.Label = nextText
+					elseif element.Description then
+						element.Description = nextText
+					end
+				end
+			end
+		end
+	end
+end

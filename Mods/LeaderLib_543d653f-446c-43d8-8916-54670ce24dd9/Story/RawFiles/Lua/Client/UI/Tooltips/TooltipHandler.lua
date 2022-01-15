@@ -41,68 +41,9 @@ end
 ---@see TooltipHandler.RegisterItemTooltipTag
 UI.RegisterItemTooltipTag = TooltipHandler.RegisterItemTooltipTag
 
----@param player EclCharacter
----@param tooltip TooltipData
-local function OnTalentTooltip(player, talent, tooltip)
-	PrintDebug("OnTalentTooltip", player, talent, Common.JsonStringify(tooltip.Data))
-end
-
-local tooltipTypeToElement = {
-	Ability = "AbilityDescription",
-	CustomStat = "StatsDescription",
-	Item = "ItemDescription",
-	Rune = "ItemDescription",
-	Skill = "SkillDescription",
-	Stat = "StatsDescription",
-	Status = "StatusDescription",
-	Tag = "TagDescription",
-	Talent = "TalentDescription",
-}
-
----@param request TooltipRequest
----@param tooltip TooltipData
-function TooltipHandler.OnAnyTooltip(request, tooltip)
-	local canShowText = not GameSettings.Settings.Client.AlwaysExpandTooltips and (not Vars.ControllerEnabled or Vars.DebugMode)
-	if canShowText and TooltipExpander.IsDirty() then
-		if request.Type == "Generic" then
-			local format = "<br><br><p align='center'><font color='#44CC00'>%s</font></p>"
-			local keyText = not Vars.ControllerEnabled and LocalizedText.Input.Shift.Value or LocalizedText.Input.Select.Value
-			if TooltipExpander.IsExpanded() then
-				tooltip.Data.Text = tooltip.Data.Text .. string.format(format, LocalizedText.Tooltip.ExpanderActive:ReplacePlaceholders(keyText))
-			else
-				tooltip.Data.Text = tooltip.Data.Text .. string.format(format, LocalizedText.Tooltip.ExpanderInactive:ReplacePlaceholders(keyText))
-			end
-		else
-			local elementType = tooltipTypeToElement[request.Type]
-			local element = tooltip:GetLastElement(elementType)
-			if element then
-				local target = element.Label or element.Description
-				if target then
-					local nextText = target
-					local format = "<br><p align='center'><font color='#44CC00'>%s</font></p>"
-					if not string.find(nextText, "<br>", #nextText-5, true) then
-						format = "<br>"..format
-					end
-					local keyText = not Vars.ControllerEnabled and LocalizedText.Input.Shift.Value or LocalizedText.Input.Select.Value
-					if TooltipExpander.IsExpanded() then
-						nextText = nextText .. string.format(format, LocalizedText.Tooltip.ExpanderActive:ReplacePlaceholders(keyText))
-					else
-						nextText = nextText .. string.format(format, LocalizedText.Tooltip.ExpanderInactive:ReplacePlaceholders(keyText))
-					end
-					if element.Label then
-						element.Label = nextText
-					elseif element.Description then
-						element.Description = nextText
-					end
-				end
-			end
-		end
-	end
-end
-
 ---@param tooltip TooltipData
 function TooltipHandler.OnGenericTooltip(tooltip)
-	if tooltip.Data.CallingUI == Data.UIType.hotBar and tooltip.Data.Text == "Toggle Chat" then
+	if tooltip.Data.UIType == Data.UIType.hotBar and string.find(tooltip.Data.Text, "Toggle Chat") then
 		tooltip:MarkDirty()
 		tooltip.Data.AllowDelay = false
 		--tooltip.Data.Text = tooltip.Data.Text .. "<br>This is appended text! Yahoo!"
@@ -139,8 +80,14 @@ Ext.RegisterListener("SessionLoaded", function()
 		--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
 		Game.Tooltip.RegisterListener("CustomStat", nil, TooltipHandler.OnCustomStatTooltip)
 		--Game.Tooltip.RegisterListener("Ability", nil, TooltipHandler.OnAbilityTooltip)
+		Game.Tooltip.RegisterListener("Generic", TooltipHandler.OnGenericTooltip)
 	end
 
-	Game.Tooltip.RegisterListener(TooltipHandler.OnAnyTooltip)
-	--Game.Tooltip.RegisterListener("Generic", TooltipHandler.OnGenericTooltip)
+
+	-- if Vars.DebugMode then
+	-- 	Game.Tooltip.RegisterListener(nil, nil, function (...)
+	-- 		local params =  {...}
+	-- 		Ext.Dump(params)
+	-- 	end)
+	-- end
 end)

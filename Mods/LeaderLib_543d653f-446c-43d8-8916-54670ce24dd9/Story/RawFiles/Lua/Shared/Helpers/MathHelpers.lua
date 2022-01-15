@@ -172,12 +172,10 @@ end
 function GameHelpers.Math.GetDistance(pos1, pos2)
     local x,y,z = GameHelpers.Math.GetPosition(pos1, true)
     local tx,ty,tz = GameHelpers.Math.GetPosition(pos2, true)
-    local diff = {
-        x - tx,
-        y - ty,
-        z - tz
-    }
-    return math.sqrt((diff[1]^2) + (diff[2]^2) + (diff[3]^2))
+    local xDiff = x - tx
+    local yDiff = y - ty
+    local zDiff = z - tz
+    return math.sqrt((xDiff^2) + (yDiff^2) + (zDiff^2))
 end
 
 ---Get the directional vector between two Vector3 points.

@@ -22,11 +22,22 @@ Input = {
 		ToggleInfo = 1,
 		FlashCtrl = 1,
 		ShowWorldTooltips = 1,
-	}
+		--Shift
+		-- QueueCommand = 1,
+		-- SplitItemToggle = 1,
+		-- ShowSneakCones = 1,
+	},
+	Shift = false,
+	Alt = false,
+	Ctrl = false
 }
 
 local KEYSTATE = Input.KEYSTATE
 local lastPressedTimes = {}
+
+local SpecialKeys = {
+	[285] = "Shift"
+}
 
 --Initialize states
 for name,ids in pairs(Data.InputEnum) do
@@ -232,6 +243,7 @@ end
 --Workaround to prevent key event listeners firing more than once for the same state from a separate extender/flash event
 local lastFiredEventFrom = {}
 
+---@param evt InputEvent
 local function InvokeExtenderEventCallbacks(evt, eventName)
 	local nextState = evt.Press and KEYSTATE.DOWN or KEYSTATE.RELEASED
 	if evt.Press or Input.SkipStateCheck[eventName] == KEYSTATE.RELEASED then
@@ -240,7 +252,6 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 	-- if Vars.DebugMode then
 	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s) Last(%s) WillFire(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime(), lastFiredEventFrom[eventName], lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState)
 	-- end
-
 	if lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState then
 		Input.Keys[eventName] = nextState
 		if evt.Press and eventName == "ActionCancel" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
@@ -263,8 +274,17 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 end
 
 ---@param evt InputEvent
-Ext.RegisterListener("InputEvent", function(evt)
+local function OnInputEvent(evt)
+	if evt.EventId == 285 then
+		Input.Shift = evt.Press
+	end
 	local eventName = Data.InputEnum[evt.EventId]
+	-- if Vars.DebugMode then
+	-- 	if type(eventName) ~= "string" or not string.find(eventName, "Mouse") then
+	-- 		fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)", Common.JsonStringify(eventName) or "nil")
+	-- 		Ext.Dump(evt)
+	-- 	end
+	-- end
 	if eventName then
 		if type(eventName) == "table" then
 			for i=1,#eventName do
@@ -273,8 +293,12 @@ Ext.RegisterListener("InputEvent", function(evt)
 		else
 			InvokeExtenderEventCallbacks(evt, eventName)
 		end
+	elseif Vars.DebugMode then
+		fprint(LOGLEVEL.WARNING, "[LeaderLib:OnInputEvent] No key registered for id (%s)", evt.EventId)
 	end
-end)
+end
+
+Ext.RegisterListener("InputEvent", OnInputEvent)
 
 ---@param ui LeaderLibUIExtensions
 ---@param pressed boolean
@@ -317,6 +341,21 @@ end
 function Input.OnMouseEvent(event, x, y)
 	InvokeListenerCallbacks(Listeners.MouseInputEvent[event], x, y)
 	InvokeListenerCallbacks(Listeners.MouseInputEvent[UIExtensions.MouseEvent.All], x, y)
+end
+
+local ShiftKeys = {
+	QueueCommand = true,
+	SplitItemToggle = true,
+	ShowSneakCones = true,
+}
+
+function Input.UpdateModifierKeys(ui, event, shiftKey, altKey, ctrlKey)
+	if Input.Shift ~= shiftKey then
+		TooltipExpander.OnShiftKey(shiftKey)
+	end
+	Input.Shift = shiftKey
+	Input.Alt = altKey
+	Input.Ctrl = ctrlKey
 end
 
 function Input.OnKeyboardEvent(ui, call, keyCode, keyName, pressed)

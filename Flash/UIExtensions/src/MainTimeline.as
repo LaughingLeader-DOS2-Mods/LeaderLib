@@ -78,7 +78,6 @@ package
 		
 		public function onEventUp(id:Number) : Boolean
 		{
-			this.CtrlDown = false;
 			var isHandled:Boolean = false;
 			var input:String = this.events[id];
 			if (input != null)
@@ -384,11 +383,13 @@ package
 		public function fireOnMouseClick(e:MouseEvent) : void
 		{
 			Registry.ExtCall("LeaderLib_UIExtensions_MouseClicked", e.stageX, e.stageY);
+			Registry.ExtCall("LeaderLib_UIExtensions_SetModifierKeys", e.shiftKey, e.altKey, e.ctrlKey);
 		}
 		
 		public function fireOnMouseMove(e:MouseEvent) : void
 		{
 			Registry.ExtCall("LeaderLib_UIExtensions_MouseMoved", e.stageX, e.stageY);
+			Registry.ExtCall("LeaderLib_UIExtensions_SetModifierKeys", e.shiftKey, e.altKey, e.ctrlKey);
 		}
 
 		public function onRightMouseDown(e:Event) : void
@@ -457,6 +458,7 @@ package
 			{
 				Registry.ExtCall("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, KeyCodeNames.GetName(e.keyCode), true);
 			}
+			Registry.ExtCall("LeaderLib_UIExtensions_SetModifierKeys", e.shiftKey, e.altKey, e.ctrlKey);
 		}
 
 		private function onKeyboardUp(e:KeyboardEvent) : void
@@ -470,6 +472,7 @@ package
 			{
 				Registry.ExtCall("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, KeyCodeNames.GetName(e.keyCode), false);
 			}
+			Registry.ExtCall("LeaderLib_UIExtensions_SetModifierKeys", e.shiftKey, e.altKey, e.ctrlKey);
 		}
 
 		private var workingKeys:Dictionary = new Dictionary();
@@ -480,7 +483,7 @@ package
 			//Registry.ExtCall("inputFocus");
 			this.stage.addEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown);
 			this.stage.addEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp);
-			this.stage.focus = this;
+			//this.stage.focus = this;
 		}
 
 		public function disableKeyboardListeners() : void

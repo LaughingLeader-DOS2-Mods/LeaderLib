@@ -172,7 +172,7 @@ function UIExtensions.SetupInstance()
 						Input.Keys[eventName] = false
 					end
 				end
-				--main.enableKeyboardListeners()
+				main.enableKeyboardListeners()
 				UIExtensions.Initialized = true
 			else
 				Ext.PrintError("[LeaderLib] Failed to GetRoot of UI:", UIExtensions.SwfPath)
@@ -189,6 +189,7 @@ function UIExtensions.SetupInstance()
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_RightMouseDown", OnRightMouseDown)
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_RightMouseUp", OnRightMouseUp)
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_KeyboardEvent", Input.OnKeyboardEvent)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_SetModifierKeys", Input.UpdateModifierKeys)
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_OnEventResolution", function(ui, call, w, h)
 				if Vars.DebugMode and Vars.Print.UI then
 					--ui:Resize(w,h)

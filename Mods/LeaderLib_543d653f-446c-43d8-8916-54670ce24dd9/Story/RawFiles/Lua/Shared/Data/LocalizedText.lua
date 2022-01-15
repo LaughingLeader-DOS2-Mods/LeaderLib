@@ -309,6 +309,9 @@ LocalizedText.Tooltip = {
 
 LocalizedText.Input = {
 	Shift = ts:Create("hbb74f5fag4e95g4e8fgb2b8g2a761e814bd5", "Shift"),
+	Alt = ts:Create("h2eac7501gd233g41edgae49g1a7a41a4bb06", "Alt"),
+	LeftAlt = ts:Create("h69d93655g343ag4b3eg8705g93a3deb00ef5", "Left Alt"),
+	RightAlt = ts:Create("hcd82cb63g0a61g4799g859egba9f1efabd4b", "Right Alt"),
 	Select = ts:Create("hdf10e5a7g950eg4f82gb716ga5a614c00811", "Select"),
 }
 

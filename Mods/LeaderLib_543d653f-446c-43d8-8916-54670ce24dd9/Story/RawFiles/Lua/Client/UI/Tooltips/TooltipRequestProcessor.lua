@@ -62,11 +62,21 @@ local function CreateRequest()
 						request.StatusId = status.StatusId
 					end
 				end
+			elseif k == "Rune" then
+				if not StringHelpers.IsNullOrEmpty(request.StatsId) then
+					return Ext.GetStat(request.StatsId)
+				end
+			elseif k == "RuneItem" then
+				if request.RuneHandleDouble then
+					return GameHelpers.GetItem(Ext.DoubleToHandle(request.RuneHandleDouble))
+				end
 			end
 		end
 	})
 	return request
 end
+
+RequestProcessor.CreateRequest = CreateRequest
 
 RequestProcessor.CallbackHandler[TooltipCalls.Skill] = function(request, ui, uiType, event, id)
 	request.Skill = id
@@ -185,14 +195,13 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 			local item = Ext.GetItem(Ext.DoubleToHandle(this.craftPanel_mc.runesPanel_mc.targetHit_mc.itemHandle))
 			if item then
 				request.ItemNetID = GetNetID(item)
-				local runeBoost = item.Stats.DynamicStats[3+slot]
-				request.Rune = Ext.GetStat(runeBoost.BoostName)
-				request.StatsId = runeBoost.BoostName
+				request.StatsId = item.Stats.DynamicStats[3+slot].BoostName
 			end
 		elseif uiType == Data.UIType.craftPanel_c then
 			local runePanel = this.craftPanel_mc.runePanel_mc
 			if runePanel then
-				local item = Ext.GetItem(Ext.DoubleToHandle(runePanel.runes_mc.runeTargetHandle))
+				request.RuneHandleDouble = runePanel.runes_mc.runeTargetHandle
+				local item = Ext.GetItem(Ext.DoubleToHandle(request.RuneHandleDouble))
 				request.ItemNetID = GetNetID(item)
 				if slot == 0 then
 					-- The target item is selected instead of a rune, so this should be an item tooltip
@@ -201,19 +210,20 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 				else
 					slot = slot - 1
 					request.Slot = slot
-					--local item = Ext.GetItem(Ext.DoubleToHandle(runePanel.item_array[runePanel.currentHLSlot].itemHandle))
-					local rune = Ext.GetItem(Ext.DoubleToHandle(runePanel.item_array[runePanel.currentHLSlot].itemHandle))
-					--local rune = Ext.GetItem(Ext.DoubleToHandle(runePanel.currMC.itemHandle))
-		
+					request.RuneHandleDouble = runePanel.item_array[runePanel.currentHLSlot].itemHandle
+					local rune = Ext.GetItem(Ext.DoubleToHandle(request.RuneHandleDouble))
+					local statsID = ""
 					if rune then
-						request.Rune = Ext.GetStat(rune.StatsId)
-						request.StatsId = rune.StatsId
-						request.RuneItem = rune
+						statsID = rune.StatsId
 					elseif item and item.Stats then
 						local runeBoost = item.Stats.DynamicStats[3+slot]
-						request.Rune = Ext.GetStat(runeBoost.BoostName)
-						request.StatsId = runeBoost.BoostName
+						if runeBoost then
+							statsID = runeBoost.BoostName
+						end
+						runeHandleDouble = Ext.HandleToDouble(item.Handle)
 					end
+
+					request.StatsId = statsID
 				end
 			end
 		end
@@ -222,9 +232,104 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 	return request
 end
 
-function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHandle, statOrWidth, ...)
-	local params = {...}
+function RequestProcessor.OnExamineTooltip(ui, method, typeIndex, id, ...)
+	---@type EclCharacter
+	local character = nil
 
+	local characterHandle = ui:GetPlayerHandle()
+	if characterHandle then
+		character = GameHelpers.GetCharacter(characterHandle)
+	end
+
+	if not character then
+		character = Client:GetCharacter()
+	end
+
+	local request = CreateRequest()
+
+	if character then
+		request.CharacterNetID = character.NetID
+	end
+
+	if typeIndex == 1 then
+		request.Type = "Stat"
+		request.Stat = Game.Tooltip.TooltipStatAttributes[id]
+
+		if request.Stat == nil then
+			Ext.PrintWarning("Requested tooltip for unknown stat ID " .. id)
+		end
+	elseif typeIndex == 2 then
+		request.Type = "Ability"
+		request.Ability = Ext.EnumIndexToLabel("AbilityType", id)
+	elseif typeIndex == 3 then
+		if id == 0 then
+			--Tooltip for "This character has no talents" doesn't exist.
+			RequestProcessor.Tooltip.Last.Event = method
+			RequestProcessor.Tooltip.Last.UIType = ui:GetTypeId()
+			return
+		else
+			request.Type = "Talent"
+			request.Talent = Ext.EnumIndexToLabel("TalentType", id)
+		end
+	elseif typeIndex == 7 then
+		request.Type = "Status"
+		request.StatusHandle = id
+		local status = Ext.GetStatus(request.Character.Handle, Ext.DoubleToHandle(id))
+		if status then
+			request.StatusId = status and status.StatusId or ""
+		end
+	else
+		local text = typeIndex
+		local x = id
+		local y, width, height, side, allowDelay = table.unpack({...})
+		--text, x, y, width, height, side, allowDelay
+		--Generic type
+		request.Type = "Generic"
+		request.Text = text
+		request.UIType = ui:GetTypeId()
+		if x then
+			request.X = x
+			request.Y = y
+			request.Width = width
+			request.Height = height
+			request.Side = side
+			request.AllowDelay = allowDelay
+		end
+	end
+
+	if RequestProcessor.Tooltip.NextRequest ~= nil then
+		Ext.PrintWarning("Previous tooltip request not cleared in render callback?")
+	end
+
+	RequestProcessor.Tooltip.NextRequest = request
+	RequestProcessor.Tooltip.Last.Event = method
+	RequestProcessor.Tooltip.Last.UIType = ui:GetTypeId()
+end
+
+function RequestProcessor.OnGenericTooltip(ui, call, text, x, y, width, height, side, allowDelay)
+	if RequestProcessor.Tooltip.NextRequest == nil then
+		---@type TooltipGenericRequest
+		local request = CreateRequest()
+		request.Type = "Generic"
+		request.Text = text
+		request.UIType = ui:GetTypeId()
+
+		if x then
+			request.X = x
+			request.Y = y
+			request.Width = width
+			request.Height = height
+			request.Side = side
+			request.AllowDelay = allowDelay
+		end
+
+		RequestProcessor.Tooltip.NextRequest = request
+		RequestProcessor.Tooltip.Last.Event = call
+		RequestProcessor.Tooltip.Last.UIType = request.UIType
+	end
+end
+
+function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHandle, statOrWidth, ...)
 	local this = ui:GetRoot()
 
 	---@type EclCharacter
@@ -372,6 +477,15 @@ function RequestProcessor:Init(tooltip)
 	Ext.RegisterUITypeCall(Data.UIType.reward_c, "refreshTooltip", function(ui, event, itemHandleDouble)
 		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, itemHandleDouble)
 	end)
+
+	--Generic tooltips
+	Ext.RegisterUINameCall("showTooltip", function(ui, ...)
+		if ui:GetTypeId() == Data.UIType.examine then
+			RequestProcessor.OnExamineTooltip(ui, ...)
+		else
+			RequestProcessor.OnGenericTooltip(ui, ...)
+		end
+	end, "Before")
 end
 
 return RequestProcessor

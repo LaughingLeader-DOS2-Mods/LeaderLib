@@ -1,5 +1,4 @@
 local Ext = Ext
-local Game = Game
 local Mods = Mods
 local assert = assert
 local debug = debug
@@ -119,9 +118,14 @@ local UIType = {
 	},
 }
 
-Game.Tooltip = {}
+if Game == nil then Game = {} end
+if Game.Tooltip == nil then Game.Tooltip = {} end
+
+local Game = Game
+
 ---@type TooltipRequestProcessor
 local RequestProcessor = Ext.Require("Client/UI/Tooltips/TooltipRequestProcessor.lua")
+Game.Tooltip.RequestProcessor = RequestProcessor
 
 _ENV = Game.Tooltip
 if setfenv ~= nil then
@@ -795,6 +799,7 @@ end
 
 ---@class TooltipRequest:table
 ---@field Type string
+---@field UIType integer
 
 ---@class TooltipItemRequest:TooltipRequest
 ---@field Item EclItem
@@ -838,9 +843,7 @@ end
 ---@field Stat number The stat handle.
 ---@field StatData table
 
----@class TooltipGenericRequest:table
----@field Type string
----@field CallingUI integer
+---@class TooltipGenericRequest:TooltipRequest
 ---@field Text string
 ---@field X number|nil
 ---@field Y number|nil
@@ -1058,15 +1061,6 @@ function TooltipHooks:Init()
 		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
 	end)
 
-	--Generic tooltips
-	Ext.RegisterUINameCall("showTooltip", function(ui, ...)
-		if ui:GetTypeId() == UIType.examine then
-			self:OnRequestExamineUITooltip(ui, ...)
-		else
-			self:OnRequestGenericTooltip(ui, ...)
-		end
-	end, "Before")
-
 	--Disabled for now since character portrait tooltips get spammed
 	-- Ext.RegisterUINameCall("showCharTooltip", function(ui, call, handle, x, y, width, height, side)
 	-- 	self.NextRequest = {
@@ -1110,29 +1104,6 @@ function TooltipHooks:Init()
 	self:RegisterControllerHooks()
 
 	self.Initialized = true
-end
-
-function TooltipHooks:OnRequestGenericTooltip(ui, call, text, x, y, width, height, side, allowDelay)
-	if self.NextRequest == nil then
-		---@type TooltipGenericRequest
-		local request = {
-			Type = "Generic",
-			Text = text,
-			CallingUI = ui:GetTypeId()
-		}
-		if x then
-			request.X = x
-			request.Y = y
-			request.Width = width
-			request.Height = height
-			request.Side = side
-			request.AllowDelay = allowDelay
-		end
-
-		self.NextRequest = request
-		self.Last.Event = call
-		self.Last.UIType = ui:GetTypeId()
-	end
 end
 
 function TooltipHooks:UpdateGenericTooltip(ui, method, keepUIinScreen)
@@ -1183,70 +1154,6 @@ function TooltipHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay,
 	self.Last.Type = "Generic"
 	self.Last.Request = self.NextRequest
 	self.NextRequest = nil
-end
-
---- @param ui UIObject
-function TooltipHooks:OnRequestExamineUITooltip(ui, method, typeIndex, id, ...)
-	local request = {
-		Character = Ext.GetCharacter(ui:GetPlayerHandle())
-	}
-
-	if request.Character == nil then
-		request.Character = Mods.LeaderLib.Client:GetCharacter()
-	end
-
-	if typeIndex == 1 then
-		request.Type = "Stat"
-		request.Stat = TooltipStatAttributes[id]
-
-		if request.Stat == nil then
-			Ext.PrintWarning("Requested tooltip for unknown stat ID " .. id)
-		end
-	elseif typeIndex == 2 then
-		request.Type = "Ability"
-		request.Ability = Ext.EnumIndexToLabel("AbilityType", id)
-	elseif typeIndex == 3 then
-		if id == 0 then
-			--Tooltip for "This character has no talents" doesn't exist.
-			self.Last.Event = method
-			self.Last.UIType = ui:GetTypeId()
-			return
-		else
-			request.Type = "Talent"
-			request.Talent = Ext.EnumIndexToLabel("TalentType", id)
-		end
-	elseif typeIndex == 7 then
-		request.Type = "Status"
-		local handle = Ext.DoubleToHandle(id)
-		if handle and request.Character then
-			request.Status = Ext.GetStatus(request.Character.Handle, handle)
-		end
-	else
-		local text = typeIndex
-		local x = id
-		local y, width, height, side, allowDelay = table.unpack({...})
-		--text, x, y, width, height, side, allowDelay
-		--Generic type
-		request.Type = "Generic"
-		request.Text = text
-		request.CallingUI = ui:GetTypeId()
-		if x then
-			request.X = x
-			request.Y = y
-			request.Width = width
-			request.Height = height
-			request.Side = side
-			request.AllowDelay = allowDelay
-		end
-	end
-
-	if self.NextRequest ~= nil then
-		Ext.PrintWarning("Previous tooltip request not cleared in render callback?")
-	end
-
-	self.NextRequest = request
-	self.Last.Event = method
-	self.Last.UIType = ui:GetTypeId()
 end
 
 ---@param ui UIObject
@@ -1361,9 +1268,9 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 		if mainArray and mainArray[0] ~= nil then
 			local compareItem = self:GetCompareItem(ui, reqItem, false)
 			if compareItem ~= nil then
-				req.Item = Ext.GetItem(compareItem)
+				req.ItemNetID = Ext.GetItem(compareItem).NetID
 				self:OnRenderSubTooltip(ui, arrayData.CompareMain, req, method, ...)
-				req.Item = reqItem
+				req.ItemNetID = reqItem.NetID
 			else
 				Ext.PrintError("Tooltip compare render failed: Couldn't find item to compare")
 			end
@@ -1372,9 +1279,9 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 		if compareArray and compareArray[0] ~= nil then
 			local compareItem = self:GetCompareItem(ui, reqItem, true)
 			if compareItem ~= nil then
-				req.Item = Ext.GetItem(compareItem)
+				req.ItemNetID = Ext.GetItem(compareItem).NetID
 				self:OnRenderSubTooltip(ui, arrayData.CompareOff, req, method, ...)		
-				req.Item = reqItem
+				req.ItemNetID = reqItem.NetID
 			else
 				Ext.PrintError("Tooltip compare render failed: Couldn't find off-hand item to compare")
 			end
@@ -1436,9 +1343,7 @@ end
 
 --- @param ui UIObject
 function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id, characterHandle)
-	local request = {
-		Character = nil
-	}
+	local request = RequestProcessor.CreateRequest()
 
 	if characterHandle == nil then
 		local uiType = ui:GetTypeId()
@@ -1454,16 +1359,12 @@ function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id, characterHa
 	end
 
 	if characterHandle ~= nil then
-		request.Character = Ext.GetCharacter(characterHandle) or nil
+		request.CharacterNetID = GameHelpers.GetNetID(characterHandle)
 	end
 
 	if method == "selectStatus" then
-		local statusHandle = Ext.DoubleToHandle(id)
 		request.Type = "Status"
-		request.Status = nil
-		if statusHandle ~= nil and request.Character ~= nil then
-			request.Status = Ext.GetStatus(request.Character.Handle, statusHandle)
-		end
+		request.StatusHandle = id
 	elseif method == "selectAbility" then
 		request.Type = "Ability"
 		request.Ability = Ext.EnumIndexToLabel("AbilityType", id)
@@ -1543,6 +1444,8 @@ function TooltipHooks:NotifyListeners(requestType, name, request, tooltip, ...)
     end
 
     self:NotifyAll(self.GlobalListeners, request, tooltip)
+
+	Mods.LeaderLib.TooltipExpander.AppendHelpText(request, tooltip)
 end
 
 function TooltipHooks:NotifyAll(listeners, ...)
@@ -1814,7 +1717,7 @@ end
 ---@param callbackOrNil function If the first two parameters are set, this is the function to invoke.
 function Game.Tooltip.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
 	if type(callbackOrNil) == "function" then
-		assert(type(tooltipTypeOrCallback) == "string", "If the third parameter is a function, the first parameter must be a string (TooltipType).")
+		--assert(type(tooltipTypeOrCallback) == "string", "If the third parameter is a function, the first parameter must be a string (TooltipType).")
 		--assert(type(tooltipID) == "string", "If the third parameter is a function, the second parameter must be a string.")
 		TooltipHooks:RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
 	elseif type(idOrNil) == "function" then

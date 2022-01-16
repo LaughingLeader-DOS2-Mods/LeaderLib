@@ -100,3 +100,70 @@ if Vars.DebugMode then
 		end
 	end)
 end
+
+local function GetClosestEnemy(player, enemies, maxDist)
+	local lastDist = 999
+	local lastEnemy = nil
+	for _,v in pairs(enemies) do
+		local dist = GameHelpers.Math.GetDistance(player, v)
+		if dist <= maxDist and dist < lastDist then
+			lastDist = dist
+			lastEnemy = v
+		end
+	end
+	return lastEnemy
+end
+
+--Enabled with LeaderLib_PullPartyIntoCombat
+function PullPartyIntoCombat()
+	local settings = SettingsManager.GetMod(ModuleUUID, false)
+	local maxDist = 30
+	if settings then
+		maxDist = settings.Global:GetVariable("AutoCombatRange", 30)
+	end
+	if maxDist <= 0 then
+		return
+	end
+
+	--TODO Any way to unhardcode the 30m range from the engine? You get kicked out of combat otherwise.
+	maxDist = math.min(maxDist, 30)
+
+	local players = GameHelpers.Character.GetPlayers(true, true)
+	local activeCombatId = nil
+	local referencePlayer = nil
+	for _,player in pairs(players) do
+		if GameHelpers.Character.IsInCombat(player) then
+			activeCombatId = CombatGetIDForCharacter(player.MyGuid)
+			referencePlayer = player
+			break
+		end
+	end
+	if activeCombatId and activeCombatId > 0 then
+		local enemies = GameHelpers.Combat.GetCharacters(activeCombatId, "Enemy", referencePlayer, true)
+
+		if #enemies > 0 then
+			for _,player in pairs(players) do
+				if not GameHelpers.Character.IsInCombat(player)
+				and not GameHelpers.Character.IsSneakingOrInvisible(player)
+				then
+					local enemy = GetClosestEnemy(player, enemies, maxDist)
+					if enemy then
+						Osi.DB_LeaderLib_Combat_Temp_EnteredCombat(player.MyGuid, activeCombatId)
+						EnterCombat(player.MyGuid, enemy.MyGuid)
+					end
+				end
+			end
+		end
+	end
+end
+
+function StartAutosaving()
+	if not Vars.IsEditorMode and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
+		local settings = SettingsManager.GetMod(ModuleUUID, false)
+		local interval = 15
+		if settings then
+			interval = settings.Global:GetVariable("AutosaveInterval", 15)
+		end
+		Osi.LeaderLib_Autosaving_InitTimer(interval)
+	end
+end

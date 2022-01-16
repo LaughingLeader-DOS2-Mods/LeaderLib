@@ -621,6 +621,14 @@ SetTag(_Character, "LeaderLib_FriendlyFireEnabled");
 //END_REGION
 
 //REGION BRING_PARTY_INTO_COMBAT
+/* [OSITOOLS_ONLY]
+IF
+TimerFinished("Timers_LeaderLib_Combat_BringPartiesIntoCombat")
+THEN
+NRD_ModCall("LeaderLib", "PullPartyIntoCombat");
+*/
+
+// [BEGIN_NO_OSITOOLS]
 IF
 TimerFinished("Timers_LeaderLib_Combat_BringPartiesIntoCombat")
 THEN
@@ -647,15 +655,8 @@ _Dist <= 30.0
 THEN
 DB_LeaderLib_Combat_Temp_EnteredCombat(_PartyMember, _CombatID);
 EnterCombat(_PartyMember, _Enemy);
+// [END_NO_OSITOOLS]
 
-/*
-IF
-StoryEvent((CHARACTERGUID)_PartyMember, "LeaderLib_Iterator_Combat_CheckPartyInvolvement")
-AND
-DB_LeaderLib_Combat_Temp_EnteredCombat(_PartyMember, _CombatID)
-THEN
-NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_PartyMember, _CombatID);
-*/
 //END_REGION
 
 //REGION CLEANUP

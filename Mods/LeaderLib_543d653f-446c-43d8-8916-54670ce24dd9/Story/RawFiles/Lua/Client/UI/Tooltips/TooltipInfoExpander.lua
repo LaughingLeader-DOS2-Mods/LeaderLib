@@ -44,7 +44,6 @@ function TooltipExpander.IsExpanded()
 		return true
 	end
 	if not Vars.ControllerEnabled then
-		Ext.Print("Input.IsPressed(keyboardKey)", Input.IsPressed(keyboardKey))
 		return Input.IsPressed(keyboardKey)
 	else
 		return Input.IsPressed(controllerKey)
@@ -119,7 +118,8 @@ Ext.RegisterUINameCall("hidetooltip", OnHideTooltip)
 local function RebuildTooltip()
 	if dirty then
 		if TooltipExpander.CallData.Args ~= nil then
-			if TooltipExpander.CallData.LastCall == "showTooltip" then
+			--if TooltipExpander.CallData.LastCall == "showTooltip" then
+			if Game.Tooltip.TooltipHooks.Last.Type == "Generic" then
 				rebuildingTooltip = true
 				dirty = false
 				local ui = Ext.GetUIByType(Data.UIType.tooltip)
@@ -140,7 +140,7 @@ local function RebuildTooltip()
 				local this = ui:GetRoot()
 				if this and this.tf then
 					request.AllowDelay = this.tf.allowDelay
-					request.BackgroundType = this.tf.bg_mc.visible == true and 0 or 1
+					request.BackgroundType = this.tf.bg_mc and this.tf.bg_mc.visible == true and 0 or 1
 				end
 
 				local tooltip = Game.Tooltip.TooltipData:Create(request)
@@ -148,7 +148,12 @@ local function RebuildTooltip()
 
 				if this and this.tf then
 					this.tf.shortDesc = tooltip.Data.Text
-					this.tf.setText(tooltip.Data.Text,tooltip.Data.BackgroundType or 0)
+
+					if this.tf.setText then
+						this.tf.setText(tooltip.Data.Text,tooltip.Data.BackgroundType or 0)
+					else
+						Ext.PrintError(this.tf.name)
+					end
 
 					this.checkTooltipBoundaries(this.getTooltipWidth(),this.getTooltipHeight(), tooltip.Data.X + this.frameSpacing, tooltip.Data.Y + this.frameSpacing)
 

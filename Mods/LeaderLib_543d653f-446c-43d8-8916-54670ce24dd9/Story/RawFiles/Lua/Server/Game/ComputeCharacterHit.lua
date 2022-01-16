@@ -128,11 +128,13 @@ end
 function HitOverrides.GetResistancePenetration(character, attacker)
     --- @type table<string,integer>
     local resistancePenetration = {}
+
+    local tags = GameHelpers.GetAllTags(attacker.Character)
         
     if attacker ~= nil and attacker.Character ~= nil then
         for damageType,tags in pairs(Data.ResistancePenetrationTags) do
             for i,tagEntry in pairs(tags) do
-                if GameHelpers.CharacterOrEquipmentHasTag(attacker.Character, tagEntry.Tag) then
+                if tags[tagEntry.Tag] then
                     if resistancePenetration[damageType] == nil then
                         resistancePenetration[damageType] = 0
                     end
@@ -422,6 +424,7 @@ end
 --- @param attacker StatCharacter
 --- @param damageMultiplier number
 function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+    damageMultiplier = damageMultiplier or 1.0
     if extVersion < 56 then
         hitRequest.DamageMultiplier = damageMultiplier
         --We're basically calling Game.Math.DoHit here, but it may be a modified version from a mod.
@@ -556,9 +559,11 @@ if extVersion < 56 then
     Ext.RegisterListener("ComputeCharacterHit", HitOverrides.ComputeCharacterHit)
 else
     Ext.Events.ComputeCharacterHit:Subscribe(function(event)
+        --local ms = Ext.MonotonicTime()
         local hit = HitOverrides.ComputeCharacterHit(event.Target, event.Attacker, event.Weapon, event.DamageList, event.HitType, event.NoHitRoll, event.ForceReduceDurability, event.Hit, event.AlwaysBackstab, event.HighGround, event.CriticalRoll)
         if hit then
             event.Handled = true
+            --fprint(LOGLEVEL.ERROR, "[LeaderLib] Hit calculation took (%s)ms", Ext.MonotonicTime() - ms)
             --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})
         end
     end)

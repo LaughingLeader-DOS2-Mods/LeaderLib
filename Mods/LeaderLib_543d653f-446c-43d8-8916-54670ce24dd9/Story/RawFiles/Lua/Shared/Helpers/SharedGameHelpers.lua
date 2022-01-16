@@ -27,12 +27,14 @@ end
 ---@param asInteger boolean|nil If true, return the result as an integer.
 ---@return number|integer
 function GameHelpers.GetExtraData(key, fallback, asInteger)
-	local value = Ext.ExtraData[key]
-	if value then
-		if asInteger then
-			return math.tointeger(value) or fallback
+	if Ext.ExtraData then
+		local value = Ext.ExtraData[key]
+		if value then
+			if asInteger then
+				return math.tointeger(value) or fallback
+			end
+			return value
 		end
-		return value
 	end
 	return fallback
 end
@@ -336,7 +338,7 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 		if isClient then
 			local uuid = character:GetItemBySlot(slot)
 			if not StringHelpers.IsNullOrEmpty(uuid) then
-				local item = Ext.GetItem(uuid)
+				local item = GameHelpers.GetItem(uuid)
 				if item and GameHelpers.ItemHasTag(item, tag) then
 					return true
 				end
@@ -345,7 +347,7 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 			if Ext.OsirisIsCallable() then
 				local uuid = CharacterGetEquippedItem(character.MyGuid, slot)
 				if not StringHelpers.IsNullOrEmpty(uuid) then
-					local item = Ext.GetItem(uuid)
+					local item = GameHelpers.GetItem(uuid)
 					if item and GameHelpers.ItemHasTag(item, tag) then
 						return true
 					end
@@ -354,7 +356,7 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 				local items = character:GetInventoryItems()
 				local count = math.min(#items, 14)
 				for i=1,count do
-					local item = Ext.GetItem(items[i])
+					local item = GameHelpers.GetItem(items[i])
 					if item and Data.VisibleEquipmentSlots[item.Slot] and GameHelpers.ItemHasTag(item, tag) then
 						return true
 					end
@@ -522,9 +524,11 @@ function GameHelpers.GetItem(object)
 	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(object) then
 		return object
 	elseif t == "string" or t == "number" then
-		local obj = Ext.GetItem(object)
-		if obj then
+		local b,obj = xpcall(Ext.GetItem, debug.traceback, object)
+		if b then
 			return obj
+		else
+			Ext.PrintError(obj)
 		end
 	end
 	return nil
@@ -563,6 +567,11 @@ function GameHelpers.ObjectExists(object, returnNullId)
 	return false
 end
 
+local getFuncs = {
+	Ext.GetCharacter,
+	Ext.GetItem,
+	Ext.GetGameObject
+}
 
 local function TryGetObject(id)
 	local t = type(id)
@@ -577,15 +586,17 @@ local function TryGetObject(id)
 			return Ext.GetItem(id)
 		end
 	elseif isHandle or t == "number" then
-		local char = Ext.GetCharacter(id)
-		if char then
-			return char
+		for i=1,3 do
+			local func = getFuncs[i]
+			local b,result = xpcall(func, debug.traceback, id)
+			if b and result then
+				return result
+			else
+				-- if Vars.DebugMode then
+				-- 	Ext.PrintError(result)
+				-- end
+			end
 		end
-		local item = Ext.GetItem(id)
-		if item then
-			return item
-		end
-		return Ext.GetGameObject(id)
 	elseif t == "userdata" then
 		return id
 	end

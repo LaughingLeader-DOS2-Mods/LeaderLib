@@ -2,6 +2,12 @@ local _translatedStringUpdate = {}
 --Turn into a weak table since we don't care to update variables that were deleted.
 setmetatable(_translatedStringUpdate, {__mode = "kv"})
 
+local extVersion = Ext.Version()
+local _getTranslatedStringKeyFunction = Ext.GetTranslatedStringFromKey
+if extVersion >= 56 then
+	_getTranslatedStringKeyFunction = Ext.L10N.GetTranslatedStringFromKey
+end
+
 ---@class TranslatedString
 local TranslatedString = {
 	Type = "TranslatedString",
@@ -63,7 +69,7 @@ end
 
 function TranslatedString:Update()
 	if not StringHelpers.IsNullOrEmpty(self.Key) then
-		local content,handle = Ext.GetTranslatedStringFromKey(self.Key)
+		local content,handle = _getTranslatedStringKeyFunction(self.Key)
 		if not StringHelpers.IsNullOrEmpty(handle) then
 			self.Handle = handle
 		end

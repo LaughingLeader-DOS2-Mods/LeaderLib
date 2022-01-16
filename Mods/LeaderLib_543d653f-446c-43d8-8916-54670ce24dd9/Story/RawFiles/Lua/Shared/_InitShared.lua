@@ -17,6 +17,12 @@ InitTable("Classes")
 InitTable("Common")
 InitTable({"Item", "Math", "Skill", "Status", "Tooltip", "UI", "Ext", "Internal", "Net"}, GameHelpers)
 
+local extVersion = Ext.Version()
+local _getTranslatedStringKeyFunction = Ext.GetTranslatedStringFromKey
+if extVersion >= 56 then
+	_getTranslatedStringKeyFunction = Ext.L10N.GetTranslatedStringFromKey
+end
+
 local _stringKeyText = {}
 
 ---Get the final value of a string key.
@@ -28,7 +34,7 @@ function GameHelpers.GetStringKeyText(key,fallback)
 	fallback = fallback or key
 	local text = _stringKeyText[key]
 	if text == nil then
-		text = Ext.GetTranslatedStringFromKey(key) or fallback
+		text = _getTranslatedStringKeyFunction(key) or fallback
 		_stringKeyText[key] = text
 	end
 	return text

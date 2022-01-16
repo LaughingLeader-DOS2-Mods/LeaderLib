@@ -51,7 +51,7 @@ Vars = {
 		Statuses = {},
 		Total = 0
 	},
-	---Temporary list of skills to listen for hitting, to then apply SkillProperties.
+	---Temporary list of zone skills to listen for during OnHit, to then apply SkillProperties.
 	---@see GameHelpers.Skill.ShootZoneAt
 	---@type table<UUID,string>
 	ApplyZoneSkillProperties = {},

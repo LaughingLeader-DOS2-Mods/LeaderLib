@@ -124,6 +124,8 @@ local function OnHit(hitStatus, hitContext)
 	local targetId = GameHelpers.GetUUID(target, true)
 	local sourceId = GameHelpers.GetUUID(source, true)
 
+	--This is set if ApplySkillProperties is true during GameHelpers.Skill.ShootZoneAt
+	---@see GameHelpers.Skill.ShootZoneAt
 	local applySkillProperties = Vars.ApplyZoneSkillProperties[hitStatus.SkillId]
 	if applySkillProperties and applySkillProperties[sourceId] then
 		Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, targetId, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))

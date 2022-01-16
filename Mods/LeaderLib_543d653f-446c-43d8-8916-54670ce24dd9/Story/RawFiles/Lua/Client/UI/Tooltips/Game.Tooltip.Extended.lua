@@ -14,6 +14,7 @@ local tostring = tostring
 local type = type
 local xpcall = xpcall
 local version = Ext.Version()
+local isDeveloperMode = Ext.IsDeveloperMode()
 
 local UIType = {
 	actionProgression = 0,
@@ -558,7 +559,7 @@ function ParseTooltipElement(tt, index, spec, typeName)
 		if field[1] ~= nil then
 			element[field[1]] = val
 		end
-		if field[2] ~= nil and type(val) ~= field[2] then
+		if isDeveloperMode and (field[2] ~= nil and type(val) ~= field[2]) then
 			Ext.PrintWarning("Type of field " .. typeName .. "." .. field[1] .. " differs: " .. type(val) .. " vs " .. field[2] .. ":", val)
 		end
 	end
@@ -687,7 +688,9 @@ function EncodeTooltipElement(tt, spec, element)
 			table.insert(tt, "")
 		else
 			if fieldType ~= nil and type(val) ~= fieldType then
-				Ext.PrintWarning("Type of field " .. element.Type .. "." .. name .. " differs: " .. type(val) .. " vs " .. fieldType .. ":", val)
+				if isDeveloperMode then
+					Ext.PrintWarning("Type of field " .. element.Type .. "." .. name .. " differs: " .. type(val) .. " vs " .. fieldType .. ":", val)
+				end
 				val = nil
 			end
 
@@ -754,7 +757,10 @@ function EncodeTooltipArray(elements)
 		if element then
 			local type = TooltipItemTypes[element.Type]
 			if type == nil then
-				Ext.PrintWarning("Couldn't encode tooltip element with unknown type:", element.Type)
+				if isDeveloperMode then
+					Ext.PrintError("Couldn't encode tooltip element with unknown type:", element.Type)
+					Ext.Dump(element)
+				end
 			else
 				if element.Type == "SkillProperties" then
 					table.insert(tt, type)
@@ -765,7 +771,10 @@ function EncodeTooltipArray(elements)
 				else
 					local spec = TooltipSpecs[element.Type]
 					if spec == nil then
-						Ext.PrintWarning("No encoder found for tooltip element type:", element.Type)
+						if isDeveloperMode then
+							Ext.PrintError("No encoder found for tooltip element type:", element.Type)
+							Ext.Dump(element)
+						end
 					else
 						table.insert(tt, type)
 						EncodeTooltipElement(tt, spec, element)
@@ -1246,7 +1255,9 @@ end
 ---@param ui UIObject
 function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	if self.NextRequest == nil then
-		Ext.PrintWarning(string.format("[Game.Tooltip] Got tooltip render request, but did not find original tooltip info! method(%s)", method))
+		if isDeveloperMode then
+			Ext.PrintWarning(string.format("[Game.Tooltip] Got tooltip render request, but did not find original tooltip info! method(%s)", method))
+		end
 		return
 	end
 

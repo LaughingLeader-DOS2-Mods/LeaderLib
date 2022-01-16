@@ -15,12 +15,6 @@ local function OnPrepareHit(target, source, damage, handle)
 		end
 	end
 
-	--Ext.Dump({Context="OnPrepareHit", Damage=data.DamageList:ToTable(), TotalDamageDone=data.TotalDamageDone, HitType=data.HitType})
-
-	-- if Vars.DebugMode and (Vars.Print.HitPrepare or Vars.LeaderDebugMode) 
-	-- and (Vars.Print.SpammyHits or (data.HitType ~= "Surface" --[[ and data.HitType ~= "DoT" ]])) then
-	-- 	Ext.Print("[HitPrepareData]", data:ToDebugString())
-	-- end
 	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle, data)
 end
 

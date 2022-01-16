@@ -266,9 +266,10 @@ function GameHelpers.Character.GetDisplayName(character)
 	return ""
 end
 
----@param includeSummons boolean|nil
+---@param includeSummons ?boolean
+---@param asTable ?boolean if true, a regular table is returned, which needs to be used with pairs/ipairs.
 ---@return fun():EsvCharacter|EclCharacter
-function GameHelpers.Character.GetPlayers(includeSummons)
+function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 	local players = {}
 	if not isClient then
 		for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
@@ -306,13 +307,17 @@ function GameHelpers.Character.GetPlayers(includeSummons)
 		end
 	end
 
-	local i = 0
-	local count = #players
-	return function ()
-		i = i + 1
-		if i <= count then
-			return players[i]
+	if not asTable then
+		local i = 0
+		local count = #players
+		return function ()
+			i = i + 1
+			if i <= count then
+				return players[i]
+			end
 		end
+	else
+		return players
 	end
 end
 

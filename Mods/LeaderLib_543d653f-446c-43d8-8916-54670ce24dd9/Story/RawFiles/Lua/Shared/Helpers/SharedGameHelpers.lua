@@ -498,6 +498,7 @@ end
 ---@return EsvCharacter|EclCharacter
 function GameHelpers.GetCharacter(object)
 	local t = type(object)
+	local isHandle = t == "userdata" and getmetatable(object) == nil
 	if t == "userdata" then
 		if GameHelpers.Ext.ObjectIsCharacter(object) then
 			return object
@@ -507,7 +508,7 @@ function GameHelpers.GetCharacter(object)
 			--Object handle?
 			return Ext.GetCharacter(object)
 		end
-	elseif t == "string" or t == "number" then
+	elseif isHandle or t == "string" or t == "number" then
 		local obj = Ext.GetCharacter(object)
 		if obj then
 			return obj
@@ -521,9 +522,10 @@ end
 ---@return EsvItem|EclItem
 function GameHelpers.GetItem(object)
 	local t = type(object)
+	local isHandle = t == "userdata" and getmetatable(object) == nil
 	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(object) then
 		return object
-	elseif t == "string" or t == "number" then
+	elseif isHandle or t == "string" or t == "number" then
 		local b,obj = xpcall(Ext.GetItem, debug.traceback, object)
 		if b then
 			return obj

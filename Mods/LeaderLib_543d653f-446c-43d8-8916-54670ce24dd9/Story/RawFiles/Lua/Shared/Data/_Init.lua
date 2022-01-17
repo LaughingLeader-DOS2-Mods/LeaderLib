@@ -769,6 +769,8 @@ for k,b in pairs(Data.EngineStatus) do
 	Data.IgnoredStatus[k] = true
 end
 Data.IgnoredStatus.CONSUME = false
+Data.IgnoredStatus.SUMMONING = false -- For the summoning listener
+Data.IgnoredStatus.SNEAKING = false
 
 Data.Surfaces = {
 	["SurfaceNone"] = -1,

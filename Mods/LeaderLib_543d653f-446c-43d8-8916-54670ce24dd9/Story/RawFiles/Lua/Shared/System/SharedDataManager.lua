@@ -413,28 +413,30 @@ end
 
 function GameHelpers.Data.GetPersistentVars(modTable, createIfMissing, ...)
 	if modTable ~= nil then
-		if Mods[modTable].PersistentVars == nil then
+		if Mods[modTable].PersistentVars == nil and createIfMissing then
 			Mods[modTable].PersistentVars = {}
 		end
 		local pvars = Mods[modTable].PersistentVars
-		local variablePath = {...}
-		local lastTable = pvars
-		for i=1,#variablePath do
-			local tableName = variablePath[i]
-			if tableName ~= nil and type(tableName) == "string" then
-				local ref = lastTable[tableName]
-				if ref == nil and createIfMissing == true then
-					ref = {}
-					lastTable[tableName] = ref
-				end
-				if ref ~= nil then
-					lastTable = ref
-				else
-					return nil
+		if pvars ~= nil then
+			local variablePath = {...}
+			local lastTable = pvars
+			for i=1,#variablePath do
+				local tableName = variablePath[i]
+				if tableName ~= nil and type(tableName) == "string" then
+					local ref = lastTable[tableName]
+					if ref == nil and createIfMissing == true then
+						ref = {}
+						lastTable[tableName] = ref
+					end
+					if ref ~= nil then
+						lastTable = ref
+					else
+						return nil
+					end
 				end
 			end
+			return lastTable
 		end
-		return lastTable
 	end
 	return nil
 end

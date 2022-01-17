@@ -250,13 +250,14 @@ end
 
 ---@param data LeaderLibCellSurfaceData
 local function HasSurfaceSingle(data, name, containingName, onlyLayer)
-	if type(name) == "table" then
+	local t = type(name)
+	if t == "table" then
 		for _,v in pairs(name) do
 			if data.HasSurface(v, containingName, onlyLayer) then
 				return true
 			end
 		end
-	else
+	elseif t == "string" then
 		local matchName = string.lower(name)
 		if data.Ground and onlyLayer ~= 1 then
 			if data.Ground.SurfaceType == name or (containingName and string.find(string.lower(data.Ground.SurfaceType), matchName)) then
@@ -268,6 +269,8 @@ local function HasSurfaceSingle(data, name, containingName, onlyLayer)
 				return true
 			end
 		end
+	else
+		ferror("Wrong type for parameter 'name': (%s). Should be string or a table.", t)
 	end
 
 	return false
@@ -330,8 +333,8 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 				Ground = nil,
 				Cloud = nil,
 			}
-			data.HasSurface = function(name, containingName, onlyLayer)
-				return HasSurfaceSingle(data, name, containingName, onlyLayer)
+			data.HasSurface = function(s, name, containingName, onlyLayer)
+				return HasSurfaceSingle(s, name, containingName, onlyLayer)
 			end
 			if cell.GroundSurface then
 				data.Ground = Ext.GetSurface(cell.GroundSurface)

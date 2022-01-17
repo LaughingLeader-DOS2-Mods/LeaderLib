@@ -371,8 +371,13 @@ local function ApplyLifeSteal(hit, target, attacker, hitType)
     end
 end
 
----@param damageList DamageList
 ---@param hit HitRequest
+---@param damageList DamageList
+---@param statusBonusDmgTypes string[]
+---@param hitType string
+---@param target StatCharacter
+---@param attacker StatCharacter
+---@param damageMultiplier number
 local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     hit.Hit = true
     damageList:AggregateSameTypeDamages()

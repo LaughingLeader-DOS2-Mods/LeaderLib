@@ -45,12 +45,6 @@ if isClient then
 					hoverType = "Item"
 				end
 			end
-			Ext.Dump({
-				UUID = obj.MyGuid,
-				NetID = obj.NetID,
-				DisplayName = obj.DisplayName,
-				FuncNetID = netid,
-			})
 			local uuid = obj.MyGuid or NETID_TO_UUID[hoverType][obj.NetID]
 			if uuid then
 				local data = {}

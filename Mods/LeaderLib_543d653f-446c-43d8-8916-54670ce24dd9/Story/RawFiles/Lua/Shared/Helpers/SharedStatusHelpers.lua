@@ -198,7 +198,7 @@ function GameHelpers.Status.IsHarmful(statusId)
 	local statusType = GameHelpers.Status.GetStatusType(statusId)
 	if harmfulStatusTypes[statusType] == true or ((statusType == "DAMAGE" or statusType == "DAMAGE_ON_MOVE") and GameHelpers.Status.StatusDealsDamage(statusId)) then
 		return true
-	elseif statusType ~= "EFFECT" and not Data.IgnoredStatus[statusId] then
+	elseif statusType ~= "EFFECT" and not Data.EngineStatus[statusId] then
 		local statsId = Ext.StatGetAttribute(statusId, "StatsId")
 		if not StringHelpers.IsNullOrWhitespace(statsId) and IsHarmfulStatsId(statsId) then
 			return true
@@ -302,7 +302,7 @@ function GameHelpers.Status.IsBeneficial(statusId, ignoreItemPotions, ignoreStat
 	end
 	if beneficialStatusTypes[statusType] == true then
 		return true
-	elseif statusType ~= "EFFECT" and not Data.IgnoredStatus[statusId] then
+	elseif statusType ~= "EFFECT" and not Data.EngineStatus[statusId] then
 		local statsId = Ext.StatGetAttribute(statusId, "StatsId")
 		if not StringHelpers.IsNullOrWhitespace(statsId) and IsBeneficialStatsId(statsId, ignoreItemPotions) then
 			return true

@@ -119,7 +119,8 @@ local function OnInitialized(region, isRunning)
 	end
 end
 
-function OnInitialized_CheckGameState(region)
+--Called from Osiris, Osi.LeaderLib_Initialized
+function OnLeaderLibInitialized(region)
 	if Ext.GetGameState() == "Running" then
 		if not Vars.Initialized then
 			OnInitialized(region, true)
@@ -136,27 +137,15 @@ function OnInitialized_CheckGameState(region)
 	end
 end
 
-Ext.RegisterListener("GameStateChanged", function(from, to)
-	if to == "Running" and Ext.OsirisIsCallable() then
-		if not Vars.Initialized then
-			OnInitialized("", true)
-		elseif from == "Sync" then
-			SettingsManager.SyncAllSettings(nil, true)
-		end
-	end
+Timer.RegisterListener("Timers_LeaderLib_Initialized_CheckGameState", function ()
+	OnLeaderLibInitialized(SharedData.RegionData.Current)
 end)
 
-function OnLeaderLibInitialized(region)
-	if not Vars.Initialized then
-		if Ext.GetGameState() == "Running" then
-			OnInitialized(region, true)
-		else
-			OnInitialized_CheckGameState(region)
-		end
-	elseif Ext.GetGameState() == "Running" then
-		InvokeOnInitializedCallbacks(region)
+Ext.RegisterListener("GameStateChanged", function(from, to)
+	if to == "Running" and from == "Sync" then
+		SettingsManager.SyncAllSettings(nil, true)
 	end
-end
+end)
 
 local function DebugLoadPersistentVars()
 	local fileStr = Ext.LoadFile("LeaderLib_Debug_PersistentVars.json")

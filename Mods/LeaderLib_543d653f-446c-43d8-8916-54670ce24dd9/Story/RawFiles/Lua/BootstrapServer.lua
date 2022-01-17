@@ -184,9 +184,6 @@ Ext.Require("BootstrapShared.lua")
 ---@type LeaderLibPersistentVars
 PersistentVars = Common.CloneTable(defaultPersistentVars, true)
 
----@type LeaderLibPersistentVars
-LeaderLibPersistentVars = PersistentVars
-
 function LoadPersistentVars()
 	Common.InitializeTableFromSource(PersistentVars, defaultPersistentVars)
 	SkillSystem.LoadSaveData()

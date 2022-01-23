@@ -394,8 +394,21 @@ if version >= 56 then
 	_jsonParse = Ext.Json.Parse
 end
 
-function Common.JsonParse(str)
-	local tbl = _jsonParse(str)
+---@param str string
+---@param safeguardErrors ?boolean If true, JsonParse is wrapped in an xpcall.
+---@return table
+function Common.JsonParse(str, safeguardErrors)
+	local tbl = {}
+	if safeguardErrors then
+		local b,result = xpcall(_jsonParse, debug.traceback, str)
+		if b then
+			tbl = result
+		else
+			Ext.PrintError(result)
+		end
+	else
+		tbl = _jsonParse(str)
+	end
 	if tbl ~= nil then
 		Common.ConvertTableKeysToNumbers(tbl, true)
 	end
@@ -407,6 +420,8 @@ if version >= 56 then
 	_jsonStringify = Ext.Json.Stringify
 end
 
+---@param tbl table
+---@return string
 function Common.JsonStringify(tbl)
 	return _jsonStringify(tbl)
 end

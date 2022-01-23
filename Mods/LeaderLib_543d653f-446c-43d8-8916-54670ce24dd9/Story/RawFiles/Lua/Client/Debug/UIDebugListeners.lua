@@ -213,48 +213,48 @@ end)
 
 local enabledParam = {Enabled=true}
 
-local areaInteract_c = UIListenerWrapper:Create(Data.UIType.areaInteract_c)
-local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, enabledParam)
-local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
-local containerInventory = UIListenerWrapper:Create(Data.UIType.containerInventory, enabledParam)
-local uiCraft = UIListenerWrapper:Create(Data.UIType.uiCraft, enabledParam)
 local contextMenu = UIListenerWrapper:Create(Data.UIType.contextMenu, enabledParam)
-local dialog = UIListenerWrapper:Create(Data.UIType.dialog,enabledParam)
-local enemyHealthBar = UIListenerWrapper:Create(Data.UIType.enemyHealthBar)
-local examine = UIListenerWrapper:Create(Data.UIType.examine, enabledParam)
-local gmPanelHUD = UIListenerWrapper:Create(Data.UIType.GMPanelHUD)
-local journal_csp = UIListenerWrapper:Create(Data.UIType.journal_csp)
-local LeaderLib_UIExtensions = UIListenerWrapper:Create("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf", enabledParam)
-local mainMenu = UIListenerWrapper:Create(Data.UIType.mainMenu)
-local msgBox = UIListenerWrapper:Create(Data.UIType.msgBox, enabledParam)
-local msgBox_c = UIListenerWrapper:Create(Data.UIType.msgBox_c, enabledParam)
---local overhead = UIListenerWrapper:Create(Data.UIType.overhead, enabledParam)
-local partyInventory = UIListenerWrapper:Create(Data.UIType.partyInventory, enabledParam)
-local playerInfo = UIListenerWrapper:Create(Data.UIType.playerInfo, {Enabled=true, Ignored={updateStatuses=true}})
-local possessionBar = UIListenerWrapper:Create(Data.UIType.possessionBar)
-local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
-local reward = UIListenerWrapper:Create(Data.UIType.reward, enabledParam)
-local reward_c = UIListenerWrapper:Create(Data.UIType.reward_c, enabledParam)
-local optionsSettings = UIListenerWrapper:Create(Data.UIType.optionsSettings, enabledParam)
-local skills = UIListenerWrapper:Create(Data.UIType.skills)
-local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole)
-local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip)
-local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip)
+local characterSheet = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
+-- local areaInteract_c = UIListenerWrapper:Create(Data.UIType.areaInteract_c)
+-- local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, enabledParam)
+-- local containerInventory = UIListenerWrapper:Create(Data.UIType.containerInventory, enabledParam)
+-- local uiCraft = UIListenerWrapper:Create(Data.UIType.uiCraft, enabledParam)
+-- local dialog = UIListenerWrapper:Create(Data.UIType.dialog,enabledParam)
+-- local enemyHealthBar = UIListenerWrapper:Create(Data.UIType.enemyHealthBar)
+-- local examine = UIListenerWrapper:Create(Data.UIType.examine, enabledParam)
+-- local gmPanelHUD = UIListenerWrapper:Create(Data.UIType.GMPanelHUD)
+-- local journal_csp = UIListenerWrapper:Create(Data.UIType.journal_csp)
+-- local LeaderLib_UIExtensions = UIListenerWrapper:Create("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf", enabledParam)
+-- local mainMenu = UIListenerWrapper:Create(Data.UIType.mainMenu)
+-- local msgBox = UIListenerWrapper:Create(Data.UIType.msgBox, enabledParam)
+-- local msgBox_c = UIListenerWrapper:Create(Data.UIType.msgBox_c, enabledParam)
+-- --local overhead = UIListenerWrapper:Create(Data.UIType.overhead, enabledParam)
+-- local partyInventory = UIListenerWrapper:Create(Data.UIType.partyInventory, enabledParam)
+-- local playerInfo = UIListenerWrapper:Create(Data.UIType.playerInfo, {Enabled=true, Ignored={updateStatuses=true}})
+-- local possessionBar = UIListenerWrapper:Create(Data.UIType.possessionBar)
+-- local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
+-- local reward = UIListenerWrapper:Create(Data.UIType.reward, enabledParam)
+-- local reward_c = UIListenerWrapper:Create(Data.UIType.reward_c, enabledParam)
+-- local optionsSettings = UIListenerWrapper:Create(Data.UIType.optionsSettings, enabledParam)
+-- local skills = UIListenerWrapper:Create(Data.UIType.skills)
+-- local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole)
+-- local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip)
+-- local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip)
 
 -- overhead.CustomCallback.updateOHs = function(self, ui, method)
 	
 -- end
 
-characterCreation.CustomCallback.updateContent = function(self, ui, method)
-	local this = ui:GetRoot()
-	if this then
-		local content = {}
-		for i=0,#this.contentArray-1 do
-			content[#content+1] = this.contentArray[i]
-		end
-		Ext.SaveFile("ConsoleDebug/characterCreation_updateContent.lua", TableHelpers.ToString(content))
-	end
-end
+-- characterCreation.CustomCallback.updateContent = function(self, ui, method)
+-- 	local this = ui:GetRoot()
+-- 	if this then
+-- 		local content = {}
+-- 		for i=0,#this.contentArray-1 do
+-- 			content[#content+1] = this.contentArray[i]
+-- 		end
+-- 		Ext.SaveFile("ConsoleDebug/characterCreation_updateContent.lua", TableHelpers.ToString(content))
+-- 	end
+-- end
 
 local printArrays = {
 	"lvlBtnAbility_array",

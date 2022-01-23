@@ -1,4 +1,5 @@
 local isClient = Ext.IsClient()
+local _EXTVERSION = Ext.Version()
 
 ---@param pickpocketSkill integer
 ---@return number
@@ -665,4 +666,33 @@ function GameHelpers.ObjectHasFlag(obj, flag)
 		end
 	end
 	return false
+end
+
+---Get an object's root template UUID.
+---@param obj EsvCharacter|EclCharacter|EsvItem|EclItem|UUID|NETID
+---@return string
+function GameHelpers.GetTemplate(obj)
+	if not isClient and Ext.OsirisIsCallable() then
+		local uuid = GameHelpers.GetUUID(obj)
+		if uuid then
+			return StringHelpers.GetUUID(GetTemplate(uuid))
+		end
+	end
+	local object = GameHelpers.TryGetObject(obj)
+	if object and object.RootTemplate then
+		if _EXTVERSION < 56 then
+			if object.RootTemplate.TemplateName ~= "" then
+				return object.RootTemplate.TemplateName
+			else
+				return object.RootTemplate.Id
+			end
+		else
+			if object.RootTemplate.RootTemplate ~= "" then
+				return object.RootTemplate.RootTemplate
+			else
+				return object.RootTemplate.Id
+			end
+		end
+	end
+	return nil
 end

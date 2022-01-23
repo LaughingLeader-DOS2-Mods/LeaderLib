@@ -67,7 +67,6 @@ local function UpdateStatusVisibility(array, whitelist, blacklist, allVisible)
 end
 
 local PlayerInfo = {}
-PlayerInfo.__index = PlayerInfo
 StatusHider.PlayerInfo = PlayerInfo
 
 function PlayerInfo:Get()
@@ -93,12 +92,16 @@ function PlayerInfo:AddStatus(directly, characterDouble, statusDouble, displayNa
 	end
 end
 
+local function NoResult()
+
+end
+
 ---@param ignoreSummons boolean|nil
 ---@return FlashObject
 function PlayerInfo:GetCharacterMovieClips(ignoreSummons)
 	local this = self:Get()
 	if not this then
-		return function() end
+		return NoResult
 	end
 	local characters = {}
 	for i=0,#this.player_array do
@@ -130,6 +133,9 @@ end
 ---@return FlashObject
 function PlayerInfo:GetSummonMovieClips(ownerHandleMatch)
 	local this = self:Get()
+	if not this then
+		return NoResult
+	end
 	local characters = {}
 	for i=0,#this.player_array do
 		local player_mc = this.player_array[i]
@@ -159,14 +165,14 @@ end
 
 function PlayerInfo:GetPlayerOrSummonByHandle(doubleHandle, this)
 	this = this or self:Get()
-	for i=0,#this.player_array do
+	for i=0,#this.player_array-1 do
 		local entry = this.player_array[i]
 		if entry then
 			if entry.characterHandle == doubleHandle then
 				return entry
 			end
 			if entry.summonList then
-				for j=0,#entry.summonList.content_array do
+				for j=0,#entry.summonList.content_array-1 do
 					local summon_mc = entry.summonList.content_array[j]
 					if summon_mc and summon_mc.characterHandle == doubleHandle then
 						return summon_mc
@@ -213,6 +219,7 @@ local function NothingIsIgnored()
 	end
 end
 
+---@param ui UIObject
 local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
 	if NothingIsIgnored() then
 		return
@@ -221,17 +228,10 @@ local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
 	local status_array = this.status_array
 	local length = #status_array
 	if length > 0 then
-		local madeChanges = false
 		local whitelist,blacklist,allVisible = GetStatusVisibilityLists()
-		for i=0,length,6 do
+		for i=0,length-1,6 do
 			local ownerDouble = status_array[i]
 			if ownerDouble then
-				-- print(i, status_array[i])
-				-- print(i+1, status_array[i+1])
-				-- print(i+2, status_array[i+2])
-				-- print(i+3, status_array[i+3])
-				-- print(i+4, status_array[i+4])
-				-- print(i+5, status_array[i+5])
 				local ownerHandle = Ext.DoubleToHandle(ownerDouble)
 				if ownerHandle then
 					local statusDouble = status_array[i+1]
@@ -240,22 +240,16 @@ local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
 					if status then
 						local visible = GetStatusVisibility(status.StatusId, whitelist,blacklist,allVisible)
 						local owner_mc = PlayerInfo:GetPlayerOrSummonByHandle(ownerDouble, this)
-						local entryExists = false
-						local status_mc = nil
 						if owner_mc then
-							for k=0,#owner_mc.status_array do
-								status_mc = owner_mc.status_array[k]
+							for k=0,#owner_mc.status_array-1 do
+								local status_mc = owner_mc.status_array[k]
 								if status_mc and status_mc.id == statusDouble then
-									if status_mc.alive ~= visible then
-										madeChanges = true
-									end
 									status_mc.visible = visible
 									status_mc.alive = visible
 									if not visible then
 										status_mc.fadingOut = true
 										this.fadeOutStatusComplete(status_mc.id,status_mc.owner)
 									end
-									entryExists = true
 									break
 								end
 							end

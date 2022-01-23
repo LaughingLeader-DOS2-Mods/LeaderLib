@@ -69,7 +69,8 @@ if isClient then
 				end
 				existingEntry.UUID = uuid
 				existingEntry.DisplayName = obj.DisplayName
-				existingEntry.RootTemplate = obj.RootTemplate.Id
+				local templateId = Ext.Version() < 56 and obj.RootTemplate.TemplateName or obj.RootTemplate.RootTemplate
+				existingEntry.RootTemplate = obj.RootTemplate.Name .. "_" .. templateId
 				existingEntry.StatsId = GameHelpers.Ext.ObjectIsItem(obj) and obj.StatsId or obj.Stats.Name
 				existingEntry.Tags = StringHelpers.Join(";", obj:GetTags())
 				if GameHelpers.Ext.ObjectIsItem(obj) then

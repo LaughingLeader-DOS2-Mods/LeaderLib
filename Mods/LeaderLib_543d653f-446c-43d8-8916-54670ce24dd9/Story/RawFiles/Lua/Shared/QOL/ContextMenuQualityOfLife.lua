@@ -23,10 +23,11 @@ if isClient then
 		Character = {},
 		Item = {}
 	}
-	local UUID_TO_ROTATION = {}
+	local CharacterServerData = {}
 	local sheetItemContextMenuDouble = nil
 
 	local function SaveInfoToFile(netid, hoverType)
+		---@type EclCharacter
 		local obj = nil
 		if hoverType then
 			if hoverType == "Character" then
@@ -50,7 +51,7 @@ if isClient then
 				local data = {}
 				local existing = Ext.LoadFile("LeaderLib_UUIDHelper.json")
 				if existing then
-					data = Common.JsonParse(existing)
+					data = Common.JsonParse(existing, true)
 					Ext.Print("Updated Osiris Data/LeaderLib_UUIDHelper.json")
 				else
 					Ext.Print("Created Osiris Data/LeaderLib_UUIDHelper.json")
@@ -69,13 +70,27 @@ if isClient then
 				end
 				existingEntry.UUID = uuid
 				existingEntry.DisplayName = obj.DisplayName
-				local templateId = Ext.Version() < 56 and obj.RootTemplate.TemplateName or obj.RootTemplate.RootTemplate
-				existingEntry.RootTemplate = obj.RootTemplate.Name .. "_" .. templateId
+
+				local serverData = CharacterServerData[uuid]
+
+				if serverData then
+					existingEntry.RootTemplate = serverData.Template
+					if serverData.Temporary then
+						existingEntry.Temporary = true
+					end
+					if serverData.Boss then
+						existingEntry.Boss = true
+					end
+				end
+
+				existingEntry.RootTemplateName = obj.RootTemplate.Name
 				existingEntry.StatsId = GameHelpers.Ext.ObjectIsItem(obj) and obj.StatsId or obj.Stats.Name
 				existingEntry.Tags = StringHelpers.Join(";", obj:GetTags())
 				if GameHelpers.Ext.ObjectIsItem(obj) then
 					existingEntry.WorldPos = obj.WorldPos
-					existingEntry.Rotation = UUID_TO_ROTATION[uuid]
+					if serverData then
+						existingEntry.Rotation = serverData.Rotation
+					end
 				end
 				Ext.SaveFile("LeaderLib_UUIDHelper.json", Common.JsonStringify(data))
 			end
@@ -197,26 +212,35 @@ if isClient then
 	end)
 
 	Ext.RegisterNetListener("LeaderLib_ContextMenu_SetUUID", function(cmd, payload)
-		print(cmd,payload)
 		local data = Common.JsonParse(payload)
 		if data then
 			NETID_TO_UUID[data.Type][data.NetID] = data.UUID
-			UUID_TO_ROTATION[data.UUID] = data.Rotation
+			CharacterServerData[data.UUID] = {
+				Rotation = data.Rotation,
+				Template = data.Template,
+				Temporary = data.Temporary,
+				Boss = data.Boss,
+			}
 		end
 	end)
 else
 	Ext.RegisterNetListener("LeaderLib_ContextMenu_RequestUUID", function(cmd, payload, userid)
-		print(cmd,payload)
 		local data = Common.JsonParse(payload)
 		if data then
 			local object = GameHelpers.TryGetObject(data.NetID)
 			if object then
-				GameHelpers.Net.PostToUser(userid, "LeaderLib_ContextMenu_SetUUID", {
+				local data = {
 					NetID = object.NetID,
 					UUID = object.MyGuid,
 					Type = data.Type,
-					Rotation={GetRotation(object.MyGuid)}
-				})
+					Rotation={GetRotation(object.MyGuid)},
+					Template = StringHelpers.GetUUID(GetTemplate(object.MyGuid))
+				}
+				if ObjectIsCharacter(object.MyGuid) == 1 then
+					data.Boss = IsBoss(object.MyGuid) == 1 and true or false
+					data.Temporary = object.Temporary
+				end
+				GameHelpers.Net.PostToUser(userid, "LeaderLib_ContextMenu_SetUUID", data)
 			end
 		end
 	end)

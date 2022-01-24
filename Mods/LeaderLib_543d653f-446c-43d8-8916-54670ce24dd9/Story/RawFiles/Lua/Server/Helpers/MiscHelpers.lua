@@ -1,3 +1,5 @@
+local _EXTVERSION = Ext.Version()
+
 local function ContextContains(context, find)
 	local findType = type(find)
 	for i,v in pairs(context) do
@@ -186,16 +188,9 @@ end
 ---Sync an item or character's scale to clients.
 ---@param object string|EsvCharacter|EsvItem
 function GameHelpers.SyncScale(object)
-	if object and type(object) ~= "userdata" then
-		object = Ext.GetGameObject(object)
-	end
-	if object then
-		GameHelpers.Net.Broadcast("LeaderLib_SyncScale", Common.JsonStringify({
-			UUID = object.MyGuid,
-			Scale = object.Scale,
-			Handle = object.NetID
-			--Handle = Ext.HandleToDouble(object.Handle)
-		}))
+	local netid = GameHelpers.GetNetID(object)
+	if netid then
+		GameHelpers.Net.Broadcast("LeaderLib_SyncScale", {NetID = netid, Scale = object.Scale})
 	end
 end
 
@@ -204,11 +199,13 @@ end
 ---@param scale number
 ---@param persist boolean|nil
 function GameHelpers.SetScale(object, scale, persist)
-	if object and type(object) ~= "userdata" then
-		object = Ext.GetGameObject(object)
-	end
-	if object and object.SetScale then
-		object:SetScale(scale)
+	object = GameHelpers.TryGetObject(object)
+	if object then
+		if _EXTVERSION < 56 then
+			object:SetScale(scale)
+		else
+			object.Scale = scale
+		end
 		GameHelpers.SyncScale(object)
 		if persist == true then
 			PersistentVars.ScaleOverride[object.MyGuid] = scale

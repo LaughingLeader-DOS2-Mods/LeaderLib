@@ -1,3 +1,5 @@
+local _EXTVERSION = Ext.Version()
+
 ---@type MessageData
 local MessageData = Classes.MessageData
 
@@ -104,10 +106,14 @@ end)
 
 Ext.RegisterNetListener("LeaderLib_SyncScale", function(call, payload)
 	local data = Common.JsonParse(payload)
-	if data.Scale then
-		local obj = Ext.GetGameObject(data.Handle) or Ext.GetGameObject(data.UUID)
-		if obj and obj.SetScale then
-			obj:SetScale(data.Scale)
+	if data.Scale and data.NetID then
+		local obj = GameHelpers.TryGetObject(data.NetID)
+		if obj then
+			if _EXTVERSION < 56 then
+				obj:SetScale(data.Scale)
+			else
+				obj.Scale = data.Scale
+			end
 		end
 	end
 end)

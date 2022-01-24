@@ -139,6 +139,13 @@ if Ext.IsServer() then
 
 	---@type fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem|nil, distance:number, startingPosition:number[], skill:StatEntrySkillData|nil):void[]
 	Listeners.ForceMoveFinished = {}
+
+	---@type table<string, fun(questId:string, character:EsvCharacter):void>
+	Listeners.QuestStarted = {All = {}}
+	---@type table<string, fun(questId:string, character:EsvCharacter):void>
+	Listeners.QuestCompleted = {All = {}}
+	---@type table<string, fun(questId:string, stateId:string, character:EsvCharacter):void>
+	Listeners.QuestStateChanged = {All = {}}
 end
 if Ext.IsClient() then
 	---Client-side Mod Menu events

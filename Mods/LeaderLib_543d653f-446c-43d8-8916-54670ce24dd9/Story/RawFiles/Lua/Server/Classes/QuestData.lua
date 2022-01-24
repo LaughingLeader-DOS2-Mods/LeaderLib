@@ -6,7 +6,7 @@ setmetatable(_questRegistration, {__mode = "kv"})
 local function RegisterQuests()
 	for i=1,#_questRegistration do
 		local quest = _questRegistration[i]
-		if quest then
+		if quest and quest.AutoRegister then
 			quest:RegisterDatabases()
 		end
 	end
@@ -71,11 +71,16 @@ function QuestStateData:Activate(uuid, state)
 end
 
 ---@class QuestDataRegistration
----@field Started fun(data:QuestData, character:EsvCharacter):void
----@field StateChanged fun(data:QuestData, state:QuestStateData, character:EsvCharacter, isCompleted:boolean):void
----@field Completed fun(data:QuestData, character:EsvCharacter):void
+---@field Started fun(callback:fun(data:QuestData, character:EsvCharacter):void):void
+---@field StateChanged fun(callback:fun(data:QuestData, state:QuestStateData, character:EsvCharacter, isCompleted:boolean):void):void
+---@field Completed fun(callback:fun(data:QuestData, character:EsvCharacter):void):void
 
----@class QuestData
+---@class QuestDataFields
+---@field ID string
+---@field States QuestStateData[]
+---@field AutoRegister boolean Defaults to true. RegisterDatabases will be called automatically by LeaderLib.
+
+---@class QuestData:QuestDataFields
 ---@field Register QuestDataRegistration
 local QuestData = {
 	Type = "QuestData",
@@ -86,6 +91,7 @@ local QuestData = {
 		Add = "",
 		Close = ""
 	},
+	AutoRegister = true
 }
 
 ---@param this QuestData
@@ -120,7 +126,7 @@ local function CreateRegistrationWrapper(this)
 end
 
 ---@param id string
----@param params table<string,any>
+---@param params ?QuestDataFields Optional table of QuestData parameters to set.
 ---@return QuestData
 function QuestData:Create(id, params)
     local this =
@@ -320,7 +326,8 @@ RegisterProtectedOsirisListener("ProcMigrateQuestFlag", 3, "after", function (ch
 		if listenerEvent == "QuestStateChanged" then
 			InvokeListenerCallbacks(Listeners.QuestStateChanged, id, extraParam, character)
 		else
-			InvokeListenerCallbacks(Listeners[listenerEvent], id, character)
+			InvokeListenerCallbacks(Listeners[listenerEvent][id], id, character)
+			InvokeListenerCallbacks(Listeners[listenerEvent].All, id, character)
 		end
 	end
 end)
@@ -332,10 +339,29 @@ RegisterProtectedOsirisListener("ProcCheckMigrateQuestAddFlag", 3, "after", func
 	local b = GameHelpers.DB.TryUnpack(Osi.DB_QuestDef_UpdateEvent:Get(id, nil, flag))
 	if b then
 		local character = GameHelpers.GetCharacter(char)
-		InvokeListenerCallbacks(Listeners.QuestStarted, id, character)
+		InvokeListenerCallbacks(Listeners.QuestStarted[id], id, character)
+		InvokeListenerCallbacks(Listeners.QuestStarted.All, id, character)
 	end
 end)
 
 -- RegisterProtectedOsirisListener("ProcGiveQuestReward", 3, "after", function (char, id, rewardState)
 -- 	local character = GameHelpers.GetCharacter(char)
 -- end)
+
+if Vars.DebugMode then
+	RegisterListener("QuestStarted", "TUT_ShipMurder", function (id, character)
+		Ext.PrintError("THERE'S BEEN A MURDER!", character.DisplayName)
+	end)
+
+	RegisterListener("QuestStarted", function (id, character)
+		fprint(LOGLEVEL.TRACE, "[QuestStarted] id(%s) character(%s)[%s]", id, character.DisplayName, character.MyGuid)
+	end)
+
+	RegisterListener("QuestCompleted", function (id, character)
+		fprint(LOGLEVEL.TRACE, "[QuestCompleted] id(%s) character(%s)[%s]", id, character.DisplayName, character.MyGuid)
+	end)
+
+	RegisterListener("QuestStateChanged", function (id, state, character)
+		fprint(LOGLEVEL.TRACE, "[QuestStateChanged] id(%s) state(%s) character(%s)[%s]", id, state, character.DisplayName, character.MyGuid)
+	end)
+end

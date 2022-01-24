@@ -138,3 +138,13 @@ function TableHelpers.ShuffleTable(tbl)
 	end
 	return newTable
 end
+
+---Try to unpack a table and return the entries.
+---@param tbl table
+---@return boolean,...
+function TableHelpers.TryUnpack(tbl)
+	if type(tbl) == "table" then
+		return true,table.unpack(tbl)
+	end
+	return false
+end

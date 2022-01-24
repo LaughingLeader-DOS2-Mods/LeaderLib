@@ -245,3 +245,15 @@ function GameHelpers.DB.Get(name, arity, index, unpack)
 	end
 	return result
 end
+
+---Try to unpack a database retrieved with Get.
+---@param tbl table
+---@param index ?integer Optional row to try and get. Defaults to 1.
+---@return boolean,...
+function GameHelpers.DB.TryUnpack(tbl, index)
+	index = index or 1
+	if type(tbl) == "table" and type(tbl[index]) == "table" then
+		return true,table.unpack(tbl[index])
+	end
+	return false
+end

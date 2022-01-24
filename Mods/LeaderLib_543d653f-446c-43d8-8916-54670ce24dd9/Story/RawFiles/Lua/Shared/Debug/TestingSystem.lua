@@ -47,25 +47,21 @@ function Testing.OnLoop(dt)
     end
 end
 
-if Ext.IsServer() then
-	Ext.RegisterListener("SessionLoaded", function()
-		Timer.RegisterListener("LeaderLib_TestingSystemLoop", function()
-			Testing.OnLoop(Ext.MonotonicTime() - Testing.LastTime)
-			Testing.LastTime = Ext.MonotonicTime()
-			if Testing.Active then
-				StartTimer("LeaderLib_TestingSystemLoop", 250)
-			else
-				Testing.Waiting = {}
-			end
-		end)
-	end)
-end
+Timer.RegisterListener("LeaderLib_TestingSystemLoop", function()
+	Testing.OnLoop(Ext.MonotonicTime() - Testing.LastTime)
+	Testing.LastTime = Ext.MonotonicTime()
+	if Testing.Active then
+		Timer.Start("LeaderLib_TestingSystemLoop", 250)
+	else
+		Testing.Waiting = {}
+	end
+end)
 
 ---@param tbl LuaTest[]
 ---@param delay integer|nil
 function Testing.RunTests(tbl, delay, testingName, ...)
 	Testing.Active = true
-	StartTimer("LeaderLib_TestingSystemLoop", 250)
+	Timer.Start("LeaderLib_TestingSystemLoop", 250)
 	local args = {...}
 	local testUUID = string.format("%s", testingName or Ext.MonotonicTime())
 	Testing.Results[testUUID] = {}

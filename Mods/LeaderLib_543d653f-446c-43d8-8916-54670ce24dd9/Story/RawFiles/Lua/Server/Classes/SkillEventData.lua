@@ -83,8 +83,10 @@ end
 ---@param func SkillEventDataForEachCallback
 ---@param mode integer Run the function on objects, positions, or both. Defaults to just objects. 0:Objects, 1:Positions, 2:All
 function SkillEventData:ForEach(func, mode)
-	mode = mode or self.TargetMode.Objects
+	mode = mode or SkillEventData.TargetMode.Objects
 	local runOnObjects = mode ~= 1 and self.TotalTargetObjects > 0
+	local runOnPositions = mode ~= 0 and self.TotalTargetPositions > 0
+
 	if runOnObjects then
 		for i,v in pairs(self.TargetObjects) do
 			local b,err = xpcall(func, debug.traceback, v, "string", self)
@@ -94,7 +96,7 @@ function SkillEventData:ForEach(func, mode)
 			end
 		end
 	end
-	local runOnPositions = mode ~= 0 and self.TotalTargetPositions > 0
+	
 	if runOnPositions then
 		for i,v in pairs(self.TargetPositions) do
 			local b,err = xpcall(func, debug.traceback, v, "table", self)

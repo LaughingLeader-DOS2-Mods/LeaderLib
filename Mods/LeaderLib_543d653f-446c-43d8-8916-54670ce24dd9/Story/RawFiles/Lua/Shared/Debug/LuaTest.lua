@@ -104,7 +104,7 @@ function LuaTest:AssertNotEquals(target, expected, extraMsg, deepTableComparison
 end
 
 function LuaTest:Complete(success, ...)
-	PrintDebug(self.Name, "LuaTest:Complete", self.Active)
+	fprint(LOGLEVEL.TRACE, "[LuaTest:%s] Test complete. Active(%s)", self.Name, self.Active)
 	if self.Active then
 		self.Success = success == true and 1 or 0
 		if self.OnComplete then
@@ -181,7 +181,7 @@ function LuaTest:Run(...)
 	if t == "table" then
 		local successes = 0
 		local total = 0
-		for k,v in pairs(self.Operation) do
+		for _,v in pairs(self.Operation) do
 			total = total + 1
 			local result = RunOperation(self, v, ...)
 			if result ~= nil then

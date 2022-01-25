@@ -61,7 +61,7 @@ function QuestStateData:UpdateFlags()
 end
 
 ---@param uuid string Character UUID
-function QuestStateData:Activate(uuid, state)
+function QuestStateData:Activate(uuid)
 	if self.Flags.Update ~= nil and self.Flags.Update ~= "" and ObjectGetFlag(uuid, self.Flags.Update) == 0 then
 		if Vars.DebugMode then
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:QuestStateData] Activating quest state (%s:%s) on (%s)[%s]", self.ID, self.Flags.Update, Ext.GetCharacter(uuid).DisplayName, uuid)

@@ -153,14 +153,14 @@ end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Ability] = function(request, ui, uiType, event, id)
 	if not request.Ability then
-		request.Ability = Ext.EnumIndexToLabel("AbilityType", id)
+		request.Ability = Ext.EnumIndexToLabel("AbilityType", id) or id
 	end
 	return request
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Talent] = function(request, ui, uiType, event, id, ...)
 	if not request.Talent then
-		request.Talent = Ext.EnumIndexToLabel("TalentType", id)
+		request.Talent = Ext.EnumIndexToLabel("TalentType", id) or id
 	end
 	return request
 end
@@ -260,7 +260,7 @@ function RequestProcessor.OnExamineTooltip(ui, method, typeIndex, id, ...)
 		end
 	elseif typeIndex == 2 then
 		request.Type = "Ability"
-		request.Ability = Ext.EnumIndexToLabel("AbilityType", id)
+		request.Ability = Ext.EnumIndexToLabel("AbilityType", id) or id
 	elseif typeIndex == 3 then
 		if id == 0 then
 			--Tooltip for "This character has no talents" doesn't exist.
@@ -269,7 +269,7 @@ function RequestProcessor.OnExamineTooltip(ui, method, typeIndex, id, ...)
 			return
 		else
 			request.Type = "Talent"
-			request.Talent = Ext.EnumIndexToLabel("TalentType", id)
+			request.Talent = Ext.EnumIndexToLabel("TalentType", id) or id
 		end
 	elseif typeIndex == 7 then
 		request.Type = "Status"

@@ -49,28 +49,30 @@ local function PrepareText(name, v, isCheckbox)
 	local displayName = name
 	local tooltip = ""
 	if v ~= nil then
-		if v.DisplayName ~= nil and v.DisplayName ~= "" then
-			if type(v.DisplayName) == "string" then
+		if v.DisplayName then
+			local t = type(v.DisplayName)
+			if t == "string" and not StringHelpers.IsNullOrEmpty(v.DisplayName) then
 				displayName = v.DisplayName
-			elseif v.DisplayName.Type == Classes.TranslatedString.Type and not StringHelpers.IsNullOrEmpty(v.DisplayName.Value) then
+			elseif t == "table" and v.DisplayName.Type == Classes.TranslatedString.Type and not StringHelpers.IsNullOrEmpty(v.DisplayName.Value) then
 				displayName = v.DisplayName.Value
 			end
 		end
-		if v.Tooltip ~= nil and v.Tooltip ~= "" then
-			if type(v.Tooltip) == "string" then
+		if v.Tooltip then
+			local t = type(v.Tooltip)
+			if t == "string" and not StringHelpers.IsNullOrEmpty(v.Tooltip) then
 				tooltip = v.Tooltip
-			elseif v.DisplayName.Type == Classes.TranslatedString.Type and not StringHelpers.IsNullOrEmpty(v.Tooltip.Value) then
+			elseif t == "table" and v.Tooltip.Type == Classes.TranslatedString.Type and not StringHelpers.IsNullOrEmpty(v.Tooltip.Value) then
 				tooltip = v.Tooltip.Value
 			end
 		end
 	end
 	if displayName == name or displayName == "stringkey" then
 		local stringKeyText = GameHelpers.GetStringKeyText(name)
-		if stringKeyText ~= nil and stringKeyText ~= "" then
+		if not StringHelpers.IsNullOrEmpty(stringKeyText) then
 			displayName = stringKeyText
 			if tooltip == "" then
 				local tooltipStringKeyText = GameHelpers.GetStringKeyText(name.."_Description")
-				if tooltipStringKeyText ~= nil and tooltipStringKeyText ~= "" then
+				if not StringHelpers.IsNullOrEmpty(tooltipStringKeyText) then
 					tooltip = tooltipStringKeyText
 				end
 			end

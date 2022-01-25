@@ -37,9 +37,10 @@ end
 local function skey(key)
 	local text = GameHelpers.GetStringKeyText(key)
 	if not StringHelpers.IsNullOrEmpty(text) then
-		text = GameHelpers.Tooltip.ReplacePlaceholders(text)
+		return GameHelpers.Tooltip.ReplacePlaceholders(text)
+	else
+		return key
 	end
-	return text
 end
 
 ---@private

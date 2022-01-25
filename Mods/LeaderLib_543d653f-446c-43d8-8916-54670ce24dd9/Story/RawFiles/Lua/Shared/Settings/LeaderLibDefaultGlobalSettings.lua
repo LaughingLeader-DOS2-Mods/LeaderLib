@@ -36,13 +36,13 @@ settings.GetMenuOrder = function()
 			"LeaderLib_AllTooltipsForItemsEnabled",
 			"LeaderLib_BuffStatusPreserverEnabled",
 		}},
-		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_DialogRedirection", "Dialog Redirection"), 
+		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_DialogRedirection", "Dialog Redirection"),
 		Entries = {		
 			"LeaderLib_DialogRedirectionEnabled",
 			"LeaderLib_DialogRedirection_DisableUserRestriction",
 			"LeaderLib_DialogRedirection_HighestPersuasionEnabled",
 		}},	
-		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Autosaving", "Autosaving"), 
+		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Autosaving", "Autosaving"),
 		Entries = {		
 			"LeaderLib_AutosavingEnabled",
 			"LeaderLib_AutosaveOnCombatStart",

@@ -119,6 +119,11 @@ local UIType = {
 	},
 }
 
+local lastGameTooltip = nil
+if Game and Game.Tooltip then
+	lastGameTooltip = Game.Tooltip
+end
+
 if Game == nil then Game = {} end
 if Game.Tooltip == nil then Game.Tooltip = {} end
 
@@ -863,6 +868,12 @@ end
 ---@field AnchorEnum integer|nil
 ---@field BackgroundType integer|nil
 
+local previousListeners = {}
+
+if lastGameTooltip.TooltipHooks then
+	previousListeners = lastGameTooltip.TooltipHooks
+end
+
 ---@class TooltipHooks
 TooltipHooks = {
 	---@type TooltipRequest
@@ -883,13 +894,45 @@ TooltipHooks = {
 	GlobalListeners = {},
 	TypeListeners = {},
 	ObjectListeners = {},
+	--LeaderLib addition
 	RequestListeners = {
 		All = {}
 	},
+	--LeaderLib addition
 	BeforeNotifyListeners = {
 		All = {},
 	},
 }
+
+if previousListeners.GlobalListeners then
+	for _,v in pairs(previousListeners.GlobalListeners) do
+		TooltipHooks.GlobalListeners[#TooltipHooks.GlobalListeners+1] = v
+	end
+end
+
+if previousListeners.TypeListeners then
+	for t,v in pairs(previousListeners.TypeListeners) do
+		if TooltipHooks.TypeListeners[t] == nil then
+			TooltipHooks.TypeListeners[t] = v
+		else
+			for _,v2 in pairs(v) do
+				table.insert(TooltipHooks.TypeListeners[t], v2)
+			end
+		end
+	end
+end
+
+if previousListeners.ObjectListeners then
+	for t,v in pairs(previousListeners.ObjectListeners) do
+		if TooltipHooks.ObjectListeners[t] == nil then
+			TooltipHooks.ObjectListeners[t] = v
+		else
+			for k,v2 in pairs(v) do
+				TooltipHooks.ObjectListeners[t][k] = v2
+			end
+		end
+	end
+end
 
 --Auto-completion
 Game.Tooltip.TooltipHooks = TooltipHooks

@@ -189,6 +189,13 @@ function StringHelpers.Trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+--- Remove all whitespace from a string.
+--- @param s string
+--- @return string
+function StringHelpers.RemoveWhitespace(s)
+	return (s:gsub("%s+", ""))
+end
+
 --- Escapes all magic characters, such as -
 --- @param s string
 --- @return string

@@ -272,20 +272,30 @@ end
 function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 	local players = {}
 	if not isClient then
-		for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
-			local player = GameHelpers.GetCharacter(db[1])
-			players[#players+1] = player
-			if includeSummons == true then
-				local summons = PersistentVars.Summons[player.MyGuid]
-				if summons then
-					for i,v in pairs(summons) do
-						if ObjectIsCharacter(v) == 1 then
-							local summon = GameHelpers.GetCharacter(v)
-							if summon then
-								players[#players+1] = summon
+		if SharedData.RegionData.LevelType == LEVELTYPE.GAME then
+			for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
+				local player = GameHelpers.GetCharacter(db[1])
+				players[#players+1] = player
+				if includeSummons == true then
+					local summons = PersistentVars.Summons[player.MyGuid]
+					if summons then
+						for i,v in pairs(summons) do
+							if ObjectIsCharacter(v) == 1 then
+								local summon = GameHelpers.GetCharacter(v)
+								if summon then
+									players[#players+1] = summon
+								end
 							end
 						end
 					end
+				end
+			end
+		else
+			local isCC = SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
+			for _,v in pairs(Ext.GetAllCharacters()) do
+				local character = Ext.GetCharacter(v)
+				if character and character.IsPlayer and not isCC or (isCC and character.CharacterControl) then
+					players[#players+1] = character
 				end
 			end
 		end

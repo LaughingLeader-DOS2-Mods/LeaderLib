@@ -4,11 +4,13 @@ package controls.dropdowns
 	{
 		public var label:String;
 		public var id:Number;
+		public var tooltip:String;
 		
-		public function DropdownItemData(label:String, id:Number)
+		public function DropdownItemData(label:String, id:Number, tooltip:String = "")
 		{
 			this.label = label;
 			this.id = id;
+			this.tooltip = tooltip;
 		}
 	}
 }

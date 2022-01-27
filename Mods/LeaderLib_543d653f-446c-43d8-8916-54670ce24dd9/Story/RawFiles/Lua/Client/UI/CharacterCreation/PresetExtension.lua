@@ -88,12 +88,35 @@ local function CreatePresetDropdown()
 		})
 	end
 	local presets = {}
+	local findModForPreset = {}
 	for k,v in pairs(PresetData) do
-		presets[#presets+1] = {
+		local index = #presets+1
+		presets[index] = {
 			Label = Ext.L10N.GetTranslatedString(v.ClassName, k),
+			Tooltip = Ext.L10N.GetTranslatedString(v.ClassDescription, ""),
 			ID = PresetToID[k]
 		}
+		findModForPreset[v.ClassType] = index
 	end
+
+	local order = Ext.GetModLoadOrder()
+	for i=1,#order do
+		local uuid = order[i]
+		local info = Ext.GetModInfo(uuid)
+		if info ~= nil then
+			for classType,index in pairs(findModForPreset) do
+				local filePath = string.format("Mods/%s/CharacterCreation/ClassPresets/%s.lsx", info.Directory, classType)
+				if Ext.IO.LoadFile(filePath, "data") then
+					presets[index].Mod = info.Name
+					if info.Name == "Shared" then
+						presets[index].Mod = "Divinity: Original Sin 2"
+					end
+					findModForPreset[classType] = nil
+				end
+			end
+		end
+	end
+	
 	table.sort(presets, function (a,b)
 		return a.Label < b.Label
 	end)
@@ -105,7 +128,10 @@ local function CreatePresetDropdown()
 	--local dropdown_mc = UIExtensions.AddDropdown(OnPresetSelected, x, y, {Dropdown = "Presets", Tooltip = "Select a Class Preset"}, presets)
 	for i=1,#presets do
 		local entry = presets[i]
-		print(uiExt.presetButton.addEntry(entry.Label, entry.ID))
+		if entry.Mod then
+			entry.Tooltip = string.format("%s<br><font color='#77FFCC'>%s</font>", entry.Tooltip, entry.Mod)
+		end
+		uiExt.presetButton.addEntry(entry.Label, entry.ID, entry.Tooltip)
 	end
 
 	local player = GameHelpers.Client.GetCharacterCreationCharacter(this)

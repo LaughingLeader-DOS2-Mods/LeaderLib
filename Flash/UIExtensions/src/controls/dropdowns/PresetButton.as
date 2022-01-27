@@ -70,9 +70,9 @@ package controls.dropdowns
 			}
 		}
 
-		public function addEntry(label:String, id:Number) : int
+		public function addEntry(label:String, id:Number, tooltip:String = "") : int
 		{
-			var entryData:DropdownItemData = new DropdownItemData(label, id);
+			var entryData:DropdownItemData = new DropdownItemData(label, id, tooltip);
 			this.combo_mc.addItem(entryData);
 			return this.combo_mc.m_scrollList.length - 1;
 		}

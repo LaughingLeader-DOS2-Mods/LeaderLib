@@ -352,6 +352,9 @@ package controls.dropdowns {
                 if (entryObject.id != null) {
                     comboEntry.id = entryObject.id;
                 }
+                if (entryObject.tooltip != null) {
+                    comboEntry.tooltip = entryObject.tooltip;
+                }
                 comboEntry.addEventListener(MouseEvent.MOUSE_UP, this.elUp);
                 comboEntry.addEventListener(MouseEvent.ROLL_OVER, this.elOver);
                 comboEntry.sel_mc.visible = false;
@@ -485,7 +488,7 @@ package controls.dropdowns {
         }
 
         public function onDeactivate(e:MouseEvent):* {
-            if (e.target == null || e.target == this.stage || (!this.contains(e.target as DisplayObject) 
+            if (e.target == null || e.target == this.stage || (!this.hovering && !this.contains(e.target as DisplayObject) 
 			&& !this.m_selectContainer.contains(e.target as DisplayObject) 
 			&& e.target != e.currentTarget)) {
                 this.close();

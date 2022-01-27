@@ -57,6 +57,33 @@ Ext.RegisterUINameCall("LeaderLib_UIExtensions_PresetSelected", function (ui, ev
 	end
 end)
 
+local function BuildModAssociation(findModForPreset, presets)
+	local remaining = Common.TableLength(findModForPreset, true)
+	local order = Ext.GetModLoadOrder()
+	for i=1,#order do
+		local uuid = order[i]
+		local info = Ext.GetModInfo(uuid)
+		if info ~= nil then
+			for classType,index in pairs(findModForPreset) do
+				local filePath = string.format("Mods/%s/CharacterCreation/ClassPresets/%s.lsx", info.Directory, classType)
+				--local filePathWithoutSpaces = string.format("Mods/%s/CharacterCreation/ClassPresets/%s.lsx", info.Directory, StringHelpers.RemoveWhitespace(classType))
+				if Ext.IO.LoadFile(filePath, "data") then
+					presets[index].Mod = info.Name
+					presets[index].ModUUID = info.UUID
+					if info.Name == "Shared" then
+						presets[index].Mod = "Divinity: Original Sin 2"
+					end
+					findModForPreset[classType] = nil
+					remaining = remaining - 1
+				end
+				if remaining <= 0 then
+					return
+				end
+			end
+		end
+	end
+end
+
 local function CreatePresetDropdown()
 	local inst = CharacterCreation.Instance
 	local extInst = UIExtensions.Instance
@@ -67,55 +94,41 @@ local function CreatePresetDropdown()
 		uiExt.layout = "fitVertical"
 		extInst:ExternalInterfaceCall("setAnchor","center","screen","center")
 		extInst:Resize(inst.FlashMovieSize[1], inst.FlashMovieSize[2])
-		local panelWidth = this.CCPanel_mc.origins_mc.width
-		--x = this.PanelButtonX
 		x = this.CCPanel_mc.x + this.CCPanel_mc.armourBtnHolder_mc.x + this.CCPanel_mc.armourBtnHolder_mc.helmetBtn_mc.x
 		y = this.CCPanel_mc.y + this.CCPanel_mc.origins_mc.height - 224
-		--y = this.CCPanel_mc.y + this.CCPanel_mc.origins_mc.height - 225
-		--local widthDiff = this.stage.stageWidth - uiExt.stage.stageWidth
-		--x = x + ((panelWidth/2) - (319.75/2))
-		Ext.Dump({
-			x = x,
-			y = y,	
-			panelWidth = panelWidth,
-			widthDiff = widthDiff,
-			["this.CCPanel_mc.x"] = this.CCPanel_mc.x,
-			CC_screenWidth = this.screenWidth,
-			UIExt_screenWidth = uiExt.screenWidth,
-			PanelButtonX = this.PanelButtonX,
-			CC = inst,
-			UIExtensions = extInst
-		})
 	end
+	local cachedPresetToMod = GameHelpers.IO.LoadJsonFile("LeaderLib_PresetToModCache.json", {})
+	
 	local presets = {}
 	local findModForPreset = {}
 	for k,v in pairs(PresetData) do
 		local index = #presets+1
-		presets[index] = {
+		local entry = {
+			ClassType = v.ClassType,
 			Label = Ext.L10N.GetTranslatedString(v.ClassName, k),
 			Tooltip = Ext.L10N.GetTranslatedString(v.ClassDescription, ""),
 			ID = PresetToID[k]
 		}
-		findModForPreset[v.ClassType] = index
+		local desc1 = Ext.L10N.GetTranslatedString(v.ClassDescription, "")
+		local desc2 = Ext.L10N.GetTranslatedString(v.ClassLongDescription, "")
+		if string.len(desc2) > string.len(desc1) then
+			entry.Tooltip = desc2
+		end
+		if cachedPresetToMod[v.ClassType] then
+			entry.ModUUID = cachedPresetToMod[v.ClassType]
+			local info = Ext.GetModInfo(entry.ModUUID)
+			if info then
+				entry.Mod = info.Name
+			end
+		elseif entry.Tooltip ~= "" then
+			--FIXME Most mods don't follow ClassType -> Filename conventions, or localize their text with proper handles.
+			findModForPreset[v.ClassType] = index
+		end
+		presets[index] = entry
 	end
 
-	local order = Ext.GetModLoadOrder()
-	for i=1,#order do
-		local uuid = order[i]
-		local info = Ext.GetModInfo(uuid)
-		if info ~= nil then
-			for classType,index in pairs(findModForPreset) do
-				local filePath = string.format("Mods/%s/CharacterCreation/ClassPresets/%s.lsx", info.Directory, classType)
-				if Ext.IO.LoadFile(filePath, "data") then
-					presets[index].Mod = info.Name
-					if info.Name == "Shared" then
-						presets[index].Mod = "Divinity: Original Sin 2"
-					end
-					findModForPreset[classType] = nil
-				end
-			end
-		end
-	end
+	BuildModAssociation(findModForPreset, presets)
+	findModForPreset = {}
 	
 	table.sort(presets, function (a,b)
 		return a.Label < b.Label
@@ -129,10 +142,13 @@ local function CreatePresetDropdown()
 	for i=1,#presets do
 		local entry = presets[i]
 		if entry.Mod then
+			findModForPreset[entry.ClassType] = entry.ModUUID
 			entry.Tooltip = string.format("%s<br><font color='#77FFCC'>%s</font>", entry.Tooltip, entry.Mod)
 		end
 		uiExt.presetButton.addEntry(entry.Label, entry.ID, entry.Tooltip)
 	end
+
+	GameHelpers.IO.SaveJsonFile("LeaderLib_PresetToModCache.json", findModForPreset)
 
 	local player = GameHelpers.Client.GetCharacterCreationCharacter(this)
 	if player and player.PlayerCustomData and player.PlayerCustomData.ClassType then

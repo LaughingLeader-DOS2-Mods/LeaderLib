@@ -190,6 +190,10 @@ else
 		GameHelpers.Data.SetRegion(region)
 		InvokeListenerCallbacks(Listeners.RegionChanged, region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
 	end)
+	
+	RegisterListener("LuaReset", function()
+		InvokeListenerCallbacks(Listeners.RegionChanged, SharedData.RegionData.Current, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+	end)
 
 	function GameHelpers.Data.SetGameMode(gameMode)
 		if not gameMode then

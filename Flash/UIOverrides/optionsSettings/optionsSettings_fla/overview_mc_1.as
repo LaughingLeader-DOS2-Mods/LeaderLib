@@ -407,34 +407,34 @@ package optionsSettings_fla
 		
 		public function addMenuDropDown(param1:Number, param2:String, param3:String) : *
 		{
-			var val4:MovieClip = new DropDown();
-			val4.combo_mc.bgTopSizeDiff = -20;
-			val4.customElHeight = this.elementHeight;
-			val4.x = this.elementX;
-			val4.label_txt.htmlText = param2;
-			val4.id = param1;
-			val4.name = "item" + this.list.length + "_mc";
-			val4.mHeight = 30;
-			val4.tooltip = param3;
-			this.totalHeight = this.totalHeight + (val4.mHeight + this.elementHSpacing);
-			val4.combo_mc.addEventListener(Event.CLOSE,this.onComboClose);
-			val4.combo_mc.addEventListener(Event.OPEN,this.onComboOpen);
-			val4.combo_mc.addEventListener("Scrolled",this.onComboScrolled);
-			if(val4.label_txt.textWidth > this.minWidth)
+			var dropdown_mc:MovieClip = new DropDown();
+			dropdown_mc.combo_mc.bgTopSizeDiff = -20;
+			dropdown_mc.customElHeight = this.elementHeight;
+			dropdown_mc.x = this.elementX;
+			dropdown_mc.label_txt.htmlText = param2;
+			dropdown_mc.id = param1;
+			dropdown_mc.name = "item" + this.list.length + "_mc";
+			dropdown_mc.mHeight = 30;
+			dropdown_mc.tooltip = param3;
+			this.totalHeight = this.totalHeight + (dropdown_mc.mHeight + this.elementHSpacing);
+			dropdown_mc.combo_mc.addEventListener(Event.CLOSE,this.onComboClose);
+			dropdown_mc.combo_mc.addEventListener(Event.OPEN,this.onComboOpen);
+			dropdown_mc.combo_mc.addEventListener("Scrolled",this.onComboScrolled);
+			if(dropdown_mc.label_txt.textWidth > this.minWidth)
 			{
-				if(this.maxWidth < val4.label_txt.textWidth)
+				if(this.maxWidth < dropdown_mc.label_txt.textWidth)
 				{
-					this.maxWidth = val4.label_txt.textWidth;
+					this.maxWidth = dropdown_mc.label_txt.textWidth;
 				}
 			}
 			else
 			{
 				this.maxWidth = this.minWidth;
 			}
-			this.list.addElement(val4);
-			val4.formHL_mc.alpha = 0;
+			this.list.addElement(dropdown_mc);
+			dropdown_mc.formHL_mc.alpha = 0;
 			this.HLCounter = this.HLCounter + 1;
-			ExternalInterface.call("controlAdded", "dropdown", val4.id, val4.list_pos, "list");
+			ExternalInterface.call("controlAdded", "dropdown", dropdown_mc.id, dropdown_mc.list_pos, "list");
 		}
 		
 		public function addMenuDropDownEntry(param1:Number, param2:String) : *

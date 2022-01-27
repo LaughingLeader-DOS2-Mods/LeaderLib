@@ -4,12 +4,15 @@ package LS_Symbols
 	import flash.events.MouseEvent;
 	import flash.external.ExternalInterface;
 	import flash.text.TextField;
+	import LS_Classes.larCombo;
 	
 	public dynamic class comboElement extends MovieClip
 	{
-		public var hl_mc:emptyBG;
 		public var sel_mc:MovieClip;
 		public var text_txt:TextField;
+		public var Combo:MovieClip;
+		public var _item:Object;
+		public var id:*;
 		
 		public function comboElement()
 		{

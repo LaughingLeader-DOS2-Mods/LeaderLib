@@ -309,16 +309,16 @@ package LS_Classes
 			this.calculateScrollRect();
 		}
 		
-		override public function setFrame(param1:Number, param2:Number) : *
+		override public function setFrame(w:Number, h:Number) : *
 		{
-			width = param1;
-			height = param2;
+			width = w;
+			height = h;
 			this.calculateScrollRect();
 		}
 		
-		public function setFrameHeight(param1:Number) : *
+		public function setFrameHeight(h:Number) : *
 		{
-			height = param1;
+			height = h;
 			this.calculateScrollRect();
 		}
 		

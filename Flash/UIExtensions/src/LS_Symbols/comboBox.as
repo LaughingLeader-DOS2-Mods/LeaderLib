@@ -4,9 +4,9 @@ package LS_Symbols
 	
 	public dynamic class comboBox extends larCombo
 	{
-		public function comboBox()
+		public function comboBox(elementClass:String = "LS_Symbols.comboElement", bgClass:String = "LS_Symbols.comboDDBG")
 		{
-			super();
+			super(elementClass, bgClass);
 		}
 	}
 }

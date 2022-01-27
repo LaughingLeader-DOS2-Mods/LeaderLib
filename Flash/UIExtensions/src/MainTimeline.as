@@ -23,6 +23,8 @@ package
 	import util.ClientTimer;
 	import flash.display.StageScaleMode;
 	import flash.display.StageDisplayState;
+	import system.DropdownManager;
+	import controls.dropdowns.PresetButton;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		
@@ -39,6 +41,7 @@ package
 		
 		public var mainPanel_mc:MainPanel;
 		public var panels_mc:PanelManager;
+		public var dropdowns_mc:DropdownManager;
 		public var contextMenuMC:ContextMenuMC;
 		public var screenScaleHelper:MovieClip;
 		
@@ -62,6 +65,8 @@ package
 		public var screenHeight:Number = 0;
 
 		private static var instance:MainTimeline;
+
+		public var presetButton:PresetButton;
 		
 		public function MainTimeline()
 		{
@@ -152,16 +157,21 @@ package
 		
 		public function onEventInit() : void
 		{
-			Registry.ExtCall("registeranchorId","LeaderLib_UIExtensions");
+			Registry.ExtCall("registeranchorId", this.anchorId);
 			Registry.ExtCall("setAnchor",this.anchorPos,this.anchorTarget,this.anchorPos);
 		}
 
 		public function onEventResize() : void
 		{
-			Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+			//Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
 		}
 
 		public function onEventResolution(w:Number, h:Number) : void
+		{
+			//this.OnRes(w,h);
+		}
+
+		public function OnRes(w:Number, h:Number) : void
 		{
 			if(this.screenWidth != w || this.screenHeight != h)
 			{
@@ -222,9 +232,9 @@ package
 			}
 		}
 
-		private function onMouseOutTooltip(e:MouseEvent) : void
+		public function onMouseOutTooltip(e:MouseEvent) : void
 		{
-			if(this.curTooltip == e.target.name && this.hasTooltip)
+			if(this.curTooltip == e.target.tooltip && this.hasTooltip)
 			{
 				Registry.ExtCall("hideTooltip");
 				this.hasTooltip = false;
@@ -502,6 +512,16 @@ package
 			panel.init(title);
 			return this.panels_mc.addPanel(panel);
 		}
+
+		public function togglePresetButton(b:Boolean, destroyEntries:Boolean = false): void
+		{
+			this.presetButton.visible = b;
+			this.presetButton.mouseEnabled = b;
+			this.presetButton.mouseChildren = b;
+			if(destroyEntries) {
+				this.presetButton.combo_mc.removeAll();
+			}
+		}
 		
 		public function frame1() : void
 		{
@@ -545,6 +565,8 @@ package
 
 			this.panels_mc = new PanelManager();
 			this.addChild(this.panels_mc);
+			this.dropdowns_mc = new DropdownManager();
+			this.addChild(this.dropdowns_mc);
 
 			this.screenScaleHelper.visible = false;
 			this.screenScaleHelper.mouseEnabled = false;
@@ -554,6 +576,12 @@ package
 			this.screenScaleHelper.doubleClickEnabled = false;
 			this.screenScaleHelper.tabEnabled = false;
 			this.screenScaleHelper.tabChildren = false;
+
+			this.presetButton = new PresetButton();
+			this.presetButton.init();
+			this.addChild(presetButton);
+
+			this.togglePresetButton(false);
 
 			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
 			//this.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove, true);

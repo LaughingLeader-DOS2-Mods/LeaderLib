@@ -170,11 +170,11 @@ package LS_Classes
 			}
 		}
 		
-		public function getElement(param1:Number) : MovieClip
+		public function getElement(index:Number) : MovieClip
 		{
-			if(param1 >= 0 && param1 < this.content_array.length)
+			if(index >= 0 && index < this.content_array.length)
 			{
-				return this.content_array[param1];
+				return this.content_array[index];
 			}
 			return null;
 		}
@@ -866,9 +866,9 @@ package LS_Classes
 			return null;
 		}
 		
-		public function selectByListID(param1:Number) : *
+		public function selectByListID(id:Number) : *
 		{
-			var val2:MovieClip = this.getElementByListID(param1);
+			var val2:MovieClip = this.getElementByListID(id);
 			this.selectMC(val2);
 		}
 		

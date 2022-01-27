@@ -42,11 +42,11 @@ package controls.dropdowns
 			ExternalInterface.call("LeaderLib_UIExtensions_OnControl", "Dropdown", this.id, this.combo_mc.selectedIndex, entry.id);
 		}
 		
-		public function deselectElement(e:MouseEvent) : *
+		public function deselectElement(e:MouseEvent=null) : *
 		{
 		}
 		
-		public function selectElement(e:MouseEvent) : *
+		public function selectElement(e:MouseEvent=null) : *
 		{
 			ExternalInterface.call("PlaySound","UI_Generic_Over");
 		}

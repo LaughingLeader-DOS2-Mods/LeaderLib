@@ -20,15 +20,15 @@ package
 			addFrameScript(0,this.frame1);
 		}
 		
-		public function deselectElement(param1:MouseEvent) : *
+		public function deselectElement(e:MouseEvent=null) : *
 		{
 		}
 		
-		public function selectElement(param1:MouseEvent) : *
+		public function selectElement(e:MouseEvent=null) : *
 		{
 		}
 
-		public function onMouseOver(param1:MouseEvent) : *
+		public function onMouseOver(e:MouseEvent) : *
 		{
 			if(this.tooltip != null && this.tooltip != "")
 			{
@@ -39,7 +39,7 @@ package
 			}
 		}
 		
-		public function onMouseOut(param1:MouseEvent) : *
+		public function onMouseOut(e:MouseEvent) : *
 		{
 			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
 			{

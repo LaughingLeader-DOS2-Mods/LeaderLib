@@ -58,13 +58,13 @@ package controls
          this.removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
       }
       
-      public function deselectElement(e:MouseEvent) : void
+      public function deselectElement(e:MouseEvent=null) : void
       {
          this.bg_mc.removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
       }
       
-      public function selectElement(e:MouseEvent) : void
+      public function selectElement(e:MouseEvent=null) : void
       {
          this.bg_mc.gotoAndStop(this.stateID * 3 + 2);
       }

@@ -53,7 +53,7 @@ package
 			this.amount_txt.x = this.slider_mc.x + this.slider_mc.m_handle_mc.x + Math.round((this.slider_mc.m_handle_mc.width - this.amount_txt.textWidth) * 0.5);
 		}
 		
-		public function deselectElement(e:MouseEvent) : *
+		public function deselectElement(e:MouseEvent=null) : *
 		{
 			if(this.base != null && this.base.focusedObject == this)
 			{
@@ -61,7 +61,7 @@ package
 			}
 		}
 		
-		public function selectElement(e:MouseEvent) : *
+		public function selectElement(e:MouseEvent=null) : *
 		{
 			if(this.base != null)
 			{

@@ -22,27 +22,27 @@ package
 			addFrameScript(0,this.frame1);
 		}
 		
-		public function onOpen(param1:Event) : *
+		public function onOpen(e:Event) : *
 		{
 			ExternalInterface.call("hideTooltip");
 		}
 		
-		public function onChange(param1:Event) : *
+		public function onChange(e:Event) : *
 		{
 			// LeaderLib: comboBoxID changed to llcomboBoxID
 			ExternalInterface.call("llcomboBoxID",this.id,this.combo_mc.selectedIndex);
 		}
 		
-		public function deselectElement(param1:MouseEvent) : *
+		public function deselectElement(e:MouseEvent=null) : *
 		{
 		}
 		
-		public function selectElement(param1:MouseEvent) : *
+		public function selectElement(e:MouseEvent=null) : *
 		{
 			ExternalInterface.call("PlaySound","UI_Generic_Over");
 		}
 		
-		public function onMouseOver(param1:MouseEvent) : *
+		public function onMouseOver(e:MouseEvent) : *
 		{
 			this.base.mainMenu_mc.setCursorPosition(this.id);
 			if(this.tooltip != null && this.tooltip != "" && !this.combo_mc.m_isOpen)
@@ -54,7 +54,7 @@ package
 			}
 		}
 		
-		public function onMouseOut(param1:MouseEvent) : *
+		public function onMouseOut(e:MouseEvent) : *
 		{
 			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
 			{

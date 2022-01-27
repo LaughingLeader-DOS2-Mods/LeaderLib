@@ -55,17 +55,17 @@ package
 			removeEventListener("mouseUp",this.buttonReleased);
 		}
 		
-		public function deselectElement(param1:MouseEvent) : *
+		public function deselectElement(e:MouseEvent=null) : *
 		{
 			this.bg_mc.gotoAndStop(1);
 		}
 		
-		public function selectElement(param1:MouseEvent) : *
+		public function selectElement(e:MouseEvent=null) : *
 		{
 			this.bg_mc.gotoAndStop(2);
 		}
 		
-		public function onMouseOver(param1:MouseEvent) : *
+		public function onMouseOver(e:MouseEvent) : *
 		{
 			this.base.mainMenu_mc.setCursorPosition(this.id);
 			if(this.tooltip != null && this.tooltip != "")
@@ -77,7 +77,7 @@ package
 			}
 		}
 		
-		public function onMouseOut(param1:MouseEvent) : *
+		public function onMouseOut(e:MouseEvent) : *
 		{
 			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
 			{

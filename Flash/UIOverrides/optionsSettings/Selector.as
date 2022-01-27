@@ -22,25 +22,25 @@ package
 			addFrameScript(0,this.frame1);
 		}
 		
-		public function onChange(param1:Event) : *
+		public function onChange(e:Event) : *
 		{
 			// LeaderLib: selectorID changed to llselectorID
 			ExternalInterface.call("llselectorID",this.id,this.selList.currentSelection);
 			ExternalInterface.call("PlaySound","UI_Gen_OptMenu_Slider");
 		}
 		
-		public function deselectElement(param1:MouseEvent) : *
+		public function deselectElement(e:MouseEvent) : *
 		{
 			this.hl_mc.visible = false;
 		}
 		
-		public function selectElement(param1:MouseEvent) : *
+		public function selectElement(e:MouseEvent) : *
 		{
 			ExternalInterface.call("PlaySound","UI_Gen_OptMenu_Over");
 			this.hl_mc.visible = true;
 		}
 		
-		public function onMouseOver(param1:MouseEvent) : *
+		public function onMouseOver(e:MouseEvent) : *
 		{
 			this.base.mainMenu_mc.setCursorPosition(this.id);
 			if(this.tooltip != null && this.tooltip != "")
@@ -51,7 +51,7 @@ package
 			}
 		}
 		
-		public function onMouseOut(param1:MouseEvent) : *
+		public function onMouseOut(e:MouseEvent) : *
 		{
 			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
 			{

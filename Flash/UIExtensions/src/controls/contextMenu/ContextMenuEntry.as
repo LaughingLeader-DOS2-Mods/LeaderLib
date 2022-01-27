@@ -23,7 +23,7 @@ package controls.contextMenu
 			this.addFrameScript(0,this.frame1);
 		}
 		
-		public function deselectElement(e:MouseEvent) : void
+		public function deselectElement() : void
 		{
 			this.hl_mc.alpha = 0;
 			this.text_txt.textColor = this.deSelectedColor;
@@ -31,7 +31,7 @@ package controls.contextMenu
 			Registry.ExtCall("PlaySound","UI_Generic_Over");
 		}
 		
-		public function selectElement(e:MouseEvent) : void
+		public function selectElement() : void
 		{
 			this.hl_mc.alpha = 1;
 			this.text_txt.textColor = this.selectedColor;

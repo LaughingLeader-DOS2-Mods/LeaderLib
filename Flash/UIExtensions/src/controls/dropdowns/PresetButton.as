@@ -50,11 +50,11 @@ package controls.dropdowns
 			Registry.ExtCall("LeaderLib_UIExtensions_PresetSelected", entry.id, this.combo_mc.selectedIndex);
 		}
 		
-		public function deselectElement(e:MouseEvent) : *
+		public function deselectElement() : *
 		{
 		}
 		
-		public function selectElement(e:MouseEvent) : *
+		public function selectElement() : *
 		{
 			Registry.ExtCall("PlaySound","UI_Generic_Over");
 		}

@@ -50,13 +50,13 @@ package
 			removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
 		}
 		
-		public function deselectElement(param1:MouseEvent) : *
+		public function deselectElement(e:MouseEvent=null) : *
 		{
 			removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
 			this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
 		}
 		
-		public function selectElement(param1:MouseEvent) : *
+		public function selectElement(e:MouseEvent=null) : *
 		{
 			this.bg_mc.gotoAndStop(this.stateID * 3 + 2);
 		}

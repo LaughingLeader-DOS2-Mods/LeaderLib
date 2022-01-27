@@ -37,17 +37,17 @@ local CharacterCreation = Classes.UIWrapper:CreateFromType(Data.UIType.character
 ---@field EquipmentProperties CCEquipmentPropertiesEntry[]
 
 ---@type table<string, CCPresetData>
-local PresetData = {}
+--local PresetData = {}
 ---@type table<string,integer>
 local PresetToID = {}
 
-local function BuildPresetData()
-	local cc = Ext.Stats.GetCharacterCreation()
-	for i,v in pairs(cc.ClassPresets) do
-		PresetData[v.ClassType] = v
-		PresetToID[v.ClassType] = i-1
-	end
-end
+-- local function BuildPresetData()
+-- 	local cc = Ext.Stats.GetCharacterCreation()
+-- 	for i,v in pairs(cc.ClassPresets) do
+-- 		PresetData[v.ClassType] = v
+-- 		PresetToID[v.ClassType] = i-1
+-- 	end
+-- end
 
 Ext.RegisterUINameCall("LeaderLib_UIExtensions_PresetSelected", function (ui, event, selectedId, selectedIndex)
 	print(event, selectedId, selectedIndex)
@@ -97,17 +97,27 @@ local function CreatePresetDropdown()
 		x = this.CCPanel_mc.x + this.CCPanel_mc.armourBtnHolder_mc.x + this.CCPanel_mc.armourBtnHolder_mc.helmetBtn_mc.x
 		y = this.CCPanel_mc.y + this.CCPanel_mc.origins_mc.height - 224
 	end
+
+	print("uiExt.presetButton.visible", uiExt.presetButton.visible)
+	if uiExt.presetButton.visible then
+		uiExt.presetButton.x = x
+		uiExt.presetButton.y = y
+		return
+	end
+
 	local cachedPresetToMod = GameHelpers.IO.LoadJsonFile("LeaderLib_PresetToModCache.json", {})
-	
+	local cc = Ext.Stats.GetCharacterCreation()
 	local presets = {}
 	local findModForPreset = {}
-	for k,v in pairs(PresetData) do
+	PresetToID = {}
+	for i,v in pairs(cc.ClassPresets) do
+		PresetToID[v.ClassType] = i-1
 		local index = #presets+1
 		local entry = {
 			ClassType = v.ClassType,
-			Label = Ext.L10N.GetTranslatedString(v.ClassName, k),
+			Label = Ext.L10N.GetTranslatedString(v.ClassName, v.ClassType),
 			Tooltip = Ext.L10N.GetTranslatedString(v.ClassDescription, ""),
-			ID = PresetToID[k]
+			ID = i-1
 		}
 		local desc1 = Ext.L10N.GetTranslatedString(v.ClassDescription, "")
 		local desc2 = Ext.L10N.GetTranslatedString(v.ClassLongDescription, "")
@@ -159,15 +169,14 @@ end
 
 RegisterListener("RegionChanged", function (region, state, levelType)
 	if levelType == LEVELTYPE.CHARACTER_CREATION then
-		if state ~= REGIONSTATE.ENDED then
-			BuildPresetData()
-			CreatePresetDropdown()
-		else
-			UIExtensions.Root.togglePresetButton(false, true);
-		end
-		local this = CharacterCreation.Root
-		if this then
-
+		if state == REGIONSTATE.ENDED then
+			UIExtensions.Root.togglePresetButton(false, true)
 		end
 	end
 end)
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTags", function (ui, call)
+	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+		CreatePresetDropdown()
+	end
+end, "After")

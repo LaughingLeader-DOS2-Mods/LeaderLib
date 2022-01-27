@@ -75,3 +75,36 @@ Ext.RegisterConsoleCommand("modorder", function(cmd, uuidOnly)
 	end
 	fprint(LOGLEVEL.DEFAULT, "=============")
 end)
+
+Ext.RegisterListener("StatsLoaded", function()
+	local info = Ext.GetModInfo(ModuleUUID)
+	Ext.Print(string.format("[%s][%s] StatsLoaded running. [%s]", info.Name, ModuleUUID, Ext.IsClient() and "CLIENT" or "SERVER"))
+end)
+
+Ext.RegisterListener("SessionLoaded", function()
+	Ext.Print(string.format("[%s] SessionLoaded running. [%s]", Ext.GetModInfo(ModuleUUID).Name, Ext.IsClient() and "CLIENT" or "SERVER"))
+
+	local mods = {}
+
+	for i,v in ipairs(Ext.GetModLoadOrder()) do
+		local info = Ext.GetModInfo(v)
+		if info then
+			table.insert(mods, {
+				Index = i,
+				UUID = v,
+				Name = info.Name
+			})
+		end
+	end
+
+	Ext.Print("Loaded mods:")
+	Ext.Dump(mods)
+end)
+
+Mods.LeaderLib.RegisterListener("BeforeLuaReset", function()
+	-- Before lua is reset. Destroy your UI here for instance.
+end)
+
+Mods.LeaderLib.RegisterListener("LuaReset", function()
+	-- Lua was reset. Re-initialize your UI here.
+end)

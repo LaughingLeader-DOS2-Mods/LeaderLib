@@ -137,7 +137,7 @@ local function OnHit(hitStatus, hitContext)
 
 	local data = Classes.HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill)
 
-	if skill then
+	if skill and source then
 		OnSkillHit(skill.Name, target, source, hitRequest.TotalDamageDone, hitRequest, hitContext, hitStatus, data)
 	end
 

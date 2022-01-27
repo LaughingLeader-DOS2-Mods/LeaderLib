@@ -7,6 +7,7 @@
 ---@field GetRoot fun():UIExtensionsMain
 
 ---@alias CheckboxCallback fun(ui:LeaderLibUIExtensions, controlType:string, id:number, state:number):void
+---@alias LeaderLibDropdownCallback fun(ui:LeaderLibUIExtensions, controlType:string, id:number, selectedIndex:number):void
 ---@alias FlashTimerCallback fun(timerName:string, isComplete:boolean):void
 
 ---@class UIExtensions
@@ -237,7 +238,7 @@ end)
 -- 	-- end)
 -- end)
 
----Add a checkbox to LeaderLib's UIExtensions UI, which fits the screen.
+---Add a checkbox to LeaderLib's UIExtensions UI.
 ---@param onClick CheckboxCallback The callback to invoke when the checkbox is clicked.
 ---@param label string
 ---@param tooltip string
@@ -261,6 +262,51 @@ function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBo
 		end
 		local index = main.addCheckbox(id, label, tooltip, state or 0, x or 0, y or 0, filterBool, enabled)
 		return id,index
+	else
+		Ext.PrintError("[LeaderLib:UIExtensions.AddCheckbox] Failed to get root of UIObject", UIExtensions.SwfPath)
+	end
+end
+
+---@class LeaderLibUIExtensionsDropdownTextSettings
+---@field Label string
+---@field Dropdown string
+---@field Tooltip string
+
+---@class LeaderLibUIExtensionsDropdownEntry
+---@field Label string
+---@field ID number
+
+---Add a dropdown to LeaderLib's UIExtensions UI.
+---@param onChange LeaderLibDropdownCallback The callback to invoke when the selection changes.
+---@param x number
+---@param y number
+---@param text LeaderLibUIExtensionsDropdownTextSettings
+---@param entries LeaderLibUIExtensionsDropdownEntry[]
+---@return integer
+function UIExtensions.AddDropdown(onChange, x, y, text, entries)
+	UIExtensions.SetupInstance()
+	local id = #UIExtensions.Controls
+	local main = UIExtensions.Root
+	if main then
+		UIExtensions.Controls[id] = onChange or true
+		local dropdownText = ""
+		local topLabelText = ""
+		local tooltipText = ""
+		if type(text) == "table" then
+			dropdownText = text.Dropdown or ""
+			topLabelText = text.Label or ""
+			tooltipText = text.Tooltip or ""
+		end
+		local index = main.dropdowns_mc.addDropdown(id, x, y, dropdownText, topLabelText, tooltipText)
+		local dropdown_mc = main.dropdowns_mc.entries[index];
+		Ext.PrintError(index, dropdown_mc)
+		if dropdown_mc and type(entries) == "table" then
+			for i=1,#entries do
+				local entry = entries[i]
+				dropdown_mc.addEntry(entry.Label, entry.ID);
+			end
+		end
+		return dropdown_mc,id,index
 	else
 		Ext.PrintError("[LeaderLib:UIExtensions.AddCheckbox] Failed to get root of UIObject", UIExtensions.SwfPath)
 	end

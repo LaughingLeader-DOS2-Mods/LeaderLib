@@ -5,9 +5,8 @@ end
 ---@param startPos number[]
 ---@param endPos number[]
 function GameHelpers.Surface.CreateRectSurface(startPos, endPos, surface, width, lengthModifier, duration, speed, statusChance, deathType, owner, lineCheckBlock)
-	Ext.EnableExperimentalPropertyWrites()
 	---@type EsvRectangleSurfaceAction
-	local surf = Ext.CreateSurfaceAction("EsvCreateSurfaceAction")
+	local surf = Ext.CreateSurfaceAction("RectangleSurfaceAction")
 	surf.Position = startPos
 	surf.Target = endPos
 	surf.SurfaceType = surface or "Water"
@@ -55,7 +54,6 @@ end
 local surfaceActions = {}
 
 local function CreateFollowSurface(projectile)
-	Ext.EnableExperimentalPropertyWrites()
 	---@type EsvChangeSurfaceOnPathAction
 	local surf = Ext.CreateSurfaceAction("ChangeSurfaceOnPathAction")
 	surf.FollowObject = projectile.Handle

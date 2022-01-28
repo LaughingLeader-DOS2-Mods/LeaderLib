@@ -290,7 +290,6 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
             local tx,ty,tz = table.unpack(props.TargetPosition)
             if skill.Distribution == "Random" then
                 positions = {}
-                local angle = Ext.Random() * 2 * math.pi
                 for p=1,count do
                     local cx,cy,cz = GetRandomPositionInCircleRadius(tx,ty,tz,radius)
                     positions[p] = {cx,cy,cz}
@@ -402,6 +401,7 @@ function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParam
     ProcessProjectileProps(props)
 end
 
+---Explode a skill as a target. Similar to CreateExplosion, EXPODE or LeaveAction/DieAction.
 ---@param target UUID|EsvCharacter|EsvItem|number[] The target character, item, or position.
 ---@param skillId string The skill to use for damage.
 ---@param source UUID|EsvCharacter|EsvItem The source of the damage, either a character, item, or UUID.
@@ -493,7 +493,7 @@ function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
     ---@type EsvZoneAction
     local action = Ext.CreateSurfaceAction("ZoneAction")
     ---@type LeaderLibZoneCreationProperties
-    local props = {} 
+    local props = {}
     props.SkillId = skillId
     --zone.AiFlags = skill.AIFlags
     props.AngleOrBase = math.max(skill.Base or 0, skill.Angle or 0)

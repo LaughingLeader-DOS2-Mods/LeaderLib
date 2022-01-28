@@ -171,6 +171,33 @@ CustomSkillProperties.MoveToTarget = {
 		MoveToTarget(attacker, position, math.max(skill.AreaRadius or 3, 3), skill, prop)
 	end
 }
+--[[ 
+local prop = {
+	Action = "LeaderLib_BoostStatus",
+	Arg1 = 1.0,
+	Arg2 = 12.0,
+	Arg3 = "",
+	Arg4 = -1,
+	Arg5 = -1,
+	Context = { "Target", "AoE" },
+	Type = "Extender"
+}
+]]
+
+-- Ext.GetStat("Shout_InspireStart").SkillProperties = {{ Action = "ENCOURAGED", Arg4 = -1, Arg5 = -1, Context = { "Target", "AoE" }, Duration = 18, StatsId = "", StatusChance = 1, SurfaceBoost = false, SurfaceBoosts = {}, Type = "Status" }, { Action = "LeaderLib_BoostStatus", Arg1 = 1.0, Arg2 = 12.0, Arg3 = "", Arg4 = -1, Arg5 = -1, Context = { "Self" }, Type = "Extender" }}; Ext.SyncStat("Shout_InspireStart", false)
+
+-- CustomSkillProperties.LeaderLib_BoostStatus = {
+-- 	GetDescription = function(prop)
+-- 		return "Amplify STATUS by surrounding characters"
+-- 	end,
+-- 	-- ExecuteOnPosition = function(prop, attacker, position, areaRadius, isFromItem, skill, hit)
+-- 	-- 	print("LeaderLib_BoostStatus", Lib.serpent.block(position))
+-- 	-- end,
+-- 	ExecuteOnTarget = function(prop, attacker, target, position, isFromItem, skill, hit)
+-- 		--CustomSkillProperties.LeaderLib_BoostStatus.ExecuteOnPosition(prop, attacker, position, isFromItem, skill, hit)
+-- 		print("LeaderLib_BoostStatus", target.DisplayName)
+-- 	end
+-- }
 
 for k,v in pairs(CustomSkillProperties) do
 	Ext.RegisterSkillProperty(k, v)

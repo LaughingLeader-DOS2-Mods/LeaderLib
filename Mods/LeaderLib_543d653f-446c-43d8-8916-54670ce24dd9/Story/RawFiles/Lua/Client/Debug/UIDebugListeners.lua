@@ -138,6 +138,7 @@ local defaultIgnored = {
 	updateStatuses = true,
 	removeLabel = true,
 	LeaderLib_UIExtensions_InputEvent = true,
+	blockMouseWheelInput = true,
 	setAllSlotsEnabled = true,
 	setButtonEnable = true,
 	updateSlotData = true,
@@ -215,8 +216,8 @@ local enabledParam = {Enabled=true}
 
 local contextMenu = UIListenerWrapper:Create(Data.UIType.contextMenu, enabledParam)
 local characterSheet = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
+local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, enabledParam)
 -- local areaInteract_c = UIListenerWrapper:Create(Data.UIType.areaInteract_c)
--- local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, enabledParam)
 -- local containerInventory = UIListenerWrapper:Create(Data.UIType.containerInventory, enabledParam)
 -- local uiCraft = UIListenerWrapper:Create(Data.UIType.uiCraft, enabledParam)
 -- local dialog = UIListenerWrapper:Create(Data.UIType.dialog,enabledParam)

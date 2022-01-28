@@ -42,6 +42,7 @@ package controls.dropdowns {
         public var pressedFunc:Function;
 		public var button_mc:IDropdownButton;
 		public var hovering:Boolean = false;
+		public var skipNextChangeInvoke:Boolean = false;
 
         public function HiddenDropdown(button_mc:IDropdownButton = null, elementClass:String = "LS_Symbols.comboElement", bgClass:String = "LS_Symbols.comboDDBG") {
             var comboElement_mc:MovieClip = null;
@@ -260,7 +261,7 @@ package controls.dropdowns {
                         next_mc.comboSelect();
                     }
                 }
-                if (this.m_enabled && changed || this.m_forceUpdate) {
+                if (!this.skipNextChangeInvoke && (this.m_enabled && changed || this.m_forceUpdate)) {
                     dispatchEvent(new Event(Event.CHANGE, true));
                 }
             }
@@ -319,15 +320,20 @@ package controls.dropdowns {
             return null;
         }
 
-        public function selectItemByID(id:Number):Boolean {
+        public function selectItemByID(id:Number, skipCallback:Boolean = false):Boolean {
+            if (skipCallback) {
+                this.skipNextChangeInvoke = true;
+            }
             var i:int = 0;
             while (i < this.m_items_array.length) {
                 if (this.m_items_array[i].id != null && this.m_items_array[i].id == id) {
                     this.selectedIndex = i;
+                    this.skipNextChangeInvoke = false;
                     return true;
                 }
                 i++;
             }
+            this.skipNextChangeInvoke = false;
             return false;
         }
 

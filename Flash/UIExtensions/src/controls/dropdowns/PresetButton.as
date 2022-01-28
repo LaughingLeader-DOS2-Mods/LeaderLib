@@ -77,9 +77,9 @@ package controls.dropdowns
 			return this.combo_mc.m_scrollList.length - 1;
 		}
 
-		public function selectItemByID(id:Number) : Boolean
+		public function selectItemByID(id:Number, skipCallback:Boolean = false) : Boolean
 		{
-			return this.combo_mc.selectItemByID(id);
+			return this.combo_mc.selectItemByID(id, skipCallback);
 		}
 
 		public function positionList(selectContainer:MovieClip) : void

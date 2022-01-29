@@ -164,49 +164,24 @@ package
 		public function onEventResize() : void
 		{
 			//Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+			Registry.ExtCall("LeaderLib_UIExtensions_OnEventResize");
 		}
 
 		public function onEventResolution(w:Number, h:Number) : void
 		{
-			//this.OnRes(w,h);
+			this.OnRes(w,h);
 		}
 
 		public function OnRes(w:Number, h:Number) : void
 		{
 			if(this.screenWidth != w || this.screenHeight != h)
 			{
-				Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+				//Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
 				this.screenWidth = w;
 				this.screenHeight = h;
 				this.uiScaling = h / this.designResolution.y;
-
-				// this.screenScaleHelper.width = w;
-				// this.screenScaleHelper.height = h;
-
-				/* if (this.screenScaleHelper.visible) {
-					// var dx:Number = (this.designResolution.x - this.screenWidth)/2;
-					// var dy:Number = (this.designResolution.y - this.screenHeight)/2;
-					var rect:Rectangle = new Rectangle(0, 0, this.stage.stageWidth, this.stage.stageHeight);
-					this.screenScaleHelper.width = rect.width;
-					this.screenScaleHelper.height = rect.height;
-					this.screenScaleHelper.x = rect.x;
-					this.screenScaleHelper.y = rect.y;
-					//trace(rect);
-				} */
-				//Registry.ExtCall("setMcSize", w, h);
 				Registry.ExtCall("LeaderLib_UIExtensions_OnEventResolution", w, h);
-				
 			}
-			// var ratioHeight:Number = 1080 / h;
-			// var ratioWidth:Number = (1920 - w * ratioHeight) * 0.5;
-			// if(ratioWidth > 0)
-			// {
-			// 	this.mainPanel_mc.x = ratioWidth;
-			// }
-			// else
-			// {
-			// 	this.mainPanel_mc.x = 0;
-			// }
 		}
 
 		public function removeControl(id:Number) : Boolean

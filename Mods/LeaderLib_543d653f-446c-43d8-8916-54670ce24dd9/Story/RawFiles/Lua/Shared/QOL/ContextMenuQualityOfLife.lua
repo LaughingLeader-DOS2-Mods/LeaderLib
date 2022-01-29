@@ -24,7 +24,6 @@ if isClient then
 		Item = {}
 	}
 	local CharacterServerData = {}
-	local sheetItemContextMenuDouble = nil
 
 	local function SaveInfoToFile(netid, hoverType)
 		---@type EclCharacter
@@ -134,18 +133,6 @@ if isClient then
 		end
 	end
 
-	Ext.RegisterUITypeCall(Data.UIType.characterSheet, "openContextMenu", function (ui, call, itemDouble)
-		sheetItemContextMenuDouble = itemDouble
-	end, "Before")
-	for _,v in pairs(Data.UIType.contextMenu) do
-		Ext.RegisterUITypeCall(v, "menuClosed", function (ui, call)
-			sheetItemContextMenuDouble = nil
-		end)
-		Ext.RegisterUITypeInvokeListener(v, "close", function (ui, call)
-			sheetItemContextMenuDouble = nil
-		end)
-	end
-
 	Ext.RegisterListener("SessionLoaded", function()
 		if not registeredListeners then
 			UI.ContextMenu.Register.ShouldOpenListener(function(contextMenu, x, y)
@@ -167,7 +154,7 @@ if isClient then
 				openTarget = ""
 			end)
 		
-			UI.ContextMenu.Register.BuiltinOpeningListener(function(contextMenu, ui, this, buttonArr, buttons)
+			UI.ContextMenu.Register.BuiltinOpeningListener(function(contextMenu, ui, this, buttonsArr, buttons, targetObject)
 				if Vars.DebugMode then
 					local cursor = Ext.GetPickingState()
 					local entries = {}
@@ -189,11 +176,8 @@ if isClient then
 							end
 						end
 					end
-					if sheetItemContextMenuDouble then
-						local item = Ext.GetItem(Ext.DoubleToHandle(sheetItemContextMenuDouble))
-						if item then
-							TryProcessHoverObject("LLCM_CopyEquipmentInfo", item, "Item", contextMenu, "Save Cursor EQ to File")
-						end
+					if targetObject and GameHelpers.Ext.ObjectIsItem(targetObject) then
+						TryProcessHoverObject("LLCM_CopyEquipmentInfo", targetObject, "Item", contextMenu, "Save Cursor EQ to File")
 					end
 					if #entries > 1 then
 						contextMenu:AddBuiltinEntry("LLCM_CopyInfoAll", function(contextMenu, ui, id, actionID, none)

@@ -188,7 +188,7 @@ if Ext.IsClient() then
 	---@type OnContextMenuOpeningCallback[]
 	Listeners.OnContextMenuOpening = {}
 	
-	---@alias OnBuiltinContextMenuOpeningCallback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray, buttons:table):void
+	---@alias OnBuiltinContextMenuOpeningCallback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray, buttons:table, targetObject:EclCharacter|EclItem|nil):void
 	---Triggered when the regular context menu is opening.
 	---@type OnBuiltinContextMenuOpeningCallback[]
 	Listeners.OnBuiltinContextMenuOpening = {}

@@ -35,7 +35,10 @@ local ContextMenu = {
 	IsOpening = false,
 	Visible = false,
 	---@private
-	RegisteredListeners = false
+	RegisteredListeners = false,
+	---The handle of whatever was used to open the context menu, if anything.
+	---@type number
+	LastObjectDouble = nil
 }
 ContextMenu.__index = ContextMenu
 local self = ContextMenu
@@ -307,8 +310,16 @@ function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDoub
 	end
 end
 
+Ext.RegisterUINameCall("openContextMenu", function (ui, call, doubleHandle, x, y)
+	ContextMenu.LastObjectDouble = doubleHandle
+end, "Before")
+
 ---@private
 function ContextMenu:OnBuiltinMenuUpdating(ui, event)
+	local targetObject = nil
+	if ContextMenu.LastObjectDouble ~= nil then
+		targetObject = GameHelpers.TryGetObject(Ext.DoubleToHandle(ContextMenu.LastObjectDouble))
+	end
 	local this = ui:GetRoot()
 	local buttonArr = this.buttonArr
 	local buttons = {}
@@ -333,7 +344,7 @@ function ContextMenu:OnBuiltinMenuUpdating(ui, event)
 		buttons[#buttons+1] = entry
 		--ContextMenu:AddEntry()
 	end
-	InvokeListenerCallbacks(Listeners.OnBuiltinContextMenuOpening, self, ui, this, buttonArr, buttons)
+	InvokeListenerCallbacks(Listeners.OnBuiltinContextMenuOpening, self, ui, this, buttonArr, buttons, targetObject)
 
 	local i = length
 	for _,v in pairs(builtinEntries) do
@@ -389,23 +400,25 @@ function ContextMenu:Init()
 		Input.RegisterListener("ContextMenu", function(...) self:OnRightClick(...) end)
 		--Input.RegisterMouseListener(UIExtensions.MouseEvent.RightMouseUp, function(...) self:OnRightClick(...) end)
 
+		local onClose = function ()
+			ContextMenu.LastObjectDouble = nil
+			builtinEntries = {}
+			GENERATED_ID_TO_ENTRY = {}
+			lastBuiltinID = 999
+		end
+
+		local registerBuiltins = function (typeId)
+			Ext.RegisterUITypeInvokeListener(typeId, "updateButtons", function(...) self:OnBuiltinMenuUpdating(...) end)
+			Ext.RegisterUITypeCall(typeId, "buttonPressed", function(...) self:OnBuiltinMenuClicked(...) end)
+			Ext.RegisterUITypeCall(typeId, "menuClosed", onClose)
+			Ext.RegisterUITypeInvokeListener(typeId, "close", onClose)
+		end
+
 		for _,v in pairs(Data.UIType.contextMenu) do
-			Ext.RegisterUITypeInvokeListener(v, "updateButtons", function(...) self:OnBuiltinMenuUpdating(...) end)
-			Ext.RegisterUITypeCall(v, "buttonPressed", function(...) self:OnBuiltinMenuClicked(...) end)
-			Ext.RegisterUITypeCall(v, "menuClosed", function(...)
-				builtinEntries = {}
-				GENERATED_ID_TO_ENTRY = {}
-				lastBuiltinID = 999
-			end)
+			registerBuiltins(v)
 		end
 		for _,v in pairs(Data.UIType.contextMenu_c) do
-			Ext.RegisterUITypeInvokeListener(v, "updateButtons", function(...) self:OnBuiltinMenuUpdating(...) end)
-			Ext.RegisterUITypeCall(v, "buttonPressed", function(...) self:OnBuiltinMenuClicked(...) end)
-			Ext.RegisterUITypeCall(v, "menuClosed", function(...)
-				builtinEntries = {}
-				GENERATED_ID_TO_ENTRY = {}
-				lastBuiltinID = 999
-			end)
+			registerBuiltins(v)
 		end
 		
 		self.RegisteredListeners = true

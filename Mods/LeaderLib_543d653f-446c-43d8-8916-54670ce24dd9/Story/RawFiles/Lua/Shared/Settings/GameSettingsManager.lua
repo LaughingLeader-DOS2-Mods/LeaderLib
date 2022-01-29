@@ -42,7 +42,7 @@ LoadGameSettings = GameSettingsManager.Load
 
 function GameSettingsManager.Save()
 	if GameSettings ~= nil then
-		local b,err = xpcall(function() 
+		local b,err = xpcall(function()
 			GameSettings:Apply()
 			Ext.SaveFile("LeaderLib_GameSettings.json", GameSettings:ToString())
 		end, debug.traceback)

@@ -429,6 +429,25 @@ local function SetVisibility(b)
 	end
 end
 
+---@param targetUIObject UIObject
+function UIExtensions.ResizeToUI(targetUIObject)
+	local extInst = UIExtensions.Instance
+	local extRoot = extInst:GetRoot()
+	local targetRoot = targetUIObject:GetRoot()
+	local x,y = 600, 200
+	if targetRoot then
+		extRoot.layout = targetRoot.layout
+		if not StringHelpers.IsNullOrEmpty(targetRoot.anchorPos) 
+		and not StringHelpers.IsNullOrEmpty(targetRoot.anchorTarget)
+		and not StringHelpers.IsNullOrEmpty(targetRoot.anchorPos) then
+			extInst:ExternalInterfaceCall("setAnchor",targetRoot.anchorPos,targetRoot.anchorTarget,targetRoot.anchorPos)
+		else
+			extInst:ExternalInterfaceCall("setAnchor","center","screen","center")
+		end
+		extInst:Resize(targetUIObject.FlashMovieSize[1], targetUIObject.FlashMovieSize[2])
+	end
+end
+
 local registeredControllerListeners = false
 
 Ext.RegisterListener("SessionLoaded", function()

@@ -13,6 +13,8 @@ SkipTutorial = {
 	}
 }
 
+local _EXTVERSION = Ext.Version()
+
 if Ext.IsServer() then
 	local initialized = false
 
@@ -378,6 +380,7 @@ else
 	local function SetSkipTutorial(ui, controlType, id, state)
 		GameSettings.Settings.SkipTutorial.Enabled = state == 0 and false or true
 		Ext.PostMessageToServer("LeaderLib_SetSkipTutorial", state == 0 and "false" or "true")
+		--GameSettingsManager.Save()
 	end
 
 	--@param event InputEvent
@@ -397,15 +400,20 @@ else
 		end
 	end
 
-	local function GetCheckboxPos(checkboxWidth,checkboxHeight)
+	local function GetCheckboxPos(main, checkboxWidth,checkboxHeight)
 		checkboxWidth = checkboxWidth or 56
 		checkboxHeight = checkboxHeight or 44
-		local main = UIExtensions.Instance:GetRoot()
-		if main then
-			local x = math.abs(main.x) + 4
-			local y = main.height - (checkboxHeight + 4)
-			--local y = main.screenHeight - (checkboxHeight + 4)
+		if Ext.Version() >= 56 then
+			local x = 4
+			local y = main.FlashMovieSize[2] - (checkboxHeight + 4)
 			return x,y
+		else
+			if main then
+				local x = 4
+				local y = main.height - (checkboxHeight + 4)
+				--local y = main.screenHeight - (checkboxHeight + 4)
+				return x,y
+			end
 		end
 		return SkipTutorial.CheckBoxPos[1] or 0, SkipTutorial.CheckBoxPos[2] or 1016
 	end
@@ -420,12 +428,31 @@ else
 		local levelName = GameHelpers.GetStringKeyText(GameSettings.Settings.SkipTutorial.Destination, "Unknown")
 		local description = string.format(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "If enabled, the game will skip the tutorial and go right to the configured starting level (%s)."), levelName)
 		
-		local x,y = GetCheckboxPos()
+		local inst = UIExtensions.Instance
+		local main = inst:GetRoot()
+
+		local x,y = 0,0
+		if _EXTVERSION >= 56 then
+			local ccUI = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.characterCreation or Data.UIType.characterCreation_c)
+			UIExtensions.ResizeToUI(ccUI)
+
+			x,y = GetCheckboxPos(inst)
+		else
+			x,y = GetCheckboxPos(main)
+		end
+
 		local controlId,index = UIExtensions.AddCheckbox(SetSkipTutorial, title, description, GameSettings.Settings.SkipTutorial.Enabled and 1 or 0, x, y)
 		createdCheckboxID = controlId
-		local main = UIExtensions.Instance:GetRoot()
 		local checkbox = main.mainPanel_mc.elements[index]
-		x,y = GetCheckboxPos(checkbox.width)
+
+		if _EXTVERSION >= 56 then
+			x,y = GetCheckboxPos(inst, checkbox.width)
+		else
+			x,y = GetCheckboxPos(main, checkbox.width)
+		end
+
+		Ext.PrintError(x,y)
+
 		checkbox.x = x
 
 		Input.RegisterListener(OnInput)

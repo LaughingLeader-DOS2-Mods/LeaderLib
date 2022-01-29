@@ -84,16 +84,16 @@ local function BuildModAssociation(findModForPreset, presets)
 	end
 end
 
-local function CreatePresetDropdown()
+local function PositionPresetButton()
 	local inst = CharacterCreation.Instance
 	local extInst = UIExtensions.Instance
+
+	UIExtensions.ResizeToUI(inst)
+
 	local extRoot = extInst:GetRoot()
 	local this = inst:GetRoot()
 	local x,y = 600, 200
 	if this then
-		extRoot.layout = "fitVertical"
-		extInst:ExternalInterfaceCall("setAnchor","center","screen","center")
-		extInst:Resize(inst.FlashMovieSize[1], inst.FlashMovieSize[2])
 		x = this.CCPanel_mc.x + this.CCPanel_mc.armourBtnHolder_mc.x + this.CCPanel_mc.armourBtnHolder_mc.helmetBtn_mc.x
 		y = this.CCPanel_mc.y + this.CCPanel_mc.origins_mc.height - (224 * inst:GetUIScaleMultiplier())
 	end
@@ -101,8 +101,14 @@ local function CreatePresetDropdown()
 	if extRoot.presetButton.visible then
 		extRoot.presetButton.x = x
 		extRoot.presetButton.y = y
-		return
 	end
+end
+
+local function CreatePresetDropdown()
+	PositionPresetButton()
+
+	local this = CharacterCreation.Root
+	local extRoot = UIExtensions.Root
 
 	local cachedPresetToMod = GameHelpers.IO.LoadJsonFile("LeaderLib_PresetToModCache.json", {})
 	local cc = Ext.Stats.GetCharacterCreation()
@@ -143,10 +149,9 @@ local function CreatePresetDropdown()
 		return a.Label < b.Label
 	end)
 
-	extRoot.presetButton.x = x
-	extRoot.presetButton.y = y
 	extRoot.presetButton.setText("Set Preset")
-	extRoot.togglePresetButton(true);
+	extRoot.presetButton.combo_mc.removeAll()
+	extRoot.togglePresetButton(true)
 	--local dropdown_mc = UIExtensions.AddDropdown(OnPresetSelected, x, y, {Dropdown = "Presets", Tooltip = "Select a Class Preset"}, presets)
 	for i=1,#presets do
 		local entry = presets[i]
@@ -180,5 +185,11 @@ end)
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTags", function (ui, call)
 	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
 		CreatePresetDropdown()
+	end
+end, "After")
+
+Ext.RegisterUINameCall("LeaderLib_UIExtensions_OnEventResolution", function ()
+	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+		PositionPresetButton()
 	end
 end, "After")

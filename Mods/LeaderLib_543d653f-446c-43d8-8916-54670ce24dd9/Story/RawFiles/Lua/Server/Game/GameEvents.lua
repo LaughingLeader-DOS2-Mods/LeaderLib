@@ -181,12 +181,12 @@ function OnLuaReset()
 	GameHelpers.Data.SetRegion(region)
 	GameHelpers.Data.SetGameMode()
 	OnInitialized(region, true)
-	pcall(DebugLoadPersistentVars)
 	if IsCharacterCreationLevel(region) == 1 then
 		SkipTutorial.Initialize()
 		SkipTutorial.OnLeaderLibInitialized(region)
 	end
 	IterateUsers("LeaderLib_StoreUserData")
+	pcall(DebugLoadPersistentVars)
 	InvokeListenerCallbacks(Listeners.LuaReset, region)
 	local payload = Common.JsonStringify({Event="LuaReset", Args={region}, _PrintSettings=Vars.Print, _CommandSettings = Vars.Commands})
 	GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", payload)

@@ -17,11 +17,9 @@ InitTable("Classes")
 InitTable("Common")
 InitTable({"Item", "Math", "Skill", "Status", "Tooltip", "UI", "Ext", "Internal", "Net"}, GameHelpers)
 
-local extVersion = Ext.Version()
-local _getTranslatedStringKeyFunction = Ext.GetTranslatedStringFromKey
-if extVersion >= 56 then
-	_getTranslatedStringKeyFunction = Ext.L10N.GetTranslatedStringFromKey
-end
+local _EXTVERSION = Ext.Version()
+local _getTranslatedStringKeyFunction = _EXTVERSION < 56 and Ext.GetTranslatedStringFromKey or Ext.L10N.GetTranslatedStringFromKey
+local _getTranslatedStringFunction = _EXTVERSION < 56 and Ext.GetTranslatedString or Ext.L10N.GetTranslatedString
 
 local _stringKeyText = {}
 
@@ -44,15 +42,23 @@ end
 ---@field Handle string
 ---@field ReferenceString string
 
+---@class ExtenderTranslatedStringObject
+---@field ArgumentString ExtenderTranslatedString
+---@field Handle ExtenderTranslatedString
+
 ---Gets the value from an extender TranslatedString. Either the ReferenceString if unset, or the localized handle value.
----@param object ExtenderTranslatedString
+---@param object ExtenderTranslatedStringObject
 ---@param fallback ?string
 ---@return string
 function GameHelpers.GetTranslatedStringValue(object, fallback)
-	if object.Handle and object.Handle.Handle ~= StringHelpers.UNSET_HANDLE then
-		return Ext.L10N.GetTranslatedString(object.Handle.Handle, object.Handle.ReferenceString)
-	elseif object.ArgumentString then
-		return object.ArgumentString.ReferenceString
+	if _EXTVERSION < 56 then
+		return not StringHelpers.IsNullOrEmpty(object) and object or fallback
+	else
+		if object.Handle and object.Handle.Handle ~= StringHelpers.UNSET_HANDLE then
+			return _getTranslatedStringFunction(object.Handle.Handle, object.Handle.ReferenceString)
+		elseif object.ArgumentString then
+			return object.ArgumentString.ReferenceString
+		end
 	end
 	return fallback or ""
 end

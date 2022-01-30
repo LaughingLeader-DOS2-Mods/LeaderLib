@@ -348,7 +348,7 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
 
     PlayProjectileSkillEffects(skill, props, extraParams.PlayCastEffects, extraParams.PlayTargetEffects)
 
-    local originalSource = TableHelpers.Clone(props.SourcePosition)
+    --local originalSource = TableHelpers.Clone(props.SourcePosition)
 
     if count > 0 then
         if skill.SingleSource ~= "Yes" and skill.Shuffle and string.find(skill.Distribution, "Edge") then

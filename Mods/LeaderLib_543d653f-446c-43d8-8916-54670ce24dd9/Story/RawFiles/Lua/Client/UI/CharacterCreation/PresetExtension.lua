@@ -120,14 +120,15 @@ local function CreatePresetDropdown()
 		local index = #presets+1
 		local entry = {
 			ClassType = v.ClassType,
-			Label = Ext.L10N.GetTranslatedString(v.ClassName, v.ClassType),
-			Tooltip = Ext.L10N.GetTranslatedString(v.ClassDescription, ""),
+			Label = GameHelpers.GetTranslatedStringValue(v.ClassName),
 			ID = i-1
 		}
-		local desc1 = Ext.L10N.GetTranslatedString(v.ClassDescription, "")
-		local desc2 = Ext.L10N.GetTranslatedString(v.ClassLongDescription, "")
-		if string.len(desc2) > string.len(desc1) then
+		local desc1 = GameHelpers.GetTranslatedStringValue(v.ClassDescription)
+		local desc2 = GameHelpers.GetTranslatedStringValue(v.ClassLongDescription)
+		if desc1 == "" and desc2 ~= "" or string.len(desc2) > string.len(desc1) then
 			entry.Tooltip = desc2
+		else
+			entry.Tooltip = desc1
 		end
 		if cachedPresetToMod[v.ClassType] then
 			entry.ModUUID = cachedPresetToMod[v.ClassType]

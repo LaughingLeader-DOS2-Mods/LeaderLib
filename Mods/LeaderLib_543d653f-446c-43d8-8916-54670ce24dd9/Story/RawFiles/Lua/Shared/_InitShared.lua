@@ -40,6 +40,23 @@ function GameHelpers.GetStringKeyText(key,fallback)
 	return text
 end
 
+---@class ExtenderTranslatedString
+---@field Handle string
+---@field ReferenceString string
+
+---Gets the value from an extender TranslatedString. Either the ReferenceString if unset, or the localized handle value.
+---@param object ExtenderTranslatedString
+---@param fallback ?string
+---@return string
+function GameHelpers.GetTranslatedStringValue(object, fallback)
+	if object.Handle and object.Handle.Handle ~= StringHelpers.UNSET_HANDLE then
+		return Ext.L10N.GetTranslatedString(object.Handle.Handle, object.Handle.ReferenceString)
+	elseif object.ArgumentString then
+		return object.ArgumentString.ReferenceString
+	end
+	return fallback or ""
+end
+
 ---Simple wrapper around assigning a variable to another without making EmmyLua pick up the result.
 function GameHelpers.SetVariable(v1,v2)
 	v1 = v2
@@ -74,7 +91,7 @@ Vars = {
 		Skills = false,
 		CustomStats = false,
 		--UI listeners
-		UI = false,
+		UI = true,
 		Input = false
 	},
 	ControllerEnabled = false,

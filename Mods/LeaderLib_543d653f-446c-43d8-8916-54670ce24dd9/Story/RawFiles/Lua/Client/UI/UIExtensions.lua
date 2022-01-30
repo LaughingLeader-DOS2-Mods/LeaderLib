@@ -138,6 +138,13 @@ local function OnRightMouseUp(ui, call, x, y)
 	Input.OnMouseEvent(UIExtensions.MouseEvent.RightMouseUp)
 end
 
+---@param ui UIObject
+local function OnResolution(ui, call, w, h)
+	-- if _EXTVERSION < 56 then
+	-- 	ui:ExternalInterfaceCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+	-- end
+end
+
 local defaultUIFlags = Data.DefaultUIFlags | Data.UIFlags.OF_FullScreen
 
 function UIExtensions.SetupInstance()
@@ -164,6 +171,7 @@ function UIExtensions.SetupInstance()
 		if not UIExtensions.Initialized then
 			local main = instance:GetRoot()
 			if main then
+				main.autoPosition = Ext.Version() < 56
 				main.clearElements()
 				main.controllerEnabled = Vars.ControllerEnabled
 				main.isInCharacterCreation = SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
@@ -191,13 +199,8 @@ function UIExtensions.SetupInstance()
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_RightMouseUp", OnRightMouseUp)
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_KeyboardEvent", Input.OnKeyboardEvent)
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_SetModifierKeys", Input.UpdateModifierKeys)
-			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_OnEventResolution", function(ui, call, w, h)
-				if Vars.DebugMode and Vars.Print.UI then
-					--ui:Resize(w,h)
-					local root = ui:GetRoot()
-					fprint(LOGLEVEL.DEFAULT, "[UIExtensions:onEventResolution] width(%s) height(%s) stage.width(%s) stage.height(%s)", w, h, root.stage.width, root.stage.height)
-				end
-			end)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_OnEventResolution", OnResolution)
+			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_OnEventResize", OnResolution)
 			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_OnControl", OnControl)
 			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_ControlAdded", OnControlAdded)
 			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_InputEvent", Input.OnFlashEvent)

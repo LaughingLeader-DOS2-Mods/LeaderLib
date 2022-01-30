@@ -36,6 +36,7 @@ package
 		public var anchorTPos:String;
 		public var anchorTarget:String;
 		public var uiScaling:Number = 1.0;
+		public var autoPosition:Boolean = false;
 
 		public const designResolution:Point = new Point(1920,1080);
 		
@@ -163,7 +164,9 @@ package
 
 		public function onEventResize() : void
 		{
-			//Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+			if (this.autoPosition) {
+				Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+			}
 			Registry.ExtCall("LeaderLib_UIExtensions_OnEventResize");
 		}
 
@@ -176,7 +179,9 @@ package
 		{
 			if(this.screenWidth != w || this.screenHeight != h)
 			{
-				//Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+				if (this.autoPosition) {
+					Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+				}
 				this.screenWidth = w;
 				this.screenHeight = h;
 				this.uiScaling = h / this.designResolution.y;

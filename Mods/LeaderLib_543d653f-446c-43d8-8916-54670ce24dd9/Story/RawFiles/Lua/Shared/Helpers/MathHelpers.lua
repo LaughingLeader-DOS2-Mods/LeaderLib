@@ -274,3 +274,56 @@ end
 function GameHelpers.Math.Clamp(value, minValue, maxValue)
     return math.max(math.min(value, maxValue), minValue)
 end
+
+---@param v number
+---@param min number
+---@param max number
+---@return number
+local function _normalize(v, min, max)
+    min = min or 0
+    max = max or 1
+    return (v - min) / (max - min)
+end
+
+GameHelpers.Math.Normalize = _normalize
+
+---Converts a hex string to RGB.
+---@param hex string
+---@return integer,integer,integer
+function GameHelpers.Math.HexToRGB(hex)
+    local t = type(hex)
+    if t == "number" then
+        hex = tostring(hex)
+        t = "string"
+    end
+    if t == "string" then
+        local hex = hex:gsub("#","")
+        if hex:len() == 3 then
+          return (tonumber("0x"..hex:sub(1,1))*17)/255, (tonumber("0x"..hex:sub(2,2))*17)/255, (tonumber("0x"..hex:sub(3,3))*17)/255
+        else
+          return tonumber("0x"..hex:sub(1,2))/255, tonumber("0x"..hex:sub(3,4))/255, tonumber("0x"..hex:sub(5,6))/255
+        end
+    end
+end
+
+---Converts a hex string to an RGBA table, scaled to the 0-1 for material Vec4 usage.
+---@param hex string
+---@return number[]
+function GameHelpers.Math.HexToMaterialRGBA(hex)
+    local r,g,b = GameHelpers.Math.HexToRGB(hex)
+    return GameHelpers.Math.ScaleRGB(r, g, b, 0)
+end
+
+---Scales RGB to the 0-1 range, using Game.Math.Normalize.
+---@param r number
+---@param g number
+---@param b number
+---@param a ?number Optional alpha
+---@return number[]
+function GameHelpers.Math.ScaleRGB(r,g,b,a)
+    if a then
+        return {_normalize(r), _normalize(g), _normalize(b), _normalize(a)}
+    else
+        return {_normalize(r), _normalize(g), _normalize(b)}
+    end
+end

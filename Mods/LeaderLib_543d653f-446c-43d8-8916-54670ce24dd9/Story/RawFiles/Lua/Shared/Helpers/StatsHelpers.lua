@@ -129,3 +129,45 @@ function GameHelpers.Stats.IsHealingSkill(skillId, healTypes)
 	end
 	return false
 end
+
+local _initializedItemColors = false
+local _ItemColors = {}
+local _colorPattern = 'new itemcolor "(.+)","(.+)","(.*)","(.*)"'
+
+local function _buildItemColors()
+	local order = Ext.GetModLoadOrder()
+	for i=1,#order do
+		local uuid = order[i]
+		local info = Ext.GetModInfo(uuid)
+		if info ~= nil then
+			local filePath = string.format("Public/%s/Stats/Generated/Data/ItemColor.txt", info.Directory)
+			local text = Ext.LoadFile(filePath, "data")
+			--local filePathWithoutSpaces = string.format("Mods/%s/CharacterCreation/ClassPresets/%s.lsx", info.Directory, StringHelpers.RemoveWhitespace(classType))
+			if text then
+				for line in StringHelpers.GetLines(text) do
+					local s,e,id,c1,c2,c3 = string.find(line, _colorPattern)
+					if id and c3 then
+						_ItemColors[id] = {"#"..c1,"#"..c2,"#"..c3}
+					end
+				end
+			end
+		end
+	end
+end
+
+--- Returns an ItemColor stat's colors.
+--- @param name string The ID of the ItemColor.
+--- @param asMaterialValues ?boolean
+--- @return string[]
+function GameHelpers.Stats.GetItemColor(name, asMaterialValues)
+	if not _initializedItemColors then
+		_buildItemColors()
+		_initializedItemColors = true
+	end
+	local entry = _ItemColors[name]
+	if asMaterialValues and entry then
+		local c1,c2,c3 = table.unpack(entry)
+		return {GameHelpers.Math.HexToMaterialRGBA(c1), GameHelpers.Math.HexToMaterialRGBA(c2), GameHelpers.Math.HexToMaterialRGBA(c3)}
+	end
+	return entry
+end

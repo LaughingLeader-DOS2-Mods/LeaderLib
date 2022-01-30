@@ -310,9 +310,11 @@ Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
 	end
 	GameSettings:Apply()
 	GameSettings.Loaded = true
-	GameSettingsManager.Save()
 
 	if isClient then
+		if not Client.IsHost then
+			GameSettingsManager.Save()
+		end
 		SyncStatOverrides(GameSettings, false)
 	end
 end)

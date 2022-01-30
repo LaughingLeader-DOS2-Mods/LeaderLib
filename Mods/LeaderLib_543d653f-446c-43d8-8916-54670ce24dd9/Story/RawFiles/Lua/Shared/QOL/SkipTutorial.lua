@@ -380,7 +380,7 @@ else
 	local function SetSkipTutorial(ui, controlType, id, state)
 		GameSettings.Settings.SkipTutorial.Enabled = state == 0 and false or true
 		Ext.PostMessageToServer("LeaderLib_SetSkipTutorial", state == 0 and "false" or "true")
-		--GameSettingsManager.Save()
+		GameSettingsManager.Save()
 	end
 
 	--@param event InputEvent
@@ -419,6 +419,7 @@ else
 	end
 
 	local function SetupSkipTutorialCheckbox()
+		GameSettingsManager.Load(false)
 		local title = "Skip Tutorial"
 		if not Vars.ControllerEnabled then
 			title = GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_DisplayName", "Skip Tutorial")
@@ -450,8 +451,6 @@ else
 		else
 			x,y = GetCheckboxPos(main, checkbox.width)
 		end
-
-		Ext.PrintError(x,y)
 
 		checkbox.x = x
 

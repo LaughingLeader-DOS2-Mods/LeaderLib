@@ -57,6 +57,9 @@ end
 SaveGameSettings = GameSettingsManager.Save
 
 function GameSettingsManager.Sync(id)
+	if not GameSettings.Loaded then
+		GameSettingsManager.Load(false)
+	end
 	if not isClient then
 		if id ~= nil then
 			GameHelpers.Net.PostToUser(id, "LeaderLib_SyncGameSettings", GameSettings:ToString())

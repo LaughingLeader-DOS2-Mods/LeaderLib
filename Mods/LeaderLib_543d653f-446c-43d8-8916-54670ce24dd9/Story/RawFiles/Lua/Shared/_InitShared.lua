@@ -54,10 +54,14 @@ function GameHelpers.GetTranslatedStringValue(object, fallback)
 	if _EXTVERSION < 56 then
 		return not StringHelpers.IsNullOrEmpty(object) and object or fallback
 	else
+		local refString = object.Handle and object.Handle.ReferenceString or ""
+		if StringHelpers.IsNullOrEmpty(refString) and object.ArgumentString then
+			refString = object.ArgumentString.ReferenceString
+		end
 		if object.Handle and object.Handle.Handle ~= StringHelpers.UNSET_HANDLE then
 			return _getTranslatedStringFunction(object.Handle.Handle, object.Handle.ReferenceString)
-		elseif object.ArgumentString then
-			return object.ArgumentString.ReferenceString
+		elseif not StringHelpers.IsNullOrEmpty(refString) then
+			return refString
 		end
 	end
 	return fallback or ""

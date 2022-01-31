@@ -32,6 +32,8 @@ UIExtensions = {
 	Visible = false
 }
 
+local _EXTVERSION = Ext.Version()
+
 setmetatable(UIExtensions, {
 	__index = function(tbl,k)
 		if k == "Root" then
@@ -138,11 +140,15 @@ local function OnRightMouseUp(ui, call, x, y)
 	Input.OnMouseEvent(UIExtensions.MouseEvent.RightMouseUp)
 end
 
+local justResized = false
+
 ---@param ui UIObject
 local function OnResolution(ui, call, w, h)
-	-- if _EXTVERSION < 56 then
-	-- 	ui:ExternalInterfaceCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+	-- if not justResized and _EXTVERSION >= 56 and SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+	-- 	--ui:ExternalInterfaceCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+	-- 	UIExtensions.ResizeToUI(Ext.GetUIByType(Vars.ControllerEnabled and Data.UIType.characterCreation_c or Data.UIType.characterCreation))
 	-- end
+	justResized = false
 end
 
 local defaultUIFlags = Data.DefaultUIFlags | Data.UIFlags.OF_FullScreen
@@ -432,22 +438,63 @@ local function SetVisibility(b)
 	end
 end
 
+function UIExtensions.ResetSize()
+	local inst = UIExtensions.Instance
+	if inst then
+		inst.MovieLayout = 6
+		inst.AnchorPos = "topleft"
+		inst.AnchorTPos = "topleft"
+		inst.AnchorTarget = "screen"
+		local this = inst:GetRoot()
+		this.layout = "fillVFit"
+		this.anchorPos = "topleft"
+		this.anchorTPos = "topleft"
+		this.anchorTarget = "screen"
+		inst:ExternalInterfaceCall("setAnchor", this.anchorPos, this.anchorTarget, this.anchorPos)
+
+		justResized = true
+		inst:Resize(1920, 1080)
+	end
+end
+
 ---@param targetUIObject UIObject
 function UIExtensions.ResizeToUI(targetUIObject)
 	local extInst = UIExtensions.Instance
 	local extRoot = extInst:GetRoot()
 	local targetRoot = targetUIObject:GetRoot()
-	local x,y = 600, 200
 	if targetRoot then
-		extRoot.layout = targetRoot.layout
-		if not StringHelpers.IsNullOrEmpty(targetRoot.anchorPos) 
-		and not StringHelpers.IsNullOrEmpty(targetRoot.anchorTarget)
-		and not StringHelpers.IsNullOrEmpty(targetRoot.anchorPos) then
-			extInst:ExternalInterfaceCall("setAnchor",targetRoot.anchorPos,targetRoot.anchorTarget,targetRoot.anchorPos)
-		else
-			extInst:ExternalInterfaceCall("setAnchor","center","screen","center")
+		if not StringHelpers.IsNullOrEmpty(targetRoot.layout) then
+			extRoot.layout = targetRoot.layout
 		end
-		extInst:Resize(targetUIObject.FlashMovieSize[1], targetUIObject.FlashMovieSize[2])
+		if not StringHelpers.IsNullOrEmpty(targetRoot.alignment) then
+			extRoot.alignment = targetRoot.alignment
+		end
+
+		extRoot.anchorPos = targetUIObject.AnchorPos
+		extRoot.anchorTarget = targetUIObject.AnchorTarget
+		extRoot.anchorTPos = targetUIObject.AnchorTPos
+		extInst:ExternalInterfaceCall("setAnchor", extRoot.anchorPos, extRoot.anchorTarget, extRoot.anchorPos)
+
+		local w,h = table.unpack(targetUIObject.FlashMovieSize)
+
+		extInst.MovieLayout = targetUIObject.MovieLayout
+		extInst.AnchorPos = targetUIObject.AnchorPos
+		extInst.AnchorTPos = targetUIObject.AnchorTPos
+		extInst.AnchorTarget = targetUIObject.AnchorTarget
+		
+		justResized = true
+		extInst:Resize(w, h)
+
+		if Vars.LeaderDebugMode then
+			Ext.SaveFile("Dumps/UIExtensions.json", Ext.DumpExport({
+				TargetWidth = w,
+				TargetHeight = h,
+				GetUIScaleMultiplier = extInst:GetUIScaleMultiplier(),
+				CC_GetUIScaleMultiplier = targetUIObject:GetUIScaleMultiplier(),
+				ZZCC = targetUIObject,
+				UIExtensions = extInst,
+			}))
+		end
 	end
 end
 

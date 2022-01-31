@@ -30,6 +30,7 @@ package
 	{		
 		//Engine variables
 		public var layout:String;
+		public var alignment:String;
 		public var events:Array;
 		public var anchorId:String;
 		public var anchorPos:String;
@@ -159,13 +160,13 @@ package
 		public function onEventInit() : void
 		{
 			Registry.ExtCall("registeranchorId", this.anchorId);
-			Registry.ExtCall("setAnchor",this.anchorPos,this.anchorTarget,this.anchorPos);
+			Registry.ExtCall("setAnchor",this.anchorPos, this.anchorTarget, this.anchorTPos);
 		}
 
 		public function onEventResize() : void
 		{
 			if (this.autoPosition) {
-				Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+				Registry.ExtCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorTPos);
 			}
 			Registry.ExtCall("LeaderLib_UIExtensions_OnEventResize");
 		}
@@ -511,6 +512,7 @@ package
 			this.anchorTarget = "screen";
 			//fixed, fitVertical, fitHorizontal, fit, fill, fillVFit
 			this.layout = "fillVFit";
+			this.alignment = "none";
 			this.curTooltip = "";
 		 	this.hasTooltip = false;
 			this.uiScaling = 1;

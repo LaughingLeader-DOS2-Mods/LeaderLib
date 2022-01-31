@@ -95,10 +95,11 @@ local function PositionPresetButton()
 	local x,y = 600, 200
 	if this then
 		x = this.CCPanel_mc.x + this.CCPanel_mc.armourBtnHolder_mc.x + this.CCPanel_mc.armourBtnHolder_mc.helmetBtn_mc.x
-		y = this.CCPanel_mc.y + this.CCPanel_mc.origins_mc.height - (224 * inst:GetUIScaleMultiplier())
+		y = this.CCPanel_mc.y + this.CCPanel_mc.origins_mc.height - 224
 	end
 
 	if extRoot.presetButton.visible then
+		local x,y = Game.Math.ConvertScreenCoordinates(x, y, inst.FlashSize[1], inst.FlashSize[2], extInst.FlashSize[1], extInst.FlashSize[2])
 		extRoot.presetButton.x = x
 		extRoot.presetButton.y = y
 	end
@@ -109,6 +110,10 @@ local function CreatePresetDropdown()
 
 	local this = CharacterCreation.Root
 	local extRoot = UIExtensions.Root
+
+	if extRoot.presetButton.visible and extRoot.presetButton.combo_mc.m_scrollList.length > 0 then
+		return
+	end
 
 	local cachedPresetToMod = GameHelpers.IO.LoadJsonFile("LeaderLib_PresetToModCache.json", {})
 	local cc = Ext.Stats.GetCharacterCreation()
@@ -123,6 +128,10 @@ local function CreatePresetDropdown()
 			Label = GameHelpers.GetTranslatedStringValue(v.ClassName),
 			ID = i-1
 		}
+		
+		if StringHelpers.IsNullOrWhitespace(entry.Label) then
+			entry.Label = v.ClassType
+		end
 		local desc1 = GameHelpers.GetTranslatedStringValue(v.ClassDescription)
 		local desc2 = GameHelpers.GetTranslatedStringValue(v.ClassLongDescription)
 		if desc1 == "" and desc2 ~= "" or string.len(desc2) > string.len(desc1) then
@@ -188,6 +197,13 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTags", fu
 		CreatePresetDropdown()
 	end
 end, "After")
+
+RegisterListener("LuaReset", function ()
+	local level = Ext.Entity.GetCurrentLevel()
+	if level and level.LevelDesc.UniqueKey == "SYS_Character_Creation_A" then
+		CreatePresetDropdown()
+	end
+end)
 
 Ext.RegisterUINameCall("LeaderLib_UIExtensions_OnEventResolution", function ()
 	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then

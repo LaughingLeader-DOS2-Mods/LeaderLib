@@ -327,3 +327,16 @@ function GameHelpers.Math.ScaleRGB(r,g,b,a)
         return {_normalize(r), _normalize(g), _normalize(b)}
     end
 end
+
+---@param fromX number
+---@param fromY number
+---@param fromWidth number
+---@param fromHeight number
+---@param toWidth number
+---@param toHeight number
+---@return number,number
+function Game.Math.ConvertScreenCoordinates(fromX, fromY, fromWidth, fromHeight, toWidth, toHeight)
+    local newX = fromX / fromWidth * toWidth
+    local newY = fromY / fromHeight * toHeight
+    return newX, newY
+end

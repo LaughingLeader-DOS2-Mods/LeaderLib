@@ -400,12 +400,21 @@ else
 		end
 	end
 
-	local function GetCheckboxPos(main, checkboxWidth,checkboxHeight)
+	---@param ccUI UIObject
+	local function GetCheckboxPos(inst, main, checkboxWidth, checkboxHeight, ccUI)
 		checkboxWidth = checkboxWidth or 56
 		checkboxHeight = checkboxHeight or 44
 		if Ext.Version() >= 56 then
 			local x = 4
-			local y = main.FlashMovieSize[2] - (checkboxHeight + 4)
+			local y = inst.FlashMovieSize[2] - (checkboxHeight + 4)
+			if ccUI then
+				local this = ccUI:GetRoot()
+				if this.portraits_mc then
+					x = this.portraits_mc.x
+					local x,y2 = Game.Math.ConvertScreenCoordinates(x, y, inst.FlashSize[1], inst.FlashSize[2], ccUI.FlashSize[1], ccUI.FlashSize[2])
+					return x,y
+				end
+			end
 			return x,y
 		else
 			if main then
@@ -433,26 +442,20 @@ else
 		local main = inst:GetRoot()
 
 		local x,y = 0,0
+		local ccUI = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.characterCreation or Data.UIType.characterCreation_c)
+			
 		if _EXTVERSION >= 56 then
-			local ccUI = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.characterCreation or Data.UIType.characterCreation_c)
 			UIExtensions.ResizeToUI(ccUI)
-
-			x,y = GetCheckboxPos(inst)
-		else
-			x,y = GetCheckboxPos(main)
 		end
+
+		x,y = GetCheckboxPos(inst, main, nil, nil, ccUI)
 
 		local controlId,index = UIExtensions.AddCheckbox(SetSkipTutorial, title, description, GameSettings.Settings.SkipTutorial.Enabled and 1 or 0, x, y)
 		createdCheckboxID = controlId
 		local checkbox = main.mainPanel_mc.elements[index]
 
-		if _EXTVERSION >= 56 then
-			x,y = GetCheckboxPos(inst, checkbox.width)
-		else
-			x,y = GetCheckboxPos(main, checkbox.width)
-		end
-
-		checkbox.x = x
+		--x,y = GetCheckboxPos(inst, main, checkbox.width, nil, ccUI)
+		--checkbox.x = x
 
 		Input.RegisterListener(OnInput)
 	end
@@ -482,6 +485,7 @@ else
 			createdCheckboxID = -1
 		end
 		Input.RemoveListener(OnInput)
+		UIExtensions.ResetSize()
 	end
 
 	---@param sharedData SharedData

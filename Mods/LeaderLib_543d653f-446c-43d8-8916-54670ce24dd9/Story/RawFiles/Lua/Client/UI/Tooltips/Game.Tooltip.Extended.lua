@@ -124,16 +124,21 @@ if Game and Game.Tooltip then
 	lastGameTooltip = Game.Tooltip
 end
 
-if Game == nil then Game = {} end
-if Game.Tooltip == nil then Game.Tooltip = {} end
+if Game == nil then
+	Game = {}
+end
 
-local Game = Game
+if Game.Tooltip == nil then
+	Game.Tooltip = {}
+end
 
 ---@type TooltipRequestProcessor
 local RequestProcessor = Ext.Require("Client/UI/Tooltips/TooltipRequestProcessor.lua")
 Game.Tooltip.RequestProcessor = RequestProcessor
 
+local game = Game
 _ENV = Game.Tooltip
+_ENV.Game = game
 if setfenv ~= nil then
 	setfenv(1, Game.Tooltip)
 end

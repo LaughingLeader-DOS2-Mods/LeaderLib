@@ -488,4 +488,24 @@ function RequestProcessor:Init(tooltip)
 	end, "Before")
 end
 
+--TODO Implement World tooltip editing with Game.Tooltip
+
+---@param item EclItem
+RegisterListener("OnWorldTooltip", function (ui, textResult, x, y, isFromItem, item)
+	if item and Game.Tooltip.TooltipHooks.Last.Request == nil then
+		local request = CreateRequest()
+		request.Type = "World"
+		request.ItemNetID = item.NetID
+		Game.Tooltip.TooltipHooks.Last.Request = request
+	end
+end)
+
+--Hack to clear the last tooltip being "World"
+Ext.RegisterUINameInvokeListener("removeTooltip", function(ui, ...)
+	local lastRequest = Game.Tooltip.TooltipHooks.Last.Request
+	if lastRequest and lastRequest.Type == "World" then
+		Game.Tooltip.TooltipHooks.Last.Request = nil
+	end
+end)
+
 return RequestProcessor

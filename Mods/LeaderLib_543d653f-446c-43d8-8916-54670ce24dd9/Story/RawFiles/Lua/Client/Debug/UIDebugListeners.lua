@@ -239,8 +239,8 @@ local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation
 -- local optionsSettings = UIListenerWrapper:Create(Data.UIType.optionsSettings, enabledParam)
 -- local skills = UIListenerWrapper:Create(Data.UIType.skills)
 -- local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole)
--- local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip)
--- local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip)
+local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, enabledParam)
+local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip, enabledParam)
 
 -- overhead.CustomCallback.updateOHs = function(self, ui, method)
 	

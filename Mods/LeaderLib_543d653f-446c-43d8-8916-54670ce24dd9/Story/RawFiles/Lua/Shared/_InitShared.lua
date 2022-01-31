@@ -97,7 +97,7 @@ Vars = {
 		Skills = false,
 		CustomStats = false,
 		--UI listeners
-		UI = true,
+		UI = false,
 		Input = false
 	},
 	ControllerEnabled = false,

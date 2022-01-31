@@ -52,7 +52,7 @@ function TooltipHandler.OnWorldTooltipUpdated(ui, event)
 	if main then
 		--public function setTooltip(param1:uint, param2:Number, param3:Number, param4:Number, param5:String, param6:Number, param7:Boolean, param8:uint = 16777215, param9:uint = 0
 		--this.setTooltip(val2,val3,val4,val5,val6,this.worldTooltip_array[val2++],this.worldTooltip_array[val2++]);
-		for i=0,#main.worldTooltip_array,6 do
+		for i=0,#main.worldTooltip_array-1,6 do
 			local doubleHandle = main.worldTooltip_array[i]
 			if doubleHandle then
 				local x = main.worldTooltip_array[i+1]

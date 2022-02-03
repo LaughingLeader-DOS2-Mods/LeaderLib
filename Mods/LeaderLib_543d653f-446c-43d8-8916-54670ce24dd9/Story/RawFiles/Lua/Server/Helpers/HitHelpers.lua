@@ -2,7 +2,7 @@ if not GameHelpers.Hit then
     GameHelpers.Hit = {}
 end
 
-local version = Ext.Version()
+local _EXTVERSION = Ext.Version()
 
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.
 ---Pass in an object if this is a status.
@@ -240,7 +240,7 @@ function GameHelpers.Hit.Succeeded(hit)
     if GameHelpers.Ext.UserDataIsType(hit, Data.ExtenderClass.EsvStatusHit) then
         hit = hit.Hit
     end
-    if version < 56 then
+    if _EXTVERSION < 56 then
         if (hit.EffectFlags & Game.Math.HitFlag.Dodged) ~= 0 then
             return false
         end
@@ -267,7 +267,7 @@ function GameHelpers.Hit.HasFlag(hit, flag)
         error(string.format("Invalid hit (%s) or flag (%s)", hit, flag), 2)
     end
     local t = type(flag)
-    if t == "string" and version < 56 then
+    if t == "string" and _EXTVERSION < 56 then
         flag = Game.Math.HitFlag[flag]
     elseif t == "table" then
         for i,v in pairs(flag) do
@@ -277,7 +277,7 @@ function GameHelpers.Hit.HasFlag(hit, flag)
         end
         return false
     end
-    if version < 56 then
+    if _EXTVERSION < 56 then
         return (hit.EffectFlags & flag) ~= 0
     else
         return hit[flag] == true
@@ -294,7 +294,7 @@ function GameHelpers.Hit.SetFlag(hit, flag, b)
         return false
     end
     local t = type(flag)
-    if t == "string" and version < 56 then
+    if t == "string" and _EXTVERSION < 56 then
         flag = Game.Math.HitFlag[flag]
     elseif t == "table" then
         for i,v in pairs(flag) do
@@ -302,7 +302,7 @@ function GameHelpers.Hit.SetFlag(hit, flag, b)
         end
         return true
     end
-    if version < 56 then
+    if _EXTVERSION < 56 then
         if b then
             hit.EffectFlags = hit.EffectFlags | flag
         else
@@ -338,7 +338,7 @@ function GameHelpers.Hit.RecalculateLifeSteal(hit, target, attacker, hitType, se
         end
 
         local applyReflectionModifier = false
-        if version < 56 then
+        if _EXTVERSION < 56 then
             applyReflectionModifier = hit.EffectFlags & (Game.Math.HitFlag.FromShacklesOfPain|Game.Math.HitFlag.NoDamageOnOwner|Game.Math.HitFlag.Reflection) ~= 0
         else
             applyReflectionModifier = hit.FromShacklesOfPain or hit.NoDamageOnOwner or hit.Reflection
@@ -357,7 +357,7 @@ function GameHelpers.Hit.RecalculateLifeSteal(hit, target, attacker, hitType, se
             hit.LifeSteal = math.max(math.ceil(lifesteal * attacker.LifeSteal / 100), 0)
         end
     elseif setFlags then
-        if version < 56 then
+        if _EXTVERSION < 56 then
             hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DontCreateBloodSurface
         else
             hit.DontCreateBloodSurface = true

@@ -7,7 +7,7 @@ HitOverrides = {
 }
 --- This script tweaks Game.Math functions to allow lowering resistance with Resistance Penetration tags on items of the attacker.
 
-local extVersion = Ext.Version()
+local _EXTVERSION = Ext.Version()
 
 --region Game.Math functions
 
@@ -75,7 +75,7 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
 	local res = character[GetResistanceName(damageType)] or 0
 
     --Workaround for PhysicalResistance in StatCharacter being double what it actually is
-    if extVersion <= 55 and damageType == "Physical" then
+    if _EXTVERSION <= 55 and damageType == "Physical" then
         local stat = Ext.GetStat(character.Name)
         if stat then
             res = stat.PhysicalResistance
@@ -430,7 +430,7 @@ end
 --- @param damageMultiplier number
 function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     damageMultiplier = damageMultiplier or 1.0
-    if extVersion < 56 then
+    if _EXTVERSION < 56 then
         hitRequest.DamageMultiplier = damageMultiplier
         --We're basically calling Game.Math.DoHit here, but it may be a modified version from a mod.
         HitOverrides.DoHitModified(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
@@ -460,7 +460,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     local statusBonusDmgTypes = {}
 
 	local damageList = Ext.NewDamageList()
-    if extVersion >= 56 then
+    if _EXTVERSION >= 56 then
 	    damageList:CopyFrom(preDamageList)
     else
         damageList:Merge(preDamageList)
@@ -560,7 +560,7 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
     end
 end
 
-if extVersion < 56 then
+if _EXTVERSION < 56 then
     Ext.RegisterListener("ComputeCharacterHit", HitOverrides.ComputeCharacterHit)
 else
     Ext.Events.ComputeCharacterHit:Subscribe(function(event)

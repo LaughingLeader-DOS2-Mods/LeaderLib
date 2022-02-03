@@ -2,7 +2,7 @@ if GameHelpers.Damage == nil then
 	GameHelpers.Damage = {}
 end
 
-local version = Ext.Version()
+local _EXTVERSION = Ext.Version()
 
 ---Reduce damage by a percentage (ex. 0.5)
 ---@param target string
@@ -269,7 +269,7 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
         DamageList = damageList,
     }
 
-    if version >= 56 then
+    if _EXTVERSION >= 56 then
         for k,v in pairs(Game.Math.HitFlag) do
             hit[k] = false
         end
@@ -292,7 +292,7 @@ end
 ---@param target string|StatCharacter
 ---@param handle integer
 function GameHelpers.Damage.ApplyHitRequestFlags(hit, target, handle)
-    if version < 56 then
+    if _EXTVERSION < 56 then
         for flag,num in pairs(Game.Math.HitFlag) do
             if hit.EffectFlags & num ~= 0 then
                 NRD_StatusSetInt(target, handle, flag, 1)

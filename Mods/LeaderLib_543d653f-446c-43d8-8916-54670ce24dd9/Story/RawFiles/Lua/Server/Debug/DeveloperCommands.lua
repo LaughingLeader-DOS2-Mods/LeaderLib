@@ -1,5 +1,7 @@
 local MessageData = Classes.MessageData
 
+local _EXTVERSION = Ext.Version()
+
 if Debug == nil then
 	Debug = {}
 end

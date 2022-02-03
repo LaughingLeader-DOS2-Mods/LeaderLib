@@ -1,6 +1,6 @@
 if Common == nil then Common = {} end
 
-local version = Ext.Version()
+local _EXTVERSION = Ext.Version()
 
 function Common.InitSeed()
 	local rnd = Ext.Random(9999)
@@ -8,7 +8,7 @@ function Common.InitSeed()
 	_G["LEADERLIB_RAN_SEED"] = seed
 	--PrintDebug("[LeaderLib:Common.lua] Set LEADERLIB_RAN_SEED to ("..tostring(seed)..")")
 	if Ext.IsServer() then
-		GameHelpers.Net.Broadcast("LeaderLib_SyncRanSeed", tostring(seed), nil)
+		GameHelpers.Net.Broadcast("LeaderLib_SyncRanSeed", tostring(seed))
 	end
 end
 
@@ -337,6 +337,9 @@ function Common.PopRandomTableEntry(tbl)
 	return nil
 end
 
+---Randomizes a table in place.
+---@param tbl table
+---@return table
 function Common.ShuffleTable(tbl)
 	for i = #tbl, 2, -1 do
 		local j = Ext.Random(i)
@@ -390,7 +393,7 @@ function Common.ConvertTableKeysToNumbers(tbl, recursive)
 end
 
 local _jsonParse = Ext.JsonParse
-if version >= 56 then
+if _EXTVERSION >= 56 then
 	_jsonParse = Ext.Json.Parse
 end
 
@@ -416,7 +419,7 @@ function Common.JsonParse(str, safeguardErrors)
 end
 
 local _jsonStringify = Ext.JsonStringify
-if version >= 56 then
+if _EXTVERSION >= 56 then
 	_jsonStringify = Ext.Json.Stringify
 end
 

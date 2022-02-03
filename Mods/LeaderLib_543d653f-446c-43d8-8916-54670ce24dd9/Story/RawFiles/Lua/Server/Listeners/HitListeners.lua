@@ -1,4 +1,4 @@
-local version = Ext.Version()
+local _EXTVERSION = Ext.Version()
 
 ---@param target string
 ---@param source string
@@ -96,7 +96,7 @@ end
 ---@param hitStatus EsvStatusHit
 ---@param hitContext HitContext
 local function GetHitRequest(hitStatus, hitContext)
-	if version < 56 then
+	if _EXTVERSION < 56 then
 		return hitContext.Hit or hitStatus.Hit
 	end
 	return hitStatus.Hit
@@ -163,7 +163,7 @@ local function OnHit(hitStatus, hitContext)
 	InvokeListenerCallbacks(Listeners.OnHit, targetId, sourceId, hitRequest.TotalDamageDone, hitStatus.StatusHandle, skill and skill.Name or nil, hitStatus, hitContext, data)
 end
 
-if version < 56 then
+if _EXTVERSION < 56 then
 	RegisterProtectedExtenderListener("StatusHitEnter", OnHit)
 else
 	Ext.Events.StatusHitEnter:Subscribe(function (event)

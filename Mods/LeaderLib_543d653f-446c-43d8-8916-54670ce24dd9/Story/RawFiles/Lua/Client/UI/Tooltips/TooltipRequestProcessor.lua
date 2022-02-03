@@ -1,3 +1,5 @@
+local _EXTVERSION = Ext.Version()
+
 ---@class TooltipRequestProcessor
 local RequestProcessor = {
 	---@type table<string,fun(request:TooltipRequest, ui:UIObject, uiType:integer, event:string, vararg):TooltipRequest>
@@ -16,8 +18,13 @@ local TooltipCalls = {
 	Tag = "showTagTooltip",
 	CustomStat = "showCustomStatTooltip",
 	Rune = "showRuneTooltip",
-	Pyramid = "pyramidOver"
+	Pyramid = "pyramidOver",
 }
+
+local TooltipInvokes = {
+	Surface = "displaySurfaceText"
+}
+
 local ControllerCharacterCreationCalls = {
 	Skill = "requestSkillTooltip",
 	Stat = "requestAttributeTooltip",
@@ -232,6 +239,51 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 	return request
 end
 
+local function GetCursorSurfaces()
+	local cursor = Ext.GetPickingState()
+	if cursor and cursor.WorldPosition then
+		if _EXTVERSION >= 56 then
+			local grid = Ext.Entity.GetAiGrid()
+			if grid then
+				local surfaces = GameHelpers.Grid.GetSurfaces(cursor.WorldPosition[1], cursor.WorldPosition[3], grid)
+				if surfaces then
+					Ext.Dump(surfaces)
+					return surfaces
+				end
+			end
+		end
+	end
+end
+
+RequestProcessor.CallbackHandler[TooltipInvokes.Surface] = function(request, ui, uiType, event, x, y)
+	local surfaces = nil
+	local cursor = Ext.GetPickingState()
+	if cursor and cursor.WalkablePosition then
+		request.Position = cursor.WalkablePosition
+		if _EXTVERSION >= 56 then
+			local grid = Ext.Entity.GetAiGrid()
+			if grid then
+				--surfaces = GameHelpers.Grid.GetSurfaces(x, y, grid, 0, nil, true)
+				surfaces = GameHelpers.Grid.GetSurfaces(cursor.WalkablePosition[1], cursor.WalkablePosition[3], grid, 0, nil, true)
+				--surfaces = GameHelpers.Grid.GetSurfaces(cursor.WorldPosition[1], cursor.WorldPosition[3], grid, 1)
+			end
+		end
+	end
+	if surfaces then
+		if surfaces.Flags then
+			request.Flags = surfaces.Flags
+		end
+		if surfaces.Ground then
+			request.Ground = surfaces.Ground
+		end
+		if surfaces.Cloud then
+			request.Cloud = surfaces.Cloud
+		end
+	end
+	--Ext.Dump({Cursor = cursor, Request=request, Surfaces=surfaces or "nil"})
+	return request
+end
+
 function RequestProcessor.OnExamineTooltip(ui, method, typeIndex, id, ...)
 	---@type EclCharacter
 	local character = nil
@@ -402,6 +454,9 @@ function RequestProcessor:Init(tooltip)
 	self.Tooltip = tooltip
 	for t,v in pairs(TooltipCalls) do
 		Ext.RegisterUINameCall(v, function(ui, event, ...) RequestProcessor.HandleCallback(t, ui, ui:GetTypeId(), event, ...) end, "Before")
+	end
+	for t,v in pairs(TooltipInvokes) do
+		Ext.RegisterUINameInvokeListener(v, function(ui, event, ...) RequestProcessor.HandleCallback(t, ui, ui:GetTypeId(), event, ...) end, "Before")
 	end
 	for t,v in pairs(ControllerCharacterCreationCalls) do
 		Ext.RegisterUITypeCall(Data.UIType.characterCreation_c, v, function(ui, event, ...) RequestProcessor.HandleCallback(t, ui, ui:GetTypeId(), event, ...) end, "Before")

@@ -952,8 +952,9 @@ local TooltipArrayNames = {
 	Default = {
 		Main = "tooltip_array",
 		CompareMain = "tooltipCompare_array",
-		CompareOff = "tooltipOffHand_array"
+		CompareOff = "tooltipOffHand_array",
 	},
+	Surface = {Main = "tooltipArray" },
 	Console = {
 		CharacterCreation = {
 			Main = "tooltipArray",
@@ -1117,6 +1118,10 @@ function TooltipHooks:Init()
 	Ext.RegisterUINameInvokeListener("addStatusTooltip", function (...)
 		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
 	end)
+
+	Ext.RegisterUINameInvokeListener("displaySurfaceText", function (...)
+		self:OnRenderTooltip(TooltipArrayNames.Surface, ...)
+	end, "After")
 
 	--Disabled for now since character portrait tooltips get spammed
 	-- Ext.RegisterUINameCall("showCharTooltip", function(ui, call, handle, x, y, width, height, side)
@@ -1385,6 +1390,16 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 			self:NotifyListeners("Rune", req.StatsId, req, tooltip, req.Item, req.Rune, req.Slot)
 		elseif req.Type == "Tag" then
 			self:NotifyListeners("Tag", req.Category, req, tooltip, req.Tag)
+		elseif req.Type == "Surface" then
+			if req.Ground then
+				self:NotifyListeners("Surface", req.Ground, req, tooltip, req.Character, req.Ground)
+			end
+			if req.Cloud then
+				self:NotifyListeners("Surface", req.Cloud, req, tooltip, req.Character, req.Cloud)
+			end
+			if not req.Cloud and not req.Ground then
+				self:NotifyListeners("Surface", "Unknown", req, tooltip, req.Character, "Unknown")
+			end
 		elseif req.Type == "Generic" then
 			-- Skip since it's handled in addTooltip
 		else
@@ -1614,15 +1629,39 @@ function TooltipData:Create(data, uiType)
 	return tt
 end
 
+---LeaderLib addition
 ---Whether or not the tooltip should be expanded. Check this when setting up tooltip elements.
 ---@return boolean
 function TooltipData:IsExpanded()
 	return Mods.LeaderLib.TooltipExpander.IsExpanded()
 end
 
+---LeaderLib addition
 ---Signals to the tooltip expander that pressing or releasing the expand key will cause the current visible tooltip to re-render.
 function TooltipData:MarkDirty()
 	return Mods.LeaderLib.TooltipExpander.MarkDirty()
+end
+
+local DescriptionElements = {
+	AbilityDescription = true,
+	ItemDescription = true,
+	SkillDescription = true,
+	StatsDescription = true,
+	StatusDescription = true,
+	SurfaceDescription = true,
+	TagDescription = true,
+	TalentDescription = true,
+}
+
+---LeaderLib addition
+---Gets whichever element is the description.
+---@return TooltipElement
+function TooltipData:GetDescriptionElement()
+	for i,element in pairs(self.Data) do
+		if DescriptionElements[element.Type] and element.Label then
+			return element
+		end
+	end
 end
 
 local function ElementTypeMatch(e,t,isTable)

@@ -39,6 +39,7 @@ Ext.Require("Shared/Common.lua")
 Ext.Require("Shared/Classes/_Init.lua")
 Ext.Require("Shared/Data/LocalizedText.lua")
 Ext.Require("Shared/System/Timers.lua")
+Ext.Require("Shared/Helpers/GridHelpers.lua")
 Ext.Require("Shared/Helpers/UIHelpers.lua")
 Ext.Require("Shared/Settings/LeaderLibGameSettings.lua")
 Ext.Require("Shared/Libraries/_Init.lua")
@@ -64,3 +65,4 @@ if Vars.DebugMode then
 	Ext.Require("Shared/Debug/TestingSystem.lua")
 end
 Ext.Require("Shared/Debug/ConsoleWindowHelpers.lua")
+Ext.Require("Shared/Debug/SharedCommands.lua")

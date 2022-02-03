@@ -12,7 +12,7 @@ function EnableFeature(id)
 		Features[id] = true
 		OnFeatureEnabled(id)
 		if Ext.IsServer() and Ext.GetGameState() == "Running" then
-			GameHelpers.Net.Broadcast("LeaderLib_EnableFeature", id, nil)
+			GameHelpers.Net.Broadcast("LeaderLib_EnableFeature", id)
 		end
 	end
 end
@@ -23,7 +23,7 @@ function DisableFeature(id)
 		Features[id] = false
 		OnFeatureDisabled(id)
 		if Ext.IsServer() and Ext.GetGameState() == "Running" then
-			GameHelpers.Net.Broadcast("LeaderLib_DisableFeature", id, nil)
+			GameHelpers.Net.Broadcast("LeaderLib_DisableFeature", id)
 		end
 	end
 end

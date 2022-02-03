@@ -103,7 +103,7 @@ function GameHelpers.UI.CombatLog(text, filter, specificCharacters)
 		Text = GameHelpers.Tooltip.ReplacePlaceholders(text)
 	})
 	if specificCharacters == nil then
-		GameHelpers.Net.Broadcast("LeaderLib_AddTextToCombatLog", data, nil)
+		GameHelpers.Net.Broadcast("LeaderLib_AddTextToCombatLog", data)
 	else
 		local charType = type(specificCharacters)
 		if charType == "string" then
@@ -127,7 +127,7 @@ function GameHelpers.UI.ShowMessageBox(text, specificCharacters, boxType, title)
 		Title = title
 	})
 	if specificCharacters == nil then
-		GameHelpers.Net.Broadcast("LeaderLib_DisplayMessageBox", data, nil)
+		GameHelpers.Net.Broadcast("LeaderLib_DisplayMessageBox", data)
 	else
 		local charType = type(specificCharacters)
 		if charType == "string" then
@@ -150,7 +150,7 @@ function GameHelpers.UI.RefreshStatusTurns(player, status, turns)
 			Status = status,
 			Turns = turns
 		})
-		GameHelpers.Net.Broadcast("LeaderLib_UI_RefreshStatusTurns", data, nil)
+		GameHelpers.Net.Broadcast("LeaderLib_UI_RefreshStatusTurns", data)
 	end
 end
 

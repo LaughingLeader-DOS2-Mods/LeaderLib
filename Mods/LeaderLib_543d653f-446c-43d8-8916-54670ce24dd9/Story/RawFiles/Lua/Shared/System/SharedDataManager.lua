@@ -92,7 +92,7 @@ else
 		end
 		if client == nil then
 			local totalUsers = Common.TableLength(UserIds, true)
-			--GameHelpers.Net.Broadcast("LeaderLib_SharedData_StoreData", Common.JsonStringify(SharedData), nil)
+			--GameHelpers.Net.Broadcast("LeaderLib_SharedData_StoreData", Common.JsonStringify(SharedData))
 			if totalUsers <= 0 then
 				IterateUsers("LeaderLib_StoreUserData")
 			else

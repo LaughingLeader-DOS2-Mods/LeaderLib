@@ -48,6 +48,31 @@ if _EXTVERSION >= 56 then
 			else
 				SendDumpCommand(...)
 			end
+		end,
+		character = function (dumpType, synced, ...)
+			local fileName = string.format("Dumps/Character_%s.json", isClient and "Client" or "Server")
+			Ext.IO.SaveFile(fileName, Ext.DumpExport(Ext.GetCharacter(me.NetID)))
+			Ext.Print("[dump:cc] Saved character data to",fileName)
+			if not synced then
+				SendDumpCommand(dumpType, true, ...)
+			end
+		end,
+		uiext = function (...)
+			if isClient then
+				local data = {UIExtensions = UIExtensions.Instance}
+				for id,v in pairs(Data.UIType) do
+					if type(v) == "number" then
+						local ui = Ext.GetUIByType(v)
+						if ui then
+							data[string.gsub(ui.Path, "G:/Divinity Original Sin 2/DefEd/Data/Public/Game/GUI/", "")] = ui
+						end
+					end
+				end
+				Ext.SaveFile("Dumps/UIExtensions.json", Ext.DumpExport(data))
+				Ext.Print("[dump:cc] Saved UIExtensions data to Dumps/UIExtensions.json")
+			else
+				SendDumpCommand(...)
+			end
 		end
 	}
 

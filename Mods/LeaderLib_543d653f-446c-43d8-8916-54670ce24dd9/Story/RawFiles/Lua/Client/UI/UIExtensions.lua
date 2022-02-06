@@ -208,7 +208,6 @@ function UIExtensions.SetupInstance()
 				end
 				main.enableKeyboardListeners()
 				UIExtensions.Initialized = true
-				UIExtensions.Hotbars.Init()
 			else
 				Ext.PrintError("[LeaderLib] Failed to GetRoot of UI:", UIExtensions.SwfPath)
 			end

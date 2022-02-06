@@ -1,0 +1,10 @@
+{
+	"mainClass": "MainTimeline",
+	"compilerOptions": {
+		"source-path": ["src"],
+		"target-player": "10.3"
+	},
+	"files": [
+		"src/MainTimeline.as"
+	]
+}

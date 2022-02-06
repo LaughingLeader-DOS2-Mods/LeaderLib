@@ -81,6 +81,13 @@ Ext.RegisterListener("SessionLoaded", function()
 		Game.Tooltip.RegisterListener("CustomStat", nil, TooltipHandler.OnCustomStatTooltip)
 		--Game.Tooltip.RegisterListener("Ability", nil, TooltipHandler.OnAbilityTooltip)
 		Game.Tooltip.RegisterListener("Generic", TooltipHandler.OnGenericTooltip)
+		-- Game.Tooltip.RegisterListener("Surface", "Water", function (character, surfaceType, tooltip)
+		-- 	local description = tooltip:GetDescriptionElement()
+		-- 	if description then
+		-- 		description.Label = description.Label .. "<br><font color='#33FF00'>Water can be transformed into poison with Contamination.</font>"
+		-- 	end
+		-- 	--Ext.Dump({Description=description or "nil",SurfaceType = surfaceType, Tooltip=tooltip.Data})
+		-- end)
 	end
 
 

@@ -1,9 +1,9 @@
 package controls
 {
 	import flash.display.MovieClip;
+	import flash.display.Stage;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	import flash.display.Stage;
 
 	public class BaseDraggableObject extends MovieClip
 	{

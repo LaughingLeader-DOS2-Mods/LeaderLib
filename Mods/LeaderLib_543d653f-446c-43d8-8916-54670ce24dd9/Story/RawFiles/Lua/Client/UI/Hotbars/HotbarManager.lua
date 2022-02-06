@@ -1,5 +1,56 @@
-UIExtensions.Hotbars = {}
-local self = UIExtensions.Hotbars
+local HotbarExt = {
+	ID = "LeaderLibHotbarExtension",
+	Layer = 12,
+	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_HotbarExtension.swf",
+	Initialized = false,
+	Visible = false
+}
+local self = HotbarExt
+
+local _EXTVERSION = Ext.Version()
+
+function HotbarExt.GetInstance(skipSetup)
+	local instance = Ext.GetUI(self.ID)
+	if not instance and skipSetup ~= true then
+		instance = HotbarExt.SetupInstance()
+	end
+	return instance
+end
+
+setmetatable(HotbarExt, {
+	__index = function(tbl,k)
+		if k == "Root" then
+			local ui = HotbarExt.GetInstance()
+			if ui then
+				return ui:GetRoot()
+			end
+		elseif k == "Instance" then
+			local ui = HotbarExt.GetInstance()
+			if ui then
+				return ui
+			end
+		end
+	end
+})
+
+function HotbarExt.SetupInstance()
+	local instance = Ext.GetUI(self.ID)
+	if not instance then
+		instance = Ext.CreateUI(self.ID, self.SwfPath, self.Layer, Data.DefaultUIFlags)
+		HotbarExt.RegisteredListeners = false
+		HotbarExt.Visible = true
+	end
+	if instance then
+		instance:Show()
+		HotbarExt.Visible = true
+		if not HotbarExt.Initialized then
+			HotbarExt.InitHotbars()
+			HotbarExt.Initialized = true
+		end
+	else
+		Ext.PrintError("[LeaderLib] Failed to create UI:", HotbarExt.SwfPath)
+	end
+end
 
 local Hotbar = Classes.UIWrapper:CreateFromType(Data.UIType.hotBar, {ControllerID = Data.UIType.bottomBar_c, IsControllerSupported = true})
 local StatusConsole = Classes.UIWrapper:CreateFromType(Data.UIType.statusConsole, {ControllerID = Data.UIType.statusPanel, IsControllerSupported = true})
@@ -9,7 +60,7 @@ local draws = {}
 local function ClearCustomDrawsForHotbar(hotbarIndex)
 	local data = draws[hotbarIndex]
 	if data then
-		local inst = UIExtensions.Instance
+		local inst = self.Instance
 		for name,b in pairs(data) do
 			inst:ClearCustomIcon(name)
 		end
@@ -31,17 +82,16 @@ local function ClearCustomDraw(inst, hotbarIndex, name)
 	end
 end
 
-RegisterListener("BeforeLuaReset", function ()
-	local inst = UIExtensions.Instance
+local function ClearAllCustomDraws(inst)
 	for hotbarIndex,data in pairs(draws) do
 		for name,b in pairs(data) do
 			inst:ClearCustomIcon(name)
 		end
 	end
-end)
+end
 
 local function UpdateHotbar(hotbar, playerData, playerDoubleHandle)
-	local inst = UIExtensions.Instance
+	local inst = self.Instance
 	local currentHotbarIndex = hotbar.currentHotBarIndex
 	local hotbarIndexOffset = (hotbar.currentHotBarIndex-1) * hotbar.maxSlots
 	ClearCustomDrawsForHotbar(currentHotbarIndex)
@@ -91,7 +141,7 @@ local function UpdateHotbar(hotbar, playerData, playerDoubleHandle)
 end
 
 Ext.RegisterUINameCall("LeaderLib_Hotbars_CycleHotbar", function (ui, call, hotbarId, barIndex)
-	local this = UIExtensions.Root
+	local this = self.Root
 	if this then
 		this = this.hotbars_mc
 		local index = this.getIndexByID(hotbarId)
@@ -127,6 +177,20 @@ Ext.RegisterUINameCall("LeaderLib_Hotbar_ShowItemTooltip", function (ui, call, i
 	Hotbar:ExternalInterfaceCall("showItemTooltip", itemDouble, x, y, width, height, extra, side)
 end, "Before")
 
+Ext.RegisterUINameCall("LeaderLib_Hotbar_UpdateSlots", function (ui, call, hotbarListIndex, slotCount)
+	local this = ui:GetRoot()
+	if this then
+		local hotbar = this.hotbars_mc.entries[hotbarListIndex]
+		if hotbar then
+			local playerData = Client:GetCharacterData()
+			local player = Client:GetCharacter()
+			local doubleHandle = Ext.HandleToDouble(player.Handle)
+			UpdateHotbar(hotbar, playerData, doubleHandle)
+			hotbar.slotholder_mc.updateClearOldSlots()
+		end
+	end
+end, "Before")
+
 local function GetHotbarStartPosition(inst, hotbarRoot, hotbarInst)
 	--local x = hotbarRoot.x + hotbarRoot.hotbar_mc.x + hotbarRoot.hotbar_mc.slotholder_mc.x
 	local x = hotbarRoot.showLog_mc.x - 1647.2
@@ -139,7 +203,7 @@ local function GetHotbarStartPosition(inst, hotbarRoot, hotbarInst)
 end
 
 local function PositionHotbar()
-	local inst = UIExtensions.Instance
+	local inst = self.Instance
 	local this = inst:GetRoot()
 	local hotbarInst = Hotbar.Instance
 	local hotbarRoot = hotbarInst:GetRoot()
@@ -174,12 +238,12 @@ Hotbar:RegisterCallListener("updateSlots", function (self, ui, call)
 	PositionHotbar()
 end)
 
-RegisterListener("UIExtensionsResized", function (ui, w, h)
+RegisterListener("selfResized", function (ui, w, h)
 	PositionHotbar()
 end)
 
-function UIExtensions.Hotbars.Init()
-	local inst = UIExtensions.Instance
+function HotbarExt.InitHotbars()
+	local inst = self.Instance
 	local this = inst:GetRoot()
 	local hotbarInst = Hotbar.Instance
 	local hotbarRoot = hotbarInst:GetRoot()
@@ -210,8 +274,8 @@ function UIExtensions.Hotbars.Init()
 	end
 end
 
-function UIExtensions.Hotbars.Update()
-	local this = UIExtensions.Root
+function self.Hotbars.Update()
+	local this = self.Root
 	if this then
 		local hotbars_mc = this.hotbars_mc
 		local playerData = Client:GetCharacterData()
@@ -237,7 +301,7 @@ RegisterListener("ClientDataSynced", function (modData, sharedData)
 	if Ext.GetGameState() == "Running" then
 		local hotbar = Hotbar.Root
 		if hotbar and hotbar.hotbar_mc.isSkillBarShown then
-			UIExtensions.Hotbars.Update()
+			self.Hotbars.Update()
 		end
 	end
 end)
@@ -273,3 +337,23 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "updateSlotData", function 
 	end
 	GameHelpers.IO.SaveJsonFile("Dumps/hotBar_updateSlotData.json", data)
 end)
+
+local function DestroyInstance(force)
+	local instance = HotbarExt.GetInstance(true)
+	if instance then
+		ClearAllCustomDraws(instance)
+		instance:Hide()
+		instance:Destroy()
+	end
+	HotbarExt.Visible = false
+end
+
+RegisterListener("BeforeLuaReset", function()
+	DestroyInstance(true)
+end)
+
+RegisterListener("LuaReset", function()
+	HotbarExt.SetupInstance()
+end)
+
+UIExtensions.Hotbars = HotbarExt

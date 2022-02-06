@@ -145,7 +145,12 @@ local defaultIgnored = {
 	updateSlots = true,
 	showExpTooltip = true,
 	SlotHoverOut = true,
-	setInputDevice = true
+	setInputDevice = true,
+	updateTooltips = true,
+	moveText = true,
+	clearAnchor = true,
+	clearAll = true,
+	removeTooltip = true,
 }
 
 local lastTimeSinceIgnored = {}
@@ -214,9 +219,22 @@ end)
 
 local enabledParam = {Enabled=true}
 
-local contextMenu = UIListenerWrapper:Create(Data.UIType.contextMenu, enabledParam)
+--local contextMenu = UIListenerWrapper:Create(Data.UIType.contextMenu, enabledParam)
 local characterSheet = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
 local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, enabledParam)
+--local chatLog = UIListenerWrapper:Create(Data.UIType.chatLog, enabledParam)
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.chatLog, "setLogVisible", function (ui, event, visible)
+	if visible then
+		--Ext.GetUIByType(Data.UIType.hotBar):ExternalInterfaceCall("ToggleChatLog")
+		Timer.StartOneshot("LLDEBUG_CloseChatLog", 10, function ()
+			local this = Ext.GetUIByType(Data.UIType.chatLog):GetRoot()
+			this.log_mc.visible = false
+			this.mouseChildren = false
+			this.mouseEnabled = false
+		end)
+	end
+end)
 -- local areaInteract_c = UIListenerWrapper:Create(Data.UIType.areaInteract_c)
 -- local containerInventory = UIListenerWrapper:Create(Data.UIType.containerInventory, enabledParam)
 -- local uiCraft = UIListenerWrapper:Create(Data.UIType.uiCraft, enabledParam)
@@ -239,8 +257,9 @@ local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation
 -- local optionsSettings = UIListenerWrapper:Create(Data.UIType.optionsSettings, enabledParam)
 -- local skills = UIListenerWrapper:Create(Data.UIType.skills)
 -- local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole)
-local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, enabledParam)
-local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip, enabledParam)
+--local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, enabledParam)
+--local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip, enabledParam)
+--local textDisplay = UIListenerWrapper:Create(Data.UIType.textDisplay, enabledParam)
 
 -- overhead.CustomCallback.updateOHs = function(self, ui, method)
 	
@@ -315,7 +334,7 @@ end
 -- 	Ext.Print(method,Lib.serpent.block(buttons))
 -- end
 
-local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, enabledParam)
+--local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, enabledParam)
 --[[
 ---@param ui UIObject
 hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)

@@ -17,6 +17,7 @@ package controls.hotbar
 	public class Hotbar extends BaseDraggableObject implements IInputHandler
 	{
 		public var id:int;
+		public var listIndex:int;
 		public var maxSlots:int = 29;
 		public var cToAlpha:Number = 0.65;
 
@@ -82,8 +83,7 @@ package controls.hotbar
 			this.sourceList.EL_SPACING = 0;
 			this.sourceHolder_mc.addChild(this.sourceList);
 			this.sourceList.canPositionInvisibleElements = true;
-			var i:uint = 0;
-			while(i < this.maxSlots)
+			for(var i:uint = 0; i < this.maxSlots; i++)
 			{
 				indicator = new SourceIndicator();
 				indicator.visible = false;

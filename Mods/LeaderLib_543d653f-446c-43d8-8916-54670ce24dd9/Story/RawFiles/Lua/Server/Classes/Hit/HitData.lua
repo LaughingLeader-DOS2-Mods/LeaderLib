@@ -6,21 +6,16 @@
 ---@field Target string
 ---@field AttackerObject EsvCharacter|EsvItem
 ---@field Attacker string
+---@field DamageList DamageList
+---@field HitContext HitContext
+---@field HitRequest HitRequest
+---@field HitStatus EsvStatusHit
+---@field SkillData StatEntrySkillData
+---@field Success boolean True if the hit has a target, and the hit wasn't Dodged, Blocked, or Missed.
 local HitData = {
 	ID = "HitData",
 	Skill = "",
-	---@type StatEntrySkillData
-	SkillData = nil,
 	IsFromSkll = false,
-	---@type boolean The hit did not miss.
-	Success = true,
-	---@type EsvStatusHit
-	HitStatus = nil,
-	---@type HitContext
-	HitContext = nil,
-	---@type HitRequest
-	HitRequest = nil,
-	---@type DamageList
 	DamageList = {}
 }
 

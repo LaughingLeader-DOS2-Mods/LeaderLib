@@ -55,10 +55,10 @@ package controls.dropdowns
 		{
 			if(this.tooltip != null && this.tooltip != "" && !this.combo_mc.m_isOpen)
 			{
-				MainTimeline.Instance.curTooltip = this.tooltip;
 				this.tooltipYOffset = -4;
-				this.tooltipOverrideW = MainTimeline.Instance.ElW;
+				this.tooltipOverrideW = MainTimeline.Instance.tooltipWidthOverride;
 				tooltipHelper.ShowTooltipForMC(this,root,"bottom",MainTimeline.Instance.hasTooltip == false);
+				MainTimeline.Instance.setHasTooltip(true, this.tooltip);
 			}
 		}
 

@@ -12,7 +12,7 @@ package LS_Classes
          super();
       }
       
-      public static function ShowItemTooltipForMC(target:MovieClip, parentRoot:DisplayObject, tooltipSide:String = "right") : void
+      public static function ShowSkillTooltipForMC(target:MovieClip, parentRoot:DisplayObject, characterHandle:Number, skillId:String, tooltipSide:String = "right") : void
       {
          var tooltipWidth:Number = target.width;
          var tooltipHeight:Number = target.height;
@@ -40,9 +40,44 @@ package LS_Classes
             contextParam = target.contextParam;
          }
          var pos:Point = getGlobalPositionOfMC(target,parentRoot);
-         Registry.ExtCall("showItemTooltip",target.itemHandle,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,contextParam,tooltipSide);
-         var base:MovieClip = parentRoot as MovieClip;
-         base.hasTooltip = true;
+         Registry.ExtCall("showSkillTooltip",characterHandle,skillId,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,contextParam,tooltipSide);
+         MainTimeline.Instance.setHasTooltip(true, skillId);
+      }
+      
+      public static function ShowItemTooltipForMC(target:MovieClip, parentRoot:DisplayObject, itemHandle:Number = -1, tooltipSide:String = "right") : void
+      {
+         var tooltipWidth:Number = target.width;
+         var tooltipHeight:Number = target.height;
+         var offsetX:Number = 0;
+         var offsetY:Number = 0;
+         var contextParam:Number = -1;
+         if(target.tooltipOverrideW)
+         {
+            tooltipWidth = target.tooltipOverrideW;
+         }
+         if(target.tooltipOverrideH)
+         {
+            tooltipHeight = target.tooltipOverrideH;
+         }
+         if(target.tooltipXOffset)
+         {
+            offsetX = target.tooltipXOffset;
+         }
+         if(target.tooltipYOffset)
+         {
+            offsetY = target.tooltipYOffset;
+         }
+         if(target.contextParam)
+         {
+            contextParam = target.contextParam;
+         }
+         if(itemHandle == -1 && target.itemHandle)
+         {
+            itemHandle = target.itemHandle;
+         }
+         var pos:Point = getGlobalPositionOfMC(target,parentRoot);
+         Registry.ExtCall("showItemTooltip",itemHandle,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,contextParam,tooltipSide);
+         MainTimeline.Instance.setHasTooltip(true, target.name);
       }
       
       public static function ShowTooltipForMC(target:MovieClip, parentRoot:DisplayObject, tooltipSide:String = "right", fadeTooltip:Boolean = true) : void
@@ -77,8 +112,7 @@ package LS_Classes
             }
             pos = getGlobalPositionOfMC(target,parentRoot);
             Registry.ExtCall("showTooltip",target.tooltip,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,tooltipSide,fadeTooltip);
-            base = parentRoot as MovieClip;
-            base.hasTooltip = true;
+            MainTimeline.Instance.setHasTooltip(true, target.tooltip);
          }
       }
       
@@ -114,8 +148,7 @@ package LS_Classes
             }
             pos = getGlobalPositionOfMC(target,parentRoot);
             Registry.ExtCall("showStatusTooltip",target.owner,target.id,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,tooltipSide);
-            base = parentRoot as MovieClip;
-            base.hasTooltip = true;
+            MainTimeline.Instance.setHasTooltip(true, target.name);
          }
       }
       

@@ -111,7 +111,7 @@ else
 						local netid = GetNetID(uuid)
 						local data = PrepareSharedData(profile, isHost, id, netid)
 						SendSyncListenerEvent(id, profile, uuid, isHost)
-						GameHelpers.Net.PostToUser(id, "LeaderLib_SharedData_StoreData", Common.JsonStringify(data))
+						GameHelpers.Net.PostToUser(id, "LeaderLib_SharedData_StoreData", data)
 						GameSettingsManager.Sync(id)
 					end
 				end

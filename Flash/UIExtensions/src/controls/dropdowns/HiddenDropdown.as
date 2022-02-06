@@ -9,6 +9,7 @@ package controls.dropdowns {
     import flash.geom.Point;
     import flash.system.Capabilities;
     import LS_Classes.scrollList;
+    import interfaces.IDropdownButton;
 
 	//Dropdown without any top_mc label.
     public dynamic class HiddenDropdown extends MovieClip {

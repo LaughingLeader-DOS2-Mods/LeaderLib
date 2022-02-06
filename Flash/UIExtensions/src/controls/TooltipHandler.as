@@ -41,25 +41,22 @@ package controls
 
 		public static function showTooltip(mc:MovieClip, fade:Boolean=true) : void
 		{
-			var base:MovieClip = mc.base || mc.root as MovieClip;
-			if(base != null && mc.tooltip != null && mc.tooltip != "")
+			if(mc.tooltip != null && mc.tooltip != "")
 			{
-				fade = base.hasTooltip == true;
-				base.curTooltip = mc.tooltip;
-				mc.tooltipOverrideW = mc.base.ElW;
+				fade = MainTimeline.Instance.hasTooltip == true;
+				mc.tooltipOverrideW = MainTimeline.Instance.tooltipWidthOverride;
 				mc.tooltipYOffset = -4;
-				tooltipHelper.ShowTooltipForMC(mc,base,mc.tooltipSide,fade);
+				tooltipHelper.ShowTooltipForMC(mc,MainTimeline.Instance,mc.tooltipSide,fade);
+				MainTimeline.Instance.setHasTooltip(true, mc.tooltip);
 			}
 		}
 
 		public static function hideTooltip(mc:MovieClip) : void
 		{
-			var base:MovieClip = mc.base || mc.root as MovieClip;
-			if(base != null && base.curTooltip == mc.tooltip && base.hasTooltip)
+			if(MainTimeline.Instance.curTooltip == mc.tooltip && MainTimeline.Instance.hasTooltip)
 			{
 				Registry.ExtCall("hideTooltip");
-				base.hasTooltip = false;
-				base.curTooltip = "";
+				MainTimeline.Instance.setHasTooltip(false);
 			}
 		}
 	}

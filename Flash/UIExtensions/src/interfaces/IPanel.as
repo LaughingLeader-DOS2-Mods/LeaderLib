@@ -1,4 +1,4 @@
-package controls.panels
+package interfaces
 {
 	public interface IPanel
 	{

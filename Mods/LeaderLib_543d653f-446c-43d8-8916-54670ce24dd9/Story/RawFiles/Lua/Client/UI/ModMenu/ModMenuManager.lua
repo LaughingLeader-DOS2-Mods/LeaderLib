@@ -330,7 +330,6 @@ end
 function ModMenuManager.OnSlider(id, value)
 	local controlData = ModMenuManager.Controls[id]
 	if controlData ~= nil then
-		PrintDebug("ModMenuManager.OnSlider", id, value)
 		controlData.Value = value
 	end
 end

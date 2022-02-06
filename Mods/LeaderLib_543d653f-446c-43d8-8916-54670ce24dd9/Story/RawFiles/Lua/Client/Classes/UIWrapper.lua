@@ -184,4 +184,22 @@ function UIWrapper:GetRoot()
 	end
 end
 
+---@param call string
+---@vararg any
+function UIWrapper:ExternalInterfaceCall(call, ...)
+	local ui = self:GetInstance()
+	if ui then
+		ui:ExternalInterfaceCall(call, ...)
+	end
+end
+
+---@param method string
+---@vararg any
+function UIWrapper:Invoke(method, ...)
+	local ui = self:GetInstance()
+	if ui then
+		ui:Invoke(method, ...)
+	end
+end
+
 Classes.UIWrapper = UIWrapper

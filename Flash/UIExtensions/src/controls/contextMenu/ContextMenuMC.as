@@ -6,8 +6,9 @@ package controls.contextMenu
 	import flash.geom.Rectangle;
 	import flash.text.TextFieldAutoSize;
 	import flash.events.MouseEvent;
+	import interfaces.IInputHandler;
 	
-	public dynamic class ContextMenuMC extends MovieClip
+	public dynamic class ContextMenuMC extends MovieClip implements IInputHandler
 	{
 		public var bg_mc:MovieClip;
 		public var list:listDisplay;
@@ -41,6 +42,8 @@ package controls.contextMenu
 			this.tweenTime = 0.3;
 			this.text_array = new Array();
 			this.buttonArr = new Array();
+
+			MainTimeline.Instance.addInputHandler(this);
 		}
 		
 		public function setTitle(text:String) : void
@@ -119,7 +122,17 @@ package controls.contextMenu
 			this.setListLoopable(false);
 		}
 
-		public function onInputUp(input:String) : Boolean
+		public function OnDestroying() : void
+		{
+			MainTimeline.Instance.removeInputHandler(this);
+		}
+
+		public function get IsInputEnabled():Boolean
+		{
+			return this.visible;
+		}
+
+		public function OnInputUp(input:String) : Boolean
 		{
 			var currentMC:MovieClip = null;
 			var isHandled:Boolean = false;
@@ -166,7 +179,7 @@ package controls.contextMenu
 			return isHandled;
 		}
 
-		public function onInputDown(input:String) : Boolean
+		public function OnInputDown(input:String) : Boolean
 		{
 			var isHandled:Boolean = false;
 			if (MainTimeline.Instance.controllerEnabled) {

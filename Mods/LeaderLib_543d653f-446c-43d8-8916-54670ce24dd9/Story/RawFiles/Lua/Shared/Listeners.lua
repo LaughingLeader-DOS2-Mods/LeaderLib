@@ -206,6 +206,9 @@ if Ext.IsClient() then
 	---@type fun(ui:UIExtensionsMain, control:FlashMovieClip, id:string, index:integer):void[]
 	Listeners.UIExtensionsControlAdded = {}
 
+	---@type fun(ui:UIExtensionsMain, width:number, height:number):void[]
+	Listeners.UIExtensionsResized = {}
+
 	---Simple listener called when Vars.ControllerEnabled is set to true.
 	---@type function[]
 	Listeners.ControllerModeEnabled = {}

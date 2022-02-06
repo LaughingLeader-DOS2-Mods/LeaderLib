@@ -25,12 +25,16 @@ package
 	import flash.display.StageDisplayState;
 	import system.DropdownManager;
 	import controls.dropdowns.PresetButton;
+	import interfaces.IInputHandler;
+	import system.HotbarManager;
+	import LS_Classes.listDisplay;
+	import flash.system.Capabilities;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		
 		//Engine variables
 		public var layout:String;
-		public var alignment:String;
+		//public var alignment:String;
 		public var events:Array;
 		public var anchorId:String;
 		public var anchorPos:String;
@@ -42,13 +46,18 @@ package
 		public const designResolution:Point = new Point(1920,1080);
 		
 		public var mainPanel_mc:MainPanel;
+
+		public var controlManagers:MovieClip;
 		public var panels_mc:PanelManager;
 		public var dropdowns_mc:DropdownManager;
+		public var hotbars_mc:HotbarManager;
+
 		public var contextMenuMC:ContextMenuMC;
-		public var screenScaleHelper:MovieClip;
+		//public var screenScaleHelper:MovieClip;
 		
 		public var curTooltip:String;
 	  	public var hasTooltip:Boolean;
+	  	public var tooltipWidthOverride:Number = 0;
 
 	  	public var controllerEnabled:Boolean = false;
 		public var isInCharacterCreation:Boolean = false;
@@ -69,6 +78,10 @@ package
 		private static var instance:MainTimeline;
 
 		public var presetButton:PresetButton;
+
+		public var inputHandlers:Array;
+
+		public var isDragging:Boolean = false;
 		
 		public function MainTimeline()
 		{
@@ -81,6 +94,48 @@ package
 		public static function get Instance():MainTimeline
 		{
 			return instance;
+		}
+
+		public function addInputHandler(obj:IInputHandler) : void
+		{
+			this.inputHandlers.push(obj);
+		}
+
+		public function removeInputHandler(obj:IInputHandler) : void
+		{
+			var index:int = 0;
+			while(index < this.inputHandlers.length)
+			{
+				if(this.inputHandlers[index] == obj)
+				{
+					this.inputHandlers.splice(index, 1);
+				}
+				index++;
+			}
+		}
+
+		public function invokeInputCallbacks(inputId:String, isUp:Boolean = false) : Boolean
+		{
+			var isHandled:Boolean = false;
+			var handler:IInputHandler = null;
+			for(var i:int = 0; i < this.inputHandlers.length; i++)
+			{
+				handler = this.inputHandlers[i] as IInputHandler;
+				if (handler && handler.IsInputEnabled) {
+					if (!isUp) {
+						if (handler.OnInputDown(inputId)) {
+							isHandled = true;
+							break;
+						}
+					} else {
+						if (handler.OnInputUp(inputId)) {
+							isHandled = true;
+							break;
+						}
+					}
+				}
+			}
+			return isHandled;
 		}
 		
 		public function onEventUp(id:Number) : Boolean
@@ -99,9 +154,8 @@ package
 							break;
 					}
 				}
-				if (!isHandled && this.contextMenuMC.visible)
-				{
-					isHandled = this.contextMenuMC.onInputUp(input);
+				if(!isHandled) {
+					isHandled = this.invokeInputCallbacks(input, true);
 				}
 			}
 
@@ -148,9 +202,8 @@ package
 						}
 					}
 				}
-				if (!isHandled && this.contextMenuMC.visible)
-				{
-					isHandled = this.contextMenuMC.onInputDown(input);
+				if(!isHandled) {
+					isHandled = this.invokeInputCallbacks(input, false);
 				}
 			}
 
@@ -160,7 +213,7 @@ package
 		public function onEventInit() : void
 		{
 			Registry.ExtCall("registeranchorId", this.anchorId);
-			Registry.ExtCall("setAnchor",this.anchorPos, this.anchorTarget, this.anchorTPos);
+			//Registry.ExtCall("setAnchor",this.anchorPos, this.anchorTarget, this.anchorTPos);
 		}
 
 		public function onEventResize() : void
@@ -186,6 +239,10 @@ package
 				this.screenWidth = w;
 				this.screenHeight = h;
 				this.uiScaling = h / this.designResolution.y;
+				// if(this.screenScaleHelper.visible) {
+				// 	this.screenScaleHelper.scaleX = 1 + (w / this.designResolution.x);
+				// 	this.screenScaleHelper.scaleY = 1 + (h / this.designResolution.y);
+				// }
 				Registry.ExtCall("LeaderLib_UIExtensions_OnEventResolution", w, h);
 			}
 		}
@@ -201,15 +258,21 @@ package
 			mainPanel_mc.clearElements();
 		}
 
+		public function setHasTooltip(isEnabled:Boolean, text:String = "") : void
+		{
+			this.hasTooltip = isEnabled;
+			this.curTooltip = text;
+		}
+
 		private function onMouseOverTooltip(e:MouseEvent) : void
 		{
 			var obj:MovieClip = e.target as MovieClip;
 			if(obj.tooltip != null && obj.tooltip != "")
 			{
-				this.curTooltip = obj.name;
-				obj.tooltipOverrideW = this.base.ElW;
+				obj.tooltipOverrideW = this.tooltipWidthOverride;
 				obj.tooltipYOffset = -4;
 				tooltipHelper.ShowTooltipForMC(obj,this,"bottom",this.hasTooltip == false);
+				MainTimeline.Instance.setHasTooltip(true, obj.tooltip);
 			}
 		}
 
@@ -218,9 +281,8 @@ package
 			if(this.curTooltip == e.target.tooltip && this.hasTooltip)
 			{
 				Registry.ExtCall("hideTooltip");
-				this.hasTooltip = false;
 			}
-			this.curTooltip = "";
+			MainTimeline.Instance.setHasTooltip(false);
 		}
 
 		private function setupControlForTooltip(obj:MovieClip) : void
@@ -491,7 +553,7 @@ package
 			panel.x = panelX;
 			panel.y = panelY;
 			panel.init(title);
-			return this.panels_mc.addPanel(panel);
+			return this.panels_mc.add(panel);
 		}
 
 		public function togglePresetButton(b:Boolean, destroyEntries:Boolean = false): void
@@ -510,15 +572,18 @@ package
 			this.anchorPos = "topleft";
 			this.anchorTPos = "topleft";
 			this.anchorTarget = "screen";
+			this.alignment = "center";
 			//fixed, fitVertical, fitHorizontal, fit, fill, fillVFit
 			this.layout = "fillVFit";
-			this.alignment = "none";
 			this.curTooltip = "";
 		 	this.hasTooltip = false;
-			this.uiScaling = 1;
+			this.uiScaling = 2;
 
-			this.stage.scaleMode = StageScaleMode.EXACT_FIT;
+			//this.stage.scaleMode = StageScaleMode.EXACT_FIT;
 			//this.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE; 
+
+			this.timers = new Array();
+			this.inputHandlers = new Array();
 
 			KeyCodeNames.Init();
 			workingKeys[8] = "FlashBackspace";
@@ -536,8 +601,6 @@ package
 			workingKeys[40] = "FlashArrowDown";
 			workingKeys[46] = "FlashDelete";
 
-			this.timers = new Array();
-
 			this.screenWidth = this.width;
 			this.screenHeight = this.height;
 
@@ -545,19 +608,26 @@ package
 			this.addChild(contextMenuMC);
 			this.contextMenuMC.visible = false;
 
-			this.panels_mc = new PanelManager();
-			this.addChild(this.panels_mc);
-			this.dropdowns_mc = new DropdownManager();
-			this.addChild(this.dropdowns_mc);
+			this.controlManagers = new MovieClip();
+			this.addChild(controlManagers);
 
-			this.screenScaleHelper.visible = false;
-			this.screenScaleHelper.mouseEnabled = false;
-			this.screenScaleHelper.mouseChildren = false;
-			this.screenScaleHelper.buttonMode = false;
-			this.screenScaleHelper.enabled = false;
-			this.screenScaleHelper.doubleClickEnabled = false;
-			this.screenScaleHelper.tabEnabled = false;
-			this.screenScaleHelper.tabChildren = false;
+			this.hotbars_mc = new HotbarManager();
+			this.panels_mc = new PanelManager();
+			this.dropdowns_mc = new DropdownManager();
+
+			this.controlManagers.addChild(this.hotbars_mc);
+			this.controlManagers.addChild(this.dropdowns_mc);
+			this.controlManagers.addChild(this.panels_mc);
+
+			// this.screenScaleHelper.visible = true;
+			// this.screenScaleHelper.alpha = 0.5;
+			// this.screenScaleHelper.mouseEnabled = false;
+			// this.screenScaleHelper.mouseChildren = false;
+			// this.screenScaleHelper.buttonMode = false;
+			// this.screenScaleHelper.enabled = false;
+			// this.screenScaleHelper.doubleClickEnabled = false;
+			// this.screenScaleHelper.tabEnabled = false;
+			// this.screenScaleHelper.tabChildren = false;
 
 			this.presetButton = new PresetButton();
 			this.presetButton.init();
@@ -578,6 +648,12 @@ package
 			// });
 
 			this.events = new Array("IE Action1","IE ActionCancel","IE ActionMenu","IE AreaPickup","IE Benchmark","IE CCZoomIn","IE CCZoomOut","IE CameraBackward","IE CameraCenter","IE CameraForward","IE CameraLeft","IE CameraRight","IE CameraRotateLeft","IE CameraRotateMouseLeft","IE CameraRotateMouseRight","IE CameraRotateRight","IE CameraToggleMouseRotate","IE CameraZoomIn","IE CameraZoomOut","IE CancelSelectorMode","IE CharacterCreationAccept","IE CharacterCreationRotateLeft","IE CharacterCreationRotateRight","IE CharacterMoveBackward","IE CharacterMoveForward","IE CharacterMoveLeft","IE CharacterMoveRight","IE CloseApplication","IE Combine","IE ConnectivityMenu","IE ContextMenu","IE ControllerContextMenu","IE CycleCharactersNext","IE CycleCharactersPrev","IE DefaultCameraBackward","IE DefaultCameraCaptureInput","IE DefaultCameraFast","IE DefaultCameraForward","IE DefaultCameraFrontView","IE DefaultCameraLeft","IE DefaultCameraLeftView","IE DefaultCameraMouseDown","IE DefaultCameraMouseLeft","IE DefaultCameraMouseRight","IE DefaultCameraMouseUp","IE DefaultCameraPanCamera","IE DefaultCameraRight","IE DefaultCameraRotateDown","IE DefaultCameraRotateLeft","IE DefaultCameraRotateRight","IE DefaultCameraRotateUp","IE DefaultCameraSlow","IE DefaultCameraSpecialPanCamera1","IE DefaultCameraSpecialPanCamera2","IE DefaultCameraToggleMouseRotation","IE DefaultCameraTopView","IE DefaultCameraZoomIn","IE DefaultCameraZoomOut","IE DestructionToggle","IE DragSingleToggle","IE FlashAlt","IE FlashArrowDown","IE FlashArrowLeft","IE FlashArrowRight","IE FlashArrowUp","IE FlashBackspace","IE FlashCancel","IE FlashCtrl","IE FlashDelete","IE FlashEnd","IE FlashEnter","IE FlashHome","IE FlashLeftMouse","IE FlashMiddleMouse","IE FlashMouseMoveDown","IE FlashMouseMoveLeft","IE FlashMouseMoveRight","IE FlashMouseMoveUp","IE FlashPgDn","IE FlashPgUp","IE FlashRightMouse","IE FlashScrollDown","IE FlashScrollUp","IE FlashTab","IE FreeCameraFoVDec","IE FreeCameraFoVInc","IE FreeCameraFreezeGameTime","IE FreeCameraHeightDec","IE FreeCameraHeightInc","IE FreeCameraMoveBackward","IE FreeCameraMoveForward","IE FreeCameraMoveLeft","IE FreeCameraMoveRight","IE FreeCameraRotSpeedDec","IE FreeCameraRotSpeedInc","IE FreeCameraRotateControllerDown","IE FreeCameraRotateControllerLeft","IE FreeCameraRotateControllerRight","IE FreeCameraRotateControllerUp","IE FreeCameraRotateMouseDown","IE FreeCameraRotateMouseLeft","IE FreeCameraRotateMouseRight","IE FreeCameraRotateMouseUp","IE FreeCameraSlowdown","IE FreeCameraSpeedDec","IE FreeCameraSpeedInc","IE FreeCameraSpeedReset","IE FreeCameraToggleMouseRotate","IE GMKillResurrect","IE GMNormalAlignMode","IE GMSetHealth","IE HighlightCharacters","IE Interact","IE MoveCharacterUpInGroup","IE NextObject","IE PanelSelect","IE PartyManagement","IE Pause","IE Ping","IE PrevObject","IE QueueCommand","IE QuickLoad","IE QuickSave","IE ReloadInputConfig","IE RotateItemLeft","IE RotateItemRight","IE Screenshot","IE SelectorMoveBackward","IE SelectorMoveForward","IE SelectorMoveLeft","IE SelectorMoveRight","IE ShowChat","IE ShowSneakCones","IE ShowWorldTooltips","IE SkipVideo","IE SplitItemToggle","IE SwitchGMMode","IE ToggleCharacterPane","IE ToggleCombatMode","IE ToggleCraft","IE ToggleEquipment","IE ToggleFullscreen","IE ToggleGMInventory","IE ToggleGMItemGeneratorPane","IE ToggleGMMiniMap","IE ToggleGMMoodPanel","IE ToggleGMPause","IE ToggleGMRewardPanel","IE ToggleGMShroud","IE ToggleHomestead","IE ToggleInGameMenu","IE ToggleInfo","IE ToggleInputMode","IE ToggleInventory","IE ToggleJournal","IE ToggleManageTarget","IE ToggleMap","IE ToggleMonsterSelect","IE ToggleOverviewMap","IE TogglePartyManagement","IE TogglePresentation","IE ToggleRecipes","IE ToggleReputationPanel","IE ToggleRollPanel","IE ToggleSetStartPoint","IE ToggleSkills","IE ToggleSneak","IE ToggleSplitscreen","IE ToggleStatusPanel","IE ToggleSurfacePainter","IE ToggleTacticalCamera","IE ToggleVignette","IE UIAccept","IE UIAddPoints","IE UIAddonDown","IE UIAddonUp","IE UIBack","IE UICancel","IE UICompareItems","IE UIContextMenuModifier","IE UICopy","IE UICreateProfile","IE UICreationAddSkill","IE UICreationEditClassNext","IE UICreationEditClassPrev","IE UICreationNext","IE UICreationPrev","IE UICreationRemoveSkill","IE UICreationTabNext","IE UICreationTabPrev","IE UICut","IE UIDelete","IE UIDeleteProfile","IE UIDialogRPSPaper","IE UIDialogRPSRock","IE UIDialogRPSScissors","IE UIDialogTextDown","IE UIDialogTextUp","IE UIDown","IE UIEditCharacter","IE UIEndTurn","IE UIFilter","IE UIHotBarNext","IE UIHotBarPrev","IE UIInvite","IE UILeft","IE UIMapDown","IE UIMapLeft","IE UIMapRemoveMarker","IE UIMapReset","IE UIMapRight","IE UIMapUp","IE UIMapZoomIn","IE UIMapZoomOut","IE UIMarkWares","IE UIMessageBoxA","IE UIMessageBoxB","IE UIMessageBoxX","IE UIMessageBoxY","IE UIModNext","IE UIModPrev","IE UIPaste","IE UIRadialDown","IE UIRadialLeft","IE UIRadialRight","IE UIRadialUp","IE UIRefresh","IE UIRemoveItemSelection","IE UIRemovePoints","IE UIRename","IE UIRequestTrade","IE UIRight","IE UISelectChar1","IE UISelectChar2","IE UISelectChar3","IE UISelectChar4","IE UISelectSlot0","IE UISelectSlot1","IE UISelectSlot11","IE UISelectSlot12","IE UISelectSlot2","IE UISelectSlot3","IE UISelectSlot4","IE UISelectSlot5","IE UISelectSlot6","IE UISelectSlot7","IE UISelectSlot8","IE UISelectSlot9","IE UISend","IE UISetSlot","IE UIShowInfo","IE UIShowTooltip","IE UIStartGame","IE UISwitchDown","IE UISwitchLeft","IE UISwitchRight","IE UISwitchUp","IE UITabNext","IE UITabPrev","IE UITakeAll","IE UIToggleActions","IE UIToggleEquipment","IE UIToggleHelmet","IE UIToggleMultiselection","IE UIToggleTutorials","IE UITooltipDown","IE UITooltipUp","IE UITradeBalance","IE UITradeRemoveOffer","IE UITradeSwitchWindow","IE UIUp","IE WidgetButtonA","IE WidgetButtonBackSpace","IE WidgetButtonC","IE WidgetButtonDelete","IE WidgetButtonDown","IE WidgetButtonEnd","IE WidgetButtonEnter","IE WidgetButtonEscape","IE WidgetButtonHome","IE WidgetButtonLeft","IE WidgetButtonPageDown","IE WidgetButtonPageUp","IE WidgetButtonRight","IE WidgetButtonSpace","IE WidgetButtonTab","IE WidgetButtonUp","IE WidgetButtonV","IE WidgetButtonX","IE WidgetButtonY","IE WidgetButtonZ","IE WidgetMouseLeft","IE WidgetMouseMotion","IE WidgetMouseRight","IE WidgetScreenshot","IE WidgetScreenshotVideo","IE WidgetScrollDown","IE WidgetScrollUp","IE WidgetToggleDebugConsole","IE WidgetToggleDevComments","IE WidgetToggleEffectStats","IE WidgetToggleGraphicsDebug","IE WidgetToggleHierarchicalProfiler","IE WidgetToggleOptions","IE WidgetToggleOutput","IE WidgetToggleStats");
+
+			if (Capabilities.isDebugger) {
+				this.hotbars_mc.add(1, 20, 30);
+				this.hotbars_mc.add(2, 20, 100);
+				this.hotbars_mc.add(3, 20, 170);
+			}
 		}
 	}
 }

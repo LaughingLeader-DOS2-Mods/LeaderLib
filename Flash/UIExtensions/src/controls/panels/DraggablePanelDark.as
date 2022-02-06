@@ -7,6 +7,7 @@ package controls.panels
 	import controls.buttons.CloseButton;
 	import flash.external.ExternalInterface;
 	import LS_Classes.LSPanelHelpers;
+	import interfaces.IPanel;
 	
 	public dynamic class DraggablePanelDark extends BaseDraggablePanel implements IPanel
 	{
@@ -71,7 +72,7 @@ package controls.panels
 				this.list.clearElements();
 				this.listHolder_mc.removeChild(this.list);
 			}
-			MainTimeline.Instance.panels_mc.removePanel(this);
+			MainTimeline.Instance.panels_mc.remove(this);
 		}
 
 		public function onMinimize(): void

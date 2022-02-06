@@ -3,6 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //The version is registered in LeaderLib_00_1_1_System, so other mods will be able to see if LeaderLib is registered.
 KBSECTION
+
 //REGION UPDATE_EVENT
 IF
 GameStarted(_,_)

@@ -45,6 +45,8 @@ package
 			{
 				args.unshift(name);
 				return ExternalInterface.call.apply(null, args);
+			} else {
+				trace(name);
 			}
 			return false;
 		}

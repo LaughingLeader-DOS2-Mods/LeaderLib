@@ -438,6 +438,7 @@ LocalizedText.CombatLog = {
 	WasHitBySurface = ts:Create("h3cc306cdg95b4g4803g803ag2dd33a722d6c", "[1] was [2] for [3] by a surface"),
 	WasDestroyed = ts:Create("h3d2c57b3g8b84g4315ga619g04367092ce5f", "[2] was destroyed"),
 }
+
 ---Get localized resistance text wrapped in that resistance's color.
 ---@param resistance string
 ---@param amount integer

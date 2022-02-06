@@ -28,23 +28,27 @@ end
 
 local function TryFindCallback(uuid, name)
 	local b,result = pcall(function()
-		local tbl = Mods[uuid]
-		if tbl then
-			local pathway = StringHelpers.Split(name, ".")
-			local last = tbl
-			for _,key in ipairs(pathway) do
-				local value = last[key]
-				if value then
-					last = value
-				else
-					Ext.PrintError("Error trying to find global variable at Mods[%s].%s", uuid, name)
-					break
+		for id,tbl in pairs(Mods) do
+			if tbl.ModuleUUID == uuid then
+				if tbl[name] ~= nil then
+					return tbl[name]
 				end
-			end
-			if last ~= nil and type(last) == "function" or type(last) == "table" then
-				return last
+				local pathway = StringHelpers.Split(name, ".")
+				local last = tbl
+				for _,key in ipairs(pathway) do
+					local value = last[key]
+					if value then
+						last = value
+					end
+				end
+				if last ~= nil and type(last) == "function" or type(last) == "table" then
+					return last
+				end
+				fprint(LOGLEVEL.WARNING, "[LeaderLib:TryFindCallback] Failed to find global variable within Mods[%s].%s", id, name)
+				return nil
 			end
 		end
+		fprint(LOGLEVEL.ERROR, "[LeaderLib:TryFindCallback] Failed to find global mod table for UUID (%s) and name (%s)", uuid, name)
 		return nil
 	end)
 	
@@ -135,6 +139,7 @@ local function TryFindConfig(info)
 	local file = Ext.LoadFile(filePath, "data")
 	return file
 end
+
 --Mods/SuperEnemyUpgradeOverhaul_e21fcd37-daec-490d-baec-f6f3e83f1ac9/ModSettingsConfig.json
 function SettingsManager.LoadConfigFiles()
 	local order = Ext.GetModLoadOrder()

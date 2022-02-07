@@ -1,34 +1,27 @@
 package
 {
 	import controls.*;
-	import controls.contextMenu.ContextMenuMC;
+	import LS_Classes.tooltipHelper;
+
 	import controls.bars.BarHolder;
+	import controls.contextMenu.ContextMenuMC;
+	import controls.dropdowns.PresetButton;
 	import controls.panels.DraggablePanelDark;
-	import fl.motion.Color;
-	import flash.display.DisplayObject;
+
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
-	import flash.external.ExternalInterface;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;
-	import flash.text.TextFieldAutoSize;
-	import flash.ui.Keyboard;
 	import flash.utils.Dictionary;
-	import LS_Classes.tooltipHelper;
+
+	import interfaces.IInputHandler;
+
+	import system.DropdownManager;
 	import system.KeyCodeNames;
 	import system.PanelManager;
+
 	import util.ClientTimer;
-	import flash.display.StageScaleMode;
-	import flash.display.StageDisplayState;
-	import system.DropdownManager;
-	import controls.dropdowns.PresetButton;
-	import interfaces.IInputHandler;
-	import system.HotbarManager;
-	import LS_Classes.listDisplay;
-	import flash.system.Capabilities;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		

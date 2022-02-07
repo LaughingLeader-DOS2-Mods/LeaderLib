@@ -8,8 +8,9 @@ package controls.panels
 	import flash.external.ExternalInterface;
 	import LS_Classes.LSPanelHelpers;
 	import interfaces.IPanel;
+	import controls.BaseDraggableObject;
 	
-	public dynamic class DraggablePanelDark extends BaseDraggablePanel implements IPanel
+	public dynamic class DraggablePanelDark extends BaseDraggableObject implements IPanel
 	{
 		public var listHolder_mc:MovieClip;
 		public var hit_mc:MovieClip;
@@ -92,9 +93,8 @@ package controls.panels
 			}
 		}
 		
-		public override function frame1() : void
+		public function frame1() : void
 		{
-			super.frame1();
 			this.close_mc.init(this.onClose);
 			this.minimize_mc.init(this.onMinimize);
 			this.initializeDrag(this.hit_mc);

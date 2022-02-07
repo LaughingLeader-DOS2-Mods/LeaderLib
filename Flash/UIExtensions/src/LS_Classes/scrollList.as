@@ -67,7 +67,7 @@ package LS_Classes
 		private function onDragAutoScrollMove(param1:Event) : *
 		{
 			var val2:Number = NaN;
-			if(root != null && (root as MovieClip).isDragging)
+			if(root != null && MainTimeline.Instance.isDragging)
 			{
 				val2 = 0;
 				if(this.mouseY > 0 && this.mouseY < this.m_dragAutoScrollDistance)

@@ -286,7 +286,7 @@ local function OverrideStats(data, statsLoadedState)
 	if data == nil then
 		data = GameSettingsManager.Load()
 	end
-	local skills = Ext.GetStatEntries("SkillData")
+	local skills = GameHelpers.Stats.GetSkills()
 	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
 	if data.Settings.StarterTierSkillOverrides or data.Settings.LowerMemorizationRequirements then
 		local originalSkillTiers = {}

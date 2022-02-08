@@ -93,7 +93,7 @@ end
 
 ---@private
 function ParseHealingStatusToSkills()
-	for _,skillId in pairs(Ext.GetStatEntries("SkillData")) do
+	for skillId in GameHelpers.Stats.GetSkills() do
 		local props = GameHelpers.Stats.GetSkillProperties(skillId)
 		if props then
 			for _,v in pairs(props) do

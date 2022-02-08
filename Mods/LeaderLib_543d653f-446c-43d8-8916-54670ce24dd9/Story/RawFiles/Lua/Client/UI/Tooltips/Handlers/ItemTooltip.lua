@@ -38,8 +38,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					if savedSkills == nil then
 						local tooltipIcon = GameHelpers.Tooltip.GetElementAttribute(tooltip:GetElement("SkillIcon"), "Label")
 						local tooltipSkillDescription = GameHelpers.Tooltip.GetElementAttribute(tooltip:GetElement("SkillDescription"), "Label")
-						for i,skillId in pairs(Ext.GetStatEntries("SkillData")) do
-							local skill = Ext.GetStat(skillId)
+						for skill in GameHelpers.Stats.GetSkills(true) do
 							local icon = skill.Icon
 							if tooltipIcon == icon then
 								local displayName = GameHelpers.GetStringKeyText(skill.DisplayName)

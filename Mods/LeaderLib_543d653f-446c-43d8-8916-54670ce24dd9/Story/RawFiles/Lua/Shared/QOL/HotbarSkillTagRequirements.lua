@@ -157,15 +157,13 @@ else
 	end)
 
 	Ext.RegisterListener("SessionLoaded", function()
-		for _,id in pairs(Ext.GetStatEntries("SkillData")) do
-			---@type StatEntrySkillData
-			local skillData = Ext.GetStat(id)
-			for _,prop in pairs(skillData.Requirements) do
+		for skill in GameHelpers.Stats.GetSkills(true) do
+			for _,prop in pairs(skill.Requirements) do
 				if prop.Requirement == "Tag" then
 					if not Data.SkillRequirementTags[prop.Param] then
 						Data.SkillRequirementTags[prop.Param] = {}
 					end
-					Data.SkillRequirementTags[prop.Param][id] = true
+					Data.SkillRequirementTags[prop.Param][skill.Name] = true
 				end
 			end
 		end

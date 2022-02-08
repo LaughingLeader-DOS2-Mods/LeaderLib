@@ -141,7 +141,7 @@ function PullPartyIntoCombat()
 	if activeCombatId and activeCombatId > 0 then
 		local enemies = GameHelpers.Combat.GetCharacters(activeCombatId, "Enemy", referencePlayer, true)
 
-		if #enemies > 0 then
+		if enemies and #enemies > 0 then
 			for _,player in pairs(players) do
 				if not GameHelpers.Character.IsInCombat(player)
 				and not GameHelpers.Character.IsSneakingOrInvisible(player)

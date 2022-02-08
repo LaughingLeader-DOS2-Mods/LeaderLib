@@ -194,7 +194,7 @@ function GameHelpers.Stats.GetSkills(asStatsEntry)
 	else
 		local id = nil
 		return function ()
-			id = next(_cachedSkills, k)
+			id = next(_cachedSkills, id)
 			if id then
 				return Ext.GetStat(id)
 			end

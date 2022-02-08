@@ -157,13 +157,35 @@ function PullPartyIntoCombat()
 	end
 end
 
-function StartAutosaving()
-	if not Vars.IsEditorMode and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
-		local settings = SettingsManager.GetMod(ModuleUUID, false)
-		local interval = 15
-		if settings then
-			interval = settings.Global:GetVariable("AutosaveInterval", 15)
-		end
-		Osi.LeaderLib_Autosaving_InitTimer(interval)
-	end
-end
+-- function StartAutosaving(isGameLevel)
+-- 	if isGameLevel == nil then
+-- 		isGameLevel = false
+-- 	end
+-- 	if SharedData.RegionData.Current == "" then
+-- 		local level = Osi.DB_CurrentLevel:Get(nil)
+-- 		if level and level[1] then
+-- 			isGameLevel = IsGameLevel(level[1][1]) == 1
+-- 		end
+-- 	else
+-- 		isGameLevel = SharedData.RegionData.LevelType == LEVELTYPE.GAME
+-- 	end
+-- 	if not Vars.IsEditorMode and isGameLevel then
+-- 		local settings = SettingsManager.GetMod(ModuleUUID, false)
+-- 		local interval = 15
+-- 		if settings then
+-- 			interval = settings.Global:GetVariable("AutosaveInterval", 15)
+-- 		end
+-- 		Osi.LeaderLib_Autosaving_InitTimer(interval)
+-- 	end
+-- end
+
+-- RegisterListener("RegionChanged", function (region, state, levelType)
+-- 	if levelType == LEVELTYPE.GAME then
+-- 		local started = Osi.DB_LeaderLib_AutoSaving_Temp_TimerStarted:Get(nil)
+-- 		if not started or started[1][1] ~= 1 then
+-- 			StartAutosaving(true)
+-- 		end
+-- 	else
+-- 		Osi.LeaderLib_Autosaving_Stop()
+-- 	end
+-- end)

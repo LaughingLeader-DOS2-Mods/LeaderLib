@@ -101,7 +101,6 @@ NOT DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1);
 LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:StartAtGameLevel(1)] Game level started. Starting autosaving.");
 LeaderLib_Autosaving_Start();
 
-// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_Autosaving_Start()
 AND
@@ -119,14 +118,7 @@ DB_LeaderLib_Autosaving_Interval(_Flag, _Minutes)
 THEN
 LeaderLog_LogInt("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_StartAutosaving] Autosaving after [",_Minutes,"] minutes.");
 LeaderLib_Autosaving_InitTimer(_Minutes);
-// [END_NO_OSITOOLS]
-
-/* [OSITOOLS_ONLY]
-PROC
-LeaderLib_Autosaving_Start()
-THEN
-NRD_ModCall("LeaderLib", "StartAutosaving");
-*/
+//NRD_ModCall("LeaderLib", "StartAutosaving");
 
 PROC
 LeaderLib_Autosaving_Start()
@@ -184,6 +176,7 @@ DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
 AND
 _Minutes > 0
 THEN
+TimerCancel("LeaderLib_Timers_Autosaving");
 TimerLaunch("LeaderLib_Timers_Autosaving", 60000);
 DB_LeaderLib_AutoSaving_Temp_TimerStarted(1);
 

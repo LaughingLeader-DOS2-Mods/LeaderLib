@@ -20,7 +20,7 @@ settings.Global:AddLocalizedFlags({
 	"LeaderLib_BuffStatusPreserverEnabled",
 })
 settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
-settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)
+--settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)
 settings.Global:AddLocalizedVariable("AutoCombatRange", "LeaderLib_Variables_AutoCombatRange", 30, 1, 30, 1)
 
 settings.GetMenuOrder = function()
@@ -47,7 +47,7 @@ settings.GetMenuOrder = function()
 			"LeaderLib_AutosavingEnabled",
 			"LeaderLib_AutosaveOnCombatStart",
 			"LeaderLib_DisableAutosavingInCombat",
-			"AutosaveInterval",
+			--"AutosaveInterval",
 		}},	
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Fixes", "Fixes"),
 		Entries = {

@@ -194,6 +194,9 @@ end
 
 local function OnTimerFinished(timerName)
 	if not IsClient then
+		if not Vars.Initialized then
+			LoadPersistentVars(true)
+		end
 		local data = PersistentVars.TimerData[timerName]
 		PersistentVars.TimerData[timerName] = nil
 		

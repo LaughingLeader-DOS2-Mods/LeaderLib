@@ -184,10 +184,12 @@ Ext.Require("BootstrapShared.lua")
 ---@type LeaderLibPersistentVars
 PersistentVars = Common.CloneTable(defaultPersistentVars, true)
 
-function LoadPersistentVars()
+function LoadPersistentVars(skipCallback)
 	Common.InitializeTableFromSource(PersistentVars, defaultPersistentVars)
 	SkillSystem.LoadSaveData()
-	InvokeListenerCallbacks(Listeners.PersistentVarsLoaded)
+	if not skipCallback then
+		InvokeListenerCallbacks(Listeners.PersistentVarsLoaded)
+	end
 end
 
 -- local function LeaderLib_GameSessionLoad()

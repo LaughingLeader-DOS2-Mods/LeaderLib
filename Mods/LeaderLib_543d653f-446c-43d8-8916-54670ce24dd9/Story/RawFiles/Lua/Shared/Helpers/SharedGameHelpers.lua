@@ -696,3 +696,89 @@ function GameHelpers.GetTemplate(obj)
 	end
 	return nil
 end
+
+local _cachedLevels = {}
+setmetatable(_cachedLevels, {__mode ="kv"})
+local _ranCachedLevels = false
+local NonGameLevelTypes = {
+	LobbyLevel = true,
+	MenuLevel = true,
+	PhotoBoothLevel = true,
+	CharacterCreationLevel = true,
+}
+local LevelAttributeNames = {
+	"LobbyLevel",
+	"MenuLevel",
+	"PhotoBoothLevel",
+	"CharacterCreationLevel",
+	"StartLevel",
+}
+
+local function _cacheAllModLevels()
+	local manager = isClient and Ext.Client.GetModManager() or not isClient and Ext.Server.GetModManager()
+	if manager then
+		_ranCachedLevels = true
+		for _,data in pairs(manager.AvailableMods) do
+			for i=1,5 do
+				local att = LevelAttributeNames[i]
+				local levelName = data.Info[att]
+				if not StringHelpers.IsNullOrEmpty(levelName) then
+					_cachedLevels[levelName] = att
+				end
+			end
+		end
+	end
+end
+
+---@param levelName string
+---@param levelType LEVELTYPE
+---@return boolean
+function GameHelpers.IsLevelType(levelName, levelType)
+	if _EXTVERSION >= 56 then
+		if not _ranCachedLevels then
+			_cacheAllModLevels()
+		end
+		local levelData = _cachedLevels[levelName]
+		if levelType == LEVELTYPE.CHARACTER_CREATION then
+			return levelData == "CharacterCreationLevel"
+		elseif levelType == LEVELTYPE.LOBBY then
+			return levelData == "LobbyLevel"
+		elseif levelType == LEVELTYPE.GAME then
+			return StringHelpers.IsNullOrEmpty(levelData) or not NonGameLevelTypes[levelData]
+		end
+	elseif Ext.OsirisIsCallable() then
+		if levelType == LEVELTYPE.GAME then
+			return IsGameLevel(levelName) == 1
+		elseif levelType == LEVELTYPE.CHARACTER_CREATION then
+			return IsCharacterCreationLevel(levelName) == 1
+		elseif levelType == LEVELTYPE.LOBBY then
+			return IsGameLevel(levelName) == 0
+		end
+	end
+	return false
+end
+
+---@param levelName string
+---@return LEVELTYPE
+function GameHelpers.GetLevelType(levelName)
+	if _EXTVERSION >= 56 then
+		if not _ranCachedLevels then
+			_cacheAllModLevels()
+		end
+		local levelData = _cachedLevels[levelName]
+		if levelData == "CharacterCreationLevel" then
+			return LEVELTYPE.CHARACTER_CREATION
+		elseif levelData == "LobbyLevel" then
+			return LEVELTYPE.LOBBY
+		end
+	elseif Ext.OsirisIsCallable() then
+		if IsGameLevel(levelName) == 1 then
+			return LEVELTYPE.GAME
+		elseif IsCharacterCreationLevel(levelName) == 1 then
+			return LEVELTYPE.CHARACTER_CREATION
+		else
+			return LEVELTYPE.LOBBY
+		end
+	end
+	return LEVELTYPE.GAME
+end

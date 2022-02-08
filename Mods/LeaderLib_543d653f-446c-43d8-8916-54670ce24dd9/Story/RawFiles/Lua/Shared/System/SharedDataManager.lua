@@ -5,6 +5,7 @@ end
 local ClientCharacterData = Classes.ClientCharacterData
 
 local isClient = Ext.IsClient()
+local _EXTVERSION = Ext.Version()
 
 ---@class LEVELTYPE
 LEVELTYPE = {
@@ -47,6 +48,34 @@ SharedData = {
 	ModData = {},
 	GameMode = GAMEMODE.CAMPAIGN
 }
+
+local function SetCurrentLevelData()
+	if _EXTVERSION >= 56 then
+		local level = Ext.Entity.GetCurrentLevel()
+		if level then
+			local levelName = level.LevelDesc.LevelName
+			SharedData.RegionData.Current = levelName
+			SharedData.RegionData.LevelType = GameHelpers.GetLevelType(levelName)
+			-- if levelName == "SYS_Character_Creation_A"
+			-- or levelName == "SYS_GM_Waitingspot_A"
+			-- then
+			-- 	SharedData.RegionData.LevelType = LEVELTYPE.CHARACTER_CREATION
+			-- elseif levelName == "ARENA_Menu"
+			-- or levelName == "DOS2_MENUArenaA"
+			-- or levelName == "GM_SYS_Lobby"
+			-- or levelName == "GM_SYS_MenuLevel_A" then
+			-- 	SharedData.RegionData.LevelType = LEVELTYPE.LOBBY
+			-- else
+			-- 	SharedData.RegionData.LevelType = LEVELTYPE.GAME
+			-- end
+		end
+	end
+end
+
+SetCurrentLevelData()
+
+Ext.RegisterListener("SessionLoading", SetCurrentLevelData)
+Ext.RegisterListener("SessionLoaded", SetCurrentLevelData)
 
 if isClient then
 	---@type ClientData

@@ -53,13 +53,15 @@ end)
 ---@param isInCombat boolean|nil
 ---@param ... any Optional parameters to pass to listeners.
 function TagManager:TagObject(object, isInCombat, ...)
-	object = GameHelpers.TryGetObject(object, true)
-	local isCharacter = GameHelpers.Ext.ObjectIsCharacter(object)
-	isInCombat = isInCombat
-	if isInCombat == nil then
-		isInCombat = (isCharacter and Ext.OsirisIsCallable() and CharacterIsInCombat(object.MyGuid) == 1)
+	object = GameHelpers.TryGetObject(object)
+	if object then
+		local isCharacter = GameHelpers.Ext.ObjectIsCharacter(object)
+		isInCombat = isInCombat
+		if isInCombat == nil then
+			isInCombat = (isCharacter and Ext.OsirisIsCallable() and CharacterIsInCombat(object.MyGuid) == 1)
+		end
+		InvokeListenerCallbacks(TagManager.Callbacks.TagObject, object, isInCombat, isCharacter, ...)
 	end
-	InvokeListenerCallbacks(TagManager.Callbacks.TagObject, object, isInCombat, isCharacter, ...)
 end
 
 ---@param ... any Optional parameters to pass to listeners.

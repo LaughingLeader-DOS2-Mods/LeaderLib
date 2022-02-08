@@ -44,7 +44,7 @@ if _EXTVERSION >= 56 then
 		visual = function (...)
 			if isClient then
 				Ext.IO.SaveFile("Dumps/Visual.json", Ext.DumpExport(Client:GetCharacter().Visual))
-				Ext.Print("[dump:cc] Saved visual data to Dumps/Visual.json")
+				Ext.Print("[dump:visual] Saved visual data to Dumps/Visual.json")
 			else
 				SendDumpCommand(...)
 			end
@@ -52,14 +52,20 @@ if _EXTVERSION >= 56 then
 		character = function (dumpType, synced, ...)
 			local fileName = string.format("Dumps/Character_%s.json", isClient and "Client" or "Server")
 			Ext.IO.SaveFile(fileName, Ext.DumpExport(Ext.GetCharacter(me.NetID)))
-			Ext.Print("[dump:cc] Saved character data to",fileName)
+			Ext.Print("[dump:character] Saved character data to",fileName)
 			if not synced then
 				SendDumpCommand(dumpType, true, ...)
 			end
 		end,
 		uiext = function (...)
 			if isClient then
-				local data = {UIExtensions = UIExtensions.Instance}
+				local data = {
+					UIExtensions = UIExtensions.Instance,
+					CCExt = UIExtensions.CC.GetInstance(false) or "nil"
+				}
+				if Mods.LLHotbarExtension then
+					data.HotbarExt = Mods.LLHotbarExtension.HotbarExt.Instance
+				end
 				for id,v in pairs(Data.UIType) do
 					if type(v) == "number" then
 						local ui = Ext.GetUIByType(v)
@@ -69,9 +75,19 @@ if _EXTVERSION >= 56 then
 					end
 				end
 				Ext.SaveFile("Dumps/UIExtensions.json", Ext.DumpExport(data))
-				Ext.Print("[dump:cc] Saved UIExtensions data to Dumps/UIExtensions.json")
+				Ext.Print("[dump:uiext] Saved UIExtensions data to Dumps/UIExtensions.json")
 			else
 				SendDumpCommand(...)
+			end
+		end,
+		modmanager = function (dumpType, synced, ...)
+			if _EXTVERSION >= 56 then
+				local fileName = string.format("Dumps/ModManager_%s.json", isClient and "Client" or "Server")
+				Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Ext.Client.GetModManager() or Ext.Server.GetModManager()))
+				Ext.Print("[dump:modmanager] Saved mod manager data to",fileName)
+				if not synced then
+					SendDumpCommand(dumpType, true, ...)
+				end
 			end
 		end
 	}

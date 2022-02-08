@@ -731,39 +731,19 @@ local function _cacheAllModLevels()
 end
 
 ---@param levelName string
----@param levelType LEVELTYPE
----@return boolean
-function GameHelpers.IsLevelType(levelName, levelType)
-	if _EXTVERSION >= 56 then
-		if not _ranCachedLevels then
-			_cacheAllModLevels()
-		end
-		local levelData = _cachedLevels[levelName]
-		if levelType == LEVELTYPE.CHARACTER_CREATION then
-			return levelData == "CharacterCreationLevel"
-		elseif levelType == LEVELTYPE.LOBBY then
-			return levelData == "LobbyLevel"
-		elseif levelType == LEVELTYPE.GAME then
-			return StringHelpers.IsNullOrEmpty(levelData) or not NonGameLevelTypes[levelData]
-		end
-	elseif Ext.OsirisIsCallable() then
-		if levelType == LEVELTYPE.GAME then
-			return IsGameLevel(levelName) == 1
-		elseif levelType == LEVELTYPE.CHARACTER_CREATION then
-			return IsCharacterCreationLevel(levelName) == 1
-		elseif levelType == LEVELTYPE.LOBBY then
-			return IsGameLevel(levelName) == 0
-		end
-	end
-	return false
-end
-
----@param levelName string
 ---@return LEVELTYPE
 function GameHelpers.GetLevelType(levelName)
 	if _EXTVERSION >= 56 then
 		if not _ranCachedLevels then
-			_cacheAllModLevels()
+			if Ext.GetGameState() == "Running" then
+				_cacheAllModLevels()
+			else
+				if levelName == "SYS_Character_Creation_A" then
+					return LEVELTYPE.CHARACTER_CREATION
+				elseif levelName == "ARENA_Menu" then
+					return LEVELTYPE.LOBBY
+				end
+			end
 		end
 		local levelData = _cachedLevels[levelName]
 		if levelData == "CharacterCreationLevel" then
@@ -781,4 +761,11 @@ function GameHelpers.GetLevelType(levelName)
 		end
 	end
 	return LEVELTYPE.GAME
+end
+
+---@param levelName string
+---@param levelType LEVELTYPE
+---@return boolean
+function GameHelpers.IsLevelType(levelName, levelType)
+	return GameHelpers.GetLevelType(levelName) == levelType
 end

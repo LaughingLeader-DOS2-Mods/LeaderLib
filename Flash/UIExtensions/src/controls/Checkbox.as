@@ -17,6 +17,8 @@ package controls
       public var filterBool:Boolean = false;
       public var stateID:Number = 0;
       public var tooltip:String = "";
+
+      public var callbackName:String = "LeaderLib_UIExtensions_OnControl";
       
       public function Checkbox()
       {
@@ -46,7 +48,7 @@ package controls
          }
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
          Registry.ExtCall("PlaySound","UI_Gen_XButton_Click");
-         Registry.ExtCall("LeaderLib_UIExtensions_OnControl", "checkbox", this.id, this.stateID);
+         Registry.ExtCall(this.callbackName, "checkbox", this.id, this.stateID);
       }
       
       public function onClick(e:MouseEvent) : void

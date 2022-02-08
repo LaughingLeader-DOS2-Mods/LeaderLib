@@ -151,7 +151,7 @@ package LS_Classes
 		
 		public function onMouseOver(e:MouseEvent) : *
 		{
-			tooltipHelper.ShowTooltipForMC(this as MovieClip,this.root,this.alignTooltip != null?this.alignTooltip:"right");
+			tooltipHelper.ShowTooltipForMC(this as MovieClip,MainTimeline.Instance,this.alignTooltip != null?this.alignTooltip:"right");
 			if(!this.m_Disabled)
 			{
 				if(this.SND_Over != null)

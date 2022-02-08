@@ -371,17 +371,14 @@ if Ext.IsServer() then
 		end)
 	end
 else
-	local createdCheckboxID = -1
-
-	---@param ui LeaderLibUIExtensions
-	---@param controlType string
-	---@param id number
-	---@param state number
-	local function SetSkipTutorial(ui, controlType, id, state)
-		GameSettings.Settings.SkipTutorial.Enabled = state == 0 and false or true
-		Ext.PostMessageToServer("LeaderLib_SetSkipTutorial", state == 0 and "false" or "true")
-		GameSettingsManager.Save()
-	end
+	Ext.RegisterUINameCall("LeaderLib_CC_SkipTutorialToggled", function (ui, event, controlType, id, state)
+		local nextState = state == 0 and false or true
+		if GameSettings.Settings.SkipTutorial.Enabled ~= nextState then
+			GameSettings.Settings.SkipTutorial.Enabled = nextState
+			Ext.PostMessageToServer("LeaderLib_SetSkipTutorial", nextState and "true" or "false")
+			GameSettingsManager.Save()
+		end
+	end)
 
 	--@param event InputEvent
 	--local function OnInput(event, inputMap, controllerEnabled)
@@ -393,38 +390,11 @@ else
 	local function OnInput(eventName, pressed, id, inputMap, controllerEnabled)
 		if controllerEnabled and createdCheckboxID > -1 and 
 			(Input.IsPressed(Data.Input.UICreationTabPrev) and pressed and eventName == "ConnectivityMenu") then
-			local main = UIExtensions.Instance:GetRoot()
+			local main = UIExtensions.CC.Root
 			if main then
-				main.toggleCheckbox(createdCheckboxID)
+				main.skipTutorial_mc.toggle()
 			end
 		end
-	end
-
-	---@param ccUI UIObject
-	local function GetCheckboxPos(inst, main, checkboxWidth, checkboxHeight, ccUI)
-		checkboxWidth = checkboxWidth or 56
-		checkboxHeight = checkboxHeight or 44
-		if Ext.Version() >= 56 then
-			local x = 4
-			local y = inst.FlashMovieSize[2] - (checkboxHeight + 4)
-			if ccUI then
-				local this = ccUI:GetRoot()
-				if this.portraits_mc then
-					x = this.portraits_mc.x
-					local x,y2 = Game.Math.ConvertScreenCoordinates(x, y, inst.FlashSize[1], inst.FlashSize[2], ccUI.FlashSize[1], ccUI.FlashSize[2])
-					return x,y
-				end
-			end
-			return x,y
-		else
-			if main then
-				local x = 4
-				local y = main.height - (checkboxHeight + 4)
-				--local y = main.screenHeight - (checkboxHeight + 4)
-				return x,y
-			end
-		end
-		return SkipTutorial.CheckBoxPos[1] or 0, SkipTutorial.CheckBoxPos[2] or 1016
 	end
 
 	local function SetupSkipTutorialCheckbox()
@@ -438,54 +408,22 @@ else
 		local levelName = GameHelpers.GetStringKeyText(GameSettings.Settings.SkipTutorial.Destination, "Unknown")
 		local description = string.format(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "If enabled, the game will skip the tutorial and go right to the configured starting level (%s)."), levelName)
 		
-		local inst = UIExtensions.Instance
-		local main = inst:GetRoot()
-
-		local x,y = 0,0
-		local ccUI = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.characterCreation or Data.UIType.characterCreation_c)
-			
-		if _EXTVERSION >= 56 then
-			UIExtensions.ResizeToUI(ccUI)
+		local main = UIExtensions.CC.Root
+		if main then
+			main.skipTutorial_mc.setText(title)
+			main.skipTutorial_mc.tooltip = description
+			main.skipTutorial_mc.setState(GameSettings.Settings.SkipTutorial.Enabled and 1 or 0)
 		end
-
-		x,y = GetCheckboxPos(inst, main, nil, nil, ccUI)
-
-		local controlId,index = UIExtensions.AddCheckbox(SetSkipTutorial, title, description, GameSettings.Settings.SkipTutorial.Enabled and 1 or 0, x, y)
-		createdCheckboxID = controlId
-		local checkbox = main.mainPanel_mc.elements[index]
-
-		--x,y = GetCheckboxPos(inst, main, checkbox.width, nil, ccUI)
-		--checkbox.x = x
 
 		Input.RegisterListener(OnInput)
 	end
 
-	local registeredStartListener = false
-
 	local function SetupUI()
 		SetupSkipTutorialCheckbox()
-		-- if not registeredStartListener then
-		-- 	Ext.RegisterUINameCall("startGame", function(ui, call, ...)
-		-- 		if createdCheckboxID > -1 then
-		-- 			UIExtensions.RemoveControl(createdCheckboxID)
-		-- 			createdCheckboxID = -1
-		-- 		else
-		-- 			--Fallback
-		-- 			UIExtensions.RemoveAllControls()
-		-- 		end
-		-- 		Input.RemoveListener(OnInput)
-		-- 	end)
-		-- 	registeredStartListener = true
-		-- end
 	end
 
 	local function ClearUI()
-		if createdCheckboxID > -1 then
-			UIExtensions.RemoveControl(createdCheckboxID)
-			createdCheckboxID = -1
-		end
 		Input.RemoveListener(OnInput)
-		UIExtensions.ResetSize()
 	end
 
 	---@param sharedData SharedData

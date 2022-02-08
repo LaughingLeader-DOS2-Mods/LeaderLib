@@ -18,39 +18,70 @@ package system
 			return this.entries.length;
 		}
 
+		public function rebuildListIndexes() : void
+		{
+			var obj:MovieClip = null;
+			for (var i:uint=this.entries.length; i--;)
+			{
+				obj = this.entries[i];
+				if(obj)
+				{
+					obj.listIndex = i;
+				}
+			}
+		}
+
 		public function getIndexByID(id:*) : int
 		{
 			var obj:MovieClip = null;
-			var index:int = 0;
-			while(index < this.entries.length)
+			for (var i:uint=this.entries.length; i--;)
 			{
-				obj = this.entries[index];
+				obj = this.entries[i];
 				if(obj && obj.id == id)
 				{
-					return index;
+					return i;
 				}
-				index++;
 			}
 			return -1;
+		}
+
+		public function removeAt(obj:MovieClip, index:uint) : Boolean
+		{
+			var success:Boolean = this.removeChild(obj) != null;
+			if (obj is IDestroyable)
+			{
+				obj.OnDestroying();
+			}
+			this.entries.splice(index, 1);
+			return success;
 		}
 
 		public function remove(obj:MovieClip) : Boolean
 		{
 			var success:Boolean = this.removeChild(obj) != null;
-			var index:int = 0;
-			while(index < this.entries.length)
+			for (var i:uint=this.entries.length; i--;)
 			{
-				if(this.entries[index] == obj)
+				if(this.entries[i] == obj)
 				{
-					if (obj is IDestroyable)
-					{
-						obj.OnDestroying();
-					}
-					this.entries.splice(index, 1);
-					success = true;
+					success = this.removeAt(obj, i);
 					break;
 				}
-				index++;
+			}
+			if(success) {
+				this.rebuildListIndexes();
+			}
+			return success;
+		}
+
+		public function removeAtIndex(index:uint) : Boolean
+		{
+			var success:Boolean = false;
+			var obj:MovieClip = this.entries[index];
+			if (obj) {
+				success = this.removeAt(obj, index);
+			}
+			if(success) {
+				this.rebuildListIndexes();
 			}
 			return success;
 		}
@@ -59,21 +90,18 @@ package system
 		{
 			var success:Boolean = false;
 			var obj:MovieClip = null;
-			var index:int = 0;
-			while(index < this.entries.length)
+			for (var i:uint=this.entries.length; i--;)
 			{
-				obj = this.entries[index];
+				obj = this.entries[i];
 				if(obj && obj.id == id)
 				{
-					if (obj is IDestroyable)
-					{
-						obj.OnDestroying();
+					if(this.removeAt(obj, i)) {
+						success = true;
 					}
-					this.removeChild(obj);
-					this.entries.splice(index, 1);
-					success = true;
 				}
-				index++;
+			}
+			if(success) {
+				this.rebuildListIndexes();
 			}
 			return success;
 		}
@@ -81,19 +109,13 @@ package system
 		public function clearAll() : void
 		{
 			var obj:MovieClip = null;
-			var index:int = 0;
-			while(index < this.entries.length)
+			for (var i:uint=this.entries.length; i--;)
 			{
-				obj = this.entries[index];
+				obj = this.entries[i];
 				if(obj)
 				{
-					if (obj is IDestroyable)
-					{
-						obj.OnDestroying();
-					}
-					this.removeChild(obj);
+					this.removeAt(obj, i)
 				}
-				index++;
 			}
 			this.entries.length = 0;
 		}

@@ -148,18 +148,18 @@ local function OnResolution(ui, call, w, h)
 	-- 	--ui:ExternalInterfaceCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
 	-- 	UIExtensions.ResizeToUI(Ext.GetUIByType(Vars.ControllerEnabled and Data.UIType.characterCreation_c or Data.UIType.characterCreation))
 	-- end
-	if w == nil then
-		if _EXTVERSION >= 56 then
-			w,h = table.unpack(ui.FlashMovieSize)
-			print(call, w,h)
-			local this = UIExtensions.Root
-			if this then
-				this.OnRes(w,h)
-			end
-		end
-	else
-		print(call, w, h)
-	end
+	-- if w == nil then
+	-- 	if _EXTVERSION >= 56 then
+	-- 		w,h = table.unpack(ui.FlashMovieSize)
+	-- 		print(call, w,h)
+	-- 		local this = UIExtensions.Root
+	-- 		if this then
+	-- 			this.OnRes(w,h)
+	-- 		end
+	-- 	end
+	-- else
+	-- 	print(call, w, h)
+	-- end
 	-- if not justResized then
 	-- 	justResized = true
 	-- 	ui:Resize(1920, 1080)
@@ -458,63 +458,62 @@ local function SetVisibility(b)
 end
 
 function UIExtensions.ResetSize()
-	-- local inst = UIExtensions.Instance
-	-- if inst then
-	-- 	inst.MovieLayout = 6
-	-- 	inst.AnchorPos = "topleft"
-	-- 	inst.AnchorTPos = "topleft"
-	-- 	inst.AnchorTarget = "screen"
-	-- 	local this = inst:GetRoot()
-	-- 	this.layout = "fillVFit"
-	-- 	this.anchorPos = "topleft"
-	-- 	this.anchorTPos = "topleft"
-	-- 	this.anchorTarget = "screen"
-	-- 	inst:ExternalInterfaceCall("setAnchor", this.anchorPos, this.anchorTarget, this.anchorPos)
-
-	-- 	justResized = true
-	-- 	inst:Resize(1920, 1080)
-	-- end
+	local inst = UIExtensions.Instance
+	if inst then
+		inst.MovieLayout = 6
+		inst.AnchorPos = "topleft"
+		inst.AnchorTPos = "topleft"
+		inst.AnchorTarget = "screen"
+		local this = inst:GetRoot()
+		this.layout = "fillVFit"
+		this.anchorPos = "topleft"
+		this.anchorTPos = "topleft"
+		this.anchorTarget = "screen"
+		--inst:ExternalInterfaceCall("setAnchor", this.anchorPos, this.anchorTarget, this.anchorPos)
+		justResized = true
+		inst:Resize(1920, 1080)
+	end
 end
 
 ---@param targetUIObject UIObject
 function UIExtensions.ResizeToUI(targetUIObject)
-	-- local extInst = UIExtensions.Instance
-	-- local extRoot = extInst:GetRoot()
-	-- local targetRoot = targetUIObject:GetRoot()
-	-- if targetRoot then
-	-- 	if not StringHelpers.IsNullOrEmpty(targetRoot.layout) then
-	-- 		extRoot.layout = targetRoot.layout
-	-- 	end
-	-- 	if not StringHelpers.IsNullOrEmpty(targetRoot.alignment) then
-	-- 		extRoot.alignment = targetRoot.alignment
-	-- 	end
+	local extInst = UIExtensions.Instance
+	local extRoot = extInst:GetRoot()
+	local targetRoot = targetUIObject:GetRoot()
+	if targetRoot then
+		if not StringHelpers.IsNullOrEmpty(targetRoot.layout) then
+			extRoot.layout = targetRoot.layout
+		end
+		if not StringHelpers.IsNullOrEmpty(targetRoot.alignment) then
+			extRoot.alignment = targetRoot.alignment
+		end
 
-	-- 	extRoot.anchorPos = targetUIObject.AnchorPos
-	-- 	extRoot.anchorTarget = targetUIObject.AnchorTarget
-	-- 	extRoot.anchorTPos = targetUIObject.AnchorTPos
-	-- 	extInst:ExternalInterfaceCall("setAnchor", extRoot.anchorPos, extRoot.anchorTarget, extRoot.anchorPos)
+		extRoot.anchorPos = targetUIObject.AnchorPos
+		extRoot.anchorTarget = targetUIObject.AnchorTarget
+		extRoot.anchorTPos = targetUIObject.AnchorTPos
+		--extInst:ExternalInterfaceCall("setAnchor", extRoot.anchorPos, extRoot.anchorTarget, extRoot.anchorPos)
 
-	-- 	local w,h = table.unpack(targetUIObject.FlashMovieSize)
+		local w,h = table.unpack(targetUIObject.FlashMovieSize)
 
-	-- 	extInst.MovieLayout = targetUIObject.MovieLayout
-	-- 	extInst.AnchorPos = targetUIObject.AnchorPos
-	-- 	extInst.AnchorTPos = targetUIObject.AnchorTPos
-	-- 	extInst.AnchorTarget = targetUIObject.AnchorTarget
+		extInst.MovieLayout = targetUIObject.MovieLayout
+		extInst.AnchorPos = targetUIObject.AnchorPos
+		extInst.AnchorTPos = targetUIObject.AnchorTPos
+		extInst.AnchorTarget = targetUIObject.AnchorTarget
 		
-	-- 	justResized = true
-	-- 	extInst:Resize(w, h)
+		justResized = true
+		extInst:Resize(w, h)
 
-	-- 	if Vars.LeaderDebugMode then
-	-- 		Ext.SaveFile("Dumps/UIExtensions.json", Ext.DumpExport({
-	-- 			TargetWidth = w,
-	-- 			TargetHeight = h,
-	-- 			GetUIScaleMultiplier = extInst:GetUIScaleMultiplier(),
-	-- 			CC_GetUIScaleMultiplier = targetUIObject:GetUIScaleMultiplier(),
-	-- 			ZZCC = targetUIObject,
-	-- 			UIExtensions = extInst,
-	-- 		}))
-	-- 	end
-	-- end
+		-- if Vars.LeaderDebugMode then
+		-- 	Ext.SaveFile("Dumps/UIExtensions.json", Ext.DumpExport({
+		-- 		TargetWidth = w,
+		-- 		TargetHeight = h,
+		-- 		GetUIScaleMultiplier = extInst:GetUIScaleMultiplier(),
+		-- 		CC_GetUIScaleMultiplier = targetUIObject:GetUIScaleMultiplier(),
+		-- 		ZZCC = targetUIObject,
+		-- 		UIExtensions = extInst,
+		-- 	}))
+		-- end
+	end
 end
 
 local registeredControllerListeners = false

@@ -5,7 +5,6 @@ package
 
 	import controls.bars.BarHolder;
 	import controls.contextMenu.ContextMenuMC;
-	import controls.dropdowns.PresetButton;
 	import controls.panels.DraggablePanelDark;
 
 	import flash.display.MovieClip;
@@ -68,8 +67,6 @@ package
 		public var screenHeight:Number = 0;
 
 		private static var instance:MainTimeline;
-
-		public var presetButton:PresetButton;
 
 		public var inputHandlers:Array;
 
@@ -205,7 +202,7 @@ package
 		public function onEventInit() : void
 		{
 			Registry.ExtCall("registeranchorId", this.anchorId);
-			//Registry.ExtCall("setAnchor",this.anchorPos, this.anchorTarget, this.anchorTPos);
+			Registry.ExtCall("setAnchor",this.anchorPos, this.anchorTarget, this.anchorTPos);
 		}
 
 		public function onEventResize() : void
@@ -547,16 +544,6 @@ package
 			panel.init(title);
 			return this.panels_mc.add(panel);
 		}
-
-		public function togglePresetButton(b:Boolean, destroyEntries:Boolean = false): void
-		{
-			this.presetButton.visible = b;
-			this.presetButton.mouseEnabled = b;
-			this.presetButton.mouseChildren = b;
-			if(destroyEntries) {
-				this.presetButton.combo_mc.removeAll();
-			}
-		}
 		
 		public function frame1() : void
 		{
@@ -618,12 +605,6 @@ package
 			// this.screenScaleHelper.doubleClickEnabled = false;
 			// this.screenScaleHelper.tabEnabled = false;
 			// this.screenScaleHelper.tabChildren = false;
-
-			this.presetButton = new PresetButton();
-			this.presetButton.init();
-			this.addChild(presetButton);
-
-			this.togglePresetButton(false);
 
 			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
 			//this.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove, true);

@@ -31,12 +31,22 @@ package controls.dropdowns
 			this.combo_mc.m_dropOutYDisplacement = -2;
 			this.combo_mc.bgHSpacing = -3;
 			this.addChild(combo_mc);
+			this.combo_mc.addEventListener(Event.CHANGE,this.onChange);
+			this.combo_mc.addEventListener(Event.OPEN,this.onOpen);
 		}
 
 		public function setText(tooltipText:String = "") : *
 		{
 			this.tooltip = tooltipText;
 			this.graphics_mc.tooltip = this.tooltip;
+		}
+		
+		public function get length() : uint
+		{
+			if(this.combo_mc) {
+				return this.combo_mc.m_scrollList.length;
+			}
+			return 0;
 		}
 		
 		public function onOpen(e:Event) : *
@@ -88,13 +98,18 @@ package controls.dropdowns
 			selectContainer.x = pos.x - selectContainer.width;
             selectContainer.y = Math.round(pos.y);
 		}
+
+		public function removeAll() : void
+		{
+			if(this.combo_mc) {
+				this.combo_mc.removeAll();
+			}
+		}
 		
 		public function frame1() : void
 		{
 			this.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
 			this.addEventListener(MouseEvent.MOUSE_OUT,MainTimeline.Instance.onMouseOutTooltip);
-			this.combo_mc.addEventListener(Event.CHANGE,this.onChange);
-			this.combo_mc.addEventListener(Event.OPEN,this.onOpen);
 			// this.divider = new scrollbarDivider();
 			// this.divider.x = 241;
 			// this.divider.y = 2;

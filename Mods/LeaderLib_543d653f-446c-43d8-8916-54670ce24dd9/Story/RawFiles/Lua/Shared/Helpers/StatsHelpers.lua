@@ -403,6 +403,7 @@ local RequirementFunctions = {
 ---@return boolean
 function GameHelpers.Stats.CharacterHasRequirements(character, statId)
 	local stat = Ext.GetStat(statId)
+	local isInCombat = RequirementFunctions.Combat(character, "Combat", -1, false)
 	if stat and stat.Requirements then
 		for _,req in pairs(stat.Requirements) do
 			if req.Requirement == "Tag" then
@@ -461,6 +462,18 @@ function GameHelpers.Stats.CharacterHasRequirements(character, statId)
                     return false
                 end
             end
+			local sourceCost = stat["Magic Cost"] or 0
+			if sourceCost > 0 then
+				if character.Stats.MPStart < sourceCost then
+					return false
+				end
+			end
+			local apCost = stat.ActionPoints or 0
+			if apCost > 0 and isInCombat then
+				if character.Stats.CurrentAP < apCost then
+					return false
+				end
+			end
 		end
 		
 		return true

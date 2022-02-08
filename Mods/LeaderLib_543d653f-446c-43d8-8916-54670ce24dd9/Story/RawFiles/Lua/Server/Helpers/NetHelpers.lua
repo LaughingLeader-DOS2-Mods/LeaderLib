@@ -59,3 +59,11 @@ function GameHelpers.Net.Broadcast(channel, payload, excludeCharacter)
 	end
 	return true
 end
+
+--Old Osiris support
+---@deprecated
+---@param channel string
+---@param payload string
+function BroadcastToClient(channel, uuid)
+	GameHelpers.Net.PostToUser(uuid, channel)
+end

@@ -197,6 +197,7 @@ NRD_ModCall("LeaderLib", "Debug_Iterator_PrintDeltamod", (STRING)_Item, _DeltaMo
 IF
 TimerFinished("Timers_LeaderLib_Debug_LuaReset")
 THEN
+GlobalClearFlag("LeaderLib_ResettingLua");
 NRD_ModCall("LeaderLib", "OnLuaReset");
 NRD_ModCall("LeaderLib", "CharacterSheet_StorePartyValues");
 */

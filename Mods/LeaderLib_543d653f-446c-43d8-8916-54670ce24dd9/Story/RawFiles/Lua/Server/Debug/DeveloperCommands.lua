@@ -48,6 +48,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			Ext.SaveFile("LeaderLib_Debug_PersistentVars.json", Common.JsonStringify(varData))
 		end
 		TimerCancel("Timers_LeaderLib_Debug_LuaReset")
+		GlobalSetFlag("LeaderLib_ResettingLua")
 		TimerLaunch("Timers_LeaderLib_Debug_LuaReset", 500)
 		PrintDebug("[LeaderLib:luareset] Reseting lua.")
 		NRD_LuaReset(1,1,1)

@@ -191,3 +191,11 @@ function OnLuaReset()
 	local payload = Common.JsonStringify({Event="LuaReset", Args={region}, _PrintSettings=Vars.Print, _CommandSettings = Vars.Commands})
 	GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", payload)
 end
+
+if Ext.Version() >= 56 then
+	Ext.Events.ResetCompleted:Subscribe(function ()
+		if Ext.OsirisIsCallable() and GlobalGetFlag("LeaderLib_ResettingLua") == 0 then
+			OnLuaReset()
+		end
+	end)
+end

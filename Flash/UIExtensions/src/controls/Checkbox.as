@@ -109,6 +109,8 @@ package controls
          this.label_txt.defaultTextFormat.color = 0xFFFFFF;
          this.label_txt.defaultTextFormat.font = "Quadraat Offc Pro";
          this.label_txt.autoSize = TextFieldAutoSize.LEFT;
+
+         this.setState(this.stateID);
       }
    }
 }

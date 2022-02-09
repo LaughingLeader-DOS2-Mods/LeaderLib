@@ -1,3 +1,5 @@
+local _EXTVERSION = Ext.Version()
+
 ---Data passed to hit callbacks, such as the various functions in SkillListeners.lua
 ---@class HitData
 ---@field Damage integer
@@ -116,24 +118,54 @@ function HitData:PrintTargets()
 	PrintDebug("============")
 end
 
+---@param target DamageList
+---@param source DamageList
+local function CopyDamageList(target, source)
+	if not target or target == source then
+		return
+	end
+	for _,damageType in Data.DamageTypes:Get() do
+		target:Clear(damageType)
+	end
+	target:Merge(source)
+end
+
 ---Updates HitStatus.Hit and HitContext.Hit to HitRequest, so property changes are applied.
 function HitData:UpdateHitRequest()
 	if self.HitRequest then
-		self.HitStatus.Hit = self.HitRequest
-		if self.HitContext and self.HitContext.Hit then
-			self.HitContext.Hit = self.HitRequest
+		--No longer needed in v56 since Hit is a reference type now.
+		if _EXTVERSION < 56 then
+			self.HitStatus.Hit = self.HitRequest
+			if self.HitContext and self.HitContext.Hit then
+				self.HitContext.Hit = self.HitRequest
+			end
+		else
+			-- Ext.Dump({
+			-- 	HitRequest = self.HitRequest and self.HitRequest.DamageList:ToTable() or "nil",
+			-- 	HitContext = (self.HitContext and self.HitContext.CharacterHitDamageList) and self.HitContext.CharacterHitDamageList:ToTable() or "nil",
+			-- 	HitStatus = (self.HitStatus and self.HitStatus.Hit) and self.HitStatus.Hit.DamageList:ToTable() or "nil",
+			-- })
 		end
+		-- Ext.IO.SaveFile("Dumps/HitCrap.json", Ext.DumpExport({
+		-- 	HitStatus = self.HitStatus,
+		-- 	HitRequest = self.HitRequest,
+		-- 	HitContext = self.HitContext
+		-- }))
 	end
 end
 
 ---Applies any DamageList changes to the actual hit.
 ---@param recalculate boolean|nil If true, lifesteal is recalculated.
 function HitData:ApplyDamageList(recalculate)
-	NRD_HitStatusClearAllDamage(self.Target, self.Handle)
-	for k,v in pairs(self.DamageList:ToTable()) do
-		NRD_HitStatusAddDamage(self.Target, self.Handle, v.DamageType, v.Amount)
+	if _EXTVERSION < 56 then
+		self.HitRequest.DamageList = self.DamageList
+		NRD_HitStatusClearAllDamage(self.Target, self.Handle)
+		for k,v in pairs(self.DamageList:ToTable()) do
+			NRD_HitStatusAddDamage(self.Target, self.Handle, v.DamageType, v.Amount)
+		end
+	else
+		CopyDamageList(self.HitStatus.Hit.DamageList, self.DamageList)
 	end
-	self.HitRequest.DamageList = self.DamageList
 	if recalculate then
 		self:Recalculate(true, true)
 	else
@@ -155,8 +187,8 @@ function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamag
 	--Recalculate LifeSteal
 	if self.HitRequest then
 		self.HitRequest.ArmorAbsorption = 0
-		if self.HitRequest.TotalDamageDone ~= total 
-		and total ~= 0 
+		if self.HitRequest.TotalDamageDone ~= total
+		and total ~= 0
 		and GameHelpers.Ext.ObjectIsCharacter(self.TargetObject)
 		then
 			self.HitRequest.ArmorAbsorption = self.HitRequest.ArmorAbsorption + Game.Math.ComputeArmorDamage(self.DamageList, self.TargetObject.Stats.CurrentArmor)

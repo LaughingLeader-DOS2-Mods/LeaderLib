@@ -1,15 +1,17 @@
 ---@class CCExtensionsUI
 ---@field Root FlashMainTimeline
 ---@field Instance UIObject
+---@field Visible boolean
 local CCExt = {
 	ID = "LeaderLib_CharacterCreationExtensions",
 	Layer = 3,
 	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_CharacterCreationExtensions.swf",
 	Initialized = false,
-	Visible = false
 }
 
 UIExtensions.CC = CCExt
+
+local CharacterCreation = Classes.UIWrapper:CreateFromType(Data.UIType.characterCreation, {ControllerID = Data.UIType.characterCreation_c, IsControllerSupported = true})
 
 function CCExt.GetInstance(skipSetup)
 	local instance = Ext.GetUI(CCExt.ID)
@@ -31,6 +33,12 @@ setmetatable(CCExt, {
 			if ui then
 				return ui
 			end
+		elseif k == "Visible" then
+			local ui = CCExt.GetInstance()
+			if ui then
+				return Common.TableHasValue(ui.Flags, "OF_Visible")
+			end
+			return false
 		end
 	end
 })
@@ -40,7 +48,6 @@ local function DestroyInstance()
 	if instance then
 		instance:Hide()
 		instance:Destroy()
-		CCExt.Visible = false
 	end
 end
 
@@ -55,14 +62,17 @@ end)
 local function GetCCVisibility()
 	local cc = Ext.GetUIByType(Vars.ControllerEnabled and Data.UIType.characterCreation_c or Data.UIType.characterCreation)
 	if cc then
+		if cc:GetRoot().isFinished == true then
+			return false
+		end
 		return Common.TableHasValue(cc.Flags, "OF_Visible")
 	end
 	return false
 end
 
 function CCExt.ToggleVisibility()
-	CCExt.Visible = GetCCVisibility()
-	if CCExt.Visible then
+	local visible = GetCCVisibility()
+	if visible then
 		local inst = CCExt.GetInstance()
 		if inst then
 			inst:Show()
@@ -73,8 +83,8 @@ function CCExt.ToggleVisibility()
 end
 
 function CCExt.SetupInstance()
-	CCExt.Visible = GetCCVisibility()
-	if CCExt.Visible then
+	local visible = GetCCVisibility()
+	if visible then
 		local instance = Ext.GetUI(CCExt.ID)
 		if not instance then
 			instance = Ext.CreateUI(CCExt.ID, CCExt.SwfPath, CCExt.Layer)
@@ -90,8 +100,9 @@ function CCExt.SetupInstance()
 	end
 end
 
-RegisterListener("RegionChanged", function (region, state, levelType)
-	if levelType ~= LEVELTYPE.CHARACTER_CREATION or state == REGIONSTATE.ENDED then
+local function UpdateVisibility()
+	local ccVisible = GetCCVisibility()
+	if not ccVisible or levelType ~= LEVELTYPE.CHARACTER_CREATION or state == REGIONSTATE.ENDED then
 		DestroyInstance()
 	else
 		local inst = CCExt.GetInstance(true)
@@ -99,4 +110,12 @@ RegisterListener("RegionChanged", function (region, state, levelType)
 			CCExt.SetupInstance()
 		end
 	end
+end
+
+CharacterCreation:RegisterInvokeListener("creationDone", function (wrapper, ui, method)
+	UpdateVisibility()
+end)
+
+RegisterListener("RegionChanged", function (region, state, levelType)
+	UpdateVisibility()
 end)

@@ -56,12 +56,14 @@ local validTypes = {
 ---@param supportedExtraTypes table<string,boolean>
 ---@return table<string|number|boolean,string|number|boolean|table>
 function TableHelpers.SanitizeTable(tbl, supportedExtraTypes)
-	if type(tbl) ~= "table" then
-		return
-	end
 	local output = {}
+	local tableType = type(tbl)
+	if tableType ~= "table" and tableType ~= "userdata" then
+		return output
+	end
 	for k,v in pairs(tbl) do
-		if validTypes[type(k)] then
+		local keyType = type(k)
+		if validTypes[keyType] then
 			local t = type(v)
 			if validTypes[t] or (supportedExtraTypes and supportedExtraTypes[t]) then
 				if t == "table" or t == "userdata" then

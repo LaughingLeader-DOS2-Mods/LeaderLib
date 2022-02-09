@@ -54,14 +54,8 @@ if _EXTVERSION >= 56 then
 			if isClient then
 				Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Client:GetCharacter() or Ext.GetCharacter(CharacterGetHostCharacter())))
 			else
-				local data = {}
 				local character = Ext.GetCharacter(CharacterGetHostCharacter())
-				if character then
-					for k,v in pairs(character) do
-						data[k] = v
-					end
-				end
-				data = TableHelpers.SanitizeTable(data, {["userdata"] = true, ["function"] = true})
+				local data = TableHelpers.SanitizeTable(character, {["userdata"] = true, ["function"] = true})
 				Ext.IO.SaveFile(fileName, Ext.DumpExport(data))
 			end
 			Ext.Print("[dump:character] Saved character data to",fileName)

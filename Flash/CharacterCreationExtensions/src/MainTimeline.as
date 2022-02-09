@@ -1,15 +1,13 @@
 package
 {
-	import controls.Checkbox;
 	import LS_Classes.tooltipHelper;
-	import controls.dropdowns.PresetButton;
+
+	import controls.buttons.SkipTutorialButton;
+	import controls.buttons.PresetButton;
 
 	import flash.display.MovieClip;
-	import flash.events.Event;
-	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	import flash.utils.Dictionary;
 	
 	public class MainTimeline extends MovieClip
 	{		
@@ -34,7 +32,7 @@ package
 		public var screenHeight:Number = 0;
 
 		private static var instance:MainTimeline;
-		public var skipTutorial_mc:Checkbox;
+		public var skipTutorial_mc:SkipTutorialButton;
 		public var presetButton_mc:PresetButton;
 		
 		public function MainTimeline()
@@ -56,9 +54,7 @@ package
 			Registry.ExtCall("setAnchor",this.anchorPos, this.anchorTarget, this.anchorTPos);
 
 			this.presetButton_mc.init();
-			this.togglePresetButton(false);
-			this.skipTutorial_mc.callbackName = "LeaderLib_CC_SkipTutorialToggled";
-			this.skipTutorial_mc.setText("Skip Tutorial");
+			this.skipTutorial_mc.init();
 		}
 
 		public function setHasTooltip(isEnabled:Boolean, text:String = "") : void
@@ -97,8 +93,7 @@ package
 		public function togglePresetButton(b:Boolean, destroyEntries:Boolean = false): void
 		{
 			this.presetButton_mc.visible = b;
-			this.presetButton_mc.mouseEnabled = b;
-			this.presetButton_mc.mouseChildren = b;
+			this.presetButton_mc.isEnabled = b;
 			if(destroyEntries) {
 				this.presetButton_mc.combo_mc.removeAll();
 			}

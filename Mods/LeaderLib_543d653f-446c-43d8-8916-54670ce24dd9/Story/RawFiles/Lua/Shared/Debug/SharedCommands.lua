@@ -51,13 +51,15 @@ if _EXTVERSION >= 56 then
 		end,
 		character = function (dumpType, synced, ...)
 			local fileName = string.format("Dumps/Character_%s.json", isClient and "Client" or "Server")
-			if isClient then
-				Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Client:GetCharacter() or Ext.GetCharacter(CharacterGetHostCharacter())))
-			else
-				local character = Ext.GetCharacter(CharacterGetHostCharacter())
-				local data = TableHelpers.SanitizeTable(character, {["userdata"] = true, ["function"] = true})
-				Ext.IO.SaveFile(fileName, Ext.DumpExport(data))
-			end
+			Ext.PrintError(fileName)
+			Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Client:GetCharacter() or Ext.GetCharacter(CharacterGetHostCharacter())))
+			-- if isClient then
+				
+			-- else
+			-- 	local character = Ext.GetCharacter(CharacterGetHostCharacter())
+			-- 	local data = TableHelpers.SanitizeTable(character, {["userdata"] = true, ["function"] = true})
+			-- 	Ext.IO.SaveFile(fileName, Ext.DumpExport(data))
+			-- end
 			Ext.Print("[dump:character] Saved character data to",fileName)
 			if not synced then
 				SendDumpCommand(dumpType, true, ...)

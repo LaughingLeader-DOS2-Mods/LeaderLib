@@ -52,7 +52,7 @@ UIExtensions.CC.PresetExt = PresetExt
 -- 	end
 -- end
 
-Ext.RegisterUINameCall("LeaderLib_UIExtensions_PresetSelected", function (ui, event, selectedId, selectedIndex)
+Ext.RegisterUINameCall("LeaderLib_PresetDropdown_PresetSelected", function (ui, event, selectedId, selectedIndex)
 	if selectedId then
 		--ExternalInterface.call("selectOption",(parent as MovieClip).contentID,this.optionsList[this.currentIdx].optionID,true);
 		CharacterCreation.Instance:ExternalInterfaceCall("selectOption", 1.0, selectedId, true)
@@ -86,16 +86,6 @@ function PresetExt.BuildModAssociation(findModForPreset, presets)
 	end
 end
 
-function PresetExt.PositionPresetButton(ccExt)
-	local ccRoot = CharacterCreation.Root
-	if ccRoot then
-		local x = ccRoot.CCPanel_mc.x + ccRoot.CCPanel_mc.armourBtnHolder_mc.x + ccRoot.CCPanel_mc.armourBtnHolder_mc.helmetBtn_mc.x
-		local y = ccRoot.CCPanel_mc.y + ccRoot.CCPanel_mc.origins_mc.height - 224
-		ccExt.presetButton_mc.x = x
-		ccExt.presetButton_mc.y = y
-	end
-end
-
 function PresetExt.SelectCurrentPreset(ccExt)
 	local ccRoot = CharacterCreation.Root
 	if ccRoot then
@@ -109,9 +99,8 @@ end
 
 function PresetExt.CreatePresetDropdown()
 	local ccExt = UIExtensions.CC.Root
-	PresetExt.PositionPresetButton(ccExt)
 	
-	if ccExt.presetButton_mc.visible and ccExt.presetButton_mc.length > 0 then
+	if not ccExt or ccExt.presetButton_mc.visible and ccExt.presetButton_mc.length > 0 then
 		return
 	end
 
@@ -185,7 +174,6 @@ end
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTags", function (ui, call)
 	if UIExtensions.CC.Visible then
 		local ccExt = UIExtensions.CC.Root
-		PresetExt.PositionPresetButton(ccExt)
 		PresetExt.SelectCurrentPreset(ccExt)
 	end
 end, "After")

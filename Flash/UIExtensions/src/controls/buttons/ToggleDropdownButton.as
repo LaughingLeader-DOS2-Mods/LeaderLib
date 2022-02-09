@@ -1,31 +1,52 @@
-package controls.dropdowns
+package controls.buttons
 {
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import LS_Classes.tooltipHelper;
-	import controls.scrollbar.scrollbarDivider;
 	import flash.geom.Point;
+	import controls.dropdowns.HiddenDropdown;
+	import controls.dropdowns.DropdownItemData;
+	import interfaces.IDropdownButton;
 
-	public dynamic class PresetButton extends MovieClip
+	public dynamic class ToggleDropdownButton extends MovieClip
 	{
-		public var graphics_mc:PresetButtonGraphic;
+		public var button_graphic:IDropdownButton;
 		public var combo_mc:HiddenDropdown;
 		public var tooltip:String;
 		public var id:Number;
+		public var callbackId:String;
+
 		public var tooltipOverrideW:Number;
 		public var tooltipYOffset:Number;
-		public var divider:MovieClip;
+		public var tooltipSide:String = "left";
 
-		public function PresetButton()
+		private var _isEnabled:Boolean = false;
+		
+		public function get isEnabled():Boolean
 		{
-			super();
-			this.addFrameScript(0, this.frame1);
+			return this._isEnabled;
 		}
 
-		public function init() : void
+		public function set isEnabled(v:Boolean):void
 		{
-			this.combo_mc = new HiddenDropdown(this.graphics_mc);
+			this._isEnabled = v;
+			this.combo_mc.m_enabled = v;
+			if(this.disabled_mc)
+			{
+				this.disabled_mc.visible = !v;
+			}
+		}
+
+		public function ToggleDropdownButton()
+		{
+			super();
+		}
+
+		public function _init(graphics_mc:IDropdownButton) : void
+		{
+			this.button_graphic = graphics_mc;
+			this.combo_mc = new HiddenDropdown(graphics_mc);
 			this.combo_mc.positionListFunc = this.positionList;
 			//this.combo_mc.m_selectContainer.x = -this.combo_mc.m_selectContainer.width;
 			this.combo_mc.m_dropOutYDisplacement = -2;
@@ -33,12 +54,18 @@ package controls.dropdowns
 			this.addChild(combo_mc);
 			this.combo_mc.addEventListener(Event.CHANGE,this.onChange);
 			this.combo_mc.addEventListener(Event.OPEN,this.onOpen);
+
+			this.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
+			this.addEventListener(MouseEvent.MOUSE_OUT,MainTimeline.Instance.onMouseOutTooltip);
 		}
 
 		public function setText(tooltipText:String = "") : *
 		{
 			this.tooltip = tooltipText;
-			this.graphics_mc.tooltip = this.tooltip;
+			if(this.button_graphic)
+			{
+				(this.button_graphic as MovieClip).tooltip = this.tooltip;
+			}
 		}
 		
 		public function get length() : uint
@@ -51,14 +78,16 @@ package controls.dropdowns
 		
 		public function onOpen(e:Event) : *
 		{
-			Registry.ExtCall("hideTooltip");
+			if(MainTimeline.Instance.curTooltip == this.tooltip) {
+				Registry.ExtCall("hideTooltip");
+			}
 		}
 		
 		public function onChange(e:Event) : *
 		{
 			var entry:MovieClip = this.combo_mc.selectedMc;
 			if(entry) {
-				Registry.ExtCall("LeaderLib_UIExtensions_PresetSelected", entry.id, this.combo_mc.selectedIndex);
+				Registry.ExtCall(this.callbackId, entry.id, this.combo_mc.selectedIndex);
 			}
 		}
 		
@@ -73,7 +102,7 @@ package controls.dropdowns
 		
 		public function onMouseOver(e:MouseEvent) : *
 		{
-			if(this.tooltip != null && this.tooltip != "" && !this.combo_mc.m_isOpen)
+			if(this.isEnabled && this.tooltip != null && this.tooltip != "" && !this.combo_mc.m_isOpen)
 			{
 				this.tooltipYOffset = -4;
 				this.tooltipOverrideW = MainTimeline.Instance.tooltipWidthOverride;
@@ -106,16 +135,6 @@ package controls.dropdowns
 			if(this.combo_mc) {
 				this.combo_mc.removeAll();
 			}
-		}
-		
-		public function frame1() : void
-		{
-			this.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-			this.addEventListener(MouseEvent.MOUSE_OUT,MainTimeline.Instance.onMouseOutTooltip);
-			// this.divider = new scrollbarDivider();
-			// this.divider.x = 241;
-			// this.divider.y = 2;
-			// this.combo_mc.divider = this.divider;
 		}
 	}
 }

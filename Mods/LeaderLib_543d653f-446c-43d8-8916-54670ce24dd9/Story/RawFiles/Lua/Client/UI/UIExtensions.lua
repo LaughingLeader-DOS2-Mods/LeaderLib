@@ -29,6 +29,7 @@ UIExtensions = {
 		RightMouseDown = "RightMouseDown",
 		RightMouseUp = "RightMouseUp",
 	},
+	MouseEnabled = false,
 	Visible = false
 }
 

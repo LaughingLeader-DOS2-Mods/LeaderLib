@@ -275,6 +275,7 @@ if Vars.DebugMode then
 	end
 end
 Ext.Require("Server/Game/QOL/BuffStatusPreserver.lua")
+Ext.Require("Server/Game/QOL/SkipTutorial.lua")
 Ext.Require("Server/Updates.lua")
 
 ---Set a character's name with a translated string value.

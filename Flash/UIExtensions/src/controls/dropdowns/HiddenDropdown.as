@@ -441,7 +441,6 @@ package controls.dropdowns {
         }
 
         public function topUp(e:MouseEvent):* {
-			trace("topUp", e.currentTarget);
             if (this.m_isOpen) {
                 this.close();
             } else {

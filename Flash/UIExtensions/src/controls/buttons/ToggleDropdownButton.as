@@ -57,7 +57,7 @@ package controls.buttons
 			this.combo_mc.positionListFunc = this.positionList;
 			//this.combo_mc.m_selectContainer.x = -this.combo_mc.m_selectContainer.width;
 			this.combo_mc.m_dropOutYDisplacement = -2;
-			this.combo_mc.bgHSpacing = 6;
+			this.combo_mc.bgHSpacing = 24;
 			this.combo_mc.header_mc = this.title_mc;
 
 			this.addChild(combo_mc);

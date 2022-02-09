@@ -242,7 +242,7 @@
 	<content contentuid="h9308f157g1e5ag4051gbcc0g9d41c54ffa57">Pushes targets [1]m [2] ([3]% Chance).</content>
 	<content contentuid="h938a3bd1gcfc3g4885gacb7geef71a63ea1b">The coast is clear then?</content>
 	<content contentuid="h93f14fd4gf2eag4e9egb5f6g134e1c8f9ad1">Me? Oh, I&apos;m just a retired old man, looking to sell his wares. *He rubs his beard, glancing around on the boat.* Afraid I&apos;m not much of a soldier anymore, so trading is all I&apos;ve got.</content>
-	<content contentuid="h941109e1g894dg49efgbd26g139bcb434deb">Skip Tutorial</content>
+	<content contentuid="h941109e1g894dg49efgbd26g139bcb434deb">Select Starting Level</content>
 	<content contentuid="h943fc926g7822g4ed0g8f23g217d384bf9d2">Selecting menu option...</content>
 	<content contentuid="h950f9baege3b1g428agbb4dgf70a45676c5a">Chain All</content>
 	<content contentuid="h951be36bg6ed7g49e4ga343gaa5c47a4c98e">*Lothar grunts, rubbing his lower back as he chews on something.* Once I saw this beautiful ship in the distance, I knew it was my chance to escape. I swam like a fish.</content>
@@ -255,6 +255,7 @@
 	<content contentuid="h9863bb3eg058dg45acg8926gefb0f24ece72">Autosave When Combat Starts</content>
 	<content contentuid="h98bf1217gf2bfg4d82g99b9g6747f36f9aab">&lt;font color=&apos;#FF0000&apos;&gt;Script Extender Missing!&lt;/font&gt;</content>
 	<content contentuid="h98d315c5g189cg431eg9862g7cea569a5e3b">Hmm?</content>
+	<content contentuid="h9ade7360g8608g42f6g8e7cgff542d517949">&lt;font color=&apos;#BB77FF&apos; size=&apos;22&apos;&gt;Preset Selection&lt;/font&gt;&lt;br&gt;Toggle the the Preset Selection dropdown.</content>
 	<content contentuid="h9b4fce0fge5a9g4369gb3e8g1567058cc47c">If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like Invisible and healing statuses. </content>
 	<content contentuid="h9b843d3agc42eg4295g8381ge2eb54eeac08">Dialog Redirection Settings</content>
 	<content contentuid="h9bb57fccg3ddag4112g9047g2a8f557b4f0d">A peculiar tome said to be extremely convenient.&lt;br&gt;Read to access the &quot;Mod Menu&quot;.</content>
@@ -271,7 +272,7 @@
 	<content contentuid="ha1c04ddag65a8g4deagbbe6g8c401710cad9">If enabled, skill memorization requirements will be lowered (such as Necromancy 4 to Necromancy 1).&lt;br&gt;&lt;font color=&apos;#FF9933&apos;&gt;Ideally enable this alongside Skill Tier Overrides, so more skills can be selected in character creation.&lt;/font&gt;&lt;br&gt;(Default: Disabled)</content>
 	<content contentuid="ha267dc3cg888dg4f53g956ag3b6a6a9cbbef">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
 	<content contentuid="ha2901d46g7ba5g408cg91ffg6b14b45b4c09">Dynamic Menu Sample</content>
-	<content contentuid="ha2cbea79g07e1g474dg912age8c7e79abd34">&lt;font color=&apos;#77DDFF&apos;&gt;Skip Tutorial&lt;/font&gt;&lt;br&gt;Skip the tutorial and go straight to a specific level.</content>
+	<content contentuid="ha2cbea79g07e1g474dg912age8c7e79abd34">&lt;font color=&apos;#77DDFF&apos; size=&apos;22&apos;&gt;Skip Tutorial&lt;/font&gt;&lt;br&gt;Skip the tutorial and go straight to a specific level.</content>
 	<content contentuid="ha35fc503g56dbg4adag963dga359d961e0c8">Horns</content>
 	<content contentuid="ha3662eaeg1dedg441eg9acdg2b9dbaabf295">Summoner&apos;s Guide to Management</content>
 	<content contentuid="ha3a18e3fge9e4g4496g84b8g5590844143f0">Rifle Weapon</content>

@@ -264,7 +264,8 @@ LocalizedText.UI = {
 	Yes = ts:Create("hf52bf842g05beg48dega717gca15b3678e0e", "Yes"),
 	No = ts:Create("heded8384gb4f5g439dg9883g5cf950b2bbfc", "No"),
 	Preset = ts:Create("h72ab555bg3ff6g4049ga555g37e9d9a0f2ed", "Preset"),
-	Change = ts:Create("hd2c3081eg2847g44bag82d5g121c54bfb29f", "Change"),
+	Select = ts:Create("hdf10e5a7g950eg4f82gb716ga5a614c00811", "Select"),
+	--Change = ts:Create("hd2c3081eg2847g44bag82d5g121c54bfb29f", "Change"),
 }
 
 LocalizedText.ContextMenu = {

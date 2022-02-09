@@ -101,40 +101,48 @@ function CCExt.PositionButtons(ccExt)
 	end
 end
 
-local SkipTutorialRegions = {
+local SkipTutorialRegions = Classes.Enum:Create({
 	[0] = "None",
-	"FJ_FortJoy_Main",
-	"LV_HoE_Main",
-	"RC_Main",
-	"CoS_Main",
-	"ARX_Main",
-	"ARX_Endgame",
-}
+	[1] = "FJ_FortJoy_Main",
+	[2] = "LV_HoE_Main",
+	[3] = "RC_Main",
+	[4] = "CoS_Main",
+	[5] = "ARX_Main",
+	[6] = "ARX_Endgame",
+})
 
 local SkipTutorialRegionTooltips = {
 	None = "Go to the tutorial.",
-	FJ_FortJoy_Main = "Go to the first Act, Fort Joy.",
-	LV_HoE_Main = "Go to the Lady Vengeance inbetween Act 1 and 2.",
-	RC_Main = "Go to Act 2, Reaper's Coast.",
-	CoS_Main = "Go to Act 3 Part 1, the Nameless Isles.",
-	ARX_Main = "Go to Act 3 Part 2, Arx.",
+	FJ_FortJoy_Main = "Go to the Act I, Fort Joy.",
+	LV_HoE_Main = "Go to the Lady Vengeance, inbetween Act 1 and 2.",
+	RC_Main = "Go to Act II, Reaper's Coast.",
+	CoS_Main = "Go to Act II Part 1, the Nameless Isles.",
+	ARX_Main = "Go to Act II Part 2, Arx.",
 	ARX_Endgame = "Go to the end of the game.",
 }
 
-Classes.Enum:Create(SkipTutorialRegions)
+local DeveloperOnlyRegions = {
+	LV_HoE_Main = true,
+	CoS_Main = true,
+	ARX_Main = true,
+	ARX_Endgame = true,
+}
 
 function CCExt.SetupSkipTutorialButton(this)
 	this.skipTutorial_mc.isEnabled = CCExt.IsHost
 	GameSettingsManager.Load(false)
-	this.skipTutorial_mc.setText(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "<font color='#77DDFF'>Skip Tutorial</font><br>Skip the tutorial and go straight to a specific level."))
-	this.skipTutorial_mc.title_mc.setText(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_DisplayName", "Skip Tutorial"));
-	for i=0,#SkipTutorialRegions-1 do
-		local level = SkipTutorialRegions[i]
-		if level ~= "None" then
-			local name = GameHelpers.GetStringKeyText(level)
-			this.skipTutorial_mc.addEntry(name, i, SkipTutorialRegionTooltips[level])
-		else
-			this.skipTutorial_mc.addEntry("Tutorial", i, SkipTutorialRegionTooltips.None)
+	this.skipTutorial_mc.setText(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "<font color='#77DDFF' size'22'>Skip Tutorial</font><br>Skip the tutorial and go straight to a specific level."))
+	this.skipTutorial_mc.title_mc.setText(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_DisplayName", "Select Starting Level"));
+	
+	for i,level in pairs(SkipTutorialRegions) do
+		Ext.PrintError(i,level)
+		if DeveloperOnlyRegions[level] ~= true then
+			if level ~= "None" then
+				local name = GameHelpers.GetStringKeyText(level)
+				this.skipTutorial_mc.addEntry(name, i, SkipTutorialRegionTooltips[level])
+			else
+				this.skipTutorial_mc.addEntry("Tutorial", i, SkipTutorialRegionTooltips.None)
+			end
 		end
 	end
 	if not GameSettings.Settings.SkipTutorial.Enabled then
@@ -160,8 +168,9 @@ function CCExt.SetupInstance(force)
 			instance:Show()
 			local this = instance:GetRoot()
 			if not CCExt.Initialized then
-				local title = string.format("%s %s", LocalizedText.UI.Change.Value, LocalizedText.UI.Preset.Value)
-				this.presetButton_mc.setText(title)
+				local title = string.format("%s %s", LocalizedText.UI.Select.Value, LocalizedText.UI.Preset.Value)
+				local tooltip = GameHelpers.GetStringKeyText("LeaderLib_UI_PresetDropdown_Tooltip", "<font color='#BB77FF' size='22'>Preset Selection</font><br>Toggle the the Preset Selection dropdown.")
+				this.presetButton_mc.setText(tooltip)
 				this.presetButton_mc.title_mc.setText(title)
 				if _EXTVERSION >= 56 then
 					UIExtensions.CC.PresetExt.CreatePresetDropdown()

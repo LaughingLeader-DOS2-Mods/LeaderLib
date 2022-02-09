@@ -3,9 +3,10 @@ LeaderLib_UI_ModSettingsButton_DisplayName	Mod Settings	h5945db23gdaafg400ega4d6
 LeaderLib_UI_Talent_DeathfogResistant_DisplayName	Deathfog Resistant	hcf141983g4e08g405dg83bcg3f66636aa9ec
 LeaderLib_UI_Talent_Sourcerer_DisplayName	Sourcerer	h5279a104g5c7ag4d0fgb191gc963d39c286c
 LeaderLib_UI_Talent_Rager_DisplayName	Rager	he1b6d26dgfa57g4878g8948g68f08c6c531f
-LeaderLib_UI_SkipTutorial_DisplayName	Skip Tutorial	h941109e1g894dg49efgbd26g139bcb434deb
+LeaderLib_UI_SkipTutorial_DisplayName	Select Starting Level	h941109e1g894dg49efgbd26g139bcb434deb
 LeaderLib_UI_SkipTutorial_Controller_DisplayName	Skip Tutorial (LB + Select)	h07ede36bgda99g42ecg813bgbc1496640e7d
-LeaderLib_UI_SkipTutorial_Description	<font color='#77DDFF'>Skip Tutorial</font><br>Skip the tutorial and go straight to a specific level.	ha2cbea79g07e1g474dg912age8c7e79abd34
+LeaderLib_UI_SkipTutorial_Description	<font color='#77DDFF' size='22'>Skip Tutorial</font><br>Skip the tutorial and go straight to a specific level.	ha2cbea79g07e1g474dg912age8c7e79abd34
+LeaderLib_UI_PresetDropdown_Tooltip	<font color='#BB77FF' size='22'>Preset Selection</font><br>Toggle the the Preset Selection dropdown.	h9ade7360g8608g42f6g8e7cgff542d517949
 LeaderLib_UI_ContextMenu_HideStatus	Hide Status	h901ab1b9g943dg465cg8583g3ad8e86354b5
 LeaderLib_UI_ContextMenu_HideStatus_Examine	Hide Status from Portrait UI	hc9377dd3g70d6g4d84g8c8fg812246a61029
 LeaderLib_UI_ContextMenu_ShowStatus	Show Status	ha52299cfg95f3g4a46gaa56g3cd74d716741

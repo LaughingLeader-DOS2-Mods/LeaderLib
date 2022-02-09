@@ -140,7 +140,7 @@ local function WrapCallbackObjects(tbl)
 		return
 	else
 		for i=1,#tbl do
-			tbl[i] = Ext.GetGameObject(tbl[i]) or tbl[i]
+			tbl[i] = GameHelpers.TryGetObject(tbl[i]) or tbl[i]
 		end
 	end
 	return table.unpack(tbl)

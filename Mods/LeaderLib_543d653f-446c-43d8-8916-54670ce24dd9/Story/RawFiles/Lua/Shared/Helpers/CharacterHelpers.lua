@@ -384,7 +384,7 @@ function GameHelpers.Character.GetSummons(owner, getItems)
 			if not matchId or ownerId == matchId then
 				for i,character in pairs(tbl) do
 					if getItems == true or ObjectIsItem(character) == false then
-						local summon = Ext.GetGameObject(character)
+						local summon = GameHelpers.TryGetObject(character)
 						if summon then
 							summons[#summons+1] = summon
 						end

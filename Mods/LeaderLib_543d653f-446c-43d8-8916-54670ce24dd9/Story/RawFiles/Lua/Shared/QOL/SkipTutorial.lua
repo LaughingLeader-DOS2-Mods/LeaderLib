@@ -363,12 +363,6 @@ if Ext.IsServer() then
 				end
 			end
 		end)
-
-		Ext.RegisterOsirisListener("RegionEnded", 1, "before", function(region)
-			if IsCharacterCreationLevel(region) == 1 then
-				GameHelpers.Net.Broadcast("LeaderLib_ClearSkipTutorialUI", "")
-			end
-		end)
 	end
 else
 	Ext.RegisterUINameCall("LeaderLib_CC_SkipTutorialToggled", function (ui, event, controlType, id, state)
@@ -388,7 +382,7 @@ else
 	---@param inputMap table<integer,boolean>
 	---@param controllerEnabled boolean
 	local function OnInput(eventName, pressed, id, inputMap, controllerEnabled)
-		if controllerEnabled and createdCheckboxID > -1 and 
+		if controllerEnabled and
 			(Input.IsPressed(Data.Input.UICreationTabPrev) and pressed and eventName == "ConnectivityMenu") then
 			local main = UIExtensions.CC.Root
 			if main then
@@ -397,7 +391,7 @@ else
 		end
 	end
 
-	local function SetupSkipTutorialCheckbox()
+	function SkipTutorial.SetupSkipTutorialCheckbox(this)
 		GameSettingsManager.Load(false)
 		local title = "Skip Tutorial"
 		if not Vars.ControllerEnabled then
@@ -408,42 +402,17 @@ else
 		local levelName = GameHelpers.GetStringKeyText(GameSettings.Settings.SkipTutorial.Destination, "Unknown")
 		local description = string.format(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "If enabled, the game will skip the tutorial and go right to the configured starting level (%s)."), levelName)
 		
-		local main = UIExtensions.CC.Root
-		if main then
-			main.skipTutorial_mc.setText(title)
-			main.skipTutorial_mc.tooltip = description
-			main.skipTutorial_mc.setState(GameSettings.Settings.SkipTutorial.Enabled and 1 or 0)
+		if this then
+			this.skipTutorial_mc.setText(title)
+			this.skipTutorial_mc.tooltip = description
+			this.skipTutorial_mc.setState(GameSettings.Settings.SkipTutorial.Enabled and 1 or 0)
+			this.skipTutorial_mc.visible = true
 		end
 
 		Input.RegisterListener(OnInput)
 	end
 
-	local function SetupUI()
-		SetupSkipTutorialCheckbox()
-	end
-
-	local function ClearUI()
+	function SkipTutorial.OnDestroying()
 		Input.RemoveListener(OnInput)
 	end
-
-	---@param sharedData SharedData
-	RegisterListener("ClientDataSynced", function(modData, sharedData)
-		if Client.IsHost then
-			if sharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION and SharedData.GameMode == GAMEMODE.CAMPAIGN then
-				SetupUI()
-			else
-				ClearUI()
-			end
-		end
-	end)
-
-	Ext.RegisterNetListener("LeaderLib_SetupSkipTutorialUI", function(cmd, payload)
-		if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
-			SetupUI()
-		end
-	end)
-
-	Ext.RegisterNetListener("LeaderLib_ClearSkipTutorialUI", function(cmd, payload)
-		ClearUI()
-	end)
 end

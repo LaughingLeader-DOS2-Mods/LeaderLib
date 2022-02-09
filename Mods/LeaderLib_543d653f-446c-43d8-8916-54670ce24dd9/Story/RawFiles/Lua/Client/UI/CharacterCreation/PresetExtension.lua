@@ -41,6 +41,9 @@ local CharacterCreation = Classes.UIWrapper:CreateFromType(Data.UIType.character
 ---@type table<string,integer>
 local PresetToID = {}
 
+local PresetExt = {}
+UIExtensions.CC.PresetExt = PresetExt
+
 -- local function BuildPresetData()
 -- 	local cc = Ext.Stats.GetCharacterCreation()
 -- 	for i,v in pairs(cc.ClassPresets) do
@@ -56,7 +59,7 @@ Ext.RegisterUINameCall("LeaderLib_UIExtensions_PresetSelected", function (ui, ev
 	end
 end)
 
-local function BuildModAssociation(findModForPreset, presets)
+function PresetExt.BuildModAssociation(findModForPreset, presets)
 	local remaining = Common.TableLength(findModForPreset, true)
 	local order = Ext.GetModLoadOrder()
 	for i=1,#order do
@@ -83,24 +86,32 @@ local function BuildModAssociation(findModForPreset, presets)
 	end
 end
 
-local function PositionPresetButton()
-	local this = CharacterCreation.Root
-	local extRoot = UIExtensions.CC.Root
-	if this then
-		local x = this.CCPanel_mc.x + this.CCPanel_mc.armourBtnHolder_mc.x + this.CCPanel_mc.armourBtnHolder_mc.helmetBtn_mc.x
-		local y = this.CCPanel_mc.y + this.CCPanel_mc.origins_mc.height - 224
-		extRoot.presetButton_mc.x = x
-		extRoot.presetButton_mc.y = y
+function PresetExt.PositionPresetButton(ccExt)
+	local ccRoot = CharacterCreation.Root
+	if ccRoot then
+		local x = ccRoot.CCPanel_mc.x + ccRoot.CCPanel_mc.armourBtnHolder_mc.x + ccRoot.CCPanel_mc.armourBtnHolder_mc.helmetBtn_mc.x
+		local y = ccRoot.CCPanel_mc.y + ccRoot.CCPanel_mc.origins_mc.height - 224
+		ccExt.presetButton_mc.x = x
+		ccExt.presetButton_mc.y = y
 	end
 end
 
-local function CreatePresetDropdown()
-	PositionPresetButton()
+function PresetExt.SelectCurrentPreset(ccExt)
+	local ccRoot = CharacterCreation.Root
+	if ccRoot then
+		local player = GameHelpers.Client.GetCharacterCreationCharacter(ccRoot)
+		if player and player.PlayerCustomData and player.PlayerCustomData.ClassType then
+			local id = PresetToID[player.PlayerCustomData.ClassType]
+			ccExt.presetButton_mc.selectItemByID(id, true)
+		end
+	end
+end
 
-	local this = CharacterCreation.Root
-	local extRoot = UIExtensions.CC.Root
-
-	if extRoot.presetButton_mc.visible and extRoot.presetButton_mc.length > 0 then
+function PresetExt.CreatePresetDropdown()
+	local ccExt = UIExtensions.CC.Root
+	PresetExt.PositionPresetButton(ccExt)
+	
+	if ccExt.presetButton_mc.visible and ccExt.presetButton_mc.length > 0 then
 		return
 	end
 
@@ -123,7 +134,9 @@ local function CreatePresetDropdown()
 		end
 		local desc1 = GameHelpers.GetTranslatedStringValue(v.ClassDescription)
 		local desc2 = GameHelpers.GetTranslatedStringValue(v.ClassLongDescription)
-		if desc1 == "" and desc2 ~= "" or string.len(desc2) > string.len(desc1) then
+		local isEmpty1 = StringHelpers.IsNullOrEmpty(desc1)
+		local isEmpty2 = StringHelpers.IsNullOrEmpty(desc2)
+		if isEmpty1 and not isEmpty2 then
 			entry.Tooltip = desc2
 		else
 			entry.Tooltip = desc1
@@ -141,50 +154,38 @@ local function CreatePresetDropdown()
 		presets[index] = entry
 	end
 
-	BuildModAssociation(findModForPreset, presets)
+	PresetExt.BuildModAssociation(findModForPreset, presets)
 	findModForPreset = {}
 	
 	table.sort(presets, function (a,b)
 		return a.Label < b.Label
 	end)
 
-	extRoot.presetButton_mc.setText("Set Preset")
-	extRoot.presetButton_mc.removeAll()
-	extRoot.togglePresetButton(true)
+	ccExt.presetButton_mc.removeAll()
+	ccExt.togglePresetButton(true)
 	--local dropdown_mc = UIExtensions.AddDropdown(OnPresetSelected, x, y, {Dropdown = "Presets", Tooltip = "Select a Class Preset"}, presets)
 	for i=1,#presets do
 		local entry = presets[i]
 		if entry.Mod then
+			local modName = entry.Mod
 			findModForPreset[entry.ClassType] = entry.ModUUID
-			entry.Tooltip = string.format("%s<br><font color='#77FFCC'>%s</font>", entry.Tooltip, entry.Mod)
+			if modName == "Shared" then
+				modName = "Divinity: Original Sin 2"
+			end
+			entry.Tooltip = string.format("%s<br><font color='#77FFCC'>%s</font>", entry.Tooltip, modName)
 		end
-		extRoot.presetButton_mc.addEntry(entry.Label, entry.ID, entry.Tooltip)
+		ccExt.presetButton_mc.addEntry(entry.Label, entry.ID, entry.Tooltip)
 	end
 
 	GameHelpers.IO.SaveJsonFile("LeaderLib_PresetToModCache.json", findModForPreset)
 
-	local player = GameHelpers.Client.GetCharacterCreationCharacter(this)
-	if player and player.PlayerCustomData and player.PlayerCustomData.ClassType then
-		local id = PresetToID[player.PlayerCustomData.ClassType]
-		extRoot.presetButton_mc.selectItemByID(id, true)
-	end
+	PresetExt.SelectCurrentPreset(ccExt)
 end
 
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTags", function (ui, call)
-	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
-		CreatePresetDropdown()
-	end
-end, "After")
-
-RegisterListener("LuaReset", function ()
-	local level = Ext.Entity.GetCurrentLevel()
-	if level and level.LevelDesc.UniqueKey == "SYS_Character_Creation_A" then
-		CreatePresetDropdown()
-	end
-end)
-
-Ext.RegisterUINameCall("LeaderLib_UIExtensions_OnEventResolution", function ()
-	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
-		PositionPresetButton()
+	if UIExtensions.CC.Visible then
+		local ccExt = UIExtensions.CC.Root
+		PresetExt.PositionPresetButton(ccExt)
+		PresetExt.SelectCurrentPreset(ccExt)
 	end
 end, "After")

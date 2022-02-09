@@ -24,17 +24,17 @@ end
 setmetatable(CCExt, {
 	__index = function(tbl,k)
 		if k == "Root" then
-			local ui = CCExt.GetInstance()
+			local ui = CCExt.GetInstance(false)
 			if ui then
 				return ui:GetRoot()
 			end
 		elseif k == "Instance" then
-			local ui = CCExt.GetInstance()
+			local ui = CCExt.GetInstance(false)
 			if ui then
 				return ui
 			end
 		elseif k == "Visible" then
-			local ui = CCExt.GetInstance()
+			local ui = CCExt.GetInstance(false)
 			if ui then
 				return Common.TableHasValue(ui.Flags, "OF_Visible")
 			end
@@ -82,18 +82,24 @@ function CCExt.ToggleVisibility()
 	end
 end
 
-function CCExt.SetupInstance()
-	local visible = GetCCVisibility()
+function CCExt.SetupInstance(force)
+	local visible = force or GetCCVisibility()
 	if visible then
 		local instance = Ext.GetUI(CCExt.ID)
 		if not instance then
+			CCExt.Initialized = false
 			instance = Ext.CreateUI(CCExt.ID, CCExt.SwfPath, CCExt.Layer)
 		end
 		if instance then
 			instance:Show()
 			local this = instance:GetRoot()
-			this.skipTutorial_mc.visible = SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
-			this.presetButton_mc.setText("Set Preset")
+			if not CCExt.Initialized then
+				this.presetButton_mc.setText(string.format("%s %s", LocalizedText.UI.Change.Value, LocalizedText.UI.Preset.Value))
+				SkipTutorial.SetupSkipTutorialCheckbox(this)
+				UIExtensions.CC.PresetExt.CreatePresetDropdown()
+				CCExt.Initialized = true
+			end
+			return instance
 		else
 			Ext.PrintError("[LeaderLib] Failed to create UI:", UIExtensions.SwfPath)
 		end
@@ -102,7 +108,7 @@ end
 
 local function UpdateVisibility()
 	local ccVisible = GetCCVisibility()
-	if not ccVisible or levelType ~= LEVELTYPE.CHARACTER_CREATION or state == REGIONSTATE.ENDED then
+	if not ccVisible then
 		DestroyInstance()
 	else
 		local inst = CCExt.GetInstance(true)
@@ -112,10 +118,30 @@ local function UpdateVisibility()
 	end
 end
 
-CharacterCreation:RegisterInvokeListener("creationDone", function (wrapper, ui, method)
-	UpdateVisibility()
+local function OnCharacterCreation(isCC)
+	if isCC == false then
+		DestroyInstance()
+	elseif GameHelpers.IsLevelType(nil, LEVELTYPE.CHARACTER_CREATION) then
+		CCExt.SetupInstance(true)
+	end
+end
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.tutorialBox, "setIsCharacterCreation", function (ui, method, isCC)
+	OnCharacterCreation(isCC)
 end)
 
-RegisterListener("RegionChanged", function (region, state, levelType)
-	UpdateVisibility()
+Ext.RegisterUITypeInvokeListener(Data.UIType.tutorialBox_c, "setIsCharacterCreation", function (ui, method, isCC)
+	OnCharacterCreation(isCC)
+end)
+
+UI.RegisterUICreatedListener({Data.UIType.characterCreation, Data.UIType.characterCreation_c}, function (ui, this, player)
+	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+		CCExt.SetupInstance(true)
+	end
+end)
+
+Ext.RegisterListener("GameStateChanged", function (from, to)
+	if to == "Menu" then
+		DestroyInstance()
+	end
 end)

@@ -265,6 +265,8 @@ LocalizedText.UI = {
 	No = ts:Create("heded8384gb4f5g439dg9883g5cf950b2bbfc", "No"),
 	Preset = ts:Create("h72ab555bg3ff6g4049ga555g37e9d9a0f2ed", "Preset"),
 	Select = ts:Create("hdf10e5a7g950eg4f82gb716ga5a614c00811", "Select"),
+	Active = ts:Create("h4d5a9819gb8efg4f9ag8ceeg1b11c1619b85", "Active"):WithFormat("<font color='#33FF33'>(%s)</font>"),
+	Inactive = ts:Create("hfbe448d5ga175g4f6aga6f8g758a142bff9e", "Inactive"):WithFormat("<font color='#FF3333'>(%s)</font>"),
 	--Change = ts:Create("hd2c3081eg2847g44bag82d5g121c54bfb29f", "Change"),
 }
 

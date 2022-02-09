@@ -95,7 +95,7 @@ function CCExt.PositionButtons(ccExt)
 		ccExt.presetButton_mc.x = x
 		ccExt.presetButton_mc.y = y
 		ccExt.skipTutorial_mc.x = x
-		ccExt.skipTutorial_mc.y = y - 194
+		ccExt.skipTutorial_mc.y = ccRoot.CCPanel_mc.y + ccRoot.CCPanel_mc.armourBtnHolder_mc.y + ccRoot.CCPanel_mc.armourBtnHolder_mc.armourBtn_mc.y + ccRoot.CCPanel_mc.armourBtnHolder_mc.armourBtn_mc.height + ccExt.skipTutorial_mc.height + 12
 
 		ccExt.presetButton_mc.visible = _EXTVERSION >= 56
 	end
@@ -131,11 +131,12 @@ local DeveloperOnlyRegions = {
 function CCExt.SetupSkipTutorialButton(this)
 	this.skipTutorial_mc.isEnabled = CCExt.IsHost
 	GameSettingsManager.Load(false)
-	this.skipTutorial_mc.setText(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "<font color='#77DDFF' size'22'>Skip Tutorial</font><br>Skip the tutorial and go straight to a specific level."))
+	local activeText = GameSettings.Settings.SkipTutorial.Enabled and LocalizedText.UI.Active.Value or LocalizedText.UI.Inactive.Value
+	local tooltip = string.format("%s<br>%s", GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "<font color='#77DDFF' size'22'>Skip Tutorial</font><br>Skip the tutorial and go straight to a specific level."), activeText)
+	this.skipTutorial_mc.setText(tooltip)
 	this.skipTutorial_mc.title_mc.setText(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_DisplayName", "Select Starting Level"));
 	
 	for i,level in pairs(SkipTutorialRegions) do
-		Ext.PrintError(i,level)
 		if DeveloperOnlyRegions[level] ~= true then
 			if level ~= "None" then
 				local name = GameHelpers.GetStringKeyText(level)
@@ -154,6 +155,7 @@ function CCExt.SetupSkipTutorialButton(this)
 		end
 		this.skipTutorial_mc.selectItemByID(index, true)
 	end
+	this.skipTutorial_mc.graphics_mc.activated = GameSettings.Settings.SkipTutorial.Enabled
 end
 
 function CCExt.SetupInstance(force)
@@ -240,6 +242,14 @@ Ext.RegisterUINameCall("LeaderLib_SkipTutorialButton_LevelSelected", function (u
 		end
 		Ext.PostMessageToServer("LeaderLib_SetSkipTutorial", level)
 		GameSettingsManager.Save()
+
+		local this = ui:GetRoot()
+		if this then
+			this.skipTutorial_mc.graphics_mc.activated = GameSettings.Settings.SkipTutorial.Enabled
+			local activeText = GameSettings.Settings.SkipTutorial.Enabled and LocalizedText.UI.Active.Value or LocalizedText.UI.Inactive.Value
+			local tooltip = string.format("%s<br>%s", GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "<font color='#77DDFF' size'22'>Skip Tutorial</font><br>Skip the tutorial and go straight to a specific level."), activeText)
+			this.skipTutorial_mc.setText(tooltip)
+		end
 	end
 end)
 
@@ -247,6 +257,14 @@ Ext.RegisterNetListener("LeaderLib_EnableSkipTutorialUI", function (cmd, payload
 	CCExt.IsHost = true
 	local this = CCExt.Root
 	if this then
-		this.skipTutorial_mc.isEnabled = true
+		this.skipTutorial_mc.isEnabled = CCExt.IsHost
+	end
+end)
+
+RegisterListener("ClientDataSynced", function ()
+	CCExt.IsHost = Client.IsHost
+	local this = CCExt.Root
+	if this then
+		this.skipTutorial_mc.isEnabled = CCExt.IsHost
 	end
 end)

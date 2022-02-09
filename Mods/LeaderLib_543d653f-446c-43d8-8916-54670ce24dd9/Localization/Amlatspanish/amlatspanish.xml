@@ -271,7 +271,7 @@
 	<content contentuid="ha1c04ddag65a8g4deagbbe6g8c401710cad9">If enabled, skill memorization requirements will be lowered (such as Necromancy 4 to Necromancy 1).&lt;br&gt;&lt;font color=&apos;#FF9933&apos;&gt;Ideally enable this alongside Skill Tier Overrides, so more skills can be selected in character creation.&lt;/font&gt;&lt;br&gt;(Default: Disabled)</content>
 	<content contentuid="ha267dc3cg888dg4f53g956ag3b6a6a9cbbef">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
 	<content contentuid="ha2901d46g7ba5g408cg91ffg6b14b45b4c09">Dynamic Menu Sample</content>
-	<content contentuid="ha2cbea79g07e1g474dg912age8c7e79abd34">If enabled, the game will skip the tutorial and go right to the configured starting level (%s).</content>
+	<content contentuid="ha2cbea79g07e1g474dg912age8c7e79abd34">&lt;font color=&apos;#77DDFF&apos;&gt;Skip Tutorial&lt;/font&gt;&lt;br&gt;Skip the tutorial and go straight to a specific level.</content>
 	<content contentuid="ha35fc503g56dbg4adag963dga359d961e0c8">Horns</content>
 	<content contentuid="ha3662eaeg1dedg441eg9acdg2b9dbaabf295">Summoner&apos;s Guide to Management</content>
 	<content contentuid="ha3a18e3fge9e4g4496g84b8g5590844143f0">Rifle Weapon</content>

@@ -102,24 +102,44 @@ local potionProperties = {
 }
 
 ---@param stat StatEntryPotion|table
-local function IsHarmfulPotion(stat)
+local function IsBeneficialPotion(stat, ignoreItemPotions)
+	if ignoreItemPotions == true and (stat.IsFood == "Yes" or stat.IsConsumable == "Yes") then
+		return false
+	end
+	if not StringHelpers.IsNullOrWhitespace(stat.BonusWeapon) then
+		return true
+	end
+	local totalPositive = 0
+	local totalNegative = 0
 	for k,b in pairs(potionProperties) do
 		local value = stat[k]
 		local t = type(value)
 		if t == "number" then
-			if (b == true and value < 0) or (b == false and value > 0) then
-				return true
+			if (b == true and value > 0) or (b == false and value < 0) then
+				--return true
+				totalPositive = totalPositive + value
+			else
+				totalNegative = totalNegative + value
 			end
 		elseif t == "string" then
 			if value ~= "None" and string.find(b, "Qualifier") then
 				local realValue = tonumber(value)
-				if realValue and realValue < 0 then
-					return true
+				if realValue then
+					if realValue > 0 then
+						totalPositive = totalPositive + value
+					else
+						totalNegative = totalNegative + value
+					end
 				end
 			end
 		end
 	end
-	return false
+	return totalPositive >= math.abs(totalNegative)
+end
+
+---@param stat StatEntryPotion|table
+local function IsHarmfulPotion(stat, ignoreItemPotions)
+	return not IsBeneficialPotion(stat, ignoreItemPotions)
 end
 
 local function IsHarmfulStatsId(statsId)
@@ -231,33 +251,6 @@ local healingStatusTypes = {
 	HEAL_SHARING_CASTER = true,
 	HEALING = true,
 }
-
----@param stat StatEntryPotion|table
-local function IsBeneficialPotion(stat, ignoreItemPotions)
-	if ignoreItemPotions == true and stat.IsFood == "Yes" or stat.IsConsumable == "Yes" then
-		return false
-	end
-	if not StringHelpers.IsNullOrWhitespace(stat.BonusWeapon) then
-		return true
-	end
-	for k,b in pairs(potionProperties) do
-		local value = stat[k]
-		local t = type(value)
-		if t == "number" then
-			if (b == true and value > 0) or (b == false and value < 0) then
-				return true
-			end
-		elseif t == "string" then
-			if value ~= "None" and string.find(b, "Qualifier") then
-				local realValue = tonumber(value)
-				if realValue and realValue > 0 then
-					return true
-				end
-			end
-		end
-	end
-	return false
-end
 
 local function IsBeneficialStatsId(statsId, ignoreItemPotions)
 	if not StringHelpers.IsNullOrWhitespace(statsId) then

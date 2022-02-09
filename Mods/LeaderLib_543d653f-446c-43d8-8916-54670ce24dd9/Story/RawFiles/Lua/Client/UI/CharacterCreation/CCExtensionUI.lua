@@ -268,3 +268,13 @@ RegisterListener("ClientDataSynced", function ()
 		this.skipTutorial_mc.isEnabled = CCExt.IsHost
 	end
 end)
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTags", function (ui, call)
+	if UIExtensions.CC.Visible then
+		local ccExt = UIExtensions.CC.Root
+		CCExt.PositionButtons(ccExt)
+		if ccExt.presetButton_mc.visible then
+			UIExtensions.CC.PresetExt.SelectCurrentPreset(ccExt)
+		end
+	end
+end, "After")

@@ -170,10 +170,3 @@ function PresetExt.CreatePresetDropdown()
 
 	PresetExt.SelectCurrentPreset(ccExt)
 end
-
-Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTags", function (ui, call)
-	if UIExtensions.CC.Visible then
-		local ccExt = UIExtensions.CC.Root
-		PresetExt.SelectCurrentPreset(ccExt)
-	end
-end, "After")

@@ -53,8 +53,9 @@ local validTypes = {
 }
 ---Prepares a table for PersistentVars saving by removing invalid values.
 ---@param tbl table
+---@param supportedExtraTypes table<string,boolean>
 ---@return table<string|number|boolean,string|number|boolean|table>
-function TableHelpers.SanitizeTable(tbl)
+function TableHelpers.SanitizeTable(tbl, supportedExtraTypes)
 	if type(tbl) ~= "table" then
 		return
 	end
@@ -62,9 +63,9 @@ function TableHelpers.SanitizeTable(tbl)
 	for k,v in pairs(tbl) do
 		if validTypes[type(k)] then
 			local t = type(v)
-			if validTypes[t] then
-				if t == "table" then
-					output[k] = TableHelpers.SanitizeTable(v)
+			if validTypes[t] or (supportedExtraTypes and supportedExtraTypes[t]) then
+				if t == "table" or t == "userdata" then
+					output[k] = TableHelpers.SanitizeTable(v, supportedExtraTypes)
 				else
 					output[k] = v
 				end

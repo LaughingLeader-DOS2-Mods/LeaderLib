@@ -785,5 +785,14 @@ end
 ---@param levelType LEVELTYPE
 ---@return boolean
 function GameHelpers.IsLevelType(levelName, levelType)
-	return GameHelpers.GetLevelType(levelName) == levelType
+	if levelName == nil and _EXTVERSION >= 56 then
+		local level = Ext.Entity.GetCurrentLevel()
+		if level then
+			levelName = level.LevelDesc.LevelName
+		end
+	end
+	if not StringHelpers.IsNullOrEmpty(levelName) then
+		return GameHelpers.GetLevelType(levelName) == levelType
+	end
+	return false
 end

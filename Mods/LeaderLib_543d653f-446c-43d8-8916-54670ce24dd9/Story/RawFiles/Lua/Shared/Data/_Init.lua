@@ -4,54 +4,6 @@ end
 
 Data.SkillRequirementTags = {}
 
-local function CreateEnum(target)
-	local integers = {}
-	local names = {}
-	local startIndex = 1
-	for k,v in pairs(target) do
-		if type(k) == "string" then
-			if v == 0 then startIndex = 0 end
-			names[v] = k
-		else
-			if k == 0 then startIndex = 0 end
-			integers[k] = v
-		end
-	end
-	setmetatable(target, {
-		__call = function(tbl, v)
-			local t = type(v)
-			if t == "number" or t == "string" then
-				return target[v]
-			end
-		end,
-		__newindex = function() end,
-		__index = function() end,
-		__pairs = function(tbl)
-			local i = startIndex
-			local function iter(tbl)
-				local name = names[i]
-				local v = target[name]
-				if v ~= nil then
-					i = i + 1
-					return name,v
-				end
-			end
-			return iter, tbl, names[i]
-		end,
-		__ipairs = function(tbl)
-			local i = startIndex
-			local function iter(tbl,i)
-				local v = target[integers[i]]
-				if v ~= nil then
-					i = i + 1
-					return integers[1],v
-				end
-			end
-			return iter, tbl, integers[1]
-		end
-	})
-end
-
 Data.OriginalSkillTiers = {}
 ---@type table<string,boolean>
 Data.ObjectStats = {}
@@ -115,7 +67,7 @@ Data.DamageTypeEnums = {
 	[11] = "Shadow",
 }
 
-CreateEnum(Data.DamageTypeEnums)
+Classes.Enum:Create(Data.DamageTypeEnums)
 
 Data.DamageTypeToResistance = {
 	Physical = "PhysicalResistance",
@@ -202,7 +154,7 @@ Data.EquipmentSlotNames = {
 	[14] = "Sentinel",
 }
 
-CreateEnum(Data.EquipmentSlotNames)
+Classes.Enum:Create(Data.EquipmentSlotNames)
 
 local itemslot = {
 	[0] = "Helmet",
@@ -613,7 +565,7 @@ Data.ItemRarity = {
 	[6] = "Divine",
 }
 
-CreateEnum(Data.ItemRarity)
+Classes.Enum:Create(Data.ItemRarity)
 
 ---@class SKILL_STATE
 SKILL_STATE = {
@@ -854,7 +806,7 @@ for k,v in pairs(Data.Surfaces) do
 	Data.Surfaces[v] = k
 end
 
-CreateEnum(Data.Surfaces)
+Classes.Enum:Create(Data.Surfaces)
 
 Data.SurfaceChange = {
 	[0] = "None",
@@ -885,7 +837,7 @@ Data.SurfaceChange = {
 	Shatter = 12,
 }
 
-CreateEnum(Data.SurfaceChange)
+Classes.Enum:Create(Data.SurfaceChange)
 
 Data.UIType = {
 	actionProgression = 0,
@@ -1338,7 +1290,7 @@ Data.HitType = {
     [5] = "DoT",
     [6] = "Reflected",
 }
-CreateEnum(Data.HitType)
+Classes.Enum:Create(Data.HitType)
 
 ---More of an informal association rather than an actual enum.
 Data.HitReason = {
@@ -1364,7 +1316,7 @@ Data.HitReason = {
 	StatusConsume = 6,
 }
 
-CreateEnum(Data.HitReason)
+Classes.Enum:Create(Data.HitReason)
 
 Data.Difficulty = {
 	[0] = "Story",
@@ -1379,7 +1331,7 @@ Data.Difficulty = {
 	Honour = 4,
 }
 
-CreateEnum(Data.Difficulty)
+Classes.Enum:Create(Data.Difficulty)
 
 Data.SkillRequirement = {
     MeleeWeapon = "MeleeWeapon",

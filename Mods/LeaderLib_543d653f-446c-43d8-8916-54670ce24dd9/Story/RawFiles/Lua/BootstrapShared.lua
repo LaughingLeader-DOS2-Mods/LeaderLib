@@ -21,6 +21,7 @@ function fassert(b, message, ...)
 end
 
 Ext.Require("Shared/_InitShared.lua")
+Ext.Require("Shared/Classes/Enum.lua")
 Ext.Require("Shared/Data/_Init.lua")
 Ext.Require("Shared/Settings/GameSettingsManager.lua")
 Ext.Require("Shared/Helpers/DebugHelpers.lua")
@@ -56,7 +57,6 @@ Ext.Require("Shared/Stats/StatOverrides.lua")
 Ext.Require("Shared/System/FeaturesHandler.lua")
 
 Ext.Require("Shared/QOL/WingsWorkaround.lua")
-Ext.Require("Shared/QOL/SkipTutorial.lua")
 Ext.Require("Shared/QOL/WorldTooltips.lua")
 Ext.Require("Shared/QOL/ContextMenuQualityOfLife.lua")
 Ext.Require("Shared/QOL/HotbarSkillTagRequirements.lua")

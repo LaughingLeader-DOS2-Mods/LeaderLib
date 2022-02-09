@@ -32,7 +32,10 @@ function GameHelpers.GetStringKeyText(key,fallback)
 	fallback = fallback or key
 	local text = _stringKeyText[key]
 	if text == nil then
-		text = _getTranslatedStringKeyFunction(key) or fallback
+		text = _getTranslatedStringKeyFunction(key)
+		if StringHelpers.IsNullOrEmpty(text) then
+			text = fallback
+		end
 		_stringKeyText[key] = text
 	end
 	return text

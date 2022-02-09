@@ -83,6 +83,10 @@ end
 ---@param extendDuration boolean|nil If true, the current duration is added to the duration value set, instead of replacing it.
 ---@return boolean
 function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, applyIfMissing, extendDuration)
+	obj = GameHelpers.GetUUID(obj)
+	if StringHelpers.IsNullOrEmpty(obj) then
+		error("A valid UUID is required.")
+	end
 	if HasActiveStatus(obj, statusId) == 0 then
 		if applyIfMissing ~= false then
 			ApplyStatus(obj, statusId, duration, 0, obj)

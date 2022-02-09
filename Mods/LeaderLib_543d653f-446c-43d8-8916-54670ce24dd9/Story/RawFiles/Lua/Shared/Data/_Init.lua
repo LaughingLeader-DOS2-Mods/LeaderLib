@@ -959,6 +959,7 @@ Data.UIType = {
 	roll = 118,
 	saveLoad = 39,
 	skills = 41,
+	serverlist = 26,
 	statsPanel_c = 63,
 	statusConsole = 117,
 	statusPanel = 128,

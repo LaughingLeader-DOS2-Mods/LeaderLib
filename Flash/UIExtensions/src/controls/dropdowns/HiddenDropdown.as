@@ -24,27 +24,31 @@ package controls.dropdowns {
         public var m_isOpen:Boolean = false;
         public var _elH:Number = 30;
         public var _editable:Boolean = false;
-        public var m_bg_mc:MovieClip;
+        
         public var bgTopSizeDiff:Number = -6;
         public var bgTopDisplacement:Number = 0;
         public var m_dropOutYDisplacement:Number = 0;
         public var m_forceUpdate:Boolean = false;
         public var m_enabled:Boolean;
-        public var m_selectContainer:MovieClip;
-        public var m_bgHSpacing:Number = 6;
+        public var m_bgHSpacing:Number = 12;
         public var m_listTopHSpacing:Number = 4;
         public var cmbElement:Class;
         public var m_mouseWheelEnabledWhenClosed:Boolean = false;
-        public var divider_mc:MovieClip;
+
         public var onOver:Function = null;
         public var onOut:Function = null;
         public var positionListFunc:Function = null;
         public var hasDeactivateListener:Boolean = false;
         public var pressedFunc:Function;
-		public var button_mc:IDropdownButton;
 		public var hovering:Boolean = false;
 		public var skipNextChangeInvoke:Boolean = false;
         public var minWidth:Number = 265;
+
+        public var m_selectContainer:MovieClip;
+        public var divider_mc:MovieClip;
+        public var header_mc:MovieClip;
+        public var m_bg_mc:MovieClip;
+		public var button_mc:IDropdownButton;
 
         public function HiddenDropdown(button_mc:IDropdownButton = null, elementClass:String = "LS_Symbols.comboElement", bgClass:String = "LS_Symbols.comboDDBG") {
             var comboElement_mc:MovieClip = null;
@@ -433,6 +437,9 @@ package controls.dropdowns {
             if (this.divider_mc) {
                 this.divider_mc.height = Math.round(this.m_bg_mc.height - this.divider_mc.y * 2);
                 this.divider_mc.visible = this.m_scrollList.m_scrollbar_mc.visible;
+            }
+            if (this.header_mc && this.header_mc.resize != null) {
+                this.header_mc.resize(this.m_bg_mc.x, this.m_bg_mc.y, this.m_bg_mc.width);
             }
         }
 

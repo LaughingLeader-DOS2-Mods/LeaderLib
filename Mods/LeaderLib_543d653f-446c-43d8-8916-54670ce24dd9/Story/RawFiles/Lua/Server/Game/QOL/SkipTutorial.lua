@@ -325,7 +325,7 @@ function SkipTutorial.Initialize()
 				Ext.Print("[LeaderLib] The tutorial is already being bypassed. Skipping Skip Tutorial setup.")
 			end
 		elseif skipTutorialControlEnabled and runSkipTutorialSetup and region == GameSettings.Settings.SkipTutorial.Destination then
-			GameHelpers.Net.PostMessageToHost("LeaderLib_ClearSkipTutorialUI", "")
+			GameHelpers.Net.PostMessageToHost("LeaderLib_DisableSkipTutorialUI", "")
 
 			local data = LevelSettings[region]
 			local settings = GameSettings.Settings.SkipTutorial

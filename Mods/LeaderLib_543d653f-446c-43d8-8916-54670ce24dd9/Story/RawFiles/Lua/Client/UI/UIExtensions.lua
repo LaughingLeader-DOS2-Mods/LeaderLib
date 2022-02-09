@@ -18,6 +18,7 @@ UIExtensions = {
 	---@type table<string, FlashTimerCallback[]>
 	Timers = {},
 	Layer = 18,
+	ID = "LeaderLibUIExtensions",
 	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf",
 	Initialized = false,
 	RegisteredListeners = false,
@@ -52,7 +53,7 @@ setmetatable(UIExtensions, {
 })
 
 local function DestroyInstance(force)
-	local instance = UIExtensions.GetInstance()
+	local instance = UIExtensions.GetInstance(true)
 	if instance then
 		if force or Common.TableLength(UIExtensions.Controls, true) + Common.TableLength(UIExtensions.Timers, true) == 0 then
 			instance:Invoke("dispose")
@@ -173,20 +174,23 @@ end
 --local defaultUIFlags = Data.DefaultUIFlags | Data.UIFlags.OF_FullScreen | Data.UIFlags.OF_KeepInScreen
 local defaultUIFlags = Data.DefaultUIFlags
 
-function UIExtensions.SetupInstance()
+function UIExtensions.SetupInstance(skipCheck)
 	-- if Ext.GetGameState() == "Menu" then
 	-- 	Ext.PrintError("[UIExtensions.SetupInstance] Game not ready yet.")
 	-- end
-	local instance = Ext.GetUI("LeaderLibUIExtensions")
+	local instance = nil
+	if not skipCheck then
+		instance = Ext.GetUI(UIExtensions.ID) or Ext.GetBuiltinUI(UIExtensions.SwfPath)
+	end
 	if not instance then
 		if Vars.ControllerEnabled then
 			----Needs to be less than 9
 			UIExtensions.Layer = 7
 		end
 		if Vars.DebugMode and not Vars.ControllerEnabled then
-			instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer, defaultUIFlags)
+			instance = Ext.CreateUI(UIExtensions.ID, UIExtensions.SwfPath, UIExtensions.Layer, defaultUIFlags)
 		else
-			instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
+			instance = Ext.CreateUI(UIExtensions.ID, UIExtensions.SwfPath, UIExtensions.Layer)
 		end
 		UIExtensions.RegisteredListeners = false
 		UIExtensions.Visible = true
@@ -244,10 +248,10 @@ function UIExtensions.SetupInstance()
 	end
 end
 
-function UIExtensions.GetInstance()
-	local instance = Ext.GetUI("LeaderLibUIExtensions")
-	if not instance then
-		instance = UIExtensions.SetupInstance()
+function UIExtensions.GetInstance(skipSetup)
+	local instance = Ext.GetUI(UIExtensions.ID) or Ext.GetBuiltinUI(UIExtensions.SwfPath)
+	if not instance and not skipSetup then
+		instance = UIExtensions.SetupInstance(true)
 	end
 	return instance
 end

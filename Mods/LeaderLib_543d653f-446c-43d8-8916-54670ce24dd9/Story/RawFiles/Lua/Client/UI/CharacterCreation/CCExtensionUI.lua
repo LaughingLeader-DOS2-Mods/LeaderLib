@@ -9,6 +9,7 @@ local CCExt = {
 	Layer = 3,
 	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_CharacterCreationExtensions.swf",
 	Initialized = false,
+	IsHost = false,
 }
 
 UIExtensions.CC = CCExt
@@ -123,8 +124,10 @@ local SkipTutorialRegionTooltips = {
 Classes.Enum:Create(SkipTutorialRegions)
 
 function CCExt.SetupSkipTutorialButton(this)
+	this.skipTutorial_mc.isEnabled = CCExt.IsHost
 	GameSettingsManager.Load(false)
 	this.skipTutorial_mc.setText(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "<font color='#77DDFF'>Skip Tutorial</font><br>Skip the tutorial and go straight to a specific level."))
+	this.skipTutorial_mc.title_mc.setText(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_DisplayName", "Skip Tutorial"));
 	for i=0,#SkipTutorialRegions-1 do
 		local level = SkipTutorialRegions[i]
 		if level ~= "None" then
@@ -141,7 +144,6 @@ function CCExt.SetupSkipTutorialButton(this)
 		if not index then
 			index = SkipTutorialRegions.FJ_FortJoy_Main
 		end
-		print(index)
 		this.skipTutorial_mc.selectItemByID(index, true)
 	end
 end
@@ -158,7 +160,9 @@ function CCExt.SetupInstance(force)
 			instance:Show()
 			local this = instance:GetRoot()
 			if not CCExt.Initialized then
-				this.presetButton_mc.setText(string.format("%s %s", LocalizedText.UI.Change.Value, LocalizedText.UI.Preset.Value))
+				local title = string.format("%s %s", LocalizedText.UI.Change.Value, LocalizedText.UI.Preset.Value)
+				this.presetButton_mc.setText(title)
+				this.presetButton_mc.title_mc.setText(title)
 				if _EXTVERSION >= 56 then
 					UIExtensions.CC.PresetExt.CreatePresetDropdown()
 				end
@@ -231,6 +235,7 @@ Ext.RegisterUINameCall("LeaderLib_SkipTutorialButton_LevelSelected", function (u
 end)
 
 Ext.RegisterNetListener("LeaderLib_EnableSkipTutorialUI", function (cmd, payload)
+	CCExt.IsHost = true
 	local this = CCExt.Root
 	if this then
 		this.skipTutorial_mc.isEnabled = true

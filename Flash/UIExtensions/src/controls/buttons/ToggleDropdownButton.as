@@ -7,12 +7,14 @@ package controls.buttons
 	import flash.geom.Point;
 	import controls.dropdowns.HiddenDropdown;
 	import controls.dropdowns.DropdownItemData;
+	import controls.dropdowns.TopHeader;
 	import interfaces.IDropdownButton;
 
 	public dynamic class ToggleDropdownButton extends MovieClip
 	{
 		public var button_graphic:IDropdownButton;
 		public var combo_mc:HiddenDropdown;
+		public var title_mc:TopHeader;
 		public var tooltip:String;
 		public var id:Number;
 		public var callbackId:String;
@@ -46,14 +48,24 @@ package controls.buttons
 		public function _init(graphics_mc:IDropdownButton) : void
 		{
 			this.button_graphic = graphics_mc;
+
+			this.title_mc = new TopHeader();
+			this.title_mc.visible = false;
+			this.title_mc.y = -this.title_mc.height;
+
 			this.combo_mc = new HiddenDropdown(graphics_mc);
 			this.combo_mc.positionListFunc = this.positionList;
 			//this.combo_mc.m_selectContainer.x = -this.combo_mc.m_selectContainer.width;
 			this.combo_mc.m_dropOutYDisplacement = -2;
-			this.combo_mc.bgHSpacing = -3;
+			this.combo_mc.bgHSpacing = 6;
+			this.combo_mc.header_mc = this.title_mc;
+
 			this.addChild(combo_mc);
+			combo_mc.m_selectContainer.addChild(title_mc);
+
 			this.combo_mc.addEventListener(Event.CHANGE,this.onChange);
 			this.combo_mc.addEventListener(Event.OPEN,this.onOpen);
+			this.combo_mc.addEventListener(Event.CLOSE,this.onClose);
 
 			this.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
 			this.addEventListener(MouseEvent.MOUSE_OUT,MainTimeline.Instance.onMouseOutTooltip);
@@ -81,6 +93,12 @@ package controls.buttons
 			if(MainTimeline.Instance.curTooltip == this.tooltip) {
 				Registry.ExtCall("hideTooltip");
 			}
+			this.title_mc.visible = true;
+		}
+		
+		public function onClose(e:Event) : *
+		{
+			this.title_mc.visible = false;
 		}
 		
 		public function onChange(e:Event) : *
@@ -128,6 +146,9 @@ package controls.buttons
 			var pos:Point = this.localToGlobal(new Point(0, 0));
 			selectContainer.x = pos.x - selectContainer.width;
             selectContainer.y = Math.round(pos.y);
+			// pos = this.title_mc.globalToLocal(new Point(0, 0));
+            // this.title_mc.x = pos.x;
+            // this.title_mc.y = pos.y - this.title_mc.height;
 		}
 
 		public function removeAll() : void

@@ -12,16 +12,19 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
 			IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
 		end
-		SettingsManager.SyncAllSettings(id)
-
-		local host = CharacterGetHostCharacter()
-		local uuid = GetCurrentCharacter(id)
-		if not StringHelpers.IsNullOrEmpty(uuid) and host ~= uuid and SendMissingExtenderMessage(uuid) then
-			OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
-			local text = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
-			OpenMessageBox(host, text)
-			--local hostText = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
-			--GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
+		local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
+		local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
+		if not StringHelpers.IsNullOrEmpty(uuid)
+		and not StringHelpers.IsNullOrEmpty(host)
+		and host ~= uuid then
+			SettingsManager.SyncAllSettings(id)
+			if SendMissingExtenderMessage(uuid) then
+				OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
+				local text = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
+				OpenMessageBox(host, text)
+				--local hostText = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
+				--GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
+			end
 		end
 	end
 end)
@@ -32,7 +35,7 @@ end)
 
 Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
 	if event == "Iterators_LeaderLib_UI_UnlockPartyInventory" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
-		GameHelpers.Net.PostToUser(id, "LeaderLib_UnlockCharacterInventory", "")
+		GameHelpers.Net.PostToUser(id, "LeaderLib_UnlockCharacterInventory")
 	end
 end)
 
@@ -85,14 +88,17 @@ Ext.RegisterOsirisListener("GlobalFlagCleared", 1, "after", function(flag)
 end)
 
 local function OnObjectDying(obj)
+	if not Ext.GetGameState() == "Running" then
+		return
+	end
 	obj = StringHelpers.GetUUID(obj)
 	local isSummon = false
 	local owner = nil
-	local summon = ObjectExists(obj) == 1 and Ext.GetGameObject(obj) or nil
+	local summon = ObjectExists(obj) == 1 and GameHelpers.TryGetObject(obj) or nil
 	for ownerId,tbl in pairs(PersistentVars.Summons) do
 		for i,uuid in pairs(tbl) do
 			if uuid == obj then
-				owner = Ext.GetGameObject(ownerId)
+				owner = GameHelpers.TryGetObject(ownerId)
 				table.remove(tbl, i)
 				isSummon = true
 			end

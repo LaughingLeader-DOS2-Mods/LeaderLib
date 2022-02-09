@@ -49,15 +49,18 @@ else
 	end
 
 	function WorldTooltipper.UpdateWorldItems()
-		if SettingsManager.GetMod("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true) then
-			local time = Ext.MonotonicTime()
-			for _,uuid in pairs(Ext.GetAllItems()) do
-				local item = Ext.GetItem(uuid)
-				if item and ShouldHaveTooltip(item) then
-					item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
+		--Don't try and modify items during Sync/etc
+		if Ext.GetGameState() == "Running" then
+			if SettingsManager.GetMod(ModuleUUID).Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true) then
+				local time = Ext.MonotonicTime()
+				for _,uuid in pairs(Ext.GetAllItems()) do
+					local item = Ext.GetItem(uuid)
+					if item and ShouldHaveTooltip(item) then
+						item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
+					end
 				end
+				fprint(LOGLEVEL.DEFAULT, "[LeaderLib:WorldTooltips.UpdateWorldItems] World tooltip updating took (%s) ms.", Ext.MonotonicTime()-time)
 			end
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:WorldTooltips.UpdateWorldItems] World tooltip updating took (%s) ms.", Ext.MonotonicTime()-time)
 		end
 	end
 
@@ -78,7 +81,10 @@ else
 	end
 
 	Ext.RegisterOsirisListener("ItemEnteredRegion", Data.OsirisEvents.ItemEnteredRegion, "after", function(uuid, region)
-		if SettingsManager.GetMod("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true) then
+		--Sync state safety
+		if Ext.GetGameState() == "Running" 
+		and SettingsManager.GetMod(ModuleUUID).Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true)
+		then
 			WorldTooltipper.OnItemEnteredWorld(Ext.GetItem(uuid), region)
 		end
 	end)

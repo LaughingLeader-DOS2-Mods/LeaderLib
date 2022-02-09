@@ -141,9 +141,8 @@ Ext.RegisterNetListener("LeaderLib_DisplayMessageBox", function(call, dataStr)
 end)
 
 Ext.RegisterNetListener("LeaderLib_UnlockCharacterInventory", function(call, playersTableString)
-	if playersTableString ~= nil then
-		--ExternalInterface.call("lockInventory",this.id,this.lockBtn_mc.isActive)
-		local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.partyInventory) or Vars.ControllerEnabled and Ext.GetBuiltinUI(Data.UIType.partyInventory_c)
+	if Ext.GetGameState() == "Running" and playersTableString ~= nil then
+		local ui = Ext.GetBuiltinUI(not Vars.ControllerEnabled and Data.UIType.partyInventory or Data.UIType.partyInventory_c)
 		if ui then
 			for player in GameHelpers.Character.GetPlayers() do
 				ui:ExternalInterfaceCall("lockInventory", Ext.HandleToDouble(player.Handle), false)

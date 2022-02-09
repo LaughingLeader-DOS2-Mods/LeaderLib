@@ -112,7 +112,6 @@ local function OnInitialized(region, isRunning)
 
 	if isRunning == true or Ext.GetGameState() == "Running" then
 		InvokeOnInitializedCallbacks(region)
-		SettingsManager.SyncAllSettings()
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
 			IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
 		end
@@ -125,7 +124,6 @@ function OnLeaderLibInitialized(region)
 		if not Vars.Initialized then
 			OnInitialized(region, true)
 		else
-			SettingsManager.SyncAllSettings()
 			InvokeOnInitializedCallbacks(region)
 		end
 	else

@@ -22,7 +22,7 @@ local function GetHealingStatusesForHeal(target, healStatus)
 	return statuses
 end
 
-Ext.RegisterOsirisListener("NRD_OnHeal", 4, "after", function(target, source, amount, handle)
+RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, source, amount, handle)
 	---@type EsvStatusHeal
 	local healStatus = Ext.GetStatus(target, handle)
 

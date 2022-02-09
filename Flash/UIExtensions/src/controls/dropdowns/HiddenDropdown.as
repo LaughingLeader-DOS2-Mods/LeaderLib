@@ -44,6 +44,7 @@ package controls.dropdowns {
 		public var button_mc:IDropdownButton;
 		public var hovering:Boolean = false;
 		public var skipNextChangeInvoke:Boolean = false;
+        public var minWidth:Number = 265;
 
         public function HiddenDropdown(button_mc:IDropdownButton = null, elementClass:String = "LS_Symbols.comboElement", bgClass:String = "LS_Symbols.comboDDBG") {
             var comboElement_mc:MovieClip = null;
@@ -71,8 +72,8 @@ package controls.dropdowns {
                 this.button_mc.addEventListener(MouseEvent.ROLL_OUT, this.topOut);
                 this.button_mc.addEventListener(MouseEvent.ROLL_OVER, this.topOver);
                 comboElement_mc = new this.cmbElement();
-                this.m_scrollList.setFrame(Math.max(320, this.button_mc.width) + this.bgTopSizeDiff, (comboElement_mc.height * this._rowCount) - 4);
-                this.m_bg_mc.width = Math.max(320, this.button_mc.width) + this.bgTopSizeDiff;
+                this.m_scrollList.setFrame(Math.max(this.minWidth, this.button_mc.width) + this.bgTopSizeDiff, (comboElement_mc.height * this._rowCount) - 4);
+                this.m_bg_mc.width = Math.max(this.minWidth, this.button_mc.width) + this.bgTopSizeDiff;
             }
             this.m_scrollList.addEventListener(MouseEvent.ROLL_OUT, this.scrollListOut);
             this.m_scrollList.addEventListener(Event.CHANGE, this.comboScrolled);
@@ -128,7 +129,7 @@ package controls.dropdowns {
             this.cmbElement = Registry.GetClass(elementClass);
             var mc:MovieClip = new this.cmbElement();
 			if(this.button_mc) {
-				this.m_scrollList.setFrame(Math.max(320, this.button_mc.width) + this.bgTopSizeDiff, mc.height * this._rowCount);
+				this.m_scrollList.setFrame(Math.max(this.minWidth, this.button_mc.width) + this.bgTopSizeDiff, mc.height * this._rowCount);
 			} else {
 				this.m_scrollList.setFrame(this.bgTopSizeDiff, mc.height * this._rowCount);
 			}
@@ -298,7 +299,7 @@ package controls.dropdowns {
             this._rowCount = value;
             if (this.button_mc) {
                 element_mc = new this.cmbElement();
-                this.m_scrollList.setFrame(Math.max(320, this.button_mc.width) + this.bgTopSizeDiff, (element_mc.height + this.m_scrollList.EL_SPACING) * this._rowCount);
+                this.m_scrollList.setFrame(Math.max(this.minWidth, this.button_mc.width) + this.bgTopSizeDiff, (element_mc.height + this.m_scrollList.EL_SPACING) * this._rowCount);
                 this._resizeDDBg();
             }
         }
@@ -427,7 +428,7 @@ package controls.dropdowns {
                 this.m_bg_mc.height = 20;
                 this.m_scrollList.checkScrollBar();
             }
-            this.m_bg_mc.width = Math.round(Math.max(320, this.button_mc.width) + this.bgTopSizeDiff);
+            this.m_bg_mc.width = Math.round(Math.max(this.minWidth, this.button_mc.width) + this.bgTopSizeDiff);
             this.m_bg_mc.x = Math.round(-this.bgTopSizeDiff * 0.5 + this.bgTopDisplacement);
             if (this.divider_mc) {
                 this.divider_mc.height = Math.round(this.m_bg_mc.height - this.divider_mc.y * 2);

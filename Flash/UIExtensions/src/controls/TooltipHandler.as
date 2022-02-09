@@ -3,29 +3,26 @@ package controls
 	import LS_Classes.tooltipHelper;
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
-	import flash.external.ExternalInterface;
 	
 	public class TooltipHandler
 	{
 		public static function init(mc:MovieClip, mouseTarget:MovieClip = null) : void
 		{
-			mc.base = mc.root as MovieClip;
+			//mc.base = mc.root as MovieClip;
 			if(mouseTarget == null)
 			{
 				mouseTarget = mc;
 			}
 			mouseTarget.addEventListener(MouseEvent.MOUSE_OVER, function(e:MouseEvent) : void
 			{
-				TooltipHandler.showTooltip(mc);
-				if (mc.mouseOver != null)
+				if (TooltipHandler.showTooltip(mc) && mc.mouseOver != null)
 				{
 					mc.mouseOver(e);
 				}
 			});
-			mouseTarget.addEventListener(MouseEvent.MOUSE_OUT, function(e:MouseEvent) : void
+			mouseTarget.addEventListener(MouseEvent.ROLL_OUT, function(e:MouseEvent) : void
 			{
-				TooltipHandler.hideTooltip(mc);
-				if (mc.mouseOut != null)
+				if (TooltipHandler.hideTooltip(mc) && mc.mouseOut != null)
 				{
 					mc.mouseOut(e);
 				}
@@ -39,25 +36,29 @@ package controls
 			}
 		}
 
-		public static function showTooltip(mc:MovieClip, fade:Boolean=true) : void
+		public static function showTooltip(mc:MovieClip, fade:Boolean=true) : Boolean
 		{
-			if(mc.tooltip != null && mc.tooltip != "")
+			if(mc.tooltip != null && mc.tooltip != "" && MainTimeline.Instance.curTooltip != mc.tooltip)
 			{
 				fade = MainTimeline.Instance.hasTooltip == true;
 				mc.tooltipOverrideW = MainTimeline.Instance.tooltipWidthOverride;
 				mc.tooltipYOffset = -4;
 				tooltipHelper.ShowTooltipForMC(mc,MainTimeline.Instance,mc.tooltipSide,fade);
 				MainTimeline.Instance.setHasTooltip(true, mc.tooltip);
+				return true;
 			}
+			return false;
 		}
 
-		public static function hideTooltip(mc:MovieClip) : void
+		public static function hideTooltip(mc:MovieClip) : Boolean
 		{
 			if(MainTimeline.Instance.curTooltip == mc.tooltip && MainTimeline.Instance.hasTooltip)
 			{
 				Registry.ExtCall("hideTooltip");
 				MainTimeline.Instance.setHasTooltip(false);
+				return true;
 			}
+			return false;
 		}
 	}
 }

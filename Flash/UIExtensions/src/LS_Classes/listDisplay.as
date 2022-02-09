@@ -267,29 +267,29 @@ package LS_Classes
 			return null;
 		}
 		
-		public function selectByOffset(param1:Number, param2:Boolean = true) : Boolean
+		public function selectByOffset(offset:Number, force:Boolean = true) : Boolean
 		{
-			var val5:MovieClip = null;
-			var val6:Number = NaN;
-			var val3:Boolean = false;
-			param1 += this.TOP_SPACING;
-			var val4:uint = 0;
-			while(val4 < this.content_array.length)
+			var obj_mc:MovieClip = null;
+			var obj_height:Number = NaN;
+			var success:Boolean = false;
+			offset += this.TOP_SPACING;
+			var i:uint = 0;
+			while(i < this.content_array.length)
 			{
-				val5 = this.content_array[val4];
-				if(val5 && val5.visible)
+				obj_mc = this.content_array[i];
+				if(obj_mc && obj_mc.visible)
 				{
-					val6 = this.getElementHeight(val5);
-					if(val5.y <= param1 && val5.y + val6 > param1)
+					obj_height = this.getElementHeight(obj_mc);
+					if(obj_mc.y <= offset && obj_mc.y + obj_height > offset)
 					{
-						val3 = true;
-						this.selectMC(val5);
+						success = true;
+						this.selectMC(obj_mc);
 						break;
 					}
 				}
-				val4++;
+				i++;
 			}
-			return val3;
+			return success;
 		}
 		
 		public function getElementByString(param1:String, param2:String) : MovieClip
@@ -868,13 +868,13 @@ package LS_Classes
 		
 		public function selectByListID(id:Number) : *
 		{
-			var val2:MovieClip = this.getElementByListID(id);
-			this.selectMC(val2);
+			var obj_mc:MovieClip = this.getElementByListID(id);
+			this.selectMC(obj_mc);
 		}
 		
-		public function selectMC(param1:MovieClip, param2:Boolean = false) : *
+		public function selectMC(obj_mc:MovieClip, force:Boolean = false) : *
 		{
-			if(this.m_CurrentSelection != param1 || param2)
+			if(this.m_CurrentSelection != obj_mc || force)
 			{
 				if(this.m_CurrentSelection)
 				{
@@ -887,17 +887,17 @@ package LS_Classes
 						this.m_CurrentSelection.INTDeselect();
 					}
 				}
-				if(param1)
+				if(obj_mc)
 				{
-					this.m_CurrentSelection = param1;
+					this.m_CurrentSelection = obj_mc;
 					dispatchEvent(new Event(Event.CHANGE));
 					if(this.OnSelectionChanged != null)
 					{
 						this.OnSelectionChanged();
 					}
-					if(param1.selectElement)
+					if(obj_mc.selectElement)
 					{
-						param1.selectElement();
+						obj_mc.selectElement();
 					}
 				}
 				else
@@ -926,51 +926,51 @@ package LS_Classes
 			}
 		}
 		
-		public function select(param1:Number, param2:Boolean = false, param3:Boolean = true) : *
+		public function select(index:Number, force:Boolean = false, forward:Boolean = true) : *
 		{
-			var val4:MovieClip = null;
-			if(this.visibleLength <= 1 && this.m_CurrentSelection && this.m_CurrentSelection.visible && !(this.currentSelection == param1 && param2))
+			var obj_mc:MovieClip = null;
+			if(this.visibleLength <= 1 && this.m_CurrentSelection && this.m_CurrentSelection.visible && !(this.currentSelection == index && force))
 			{
 				return;
 			}
 			if(this.m_cyclic)
 			{
-				if(param1 < 0)
+				if(index < 0)
 				{
-					param1 = this.content_array.length - 1;
+					index = this.content_array.length - 1;
 				}
-				else if(param1 >= this.content_array.length)
+				else if(index >= this.content_array.length)
 				{
-					param1 = 0;
+					index = 0;
 				}
 			}
-			else if(param1 < 0 || param1 >= this.content_array.length)
+			else if(index < 0 || index >= this.content_array.length)
 			{
 				return;
 			}
-			if(this.currentSelection != param1 || param2)
+			if(this.currentSelection != index || force)
 			{
-				val4 = this.content_array[param1];
-				if(val4)
+				obj_mc = this.content_array[index];
+				if(obj_mc)
 				{
-					if(val4.visible && val4.selectable)
+					if(obj_mc.visible && obj_mc.selectable)
 					{
-						this.selectMC(val4,param2);
-						if(!param3 && val4.INTSelectLast != null && val4.INTSelectLast())
+						this.selectMC(obj_mc,force);
+						if(!forward && obj_mc.INTSelectLast != null && obj_mc.INTSelectLast())
 						{
-							if(val4.deselectElement)
+							if(obj_mc.deselectElement)
 							{
-								val4.deselectElement();
+								obj_mc.deselectElement();
 							}
 						}
 					}
-					else if(param3)
+					else if(forward)
 					{
-						this.select(param1 + 1,param2,param3);
+						this.select(index + 1,force,forward);
 					}
 					else
 					{
-						this.select(param1 - 1,param2,param3);
+						this.select(index - 1,force,forward);
 					}
 				}
 			}
@@ -1160,37 +1160,37 @@ package LS_Classes
 			return this.getFirstElement(true,param1);
 		}
 		
-		public function getLastElement(param1:Boolean = true, param2:Boolean = true) : MovieClip
+		public function getLastElement(visibleOnly:Boolean = true, force:Boolean = true) : MovieClip
 		{
-			var val3:int = this.content_array.length - 1;
-			while(val3 >= 0)
+			var i:int = this.content_array.length - 1;
+			while(i >= 0)
 			{
-				if(this.content_array[val3])
+				if(this.content_array[i])
 				{
-					if(!(param1 && !this.content_array[val3].visible))
+					if(!(visibleOnly && !this.content_array[i].visible))
 					{
-						if(!(param2 && this.content_array[val3].selectable == false))
+						if(!(force && this.content_array[i].selectable == false))
 						{
-							return this.content_array[val3];
+							return this.content_array[i];
 						}
 					}
 				}
-				val3--;
+				i--;
 			}
 			return null;
 		}
 		
-		public function getLastVisible(param1:Boolean = true) : MovieClip
+		public function getLastVisible(force:Boolean = true) : MovieClip
 		{
-			return this.getLastElement(true,param1);
+			return this.getLastElement(true,force);
 		}
 		
-		public function selectFirstVisible(param1:Boolean = false) : *
+		public function selectFirstVisible(force:Boolean = false) : *
 		{
-			var val2:MovieClip = this.getFirstVisible();
-			if(val2)
+			var obj_mc:MovieClip = this.getFirstVisible();
+			if(obj_mc)
 			{
-				this.selectMC(val2,param1);
+				this.selectMC(obj_mc,force);
 			}
 		}
 		

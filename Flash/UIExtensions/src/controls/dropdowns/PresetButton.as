@@ -57,7 +57,9 @@ package controls.dropdowns
 		public function onChange(e:Event) : *
 		{
 			var entry:MovieClip = this.combo_mc.selectedMc;
-			Registry.ExtCall("LeaderLib_UIExtensions_PresetSelected", entry.id, this.combo_mc.selectedIndex);
+			if(entry) {
+				Registry.ExtCall("LeaderLib_UIExtensions_PresetSelected", entry.id, this.combo_mc.selectedIndex);
+			}
 		}
 		
 		public function deselectElement() : *

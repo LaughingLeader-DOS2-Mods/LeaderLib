@@ -13,6 +13,17 @@ package LS_Symbols
 		public var Combo:MovieClip;
 		public var _item:Object;
 		public var id:*;
+
+		public static var selectedColor:uint = 6151031;
+
+		public function get selected():Boolean
+		{
+			if(this.Combo)
+			{
+				return this.Combo.selectedIndex == this.list_pos;
+			}
+			return false;
+		}
 		
 		public function comboElement()
 		{
@@ -22,17 +33,27 @@ package LS_Symbols
 		
 		public function deselectElement() : *
 		{
-			this.text_txt.textColor = 11246731;
+			this.text_txt.textColor = !this.selected ? 11246731 : selectedColor;
 			this.text_txt.visible = true;
 		}
 		
 		public function selectElement() : *
 		{
-			this.text_txt.textColor = 15132390;
+			this.text_txt.textColor = !this.selected ? 15132390 : selectedColor;
 			if(this.Combo.m_isOpen)
 			{
 				Registry.ExtCall("PlaySound","UI_Generic_Over");
 			}
+		}
+		
+		public function comboDeselect() : *
+		{
+			this.text_txt.textColor = 11246731;
+		}
+		
+		public function comboSelect() : *
+		{
+			this.text_txt.textColor = selectedColor;
 		}
 		
 		public function setSelectionText() : *

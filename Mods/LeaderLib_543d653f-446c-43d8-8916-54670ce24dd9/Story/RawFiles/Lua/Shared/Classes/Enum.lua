@@ -1,6 +1,19 @@
 ---@class Enum
 local Enum = {}
 
+local iter = function (tbl,i)
+	i = i + 1
+	local value = tbl[i]
+	if value == nil then return end
+	return i, value
+end
+
+local function stateless_iter(tbl, k)
+	local v = nil
+	k,v = next(tbl, k)
+	if nil~=v then return k,v end
+end
+
 local function CreateEnum(target)
 	local integers = {}
 	local names = {}
@@ -21,6 +34,14 @@ local function CreateEnum(target)
 			end
 		end
 	end
+	local hasIntegers = #integers > 0
+	local iterFunc = function ()
+		if hasIntegers then
+			return iter, integers, startIndex-1
+		else
+			return stateless_iter, names, nil
+		end
+	end
 	setmetatable(target, {
 		__call = function(tbl, v)
 			local t = type(v)
@@ -32,30 +53,10 @@ local function CreateEnum(target)
 		__index = function(_,key)
 			return names[key] or integers[key]
 		end,
-		__pairs = function(tbl)
-			local i = startIndex
-			local function iter(tbl)
-				local name = names[i]
-				local v = target[name]
-				if v ~= nil then
-					i = i + 1
-					return name,v
-				end
-			end
-			return iter, tbl, names[i]
-		end,
-		__ipairs = function(tbl)
-			local i = startIndex
-			local function iter(tbl,i)
-				local v = target[integers[i]]
-				if v ~= nil then
-					i = i + 1
-					return integers[1],v
-				end
-			end
-			return iter, tbl, integers[1]
-		end
+		__pairs = iterFunc,
+		__ipairs = iterFunc
 	})
+	return target
 end
 
 function Enum:Create(target)

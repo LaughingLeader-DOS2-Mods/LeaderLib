@@ -700,12 +700,14 @@ end
 local _cachedLevels = {}
 setmetatable(_cachedLevels, {__mode ="kv"})
 local _ranCachedLevels = false
+
 local NonGameLevelTypes = {
 	LobbyLevel = true,
 	MenuLevel = true,
 	PhotoBoothLevel = true,
 	CharacterCreationLevel = true,
 }
+
 local LevelAttributeNames = {
 	"LobbyLevel",
 	"MenuLevel",
@@ -718,15 +720,29 @@ local function _cacheAllModLevels()
 	local manager = isClient and Ext.Client.GetModManager() or not isClient and Ext.Server.GetModManager()
 	if manager then
 		_ranCachedLevels = true
-		for _,data in pairs(manager.AvailableMods) do
-			for i=1,5 do
-				local att = LevelAttributeNames[i]
-				local levelName = data.Info[att]
-				if not StringHelpers.IsNullOrEmpty(levelName) then
-					_cachedLevels[levelName] = att
+		local adventureMod = manager.BaseModule
+		for i=1,5 do
+			local att = LevelAttributeNames[i]
+			local levelName = adventureMod.Info[att]
+			if not StringHelpers.IsNullOrEmpty(levelName) then
+				if _cachedLevels[levelName] == nil then
+					_cachedLevels[levelName] = {}
 				end
+				_cachedLevels[levelName][att] = true
 			end
 		end
+		-- for _,data in pairs(manager.AvailableMods) do
+		-- 	for i=1,5 do
+		-- 		local att = LevelAttributeNames[i]
+		-- 		local levelName = data.Info[att]
+		-- 		if not StringHelpers.IsNullOrEmpty(levelName) then
+		-- 			if _cachedLevels[levelName] == nil then
+		-- 				_cachedLevels[levelName] = {}
+		-- 			end
+		-- 			_cachedLevels[levelName][att] = true
+		-- 		end
+		-- 	end
+		-- end
 	end
 end
 
@@ -746,10 +762,12 @@ function GameHelpers.GetLevelType(levelName)
 			end
 		end
 		local levelData = _cachedLevels[levelName]
-		if levelData == "CharacterCreationLevel" then
-			return LEVELTYPE.CHARACTER_CREATION
-		elseif levelData == "LobbyLevel" then
-			return LEVELTYPE.LOBBY
+		if levelData then
+			if levelData.CharacterCreationLevel then
+				return LEVELTYPE.CHARACTER_CREATION
+			elseif levelData.LobbyLevel then
+				return LEVELTYPE.LOBBY
+			end
 		end
 	elseif Ext.OsirisIsCallable() then
 		if IsGameLevel(levelName) == 1 then

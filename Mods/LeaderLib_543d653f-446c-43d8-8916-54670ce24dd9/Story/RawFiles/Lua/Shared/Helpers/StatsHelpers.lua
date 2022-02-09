@@ -389,8 +389,21 @@ local RequirementFunctions = {
 	end,
 	-- MinKarma = HasStatValue,
 	-- MaxKarma = HasStatValue,
+	---@param character EclCharacter
 	Immobile = function (character, req, param, b)
-		local isImmobile = character.Stats.Movement <= 0
+		local totalMoveRange = 0
+		local totalMoveSpeedBoost = 0
+		--for i,v in pairs(character.Stats.DynamicStats) do
+		local length = #character.Stats.DynamicStats
+		for i=1,length do
+			local v = character.Stats.DynamicStats[i]
+			totalMoveRange = totalMoveRange + v.Movement
+			totalMoveSpeedBoost = totalMoveSpeedBoost + v.MovementSpeedBoost
+		end
+		if totalMoveSpeedBoost == 0 then
+			totalMoveSpeedBoost = 1
+		end
+		local isImmobile = (totalMoveRange * totalMoveSpeedBoost) <= 0
 		return isImmobile ~= b
 	end,
 	Tag = function (character, req, param, b)
@@ -403,11 +416,11 @@ local RequirementFunctions = {
 ---@return boolean
 function GameHelpers.Stats.CharacterHasRequirements(character, statId)
 	local stat = Ext.GetStat(statId)
-	local isInCombat = RequirementFunctions.Combat(character, "Combat", -1, false)
+	local isInCombat = character:GetStatus("COMBAT") ~= nil
 	if stat and stat.Requirements then
 		for _,req in pairs(stat.Requirements) do
-			if req.Requirement == "Tag" then
-				if character:HasTag(req.Param) == req.Not then
+			if req.Requirement == "Combat" then
+				if isInCombat == req.Not then
 					return false
 				end
 			else
@@ -419,16 +432,6 @@ function GameHelpers.Stats.CharacterHasRequirements(character, statId)
 					end
 				end
 			end
-			-- elseif Data.AttributeEnum[req.Requirement] or Data.AbilityEnum[req.Requirement] then
-			-- 	if type(req.Param) == "number" then
-			-- 		if req.Param > 0 then
-			-- 			local current = character.Stats[req.Requirement]
-			-- 			if current < req.Param then
-			-- 				return false
-			-- 			end
-			-- 		end
-			-- 	end
-			-- end
 		end
 
 		if _cachedSkills[statId] then
@@ -472,6 +475,22 @@ function GameHelpers.Stats.CharacterHasRequirements(character, statId)
 			if apCost > 0 and isInCombat then
 				if character.Stats.CurrentAP < apCost then
 					return false
+				end
+			end
+
+			for _,req in pairs(stat.MemorizationRequirements) do
+				if req.Requirement == "Combat" then
+					if isInCombat == req.Not then
+						return false
+					end
+				else
+					local callback = RequirementFunctions[req.Requirement]
+					if callback then
+						local result = callback(character, req.Requirement, req.Param, req.Not)
+						if result == false then
+							return false
+						end
+					end
 				end
 			end
 		end

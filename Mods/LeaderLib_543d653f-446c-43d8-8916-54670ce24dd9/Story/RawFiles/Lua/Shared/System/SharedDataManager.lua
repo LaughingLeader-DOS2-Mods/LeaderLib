@@ -14,6 +14,7 @@ LEVELTYPE = {
 	LOBBY = 3,
 	EDITOR = 4,
 }
+Classes.Enum:Create(LEVELTYPE)
 
 ---@class GAMEMODE
 GAMEMODE = {
@@ -21,6 +22,7 @@ GAMEMODE = {
 	ARENA = 2,
 	GAMEMASTER = 3
 }
+Classes.Enum:Create(GAMEMODE)
 
 local UserIds = {}
 
@@ -31,6 +33,7 @@ REGIONSTATE = {
 	GAME = 2,
 	ENDED = 3
 }
+Classes.Enum:Create(REGIONSTATE)
 
 ---@class SharedData
 SharedData = {
@@ -221,6 +224,7 @@ else
 	end)
 	
 	RegisterListener("LuaReset", function()
+		SharedData.RegionData.State = REGIONSTATE.GAME
 		InvokeListenerCallbacks(Listeners.RegionChanged, SharedData.RegionData.Current, SharedData.RegionData.State, SharedData.RegionData.LevelType)
 	end)
 
@@ -539,7 +543,7 @@ if isClient then
 				InvokeListenerCallbacks(Listeners.Initialized, SharedData.RegionData.Current)
 				Vars.Initialized = true
 			end
-			InvokeListenerCallbacks(Listeners.RegionChanged, SharedData.RegionData.State, SharedData.RegionData.Current, SharedData.RegionData.LevelType)
+			InvokeListenerCallbacks(Listeners.RegionChanged, SharedData.RegionData.Current, SharedData.RegionData.State, SharedData.RegionData.LevelType)
 			return true
 		else
 			error("Error parsing json?", payload)

@@ -22,7 +22,7 @@ local function CreateEnum(target)
 		local t = type(k)
 		if t == "string" then
 			if v == 0 then startIndex = 0 end
-			names[v] = k
+			names[k] = v
 			if type(v) == "number" then
 				integers[v] = k
 			end
@@ -34,6 +34,7 @@ local function CreateEnum(target)
 			end
 		end
 	end
+	Ext.Dump({Names = names, Integers = integers})
 	local hasIntegers = #integers > 0
 	local iterFunc = function ()
 		if hasIntegers then
@@ -45,8 +46,10 @@ local function CreateEnum(target)
 	setmetatable(target, {
 		__call = function(tbl, v)
 			local t = type(v)
-			if t == "number" or t == "string" then
-				return target[v]
+			if t == "number" then
+				return integers[v]
+			elseif t == "string" then
+				return names[v]
 			end
 		end,
 		__newindex = function() end,

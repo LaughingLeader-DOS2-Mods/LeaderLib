@@ -51,15 +51,22 @@ if _EXTVERSION >= 56 then
 		end,
 		character = function (dumpType, synced, ...)
 			local fileName = string.format("Dumps/Character_%s.json", isClient and "Client" or "Server")
-			Ext.PrintError(fileName)
-			Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Client:GetCharacter() or Ext.GetCharacter(CharacterGetHostCharacter())))
-			-- if isClient then
-				
-			-- else
-			-- 	local character = Ext.GetCharacter(CharacterGetHostCharacter())
-			-- 	local data = TableHelpers.SanitizeTable(character, {["userdata"] = true, ["function"] = true})
-			-- 	Ext.IO.SaveFile(fileName, Ext.DumpExport(data))
-			-- end
+			--Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Client:GetCharacter() or Ext.GetCharacter(CharacterGetHostCharacter())))
+			if isClient then
+				Ext.IO.SaveFile(fileName, Ext.DumpExport(Client:GetCharacter()))
+			else
+				-- local character = Ext.GetCharacter(CharacterGetHostCharacter())
+				-- local data = {}
+				-- for k,v in pairs(character) do
+				-- 	--FIXME StatusesFromItems  is a table of userdata keys. Dumping this will be fixed in an extender update.
+				-- 	if k ~= "StatusesFromItems" and k ~= "AI" then
+				-- 		print(k, type(k), type(v))
+				-- 		Ext.DumpExport(v)
+				-- 		data[k] = v
+				-- 	end
+				-- end
+				-- Ext.IO.SaveFile(fileName, Ext.DumpExport(data))
+			end
 			Ext.Print("[dump:character] Saved character data to",fileName)
 			if not synced then
 				SendDumpCommand(dumpType, true, ...)

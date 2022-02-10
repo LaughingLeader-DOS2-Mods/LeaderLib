@@ -34,7 +34,6 @@ local function CreateEnum(target)
 			end
 		end
 	end
-	Ext.Dump({Names = names, Integers = integers})
 	local hasIntegers = #integers > 0
 	local iterFunc = function ()
 		if hasIntegers then

@@ -51,6 +51,38 @@ function GameHelpers.Character.IsPlayer(character)
 	return false
 end
 
+---Returns true if the character IsGameMaster or IsPossessed
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param ignorePossessed ?boolean
+---@return boolean
+function GameHelpers.Character.IsGameMaster(character, ignorePossessed)
+	if not character then
+		return false
+	end
+	local t = type(character)
+	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(character) then
+		return false
+	end
+	character = GameHelpers.GetCharacter(character)
+	if not character then
+		return false
+	end
+	if not isClient then
+		return character.IsGameMaster or (not ignorePossessed and character.IsPossessed)
+	else
+		for uuid,data in pairs(SharedData.CharacterData) do
+			if data.NetID == character.NetID and (data.IsGameMaster or (not ignorePossessed and data.IsPossessed)) then
+				return true
+			end
+		end
+		local gm = GameHelpers.Client.GetGameMaster()
+		if gm and gm.NetID == character.NetID then
+			return true
+		end
+	end
+	return false
+end
+
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 ---@return boolean
 function GameHelpers.Character.IsPlayerOrPartyMember(character)

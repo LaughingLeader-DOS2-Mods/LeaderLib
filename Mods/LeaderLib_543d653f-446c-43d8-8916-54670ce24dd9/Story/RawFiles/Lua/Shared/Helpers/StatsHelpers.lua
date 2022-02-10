@@ -2,6 +2,8 @@ if GameHelpers.Stats == nil then
 	GameHelpers.Stats = {}
 end
 
+local isClient = Ext.IsClient()
+
 --- @param stat string
 --- @param match string
 --- @return boolean
@@ -411,7 +413,7 @@ local RequirementFunctions = {
 	end,
 }
 
----@param character EclCharacter
+---@param character EsvCharacter|EclCharacter
 ---@param statId string A skill or item stat.
 ---@return boolean
 function GameHelpers.Stats.CharacterHasRequirements(character, statId)
@@ -476,6 +478,11 @@ function GameHelpers.Stats.CharacterHasRequirements(character, statId)
 				if character.Stats.CurrentAP < apCost then
 					return false
 				end
+			end
+
+			--GM's don't have to deal with memorization requirements'
+			if GameHelpers.Character.IsGameMaster(character) or not GameHelpers.Character.IsPlayer(character) then
+				return true
 			end
 
 			for _,req in pairs(stat.MemorizationRequirements) do

@@ -82,6 +82,23 @@ function GameHelpers.Client.GetCharacter()
 	return character
 end
 
+---@return EclCharacter
+function GameHelpers.Client.GetGameMaster()
+	if Client and Client.Character and (Client.Character.IsGameMaster and not Client.Character.IsPossessed) then
+		return Client:GetCharacter()
+	end
+	if not Vars.ControllerEnabled then
+		local ui = Ext.GetUIByType(Data.UIType.characterSheet)
+		if ui then
+			---@type FlashMainTimeline
+			local this = ui:GetRoot()
+			if this and this.isGameMasterChar then
+				return GameHelpers.Client.TryGetCharacterFromDouble(this.characterHandle)
+			end
+		end
+	end
+end
+
 ---@return boolean
 function GameHelpers.Client.IsGameMaster(ui, this)
 	if Client and Client.Character and (Client.Character.IsGameMaster and not Client.Character.IsPossessed) then

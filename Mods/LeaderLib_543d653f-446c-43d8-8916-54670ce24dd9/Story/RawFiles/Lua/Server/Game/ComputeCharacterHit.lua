@@ -128,13 +128,12 @@ end
 function HitOverrides.GetResistancePenetration(character, attacker)
     --- @type table<string,integer>
     local resistancePenetration = {}
-
-    local tags = GameHelpers.GetAllTags(attacker.Character)
         
     if attacker ~= nil and attacker.Character ~= nil then
+        local _cachedTags = GameHelpers.GetAllTags(attacker.Character, true, true)
         for damageType,tags in pairs(Data.ResistancePenetrationTags) do
             for i,tagEntry in pairs(tags) do
-                if tags[tagEntry.Tag] then
+                if _cachedTags[tagEntry.Tag] then
                     if resistancePenetration[damageType] == nil then
                         resistancePenetration[damageType] = 0
                     end

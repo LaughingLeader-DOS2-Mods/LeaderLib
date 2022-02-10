@@ -2,16 +2,20 @@ local _EXTVERSION = Ext.Version()
 local isClient = Ext.IsClient()
 
 if _EXTVERSION >= 56 then
-	local function SendDumpCommand(...)
+	local function SendDumpCommand(dumpType, synced, ...)
+		if synced then
+			return
+		end
+		local args = {...}
 		if not isClient then
 			GameHelpers.Net.PostMessageToHost("LeaderLib_Debug_RunDumpCommand", {
-				Command = "dump",
-				Args = {...},
+				Command = dumpType,
+				Args = args
 			})
 		else
 			Ext.PostMessageToServer("LeaderLib_Debug_RunDumpCommand", Common.JsonStringify({
-				Command = "dump",
-				Args = {...},
+				Command = dumpType,
+				Args = args
 			}))
 		end
 	end
@@ -68,11 +72,9 @@ if _EXTVERSION >= 56 then
 				-- Ext.IO.SaveFile(fileName, Ext.DumpExport(data))
 			end
 			Ext.Print("[dump:character] Saved character data to",fileName)
-			if not synced then
-				SendDumpCommand(dumpType, true, ...)
-			end
+			SendDumpCommand(dumpType, synced, ...)
 		end,
-		uiext = function (...)
+		uiext = function (dumpType, synced, filename)
 			if isClient then
 				local data = {
 					UIExtensions = UIExtensions.Instance,
@@ -89,10 +91,11 @@ if _EXTVERSION >= 56 then
 						end
 					end
 				end
-				Ext.SaveFile("Dumps/UIExtensions.json", Ext.DumpExport(data))
-				Ext.Print("[dump:uiext] Saved UIExtensions data to Dumps/UIExtensions.json")
+				filename = "Dumps/" .. (filename or "UIExtensions.json")
+				Ext.SaveFile(filename, Ext.DumpExport(data))
+				fprint(LOGLEVEL.DEFAULT, "[dump:uiext] Saved UIExtensions data to %s", filename)
 			else
-				SendDumpCommand(...)
+				SendDumpCommand(dumpType, synced, filename)
 			end
 		end,
 		modmanager = function (dumpType, synced, ...)
@@ -107,14 +110,19 @@ if _EXTVERSION >= 56 then
 		end
 	}
 
-	local function OnDumpCommand(cmd, dumpType, ...)
+	local function OnDumpCommand(cmd, dumpType, synced, ...)
+		local args = {...}
+		if type(synced) == "string" then
+			table.insert(args, 1, synced)
+			synced = false
+		end
 		dumpType = string.lower(dumpType or "")
 		if dumpType == "" then
 			return
 		end
 		for k,func in pairs(_DUMP) do
 			if string.find(dumpType, k) then
-				func(dumpType, ...)
+				func(dumpType, synced, ...)
 			end
 		end
 	end
@@ -124,7 +132,7 @@ if _EXTVERSION >= 56 then
 	Ext.RegisterNetListener("LeaderLib_Debug_RunDumpCommand", function (netmsg, payload)
 		local cmdData = Common.JsonParse(payload)
 		if cmdData then
-			OnDumpCommand(cmdData.Command, table.unpack(cmdData.Args))
+			OnDumpCommand("dump", cmdData.Command, true, table.unpack(cmdData.Args))
 		end
 	end)
 end

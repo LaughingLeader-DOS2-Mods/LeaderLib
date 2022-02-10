@@ -231,6 +231,10 @@ Ext.RegisterListener("GameStateChanged", function (from, to)
 	end
 end)
 
+Ext.RegisterUINameCall("LeaderLib_CCExt_RepositionButtons", function (ui, call)
+	CCExt.PositionButtons(ui:GetRoot())
+end)
+
 Ext.RegisterUINameCall("LeaderLib_SkipTutorialButton_LevelSelected", function (ui, call, id, index)
 	local level = SkipTutorialRegions[index]
 	if level then
@@ -278,3 +282,12 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTags", fu
 		end
 	end
 end, "After")
+
+---@param region string
+---@param state REGIONSTATE
+---@param levelType LEVELTYPE
+RegisterListener("RegionChanged", function (region, state, levelType)
+	if state == REGIONSTATE.ENDED and levelType == LEVELTYPE.CHARACTER_CREATION then
+		DestroyInstance()
+	end
+end)

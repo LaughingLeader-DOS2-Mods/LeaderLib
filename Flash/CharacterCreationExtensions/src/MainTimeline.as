@@ -57,6 +57,11 @@ package
 			this.skipTutorial_mc.init();
 		}
 
+		public function onEventResolution(w:int, h:int) : *
+		{
+			Registry.ExtCall("LeaderLib_CCExt_RepositionButtons");
+		}
+
 		public function setHasTooltip(isEnabled:Boolean, text:String = "") : void
 		{
 			this.hasTooltip = isEnabled;

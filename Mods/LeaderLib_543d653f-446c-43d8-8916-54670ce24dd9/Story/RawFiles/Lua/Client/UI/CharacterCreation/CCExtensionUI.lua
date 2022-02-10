@@ -148,14 +148,15 @@ function CCExt.SetupSkipTutorialButton(this)
 	end
 	if not GameSettings.Settings.SkipTutorial.Enabled then
 		this.skipTutorial_mc.selectItemByID(1, true)
+		this.skipTutorial_mc.graphics_mc.activated = false
 	else
 		local index = SkipTutorialRegions[GameSettings.Settings.SkipTutorial.Destination]
 		if not index then
 			index = SkipTutorialRegions.FJ_FortJoy_Main
 		end
 		this.skipTutorial_mc.selectItemByID(index, true)
+		this.skipTutorial_mc.graphics_mc.activated = true
 	end
-	this.skipTutorial_mc.graphics_mc.activated = GameSettings.Settings.SkipTutorial.Enabled
 end
 
 function CCExt.SetupInstance(force)

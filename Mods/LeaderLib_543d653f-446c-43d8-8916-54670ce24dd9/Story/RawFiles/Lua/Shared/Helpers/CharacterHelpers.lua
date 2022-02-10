@@ -185,6 +185,9 @@ function GameHelpers.Character.IsInCombat(character)
 		elseif GameHelpers.DB.HasUUID("DB_CombatCharacters", character, 2, 1) then
 			return true
 		end
+	else
+		character = GameHelpers.GetCharacter(character)
+		return character and character:GetStatus("COMBAT") ~= nil
 	end
 	return false
 end

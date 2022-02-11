@@ -12,6 +12,7 @@ local VariableData = {
 	Interval = 1,
 	DebugOnly = false,
 	CanExport = true,
+	ClientSide = false,
 	IsFromFile = false
 }
 
@@ -29,6 +30,7 @@ function VariableData:Create(id, value, displayName, tooltip, min, max, interval
     {
 		ID = id,
 		Value = value or "",
+		ClientSide = false,
 		IsFromFile = false
 	}
 	if isFromFile ~= nil then

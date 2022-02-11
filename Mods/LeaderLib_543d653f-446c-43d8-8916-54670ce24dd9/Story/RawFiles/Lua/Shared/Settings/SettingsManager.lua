@@ -164,7 +164,7 @@ end
 
 function LoadGlobalSettings()
 	local b,result = xpcall(function()
-		--SettingsManager.LoadConfigFiles()
+		SettingsManager.LoadConfigFiles()
 		local json = Ext.LoadFile("LeaderLib_GlobalSettings.json")
 		if json ~= nil and json ~= "" then
 			local json_tbl = Common.JsonParse(json)
@@ -295,6 +295,5 @@ if Ext.IsServer() then
 end
 
 Ext.RegisterListener("SessionLoading", function()
-	SettingsManager.LoadConfigFiles()
 	LoadGlobalSettings()
 end)

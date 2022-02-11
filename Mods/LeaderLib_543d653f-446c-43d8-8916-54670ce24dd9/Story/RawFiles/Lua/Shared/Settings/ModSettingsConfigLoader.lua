@@ -150,7 +150,7 @@ function SettingsManager.LoadConfigFiles()
 				local b,result = xpcall(TryFindConfig, debug.traceback, info)
 				if not b then
 					Ext.PrintError(result)
-				elseif result ~= nil and result ~= "" then
+				elseif not StringHelpers.IsNullOrEmpty(result) then
 					LoadModSettingsConfig(uuid, result)
 				end
 			end

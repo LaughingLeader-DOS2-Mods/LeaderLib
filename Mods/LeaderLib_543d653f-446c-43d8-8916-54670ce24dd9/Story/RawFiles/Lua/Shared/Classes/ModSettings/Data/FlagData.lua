@@ -10,6 +10,7 @@ local FlagData = {
 	Tooltip = nil,
 	DebugOnly = false,
 	CanExport = true,
+	ClientSide = false,
 	IsFromFile = false
 }
 
@@ -27,6 +28,7 @@ function FlagData:Create(flag, flagType, enabled, displayName, tooltip, isFromFi
 		IsFromFile = false,
 		DebugOnly = false,
 		CanExport = true,
+		ClientSide = false,
 		Default = false
 	}
 	if enabled ~= nil then

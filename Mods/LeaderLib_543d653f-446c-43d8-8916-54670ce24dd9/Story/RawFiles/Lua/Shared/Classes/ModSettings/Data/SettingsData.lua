@@ -236,25 +236,27 @@ function SettingsData:UpdateFlags()
 		return
 	end
 	for flag,data in pairs(self.Flags) do
-		if data.FlagType == "Global" then
-			data.Enabled = GlobalGetFlag(flag) == 1
-		elseif data.FlagType == "User" or data.FlagType == "Character" then
-			for player in GameHelpers.Character.GetPlayers(false) do
-				local uuid = player.MyGuid
-				if data.FlagType == "User" then
-					local id = CharacterGetReservedUserID(uuid)
-					if id then
-						local profileid = GetUserProfileID(id)
-						if profileid then
-							data:AddTarget(profileid, UserGetFlag(uuid, flag) == 1)
+		if not data.ClientSide then
+			if data.FlagType == "Global" then
+				data.Enabled = GlobalGetFlag(flag) == 1
+			elseif data.FlagType == "User" or data.FlagType == "Character" then
+				for player in GameHelpers.Character.GetPlayers(false) do
+					local uuid = player.MyGuid
+					if data.FlagType == "User" then
+						local id = CharacterGetReservedUserID(uuid)
+						if id then
+							local profileid = GetUserProfileID(id)
+							if profileid then
+								data:AddTarget(profileid, UserGetFlag(uuid, flag) == 1)
+							end
 						end
-					end
-				elseif data.FlagType == "Character" then
-					local enabled = ObjectGetFlag(uuid, flag) == 1
-					if enabled then
-						data:AddTarget(uuid, true)
-					else
-						data:RemoveTarget(uuid)
+					elseif data.FlagType == "Character" then
+						local enabled = ObjectGetFlag(uuid, flag) == 1
+						if enabled then
+							data:AddTarget(uuid, true)
+						else
+							data:RemoveTarget(uuid)
+						end
 					end
 				end
 			end
@@ -273,38 +275,40 @@ function SettingsData:ApplyFlags()
 		return
 	end
 	for flag,data in pairs(self.Flags) do
-		if data.FlagType == "Global" then
-			if data.Enabled then
-				GlobalSetFlag(flag)
-			else
-				GlobalClearFlag(flag)
-			end
-		elseif data.Targets ~= nil then
-			for target,enabled in pairs(data.Targets) do
-				if data.FlagType == "User" then
-					local userid = tonumber(target)
-					if userid == nil then
-						-- Username?
-						userid = target
-					end
-					for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
-						local uuid = db[1]
-						local id = CharacterGetReservedUserID(uuid)
-						local profileid = GetUserProfileID(id)
-						local username = GetUserName(id)
-						if profileid == userid or username == userid then
-							if enabled then
-								UserSetFlag(uuid, flag, 0)
-							else
-								UserClearFlag(uuid, flag, 0)
+		if not data.ClientSide then
+			if data.FlagType == "Global" then
+				if data.Enabled then
+					GlobalSetFlag(flag)
+				else
+					GlobalClearFlag(flag)
+				end
+			elseif data.Targets ~= nil then
+				for target,enabled in pairs(data.Targets) do
+					if data.FlagType == "User" then
+						local userid = tonumber(target)
+						if userid == nil then
+							-- Username?
+							userid = target
+						end
+						for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
+							local uuid = db[1]
+							local id = CharacterGetReservedUserID(uuid)
+							local profileid = GetUserProfileID(id)
+							local username = GetUserName(id)
+							if profileid == userid or username == userid then
+								if enabled then
+									UserSetFlag(uuid, flag, 0)
+								else
+									UserClearFlag(uuid, flag, 0)
+								end
 							end
 						end
-					end
-				elseif data.FlagType == "Character" and ObjectExists(target) == 1 then
-					if data.Enabled then
-						ObjectSetFlag(target, flag, 0)
-					else
-						ObjectClearFlag(target, flag, 0)
+					elseif data.FlagType == "Character" and ObjectExists(target) == 1 then
+						if data.Enabled then
+							ObjectSetFlag(target, flag, 0)
+						else
+							ObjectClearFlag(target, flag, 0)
+						end
 					end
 				end
 			end
@@ -314,7 +318,7 @@ end
 
 function SettingsData:ApplyVariables(uuid, callback)
 	for name,data in pairs(self.Variables) do
-		if data ~= nil then
+		if data ~= nil and not data.ClientSide then
 			if callback ~= nil then
 				pcall(callback, uuid, name, data)
 			end
@@ -359,8 +363,8 @@ function SettingsData:FlagEquals(id, b, target)
 		if data.FlagType == "Global" then
 			return data.Enabled == b
 		elseif data.FlagType == "User" or data.FlagType == "Character" then
-			if not self:CanExecuteOsiris() then
-				return false
+			if not self:CanExecuteOsiris() or data.ClientSide then
+				return data.ClientSide and data.Enabled
 			end
 			if target ~= nil then
 				target = GameHelpers.GetUUID(target)

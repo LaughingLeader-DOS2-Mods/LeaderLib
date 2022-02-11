@@ -1,6 +1,8 @@
 local SettingsData = Classes.ModSettingsClasses.SettingsData
 local ProfileSettings = Classes.ModSettingsClasses.ProfileSettings
 
+local isClient = Ext.IsClient()
+
 ---@class ModSettings
 local ModSettings = {
 	Type = "ModSettings",
@@ -71,8 +73,9 @@ function ModSettings:Update()
 		for i,v in pairs(self.Profiles) do
 			v.Settings:UpdateVariables(self.UpdateVariable)
 		end
-	else
-		if Ext.IsModLoaded(self.UUID) then
+	elseif not isClient then
+		if Ext.IsModLoaded(self.UUID) and Ext.OsirisIsCallable() then
+			--Janktown
 			local last_pricemod = GetGlobalPriceModifier()
 			for name,v in pairs(self.Global.Variables) do
 				SetGlobalPriceModifier(123456)

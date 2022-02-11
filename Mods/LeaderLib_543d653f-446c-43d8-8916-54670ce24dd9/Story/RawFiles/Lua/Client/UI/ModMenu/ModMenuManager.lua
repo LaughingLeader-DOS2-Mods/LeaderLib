@@ -115,7 +115,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 	end
 	if not v.DebugOnly or debugEnabled then
 		if v.Type == "FlagData" then
-			local enableControl = Client.IsHost or v.FlagType ~= "Global"
+			local enableControl = v.ClientSide or Client.IsHost or v.FlagType ~= "Global"
 			local state = 0
 			if v.Default then
 				state = v.Enabled and 0 or 1
@@ -137,12 +137,12 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 				
 				local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
 				if slider ~= nil and slider.slider_mc ~= nil then
-					local controlsEnabled = Client.IsHost == true
+					local controlsEnabled = v.ClientSide or Client.IsHost == true
 					slider.alpha = controlsEnabled and 1.0 or 0.3
 					slider.slider_mc.m_disabled = not controlsEnabled
 				end
 			elseif varType == "boolean" then
-				local enableControl = Client.IsHost == true -- TODO: Specify on entries whether clients can edit them?
+				local enableControl = v.ClientSide or Client.IsHost == true -- TODO: Specify on entries whether clients can edit them?
 				local state = v.Value == true and 1 or 0
 				local displayName, tooltip = PrepareText(name, v, true)
 				mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
@@ -160,7 +160,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 				end
 			end
 		elseif v.Type == "ButtonData" then
-			local enableControl = v.Enabled and (Client.IsHost == true or not v.HostOnly)
+			local enableControl = v.Enabled and (v.ClientSide or Client.IsHost == true or not v.HostOnly)
 			local displayName, tooltip = PrepareText(name, v)
 			local soundUp = v.SoundUp or ""
 			if not Vars.ControllerEnabled then

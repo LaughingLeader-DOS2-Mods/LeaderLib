@@ -87,7 +87,10 @@ package LS_Classes
             this.text_txt.y = this.textY;
          }
          this.bg_mc.visible = !selected;
-         this.activeBG_mc.visible = selected;
+         if(this.activeBG_mc) 
+         {
+            this.activeBG_mc.visible = selected;
+         }
          this.m_Active = selected;
          this.setEnabled(!disabled);
       }
@@ -111,7 +114,10 @@ package LS_Classes
       {
          this.m_Active = param1;
          this.bg_mc.visible = !param1;
-         this.activeBG_mc.visible = param1;
+         if(this.activeBG_mc) 
+         {
+            this.activeBG_mc.visible = param1;
+         }
          if(this.text_txt)
          {
             this.text_txt.alpha = !!param1?Number(this.textActiveAlpha):Number(this.textInActiveAlpha);
@@ -150,7 +156,10 @@ package LS_Classes
          if(!this.m_Disabled)
          {
             this.bg_mc.gotoAndStop(2);
-            this.activeBG_mc.gotoAndStop(2);
+            if(this.activeBG_mc) 
+            {
+               this.activeBG_mc.gotoAndStop(2);
+            }
             if(this.SND_Over != null)
             {
                Registry.ExtCall("PlaySound",this.SND_Over);
@@ -177,11 +186,14 @@ package LS_Classes
             removeEventListener(MouseEvent.MOUSE_UP,this.onUp);
          }
          this.bg_mc.gotoAndStop(1);
-         this.activeBG_mc.gotoAndStop(1);
+         if(this.activeBG_mc)
+         {
+            this.activeBG_mc.gotoAndStop(1);
+         }
          if(this.text_txt)
          {
             this.text_txt.y = this.textY;
-            if(!this.activeBG_mc.visible)
+            if(this.activeBG_mc && !this.activeBG_mc.visible)
             {
                this.text_txt.alpha = this.textInActiveAlpha;
             }
@@ -209,7 +221,10 @@ package LS_Classes
                addEventListener(MouseEvent.MOUSE_UP,this.onUp);
             }
             this.bg_mc.gotoAndStop(3);
-            this.activeBG_mc.gotoAndStop(3);
+            if(this.activeBG_mc) 
+            {
+               this.activeBG_mc.gotoAndStop(3);
+            }
             if(this.text_txt && this.interactiveTextOnClick)
             {
                this.text_txt.y = this.textY + 2;
@@ -240,7 +255,10 @@ package LS_Classes
             this.setActive(!this.m_Active);
          }
          this.bg_mc.gotoAndStop(2);
-         this.activeBG_mc.gotoAndStop(2);
+         if(this.activeBG_mc) 
+         {
+            this.activeBG_mc.gotoAndStop(2);
+         }
          if(this.text_txt && this.interactiveTextOnClick)
          {
             this.text_txt.y = this.textY;

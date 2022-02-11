@@ -53,26 +53,11 @@ if _EXTVERSION >= 56 then
 				SendDumpCommand(...)
 			end
 		end,
-		character = function (dumpType, synced, ...)
-			local fileName = string.format("Dumps/Character_%s.json", isClient and "Client" or "Server")
-			--Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Client:GetCharacter() or Ext.GetCharacter(CharacterGetHostCharacter())))
-			if isClient then
-				Ext.IO.SaveFile(fileName, Ext.DumpExport(Client:GetCharacter()))
-			else
-				-- local character = Ext.GetCharacter(CharacterGetHostCharacter())
-				-- local data = {}
-				-- for k,v in pairs(character) do
-				-- 	--FIXME StatusesFromItems  is a table of userdata keys. Dumping this will be fixed in an extender update.
-				-- 	if k ~= "StatusesFromItems" and k ~= "AI" then
-				-- 		print(k, type(k), type(v))
-				-- 		Ext.DumpExport(v)
-				-- 		data[k] = v
-				-- 	end
-				-- end
-				-- Ext.IO.SaveFile(fileName, Ext.DumpExport(data))
-			end
+		character = function (dumpType, synced, filename)
+			local fileName = string.format("Dumps/%s_%s.json", filename or "Character", isClient and "Client" or "Server")
+			Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Client:GetCharacter() or Ext.GetCharacter(CharacterGetHostCharacter())))
 			Ext.Print("[dump:character] Saved character data to",fileName)
-			SendDumpCommand(dumpType, synced, ...)
+			SendDumpCommand(dumpType, synced, filename)
 		end,
 		uiext = function (dumpType, synced, filename)
 			if isClient then
@@ -82,6 +67,12 @@ if _EXTVERSION >= 56 then
 				}
 				if Mods.LLHotbarExtension then
 					data.HotbarExt = Mods.LLHotbarExtension.HotbarExt.Instance
+				end
+				if Mods.WeaponExpansion then
+					data.WeaponExpansion = {
+						ToggleButton = Mods.WeaponExpansion.MasteryMenu.ToggleButton.Instance,
+						MasteryMenu = Mods.WeaponExpansion.MasteryMenu.Instance,
+					}
 				end
 				for id,v in pairs(Data.UIType) do
 					if type(v) == "number" then

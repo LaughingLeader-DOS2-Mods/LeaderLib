@@ -288,6 +288,7 @@ LocalizedText.SkillTooltip = {
 	FromSelf = ts:Create("h727273bcg948ag461agad93gef52b2419eca", "from self"),
 	MoveToTarget = ts:Create("h19d1b9dag302dg4655g86fdgad6fe369db15", "Move to the target."),
 	--BasicAttack = ts:Create("hbdac34fdg43b6g4439g9947g6676e9c03294", "Basic Attack"),
+	LeaderLibToggleGrouping = ts:CreateFromKey("LeaderLib_Tooltip_ToggleGrouping", "<font color='#00CCFF'>Keyboard Shortcut</font><br><font color='#44CCAA'>Press CTRL + Spacebar to chain/unchain party members. No skill required.</font>"),
 }
 
 LocalizedText.WeaponType = {

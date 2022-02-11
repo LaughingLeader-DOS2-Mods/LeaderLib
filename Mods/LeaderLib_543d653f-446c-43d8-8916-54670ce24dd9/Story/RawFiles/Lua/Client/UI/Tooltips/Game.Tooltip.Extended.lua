@@ -1653,7 +1653,7 @@ local DescriptionElements = {
 	TalentDescription = true,
 }
 
----LeaderLib addition
+---[LeaderLib] addition
 ---Gets whichever element is the description.
 ---@return TooltipElement
 function TooltipData:GetDescriptionElement()

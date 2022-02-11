@@ -142,6 +142,18 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 			end
 		end
 	end
+
+	if not Vars.ControllerEnabled then
+		if skill == "Shout_LeaderLib_ChainAll" or skill == "Shout_LeaderLib_UnchainAll" then
+			tooltip:MarkDirty()
+			if tooltip:IsExpanded() then
+				local desc = tooltip:GetDescriptionElement()
+				if desc then
+					desc.Label = string.format("%s<br>%s", desc.Label, LocalizedText.SkillTooltip.LeaderLibToggleGrouping.Value)
+				end
+			end
+		end
+	end
 end
 
 --- @param skill StatEntrySkillData

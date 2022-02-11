@@ -201,7 +201,13 @@ end
 function GameHelpers.SetScale(object, scale, persist)
 	object = GameHelpers.TryGetObject(object)
 	if object and object.Scale then
-		object.Scale = scale
+		if _EXTVERSION <= 56 then
+			if object.SetScale then
+				object:SetScale(scale)
+			end
+		else
+			object.Scale = scale
+		end
 		GameHelpers.SyncScale(object)
 		if persist == true then
 			PersistentVars.ScaleOverride[object.MyGuid] = scale

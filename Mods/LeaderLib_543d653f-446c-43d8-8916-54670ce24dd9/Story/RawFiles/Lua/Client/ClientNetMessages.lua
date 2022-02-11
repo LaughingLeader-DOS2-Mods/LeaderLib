@@ -104,12 +104,18 @@ Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
 	InvokeListenerCallbacks(Listeners.ModSettingsLoaded)
 end)
 
-Ext.RegisterNetListener("LeaderLib_SyncScale", function(call, payload)
+Ext.RegisterNetListener("LeaderLib_SyncScale", function(cmd, payload)
 	local data = Common.JsonParse(payload)
 	if data.Scale and data.NetID then
 		local obj = GameHelpers.TryGetObject(data.NetID)
 		if obj and obj.Scale then
-			obj.Scale = data.Scale
+			if _EXTVERSION <= 56 then
+				if obj.SetScale then
+					obj:SetScale(data.Scale)
+				end
+			else
+				obj.Scale = data.Scale
+			end
 		end
 	end
 end)

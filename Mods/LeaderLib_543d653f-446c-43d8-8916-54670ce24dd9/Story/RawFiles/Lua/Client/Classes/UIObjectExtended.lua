@@ -4,9 +4,10 @@
 ---@field SwfPath string
 ---@field DefaultUIFlags integer|nil
 ---@field SetPosition fun(self:UIObjectExtended):void
----@field OnVisibilityChanged fun(self:UIObjectExtended, lastVisible:boolean, nextVisible:boolean):void
 ---@field ShouldBeVisible fun(self:UIObjectExtended):boolean
+---@field OnVisibilityChanged fun(self:UIObjectExtended, lastVisible:boolean, nextVisible:boolean):void
 ---@field OnInitialized fun(self:UIObjectExtended, instance:UIObject):void
+---@field OnTick fun(self:UIObjectExtended, e:GameTime):void
 
 ---@class UIObjectExtended:UIObjectExtendedSettings
 ---@field Instance UIObject
@@ -157,6 +158,9 @@ RegisterTickListener(function (e)
 	for i=1,length do
 		local ui = _registeredUIArray[i]
 		ui:ValidateVisibility()
+		if ui.OnTick then
+			ui:OnTick(e)
+		end
 	end
 end, true)
 

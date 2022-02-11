@@ -4,6 +4,47 @@ end
 
 local isClient = Ext.IsClient()
 
+
+local harmfulStatusTypes = {
+	--DAMAGE = true,
+	--DAMAGE_ON_MOVE = true,
+	CHARMED = true,
+	CONSTRAINED = true,
+	DECAYING_TOUCH = true,
+	FLANKED = true,
+	INCAPACITATED = true,
+	INFECTIOUS_DISEASED = true,
+	KNOCKED_DOWN = true,
+	SHACKLES_OF_PAIN = true,
+	SHACKLES_OF_PAIN_CASTER = true,
+	UNHEALABLE = true,
+}
+
+local beneficialStatusTypes = {
+	ACTIVE_DEFENSE = true,
+	--ADRENALINE = true,
+	--BOOST = true,
+	--EXTRA_TURN = true,
+	FLOATING = true,
+	GUARDIAN_ANGEL = true,
+	HEAL = true,
+	HEAL_SHARING = true,
+	HEAL_SHARING_CASTER = true,
+	HEALING = true,
+	INVISIBLE = true,
+	LEADERSHIP = true,
+	--PLAY_DEAD = true,
+	STANCE = true,
+	WIND_WALKER = true,
+}
+
+local healingStatusTypes = {
+	HEAL = true,
+	HEAL_SHARING = true,
+	HEAL_SHARING_CASTER = true,
+	HEALING = true,
+}
+
 local _statusIdToStatusType = {}
 setmetatable(_statusIdToStatusType, {__index = Data.StatusToType})
 
@@ -197,28 +238,16 @@ function GameHelpers.Status.StatusDealsDamage(statusId, checkDamageEvent)
 	return false
 end
 
-local harmfulStatusTypes = {
-	--DAMAGE = true,
-	--DAMAGE_ON_MOVE = true,
-	CHARMED = true,
-	CONSTRAINED = true,
-	DECAYING_TOUCH = true,
-	FLANKED = true,
-	INCAPACITATED = true,
-	INFECTIOUS_DISEASED = true,
-	KNOCKED_DOWN = true,
-	SHACKLES_OF_PAIN = true,
-	SHACKLES_OF_PAIN_CASTER = true,
-	UNHEALABLE = true,
-}
-
 ---A status is harmful if it deals damage, is a specific type (KNOCKED_DOWN etc), or has negative potion attributes.
 ---@param statusId string
 function GameHelpers.Status.IsHarmful(statusId)
 	local statusType = GameHelpers.Status.GetStatusType(statusId)
 	if harmfulStatusTypes[statusType] == true or ((statusType == "DAMAGE" or statusType == "DAMAGE_ON_MOVE") and GameHelpers.Status.StatusDealsDamage(statusId)) then
 		return true
-	elseif statusType ~= "EFFECT" and not Data.EngineStatus[statusId] then
+	elseif statusType ~= "EFFECT" 
+	and not Data.EngineStatus[statusId]
+	and not beneficialStatusTypes[statusType]
+	then
 		local statsId = Ext.StatGetAttribute(statusId, "StatsId")
 		if not StringHelpers.IsNullOrWhitespace(statsId) and IsHarmfulStatsId(statsId) then
 			return true
@@ -226,31 +255,6 @@ function GameHelpers.Status.IsHarmful(statusId)
 	end
 	return false
 end
-
-local beneficialStatusTypes = {
-	ACTIVE_DEFENSE = true,
-	--ADRENALINE = true,
-	--BOOST = true,
-	--EXTRA_TURN = true,
-	FLOATING = true,
-	GUARDIAN_ANGEL = true,
-	HEAL = true,
-	HEAL_SHARING = true,
-	HEAL_SHARING_CASTER = true,
-	HEALING = true,
-	INVISIBLE = true,
-	LEADERSHIP = true,
-	--PLAY_DEAD = true,
-	STANCE = true,
-	WIND_WALKER = true,
-}
-
-local healingStatusTypes = {
-	HEAL = true,
-	HEAL_SHARING = true,
-	HEAL_SHARING_CASTER = true,
-	HEALING = true,
-}
 
 local function IsBeneficialStatsId(statsId, ignoreItemPotions)
 	if not StringHelpers.IsNullOrWhitespace(statsId) then
@@ -295,7 +299,9 @@ function GameHelpers.Status.IsBeneficial(statusId, ignoreItemPotions, ignoreStat
 	end
 	if beneficialStatusTypes[statusType] == true then
 		return true
-	elseif statusType ~= "EFFECT" and not Data.EngineStatus[statusId] then
+	elseif statusType ~= "EFFECT"
+	and not Data.EngineStatus[statusId]
+	and not harmfulStatusTypes[statusType] then
 		local statsId = Ext.StatGetAttribute(statusId, "StatsId")
 		if not StringHelpers.IsNullOrWhitespace(statsId) and IsBeneficialStatsId(statsId, ignoreItemPotions) then
 			return true

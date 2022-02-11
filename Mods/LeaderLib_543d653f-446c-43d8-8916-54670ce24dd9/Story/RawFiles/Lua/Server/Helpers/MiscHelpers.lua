@@ -200,12 +200,8 @@ end
 ---@param persist boolean|nil
 function GameHelpers.SetScale(object, scale, persist)
 	object = GameHelpers.TryGetObject(object)
-	if object then
-		if _EXTVERSION < 56 then
-			object:SetScale(scale)
-		else
-			object.Scale = scale
-		end
+	if object and object.Scale then
+		object.Scale = scale
 		GameHelpers.SyncScale(object)
 		if persist == true then
 			PersistentVars.ScaleOverride[object.MyGuid] = scale

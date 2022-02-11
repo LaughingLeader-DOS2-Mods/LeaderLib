@@ -98,40 +98,35 @@ function SkipTutorial.Initialize()
 		end
 
 		local regionLevel = SkipTutorial.Regions[region] or 0
-		local players = Osi.DB_IsPlayer:Get(nil)
-		if players then
-			for _,entry in pairs(players) do
-				local uuid = StringHelpers.GetUUID(entry[1])
-				if settings.StartingCharacterLevel.Enabled then
-					local targetLevel = settings.StartingCharacterLevel[region] or 1
-					if targetLevel > 1 and CharacterGetLevel(uuid) < targetLevel then
-						fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Leveling up player (%s) to (%s).", uuid, targetLevel)
-						--GameHelpers.Character.SetLevel(uuid, targetLevel)
-						CharacterLevelUpTo(uuid, targetLevel)
-					end
+		for player in GameHelpers.Character.GetPlayers() do
+			if settings.StartingCharacterLevel.Enabled then
+				local targetLevel = settings.StartingCharacterLevel[region] or 1
+				if targetLevel > 1 and player.Stats.Level < targetLevel then
+					fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Leveling up player (%s) to (%s).", player.DisplayName, targetLevel)
+					GameHelpers.Character.SetLevel(player, targetLevel)
 				end
-				
-				-- Past Fort Joy, apply the _Act2 presets.
-				if regionLevel > 1 then
-					fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Adding Bless to player (%s).", uuid)
-					CharacterAddSkill(uuid, "Target_Bless", 0)
-					-- if Vars.DebugMode then
-					-- 	Timer.StartOneshot(string.format("LeaderLib_SkipTutorialPostSetup%s", uuid), 1000, function()
-					-- 		local preset = GetVarFixedString(uuid, "LeaderLib_CurrentPreset")
-					-- 		if StringHelpers.IsNullOrEmpty(preset) then
-					-- 			preset = GetMainAttributePreset(uuid)
-					-- 		end
-					-- 		if not StringHelpers.IsNullOrEmpty(preset) then
-					-- 			---@type PresetData
-					-- 			local act2Preset = Data.Presets.Act2[preset]
-					-- 			if act2Preset then
-					-- 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Applying preset (%s) to player (%s).", preset, uuid)
-					-- 				act2Preset:ApplyToCharacter(uuid, "Uncommon", nil, true, true)
-					-- 			end
-					-- 		end
-					-- 	end)
-					-- end
-				end
+			end
+			
+			-- Past Fort Joy, apply the _Act2 presets.
+			if regionLevel > 1 then
+				fprint(LOGLEVEL.TRACE, "[LeaderLib:SkipTutorial] Adding Bless to player (%s).", player.DisplayName)
+				CharacterAddSkill(player.MyGuid, "Target_Bless", 0)
+				-- if Vars.DebugMode then
+				-- 	Timer.StartOneshot(string.format("LeaderLib_SkipTutorialPostSetup%s", uuid), 1000, function()
+				-- 		local preset = GetVarFixedString(uuid, "LeaderLib_CurrentPreset")
+				-- 		if StringHelpers.IsNullOrEmpty(preset) then
+				-- 			preset = GetMainAttributePreset(uuid)
+				-- 		end
+				-- 		if not StringHelpers.IsNullOrEmpty(preset) then
+				-- 			---@type PresetData
+				-- 			local act2Preset = Data.Presets.Act2[preset]
+				-- 			if act2Preset then
+				-- 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Applying preset (%s) to player (%s).", preset, uuid)
+				-- 				act2Preset:ApplyToCharacter(uuid, "Uncommon", nil, true, true)
+				-- 			end
+				-- 		end
+				-- 	end)
+				-- end
 			end
 		end
 
@@ -315,45 +310,37 @@ function SkipTutorial.Initialize()
 		GameSettingsManager.Save()
 	end)
 
-	function SkipTutorial.OnLeaderLibInitialized(region)
-		if (region and IsCharacterCreationLevel(region) == 1) or SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION and SharedData.GameMode == GAMEMODE.CAMPAIGN then
-			-- Skip setting up Skip Tutorial stuff if another mod is modifying that already.
-			if GameHelpers.DB.HasValue("DB_GLO_FirstLevelAfterCharacterCreation", "TUT_Tutorial_A") then
-				runSkipTutorialSetup = GameSettings.Settings.SkipTutorial.Enabled
-				GameHelpers.Net.PostMessageToHost("LeaderLib_EnableSkipTutorialUI", SharedData.RegionData.Current)
-				skipTutorialControlEnabled = true
+	---@param region string
+	---@param state REGIONSTATE
+	---@param levelType LEVELTYPE
+	RegisterListener("RegionChanged", function (region, state, levelType)
+		if SharedData.GameMode == GAMEMODE.CAMPAIGN and state == REGIONSTATE.GAME then
+			if levelType == LEVELTYPE.CHARACTER_CREATION then
+				-- Skip setting up Skip Tutorial stuff if another mod is modifying that already.
+				if GameHelpers.DB.HasValue("DB_GLO_FirstLevelAfterCharacterCreation", "TUT_Tutorial_A") then
+					runSkipTutorialSetup = GameSettings.Settings.SkipTutorial.Enabled
+					GameHelpers.Net.PostMessageToHost("LeaderLib_EnableSkipTutorialUI", SharedData.RegionData.Current)
+				else
+					Ext.Print("[LeaderLib] The tutorial is already being bypassed. Skipping Skip Tutorial setup.")
+				end
 			else
-				Ext.Print("[LeaderLib] The tutorial is already being bypassed. Skipping Skip Tutorial setup.")
-			end
-		elseif skipTutorialControlEnabled and runSkipTutorialSetup and region == GameSettings.Settings.SkipTutorial.Destination then
-			GameHelpers.Net.PostMessageToHost("LeaderLib_DisableSkipTutorialUI", "")
-
-			local data = LevelSettings[region]
-			local settings = GameSettings.Settings.SkipTutorial
-
-			SkipTutorial_MainSetup(settings, region)
-
-			if data and data.Setup then
-				local b,err = xpcall(data.Setup, debug.traceback, settings)
-				if not b then
-					Ext.PrintError(err)
+				if runSkipTutorialSetup and region == GameSettings.Settings.SkipTutorial.Destination then
+					local data = LevelSettings[region]
+					local settings = GameSettings.Settings.SkipTutorial
+		
+					SkipTutorial_MainSetup(settings, region)
+		
+					if data and data.Setup then
+						local b,err = xpcall(data.Setup, debug.traceback, settings)
+						if not b then
+							Ext.PrintError(err)
+						end
+					end
+					runSkipTutorialSetup = false
 				end
 			end
-			runSkipTutorialSetup = false
 		end
-	end
-
-	RegisterListener("Initialized", function(region)
-		SkipTutorial.OnLeaderLibInitialized(region)
 	end)
-
-	-- Ext.RegisterOsirisListener("DB_ObjectTimer", 3, "after", function(uuid, timerName, uniqueTimerName)
-	-- 	if timerName == "FTJ_WakeUpTimer" then
-	-- 		print("DB_ObjectTimer", uuid, timerName, uniqueTimerName)
-	-- 		Osi.ProcObjectTimerCancel(uuid, "FTJ_WakeUpTimer")
-	-- 		Osi.ProcObjectTimerFinished(uuid, "FTJ_WakeUpTimer")
-	-- 	end
-	-- end)
 
 	Ext.RegisterOsirisListener("CharacterCreationFinished", 1, "before", function(uuid)
 		-- CharacterCreationFinished(NULL) means that everyone is ready

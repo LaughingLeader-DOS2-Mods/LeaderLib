@@ -181,7 +181,6 @@ function OnLuaReset()
 	OnInitialized(region, true)
 	if IsCharacterCreationLevel(region) == 1 then
 		SkipTutorial.Initialize()
-		SkipTutorial.OnLeaderLibInitialized(region)
 	end
 	IterateUsers("LeaderLib_StoreUserData")
 	pcall(DebugLoadPersistentVars)

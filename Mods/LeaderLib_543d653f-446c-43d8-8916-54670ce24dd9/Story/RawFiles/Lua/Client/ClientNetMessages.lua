@@ -34,7 +34,7 @@ local function SetGlobalSettingsMetatables()
 end
 
 ---@param settings GlobalSettings
-local function SyncGlobalSettings(settings)
+local function LoadGlobalSettingsOnClient(settings)
 	if GlobalSettings ~= nil then
 		local length = #Listeners.ModSettingsSynced
 
@@ -86,7 +86,7 @@ end
 Ext.RegisterNetListener("LeaderLib_SyncGlobalSettings", function(call, dataString)
 	local settings = Common.JsonParse(dataString)
 	if settings ~= nil then
-		SyncGlobalSettings(settings)
+		LoadGlobalSettingsOnClient(settings)
 	end
 end)
 
@@ -94,7 +94,7 @@ Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
 	local data = Common.JsonParse(dataString)
 	if data.Features ~= nil then Features = data.Features end
 	if data.GlobalSettings ~= nil then 
-		SyncGlobalSettings(data.GlobalSettings)
+		LoadGlobalSettingsOnClient(data.GlobalSettings)
 	end
 	if data.GameSettings ~= nil then
 		GameSettings = data.GameSettings
@@ -244,6 +244,8 @@ Ext.RegisterNetListener("LeaderLib_UI_RefreshAll", function(cmd, uuid)
 end)
 
 Ext.RegisterNetListener("LeaderLib_Client_InvokeListeners", function(cmd, payload)
+	local event, listeners, args = nil,nil,nil
+
 	if string.find(payload, "{") then
 		local data = Common.JsonParse(payload)
 		if data._PrintSettings then
@@ -256,29 +258,28 @@ Ext.RegisterNetListener("LeaderLib_Client_InvokeListeners", function(cmd, payloa
 				Vars.Commands[k] = v
 			end
 		end
-		local listeners = Listeners[data.Event]
-		if listeners then
-			if data.Event == "LuaReset" then
-				GameSettingsManager.Load()
-			end
-			if data.Args then
-				InvokeListenerCallbacks(listeners, table.unpack(data.Args))
-			else
-				InvokeListenerCallbacks(listeners)
-			end
+		event = data.Event
+		listeners = Listeners[data.Event]
+		args = data.Args
+	else
+		listeners = Listeners[payload]
+		event = payload
+	end
+
+	if listeners then
+		if event == "LuaReset" then
+			LoadGlobalSettings()
+			GameSettingsManager.Load()
+		elseif event == "BeforeLuaReset" then
+			Vars.Resetting = true
+		end
+		if args then
+			InvokeListenerCallbacks(listeners, table.unpack(args))
 		else
-			fprint(LOGLEVEL.ERROR, "[LeaderLib:LeaderLib_Client_InvokeListeners] No listeners for event (%s)", payload)
+			InvokeListenerCallbacks(listeners)
 		end
 	else
-		local listeners = Listeners[payload]
-		if listeners then
-			if payload == "LuaReset" then
-				GameSettingsManager.Load()
-			end
-			InvokeListenerCallbacks(listeners)
-		else
-			fprint(LOGLEVEL.ERROR, "[LeaderLib:LeaderLib_Client_InvokeListeners] No listeners for event (%s)", payload)
-		end
+		fprint(LOGLEVEL.ERROR, "[LeaderLib:LeaderLib_Client_InvokeListeners] No listeners for event (%s)", payload)
 	end
 end)
 

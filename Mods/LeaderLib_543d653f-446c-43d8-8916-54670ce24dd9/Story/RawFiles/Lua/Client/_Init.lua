@@ -35,7 +35,7 @@ Ext.Require("Client/InputManager.lua")
 
 Ext.Require("Client/UI/UITypeWorkaround.lua")
 Ext.Require("Client/UI/UIListeners.lua")
-Ext.Require("Client/UI/StatusHider.lua")
+Ext.Require("Client/QOL/StatusHider.lua")
 Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 Ext.Require("Client/UI/CharacterSheet.lua")
 Ext.Require("Client/UI/ModMenu/_Init.lua")
@@ -50,6 +50,7 @@ Ext.Require("Client/UI/ContextMenu.lua")
 Ext.Require("Client/UI/CharacterCreation/CCExtensionUI.lua")
 if Ext.Version() >= 56 then
 	Ext.Require("Client/UI/CharacterCreation/PresetExtension.lua")
+	Ext.Require("Client/QOL/ChatLogHider.lua")
 end
 
 if Vars.DebugMode then

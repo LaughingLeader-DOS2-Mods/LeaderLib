@@ -4,6 +4,8 @@
 
 ---@alias LeaderLibClientListenerEvent string|'"CharacterSheetPointChanged"' | '"ControllerModeEnabled"' | '"InputEvent"' | '"ModMenuSectionCreated"' | '"MouseInputEvent"' | '"NamedInputEvent"' | '"OnContextMenuEntryClicked"' | '"OnContextMenuOpening"' | '"OnTalentArrayUpdating"' | '"OnTooltipPositioned"' | '"OnWorldTooltip"' | '"ShouldOpenContextMenu"' | '"UICreated"'
 
+local _EXTVERSION = Ext.Version()
+
 if not Listeners then
 	---@private
 	---@class LeaderLibListeners:table
@@ -317,3 +319,48 @@ function RegisterModListener(event, uuid, callback)
 		Ext.PrintError("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
 	end
 end
+
+---region Tick Listeners
+
+local _state = Ext.GetGameState()
+
+Ext.RegisterListener("GameStateChanged", function (from, to)
+	_state = to
+end)
+
+---@class GameTime
+---@field Time number
+---@field DeltaTime number
+---@field Ticks integer
+
+---Wrapper around Ext.Events.Tick that skips execution if resetting, or if the game isn't running.
+---@type fun(e:GameTime):void[]
+Listeners.Tick = {}
+
+---@param callback fun(e:GameTime):void
+---@param runningOnly ?boolean
+function RegisterTickListener(callback, runningOnly)
+	if runningOnly then
+		Listeners.Tick[#Listeners.Tick+1] = function (e)
+			if _state == "Running" and not Vars.Resetting then
+				callback(e)
+			end
+		end
+	else
+		Listeners.Tick[#Listeners.Tick+1] = function (e)
+			if not Vars.Resetting then
+				callback(e)
+			end
+		end
+	end
+end
+
+local function OnTick(e)
+	InvokeListenerCallbacks(Listeners.Tick, e)
+end
+
+if _EXTVERSION >= 56 then
+	Ext.Events.Tick:Subscribe(OnTick)
+end
+
+---endregion

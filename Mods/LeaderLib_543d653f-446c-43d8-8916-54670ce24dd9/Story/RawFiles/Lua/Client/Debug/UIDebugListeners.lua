@@ -223,18 +223,6 @@ local enabledParam = {Enabled=true}
 local characterSheet = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
 local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, enabledParam)
 --local chatLog = UIListenerWrapper:Create(Data.UIType.chatLog, enabledParam)
-
-Ext.RegisterUITypeInvokeListener(Data.UIType.chatLog, "setLogVisible", function (ui, event, visible)
-	if visible then
-		--Ext.GetUIByType(Data.UIType.hotBar):ExternalInterfaceCall("ToggleChatLog")
-		Timer.StartOneshot("LLDEBUG_CloseChatLog", 10, function ()
-			local this = Ext.GetUIByType(Data.UIType.chatLog):GetRoot()
-			this.log_mc.visible = false
-			this.mouseChildren = false
-			this.mouseEnabled = false
-		end)
-	end
-end)
 -- local areaInteract_c = UIListenerWrapper:Create(Data.UIType.areaInteract_c)
 -- local containerInventory = UIListenerWrapper:Create(Data.UIType.containerInventory, enabledParam)
 -- local uiCraft = UIListenerWrapper:Create(Data.UIType.uiCraft, enabledParam)

@@ -39,7 +39,10 @@ setmetatable(CCExt, {
 		elseif k == "Visible" then
 			local ui = CCExt.GetInstance(true)
 			if ui then
-				return Common.TableHasValue(ui.Flags, "OF_Visible")
+				if _EXTVERSION >= 56 then
+					return Common.TableHasValue(ui.Flags, "OF_Visible")
+				end
+				return true
 			end
 			return false
 		end
@@ -69,7 +72,10 @@ local function GetCCVisibility()
 		if this and this.isFinished == true then
 			return false
 		end
-		return Common.TableHasValue(cc.Flags, "OF_Visible")
+		if _EXTVERSION >= 56 then
+			return Common.TableHasValue(cc.Flags, "OF_Visible")
+		end
+		return true
 	end
 	return false
 end
@@ -137,7 +143,7 @@ function CCExt.SetupSkipTutorialButton(this)
 	this.skipTutorial_mc.title_mc.setText(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_DisplayName", "Select Starting Level"));
 	
 	for i,level in pairs(SkipTutorialRegions) do
-		if DeveloperOnlyRegions[level] ~= true then
+		if Vars.DebugMode or DeveloperOnlyRegions[level] ~= true then
 			if level ~= "None" then
 				local name = GameHelpers.GetStringKeyText(level)
 				this.skipTutorial_mc.addEntry(name, i, SkipTutorialRegionTooltips[level])
@@ -150,8 +156,10 @@ function CCExt.SetupSkipTutorialButton(this)
 		this.skipTutorial_mc.selectItemByID(1, true)
 		this.skipTutorial_mc.graphics_mc.activated = false
 	else
-		local index = SkipTutorialRegions[GameSettings.Settings.SkipTutorial.Destination]
-		if not index then
+		local dest = GameSettings.Settings.SkipTutorial.Destination
+		local index = SkipTutorialRegions[dest]
+		if not index 
+		or (DeveloperOnlyRegions[dest] and not Vars.DebugMode) then
 			index = SkipTutorialRegions.FJ_FortJoy_Main
 		end
 		this.skipTutorial_mc.selectItemByID(index, true)
@@ -203,10 +211,10 @@ local function UpdateVisibility(forceVisible)
 	end
 end
 
-local function OnCharacterCreation(isCC)
+local function OnCharacterCreation(isCC, region)
 	if isCC == false then
 		DestroyInstance()
-	elseif GameHelpers.IsLevelType(nil, LEVELTYPE.CHARACTER_CREATION) then
+	elseif GameHelpers.IsLevelType(region, LEVELTYPE.CHARACTER_CREATION) then
 		CCExt.SetupInstance(true)
 		UpdateVisibility()
 	end
@@ -236,8 +244,8 @@ Ext.RegisterUINameCall("LeaderLib_CCExt_RepositionButtons", function (ui, call)
 	CCExt.PositionButtons(ui:GetRoot())
 end)
 
-Ext.RegisterUINameCall("LeaderLib_SkipTutorialButton_LevelSelected", function (ui, call, id, index)
-	local level = SkipTutorialRegions[index]
+Ext.RegisterUINameCall("LeaderLib_SkipTutorialButton_LevelSelected", function (ui, call, id, selectedIndex)
+	local level = SkipTutorialRegions[id]
 	if level then
 		if level == "None" then
 			GameSettings.Settings.SkipTutorial.Enabled = false
@@ -268,9 +276,11 @@ end)
 
 RegisterListener("ClientDataSynced", function ()
 	CCExt.IsHost = Client.IsHost
-	local this = CCExt.Root
-	if this then
-		this.skipTutorial_mc.isEnabled = CCExt.IsHost
+	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+		local this = CCExt.Root
+		if this then
+			this.skipTutorial_mc.isEnabled = CCExt.IsHost
+		end
 	end
 end)
 
@@ -288,7 +298,12 @@ end, "After")
 ---@param state REGIONSTATE
 ---@param levelType LEVELTYPE
 RegisterListener("RegionChanged", function (region, state, levelType)
-	if state == REGIONSTATE.ENDED and levelType == LEVELTYPE.CHARACTER_CREATION then
-		DestroyInstance()
+	if levelType == LEVELTYPE.CHARACTER_CREATION then
+		if state == REGIONSTATE.ENDED then
+			DestroyInstance()
+		elseif _EXTVERSION < 56 then
+			CCExt.SetupInstance(true)
+			UpdateVisibility()
+		end
 	end
 end)

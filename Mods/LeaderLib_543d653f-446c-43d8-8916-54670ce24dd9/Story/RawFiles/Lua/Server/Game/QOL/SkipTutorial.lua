@@ -300,6 +300,7 @@ function SkipTutorial.Initialize()
 
 		local data = LevelSettings[region]
 		Osi.DB_GLO_FirstLevelAfterCharacterCreation(region)
+		fprint(LOGLEVEL.TRACE, "[LeaderLib:SkipTutorial] Teleporting to region (%s) and trigger (%s)", region, data.StartTrigger)
 		Osi.DB_CharacterCreationTransitionInfo(region, data.StartTrigger,"")
 	end
 

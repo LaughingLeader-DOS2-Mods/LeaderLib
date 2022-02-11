@@ -84,6 +84,7 @@
 	<content contentuid="h35914541gb69bg42f4gafa5gb90aeb1ec229">...</content>
 	<content contentuid="h386d715bg3f70g4373g8d64g99fb5f1010e8">*Ask why Lothar left his &quot;vacation&quot; on Reaper&apos;s Eye.*</content>
 	<content contentuid="h393d684bg505dg41c4gbb5dg715a4b5bd153">Close</content>
+	<content contentuid="h3952f84bge59bg44d1gb0d1g47a6a1a49f9e">Aggressively prevent the chat log from being visible or toggleable.</content>
 	<content contentuid="h39cb32edgc4a5g4932g8f3eg1595aa137776">Autosave Settings&lt;br&gt;[LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082]</content>
 	<content contentuid="h3a115862g7d96g47bcga77dgc86ff8da7ff8">[LeaderLib_ModMenu_Menu3_cf00a8c6-02d2-4fda-a766-4f533ac93b2d]</content>
 	<content contentuid="h3c27be6dg727bg4802ga3cbge9ab8e50a62b">[Previous]</content>
@@ -324,6 +325,7 @@
 	<content contentuid="hbbc07b7cgc1d4g41c8gbec8gdadfd3486b3f">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
 	<content contentuid="hbbcfe136ge58bg4675gb872g0bbdb98cff28">[LOAD] Load Game Settings - This file is loaded automatically when you get in-game (loading saves, new games, etc).&lt;br&gt;Location: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GameSettings.json&lt;/b&gt;</content>
 	<content contentuid="hbd4f0f23g1792g4e99g9665g58b511994c18">*You take a look at the trader&apos;s wares.*</content>
+	<content contentuid="hbdb60e07g9f65g41bagbfabge9ad2347c44a">Hide Chat Log</content>
 	<content contentuid="hbde09b0bg3c2eg423cga548g96e2590e887c">The maximum amount of action points.&lt;br&gt;(Default: 6)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
 	<content contentuid="hbe5db354g0434g4e02g8af6g16dee986c19a">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
 	<content contentuid="hbe7c777fg3946g4d49g9271g4684744cb15b">[LeaderLib_ModMenu_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f]</content>

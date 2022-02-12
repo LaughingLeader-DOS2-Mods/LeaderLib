@@ -59,7 +59,7 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, par
 		--OutOfCombatSpeed = 6000
 	}
 	if params then
-		params = TableHelpers.SanitizeTable(params)
+		params = TableHelpers.SanitizeTable(params, nil, true)
 		for k,v in pairs(params) do
 			tbl[k] = v
 		end

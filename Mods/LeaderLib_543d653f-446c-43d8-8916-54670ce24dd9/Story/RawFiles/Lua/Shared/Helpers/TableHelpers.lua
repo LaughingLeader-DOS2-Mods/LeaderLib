@@ -45,6 +45,11 @@ function TableHelpers.TryOrderedEach(tbl)
 	end
 end
 
+local validKeyTypes = {
+	string = true,
+	number = true,
+}
+
 local validTypes = {
 	string = true,
 	table = true,
@@ -54,8 +59,9 @@ local validTypes = {
 ---Prepares a table for PersistentVars saving by removing invalid values.
 ---@param tbl table
 ---@param supportedExtraTypes table<string,boolean>
+---@param forJson ?boolean If true, key types will be restricted to number/string.
 ---@return table<string|number|boolean,string|number|boolean|table>
-function TableHelpers.SanitizeTable(tbl, supportedExtraTypes)
+function TableHelpers.SanitizeTable(tbl, supportedExtraTypes, forJson)
 	local output = {}
 	local tableType = type(tbl)
 	if tableType ~= "table" and tableType ~= "userdata" then
@@ -63,11 +69,11 @@ function TableHelpers.SanitizeTable(tbl, supportedExtraTypes)
 	end
 	for k,v in pairs(tbl) do
 		local keyType = type(k)
-		if validTypes[keyType] then
+		if (forJson and validKeyTypes[keyType]) or not (forJson and validTypes(keyType)) then
 			local t = type(v)
 			if validTypes[t] or (supportedExtraTypes and supportedExtraTypes[t]) then
 				if t == "table" or t == "userdata" then
-					output[k] = TableHelpers.SanitizeTable(v, supportedExtraTypes)
+					output[k] = TableHelpers.SanitizeTable(v, supportedExtraTypes, forJson)
 				else
 					output[k] = v
 				end

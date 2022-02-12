@@ -41,11 +41,11 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		
 		for name,data in pairs(Mods) do
 			if data.PersistentVars ~= nil then
-				varData[name] = TableHelpers.SanitizeTable(data.PersistentVars)
+				varData[name] = TableHelpers.SanitizeTable(data.PersistentVars, nil, true)
 			end
 		end
 		if varData ~= nil then
-			Ext.SaveFile("LeaderLib_Debug_PersistentVars.json", Common.JsonStringify(varData))
+			GameHelpers.IO.SaveJsonFile("LeaderLib_Debug_PersistentVars.json", varData)
 		end
 		TimerCancel("Timers_LeaderLib_Debug_LuaReset")
 		GlobalSetFlag("LeaderLib_ResettingLua")

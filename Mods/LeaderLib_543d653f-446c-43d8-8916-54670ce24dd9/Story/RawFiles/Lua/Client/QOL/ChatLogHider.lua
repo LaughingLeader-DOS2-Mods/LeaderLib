@@ -8,10 +8,8 @@ local _ticksSince = 0
 
 --Ext.UI.GetByType(6):GetRoot().log_mc.enableInput(false)
 
-local resetting = false
 
 RegisterListener("BeforeLuaReset", function()
-	resetting = true
 	local chatlog = Ext.UI.GetByType(Data.UIType.chatLog)
 	if chatlog and not Common.TableHasValue(chatlog.Flags, "OF_Visible") then
 		chatlog:Show()
@@ -27,12 +25,16 @@ end)
 local lastDisabled = nil
 
 Ext.Events.Tick:Subscribe(function (e)
-	if not resetting and _currentState == "Running" then
+	if not Vars.Resetting and _currentState == "Running" then
 		if GameSettings.Settings.Client.HideChatLog then
 			lastDisabled = true
 			local chatlog = Ext.UI.GetByType(Data.UIType.chatLog)
 			if chatlog and Common.TableHasValue(chatlog.Flags, "OF_Visible") then
 				chatlog:Hide()
+			end
+			local hotbar = Ext.UI.GetByType(Data.UIType.hotBar)
+			if hotbar then
+				hotbar:GetRoot().hotbar_mc.chatBtn_mc.visible = false
 			end
 		elseif lastDisabled ~= false then
 			local chatlog = Ext.UI.GetByType(Data.UIType.chatLog)

@@ -30,8 +30,7 @@ local ClientCharacterData = {
 		SourceBase = 0,
 		SourceCurrent = 0,
 		SourceMax = 0
-	},
-	Skillbar = {}
+	}
 }
 
 ClientCharacterData.__index = ClientCharacterData
@@ -53,8 +52,7 @@ function ClientCharacterData:Create(params)
 		IsPossessed = false,
 		IsGameMaster = false,
 		IsPlayer = true,
-		Points = {},
-		Skillbar = {},
+		Points = {}
 	}
 	if params and type(params) == "table" then
 		for k,v in pairs(params) do
@@ -88,27 +86,27 @@ function ClientCharacterData:Update(params)
 		end
 	end
 	self:UpdatePoints(self.UUID)
-	if not isClient and _EXTVERSION >= 56 and GameHelpers.Character.IsPlayer(self.UUID) then
-		local character = Ext.GetCharacter(self.UUID)
-		if character and character.PlayerData then
-			self.Skillbar = {}
-			for i,v in pairs(character.PlayerData.SkillBar) do
-				if v.Type ~= "None" then
-					self.Skillbar[i] = {
-						SkillOrStatId = v.SkillOrStatId,
-						Type = v.Type
-					}
-					if v.Type == "Item" then
-						local item = Ext.GetItem(v.ItemHandle)
-						if item then
-							self.Skillbar[i].ItemHandle = item.NetID
-							self.Skillbar[i].Amount = item.Amount
-						end
-					end
-				end
-			end
-		end
-	end
+	-- if not isClient and _EXTVERSION >= 56 and GameHelpers.Character.IsPlayer(self.UUID) then
+	-- 	local character = Ext.GetCharacter(self.UUID)
+	-- 	if character and character.PlayerData then
+	-- 		self.Skillbar = {}
+	-- 		for i,v in pairs(character.PlayerData.SkillBar) do
+	-- 			if v.Type ~= "None" then
+	-- 				self.Skillbar[i] = {
+	-- 					SkillOrStatId = v.SkillOrStatId,
+	-- 					Type = v.Type
+	-- 				}
+	-- 				if v.Type == "Item" then
+	-- 					local item = Ext.GetItem(v.ItemHandle)
+	-- 					if item then
+	-- 						self.Skillbar[i].ItemHandle = item.NetID
+	-- 						self.Skillbar[i].Amount = item.Amount
+	-- 					end
+	-- 				end
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 	return self
 end
 
@@ -159,8 +157,7 @@ function ClientCharacterData:Export()
 			SourceBase = self.Points.SourceBase or 0,
 			SourceCurrent = self.Points.SourceCurrent or 0,
 			SourceMax = self.Points.SourceMax or 0
-		},
-		Skillbar = self.Skillbar
+		}
 	}
 	return data
 end

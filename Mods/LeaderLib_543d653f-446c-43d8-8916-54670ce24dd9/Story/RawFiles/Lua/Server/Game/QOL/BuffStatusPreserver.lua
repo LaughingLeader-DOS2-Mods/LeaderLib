@@ -112,7 +112,7 @@ RegisterStatusTypeListener(Vars.StatusEvent.Applied, "CONSUME", BuffStatusPreser
 
 ---@private
 function BuffStatusPreserver.Disable()
-	if BuffStatusPreserver.PersistentVars.BuffStatuses then
+	if PersistentVars.BuffStatuses then
 		for uuid,data in pairs(PersistentVars.BuffStatuses) do
 			BuffStatusPreserver.OnEnteredCombat(uuid, 0)
 		end

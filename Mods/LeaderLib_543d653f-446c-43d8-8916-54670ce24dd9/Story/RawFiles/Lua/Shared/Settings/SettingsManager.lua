@@ -1,4 +1,6 @@
-SettingsManager = {}
+SettingsManager = {
+	LoadedInitially = false
+}
 
 local FlagData = Classes.ModSettingsClasses.FlagData
 local VariableData = Classes.ModSettingsClasses.VariableData
@@ -173,11 +175,13 @@ function LoadGlobalSettings()
 		return true
 	end, debug.traceback)
 	if not b then
+		SettingsManager.LoadedInitially = false
 		Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
 		Ext.PrintError(result)
 		return false
 	else
-		if Ext.IsServer() and Ext.OsirisIsCallable() or Ext.GetGameState() == "Running" then
+		SettingsManager.LoadedInitially = true
+		if Ext.OsirisIsCallable() then
 			for uuid,v in pairs(GlobalSettings.Mods) do
 				v:ApplyToGame()
 			end
@@ -188,6 +192,9 @@ function LoadGlobalSettings()
 end
 
 function SaveGlobalSettings()
+	if not SettingsManager.LoadedInitially then
+		LoadGlobalSettings()
+	end
 	local status,err = xpcall(function()
 		local export = ExportGlobalSettings()
 		local json = Common.JsonStringify(export)
@@ -293,7 +300,3 @@ if Ext.IsServer() then
 	
 	end
 end
-
-Ext.RegisterListener("SessionLoading", function()
-	LoadGlobalSettings()
-end)

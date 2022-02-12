@@ -87,9 +87,11 @@ local function OnInitialized(region, isRunning)
 		end
 	end
 
-	local status,err = xpcall(OverrideLeaveActionStatuses, debug.traceback)
-	if not status then
-		Ext.PrintError(err)
+	if not Vars.Initialized then
+		local status,err = xpcall(OverrideLeaveActionStatuses, debug.traceback)
+		if not status then
+			Ext.PrintError(err)
+		end
 	end
 
 	Vars.Initialized = true
@@ -104,7 +106,6 @@ local function OnInitialized(region, isRunning)
 	end)
 
 	if Vars.PostLoadEnableLuaListeners or TotalSkillListeners > 0 then
-		PrintDebug("**********************Enabling Lua listeners in Osiris*****************")
 		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaSkillListeners_Enabled", "LeaderLib")
 		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaEventListeners_Enabled", "LeaderLib")
 		Vars.PostLoadEnableLuaListeners = false
@@ -120,23 +121,24 @@ end
 
 --Called from Osiris, Osi.LeaderLib_Initialized
 function OnLeaderLibInitialized(region)
-	if Ext.GetGameState() == "Running" then
-		if not Vars.Initialized then
-			OnInitialized(region, true)
-		else
-			InvokeOnInitializedCallbacks(region)
-		end
-	else
-		if Vars.DebugMode then
-			Ext.PrintWarning("[LeaderLib:OnInitialized_CheckGameState] Game State:", Ext.GetGameState())
-		end
-		TimerCancel("Timers_LeaderLib_Initialized_CheckGameState")
-		TimerLaunch("Timers_LeaderLib_Initialized_CheckGameState", 500)
-	end
+	OnInitialized(region)
+	-- if Ext.GetGameState() ~= "Running" then
+	-- 	if Vars.DebugMode then
+	-- 		Ext.PrintWarning("[LeaderLib:OnInitialized_CheckGameState] Game State:", Ext.GetGameState())
+	-- 	end
+	-- 	TimerCancel("Timers_LeaderLib_Initialized_CheckGameState")
+	-- 	TimerLaunch("Timers_LeaderLib_Initialized_CheckGameState", 500)
+	-- end
 end
 
 Timer.RegisterListener("Timers_LeaderLib_Initialized_CheckGameState", function ()
 	OnLeaderLibInitialized(SharedData.RegionData.Current)
+end)
+
+RegisterListener("RegionChanged", function (region, state, levelType)
+	if levelType == LEVELTYPE.GAME and state == REGIONSTATE.GAME then
+		OnLeaderLibInitialized(region)
+	end
 end)
 
 Ext.RegisterListener("GameStateChanged", function(from, to)
@@ -178,6 +180,7 @@ function OnLuaReset()
 	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
 	GameHelpers.Data.SetRegion(region)
 	GameHelpers.Data.SetGameMode()
+	Vars.Initialized = false
 	OnInitialized(region, true)
 	if IsCharacterCreationLevel(region) == 1 then
 		SkipTutorial.Initialize()

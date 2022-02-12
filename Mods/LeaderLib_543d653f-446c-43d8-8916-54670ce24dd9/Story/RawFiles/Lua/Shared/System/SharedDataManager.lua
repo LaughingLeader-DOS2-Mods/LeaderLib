@@ -223,9 +223,10 @@ else
 		InvokeListenerCallbacks(Listeners.RegionChanged, region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
 	end)
 	
-	RegisterListener("LuaReset", function()
+	RegisterListener("LuaReset", function(region)
 		SharedData.RegionData.State = REGIONSTATE.GAME
-		InvokeListenerCallbacks(Listeners.RegionChanged, SharedData.RegionData.Current, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+		GameHelpers.Data.SetRegion(region)
+		InvokeListenerCallbacks(Listeners.RegionChanged, region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
 	end)
 
 	function GameHelpers.Data.SetGameMode(gameMode)

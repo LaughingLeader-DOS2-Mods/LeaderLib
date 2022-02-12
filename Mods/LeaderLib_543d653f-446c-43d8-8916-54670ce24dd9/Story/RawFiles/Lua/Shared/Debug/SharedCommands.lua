@@ -56,7 +56,7 @@ if _EXTVERSION >= 56 then
 		character = function (dumpType, synced, filename)
 			local fileName = string.format("Dumps/%s_%s.json", filename or "Character", isClient and "Client" or "Server")
 			Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Client:GetCharacter() or Ext.GetCharacter(CharacterGetHostCharacter())))
-			Ext.Print("[dump:character] Saved character data to",fileName)
+			Ext.Print("[dump:character] Saved character data to", fileName)
 			SendDumpCommand(dumpType, synced, filename)
 		end,
 		uiext = function (dumpType, synced, filename)

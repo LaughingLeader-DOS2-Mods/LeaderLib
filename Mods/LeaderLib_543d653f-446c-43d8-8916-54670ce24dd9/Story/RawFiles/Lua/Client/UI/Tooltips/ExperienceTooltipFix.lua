@@ -1,3 +1,5 @@
+--This fixes an issue where if the experience tooltip was open when the reward UI opens, it prevents being able to click on things.
+
 Ext.RegisterUITypeInvokeListener(Data.UIType.reward, "setTitle", function(ui, event)
 	local hotbar = Ext.GetUIByType(Data.UIType.hotBar)
 	if hotbar then

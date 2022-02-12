@@ -77,13 +77,13 @@ package LS_Classes
 		
 		public function get visibleHeight() : Number
 		{
-			var val1:Number = 0;
-			var val2:MovieClip = this.getLastVisible(false);
-			if(val2)
+			var h:Number = 0;
+			var last_mc:MovieClip = this.getLastVisible(false);
+			if(last_mc)
 			{
-				val1 = this.getElementHeight(val2) + val2.y;
+				h = this.getElementHeight(last_mc) + last_mc.y;
 			}
-			return val1;
+			return h;
 		}
 		
 		override public function set width(param1:Number) : void

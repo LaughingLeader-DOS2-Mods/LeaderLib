@@ -74,6 +74,13 @@ local StatFixes = {
 			SkillProperties = {}
 		}
 	},
+	--Original: "EMPTY". This isn't a status.
+	Target_Quest_DemonicPossession_Kill = {
+		CanChange = _SkillPropertiesActionMissing,
+		Changes = {
+			SkillProperties = {}
+		}
+	},
 	--Original: OILED,100,1 - OILED isn't a status.
 	Rain_Oil = {
 		CanChange = _SkillPropertiesActionMissing,

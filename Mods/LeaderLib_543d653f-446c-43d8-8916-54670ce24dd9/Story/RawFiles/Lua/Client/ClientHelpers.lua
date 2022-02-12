@@ -168,3 +168,17 @@ function GameHelpers.Client.WriteTableToFlashArray(tbl, arr)
 		arr[i-1] = tbl[i]
 	end
 end
+
+---@alias ExtenderSkillBarSlotType string|'"None"'|'"Skill"'|'"Item"'
+
+---@class ExtenderPlayerSkillBarSlot
+---@field Type ExtenderSkillBarSlotType
+---@field SkillOrStatId string
+---@field ItemHandle ObjectHandle
+
+---@param slotData ExtenderPlayerSkillBarSlot
+function GameHelpers.Client.ClearSlot(slotData)
+	slotData.Type = "None"
+	slotData.SkillOrStatId = ""
+	slotData.ItemHandle = Ext.DoubleToHandle(0)
+end

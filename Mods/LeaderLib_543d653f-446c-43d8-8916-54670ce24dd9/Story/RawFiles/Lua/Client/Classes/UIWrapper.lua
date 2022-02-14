@@ -9,7 +9,19 @@ local UIWrapper = {
 	IsControllerSupported = false,
 	ControllerID = -1,
 	ControllerPath = "",
+	Callbacks = {
+		---@type table<string, UIWrapperCallbackHandler[]>
+		Invoke = {},
+		---@type table<string, UIWrapperCallbackHandler[]>
+		Call = {}
+	}
 }
+
+local _EXTVERSION = Ext.Version()
+
+---@type table<integer,LeaderLibUIWrapper[]>
+local _uiWrappers = {}
+--setmetatable(_uiWrappers, {__mode = "kv"})
 
 ---@return LeaderLibUIWrapper
 local function CreateWrapper(...)
@@ -53,7 +65,11 @@ function UIWrapper:CreateFromType(id, params)
 	local this = {
 		ID = id,
 		Name = Data.UITypeToName[id] or "",
-		Path = ""
+		Path = "",
+		Callbacks = {
+			Invoke = {},
+			Call = {}
+		}
 	}
 	if params then
 		for k,v in pairs(params) do
@@ -66,7 +82,15 @@ function UIWrapper:CreateFromType(id, params)
 		ui:CaptureExternalInterfaceCalls()
 		ui:CaptureInvokes()
 	end
+	if _uiWrappers[id] == nil then
+		_uiWrappers[id] = {}
+	end
+	table.insert(_uiWrappers[id], this)
 	return this
+end
+
+local function CanInvokeCallback(data, uiType, eventType)
+	return data.Type == uiType and data.Context == eventType
 end
 
 ---@param path string
@@ -76,7 +100,11 @@ function UIWrapper:CreateFromPath(path, params)
 	local this = {
 		ID = -1,
 		Name = "",
-		Path = path
+		Path = path,
+		Callbacks = {
+			Invoke = {},
+			Call = {}
+		}
 	}
 	if params then
 		for k,v in pairs(params) do
@@ -97,28 +125,71 @@ end
 ---@alias UIWrapperEventContextType string|'"Keyboard"'|'"Controller"'|'"All"'
 ---@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, ui:UIObject, event:string, vararg):void
 
+function UIWrapper:InvokeCallbacks(callbackType, e, ui, event, eventType, args)
+	if not self.Callbacks[callbackType] then
+		error(string.format("Invalid callback type %s", callbackType))
+	end
+	local callbacks = self.Callbacks[callbackType][event]
+	if callbacks then
+		local len = #callbacks
+		for i=1,len do
+			local callbackData = callbacks[i]
+			if CanInvokeCallback(callbackData, ui.Type, eventType) then
+				local result = {xpcall(callbackData.Callback, debug.traceback, self, ui, event, table.unpack(args))}
+				if result[1] then
+					local b,preventAction,stopPropagation = table.unpack(result)
+					if preventAction then
+						e:PreventAction()
+					end
+					if stopPropagation then
+						e:StopPropagation()
+					end
+				else
+					Ext.PrintError(result[2])
+				end
+			end
+		end
+	end
+end
+
 ---@param event string The method name.
 ---@param callback UIWrapperCallbackHandler
 ---@param eventType UICallbackEventType
 ---@param uiContext UIWrapperEventContextType
 function UIWrapper:RegisterInvokeListener(event, callback, eventType, uiContext)
 	if self.ID ~= -1 and uiContext ~= "Controller" then
-		Ext.RegisterUITypeInvokeListener(self.ID, event, function(...)
-			local b,err = xpcall(callback, debug.traceback, self, ...)
-			if not b then
-				fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):InvokeListener] Error:%s", self.ID, err)
-				error(err, 2)
-			end
-		end, eventType)
+		if self.Callbacks.Invoke[event] == nil then
+			self.Callbacks.Invoke[event] = {}
+		end
+		table.insert(self.Callbacks.Invoke[event], {
+			Callback = callback,
+			Type = self.ID,
+			Context = eventType or "After"
+		})
+		-- Ext.RegisterUITypeInvokeListener(self.ID, event, function(...)
+		-- 	local b,err = xpcall(callback, debug.traceback, self, ...)
+		-- 	if not b then
+		-- 		fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):InvokeListener] Error:%s", self.ID, err)
+		-- 		error(err, 2)
+		-- 	end
+		-- end, eventType)
 	end
 	if self.ControllerID ~= -1 and (uiContext == "Controller" or uiContext == "All") then
-		Ext.RegisterUITypeInvokeListener(self.ControllerID, event, function(...)
-			local b,err = xpcall(callback, debug.traceback, self, ...)
-			if not b then
-				fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):InvokeListener] Error:%s", self.ControllerID, err)
-				error(err, 2)
-			end
-		end, eventType)
+		if self.Callbacks.Invoke[event] == nil then
+			self.Callbacks.Invoke[event] = {}
+		end
+		table.insert(self.Callbacks.Invoke[event], {
+			Callback = callback,
+			Type = self.ControllerID,
+			Context = eventType or "After"
+		})
+		-- Ext.RegisterUITypeInvokeListener(self.ControllerID, event, function(...)
+		-- 	local b,err = xpcall(callback, debug.traceback, self, ...)
+		-- 	if not b then
+		-- 		fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):InvokeListener] Error:%s", self.ControllerID, err)
+		-- 		error(err, 2)
+		-- 	end
+		-- end, eventType)
 	end
 end
 
@@ -128,22 +199,38 @@ end
 ---@param uiContext UIWrapperEventContextType
 function UIWrapper:RegisterCallListener(event, callback, eventType, uiContext)
 	if self.ID ~= -1 and uiContext ~= "Controller" then
-		Ext.RegisterUITypeCall(self.ID, event, function(...)
-			local b,err = xpcall(callback, debug.traceback, self, ...)
-			if not b then
-				fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):CallListener] Error:%s", self.ID, err)
-				error(err, 2)
-			end
-		end, eventType)
+		if self.Callbacks.Call[event] == nil then
+			self.Callbacks.Call[event] = {}
+		end
+		table.insert(self.Callbacks.Call[event], {
+			Callback = callback,
+			Type = self.ID,
+			Context = eventType or "After"
+		})
+		-- Ext.RegisterUITypeCall(self.ID, event, function(...)
+		-- 	local b,err = xpcall(callback, debug.traceback, self, ...)
+		-- 	if not b then
+		-- 		fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):CallListener] Error:%s", self.ID, err)
+		-- 		error(err, 2)
+		-- 	end
+		-- end, eventType)
 	end
 	if self.ControllerID ~= -1 and (uiContext == "Controller" or uiContext == "All") then
-		Ext.RegisterUITypeCall(self.ControllerID, event, function(...)
-			local b,err = xpcall(callback, debug.traceback, self, ...)
-			if not b then
-				fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):CallListener] Error:%s", self.ControllerID, err)
-				error(err, 2)
-			end
-		end, eventType)
+		if self.Callbacks.Call[event] == nil then
+			sself.Callbacks.Call[event] = {}
+		end
+		table.insert(self.Callbacks.Call[event], {
+			Callback = callback,
+			Type = self.ControllerID,
+			Context = eventType or "After"
+		})
+		-- Ext.RegisterUITypeCall(self.ControllerID, event, function(...)
+		-- 	local b,err = xpcall(callback, debug.traceback, self, ...)
+		-- 	if not b then
+		-- 		fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):CallListener] Error:%s", self.ControllerID, err)
+		-- 		error(err, 2)
+		-- 	end
+		-- end, eventType)
 	end
 end
 
@@ -200,6 +287,28 @@ function UIWrapper:Invoke(method, ...)
 	if ui then
 		ui:Invoke(method, ...)
 	end
+end
+
+if _EXTVERSION >= 56 then
+	Ext.Events.UIInvoke:Subscribe(function (e)
+		local wrappers = _uiWrappers[e.UI.Type]
+		if wrappers then
+			local len = #wrappers
+			for i=1,len do
+				wrappers[i]:InvokeCallbacks("Invoke", e, e.UI, e.Function, e.When, e.Args)
+			end
+		end
+	end)
+
+	Ext.Events.UICall:Subscribe(function (e)
+		local wrappers = _uiWrappers[e.UI.Type]
+		if wrappers then
+			local len = #wrappers
+			for i=1,len do
+				wrappers[i]:InvokeCallbacks("Call", e, e.UI, e.Function, e.When, e.Args)
+			end
+		end
+	end)
 end
 
 Classes.UIWrapper = UIWrapper

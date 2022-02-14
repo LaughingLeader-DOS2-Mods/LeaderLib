@@ -35,10 +35,14 @@ function SettingsManager.Remove(uuid)
 end
 
 ---@param uuid string
----@param createIfMissing boolean|nil
+---@param createIfMissing ?boolean
+---@param tryInitialLoad ?boolean
 ---@return ModSettings|nil
-function SettingsManager.GetMod(uuid, createIfMissing)
-	if uuid ~= nil and uuid ~= "" then
+function SettingsManager.GetMod(uuid, createIfMissing, tryInitialLoad)
+	if not StringHelpers.IsNullOrEmpty(uuid) then
+		if tryInitialLoad and not SettingsManager.LoadedInitially then
+			LoadGlobalSettings()
+		end
 		local data = GlobalSettings.Mods[uuid]
 		if data ~= nil then
 			return data

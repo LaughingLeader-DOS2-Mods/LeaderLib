@@ -417,7 +417,7 @@ else
 	-- Ext.RegisterOsirisListener("CharacterRemoveMaxSourcePointsOverride", 2, "after", OnPointsChanged)
 
 	Ext.RegisterListener("GameStateChanged", function(from, to)
-		if to == "Running" and from ~= "Paused" then
+		if to == "Running" and from ~= "Paused" and from ~= "GameMasterPause" then
 			IterateUsers("LeaderLib_StoreUserData")
 			GameHelpers.Data.StartSyncTimer()
 		end

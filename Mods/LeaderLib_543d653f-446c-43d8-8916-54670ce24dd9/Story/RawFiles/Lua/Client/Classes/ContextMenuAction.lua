@@ -4,10 +4,12 @@
 ---@field Callback ContextMenuActionCallback
 ---@field Visible boolean
 ---@field DisplayName string
+---@field Tooltip string
 ---@field Icon string
 ---@field UseClickSound boolean
 ---@field Disabled boolean
 ---@field IsLegal boolean
+---@field StayOpen boolean
 ---@field Children ContextMenuActionSettings[]
 
 ---@class ContextMenuAction:ContextMenuActionSettings
@@ -17,6 +19,7 @@ local ContextMenuAction = {
 	Visible = true,
 	UseClickSound = true,
 	Disabled = false,
+	StayOpen = false,
 	IsLegal = true
 }
 
@@ -33,10 +36,19 @@ function ContextMenuAction:Create(params)
 		ID = "",
 		ShouldOpen = nil,
 		Callback = nil,
+		Tooltip = ""
 	}
 	if type(params) == "table" then
 		for k,v in pairs(params) do
 			this[k] = v
+		end
+	end
+	if this.Children then
+		if this.UseClickSound == nil then
+			this.UseClickSound = false
+		end
+		if this.StayOpen == nil then
+			this.StayOpen = true
 		end
 	end
 	setmetatable(this, ContextMenuAction)

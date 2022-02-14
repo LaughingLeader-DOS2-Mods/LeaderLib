@@ -179,7 +179,7 @@ local _actionMap = {}
 
 ---@private
 ---@param ui UIObject
-function ContextMenu:OnEntryClicked(ui, event, index, actionID, handle, isBuiltIn)
+function ContextMenu:OnEntryClicked(ui, event, index, actionID, handle, isBuiltIn, stayOpen)
 	local action = self.DefaultActionCallbacks[actionID] or _actionMap[actionID]
 	local b,result = false,nil
 	if action then
@@ -191,8 +191,10 @@ function ContextMenu:OnEntryClicked(ui, event, index, actionID, handle, isBuiltI
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
 	end
 	InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, index, actionID, handle)
-	if result ~= true then
-		ui:Invoke("showContextMenu", false)
+	if stayOpen and result == false then
+		ui:GetRoot().showContextMenu(false)
+	elseif not stayOpen and result ~= true then
+		ui:GetRoot().showContextMenu(false)
 	end
 end
 
@@ -542,8 +544,7 @@ function ContextMenu:Close()
 	if instance then
 		self:ClearCustomIcons()
 		local main = instance:GetRoot()
-		local contextMenu = main.contextMenuMC
-		contextMenu.close()
+		main.showContextMenu(false)
 	end
 end
 
@@ -567,11 +568,12 @@ local function AddEntryMC(targetContextMenu, entry)
 		return
 	end
 	_actionMap[entry.ID] = entry.Callback
-	local index = targetContextMenu.addEntry(entry.ID, entry.UseClickSound, entry.DisplayName, entry.Disabled, entry.IsLegal)
+	local index = targetContextMenu.addEntry(entry.ID, entry.UseClickSound, entry.DisplayName, entry.Disabled, entry.IsLegal, entry.Handle, entry.Tooltip)
 	local menuItem = targetContextMenu.list.content_array[index]
 	if not StringHelpers.IsNullOrEmpty(entry.Icon) then
 		local iconId = string.format("LeaderLib_UIExtensions_%s", entry.Icon)
 		menuItem.setIcon("iggy_" .. iconId)
+		menuItem.stayOpen = entry.StayOpen or false
 		ContextMenu:SaveCustomIcon(iconId, entry.Icon, 24, 24)
 	end
 	
@@ -579,9 +581,9 @@ local function AddEntryMC(targetContextMenu, entry)
 		menuItem.createSubmenu()
 		for j=1,#entry.Children do
 			local child = entry.Children[j]
-			AddEntryMC(menuItem.childContextMenu, child)
+			AddEntryMC(menuItem.childCM, child)
 		end
-		menuItem.childContextMenu.updateDone()
+		menuItem.childCM.updateDone()
 	end
 end
 
@@ -620,7 +622,7 @@ function ContextMenu:MoveAndRebuild(x,y)
 		x = x + paddingX
 		y = y + paddingY
 		
-		contextMenu.open(x,y)
+		main.showContextMenu(true, x,y)
 		self.Visible = true
 		--main.showContextMenu(true)
 	end
@@ -668,7 +670,7 @@ function ContextMenu:Open()
 			y = y + paddingY
 		end
 
-		contextMenu.open(x,y)
+		main.showContextMenu(true, x,y)
 		self.Visible = true
 		self.IsOpening = false
 		--main.showContextMenu(true)

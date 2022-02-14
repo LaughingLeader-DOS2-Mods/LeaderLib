@@ -2,22 +2,19 @@ package controls.contextMenu
 {
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
-	import flash.external.ExternalInterface;
+	import interfaces.IContextMenuObject;
 	import flash.text.TextField;
 	import LS_Classes.listDisplay;
 	import flash.geom.Point;
 	import flash.events.Event;
 	import LS_Symbols.IggyIcon;
 	
-	public dynamic class ContextMenuEntry extends MovieClip
+	public class ContextMenuEntry extends BaseContextMenuObject implements IContextMenuObject
 	{
 		public var arrow_mc:MovieClip;
 		public var hl_mc:MovieClip;
 		public var text_txt:TextField;
 		public var iggy_mc:IggyIcon;
-
-		public var parentContextMenu:ContextMenuMC;
-		public var childContextMenu:ContextMenuMC;
 
 		public var selectedColor:uint;
 		public var deSelectedColor:uint;
@@ -40,18 +37,36 @@ package controls.contextMenu
 		public var tweenToY:Number;
 
 		public var isActive:Boolean = false;
+		public var openOnHover:Boolean = true;
+
+		public var tooltip:String;
+		public var tooltipSide:String = "top";
+		public var tooltipEnabled:Boolean = false;
+		public var tooltipYOffset:Number = -10;
+		public var tooltipOverrideW:Number = 0;
 		
 		public function ContextMenuEntry(parentCM:ContextMenuMC)
 		{
 			super();
 			this.iggy_mc.visible = false;
-			this.parentContextMenu = parentCM;
+			this.setHierarchy(parentCM);
 			this.addFrameScript(0,this.frame1);
 		}
 
-		public function get isParentOpen():Boolean
+		public function setTooltip(text:String = "") : Boolean
 		{
-			return parentContextMenu && parentContextMenu.isOpen;
+			this.tooltip = text;
+			var nextEnabled:Boolean = this.tooltip != "";
+			if (nextEnabled)
+			{
+				if(!this.tooltipEnabled) MainTimeline.Instance.setupControlForTooltip(this);
+			}
+			else
+			{
+				if(this.tooltipEnabled) MainTimeline.Instance.clearControlForTooltip(this);
+			}
+			this.tooltipEnabled = nextEnabled;
+			return this.tooltipEnabled;
 		}
 
 		public function setIcon(name:String) : void
@@ -65,7 +80,7 @@ package controls.contextMenu
 			this.hl_mc.alpha = 1;
 			this.text_txt.textColor = this.selectedColor;
 			this.text_txt.htmlText = this.text;
-			this.openSubmenu();
+			if(openOnHover) this.open();
 		}
 
 		public function clearHovered() : void
@@ -73,16 +88,16 @@ package controls.contextMenu
 			this.hl_mc.alpha = 0;
 			this.text_txt.textColor = this.deSelectedColor;
 			this.text_txt.htmlText = this.text;
-			this.closeSubmenu();
+			this.close();
 		}
 		
 		public function deselectElement() : void
 		{
 			this.clearHovered();
-			if(!isParentOpen)
-			{
-				Registry.ExtCall("PlaySound","UI_Generic_Over");	
-			}
+			// if(!isParentOpen)
+			// {
+			// 	Registry.ExtCall("PlaySound","UI_Generic_Over");	
+			// }
 			this.removeEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
 		}
 		
@@ -96,11 +111,14 @@ package controls.contextMenu
 		{
 			if(!this.disabled)
 			{
-				Registry.ExtCall("LeaderLib_ContextMenu_EntryPressed",this.list_pos,this.actionID,this.handle);
+				Registry.ExtCall("LeaderLib_ContextMenu_EntryPressed",this.list_pos,this.actionID,this.handle,false,this.stayOpen);
 				if(!this.stayOpen)
 				{
-					this.closeSubmenu(true);
-					this.parentContextMenu.close();
+					this.close(true);
+					if(this.parentCM)
+					{
+						this.parentCM.close();
+					}
 				}
 			}
 		}
@@ -131,63 +149,67 @@ package controls.contextMenu
 			this.clearHovered();
 		}
 
-		public function isMouseOverlappingSubmenu() : Boolean
+		public function onContextMenuSelectionCleared(e:Event) : void
 		{
-			return this.childContextMenu.isMouseHovering();
+			this.close(true);
 		}
 
-		public function closeSubmenu(force:Boolean = false) : void
+		public function close(force:Boolean = false) : void
 		{
-			if(this.childContextMenu && this.childContextMenu.isOpen)
+			if(this.childCM && this.childCM.isOpen)
 			{
-				if(force && !this.isMouseOverlappingSubmenu())
+				if(force || !this.childCM.isMouseHovering)
 				{
-					MainTimeline.Instance.removeChild(childContextMenu);
-					this.childContextMenu.close();
+					this.childCM.close();
+					this.isOpen = false;
 				}
+				this.arrow_mc.visible = this.isOpen;
+			}
+			else
+			{
+				this.arrow_mc.visible = false;
 			}
 		}
 
-		public function onContextMenuSelectionCleared(e:Event) : void
+		public function open(targetX:Number=0, targetY:Number=0) : void
 		{
-			this.closeSubmenu(true);
-		}
-
-		public function openSubmenu() : void
-		{
-			if(this.childContextMenu && !this.childContextMenu.isOpen)
+			if(this.childCM && !this.childCM.isOpen)
 			{
-				MainTimeline.Instance.addChild(childContextMenu);
-				var xPos:Number = Math.max(this.parentContextMenu.bg_mc.mouseX, this.parentContextMenu.bg_mc.width);
-				var yPos:Number = this.parentContextMenu.bg_mc.y;
-				var pos:Point = this.parentContextMenu.bg_mc.localToGlobal(new Point(xPos, yPos));
-				this.childContextMenu.open(pos.x, pos.y);
+				//var xPos:Number = Math.max(this.parentContextMenu.bg_mc.mouseX, this.parentContextMenu.bg_mc.width);
+				//var yPos:Number = this.parentContextMenu.bg_mc.y;
+				//var pos:Point = this.parentContextMenu.bg_mc.localToGlobal(new Point(xPos, yPos));
+				//this.childCM.open(pos.x-30, pos.y);
+				this.childCM.open(targetX, targetY);
+				this.isOpen = true;
+				this.arrow_mc.visible = true;
 				//this.parentContextMenu.addEventListener(Event.CLEAR, this.onContextMenuSelectionCleared);
 			}
 		}
 
 		public function createSubmenu(openImmediately:Boolean = false) : void
 		{
-			this.arrow_mc.visible = true;
-			if(this.childContextMenu == null)
+			this.arrow_mc.visible = false;
+			if(this.childCM == null)
 			{
-				this.childContextMenu = new ContextMenuMC();
-				this.childContextMenu.bg_mc.top_mc.visible = false;
-				this.childContextMenu.bg_mc.bottom_mc.visible = false;
-				this.childContextMenu.parentObject = this;
-				this.childContextMenu.init();
-				this.childContextMenu.visible = false;
+				var cm:ContextMenuMC = new ContextMenuMC();
+				// cm.bg_mc.top_mc.visible = false;
+				// cm.bg_mc.bottom_mc.visible = false;
+				cm.setHierarchy(this);
+				cm.init();
+				cm.visible = false;
+				cm.playSounds = false;
+				this.setHierarchy(this.parentCM, cm);
 			}
 			if(openImmediately)
 			{
-				this.openSubmenu();
+				this.open();
 			}
 		}
 		
 		private function frame1() : void
 		{
 			this.addEventListener(MouseEvent.MOUSE_DOWN,this.buttonDown);
-			this.addEventListener(MouseEvent.ROLL_OVER,this.buttonOver);
+			this.addEventListener(MouseEvent.MOUSE_OVER,this.buttonOver);
 			this.addEventListener(MouseEvent.MOUSE_OUT,this.buttonOut);
 		}
 	}

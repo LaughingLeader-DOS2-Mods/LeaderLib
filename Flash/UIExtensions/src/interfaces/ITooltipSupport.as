@@ -1,4 +1,4 @@
-package controls
+package interfaces
 {
 	public interface ITooltipSupport
 	{

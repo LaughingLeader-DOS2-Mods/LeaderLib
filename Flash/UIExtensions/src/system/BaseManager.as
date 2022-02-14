@@ -56,37 +56,33 @@ package system
 			return success;
 		}
 
-		public function remove(obj:MovieClip) : Boolean
+		public function remove(obj:MovieClip, skipRebuild:Boolean = false) : Boolean
 		{
-			var success:Boolean = this.removeChild(obj) != null;
-			for (var i:uint=this.entries.length; i--;)
+			if (obj.listIndex)
 			{
-				if(this.entries[i] == obj)
-				{
-					success = this.removeAt(obj, i);
-					break;
-				}
+				this.entries.splice(obj.listIndex, 1);
 			}
-			if(success) {
+			var success:Boolean = this.removeChild(obj) != null;
+			if(success && !skipRebuild) {
 				this.rebuildListIndexes();
 			}
 			return success;
 		}
 
-		public function removeAtIndex(index:uint) : Boolean
+		public function removeAtIndex(index:uint, skipRebuild:Boolean = false) : Boolean
 		{
 			var success:Boolean = false;
 			var obj:MovieClip = this.entries[index];
 			if (obj) {
 				success = this.removeAt(obj, index);
 			}
-			if(success) {
+			if(success && !skipRebuild) {
 				this.rebuildListIndexes();
 			}
 			return success;
 		}
 
-		public function removeWithID(id:*) : Boolean
+		public function removeWithID(id:*, skipRebuild:Boolean = false) : Boolean
 		{
 			var success:Boolean = false;
 			var obj:MovieClip = null;
@@ -100,7 +96,7 @@ package system
 					}
 				}
 			}
-			if(success) {
+			if(success && !skipRebuild) {
 				this.rebuildListIndexes();
 			}
 			return success;

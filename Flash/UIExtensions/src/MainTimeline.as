@@ -22,12 +22,14 @@ package
 
 	import util.ClientTimer;
 	import controls.bars.HealthBarHolder;
+	import controls.contextMenu.ContextMenuMain;
+	import flash.utils.Timer;
 	
-	public dynamic class MainTimeline extends MovieClip
+	public class MainTimeline extends MovieClip
 	{		
 		//Engine variables
 		public var layout:String;
-		//public var alignment:String;
+		public var alignment:String;
 		public var events:Array;
 		public var anchorId:String;
 		public var anchorPos:String;
@@ -44,7 +46,7 @@ package
 		public var panels_mc:PanelManager;
 		public var dropdowns_mc:DropdownManager;
 
-		public var contextMenuMC:ContextMenuMC;
+		public var contextMenuMC:ContextMenuMain;
 		//public var screenScaleHelper:MovieClip;
 		
 		public var curTooltip:String;
@@ -93,14 +95,14 @@ package
 
 		public function removeInputHandler(obj:IInputHandler) : void
 		{
-			var index:int = 0;
-			while(index < this.inputHandlers.length)
+			var checkObj:IInputHandler = null;
+			for (var i:uint = this.inputHandlers.length; i--;)
 			{
-				if(this.inputHandlers[index] == obj)
+				checkObj = this.inputHandlers[i];
+				if(checkObj == obj)
 				{
-					this.inputHandlers.splice(index, 1);
+					this.inputHandlers.splice(i, 1);
 				}
-				index++;
 			}
 		}
 
@@ -206,6 +208,7 @@ package
 			Registry.ExtCall("setAnchor",this.anchorPos, this.anchorTarget, this.anchorTPos);
 
 			this.contextMenuMC.init();
+			this.contextMenuMC.playSounds = false;
 		}
 
 		public function onEventResize() : void
@@ -261,9 +264,8 @@ package
 			var obj:MovieClip = e.target as MovieClip;
 			if(obj.tooltip != null && obj.tooltip != "")
 			{
-				obj.tooltipOverrideW = this.tooltipWidthOverride;
-				obj.tooltipYOffset = -4;
-				tooltipHelper.ShowTooltipForMC(obj,this,"bottom",this.hasTooltip == false);
+				var side:String = obj.tooltipSide == null ? "top" : obj.tooltipSide;
+				tooltipHelper.ShowTooltipForMC(obj,this,side,this.hasTooltip == false);
 				MainTimeline.Instance.setHasTooltip(true, obj.tooltip);
 			}
 		}
@@ -277,10 +279,16 @@ package
 			MainTimeline.Instance.setHasTooltip(false);
 		}
 
-		private function setupControlForTooltip(obj:MovieClip) : void
+		public function setupControlForTooltip(obj:MovieClip) : void
 		{
 			obj.addEventListener(MouseEvent.MOUSE_OVER, this.onMouseOverTooltip);
 			obj.addEventListener(MouseEvent.MOUSE_OUT, this.onMouseOutTooltip);
+		}
+
+		public function clearControlForTooltip(obj:MovieClip) : void
+		{
+			obj.removeEventListener(MouseEvent.MOUSE_OVER, this.onMouseOverTooltip);
+			obj.removeEventListener(MouseEvent.MOUSE_OUT, this.onMouseOutTooltip);
 		}
 		
 		public function addCheckbox(id:Number, label:String, tooltip:String, stateID:Number=0, x:Number=0, y:Number=0, filterBool:Boolean = false, enabled:Boolean = true) : uint
@@ -476,20 +484,24 @@ package
 				stage.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick);
 				stage.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove);
 				stage.addEventListener("rightMouseDown",this.onRightMouseDown);
-				stage.addEventListener("rightMouseUp",this.onRighMouseUp);
+				stage.addEventListener("rightMouseUp",this.onRightMouseUp);
 			}
 			this.listeningForMouse = b;
 		}
 
-		public function showContextMenu(b:Boolean = true) : void
+		public function showContextMenu(b:Boolean = true, xPos:Number=-9999, yPos:Number=-9999) : void
 		{
 			if (b)
 			{
+				if(xPos == -9999) xPos = mouseX;
+				if(yPos == -9999) yPos = mouseY;
+				contextMenuMC.playSounds = true;
 				contextMenuMC.open(mouseX, mouseY);
 			}
 			else
 			{
 				contextMenuMC.close();
+				contextMenuMC.playSounds = false;
 			}
 		}
 
@@ -548,6 +560,22 @@ package
 			panel.init(title);
 			return this.panels_mc.add(panel);
 		}
+
+		public function onContextMenuMouseOver(e:MouseEvent) : void
+		{
+			
+		}
+
+		private var contextMenuHoverTimer:Timer;
+
+		public function onContextMenuMouseOut(e:MouseEvent) : void
+		{
+			this.contextMenuMC.closeSubmenus();
+			// if (!this.contextMenuMC.isMouseHoveringAny)
+			// {
+			// 	this.contextMenuMC.closeSubmenus();
+			// }
+		}
 		
 		public function frame1() : void
 		{
@@ -587,7 +615,7 @@ package
 			this.screenWidth = this.width;
 			this.screenHeight = this.height;
 
-			this.contextMenuMC = new ContextMenuMC();
+			this.contextMenuMC = new ContextMenuMain();
 			this.addChild(contextMenuMC);
 			this.contextMenuMC.visible = false;
 
@@ -611,7 +639,8 @@ package
 			// this.screenScaleHelper.tabChildren = false;
 
 			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
-			//this.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove, true);
+			this.contextMenuMC.addEventListener(MouseEvent.MOUSE_OVER, this.onContextMenuMouseOver, false);
+			this.contextMenuMC.addEventListener(MouseEvent.ROLL_OUT, this.onContextMenuMouseOut, false);
 			
 			// this.stage.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent):void
 			// {

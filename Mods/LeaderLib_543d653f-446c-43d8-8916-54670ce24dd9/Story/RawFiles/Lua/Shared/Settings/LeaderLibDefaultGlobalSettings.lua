@@ -91,7 +91,7 @@ if Ext.IsServer() then
 	end)
 	settings.Global.Flags.LeaderLib_FriendlyFireEnabled:AddListener(function(id, enabled, data, settingsData)
 		local gs = Ext.GetGameState()
-		if gs == "Running" or gs == "Paused" then
+		if gs == "Running" then
 			TagManager:TagAll(enabled)
 		end
 	end)

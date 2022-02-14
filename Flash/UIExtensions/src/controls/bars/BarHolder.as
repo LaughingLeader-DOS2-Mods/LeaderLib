@@ -6,11 +6,16 @@ package controls.bars
 	import flash.geom.ColorTransform;
 	import LS_Classes.larTween;
 	import controls.TooltipHandler;
+	import controls.BaseDraggableObject;
 	
-	public dynamic class BarHolder extends MovieClip
+	public class BarHolder extends BaseDraggableObject
 	{
 		public var hBar_mc:MovieClip;
 		public var hBar2_mc:MovieClip;
+
+		public var id:String;
+		public var tooltip:String;
+
 		public var easingFunction:Function;
 		private var timeline:larTween;
 		private var percHB:Number = 0;
@@ -31,6 +36,7 @@ package controls.bars
 		private function frame1():void
 		{
 			TooltipHandler.init(this);
+			this.initializeDrag(this);
 		}
 		
 		private function set onComplete(func:Function) : *

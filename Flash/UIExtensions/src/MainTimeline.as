@@ -21,6 +21,7 @@ package
 	import system.PanelManager;
 
 	import util.ClientTimer;
+	import controls.bars.HealthBarHolder;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		
@@ -203,6 +204,8 @@ package
 		{
 			Registry.ExtCall("registeranchorId", this.anchorId);
 			Registry.ExtCall("setAnchor",this.anchorPos, this.anchorTarget, this.anchorTPos);
+
+			this.contextMenuMC.init();
 		}
 
 		public function onEventResize() : void
@@ -328,9 +331,9 @@ package
 			}
 		}
 
-		public function addBar(id:Number, label:String, tooltip:String = "", x:Number=0, y:Number=0, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : void
+		public function addBar(id:String, label:String, tooltip:String = "", x:Number=0, y:Number=0, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : uint
 		{
-			var bar:BarHolder = new BarHolder();
+			var bar:HealthBarHolder = new HealthBarHolder();
 			bar.id = id;
 			bar.x = x;
 			bar.y = y;
@@ -340,8 +343,9 @@ package
 				bar.setBarColour(color);
 			}
 			//setupControlForTooltip(bar);
-			mainPanel_mc.addElement(bar);
-			Registry.ExtCall("LeaderLib_UIExtensions_ControlAdded", "bar", id, bar.list_id);
+			var index:uint = mainPanel_mc.addElement(bar);
+			Registry.ExtCall("LeaderLib_UIExtensions_ControlAdded", "bar", id, index);
+			return index;
 		}
 
 		public function setBar(id:Number, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : void

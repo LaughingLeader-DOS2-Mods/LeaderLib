@@ -9,14 +9,18 @@ package
 		public function MainPanel()
 		{
 			super();
+			this.elements = new Array();
+			this.mouseEnabled = false;
 			this.addFrameScript(0,this.frame1);
 		}
 
-		public function addElement(obj:MovieClip) : void
+		public function addElement(obj:MovieClip) : uint
 		{
-			obj.list_id = this.elements.length;
+			var index:uint = this.elements.length;
+			obj.list_id = index;
 			elements.push(obj);
 			this.addChild(obj);
+			return index;
 		}
 
 		public function removeElement(obj:MovieClip) : void
@@ -73,8 +77,6 @@ package
 		private function frame1() : void
 		{
 			this.stop();
-			this.elements = new Array();
-			this.mouseEnabled = false;
 		}
 	}
 }

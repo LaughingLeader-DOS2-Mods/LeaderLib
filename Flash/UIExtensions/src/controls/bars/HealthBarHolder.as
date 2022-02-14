@@ -4,7 +4,7 @@ package controls.bars
 	
 	//TODO Need to make this instead an option in BarHolder since library symbols don't like being two subclasses away from MovieClip
 
-	public dynamic class HealthBarHolder extends MovieClip
+	public class HealthBarHolder extends BarHolder
 	{
 		public function HealthBarHolder()
 		{

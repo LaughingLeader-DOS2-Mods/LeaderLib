@@ -9,10 +9,10 @@
 ---@field Disabled boolean
 ---@field Legal boolean
 ---@field Callback ContextMenuActionCallback
----@field StayOpen boolean|nil
 ---@field Handle number
+---@field Children ContextMenuEntry[]
 
-local ACTIONS = {
+local ACTION_ID = {
 	HideStatus = "hideStatus",
 	UnhideStatus = "unhideStatus"
 }
@@ -28,8 +28,12 @@ local ContextMenu = {
 	Instance = nil,
 	---@type ContextMenuEntry[]
 	Entries = {},
-	---@type table<integer, ContextMenuActionCallback> 
+	---@type table<string, ContextMenuAction>
 	Actions = {},
+	---@type table<integer, ContextMenuActionCallback>
+	DefaultActionCallbacks = {},
+	---@type table<integer, ContextMenuActionCallback>
+	TemporaryActionCallbacks = {},
 	---@type ContextStatus
 	ContextStatus = nil,
 	IsOpening = false,
@@ -38,7 +42,8 @@ local ContextMenu = {
 	RegisteredListeners = false,
 	---The handle of whatever was used to open the context menu, if anything.
 	---@type number
-	LastObjectDouble = nil
+	LastObjectDouble = nil,
+	Icons = {}
 }
 ContextMenu.__index = ContextMenu
 local self = ContextMenu
@@ -49,7 +54,7 @@ local lastBuiltinID = 999
 ---@type table<integer,ContextMenuEntry>
 local GENERATED_ID_TO_ENTRY = {}
 
-ContextMenu.Actions[ACTIONS.HideStatus] = function(self, ui, id, actionID, handle)
+ContextMenu.DefaultActionCallbacks[ACTION_ID.HideStatus] = function(self, ui, id, actionID, handle)
 	if self.ContextStatus and not StringHelpers.IsNullOrWhitespace(self.ContextStatus.StatusId) then
 		if not GameSettings.Settings.Client.StatusOptions.HideAll then
 			local addToList = true
@@ -92,7 +97,7 @@ ContextMenu.Actions[ACTIONS.HideStatus] = function(self, ui, id, actionID, handl
 	end
 end
 
-ContextMenu.Actions[ACTIONS.UnhideStatus] = function(self, ui, id, actionID, handle)
+ContextMenu.DefaultActionCallbacks[ACTION_ID.UnhideStatus] = function(self, ui, id, actionID, handle)
 	if self.ContextStatus and not StringHelpers.IsNullOrWhitespace(self.ContextStatus.StatusId) then
 		if not GameSettings.Settings.Client.StatusOptions.HideAll then
 			local removedFromList = false
@@ -170,21 +175,23 @@ function ContextMenu:OnUpdate(ui, event)
 
 end
 
+local _actionMap = {}
+
 ---@private
 ---@param ui UIObject
-function ContextMenu:OnEntryClicked(ui, event, id, actionID, handle, isBuiltIn)
-	local entry = self.Entries[id]
-	local action = self.Actions[actionID] or (entry and entry.Callback)
+function ContextMenu:OnEntryClicked(ui, event, index, actionID, handle, isBuiltIn)
+	local action = self.DefaultActionCallbacks[actionID] or _actionMap[actionID]
+	local b,result = false,nil
 	if action then
-		local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, entry.Handle)
+		b,result = xpcall(action, debug.traceback, self, ui, index, actionID, handle)
 		if not b then
-			Ext.PrintError(err)
+			Ext.PrintError(result)
 		end
 	else
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
 	end
-	InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, id, actionID, entry.Handle)
-	if not entry or (entry and not entry.StayOpen) then
+	InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, index, actionID, handle)
+	if result ~= true then
 		ui:Invoke("showContextMenu", false)
 	end
 end
@@ -196,13 +203,27 @@ function ContextMenu:OnHideTooltip(ui, event)
 	end
 end
 
-local function GetShouldOpen(self,x,y)
+local _enabledActionsForContext = {}
+
+local function GetShouldOpen(contextMenu, x, y)
+	local success = false
+	for id,action in pairs(ContextMenu.Actions) do
+		if action:GetCanOpen(contextMenu, x, y) then
+			_enabledActionsForContext[id] = true
+			success = true
+		end
+	end
+
+	if success then
+		return true
+	end
+
 	local callbacks = Listeners.ShouldOpenContextMenu
 	local length = callbacks and #callbacks or 0
 	if length > 0 then
 		for i=1,length do
 			local callback = callbacks[i]
-			local success,b = xpcall(callback, debug.traceback, self, x, y)
+			local success,b = xpcall(callback, debug.traceback, contextMenu, x, y)
 			if not success then
 				Ext.PrintError(b)
 			elseif b then
@@ -219,6 +240,7 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 	--fprint(LOGLEVEL.DEFAULT, "[ContextMenu:OnRightClick] IsOpening(%s) Visible(%s) pressed(%s)", self.IsOpening, self.Visible, pressed)
 	if not self.IsOpening then
 		local x,y = UIExtensions.GetMousePosition()
+		_enabledActionsForContext = {}
 		local openRequested = GetShouldOpen(self, x, y)
 
 		local hideText,showText = "",""
@@ -236,20 +258,28 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 				if self.ContextStatus then
 					if not settings.HideAll then
 						if self.ContextStatus.RemoveFromList then
-							self:AddEntry(ACTIONS.UnhideStatus, nil, showText)
+							self:AddEntry(ACTION_ID.UnhideStatus, nil, showText)
 						else
-							self:AddEntry(ACTIONS.HideStatus, nil, hideText)
+							self:AddEntry(ACTION_ID.HideStatus, nil, hideText)
 						end
 					else
 						if self.ContextStatus.RemoveFromList then
-							self:AddEntry(ACTIONS.HideStatus, nil, hideText)
+							self:AddEntry(ACTION_ID.HideStatus, nil, hideText)
 						else
-							self:AddEntry(ACTIONS.UnhideStatus, nil, showText)
+							self:AddEntry(ACTION_ID.UnhideStatus, nil, showText)
 						end
 					end
 				end
 
+				for id,action in pairs(ContextMenu.Actions) do
+					if _enabledActionsForContext[id] then
+						self.Entries[#self.Entries+1] = action
+						_enabledActionsForContext[id] = nil
+					end
+				end
+
 				InvokeListenerCallbacks(Listeners.OnContextMenuOpening, self, x, y)
+
 				self:MoveAndRebuild(x,y)
 				return
 			elseif not openRequested then
@@ -262,16 +292,22 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 			if self.ContextStatus then
 				if not settings.HideAll then
 					if self.ContextStatus.RemoveFromList then
-						self:AddEntry(ACTIONS.UnhideStatus, nil, showText)
+						self:AddEntry(ACTION_ID.UnhideStatus, nil, showText)
 					else
-						self:AddEntry(ACTIONS.HideStatus, nil, hideText)
+						self:AddEntry(ACTION_ID.HideStatus, nil, hideText)
 					end
 				else
 					if self.ContextStatus.RemoveFromList then
-						self:AddEntry(ACTIONS.HideStatus, nil, hideText)
+						self:AddEntry(ACTION_ID.HideStatus, nil, hideText)
 					else
-						self:AddEntry(ACTIONS.UnhideStatus, nil, showText)
+						self:AddEntry(ACTION_ID.UnhideStatus, nil, showText)
 					end
+				end
+			end
+			for id,action in pairs(ContextMenu.Actions) do
+				if _enabledActionsForContext[id] then
+					self.Entries[#self.Entries+1] = action
+					_enabledActionsForContext[id] = nil
 				end
 			end
 			InvokeListenerCallbacks(Listeners.OnContextMenuOpening, self, x, y)
@@ -313,6 +349,51 @@ end
 Ext.RegisterUINameCall("openContextMenu", function (ui, call, doubleHandle, x, y)
 	ContextMenu.LastObjectDouble = doubleHandle
 end, "Before")
+
+
+local function GetVar(var, fallback)
+	if var == nil or type(var) ~= type(fallback) then
+		return fallback
+	end
+	return var
+end
+
+local BuiltinContextMenuEntry = {
+	Type = "ContextMenuEntry",
+	Visible = true,
+	Disabled = false,
+	Legal = true,
+	ClickSound = true,
+	ActionID = "",
+	DisplayName = "",
+}
+BuiltinContextMenuEntry.__index = BuiltinContextMenuEntry
+
+---@param actionId string
+---@param callback ContextMenuActionCallback
+---@param label string
+---@param visible boolean
+---@param useClickSound boolean
+---@param disabled boolean
+---@param isLegal boolean
+---@param handle any
+function ContextMenu:AddBuiltinEntry(actionId, callback, label, visible, useClickSound, disabled, isLegal, handle)
+	local entry = {
+		ID = lastBuiltinID,
+		ActionID = GetVar(actionId, string.format("Entry%s", lastBuiltinID)),
+		ClickSound = GetVar(useClickSound, true),
+		Label = GetVar(label, "Entry"),
+		Disabled = GetVar(disabled, false),
+		Visible = GetVar(visible, false),
+		Legal = GetVar(isLegal, true),
+		Callback = callback,
+		Handle = handle
+	}
+	setmetatable(entry, BuiltinContextMenuEntry)
+	builtinEntries[#builtinEntries+1] = entry
+	GENERATED_ID_TO_ENTRY[entry.ID] = entry
+	lastBuiltinID = lastBuiltinID + 1
+end
 
 ---@private
 function ContextMenu:OnBuiltinMenuUpdating(ui, event)
@@ -365,7 +446,7 @@ end
 function ContextMenu:OnBuiltinMenuClicked(ui, event, id, actionID, handleAlwaysZero)
 	local entry = GENERATED_ID_TO_ENTRY[id]
 	if entry then
-		local action = self.Actions[actionID] or (entry and entry.Callback)
+		local action = self.DefaultActionCallbacks[actionID] or (entry and entry.Callback)
 		if action then
 			local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, entry.Handle)
 			if not b then
@@ -425,73 +506,33 @@ function ContextMenu:Init()
 	end
 end
 
-local function GetVar(var, fallback)
-	if var == nil or type(var) ~= type(fallback) then
-		return fallback
-	end
-	return var
-end
-
-local ContextMenuEntry = {
-	StayOpen = false,
-	Disabled = false,
-	Legal = true,
-	ClickSound = true,
-	ID = -1,
-	ActionID = "",
-}
-ContextMenuEntry.__index = ContextMenuEntry
-
----@param actionId string
+---@param id string
 ---@param callback ContextMenuActionCallback
 ---@param label string
+---@param visible string
 ---@param useClickSound boolean
 ---@param disabled boolean
 ---@param isLegal boolean
 ---@param handle any
+---@param children ContextMenuEntry[]
 ---@return ContextMenuEntry
-function ContextMenu:AddEntry(actionId, callback, label, visible, useClickSound, disabled, isLegal, handle)
+function ContextMenu:AddEntry(id, callback, label, visible, useClickSound, disabled, isLegal, handle, children)
 	if not self.Entries then
 		self.Entries = {}
 	end
-	local id = #self.Entries+1
-	local entry = {
+	local entry = Classes.ContextMenuAction:Create({
 		ID = id,
-		ActionID = GetVar(actionId, string.format("Entry%s", id)),
-		ClickSound = GetVar(useClickSound, true),
-		Label = GetVar(label, "Entry"),
-		Disabled = GetVar(disabled, false),
-		Legal = GetVar(isLegal, true),
 		Callback = callback,
-		Handle = handle
-	}
-	setmetatable(entry, ContextMenuEntry)
-	self.Entries[id] = entry
+		DisplayName = label,
+		Visible = visible,
+		UseClickSound = useClickSound,
+		Disabled = disabled,
+		IsLegal = isLegal,
+		Handle = handle,
+		Children = children
+	})
+	self.Entries[#self.Entries+1] = entry
 	return entry
-end
-
----@param actionId string
----@param callback ContextMenuActionCallback
----@param label string
----@param useClickSound boolean
----@param disabled boolean
----@param isLegal boolean
----@param handle any
-function ContextMenu:AddBuiltinEntry(actionId, callback, label, visible, useClickSound, disabled, isLegal, handle)
-	local entry = {
-		ID = lastBuiltinID,
-		ActionID = GetVar(actionId, string.format("Entry%s", lastBuiltinID)),
-		ClickSound = GetVar(useClickSound, true),
-		Label = GetVar(label, "Entry"),
-		Disabled = GetVar(disabled, false),
-		Legal = GetVar(isLegal, true),
-		Callback = callback,
-		Handle = handle
-	}
-	setmetatable(entry, ContextMenuEntry)
-	builtinEntries[#builtinEntries+1] = entry
-	GENERATED_ID_TO_ENTRY[entry.ID] = entry
-	lastBuiltinID = lastBuiltinID + 1
 end
 
 function ContextMenu:Close()
@@ -499,9 +540,48 @@ function ContextMenu:Close()
 	self.IsOpening = false
 	local instance = UIExtensions.GetInstance()
 	if instance then
+		self:ClearCustomIcons()
 		local main = instance:GetRoot()
 		local contextMenu = main.contextMenuMC
 		contextMenu.close()
+	end
+end
+
+function ContextMenu:ClearCustomIcons()
+	local inst = UIExtensions.Instance
+	for id,icon in pairs(self.Icons) do
+		inst:ClearCustomIcon(id)
+	end
+	self.Icons = {}
+end
+
+function ContextMenu:SaveCustomIcon(iconId, iconName, w, h)
+	self.Icons[iconId] = iconName
+	UIExtensions.Instance:SetCustomIcon(iconId, iconName, w, h)
+end
+
+---@param targetContextMenu FlashMovieClip
+---@param entry ContextMenuAction
+local function AddEntryMC(targetContextMenu, entry)
+	if not entry then
+		return
+	end
+	_actionMap[entry.ID] = entry.Callback
+	local index = targetContextMenu.addEntry(entry.ID, entry.UseClickSound, entry.DisplayName, entry.Disabled, entry.IsLegal)
+	local menuItem = targetContextMenu.list.content_array[index]
+	if not StringHelpers.IsNullOrEmpty(entry.Icon) then
+		local iconId = string.format("LeaderLib_UIExtensions_%s", entry.Icon)
+		menuItem.setIcon("iggy_" .. iconId)
+		ContextMenu:SaveCustomIcon(iconId, entry.Icon, 24, 24)
+	end
+	
+	if entry.Children then
+		menuItem.createSubmenu()
+		for j=1,#entry.Children do
+			local child = entry.Children[j]
+			AddEntryMC(menuItem.childContextMenu, child)
+		end
+		menuItem.childContextMenu.updateDone()
 	end
 end
 
@@ -513,24 +593,15 @@ function ContextMenu:MoveAndRebuild(x,y)
 		local contextMenu = main.contextMenuMC
 		contextMenu.clearButtons()
 
-		if #self.Entries > 1 then
-			local i = 0
-			for _,v in ipairs(self.Entries) do
-				contextMenu.buttonArr[i] = v.ID
-				contextMenu.buttonArr[i+1] = v.ActionID
-				contextMenu.buttonArr[i+2] = v.ClickSound
-				contextMenu.buttonArr[i+3] = "" -- Unused
-				contextMenu.buttonArr[i+4] = v.Label
-				contextMenu.buttonArr[i+5] = v.Disabled
-				contextMenu.buttonArr[i+6] = v.Legal
-				i = i + 7
-			end
-			contextMenu.updateButtons()
-		else
-			local entry = self.Entries[1]
-			contextMenu.addEntry(entry.ID, entry.ActionID, entry.ClickSound, entry.Label, entry.Disabled, entry.Legal)
-			contextMenu.updateDone()
+		_actionMap = {}
+
+		local totalEntries = #self.Entries
+		for i=1,totalEntries do
+			local entry = self.Entries[i]
+			AddEntryMC(contextMenu, entry)
 		end
+
+		contextMenu.updateDone()
 		
 		local paddingX,paddingY = 8,-24
 		if self.ContextStatus.CallingUI == Data.UIType.examine then
@@ -564,28 +635,15 @@ function ContextMenu:Open()
 		local contextMenu = main.contextMenuMC
 		contextMenu.clearButtons()
 
-		local totalEntries = #self.Entries
+		_actionMap = {}
 
-		if totalEntries > 1 then
-			local i = 0
-			for _,v in ipairs(self.Entries) do
-				contextMenu.buttonArr[i] = v.ID
-				contextMenu.buttonArr[i+1] = v.ActionID
-				contextMenu.buttonArr[i+2] = v.ClickSound
-				contextMenu.buttonArr[i+3] = "" -- Unused
-				contextMenu.buttonArr[i+4] = v.Label
-				contextMenu.buttonArr[i+5] = v.Disabled
-				contextMenu.buttonArr[i+6] = v.Legal
-				i = i + 7
-			end
-			contextMenu.updateButtons()
-		elseif totalEntries == 1 then
-			local entry = self.Entries[1]
-			contextMenu.addEntry(entry.ID, entry.ActionID, entry.ClickSound, entry.Label, entry.Disabled, entry.Legal)
-			contextMenu.updateDone()
-		else
-			fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:Open] No entries were added to the context menu! Who's opening it?")
+		local totalEntries = #self.Entries
+		for i=1,totalEntries do
+			local entry = self.Entries[i]
+			AddEntryMC(contextMenu, entry)
 		end
+
+		contextMenu.updateDone()
 		
 		local x,y = UIExtensions.GetMousePosition()
 		local paddingX,paddingY = 8,-24
@@ -739,6 +797,11 @@ end
 ---@param callback OnContextMenuEntryClickedCallback
 function ContextMenu.Register.EntryClickedListener(callback)
 	RegisterListener("OnContextMenuEntryClicked", callback)
+end
+
+---@param action ContextMenuAction
+function ContextMenu.Register.Action(action)
+	ContextMenu.Actions[action.ID] = action
 end
 
 UI.ContextMenu = ContextMenu

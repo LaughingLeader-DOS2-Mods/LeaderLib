@@ -233,36 +233,32 @@ package LS_Classes
 			return false;
 		}
 		
-		public function getElementByNumber(param1:String, param2:Number) : MovieClip
+		public function getElementByNumber(property:String, value:Number) : MovieClip
 		{
-			var val4:MovieClip = null;
-			var val3:uint = 0;
-			while(val3 < this.content_array.length)
+			var mc:MovieClip = null;
+			for (var i:uint = this.content_array.length; i--;)
 			{
-				val4 = this.content_array[val3];
-				if(val4 && val4[param1] == param2)
+				mc = this.content_array[i];
+				if(mc && mc[property] == value)
 				{
-					val4.list_pos = val3;
-					return val4;
+					mc.list_pos = i;
+					return mc;
 				}
-				val3++;
 			}
 			return null;
 		}
 		
-		public function getElementByBool(param1:String, param2:Boolean) : MovieClip
+		public function getElementByBool(property:String, value:Boolean) : MovieClip
 		{
-			var val4:MovieClip = null;
-			var val3:uint = 0;
-			while(val3 < this.content_array.length)
+			var mc:MovieClip = null;
+			for (var i:uint = this.content_array.length; i--;)
 			{
-				val4 = this.content_array[val3];
-				if(val4 && val4[param1] == param2)
+				mc = this.content_array[i];
+				if(mc && mc[property] == value)
 				{
-					val4.list_pos = val3;
-					return val4;
+					mc.list_pos = i;
+					return mc;
 				}
-				val3++;
 			}
 			return null;
 		}
@@ -292,19 +288,17 @@ package LS_Classes
 			return success;
 		}
 		
-		public function getElementByString(param1:String, param2:String) : MovieClip
+		public function getElementByString(property:String, value:String) : MovieClip
 		{
-			var val4:MovieClip = null;
-			var val3:uint = 0;
-			while(val3 < this.content_array.length)
+			var mc:MovieClip = null;
+			for (var i:uint = this.content_array.length; i--;)
 			{
-				val4 = this.content_array[val3];
-				if(val4 && val4[param1] == param2)
+				mc = this.content_array[i];
+				if(mc && mc[property] == value)
 				{
-					val4.list_pos = val3;
-					return val4;
+					mc.list_pos = i;
+					return mc;
 				}
-				val3++;
 			}
 			return null;
 		}
@@ -361,31 +355,31 @@ package LS_Classes
 			{
 				this.INTSort();
 			}
-			var val1:Number = this.m_topSpacing;
+			var yPos:Number = this.m_topSpacing;
 			this.m_visibleLength = 0;
-			var val2:uint = 0;
-			while(val2 < this.content_array.length)
+			var i:uint = 0;
+			while(i < this.content_array.length)
 			{
-				if(this.content_array[val2].visible || this.canPositionInvisibleElements)
+				if(this.content_array[i].visible || this.canPositionInvisibleElements)
 				{
-					this.content_array[val2].list_pos = val2;
-					this.content_array[val2].y = val1;
-					this.content_array[val2].tweenToY = val1;
-					if(this.content_array[val2].INTUpd4PosEl != null)
+					this.content_array[i].list_pos = i;
+					this.content_array[i].y = yPos;
+					this.content_array[i].tweenToY = yPos;
+					if(this.content_array[i].INTUpd4PosEl != null)
 					{
-						this.content_array[val2].INTUpd4PosEl();
+						this.content_array[i].INTUpd4PosEl();
 					}
-					val1 += this.getElementHeight(this.content_array[val2]) + this.EL_SPACING;
+					yPos += this.getElementHeight(this.content_array[i]) + this.EL_SPACING;
 					if(this.m_sideSpacing != 0)
 					{
-						this.content_array[val2].x = this.SIDE_SPACING;
+						this.content_array[i].x = this.SIDE_SPACING;
 					}
-					if(this.content_array[val2].visible)
+					if(this.content_array[i].visible)
 					{
 						++this.m_visibleLength;
 					}
 				}
-				val2++;
+				i++;
 			}
 			if(this.m_NeedsSorting)
 			{
@@ -921,6 +915,7 @@ package LS_Classes
 					{
 						this.m_CurrentSelection.INTDeselect();
 					}
+					dispatchEvent(new Event(Event.CLEAR));
 				}
 				this.m_CurrentSelection = null;
 			}

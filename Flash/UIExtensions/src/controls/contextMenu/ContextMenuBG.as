@@ -31,17 +31,9 @@ package controls.contextMenu
 		public function setHeight(height:Number, contextContent:MovieClip) : void
 		{
 			var tweenHeight:uint = 0;
-			if(contextContent)
-			{
-				this.contextContent = contextContent;
-				tweenHeight = this.container_mc.y + this.container_mc.height;
-				this.animateOpening(tweenHeight);
-				//Registry.ExtCall("setHeight", height + this.bottom_mc.height);
-			}
-			else
-			{
-				Registry.ExtCall("UIAssert","There is an empty content list in the contextmenu!");
-			}
+			this.contextContent = contextContent;
+			tweenHeight = this.container_mc.y + this.container_mc.height;
+			this.animateOpening(tweenHeight);
 		}
 		
 		public function animateOpening(height:uint) : void
@@ -68,7 +60,10 @@ package controls.contextMenu
 		
 		public function animationLoop() : void
 		{
-			this.contextContent.scrollRect = new Rectangle(0,0,this.contextContent.width,this.mid_mc.height);
+			if(this.contextContent)
+			{
+				this.contextContent.scrollRect = new Rectangle(0,0,this.contextContent.width,this.mid_mc.height);
+			}
 			this.bottom_mc.y = this.mid_mc.y + this.mid_mc.height - this.bottomOffset;
 		}
 		

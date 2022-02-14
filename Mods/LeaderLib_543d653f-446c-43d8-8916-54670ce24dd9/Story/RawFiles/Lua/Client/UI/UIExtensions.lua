@@ -67,6 +67,7 @@ local function DestroyInstance(force)
 end
 
 RegisterListener("BeforeLuaReset", function()
+	UI.ContextMenu:ClearCustomIcons()
 	DestroyInstance(true)
 end)
 
@@ -78,8 +79,8 @@ Ext.RegisterConsoleCommand("llresetuiext", function(cmd)
 	DestroyInstance(true)
 end)
 
-local function OnControlAdded(ui, call, id, index, ...)
-	--PrintDebug("OnControlAdded", id, listid, Common.JsonStringify({...}))
+local function OnControlAdded(ui, call, controlType, id, index, ...)
+	fprint(LOGLEVEL.TRACE, "[UIExtensions:%s] controlType(%s) id(%s) index(%s)", call, controlType, id, index)
 	local main = ui:GetRoot()
 	if main then
 		local control = main.mainPanel_mc.elements[index]
@@ -561,7 +562,8 @@ Ext.RegisterConsoleCommand("barTest", function()
 	if ui then
 		local this = ui:GetRoot()
 		if this then
-			this.addBar("BeetusAdrenaline", "Adrenaline", "Is this working?", 100, 100, 0.5, true)
+			local bar = this.mainPanel_mc.elements[this.addBar("BeetusAdrenaline", "Adrenaline", "Is this working?", 100, 100)]
+			bar.setBarColour(0xFFCC00)
 		end
 	end
 end)

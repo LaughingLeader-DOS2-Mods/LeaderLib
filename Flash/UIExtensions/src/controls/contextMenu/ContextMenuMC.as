@@ -7,13 +7,15 @@ package controls.contextMenu
 	import flash.text.TextFieldAutoSize;
 	import flash.events.MouseEvent;
 	import interfaces.IInputHandler;
+	import flash.geom.Point;
+	import flash.events.Event;
 	
 	public dynamic class ContextMenuMC extends MovieClip implements IInputHandler
 	{
-		public var bg_mc:MovieClip;
+		public var bg_mc:ContextMenuBG;
 		public var list:listDisplay;
+		public var parentObject:MovieClip;
 
-		//MainTimeline
 		public var closing:Boolean;
 		public var isOpen:Boolean;
 		public const offsetX:Number = 0;
@@ -22,13 +24,14 @@ package controls.contextMenu
 		public var text_array:Array;
 		public var buttonArr:Array;
 		
+		public var minHeight:Number = 300;
+		
 		public function ContextMenuMC()
 		{
 			super();
-			this.addFrameScript(0,this.frame1);
 		}
 
-		private function frame1() : void
+		public function init() : void
 		{
 			this.list = new listDisplay();
 			this.list.EL_SPACING = 0;
@@ -42,8 +45,6 @@ package controls.contextMenu
 			this.tweenTime = 0.3;
 			this.text_array = new Array();
 			this.buttonArr = new Array();
-
-			MainTimeline.Instance.addInputHandler(this);
 		}
 		
 		public function setTitle(text:String) : void
@@ -51,15 +52,14 @@ package controls.contextMenu
 			this.bg_mc.title_txt.htmlText = text;
 		}
 		
-		public function addEntry(id:Number, actionID:String, clickSound:Boolean, text:String, disabled:Boolean, legal:Boolean) : void
+		public function addEntry(actionID:String, clickSound:Boolean, text:String, disabled:Boolean, legal:Boolean) : uint
 		{
-			var entry:MovieClip = this.list.getElementByNumber("id",id);
+			var entry:ContextMenuEntry = this.list.getElementByString("actionID",actionID) as ContextMenuEntry;
 			if(entry == null)
 			{
 				entry = new ContextMenuEntry(this);
 				this.list.addElement(entry,false);
 				entry.mouseChildren = false;
-				entry.id = id;
 				entry.actionID = actionID;
 				entry.handle = 0;
 				entry.arrow_mc.visible = false;
@@ -87,12 +87,13 @@ package controls.contextMenu
 			entry.disabled = disabled;
 			entry.text_txt.htmlText = text;
 			entry.hl_mc.height = Math.floor(entry.text_txt.textHeight) + 2;
+			return entry.list_pos;
 		}
 		
 		public function updateDone() : void
 		{
 			this.list.positionElements();
-			this.bg_mc.setHeight(this.bg_mc.container_mc.height,this.list);
+			this.bg_mc.setHeight(Math.max(this.minHeight, this.bg_mc.container_mc.height),this.list);
 			this.list.scrollRect = new Rectangle(0,0,this.bg_mc.width,this.bg_mc.height);
 			this.bg_mc.bottom_mc.y = this.bg_mc.mid_mc.y + this.bg_mc.mid_mc.height - this.bg_mc.bottomOffset;
 			this.list.alpha = 1;
@@ -136,6 +137,10 @@ package controls.contextMenu
 		{
 			var currentMC:MovieClip = null;
 			var isHandled:Boolean = false;
+			if(!this.visible)
+			{
+				return isHandled;
+			}
 			switch(input)
 			{
 				case "IE UIAccept":
@@ -182,6 +187,10 @@ package controls.contextMenu
 		public function OnInputDown(input:String) : Boolean
 		{
 			var isHandled:Boolean = false;
+			if(!this.visible)
+			{
+				return isHandled;
+			}
 			if (MainTimeline.Instance.controllerEnabled) {
 				switch(input)
 				{
@@ -224,8 +233,9 @@ package controls.contextMenu
 
 			if(!this.isOpen)
 			{
+				MainTimeline.Instance.addInputHandler(this);
 				//stage.addEventListener("rightMouseDown",this.onCloseUI);
-				stage.addEventListener(MouseEvent.CLICK,this.onCloseUI);
+				stage.addEventListener(MouseEvent.CLICK, this.onCloseUI);
 				this.isOpen = true;
 			}
 			Registry.ExtCall("LeaderLib_ContextMenu_Opened");
@@ -240,6 +250,7 @@ package controls.contextMenu
 			}
 			if(this.isOpen)
 			{
+				MainTimeline.Instance.removeInputHandler(this);
 				//stage.removeEventListener("rightMouseDown",this.onCloseUI);
 				stage.removeEventListener(MouseEvent.CLICK,this.onCloseUI);
 				this.isOpen = false;
@@ -260,9 +271,16 @@ package controls.contextMenu
 			this.list.clearElements();
 		}
 		
-		public function selectButton(button:MovieClip) : void
+		public function selectButton(button:ContextMenuEntry, force:Boolean=false) : void
 		{
-			this.list.selectMC(button);
+			if(button == null)
+			{
+				this.list.clearSelection();
+			}
+			else
+			{
+				this.list.selectMC(button, force);
+			}
 		}
 
 		public function updateButtons() : void
@@ -287,12 +305,18 @@ package controls.contextMenu
 					text = String(this.buttonArr[index + 4]);
 					disabled = Boolean(this.buttonArr[index + 5]);
 					legal = Boolean(this.buttonArr[index + 6]);
-					this.addEntry(id,actionID,clickSound,text,disabled,legal);
+					this.addEntry(actionID,clickSound,text,disabled,legal);
 				}
 				index = index + 7;
 			}
 			this.updateDone();
 			this.buttonArr = new Array();
+		}
+
+		public function isMouseHovering():Boolean
+		{
+			var mousePoint:Point = this.localToGlobal(new Point(this.mouseX, this.mouseY));
+			return this.hitTestPoint(mousePoint.x, mousePoint.y, true);
 		}
 	}
 }

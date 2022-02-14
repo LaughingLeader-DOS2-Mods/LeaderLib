@@ -66,3 +66,4 @@ if Vars.DebugMode then
 end
 Ext.Require("Shared/Debug/ConsoleWindowHelpers.lua")
 Ext.Require("Shared/Debug/SharedCommands.lua")
+Ext.Require("Shared/Patches/ModPatching.lua")

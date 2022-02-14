@@ -354,6 +354,46 @@ Ext.RegisterConsoleCommand("addskill", function(command, skill)
 	CharacterAddSkill(host, skill, 1)
 end)
 
+Ext.RegisterConsoleCommand("addskillset", function(command, name, addRequirements)
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local skillset = Ext.GetSkillSet(name)
+	addRequirements = addRequirements == "true" or addRequirements == "1"
+	if skillset then
+		if addRequirements then
+			local total = #skillset.Skills
+			if host.Stats.Memory < total then
+				CharacterAddAttribute(host.MyGuid, "Memory", (total - host.Stats.Memory) + 1)
+			end
+		end
+		Timer.StartOneshot("", 250, function ()
+			for _,v in pairs(skillset.Skills) do
+				if addRequirements then
+					local stat = Ext.GetStat(v)
+					if stat then
+						for _,req in pairs(stat.MemorizationRequirements) do
+							if req.Not == false then
+								if Data.AbilityEnum[req.Requirement] then
+									local addAmount = req.Param - host.Stats[req.Requirement]
+									if addAmount > 0 then
+										CharacterAddAbility(host.MyGuid, req.Requirement, addAmount)
+									end
+								elseif Data.AttributeEnum[req.Requirement] then
+									local addAmount = req.Param - host.Stats[req.Requirement]
+									if addAmount > 0 then
+										CharacterAddAttribute(host.MyGuid, req.Requirement, addAmount)
+									end
+								end
+							end
+						end
+					end
+				end
+				CharacterRemoveSkill(host.MyGuid, v)
+				CharacterAddSkill(host.MyGuid, v, 1)
+			end
+		end)
+	end
+end)
+
 local removedSkills = {}
 
 Ext.RegisterConsoleCommand("removeskill", function(cmd, skill)

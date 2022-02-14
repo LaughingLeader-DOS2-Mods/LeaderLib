@@ -168,7 +168,9 @@ local function CanChangeSkillTier(stat, tier)
 end
 
 -- Adds more alignment entities
-Ext.AddPathOverride("Mods/DivinityOrigins_1301db3d-1f54-4e98-9be5-5094030916e4/Story/Alignments/Alignment.lsx", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OriginsAlignments.lsx")
+if Ext.Version() < 56 then
+	Ext.AddPathOverride("Mods/DivinityOrigins_1301db3d-1f54-4e98-9be5-5094030916e4/Story/Alignments/Alignment.lsx", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OriginsAlignments.lsx")
+end
 Ext.AddPathOverride("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Stats/Generated/Data/LeaderLib_Skills_Force.txt", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Stats/Overrides/LeaderLib_Skills_SafeForce.txt")
 
 ---Modifies a stat if it differs from the desired value.
@@ -205,31 +207,20 @@ local forceStatuses = {
 	"LEADERLIB_FORCE_PUSH20",
 }
 
-local function OverrideForce(syncMode, skills)
-	for i,stat in pairs(forceStatuses) do
-		if syncMode ~= true then
-			Ext.StatSetAttribute(stat, "LeaveAction", "")
-		else
-			local statObj = Ext.GetStat(stat)
-			if statObj then
-				statObj.LeaveAction = ""
-				Ext.SyncStat(stat, false)
+local function OverrideForce(syncMode)
+	for i,statId in pairs(forceStatuses) do
+		local stat = Ext.GetStat(statId)
+		if stat then
+			stat.LeaveAction = ""
+			if syncMode then
+				Ext.SyncStat(statId, false)
 			end
 		end
 	end
-	--[[ if Vars.DebugMode then
-		for _,v in pairs(skills) do
+	if Vars.DebugMode and Ext.GetGameState() == "Running" then
+		for stat in GameHelpers.Stats.GetSkills(true) do
 			---@type StatProperty[]
-			local props = nil
-			local statObj = nil
-			if syncMode ~= true then
-				props = Ext.StatGetAttribute(v, "SkillProperties")
-			else
-				statObj = Ext.GetStat(v)
-				if statObj then
-					props = statObj.SkillProperties
-				end
-			end
+			local props = GameHelpers.Stats.GetSkillProperties(stat)
 			if props then
 				local hasForce = false
 				for i,prop in pairs(props) do
@@ -245,25 +236,20 @@ local function OverrideForce(syncMode, skills)
 							Arg3 =  "",
 							Arg4 =  -1,
 							Arg5 =  -1,
-							Context = {
-								"Target",
-								"AoE",
-							}
+							Context = TableHelpers.Clone(prop.Context)
 						}
 						props[i] = extProp
 					end
 				end
 				if hasForce then
-					if syncMode ~= true then
-						Ext.StatSetAttribute(v, "SkillProperties", props)
-					else
-						statObj.SkillProperties = props
-						Ext.SyncStat(v, false)
+					stat.SkillProperties = props
+					if syncMode then
+						Ext.SyncStat(stat.Name, false)
 					end
 				end
 			end
 		end
-	end ]]
+	end
 end
 
 local function AdjustAP(stat, settings)
@@ -293,7 +279,6 @@ local function OverrideStats(data, statsLoadedState)
 	if data == nil then
 		data = GameSettingsManager.Load()
 	end
-	local skills = GameHelpers.Stats.GetSkills()
 	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
 	if data.Settings.StarterTierSkillOverrides or data.Settings.LowerMemorizationRequirements then
 		local originalSkillTiers = {}
@@ -302,7 +287,7 @@ local function OverrideStats(data, statsLoadedState)
 		end
 		local total = 0
 		--Ext.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
-		for _,id in pairs(skills) do
+		for id in GameHelpers.Stats.GetSkills() do
 			local stat = Ext.GetStat(id)
 			local tier = stat.Tier
 			if data.Settings.StarterTierSkillOverrides == true then
@@ -418,7 +403,7 @@ local function OverrideStats(data, statsLoadedState)
 	end
 
 	OverrideWings(not isClient and not statsLoadedState)
-	OverrideForce(not isClient and not statsLoadedState, skills)
+	OverrideForce(not isClient and not statsLoadedState)
 
 	for statId,data in pairs(StatFixes) do
 		local stat = Ext.GetStat(statId)

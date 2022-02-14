@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
     <header version="2" />
-    <version major="3" minor="6" revision="6" build="0" />
+    <version major="3" minor="6" revision="5" build="0" />
     <region id="AlignmentManager">
         <node id="root">
             <children>
@@ -15,7 +15,58 @@
                         </node>
                     </children>
                 </node>
-                <node id="Entities" />
+                <node id="Entities">
+                     <children>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player11" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player12" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player13" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player14" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player15" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player16" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player17" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player18" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player19" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player20" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero LLWEAPONEX_Harken" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero LLWEAPONEX_Korvash" type="22" />
+                        </node>
+                     </children>
+                </node>
                 <node id="Relations">
                     <children>
                         <node id="Relation">

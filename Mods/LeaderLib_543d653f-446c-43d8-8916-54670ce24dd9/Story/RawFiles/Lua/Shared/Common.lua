@@ -358,11 +358,12 @@ function Common.InitializeTableFromSource(target, source)
 				target[k] = v
 			elseif type(v) == "table" then
 				Common.InitializeTableFromSource(target[k], v)
-			end		
+			end
 		end
 	else
 		Ext.PrintError("[LeaderLib:Common.InitializeTableFromSource] Source table is nil!")
 	end
+	return target
 end
 
 ---Converts a table string keys to numbers. Useful for converting JsonStringify number keys back to numbers.

@@ -18,3 +18,13 @@ function GameHelpers.PersistentVars.Initialize(modGlobalTable, defaultTable, ini
 	modGlobalTable.PersistentVars = data
 	return modGlobalTable.PersistentVars
 end
+
+---Creates a new clone of defaultPersistentVars, copies keys that match from the loaded PersistentVars, then returns the new table. Use this to effectively remove unused entries from PersistentVars, while preserving whatever default values you need, by assigning PersistentVars to the table returned from this function.
+---@param defaultPersistentVars table A table of default values to copy from.
+---@param loadedPersistentVars table The loaded PersistentVars.
+---@return table
+function GameHelpers.PersistentVars.Update(defaultPersistentVars, loadedPersistentVars)
+	local data = TableHelpers.Clone(defaultPersistentVars)
+	TableHelpers.CopyExistingKeys(data, loadedPersistentVars)
+	return data
+end

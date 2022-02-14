@@ -6,12 +6,15 @@ end
 ---@param deep boolean|nil If true, metatables are copied as well.
 function TableHelpers.Clone(orig, deep)
 	if deep ~= true then
-		local orig_type = type(orig)
-		local copy
-		if orig_type == 'table' then
-			copy = {}
-			for orig_key, orig_value in pairs(orig) do
-				copy[orig_key] = orig_value
+		local t = type(orig)
+		local copy = {}
+		if t == "table" then
+			for k, v in pairs(orig) do
+				if type(v) == "table" then
+					copy[k] = TableHelpers.Clone(v, deep)
+				else
+					copy[k] = v
+				end
 			end
 		else -- number, string, boolean, etc
 			copy = orig
@@ -101,6 +104,25 @@ function TableHelpers.AddOrUpdate(target, addFrom, skipExisting)
 			end
 		end
 	end
+end
+
+---Only assigns values from addFrom if they already exist in target.
+---@param target table
+---@param addFrom table
+function TableHelpers.CopyExistingKeys(target, addFrom)
+	if target == nil or addFrom == nil then
+		return target
+	end
+	for k,v in pairs(target) do
+		if addFrom[k] ~= nil then
+			if type(v) == "table" then
+				TableHelpers.AddOrUpdate(v, addFrom[k])
+			else
+				target[k] = addFrom[k]
+			end
+		end
+	end
+	return target
 end
 
 ---@param tbl table

@@ -117,22 +117,27 @@ function GameHelpers.Client.IsGameMaster(ui, this)
 	return false
 end
 
+local function ProcessDoubleHandle(double)
+	if not GameHelpers.Math.IsNaN(double) then
+		local handle = Ext.DoubleToHandle(double)
+		if handle then
+			return Ext.GetCharacter(handle)
+		end
+	else
+		fprint(LOGLEVEL.WARNING, "[GameHelpers.Client.TryGetCharacterFromDouble] Double handle is NaN (not a number)!")
+		return nil
+	end
+end
+
 ---Tries to get a character from a double value.
 ---@param double number
 ---@return EclCharacter
 function GameHelpers.Client.TryGetCharacterFromDouble(double)
-	local b,character = xpcall(function()
-		if not GameHelpers.Math.IsNaN(double) then
-			local handle = Ext.DoubleToHandle(double)
-			if handle then
-				return Ext.GetCharacter(handle)
-			end
-		else
-			fprint(LOGLEVEL.WARNING, "[GameHelpers.Client.TryGetCharacterFromDouble] Double handle is NaN (not a number)!")
-			return nil
-		end
-	end, debug.traceback)
-	return character
+	local b,character = xpcall(ProcessDoubleHandle, debug.traceback, double)
+	if b then
+		return character
+	end
+	return nil
 end
 
 local function _pairs(t, var)

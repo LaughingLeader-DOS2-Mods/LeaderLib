@@ -200,7 +200,7 @@ function SaveGlobalSettings()
 		LoadGlobalSettings()
 	end
 	local status,err = xpcall(function()
-		local export = ExportGlobalSettings()
+		local export = ExportGlobalSettings(false)
 		local json = Common.JsonStringify(export)
 		Ext.SaveFile("LeaderLib_GlobalSettings.json", json)
 		PrintDebug("[LeaderLib] Saved LeaderLib_GlobalSettings.json")

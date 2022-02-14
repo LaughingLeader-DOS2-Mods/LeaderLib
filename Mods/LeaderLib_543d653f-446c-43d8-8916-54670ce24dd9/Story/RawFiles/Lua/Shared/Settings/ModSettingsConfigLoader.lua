@@ -76,10 +76,18 @@ local function LoadModSettingsConfig(uuid, file)
 					end
 					if data.Settings ~= nil then
 						for id,paramSettings in pairs(data.Settings) do
-							local flag = settings.Global.Flags[id]
-							if flag ~= nil then
-								for param,value in pairs(paramSettings) do
-									flag[param] = value
+							if StringHelpers.Equals(id, "all", true, true) then
+								for flagId,flagData in pairs(settings.Global.Flags) do
+									for param,value in pairs(paramSettings) do
+										flagData[param] = value
+									end
+								end
+							else
+								local flagData = settings.Global.Flags[id]
+								if flagData ~= nil then
+									for param,value in pairs(paramSettings) do
+										flagData[param] = value
+									end
 								end
 							end
 						end
@@ -101,20 +109,57 @@ local function LoadModSettingsConfig(uuid, file)
 						settings.Global:AddLocalizedVariable(id, namePrefix .. id, value, min, max, increment)
 					end
 				end
+				if data.Settings ~= nil then
+					for id,paramSettings in pairs(data.Settings) do
+						if StringHelpers.Equals(id, "all", true, true) then
+							for _,varData in pairs(settings.Global.Variables) do
+								for param,value in pairs(paramSettings) do
+									varData[param] = value
+								end
+							end
+						else
+							local varData = settings.Global.Variables[id]
+							if varData ~= nil then
+								for param,value in pairs(paramSettings) do
+									varData[param] = value
+								end
+							end
+						end
+					end
+				end
 			end
 			if config.Data.Buttons ~= nil then
+				local data = config.Data.Buttons
 				local buttonid = 0
-				for _,data in pairs(config.Data.Buttons) do
-					local id = data.ID or string.format("%s_%s", uuid, buttonid)
-					local enabled = data.Enabled ~= nil and data.Enabled or data.Enabled == nil and true
-					local callbackName = data.Callback
+				for _,buttonData in pairs(data) do
+					local id = buttonData.ID or string.format("%s_%s", uuid, buttonid)
+					local enabled = buttonData.Enabled ~= nil and buttonData.Enabled or buttonData.Enabled == nil and true
+					local callbackName = buttonData.Callback
 					local callback = nil
 					if callbackName ~= nil then
 						callback = TryFindCallback(uuid, callbackName)
 					end
-					local namePrefix = data.NamePrefix or ""
-					settings.Global:AddLocalizedButton(id, namePrefix .. id, callback, data.Enabled, data.HostOnly)
+					local namePrefix = buttonData.NamePrefix or ""
+					settings.Global:AddLocalizedButton(id, namePrefix .. id, callback, buttonData.Enabled, buttonData.HostOnly)
 					buttonid = buttonid + 1
+				end
+				if data.Settings ~= nil then
+					for id,paramSettings in pairs(data.Settings) do
+						if StringHelpers.Equals(id, "all", true, true) then
+							for _,buttonData in pairs(settings.Global.Buttons) do
+								for param,value in pairs(paramSettings) do
+									buttonData[param] = value
+								end
+							end
+						else
+							local buttonData = settings.Global.Buttons[id]
+							if buttonData ~= nil then
+								for param,value in pairs(paramSettings) do
+									buttonData[param] = value
+								end
+							end
+						end
+					end
 				end
 			end
 		end

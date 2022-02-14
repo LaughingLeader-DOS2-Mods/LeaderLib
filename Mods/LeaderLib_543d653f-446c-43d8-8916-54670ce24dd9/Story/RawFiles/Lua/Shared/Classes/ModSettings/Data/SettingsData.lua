@@ -354,6 +354,30 @@ function SettingsData:GetVariable(name, fallback)
 	return fallback
 end
 
+---Gets a flag's value.
+---@param name string
+---@param fallback boolean
+---@return boolean
+function SettingsData:GetFlag(name, fallback)
+	local data = self.Flags[name]
+	if data ~= nil then
+		return data.Enabled
+	end
+	return fallback
+end
+
+---Gets a flag or variable's value.
+---@param name string
+---@param fallback ?boolean|number|string
+---@return boolean|number|string
+function SettingsData:GetFlagOrVariableValue(name, fallback)
+	local value = self:GetFlag(name) or self:GetVariable(name)
+	if value == nil then
+		return fallback
+	end
+	return value
+end
+
 ---@param id string Flag id.
 ---@param b boolean Value to compare, i.e. true for "Flag Is Set"
 ---@param target UUID|nil Optional character UUID to check, for object or user flags.

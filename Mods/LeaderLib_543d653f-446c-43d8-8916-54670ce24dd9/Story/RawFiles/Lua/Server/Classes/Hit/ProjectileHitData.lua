@@ -1,7 +1,7 @@
 ---Data passed to hit callbacks, such as the various functions in SkillListeners.lua
 ---@class ProjectileHitData
 local ProjectileHitData = {
-	ID = "ProjectileHitData",
+	Type = "ProjectileHitData",
 	Target = "",
 	Attacker = "",
 	Skill = "",

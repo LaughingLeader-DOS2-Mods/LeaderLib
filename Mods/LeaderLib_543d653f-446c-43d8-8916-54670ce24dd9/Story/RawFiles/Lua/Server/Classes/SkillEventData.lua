@@ -1,7 +1,7 @@
 ---Data passed to callbacks for the various functions in SkillListeners.lua
 ---@class SkillEventData
 local SkillEventData = {
-	ID = "SkillEventData",
+	Type = "SkillEventData",
 	Source = nil,
 	Skill = "",
 	SkillType = "",

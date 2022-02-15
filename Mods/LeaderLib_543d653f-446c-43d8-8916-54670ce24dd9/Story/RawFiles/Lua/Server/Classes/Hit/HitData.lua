@@ -15,7 +15,7 @@ local _EXTVERSION = Ext.Version()
 ---@field SkillData StatEntrySkillData
 ---@field Success boolean True if the hit has a target, and the hit wasn't Dodged, Blocked, or Missed.
 local HitData = {
-	ID = "HitData",
+	Type = "HitData",
 	Skill = "",
 	IsFromSkll = false,
 	DamageList = {}

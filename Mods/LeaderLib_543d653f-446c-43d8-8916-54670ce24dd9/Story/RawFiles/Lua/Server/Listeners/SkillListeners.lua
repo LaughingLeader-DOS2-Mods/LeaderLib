@@ -27,7 +27,7 @@ local function GetListeners(skill)
 	local parsingAllTable = false
 	local listeners = SkillListeners[skill]
 	if listeners == nil then
-		listeners = SkillListeners["All"] 
+		listeners = SkillListeners["All"]
 		parsingAllTable = true
 	end
 	if listeners then
@@ -37,7 +37,7 @@ local function GetListeners(skill)
 			i = i + 1
 			if not parsingAllTable and i == count+1 then
 				if SkillListeners["All"] ~= nil then
-					listeners = SkillListeners["All"] 
+					listeners = SkillListeners["All"]
 					i = 1
 					count = #listeners
 					parsingAllTable = true
@@ -149,9 +149,10 @@ function OnSkillPreparing(char, skillprototype)
 	end
 
 	if not last or last ~= skill then
+		local skillData = Ext.GetStat(skill)
 		for callback in GetListeners(skill) do
 			--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
-			local status,err = xpcall(callback, debug.traceback, skill, char, SKILL_STATE.PREPARE)
+			local status,err = xpcall(callback, debug.traceback, skill, char, SKILL_STATE.PREPARE, skillData, "StatEntrySkillData")
 			if not status then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
@@ -165,9 +166,10 @@ end
 
 function SkillSystem.OnSkillPreparingCancel(char, skillprototype, skill, skipRemoval)
 	skill = skill or GetSkillEntryName(skillprototype)
+	local skillData = Ext.GetStat(skill)
 	for callback in GetListeners(skill) do
 		--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
-		local status,err = xpcall(callback, debug.traceback, skill, char, SKILL_STATE.CANCEL)
+		local status,err = xpcall(callback, debug.traceback, skill, char, SKILL_STATE.CANCEL, skillData, "StatEntrySkillData")
 		if not status then
 			Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 		end
@@ -244,7 +246,7 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 				--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") data(",data:ToString(),")")
 				--PrintDebug("params(",Common.JsonStringify({...}),")")
 			end
-			status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.USED, data)
+			status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.USED, data, data.Type)
 			if not status then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
@@ -259,7 +261,7 @@ function OnSkillCast(char, skill, skilLType, skillAbility)
 	local data = GetCharacterSkillData(skill, uuid, true, skilLType, skillAbility, Vars.DebugMode, "OnSkillCast")
 	if data ~= nil then
 		for callback in GetListeners(skill) do
-			local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.CAST, data)
+			local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.CAST, data, data.Type)
 			if not b then
 				Ext.PrintError("[LeaderLib:SkillListeners:OnSkillCast] Error invoking function:\n", err)
 			end
@@ -287,10 +289,11 @@ end
 --- @param hit HitRequest
 --- @param context HitContext
 --- @param hitStatus EsvStatusHit
+--- @param data HitData|ProjectileHitData
 function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, data)
 	if not IgnoreHitTarget(target.MyGuid) then
 		for callback in GetListeners(skillId) do
-			local b,err = xpcall(callback, debug.traceback, skillId, source.MyGuid, SKILL_STATE.HIT, data)
+			local b,err = xpcall(callback, debug.traceback, skillId, source.MyGuid, SKILL_STATE.HIT, data, data.Type)
 			if not b then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
@@ -312,21 +315,21 @@ RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObje
 			---@type ProjectileHitData
 			local data = Classes.ProjectileHitData:Create(target, uuid, projectile, position, skill)
 			for callback in GetListeners(skill) do
-				local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.PROJECTILEHIT, data)
+				local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.PROJECTILEHIT, data, data.Type)
 				if not b then
 					Ext.PrintError("[LeaderLib:SkillListeners:ProjectileHit] Error invoking function:\n", err)
 				end
 			end
-			InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.PROJECTILEHIT, data)
+			InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.PROJECTILEHIT, data, data.Type)
 		end
 	end
 end)
 
 RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "after", function(uuid, skill, learned)
 	uuid = StringHelpers.GetUUID(uuid)
-	learned = learned == 1 and true or false 
+	learned = learned == 1 and true or false
 	for callback in GetListeners(skill) do
-		local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.LEARNED, learned)
+		local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.LEARNED, learned, "boolean")
 		if not b then
 			Ext.PrintError("[LeaderLib:SkillListeners:SkillAdded] Error invoking function:\n", err)
 		end
@@ -344,7 +347,7 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 		end
 	end
 	for callback in GetListeners(skill) do
-		local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.MEMORIZED, learned)
+		local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.MEMORIZED, learned, "boolean")
 		if not b then
 			Ext.PrintError("[LeaderLib:SkillListeners:SkillActivated] Error invoking function:\n", err)
 		end
@@ -365,7 +368,7 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 		end
 	end
 	for callback in GetListeners(skill) do
-		local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.UNMEMORIZED, learned)
+		local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.UNMEMORIZED, learned, "boolean")
 		if not b then
 			Ext.PrintError("[LeaderLib:SkillListeners:SkillDeactivated] Error invoking function:\n", err)
 		end

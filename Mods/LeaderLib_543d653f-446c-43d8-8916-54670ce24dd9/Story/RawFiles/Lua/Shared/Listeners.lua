@@ -108,6 +108,7 @@ if Ext.IsServer() then
 	---Newer hit listener.
 	---@type OnStatusHitEnterCallback[]
 	Listeners.StatusHitEnter = {}
+	---@deprecated
 	---Fires when a skill hits, or a projectile from a skill hits.
 	---@type OnSkillHitCallback[]
 	Listeners.OnSkillHit = {}

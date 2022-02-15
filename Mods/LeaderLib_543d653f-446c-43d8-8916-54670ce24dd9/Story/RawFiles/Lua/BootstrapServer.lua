@@ -1,8 +1,10 @@
 TotalSkillListeners = 0
 
----@alias LeaderLibSkillListenerCallback fun(skill:string, char:string, state:SKILL_STATE, data:SkillEventData|HitData|ProjectileHitData)
+---@alias LeaderLibSkillListenerDataType string|'"boolean"'|'"StatEntrySkillData"'|'"HitData"'|'"ProjectileHitData"'|'"SkillEventData"'
 
----Registers a function to call when a specific skill's events fire.
+---@alias LeaderLibSkillListenerCallback fun(skill:string, char:string, state:SKILL_STATE, data:SkillEventData|HitData|ProjectileHitData|StatEntrySkillData|boolean, dataType:LeaderLibSkillListenerDataType)
+
+---Registers a function to call when skill events fire for a skill or table of skills.
 ---@param skill string|string[]
 ---@param callback LeaderLibSkillListenerCallback
 ---@see SkillEventData#ForEach

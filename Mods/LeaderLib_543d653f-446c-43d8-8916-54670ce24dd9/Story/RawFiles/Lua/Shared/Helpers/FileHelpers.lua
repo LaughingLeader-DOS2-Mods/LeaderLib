@@ -16,5 +16,12 @@ function GameHelpers.IO.LoadJsonFile(filepath, fallback)
 end
 
 function GameHelpers.IO.SaveJsonFile(filepath, data)
-	_saveFile(filepath, Common.JsonStringify(data))
+	local output = data
+	local t = type(data)
+	if t == "table" then
+		output = Common.JsonStringify(data)
+	elseif t ~= "string" then
+		output = tostring(data)
+	end
+	_saveFile(filepath, output)
 end

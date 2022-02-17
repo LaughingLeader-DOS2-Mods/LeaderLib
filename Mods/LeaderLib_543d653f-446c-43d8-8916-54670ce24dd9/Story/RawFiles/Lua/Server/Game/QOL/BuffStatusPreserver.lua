@@ -52,7 +52,10 @@ end
 function BuffStatusPreserver.OnLeftCombat(obj, id)
 	if not BuffStatusPreserver.Enabled() then return end
 	if GameHelpers.Character.IsPlayerOrPartyMember(obj) then
-		BuffStatusPreserver.PreserveAllStatuses(Ext.GetCharacter(obj))
+		local player = GameHelpers.GetCharacter(obj)
+		if player then
+			BuffStatusPreserver.PreserveAllStatuses(player)
+		end
 	end
 end
 
@@ -60,13 +63,15 @@ function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
 	local uuid = StringHelpers.GetUUID(obj)
 	local data = PersistentVars.BuffStatuses[uuid]
 	if data then
-		local character = Ext.GetCharacter(uuid)
-		for id,duration in pairs(data) do
-			local status = character:GetStatus(id)
-			if status then
-				status.CurrentLifeTime = duration
-				status.LifeTime = duration
-				status.RequestClientSync = true
+		local character = GameHelpers.GetCharacter(uuid)
+		if character then
+			for id,duration in pairs(data) do
+				local status = character:GetStatus(id)
+				if status then
+					status.CurrentLifeTime = duration
+					status.LifeTime = duration
+					status.RequestClientSync = true
+				end
 			end
 		end
 		PersistentVars.BuffStatuses[uuid] = nil
@@ -79,8 +84,10 @@ function BuffStatusPreserver.OnStatusApplied(target, status, source, statusType)
 		local data = BuffStatusPreserver.NextBuffStatus[target]
 		if data and data[status] then
 			BuffStatusPreserver.NextBuffStatus[target][status] = nil
-			local character = Ext.GetCharacter(target)
-			BuffStatusPreserver.PreserveStatus(character, character:GetStatus(status), true)
+			local character = GameHelpers.GetCharacter(target)
+			if character then
+				BuffStatusPreserver.PreserveStatus(character, character:GetStatus(status), true)
+			end
 		end
 	end
 end

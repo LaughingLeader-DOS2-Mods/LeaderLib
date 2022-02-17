@@ -9,7 +9,16 @@ Data.Input = {
 	["FlashLeftMouse"] = {1, 4},
 	["FlashRightMouse"] = 2,
 	["FlashMiddleMouse"] = 3,
+	["Screenshot"] = 14,
 	["FlashAlt"] = 62,
+	["WidgetToggleOutput"] = 41,
+	["WidgetToggleEffectStats"] = 42,
+	["WidgetToggleOptions"] = 45,
+	["WidgetToggleHierarchicalProfiler"] = 46,
+	["WidgetToggleStats"] = {47,253},
+	["WidgetToggleDebugConsole"] = 48,
+	["WidgetToggleGraphicsDebug"] = 49,
+	["WidgetToggleDevComments"] = 50,
 	["ActionMenu"] = 110,
 	["CameraCenter"] = 111,
 	["CameraToggleMouseRotate"] = 112,
@@ -145,7 +154,6 @@ Data.Input = {
 	["ToggleMap"] = 250,
 	["ToggleSkills"] = 251,
 	["ToggleSneak"] = 252,
-	["WidgetToggleStats"] = 253,
 	["AreaPickup"] = 254,
 	["ToggleMonsterSelect"] = 255,
 	["ToggleSetStartPoint"] = 256,
@@ -276,12 +284,25 @@ Data.Input = {
 	["CopyVersionToClipboard"] = 385,
 	["UISend"] = 386
 }
+
+--Classes.Enum:Create(Data.Input)
+--Data.InputEnum = Data.Input
+
 Data.InputEnum = {
 	[1] = {"FlashLeftMouse", "Action1"},
 	[2] = "FlashRightMouse",
 	[3] = "FlashMiddleMouse",
 	[4] = "FlashLeftMouse",
 	[62] = "FlashAlt",
+	[14] = "Screenshot",
+	[41] = "WidgetToggleOutput",
+	[42] = "WidgetToggleEffectStats",
+	[45] = "WidgetToggleOptions",
+	[46] = "WidgetToggleHierarchicalProfiler",
+	[47] = "WidgetToggleStats",
+	[48] = "WidgetToggleDebugConsole",
+	[49] = "WidgetToggleGraphicsDebug",
+	[50] = "WidgetToggleDevComments",
 	[110] = "ActionMenu",
 	[111] = "CameraCenter",
 	[112] = "CameraToggleMouseRotate",
@@ -550,3 +571,4 @@ Data.InputEnum = {
 	[385] = "CopyVersionToClipboard",
 	[386] = "UISend"
 }
+

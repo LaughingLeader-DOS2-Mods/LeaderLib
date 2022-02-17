@@ -3,8 +3,8 @@
 ---@field ShouldOpen ShouldOpenContextMenuCallback
 ---@field Callback ContextMenuActionCallback
 ---@field Visible boolean
----@field DisplayName string
----@field Tooltip string
+---@field DisplayName string|TranslatedString
+---@field Tooltip string|TranslatedString
 ---@field Icon string
 ---@field UseClickSound boolean
 ---@field Disabled boolean
@@ -56,6 +56,36 @@ function ContextMenuAction:Create(params)
 	assert(not StringHelpers.IsNullOrEmpty(this.ID), "ID must be a valid string.")
 
 	return this
+end
+
+---@param character ?EclCharacter
+---@return string
+function ContextMenuAction:GetDisplayName(character)
+	local t = type(self.DisplayName)
+	if t == "string" then
+		if string.find(self.DisplayName, "_") then
+			return GameHelpers.GetStringKeyText(self.DisplayName)
+		end
+		return self.DisplayName
+	elseif t == "table" and self.DisplayName.Type == "TranslatedString" then
+		return GameHelpers.Tooltip.ReplacePlaceholders(self.DisplayName.Value, character)
+	end
+	return ""
+end
+
+---@param character ?EclCharacter
+---@return string
+function ContextMenuAction:GetTooltip(character)
+	local t = type(self.Tooltip)
+	if t == "string" then
+		if string.find(self.Tooltip, "_") then
+			return GameHelpers.GetStringKeyText(self.Tooltip)
+		end
+		return self.Tooltip
+	elseif t == "table" and self.Tooltip.Type == "TranslatedString" then
+		return GameHelpers.Tooltip.ReplacePlaceholders(self.Tooltip.Value, character)
+	end
+	return ""
 end
 
 ---@param contextMenu ContextMenu

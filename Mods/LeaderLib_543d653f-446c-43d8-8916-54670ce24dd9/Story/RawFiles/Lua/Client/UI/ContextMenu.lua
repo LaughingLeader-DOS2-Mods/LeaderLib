@@ -568,7 +568,7 @@ local function AddEntryMC(targetContextMenu, entry)
 		return
 	end
 	_actionMap[entry.ID] = entry.Callback
-	local index = targetContextMenu.addEntry(entry.ID, entry.UseClickSound, entry.DisplayName, entry.Disabled, entry.IsLegal, entry.Handle, entry.Tooltip)
+	local index = targetContextMenu.addEntry(entry.ID, entry.UseClickSound, entry:GetDisplayName(), entry.Disabled, entry.IsLegal, entry.Handle, entry:GetTooltip())
 	local menuItem = targetContextMenu.list.content_array[index]
 	if not StringHelpers.IsNullOrEmpty(entry.Icon) then
 		local iconId = string.format("LeaderLib_UIExtensions_%s", entry.Icon)

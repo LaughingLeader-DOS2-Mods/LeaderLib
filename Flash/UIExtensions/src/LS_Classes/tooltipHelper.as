@@ -94,19 +94,19 @@ package LS_Classes
             offsetY = 0;
             tooltipWidth = target.width;
             tooltipHeight = target.height;
-            if(target.tooltipOverrideW)
+            if(target.tooltipOverrideW != null)
             {
                tooltipWidth = target.tooltipOverrideW;
             }
-            if(target.tooltipOverrideH)
+            if(target.tooltipOverrideH != null)
             {
                tooltipHeight = target.tooltipOverrideH;
             }
-            if(target.tooltipXOffset)
+            if(target.tooltipXOffset != null)
             {
                offsetX = target.tooltipXOffset;
             }
-            if(target.tooltipYOffset)
+            if(target.tooltipYOffset != null)
             {
                offsetY = target.tooltipYOffset;
             }

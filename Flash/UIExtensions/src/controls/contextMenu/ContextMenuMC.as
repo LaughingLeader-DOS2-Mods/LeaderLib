@@ -10,6 +10,7 @@ package controls.contextMenu
 	import interfaces.IContextMenuObject;
 	import flash.geom.Point;
 	import flash.events.Event;
+	import flash.system.Capabilities;
 	
 	public class ContextMenuMC extends BaseContextMenuObject implements IInputHandler, IContextMenuObject
 	{
@@ -272,8 +273,18 @@ package controls.contextMenu
 			if(this.isChild && this.parentCM)
 			{
 				MainTimeline.Instance.contextMenuMC.clearActiveSubmenu();
-				MainTimeline.Instance.contextMenuMC.children_mc.removeChild(this);
-				//this.parentCM.close(true);
+				if(this.visible)
+				{
+					try {
+						MainTimeline.Instance.contextMenuMC.children_mc.removeChild(this);
+					} catch (error:Error) {
+						if (Capabilities.isDebugger) {
+							trace(error.getStackTrace());
+						} else {
+							trace("MainTimeline.Instance.contextMenuMC.children_mc.removeChild error");
+						}
+					}
+				}
 			}
 			if(this.visible)
 			{

@@ -81,7 +81,7 @@ function GameHelpers.Stats.GetRuneBoosts(item)
 end
 
 function GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute)
-	---@param StatEntrySkillData
+	---@type StatEntrySkillData
 	local stat = nil
 	local t = type(statName)
 	if t == "string" then
@@ -137,78 +137,6 @@ function GameHelpers.Stats.IsHealingSkill(skillId, healTypes)
 		end
 	end
 	return false
-end
-
-local _initializedItemColors = false
-local _ItemColors = {}
-local _colorPattern = 'new itemcolor "(.+)","(.+)","(.*)","(.*)"'
-
-local function _buildItemColors()
-	local order = Ext.GetModLoadOrder()
-	for i=1,#order do
-		local uuid = order[i]
-		local info = Ext.GetModInfo(uuid)
-		if info ~= nil then
-			local filePath = string.format("Public/%s/Stats/Generated/Data/ItemColor.txt", info.Directory)
-			local text = Ext.LoadFile(filePath, "data")
-			--local filePathWithoutSpaces = string.format("Mods/%s/CharacterCreation/ClassPresets/%s.lsx", info.Directory, StringHelpers.RemoveWhitespace(classType))
-			if text then
-				for line in StringHelpers.GetLines(text) do
-					local s,e,id,c1,c2,c3 = string.find(line, _colorPattern)
-					if id and c3 then
-						_ItemColors[id] = {"#"..c1,"#"..c2,"#"..c3}
-					end
-				end
-			end
-		end
-	end
-end
-
---- Returns an ItemColor stat's colors.
---- @param name string The ID of the ItemColor.
---- @param asMaterialValues ?boolean
---- @return string[]
-function GameHelpers.Stats.GetItemColor(name, asMaterialValues)
-	if not _initializedItemColors then
-		_buildItemColors()
-		_initializedItemColors = true
-	end
-	local entry = _ItemColors[name]
-	if asMaterialValues and entry then
-		local c1,c2,c3 = table.unpack(entry)
-		return {GameHelpers.Math.HexToMaterialRGBA(c1), GameHelpers.Math.HexToMaterialRGBA(c2), GameHelpers.Math.HexToMaterialRGBA(c3)}
-	end
-	return entry
-end
-
-local _cachedSkills = {}
-local _builtCachedSkills = false
-setmetatable(_cachedSkills, {__mode = "kv"})
-
----@param asStatsEntry ?boolean Return the StatEntrySkillData instead of string.
----@return fun():string|StatEntrySkillData
-function GameHelpers.Stats.GetSkills(asStatsEntry)
-	if not _builtCachedSkills then
-		for i,v in pairs(Ext.GetStatEntries("SkillData")) do
-			_cachedSkills[v] = true
-		end
-		_builtCachedSkills = true
-	end
-	if not asStatsEntry then
-		local id = nil
-		return function ()
-			id = next(_cachedSkills, id)
-			return id
-		end
-	else
-		local id = nil
-		return function ()
-			id = next(_cachedSkills, id)
-			if id then
-				return Ext.GetStat(id)
-			end
-		end
-	end
 end
 
 local meleeTypes = {"Sword", "Club", "Axe", "Staff", "Knife", "Spear"}
@@ -443,7 +371,7 @@ function GameHelpers.Stats.CharacterHasRequirements(character, statId)
 			end
 		end
 
-		if _cachedSkills[statId] then
+		if GameHelpers.Stats.IsStatType(statId, "SkillData") then
 			local items = {character.Stats.MainWeapon, character.Stats.OffHandWeapon}
             if stat.Requirement == Data.SkillRequirement.MeleeWeapon then
                 if not GameHelpers.Item.IsWeaponType(items, meleeTypes) then

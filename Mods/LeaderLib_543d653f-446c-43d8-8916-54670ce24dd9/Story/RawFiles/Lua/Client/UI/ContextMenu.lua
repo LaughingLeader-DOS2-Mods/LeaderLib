@@ -207,11 +207,31 @@ end
 
 local _enabledActionsForContext = {}
 
+---@return fun():ContextMenuAction,string
+local function GetOrderedContextMenuActions()
+	local ids = {}
+	for id,action in pairs(ContextMenu.Actions) do
+		ids[#ids+1] = {Name=action:GetDisplayName(),ID=id}
+	end
+	table.sort(ids, function(a,b)
+		return a.Name < b.Name
+	end)
+	local i = 0
+	local count = #ids
+	return function ()
+		i = i + 1
+		if i <= count then
+			local entry = ids[i]
+			return ContextMenu.Actions[entry.ID],entry.ID
+		end
+	end
+end
+
 local function GetShouldOpen(contextMenu, x, y)
 	local success = false
-	for id,action in pairs(ContextMenu.Actions) do
+	for actionId,action in pairs(ContextMenu.Actions) do
 		if action:GetCanOpen(contextMenu, x, y) then
-			_enabledActionsForContext[id] = true
+			_enabledActionsForContext[actionId] = true
 			success = true
 		end
 	end
@@ -273,10 +293,10 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 					end
 				end
 
-				for id,action in pairs(ContextMenu.Actions) do
-					if _enabledActionsForContext[id] then
+				for action,actionId in GetOrderedContextMenuActions() do
+					if _enabledActionsForContext[actionId] then
 						self.Entries[#self.Entries+1] = action
-						_enabledActionsForContext[id] = nil
+						_enabledActionsForContext[actionId] = nil
 					end
 				end
 
@@ -306,10 +326,10 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 					end
 				end
 			end
-			for id,action in pairs(ContextMenu.Actions) do
-				if _enabledActionsForContext[id] then
+			for action,actionId in GetOrderedContextMenuActions() do
+				if _enabledActionsForContext[actionId] then
 					self.Entries[#self.Entries+1] = action
-					_enabledActionsForContext[id] = nil
+					_enabledActionsForContext[actionId] = nil
 				end
 			end
 			InvokeListenerCallbacks(Listeners.OnContextMenuOpening, self, x, y)

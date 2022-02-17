@@ -96,3 +96,15 @@ if Ext.IsServer() then
 		end
 	end)
 end
+
+--Making sure autosaves are enabled in the options if this flag is enabled
+if Ext.Version() >= 56 then
+	settings.Global.Flags.LeaderLib_AutosavingEnabled:AddListener(function(id, enabled, data, settingsData)
+		if enabled then
+			local options = Ext.Utils.GetGlobalSwitches()
+			if options then
+				options.CanAutoSave = true
+			end
+		end
+	end)
+end

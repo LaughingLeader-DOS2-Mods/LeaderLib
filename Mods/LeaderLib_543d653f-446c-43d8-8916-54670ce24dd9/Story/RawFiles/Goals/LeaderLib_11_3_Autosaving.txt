@@ -525,7 +525,7 @@ DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayText);
 PROC
 LeaderLib_AutoSaving_OnCombatStarted((INTEGER)_CombatID)
 AND
-DB_GlobalFlag("LeaderLib_AutosaveOnCombatStart")
+GlobalGetFlag("LeaderLib_AutosaveOnCombatStart", 1)
 AND
 NOT DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID)
 AND

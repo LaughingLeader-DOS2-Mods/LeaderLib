@@ -932,6 +932,8 @@ Ext.RegisterConsoleCommand("lldebug_keepAlive", function(command)
 	end)
 end)
 
+--Ext.Audio.SetState("Music_Type", "Stop"); Mods.LeaderLib.Timer.StartOneshot("", 10000, function() Ext.Audio.SetState("Music_Type", "Fight"); Ext.Audio.SetState("Music_Theme", "Boss_Theme_01") end)
+
 Ext.RegisterConsoleCommand("lldebug_music", function(command, mType, theme)
 	GameHelpers.Net.Broadcast("LeaderLib_Debug_MusicTest", Common.JsonStringify({
 		Type = mType or "Explo",

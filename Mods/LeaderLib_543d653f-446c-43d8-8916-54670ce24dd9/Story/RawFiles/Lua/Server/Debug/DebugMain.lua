@@ -849,3 +849,67 @@ RegisterListener("ForceMoveFinished", function(target, source, distance, startin
 		end
 	end
 end, nil) ]]
+
+--[[ if Ext.Version() >= 56 then
+	local function PrintEventTime(name, id)
+		fprint(LOGLEVEL.ERROR, "[%i:%s] ID(%s)", Ext.MonotonicTime(), name, id)
+	end
+
+	Ext.Events.GetSkillDamage:Subscribe(function (e)
+		PrintEventTime("GetSkillDamage", e.Skill.Name)
+	end)
+
+	Ext.Events.BeforeShootProjectile:Subscribe(function (e)
+		PrintEventTime("BeforeShootProjectile", e.Projectile.SkillId)
+	end)
+
+	Ext.Events.ShootProjectile:Subscribe(function (e)
+		PrintEventTime("ShootProjectile", e.Projectile.SkillId)
+	end)
+
+	Ext.Events.ProjectileHit:Subscribe(function (e)
+		PrintEventTime("ProjectileHit", e.Projectile.SkillId)
+	end)
+
+	Ext.Events.GroundHit:Subscribe(function (e)
+		PrintEventTime("GroundHit", e.Caster.DisplayName)
+	end)
+
+	RegisterProtectedOsirisListener("CharacterUsedSkill", 4, "before", function(attacker, skill, _, _)
+		PrintEventTime("CharacterUsedSkill", skill)
+	end)
+
+	RegisterProtectedOsirisListener("CharacterUsedSkillOnTarget", 4, "before", function(attacker, _, skill, _, _)
+		PrintEventTime("CharacterUsedSkillOnTarget", skill)
+	end)
+
+	RegisterProtectedOsirisListener("CharacterUsedSkillAtPosition", 4, "before", function(attacker, _, _, _, skill, _, _)
+		PrintEventTime("CharacterUsedSkillAtPosition", skill)
+	end)
+
+	RegisterProtectedOsirisListener("SkillCast", 4, "before", function(attacker, skill, _, _)
+		PrintEventTime("SkillCast", skill)
+	end)
+
+	RegisterProtectedOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
+		PrintEventTime("NRD_OnPrepareHit", Ext.GetCharacter(attacker).DisplayName)
+	end)
+
+	RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(target,status,handle,source)
+		if status == "HIT" then
+			PrintEventTime("NRD_OnStatusAttempt:HIT", Ext.Entity.GetStatus(target, handle).SkillId)
+		end
+	end)
+
+	Ext.Events.StatusHitEnter:Subscribe(function (e)
+		PrintEventTime("StatusHitEnter", e.Hit.SkillId)
+	end)
+
+	Ext.Events.ComputeCharacterHit:Subscribe(function (e)
+		PrintEventTime("ComputeCharacterHit", e.Attacker.Character.DisplayName)
+	end)
+
+	Ext.Events.BeforeCharacterApplyDamage:Subscribe(function (e)
+		PrintEventTime("BeforeCharacterApplyDamage", e.Context.Status.SkillId)
+	end)
+end ]]

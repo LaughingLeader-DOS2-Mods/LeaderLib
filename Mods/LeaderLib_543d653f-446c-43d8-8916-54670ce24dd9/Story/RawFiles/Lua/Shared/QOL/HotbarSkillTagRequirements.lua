@@ -99,8 +99,8 @@ if Vars.IsClient then
 	end
 else
 	RegisterProtectedOsirisListener("ObjectWasTagged", 2, "after", function(uuid, tag)
-		if ObjectIsCharacter(uuid) == 1 
-		and CharacterIsControlled(uuid) == 1 
+		if ObjectIsCharacter(uuid) == 1
+		and CharacterIsControlled(uuid) == 1
 		and Features.FixSkillTagRequirements
 		and Data.SkillRequirementTags[tag] then
 			--Delay slightly to aggregate quick changes
@@ -108,8 +108,8 @@ else
 		end
 	end)
 	RegisterProtectedOsirisListener("ObjectLostTag", 2, "after", function(uuid, tag)
-		if ObjectIsCharacter(uuid) == 1 
-		and CharacterIsControlled(uuid) == 1 
+		if ObjectIsCharacter(uuid) == 1
+		and CharacterIsControlled(uuid) == 1
 		and Features.FixSkillTagRequirements
 		and Data.SkillRequirementTags[tag] then
 			GameHelpers.UI.RefreshSkillBarAfterDelay(uuid, 50)
@@ -120,8 +120,8 @@ else
 		if ObjectExists(character) == 0 or ObjectExists(item) == 0 then
 			return
 		end
-		if ObjectIsCharacter(character) == 1 
-		and CharacterIsControlled(character) == 1 
+		if ObjectIsCharacter(character) == 1
+		and CharacterIsControlled(character) == 1
 		and Features.FixSkillTagRequirements then
 			local item = Ext.GetItem(item)
 			if item and not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) then
@@ -140,8 +140,8 @@ else
 		if ObjectExists(character) == 0 or ObjectExists(item) == 0 then
 			return
 		end
-		if ObjectIsCharacter(character) == 1 
-		and CharacterIsControlled(character) == 1 
+		if ObjectIsCharacter(character) == 1
+		and CharacterIsControlled(character) == 1
 		and Features.FixSkillTagRequirements then
 			local item = Ext.GetItem(item)
 			if item and not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) then

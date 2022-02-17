@@ -2076,6 +2076,7 @@ LeaderLib_Ext_QRY_HasStatusType(_Host, "INVISIBLE", 0)
 THEN
 CharacterStatusText(_Host, "<font color='#FF22CC' size='26'>No INVISIBLE type status!</font>");
 */
+
 EXITSECTION
 
 ENDEXITSECTION

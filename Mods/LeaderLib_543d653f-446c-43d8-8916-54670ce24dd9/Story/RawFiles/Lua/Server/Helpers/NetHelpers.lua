@@ -40,8 +40,7 @@ function GameHelpers.Net.PostToUser(user, channel, payload)
 		_postToUser(id, channel, EnsureString(payload))
 		return true
 	elseif Vars.DebugMode then
-		fprint(LOGLEVEL.WARNING, "[LeaderLib:GameHelpers.Net.PostToUser(%s)] Failed to get user ID for character (%s). Payload:", channel, user)
-		Ext.Dump(payload)
+		fprint(LOGLEVEL.WARNING, "[LeaderLib:GameHelpers.Net.PostToUser(%s)] Failed to get user ID for character (%s).", channel, user)
 	end
 	return false
 end

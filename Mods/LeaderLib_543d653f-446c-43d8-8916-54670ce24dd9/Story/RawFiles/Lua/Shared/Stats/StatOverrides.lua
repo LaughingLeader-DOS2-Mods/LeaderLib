@@ -50,16 +50,6 @@ local _SkillPropertiesActionMissing = function (stat)
 	return false
 end
 
----@param uuid string
-local _SkillPropertiesActionMissingAndModLoaded = function (uuid)
-	return function(...)
-		if Ext.IsModLoaded(uuid) then
-			return _SkillPropertiesActionMissing(...)
-		end
-		return false
-	end
-end
-
 local StatFixes = {
 	--Original: "Burning,0,2;Melt" - Seems like it was meant to not apply BURNING, but Burning isn't a status.
 	Projectile_TrapEarthballNoIgnite = {
@@ -84,10 +74,11 @@ local StatFixes = {
 			SkillProperties = {}
 		}
 	},
-	--Origins skill
 	--Original: "EMPTY". This isn't a status.
 	Target_Quest_DemonicPossession_Kill = {
-		CanChange = _SkillPropertiesActionMissingAndModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+		--Divinity: Original Sin 2 Campaign
+		Mod = "1301db3d-1f54-4e98-9be5-5094030916e4",
+		CanChange = _SkillPropertiesActionMissing,
 		Changes = {
 			SkillProperties = {}
 		}
@@ -417,17 +408,19 @@ local function OverrideStats(data, statsLoadedState)
 	OverrideForce(not isClient and not statsLoadedState)
 
 	for statId,data in pairs(StatFixes) do
-		local stat = Ext.GetStat(statId)
-		if stat and data.CanChange(stat) then
-			for attribute,value in pairs(data.Changes) do
-				if not isClient and not statsLoadedState then
-					stat[attribute] = value
-				else
-					Ext.StatSetAttribute(statId, attribute, value)
+		if not data.Mod or Ext.IsModLoaded(data.Mod) then
+			local stat = Ext.GetStat(statId)
+			if stat and data.CanChange(stat) then
+				for attribute,value in pairs(data.Changes) do
+					if not isClient and not statsLoadedState then
+						stat[attribute] = value
+					else
+						Ext.StatSetAttribute(statId, attribute, value)
+					end
 				end
-			end
-			if not isClient and not statsLoadedState then
-				Ext.SyncStat(statId, false)
+				if not isClient and not statsLoadedState then
+					Ext.SyncStat(statId, false)
+				end
 			end
 		end
 	end

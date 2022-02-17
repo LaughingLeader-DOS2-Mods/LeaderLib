@@ -1,7 +1,7 @@
 ---A helper table for NRD_OnPrepareHit that retrieves all relevant flags and damage values.
 ---@class HitPrepareData
 ---@field TotalDamageDone integer
----@field DamageList table<string, integer>
+---@field DamageList DamageList
 ---@field Handle integer
 ---@field Target string
 ---@field Source string
@@ -44,6 +44,12 @@
 ---@field Bleeding boolean
 ---@field Burning boolean
 ---@field NoEvents boolean
+local HitPrepareData = {
+	Type = "HitPrepareData",
+	TotalDamageDone = 0,
+	DamageList = {},
+	Handle = -1,
+}
 
 local HIT_ATTRIBUTE = {
 	--Hit Prepare Attributes
@@ -96,14 +102,6 @@ local ChaosDamageTypes = {
 	Poison = 10,
 }
 
----@type HitPrepareData
-local HitPrepareData = {
-	Type = "HitPrepareData",
-	TotalDamageDone = 0,
-	DamageList = {},
-	Handle = -1,
-}
-
 local canUseRawFunctions = Ext.Version() >= 55
 
 HitPrepareData.__call = function(_, ...)
@@ -117,11 +115,11 @@ local function CreateDamageMetaList(handle)
 		if k == "ToTable" then
 			return function ()
 				local newTable = {}
-				for k,v in pairs(Data.DamageTypeEnums) do
-					if NRD_HitGetDamage(handle, k) > 0 then
+				for num,damageType in pairs(Data.DamageTypeEnums) do
+					if NRD_HitGetDamage(handle, damageType) > 0 then
 						newTable[#newTable+1] = {
-							Amount = NRD_HitGetDamage(handle, k),
-							DamageType = k
+							Amount = NRD_HitGetDamage(handle, damageType),
+							DamageType = damageType
 						}
 					end
 				end

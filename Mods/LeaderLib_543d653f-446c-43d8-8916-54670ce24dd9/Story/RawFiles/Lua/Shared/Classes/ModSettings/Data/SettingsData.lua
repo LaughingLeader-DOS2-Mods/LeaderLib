@@ -35,12 +35,13 @@ end
 
 --- Shortcut to get the string key text without handle.
 local function skey(key)
-	local text = GameHelpers.GetStringKeyText(key)
-	if not StringHelpers.IsNullOrEmpty(text) then
-		return GameHelpers.Tooltip.ReplacePlaceholders(text)
-	else
-		return key
-	end
+	return Classes.TranslatedString:CreateFromKey(key)
+	-- local text = GameHelpers.GetStringKeyText(key)
+	-- if not StringHelpers.IsNullOrEmpty(text) then
+	-- 	return GameHelpers.Tooltip.ReplacePlaceholders(text)
+	-- else
+	-- 	return key
+	-- end
 end
 
 ---@private

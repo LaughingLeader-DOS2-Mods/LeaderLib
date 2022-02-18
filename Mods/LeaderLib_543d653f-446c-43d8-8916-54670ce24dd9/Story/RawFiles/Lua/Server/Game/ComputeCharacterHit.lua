@@ -63,16 +63,20 @@ end
 
 local function GetResistanceName(damageType)
     if Data.DamageTypeToResistance[damageType] then
-        return Data.DamageTypeToResistance[damageType]
+        return Data.DamageTypeToResistance[damageType], true
     end
-    return damageType .. "Resistance"
+    return Data.DamageTypeToResistanceWithExtras[damageType], false
 end
 
 --- @param character StatCharacter
 --- @param damageType string DamageType enumeration
 --- @param resistancePenetration integer
 function HitOverrides.GetResistance(character, damageType, resistancePenetration)
-	local res = character[GetResistanceName(damageType)] or 0
+    local res = 0
+    local resName,isRealStat = GetResistanceName(damageType)
+    if resName and isRealStat then
+        res = character[resName] or 0
+    end
 
     --Workaround for PhysicalResistance in StatCharacter being double what it actually is
     if _EXTVERSION <= 55 and damageType == "Physical" then
@@ -97,7 +101,7 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
     if length > 0 then
         for i=1,length do
             local callback = Listeners.GetHitResistanceBonus[i]
-            local b,bonus = xpcall(callback, debug.traceback, character, damageType, resistancePenetration, res)
+            local b,bonus = xpcall(callback, debug.traceback, character, damageType, resistancePenetration, res, resName)
             if b then
                 if bonus ~= nil and type(bonus) == "number" then
                     res = res + bonus

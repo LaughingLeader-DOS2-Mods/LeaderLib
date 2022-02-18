@@ -10,18 +10,26 @@ package controls.contextMenu
 		
 		public function ContextMenuMain()
 		{
-			super();
+			super("main");
 		}
 
-
-		public function clearActiveSubmenu() : void
+		public function clearActiveSubmenu(skipClose:Boolean = false, sub:IContextMenuObject = null) : void
 		{
+			if(sub != null && sub != this.activeSubmenu)
+			{
+				return;
+			}
+			if(!skipClose && this.activeSubmenu != null)
+			{
+				this.activeSubmenu.close(true);
+			}
 			this.activeSubmenu = null;
 		}
 
 		public function setActiveSubmenu(sub:IContextMenuObject) : void
 		{
-			if(this.activeSubmenu)
+			Registry.Log("setActiveSubmenu(%s) depth(%s) currentDepth(%s) this.activeSubmenu(%s)", sub, sub.depth, this.activeSubmenu ? this.activeSubmenu.depth : -1, this.activeSubmenu);
+			if(this.activeSubmenu != null && sub.depth <= this.activeSubmenu.depth)
 			{
 				this.activeSubmenu.close(true);
 			}

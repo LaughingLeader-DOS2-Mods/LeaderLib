@@ -44,6 +44,21 @@ package controls.contextMenu
 		public var tooltipEnabled:Boolean = false;
 		public var tooltipYOffset:Number = -10;
 		public var tooltipOverrideW:Number = 0;
+
+		private var _side:String = "right";
+		public function get side():String { return this._side; }
+		public function set side(v:String):void
+		{
+			this._side = v;
+			if(this._side == "left")
+			{
+				this.arrow_mc.rotation = -180;
+			}
+			else
+			{
+				this.arrow_mc.rotation = 0;
+			}
+		}
 		
 		public function ContextMenuEntry(parentCM:ContextMenuMC)
 		{
@@ -89,6 +104,7 @@ package controls.contextMenu
 			this.text_txt.textColor = this.deSelectedColor;
 			this.text_txt.htmlText = this.text;
 			this.close();
+			Registry.Log("[ContextMenuEntry.clearHovered] id(%s)", this.actionID);
 		}
 		
 		public function deselectElement() : void
@@ -160,26 +176,43 @@ package controls.contextMenu
 			{
 				if(force || !this.childCM.isMouseHovering)
 				{
-					this.childCM.close();
+					this.childCM.close(true);
 					this.isOpen = false;
 				}
 				this.arrow_mc.visible = this.isOpen;
+
+				if(this.side == "left" && this.parentCM && this.parentCM == MainTimeline.Instance.contextMenuMC)
+				{
+					this.side = "right";
+				}
 			}
 			else
 			{
 				this.arrow_mc.visible = false;
 			}
+			Registry.Log("[%s] close(%s) isOpen(%s)", this, force, this.isOpen);
 		}
 
 		public function open(targetX:Number=0, targetY:Number=0) : void
 		{
+			Registry.Log("[%s] open(%s, %s) ", this, targetX, targetY);
 			if(this.childCM && !this.childCM.isOpen)
 			{
+				this.childCM.side = this.side;
 				//var xPos:Number = Math.max(this.parentContextMenu.bg_mc.mouseX, this.parentContextMenu.bg_mc.width);
 				//var yPos:Number = this.parentContextMenu.bg_mc.y;
 				//var pos:Point = this.parentContextMenu.bg_mc.localToGlobal(new Point(xPos, yPos));
 				//this.childCM.open(pos.x-30, pos.y);
-				this.childCM.open(targetX, targetY);
+				if(this.parentCM != MainTimeline.Instance.contextMenuMC)
+				{
+					var parent_mc:MovieClip = this.parentCM as MovieClip;
+					this.childCM.open(parent_mc.x + targetX, parent_mc.y + targetY);
+				}
+				else
+				{
+					this.childCM.open(targetX, this.y + targetY);
+				}
+				
 				this.isOpen = true;
 				this.arrow_mc.visible = true;
 				//this.parentContextMenu.addEventListener(Event.CLEAR, this.onContextMenuSelectionCleared);
@@ -191,7 +224,8 @@ package controls.contextMenu
 			this.arrow_mc.visible = false;
 			if(this.childCM == null)
 			{
-				var cm:ContextMenuMC = new ContextMenuMC();
+				var subid:String = String(this.actionID + ".submenu");
+				var cm:ContextMenuMC = new ContextMenuMC(subid);
 				// cm.bg_mc.top_mc.visible = false;
 				// cm.bg_mc.bottom_mc.visible = false;
 				cm.setHierarchy(this);
@@ -200,6 +234,7 @@ package controls.contextMenu
 				cm.playSounds = false;
 				this.setHierarchy(this.parentCM, cm);
 			}
+			this.childCM.depth = this.depth + 1;
 			if(openImmediately)
 			{
 				this.open();
@@ -210,7 +245,12 @@ package controls.contextMenu
 		{
 			this.addEventListener(MouseEvent.MOUSE_DOWN,this.buttonDown);
 			this.addEventListener(MouseEvent.MOUSE_OVER,this.buttonOver);
-			this.addEventListener(MouseEvent.MOUSE_OUT,this.buttonOut);
+			this.addEventListener(MouseEvent.MOUSE_OUT,this.buttonOut, false, 99);
+		}
+
+		override public function toString():String
+		{
+			return "ContextMenuEntry(" + this.actionID + ")";
 		}
 	}
 }

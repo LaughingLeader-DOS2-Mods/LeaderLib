@@ -232,6 +232,11 @@ function UIExtensions.SetupInstance(skipCheck)
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_SetModifierKeys", Input.UpdateModifierKeys)
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_OnEventResolution", OnResolution)
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_OnEventResize", OnResolution)
+			Ext.RegisterUICall(instance, "LeaderLib_UIAssert", function (ui, call, msg)
+				if Vars.DebugMode then
+					Ext.PrintWarning(msg)
+				end
+			end)
 			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_OnControl", OnControl)
 			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_ControlAdded", OnControlAdded)
 			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_InputEvent", Input.OnFlashEvent)

@@ -17,6 +17,7 @@ package controls.contextMenu
 		public var bg_mc:ContextMenuBG;
 		public var list:listDisplay;
 
+		public var id:String;
 		public var closing:Boolean;
 		public var playSounds:Boolean = false;
 		public const offsetX:Number = 0;
@@ -26,10 +27,27 @@ package controls.contextMenu
 		public var buttonArr:Array;
 		
 		public var minHeight:Number = 300;
+
+		private var _side:String = "right";
+		public function get side():String { return this._side; }
+		public function set side(v:String):void 
+		{ 
+			this._side = v;
+			var sub:IContextMenuObject = null;
+			for (var i:uint = this.list.content_array.length; i--;)
+			{
+				sub = this.list.content_array[i];
+				if(sub)
+				{
+					sub.side = v;
+				}
+			}
+		}
 		
-		public function ContextMenuMC()
+		public function ContextMenuMC(ID:String="")
 		{
 			super();
+			this.id = ID;
 		}
 
 		public function init() : void
@@ -47,7 +65,7 @@ package controls.contextMenu
 			this.text_array = new Array();
 			this.buttonArr = new Array();
 
-			this.addEventListener(MouseEvent.MOUSE_OUT, this.onMouseOut);
+			this.addEventListener(MouseEvent.MOUSE_OUT, this.onMouseOut, false, 1);
 		}
 		
 		public function setTitle(text:String) : void
@@ -71,7 +89,7 @@ package controls.contextMenu
 			}
 			else
 			{
-				entry.setHierarchy(this);
+				entry.setHierarchy(this, entry.childCM);
 			}
 			entry.handle = handle;
 			entry.legal = legal;
@@ -231,28 +249,75 @@ package controls.contextMenu
 			return isHandled;
 		}
 
+		public function get totalWidth():Number
+		{
+			var w:Number = this.width;
+			var c:MovieClip = this.childCM as MovieClip;
+			while (c != null)
+			{
+				w += c.width;
+				c = c.childCM as MovieClip;
+			}
+			return w;
+		}
+
 		public function open(targetX:Number=0, targetY:Number=0) : void
 		{
 			this.x = targetX;
 			this.y = targetY;
 
-			if((this.y + this.height + 20) > MainTimeline.Instance.stage.stageHeight)
-			{
-				this.y = MainTimeline.Instance.stage.stageHeight - this.height - 20
-			}
-
-			if((this.x + this.width + 20) > MainTimeline.Instance.stage.stageWidth)
-			{
-				this.x = MainTimeline.Instance.stage.stageWidth - this.width - 20
-			}
-
 			if(this.isChild && !this.visible)
 			{
-				MainTimeline.Instance.contextMenuMC.setActiveSubmenu(this.parentCM);
-				this.x += ((this.parentCM as MovieClip).width - 10);
+				var parent_mc:MovieClip = (this.parentCM as MovieClip);
+				var parentWidth:Number = parent_mc.width - 10;
+				var nextX:Number = this.x + parent_mc.x + parentWidth;
+
+				var nextSide:String = this.parentCM.side;
+
+				var globalPos:Point = parent_mc.localToGlobal(new Point(parent_mc.x + parentWidth + this.totalWidth + 20, parent_mc.y));
+
+				if(this.depth == 1)
+				{
+					if (globalPos.x >= MainTimeline.Instance.stage.stageWidth)
+					{
+						nextSide = "left";
+					}
+				}
+
+				if (nextSide == "left")
+				{
+					nextX = (this.x - this.width) + 20;
+				}
+
+				if(this.side != nextSide)
+				{
+					this.side = nextSide;
+
+					if(this.parentCM.side != nextSide)
+					{
+						this.parentCM.side = nextSide;
+					}
+				}
+
+				MainTimeline.Instance.contextMenuMC.setActiveSubmenu(this);
+				this.x = nextX;
 				//var index:int = MainTimeline.Instance.getChildIndex(MainTimeline.Instance.contextMenuMC);
 				//MainTimeline.Instance.addChildAt(this, index-1);
 				MainTimeline.Instance.contextMenuMC.children_mc.addChild(this);
+
+				Registry.Log("[%s] open(%s, %s) side(%s) x(%s) y(%s) edgeRight(%s) stageWidth(%s)", this, targetX, targetY, this.side, this.x, this.y, globalPos.x, MainTimeline.Instance.stage.stageWidth);
+			}
+			else
+			{
+				if((this.x + this.width + 20) > MainTimeline.Instance.stage.stageWidth)
+				{
+					this.x = MainTimeline.Instance.stage.stageWidth - this.width - 20
+				}
+			}
+
+			if((this.y + this.height + 20) > MainTimeline.Instance.stage.stageHeight)
+			{
+				this.y = MainTimeline.Instance.stage.stageHeight - this.height - 20
 			}
 			
 			if(this.playSounds) Registry.ExtCall("PlaySound","UI_GM_Generic_Slide_Open");
@@ -265,14 +330,13 @@ package controls.contextMenu
 				MainTimeline.Instance.stage.addEventListener(MouseEvent.CLICK, this.onCloseUI);
 				this.isOpen = true;
 			}
-			Registry.ExtCall("LeaderLib_ContextMenu_Opened");
+			Registry.ExtCall("LeaderLib_ContextMenu_Opened", this.id);
 		}
 
 		public function close(force:Boolean = false) : void
 		{
 			if(this.isChild && this.parentCM)
 			{
-				MainTimeline.Instance.contextMenuMC.clearActiveSubmenu();
 				if(this.visible)
 				{
 					try {
@@ -300,12 +364,17 @@ package controls.contextMenu
 				//MainTimeline.Instance.stage.removeEventListener("rightMouseDown",this.onCloseUI);
 				MainTimeline.Instance.stage.removeEventListener(MouseEvent.CLICK, this.onCloseUI);
 				this.isOpen = false;
-				if(this.childCM)
-				{
-					this.childCM.close(force);
-				}
 			}
-			Registry.ExtCall("LeaderLib_ContextMenu_Closed");
+			if(this.childCM)
+			{
+				this.childCM.close(force);
+			}
+			if(this.parentCM)
+			{
+				this.parentCM.close(force);
+			}
+			Registry.ExtCall("LeaderLib_ContextMenu_Closed", this.id);
+			Registry.Log("[%s] close(%s) visible(%s) isOpen(%s)", this, force, this.visible, this.isOpen);
 		}
 
 		public function onCloseUI(e:MouseEvent) : void
@@ -367,8 +436,14 @@ package controls.contextMenu
 		{
 			if(this.isChild && !this.isMouseHovering)
 			{
+				Registry.Log("[ContextMenuMC(child).onMouseOut] id(%s)", this.id);
 				this.close();
 			}
+		}
+
+		override public function toString():String
+		{
+			return "ContextMenu(" + this.id + ")";
 		}
 	}
 }

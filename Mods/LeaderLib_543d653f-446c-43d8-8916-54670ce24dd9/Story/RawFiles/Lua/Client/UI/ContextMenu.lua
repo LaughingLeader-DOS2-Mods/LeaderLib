@@ -187,7 +187,7 @@ function ContextMenu:OnEntryClicked(ui, event, index, actionID, handle, isBuiltI
 		if not b then
 			Ext.PrintError(result)
 		end
-	else
+	elseif not stayOpen then
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
 	end
 	InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, index, actionID, handle)
@@ -470,7 +470,7 @@ function ContextMenu:OnBuiltinMenuClicked(ui, event, id, actionID, handleAlwaysZ
 	if entry then
 		local action = self.DefaultActionCallbacks[actionID] or (entry and entry.Callback)
 		if action then
-			local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, entry.Handle)
+			local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, entry.Handle, entry)
 			if not b then
 				Ext.PrintError(err)
 			end
@@ -583,25 +583,26 @@ end
 
 ---@param targetContextMenu FlashMovieClip
 ---@param entry ContextMenuAction
-local function AddEntryMC(targetContextMenu, entry)
+local function AddEntryMC(targetContextMenu, entry, depth)
 	if not entry then
 		return
 	end
 	_actionMap[entry.ID] = entry.Callback
 	local index = targetContextMenu.addEntry(entry.ID, entry.UseClickSound, entry:GetDisplayName(), entry.Disabled, entry.IsLegal, entry.Handle, entry:GetTooltip())
 	local menuItem = targetContextMenu.list.content_array[index]
+	menuItem.depth = depth
 	if not StringHelpers.IsNullOrEmpty(entry.Icon) then
 		local iconId = string.format("LeaderLib_UIExtensions_%s", entry.Icon)
 		menuItem.setIcon("iggy_" .. iconId)
-		menuItem.stayOpen = entry.StayOpen or false
 		ContextMenu:SaveCustomIcon(iconId, entry.Icon, 24, 24)
 	end
+	menuItem.stayOpen = entry.StayOpen or false
 	
 	if entry.Children then
 		menuItem.createSubmenu()
 		for j=1,#entry.Children do
 			local child = entry.Children[j]
-			AddEntryMC(menuItem.childCM, child)
+			AddEntryMC(menuItem.childCM, child, depth + 1)
 		end
 		menuItem.childCM.updateDone()
 	end
@@ -620,7 +621,7 @@ function ContextMenu:MoveAndRebuild(x,y)
 		local totalEntries = #self.Entries
 		for i=1,totalEntries do
 			local entry = self.Entries[i]
-			AddEntryMC(contextMenu, entry)
+			AddEntryMC(contextMenu, entry, 0)
 		end
 
 		contextMenu.updateDone()
@@ -662,7 +663,7 @@ function ContextMenu:Open()
 		local totalEntries = #self.Entries
 		for i=1,totalEntries do
 			local entry = self.Entries[i]
-			AddEntryMC(contextMenu, entry)
+			AddEntryMC(contextMenu, entry, 0)
 		end
 
 		contextMenu.updateDone()

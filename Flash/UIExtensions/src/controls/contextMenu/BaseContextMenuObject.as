@@ -8,11 +8,12 @@ package controls.contextMenu
 		public var parentCM:IContextMenuObject;
 		public var childCM:IContextMenuObject;
 
+		private var _depth:int = 0;
+		public function get depth():int { return this._depth; }
+		public function set depth(v:int):void { this._depth = v; }
+
 		private var _isOpen:Boolean = false;
-		public function BaseContextMenuObject()
-		{
-			super();
-		}
+
 		public function get isOpen():Boolean
 		{
 			return _isOpen;
@@ -51,6 +52,11 @@ package controls.contextMenu
 		{
 			this.parentCM = parentCMObject;
 			this.childCM = childCMObject;
+		}
+
+		public function BaseContextMenuObject()
+		{
+			super();
 		}
 	}
 }

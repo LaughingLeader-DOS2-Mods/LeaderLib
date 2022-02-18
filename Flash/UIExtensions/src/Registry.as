@@ -44,7 +44,8 @@ package
 			if(_canCallExternally)
 			{
 				args.unshift(name);
-				return ExternalInterface.call.apply(null, args);
+				ExternalInterface.call.apply(null, args);
+				return true;
 			} else {
 				trace(name);
 			}
@@ -70,6 +71,25 @@ package
 			}
 			trace("Failed to find class with path: " + path);
 			return null;
+		}
+
+		public static function Log(msg:String, ...args:Array) : void
+		{
+			try
+			{
+				var len:uint = args.length;
+				for(var i:uint=0; i < len; i++)
+				{
+					msg = msg.replace("%s", String(args[i]));
+				}
+			}
+			catch(e:*) {
+				trace(e);
+			}
+			if (!ExtCall("LeaderLib_UIAssert", msg))
+			{
+				trace(msg);
+			}
 		}
 	}
 }

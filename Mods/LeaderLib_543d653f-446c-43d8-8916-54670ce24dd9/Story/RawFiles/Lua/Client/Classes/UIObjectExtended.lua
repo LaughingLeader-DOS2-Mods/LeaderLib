@@ -46,6 +46,14 @@ end
 
 UIObjectExtended.__index = GetIndex
 
+local FunctionParameters = {
+	ShouldBeVisible = true,
+	OnVisibilityChanged = true,
+	OnInitialized = true,
+	OnTick = true,
+	SetPosition = true,
+}
+
 ---@param params UIObjectExtendedSettings
 function UIObjectExtended:Create(params)
 	---@type UIObjectExtended
@@ -54,7 +62,22 @@ function UIObjectExtended:Create(params)
 	}
 	if type(params) == "table" then
 		for k,v in pairs(params) do
-			this[k] = v
+			if FunctionParameters[k] then
+				local t = type(v)
+				if t ~= "function" then
+					fprint(LOGLEVEL.ERROR, "[LeaderLib:UIObjectExtended] Parameters [%s] should be a function, but it is a [%s].", k, t)
+					--In case "ShouldBeVisible" is true/false, return the value in a wrapper function instead.
+					if t ~= "nil" then
+						this[k] = function ()
+							return v
+						end
+					end
+				else
+					this[k] = v
+				end
+			else
+				this[k] = v
+			end
 		end
 	end
 	setmetatable(this, UIObjectExtended)

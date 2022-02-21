@@ -59,6 +59,9 @@ package controls.contextMenu
 				this.arrow_mc.rotation = 0;
 			}
 		}
+
+		public static var EntryHeight:Number = 33;
+		public static var EntryWidth:Number = 245;
 		
 		public function ContextMenuEntry(parentCM:ContextMenuMC)
 		{
@@ -104,7 +107,7 @@ package controls.contextMenu
 			this.text_txt.textColor = this.deSelectedColor;
 			this.text_txt.htmlText = this.text;
 			this.close();
-			Registry.Log("[ContextMenuEntry.clearHovered] id(%s)", this.actionID);
+			//Registry.Log("[ContextMenuEntry.clearHovered] id(%s)", this.actionID);
 		}
 		
 		public function deselectElement() : void
@@ -190,12 +193,12 @@ package controls.contextMenu
 			{
 				this.arrow_mc.visible = false;
 			}
-			Registry.Log("[%s] close(%s) isOpen(%s)", this, force, this.isOpen);
+			//Registry.Log("[%s] close(%s) isOpen(%s)", this, force, this.isOpen);
 		}
 
 		public function open(targetX:Number=0, targetY:Number=0) : void
 		{
-			Registry.Log("[%s] open(%s, %s) ", this, targetX, targetY);
+			//Registry.Log("[%s] open(%s, %s) ", this, targetX, targetY);
 			if(this.childCM && !this.childCM.isOpen)
 			{
 				this.childCM.side = this.side;
@@ -246,6 +249,16 @@ package controls.contextMenu
 			this.addEventListener(MouseEvent.MOUSE_DOWN,this.buttonDown);
 			this.addEventListener(MouseEvent.MOUSE_OVER,this.buttonOver);
 			this.addEventListener(MouseEvent.MOUSE_OUT,this.buttonOut, false, 99);
+
+			if(this.height > EntryHeight)
+			{
+				EntryHeight = this.height;
+			}
+
+			if(this.width > EntryWidth)
+			{
+				EntryWidth = this.width;
+			}
 		}
 
 		override public function toString():String

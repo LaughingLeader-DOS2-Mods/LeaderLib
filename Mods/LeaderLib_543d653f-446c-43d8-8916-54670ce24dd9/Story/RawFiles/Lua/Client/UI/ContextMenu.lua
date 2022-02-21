@@ -587,6 +587,7 @@ local function AddEntryMC(targetContextMenu, entry, depth)
 	if not entry then
 		return
 	end
+	entry:Update()
 	_actionMap[entry.ID] = entry.Callback
 	local index = targetContextMenu.addEntry(entry.ID, entry.UseClickSound, entry:GetDisplayName(), entry.Disabled, entry.IsLegal, entry.Handle, entry:GetTooltip())
 	local menuItem = targetContextMenu.list.content_array[index]

@@ -1,6 +1,7 @@
 ---@class ContextMenuActionSettings
 ---@field ID string
 ---@field ShouldOpen ShouldOpenContextMenuCallback
+---@field OnUpdate fun(self:ContextMenuAction):void Called before this action is added to the context menu. Use it to set Disabled/Legal etc.
 ---@field Callback ContextMenuActionCallback
 ---@field Visible boolean
 ---@field DisplayName string|TranslatedString
@@ -96,6 +97,12 @@ function ContextMenuAction:GetCanOpen(contextMenu, x, y)
 		return self.ShouldOpen(contextMenu, x, y) == true
 	end
 	return false
+end
+
+function ContextMenuAction:Update()
+	if self.OnUpdate then
+		self:OnUpdate()
+	end
 end
 
 function ContextMenuAction:GetAsEntry()

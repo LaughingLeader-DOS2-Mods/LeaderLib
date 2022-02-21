@@ -28,7 +28,7 @@ package controls.contextMenu
 
 		public function setActiveSubmenu(sub:IContextMenuObject) : void
 		{
-			Registry.Log("setActiveSubmenu(%s) depth(%s) currentDepth(%s) this.activeSubmenu(%s)", sub, sub.depth, this.activeSubmenu ? this.activeSubmenu.depth : -1, this.activeSubmenu);
+			//Registry.Log("setActiveSubmenu(%s) depth(%s) currentDepth(%s) this.activeSubmenu(%s)", sub, sub.depth, this.activeSubmenu ? this.activeSubmenu.depth : -1, this.activeSubmenu);
 			if(this.activeSubmenu != null && sub.depth <= this.activeSubmenu.depth)
 			{
 				this.activeSubmenu.close(true);

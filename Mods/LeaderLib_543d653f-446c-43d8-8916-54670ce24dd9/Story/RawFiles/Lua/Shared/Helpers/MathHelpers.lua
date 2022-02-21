@@ -335,8 +335,62 @@ end
 ---@param toWidth number
 ---@param toHeight number
 ---@return number,number
-function Game.Math.ConvertScreenCoordinates(fromX, fromY, fromWidth, fromHeight, toWidth, toHeight)
+function GameHelpers.Math.ConvertScreenCoordinates(fromX, fromY, fromWidth, fromHeight, toWidth, toHeight)
     local newX = fromX / fromWidth * toWidth
     local newY = fromY / fromHeight * toHeight
     return newX, newY
+end
+
+---@class EulerAngle
+---@field X number
+---@field Y number
+---@field Z number
+
+local cos = math.cos
+local sin = math.sin
+local arccos = math.acos
+local arcsin = math.asin
+local arctan = math.atan
+
+---Convert xyz angle values to a rotation matrix.
+---@param x number
+---@param y number
+---@param z number
+---@return number[]
+function GameHelpers.Math.XYZToRotationMatrix(x, y, z)
+    local cy,cx,cz = cos(y), cos(x), cos(z)
+    local sy,sx,sz = sin(y), sin(x), sin(z)
+    local rot = {
+        cy*cz,
+        sx*sy*cz - sz*cx,
+        sy*cx*cz + sx*sz,
+        sz*cy,
+        sx*sy*sz + cx*cz,
+        sy*sz*cx - sx*cz,
+        -sy,
+        sx*cy,
+        cx*cy,
+    }
+    return rot
+end
+
+---Convert an {X,Y,Z} table using euler angle values to a rotation matrix.
+---@param euler number[]|Vector3
+---@return number[]
+function GameHelpers.Math.EulerToRotationMatrix(euler)
+    return GameHelpers.Math.XYZToRotationMatrix(table.unpack(euler))
+end
+
+---@param rot number[]
+---@return number[]
+function GameHelpers.Math.RotationMatrixToEuler(rot)
+    local beta = -arcsin(rot[7])
+    local alpha = arctan(rot[8]/cos(beta), rot[9]/cos(beta))
+    local gamma = arctan(rot[4]/cos(beta), rot[1]/cos(beta))
+    local euler = {
+        beta,
+        alpha,
+        gamma,
+    }
+    return euler
 end

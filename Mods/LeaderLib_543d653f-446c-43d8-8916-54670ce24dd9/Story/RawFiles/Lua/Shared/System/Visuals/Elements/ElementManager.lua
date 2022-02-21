@@ -1,8 +1,10 @@
-if VisualManager == nil then
-	VisualManager = {}
-end
+Ext.Require("Shared/System/Visuals/Elements/Classes/VisualResourceData.lua")
+Ext.Require("Shared/System/Visuals/Elements/Classes/VisualElementData.lua")
 
-VisualManager.VisualSlot = {
+---@class LeaderLibVisualElementManager
+local ElementManager = {}
+
+ElementManager.VisualSlot = {
 	Helmet = 1,
 	Head = 2,
 	Torso = 3,
@@ -13,8 +15,9 @@ VisualManager.VisualSlot = {
 	Extra1 = 8,
 	Extra2 = 9
 }
+Classes.Enum:Create(ElementManager.VisualSlot)
 
-VisualManager.Slot = {
+ElementManager.Slot = {
 	Helmet = "Helmet",
 	Breast = "Breast",
 	Leggings = "Leggings",
@@ -31,7 +34,7 @@ VisualManager.Slot = {
 	Overhead = "Overhead",
 }
 
-VisualManager.ArmorType = {
+ElementManager.ArmorType = {
 	None = "None",
 	Cloth = "Cloth",
 	Leather = "Leather",
@@ -39,44 +42,38 @@ VisualManager.ArmorType = {
 	Plate = "Plate",
 	Robe = "Robe",
 }
+---@alias ArmorType string|'"None"'|'"Cloth"'|'"Leather"'|'"Mail"'|'"Plate"'|'"Robe"'
 
-if VisualManager.Register == nil then
-	VisualManager.Register = {}
+if ElementManager.Register == nil then
+	ElementManager.Register = {}
 end
 
-if VisualManager.Events == nil then
-	VisualManager.Events = {}
-end
-
----@alias VisualSetUUID string
----@alias ArmorType string
-
-if VisualManager.Data == nil then
-	---@type table<VisualSetUUID, VisualElementData>
-	VisualManager.Data = {}
+if ElementManager.Data == nil then
+	---@type table<string, VisualElementData>
+	ElementManager.Data = {}
 end
 
 ---@param visualSet string
 ---@param data VisualElementData
-function VisualManager.Register.Visuals(visualSet, data)
-	VisualManager.Data[visualSet] = data
+function ElementManager.Register.Visuals(visualSet, data)
+	ElementManager.Data[visualSet] = data
 	data.VisualSet = visualSet
 end
 
 ---@param char EsvCharacter
 ---@param item EsvItem
 ---@param equipped boolean
-function VisualManager.Events.OnEquipmentChanged(char,item,equipped)
+function ElementManager.OnEquipmentChanged(char,item,equipped)
 	if char == nil or item == nil then
 		return false
 	end
 	if item.ItemType == "Armor" and char.RootTemplate ~= nil then
 		local visual = char.RootTemplate.VisualTemplate
 		if not StringHelpers.IsNullOrEmpty(visual) then
-			local data = VisualManager.Data[visual]
+			local data = ElementManager.Data[visual]
 			if data ~= nil and data.OnEquipmentChanged ~= nil then
 				-- Hidden Helmet
-				if equipped and (item.Stats ~= nil and item.Stats.Slot == VisualManager.Slot.Helmet) and ObjectGetFlag(char.MyGuid, "LeaderLib_HelmetHidden") == 1 then
+				if equipped and (item.Stats ~= nil and item.Stats.Slot == ElementManager.Slot.Helmet) and ObjectGetFlag(char.MyGuid, "LeaderLib_HelmetHidden") == 1 then
 					equipped = false
 				end
 				local b,result = xpcall(data.OnEquipmentChanged, debug.traceback, data, char, item, equipped)
@@ -92,14 +89,14 @@ RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)
 	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
 		return
 	end
-	VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), true)
+	ElementManager.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), true)
 end)
 
 RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char)
 	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
 		return
 	else
-		VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
+		ElementManager.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
 	end
 end)
 
@@ -115,7 +112,7 @@ RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)
 		local itemData = GameHelpers.Ext.CreateItemTable(item)
 		CCItemData[StringHelpers.GetUUID(item)] = itemData
 	end
-	VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), true)
+	ElementManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), true)
 end, true)
 
 RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char)
@@ -124,7 +121,7 @@ RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char
 		if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
 			local itemData = CCItemData[item]
 			if itemData then
-				VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), itemData, false)
+				ElementManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), itemData, false)
 				CCItemData[item] = nil
 			else
 				return
@@ -133,7 +130,7 @@ RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char
 			return
 		end
 	else
-		VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
+		ElementManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
 	end
 end, true) ]]
 
@@ -154,11 +151,13 @@ Ext.RegisterNetListener("LeaderLib_OnHelmetToggled", function(cmd, payload)
 			end
 			if item ~= nil then
 				if data.State == 1 then
-					VisualManager.Events.OnEquipmentChanged(char, item, true)
+					ElementManager.Events.OnEquipmentChanged(char, item, true)
 				else
-					VisualManager.Events.OnEquipmentChanged(char, item, false)
+					ElementManager.Events.OnEquipmentChanged(char, item, false)
 				end
 			end
 		end
 	end
 end)
+
+VisualManager.Elements = ElementManager

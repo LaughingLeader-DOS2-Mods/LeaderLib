@@ -182,3 +182,18 @@ function GameHelpers.Stats.GetItemColor(name, asMaterialValues)
 	end
 	return entry
 end
+
+---@param id string
+---@param statType ?StatType
+---@return boolean
+function GameHelpers.Stats.Exists(id, statType)
+	if statType then
+		assert(IsStatTypeValid(statType), "statType must be one of the following: Armor|DeltaMod|Object|Potion|Shield|SkillData|StatusData|Weapon")
+		_GetCachedStatType(statType)
+		local t = _statNameToType[id]
+		return t ~= nil
+	else
+		local b,stat = pcall(Ext.GetStat, id)
+		return b and stat ~= nil
+	end
+end

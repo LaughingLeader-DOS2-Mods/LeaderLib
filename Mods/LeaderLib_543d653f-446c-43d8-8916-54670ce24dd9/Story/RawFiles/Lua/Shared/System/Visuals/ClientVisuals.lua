@@ -25,6 +25,7 @@
 ---@field IsShadowProxy boolean
 ---@field AllowReceiveDecalWhenAnimated boolean
 
+
 ---@class LeaderLibClientVisualOptions
 --- @field Matrix number[] Size 16 table of matrices.
 --- @field Rotate number[] Size 9 table of matrices.

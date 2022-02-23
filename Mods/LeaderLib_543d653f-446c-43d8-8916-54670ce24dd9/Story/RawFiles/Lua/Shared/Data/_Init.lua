@@ -896,6 +896,7 @@ Data.UIType = {
 	optionsInput = 13,
 	overhead = 5,
 	overviewMap = 112,
+	panelSelect_c = 83,
 	partyInventory = 116,
 	partyInventory_c = 142,
 	partyManagement_c = 82,

@@ -215,7 +215,7 @@ RegisterListener("BeforeLuaReset", function()
 	end
 end)
 
-RegisterTickListener(function (e)
+local function OnTick(e)
 	local length = #_registeredUIArray
 	for i=1,length do
 		local ui = _registeredUIArray[i]
@@ -224,7 +224,9 @@ RegisterTickListener(function (e)
 			ui:OnTick(e)
 		end
 	end
-end, true)
+end
+
+RegisterTickListener(OnTick, true)
 
 Ext.RegisterUINameCall("LeaderLib_OnEventResolution", function (ui, event, id)
 	local data = _registeredUIs[id]

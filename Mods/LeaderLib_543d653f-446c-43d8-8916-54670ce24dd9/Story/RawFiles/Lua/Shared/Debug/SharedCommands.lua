@@ -65,14 +65,14 @@ if _EXTVERSION >= 56 then
 					UIExtensions = UIExtensions.Instance,
 					CCExt = UIExtensions.CC.GetInstance(false) or "nil"
 				}
-				if Mods.LLHotbarExtension then
-					data.HotbarExt = Mods.LLHotbarExtension.HotbarExt.Instance
-				end
-				if Mods.WeaponExpansion then
-					data.WeaponExpansion = {
-						ToggleButton = Mods.WeaponExpansion.MasteryMenu.ToggleButton.Instance,
-						MasteryMenu = Mods.WeaponExpansion.MasteryMenu.Instance,
-					}
+				local callbacks = Listeners.DebugCommand.uiext
+				if callbacks then
+					for i,v in pairs(callbacks) do
+						local b,err = xpcall(v, debug.traceback, dumpType, isClient, data)
+						if not b then
+							Ext.PrintError(err)
+						end
+					end
 				end
 				for id,v in pairs(Data.UIType) do
 					if type(v) == "number" then

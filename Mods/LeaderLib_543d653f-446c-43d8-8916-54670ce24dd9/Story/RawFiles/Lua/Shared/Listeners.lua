@@ -42,6 +42,9 @@ Listeners.GetTextPlaceholder = {
 --Debug listeners
 Listeners.LuaReset = {}
 Listeners.BeforeLuaReset = {}
+---@type table<string,fun(cmd:string, isClient:boolean, ...):void>
+Listeners.DebugCommand = {}
+
 ---Called when LeaderLib finishes loading its server-side or client-side scripts.
 Listeners.Loaded = {}
 

@@ -9,12 +9,12 @@
 ---@field Icon string
 ---@field UseClickSound boolean
 ---@field Disabled boolean
----@field IsLegal boolean
+---@field IsLegal boolean Results in the label being red if true (used for actions like pickpocketing).
 ---@field StayOpen boolean
 ---@field Children ContextMenuActionSettings[]
 
 ---@class ContextMenuAction:ContextMenuActionSettings
----@field Handle any
+---@field Handle any A specific value that will be passed along to the callback on click.
 local ContextMenuAction = {
 	Type = "ContextMenuAction",
 	Visible = true,
@@ -35,9 +35,12 @@ function ContextMenuAction:Create(params)
 	---@type ContextMenuAction
 	local this = {
 		ID = "",
+		Icon = "",
+		DisplayName = "",
+		Tooltip = "",
 		ShouldOpen = nil,
 		Callback = nil,
-		Tooltip = ""
+		OnUpdate = nil
 	}
 	if type(params) == "table" then
 		for k,v in pairs(params) do

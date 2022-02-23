@@ -86,15 +86,15 @@ package LS_Classes
 			return h;
 		}
 		
-		override public function set width(param1:Number) : void
+		override public function set width(v:Number) : void
 		{
-			this.m_width = param1;
+			this.m_width = v;
 			this.updateScrollHit();
 		}
 		
-		override public function set height(param1:Number) : void
+		override public function set height(v:Number) : void
 		{
-			this.m_height = param1;
+			this.m_height = v;
 			this.updateScrollHit();
 		}
 		
@@ -112,31 +112,31 @@ package LS_Classes
 			return this.m_visibleLength;
 		}
 		
-		public function setFrameWidth(param1:Number) : *
+		public function setFrameWidth(frameWidth:Number) : void
 		{
-			this.setFrame(param1,this.container_mc.height);
+			this.setFrame(frameWidth,this.container_mc.height);
 		}
 		
-		public function setFrame(param1:Number, param2:Number) : *
+		public function setFrame(frameWidth:Number, frameHeight:Number) : void
 		{
-			this.m_width = param1;
-			this.m_height = param2;
+			this.m_width = frameWidth;
+			this.m_height = frameHeight;
 			this.updateScrollHit();
-			this.container_mc.scrollRect = new Rectangle(0,0,param1,param2);
+			this.container_mc.scrollRect = new Rectangle(0,0,frameWidth,frameHeight);
 			this.m_hasScrollRect = true;
 		}
 		
-		protected function updateScrollHit() : *
+		protected function updateScrollHit() : void
 		{
-			var val1:Sprite = null;
+			var spr:Sprite = null;
 			if(this.scrollHit_mc.numChildren == 0)
 			{
-				val1 = new Sprite();
-				val1.graphics.lineStyle(1,16777215);
-				val1.graphics.beginFill(16777215);
-				val1.graphics.drawRect(0,0,100,100);
-				val1.graphics.endFill();
-				this.scrollHit_mc.addChild(val1);
+				spr = new Sprite();
+				spr.graphics.lineStyle(1,16777215);
+				spr.graphics.beginFill(16777215);
+				spr.graphics.drawRect(0,0,100,100);
+				spr.graphics.endFill();
+				this.scrollHit_mc.addChild(spr);
 			}
 			this.scrollHit_mc.width = this.width;
 			this.scrollHit_mc.height = this.height;
@@ -161,11 +161,11 @@ package LS_Classes
 			return this.m_positionInvisibleElements;
 		}
 		
-		public function set canPositionInvisibleElements(param1:Boolean) : *
+		public function set canPositionInvisibleElements(b:Boolean) : void
 		{
-			if(this.m_positionInvisibleElements != param1)
+			if(this.m_positionInvisibleElements != b)
 			{
-				this.m_positionInvisibleElements = param1;
+				this.m_positionInvisibleElements = b;
 				this.positionElements();
 			}
 		}
@@ -179,35 +179,36 @@ package LS_Classes
 			return null;
 		}
 		
-		public function getAt(param1:Number) : MovieClip
+		public function getAt(index:Number) : MovieClip
 		{
-			if(param1 >= 0 && param1 < this.content_array.length)
+			if(index >= 0 && index < this.content_array.length)
 			{
-				return this.content_array[param1];
+				return this.content_array[index];
 			}
 			return null;
 		}
 		
-		public function getElementByListID(param1:Number) : MovieClip
+		public function getElementByListID(id:Number) : MovieClip
 		{
-			if(param1 == -1)
+			if(id == -1)
 			{
 				return null;
 			}
-			var val2:uint = 0;
-			while(val2 < this.content_array.length)
+			var i:uint = 0;
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
-				if(this.content_array[val2] && this.content_array[val2].hasOwnProperty("list_id") && this.content_array[val2].list_id == param1)
+				if(this.content_array[i] && this.content_array[i].hasOwnProperty("list_id") && this.content_array[i].list_id == id)
 				{
-					this.content_array[val2].list_pos = val2;
-					return this.content_array[val2];
+					this.content_array[i].list_pos = i;
+					return this.content_array[i];
 				}
-				val2++;
+				i++;
 			}
 			return null;
 		}
 		
-		public function selectLastElement() : *
+		public function selectLastElement() : void
 		{
 			if(this.content_array.length > 0)
 			{
@@ -215,20 +216,20 @@ package LS_Classes
 			}
 		}
 		
-		public function isLastElement(param1:MovieClip) : Boolean
+		public function isLastElement(mc:MovieClip) : Boolean
 		{
 			if(this.content_array.length > 0)
 			{
-				return param1 == this.getLastElement(false,false);
+				return mc == this.getLastElement(false,false);
 			}
 			return false;
 		}
 		
-		public function isFirstElement(param1:MovieClip) : Boolean
+		public function isFirstElement(mc:MovieClip) : Boolean
 		{
 			if(this.content_array.length > 0)
 			{
-				return param1 == this.getFirstElement(false,false);
+				return mc == this.getFirstElement(false,false);
 			}
 			return false;
 		}
@@ -303,7 +304,7 @@ package LS_Classes
 			return null;
 		}
 		
-		protected function INTSort() : *
+		protected function INTSort() : void
 		{
 			if(this.m_SortOnFieldName && this.content_array && this.content_array.length > 1)
 			{
@@ -311,28 +312,22 @@ package LS_Classes
 			}
 		}
 		
-		public function cleanUpElements() : *
+		public function cleanUpElements() : void
 		{
-			var val2:MovieClip = null;
-			var val1:uint = 0;
-			while(val1 < this.content_array.length)
+			var mc:MovieClip = null;
+			for (var i:uint = this.content_array.length; i--;)
 			{
-				val2 = this.content_array[val1];
-				if(val2)
+				mc = this.content_array[i];
+				if(mc)
 				{
-					if(val2.isUpdated)
+					if(mc.isUpdated)
 					{
-						val2.isUpdated = false;
-						val1++;
+						mc.isUpdated = false;
 					}
 					else
 					{
-						this.removeElement(val1,false);
+						this.removeElement(i,false);
 					}
-				}
-				else
-				{
-					val1++;
 				}
 			}
 			if(this.content_array.length > 0)
@@ -345,7 +340,7 @@ package LS_Classes
 			}
 		}
 		
-		public function positionElements() : *
+		public function positionElements() : void
 		{
 			if(this.content_array.length < 1)
 			{
@@ -358,7 +353,8 @@ package LS_Classes
 			var yPos:Number = this.m_topSpacing;
 			this.m_visibleLength = 0;
 			var i:uint = 0;
-			while(i < this.content_array.length)
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
 				if(this.content_array[i].visible || this.canPositionInvisibleElements)
 				{
@@ -388,144 +384,145 @@ package LS_Classes
 			}
 		}
 		
-		public function getElementWidth(param1:MovieClip) : Number
+		public function getElementWidth(mc:MovieClip) : Number
 		{
-			var val2:Number = param1.width;
-			if(param1.widthOverride != undefined && !isNaN(param1.widthOverride))
+			var mc_width:Number = mc.width;
+			if(mc.widthOverride != undefined && !isNaN(mc.widthOverride))
 			{
-				val2 = param1.widthOverride;
+				mc_width = mc.widthOverride;
 			}
 			else if(this.m_customElementWidth != -1)
 			{
-				val2 = this.m_customElementWidth;
+				mc_width = this.m_customElementWidth;
 			}
-			return val2;
+			return mc_width;
 		}
 		
-		public function getElementHeight(param1:MovieClip) : Number
+		public function getElementHeight(mc:MovieClip) : Number
 		{
-			var val2:Number = param1.height;
-			if(param1.heightOverride != undefined && !isNaN(param1.heightOverride))
+			var mc_height:Number = mc.height;
+			if(mc.heightOverride != undefined && !isNaN(mc.heightOverride))
 			{
-				val2 = param1.heightOverride;
+				mc_height = mc.heightOverride;
 			}
 			else if(this.m_customElementHeight != -1)
 			{
-				val2 = this.m_customElementHeight;
+				mc_height = this.m_customElementHeight;
 			}
-			return val2;
+			return mc_height;
 		}
 		
 		public function getContentHeight() : Number
 		{
-			var val3:MovieClip = null;
-			var val1:uint = 0;
-			var val2:int = 0;
-			for each(val3 in this.content_array)
+			var totalHeight:uint = 0;
+			var spacingVal:Number = this.EL_SPACING;
+			var mc:MovieClip = null;
+			for (var i:uint = this.content_array.length; i--;)
 			{
-				if(val3 && val3.visible)
+				mc = this.content_array[i];
+				if(mc)
 				{
-					val1 += this.getElementHeight(val3) + val2;
-					val2 = this.EL_SPACING;
+					totalHeight += this.getElementHeight(mc) + spacingVal;
 				}
 			}
-			return val1;
+			return totalHeight;
 		}
 		
-		protected function reOrderDepths() : *
+		protected function reOrderDepths() : void
 		{
-			var val1:int = 0;
 			if(this.m_forceDepthReorder)
 			{
-				val1 = this.content_array.length - 1;
-				while(val1 >= 0)
+				var mc:MovieClip = null;
+				for (var i:uint = this.content_array.length; i--;)
 				{
-					this.containerContent_mc.addChild(this.content_array[val1]);
-					val1--;
+					mc = this.content_array[i];
+					if(mc)
+					{
+						this.containerContent_mc.addChild(mc);
+					}
 				}
 			}
 		}
 		
-		public function moveElementsToPosition(param1:Number = 0.8, param2:Boolean = false) : *
+		public function moveElementsToPosition(yPos:Number = 0.8, tweenX:Boolean = false) : void
 		{
-			var val4:Object = null;
-			var val6:MovieClip = null;
+			var mc:MovieClip = null;
 			if(this.content_array.length < 1)
 			{
 				return;
 			}
-			var val3:Number = 0;
+			var tweenToY:Number = 0;
 			this.m_tweeningMcs = 0;
 			dispatchEvent(new Event("listMoveStart"));
-			var val5:uint = 0;
-			while(val5 < this.content_array.length)
+			var i:uint = 0;
+			while(i < this.content_array.length)
 			{
 				++this.m_tweeningMcs;
-				(val6 = this.content_array[val5]).tweening = true;
-				val6.tweenToY = val3;
-				this.stopElementMCPosTweens(val6);
-				val6.list_tweenY = new larTween(val6,"y",this.m_PositionTweenFunc,NaN,val3,param1,this.removeTweenState,val6.list_id);
-				if(param2 || this.m_sideSpacing != 0)
+				(mc = this.content_array[i]).tweening = true;
+				mc.tweenToY = tweenToY;
+				this.stopElementMCPosTweens(mc);
+				mc.list_tweenY = new larTween(mc,"y",this.m_PositionTweenFunc,NaN,tweenToY,yPos,this.removeTweenState,mc.list_id);
+				if(tweenX || this.m_sideSpacing != 0)
 				{
-					val6.list_tweenX = new larTween(val6,"x",this.m_PositionTweenFunc,NaN,this.m_sideSpacing,param1);
+					mc.list_tweenX = new larTween(mc,"x",this.m_PositionTweenFunc,NaN,this.m_sideSpacing,yPos);
 				}
-				val3 += this.getElementHeight(val6) + this.EL_SPACING;
-				val5++;
+				tweenToY += this.getElementHeight(mc) + this.EL_SPACING;
+				i++;
 			}
 		}
 		
-		protected function removeTweenState(param1:uint) : *
+		protected function removeTweenState(list_id:uint) : void
 		{
-			var val2:MovieClip = this.getElementByNumber("list_id",param1);
+			var mc:MovieClip = this.getElementByNumber("list_id",list_id);
 			--this.m_tweeningMcs;
 			if(this.m_tweeningMcs == 0)
 			{
 				dispatchEvent(new Event("listMoveStop"));
 			}
-			val2.dispatchEvent(new Event("elementMoveStop"));
-			val2.tweening = false;
+			mc.dispatchEvent(new Event("elementMoveStop"));
+			mc.tweening = false;
 		}
 		
-		public function moveElementToPosition(param1:Number, param2:Number) : Boolean
+		public function moveElementToPosition(index:Number, toIndex:Number) : Boolean
 		{
-			var val3:DisplayObject = null;
-			if(param1 >= 0 && param2 >= 0)
+			var mc:MovieClip = null;
+			if(index >= 0 && toIndex >= 0)
 			{
-				val3 = this.content_array[param1];
-				this.content_array.splice(param1,1);
-				this.content_array.splice(param2,0,val3);
+				mc = this.content_array[index];
+				this.content_array.splice(index,1);
+				this.content_array.splice(toIndex,0,mc);
 				this.resetListPos();
 				return true;
 			}
 			return false;
 		}
 		
-		public function moveElementToBack(param1:Number) : *
+		public function moveElementToBack(index:Number) : void
 		{
-			var val2:DisplayObject = null;
-			if(param1 >= 0 && param1 < this.content_array.length)
+			var mc:MovieClip = null;
+			if(index >= 0 && index < this.content_array.length)
 			{
-				val2 = this.content_array[param1];
-				if(val2)
+				mc = this.content_array[index];
+				if(mc)
 				{
-					this.content_array.splice(param1,1);
-					this.content_array.push(val2);
+					this.content_array.splice(index,1);
+					this.content_array.push(mc);
 					this.resetListPos();
 				}
 			}
 		}
 		
-		public function onRemovedFromStage(param1:Event) : *
+		public function onRemovedFromStage(e:Event) : void
 		{
-			var val2:MovieClip = param1.currentTarget as MovieClip;
-			if(val2)
+			var mc:MovieClip = e.currentTarget as MovieClip;
+			if(mc)
 			{
-				this.stopElementMCTweens(val2);
-				val2.removeEventListener(Event.REMOVED_FROM_STAGE,this.onRemovedFromStage);
+				this.stopElementMCTweens(mc);
+				mc.removeEventListener(Event.REMOVED_FROM_STAGE,this.onRemovedFromStage);
 			}
 		}
 		
-		public function addElement(obj:DisplayObject, reposition:Boolean = true, isSelectable:Boolean = true) : *
+		public function addElement(obj:DisplayObject, reposition:Boolean = true, isSelectable:Boolean = true) : void
 		{
 			var mc:MovieClip = obj as MovieClip;
 			this.containerContent_mc.addChild(obj);
@@ -548,40 +545,39 @@ package LS_Classes
 			}
 		}
 		
-		public function addElementOnPosition(param1:DisplayObject, param2:uint, param3:Boolean = true, param4:Boolean = true) : *
+		public function addElementOnPosition(mc:MovieClip, index:uint, bSort:Boolean = true, isSelectable:Boolean = true) : void
 		{
-			var val5:MovieClip;
-			if((val5 = param1 as MovieClip).deselectElement)
+			if(mc.deselectElement)
 			{
-				val5.deselectElement();
+				mc.deselectElement();
 			}
-			this.containerContent_mc.addChild(param1);
-			val5.list_id = this.idInc;
+			this.containerContent_mc.addChild(mc);
+			mc.list_id = this.idInc;
 			++this.idInc;
-			val5.selectable = param4;
-			this.content_array.splice(param2,0,val5);
+			mc.selectable = isSelectable;
+			this.content_array.splice(index,0,mc);
 			this.m_NeedsSorting = true;
 			this.reOrderDepths();
 			this.resetListPos();
-			if(param3)
+			if(bSort)
 			{
 				this.positionElements();
 			}
 		}
 		
-		public function addElementToFront(param1:DisplayObject, param2:Boolean = true) : *
+		public function addElementToFront(mc:MovieClip, bSort:Boolean = true) : void
 		{
-			this.containerContent_mc.addChild(param1);
-			this.content_array.unshift(param1 as MovieClip);
-			(param1 as MovieClip).list_id = ++this.idInc;
+			this.containerContent_mc.addChild(mc);
+			this.content_array.unshift(mc);
+			mc.list_id = ++this.idInc;
 			this.resetListPos();
-			if(param2)
+			if(bSort)
 			{
 				this.positionElements();
 			}
 		}
 		
-		public function resetListPos() : *
+		public function resetListPos() : void
 		{
 			var val1:uint = 0;
 			while(val1 < this.content_array.length)
@@ -591,129 +587,124 @@ package LS_Classes
 			}
 		}
 		
-		public function stopElementTweens(param1:Number) : *
+		public function stopElementTweens(index:Number) : void
 		{
-			if(param1 >= 0 && param1 < this.content_array.length)
+			if(index >= 0 && index < this.content_array.length)
 			{
-				this.stopElementMCTweens(this.content_array[param1]);
+				this.stopElementMCTweens(this.content_array[index]);
 			}
 		}
 		
-		protected function stopElementMCTweens(param1:MovieClip) : *
+		protected function stopElementMCTweens(mc:MovieClip) : void
 		{
-			if(param1)
+			if(mc)
 			{
-				this.stopElementMCPosTweens(param1);
-				this.stopElementMCAlphaTweens(param1);
-				this.stopElementMCScaleTweens(param1);
-				param1.tweening = false;
+				this.stopElementMCPosTweens(mc);
+				this.stopElementMCAlphaTweens(mc);
+				this.stopElementMCScaleTweens(mc);
+				mc.tweening = false;
 			}
 		}
 		
-		protected function stopElementMCScaleTweens(param1:MovieClip) : *
+		protected function stopElementMCScaleTweens(mc:MovieClip) : void
 		{
-			if(param1)
+			if(mc)
 			{
-				if(param1.list_tweenScaleX)
+				if(mc.list_tweenScaleX)
 				{
-					param1.list_tweenScaleX.stop();
+					mc.list_tweenScaleX.stop();
 				}
-				if(param1.list_tweenScaleY)
+				if(mc.list_tweenScaleY)
 				{
-					param1.list_tweenScaleY.stop();
-				}
-			}
-		}
-		
-		private function stopElementMCAlphaTweens(param1:MovieClip) : *
-		{
-			if(param1)
-			{
-				if(param1.list_tweenAlpha)
-				{
-					param1.list_tweenAlpha.stop();
+					mc.list_tweenScaleY.stop();
 				}
 			}
 		}
 		
-		protected function stopElementMCPosTweens(param1:MovieClip) : *
+		private function stopElementMCAlphaTweens(mc:MovieClip) : void
 		{
-			if(param1)
+			if(mc)
 			{
-				if(param1.list_tweenX)
+				if(mc.list_tweenAlpha)
 				{
-					param1.list_tweenX.stop();
-				}
-				if(param1.list_tweenY)
-				{
-					param1.list_tweenY.stop();
+					mc.list_tweenAlpha.stop();
 				}
 			}
 		}
 		
-		public function fadeOutAndRemoveElement(param1:Number, param2:Number, param3:Number, param4:Boolean = true, param5:Boolean = false) : *
+		protected function stopElementMCPosTweens(mc:MovieClip) : void
 		{
-			var _element:MovieClip = null;
-			var pos:Number = param1;
-			var fadeTime:Number = param2;
-			var delay:Number = param3;
-			var update:Boolean = param4;
-			var removeElementBefore:Boolean = param5;
+			if(mc)
+			{
+				if(mc.list_tweenX)
+				{
+					mc.list_tweenX.stop();
+				}
+				if(mc.list_tweenY)
+				{
+					mc.list_tweenY.stop();
+				}
+			}
+		}
+		
+		public function fadeOutAndRemoveElement(pos:Number, fadeTime:Number, delay:Number, update:Boolean = true, removeElementBefore:Boolean = false) : void
+		{
+			var mc:MovieClip = null;
 			if(pos >= 0 && pos < this.content_array.length)
 			{
-				_element = this.content_array[pos];
-				if(_element)
+				mc = this.content_array[pos];
+				if(mc)
 				{
-					_element.tweenDelay = new Timer(delay * 1000,1);
-					_element.tweenDelay.addEventListener(TimerEvent.TIMER_COMPLETE,function():*
+					mc.tweenDelay = new Timer(delay * 1000,1);
+					mc.tweenDelay.addEventListener(TimerEvent.TIMER_COMPLETE,function():void
 					{
-						stopElementMCAlphaTweens(_element);
-						_element.list_tweenAlpha = new larTween(_element,"alpha",m_AlphaTweenFunc,_element.alpha,0,fadeTime);
+						stopElementMCAlphaTweens(mc);
+						mc.list_tweenAlpha = new larTween(mc,"alpha",m_AlphaTweenFunc,mc.alpha,0,fadeTime);
 						if(removeElementBefore)
 						{
-							_element.list_tweenAlpha.m_FinishCallback = removeChildAfterFade;
-							_element.list_tweenAlpha.m_FinishCallbackParams = [_element];
+							mc.list_tweenAlpha.m_FinishCallback = removeChildAfterFade;
+							mc.list_tweenAlpha.m_FinishCallbackParams = [mc];
 							content_array.splice(pos,1);
 						}
 						else
 						{
-							_element.list_tweenAlpha.m_FinishCallback = removeElement;
-							_element.list_tweenAlpha.m_FinishCallbackParams = [pos,true,true,0.1];
+							mc.list_tweenAlpha.m_FinishCallback = removeElement;
+							mc.list_tweenAlpha.m_FinishCallbackParams = [pos,true,true,0.1];
 						}
 					});
 				}
 			}
 		}
 		
-		private function removeChildAfterFade(param1:MovieClip) : *
+		private function removeChildAfterFade(mc:MovieClip) : void
 		{
-			this.containerContent_mc.removeChild(param1);
+			this.containerContent_mc.removeChild(mc);
 		}
 		
-		public function removeElement(param1:Number, param2:Boolean = true, param3:Boolean = false, param4:Number = 0.3) : *
+		public function removeElement(index:Number, bSort:Boolean = true, bMoveToPosition:Boolean = false, yPosition:Number = 0.3) : void
 		{
-			var val5:MovieClip = null;
-			var val6:Number = NaN;
-			var val7:MovieClip = null;
-			if(param1 >= 0 && param1 < this.content_array.length)
+			var mc:MovieClip = null;
+			var cur_index:Number = NaN;
+			var parent_mc:MovieClip = null;
+			if(index >= 0 && index < this.content_array.length)
 			{
-				val5 = this.content_array[param1]
-				if(val5)
+				mc = this.content_array[index]
+				if(mc)
 				{
-					this.stopElementMCTweens(val5);
-					val7 = val5.parent as MovieClip;
-					if(val7)
+					this.stopElementMCTweens(mc);
+					parent_mc = mc.parent as MovieClip;
+					if(parent_mc)
 					{
-						val7.removeChild(val5);
+						parent_mc.removeChild(mc);
 					}
 				}
-				this.content_array.splice(param1,1);
-				val6 = this.currentSelection;
-				if(param1 == val6 && this.content_array.length > 0)
+				this.content_array.splice(index,1);
+				cur_index = this.currentSelection;
+				if(index == cur_index && this.content_array.length > 0)
 				{
-					if(val6 > 0)
+					if(cur_index > 0)
 					{
-						this.m_CurrentSelection = this.content_array[val6 - 1];
+						this.m_CurrentSelection = this.content_array[cur_index - 1];
 					}
 					else
 					{
@@ -729,11 +720,11 @@ package LS_Classes
 					this.m_CurrentSelection = null;
 				}
 				this.resetListPos();
-				if(param2)
+				if(bSort)
 				{
-					if(param3)
+					if(bMoveToPosition)
 					{
-						this.moveElementsToPosition(param4);
+						this.moveElementsToPosition(yPosition);
 					}
 					else
 					{
@@ -741,25 +732,25 @@ package LS_Classes
 					}
 				}
 			}
-			dispatchEvent(new Event("elementRemoved"));
+			this.dispatchEvent(new Event("elementRemoved"));
 		}
 		
-		public function removeElementByListId(param1:Number, param2:Boolean = true) : Boolean
+		public function removeElementByListId(id:Number, bSort:Boolean = true) : Boolean
 		{
-			var val3:uint = 0;
-			while(val3 < this.content_array.length)
+			var i:uint = 0;
+			while(i < this.content_array.length)
 			{
-				if(this.content_array[val3].list_id == param1)
+				if(this.content_array[i].list_id == id)
 				{
-					this.removeElement(val3,param2);
+					this.removeElement(i,bSort);
 					return true;
 				}
-				val3++;
+				i++;
 			}
 			return false;
 		}
 		
-		public function clearElements() : *
+		public function clearElements() : void
 		{
 			var mc:MovieClip = null;
 			var i:uint = 0;
@@ -779,9 +770,9 @@ package LS_Classes
 			this.m_visibleLength = -1;
 		}
 		
-		public function set elementSpacing(param1:Number) : *
+		public function set elementSpacing(v:Number) : void
 		{
-			this.EL_SPACING = param1;
+			this.EL_SPACING = v;
 			this.positionElements();
 		}
 		
@@ -790,9 +781,9 @@ package LS_Classes
 			return this.EL_SPACING;
 		}
 		
-		public function set TOP_SPACING(param1:Number) : *
+		public function set TOP_SPACING(v:Number) : void
 		{
-			this.m_topSpacing = param1;
+			this.m_topSpacing = v;
 			this.positionElements();
 		}
 		
@@ -801,9 +792,9 @@ package LS_Classes
 			return this.m_topSpacing;
 		}
 		
-		public function set SIDE_SPACING(param1:Number) : *
+		public function set SIDE_SPACING(v:Number) : void
 		{
-			this.m_sideSpacing = param1;
+			this.m_sideSpacing = v;
 			this.positionElements();
 		}
 		
@@ -817,24 +808,24 @@ package LS_Classes
 			return this.content_array.length;
 		}
 		
-		public function next() : *
+		public function next() : void
 		{
-			var val1:Number = NaN;
+			var index:Number = 0;
 			if(this.visibleLength > 1)
 			{
-				val1 = this.currentSelection;
+				index = this.currentSelection;
 				if(this.currentSelection <= 0)
 				{
-					val1 = 0;
+					index = 0;
 				}
 				if(!this.m_CurrentSelection || this.m_CurrentSelection.INTSelectNext == null || !this.m_CurrentSelection.INTSelectNext())
 				{
-					this.select(val1 + 1,false,true);
+					this.select(index + 1,false,true);
 				}
 			}
 		}
 		
-		public function previous() : *
+		public function previous() : void
 		{
 			if(this.visibleLength > 1 && (!this.m_CurrentSelection || this.m_CurrentSelection.INTSelectPrevious == null || !this.m_CurrentSelection.INTSelectPrevious()))
 			{
@@ -844,29 +835,28 @@ package LS_Classes
 		
 		public function getPreviousVisibleElement() : MovieClip
 		{
-			var val1:int = 0;
 			if(this.currentSelection > 0)
 			{
-				val1 = this.currentSelection - 1;
-				while(val1 >= 0)
+				var element:MovieClip = null;
+				for (var i:uint = this.currentSelection - 1; i--;)
 				{
-					if(this.content_array[val1] && this.content_array[val1].visible)
+					element = this.content_array[i];
+					if(element && element.visible)
 					{
-						return this.content_array[val1];
+						return element;
 					}
-					val1--;
 				}
 			}
 			return null;
 		}
 		
-		public function selectByListID(id:Number) : *
+		public function selectByListID(id:Number) : void
 		{
 			var obj_mc:MovieClip = this.getElementByListID(id);
 			this.selectMC(obj_mc);
 		}
 		
-		public function selectMC(obj_mc:MovieClip, force:Boolean = false) : *
+		public function selectMC(obj_mc:MovieClip, force:Boolean = false) : void
 		{
 			if(this.m_CurrentSelection != obj_mc || force)
 			{
@@ -901,7 +891,7 @@ package LS_Classes
 			}
 		}
 		
-		public function clearSelection() : *
+		public function clearSelection() : void
 		{
 			if(this.currentSelection != -1)
 			{
@@ -921,7 +911,7 @@ package LS_Classes
 			}
 		}
 		
-		public function select(index:Number, force:Boolean = false, forward:Boolean = true) : *
+		public function select(index:Number, force:Boolean = false, forward:Boolean = true) : void
 		{
 			var obj_mc:MovieClip = null;
 			if(this.visibleLength <= 1 && this.m_CurrentSelection && this.m_CurrentSelection.visible && !(this.currentSelection == index && force))
@@ -971,7 +961,7 @@ package LS_Classes
 			}
 		}
 		
-		public function filterShowAll() : *
+		public function filterShowAll() : void
 		{
 			var val1:uint = 0;
 			while(val1 < this.content_array.length)
@@ -983,7 +973,7 @@ package LS_Classes
 			this.m_visibleLength = -1;
 		}
 		
-		public function filterHideAll() : *
+		public function filterHideAll() : void
 		{
 			var val1:uint = 0;
 			while(val1 < this.content_array.length)
@@ -995,208 +985,215 @@ package LS_Classes
 			this.m_visibleLength = -1;
 		}
 		
-		public function filterHideBoolean(param1:String, param2:Boolean) : *
+		public function filterHideBoolean(propertyName:String, compareValue:Boolean) : void
 		{
-			var val3:Number = 0;
-			var val4:uint = 0;
-			while(val4 < this.content_array.length)
+			var totalVisible:Number = 0;
+			var i:uint = 0;
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
-				if(this.content_array[val4][param1] && this.content_array[val4][param1] == param2)
+				if(this.content_array[i][propertyName] && this.content_array[i][propertyName] == compareValue)
 				{
-					this.content_array[val4].visible = false;
-					this.content_array[val4].m_filteredObject = true;
+					this.content_array[i].visible = false;
+					this.content_array[i].m_filteredObject = true;
 				}
-				if(this.content_array[val4].visible)
+				if(this.content_array[i].visible)
 				{
-					val3++;
+					totalVisible++;
 				}
-				val4++;
+				i++;
 			}
-			this.m_visibleLength = val3;
+			this.m_visibleLength = totalVisible;
 		}
 		
-		public function filterShowBoolean(param1:String, param2:Boolean, param3:Boolean = true) : *
+		public function filterShowBoolean(propertyName:String, compareValue:Boolean, hideIfNotEqual:Boolean = true) : void
 		{
-			var val4:Number = 0;
-			var val5:uint = 0;
-			while(val5 < this.content_array.length)
+			var totalVisible:Number = 0;
+			var i:uint = 0;
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
-				if(this.content_array[val5][param1])
+				if(this.content_array[i][propertyName])
 				{
-					if(this.content_array[val5][param1] == param2)
+					if(this.content_array[i][propertyName] == compareValue)
 					{
-						this.content_array[val5].visible = true;
+						this.content_array[i].visible = true;
 					}
-					else if(param3)
+					else if(hideIfNotEqual)
 					{
-						this.content_array[val5].visible = false;
+						this.content_array[i].visible = false;
 					}
 				}
-				if(this.content_array[val5].visible)
+				if(this.content_array[i].visible)
 				{
-					val4++;
+					totalVisible++;
 				}
-				val5++;
+				i++;
 			}
-			this.m_visibleLength = val4;
+			this.m_visibleLength = totalVisible;
 		}
 		
-		public function filterBySubString(param1:String, param2:String) : *
+		public function filterBySubString(propertyName:String, compareValue:String) : void
 		{
-			var val3:Number = 0;
-			var val4:uint = 0;
-			while(val4 < this.content_array.length)
+			var totalVisible:Number = 0;
+			var i:uint = 0;
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
-				if(!this.content_array[val4].m_filteredObject && (param2 == "" || this.content_array[val4][param1].toLowerCase().indexOf(param2.toLowerCase()) != -1))
+				if(!this.content_array[i].m_filteredObject && (compareValue == "" || this.content_array[i][propertyName].toLowerCase().indexOf(compareValue.toLowerCase()) != -1))
 				{
-					this.content_array[val4].visible = true;
-					this.content_array[val4].m_filteredObject = false;
+					this.content_array[i].visible = true;
+					this.content_array[i].m_filteredObject = false;
 				}
 				else
 				{
-					this.content_array[val4].visible = false;
-					this.content_array[val4].m_filteredObject = true;
+					this.content_array[i].visible = false;
+					this.content_array[i].m_filteredObject = true;
 				}
-				if(this.content_array[val4].visible)
+				if(this.content_array[i].visible)
 				{
-					val3++;
+					totalVisible++;
 				}
-				val4++;
+				i++;
 			}
-			this.m_visibleLength = val3;
+			this.m_visibleLength = totalVisible;
 		}
 		
-		public function filterShowType(param1:String, param2:Object, param3:Boolean = true) : *
+		public function filterShowType(propertyName:String, compareValue:Object, hideIfNotEqual:Boolean = true) : void
 		{
-			var val4:Number = 0;
-			var val5:uint = 0;
-			while(val5 < this.content_array.length)
+			var totalVisible:Number = 0;
+			var i:uint = 0;
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
-				if(this.content_array[val5][param1] != null && this.content_array[val5][param1] == param2)
+				if(this.content_array[i][propertyName] != null && this.content_array[i][propertyName] == compareValue)
 				{
-					this.content_array[val5].visible = true;
-					this.content_array[val5].m_filteredObject = false;
+					this.content_array[i].visible = true;
+					this.content_array[i].m_filteredObject = false;
 				}
-				else if(param3)
+				else if(hideIfNotEqual)
 				{
-					this.content_array[val5].visible = false;
-					this.content_array[val5].m_filteredObject = true;
+					this.content_array[i].visible = false;
+					this.content_array[i].m_filteredObject = true;
 				}
-				if(this.content_array[val5].visible)
+				if(this.content_array[i].visible)
 				{
-					val4++;
+					totalVisible++;
 				}
-				val5++;
+				i++;
 			}
-			this.m_visibleLength = val4;
+			this.m_visibleLength = totalVisible;
 		}
 		
-		public function filterHideType(param1:String, param2:Object) : *
+		public function filterHideType(propertyName:String, compareValue:Object) : void
 		{
-			var val3:Number = 0;
-			var val4:uint = 0;
-			while(val4 < this.content_array.length)
+			var totalVisible:Number = 0;
+			var i:uint = 0;
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
-				if(this.content_array[val4][param1] != null && this.content_array[val4][param1] == param2)
+				if(this.content_array[i][propertyName] != null && this.content_array[i][propertyName] == compareValue)
 				{
-					this.content_array[val4].visible = false;
-					this.content_array[val4].m_filteredObject = true;
+					this.content_array[i].visible = false;
+					this.content_array[i].m_filteredObject = true;
 				}
-				if(this.content_array[val4].visible)
+				if(this.content_array[i].visible)
 				{
-					val3++;
+					totalVisible++;
 				}
-				val4++;
+				i++;
 			}
-			this.m_visibleLength = val3;
+			this.m_visibleLength = totalVisible;
 		}
 		
-		public function filterType(param1:String, param2:Object) : *
+		public function filterType(propertyName:String, compareValue:Object) : void
 		{
-			var val3:Number = 0;
-			var val4:uint = 0;
-			while(val4 < this.content_array.length)
+			var totalVisible:Number = 0;
+			var i:uint = 0;
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
-				if(!(this.content_array[val4][param1] != null && this.content_array[val4][param1] == param2))
+				if(!(this.content_array[i][propertyName] != null && this.content_array[i][propertyName] == compareValue))
 				{
-					this.content_array[val4].visible = false;
+					this.content_array[i].visible = false;
 				}
-				if(this.content_array[val4].visible)
+				if(this.content_array[i].visible)
 				{
-					val3++;
+					totalVisible++;
 				}
-				val4++;
+				i++;
 			}
-			this.m_visibleLength = val3;
+			this.m_visibleLength = totalVisible;
 		}
 		
-		public function getFirstElement(param1:Boolean = true, param2:Boolean = true) : MovieClip
+		public function getFirstElement(onlyVisible:Boolean = true, onlySelectable:Boolean = true) : MovieClip
 		{
-			var val3:uint = 0;
-			while(val3 < this.content_array.length)
-			{
-				if(this.content_array[val3])
-				{
-					if(!(param1 && !this.content_array[val3].visible))
-					{
-						if(!(param2 && this.content_array[val3].selectable == false))
-						{
-							return this.content_array[val3];
-						}
-					}
-				}
-				val3++;
-			}
-			return null;
-		}
-		
-		public function getFirstVisible(param1:Boolean = true) : MovieClip
-		{
-			return this.getFirstElement(true,param1);
-		}
-		
-		public function getLastElement(visibleOnly:Boolean = true, force:Boolean = true) : MovieClip
-		{
-			var i:int = this.content_array.length - 1;
-			while(i >= 0)
+			var i:uint = 0;
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
 				if(this.content_array[i])
 				{
-					if(!(visibleOnly && !this.content_array[i].visible))
+					if(!(onlyVisible && !this.content_array[i].visible))
 					{
-						if(!(force && this.content_array[i].selectable == false))
+						if(!(onlySelectable && this.content_array[i].selectable == false))
 						{
 							return this.content_array[i];
 						}
 					}
 				}
-				i--;
+				i++;
 			}
 			return null;
 		}
 		
-		public function getLastVisible(force:Boolean = true) : MovieClip
+		public function getFirstVisible(onlySelectable:Boolean = true) : MovieClip
 		{
-			return this.getLastElement(true,force);
+			return this.getFirstElement(true,onlySelectable);
 		}
 		
-		public function selectFirstVisible(force:Boolean = false) : *
+		public function getLastElement(visibleOnly:Boolean = true, onlySelectable:Boolean = true) : MovieClip
 		{
-			var obj_mc:MovieClip = this.getFirstVisible();
-			if(obj_mc)
+			var mc:MovieClip = null;
+			for (var i:uint = this.content_array.length; i--;)
 			{
-				this.selectMC(obj_mc,force);
+				mc = this.content_array[i];
+				if(mc)
+				{
+					if(!(visibleOnly && !mc.visible))
+					{
+						if(!(onlySelectable && mc.selectable == false))
+						{
+							return mc;
+						}
+					}
+				}
+			}
+			return null;
+		}
+		
+		public function getLastVisible(onlySelectable:Boolean = true) : MovieClip
+		{
+			return this.getLastElement(true,onlySelectable);
+		}
+		
+		public function selectFirstVisible(force:Boolean = false) : void
+		{
+			var mc:MovieClip = this.getFirstVisible();
+			if(mc)
+			{
+				this.selectMC(mc,force);
 			}
 		}
 		
-		public function sortOn(param1:Object, param2:Object = null, param3:Boolean = true) : *
+		public function sortOn(propertyName:Object, sortOptions:Object = null, reposition:Boolean = true) : void
 		{
-			this.m_SortOnFieldName = param1;
-			this.m_SortOnOptions = param2;
+			this.m_SortOnFieldName = propertyName;
+			this.m_SortOnOptions = sortOptions;
 			if(this.content_array && this.content_array.length > 1)
 			{
 				this.content_array.sortOn(this.m_SortOnFieldName,this.m_SortOnOptions);
-				if(param3)
+				if(reposition)
 				{
 					this.positionElements();
 				}
@@ -1204,21 +1201,21 @@ package LS_Classes
 				{
 					this.resetListPos();
 				}
-				dispatchEvent(new Event("listSorted"));
+				this.dispatchEvent(new Event("listSorted"));
 			}
 		}
 		
-		public function redoSort() : *
+		public function redoSort() : void
 		{
 			this.m_NeedsSorting = true;
 		}
 		
-		public function sortOnce(param1:Object, param2:Object = null, param3:Boolean = true) : *
+		public function sortOnce(propertyName:Object, sortOptions:Object = null, reposition:Boolean = true) : void
 		{
 			if(this.content_array && this.content_array.length > 1)
 			{
-				this.content_array.sortOn(param1,param2);
-				if(param3)
+				this.content_array.sortOn(propertyName,sortOptions);
+				if(reposition)
 				{
 					this.positionElements();
 				}
@@ -1226,29 +1223,29 @@ package LS_Classes
 				{
 					this.resetListPos();
 				}
-				dispatchEvent(new Event("listSorted"));
+				this.dispatchEvent(new Event("listSorted"));
 			}
 		}
 		
-		public function cursorLeft() : *
+		public function cursorLeft() : void
 		{
 		}
 		
-		public function cursorRight() : *
+		public function cursorRight() : void
 		{
 		}
 		
-		public function cursorUp() : *
+		public function cursorUp() : void
 		{
 			this.previous();
 		}
 		
-		public function cursorDown() : *
+		public function cursorDown() : void
 		{
 			this.next();
 		}
 		
-		public function cursorAccept() : *
+		public function cursorAccept() : void
 		{
 			if(this.m_CurrentSelection && this.m_CurrentSelection.onClick != null)
 			{
@@ -1257,20 +1254,15 @@ package LS_Classes
 		}
 		
 		// LeaderLib Addition
-		public function isOverlappingPosition(targetX:Number, targetY:Number, shapeTest:Boolean=true) : *
+		public function isOverlappingPosition(targetX:Number, targetY:Number, shapeTest:Boolean=true) : Boolean
 		{
-			if(this.content_array && this.content_array.length > 1)
+			var mc:MovieClip = null;
+			for (var i:uint = this.content_array.length; i--;)
 			{
-				var index:uint = 0;
-				var obj:MovieClip = null;
-				while(index < this.content_array.length)
+				mc = this.content_array[i];
+				if(mc != null && mc.hitTestPoint(targetX, targetY, shapeTest))
 				{
-					obj = this.content_array[index];
-					if(obj != null && obj.hitTestPoint(targetX, targetY, shapeTest))
-					{
-						return true;
-					}
-					index++;
+					return true;
 				}
 			}
 			return false;

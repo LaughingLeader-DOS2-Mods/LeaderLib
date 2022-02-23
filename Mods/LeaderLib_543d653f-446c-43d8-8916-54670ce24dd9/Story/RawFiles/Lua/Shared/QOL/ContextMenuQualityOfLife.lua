@@ -68,6 +68,7 @@ if isClient then
 					data[#data+1] = existingEntry
 				end
 				existingEntry.UUID = uuid
+				existingEntry.NetID = obj.NetID
 				existingEntry.DisplayName = obj.DisplayName
 
 				local serverData = CharacterServerData[uuid]

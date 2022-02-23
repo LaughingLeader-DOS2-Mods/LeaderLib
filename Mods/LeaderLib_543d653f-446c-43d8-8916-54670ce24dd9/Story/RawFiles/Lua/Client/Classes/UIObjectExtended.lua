@@ -1,3 +1,5 @@
+local _EXTVERSION = Ext.Version()
+
 ---@class UIObjectExtendedSettings
 ---@field ID string
 ---@field Layer integer
@@ -106,6 +108,43 @@ function UIObjectExtended:Reposition()
 	end
 end
 
+local _inputFlags = {}
+
+---@param inst UIObject
+function UIObjectExtended:Show(inst)
+	inst = inst or self.Instance
+	if inst then
+		if _EXTVERSION >= 56 then
+			local flags = _inputFlags[self.ID]
+			if flags then
+				for flag,b in pairs(_inputFlags[self.ID]) do
+					if not Common.TableHasEntry(inst.Flags, flag) then
+						inst.Flags[#inst.Flags+1] = flag
+					end
+				end
+				_inputFlags[self.ID] = nil
+			end
+		end
+		inst:Show()
+	end
+end
+
+---@param inst UIObject
+function UIObjectExtended:Hide(inst)
+	inst = inst or self.Instance
+	if inst then
+		if _EXTVERSION >= 56 then
+			_inputFlags[self.ID] = {}
+			for i,v in pairs(inst.Flags) do
+				if string.find(v, "PlayerInput") then
+					_inputFlags[self.ID][v] = true
+				end
+			end
+		end
+		inst:Hide()
+	end
+end
+
 ---@param b boolean
 function UIObjectExtended:SetVisible(b)
 	if b == nil then
@@ -124,12 +163,12 @@ function UIObjectExtended:SetVisible(b)
 				if self.OnVisibilityChanged then
 					self:OnVisibilityChanged(last, b)
 				end
-				inst:Show()
+				self:Show(inst)
 			else
 				if self.OnVisibilityChanged then
 					self:OnVisibilityChanged(last, b)
 				end
-				inst:Hide()
+				self:Hide(inst)
 			end
 		end
 	end
@@ -141,7 +180,7 @@ function UIObjectExtended:Initialize(setVisibility)
 	local instance = Ext.GetUI(self.ID) or Ext.GetBuiltinUI(self.SwfPath)
 	if not instance then
 		instance = Ext.CreateUI(self.ID, self.SwfPath, self.Layer, self.DefaultUIFlags)
-		instance:Hide()
+		self:Hide(instance)
 
 		if self.OnInitialized then
 			self:OnInitialized(instance)

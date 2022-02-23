@@ -9,7 +9,7 @@ package LS_Classes
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
 	
-	public class listDisplay extends MovieClip
+	public dynamic class listDisplay extends MovieClip
 	{
 		public var content_array:Array;
 		public var scrollHit_mc:MovieClip;

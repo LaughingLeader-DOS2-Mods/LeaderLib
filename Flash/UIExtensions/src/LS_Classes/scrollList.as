@@ -54,17 +54,17 @@ package LS_Classes
 			}
 		}
 		
-		private function disableDragAutoScroll(param1:MouseEvent) : *
+		private function disableDragAutoScroll(param1:MouseEvent) : void
 		{
 			this.removeEventListener(Event.ENTER_FRAME,this.onDragAutoScrollMove);
 		}
 		
-		private function enableDragAutoScroll(param1:MouseEvent) : *
+		private function enableDragAutoScroll(param1:MouseEvent) : void
 		{
 			this.addEventListener(Event.ENTER_FRAME,this.onDragAutoScrollMove);
 		}
 		
-		private function onDragAutoScrollMove(param1:Event) : *
+		private function onDragAutoScrollMove(param1:Event) : void
 		{
 			var val2:Number = NaN;
 			if(root != null && MainTimeline.Instance.isDragging)
@@ -88,17 +88,17 @@ package LS_Classes
 			return this.m_dragAutoScroll;
 		}
 		
-		override public function set TOP_SPACING(param1:Number) : *
+		override public function set TOP_SPACING(v:Number) : void
 		{
-			this.m_scrollbar_mc.m_extraSpacing = param1 * 2;
-			super.TOP_SPACING = param1;
+			this.m_scrollbar_mc.m_extraSpacing = v * 2;
+			super.TOP_SPACING = v;
 		}
 		
-		public function set setTileableBG(param1:String) : *
+		public function set setTileableBG(className:String) : void
 		{
-			var val2:Class = Registry.GetClass(param1);
-			this.m_bgTile1_mc = new val2();
-			this.m_bgTile2_mc = new val2();
+			var obj_class:Class = Registry.GetClass(className);
+			this.m_bgTile1_mc = new obj_class();
+			this.m_bgTile2_mc = new obj_class();
 			this.m_bgTile1_mc.id = 1;
 			this.m_bgTile2_mc.id = 2;
 			containerBG_mc.addChild(this.m_bgTile1_mc);
@@ -107,25 +107,25 @@ package LS_Classes
 			this.m_bgTile2_mc.y = this.m_bgTile1_mc.y + this.m_bgTile1_mc.height;
 		}
 		
-		private function updateBGPos(param1:Event) : *
+		private function updateBGPos(e:Event) : void
 		{
-			var val2:MovieClip = null;
-			var val3:MovieClip = null;
+			var top_mc:MovieClip = null;
+			var bottom_mc:MovieClip = null;
 			containerBG_mc.scrollRect = containerContent_mc.scrollRect;
 			if(this.m_bgTile1_mc && this.m_bgTile2_mc)
 			{
-				val2 = this.topBgTile;
-				val3 = this.bottomBgTile;
-				if(val3.y < this.m_scrollbar_mc.scrolledY)
+				top_mc = this.topBgTile;
+				bottom_mc = this.bottomBgTile;
+				if(bottom_mc.y < this.m_scrollbar_mc.scrolledY)
 				{
-					val2.y = val3.y + val3.height;
+					top_mc.y = bottom_mc.y + bottom_mc.height;
 				}
-				else if(val3.y > this.m_scrollbar_mc.scrolledY + height)
+				else if(bottom_mc.y > this.m_scrollbar_mc.scrolledY + height)
 				{
-					val3.y = val2.y - val3.height;
+					bottom_mc.y = top_mc.y - bottom_mc.height;
 				}
 			}
-			dispatchEvent(new Event(Event.CHANGE));
+			this.dispatchEvent(new Event(Event.CHANGE));
 			this.cullMcsToFrame();
 		}
 		
@@ -147,25 +147,26 @@ package LS_Classes
 			return this.m_bgTile2_mc;
 		}
 		
-		private function cullMcsToFrame() : *
+		private function cullMcsToFrame() : void
 		{
-			var val2:MovieClip = null;
-			var val1:uint = 0;
-			while(val1 < content_array.length)
+			var mc:MovieClip = null;
+			var i:uint = 0;
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
-				val2 = content_array[val1];
-				if(val2 && val2.elementInView && val2.elementInView is Function)
+				mc = content_array[i];
+				if(mc && mc.elementInView && mc.elementInView is Function)
 				{
-					if(val2.y + getElementHeight(val2) - this.m_TextGlowOffset > this.m_scrollbar_mc.scrolledY && val2.y + this.m_TextGlowOffset <= this.m_scrollbar_mc.scrolledY + height)
+					if(mc.y + getElementHeight(mc) - this.m_TextGlowOffset > this.m_scrollbar_mc.scrolledY && mc.y + this.m_TextGlowOffset <= this.m_scrollbar_mc.scrolledY + height)
 					{
-						val2.elementInView(val2.visible);
+						mc.elementInView(mc.visible);
 					}
 					else
 					{
-						val2.elementInView(false);
+						mc.elementInView(false);
 					}
 				}
-				val1++;
+				i++;
 			}
 		}
 		
@@ -179,11 +180,11 @@ package LS_Classes
 			return this.m_scrollbar_mc.scrolledY;
 		}
 		
-		public function set mouseWheelWhenOverEnabled(param1:Boolean) : *
+		public function set mouseWheelWhenOverEnabled(b:Boolean) : void
 		{
-			if(this.m_mouseWheelWhenOverEnabled != param1)
+			if(this.m_mouseWheelWhenOverEnabled != b)
 			{
-				this.m_mouseWheelWhenOverEnabled = param1;
+				this.m_mouseWheelWhenOverEnabled = b;
 				if(this.m_mouseWheelWhenOverEnabled)
 				{
 					this.addEventListener(MouseEvent.ROLL_OUT,this.disableMouseWheelOnOut);
@@ -197,39 +198,34 @@ package LS_Classes
 			}
 		}
 		
-		override public function selectMC(param1:MovieClip, param2:Boolean = false) : *
+		override public function selectMC(mc:MovieClip, force:Boolean = false) : void
 		{
-			var val4:MovieClip = null;
-			var val5:Number = NaN;
-			var val3:Boolean = true;
-			if(param1 && m_CurrentSelection && param1.list_pos < m_CurrentSelection.list_pos)
-			{
-				val3 = false;
-			}
-			super.selectMC(param1,param2);
+			var first_mc:MovieClip = null;
+			var mc_height:Number = NaN;
+			super.selectMC(mc,force);
 			if(this.m_scrollbar_mc.visible && this.m_allowKeepIntoView)
 			{
-				val4 = getFirstVisible();
-				if(m_CurrentSelection == val4)
+				first_mc = getFirstVisible();
+				if(m_CurrentSelection == first_mc)
 				{
 					this.m_scrollbar_mc.scrollTo(0,this.m_scrollbar_mc.m_animateScrolling);
 				}
 				else
 				{
-					val5 = getElementHeight(m_CurrentSelection);
-					this.m_scrollbar_mc.scrollIntoView(m_CurrentSelection.y,val5);
+					mc_height = getElementHeight(m_CurrentSelection);
+					this.m_scrollbar_mc.scrollIntoView(m_CurrentSelection.y,mc_height);
 				}
 			}
 		}
 		
-		override public function clearElements() : *
+		override public function clearElements() : void
 		{
 			super.clearElements();
 			this.resetScroll();
 			this.checkScrollBar();
 		}
 		
-		public function resetScroll() : *
+		public function resetScroll() : void
 		{
 			if(this.m_scrollbar_mc)
 			{
@@ -237,35 +233,35 @@ package LS_Classes
 			}
 		}
 		
-		override public function selectByOffset(param1:Number, param2:Boolean = false) : Boolean
+		override public function selectByOffset(offsetY:Number, force:Boolean = false) : Boolean
 		{
-			var val4:* = undefined;
-			var val5:MovieClip = null;
-			var val6:Number = NaN;
-			var val3:Boolean = false;
-			if(param2)
+			if(force)
 			{
-				return super.selectByOffset(param1);
+				return super.selectByOffset(offsetY);
 			}
-			param1 += TOP_SPACING;
-			param1 += this.m_scrollbar_mc.scrolledY;
-			val4 = 0;
-			while(val4 < content_array.length)
+			var mc:MovieClip = null;
+			var mc_height:Number = NaN;
+			var is_selected:Boolean = false;
+			offsetY += TOP_SPACING;
+			offsetY += this.m_scrollbar_mc.scrolledY;
+			var i:uint = 0;
+			var len:uint = this.content_array.length;
+			while(i < len)
 			{
-				val5 = content_array[val4];
-				if(val5 != null && val5.visible)
+				mc = content_array[i];
+				if(mc != null && mc.visible)
 				{
-					val6 = getElementHeight(val5);
-					if(val5.y <= param1 && val5.y + val6 > param1)
+					mc_height = getElementHeight(mc);
+					if(mc.y <= offsetY && mc.y + mc_height > offsetY)
 					{
-						val3 = true;
-						this.selectMC(val5);
+						is_selected = true;
+						this.selectMC(mc);
 						break;
 					}
 				}
-				val4++;
+				i++;
 			}
-			return val3;
+			return is_selected;
 		}
 		
 		public function get mouseWheelEnabled() : Boolean
@@ -273,26 +269,26 @@ package LS_Classes
 			return this.m_mouseWheelEnabled;
 		}
 		
-		public function set mouseWheelEnabled(param1:Boolean) : *
+		public function set mouseWheelEnabled(b:Boolean) : void
 		{
-			if(this.m_mouseWheelEnabled != param1)
+			if(this.m_mouseWheelEnabled != b)
 			{
-				this.m_mouseWheelEnabled = param1;
-				this.m_scrollbar_mc.mouseWheelEnabled = param1;
+				this.m_mouseWheelEnabled = b;
+				this.m_scrollbar_mc.mouseWheelEnabled = b;
 			}
 		}
 		
-		private function disableMouseWheelOnOut(param1:MouseEvent) : *
+		private function disableMouseWheelOnOut(e:MouseEvent) : void
 		{
 			this.m_scrollbar_mc.mouseWheelEnabled = false;
 		}
 		
-		private function enableMouseWheelOnOver(param1:MouseEvent) : *
+		private function enableMouseWheelOnOver(e:MouseEvent) : void
 		{
 			this.m_scrollbar_mc.mouseWheelEnabled = true;
 		}
 		
-		public function checkScrollBar() : *
+		public function checkScrollBar() : void
 		{
 			if(this.m_allowAutoScroll)
 			{
@@ -303,35 +299,35 @@ package LS_Classes
 			this.m_scrollbar_mc.scrollbarVisible();
 		}
 		
-		override public function setFrameWidth(param1:Number) : *
+		override public function setFrameWidth(w:Number) : void
 		{
-			width = param1;
+			this.width = w;
 			this.calculateScrollRect();
 		}
 		
-		override public function setFrame(w:Number, h:Number) : *
+		override public function setFrame(w:Number, h:Number) : void
 		{
-			width = w;
-			height = h;
+			this.width = w;
+			this.height = h;
 			this.calculateScrollRect();
 		}
 		
-		public function setFrameHeight(h:Number) : *
+		public function setFrameHeight(h:Number) : void
 		{
-			height = h;
+			this.height = h;
 			this.calculateScrollRect();
 		}
 		
-		private function calculateScrollRect() : *
+		private function calculateScrollRect() : void
 		{
-			containerContent_mc.scrollRect = new Rectangle(0,0,width,height);
+			this.containerContent_mc.scrollRect = new Rectangle(0,0,width,height);
 			this.m_scrollbar_mc.x = this.m_SBSpacing + width;
 			this.m_scrollbar_mc.addContent(containerContent_mc);
 			this.checkScrollBar();
-			updateScrollHit();
+			this.updateScrollHit();
 		}
 		
-		override public function positionElements() : *
+		override public function positionElements() : void
 		{
 			if(content_array.length == 0)
 			{
@@ -363,13 +359,13 @@ package LS_Classes
 			this.cullMcsToFrame();
 		}
 		
-		public function set scrollbarSpacing(param1:Number) : *
+		public function set scrollbarSpacing(param1:Number) : void
 		{
 			this.m_SBSpacing = param1;
 			this.m_scrollbar_mc.x = width + this.m_SBSpacing + this.m_scrollbar_mc.width;
 		}
 		
-		public function set SB_SPACING(param1:Number) : *
+		public function set SB_SPACING(param1:Number) : void
 		{
 			this.m_SBSpacing = param1;
 			this.m_scrollbar_mc.x = width + this.m_SBSpacing + this.m_scrollbar_mc.width;

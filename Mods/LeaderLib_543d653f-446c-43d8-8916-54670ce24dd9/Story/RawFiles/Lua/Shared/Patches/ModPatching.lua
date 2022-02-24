@@ -8,15 +8,15 @@ local function PatchMods()
 			if Ext.Version() < 56 then
 				Ext._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
 			else
-				Ext._Internal._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil			
+				Ext._Internal._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil	
 			end
 
-			Ext.RegisterNetListener("LLWEAPONEX_SetWorldTooltipText", function (text)
+			Ext.RegisterNetListener("LLWEAPONEX_SetWorldTooltipText", function (cmd, payload)
 				local ui = Ext.GetUIByType(Data.UIType.tooltip)
 				if ui then
 					local main = ui:GetRoot()
 					if main ~= nil then
-						local text = e.Payload or ""
+						local text = payload or ""
 						if main.tf ~= nil then
 							main.tf.shortDesc = text
 							if main.tf.setText ~= nil then
@@ -31,6 +31,38 @@ local function PatchMods()
 					end
 				end
 			end)
+
+			--Harken = "e446752a-13cc-4a88-a32e-5df244c90d8b",
+			--Korvash = "3f20ae14-5339-4913-98f1-24476861ebd6",
+			local uuid = "e446752a-13cc-4a88-a32e-5df244c90d8b"
+			if ObjectExists(uuid) == 1 then
+				local faction = GetFaction(uuid)
+				if StringHelpers.IsNullOrWhitespace(faction) then
+					if GameHelpers.Character.IsPlayer(uuid) then
+						SetFaction(uuid, "Hero LLWEAPONEX_Harken")
+						if StringHelpers.IsNullOrWhitespace(GetFaction(uuid)) then
+							SetFaction(uuid, "Hero Henchman Fighter")
+						end
+					else
+						SetFaction(uuid, "Good NPC")
+					end
+				end
+			end
+			uuid = "3f20ae14-5339-4913-98f1-24476861ebd6"
+			if ObjectExists(uuid) == 1 then
+				local faction = GetFaction(uuid)
+				if StringHelpers.IsNullOrWhitespace(faction) then
+					if GameHelpers.Character.IsPlayer(uuid) then
+						SetFaction(uuid, "Hero LLWEAPONEX_Korvash")
+						if StringHelpers.IsNullOrWhitespace(GetFaction(uuid)) then
+							SetFaction(uuid, "Hero Henchman Inquisitor")
+						end
+					else
+						SetFaction(uuid, "Good NPC")
+					end
+				end
+			end
+
 			-- Ext.Events.NetMessageReceived:Subscribe(function (e)
 			-- 	if e.Channel == "LLWEAPONEX_SetWorldTooltipText" then
 			-- 		e:StopPropagation()
@@ -41,4 +73,4 @@ local function PatchMods()
 	end
 end
 
-Ext.RegisterListener("SessionLoaded", PatchMods)
+RegisterListener("Initialized", PatchMods)

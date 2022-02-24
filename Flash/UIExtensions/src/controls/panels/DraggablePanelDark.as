@@ -47,6 +47,10 @@ package controls.panels
 			this.list.m_scrollbar_mc.SND_Over = "";
 			this.list.m_scrollbar_mc.SND_Release = "UI_GM_Generic_Click_Release";
 			this.listHolder_mc.addChild(this.list);
+
+			this.close_mc.init(this.onClose);
+			this.minimize_mc.init(this.onMinimize);
+			this.initializeDrag(this.hit_mc);
 		}
 		
 		public function addText(text:String) : void
@@ -91,14 +95,6 @@ package controls.panels
 			{
 				this.bg_mc.gotoAndStop(1);
 			}
-		}
-		
-		public function frame1() : void
-		{
-			this.close_mc.init(this.onClose);
-			this.minimize_mc.init(this.onMinimize);
-			this.initializeDrag(this.hit_mc);
-			//LSPanelHelpers.makeDraggable(this.hit_mc);
 		}
 	}
 }

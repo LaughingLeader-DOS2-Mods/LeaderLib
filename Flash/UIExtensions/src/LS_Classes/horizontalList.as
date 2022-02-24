@@ -19,7 +19,7 @@ package LS_Classes
 			super();
 		}
 		
-		override public function positionElements() : *
+		override public function positionElements() : void
 		{
 			var val7:Number = NaN;
 			var val8:int = 0;
@@ -138,7 +138,7 @@ package LS_Classes
 			return this.m_holderArray[param1];
 		}
 		
-		private function cleanupUnusedRowHolders(param1:Number) : *
+		private function cleanupUnusedRowHolders(param1:Number) : void
 		{
 			var val2:uint = param1 + 1;
 			while(this.m_holderArray.length > val2)
@@ -148,7 +148,7 @@ package LS_Classes
 			}
 		}
 		
-		override public function moveElementsToPosition(param1:Number = 0.8, param2:Boolean = false) : *
+		override public function moveElementsToPosition(param1:Number = 0.8, param2:Boolean = false) : void
 		{
 			var val8:Object = null;
 			var val10:MovieClip = null;

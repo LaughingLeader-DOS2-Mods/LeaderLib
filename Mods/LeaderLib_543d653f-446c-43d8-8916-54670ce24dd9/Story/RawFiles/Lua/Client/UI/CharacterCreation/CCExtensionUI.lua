@@ -17,7 +17,7 @@ UIExtensions.CC = CCExt
 local CharacterCreation = Classes.UIWrapper:CreateFromType(Data.UIType.characterCreation, {ControllerID = Data.UIType.characterCreation_c, IsControllerSupported = true})
 
 function CCExt.GetInstance(skipSetup)
-	local instance = Ext.GetUI(CCExt.ID)
+	local instance = Ext.GetUI(CCExt.ID) or Ext.GetBuiltinUI(CCExt.SwfPath)
 	if not instance and skipSetup ~= true then
 		instance = CCExt.SetupInstance()
 	end
@@ -104,6 +104,7 @@ function CCExt.PositionButtons(ccExt)
 		ccExt.skipTutorial_mc.y = ccRoot.CCPanel_mc.y + ccRoot.CCPanel_mc.armourBtnHolder_mc.y + ccRoot.CCPanel_mc.armourBtnHolder_mc.armourBtn_mc.y + ccRoot.CCPanel_mc.armourBtnHolder_mc.armourBtn_mc.height + ccExt.skipTutorial_mc.height + 12
 
 		ccExt.presetButton_mc.visible = _EXTVERSION >= 56
+		ccExt.skipTutorial_mc.visible = true
 	end
 end
 
@@ -271,6 +272,7 @@ Ext.RegisterNetListener("LeaderLib_EnableSkipTutorialUI", function (cmd, payload
 	local this = CCExt.Root
 	if this then
 		this.skipTutorial_mc.isEnabled = CCExt.IsHost
+		this.skipTutorial_mc.visible = true
 	end
 end)
 
@@ -305,5 +307,7 @@ RegisterListener("RegionChanged", function (region, state, levelType)
 			CCExt.SetupInstance(true)
 			UpdateVisibility()
 		end
+	elseif CCExt.Visible then
+		DestroyInstance()
 	end
 end)

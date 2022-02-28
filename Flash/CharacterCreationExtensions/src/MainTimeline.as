@@ -55,6 +55,9 @@ package
 
 			this.presetButton_mc.init();
 			this.skipTutorial_mc.init();
+
+			this.presetButton_mc.visible = false;
+			this.skipTutorial_mc.visible = false;
 		}
 
 		public function onEventResolution(w:int, h:int) : *

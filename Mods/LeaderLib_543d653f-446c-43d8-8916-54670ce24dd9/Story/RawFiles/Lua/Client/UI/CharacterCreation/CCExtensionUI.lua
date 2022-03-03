@@ -66,7 +66,10 @@ RegisterListener("LuaReset", function()
 end)
 
 local function GetCCVisibility()
-	local cc = Ext.GetUIByType(Vars.ControllerEnabled and Data.UIType.characterCreation_c or Data.UIType.characterCreation)
+	if Vars.ControllerEnabled then
+		return false
+	end
+	local cc = Ext.GetUIByType(Data.UIType.characterCreation)
 	if cc then
 		local this = cc:GetRoot()
 		if this and this.isFinished == true then
@@ -169,6 +172,9 @@ function CCExt.SetupSkipTutorialButton(this)
 end
 
 function CCExt.SetupInstance(force)
+	if Vars.ControllerEnabled then
+		force = false
+	end
 	local visible = force or GetCCVisibility()
 	if visible then
 		local instance = Ext.GetUI(CCExt.ID) or Ext.GetBuiltinUI(CCExt.SwfPath)

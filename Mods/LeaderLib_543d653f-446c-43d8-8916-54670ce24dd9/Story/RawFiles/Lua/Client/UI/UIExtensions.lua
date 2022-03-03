@@ -455,13 +455,13 @@ local function SetVisibility(b)
 	local instance = UIExtensions.GetInstance()
 	if not b then
 		if instance then
-			instance:Hide()
+			Classes.UIObjectExtended.Hide(UIExtensions, instance)
 		end
 		UIExtensions.Visible = false
 	else
 		if UIExtensions.Visible ~= true then
 			if instance then
-				instance:Show()
+				Classes.UIObjectExtended.Show(UIExtensions, instance)
 			end
 		end
 		UIExtensions.Visible = true

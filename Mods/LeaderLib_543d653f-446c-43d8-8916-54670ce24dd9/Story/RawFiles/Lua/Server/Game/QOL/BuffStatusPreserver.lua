@@ -10,7 +10,7 @@ BuffStatusPreserver.Enabled = function()
 end
 BuffStatusPreserver.NextBuffStatus = {}
 
-BuffStatusPreserver.IgnoreStatusTypes = {
+BuffStatusPreserver.IgnoredStatusTypes = {
 	HEAL = true,
 	HEAL_SHARING = true,
 	HEAL_SHARING_CASTER = true,
@@ -20,10 +20,32 @@ BuffStatusPreserver.IgnoreStatusTypes = {
 	GUARDIAN_ANGEL = true,
 }
 
+BuffStatusPreserver.IgnoredStatuses = {
+	APOTHEOSIS = true,
+	ASCENDANT = true,
+	DOUBLE_DAMAGE = true,
+	SOURCE_REPLENISH = true,
+	SHED_SKIN = true,
+	QUEST = function(id) return string.find(string.lower(id), "quest") ~= nil end,
+	STORY = function(id) return string.find(string.lower(id), "story") ~= nil end,
+}
+
+local function IgnoreStatus(id)
+	local ignored = BuffStatusPreserver.IgnoredStatuses
+	if ignored ~= nil then
+		if ignored == true or (type(ignored) == "function" and ignored(id))then
+			return true
+		end
+	end
+	return false
+end
+
 ---@param character EsvCharacter
 ---@param status EsvStatus
 function BuffStatusPreserver.PreserveStatus(character, status, skipCheck)
-	if status.CurrentLifeTime > 0 and (skipCheck == true or GameHelpers.Status.IsBeneficial(status.StatusId, true, BuffStatusPreserver.IgnoreStatusTypes)) then
+	if not IgnoreStatus(status.StatusId)
+	and status.CurrentLifeTime > 0 
+	and (skipCheck == true or GameHelpers.Status.IsBeneficial(status.StatusId, true, BuffStatusPreserver.IgnoredStatusTypes)) then
 		if not PersistentVars.BuffStatuses[character.MyGuid] then
 			PersistentVars.BuffStatuses[character.MyGuid] = {}
 		end
@@ -78,16 +100,20 @@ function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
 	end
 end
 
-function BuffStatusPreserver.OnStatusApplied(target, status, source, statusType)
+---@param target EsvCharacter|EsvItem
+---@param status EsvStatus
+---@param source ?EsvCharacter|EsvItem
+---@param statusType string
+---@param statusEvent StatusEventID
+function BuffStatusPreserver.OnStatusApplied(target, status, source, statusType, statusEvent)
 	if not BuffStatusPreserver.Enabled() then return end
-	if CharacterIsInCombat(target) == 0 and GameHelpers.Character.IsPlayerOrPartyMember(target) then
-		local data = BuffStatusPreserver.NextBuffStatus[target]
-		if data and data[status] then
-			BuffStatusPreserver.NextBuffStatus[target][status] = nil
-			local character = GameHelpers.GetCharacter(target)
-			if character then
-				BuffStatusPreserver.PreserveStatus(character, character:GetStatus(status), true)
-			end
+	if GameHelpers.Ext.ObjectIsCharacter(target)
+	and not GameHelpers.Character.IsInCombat(target)
+	and GameHelpers.Character.IsPlayerOrPartyMember(target) then
+		local data = BuffStatusPreserver.NextBuffStatus[target.MyGuid]
+		if data and data[status.StatusId] then
+			BuffStatusPreserver.NextBuffStatus[target.MyGuid][status] = nil
+			BuffStatusPreserver.PreserveStatus(target, status, true)
 		end
 	end
 end
@@ -101,7 +127,9 @@ function BuffStatusPreserver.OnSkillUsed(caster, skill, skillType, skillElement)
 		local props = GameHelpers.Stats.GetSkillProperties(skill)
 		if props then
 			for i,v in pairs(props) do
-				if v.Type == "Status" and GameHelpers.Status.IsBeneficial(v.Action, true, BuffStatusPreserver.IgnoreStatusTypes) then
+				if v.Type == "Status"
+				and not IgnoreStatus(v.Action)
+				and GameHelpers.Status.IsBeneficial(v.Action, true, BuffStatusPreserver.IgnoredStatusTypes) then
 					if BuffStatusPreserver.NextBuffStatus[caster] == nil then
 						BuffStatusPreserver.NextBuffStatus[caster] = {}
 					end
@@ -115,7 +143,7 @@ end
 --Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "after", BuffStatusPreserver.OnLeftCombat)
 Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", BuffStatusPreserver.OnEnteredCombat)
 Ext.RegisterOsirisListener("CharacterUsedSkill", 4, "after", BuffStatusPreserver.OnSkillUsed)
-RegisterStatusTypeListener(Vars.StatusEvent.Applied, "CONSUME", BuffStatusPreserver.OnStatusApplied)
+StatusManager.Register.Type.Applied("CONSUME", BuffStatusPreserver.OnStatusApplied)
 
 ---@private
 function BuffStatusPreserver.Disable()

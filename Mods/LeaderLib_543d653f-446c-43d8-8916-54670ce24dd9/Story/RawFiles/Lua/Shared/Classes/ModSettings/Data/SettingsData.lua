@@ -65,9 +65,10 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 		self:InvokeListenerCallbacks(flag, enabled, self.Flags[flag])
 	else
 		local existing = self.Flags[flag]
-		local changed = existing.Enabled ~= enabled
+		local changed = false
 		existing.ID = flag
-		if enabled ~= nil then
+		if enabled ~= nil and (existing.Enabled == nil or isFromFile) then
+			changed = existing.Enabled ~= enabled
 			existing.Enabled = enabled
 		end
 		if canExport ~= nil then
@@ -142,7 +143,10 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 	else
 		local existing = self.Variables[name]
 		local changed = false
-		if value ~= nil then
+		if value and not isFromFile then
+			existing.Default = value
+		end
+		if value ~= nil and (existing.Value == nil or isFromFile) then
 			changed = existing.Value ~= value
 			existing.Value = value
 		end

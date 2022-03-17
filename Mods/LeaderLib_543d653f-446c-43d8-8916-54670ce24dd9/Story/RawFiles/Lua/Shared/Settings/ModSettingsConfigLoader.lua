@@ -173,7 +173,6 @@ local function LoadModSettingsConfig(uuid, file)
 			-- 	local entries = section.Entries
 			-- end
 		end
-		InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], settings)
 		return true
 	end
 	return false
@@ -185,7 +184,6 @@ local function TryFindConfig(info)
 	return file
 end
 
---Mods/SuperEnemyUpgradeOverhaul_e21fcd37-daec-490d-baec-f6f3e83f1ac9/ModSettingsConfig.json
 function SettingsManager.LoadConfigFiles()
 	local order = Ext.GetModLoadOrder()
 	for i,uuid in pairs(order) do

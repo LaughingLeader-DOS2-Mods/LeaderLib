@@ -101,7 +101,12 @@ Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
 		setmetatable(GameSettings, Classes.LeaderLibGameSettings)
 		--SyncStatOverrides(GameSettings)
 	end
-	InvokeListenerCallbacks(Listeners.ModSettingsLoaded)
+	InvokeListenerCallbacks(Listeners.ModSettingsLoaded.All)
+	for k,v in pairs(Listeners.ModSettingsLoaded) do
+		if k ~= "All" then
+			InvokeListenerCallbacks(v)
+		end
+	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_SyncScale", function(cmd, payload)

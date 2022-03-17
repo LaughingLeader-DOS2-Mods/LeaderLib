@@ -295,10 +295,9 @@ function RemoveListener(event, callback, param)
 	end
 end
 
+local invoke = xpcall
+local messageFunc = debug.traceback
 function InvokeListenerCallbacks(callbacks, ...)
-	local invoke = xpcall
-	local messageFunc = debug.traceback
-	
 	local length = callbacks and #callbacks or 0
 	if length > 0 then
 		for i=1,length do

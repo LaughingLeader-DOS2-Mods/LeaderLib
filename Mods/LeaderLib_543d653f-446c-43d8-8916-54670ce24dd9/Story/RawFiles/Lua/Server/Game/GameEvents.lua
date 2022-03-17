@@ -122,13 +122,6 @@ end
 --Called from Osiris, Osi.LeaderLib_Initialized
 function OnLeaderLibInitialized(region)
 	OnInitialized(region)
-	-- if Ext.GetGameState() ~= "Running" then
-	-- 	if Vars.DebugMode then
-	-- 		Ext.PrintWarning("[LeaderLib:OnInitialized_CheckGameState] Game State:", Ext.GetGameState())
-	-- 	end
-	-- 	TimerCancel("Timers_LeaderLib_Initialized_CheckGameState")
-	-- 	TimerLaunch("Timers_LeaderLib_Initialized_CheckGameState", 500)
-	-- end
 end
 
 Timer.RegisterListener("Timers_LeaderLib_Initialized_CheckGameState", function ()

@@ -307,7 +307,7 @@ end
 function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 	local players = {}
 	if not isClient then
-		if SharedData.RegionData.LevelType == LEVELTYPE.GAME then
+		if SharedData.RegionData.LevelType == LEVELTYPE.GAME and Ext.OsirisIsCallable() then
 			for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
 				local player = GameHelpers.GetCharacter(db[1])
 				players[#players+1] = player
@@ -328,7 +328,7 @@ function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 		else
 			local isCC = SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
 			for _,v in pairs(Ext.GetAllCharacters()) do
-				local character = Ext.GetCharacter(v)
+				local character = GameHelpers.GetCharacter(v)
 				if character and character.IsPlayer and not isCC or (isCC and character.CharacterControl) then
 					players[#players+1] = character
 				end

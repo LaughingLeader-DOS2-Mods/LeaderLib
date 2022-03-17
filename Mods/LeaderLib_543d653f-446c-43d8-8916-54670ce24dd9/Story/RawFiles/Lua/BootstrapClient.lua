@@ -9,3 +9,9 @@ end
 Ext.RegisterNetListener("LeaderLib_SyncRanSeed", LeaderLib_SyncRanSeed)
 
 InvokeListenerCallbacks(Listeners.Loaded)
+
+Ext.RegisterListener("SessionLoaded", function()
+	if not SettingsManager.LoadedInitially then
+		LoadGlobalSettings()
+	end
+end)

@@ -54,14 +54,41 @@ function Timer.StartOneshot(timerName, delay, callback)
 	else
 		if Ext.Version() >= 56 then
 			if OneshotTimerData[timerName] == nil then
-				OneshotTimerData[timerName] = {}
+				OneshotTimerData[timerName] = {callback}
+				Timer.WaitForTick[#Timer.WaitForTick+1] = {
+					ID = timerName,
+					TargetTime = Ext.MonotonicTime() + delay,
+					Delay = delay
+				}
+			else
+				local timerData = OneshotTimerData[timerName]
+				local hasWaitForTick = false
+				for i=1,#Timer.WaitForTick do
+					local v = Timer.WaitForTick[i]
+					if v.ID == timerName then
+						v.TargetTime = Ext.MonotonicTime() + delay
+						hasWaitForTick = true
+					end
+				end
+				if not hasWaitForTick then
+					Timer.WaitForTick[#Timer.WaitForTick+1] = {
+						ID = timerName,
+						TargetTime = Ext.MonotonicTime() + delay,
+						Delay = delay
+					}
+				end
+				local alreadyAdded = false
+				for i=1,#timerData do
+					local v = timerData[i]
+					if v == callback then
+						alreadyAdded = true
+					end
+				end
+				if not alreadyAdded then
+					timerData[#timerData+1] = callback
+				end
 			end
-			table.insert(OneshotTimerData[timerName], callback)
-			Timer.WaitForTick[#Timer.WaitForTick+1] = {
-				ID = timerName,
-				TargetTime = Ext.MonotonicTime() + delay,
-				Delay = delay
-			}
+			
 		else
 			UIExtensions.StartTimer(timerName, delay, callback)
 		end
@@ -194,9 +221,6 @@ end
 
 local function OnTimerFinished(timerName)
 	if not IsClient then
-		if not Vars.Initialized then
-			LoadPersistentVars(true)
-		end
 		local data = PersistentVars.TimerData[timerName]
 		PersistentVars.TimerData[timerName] = nil
 		

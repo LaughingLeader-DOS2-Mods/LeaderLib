@@ -288,12 +288,28 @@ Features = {
 
 Importer = {
 	SetupVarsMetaTable = function(targetModTable)
-		local meta = targetModTable.Vars and getmetatable(targetModTable.Vars) or {}
-		if not meta.__index then
-			meta.__index = Vars
+		local meta = {}
+		if targetModTable.Vars ~= nil and getmetatable(targetModTable.Vars) then
+			meta = getmetatable(targetModTable.Vars)
 		end
-		if not targetModTable.Vars then
-			targetModTable.Vars = {}
+		if meta.__index == nil then
+			meta.__index = Vars
+		else
+			local lastIndexer = meta.__index
+			local indexerType = type(lastIndexer)
+			meta.__index = function (tbl, k)
+				if Vars[k] ~= nil then
+					return Vars[k]
+				end
+				if indexerType == "function" then
+					return lastIndexer(tbl, k)
+				else
+					return lastIndexer[k]
+				end
+			end
+		end
+		if targetModTable.Vars == nil then
+			rawset(targetModTable, "Vars", {})
 		end
 		setmetatable(targetModTable.Vars, meta)
 	end,
@@ -328,6 +344,7 @@ Importer = {
 		SkillListeners = true,
 		ModListeners = true,
 		Settings = true,
+		Importer = true,
 		ImportUnsafe = true,
 		Import = true,
 		CustomSkillProperties = true,
@@ -337,14 +354,13 @@ Importer = {
 			if k == "LeaderLib" then
 				return Mods.LeaderLib
 			end
-			if Importer.PrivateKeys[k] then
-				return nil
-			end
-			if additionalTable and additionalTable[k] then
-				return additionalTable[k]
-			end
-			if Mods.LeaderLib[k] then
-				return Mods.LeaderLib[k]
+			if not Importer.PrivateKeys[k] then
+				if additionalTable and additionalTable[k] then
+					return additionalTable[k]
+				end
+				if Mods.LeaderLib[k] ~= nil then
+					return Mods.LeaderLib[k]
+				end
 			end
 			if originalGetIndex then
 				return originalGetIndex(tbl, k)
@@ -371,7 +387,7 @@ function Import(targetModTable, additionalTable)
 				targetOriginalGetIndex = targetMeta.__index
 			else
 				local originalIndex = targetMeta.__index
-				targetOriginalGetIndex = function(tbl,k) 
+				targetOriginalGetIndex = function(tbl,k)
 					return originalIndex[k]
 				end
 			end

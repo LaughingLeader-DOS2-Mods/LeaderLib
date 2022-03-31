@@ -140,6 +140,12 @@ function SkipTutorial.Initialize()
 				PartyAddGold(host, gold)
 			end
 		end
+
+		Timer.StartOneshot("LeaderLib_SkipTutorial_CreateAutoSave", 5000, function ()
+			if Ext.OsirisIsCallable() then
+				AutoSave()
+			end
+		end)
 	end
 
 	--TODO Make StartTrigger another GameSettings configuration value.

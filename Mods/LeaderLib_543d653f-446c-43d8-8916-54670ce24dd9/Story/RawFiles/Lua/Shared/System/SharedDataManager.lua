@@ -450,7 +450,7 @@ else
 end
 
 function GameHelpers.Data.GetPersistentVars(modTable, createIfMissing, ...)
-	if modTable ~= nil then
+	if modTable ~= nil and Mods[modTable] then
 		if Mods[modTable].PersistentVars == nil and createIfMissing then
 			Mods[modTable].PersistentVars = {}
 		end

@@ -140,9 +140,6 @@ function LoadGlobalSettings()
 		if saved_data then
 			ParseSettings(saved_data)
 		end
-		for uuid,v in pairs(GlobalSettings.Mods) do
-			InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], v)
-		end
 		return true
 	end, debug.traceback)
 	if not b then
@@ -152,17 +149,14 @@ function LoadGlobalSettings()
 		return false
 	else
 		SettingsManager.LoadedInitially = true
-		if Ext.OsirisIsCallable() then
-			for uuid,v in pairs(GlobalSettings.Mods) do
+		local callOsiris = Ext.OsirisIsCallable()
+		for uuid,v in pairs(GlobalSettings.Mods) do
+			if callOsiris then
 				v:ApplyToGame()
 			end
+			InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], v)
 		end
 		InvokeListenerCallbacks(Listeners.ModSettingsLoaded.All, GlobalSettings)
-		for k,v in pairs(Listeners.ModSettingsLoaded) do
-			if k ~= "All" then
-				InvokeListenerCallbacks(v)
-			end
-		end
 		return result
 	end
 end

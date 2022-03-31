@@ -187,7 +187,7 @@ Ext.Require("BootstrapShared.lua")
 PersistentVars = Common.CloneTable(defaultPersistentVars, true)
 
 function LoadPersistentVars(skipCallback)
-	Common.InitializeTableFromSource(PersistentVars, defaultPersistentVars)
+	GameHelpers.PersistentVars.Update(defaultPersistentVars, PersistentVars)
 	SkillSystem.LoadSaveData()
 	if not skipCallback then
 		InvokeListenerCallbacks(Listeners.PersistentVarsLoaded)

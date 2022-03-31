@@ -114,7 +114,7 @@ local function OnInitialized(region, isRunning)
 	if isRunning == true or Ext.GetGameState() == "Running" then
 		InvokeOnInitializedCallbacks(region)
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1
-		and GameHelpers.CurrentLevelTypeEquals(LEVELTYPE.GAME) then
+		and GameHelpers.IsLevelType(LEVELTYPE.GAME) then
 			Timer.Start("LeaderLib_UnlockCharacterInventories", 10000)
 		end
 	end

@@ -114,7 +114,7 @@ end
 settings.Global.Flags.LeaderLib_AutoUnlockInventoryInMultiplayer:AddListener(function(id, enabled, data, settingsData)
 	if enabled then
 		if isClient then
-			if GameHelpers.CurrentLevelTypeEquals(LEVELTYPE.GAME) then
+			if GameHelpers.IsLevelType(LEVELTYPE.GAME) then
 				GameHelpers.Client.SetInventoryLocked(false)
 			end
 		elseif Vars.Initialized then

@@ -781,14 +781,24 @@ function GameHelpers.GetLevelType(levelName)
 	return LEVELTYPE.GAME
 end
 
----@param levelName string
 ---@param levelType LEVELTYPE
+---@param levelName ?string Optional level to use when checking.
 ---@return boolean
-function GameHelpers.IsLevelType(levelName, levelType)
-	if levelName == nil and _EXTVERSION >= 56 then
-		local level = Ext.Entity.GetCurrentLevel()
-		if level then
-			levelName = level.LevelDesc.LevelName
+function GameHelpers.IsLevelType(levelType, levelName)
+	--Assuming levelType is actually levelName and levelName is LEVELTYPE, swap the params
+	if not LEVELTYPE[levelType] and LEVELTYPE[levelName] then
+		local lt = levelName
+		levelName = levelType
+		levelType = lt
+	end
+	if levelName == nil then
+		if _EXTVERSION >= 56 then
+			local level = Ext.Entity.GetCurrentLevel()
+			if level then
+				levelName = level.LevelDesc.LevelName
+			end
+		else
+			levelName = SharedData.RegionData.Current
 		end
 	end
 	if not StringHelpers.IsNullOrEmpty(levelName) then

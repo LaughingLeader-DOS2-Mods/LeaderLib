@@ -221,7 +221,7 @@ end
 local function OnCharacterCreation(isCC, region)
 	if isCC == false then
 		DestroyInstance()
-	elseif GameHelpers.IsLevelType(region, LEVELTYPE.CHARACTER_CREATION) then
+	elseif GameHelpers.IsLevelType(LEVELTYPE.CHARACTER_CREATION, region) then
 		CCExt.SetupInstance(true)
 		UpdateVisibility()
 	end
@@ -236,7 +236,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.tutorialBox_c, "setIsCharacterCreat
 end)
 
 UI.RegisterUICreatedListener({Data.UIType.characterCreation, Data.UIType.characterCreation_c}, function (ui, this, player)
-	if GameHelpers.IsLevelType(nil, LEVELTYPE.CHARACTER_CREATION) then
+	if GameHelpers.IsLevelType(LEVELTYPE.CHARACTER_CREATION) then
 		UpdateVisibility(true)
 	end
 end)

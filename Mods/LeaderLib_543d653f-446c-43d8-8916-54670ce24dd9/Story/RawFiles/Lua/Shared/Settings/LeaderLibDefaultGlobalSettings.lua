@@ -1,3 +1,5 @@
+local isClient = Ext.IsClient()
+
 ---@type ModSettings
 local ModSettings = Classes.ModSettingsClasses.ModSettings
 local settings = ModSettings:Create("7e737d2f-31d2-4751-963f-be6ccc59cd0c")
@@ -108,3 +110,15 @@ if Ext.Version() >= 56 then
 		end
 	end)
 end
+
+settings.Global.Flags.LeaderLib_AutoUnlockInventoryInMultiplayer:AddListener(function(id, enabled, data, settingsData)
+	if enabled then
+		if isClient then
+			if GameHelpers.CurrentLevelTypeEquals(LEVELTYPE.GAME) then
+				GameHelpers.Client.SetInventoryLocked(false)
+			end
+		elseif Vars.Initialized then
+			Timer.Start("LeaderLib_UnlockCharacterInventories", 2000)
+		end
+	end
+end)

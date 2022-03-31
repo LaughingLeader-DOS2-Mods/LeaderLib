@@ -110,17 +110,17 @@ package LS_Classes
          }
       }
       
-      public function setActive(param1:Boolean) : *
+      public function setActive(b:Boolean) : void
       {
-         this.m_Active = param1;
-         this.bg_mc.visible = !param1;
+         this.m_Active = b;
+         this.bg_mc.visible = !b;
          if(this.activeBG_mc) 
          {
-            this.activeBG_mc.visible = param1;
+            this.activeBG_mc.visible = b;
          }
          if(this.text_txt)
          {
-            this.text_txt.alpha = !!param1?Number(this.textActiveAlpha):Number(this.textInActiveAlpha);
+            this.text_txt.alpha = !!b?Number(this.textActiveAlpha):Number(this.textInActiveAlpha);
          }
       }
       

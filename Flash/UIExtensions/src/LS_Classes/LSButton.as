@@ -33,6 +33,7 @@ package LS_Classes
 		public var icon_mc:MovieClip;
 		public var disabled_mc:MovieClip;
 		public var m_Disabled:Boolean = false;
+		public var bgStartFrame:uint = 0;
 		public var SND_Press:String = "";
 		public var SND_Over:String = "UI_Generic_Over";
 		public var SND_Click:String = "UI_Gen_XButton_Click";
@@ -166,7 +167,7 @@ package LS_Classes
 				{
 					this.icon_mc.alpha = this.textClickAlpha;
 				}
-				this.bg_mc.gotoAndStop(2);
+				this.bg_mc.gotoAndStop(this.bgStartFrame + 2);
 				if(this.onOverFunc != null)
 				{
 					if(this.onOverParams == null)
@@ -195,7 +196,7 @@ package LS_Classes
 			{
 				Registry.ExtCall("hideTooltip");
 			}
-			this.bg_mc.gotoAndStop(1);
+			
 			if(this.onOutFunc != null)
 			{
 				if(this.onOutParams == null)
@@ -207,6 +208,8 @@ package LS_Classes
 					this.onOutFunc(this.onOutParams);
 				}
 			}
+			this.bg_mc.gotoAndStop(this.bgStartFrame + 1);
+			
 			if(this.text_txt && !this.m_Disabled)
 			{
 				this.text_txt.alpha = this.textNormalAlpha;
@@ -235,7 +238,6 @@ package LS_Classes
 				{
 					addEventListener(MouseEvent.MOUSE_UP,this.onUp);
 				}
-				this.bg_mc.gotoAndStop(3);
 				if(this.SND_Press != null)
 				{
 					Registry.ExtCall("PlaySound",this.SND_Press);
@@ -251,6 +253,7 @@ package LS_Classes
 						this.onDownFunc(this.onDownParams);
 					}
 				}
+				this.bg_mc.gotoAndStop(this.bgStartFrame + 3);
 				if(this.text_txt)
 				{
 					this.text_txt.y = this.textY + 2;
@@ -272,7 +275,6 @@ package LS_Classes
 			{
 				removeEventListener(MouseEvent.MOUSE_UP,this.onUp);
 			}
-			this.bg_mc.gotoAndStop(2);
 			if(this.SND_Click != null)
 			{
 				Registry.ExtCall("PlaySound",this.SND_Click);
@@ -281,6 +283,7 @@ package LS_Classes
 			{
 				this.onUpFunc();
 			}
+			this.bg_mc.gotoAndStop(this.bgStartFrame + 2);
 			if(this.text_txt)
 			{
 				this.text_txt.y = this.textY;

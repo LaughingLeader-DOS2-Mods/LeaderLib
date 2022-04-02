@@ -10,7 +10,7 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 	Vars.Users[profileId] = {ID = id, Name=username}
 	if Ext.GetGameState() == "Running" then
 		if GameHelpers.IsLevelType(LEVELTYPE.GAME) and GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
-			Timer.Start("LeaderLib_UnlockCharacterInventories", 2000)
+			Timer.Start("LeaderLib_UnlockCharacterInventories", 1500)
 		end
 		local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
 		local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
@@ -31,12 +31,6 @@ end)
 
 Ext.RegisterOsirisListener("UserDisconnected", 3, "after", function(id, username, profileId)
 	Vars.Users[profileId] = nil
-end)
-
-Timer.RegisterListener("LeaderLib_UnlockCharacterInventories", function ()
-	if GameHelpers.IsLevelType(LEVELTYPE.GAME) then
-		GameHelpers.Net.Broadcast("LeaderLib_UnlockCharacterInventory")
-	end
 end)
 
 Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)

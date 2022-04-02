@@ -140,10 +140,6 @@ Ext.RegisterNetListener("LeaderLib_DisplayMessageBox", function(call, dataStr)
 	end
 end)
 
-Ext.RegisterNetListener("LeaderLib_UnlockCharacterInventory", function(cmd, payload)
-	GameHelpers.Client.SetInventoryLocked(false)
-end)
-
 Ext.RegisterNetListener("LeaderLib_AutoSortPlayerInventory", function(call, uuid)
 	--TODO No way to sort controller inventories?
 	if not Vars.ControllerEnabled then

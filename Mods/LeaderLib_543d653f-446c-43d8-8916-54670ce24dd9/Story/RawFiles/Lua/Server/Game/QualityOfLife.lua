@@ -189,3 +189,9 @@ end
 -- 		Osi.LeaderLib_Autosaving_Stop()
 -- 	end
 -- end)
+
+Timer.RegisterListener("LeaderLib_UnlockCharacterInventories", function ()
+	if GameHelpers.IsLevelType(LEVELTYPE.GAME) and Ext.GetGameState() == "Running" then
+		GameHelpers.Net.Broadcast("LeaderLib_UnlockCharacterInventory")
+	end
+end)

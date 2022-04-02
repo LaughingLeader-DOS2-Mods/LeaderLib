@@ -1,6 +1,7 @@
 ---@class LeaderLibUIWrapper
 ---@field Root FlashMainTimeline
 ---@field Instance UIObject
+---@field Visible boolean
 local UIWrapper = {
 	Type = "UIWrapper",
 	Name = "",
@@ -53,6 +54,16 @@ local function SetMeta(this)
 				if ui then
 					return ui:GetRoot()
 				end
+			elseif k == "Visible" then
+				local ui = UIWrapper.GetInstance(this)
+				if ui then
+					if _EXTVERSION >= 56 then
+						return Common.TableHasValue(ui.Flags, "OF_Visible")
+					else
+						return true
+					end
+				end
+				return false
 			end
 		end
 	})

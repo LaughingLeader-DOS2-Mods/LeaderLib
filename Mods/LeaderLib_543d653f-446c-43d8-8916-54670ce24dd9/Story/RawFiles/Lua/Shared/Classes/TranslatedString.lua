@@ -29,7 +29,7 @@ end
 ---@param handle string
 ---@param content string
 ---@return TranslatedString
-function TranslatedString:Create(handle,content)
+function TranslatedString:Create(handle, content)
 	local this =
 	{
 		Handle = handle,
@@ -50,12 +50,12 @@ function TranslatedString:WithFormat(format)
 	return self
 end
 
----@param stringKey string
+---@param key string
 ---@param fallback string|nil
 ---@return TranslatedString
-function TranslatedString:CreateFromKey(stringKey, fallback)
+function TranslatedString:CreateFromKey(key, fallback)
 	local this = {
-		Key = stringKey,
+		Key = key,
 		Content = fallback or "",
 		Handle = "",
 		Value = "",

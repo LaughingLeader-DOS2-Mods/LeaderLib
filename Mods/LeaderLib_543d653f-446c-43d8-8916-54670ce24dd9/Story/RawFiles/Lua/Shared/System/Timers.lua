@@ -285,7 +285,7 @@ if not IsClient then
 		end
 	end
 
-	---Restarts an object timers.
+	---Restarts an object timer.
 	---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
 	---@param object UUID|NETID|EsvGameObject
 	---@param delay integer
@@ -296,6 +296,43 @@ if not IsClient then
 			TimerCancel(uniqueTimerName)
 			TimerLaunch(uniqueTimerName, delay)
 		end
+	end
+
+	---Starts an Osiris timer with a unique string variance, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
+	---This is similar to an object timer, but you can set the unique string directly.
+	---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
+	---@param uniqueVariance string The string that makes this timer unique, such as a UUID.
+	---@param delay integer
+	---@param ... string|number|boolean Optional variable arguments that will be sent to the timer finished callback.
+	---@vararg string|number|boolean|table
+	function Timer.StartUniqueTimer(timerName, uniqueVariance, delay, ...)
+		if not IsClient then
+			if uniqueVariance then
+				local uniqueTimerName = string.format("%s%s", timerName, uniqueVariance)
+				local data = {...}
+				if #data > 0 then
+					Timer.StoreObjectData(uniqueTimerName, timerName, data)
+				else
+					Timer.StoreObjectData(uniqueTimerName, timerName)
+				end
+				TimerCancel(uniqueTimerName)
+				TimerLaunch(uniqueTimerName, delay)
+			else
+				fprint(LOGLEVEL.WARNING, "[LeaderLib:StartUniqueTimer] A valid object is required. Parameter (%s) is invalid!", object or "nil")
+			end
+		else
+			Ext.PrintWarning("[LeaderLib:StartUniqueTimer] This function is intended for server-side. Use Timer.StartOneshot on the client!")
+		end
+	end
+
+	---Restarts a unique timer.
+	---@param timerName string The generalized timer name.
+	---@param uniqueVariance string The string that makes this timer unique, such as a UUID.
+	---@param delay integer
+	function Timer.RestartUniqueTimer(timerName, uniqueVariance, delay)
+		local uniqueTimerName = string.format("%s%s", timerName, uniqueVariance)
+		TimerCancel(uniqueTimerName)
+		TimerLaunch(uniqueTimerName, delay)
 	end
 
 	---@private

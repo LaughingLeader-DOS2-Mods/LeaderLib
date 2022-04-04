@@ -16,17 +16,18 @@ TurnCounter.Mode = {
 ---@field Turns integer
 ---@field TargetTurns integer By default, 0 in decrement mode.
 ---@field Combat integer
----@field OutOfCombatSpeed integer|nil
----@field CountSkipDisabled boolean|nil If true, turn counting will not count a turn ending if it was skipped.
+---@field OutOfCombatSpeed ?integer
+---@field CombatOnly ?boolean If true, turn counting will only occur in combat.
+---@field CountSkipDisabled ?boolean If true, turn counting will not count a turn ending if it was skipped. Otherwise, turn delays count towards the total.
 ---@field Position number[]|nil
 ---@field Target string|nil An optional target for this counter. If set then only their turn ending will count the timer down.
+---@field Infinite boolean
 ---@field Mode TURNCOUNTER_MODE
 ---@field Data table Optional data to store in PersistentVars, such as a UUID.
 
 function TurnCounter.CleanupData(uniqueId)
 	PersistentVars.TurnCounterData[uniqueId] = nil
 end
-
 
 ---@param id string Identifier for this countdown.
 ---@param turns integer How many turns to count.
@@ -56,6 +57,7 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, par
 		TargetTurns = targetTurns,
 		Combat = combat or -1,
 		Mode = mode,
+		Infinite = false
 		--OutOfCombatSpeed = 6000
 	}
 	if params then
@@ -70,6 +72,29 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, par
 		StartTimer(uniqueId, speed)
 	end
 	TurnCounter.Started(tbl, uniqueId)
+end
+
+---@param id string Identifier for this countdown.
+---@param combatOrTarget ?integer|UUID|number[] If specified, only turn counters with this specific combat ID, target, or position will be cleared.
+function TurnCounter.ClearTurnCounter(id, combatOrTarget)
+	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+		if data.ID == id then
+			if combatOrTarget ~= nil then
+				local t = type(combatOrTarget)
+				if t == "number" then
+					if data.Combat == combatOrTarget then
+						PersistentVars.TurnCounterData[uniqueId] = nil
+					end
+				elseif t == "table" and data.Position == combatOrTarget then
+					PersistentVars.TurnCounterData[uniqueId] = nil
+				elseif data.Target == combatOrTarget then
+					PersistentVars.TurnCounterData[uniqueId] = nil
+				end
+			else
+				PersistentVars.TurnCounterData[uniqueId] = nil
+			end
+		end
+	end
 end
 
 ---@param id string Identifier for this countdown.
@@ -132,13 +157,13 @@ function TurnCounter.TickTurn(data, uniqueId)
 	local last = data.Turns
 	if data.Mode ~= TurnCounter.Mode.Increment then
 		data.Turns = data.Turns - 1
-		if data.Turns <= data.TargetTurns then
+		if not data.Infinite and data.Turns <= data.TargetTurns then
 			TurnCounter.CountdownDone(data, uniqueId, last)
 			return true
 		end
 	else
 		data.Turns = data.Turns + 1
-		if data.Turns >= data.TargetTurns then
+		if not data.Infinite and data.Turns >= data.TargetTurns then
 			TurnCounter.CountdownDone(data, uniqueId, last)
 			return true
 		end
@@ -160,7 +185,7 @@ function TurnCounter.OnTurnEnded(uuid)
 	local id = CombatGetIDForCharacter(uuid)
 	if id then
 		for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
-			if data.Combat == id and not (data.Target or data.Target == uuid) then
+			if data.Combat == id and (not data.Target or data.Target == uuid) then
 				TurnCounter.TickTurn(data, uniqueId)
 			end
 		end
@@ -184,8 +209,8 @@ function TurnCounter.OnTimerFinished(uniqueId)
 	local data = PersistentVars.TurnCounterData[uniqueId]
 	if data then
 		if not TurnCounter.TickTurn(data, uniqueId) then
-			if not GameHelpers.IsActiveCombat(data.Combat) then
-				StartTimer(uniqueId, data.OutOfCombatSpeed or TurnCounter.DefaultTimerSpeed)
+			if not GameHelpers.IsActiveCombat(data.Combat) and not data.CombatOnly then
+				Timer.Start(uniqueId, data.OutOfCombatSpeed or TurnCounter.DefaultTimerSpeed)
 			end
 		end
 	end
@@ -195,16 +220,20 @@ end
 function TurnCounter.OnCombatStarted(id)
 	local characters = GameHelpers.GetCombatCharacters(id)
 	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
-		if data.Combat == id then
-			CancelTimer(uniqueId)
-		elseif data.Position then
-			if characters then
-				local pos = Classes.Vector3(table.unpack(data.Position))
+		if data.Combat and data.Combat == id then
+			Timer.Cancel(uniqueId)
+		else
+			local pos = nil
+			if data.Position then
+				pos = data.Position
+			elseif data.Target then
+				pos = GameHelpers.Math.GetPosition(data.Target)
+			end
+			if pos and characters then
 				for i,v in pairs(characters) do
-					local pos2 = Classes.Vector3(table.unpack(v.WorldPos))
-					if pos2:Distance(pos) <= TurnCounter.CombatMinDistance then
+					if GameHelpers.Math.GetDistance(pos, v.WorldPos) <= TurnCounter.CombatMinDistance then
 						data.Combat = id
-						CancelTimer(uniqueId)
+						Timer.Cancel(uniqueId)
 						break
 					end
 				end
@@ -216,8 +245,11 @@ end
 ---@private
 function TurnCounter.OnCombatEnded(id)
 	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
-		if data.Combat == id and data.Turns > 0 then
-			StartTimer(uniqueId, data.OutOfCombatSpeed or TurnCounter.DefaultTimerSpeed)
+		if data.Combat == id then
+			data.Combat = nil
+			if not data.CombatOnly then
+				Timer.Start(uniqueId, data.OutOfCombatSpeed or TurnCounter.DefaultTimerSpeed)
+			end
 		end
 	end
 end

@@ -656,15 +656,50 @@ function GameHelpers.Character.IsImmobile(character)
 	return false
 end
 
+---Checks if a character has a specific object/party/user flag.
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param flag string|string[]
+---@return boolean
 function GameHelpers.Character.HasFlag(character, flag)
 	if not isClient and Ext.OsirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(character)
 		if uuid then
-			return ObjectGetFlag(uuid, flag) == 1
-			or PartyGetFlag(uuid, flag) == 1
-			or UserGetFlag(uuid, flag) == 1
+			local t = type(flag)
+			if t == "table" then
+				for k,v in pairs(flag) do
+					if GameHelpers.Character.HasFlag(character, v) then
+						return true
+					end
+				end
+			elseif t == "string" then
+				return ObjectGetFlag(uuid, flag) == 1
+				or PartyGetFlag(uuid, flag) == 1
+				or UserGetFlag(uuid, flag) == 1
+			else
+				error("flag parameter must be a string or table of strings.", 2)
+			end
 		end
 	end
 	return false
+end
+
+---Returns true if the target is an enemy or Friendly Fire is enabled.
+---@param target UUID|NETID|EsvCharacter|EclCharacter
+---@param attacker ?UUID|NETID|EsvCharacter|EclCharacter If not specified, then this will return true if the target is an enemy of the party.
+---@return boolean
+function GameHelpers.Character.CanAttackTarget(target, attacker)
+	target = GameHelpers.TryGetObject(target)
+	if GameHelpers.Ext.ObjectIsItem(target) then
+		return true
+	end
+	assert(GameHelpers.Ext.ObjectIsCharacter(target), "target parameter must be a UUID, NetID, or Esv/EclCharacter")
+	if target:HasTag("LeaderLib_FriendlyFireEnabled") then
+		return true
+	end
+	if not attacker then
+		return GameHelpers.Character.IsEnemyOfParty(target)
+	end
+	attacker = GameHelpers.GetCharacter(attacker)
+	assert(GameHelpers.Ext.ObjectIsCharacter(attacker), "attacker parameter must be a UUID, NetID, or Esv/EclCharacter")
+	return GameHelpers.Character.IsEnemy(target, attacker)
 end

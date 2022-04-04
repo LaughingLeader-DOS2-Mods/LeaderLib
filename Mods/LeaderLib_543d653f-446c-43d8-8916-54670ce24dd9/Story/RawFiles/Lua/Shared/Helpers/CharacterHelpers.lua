@@ -686,10 +686,11 @@ end
 ---Returns true if the target is an enemy or Friendly Fire is enabled.
 ---@param target UUID|NETID|EsvCharacter|EclCharacter
 ---@param attacker ?UUID|NETID|EsvCharacter|EclCharacter If not specified, then this will return true if the target is an enemy of the party.
+---@param allowItems ?boolean If true, this will return true if target is an item.
 ---@return boolean
-function GameHelpers.Character.CanAttackTarget(target, attacker)
+function GameHelpers.Character.CanAttackTarget(target, attacker, allowItems)
 	target = GameHelpers.TryGetObject(target)
-	if GameHelpers.Ext.ObjectIsItem(target) then
+	if allowItems and GameHelpers.Ext.ObjectIsItem(target) then
 		return true
 	end
 	assert(GameHelpers.Ext.ObjectIsCharacter(target), "target parameter must be a UUID, NetID, or Esv/EclCharacter")

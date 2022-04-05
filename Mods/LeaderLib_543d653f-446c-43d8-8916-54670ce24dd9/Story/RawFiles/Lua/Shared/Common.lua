@@ -427,7 +427,13 @@ end
 ---@param tbl table
 ---@return string
 function Common.JsonStringify(tbl)
-	return _jsonStringify(tbl)
+	local b,result = xpcall(_jsonStringify, debug.traceback, tbl)
+	if not b then
+		Ext.PrintError(result)
+		Ext.Dump(table)
+		return ""
+	end
+	return result
 end
 
 ---@param max integer

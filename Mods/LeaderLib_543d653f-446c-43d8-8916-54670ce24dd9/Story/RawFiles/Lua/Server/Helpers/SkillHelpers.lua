@@ -1,8 +1,6 @@
 if GameHelpers == nil then GameHelpers = {} end
 if GameHelpers.Skill == nil then GameHelpers.Skill = {} end
 
-
-
 local projectileCreationProperties = {
     SkillId = "String",
     CleanseStatuses = "String",
@@ -587,3 +585,20 @@ function GameHelpers.Skill.ShootZoneFromSource(skillId, source, extraParams)
 end
 
 --Mods.LeaderLib.GameHelpers.Skill.ShootZoneFromSource("Cone_SilencingStare", me.MyGuid, {PlayCastEffects=true,PlayTargetEffects=true,ApplySkillProperties=true})
+
+---Returns true if the string is an action "skill" (not actually a skill), such as sneaking or unsheathing.
+---@param skill string
+---@return boolean
+function GameHelpers.Skill.IsAction(skill)
+    local t = type(skill)
+    if t == "table" then
+        for _,v in pairs(skill) do
+            if Data.ActionSkills[skill] == true then
+                return true
+            end
+        end
+    elseif t == "string" then
+        return Data.ActionSkills[skill] == true
+    end
+    return false
+end

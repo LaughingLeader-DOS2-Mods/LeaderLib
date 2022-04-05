@@ -72,7 +72,7 @@ function TableHelpers.SanitizeTable(tbl, supportedExtraTypes, forJson)
 	end
 	for k,v in pairs(tbl) do
 		local keyType = type(k)
-		if (forJson and validKeyTypes[keyType]) or not (forJson and validTypes(keyType)) then
+		if (forJson and validKeyTypes[keyType]) or not (forJson and validTypes[keyType]) then
 			local t = type(v)
 			if validTypes[t] or (supportedExtraTypes and supportedExtraTypes[t]) then
 				if t == "table" or t == "userdata" then

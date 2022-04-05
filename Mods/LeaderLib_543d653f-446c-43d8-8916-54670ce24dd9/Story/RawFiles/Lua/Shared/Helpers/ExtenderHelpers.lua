@@ -2,6 +2,8 @@ if GameHelpers.Ext == nil then
 	GameHelpers.Ext = {}
 end
 
+local isClient = Ext.IsClient
+
 local characterStatAttributes = {
 	"Strength",
 	"Finesse",
@@ -772,10 +774,21 @@ function GameHelpers.Ext.ObjectIsItem(obj)
 	return false
 end
 
+---@param obj EsvGameObject|EclGameObject|UUID
 function GameHelpers.Ext.ObjectIsCharacter(obj)
-	if type(obj) == "userdata" then
+	local t = type(obj)
+	if t == "userdata" then
 		local meta = getmetatable(obj)
 		return meta == Data.ExtenderClass.EsvCharacter or meta == Data.ExtenderClass.EclCharacter
+	elseif t == "string" then
+		if not isClient and Ext.OsirisIsCallable() then
+			return ObjectIsCharacter(obj) == 1
+		else
+			local char = GameHelpers.GetCharacter(obj)
+			if char then
+				return true
+			end
+		end
 	end
 	return false
 end

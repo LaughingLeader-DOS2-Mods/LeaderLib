@@ -369,8 +369,8 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 end
 
 ---@param object EsvCharacter|EsvItem|EclCharacter|EclItem The character or item to get tags from.
----@param inDictionaryFormat ?boolean If true, tags will be set as tbl[tag] = true, for easier checking.
----@param addEquipmentTags ?boolean If the object is a character, all tags found on equipped items will be added to the table.
+---@param inDictionaryFormat boolean|nil If true, tags will be set as tbl[tag] = true, for easier checking.
+---@param addEquipmentTags boolean|nil If the object is a character, all tags found on equipped items will be added to the table.
 ---@return string[]
 function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 	local tags = {}
@@ -782,7 +782,7 @@ function GameHelpers.GetLevelType(levelName)
 end
 
 ---@param levelType LEVELTYPE
----@param levelName ?string Optional level to use when checking.
+---@param levelName string|nil Optional level to use when checking.
 ---@return boolean
 function GameHelpers.IsLevelType(levelType, levelName)
 	--Assuming levelType is actually levelName and levelName is LEVELTYPE, swap the params

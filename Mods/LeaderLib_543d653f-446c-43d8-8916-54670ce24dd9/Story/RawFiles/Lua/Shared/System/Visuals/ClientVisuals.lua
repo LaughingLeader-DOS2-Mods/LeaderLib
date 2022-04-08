@@ -1,5 +1,5 @@
 ---@class ExtenderClientVisualOptions
----@field Bone FixedString
+---@field Bone string
 ---@field AllowTPose boolean
 ---@field ResetScale boolean
 ---@field SyncAnimationWithParent boolean
@@ -25,18 +25,33 @@
 ---@field IsShadowProxy boolean
 ---@field AllowReceiveDecalWhenAnimated boolean
 
-
 ---@class LeaderLibClientVisualOptions
 --- @field Matrix number[] Size 16 table of matrices.
 --- @field Rotate number[] Size 9 table of matrices.
 --- @field Scale number[] Size 3 Vector3-style table.
 --- @field Translate number[] Size 3 Vector3-style table.
 
----@type table<NETID,table<FixedString, EclLuaVisualClientMultiVisual>>
+---@class EclLuaVisualClientMultiVisual
+--- @field AttachedVisualComponents ObjectHandle[]
+--- @field Effects ObjectHandle[]
+--- @field ListenForTextKeysHandle ObjectHandle
+--- @field ListeningOnTextKeys boolean
+--- @field Position Vector3
+--- @field TargetObjectHandle ObjectHandle
+--- @field TextKeyEffects table<string, table>
+--- @field Visuals table
+--- @field WeaponAttachments table[]
+--- @field WeaponBones string
+--- @field AddVisual fun(self:EclLuaVisualClientMultiVisual, id:string, options:ExtenderClientVisualOptions|nil):table
+--- @field Delete fun(self:EclLuaVisualClientMultiVisual)
+--- @field ParseFromStats fun(self:EclLuaVisualClientMultiVisual, effect:string, weaponBones:string|nil)
+--- @field AttachedVisuals ObjectHandle[]
+
+---@type table<NETID,table<string, EclLuaVisualClientMultiVisual>>
 local ActiveVisuals = {}
 
 ---@param character EclCharacter
----@param visualResource FixedString
+---@param visualResource string
 function VisualManager.GetVisualHandler(character, visualResource)
 	local characterData = ActiveVisuals[character.NetID]
 	if characterData then
@@ -46,16 +61,6 @@ function VisualManager.GetVisualHandler(character, visualResource)
 		end
 	end
 	return nil
-end
-
----@param character EclCharacter
----@param visualResource FixedString
----@param handler EclLuaVisualClientMultiVisual
-function VisualManager.StoreVisualHandler(character, visualResource, handler)
-	if  ActiveVisuals[character.NetID] == nil then
-		ActiveVisuals[character.NetID] = {}
-	end
-	ActiveVisuals[character.NetID][visualResource] = handler
 end
 
 -- VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone", Weapon=true, UseLocalTransform=true}, {Rotate=Mods.LeaderLib.Game.Math.EulerToRotationMatrix({180,0,0})})
@@ -68,7 +73,18 @@ end
 --Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "48491cef-a2de-4dec-9d65-9c6aea8a769e", {Bone="Dummy_R_Hand", Armor=true, UseLocalTransform=true})
 
 ---@param character EclCharacter
----@param visualResource FixedString
+---@param visualResource string
+---@param handler EclLuaVisualClientMultiVisual
+function VisualManager.StoreVisualHandler(character, visualResource, handler)
+	if  ActiveVisuals[character.NetID] == nil then
+		ActiveVisuals[character.NetID] = {}
+	end
+	ActiveVisuals[character.NetID][visualResource] = handler
+end
+
+---@param character EclCharacter
+---@param visualResource string
+---@return boolean
 function VisualManager.DeleteVisual(character, visualResource)
 	local handler = VisualManager.GetVisualHandler(character, visualResource)
 	if handler then
@@ -80,9 +96,9 @@ function VisualManager.DeleteVisual(character, visualResource)
 end
 
 ---@param character EclCharacter
----@param visualResource FixedString
----@param options ?ExtenderClientVisualOptions
----@param positionOptions ?LeaderLibClientVisualOptions
+---@param visualResource string
+---@param options ExtenderClientVisualOptions|nil
+---@param positionOptions LeaderLibClientVisualOptions|nil
 function VisualManager.AttachVisual(character, visualResource, options, positionOptions)
 	VisualManager.DeleteVisual(character, visualResource)
 	---@type EclLuaVisualClientMultiVisual

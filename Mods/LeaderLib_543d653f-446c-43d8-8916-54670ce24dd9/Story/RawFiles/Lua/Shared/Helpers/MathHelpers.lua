@@ -318,7 +318,7 @@ end
 ---@param r number
 ---@param g number
 ---@param b number
----@param a ?number Optional alpha
+---@param a number|nil Optional alpha
 ---@return number[]
 function GameHelpers.Math.ScaleRGB(r,g,b,a)
     if a then

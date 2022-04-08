@@ -341,7 +341,7 @@ end)
 Listeners.Tick = {}
 
 ---@param callback fun(e:GameTime):void
----@param runningOnly ?boolean
+---@param runningOnly boolean|nil
 function RegisterTickListener(callback, runningOnly)
 	if runningOnly then
 		Listeners.Tick[#Listeners.Tick+1] = function (e)

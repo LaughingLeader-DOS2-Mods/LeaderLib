@@ -188,7 +188,7 @@ function GameHelpers.Client.ClearSlot(slotData)
 	slotData.ItemHandle = Ext.DoubleToHandle(0)
 end
 
----@param locked ?boolean Defaults to false.
+---@param locked boolean|nil Defaults to false.
 function GameHelpers.Client.SetInventoryLocked(locked)
 	if Ext.GetGameState() == "Running" then
 		if type(locked) ~= "boolean" then

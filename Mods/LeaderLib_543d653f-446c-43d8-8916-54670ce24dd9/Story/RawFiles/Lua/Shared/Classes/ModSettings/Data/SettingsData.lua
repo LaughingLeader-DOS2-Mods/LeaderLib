@@ -373,7 +373,7 @@ end
 
 ---Gets a flag or variable's value.
 ---@param name string
----@param fallback ?boolean|number|string
+---@param fallback boolean|number|string|nil
 ---@return boolean|number|string
 function SettingsData:GetFlagOrVariableValue(name, fallback)
 	local value = self:GetFlag(name) or self:GetVariable(name)

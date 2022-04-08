@@ -208,7 +208,7 @@ end
 --- @param s string
 --- @param pattern string
 --- @param repl string|table|function
---- @param n ?integer
+--- @param n integer|nil
 --- @return string
 function StringHelpers.Replace(s, pattern, repl, n)
 	return string.gsub(s, StringHelpers.EscapeMagic(pattern), repl, n)
@@ -408,11 +408,11 @@ GetSkillEntryName = StringHelpers.GetSkillEntryName
 ---Helper for string.find with some additional options.
 ---@param s string
 ---@param pattern string
----@param caseInsensitive ?boolean Searches for a string.lower version of s.
----@param startPos ?integer If set, start the find from this position.
----@param endPos ?integer If set, end the find at this position.
----@param findStartPos ?integer
----@param findPlain ?boolean
+---@param caseInsensitive boolean|nil Searches for a string.lower version of s.
+---@param startPos integer|nil If set, start the find from this position.
+---@param endPos integer|nil If set, end the find at this position.
+---@param findStartPos integer|nil
+---@param findPlain boolean|nil
 ---@return integer,integer,string
 function StringHelpers.Find(s, pattern, caseInsensitive, startPos, endPos, findStartPos, findPlain)
 	if caseInsensitive then

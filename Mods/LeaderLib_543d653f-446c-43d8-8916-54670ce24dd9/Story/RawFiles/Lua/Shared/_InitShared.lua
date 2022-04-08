@@ -51,7 +51,7 @@ end
 
 ---Gets the value from an extender TranslatedString. Either the ReferenceString if unset, or the localized handle value.
 ---@param object ExtenderTranslatedStringObject
----@param fallback ?string
+---@param fallback string|nil
 ---@return string
 function GameHelpers.GetTranslatedStringValue(object, fallback)
 	if _EXTVERSION < 56 then

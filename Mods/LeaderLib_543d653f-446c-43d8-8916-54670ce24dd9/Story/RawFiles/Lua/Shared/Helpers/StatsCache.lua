@@ -99,7 +99,7 @@ local function IsStatTypeValid(statType)
 end
 
 ---@param statType StatType
----@param asStatsEntry ?boolean Return the StatEntrySkillData instead of string.
+---@param asStatsEntry boolean|nil Return the StatEntrySkillData instead of string.
 ---@return fun():string|StatEntrySkillData
 function GameHelpers.Stats.GetStats(statType, asStatsEntry)
 	assert(IsStatTypeValid(statType), "statType must be one of the following: Armor|DeltaMod|Potion|Shield|SkillData|StatusData|Weapon")
@@ -124,13 +124,13 @@ function GameHelpers.Stats.GetStats(statType, asStatsEntry)
 	end
 end
 
----@param asStatsEntry ?boolean Return the StatEntrySkillData instead of string.
+---@param asStatsEntry boolean|nil Return the StatEntrySkillData instead of string.
 ---@return fun():string|StatEntrySkillData
 function GameHelpers.Stats.GetSkills(asStatsEntry)
 	return GameHelpers.Stats.GetStats("SkillData", asStatsEntry)
 end
 
----@param asStatsEntry ?boolean Return the StatEntrySkillData instead of string.
+---@param asStatsEntry boolean|nil Return the StatEntrySkillData instead of string.
 ---@return fun():string|StatEntryStatusData
 function GameHelpers.Stats.GetStatuses(asStatsEntry)
 	return GameHelpers.Stats.GetStats("StatusData", asStatsEntry)
@@ -171,7 +171,7 @@ end
 
 --- Returns an ItemColor stat's colors.
 --- @param name string The ID of the ItemColor.
---- @param asMaterialValues ?boolean
+--- @param asMaterialValues boolean|nil
 --- @return string[]
 function GameHelpers.Stats.GetItemColor(name, asMaterialValues)
 	local _itemColors = _GetCachedStatType("ItemColor")
@@ -184,7 +184,7 @@ function GameHelpers.Stats.GetItemColor(name, asMaterialValues)
 end
 
 ---@param id string
----@param statType ?StatType
+---@param statType StatType|nil
 ---@return boolean
 function GameHelpers.Stats.Exists(id, statType)
 	if statType then

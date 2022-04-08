@@ -53,7 +53,7 @@ end
 
 ---Returns true if the character IsGameMaster or IsPossessed
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
----@param ignorePossessed ?boolean
+---@param ignorePossessed boolean|nil
 ---@return boolean
 function GameHelpers.Character.IsGameMaster(character, ignorePossessed)
 	if not character then
@@ -301,8 +301,8 @@ function GameHelpers.Character.GetDisplayName(character)
 	return ""
 end
 
----@param includeSummons ?boolean
----@param asTable ?boolean if true, a regular table is returned, which needs to be used with pairs/ipairs.
+---@param includeSummons boolean|nil
+---@param asTable boolean|nil if true, a regular table is returned, which needs to be used with pairs/ipairs.
 ---@return fun():EsvCharacter|EclCharacter
 function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 	local players = {}
@@ -685,8 +685,8 @@ end
 
 ---Returns true if the target is an enemy or Friendly Fire is enabled.
 ---@param target UUID|NETID|EsvCharacter|EclCharacter
----@param attacker ?UUID|NETID|EsvCharacter|EclCharacter If not specified, then this will return true if the target is an enemy of the party.
----@param allowItems ?boolean If true, this will return true if target is an item.
+---@param attacker UUID|NETID|EsvCharacter|EclCharacter|nil If not specified, then this will return true if the target is an enemy of the party.
+---@param allowItems boolean|nil If true, this will return true if target is an item.
 ---@return boolean
 function GameHelpers.Character.CanAttackTarget(target, attacker, allowItems)
 	target = GameHelpers.TryGetObject(target)

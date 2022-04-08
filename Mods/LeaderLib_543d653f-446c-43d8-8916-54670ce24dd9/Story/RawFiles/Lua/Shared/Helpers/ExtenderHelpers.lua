@@ -822,7 +822,7 @@ end
 
 ---@param obj userdata
 ---@param typeName string
----@param meta ?string Optional metatable to pass in, to skip fetching it manually.
+---@param meta string|nil Optional metatable to pass in, to skip fetching it manually.
 ---@return boolean
 function GameHelpers.Ext.UserDataIsType(obj, typeName, meta)
 	return (meta or getmetatable(obj)) == typeName

@@ -35,8 +35,8 @@ function SettingsManager.Remove(uuid)
 end
 
 ---@param uuid string
----@param createIfMissing ?boolean
----@param tryInitialLoad ?boolean
+---@param createIfMissing boolean|nil
+---@param tryInitialLoad boolean|nil
 ---@return ModSettings|nil
 function SettingsManager.GetMod(uuid, createIfMissing, tryInitialLoad)
 	if not StringHelpers.IsNullOrEmpty(uuid) then

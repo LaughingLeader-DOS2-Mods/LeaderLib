@@ -399,7 +399,7 @@ if _EXTVERSION >= 56 then
 end
 
 ---@param str string
----@param safeguardErrors ?boolean If true, JsonParse is wrapped in an xpcall.
+---@param safeguardErrors boolean|nil If true, JsonParse is wrapped in an xpcall.
 ---@return table
 function Common.JsonParse(str, safeguardErrors)
 	local tbl = {}

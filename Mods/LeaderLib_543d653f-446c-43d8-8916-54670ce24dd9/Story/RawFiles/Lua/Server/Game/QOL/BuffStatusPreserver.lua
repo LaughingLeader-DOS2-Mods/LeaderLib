@@ -102,7 +102,7 @@ end
 
 ---@param target EsvCharacter|EsvItem
 ---@param status EsvStatus
----@param source ?EsvCharacter|EsvItem
+---@param source EsvCharacter|EsvItem|nil Optional source of the status.
 ---@param statusType string
 ---@param statusEvent StatusEventID
 function BuffStatusPreserver.OnStatusApplied(target, status, source, statusType, statusEvent)

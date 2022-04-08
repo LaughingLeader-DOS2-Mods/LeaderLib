@@ -92,8 +92,8 @@ function UIObjectExtended:Create(params)
 	return this
 end
 
----@param skipCreation ?boolean
----@param setVisibility ?boolean
+---@param skipCreation boolean|nil
+---@param setVisibility boolean|nil
 function UIObjectExtended:GetInstance(skipCreation, setVisibility)
 	local instance = Ext.GetUI(self.ID) or Ext.GetBuiltinUI(self.SwfPath)
 	if not instance and skipCreation ~= true then
@@ -152,8 +152,8 @@ function UIObjectExtended:SetVisible(b)
 	end
 	local last = self.Visible
 	if last ~= b then
-		--Create the instance if visibility should be true
 		local inst = self:GetInstance(not b, false)
+		--Create the instance if visibility should be true
 		if not self.ResolutionInitialized then
 			return
 		end
@@ -174,7 +174,7 @@ function UIObjectExtended:SetVisible(b)
 	end
 end
 
----@param setVisibility ?boolean
+---@param setVisibility boolean|nil
 ---@private
 function UIObjectExtended:Initialize(setVisibility)
 	local instance = Ext.GetUI(self.ID) or Ext.GetBuiltinUI(self.SwfPath)

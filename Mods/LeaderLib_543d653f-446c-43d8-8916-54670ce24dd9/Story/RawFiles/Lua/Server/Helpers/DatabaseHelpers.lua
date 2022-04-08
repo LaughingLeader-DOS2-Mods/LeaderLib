@@ -248,7 +248,7 @@ end
 
 ---Try to unpack a database retrieved with Get.
 ---@param tbl table
----@param index ?integer Optional row to try and get. Defaults to 1.
+---@param index integer|nil Optional row to try and get. Defaults to 1.
 ---@return boolean,...
 function GameHelpers.DB.TryUnpack(tbl, index)
 	index = index or 1

@@ -75,7 +75,7 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, par
 end
 
 ---@param id string Identifier for this countdown.
----@param combatOrTarget ?integer|UUID|number[] If specified, only turn counters with this specific combat ID, target, or position will be cleared.
+---@param combatOrTarget integer|UUID|number[]|nil If specified, only turn counters with this specific combat ID, target, or position will be cleared.
 function TurnCounter.ClearTurnCounter(id, combatOrTarget)
 	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
 		if data.ID == id then

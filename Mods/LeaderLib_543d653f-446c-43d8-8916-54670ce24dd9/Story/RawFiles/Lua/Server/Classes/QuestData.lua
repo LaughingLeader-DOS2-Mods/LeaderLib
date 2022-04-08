@@ -126,7 +126,7 @@ local function CreateRegistrationWrapper(this)
 end
 
 ---@param id string
----@param params ?QuestDataFields Optional table of QuestData parameters to set.
+---@param params QuestDataFields|nil Optional table of QuestData parameters to set.
 ---@return QuestData
 function QuestData:Create(id, params)
     local this =

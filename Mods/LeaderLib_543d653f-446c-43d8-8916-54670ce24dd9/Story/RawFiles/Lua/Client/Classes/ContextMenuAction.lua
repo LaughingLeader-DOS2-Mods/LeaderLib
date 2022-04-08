@@ -62,7 +62,7 @@ function ContextMenuAction:Create(params)
 	return this
 end
 
----@param character ?EclCharacter
+---@param character EclCharacter|nil
 ---@return string
 function ContextMenuAction:GetDisplayName(character)
 	local t = type(self.DisplayName)
@@ -77,7 +77,7 @@ function ContextMenuAction:GetDisplayName(character)
 	return ""
 end
 
----@param character ?EclCharacter
+---@param character EclCharacter|nil
 ---@return string
 function ContextMenuAction:GetTooltip(character)
 	local t = type(self.Tooltip)

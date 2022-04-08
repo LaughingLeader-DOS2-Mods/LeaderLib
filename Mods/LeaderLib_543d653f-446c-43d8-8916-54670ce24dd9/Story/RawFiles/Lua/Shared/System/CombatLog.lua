@@ -271,8 +271,8 @@ else
 	---@param targetDisplayName string
 	---@param damageType string
 	---@param damageAmount integer
-	---@param isFromSurface ?boolean If true, the text is "x was hit for y by surface" instead.
-	---@param filterId ?string|integer Optional filter. Defaults to the Combat filter.
+	---@param isFromSurface boolean|nil If true, the text is "x was hit for y by surface" instead.
+	---@param filterId string|integer|nil Optional filter. Defaults to the Combat filter.
 	function CombatLog.AddDamageText(targetDisplayName, damageType, damageAmount, isFromSurface, filterId)
 		if filterId == nil then
 			filterId = CombatLog.Filters.Combat

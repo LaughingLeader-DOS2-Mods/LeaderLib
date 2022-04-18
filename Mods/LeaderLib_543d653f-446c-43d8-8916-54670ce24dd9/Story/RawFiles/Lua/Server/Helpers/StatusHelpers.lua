@@ -357,21 +357,72 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 	end
 end
 
----Applies a status to a target, or targets around a position.
----@param target EsvGameObject|UUID|NETID
----@param status string|string[]
-function GameHelpers.Status.Remove(target, status)
-	target = GameHelpers.GetUUID(target)
-	if target then
-		local t = type(status)
-		if t == "string" then
-			RemoveStatus(target, status)
-			return true
-		elseif t == "table" then
-			for k,v in pairs(status) do
-				GameHelpers.Status.Remove(target, v)
+---Removed a status from a target, or targets around a position.
+---@param target EsvCharacter|EsvItem|UUID|NETID|number[] Either an item/character related value, an array of characters/items, or a position array.
+---@param status string|string[] A status or array of statuses to remove.
+---@param radius number|nil If target is a position array, this is the radius to look for target objects.
+---@param canTargetItems boolean|nil If true, items can be targeted by the positional search as well.
+---@param canRemoveCallback fun(target:string, statusId:string, targetIsItem:boolean):boolean|nil An optional condition function to call when attempting to remove a status from objects found in a radius around a target.
+function GameHelpers.Status.Remove(target, status, radius, canTargetItems, canRemoveCallback)
+	local t = type(target)
+	if t == "table" then
+		local targetTableType = type(target[1])
+		if targetTableType == "number" then
+			local x,y,z = table.unpack(target)
+			if not x or not y or not z then
+				error(string.format("No valid position set (%s). Failed to remove status (%s)", Lib.inspect(target), status), 2)
 			end
-			return true
+			local success = false
+			for _,v in pairs(Ext.GetCharactersAroundPosition(x,y,z,radius)) do
+				if canRemoveCallback then
+					local b,result = pcall(canRemoveCallback, v, status, false)
+					if b and result == true then
+						RemoveStatus(v, status)
+						success = true
+					end
+				else
+					RemoveStatus(v, status)
+					success = true
+				end
+			end
+			if canTargetItems then
+				for _,v in pairs(Ext.GetItemsAroundPosition(x,y,z,radius)) do
+					if canRemoveCallback then
+						local b,result = pcall(canRemoveCallback, v, status, true)
+						if b and result == true then
+							RemoveStatus(v, status)
+							success = true
+						end
+					else
+						RemoveStatus(v, status)
+						success = true
+					end
+				end
+			end
+			return success
+		elseif targetTableType == "string" or targetTableType == "userdata" then
+			--Table of string targets?
+			local success = false
+			for i,v in pairs(target) do
+				if GameHelpers.Status.Remove(v, status) then
+					success = true
+				end
+			end
+			return success
+		end
+	elseif t == "string" or t == "userdata" then
+		target = GameHelpers.GetUUID(target)
+		if target then
+			local t2 = type(status)
+			if t2 == "string" then
+				RemoveStatus(target, status)
+				return true
+			elseif t2 == "table" then
+				for k,v in pairs(status) do
+					GameHelpers.Status.Remove(target, v)
+				end
+				return true
+			end
 		end
 	end
 	return false

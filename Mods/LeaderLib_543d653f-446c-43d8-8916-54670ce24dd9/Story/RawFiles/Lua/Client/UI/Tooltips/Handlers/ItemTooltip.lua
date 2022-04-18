@@ -86,32 +86,30 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 
 		if Features.ResistancePenetration == true then
 			-- Resistance Penetration display
-			if GameHelpers.ItemHasTag(item, "LeaderLib_HasResistancePenetration") then
-				local tagsCheck = {}
-				for _,damageType in Data.DamageTypes:Get() do
-					local tags = Data.ResistancePenetrationTags[damageType]
-					if tags ~= nil then
-						local totalResPen = 0
-						for i,tagEntry in pairs(tags) do
-							if GameHelpers.ItemHasTag(item, tagEntry.Tag) then
-								totalResPen = totalResPen + tagEntry.Amount
-								tagsCheck[#tagsCheck+1] = tagEntry.Tag
-							end
-						end
-
-						if totalResPen > 0 then
-							local tString = LocalizedText.ItemBoosts.ResistancePenetration
-							local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
-							if not StringHelpers.IsNullOrWhitespace(resistanceText) then
-								local result = tString:ReplacePlaceholders(resistanceText)
-								local element = {
-									Type = "ResistanceBoost",
-									Label = result,
-									Value = totalResPen,
-								}
-								tooltip:AppendElement(element)
-							end
-						end
+			--if GameHelpers.ItemHasTag(item, "LeaderLib_HasResistancePenetration") then
+			local resistancePenetration = {}
+			local tags = GameHelpers.GetAllTags(item, true)
+			for tag,b in pairs(tags) do
+				local damageType,amount = GameHelpers.ParseResistancePenetrationTag(tag)
+				if damageType then
+					if resistancePenetration[damageType] == nil then
+						resistancePenetration[damageType] = 0
+					end
+					resistancePenetration[damageType] = resistancePenetration[damageType] + amount
+				end
+			end
+			for damageType,amount in pairs(resistancePenetration) do
+				if amount > 0 then
+					local tString = LocalizedText.ItemBoosts.ResistancePenetration
+					local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
+					if not StringHelpers.IsNullOrWhitespace(resistanceText) then
+						local result = tString:ReplacePlaceholders(resistanceText)
+						local element = {
+							Type = "ResistanceBoost",
+							Label = result,
+							Value = amount,
+						}
+						tooltip:AppendElement(element)
 					end
 				end
 			end

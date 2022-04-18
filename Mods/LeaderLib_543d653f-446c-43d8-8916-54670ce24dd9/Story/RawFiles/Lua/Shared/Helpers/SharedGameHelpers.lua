@@ -371,7 +371,7 @@ end
 ---@param object EsvCharacter|EsvItem|EclCharacter|EclItem The character or item to get tags from.
 ---@param inDictionaryFormat boolean|nil If true, tags will be set as tbl[tag] = true, for easier checking.
 ---@param addEquipmentTags boolean|nil If the object is a character, all tags found on equipped items will be added to the table.
----@return string[]
+---@return string[]|table<string,boolean>
 function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 	local tags = {}
 	local t = type(object)
@@ -805,4 +805,19 @@ function GameHelpers.IsLevelType(levelType, levelName)
 		return GameHelpers.GetLevelType(levelName) == levelType
 	end
 	return false
+end
+
+local TAG_PREFIX = "LeaderLib_ResistancePenetration_"
+
+---@param tag string A tag such as LeaderLib_ResistancePenetration_Poison50
+---@return string,integer Returns the damage type and amount if successful.
+function GameHelpers.ParseResistancePenetrationTag(tag)
+	if string.find(tag, TAG_PREFIX) then
+		local strippedTag = string.gsub(tag, TAG_PREFIX, "")
+		local damageType = string.match(strippedTag, "%a+")
+		local amount = tonumber(string.match(strippedTag, "%d+"))
+		if damageType and amount and Data.DamageTypeEnums[damageType] then
+			return damageType,amount
+		end
+	end
 end

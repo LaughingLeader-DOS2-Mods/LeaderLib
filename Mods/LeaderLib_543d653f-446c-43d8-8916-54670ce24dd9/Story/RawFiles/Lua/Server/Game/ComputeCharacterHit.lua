@@ -132,20 +132,28 @@ end
 function HitOverrides.GetResistancePenetration(character, attacker)
     --- @type table<string,integer>
     local resistancePenetration = {}
-        
+
     if attacker ~= nil and attacker.Character ~= nil then
         local _cachedTags = GameHelpers.GetAllTags(attacker.Character, true, true)
-        for damageType,tags in pairs(Data.ResistancePenetrationTags) do
-            for i,tagEntry in pairs(tags) do
-                if _cachedTags[tagEntry.Tag] then
-                    if resistancePenetration[damageType] == nil then
-                        resistancePenetration[damageType] = 0
-                    end
-                    resistancePenetration[damageType] = resistancePenetration[damageType] + tagEntry.Amount
+        for tag,b in pairs(_cachedTags) do
+            local damageType,amount = GameHelpers.ParseResistancePenetrationTag(tag)
+            if damageType then
+                if resistancePenetration[damageType] == nil then
+                    resistancePenetration[damageType] = 0
                 end
+                resistancePenetration[damageType] = resistancePenetration[damageType] + amount
             end
         end
-        
+        -- for damageType,tags in pairs(Data.ResistancePenetrationTags) do
+        --     for i,tagEntry in pairs(tags) do
+        --         if _cachedTags[tagEntry.Tag] then
+        --             if resistancePenetration[damageType] == nil then
+        --                 resistancePenetration[damageType] = 0
+        --             end
+        --             resistancePenetration[damageType] = resistancePenetration[damageType] + tagEntry.Amount
+        --         end
+        --     end
+        -- end
         if GameHelpers.CharacterOrEquipmentHasTag(attacker.Character, "LeaderLib_IgnoreUndeadPoisonResistance") and character.TALENT_Zombie then
             if not resistancePenetration["Poison"] then
                 resistancePenetration["Poison"] = 0

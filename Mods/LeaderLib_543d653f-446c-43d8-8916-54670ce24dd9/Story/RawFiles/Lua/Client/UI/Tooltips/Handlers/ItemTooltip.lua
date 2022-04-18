@@ -98,12 +98,14 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					resistancePenetration[damageType] = resistancePenetration[damageType] + amount
 				end
 			end
-			for damageType,amount in pairs(resistancePenetration) do
+			local resPenText = LocalizedText.ItemBoosts.ResistancePenetration
+			for i=1,#LocalizedText.DamageTypeNameAlphabeticalOrder do
+				local damageType = LocalizedText.DamageTypeNameAlphabeticalOrder[i]
+				local amount = resistancePenetration[damageType] or 0
 				if amount > 0 then
-					local tString = LocalizedText.ItemBoosts.ResistancePenetration
 					local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
 					if not StringHelpers.IsNullOrWhitespace(resistanceText) then
-						local result = tString:ReplacePlaceholders(resistanceText)
+						local result = resPenText:ReplacePlaceholders(resistanceText)
 						local element = {
 							Type = "ResistanceBoost",
 							Label = result,

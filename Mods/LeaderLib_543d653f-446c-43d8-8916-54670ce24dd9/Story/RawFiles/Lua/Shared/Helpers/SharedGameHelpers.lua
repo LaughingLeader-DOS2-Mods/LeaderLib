@@ -810,7 +810,8 @@ end
 local TAG_PREFIX = "LeaderLib_ResistancePenetration_"
 
 ---@param tag string A tag such as LeaderLib_ResistancePenetration_Poison50
----@return string,integer Returns the damage type and amount if successful.
+---@return string damageType
+---@return integer amount
 function GameHelpers.ParseResistancePenetrationTag(tag)
 	if string.find(tag, TAG_PREFIX) then
 		local strippedTag = string.gsub(tag, TAG_PREFIX, "")

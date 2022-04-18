@@ -41,6 +41,10 @@ LocalizedText.DamageTypeNames = {
 	Sentinel = {Text=ts:Create("h00b235c6gdd0bg494fg997cga2d204f060a8","Unknown"), Color="#008858"}, -- Special LeaderLib handle
 }
 
+---A table of sorted damage types, in alphabetical order of the localized name. Initialized on SessionLoaded.
+---@type string[]
+LocalizedText.DamageTypeNameAlphabeticalOrder = {}
+
 --MagicArmorMasteryDescription = ts:Create("h211cb400g5881g4b90g8bc8g0399d0288e00","Willpower determines how resistant you are to mental statuses like Fear or Charm."),
 --VitalityMasteryDescription = ts:Create("h2c42b179gd34bg45f8g9a81g847315e0319c","Bodybuilding determines how resistant you are to physical statuses like Bleeding or Crippled."),
 
@@ -489,3 +493,23 @@ function GameHelpers.GetResistanceNameFromDamageType(damageType)
 	end
 	return ""
 end
+
+Ext.RegisterListener("SessionLoaded", function ()
+	LocalizedText.DamageTypeNameAlphabeticalOrder = {}
+	local nameToDamageType = {}
+	local sortedNames = {}
+
+	for damageType,v in pairs(LocalizedText.DamageTypeNames) do
+		local displayName = v.Text.Value
+		sortedNames[#sortedNames+1] = displayName
+		nameToDamageType[displayName] = damageType
+	end
+
+	table.sort(sortedNames)
+
+	for i=1,#sortedNames do
+		local displayName = sortedNames[i]
+		local damageType = nameToDamageType[displayName]
+		table.insert(LocalizedText.DamageTypeNameAlphabeticalOrder, damageType)
+	end
+end)

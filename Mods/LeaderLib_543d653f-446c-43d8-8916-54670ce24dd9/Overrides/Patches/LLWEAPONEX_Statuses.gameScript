@@ -1,0 +1,586 @@
+INIT
+
+EVENTS
+
+EVENT LLWEAPONEX_Rapier_SuckerCombo1
+VARS
+	CHARACTER:_Character
+	STATUS:_Result
+	LIST<STATUS>:_RemoveList
+	INT:_Turns
+ON
+	FetchCharacterApplyStatusData(_Character, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO1)
+ACTIONS
+	Set(_Result, null)
+IF "c1"
+	GetStatusTurns(_Character, KNOCKED_DOWN, _Turns)
+THEN
+	Clamp(_Turns, 1, _Turns)
+	Add(_Turns, 1)
+	Set(_Result, LLWEAPONEX_RAPIER_MASTERY_DELAYED_DAZED)
+ENDIF
+	RETURN(_RemoveList, _Result, _Turns)
+
+
+EVENT LLWEAPONEX_Rapier_DelayedDaze_ApplyDazed
+VARS
+	CHARACTER:_Character
+	CHARACTER:_Source
+ON
+	OnCharacterEvent(_Character, "LLWEAPONEX_Events_DelayDazedReady")
+ACTIONS
+IF "c1"
+	CharacterGetStatusSourceCharacter(_Character, LLWEAPONEX_RAPIER_MASTERY_DELAYED_DAZED, _Source)
+THEN
+ELSE
+	Set(_Source, _Character)
+ENDIF
+	CharacterRemoveStatus(_Character, LLWEAPONEX_RAPIER_MASTERY_DELAYED_DAZED, null, 0)
+	CharacterApplyStatus(_Character, LLWEAPONEX_DIZZY, 2, 1, _Source)
+
+EVENT LLWEAPONEX_Tripping_GuaranteedKnockdown
+VARS
+	CHARACTER:_Character
+	STATUS:_Result
+	LIST<STATUS>:_RemoveList
+	INT:_Turns
+ON
+	FetchCharacterApplyStatusData(_Character, LLWEAPONEX_TRIPPING)
+ACTIONS
+	Set(_Result, LLWEAPONEX_TRIPPING)
+IF "c1"
+	CharacterHasStatus(_Character, LLWEAPONEX_TRIPPING)
+THEN
+	Set(_Turns, 1)
+	Set(_Result, KNOCKED_DOWN)
+	ListAdd(_RemoveList, LLWEAPONEX_TRIPPING)
+ENDIF
+	RETURN(_RemoveList, _Result, _Turns)
+
+EVENT LLWEAPONEX_Tripping_Cleanse
+VARS
+	CHARACTER:_Target
+	CHARACTER:_Source
+ON
+	OnCharacterStatusApplied(_Target, KNOCKED_DOWN)
+	OnCharacterStatusApplied(_Target, FIRST_AID)
+	OnCharacterStatusApplied(_Target, HEAL_SHARING)
+	OnCharacterStatusApplied(_Target, FORTIFIED)
+ACTIONS
+IF "c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_TRIPPING)
+THEN
+	CharacterRemoveStatus(_Target, LLWEAPONEX_TRIPPING)
+ENDIF
+
+/*
+EVENT LLWEAPONEX_Tar_BurningBypass
+VARS
+	CHARACTER:_Character
+	CHARACTER:_Source
+	INT:_BurningTurns
+ON
+	OnCharacterCharacterEvent(_Character, "LLWEAPONEX_Burning_ArmorBypass")
+ACTIONS
+IF "c1&c2"
+	GetStatusTurns(_Character, LLWEAPONEX_TARRED, _BurningTurns)
+THEN
+	IF "c1"
+		CharacterGetStatusSourceCharacter(_Character, BURNING, _Source)
+	THEN
+	
+	ENDIF
+	IF "c1"
+		IsLessThen(_BurningTurns, 1)
+	THEN
+		Set(_BurningTurns, 1)
+	ENDIF
+	CharacterApplyStatus(_Character, BURNING, _BurningTurns, 1, _Source)
+ENDIF
+*/
+
+EVENT LLWEAPONEX_DeathSentence_Block
+VARS
+	CHARACTER:_Character
+ON
+	OnCharacterStatusRemoved(_Character, LLWEAPONEX_DEATH_SENTENCE)
+ACTIONS
+IF "!c1"
+	CharacterIsDead(_Character, 1)
+THEN
+	CharacterApplyStatus(_Character, LLWEAPONEX_DEATH_SENTENCE_BLOCKED, 4, 0)
+ENDIF
+
+EVENT LLWEAPONEX_Shocked_Block_Char
+VARS
+	CHARACTER:_Character
+	STATUS:_Result
+	LIST<STATUS>:_RemoveList
+ON
+	FetchCharacterApplyStatusData(_Character, LLWEAPONEX_RUNEBLADE_SHOCKED)
+ACTIONS
+	Set(_Result, SHOCKED)
+IF "c1"
+	CharacterHasStatus(_Character, LLWEAPONEX_SHOCKED_RESISTANCE_RUNEBLADE)
+THEN
+	Set(_Result, null)
+ENDIF
+	RETURN(_RemoveList, _Result, null)
+
+EVENT LLWEAPONEX_Shocked_Block_Item
+VARS
+	ITEM:_Item
+	STATUS:_Result
+	LIST<STATUS>:_RemoveList
+ON
+	FetchItemApplyStatusData(_Item, LLWEAPONEX_RUNEBLADE_SHOCKED)
+ACTIONS
+	Set(_Result, SHOCKED)
+IF "c1"
+	ItemHasStatus(_Item, LLWEAPONEX_SHOCKED_RESISTANCE_RUNEBLADE)
+THEN
+	Set(_Result, null)
+ENDIF
+	RETURN(_RemoveList, _Result, null)
+
+/*
+EVENT LLWEAPONEX_Kevin_MiniExplosion
+VARS
+	CHARACTER:_Target
+	CHARACTER:_Player
+	FLOAT:_LevelF
+	INT:_Level
+ON
+	OnCharacterStatusApplied(_Target, LLWEAPONEX_KEVIN_MINIEXPLOSION)
+ACTIONS
+IF "c1&c2"
+	CharacterGetStatusSourceCharacter(_Target, LLWEAPONEX_KEVIN_MINIEXPLOSION, _Player)
+	CharacterGetStat(_LevelF, _Player, Level)
+THEN
+	Cast(_Level, _LevelF)
+	ExplodeAt(_Target, Projectile_LLWEAPONEX_Kevin_MiniExplosion, _Level, _Player)
+ENDIF
+*/
+
+EVENT LLWEAPONEX_ShieldToss_Bonus
+VARS
+	CHARACTER:_Character
+ON
+	OnCharacterEvent(_Character, "LLWEAPONEX_ShieldToss_ApplyAuraBonus")
+ACTIONS
+	ExplodeAt(_Character, Projectile_LLWEAPONEX_ApplyShieldTossBonus, -1, _Character)
+
+EVENT LLWEAPONEX_DeflectProjectiles_CountdownStart
+VARS
+	CHARACTER:_Character
+ON
+	OnEnteredCombat(_Character, _)
+ACTIONS
+IF "c1&!c2"
+	CharacterHasStatus(_Character, LLWEAPONEX_DEFLECT_PROJECTILES_INNATE)
+	CharacterHasStatus(_Character, LLWEAPONEX_DEFLECT_PROJECTILES_COUNTDOWN)
+THEN
+	CharacterApplyStatus(_Character, LLWEAPONEX_DEFLECT_PROJECTILES_COUNTDOWN, 4, 0, _Character)
+ENDIF
+
+EVENT LLWEAPONEX_DeflectProjectiles_CountdownCancel_LeftCombat
+VARS
+	CHARACTER:_Character
+ON
+	OnLeftCombat(_Character, _)
+ACTIONS
+IF "c1"
+	CharacterHasStatus(_Character, LLWEAPONEX_DEFLECT_PROJECTILES_COUNTDOWN)
+THEN
+	CharacterRemoveStatus(_Character, LLWEAPONEX_DEFLECT_PROJECTILES_COUNTDOWN)
+ENDIF
+
+EVENT LLWEAPONEX_DeflectProjectiles_CountdownCancel_NotInCombat
+VARS
+	CHARACTER:_Character
+	STATUS:_Result
+	LIST<STATUS>:_RemoveList
+ON
+	FetchCharacterApplyStatusData(_Character, LLWEAPONEX_DEFLECT_PROJECTILES_COUNTDOWN)
+ACTIONS
+	Set(_Result, LLWEAPONEX_DEFLECT_PROJECTILES_COUNTDOWN)
+IF "!c1|!c2"
+	IsInCombat(_Character)
+	CharacterHasStatus(_Character, LLWEAPONEX_DEFLECT_PROJECTILES_INNATE)
+THEN
+	Set(_Result, null)
+	ListAdd(_RemoveList, LLWEAPONEX_DEFLECT_PROJECTILES)
+	CombatLogText(_Character, "LLWEAPONEX_CombatLog_DeflectProjectilesCountdownFailed", 1, 1)
+ENDIF
+	RETURN(_RemoveList, _Result, null)
+	
+EVENT LLWEAPONEX_PoisonBurst_ApplyExplosion
+VARS
+	CHARACTER:_Target
+	CHARACTER:_Source
+	INT:_Turns
+ON
+	OnCharacterStatusApplied(_Target, LLWEAPONEX_POISONBURST_CHECK)
+ACTIONS
+IF "c1&c2"
+	GetStatusTurns(_Target, POISONED, _Turns)
+	CharacterGetStatusSourceCharacter(_Target, LLWEAPONEX_POISONBURST_CHECK, _Source)
+THEN
+	IF "c1|c2"
+		IsGreaterThen(_Turns, 6)
+		IsEqual(_Turns, 6)
+	THEN
+		CharacterApplyStatus(_Target, LLWEAPONEX_POISONBURST_EXPLODE_6, 0, 1, _Source)
+	ELIF "c1"
+		IsEqual(_Turns, 5)
+	THEN
+		CharacterApplyStatus(_Target, LLWEAPONEX_POISONBURST_EXPLODE_5, 0, 1, _Source)
+	ELIF "c1"
+		IsEqual(_Turns, 4)
+	THEN
+		CharacterApplyStatus(_Target, LLWEAPONEX_POISONBURST_EXPLODE_4, 0, 1, _Source)
+	ELIF "c1"
+		IsEqual(_Turns, 3)
+	THEN
+		CharacterApplyStatus(_Target, LLWEAPONEX_POISONBURST_EXPLODE_3, 0, 1, _Source)
+	ELIF "c1"
+		IsEqual(_Turns, 2)
+	THEN
+		CharacterApplyStatus(_Target, LLWEAPONEX_POISONBURST_EXPLODE_2, 0, 1, _Source)
+	ELSE
+		CharacterApplyStatus(_Target, LLWEAPONEX_POISONBURST_EXPLODE_1, 0, 1, _Source)
+	ENDIF
+ENDIF
+
+EVENT LLWEAPONEX_SoulBurn_Proc
+VARS
+	CHARACTER:_Target
+	LIST<STATUS>:_RemoveList
+	STATUS:_Result
+	INT:_Turns
+	INT:_TurnsLeft
+ON
+	FetchCharacterApplyStatusData(_Target, LLWEAPONEX_SOUL_BURN_PROC)
+ACTIONS
+	Set(_Result, null)
+	Set(_Turns, 1)
+	CharacterEvent(_Target, "LLWEAPONEX_Commands_StopSoulBurnTick")
+IF "c1"
+	GetStatusTurns(_Target, LLWEAPONEX_SOUL_BURN1, _TurnsLeft)
+THEN
+	Add(_Turns, _TurnsLeft)
+	Set(_Result, LLWEAPONEX_SOUL_BURN2)
+	ListAdd(_RemoveList, LLWEAPONEX_SOUL_BURN1)
+ELIF "c1"
+	GetStatusTurns(_Target, LLWEAPONEX_SOUL_BURN2, _TurnsLeft)
+THEN
+	Add(_Turns, _TurnsLeft)
+	Set(_Result, LLWEAPONEX_SOUL_BURN3)
+	ListAdd(_RemoveList, LLWEAPONEX_SOUL_BURN2)
+ELIF "c1"
+	GetStatusTurns(_Target, LLWEAPONEX_SOUL_BURN3, _TurnsLeft)
+THEN
+	Add(_Turns, _TurnsLeft)
+	Set(_Result, LLWEAPONEX_SOUL_BURN4)
+	ListAdd(_RemoveList, LLWEAPONEX_SOUL_BURN3)
+ELIF "c1"
+	GetStatusTurns(_Target, LLWEAPONEX_SOUL_BURN4, _TurnsLeft)
+THEN
+	IF "c1"
+		IsGreaterThen(_TurnsLeft, 0)
+	THEN
+		Add(_Turns, _TurnsLeft)
+		Clamp(_Turns, 1, 5)
+	ELSE
+		Set(_Turns, 1)
+	ENDIF
+	
+	Set(_Result, LLWEAPONEX_SOUL_BURN5)
+	ListAdd(_RemoveList, LLWEAPONEX_SOUL_BURN4)
+ELIF "!c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_SOUL_BURN5)
+THEN
+	Set(_Result, LLWEAPONEX_SOUL_BURN1)
+	Set(_Turns, 1)
+ENDIF
+IF "!c1"
+	IsEqual(_Result, null)
+THEN
+	CharacterEvent(_Target, "LLWEAPONEX_Commands_StartSoulBurnTick")
+ENDIF
+	RETURN(_RemoveList, _Result, _Turns)
+	
+//Regress the status
+EVENT LLWEAPONEX_SoulBurn_Tick
+VARS
+	CHARACTER:_Target
+	CHARACTER:_Source
+	STATUS:_Result
+	INT:_Turns
+	INT:_TurnsLeft
+ON
+	OnCharacterStatusRemoved(_Target, LLWEAPONEX_SOUL_BURN_TICK)
+ACTIONS
+IF "!c1"
+	HasFlag(_Target, "LLWEAPONEX_SkipSoulBurnTick")
+THEN
+	Set(_Result, null)
+	Set(_Turns, null)
+	IF "c1&c2&c3"
+		CharacterHasStatus(_Target, LLWEAPONEX_SOUL_BURN2)
+		GetStatusTurns(_Target, LLWEAPONEX_SOUL_BURN2, _TurnsLeft)
+		CharacterGetStatusSourceCharacter(_Target, LLWEAPONEX_SOUL_BURN2, _Source)
+	THEN
+		Set(_Turns, _TurnsLeft)
+		Set(_Result, LLWEAPONEX_SOUL_BURN1)
+	ELIF "c1&c2&c3"
+		CharacterHasStatus(_Target, LLWEAPONEX_SOUL_BURN3)
+		GetStatusTurns(_Target, LLWEAPONEX_SOUL_BURN3, _TurnsLeft)
+		CharacterGetStatusSourceCharacter(_Target, LLWEAPONEX_SOUL_BURN3, _Source)
+	THEN
+		Set(_Turns, _TurnsLeft)
+		Set(_Result, LLWEAPONEX_SOUL_BURN2)
+	ELIF "c1&c2&c3"
+		CharacterHasStatus(_Target, LLWEAPONEX_SOUL_BURN4)
+		GetStatusTurns(_Target, LLWEAPONEX_SOUL_BURN4, _TurnsLeft)
+		CharacterGetStatusSourceCharacter(_Target, LLWEAPONEX_SOUL_BURN4, _Source)
+	THEN
+		Set(_Turns, _TurnsLeft)
+		Set(_Result, LLWEAPONEX_SOUL_BURN3)
+	ELIF "c1&c2&c3"
+		CharacterHasStatus(_Target, LLWEAPONEX_SOUL_BURN5)
+		GetStatusTurns(_Target, LLWEAPONEX_SOUL_BURN5, _TurnsLeft)
+		CharacterGetStatusSourceCharacter(_Target, LLWEAPONEX_SOUL_BURN5, _Source)
+	THEN
+		Set(_Turns, _TurnsLeft)
+		Set(_Result, LLWEAPONEX_SOUL_BURN4)
+	ENDIF
+	IF "!c1&!c2&!c3"
+		IsEqual(_Result, null)
+		IsEqual(_Turns, null)
+		IsEqual(_Source, null)
+	THEN
+		CharacterApplyStatus(_Target, _Result, _Turns, 1, _Source)
+		CharacterEvent(_Target, "LLWEAPONEX_Commands_StartSoulBurnTick")
+	ENDIF
+ELSE
+	//StatusText(_Target, "LLWEAPONEX_SkipSoulBurnTick = true")
+ENDIF
+
+EVENT LLWEAPONEX_SoulBurn_Reset
+VARS
+	CHARACTER:_Character
+ON
+	OnCharacterStatusRemoved(_Character, LLWEAPONEX_SOUL_BURN1)
+	OnDie(_Character, _, _, _)
+ACTIONS
+IF "c1"
+	HasFlag(_Character, "LLWEAPONEX_SkipSoulBurnTick")
+THEN
+	ClearFlag(_Character, "LLWEAPONEX_SkipSoulBurnTick")
+ENDIF
+
+EVENT LLWEAPONEX_FrenzyCharge_Apply
+VARS
+	CHARACTER:_Target
+	LIST<STATUS>:_RemoveList
+	STATUS:_Result
+	INT:_Turns
+ON
+	FetchCharacterApplyStatusData(_Target, LLWEAPONEX_RAPIER_FRENZYCHARGE_APPLY)
+ACTIONS
+	Set(_Result, null)
+	Set(_Turns, 1)
+IF "!c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_RAPIER_FRENZYCHARGE1)
+THEN
+	Set(_Result, LLWEAPONEX_RAPIER_FRENZYCHARGE1)
+ELIF "!c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_RAPIER_FRENZYCHARGE2)
+THEN
+	Set(_Result, LLWEAPONEX_RAPIER_FRENZYCHARGE2)
+ELIF "!c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_RAPIER_FRENZYCHARGE3)
+THEN
+	Set(_Result, LLWEAPONEX_RAPIER_FRENZYCHARGE3)
+ELIF "!c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_RAPIER_FRENZYCHARGE4)
+THEN
+	Set(_Result, LLWEAPONEX_RAPIER_FRENZYCHARGE4)
+ENDIF
+	RETURN(_RemoveList, _Result, _Turns)
+
+EVENT LLWEAPONEX_RandomElementalAilment_Char
+VARS
+	CHARACTER:_Target
+	STATUS:_Result
+	LIST<STATUS>:_RemoveList
+	FLOAT:_MagicArmor
+	FLOAT:_Armor
+ON
+	FetchCharacterApplyStatusData(_Target, LLWEAPONEX_RANDOM_AILMENT)
+ACTIONS
+IF "c1&c2"
+	CharacterGetStat(_MagicArmor, _Target, MagicArmorPoints)
+	IsEqual(_MagicArmor, 0)
+THEN
+	GetRandom(_Result, POISONED, BURNING, NECROFIRE, HELLFIRE, SLOWED, CHILLED, FROZEN, SHOCKED, STUNNED, PETRIFIED, WARM, WET, ACID, SUFFOCATING, LIVING_BOMB)
+ELIF "c1&c2"
+	CharacterGetStat(_Armor, _Target, PhysicalArmorPoints)
+	IsEqual(_Armor, 0)
+THEN
+	GetRandom(_Result, BLEEDING, WARM, WET, ACID, SUFFOCATING, LIVING_BOMB)
+ELSE
+	GetRandom(_Result, WARM, WET, ACID, SUFFOCATING, LIVING_BOMB)
+ENDIF
+	RETURN(_RemoveList, _Result, 1)
+
+EVENT LLWEAPONEX_RandomElementalAilment_Item
+VARS
+	ITEM:_Target
+	STATUS:_Result
+	LIST<STATUS>:_RemoveList
+ON
+	FetchItemApplyStatusData(_Target, LLWEAPONEX_RANDOM_AILMENT)
+ACTIONS
+	GetRandom(_Result, POISONED, BURNING, NECROFIRE, HELLFIRE, SLOWED, CHILLED, FROZEN, SHOCKED, STUNNED, PETRIFIED, WARM, WET, ACID, LIVING_BOMB)
+	RETURN(_RemoveList, _Result, 1)
+
+EVENT LLWEAPONEX_RapierMastery_SuckerCombo2_Flying_KnockdownCheck_Characters
+VARS
+	CHARACTER:_Target
+	CHARACTER:_AuraHost
+	CHARACTER:_Source
+	INT:_Turns
+ON
+	OnCharacterStatusApplied(_Target, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO2_FLYING_CHECK)
+ACTIONS
+IF "c1&c2&c3"
+	CharacterGetStatusSourceCharacter(_Target, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO2_FLYING_CHECK, _AuraHost)
+	CharacterGetStatusSourceCharacter(_AuraHost, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO2_FLYING, _Source)
+	CharacterIsEnemy(_Target, _Source)
+THEN
+	CharacterApplyStatus(_AuraHost, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO2_FLYING_DAMAGE, 0, 0, _Source)
+	CharacterApplyStatus(_Target, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO2_FLYING_DAMAGE, 0, 0, _Source)
+ENDIF
+
+EVENT LLWEAPONEX_RapierMastery_SuckerCombo2_Flying_KnockdownCheck_Items
+VARS
+	ITEM:_Target
+	CHARACTER:_AuraHost
+	CHARACTER:_Source
+	INT:_Turns
+ON
+	OnItemStatus(_Target, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO2_FLYING_CHECK)
+ACTIONS
+IF "!c1&c2&c3"
+	IsStoryItem(_Target)
+	ItemGetStatusSourceCharacter(_Target, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO2_FLYING_CHECK, _AuraHost)
+	CharacterGetStatusSourceCharacter(_AuraHost, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO2_FLYING, _Source)
+THEN
+	CharacterApplyStatus(_AuraHost, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO2_FLYING_DAMAGE, 0, 0, _Source)
+	ItemApplyStatus(_Target, LLWEAPONEX_RAPIER_MASTERY_SUCKERCOMBO2_FLYING_DAMAGE, 0, 0, _Source)
+ENDIF
+
+EVENT LLWEAPONEX_WarCharge_LeadershipScaling
+VARS
+	CHARACTER:_Char
+	STATUS:_Result
+	LIST<STATUS>:_RemoveList
+	INT:_Leadership
+	INT:_Turns
+ON
+	FetchCharacterApplyStatusData(_Char, LLWEAPONEX_WARCHARGE_APPLY)
+ACTIONS
+	Set(_Result, null)
+	Set(_Turns, null)
+IF "c1"
+	CharacterGetAbility(_Leadership, _Char, Leadership)
+THEN
+	IF "c1"
+		IsGreaterThen(_Leadership, 9)
+	THEN
+		Set(_Result, LLWEAPONEX_WARCHARGE10)
+		Set(_Turns, 3)
+	ELIF "c1"
+		IsEqual(_Leadership, 9)
+	THEN
+		Set(_Result, LLWEAPONEX_WARCHARGE09)
+	ELIF "c1"
+		IsEqual(_Leadership, 8)
+	THEN
+		Set(_Result, LLWEAPONEX_WARCHARGE08)
+	ELIF "c1"
+		IsEqual(_Leadership, 7)
+	THEN
+		Set(_Result, LLWEAPONEX_WARCHARGE07)
+	ELIF "c1"
+		IsEqual(_Leadership, 6)
+	THEN
+		Set(_Result, LLWEAPONEX_WARCHARGE06)
+	ELIF "c1"
+		IsEqual(_Leadership, 5)
+	THEN
+		Set(_Result, LLWEAPONEX_WARCHARGE05)
+	ELIF "c1"
+		IsEqual(_Leadership, 4)
+	THEN
+		Set(_Result, LLWEAPONEX_WARCHARGE04)
+	ELIF "c1"
+		IsEqual(_Leadership, 3)
+	THEN
+		Set(_Result, LLWEAPONEX_WARCHARGE03)
+	ELIF "c1"
+		IsEqual(_Leadership, 2)
+	THEN
+		Set(_Result, LLWEAPONEX_WARCHARGE02)
+	ELSE
+		Set(_Result, LLWEAPONEX_WARCHARGE01)
+	ENDIF
+ENDIF
+	RETURN(_RemoveList, _Result, _Turns)
+
+// Fix: Conflicting event ID
+EVENT LLWEAPONEX_UnrelentingRage_DamageBonus
+VARS
+	CHARACTER:_Target
+	LIST<STATUS>:_RemoveList
+	STATUS:_Result
+	INT:_Turns
+	INT:_TurnsLeft
+ON
+	FetchCharacterApplyStatusData(_Target, LLWEAPONEX_UNRELENTING_RAGE_BONUS_APPLY)
+ACTIONS
+	Set(_Result, null)
+	Set(_Turns, -1)
+IF "c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_UNRELENTING_RAGE_BONUS)
+THEN
+	Set(_Result, LLWEAPONEX_UNRELENTING_RAGE_BONUS2)
+	ListAdd(_RemoveList, LLWEAPONEX_UNRELENTING_RAGE_BONUS)
+ELIF "c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_UNRELENTING_RAGE_BONUS2)
+THEN
+	Set(_Result, LLWEAPONEX_UNRELENTING_RAGE_BONUS3)
+	ListAdd(_RemoveList, LLWEAPONEX_UNRELENTING_RAGE_BONUS2)
+ELIF "c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_UNRELENTING_RAGE_BONUS3)
+THEN
+	Set(_Result, LLWEAPONEX_UNRELENTING_RAGE_BONUS4)
+	ListAdd(_RemoveList, LLWEAPONEX_UNRELENTING_RAGE_BONUS3)
+ELIF "c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_UNRELENTING_RAGE_BONUS4)
+THEN
+	Set(_Result, LLWEAPONEX_UNRELENTING_RAGE_BONUS5)
+	ListAdd(_RemoveList, LLWEAPONEX_UNRELENTING_RAGE_BONUS4)
+ELIF "!c1"
+	CharacterHasStatus(_Target, LLWEAPONEX_UNRELENTING_RAGE_BONUS5)
+THEN
+	Set(_Result, LLWEAPONEX_UNRELENTING_RAGE_BONUS)
+ENDIF
+IF "!c1"
+	IsEqual(_Result, null)
+THEN
+	CharacterPlayEffect(_Target, "RS3_FX_GP_Status_Enraged_01", "Dummy_OverheadFX")
+ENDIF
+	RETURN(_RemoveList, _Result, _Turns)

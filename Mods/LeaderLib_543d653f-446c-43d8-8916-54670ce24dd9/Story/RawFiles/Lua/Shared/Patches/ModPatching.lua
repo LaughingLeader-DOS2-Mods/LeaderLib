@@ -3,8 +3,14 @@ local isClient = Ext.IsClient()
 local Patches = {
 	--Weapon Expansion
 	["c60718c3-ba22-4702-9c5d-5ad92b41ba5f"] = {
-		Version = 153288705,
-		Patch = function ()
+		Version = 153288706,
+		Patch = function (initialized)
+			--Fix Patches an event name conflict that prevented Soul Harvest's bonus from applying.
+			Ext.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript")
+			
+			if not initialized then
+				return
+			end
 			if isClient then
 				if Ext.Version() < 56 then
 					Ext._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
@@ -68,12 +74,13 @@ local Patches = {
 	}
 }
 
-local function PatchMods()
+local function PatchMods(initialized)
 	for uuid,data in pairs(Patches) do
 		if Ext.IsModLoaded(uuid) and Ext.GetModInfo(uuid).Version <= data.Version then
-			data.Patch()
+			data.Patch(initialized)
 		end
 	end
 end
 
-RegisterListener("Initialized", PatchMods)
+Ext.RegisterListener("StatsLoaded", function() PatchMods(false) end)
+RegisterListener("Initialized", function() PatchMods(true) end)

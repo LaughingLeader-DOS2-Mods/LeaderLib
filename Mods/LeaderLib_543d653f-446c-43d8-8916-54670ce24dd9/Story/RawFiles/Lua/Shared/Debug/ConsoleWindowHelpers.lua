@@ -307,5 +307,48 @@ else
 			end
 		})
 		AddConsoleVariable("sheet", sheet)
+
+		local tutorialBox = {}
+		setmetatable(tutorialBox, {
+			__call = function()
+				return Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.tutorialBox or Data.UIType.tutorialBox_c):GetRoot()
+			end,
+			__index = function(tbl,k)
+				local ui = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.tutorialBox or Data.UIType.tutorialBox_c)
+				if ui then
+					if k == "Instance" then
+						return ui
+					elseif k == "Root" then
+						return ui:GetRoot()
+					end
+					local this = ui:GetRoot()
+					local v = this[k]
+					if type(v) == "function" then
+						return function(...)
+							local b,result = pcall(v, this, ...)
+							return result
+						end
+					else
+						return v
+					end
+				end
+			end,
+			__newindex = function(tbl,k,v)
+				local ui = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.tutorialBox or Data.UIType.tutorialBox_c)
+				if ui then
+					local this = ui:GetRoot()
+					if this then
+						this[k] = v
+					end
+				end
+			end,
+			__tostring = function()
+				local ui = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.tutorialBox or Data.UIType.tutorialBox_c)
+				return ui and Ext.DumpExport(ui) or "nil"
+			end
+		})
+		AddConsoleVariable("tutorialBox", tutorialBox)
+
+		--tutorialBox.fadeInNonModalPointer("Test here!", 100, 200, 0)
 	end
 end

@@ -181,6 +181,7 @@ local defaultPersistentVars = {
 }
 
 Ext.Require("BootstrapShared.lua")
+Ext.Require("Shared/System/TutorialManager.lua")
 
 ---@private
 ---@type LeaderLibPersistentVars

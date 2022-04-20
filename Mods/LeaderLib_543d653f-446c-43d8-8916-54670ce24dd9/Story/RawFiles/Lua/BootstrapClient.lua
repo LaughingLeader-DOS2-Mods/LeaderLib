@@ -1,5 +1,6 @@
 Ext.Require("BootstrapShared.lua")
 Ext.Require("Client/_Init.lua")
+Ext.Require("Shared/System/TutorialManager.lua")
 
 local function LeaderLib_SyncRanSeed(call, seedstr)
 	_G["LEADERLIB_RAN_SEED"] = math.tointeger(seedstr)

@@ -562,17 +562,6 @@ Ext.RegisterListener("SessionLoaded", function()
 	end
 end)
 
-Ext.RegisterConsoleCommand("barTest", function()
-	local ui = UIExtensions.GetInstance()
-	if ui then
-		local this = ui:GetRoot()
-		if this then
-			local bar = this.mainPanel_mc.elements[this.addBar("BeetusAdrenaline", "Adrenaline", "Is this working?", 100, 100)]
-			bar.setBarColour(0xFFCC00)
-		end
-	end
-end)
-
 Ext.RegisterConsoleCommand("panelTest", function()
 	local this = UIExtensions.Root
 	if this then

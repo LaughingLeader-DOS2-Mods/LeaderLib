@@ -39,8 +39,8 @@ local Patches = {
 					end
 				end)
 			else
+				--Fix Custom alignment entities may fail to load when the game is loaded multiple times it seems
 				--Harken = "e446752a-13cc-4a88-a32e-5df244c90d8b",
-				--Korvash = "3f20ae14-5339-4913-98f1-24476861ebd6",
 				local uuid = "e446752a-13cc-4a88-a32e-5df244c90d8b"
 				if ObjectExists(uuid) == 1 then
 					local faction = GetFaction(uuid)
@@ -55,6 +55,7 @@ local Patches = {
 						end
 					end
 				end
+				--Korvash = "3f20ae14-5339-4913-98f1-24476861ebd6"
 				uuid = "3f20ae14-5339-4913-98f1-24476861ebd6"
 				if ObjectExists(uuid) == 1 then
 					local faction = GetFaction(uuid)

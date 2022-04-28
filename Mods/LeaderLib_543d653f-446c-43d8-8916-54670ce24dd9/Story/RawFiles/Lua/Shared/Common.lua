@@ -118,9 +118,13 @@ end
 ---@param target any[]
 ---@param mergeFrom any[]
 function Common.MergeTables(target, mergeFrom)
+	if type(mergeFrom) ~= "table" then
+		return target
+	end
 	for i=1,#mergeFrom do
 		target[#target+1] = mergeFrom[i]
 	end
+	return target
 end
 
 function Common.CopyTableToTable(target, copyFrom)

@@ -26,7 +26,7 @@ local _stringKeyText = {}
 ---Get the final value of a string key.
 ---This uses the handle returned from Ext.GetTranslatedStringFromKey to then get the text from Ext.GetTranslatedString.
 ---@param key string The string key.
----@param fallback string Text to use if the key does not exist.
+---@param fallback string|nil Text to use if the key does not exist. Defaults to the key if not set.
 ---@return string
 function GameHelpers.GetStringKeyText(key,fallback)
 	fallback = fallback or key

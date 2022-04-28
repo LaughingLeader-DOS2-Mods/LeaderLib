@@ -245,7 +245,7 @@ end
 
 ---Replace placeholder text in strings, such as ExtraData, Skill, etc.
 ---@param str string
----@param character EclCharacter|EsvCharacter Optional character to use for the tooltip.
+---@param character EclCharacter|EsvCharacter|nil Optional character to use for the tooltip.
 ---@return string
 function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
 	local b,result = xpcall(ReplacePlaceholders, debug.traceback, str, character)

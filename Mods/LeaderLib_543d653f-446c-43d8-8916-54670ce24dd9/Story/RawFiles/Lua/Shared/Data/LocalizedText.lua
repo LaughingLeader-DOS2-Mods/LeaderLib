@@ -362,7 +362,7 @@ LocalizedText.CharacterSheet = {
 
 ---Get localized damage text wrapped in that damage type's color.
 ---@param damageType string
----@param damageValue string|integer|number
+---@param damageValue string|integer|number|nil
 ---@param omitDamageName boolean|nil
 ---@return string
 local function GetDamageText(damageType, damageValue, omitDamageName)

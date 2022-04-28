@@ -55,12 +55,14 @@ function StringHelpers.Capitalize(s)
 	return s:sub(1,1):upper()..s:sub(2)
 end
 
+---@alias StringHelpersJoinGetStringCallback fun(k:any,v:any):string
+
 ---Join a table of string into one string.
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param delimiter string
 ---@param list table
----@param uniqueOnly boolean 
----@param getStringFunction fun(k:any,v:any):string
+---@param uniqueOnly boolean|nil
+---@param getStringFunction StringHelpersJoinGetStringCallback|nil
 function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 	local finalResult = ""
 	local useFunction = type(getStringFunction) == "function"
@@ -143,7 +145,11 @@ end
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param str string
 ---@param delimiter string
+---@return string[]|nil
 function StringHelpers.Split(str, delimiter)
+	if type(str) ~= "string" then
+		return nil
+	end
 	local list = {}; local pos = 1
 	if string.find("", delimiter, 1) then
 		table.insert(list, str)

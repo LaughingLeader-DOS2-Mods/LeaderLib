@@ -203,7 +203,7 @@ function GameHelpers.DB.HasUUID(databaseName, uuid, arity, checkColumn)
 	return false
 end
 
-function GameHelpers.DB.Flatten(databaseTable, formatUUID)
+function GameHelpers.DB.Flatten(databaseTable)
 	local data = {}
 	for i,v in pairs(databaseTable) do
 		local params = v
@@ -222,9 +222,9 @@ function GameHelpers.DB.Flatten(databaseTable, formatUUID)
 end
 
 ---@param name string The database name.
----@param arity integer The number of parameters for this DB.
+---@param arity integer|nil The number of parameters for this DB, or nil to try and auto-detect it.
 ---@param index integer|nil The index to return, if any. Optional.
----@param unpack boolean If true, table.unpack is called on the result when returning the data.
+---@param unpack boolean|nil If true, table.unpack is called on the result when returning the data.
 function GameHelpers.DB.Get(name, arity, index, unpack)
 	local b,result = xpcall(function()
 		local db = Osi[name]:Get(GetArity(arity))

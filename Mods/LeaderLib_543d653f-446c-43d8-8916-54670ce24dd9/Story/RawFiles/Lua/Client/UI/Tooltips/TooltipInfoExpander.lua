@@ -202,6 +202,7 @@ local tooltipTypeToElement = {
 	Tag = "TagDescription",
 	Talent = "TalentDescription",
 }
+TooltipExpander.TooltipTypeToElement = tooltipTypeToElement
 
 ---@param request TooltipRequest
 ---@param tooltip TooltipData
@@ -219,6 +220,24 @@ function TooltipExpander.AppendHelpText(request, tooltip)
 		else
 			local elementType = tooltipTypeToElement[request.Type]
 			local element = tooltip:GetLastElement(elementType)
+			--Create a description tooltip element if one doesn't exist
+			if element == nil then
+				local spec = Game.Tooltip.TooltipSpecs[elementType]
+				if spec then
+					element = {}
+					for _,field in pairs(spec) do
+						local fieldName = field[1]
+						local t = field[2]
+						if t == "string" then
+							element[fieldName] = ""
+						elseif t == "number" then
+							element[fieldName] = 0
+						elseif t == "boolean" then
+							element[fieldName] = false
+						end
+					end
+				end
+			end
 			if element then
 				local target = element.Label or element.Description
 				if target then

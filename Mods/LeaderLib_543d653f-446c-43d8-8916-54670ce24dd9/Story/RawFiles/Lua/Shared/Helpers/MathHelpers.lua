@@ -48,8 +48,8 @@ end
 
 ---Get a position derived from a character's forward facing direction.
 ---@param char UUID|EsvCharacter
----@param distanceMult number
----@param fromPosition number[]
+---@param distanceMult number|nil
+---@param fromPosition number[]|nil
 function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
     ---@type EsvCharacter
     local character = GameHelpers.GetCharacter(char)

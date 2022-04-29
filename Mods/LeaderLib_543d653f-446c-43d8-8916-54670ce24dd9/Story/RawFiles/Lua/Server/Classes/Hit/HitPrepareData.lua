@@ -60,12 +60,12 @@ local HIT_ATTRIBUTE = {
 	ForceReduceDurability = "boolean",
 	HighGround = "string",
 	--Hit Attributes
-	Equipment = "integer",
+	Equipment = "number",
 	DeathType = "string",
 	DamageType = "string",
-	AttackDirection = "integer",
-	ArmorAbsorption = "integer",
-	LifeSteal = "integer",
+	AttackDirection = "number",
+	ArmorAbsorption = "number",
+	LifeSteal = "number",
 	HitWithWeapon = "boolean",
 	Hit = "boolean",
 	Blocked = "boolean",
@@ -91,6 +91,8 @@ local HIT_ATTRIBUTE = {
 	Burning = "boolean",
 	NoEvents = "boolean",
 }
+
+HitPrepareData.HIT_ATTRIBUTE = HIT_ATTRIBUTE
 
 local ChaosDamageTypes = {
 	Physical = 1,
@@ -164,7 +166,7 @@ end
 
 local function SaveHitAttributes(handle, data)
 	for k,t in pairs(HIT_ATTRIBUTE) do
-		if t == "integer" then
+		if t == "number" then
 			data[k] = NRD_HitGetInt(handle, k) or nil
 		elseif t == "boolean" then
 			data[k] = NRD_HitGetInt(handle, k) == 1 and true or false
@@ -194,7 +196,7 @@ local function SetMeta(data)
 		__index = function(tbl,k)
 			if tbl.Handle then
 				local t = HIT_ATTRIBUTE[k]
-				if t == "integer" then
+				if t == "number" then
 					return NRD_HitGetInt(tbl.Handle, k)
 				elseif t == "boolean" then
 					return NRD_HitGetInt(tbl.Handle, k) == 1 and true or false
@@ -207,7 +209,7 @@ local function SetMeta(data)
 		__newindex = function(tbl,k,v)
 			if tbl.Handle then
 				local t = HIT_ATTRIBUTE[k]
-				if t == "integer" or t == "boolean" then
+				if t == "number" or t == "boolean" then
 					NRD_HitSetInt(tbl.Handle, k, v)
 					return
 				elseif t == "string" then

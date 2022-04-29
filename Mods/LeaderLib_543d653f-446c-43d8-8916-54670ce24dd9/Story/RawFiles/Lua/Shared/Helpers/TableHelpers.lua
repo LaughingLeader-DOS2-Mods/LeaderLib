@@ -86,24 +86,28 @@ function TableHelpers.SanitizeTable(tbl, supportedExtraTypes, forJson)
 	return output
 end
 
+---Add key/value entries to target from addFrom, optionally skipping if that key exists already.
 ---@param target table
 ---@param addFrom table
 ---@param skipExisting boolean|nil If true, existing values aren't updated.
-function TableHelpers.AddOrUpdate(target, addFrom, skipExisting)
-	if target == nil or addFrom == nil then
-		return
+---@param deep boolean|nil If true, iterate into table values to AddOrUpdate them as well.
+---@return table target Returns the target table.
+function TableHelpers.AddOrUpdate(target, addFrom, skipExisting, deep)
+	if type(target) ~= "table" or type(addFrom) ~= "table" then
+		return target
 	end
 	for k,v in pairs(addFrom) do
 		if target[k] == nil then
 			target[k] = v
 		else
-			if type(v) == "table" then
+			if deep and (type(v) == "table" and type(target[k]) == "table") then
 				TableHelpers.AddOrUpdate(target[k], v, skipExisting)
 			elseif skipExisting ~= true then
 				target[k] = v
 			end
 		end
 	end
+	return target
 end
 
 ---Only assigns values from addFrom if they already exist in target.
@@ -178,4 +182,62 @@ function TableHelpers.TryUnpack(tbl)
 		return true,table.unpack(tbl)
 	end
 	return false
+end
+
+---Checks if a table has a string/boolean/number value, or any value in a table of values, if provided.
+---@param tbl table
+---@param value SerializableValue|table<any, SerializableValue> A value or table of values to check for.
+---@param deep boolean|nil If true, and table entry is a table, keep checking for the provided values.
+---@return boolean
+function TableHelpers.HasValue(tbl, value, deep)
+	if type(tbl) ~= nil then
+		return false
+	end
+	local t = type(value)
+	if t == "table" then
+		for k,v in pairs(value) do
+			if TableHelpers.HasValue(table, v, deep) then
+				return true
+			end
+		end
+	else
+		for k,v in pairs(tbl) do
+			if v == value then
+				return true
+			end
+			if deep and type(v) == "table" and TableHelpers.HasValue(v, value, deep) then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
+---Appends values from one array into another.
+---@param copyTo any[]
+---@param copyFrom any[]
+---@return table copyTo Returns the copyTo table
+function TableHelpers.AppendArrays(copyTo, copyFrom)
+	if type(copyFrom) ~= "table" then
+		return copyTo
+	end
+	for k,v in pairs(copyFrom) do
+		table.insert(copyTo, v)
+	end
+	return copyTo
+end
+
+---Copies key/pair values from one table to another.
+---@param copyTo table
+---@param copyFrom table
+---@return table copyTo Returns the copyTo table
+function TableHelpers.CopyKeys(copyTo, copyFrom)
+	if type(copyFrom) ~= "table" then
+		return copyTo
+	end
+	for k,v in pairs(copyFrom) do
+		copyTo[k] = v
+	end
+	return copyTo
 end

@@ -368,6 +368,7 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	return false
 end
 
+---Gather all tags for an object and store them in a table.
 ---@param object EsvCharacter|EsvItem|EclCharacter|EclItem The character or item to get tags from.
 ---@param inDictionaryFormat boolean|nil If true, tags will be set as tbl[tag] = true, for easier checking.
 ---@param addEquipmentTags boolean|nil If the object is a character, all tags found on equipped items will be added to the table.
@@ -381,6 +382,15 @@ function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 				tags[v] = true
 			else
 				tags[#tags+1] = v
+			end
+		end
+		if GameHelpers.Ext.ObjectIsItem(object) and not GameHelpers.Item.IsObject(object) then
+			for tag,b in pairs(GameHelpers.GetItemTags(object, true, false)) do
+				if inDictionaryFormat then
+					tags[tag] = true
+				else
+					tags[#tags+1] = tag
+				end
 			end
 		end
 	end

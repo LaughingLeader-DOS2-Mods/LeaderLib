@@ -230,7 +230,7 @@ local function ReplacePlaceholders(str, character)
 	for v in string.gmatch(output, "%[Handle:.-%]") do
 		local text = v:gsub("%[Handle:", ""):gsub("%]", "")
 		local props = StringHelpers.Split(text, ":")
-		if props[2] == nil then 
+		if props[2] == nil then
 			props[2] = ""
 		end
 		local translatedText = Ext.GetTranslatedString(props[1], props[2])

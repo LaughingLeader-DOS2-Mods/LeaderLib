@@ -60,7 +60,7 @@ AttackManager = {
 		---Register a listener that fires when a hit occurs with a specific weapon tag.
 		---@param tag string|string[]
 		---@param callback BasicAttackOnWeaponTagHitCallback
-		---@param priority integer Optional priority to assign to this callback.
+		---@param priority integer|nil Optional priority to assign to this callback.
 		Register = function(tag, callback, priority)
 			if type(priority) ~= "number" then
 				priority = 99

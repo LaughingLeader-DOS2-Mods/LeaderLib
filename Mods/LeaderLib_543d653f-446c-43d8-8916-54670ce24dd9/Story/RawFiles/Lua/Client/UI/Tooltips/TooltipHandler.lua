@@ -19,8 +19,8 @@ TooltipHandler.SkillBookAssociatedSkills = {}
 
 ---Registers a tag to display on item tooltips.
 ---@param tag string
----@param title TranslatedString
----@param description TranslatedString
+---@param title TranslatedString|string|fun(tag:string, tooltipType:string):string|nil
+---@param description TranslatedString|string|fun(tag:string, tooltipType:string):string|nil
 function TooltipHandler.RegisterItemTooltipTag(tag, title, description)
 	local data = {}
 	if title ~= nil then

@@ -181,7 +181,7 @@ end
 
 ---@param name string|string[]|TimerCallback Timer name or the callback if a ganeric listener.
 ---@param callback TimerCallback
----@param fetchGameObjects boolean If true, any UUIDs passed into the timer callback are transformed into EsvCharacter/EsvItem.
+---@param fetchGameObjects boolean|nil If true, any UUIDs passed into the timer callback are transformed into EsvCharacter/EsvItem.
 function Timer.RegisterListener(name, callback, fetchGameObjects)
 	local t = type(name)
 	if t == "string" and not IsClient then

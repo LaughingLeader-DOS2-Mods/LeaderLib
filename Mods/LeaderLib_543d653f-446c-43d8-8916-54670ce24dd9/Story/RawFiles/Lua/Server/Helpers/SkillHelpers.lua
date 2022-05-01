@@ -60,11 +60,11 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
 
     local sourceLevel = extraParams and extraParams.CasterLevel or nil
 
-    local sourceObject = GameHelpers.TryGetObject(source)
+    local sourceObject = source and GameHelpers.TryGetObject(source) or nil
     local targetObject = GameHelpers.TryGetObject(target)
 
-    local sourcePos = GameHelpers.Math.GetPosition(sourceObject or source, false)
     local targetPos = GameHelpers.Math.GetPosition(targetObject or target, false)
+    local sourcePos = source and GameHelpers.Math.GetPosition(sourceObject or source, false) or targetPos
 
     local isFromItem = false
     ---@type EsvShootProjectileRequest
@@ -84,7 +84,9 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
 
     props.SourcePosition = sourcePos
     props.TargetPosition = targetPos
-    props.HitObjectPosition = TableHelpers.Clone(targetPos)
+    if source ~= nil then
+        props.HitObjectPosition = TableHelpers.Clone(targetPos)
+    end
 
     if targetObject then
         if extraParams.SetHitObject then
@@ -118,7 +120,7 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
                     isFromItem = true
                 end
             end
-        elseif targetType == "character" then
+        elseif targetType == "character" and targetObject then
             sourceLevel = targetObject.Stats.Level
         end
     end
@@ -156,7 +158,9 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
 
     if type(extraParams) == "table" then
         for k,v in pairs(extraParams) do
-            if not LeaderLibProjectileCreationPropertyNames[k] then
+            if v == "nil" then
+                props[k] = nil
+            else
                 props[k] = v
             end
         end
@@ -376,17 +380,17 @@ end
 
 ---@param target string|number[]|EsvCharacter|EsvItem
 ---@param skillId string
----@param source string|EsvCharacter|EsvItem
----@param extraParams LeaderLibProjectileCreationProperties Optional table of properties to apply on top of the properties set from the skill stat.
+---@param source string|EsvCharacter|EsvItem|nil
+---@param extraParams LeaderLibProjectileCreationProperties|nil Optional table of properties to apply on top of the properties set from the skill stat.
 function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParams)
     extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = Ext.GetStat(skillId)
     if not extraParams.SourceOffset then
         extraParams.SourceOffset = {0,2,0}
     end
-    if not extraParams.ParamsParsed and type(source) ~= "table" then
+    if not extraParams.ParamsParsed and source ~= nil and type(source) ~= "table" then
         extraParams.ParamsParsed = function(props, sourceObj, targetObj)
-            --Modifies the SourcePosition to between the source and target, 
+            --Modifies the SourcePosition to between the source and target
             local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenPositions(props.SourcePosition, props.TargetPosition)
 	        props.SourcePosition = {GameHelpers.Grid.GetValidPositionAlongLine(props.SourcePosition, directionalVector, 1.0)}
             props.SourcePosition[2] = props.SourcePosition[2] + 2.0

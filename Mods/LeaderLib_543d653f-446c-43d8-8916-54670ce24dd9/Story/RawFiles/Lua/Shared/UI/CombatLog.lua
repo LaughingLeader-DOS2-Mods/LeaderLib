@@ -1,23 +1,25 @@
+local isClient = Ext.IsClient()
+
 if CombatLog == nil then
 	CombatLog = {}
 end
 
 setmetatable(CombatLog, {
 	__index = function(tbl,k)
-		if k == "Root" then
-			return CombatLog.GetInstance()
-		elseif k == "PrintFilters" then
-			local this = CombatLog.GetInstance()
-			local arr = this.log_mc.filterList.content_array
-			for i=0,#arr-1 do 
-				local mc = arr[i]
-				fprint(LOGLEVEL.TRACE, "log_mc.filterList.content_array[%s] = id(%s) tooltip(%s)", i, mc.id, mc.tooltip)
+		if isClient then
+			if k == "Root" then
+				return CombatLog.GetInstance()
+			elseif k == "PrintFilters" then
+				local this = CombatLog.GetInstance()
+				local arr = this.log_mc.filterList.content_array
+				for i=0,#arr-1 do
+					local mc = arr[i]
+					fprint(LOGLEVEL.TRACE, "log_mc.filterList.content_array[%s] = id(%s) tooltip(%s)", i, mc.id, mc.tooltip)
+				end
 			end
 		end
 	end
 })
-
-local isClient = Ext.IsClient()
 
 ---@class CombatLogFilterData
 ---@field DisplayName string

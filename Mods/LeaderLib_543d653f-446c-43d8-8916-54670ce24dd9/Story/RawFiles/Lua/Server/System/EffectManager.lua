@@ -1,3 +1,5 @@
+local _EXTVERSION = Ext.Version()
+
 if EffectManager == nil then
 	EffectManager = {}
 end
@@ -215,3 +217,64 @@ end)
 -- Ext.RegisterOsirisListener("RegionEnded", 1, "after", function(region)
 	
 -- end)
+
+---@class EffectManagerEsvEffectParams
+---@field BeamTarget ObjectHandle
+---@field BeamTargetBone string
+---@field BeamTargetPos number[]
+---@field Bone string
+---@field DetachBeam boolean
+---@field Duration number
+---@field EffectName string
+---@field ForgetEffect boolean
+---@field IsDeleted boolean
+---@field IsForgotten boolean
+---@field Loop boolean
+---@field Position number[]
+---@field Rotation number[]
+---@field Scale number
+---@field Target ObjectHandle
+
+---@class EffectManagerEsvEffect:EffectManagerEsvEffectParams
+---@field NetID NETID
+---@field Delete fun(self:EffectManagerEsvEffect)
+
+---@param fx string The effect resource name
+---@param pos number[]|EsvGameObject
+---@param effectParams EffectManagerEsvEffectParams|nil
+function EffectManager.PlayEffectAt(fx, pos, effectParams)
+	local t = type(fx)
+	assert(t == "string" or t == "table", "Effect parameter must be a string or a table of strings.")
+	if t == "string" then
+		local pt = type(pos)
+		local x,y,z = nil,nil,nil
+		if pt == "table" then
+			x,y,z = table.unpack(pos)
+		elseif pt == "userdata" and pos.WorldPos then
+			x,y,z = table.unpack(pos.WorldPos)
+		end
+		assert(x and y and z, "Position table is invalid - {x,y,z} required.")
+		if _EXTVERSION >= 56 then
+			---@type EffectManagerEsvEffect
+			local effect = Ext.Effect.CreateEffect(fx, Ext.Entity.NullHandle(), "")
+			if effect then
+				effect.Position[1] = x
+				effect.Position[2] = y
+				effect.Position[3] = z
+			end
+			if type(effectParams) == "table" then
+				for k,v in pairs(effectParams) do
+					if effect[k] then
+						effect[k] = v
+					end
+				end
+			end
+		elseif Ext.OsirisIsCallable() then
+			PlayEffectAtPosition(fx, x, y, z)
+		end
+	elseif t == "table" then
+		for _,v in pairs(fx) do
+			EffectManager.PlayEffectAt(v, pos, effectParams)
+		end
+	end
+end

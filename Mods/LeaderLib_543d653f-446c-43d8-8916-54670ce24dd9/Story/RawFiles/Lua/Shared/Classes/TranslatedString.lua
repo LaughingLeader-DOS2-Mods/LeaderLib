@@ -1,3 +1,4 @@
+---@type TranslatedString[]
 local _translatedStringUpdate = {}
 --Turn into a weak table since we don't care to update variables that were deleted.
 setmetatable(_translatedStringUpdate, {__mode = "kv"})
@@ -183,4 +184,25 @@ if not Vars.IsEditorMode then
 	Ext.RegisterListener("SessionLoaded", UpdateTranslatedStrings)
 else
 	RegisterListener("Initialized", UpdateTranslatedStrings)
+end
+
+if Vars.DebugMode then
+	Ext.RegisterConsoleCommand("leaderlib_ts_missingkeys", function ()
+		local keys = {}
+		local length = #_translatedStringUpdate
+		for i=1,length do
+			local entry = _translatedStringUpdate[i]
+			if entry then
+				if not String.IsNullOrEmpty(entry.Key) then
+					local content,handle = Ext.GetTranslatedStringFromKey(entry.Key)
+					if String.IsNullOrEmpty(handle) then
+						keys[#keys+1] = entry.Key
+					end
+				end
+			end
+		end
+		table.sort(keys)
+		Ext.Print("Missing Keys:")
+		Ext.Dump(keys)
+	end)
 end

@@ -46,8 +46,12 @@ Vector3 = {
 }
 Vector3.__index = Vector3
 
-function Vector3:IsVector3(x)
-	return getmetatable(x) == Vector3
+function Vector3.IsVector3(x)
+	if type(x) == "table" then
+		return x.Type == "Vector3"
+		--return getmetatable(x) == Vector3
+	end
+	return false
 end
 
 function Vector3:Clone(v)
@@ -75,9 +79,15 @@ end
 ---@param out Vector3|nil
 function Vector3:Add(u, out)
 	out = out or self
-	out.x = self.x + u.x
-	out.y = self.y + u.y
-	out.z = self.z + u.z
+	if Vector3.IsVector3(u) then
+		out.x = self.x + u.x
+		out.y = self.y + u.y
+		out.z = self.z + u.z
+	elseif type(u) == "number" then
+		out.x = self.x + u
+		out.y = self.y + u
+		out.z = self.z + u
+	end
 	return out
 end
 
@@ -252,16 +262,21 @@ end
 ---@param x number
 ---@param y number
 ---@param z number
-function Quaternion:FromAngleAxis(angle, x, y, z)
+---@return Quaternion
+function Quaternion.FromAngleAxis(angle, x, y, z)
 	return Quaternion():SetAngleAxis(angle, x, y, z)
 end
 
 ---@param angle number
----@param x number
+---@param x number|Vector3
 ---@param y number
 ---@param z number
+---@return Quaternion
 function Quaternion:SetAngleAxis(angle, x, y, z)
-	if Vector3.IsVector3(x) then x, y, z = x.x, x.y, x.z end
+	if Vector3.IsVector3(x) then
+		local vec = x
+		x,y,z = vec:Unpack()
+	end
 	local s = math.sin(angle * .5)
 	local c = math.cos(angle * .5)
 	self.x = x * s
@@ -280,7 +295,7 @@ end
 
 ---@param u Vector3
 ---@param v Vector3
-function Quaternion:Between(u, v)
+function Quaternion.Between(u, v)
 	return Quaternion():SetBetween(u, v)
 end
 
@@ -311,7 +326,7 @@ end
 ---@param x number
 ---@param y number
 ---@param z number
-function Quaternion:FromDirection(x, y, z)
+function Quaternion.FromDirection(x, y, z)
 	return Quaternion():SetDirection(x, y, z)
 end
 

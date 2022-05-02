@@ -4,8 +4,8 @@ end
 
 ---Tries to get the position from whatever the variable is.
 ---@param obj number[]|UUID|EsvCharacter|EsvItem|Vector3
----@param unpackResult boolean If true, the position value is returned as separate numbers.
----@param fallback number[] If no position is found, this value or {0,0,0} is returned.
+---@param unpackResult boolean|nil If true, the position value is returned as separate numbers.
+---@param fallback number[]|nil If no position is found, this value or {0,0,0} is returned.
 ---@return number,number,number|number[]
 function GameHelpers.Math.GetPosition(obj, unpackResult, fallback)
     local t = type(obj)
@@ -136,7 +136,7 @@ function GameHelpers.Math.SetRotation(uuid, rotx, rotz, turnTo)
                 if turnTo ~= true then
                     CharacterLookAt(uuid, target, 1)
                 end
-                Osi.LeaderLib_Timers_StartObjectTimer(target, 250, "LLMIME_Timers_LeaderLib_Commands_RemoveItem", "LeaderLib_Commands_RemoveItem")
+                Osi.LeaderLib_Timers_StartObjectTimer(target, 250, "Timers_LeaderLib_Commands_RemoveItem", "LeaderLib_Commands_RemoveItem")
             end
         else
             local x,y,z = GetPosition(uuid)
@@ -276,8 +276,8 @@ function GameHelpers.Math.Clamp(value, minValue, maxValue)
 end
 
 ---@param v number
----@param min number
----@param max number
+---@param min number|nil
+---@param max number|nil
 ---@return number
 local function _normalize(v, min, max)
     min = min or 0
@@ -393,4 +393,31 @@ function GameHelpers.Math.RotationMatrixToEuler(rot)
         gamma,
     }
     return euler
+end
+
+---@param startPos number[]
+---@param angle number
+---@param distanceMult number
+---@param unpack boolean|nil If true, x,y,z will be returned separately.
+---@return number[]|number
+---@return number|nil
+---@return number|nil
+function GameHelpers.Math.GetPositionWithAngle(startPos, angle, distanceMult, unpack)
+    if type(distanceMult) ~= "number" then
+        distanceMult = 1.0
+    end
+    angle = math.rad(angle)
+    local x,y,z = table.unpack(startPos)
+    --y = GameHelpers.Grid.GetY(tx,tz)
+
+    local tx,ty,tz = GameHelpers.Grid.GetValidPositionInRadius({
+        x + (math.cos(angle) * distanceMult),
+        y,
+        z + (math.sin(angle) * distanceMult)},6.0)
+
+    if unpack then
+        return tx,ty,tz
+    else
+        return {tx,ty,tz}
+    end
 end

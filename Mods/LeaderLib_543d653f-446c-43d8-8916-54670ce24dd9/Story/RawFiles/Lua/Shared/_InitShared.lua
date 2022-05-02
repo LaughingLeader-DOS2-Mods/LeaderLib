@@ -41,6 +41,19 @@ function GameHelpers.GetStringKeyText(key,fallback)
 	return text
 end
 
+---Get the content of a TranslatedString.
+---@param handle string The string handle.
+---@param fallback string|nil Text to use if the key does not exist. Defaults to the key if not set.
+---@return string
+function GameHelpers.GetTranslatedString(handle,fallback)
+	fallback = fallback or handle
+	local text = _getTranslatedStringFunction(handle, fallback)
+	if text == nil then
+		return fallback
+	end
+	return text
+end
+
 ---@class ExtenderTranslatedString
 ---@field Handle string
 ---@field ReferenceString string

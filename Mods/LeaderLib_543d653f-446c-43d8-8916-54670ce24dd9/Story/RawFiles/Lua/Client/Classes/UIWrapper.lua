@@ -294,9 +294,17 @@ end
 ---@param method string
 ---@vararg any
 function UIWrapper:Invoke(method, ...)
-	local ui = self:GetInstance()
-	if ui then
-		ui:Invoke(method, ...)
+	local root = self:GetRoot()
+	if root then
+		local func = root[method]
+		if func then
+			local b,err = xpcall(func, debug.traceback, ...)
+			if not b then
+				Ext.PrintError(err)
+			end
+		else
+			fprint(LOGLEVEL.ERROR, "[UIWrapper:%s] Flash method (%s) does not exist!", self.Name, method)
+		end
 	end
 end
 

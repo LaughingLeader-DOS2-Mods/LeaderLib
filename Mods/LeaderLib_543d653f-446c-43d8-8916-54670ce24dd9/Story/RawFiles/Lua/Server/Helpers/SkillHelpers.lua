@@ -61,7 +61,7 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
     local sourceLevel = extraParams and extraParams.CasterLevel or nil
 
     local sourceObject = source and GameHelpers.TryGetObject(source) or nil
-    local targetObject = GameHelpers.TryGetObject(target)
+    local targetObject = type(target) == "userdata" and GameHelpers.TryGetObject(target) or nil
 
     local targetPos = GameHelpers.Math.GetPosition(targetObject or target, false)
     local sourcePos = source and GameHelpers.Math.GetPosition(sourceObject or source, false) or targetPos
@@ -84,13 +84,11 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
 
     props.SourcePosition = sourcePos
     props.TargetPosition = targetPos
-    if source ~= nil then
-        props.HitObjectPosition = TableHelpers.Clone(targetPos)
-    end
-
+    
     if targetObject then
         if extraParams.SetHitObject then
             props.HitObject = targetObject.MyGuid
+            props.HitObjectPosition = targetObject.WorldPos
         end
         props.Caster = targetObject.MyGuid
         props.Source = targetObject.MyGuid

@@ -309,7 +309,7 @@ RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObje
 	if not StringHelpers.IsNullOrEmpty(projectile.SkillId) then
 		local skill = GetSkillEntryName(projectile.SkillId)
 		if projectile.CasterHandle ~= nil then
-			local object = Ext.GetGameObject(projectile.CasterHandle)
+			local object = GameHelpers.TryGetObject(projectile.CasterHandle)
 			local uuid = (object ~= nil and object.MyGuid) or ""
 			local target = hitObject ~= nil and hitObject.MyGuid or ""
 			---@type ProjectileHitData
@@ -321,6 +321,40 @@ RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObje
 				end
 			end
 			InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.PROJECTILEHIT, data, data.Type)
+		end
+	end
+end)
+
+---@param request EsvShootProjectileRequest
+RegisterProtectedExtenderListener("BeforeShootProjectile", function (request)
+	local skill = GetSkillEntryName(request.SkillId)
+	if not StringHelpers.IsNullOrEmpty(skill) and request.Source then
+		local object = GameHelpers.TryGetObject(request.Source)
+		if object then
+			for callback in GetListeners(skill) do
+				local b,err = xpcall(callback, debug.traceback, skill, object.MyGuid, SKILL_STATE.BEFORESHOOT, request, "EsvShootProjectileRequest")
+				if not b then
+					Ext.PrintError("[LeaderLib:SkillListeners:BeforeShootProjectile] Error invoking function:\n", err)
+				end
+			end
+			InvokeListenerCallbacks(Listeners.OnSkillHit, object.MyGuid, skill, SKILL_STATE.BEFORESHOOT, request, "EsvShootProjectileRequest")
+		end
+	end
+end)
+
+---@param projectile EsvProjectile
+RegisterProtectedExtenderListener("ShootProjectile", function (projectile)
+	local skill = GetSkillEntryName(projectile.SkillId)
+	if not StringHelpers.IsNullOrEmpty(skill) and projectile.CasterHandle then
+		local object = GameHelpers.TryGetObject(projectile.CasterHandle)
+		if object then
+			for callback in GetListeners(skill) do
+				local b,err = xpcall(callback, debug.traceback, skill, object.MyGuid, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile")
+				if not b then
+					Ext.PrintError("[LeaderLib:SkillListeners:BeforeShootProjectile] Error invoking function:\n", err)
+				end
+			end
+			InvokeListenerCallbacks(Listeners.OnSkillHit, object.MyGuid, skill, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile")
 		end
 	end
 end)

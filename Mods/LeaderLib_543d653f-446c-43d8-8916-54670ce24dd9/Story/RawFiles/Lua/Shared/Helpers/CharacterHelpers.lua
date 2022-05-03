@@ -704,3 +704,19 @@ function GameHelpers.Character.CanAttackTarget(target, attacker, allowItems)
 	assert(GameHelpers.Ext.ObjectIsCharacter(attacker), "attacker parameter must be a UUID, NetID, or Esv/EclCharacter")
 	return GameHelpers.Character.IsEnemy(target, attacker)
 end
+
+---Returns true if the character has a FEMALE tag or IsMale is false in PlayerCustomData.
+---@param character UUID|NETID|EsvCharacter|EclCharacter
+---@return boolean
+function GameHelpers.Character.IsFemale(character)
+	character = GameHelpers.TryGetObject(character)
+	assert(GameHelpers.Ext.ObjectIsCharacter(character), "target parameter must be a character UUID, NetID, or Esv/EclCharacter")
+	if character:HasTag("FEMALE") then
+		return true
+	end
+	if GameHelpers.Character.IsPlayer(character) and character.PlayerCustomData
+	and not character.PlayerCustomData.IsMale then
+		return true
+	end
+	return false
+end

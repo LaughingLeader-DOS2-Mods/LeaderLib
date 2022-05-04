@@ -645,6 +645,36 @@ function GameHelpers.Character.EquipItem(character, item)
 	return false
 end
 
+---Get a table of the character's equipment.
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param asTable boolean|nil Return the results as a table, instead of an iterator.
+---@return EsvItem[]|EclItem[]|fun():EsvItem|EclItem
+function GameHelpers.Character.GetEquipment(character, asTable)
+	local char = GameHelpers.GetCharacter(character)
+    fassert(char ~= nil, "'%s' is not a valid character", character)
+	local equipment = {}
+    local items = char:GetInventoryItems()
+	local count = math.min(#items, 14)
+	for i=1,count do
+		local item = GameHelpers.GetItem(items[i])
+		if item then
+            equipment[#equipment+1] = item
+		end
+	end
+	if not asTable then
+		local i = 0
+		local count = #equipment
+		return function ()
+			i = i + 1
+			if i <= count then
+				return equipment[i]
+			end
+		end
+	else
+		return equipment
+	end
+end
+
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsImmobile(character)
 	local character = GameHelpers.GetCharacter(character)

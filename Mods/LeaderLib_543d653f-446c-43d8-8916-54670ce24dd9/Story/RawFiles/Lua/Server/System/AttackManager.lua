@@ -171,7 +171,7 @@ RegisterProtectedOsirisListener("CharacterStartAttackPosition", 5, "after", OnBa
 --- @param attacker EsvCharacter|EsvItem
 --- @param target EsvCharacter|EsvItem|number[]
 --- @param data HitData|DamageList
---- @param skill StatEntrySkillData
+--- @param skill StatEntrySkillData|nil
 function AttackManager.InvokeOnHit(isFromHit, attacker, target, data, skill)
 	local targetIsObject = type(target) == "userdata"
 	AttackManager.InvokeCallbacks(AttackManager.OnHit.Listeners, attacker, target, data, targetIsObject, skill)

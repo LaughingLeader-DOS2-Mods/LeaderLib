@@ -46,7 +46,7 @@ end)
 
 ---@param source EsvCharacter|EsvItem|UUID|NETID
 ---@param target EsvCharacter|EsvItem|UUID|NETID
----@param fromSkill string If this is resulting from a skill hit.
+---@param fromSkill string|nil If this is resulting from a skill hit.
 function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 	if type(source) ~= "userdata" then
 		source = GameHelpers.TryGetObject(source)
@@ -118,12 +118,14 @@ local function OnHit(hitStatus, hitContext)
 	local targetId = GameHelpers.GetUUID(target, true)
 	local sourceId = GameHelpers.GetUUID(source, true)
 
-	--This is set if ApplySkillProperties is true during GameHelpers.Skill.ShootZoneAt
-	---@see GameHelpers.Skill.ShootZoneAt
-	local applySkillProperties = Vars.ApplyZoneSkillProperties[hitStatus.SkillId]
-	if applySkillProperties and applySkillProperties[sourceId] then
-		Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, targetId, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
-		Timer.RestartOneShot(applySkillProperties[sourceId], 1)
+	if source then
+		--This is set if ApplySkillProperties is true during GameHelpers.Skill.ShootZoneAt
+		---@see GameHelpers.Skill.ShootZoneAt
+		local applySkillProperties = Vars.ApplyZoneSkillProperties[hitStatus.SkillId]
+		if applySkillProperties and applySkillProperties[sourceId] then
+			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, targetId, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
+			Timer.RestartOneShot(applySkillProperties[sourceId], 1)
+		end
 	end
 
 	---@type HitRequest

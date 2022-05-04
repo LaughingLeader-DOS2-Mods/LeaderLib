@@ -1,6 +1,7 @@
 Timer = {}
 
 local IsClient = Ext.IsClient()
+local _EXTVERSION = Ext.Version()
 
 ---[SERVER]
 ---Starts an Osiris timer with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
@@ -52,7 +53,7 @@ function Timer.StartOneshot(timerName, delay, callback)
 		TimerCancel(timerName)
 		TimerLaunch(timerName, delay)
 	else
-		if Ext.Version() >= 56 then
+		if _EXTVERSION >= 56 then
 			if OneshotTimerData[timerName] == nil then
 				OneshotTimerData[timerName] = {callback}
 				Timer.WaitForTick[#Timer.WaitForTick+1] = {
@@ -103,7 +104,7 @@ function Timer.RestartOneshot(timerName, delay)
 		if not IsClient then
 			TimerCancel(timerName)
 			TimerLaunch(timerName, delay)
-		elseif Ext.Version() >= 56 then
+		elseif _EXTVERSION >= 56 then
 			for i,v in pairs(Timer.WaitForTick) do
 				if v.ID == timerName then
 					v.TargetTime = Ext.MonotonicTime() + (delay or v.Delay)
@@ -144,7 +145,7 @@ function Timer.Cancel(timerName, object)
 	else
 		OneshotTimerData[timerName] = nil
 		UIExtensions.RemoveTimerCallback(timerName)
-		if Ext.Version() >= 56 then
+		if _EXTVERSION >= 56 then
 			for i,v in pairs(Timer.WaitForTick) do
 				if v.ID == timerName then
 					table.remove(Timer.WaitForTick, i)
@@ -371,8 +372,7 @@ if not IsClient then
 	Ext.RegisterOsirisListener("ProcObjectTimerFinished", 2, "after", OnProcObjectTimerFinished)
 end
 
---Extener Updates
-if Ext.Version() >= 56 then
+if _EXTVERSION >= 56 then
 	---@class ExtGameTime
 	---@field Time number
 	---@field DeltaTime number
@@ -384,17 +384,20 @@ if Ext.Version() >= 56 then
 	---@field Delay integer
 	
 	---@private
-	---@type WaitForTickData[] 
+	---@type WaitForTickData[]
 	Timer.WaitForTick = {}
 
 	---@param tickData ExtGameTime
 	local function OnTick(tickData)
-		local time = Ext.MonotonicTime()
-		for i=1,#Timer.WaitForTick do
-			local data = Timer.WaitForTick[i]
-			if data and data.TargetTime <= time then
-				table.remove(Timer.WaitForTick, i)
-				OnTimerFinished(data.ID)
+		local length = #Timer.WaitForTick
+		if length > 0 then
+			local time = Ext.MonotonicTime()
+			for i=1,length do
+				local data = Timer.WaitForTick[i]
+				if data and data.TargetTime <= time then
+					table.remove(Timer.WaitForTick, i)
+					OnTimerFinished(data.ID)
+				end
 			end
 		end
 	end

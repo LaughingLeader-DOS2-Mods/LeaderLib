@@ -309,7 +309,7 @@ RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObje
 	if not StringHelpers.IsNullOrEmpty(projectile.SkillId) then
 		local skill = GetSkillEntryName(projectile.SkillId)
 		if projectile.CasterHandle ~= nil then
-			local object = GameHelpers.TryGetObject(projectile.CasterHandle)
+			local object = Ext.GetGameObject(projectile.CasterHandle)
 			local uuid = (object ~= nil and object.MyGuid) or ""
 			local target = hitObject ~= nil and hitObject.MyGuid or ""
 			---@type ProjectileHitData
@@ -329,7 +329,7 @@ end)
 RegisterProtectedExtenderListener("BeforeShootProjectile", function (request)
 	local skill = GetSkillEntryName(request.SkillId)
 	if not StringHelpers.IsNullOrEmpty(skill) and request.Source then
-		local object = GameHelpers.TryGetObject(request.Source)
+		local object = Ext.GetGameObject(request.Source)
 		if object then
 			for callback in GetListeners(skill) do
 				local b,err = xpcall(callback, debug.traceback, skill, object.MyGuid, SKILL_STATE.BEFORESHOOT, request, "EsvShootProjectileRequest")
@@ -346,7 +346,7 @@ end)
 RegisterProtectedExtenderListener("ShootProjectile", function (projectile)
 	local skill = GetSkillEntryName(projectile.SkillId)
 	if not StringHelpers.IsNullOrEmpty(skill) and projectile.CasterHandle then
-		local object = GameHelpers.TryGetObject(projectile.CasterHandle)
+		local object = Ext.GetGameObject(projectile.CasterHandle)
 		if object then
 			for callback in GetListeners(skill) do
 				local b,err = xpcall(callback, debug.traceback, skill, object.MyGuid, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile")

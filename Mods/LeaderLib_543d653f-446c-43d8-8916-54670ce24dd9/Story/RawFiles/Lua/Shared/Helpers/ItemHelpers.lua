@@ -2,6 +2,9 @@ if GameHelpers.Item == nil then
     GameHelpers.Item = {}
 end
 
+local _ISCLIENT = Ext.IsClient()
+local _EXTVERSION = Ext.Version()
+
 local itemConstructorProps = {
     ["RootTemplate"] = true,
     ["OriginalRootTemplate"] = true,
@@ -34,31 +37,30 @@ local itemConstructorProps = {
 }
 
 ---Clone an item for a character.
+---[Server]
 ---@param char string
 ---@param item string
 ---@param completion_event string
 ---@param autolevel string
 function GameHelpers.Item.CloneItemForCharacter(char, item, completion_event, autolevel)
-    local autolevel_enabled = autolevel == "Yes"
-	NRD_ItemCloneBegin(item)
-    local cloned = NRD_ItemClone()
-    if autolevel_enabled then
-        local level = CharacterGetLevel(char)
-        ItemLevelUpTo(cloned,level)
+    if not _ISCLIENT then
+        local autolevel_enabled = autolevel == "Yes"
+        NRD_ItemCloneBegin(item)
+        local cloned = NRD_ItemClone()
+        if autolevel_enabled then
+            local level = CharacterGetLevel(char)
+            ItemLevelUpTo(cloned,level)
+        end
+        CharacterItemSetEvent(char, cloned, completion_event)
     end
-    CharacterItemSetEvent(char, cloned, completion_event)
 end
 
----@param item EsvItem|string
+---@param item EsvItem|EclItem|UUID|NETID
 ---@return integer
 function GameHelpers.Item.GetItemLevel(item)
-    if type(item) == "string" then
-        local itemObject = Ext.GetItem(item)
-        if itemObject then
-            return GameHelpers.Item.GetItemLevel(itemObject)
-        end
-    else
-        if item.Stats then
+    local item = GameHelpers.GetItem(item)
+    if item then
+        if not GameHelpers.Item.IsObject(item) and item.Stats then
             return item.Stats.Level
         else
             local levelOverride = (item.LevelOverride and item.LevelOverride > 0) and item.LevelOverride or -1
@@ -189,10 +191,14 @@ function GameHelpers.Item.GetSupportedGenerationValues(itemGroupId, minLevel, ma
 end
 
 ---Creates an item by stat, provided it has an ItemGroup set (for equipment).
+---[Server]
 ---@param statName string
 ---@param creationProperties ItemDefinition|nil
 ---@return string,EsvItem
 function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
+    if _ISCLIENT then
+        error("[GameHelpers.Item.CreateItemByStat] is server-side only.", 2)
+    end
     local properties = creationProperties or {}
     if type(creationProperties) == "boolean" then
         local args = {...}
@@ -212,10 +218,10 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
 
     if type(statName) == "string" then
         stat = Ext.GetStat(statName, level)
-        statType = NRD_StatGetType(statName)
+        statType = GameHelpers.Stats.GetStatType(statName)
     else
         stat = statName
-        statType = NRD_StatGetType(stat.Name)
+        statType = GameHelpers.Stats.GetStatType(stat.Name)
     end
 
     if stat and stat.Unique == 1 then
@@ -298,10 +304,14 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
     return nil
 end
 
+---[Server]
 ---@param template string
 ---@param setProperties ItemDefinition|nil
 ---@return EsvItem
 function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
+    if _ISCLIENT then
+        error("[GameHelpers.Item.CreateItemByTemplate] is server-side only.", 2)
+    end
     local constructor = Ext.CreateItemConstructor(template)
     ---@type ItemDefinition
     local props = constructor[1]
@@ -333,11 +343,15 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     return nil
 end
 
+---[Server]
 ---@param item EsvItem|string
 ---@param setProperties ItemDefinition|nil
 ---@param addDeltaMods string[]|nil An optional array of deltamods to add to the ItmeDefinition deltamods. The deltamod is checked for before it gets added.
 ---@return EsvItem
 function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
+    if _ISCLIENT then
+        error("[GameHelpers.Item.Clone] is server-side only.", 2)
+    end
     local constructor = Ext.CreateItemConstructor(item)
     ---@type ItemDefinition
     local props = constructor[1]
@@ -399,172 +413,199 @@ function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
     end
 end
 
----@param char string
----@param item string
----@return string|nil
-function GameHelpers.Item.GetEquippedSlot(char, item)
-    for i,slot in Data.EquipmentSlots:Get() do
-        local slotItem = StringHelpers.GetUUID(CharacterGetEquippedItem(char, slot))
-        if slotItem ~= nil and slotItem == StringHelpers.GetUUID(item) then
-            return slot
+---@param character EclCharacter|EsvCharacter|UUID|NETID
+---@param item EsvItem|EclItem|UUID|NETID
+---@return ItemSlot|nil
+function GameHelpers.Item.GetEquippedSlot(character, item)
+    local netid = GameHelpers.GetNetID(item)
+    local character = GameHelpers.GetCharacter(character)
+    for invItem in GameHelpers.Character.GetEquipment(character) do
+        if invItem.NetID == netid then
+            return Data.EquipmentSlotNames[invItem.Slot]
         end
     end
     return nil
 end
 
----@param char EsvCharacter|string
----@param slot string
----@return EsvItem|nil
-function GameHelpers.Item.GetItemInSlot(char, slot)
-    local uuid = CharacterGetEquippedItem(GameHelpers.GetUUID(char), slot)
-    if not StringHelpers.IsNullOrEmpty(uuid) then
-        return Ext.GetItem(uuid)
+---@param character EclCharacter|EsvCharacter|UUID|NETID
+---@param slot ItemSlot
+---@return EsvItem|EclItem|nil
+function GameHelpers.Item.GetItemInSlot(character, slot)
+    local char = GameHelpers.GetCharacter(character)
+    fassert(char ~= nil, "'%s' is not a valid character", character)
+    local slotIndex = Data.EquipmentSlotNames[slot]
+    fassert(slotIndex ~= nil, "'%s' is not a valid slot name", slot)
+    local items = char:GetInventoryItems()
+	local count = math.min(#items, 14)
+	if slotIndex <= count then
+        return items[slotIndex]
     end
     return nil
 end
 
----@param char string
+---@param character EclCharacter|EsvCharacter|UUID|NETID
 ---@param template string
----@return string|nil
-function GameHelpers.Item.GetEquippedTemplateSlot(char, template)
-    template = StringHelpers.GetUUID(template)
-    for i,slot in Data.EquipmentSlots:Get() do
-        local slotItem = StringHelpers.GetUUID(CharacterGetEquippedItem(char, slot))
-        if slotItem ~= nil then
-            if StringHelpers.GetUUID(GetTemplate(slotItem)) == template then
-                return slot,slotItem
+---@return ItemSlot|nil
+---@return EsvItem|EclItem|nil
+function GameHelpers.Item.GetEquippedTemplateSlot(character, template)
+    for item in GameHelpers.Character.GetEquipment(character) do
+        local itemTemplate = GameHelpers.GetTemplate(item)
+        if itemTemplate == template then
+            return Data.EquipmentSlotNames[item.Slot],item
+        end
+    end
+    return nil
+end
+
+---@param character EclCharacter|EsvCharacter|UUID|NETID
+---@param tag string|string[]
+---@return ItemSlot|nil
+---@return EsvItem|EclItem|nil
+function GameHelpers.Item.GetEquippedTaggedItemSlot(character, tag)
+    local char = GameHelpers.GetCharacter(character)
+    fassert(char ~= nil, "'%s' is not a valid character", character)
+    local tagType = type(tag)
+    fassert(tagType ~= "string" or tagType ~= "table", "'%s' is not a valid tag or table of tags", tag)
+    for item in GameHelpers.Character.GetEquipment(character) do
+        if GameHelpers.ItemHasTag(item, tag) then
+            return Data.EquipmentSlotNames[item.Slot],item
+        end
+    end
+    return nil
+end
+
+if _ISCLIENT then
+    
+    ---[Server]
+    ---@param character EsvCharacter|UUID|NETID
+    ---@param item EsvItem|UUID|NETID
+    ---@param slot ItemSlot
+    ---@return boolean
+    function GameHelpers.Item.EquipInSlot(character, item, slot)
+        if Ext.OsirisIsCallable() then
+            local char = GameHelpers.GetUUID(character)
+            local itemUUID = GameHelpers.GetUUID(item)
+            if ObjectExists(itemUUID) == 1 and ObjectExists(char) == 1 then
+                NRD_CharacterEquipItem(char, itemUUID, slot, 0, 0, 1, 1)
+                return true
             end
+        else
+            fprint(LOGLEVEL.WARNING, "[GameHelpers.Item.EquipInSlot] NRD_CharacterEquipItem is not callable.")
         end
+        return false
     end
-    return nil
-end
 
----@param char string
----@param tag string
----@return string|nil
-function GameHelpers.Item.GetEquippedTaggedItemSlot(char, tag)
-    for i,slot in Data.EquipmentSlots:Get() do
-        local slotItem = StringHelpers.GetUUID(CharacterGetEquippedItem(char, slot))
-        if slotItem ~= nil and IsTagged(slotItem, tag) == 1 then
-            return slot,slotItem
-        end
+    ---@deprecated
+    ---@param character EsvCharacter|UUID|NETID
+    ---@param item EsvItem|UUID|NETID
+    ---@param slot ItemSlot
+    ---@return boolean
+    EquipInSlot = function (character, item, slot)
+        return GameHelpers.Item.EquipInSlot(character, item, slot)
     end
-    return nil
-end
 
-function EquipInSlot(char, item, slot)
-    if ObjectExists(item) == 1 and ObjectExists(char) == 1 then
-        NRD_CharacterEquipItem(char, item, slot, 0, 0, 1, 1)
-    end
-end
-
-GameHelpers.Item.EquipInSlot = EquipInSlot
-
----@param char UUID|EsvCharacter
----@param item UUID|EsvItem
-function GameHelpers.Item.ItemIsEquipped(char, item)
-    local itemObj = GameHelpers.GetItem(item)
-    if itemObj ~= nil then
-        local slot = itemObj.Slot
-        if slot <= 13 then -- 13 is the Overhead slot
-            return true
-        end
-    else
-        char = GameHelpers.GetUUID(char)
-        item = GameHelpers.GetUUID(item)
-        if char and item then
-            for i,slot in Data.EquipmentSlots:Get() do
-                if CharacterGetEquippedItem(char, slot) == item then
-                    return true
+    ---Removes matching rune templates from items in any equipment slots.
+    ---[Server]
+    ---@param character EclCharacter|EsvCharacter|UUID|NETID
+    ---@param runeTemplates table
+    function GameHelpers.Item.RemoveRunes(character, runeTemplates)
+        local char = GameHelpers.GetUUID(character)
+        for item in GameHelpers.Character.GetEquipment(character) do
+            for runeSlot=0,2,1 do
+                local runeTemplate = ItemGetRuneItemTemplate(item.MyGuid, runeSlot)
+                if runeTemplate ~= nil and runeTemplates[runeTemplate] == true then
+                    local rune = ItemRemoveRune(char, item.MyGuid, runeSlot)
+                    fprint(LOGLEVEL.TRACE, "[GameHelpers.Item.RemoveRunes] Removed rune (%s) from item (%s)[%s] for character (%s)", rune, item.DisplayName, runeSlot, char)
                 end
             end
         end
     end
+
+    ---Removes an item in a slot, if one exists.
+    ---[Server]
+    ---@param character EsvCharacter|UUID|NETID
+    ---@param slot ItemSlot
+    ---@param delete boolean Whether to destroy the item or simply unequip it.
+    ---@return boolean
+    function GameHelpers.Item.UnequipItemInSlot(character, slot, delete)
+        character = GameHelpers.GetCharacter(character)
+        local item = GameHelpers.Item.GetItemInSlot(character, slot)
+        if item ~= nil then
+            CharacterUnequipItem(character.MyGuid, item.MyGuid)
+            if delete == true and not item.Global then
+                ItemRemove(item.MyGuid)
+            end
+        end
+    end
+
+    local function ItemIsLockedQRY(item)
+        if GameHelpers.Item.ItemIsLocked(item) then
+            return 1
+        end
+        return 0
+    end
+    Ext.NewQuery(GameHelpers.Item.ItemIsLocked, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](ITEMGUID)_Item, [out](INTEGER)_Locked")
+end
+
+---@param character EclCharacter|EsvCharacter|UUID|NETID
+---@param item EsvItem|EclItem|UUID|NETID
+---@return boolean
+function GameHelpers.Item.ItemIsEquipped(character, item)
+    local charUUID = StringHelpers.GetUUID(character)
+    local itemObj = GameHelpers.GetItem(item)
+    if charUUID and itemObj then
+        local slot = itemObj.Slot
+        if slot <= 13 then -- 13 is the Overhead slot, 14 is 'Sentinel'
+            local owner = GameHelpers.GetCharacter(itemObj.InUseByCharacterHandle)
+            return owner and owner.MyGuid == charUUID
+        end
+    end
     return false
 end
 
+---@param item EsvItem|EclItem|UUID|NETID
+---@return boolean
 function GameHelpers.Item.ItemIsEquippedByCharacter(item)
-    local itemObj = Ext.GetItem(item)
-    if itemObj ~= nil then
-        if itemObj.InUseByCharacterHandle ~= nil and itemObj.InUseByCharacterHandle ~= 0 then
+    local itemObj = GameHelpers.GetItem(item)
+    if itemObj then
+        local user = GameHelpers.GetCharacter(itemObj.InUseByCharacterHandle)
+        if user then
             return true
         end
     end
     return false
 end
 
----Removes matching rune templates from items in any equipment slots.
----@param character string
----@param runeTemplates table
-function GameHelpers.Item.RemoveRunes(character, runeTemplates)
-	for _,slotName in Data.VisibleEquipmentSlots:Get() do
-		local item = CharacterGetEquippedItem(character, slotName)
-		if not StringHelpers.IsNullOrEmpty(item) then
-			for runeSlot=0,2,1 do
-				local runeTemplate = ItemGetRuneItemTemplate(item, runeSlot)
-				if runeTemplate ~= nil and runeTemplates[runeTemplate] == true then
-					local rune = ItemRemoveRune(character, item, runeSlot)
-					PrintDebug("[LeaderLib:RemoveRunes] Removed rune ("..tostring(rune)..") from item ("..item..")["..tostring(runeSlot).."] for character ("..character..")")
-				end
-			end
-		end
-	end
-end
-
---- Checks if a character has an item equipped with a specific tag.
+---@deprecated
+---Checks if a character has an item equipped with a specific tag.
 ---@param character string
 ---@param tag string
 ---@return boolean
 function GameHelpers.Item.HasTagEquipped(character, tag)
-    if StringHelpers.IsNullOrEmpty(character) or StringHelpers.IsNullOrEmpty(tag) then
-        return false
-    end
-	for _,slotName in Data.VisibleEquipmentSlots:Get() do
-		local item = CharacterGetEquippedItem(character, slotName)
-		if item ~= nil and IsTagged(item, tag) == 1 then
-			return true
-		end
-	end
-	return false
-end
-
---- Removes an item in a slot, if one exists.
----@param character string
----@param slot string
----@param delete boolean Whether to destroy the item or simply unequip it.
----@return boolean
-function GameHelpers.Item.UnequipItemInSlot(character, slot, delete)
-    local item = CharacterGetEquippedItem(character, slot)
-    if item ~= nil then
-        CharacterUnequipItem(character, item)
-        if delete == true and ObjectIsGlobal(item) == 0 then
-            ItemRemove(item)
-        end
-    end
+	return GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 end
 
 ---Builds a list of items with a specific tag.
----@param character string
----@param tag string
----@param asArray boolean Optional param to make the table returned just be an array of UUIDs, instead of <slot,UUID>
----@return table<string,UUID>
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param tag string|string[]
+---@param asArray boolean|nil Optional param to make the table returned just be an array of UUIDs, instead of <slot,UUID>
+---@return table<string,EsvItem|EclItem>
 function GameHelpers.Item.FindTaggedEquipment(character, tag, asArray)
     local items = {}
-	for _,slotName in Data.VisibleEquipmentSlots:Get() do
-		local item = CharacterGetEquippedItem(character, slotName)
-		if item ~= nil and GameHelpers.ItemHasTag(item, tag) then
+    for item in GameHelpers.Character.GetEquipment(character) do
+        if GameHelpers.ItemHasTag(item, tag) then
             if asArray then
                 items[#items+1] = item
             else
-                items[slotName] = item
+                items[Data.EquipmentSlotNames[item.Slot]] = item
             end
-		end
-	end
+        end
+    end
 	return items
 end
 
 ---Gets an array of items with specific tag(s) on a character.
----@param character string|EsvCharacter
+---@param character EsvCharacter|EclCharacter|UUID|NETID
 ---@param tag string|string[]
 ---@param asEsvItem boolean
 ---@return string[]|EsvItem[]
@@ -586,8 +627,9 @@ function GameHelpers.Item.FindTaggedItems(character, tag, asEsvItem)
 	return items
 end
 
+---@deprecated
 ---Gets an item's tags in a table.
----@param item EsvItem|UUID|NETID
+---@param item EsvItem|EclItem|UUID|NETID
 ---@return string[]
 function GameHelpers.Item.GetTags(item)
     return GameHelpers.GetItemTags(item, false, false)
@@ -604,24 +646,105 @@ function GameHelpers.Item.ItemIsLocked(uuid)
     return false
 end
 
-local function ItemIsLockedQRY(item)
-    if GameHelpers.Item.ItemIsLocked(item) then
-        return 1
-    end
-    return 0
-end
-Ext.NewQuery(GameHelpers.Item.ItemIsLocked, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](ITEMGUID)_Item, [out](INTEGER)_Locked")
-
+---@deprecated
+---@param uuid UUID
+---@return boolean
 function ContainerHasContents(uuid)
-    local item = uuid
-    if type(uuid) == "string" then
-        item = Ext.GetItem(uuid)
-    end
+    local item = GameHelpers.GetItem(uuid)
     if item ~= nil and item.GetInventoryItems ~= nil then
         local contents = item:GetInventoryItems()
-        return contents ~= nil and #contents > 0
+        return contents ~= nil and #contents > 0 or false
     end
     return false
 end
 
 GameHelpers.Item.ContainerHasContents = ContainerHasContents
+
+---@param item EsvItem|EclItem|string
+---@return boolean
+function GameHelpers.Item.IsObject(item)
+	local t = type(item)
+	if t == "userdata" then
+		if GameHelpers.Ext.ObjectIsItem(item) then
+			if Data.ObjectStats[item.StatsId] or item.ItemType == "Object" then
+				return true
+			end
+			if not item.Stats then
+				return true
+			end
+		end
+	elseif t == "string" then
+		return Data.ObjectStats[item] == true
+	end
+	return false
+end
+
+---@param item EsvItem|EclItem|UUID|NETID
+---@param returnNilUUID boolean|nil
+---@return UUID
+function GameHelpers.Item.GetOwner(item, returnNilUUID)
+	local item = GameHelpers.GetItem(item)
+	if item then
+		if item.OwnerHandle ~= nil then
+			local object = Ext.GetGameObject(item.OwnerHandle)
+			if object ~= nil then
+				return object.MyGuid
+			end
+		end
+		if Ext.OsirisIsCallable() then
+			local inventory = StringHelpers.GetUUID(GetInventoryOwner(item.MyGuid))
+			if not StringHelpers.IsNullOrEmpty(inventory) then
+				return inventory
+			end
+		else
+			if item.InventoryHandle then
+				local object = Ext.GetGameObject(item.InventoryHandle)
+				if object ~= nil then
+					return object.MyGuid
+				end
+			end
+		end
+	end
+	if returnNilUUID then
+		return StringHelpers.NULL_UUID
+	end
+	return nil
+end
+
+---@param item StatItem|EsvItem|EclItem
+---@param weaponType string|string[]
+---@return boolean
+function GameHelpers.Item.IsWeaponType(item, weaponType)
+	if type(item) == "table" then
+		local hasMatch = false
+		for i,v in pairs(item) do
+			if GameHelpers.Item.IsWeaponType(v, weaponType) then
+				hasMatch = true
+			end
+		end
+		return hasMatch
+	else
+		if item == nil then
+			return false
+		end
+		if GameHelpers.Ext.ObjectIsItem(item) and not GameHelpers.Item.IsObject(item) then
+			item = item.Stats
+		end
+		if not GameHelpers.Ext.ObjectIsStatItem(item) then
+			return false
+		end
+		local t = type(weaponType)
+		if t == "table" then
+			for _,v in pairs(weaponType) do
+				if GameHelpers.Item.IsWeaponType(item, v) then
+					return true
+				end
+			end
+		elseif t == "string" then
+			if item.WeaponType == weaponType then
+				return true
+			end
+		end
+	end
+	return false
+end

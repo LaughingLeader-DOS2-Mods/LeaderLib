@@ -481,16 +481,15 @@ local function TryGetObject(id)
 		elseif ObjectIsItem(id) == 1 then
 			return Ext.GetItem(id)
 		end
-	elseif isHandle or t == "number" then
+	elseif isHandle then
+		return Ext.GetGameObject(id)
+	elseif t == "number" then
+		--Assuming id is a NetID, try Character first, then Item
 		for i=1,3 do
 			local func = getFuncs[i]
 			local b,result = xpcall(func, debug.traceback, id)
 			if b and result then
 				return result
-			else
-				-- if Vars.DebugMode then
-				-- 	Ext.PrintError(result)
-				-- end
 			end
 		end
 	elseif t == "userdata" then

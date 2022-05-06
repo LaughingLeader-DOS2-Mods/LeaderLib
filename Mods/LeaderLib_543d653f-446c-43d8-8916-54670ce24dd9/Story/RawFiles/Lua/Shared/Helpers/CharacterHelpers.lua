@@ -675,6 +675,41 @@ function GameHelpers.Character.GetEquipment(character, asTable)
 	end
 end
 
+---Get a character's mainhand and offhand item.
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+---@return EsvItem|EclItem|nil
+---@return EsvItem|EclItem|nil
+function GameHelpers.Character.GetEquippedWeapons(character)
+	local char = GameHelpers.GetCharacter(character)
+    fassert(char ~= nil, "'%s' is not a valid character", character)
+	if isClient then
+		return char:GetItemBySlot("Weapon"),char:GetItemBySlot("Shield")
+	else
+		if Ext.OsirisIsCallable() then
+			local mainhand,offhand = nil,nil
+			local mainhandId,offhandId = CharacterGetEquippedItem(char.MyGuid, "Weapon"), CharacterGetEquippedItem(char.MyGuid, "Shield")
+			if not StringHelpers.IsNullOrEmpty(mainhandId) then
+				mainhand = GameHelpers.GetItem(mainhandId)
+			end
+			if not StringHelpers.IsNullOrEmpty(offhandId) then
+				offhand = GameHelpers.GetItem(offhandId)
+			end
+			return mainhand,offhand
+		else
+			local mainhand,offhand = nil,nil
+			for item in GameHelpers.Character.GetEquipment(character) do
+				if Data.EquipmentSlotNames[item.Slot] == "Weapon" then
+					mainhand = item
+				elseif Data.EquipmentSlotNames[item.Slot] == "Shield" then
+					offhand = item
+				end
+			end
+			return mainhand,offhand
+		end
+	end
+	return nil
+end
+
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsImmobile(character)
 	local character = GameHelpers.GetCharacter(character)

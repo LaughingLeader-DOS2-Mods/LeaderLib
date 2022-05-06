@@ -123,6 +123,10 @@ end
 ---@alias UUID string
 ---@alias NETID integer
 
+---A parameter type that can be either item userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetItem.
+---@see GameHelpers.GetItem
+---@alias ItemParam EsvItem|EclItem|UUID|NETID
+
 ---@class LeaderLibPersistentVars
 local defaultPersistentVars = {
 	---Associates a unique timer name (uuid-concatenated) with a general timer name.

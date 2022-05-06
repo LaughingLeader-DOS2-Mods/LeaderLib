@@ -55,7 +55,7 @@ function GameHelpers.Item.CloneItemForCharacter(char, item, completion_event, au
     end
 end
 
----@param item EsvItem|EclItem|UUID|NETID
+---@param item ItemParam
 ---@return integer
 function GameHelpers.Item.GetItemLevel(item)
     local item = GameHelpers.GetItem(item)
@@ -344,7 +344,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
 end
 
 ---[Server]
----@param item EsvItem|string
+---@param item ItemParam
 ---@param setProperties ItemDefinition|nil
 ---@param addDeltaMods string[]|nil An optional array of deltamods to add to the ItmeDefinition deltamods. The deltamod is checked for before it gets added.
 ---@return EsvItem
@@ -414,7 +414,7 @@ function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
 end
 
 ---@param character EclCharacter|EsvCharacter|UUID|NETID
----@param item EsvItem|EclItem|UUID|NETID
+---@param item ItemParam
 ---@return ItemSlot|nil
 function GameHelpers.Item.GetEquippedSlot(character, item)
     local netid = GameHelpers.GetNetID(item)
@@ -438,7 +438,7 @@ function GameHelpers.Item.GetItemInSlot(character, slot)
     local items = char:GetInventoryItems()
 	local count = math.min(#items, 14)
 	if slotIndex <= count then
-        return items[slotIndex]
+        return Ext.GetItem(items[slotIndex])
     end
     return nil
 end
@@ -474,11 +474,11 @@ function GameHelpers.Item.GetEquippedTaggedItemSlot(character, tag)
     return nil
 end
 
-if _ISCLIENT then
+if not _ISCLIENT then
     
     ---[Server]
     ---@param character EsvCharacter|UUID|NETID
-    ---@param item EsvItem|UUID|NETID
+    ---@param item ItemParam
     ---@param slot ItemSlot
     ---@return boolean
     function GameHelpers.Item.EquipInSlot(character, item, slot)
@@ -497,7 +497,7 @@ if _ISCLIENT then
 
     ---@deprecated
     ---@param character EsvCharacter|UUID|NETID
-    ---@param item EsvItem|UUID|NETID
+    ---@param item ItemParam
     ---@param slot ItemSlot
     ---@return boolean
     EquipInSlot = function (character, item, slot)
@@ -544,11 +544,11 @@ if _ISCLIENT then
         end
         return 0
     end
-    Ext.NewQuery(GameHelpers.Item.ItemIsLocked, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](ITEMGUID)_Item, [out](INTEGER)_Locked")
+    Ext.NewQuery(ItemIsLockedQRY, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](ITEMGUID)_Item, [out](INTEGER)_Locked")
 end
 
 ---@param character EclCharacter|EsvCharacter|UUID|NETID
----@param item EsvItem|EclItem|UUID|NETID
+---@param item ItemParam
 ---@return boolean
 function GameHelpers.Item.ItemIsEquipped(character, item)
     local charUUID = StringHelpers.GetUUID(character)
@@ -563,7 +563,7 @@ function GameHelpers.Item.ItemIsEquipped(character, item)
     return false
 end
 
----@param item EsvItem|EclItem|UUID|NETID
+---@param item ItemParam
 ---@return boolean
 function GameHelpers.Item.ItemIsEquippedByCharacter(item)
     local itemObj = GameHelpers.GetItem(item)
@@ -629,17 +629,17 @@ end
 
 ---@deprecated
 ---Gets an item's tags in a table.
----@param item EsvItem|EclItem|UUID|NETID
+---@param item ItemParam
 ---@return string[]
 function GameHelpers.Item.GetTags(item)
     return GameHelpers.GetItemTags(item, false, false)
 end
 
 --- Checks if an item is locked from unequip.
----@param uuid string
+---@param item ItemParam
 ---@return boolean
-function GameHelpers.Item.ItemIsLocked(uuid)
-    local item = Ext.GetItem(uuid)
+function GameHelpers.Item.ItemIsLocked(item)
+    local item = GameHelpers.GetItem(item)
     if item ~= nil then
         return item.UnEquipLocked
     end
@@ -660,7 +660,8 @@ end
 
 GameHelpers.Item.ContainerHasContents = ContainerHasContents
 
----@param item EsvItem|EclItem|string
+---Returns true if the item's stat is an Object type.
+---@param item ItemParam
 ---@return boolean
 function GameHelpers.Item.IsObject(item)
 	local t = type(item)
@@ -679,7 +680,7 @@ function GameHelpers.Item.IsObject(item)
 	return false
 end
 
----@param item EsvItem|EclItem|UUID|NETID
+---@param item ItemParam
 ---@param returnNilUUID boolean|nil
 ---@return UUID
 function GameHelpers.Item.GetOwner(item, returnNilUUID)
@@ -711,7 +712,7 @@ function GameHelpers.Item.GetOwner(item, returnNilUUID)
 	return nil
 end
 
----@param item StatItem|EsvItem|EclItem
+---@param item StatItem|ItemParam
 ---@param weaponType string|string[]
 ---@return boolean
 function GameHelpers.Item.IsWeaponType(item, weaponType)

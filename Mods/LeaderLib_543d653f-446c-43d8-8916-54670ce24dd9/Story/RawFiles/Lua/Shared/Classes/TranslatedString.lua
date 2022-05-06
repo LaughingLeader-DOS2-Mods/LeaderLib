@@ -188,15 +188,17 @@ end
 
 if Vars.DebugMode then
 	Ext.RegisterConsoleCommand("leaderlib_ts_missingkeys", function ()
+		local kv = {}
 		local keys = {}
 		local length = #_translatedStringUpdate
 		for i=1,length do
 			local entry = _translatedStringUpdate[i]
 			if entry then
-				if not String.IsNullOrEmpty(entry.Key) then
+				if not StringHelpers.IsNullOrEmpty(entry.Key) then
 					local content,handle = Ext.GetTranslatedStringFromKey(entry.Key)
-					if String.IsNullOrEmpty(handle) then
+					if StringHelpers.IsNullOrEmpty(handle) then
 						keys[#keys+1] = entry.Key
+						kv[entry.Key] = entry.Value
 					end
 				end
 			end
@@ -204,5 +206,6 @@ if Vars.DebugMode then
 		table.sort(keys)
 		Ext.Print("Missing Keys:")
 		Ext.Dump(keys)
+		GameHelpers.IO.SaveJsonFile("Dumps/LeaderLib_MissingKeys.json", kv)
 	end)
 end

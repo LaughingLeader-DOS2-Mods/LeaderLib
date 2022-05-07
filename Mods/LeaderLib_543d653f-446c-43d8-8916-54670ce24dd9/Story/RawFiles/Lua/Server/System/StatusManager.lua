@@ -2,6 +2,11 @@ if StatusManager == nil then
 	StatusManager = {}
 end
 
+StatusManager._Internal = {
+	---Set to true after GameStarted
+	CanBlockDeletion = false
+}
+
 StatusManager.Register = {}
 
 ---If false is returned, the status will be blocked.
@@ -323,3 +328,100 @@ StatusManager.Register.DisablingStatus = {
 		StatusManager.Register.DisablingStatus.Removed(callback)
 	end
 }
+
+---@param target EsvCharacter|EsvItem|UUID|NETID
+---@param status string
+function StatusManager.IsPermanentStatusActive(target, status)
+	local uuid = GameHelpers.GetUUID(target)
+	fassert(uuid ~= nil, "Target parameter type (%s) is invalid. An EsvCharacter, EsvItem, UUID, or NetID should be provided.", target)
+	if PersistentVars.ActivePermanentStatuses[uuid] then
+		return PersistentVars.ActivePermanentStatuses[uuid][status] ~= nil
+	end
+	return false
+end
+
+---@param target EsvCharacter|EsvItem|UUID|NETID
+---@param status string
+---@param enabled boolean
+---@param source EsvCharacter|EsvItem|UUID|NETID|nil A source to use when applying the status, if any. Defaults to the target.
+function StatusManager._Internal.SetPermanentStatus(target, status, enabled, source)
+	local uuid = GameHelpers.GetUUID(target)
+	local statusIsActive = GameHelpers.Status.IsActive(target, status)
+	if not enabled then
+		PersistentVars.ActivePermanentStatuses[uuid][status] = nil
+		if statusIsActive then
+			GameHelpers.Status.Remove(target, status)
+		end
+		if Common.TableLength(PersistentVars.ActivePermanentStatuses[uuid], true) == 0 then
+			PersistentVars.ActivePermanentStatuses[uuid] = nil
+		end
+	else
+		if PersistentVars.ActivePermanentStatuses[uuid] == nil then
+			PersistentVars.ActivePermanentStatuses[uuid] = {}
+		end
+		local sourceId = source and GameHelpers.GetUUID(source) or false
+		PersistentVars.ActivePermanentStatuses[uuid][status] = sourceId
+		if not statusIsActive then
+			--fassert(type(status) == "string" and GameHelpers.Stats.Exists(status), "Status (%s) does not exist.", status)
+			GameHelpers.Status.Apply(target, status, -1.0, true, source or target)
+		end
+	end
+end
+
+---Removed a registered permanent status for the given character.
+---@param target EsvCharacter|EsvItem|UUID|NETID
+---@param status string
+function StatusManager.RemovePermanentStatus(target, status)
+	StatusManager._Internal.SetPermanentStatus(target, status, false)
+end
+
+---Applies permanent status. The given status will be blocked from deletion.
+---@param target EsvCharacter|EsvItem|UUID|NETID
+---@param status string
+---@param source EsvCharacter|EsvItem|UUID|NETID|nil A source to use when applying the status, if any. Defaults to the target.
+---@return boolean isActive Returns whether the permanent status is active or not.
+function StatusManager.ApplyPermanentStatus(target, status, source)
+	StatusManager._Internal.SetPermanentStatus(target, status, true, source)
+end
+
+---Makes a permanent status active or not, depending on if it's active already. The given status will be blocked from deletion.
+---@param target EsvCharacter|EsvItem|UUID|NETID
+---@param status string
+---@param source EsvCharacter|EsvItem|UUID|NETID|nil A source to use when applying the status, if any. Defaults to the target.
+---@return boolean isActive Returns whether the permanent status is active or not.
+function StatusManager.TogglePermanentStatus(target, status, source)
+	StatusManager._Internal.SetPermanentStatus(target, status, not StatusManager.IsPermanentStatusActive(target, status), source)
+end
+
+if Ext.Version() >= 56 then
+	Ext.Events.BeforeStatusDelete:Subscribe(function (e)
+		if StatusManager._Internal.CanBlockDeletion then
+			---@type EsvStatus
+			local status = e.Status
+			local target = Ext.GetGameObject(status.TargetHandle)
+			if target and StatusManager.IsPermanentStatusActive(target.MyGuid, status.StatusId) then
+				e:PreventAction()
+			end
+		end
+	end)
+end
+
+---@param region string
+---@param state REGIONSTATE
+---@param levelType LEVELTYPE
+RegisterListener("RegionChanged", function (region, state, levelType)
+	StatusManager._Internal.CanBlockDeletion = state == REGIONSTATE.GAME and levelType == LEVELTYPE.GAME
+end)
+
+RegisterListener("PersistentVarsLoaded", function ()
+	for uuid,statuses in pairs(PersistentVars.ActivePermanentStatuses) do
+		local target = GameHelpers.TryGetObject(uuid)
+		if target then
+			for id,source in pairs(statuses) do
+				if not GameHelpers.Status.IsActive(target, id) then
+					GameHelpers.Status.Apply(target, id, -1, true, source)
+				end
+			end
+		end
+	end
+end)

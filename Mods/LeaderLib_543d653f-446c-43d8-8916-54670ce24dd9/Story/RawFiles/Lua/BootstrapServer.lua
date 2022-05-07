@@ -135,6 +135,9 @@ local defaultPersistentVars = {
 	---@type table<string,table[]>
 	TimerData = {},
 	StatusSource = {},
+	---UUID->Statuses->ID->Source|False(for no source)
+	---@type table<UUID,table<string,UUID|boolean>>
+	ActivePermanentStatuses = {},
 	ForceMoveData = {},
 	SceneData = {
 		ActiveScene = {},
@@ -196,7 +199,7 @@ PersistentVars = Common.CloneTable(defaultPersistentVars, true)
 
 function LoadPersistentVars(skipCallback)
 	GameHelpers.PersistentVars.Update(defaultPersistentVars, PersistentVars)
-	SkillSystem.LoadSaveData()
+	SkillManager.LoadSaveData()
 	if not skipCallback then
 		InvokeListenerCallbacks(Listeners.PersistentVarsLoaded)
 	end
@@ -268,6 +271,7 @@ Ext.Require("Server/Game/OriginFixes.lua")
 Ext.Require("Server/System/EffectManager.lua")
 Ext.Require("Server/System/TurnCounter.lua")
 Ext.Require("Server/System/StatusManager.lua")
+Ext.Require("Server/System/SkillManager.lua")
 Ext.Require("Server/System/TagManager.lua")
 Ext.Require("Server/System/AttackManager.lua")
 Ext.Require("Server/System/SceneManager.lua")

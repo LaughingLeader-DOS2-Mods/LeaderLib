@@ -98,6 +98,31 @@ if _EXTVERSION >= 56 then
 					SendDumpCommand(dumpType, true, ...)
 				end
 			end
+		end,
+		leaderlib_globals = function (dumpType, synced, ...)
+			local tbl = {};
+			local globalIndex = getmetatable(_ENV).__index
+			for k,v in pairs(Mods.LeaderLib) do
+				if k == "GameHelpers" or (not globalIndex[k] and not Importer.PrivateKeys[k]) then
+					table.insert(tbl, {Name=k, Type=type(v)})
+					if k == "GameHelpers" then
+						for k2,v2 in pairs(v) do
+							table.insert(tbl, {Name="GameHelpers." .. k2, Type=type(v2)})
+						end
+					end
+				end
+			end 
+			table.sort(tbl, function(a,b)
+				if a.Type == b.Type then 
+					return a.Name < b.Name
+				end 
+				return a.Type > b.Type
+			end) 
+			local txt = "Name\tType\n" .. Mods.LeaderLib.StringHelpers.Join("\n", tbl, false, function(k,v)
+				return string.format("%s\t%s", v.Name,v.Type)
+			end)
+			GameHelpers.IO.SaveFile(string.format("Dumps/LeaderLib_Globals_%s.tsv", isClient and "Client" or "Server"), txt)
+			SendDumpCommand(dumpType, synced, ...)
 		end
 	}
 

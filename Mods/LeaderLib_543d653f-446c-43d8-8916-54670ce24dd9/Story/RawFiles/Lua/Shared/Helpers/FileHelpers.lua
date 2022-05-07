@@ -25,3 +25,28 @@ function GameHelpers.IO.SaveJsonFile(filepath, data)
 	end
 	_saveFile(filepath, output)
 end
+
+---Simple wrapper around Ext.SaveFile or Ext.IO.SaveFile, depending on the extender version.
+---@param filepath string
+---@param text string|number|boolean|table|userdata|fun():string
+function GameHelpers.IO.SaveFile(filepath, text)
+	local t = type(text)
+	local output = text
+	if t ~= "string" then
+		if t == "table" or t == "userdata" then
+			output = Ext.DumpExport(text)
+		elseif t == "number" or t == "boolean" then
+			output = tostring(text)
+		elseif t == "function" then
+			local b,result = xpcall(text, debug.traceback)
+			if result ~= nil then
+				output = tostring(result)
+			else
+				output = ""
+			end
+		else
+			output = tostring(text)
+		end
+	end
+	_saveFile(filepath, output)
+end

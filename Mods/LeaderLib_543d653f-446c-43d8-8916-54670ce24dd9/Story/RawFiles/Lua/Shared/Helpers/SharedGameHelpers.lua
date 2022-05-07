@@ -432,9 +432,8 @@ end
 
 ---Checks if a character or item exists.
 ---@param object EsvGameObject|EclGameObject|string|number
----@param returnNullId boolean
 ---@return boolean
-function GameHelpers.ObjectExists(object, returnNullId)
+function GameHelpers.ObjectExists(object)
 	local t = type(object)
 	if t == "string" and StringHelpers.IsNullOrWhitespace(object) then
 		return false

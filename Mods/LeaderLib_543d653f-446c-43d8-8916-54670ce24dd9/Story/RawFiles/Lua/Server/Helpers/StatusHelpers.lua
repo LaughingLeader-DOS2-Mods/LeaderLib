@@ -275,15 +275,17 @@ local function FinallyApplyStatus(target, status, duration, force, source)
 	end
 end
 
+---@alias GameHelpers.Status.Remove.CanApplyCallback fun(target:string, source:string, statusId:string, targetIsItem:boolean):boolean
+
 ---Applies a status to a target, or targets around a position.
 ---@param target EsvGameObject|UUID|number|number[]|nil
 ---@param status string|string[]
 ---@param duration number|nil
 ---@param force boolean|nil
----@param source EsvGameObject|UUID|number|nil
+---@param source EsvGameObject|UUID|number|nil Optional source. Defaults to NULL_00000000-0000-0000-0000-000000000000.
 ---@param radius number|nil
 ---@param canTargetItems boolean|nil
----@param canApplyCallback fun(target:string, source:string, statusId:string, targetIsItem:boolean):boolean|nil An optional function to use when attempting to apply a status in a radius.
+---@param canApplyCallback GameHelpers.Status.Remove.CanApplyCallback|nil An optional function to use when attempting to apply a status in a radius.
 function GameHelpers.Status.Apply(target, status, duration, force, source, radius, canTargetItems, canApplyCallback)
 	if not duration then
 		duration = 6.0
@@ -357,12 +359,14 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 	end
 end
 
+---@alias GameHelpers.Status.Remove.CanRemoveCallback fun(target:string, statusId:string, targetIsItem:boolean):boolean
+
 ---Removed a status from a target, or targets around a position.
 ---@param target EsvCharacter|EsvItem|UUID|NETID|number[] Either an item/character related value, an array of characters/items, or a position array.
 ---@param status string|string[] A status or array of statuses to remove.
 ---@param radius number|nil If target is a position array, this is the radius to look for target objects.
 ---@param canTargetItems boolean|nil If true, items can be targeted by the positional search as well.
----@param canRemoveCallback fun(target:string, statusId:string, targetIsItem:boolean):boolean|nil An optional condition function to call when attempting to remove a status from objects found in a radius around a target.
+---@param canRemoveCallback GameHelpers.Status.Remove.CanRemoveCallback|nil An optional condition function to call when attempting to remove a status from objects found in a radius around a target.
 function GameHelpers.Status.Remove(target, status, radius, canTargetItems, canRemoveCallback)
 	local t = type(target)
 	if t == "table" then

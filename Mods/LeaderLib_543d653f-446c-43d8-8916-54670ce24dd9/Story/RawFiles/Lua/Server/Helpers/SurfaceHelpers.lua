@@ -24,11 +24,11 @@ end
 
 ---@param pos number[]|string
 ---@param surface string
----@param radius number
----@param duration number
----@param ownerHandle userdata
----@param ignoreCursed boolean
----@param statusChance number
+---@param radius number|nil
+---@param duration number|nil
+---@param ownerHandle userdata|nil
+---@param ignoreCursed boolean|nil
+---@param statusChance number|nil
 ---@return EsvSurfaceAction
 function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, ownerHandle, ignoreCursed, statusChance)
 	if type(pos) == "string" then
@@ -39,10 +39,7 @@ function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, owner
 	surf.Position = pos
 	surf.SurfaceType = surface or "Water"
 	surf.Radius = radius or 1.0
-	if ignoreCursed == nil then
-		ignoreCursed = true
-	end
-	surf.IgnoreIrreplacableSurfaces = ignoreCursed
+	surf.IgnoreIrreplacableSurfaces = ignoreCursed == true
 	surf.Duration = duration or 6.0
 	surf.StatusChance = statusChance or 1.0
 	--surf.DeathType = deathType or "DoT"

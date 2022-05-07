@@ -125,8 +125,6 @@ if Ext.IsServer() then
 	---@type table<string, fun(uuid:string, stat:string, lastVal:integer, nextVal:integer, statType:string):void>
 	Listeners.CharacterBasePointsChanged = {}
 
-	---@alias TurnCounterCallback fun(id:string, turn:integer, lastTurn:integer, finished:boolean, data:TurnCounterData):void
-
 	---@type TurnCounterCallback[]
 	Listeners.OnTurnCounter = {}
 	---@type table<string, TurnCounterCallback>

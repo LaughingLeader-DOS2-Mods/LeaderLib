@@ -6,7 +6,9 @@ end
 ---@param obj number[]|UUID|EsvCharacter|EsvItem|Vector3
 ---@param unpackResult boolean|nil If true, the position value is returned as separate numbers.
 ---@param fallback number[]|nil If no position is found, this value or {0,0,0} is returned.
----@return number,number,number|number[]
+---@return number[]|number
+---@return number|nil
+---@return number|nil
 function GameHelpers.Math.GetPosition(obj, unpackResult, fallback)
     local t = type(obj)
     local pos = nil

@@ -313,7 +313,7 @@ end
 ---Returns true if the object has any of the given statuses.
 ---@param object EsvGameObject|UUID|NETID
 ---@param statusId string|string[]
----@param checkAll boolean If true, only return true if every given status is active.
+---@param checkAll boolean|nil If true and statusId is a table, only return true if every given status is active.
 ---@return boolean
 function GameHelpers.Status.IsActive(object, statusId, checkAll)
 	local uuid = GameHelpers.GetUUID(object)

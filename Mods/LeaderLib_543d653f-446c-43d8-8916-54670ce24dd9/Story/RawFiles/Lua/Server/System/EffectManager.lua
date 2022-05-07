@@ -30,22 +30,32 @@ end
 ---@field Effect string
 ---@field Position number[]
 ---@field Handle integer
+---@field Params EffectManagerEsvEffectParams|nil
 
 ---@param target number[]
 ---@param effect string
 ---@param handle integer
-function EffectManager.SaveWorldEffectData(target, effect, handle)
+---@param params EffectManagerEsvEffectParams|nil
+function EffectManager.SaveWorldEffectData(target, effect, handle, params)
+	if type(handle) ~= "number" then
+		return
+	end
 	local region = SharedData.RegionData.Current
 
 	if PersistentVars.WorldLoopEffects[region] == nil then
 		PersistentVars.WorldLoopEffects[region] = {}
 	end
 
-	table.insert(PersistentVars.WorldLoopEffects[region], {
+	local data = {
 		Effect = effect,
 		Position = target,
 		Handle = handle
-	})
+	}
+	if params then
+		data.Params = params
+	end
+
+	table.insert(PersistentVars.WorldLoopEffects[region], data)
 end
 
 ---@private
@@ -207,16 +217,34 @@ function EffectManager.StopLoopEffectByName(effect, options)
 end
 
 function EffectManager.RestoreEffects(region)
+	local worldEffects = PersistentVars.WorldLoopEffects[region]
+	if worldEffects then
+		for i,v in pairs(worldEffects) do
+			StopLoopEffect(v.Handle)
+			if v.Params then
+				EffectManager.PlayEffectAt(v.Effect, v.Position, v.Params)
+			else
+				EffectManager.PlayEffectAt(v.Effect, v.Position, {Loop=true})
+			end
+		end
+	end
+
 	--TODO
+	-- for uuid,dataTable in pairs(PersistentVars.ObjectLoopEffects) do
+	-- 	for i,v in pairs(dataTable) do
+	-- 		if v.Effect == effect then
+	-- 			StopLoopEffect(v.Handle)
+	-- 			table.remove(dataTable, i)
+	-- 			if not options.all then
+	-- 				break
+	-- 			end
+	-- 		end
+	-- 	end
+	-- 	if #dataTable == 0 then
+	-- 		PersistentVars.ObjectLoopEffects[uuid] = nil
+	-- 	end
+	-- end
 end
-
-Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
-	EffectManager.RestoreEffects(region)
-end)
-
--- Ext.RegisterOsirisListener("RegionEnded", 1, "after", function(region)
-	
--- end)
 
 ---@class EffectManagerEsvEffectParams
 ---@field BeamTarget ObjectHandle
@@ -239,9 +267,13 @@ end)
 ---@field NetID NETID
 ---@field Delete fun(self:EffectManagerEsvEffect)
 
----@param fx string The effect resource name
+---Play an effect at a position with optional parameters (looped, scaled).
+---Returns the EsvEffect if v56 or higher, otherwise it returns a handle.
+---If fx is a table of effects, a table or EsvEffect or table of handles will be returned.
+---@param fx string|string[] The effect resource name
 ---@param pos number[]|EsvGameObject
 ---@param effectParams EffectManagerEsvEffectParams|nil
+---@return EffectManagerEsvEffect|EffectManagerEsvEffect[]|integer|integer[]
 function EffectManager.PlayEffectAt(fx, pos, effectParams)
 	local t = type(fx)
 	assert(t == "string" or t == "table", "Effect parameter must be a string or a table of strings.")
@@ -268,13 +300,56 @@ function EffectManager.PlayEffectAt(fx, pos, effectParams)
 						effect[k] = v
 					end
 				end
+				if effectParams.Loop then
+					local handle = Ext.HandleToDouble(effect.Handle)
+					EffectManager.SaveWorldEffectData({x,y,z}, fx, handle, effectParams)
+				end
 			end
+			return effect
 		elseif Ext.OsirisIsCallable() then
-			PlayEffectAtPosition(fx, x, y, z)
+			if effectParams then
+				if effectParams.Loop then
+					if effectParams.Scale then
+						local handle = PlayScaledLoopEffectAtPosition(fx, effectParams.Scale, x, y, z)
+						EffectManager.SaveWorldEffectData({x,y,z}, fx, handle)
+						return handle
+					else
+						local handle = PlayLoopEffectAtPosition(fx, x, y, z)
+						EffectManager.SaveWorldEffectData({x,y,z}, fx, handle, effectParams)
+						return handle
+					end
+				else
+					if effectParams.Scale then
+						PlayScaledEffectAtPosition(fx, effectParams.Scale, x, y, z)
+						return true
+					else
+						PlayLoopEffectAtPosition(fx, x, y, z)
+						return true
+					end
+				end
+			else
+				PlayEffectAtPosition(fx, x, y, z)
+			end
 		end
 	elseif t == "table" then
+		local results = {}
 		for _,v in pairs(fx) do
-			EffectManager.PlayEffectAt(v, pos, effectParams)
+			local result = EffectManager.PlayEffectAt(v, pos, effectParams)
+			if result ~= nil then
+				results[#results+1] = result
+			end
 		end
+		return results
 	end
 end
+
+---@param region string
+---@param state REGIONSTATE
+---@param levelType LEVELTYPE
+RegisterListener("RegionChanged", function (region, state, levelType)
+	if state == REGIONSTATE.GAME then
+		EffectManager.RestoreEffects(region)
+	elseif state == REGIONSTATE.ENDED then
+		EffectManager.DeleteLoopEffects(region)
+	end
+end)

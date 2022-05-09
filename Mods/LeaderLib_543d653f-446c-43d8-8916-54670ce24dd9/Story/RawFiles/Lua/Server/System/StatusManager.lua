@@ -2,10 +2,28 @@ if StatusManager == nil then
 	StatusManager = {}
 end
 
-StatusManager._Internal = {
-	---Set to true after GameStarted
-	CanBlockDeletion = false
-}
+---Automatically set to true after GameStarted.
+---This is a local variable, instead of a key in _INTERNAL, so the BeforeStatusDelete listener doesn't need to parse a table within a table for every status firing the event.
+local _canBlockDeletion = false
+
+---@class StatusManagerInternals
+---@field CanBlockDeletion boolean Whether the StatusManager can block status deletion in BeforeStatusDelete, for active permanent statuses.
+local _INTERNAL = {}
+
+setmetatable(_INTERNAL, {
+	__index = function (tbl,k)
+		if k == "CanBlockDeletion" then
+			return _canBlockDeletion
+		end
+	end,
+	__newindex = function (tbl,k,v)
+		--In case a mod needs to disable this functionality
+		if k == "CanBlockDeletion" then
+			_canBlockDeletion = v == true
+		end
+	end
+})
+StatusManager._Internal = _INTERNAL
 
 StatusManager.Register = {}
 
@@ -344,7 +362,7 @@ end
 ---@param status string
 ---@param enabled boolean
 ---@param source EsvCharacter|EsvItem|UUID|NETID|nil A source to use when applying the status, if any. Defaults to the target.
-function StatusManager._Internal.SetPermanentStatus(target, status, enabled, source)
+function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 	local uuid = GameHelpers.GetUUID(target)
 	local statusIsActive = GameHelpers.Status.IsActive(target, status)
 	if not enabled then
@@ -368,20 +386,20 @@ function StatusManager._Internal.SetPermanentStatus(target, status, enabled, sou
 	end
 end
 
----Removed a registered permanent status for the given character.
----@param target EsvCharacter|EsvItem|UUID|NETID
----@param status string
-function StatusManager.RemovePermanentStatus(target, status)
-	StatusManager._Internal.SetPermanentStatus(target, status, false)
-end
-
 ---Applies permanent status. The given status will be blocked from deletion.
 ---@param target EsvCharacter|EsvItem|UUID|NETID
 ---@param status string
 ---@param source EsvCharacter|EsvItem|UUID|NETID|nil A source to use when applying the status, if any. Defaults to the target.
 ---@return boolean isActive Returns whether the permanent status is active or not.
 function StatusManager.ApplyPermanentStatus(target, status, source)
-	StatusManager._Internal.SetPermanentStatus(target, status, true, source)
+	_INTERNAL.SetPermanentStatus(target, status, true, source)
+end
+
+---Removed a registered permanent status for the given character.
+---@param target EsvCharacter|EsvItem|UUID|NETID
+---@param status string
+function StatusManager.RemovePermanentStatus(target, status)
+	_INTERNAL.SetPermanentStatus(target, status, false)
 end
 
 ---Makes a permanent status active or not, depending on if it's active already. The given status will be blocked from deletion.
@@ -390,16 +408,19 @@ end
 ---@param source EsvCharacter|EsvItem|UUID|NETID|nil A source to use when applying the status, if any. Defaults to the target.
 ---@return boolean isActive Returns whether the permanent status is active or not.
 function StatusManager.TogglePermanentStatus(target, status, source)
-	StatusManager._Internal.SetPermanentStatus(target, status, not StatusManager.IsPermanentStatusActive(target, status), source)
+	_INTERNAL.SetPermanentStatus(target, status, not StatusManager.IsPermanentStatusActive(target, status), source)
 end
 
 if Ext.Version() >= 56 then
+	---@class ExtenderBeforeStatusDeleteEventParams
+	---@field Status EsvStatus
+	---@field PreventAction fun(self:ExtenderBeforeStatusDeleteEventParams):void
+
+	---@param e ExtenderBeforeStatusDeleteEventParams
 	Ext.Events.BeforeStatusDelete:Subscribe(function (e)
-		if StatusManager._Internal.CanBlockDeletion then
-			---@type EsvStatus
-			local status = e.Status
-			local target = Ext.GetGameObject(status.TargetHandle)
-			if target and StatusManager.IsPermanentStatusActive(target.MyGuid, status.StatusId) then
+		if _canBlockDeletion and e.Status.LifeTime == -1 then
+			local target = Ext.GetGameObject(e.Status.TargetHandle)
+			if target and StatusManager.IsPermanentStatusActive(target.MyGuid, e.Status.StatusId) then
 				e:PreventAction()
 			end
 		end
@@ -410,7 +431,7 @@ end
 ---@param state REGIONSTATE
 ---@param levelType LEVELTYPE
 RegisterListener("RegionChanged", function (region, state, levelType)
-	StatusManager._Internal.CanBlockDeletion = state == REGIONSTATE.GAME and levelType == LEVELTYPE.GAME
+	_canBlockDeletion = state == REGIONSTATE.GAME and levelType == LEVELTYPE.GAME
 end)
 
 RegisterListener("PersistentVarsLoaded", function ()

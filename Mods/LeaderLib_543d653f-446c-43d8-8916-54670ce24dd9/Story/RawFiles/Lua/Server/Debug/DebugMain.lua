@@ -850,6 +850,9 @@ RegisterListener("ForceMoveFinished", function(target, source, distance, startin
 	end
 end, nil) ]]
 
+--ItemTemplateAddTo("84625ce6-ed15-46d2-aa7e-73021b1b5257", me.MyGuid, 1, 0)
+--local x,y,z = table.unpack(Mods.LeaderLib.GameHelpers.Math.ExtendPositionWithForwardDirection(Ext.GetCharacter(me.MyGuid), 4)); CreateItemTemplateAtPosition("84625ce6-ed15-46d2-aa7e-73021b1b5257", x, y, z)
+
 --[[ if Ext.Version() >= 56 then
 	local function PrintEventTime(name, id)
 		fprint(LOGLEVEL.ERROR, "[%i:%s] ID(%s)", Ext.MonotonicTime(), name, id)

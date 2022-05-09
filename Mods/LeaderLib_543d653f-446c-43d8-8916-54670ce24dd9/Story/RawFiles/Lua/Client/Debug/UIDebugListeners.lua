@@ -235,7 +235,33 @@ local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation
 -- local mainMenu = UIListenerWrapper:Create(Data.UIType.mainMenu)
 -- local msgBox = UIListenerWrapper:Create(Data.UIType.msgBox, enabledParam)
 -- local msgBox_c = UIListenerWrapper:Create(Data.UIType.msgBox_c, enabledParam)
--- --local overhead = UIListenerWrapper:Create(Data.UIType.overhead, enabledParam)
+local overhead = UIListenerWrapper:Create(Data.UIType.overhead, enabledParam)
+overhead.CustomCallback.updateOHs = function(self, ui, method)
+	local root = ui:GetRoot()
+	local data = {
+		addOH_array = {},
+		selectionInfo_array = {},
+		hp_array = {},
+		instance = ui,
+	}
+	local hasData = false
+	for i=0,#root.addOH_array-1 do
+		data.addOH_array[i] = root.addOH_array[i]
+		hasData = true
+	end
+	for i=0,#root.selectionInfo_array-1 do
+		data.selectionInfo_array[i] = root.selectionInfo_array[i]
+		hasData = true
+	end
+	for i=0,#root.hp_array-1 do
+		data.hp_array[i] = root.hp_array[i]
+		hasData = true
+	end
+	if hasData then
+		--GameHelpers.IO.SaveJsonFile(string.format("Dumps/overhead_%s.json", Ext.MonotonicTime()), Ext.DumpExport(data))
+		GameHelpers.IO.SaveJsonFile("Dumps/overhead.json", Ext.DumpExport(data))
+	end
+end
 -- local partyInventory = UIListenerWrapper:Create(Data.UIType.partyInventory, enabledParam)
 -- local playerInfo = UIListenerWrapper:Create(Data.UIType.playerInfo, {Enabled=true, Ignored={updateStatuses=true}})
 -- local possessionBar = UIListenerWrapper:Create(Data.UIType.possessionBar)
@@ -248,10 +274,6 @@ local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation
 --local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, enabledParam)
 --local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip, enabledParam)
 --local textDisplay = UIListenerWrapper:Create(Data.UIType.textDisplay, enabledParam)
-
--- overhead.CustomCallback.updateOHs = function(self, ui, method)
-	
--- end
 
 -- characterCreation.CustomCallback.updateContent = function(self, ui, method)
 -- 	local this = ui:GetRoot()

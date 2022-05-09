@@ -57,7 +57,6 @@ end
 if Vars.DebugMode then
 	Ext.Require("Client/UI/DialogKeywords.lua") -- TODO
 	Ext.Require("Client/Debug/UIGeneralDebug.lua")
-	--Ext.Require("Client/Debug/UIDebugListeners.lua")
 	Ext.Require("Client/Debug/ClientConsoleCommands.lua")
 end
 
@@ -70,8 +69,18 @@ if not Classes.PresetData then
 	Classes.PresetData = {Create = function() end}
 end
 
-Ext.RegisterListener("SessionLoading", function()
+local function OnSessionLoaded()
+	if Vars.LeaderDebugMode then
+		Ext.Require("Client/Debug/UIDebugListeners.lua")
+	end
+
 	if Vars.ControllerEnabled then
 		InvokeListenerCallbacks(Listeners.ControllerModeEnabled)
 	end
-end)
+end
+
+if Ext.Version() >= 56 then
+	Ext.Events.SessionLoaded:Register(OnSessionLoaded, {Priority=999})
+else
+	Ext.RegisterListener("SessionLoaded", OnSessionLoaded)
+end

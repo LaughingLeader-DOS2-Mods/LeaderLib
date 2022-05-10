@@ -767,9 +767,18 @@ function GameHelpers.Ext.ObjectIsStatItem(obj)
 end
 
 function GameHelpers.Ext.ObjectIsItem(obj)
-	if type(obj) == "userdata" then
+	local t = type(obj)
+	if t == "userdata" then
 		local meta = getmetatable(obj)
 		return meta == Data.ExtenderClass.EsvItem or meta == Data.ExtenderClass.EclItem
+	elseif t == "string" or t == "number" then
+		if obj == StringHelpers.NULL_UUID then
+			return false
+		end
+		local item = GameHelpers.GetItem(obj)
+		if item then
+			return true,item
+		end
 	end
 	return false
 end
@@ -780,14 +789,18 @@ function GameHelpers.Ext.ObjectIsCharacter(obj)
 	if t == "userdata" then
 		local meta = getmetatable(obj)
 		return meta == Data.ExtenderClass.EsvCharacter or meta == Data.ExtenderClass.EclCharacter
-	elseif t == "string" then
+	elseif t == "string" or t == "number" then
+		if obj == StringHelpers.NULL_UUID then
+			return false
+		end
 		if not isClient and Ext.OsirisIsCallable() then
 			return ObjectIsCharacter(obj) == 1
-		else
-			local char = GameHelpers.GetCharacter(obj)
-			if char then
-				return true
-			end
+		end
+	end
+	if t == "string" or t == "number" then
+		local char = GameHelpers.GetCharacter(obj)
+		if char then
+			return true,char
 		end
 	end
 	return false
@@ -804,8 +817,10 @@ end
 ---@return string
 function GameHelpers.Ext.GetItemStatName(obj)
 	local t = type(obj)
-
 	if t == "string" or t == "number" then
+		if obj == StringHelpers.NULL_UUID then
+			return false
+		end
 		local item = GameHelpers.GetItem(obj)
 		if item then
 			return item.StatsId

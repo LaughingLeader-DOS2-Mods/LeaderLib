@@ -254,7 +254,7 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
 		end
 	end
-	for callback in SkillManager.SkillManager.GetListeners(skill) do
+	for callback in SkillManager.GetListeners(skill) do
 		local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.MEMORIZED, learned, "boolean")
 		if not b then
 			Ext.PrintError("[LeaderLib:SkillListeners:SkillActivated] Error invoking function:\n", err)

@@ -39,6 +39,11 @@ Listeners.GetTextPlaceholder = {
 	All = {}
 }
 
+---@alias LeaderLibCharacterResurrectedCallback fun(character:EsvCharacter|EclCharacter):void
+
+---@type LeaderLibCharacterResurrectedCallback[]
+Listeners.CharacterResurrected = {}
+
 --Debug listeners
 Listeners.LuaReset = {}
 Listeners.BeforeLuaReset = {}
@@ -150,8 +155,7 @@ if Ext.IsServer() then
 	Listeners.QuestCompleted = {All = {}}
 	---@type table<string, fun(questId:string, stateId:string, character:EsvCharacter):void>
 	Listeners.QuestStateChanged = {All = {}}
-end
-if Ext.IsClient() then
+else
 	---Client-side Mod Menu events
 	---Callbacks for when a mod's Mod Menu section is created in the options menu.
 	---@type fun(uuid:string, settings:ModSettings, ui:UIObject, mainMenu:MainMenuMC):void[]
@@ -218,7 +222,65 @@ if Ext.IsClient() then
 	Listeners.ControllerModeEnabled = {}
 end
 
----@class LeaderLib:table
+---region Tick Listeners
+
+local _state = Ext.GetGameState()
+
+Ext.RegisterListener("GameStateChanged", function (from, to)
+	_state = to
+end)
+
+---@class GameTime
+---@field Time number
+---@field DeltaTime number
+---@field Ticks integer
+
+---Wrapper around Ext.Events.Tick that skips execution if resetting, or if the game isn't running.
+---@type fun(e:GameTime):void[]
+Listeners.Tick = {}
+
+---@param callback fun(e:GameTime):void
+---@param runningOnly boolean|nil
+function RegisterTickListener(callback, runningOnly)
+	if runningOnly then
+		Listeners.Tick[#Listeners.Tick+1] = function (e)
+			if _state == "Running" and not Vars.Resetting then
+				callback(e)
+			end
+		end
+	else
+		Listeners.Tick[#Listeners.Tick+1] = function (e)
+			if not Vars.Resetting then
+				callback(e)
+			end
+		end
+	end
+end
+
+local function OnTick(e)
+	InvokeListenerCallbacks(Listeners.Tick, e)
+end
+
+if _EXTVERSION >= 56 then
+	Ext.Events.Tick:Subscribe(OnTick)
+end
+
+---endregion
+
+if Events == nil then
+	---@type table<string,LeaderLibSubscribableEvent>
+	Events = {}
+end
+
+Ext.Require("Shared/Classes/SubscribableEvent.lua")
+
+---@class CharacterResurrectedEvent:LeaderLibSubscribableEvent
+---@field Subscribe fun(self:LeaderLibSubscribableEvent, callback:LeaderLibCharacterResurrectedCallback):boolean
+Events.CharacterResurrected = Classes.SubscribableEvent:New("CharacterResurrected")
+
+
+
+---@class LeaderLibGlobals:table
 ---@field RegisterListener fun(event:LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[], callbackOrKey:function|string, callbackOrNil:function|nil):void
 
 --- Registers a function to call when a specific Lua LeaderLib event fires.
@@ -227,6 +289,7 @@ end
 ---@param callbackOrNil function|nil If callback is a string, then this is the callback.
 function RegisterListener(event, callbackOrKey, callbackOrNil)
 	local listenerTable = nil
+	local t = type(event)
 	if type(event) == "table" then
 		if Common.TableHasValue(Listeners, event) then
 			listenerTable = event
@@ -238,8 +301,15 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			end
 			return
 		end
+	elseif t == "string" then
+		local subEvent = Events[event]
+		if subEvent then
+			subEvent:Subscribe(callbackOrKey, callbackOrNil)
+		else
+			listenerTable = Listeners[event]
+		end
 	else
-		listenerTable = Listeners[event]
+		error(string.format("Incorrect event ID (%s)", event), 2)
 	end
 	if listenerTable then
 		local keyType = type(callbackOrKey)
@@ -320,48 +390,3 @@ function RegisterModListener(event, uuid, callback)
 		Ext.PrintError("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
 	end
 end
-
----region Tick Listeners
-
-local _state = Ext.GetGameState()
-
-Ext.RegisterListener("GameStateChanged", function (from, to)
-	_state = to
-end)
-
----@class GameTime
----@field Time number
----@field DeltaTime number
----@field Ticks integer
-
----Wrapper around Ext.Events.Tick that skips execution if resetting, or if the game isn't running.
----@type fun(e:GameTime):void[]
-Listeners.Tick = {}
-
----@param callback fun(e:GameTime):void
----@param runningOnly boolean|nil
-function RegisterTickListener(callback, runningOnly)
-	if runningOnly then
-		Listeners.Tick[#Listeners.Tick+1] = function (e)
-			if _state == "Running" and not Vars.Resetting then
-				callback(e)
-			end
-		end
-	else
-		Listeners.Tick[#Listeners.Tick+1] = function (e)
-			if not Vars.Resetting then
-				callback(e)
-			end
-		end
-	end
-end
-
-local function OnTick(e)
-	InvokeListenerCallbacks(Listeners.Tick, e)
-end
-
-if _EXTVERSION >= 56 then
-	Ext.Events.Tick:Subscribe(OnTick)
-end
-
----endregion

@@ -20,6 +20,8 @@ function fassert(b, message, ...)
 	error(msg,2)
 end
 
+if Classes == nil then Classes = {} end
+
 Ext.Require("Shared/_InitShared.lua")
 Ext.Require("Shared/Classes/Enum.lua")
 Ext.Require("Shared/Data/_Init.lua")

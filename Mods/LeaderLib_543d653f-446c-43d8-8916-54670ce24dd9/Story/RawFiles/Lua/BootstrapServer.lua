@@ -127,6 +127,10 @@ end
 ---@see GameHelpers.GetItem
 ---@alias ItemParam EsvItem|EclItem|UUID|NETID
 
+---A parameter type that can be either character userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetCharacter.
+---@see GameHelpers.GetCharacter
+---@alias CharacterParam EsvCharacter|EclCharacter|UUID|NETID
+
 ---@class LeaderLibPersistentVars
 local defaultPersistentVars = {
 	---Associates a unique timer name (uuid-concatenated) with a general timer name.
@@ -198,10 +202,10 @@ Ext.Require("Shared/System/TutorialManager.lua")
 PersistentVars = Common.CloneTable(defaultPersistentVars, true)
 
 function LoadPersistentVars(skipCallback)
-	GameHelpers.PersistentVars.Update(defaultPersistentVars, PersistentVars)
+	PersistentVars = GameHelpers.PersistentVars.Update(defaultPersistentVars, PersistentVars)
 	SkillManager.LoadSaveData()
 	if not skipCallback then
-		InvokeListenerCallbacks(Listeners.PersistentVarsLoaded)
+		InvokeListenerCallbacks(Listeners.PersistentVarsLoaded, PersistentVars)
 	end
 end
 

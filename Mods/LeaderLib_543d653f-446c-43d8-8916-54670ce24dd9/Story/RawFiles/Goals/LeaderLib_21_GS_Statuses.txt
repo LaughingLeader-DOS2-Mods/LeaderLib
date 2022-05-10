@@ -16,6 +16,13 @@ ApplyStatus(_Char, "WINGS", -1.0, 0, _Char);
 //END_REGION
 // [END_NO_OSITOOLS]
 
+/* [OSITOOLS_ONLY]
+IF
+CharacterStatusRemoved(_Char, "RESURRECT", _)
+THEN
+NRD_ModCall("LeaderLib", "OnCharacterResurrected", (STRING)_Char);
+*/
+
 EXITSECTION
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_20_GameScripts"

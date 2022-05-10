@@ -10,19 +10,6 @@ local _canBlockDeletion = false
 ---@field CanBlockDeletion boolean Whether the StatusManager can block status deletion in BeforeStatusDelete, for active permanent statuses.
 local _INTERNAL = {}
 
-setmetatable(_INTERNAL, {
-	__index = function (tbl,k)
-		if k == "CanBlockDeletion" then
-			return _canBlockDeletion
-		end
-	end,
-	__newindex = function (tbl,k,v)
-		--In case a mod needs to disable this functionality
-		if k == "CanBlockDeletion" then
-			_canBlockDeletion = v == true
-		end
-	end
-})
 StatusManager._Internal = _INTERNAL
 
 StatusManager.Register = {}
@@ -366,12 +353,15 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 	local uuid = GameHelpers.GetUUID(target)
 	local statusIsActive = GameHelpers.Status.IsActive(target, status)
 	if not enabled then
-		PersistentVars.ActivePermanentStatuses[uuid][status] = nil
+		if PersistentVars.ActivePermanentStatuses[uuid] then
+			PersistentVars.ActivePermanentStatuses[uuid][status] = nil
+			if Common.TableLength(PersistentVars.ActivePermanentStatuses[uuid], true) == 0 then
+				PersistentVars.ActivePermanentStatuses[uuid] = nil
+			end
+		end
+
 		if statusIsActive then
 			GameHelpers.Status.Remove(target, status)
-		end
-		if Common.TableLength(PersistentVars.ActivePermanentStatuses[uuid], true) == 0 then
-			PersistentVars.ActivePermanentStatuses[uuid] = nil
 		end
 	else
 		if PersistentVars.ActivePermanentStatuses[uuid] == nil then
@@ -420,7 +410,11 @@ if Ext.Version() >= 56 then
 	Ext.Events.BeforeStatusDelete:Subscribe(function (e)
 		if _canBlockDeletion and e.Status.LifeTime == -1 then
 			local target = Ext.GetGameObject(e.Status.TargetHandle)
-			if target and StatusManager.IsPermanentStatusActive(target.MyGuid, e.Status.StatusId) then
+			if target
+			and StatusManager.IsPermanentStatusActive(target.MyGuid, e.Status.StatusId)
+			and not GameHelpers.ObjectIsDead(target)
+			then
+				Ext.Print("Blocked from deletion:", e.Status.StatusId, e.Status.LifeTime)
 				e:PreventAction()
 			end
 		end
@@ -434,15 +428,46 @@ RegisterListener("RegionChanged", function (region, state, levelType)
 	_canBlockDeletion = state == REGIONSTATE.GAME and levelType == LEVELTYPE.GAME
 end)
 
-RegisterListener("PersistentVarsLoaded", function ()
-	for uuid,statuses in pairs(PersistentVars.ActivePermanentStatuses) do
-		local target = GameHelpers.TryGetObject(uuid)
-		if target then
-			for id,source in pairs(statuses) do
-				if not GameHelpers.Status.IsActive(target, id) then
-					GameHelpers.Status.Apply(target, id, -1, true, source)
+function _INTERNAL.ReapplyPermanentStatuses()
+	if PersistentVars.ActivePermanentStatuses then
+		for uuid,statuses in pairs(PersistentVars.ActivePermanentStatuses) do
+			local target = GameHelpers.TryGetObject(uuid)
+			if target then
+				for id,source in pairs(statuses) do
+					if not GameHelpers.Status.IsActive(target, id) then
+						GameHelpers.Status.Apply(target, id, -1, true, source)
+					end
 				end
 			end
 		end
 	end
+end
+
+RegisterListener("PersistentVarsLoaded", function ()
+	_INTERNAL.ReapplyPermanentStatuses()
 end)
+
+Events.CharacterResurrected:Subscribe(function(character)
+	local permanentStatuses = PersistentVars.ActivePermanentStatuses[character.MyGuid]
+	if permanentStatuses then
+		for id,source in pairs(permanentStatuses) do
+			if not GameHelpers.Status.IsActive(character, id) then
+				GameHelpers.Status.Apply(character, id, -1, true, source)
+			end
+		end
+	end
+end)
+
+setmetatable(_INTERNAL, {
+	__index = function (tbl,k)
+		if k == "CanBlockDeletion" then
+			return _canBlockDeletion
+		end
+	end,
+	__newindex = function (tbl,k,v)
+		--In case a mod needs to disable this functionality
+		if k == "CanBlockDeletion" then
+			_canBlockDeletion = v == true
+		end
+	end
+})

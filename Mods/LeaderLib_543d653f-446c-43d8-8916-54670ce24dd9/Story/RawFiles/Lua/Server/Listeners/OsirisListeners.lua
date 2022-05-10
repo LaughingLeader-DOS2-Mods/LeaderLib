@@ -138,3 +138,13 @@ end)
 RegisterProtectedExtenderListener("TreasureItemGenerated", function(item)
 	InvokeListenerCallbacks(Listeners.TreasureItemGenerated, item, item and item.StatsId or "")
 end)
+
+---Called from LeaderLib_21_GS_Statuses.txt
+---@param uuid string
+function OnCharacterResurrected(uuid)
+	local character = GameHelpers.GetCharacter(uuid)
+	if character then
+		Events.CharacterResurrected:Invoke(character)
+		GameHelpers.Net.Broadcast("LeaderLib_Client_CharacterResurrected", character.NetID)
+	end
+end

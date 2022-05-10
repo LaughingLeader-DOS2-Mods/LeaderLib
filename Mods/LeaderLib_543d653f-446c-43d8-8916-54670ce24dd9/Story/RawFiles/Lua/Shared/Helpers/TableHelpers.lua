@@ -61,7 +61,7 @@ local validTypes = {
 }
 ---Prepares a table for PersistentVars saving by removing invalid values.
 ---@param tbl table
----@param supportedExtraTypes table<string,boolean>
+---@param supportedExtraTypes table<string,boolean>|nil
 ---@param forJson boolean|nil If true, key types will be restricted to number/string.
 ---@return table<string|number|boolean,string|number|boolean|table>
 function TableHelpers.SanitizeTable(tbl, supportedExtraTypes, forJson)

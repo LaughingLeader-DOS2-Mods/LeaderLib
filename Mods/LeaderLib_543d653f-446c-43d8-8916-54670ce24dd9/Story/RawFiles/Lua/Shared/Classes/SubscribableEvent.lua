@@ -57,6 +57,52 @@ end
 ---@field Prev LeaderLibSubscribableEventNode|nil
 ---@field Next LeaderLibSubscribableEventNode|nil
 
+---@param self LeaderLibSubscribableEvent
+---@param node LeaderLibSubscribableEventNode
+---@param sub LeaderLibSubscribableEventNode
+local function DoSubscribeBefore(self, node, sub)
+	sub.Prev = node.Prev
+	sub.Next = node
+
+	if node.Prev ~= nil then
+		node.Prev.Next = sub
+	else
+		self.First = sub
+	end
+
+	node.Prev = sub
+end
+
+---@param self LeaderLibSubscribableEvent
+---@param sub LeaderLibSubscribableEventNode
+local function DoSubscribe(self, sub)
+	if self.First == nil then
+		self.First = sub
+		return
+	end
+
+	local cur = self.First
+	local last = nil
+
+	if cur ~= nil then
+		while cur ~= nil do
+			last = cur
+			if sub.Priority > cur.Priority then
+				DoSubscribeBefore(self, cur, sub)
+				return
+			end
+	
+			cur = cur.Next
+		end
+	end
+
+	if last then
+		last.Next = sub
+	end
+
+	sub.Prev = last
+end
+
 ---@generic T : function
 ---@param callback T
 ---@param opts LeaderLibSubscribableEventSubscribeOptions|nil
@@ -75,56 +121,13 @@ function SubscribableEvent:Subscribe(callback, opts)
 		Options = {}
 	}
 
-	self:DoSubscribe(sub)
+	DoSubscribe(self, sub)
 	return index
 end
 
+---@param self LeaderLibSubscribableEvent
 ---@param node LeaderLibSubscribableEventNode
----@param sub LeaderLibSubscribableEventNode
-function SubscribableEvent:DoSubscribeBefore(node, sub)
-	sub.Prev = node.Prev
-	sub.Next = node
-
-	if node.Prev ~= nil then
-		node.Prev.Next = sub
-	else
-		self.First = sub
-	end
-
-	node.Prev = sub
-end
-
----@param sub LeaderLibSubscribableEventNode
-function SubscribableEvent:DoSubscribe(sub)
-	if self.First == nil then
-		self.First = sub
-		return
-	end
-
-	local cur = self.First
-	local last = nil
-
-	if cur ~= nil then
-		while cur ~= nil do
-			last = cur
-			if sub.Priority > cur.Priority then
-				self:DoSubscribeBefore(cur, sub)
-				return
-			end
-	
-			cur = cur.Next
-		end
-	end
-
-	if last then
-		last.Next = sub
-	end
-
-	sub.Prev = last
-end
-
----@param node LeaderLibSubscribableEventNode
-function SubscribableEvent:RemoveNode(node)
+local function RemoveNode(self, node)
 	if node.Prev ~= nil then
 		node.Prev.Next = node.Next
 	end
@@ -150,7 +153,7 @@ function SubscribableEvent:Unsubscribe(indexOrCallback)
 			if (t == "number" and cur.Index == indexOrCallback)
 			or (t == "function" and cur.Callback == indexOrCallback)
 			then
-				self:RemoveNode(cur)
+				RemoveNode(self, cur)
 				return true
 			end
 			cur = cur.Next
@@ -189,7 +192,7 @@ local function InvokeCallbacks(sub, resultsTable, ...)
 		if cur.Once then
 			local last = cur
 			cur = last.Next
-			sub:RemoveNode(last)
+			RemoveNode(sub, last)
 		else
 			cur = cur.Next
 		end

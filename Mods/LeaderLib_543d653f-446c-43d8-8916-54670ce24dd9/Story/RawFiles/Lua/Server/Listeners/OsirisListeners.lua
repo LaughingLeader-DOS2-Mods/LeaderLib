@@ -108,7 +108,7 @@ local function OnObjectDying(obj)
 		end
 	end
 	if isSummon then
-		InvokeListenerCallbacks(Listeners.OnSummonChanged, summon or obj, owner, true, ObjectIsItem(obj) == 1)
+		Events.SummonChanged:Invoke({Summon=summon or obj, Owner=owner, IsDying=true, IsItem=ObjectIsItem(obj) == 1})
 	end
 end
 

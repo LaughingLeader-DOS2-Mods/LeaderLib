@@ -324,7 +324,7 @@ local function OnStatusApplied(target,status,source)
 				end
 				table.insert(PersistentVars.Summons[owner.MyGuid], summon.MyGuid)
 			end
-			InvokeListenerCallbacks(Listeners.OnSummonChanged, summon, owner, false, ObjectIsItem(target) == 1)
+			Events.SummonChanged:Invoke({Summon=summon, Owner=owner, IsDying=false, IsItem=GameHelpers.Ext.ObjectIsItem(summon)})
 		end
 	end
 	if Vars.LeaveActionData.Total > 0 then

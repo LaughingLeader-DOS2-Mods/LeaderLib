@@ -589,39 +589,23 @@ end)
 	end
 end) ]]
 
----@param summon EsvCharacter|EsvItem
----@param owner EsvCharacter
----@param isDying boolean
----@param isItem boolean
--- RegisterListener("OnSummonChanged", function(summon, owner, isDying, isItem)
-	-- 	if not isItem then
-		-- 		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Character] Summon(%s) Totem(%s) Owner(%s) IsDying(%s) isItem(false)", GameHelpers.Character.GetDisplayName(summon), summon.Totem, GameHelpers.Character.GetDisplayName(owner), isDying)
-		-- 		fprint(LOGLEVEL.WARNING, "Dead(%s) Deactivated(%s) CannotDie(%s) DYING(%s)", summon.Dead, summon.Deactivated, summon.CannotDie, summon:GetStatus("DYING") and summon:GetStatus("DYING").Started or "false")
-		
-		-- 		if summon.Totem then
-			-- 			fprint(LOGLEVEL.DEFAULT, "Totem| Dodge(%s)", summon.Stats.Dodge)
-			-- 			--CharacterSetSummonLifetime(summon.MyGuid, 60)
-			-- 			-- summon.Stats.DynamicStats[1].Dodge = 100
-			-- 			-- summon.Stats.DynamicStats[1].DodgeBoost = 200
-			-- 			--ApplyStatus(summon.MyGuid, "EVADING", -1.0, 1, summon.MyGuid)
-			-- 			-- if not isDying then
-				-- 			-- 	GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
-			-- 			-- else
-				-- 			-- 	GameHelpers.Skill.CreateProjectileStrike(summon, "ProjectileStrike_Stormbolt_Fire", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
-			-- 			-- end
-		-- 		end
-	-- 	else
-		-- 		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Item] Summon(%s) StatsId(%s) Owner(%s) IsDying(%s) isItem(true)", GameHelpers.Character.GetDisplayName(summon), summon.StatsId, GameHelpers.Character.GetDisplayName(owner), isDying)
-	-- 	end
-	
-	-- 	print("Summons")
-	-- 	print("========")
-	-- 	for summon in GameHelpers.Character.GetSummons(owner, true) do
-		-- 		print(GameHelpers.Character.GetDisplayName(summon), summon.MyGuid)
-	-- 	end
-	-- 	print("========")
--- end)
+--[[
+Events.SummonChanged:Subscribe(function (e)
+	if not e.isItem then
+		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Character] Summon(%s) Totem(%s) Owner(%s) IsDying(%s) isItem(false)", GameHelpers.Character.GetDisplayName(e.Summon), e.Summon.Totem, GameHelpers.Character.GetDisplayName(e.Owner), e.IsDying)
+		fprint(LOGLEVEL.WARNING, "Dead(%s) Deactivated(%s) CannotDie(%s) DYING(%s)", e.Summon.Dead, e.Summon.Deactivated, e.Summon.CannotDie, e.Summon:GetStatus("DYING") and e.Summon:GetStatus("DYING").Started or "false")
+	else
+		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Item] Summon(%s) StatsId(%s) Owner(%s) IsDying(%s) isItem(true)", GameHelpers.Character.GetDisplayName(e.Summon), e.Summon.StatsId, GameHelpers.Character.GetDisplayName(e.Owner), e.IsDying)
+	end
 
+	print("Summons")
+	print("========")
+	for summon in GameHelpers.Character.GetSummons(e.Owner, true) do
+		print(GameHelpers.Character.GetDisplayName(summon), summon.MyGuid)
+	end
+	print("========")
+end)
+]]
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do names[#names+1] = k end; table.sort(names); for _,v in ipairs(names) do print(v) end; print("Time total:", Ext.MonotonicTime() - time);
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do names[#names+1] = k end; table.sort(names); for _,v in pairs(names) do print(v) end; print("Time total:", Ext.MonotonicTime() - time);
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do if not Mods.LeaderLib.Data.OsirisEvents[k] then names[#names+1] = k end; end; table.sort(names); for i=1,#names do print(names[i]) end; print("Time total:", Ext.MonotonicTime() - time);

@@ -302,9 +302,9 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTags", fu
 	end
 end, "After")
 
-Events.RegionChanged:Subscribe(function (region, state, levelType)
-	if levelType == LEVELTYPE.CHARACTER_CREATION then
-		if state == REGIONSTATE.ENDED then
+Events.RegionChanged:Subscribe(function (e)
+	if e.LevelType == LEVELTYPE.CHARACTER_CREATION then
+		if e.State == REGIONSTATE.ENDED then
 			DestroyInstance()
 		elseif _EXTVERSION < 56 then
 			CCExt.SetupInstance(true)

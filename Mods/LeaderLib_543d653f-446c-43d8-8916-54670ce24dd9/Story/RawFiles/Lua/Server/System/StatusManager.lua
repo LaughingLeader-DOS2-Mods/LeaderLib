@@ -421,8 +421,8 @@ if Ext.Version() >= 56 then
 	end)
 end
 
-Events.RegionChanged:Subscribe(function (region, state, levelType)
-	_canBlockDeletion = state == REGIONSTATE.GAME and levelType == LEVELTYPE.GAME
+Events.RegionChanged:Subscribe(function (e)
+	_canBlockDeletion = e.State == REGIONSTATE.GAME and e.LevelType == LEVELTYPE.GAME
 end)
 
 function _INTERNAL.ReapplyPermanentStatuses()
@@ -444,12 +444,12 @@ RegisterListener("PersistentVarsLoaded", function ()
 	_INTERNAL.ReapplyPermanentStatuses()
 end)
 
-Events.CharacterResurrected:Subscribe(function(character)
-	local permanentStatuses = PersistentVars.ActivePermanentStatuses[character.MyGuid]
+Events.CharacterResurrected:Subscribe(function(e)
+	local permanentStatuses = PersistentVars.ActivePermanentStatuses[e.Character.MyGuid]
 	if permanentStatuses then
 		for id,source in pairs(permanentStatuses) do
-			if not GameHelpers.Status.IsActive(character, id) then
-				GameHelpers.Status.Apply(character, id, -1, true, source)
+			if not GameHelpers.Status.IsActive(e.Character, id) then
+				GameHelpers.Status.Apply(e.Character, id, -1, true, source)
 			end
 		end
 	end

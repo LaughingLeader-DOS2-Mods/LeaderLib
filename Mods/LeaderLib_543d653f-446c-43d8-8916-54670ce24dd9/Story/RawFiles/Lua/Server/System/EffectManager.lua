@@ -467,10 +467,10 @@ function EffectManager.DeleteLoopEffects(region)
 	end
 end
 
-Events.RegionChanged:Subscribe(function (region, state, levelType)
-	if state == REGIONSTATE.GAME then
-		EffectManager.RestoreEffects(region)
-	elseif state == REGIONSTATE.ENDED then
-		EffectManager.DeleteLoopEffects(region)
+Events.RegionChanged:Subscribe(function (e)
+	if e.State == REGIONSTATE.GAME then
+		EffectManager.RestoreEffects(e.Region)
+	elseif e.State == REGIONSTATE.ENDED then
+		EffectManager.DeleteLoopEffects(e.Region)
 	end
 end)

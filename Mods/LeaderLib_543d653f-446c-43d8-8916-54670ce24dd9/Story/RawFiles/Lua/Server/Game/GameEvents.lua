@@ -41,10 +41,12 @@ local function OverrideLeaveActionStatuses()
 	end
 end
 
+local _EventsInitializedKeyOrder = {"Region"}
+
 local function InvokeOnInitializedCallbacks(region)
 	region = region or ""
 	LoadPersistentVars()
-	InvokeListenerCallbacks(Listeners.Initialized, region)
+	Events.Initialized:Invoke({Region=region})
 	Osi.LeaderLib_LoadingDone(region)
 
 	if SceneManager then
@@ -129,9 +131,9 @@ Timer.RegisterListener("Timers_LeaderLib_Initialized_CheckGameState", function (
 	OnLeaderLibInitialized(SharedData.RegionData.Current)
 end)
 
-Events.RegionChanged:Subscribe(function (region, state, levelType)
-	if levelType == LEVELTYPE.GAME and state == REGIONSTATE.GAME then
-		OnLeaderLibInitialized(region)
+Events.RegionChanged:Subscribe(function (e)
+	if e.LevelType == LEVELTYPE.GAME and e.State == REGIONSTATE.GAME then
+		OnLeaderLibInitialized(e.Region)
 	end
 end)
 
@@ -181,7 +183,7 @@ function OnLuaReset()
 	end
 	IterateUsers("LeaderLib_StoreUserData")
 	pcall(DebugLoadPersistentVars)
-	InvokeListenerCallbacks(Listeners.LuaReset, region)
+	Events.Initialized:Invoke({Region=region})
 	local payload = Common.JsonStringify({Event="LuaReset", Args={region}, _PrintSettings=Vars.Print, _CommandSettings = Vars.Commands})
 	GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", payload)
 end

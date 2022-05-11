@@ -288,8 +288,8 @@ end
 Classes.QuestStateData = QuestStateData
 Classes.QuestData = QuestData
 
-Events.RegionChanged:Subscribe(function (region, state, levelType)
-	if state == REGIONSTATE.STARTED then
+Events.RegionChanged:Subscribe(function (e)
+	if e.State == REGIONSTATE.STARTED then
 		RegisterQuests()
 	end
 end)

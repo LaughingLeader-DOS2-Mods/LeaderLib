@@ -316,12 +316,10 @@ function SkipTutorial.Initialize()
 		GameSettingsManager.Save()
 	end)
 
-	---@param region string
-	---@param state REGIONSTATE
-	---@param levelType LEVELTYPE
-	local function SkipTutorial_RegionChanged(region, state, levelType)
-		if SharedData.GameMode == GAMEMODE.CAMPAIGN and state == REGIONSTATE.GAME then
-			if levelType == LEVELTYPE.CHARACTER_CREATION then
+	---@param e RegionChangedEventArgs
+	local function SkipTutorial_RegionChanged(e)
+		if SharedData.GameMode == GAMEMODE.CAMPAIGN and e.State == REGIONSTATE.GAME then
+			if e.LevelType == LEVELTYPE.CHARACTER_CREATION then
 				-- Skip setting up Skip Tutorial stuff if another mod is modifying that already.
 				if GameHelpers.DB.HasValue("DB_GLO_FirstLevelAfterCharacterCreation", "TUT_Tutorial_A") then
 					runSkipTutorialSetup = GameSettings.Settings.SkipTutorial.Enabled
@@ -330,11 +328,11 @@ function SkipTutorial.Initialize()
 					Ext.Print("[LeaderLib] The tutorial is already being bypassed. Skipping Skip Tutorial setup.")
 				end
 			else
-				if runSkipTutorialSetup and region == GameSettings.Settings.SkipTutorial.Destination then
-					local data = LevelSettings[region]
+				if runSkipTutorialSetup and e.Region == GameSettings.Settings.SkipTutorial.Destination then
+					local data = LevelSettings[e.Region]
 					local settings = GameSettings.Settings.SkipTutorial
 		
-					SkipTutorial_MainSetup(settings, region)
+					SkipTutorial_MainSetup(settings, e.Region)
 		
 					if data and data.Setup then
 						local b,err = xpcall(data.Setup, debug.traceback, settings)

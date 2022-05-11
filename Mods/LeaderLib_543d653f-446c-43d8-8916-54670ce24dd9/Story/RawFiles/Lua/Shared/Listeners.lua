@@ -7,14 +7,9 @@
 local _EXTVERSION = Ext.Version()
 
 if not Listeners then
-	---@private
-	---@class LeaderLibListeners:table
 	Listeners = {}
 end
 
-Listeners.FeatureEnabled = {}
-Listeners.FeatureDisabled = {}
-Listeners.Initialized = {}
 Listeners.ModuleResume = {}
 Listeners.SessionLoaded = {}
 Listeners.TurnDelayed = {}
@@ -37,11 +32,6 @@ Listeners.GetTooltipSkillParam = {}
 Listeners.GetTextPlaceholder = {
 	All = {}
 }
-
----@alias LeaderLibCharacterResurrectedCallback fun(character:EsvCharacter|EclCharacter):void
-
----@type LeaderLibCharacterResurrectedCallback[]
-Listeners.CharacterResurrected = {}
 
 --Debug listeners
 Listeners.LuaReset = {}
@@ -135,9 +125,7 @@ if Ext.IsServer() then
 	Listeners.OnNamedTurnCounter = {}
 	---@type table<string, fun(id:string, uuid:UUID):void>
 	Listeners.OnTurnEnded = {All = {}}
-	---Called when a summon is created or destroyed. Includes items like mines.
-	---@type table<string, fun(summon:EsvCharacter, owner:EsvCharacter, isDying:boolean, isItem:boolean)>
-	Listeners.OnSummonChanged = {}
+
 	---@type table<string, fun(event:string, vararg)>
 	Listeners.ObjectEvent = {}
 
@@ -266,23 +254,7 @@ end
 
 ---endregion
 
-if Events == nil then
-	---@type table<string,LeaderLibSubscribableEvent>
-	Events = {}
-end
-
-Ext.Require("Shared/Classes/SubscribableEvent.lua")
-
----@class CharacterResurrectedEvent:LeaderLibSubscribableEvent
----@field Subscribe fun(self:LeaderLibSubscribableEvent, callback:LeaderLibCharacterResurrectedCallback):void
-Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurrected")
-
----@class RegionChangedEvent:LeaderLibSubscribableEvent
----@field Subscribe fun(self:LeaderLibSubscribableEvent, callback:fun(region:string, state:REGIONSTATE, levelType:LEVELTYPE):void):void
-Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged")
-
-
-
+Ext.Require("Shared/System/SubscriptionEvents.lua")
 
 ---@class LeaderLibGlobals:table
 ---@field RegisterListener fun(event:LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[], callbackOrKey:function|string, callbackOrNil:function|nil):void
@@ -308,7 +280,12 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 	elseif t == "string" then
 		local subEvent = Events[event]
 		if subEvent then
-			subEvent:Subscribe(callbackOrKey, callbackOrNil)
+			subEvent:Subscribe(function(e)
+				local b,err = xpcall(callbackOrKey, debug.traceback, e:Unpack())
+				if not b then
+					Ext.PrintError(err)
+				end
+			end)
 		else
 			listenerTable = Listeners[event]
 		end

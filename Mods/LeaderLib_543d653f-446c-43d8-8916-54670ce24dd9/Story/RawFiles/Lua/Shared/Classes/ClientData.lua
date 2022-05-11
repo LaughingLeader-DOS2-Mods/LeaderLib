@@ -178,7 +178,8 @@ ClientData.__index = ClientData
 setmetatable(ClientData.Character, ClientCharacterData)
 
 ---@param profile string Unique profile ID.
----@param isHost boolean
+---@param id integer|nil
+---@param isHost boolean|nil
 ---@return ClientData
 function ClientData:Create(profile, id, isHost)
 	---@type ClientData

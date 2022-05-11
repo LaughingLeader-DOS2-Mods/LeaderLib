@@ -1,17 +1,11 @@
-local function OnFeatureEnabled(id)
-	InvokeListenerCallbacks(Listeners.FeatureEnabled, id)
-end
-
-local function OnFeatureDisabled(id)
-	InvokeListenerCallbacks(Listeners.FeatureDisabled, id)
-end
+local isClient = Ext.IsClient()
 
 ---@param id string
 function EnableFeature(id)
 	if Features[id] ~= true then
 		Features[id] = true
-		OnFeatureEnabled(id)
-		if Ext.IsServer() and Ext.GetGameState() == "Running" then
+		Events.FeatureChanged:Invoke({ID=id, Enabled = true})
+		if not isClient and Ext.GetGameState() == "Running" then
 			GameHelpers.Net.Broadcast("LeaderLib_EnableFeature", id)
 		end
 	end
@@ -21,9 +15,21 @@ end
 function DisableFeature(id)
 	if Features[id] ~= false then
 		Features[id] = false
-		OnFeatureDisabled(id)
-		if Ext.IsServer() and Ext.GetGameState() == "Running" then
+		Events.FeatureChanged:Invoke({ID=id, Enabled = false})
+		if not isClient and Ext.GetGameState() == "Running" then
 			GameHelpers.Net.Broadcast("LeaderLib_DisableFeature", id)
 		end
 	end
+end
+
+if not isClient then
+	Ext.RegisterNetListener("LeaderLib_EnableFeature", function(channel, id)
+		Features[id] = true
+		Events.FeatureChanged:Invoke({ID=id, Enabled = true})
+	end)
+	
+	Ext.RegisterNetListener("LeaderLib_DisableFeature", function(channel, id)
+		Features[id] = false
+		Events.FeatureChanged:Invoke({ID=id, Enabled = false})
+	end)
 end

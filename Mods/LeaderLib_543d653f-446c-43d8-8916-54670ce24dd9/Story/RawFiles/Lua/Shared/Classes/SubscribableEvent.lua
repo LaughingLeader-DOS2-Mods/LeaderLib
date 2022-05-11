@@ -3,17 +3,24 @@ Adapted from ScriptExtender\LuaScripts\Libs\Event.lua in Extender v56 by Norbyte
 We don't have C++ event objects backing these, so they're more of a fancy way to register listeners.
 ]]
 
----@class LeaderLibSubscribableEventOptions
----@field GatherResults boolean If true, event results from callbacks are gathered and return in in the Invoke function.
+local isClient = Ext.IsClient()
 
----@class LeaderLibSubscribableEvent:LeaderLibSubscribableEventOptions
----@field Name string
----@field First LeaderLibSubscribableEventNode|nil
+---@class SubscribableEventCreateOptions
+---@field GatherResults boolean If true, event results from callbacks are gathered and return in in the Invoke function.
+---@field AutoInvokeOnOtherSide boolean If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
+---@field Disabled boolean If this event is disabled, Invoke won't invoke registered callbacks.
+---@field ArgsKeyOrder string[]|nil
+
+--This alias is a bit of a hack so we can have a generic type in the Subscribe/Invoke function (for an event args type)
+---@alias SubscribableEvent<T>{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T), opts:EventSubscriptionOptions|nil), Invoke:fun(self:SubscribableEvent, args:T, unpackedKeyOrder:string[]|nil), Unsubscribe:fun(self:SubscribableEvent, indexOrCallback:integer|function) }
+
+---@class BaseSubscribableEvent:SubscribableEventCreateOptions
+---@field ID string
+---@field First SubscribableEventNode|nil
 ---@field NextIndex integer
----@field StopInvoke boolean Set via StopPropagation when an event is invoked.
 local SubscribableEvent = {}
 
----@alias LeaderLibSubscribableEventInvokeResult string|"Success"|"Handled"|"Error"|
+---@alias SubscribableEventInvokeResult string|"Success"|"Handled"|"Error"|
 
 local _INVOKERESULT = {
 	Success = "Success",
@@ -21,15 +28,17 @@ local _INVOKERESULT = {
 	Error = "Error",
 }
 
----@param name string
----@param opts LeaderLibSubscribableEventOptions|nil
----@return LeaderLibSubscribableEvent
-function SubscribableEvent:Create(name, opts)
+---@param id string
+---@param opts SubscribableEventCreateOptions|nil
+---@return SubscribableEvent
+function SubscribableEvent:Create(id, opts)
 	local o = {
 		First = nil,
 		NextIndex = 1,
-		Name = name,
-		StopInvoke = false
+		ID = id,
+		Disabled = false,
+		GatherResults = false,
+		AutoInvokeOnOtherSide = false,
 	}
 	if type(opts) == "table" then
 		for k,v in pairs(opts) do
@@ -44,22 +53,22 @@ function SubscribableEvent:Create(name, opts)
     return o
 end
 
----@class LeaderLibSubscribableEventSubscribeOptions
+---@class EventSubscriptionOptions
 ---@field Priority integer|nil
 ---@field Once boolean|nil
 
----@class LeaderLibSubscribableEventNode
+---@class SubscribableEventNode
 ---@field Callback function
 ---@field Index integer
 ---@field Priority integer
 ---@field Once boolean
----@field Options LeaderLibSubscribableEventSubscribeOptions
----@field Prev LeaderLibSubscribableEventNode|nil
----@field Next LeaderLibSubscribableEventNode|nil
+---@field Options SubscribableEventCreateOptions
+---@field Prev SubscribableEventNode|nil
+---@field Next SubscribableEventNode|nil
 
----@param self LeaderLibSubscribableEvent
----@param node LeaderLibSubscribableEventNode
----@param sub LeaderLibSubscribableEventNode
+---@param self SubscribableEvent
+---@param node SubscribableEventNode
+---@param sub SubscribableEventNode
 local function DoSubscribeBefore(self, node, sub)
 	sub.Prev = node.Prev
 	sub.Next = node
@@ -73,8 +82,8 @@ local function DoSubscribeBefore(self, node, sub)
 	node.Prev = sub
 end
 
----@param self LeaderLibSubscribableEvent
----@param sub LeaderLibSubscribableEventNode
+---@param self SubscribableEvent
+---@param sub SubscribableEventNode
 local function DoSubscribe(self, sub)
 	if self.First == nil then
 		self.First = sub
@@ -91,7 +100,7 @@ local function DoSubscribe(self, sub)
 				DoSubscribeBefore(self, cur, sub)
 				return
 			end
-	
+
 			cur = cur.Next
 		end
 	end
@@ -103,16 +112,15 @@ local function DoSubscribe(self, sub)
 	sub.Prev = last
 end
 
----@generic T : function
----@param callback T
----@param opts LeaderLibSubscribableEventSubscribeOptions|nil
+---@param callback function
+---@param opts EventSubscriptionOptions|nil
 function SubscribableEvent:Subscribe(callback, opts)
 	assert(type(callback) == "function", "callback parameter must be a function")
 	local opts = type(opts) == "table" and opts or {}
 	local index = self.NextIndex
 	self.NextIndex = self.NextIndex + 1
 
-	---@type LeaderLibSubscribableEventNode
+	---@type SubscribableEventNode
 	local sub = {
 		Callback = callback,
 		Index = index,
@@ -125,8 +133,8 @@ function SubscribableEvent:Subscribe(callback, opts)
 	return index
 end
 
----@param self LeaderLibSubscribableEvent
----@param node LeaderLibSubscribableEventNode
+---@param self SubscribableEvent
+---@param node SubscribableEventNode
 local function RemoveNode(self, node)
 	if node.Prev ~= nil then
 		node.Prev.Next = node.Next
@@ -160,7 +168,7 @@ function SubscribableEvent:Unsubscribe(indexOrCallback)
 		end
 	end
 
-	fprint(LOGLEVEL.WARNING, "[LeaderLib:SubscribableEvent] Attempted to remove subscriber ID %s for event '%s', but no such subscriber exists (maybe it was removed already?)", indexOrCallback, self.Name)
+	fprint(LOGLEVEL.WARNING, "[LeaderLib:SubscribableEvent] Attempted to remove subscriber ID %s for event '%s', but no such subscriber exists (maybe it was removed already?)", indexOrCallback, self.ID)
 	return false
 end
 
@@ -168,22 +176,23 @@ function SubscribableEvent:StopPropagation()
 	self.StopInvoke = true
 end
 
----@param sub LeaderLibSubscribableEvent
+---@param sub SubscribableEvent
+---@param args RuntimeSubscribableEventArgs
 ---@param resultsTable table
 ---@vararg any
-local function InvokeCallbacks(sub, resultsTable, ...)
+local function InvokeCallbacks(sub, args, resultsTable, ...)
 	local cur = sub.First
 	local gatherResults = resultsTable ~= nil
 	local result = _INVOKERESULT.Success
 	while cur ~= nil do
-		if sub.StopInvoke then
+		if args.Handled then
 			result = _INVOKERESULT.Handled
 			break
 		end
 
-		local b, result = xpcall(cur.Callback, debug.traceback, ...)
+		local b, result = xpcall(cur.Callback, debug.traceback, args, ...)
 		if not b then
-			fprint(LOGLEVEL.ERROR, "[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.Name, result)
+			fprint(LOGLEVEL.ERROR, "[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, result)
 			result = _INVOKERESULT.Error
 		elseif gatherResults and result ~= nil then
 			resultsTable[#resultsTable+1] = result
@@ -200,22 +209,75 @@ local function InvokeCallbacks(sub, resultsTable, ...)
 	return result
 end
 
+--Convert userdata event args to a table with the NetID, so the other side can retrieve it.
+local function SerializeArgs(args)
+	local tbl = {}
+	for k,v in pairs(args) do
+		local t = type(v)
+		if t == "userdata" then
+			if v.NetID then
+				tbl[k] = {Type="Object", NetID=v.NetID}
+			end
+		elseif t == "table" then
+			tbl[k] = SerializeArgs(v)
+		elseif t == "boolean" or t == "string" or t == "number" then
+			tbl[k] = v
+		end
+	end
+	return tbl
+end
+
+local function DeserializeArgs(args)
+	local tbl = {}
+	for k,v in pairs(args) do
+		if type(v) == "table" then
+			if v.Type == "Object" then
+				tbl[k] = GameHelpers.TryGetObject(v.NetID)
+			else
+				tbl[k] = DeserializeArgs(v)
+			end
+		else
+			tbl[k] = v
+		end
+	end
+	return tbl
+end
+
+---@param args table|nil
+---@param skipAutoInvoke boolean|nil
 ---@vararg any
----@return any[]|LeaderLibSubscribableEventInvokeResult result Returns either an array of results, if GatherResults is true, or a string indicating the result (Success, Handled, or Error).
-function SubscribableEvent:Invoke(...)
+---@return any[]|SubscribableEventInvokeResult result Returns either an array of results, if GatherResults is true, or a string indicating the result (Success, Handled, or Error).
+function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
+	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder)
 	local result = nil
 	local cur = self.First
 	if cur then
 		if self.GatherResults then
 			local results = {}
-			InvokeCallbacks(self, results, ...)
+			InvokeCallbacks(self, results, eventObject, ...)
 			result = results
 		else
-			result = InvokeCallbacks(self, nil, ...)
+			result = InvokeCallbacks(self, nil, eventObject, ...)
 		end
 	end
-	self.StopInvoke = false
+	if not skipAutoInvoke and self.AutoInvokeOnOtherSide then
+		local messageFunc = isClient and Ext.PostMessageToServer or GameHelpers.Net.Broadcast
+		messageFunc("LeaderLib_SubscribableEvent_Invoke", Common.JsonStringify({
+			ID = self.ID,
+			Args = SerializeArgs(args)
+		}))
+	end
 	return result
 end
 
 Classes.SubscribableEvent = SubscribableEvent
+
+Ext.RegisterNetListener("LeaderLib_SubscribableEvent_Invoke", function(cmd, payload)
+	local data = Common.JsonParse(payload, true)
+	if data then
+		local sub = Events[data.ID]
+		if sub then
+			sub:Invoke(DeserializeArgs(data.Args), true)
+		end
+	end
+end)

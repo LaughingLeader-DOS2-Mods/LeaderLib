@@ -80,6 +80,15 @@ SetCurrentLevelData()
 Ext.RegisterListener("SessionLoading", SetCurrentLevelData)
 Ext.RegisterListener("SessionLoaded", SetCurrentLevelData)
 
+local _RegionChangedKeyOrder = {"Region", "State", "LevelType"}
+local function CreateEventArgs(region, state, levelType)
+	return {
+		Region = region,
+		State = state,
+		LevelType = levelType
+	}
+end
+
 if isClient then
 	---@type ClientData
 	Client = Classes.ClientData:Create("")
@@ -208,25 +217,25 @@ else
 	Ext.RegisterOsirisListener("RegionStarted", 1, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.STARTED
 		GameHelpers.Data.SetRegion(region)
-		Events.RegionChanged:Invoke(region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+		Events.RegionChanged:Invoke(CreateEventArgs(region, SharedData.RegionData.State, SharedData.RegionData.LevelType), _RegionChangedKeyOrder)
 	end)
 	
 	Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.GAME
 		GameHelpers.Data.SetRegion(region)
-		Events.RegionChanged:Invoke(region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+		Events.RegionChanged:Invoke(CreateEventArgs(region, SharedData.RegionData.State, SharedData.RegionData.LevelType), _RegionChangedKeyOrder)
 	end)
 	
 	Ext.RegisterOsirisListener("RegionEnded", 1, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.ENDED
 		GameHelpers.Data.SetRegion(region)
-		Events.RegionChanged:Invoke(region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+		Events.RegionChanged:Invoke(CreateEventArgs(region, SharedData.RegionData.State, SharedData.RegionData.LevelType), _RegionChangedKeyOrder)
 	end)
 	
 	RegisterListener("LuaReset", function(region)
 		SharedData.RegionData.State = REGIONSTATE.GAME
 		GameHelpers.Data.SetRegion(region)
-		Events.RegionChanged:Invoke(region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+		Events.RegionChanged:Invoke(CreateEventArgs(region, SharedData.RegionData.State, SharedData.RegionData.LevelType), _RegionChangedKeyOrder)
 	end)
 
 	function GameHelpers.Data.SetGameMode(gameMode)
@@ -541,10 +550,10 @@ if isClient then
 				ActiveCharacterChanged(Client.Character, last)
 			end
 			if not Vars.Initialized then
-				InvokeListenerCallbacks(Listeners.Initialized, SharedData.RegionData.Current)
+				Events.Initialized:Invoke({Region=SharedData.RegionData.Current})
 				Vars.Initialized = true
 			end
-			Events.RegionChanged:Invoke(SharedData.RegionData.Current, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+			Events.RegionChanged:Invoke(CreateEventArgs(SharedData.RegionData.Current, SharedData.RegionData.State, SharedData.RegionData.LevelType), _RegionChangedKeyOrder)
 			return true
 		else
 			error("Error parsing json?", payload)

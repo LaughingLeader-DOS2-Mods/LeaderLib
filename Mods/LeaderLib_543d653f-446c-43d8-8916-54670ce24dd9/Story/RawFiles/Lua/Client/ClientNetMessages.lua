@@ -3,14 +3,6 @@ local _EXTVERSION = Ext.Version()
 ---@type MessageData
 local MessageData = Classes.MessageData
 
-Ext.RegisterNetListener("LeaderLib_EnableFeature", function(channel, id)
-	Features[id] = true
-end)
-
-Ext.RegisterNetListener("LeaderLib_DisableFeature", function(channel, id)
-	Features[id] = false
-end)
-
 Ext.RegisterNetListener("LeaderLib_SyncFeatures", function(call, dataString)
 	local data = Common.JsonParse(dataString)
 	if data ~= nil then

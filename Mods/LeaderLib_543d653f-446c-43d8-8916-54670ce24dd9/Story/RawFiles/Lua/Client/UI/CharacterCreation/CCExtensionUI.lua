@@ -302,10 +302,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTags", fu
 	end
 end, "After")
 
----@param region string
----@param state REGIONSTATE
----@param levelType LEVELTYPE
-RegisterListener("RegionChanged", function (region, state, levelType)
+Events.RegionChanged:Subscribe(function (region, state, levelType)
 	if levelType == LEVELTYPE.CHARACTER_CREATION then
 		if state == REGIONSTATE.ENDED then
 			DestroyInstance()

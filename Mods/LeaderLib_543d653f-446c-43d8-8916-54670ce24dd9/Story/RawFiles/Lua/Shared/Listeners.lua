@@ -15,7 +15,6 @@ end
 Listeners.FeatureEnabled = {}
 Listeners.FeatureDisabled = {}
 Listeners.Initialized = {}
-Listeners.RegionChanged = {}
 Listeners.ModuleResume = {}
 Listeners.SessionLoaded = {}
 Listeners.TurnDelayed = {}
@@ -275,8 +274,13 @@ end
 Ext.Require("Shared/Classes/SubscribableEvent.lua")
 
 ---@class CharacterResurrectedEvent:LeaderLibSubscribableEvent
----@field Subscribe fun(self:LeaderLibSubscribableEvent, callback:LeaderLibCharacterResurrectedCallback):boolean
-Events.CharacterResurrected = Classes.SubscribableEvent:New("CharacterResurrected")
+---@field Subscribe fun(self:LeaderLibSubscribableEvent, callback:LeaderLibCharacterResurrectedCallback):void
+Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurrected")
+
+---@class RegionChangedEvent:LeaderLibSubscribableEvent
+---@field Subscribe fun(self:LeaderLibSubscribableEvent, callback:fun(region:string, state:REGIONSTATE, levelType:LEVELTYPE):void):void
+Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged")
+
 
 
 

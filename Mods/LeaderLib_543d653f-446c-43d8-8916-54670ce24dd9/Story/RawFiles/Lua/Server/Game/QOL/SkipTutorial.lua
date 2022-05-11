@@ -319,7 +319,7 @@ function SkipTutorial.Initialize()
 	---@param region string
 	---@param state REGIONSTATE
 	---@param levelType LEVELTYPE
-	RegisterListener("RegionChanged", function (region, state, levelType)
+	local function SkipTutorial_RegionChanged(region, state, levelType)
 		if SharedData.GameMode == GAMEMODE.CAMPAIGN and state == REGIONSTATE.GAME then
 			if levelType == LEVELTYPE.CHARACTER_CREATION then
 				-- Skip setting up Skip Tutorial stuff if another mod is modifying that already.
@@ -343,10 +343,14 @@ function SkipTutorial.Initialize()
 						end
 					end
 					runSkipTutorialSetup = false
+
+					Events.RegionChanged:Unsubscribe(SkipTutorial_RegionChanged)
 				end
 			end
 		end
-	end)
+	end
+
+	Events.RegionChanged:Subscribe(SkipTutorial_RegionChanged, {Priority=999})
 
 	Ext.RegisterOsirisListener("CharacterCreationFinished", 1, "before", function(uuid)
 		-- CharacterCreationFinished(NULL) means that everyone is ready

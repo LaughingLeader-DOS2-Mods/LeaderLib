@@ -208,25 +208,25 @@ else
 	Ext.RegisterOsirisListener("RegionStarted", 1, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.STARTED
 		GameHelpers.Data.SetRegion(region)
-		InvokeListenerCallbacks(Listeners.RegionChanged, region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+		Events.RegionChanged:Invoke(region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
 	end)
 	
 	Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.GAME
 		GameHelpers.Data.SetRegion(region)
-		InvokeListenerCallbacks(Listeners.RegionChanged, region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+		Events.RegionChanged:Invoke(region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
 	end)
 	
 	Ext.RegisterOsirisListener("RegionEnded", 1, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.ENDED
 		GameHelpers.Data.SetRegion(region)
-		InvokeListenerCallbacks(Listeners.RegionChanged, region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+		Events.RegionChanged:Invoke(region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
 	end)
 	
 	RegisterListener("LuaReset", function(region)
 		SharedData.RegionData.State = REGIONSTATE.GAME
 		GameHelpers.Data.SetRegion(region)
-		InvokeListenerCallbacks(Listeners.RegionChanged, region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+		Events.RegionChanged:Invoke(region, SharedData.RegionData.State, SharedData.RegionData.LevelType)
 	end)
 
 	function GameHelpers.Data.SetGameMode(gameMode)
@@ -544,7 +544,7 @@ if isClient then
 				InvokeListenerCallbacks(Listeners.Initialized, SharedData.RegionData.Current)
 				Vars.Initialized = true
 			end
-			InvokeListenerCallbacks(Listeners.RegionChanged, SharedData.RegionData.Current, SharedData.RegionData.State, SharedData.RegionData.LevelType)
+			Events.RegionChanged:Invoke(SharedData.RegionData.Current, SharedData.RegionData.State, SharedData.RegionData.LevelType)
 			return true
 		else
 			error("Error parsing json?", payload)

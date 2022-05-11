@@ -68,19 +68,6 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 	InvokeListenerCallbacks(Listeners.OnHeal, target, source, healStatus, amount, handle, skill, healingSourceStatus)
 end)
 
--- RegisterStatusTypeListener("BeforeAttempt", "HEALING", function(target, status, source, statusType)
--- 	local healingEvent = status.HealingEvent
--- 	PersistentVars.NextGenericHealStatusSource[target.MyGuid] = {
--- 		StatusId = status.StatusId,
--- 		Time = Ext.MonotonicTime(),
--- 		Source = source and source.MyGuid or nil
--- 	}
--- end)
-
--- RegisterStatusListener("Removed", "HEAL", function(target, status, source, statusType)
--- 	PersistentVars.NextGenericHealStatusSource[target] = nil
--- end)
-
 Timer.RegisterListener("LeaderLib_ClearLastUsedHealingSkill", function(timerName, uuid)
 	PersistentVars.LastUsedHealingSkill[uuid] = nil
 end)
@@ -111,28 +98,6 @@ function ParseHealingStatusToSkills()
 	end
 end
 
---local parsedSkills = false
--- RegisterListener("RegionChanged", function(region, state, levelType)
--- 	if state == REGIONSTATE.GAME and not parsedSkills then
--- 		ParseHealingStatusToSkills()
---		parsedSkills = true
--- 	end
--- end)
 Ext.RegisterListener("SessionLoaded", function()
 	ParseHealingStatusToSkills()
 end)
-
--- RegisterHealListener(function(target, source, heal, originalAmount, handle, skill, healingSourceStatus)
--- 	print("OnHeal", Lib.serpent.block({
--- 		target = target.DisplayName,
--- 		source = source and source.DisplayName or "nil",
--- 		heal = heal,
--- 		amount = amount,
--- 		skill = skill or "nil",
--- 		healingSourceStatus = healingSourceStatus,
--- 	}))
--- 	if skill == "Target_FirstAidEnemy" then
--- 		--heal.HealAmount = (heal.HealAmount * 1.5)
--- 		heal.HealAmount = 7
--- 	end
--- end)

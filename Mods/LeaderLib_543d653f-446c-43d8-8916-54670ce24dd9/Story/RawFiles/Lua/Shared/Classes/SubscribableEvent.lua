@@ -4,7 +4,7 @@ We don't have C++ event objects backing these, so they're more of a fancy way to
 ]]
 
 ---@class LeaderLibSubscribableEventOptions
----@field GatherResults boolean If true, event results from handlers are gathered and return in in the Invoke function.
+---@field GatherResults boolean If true, event results from callbacks are gathered and return in in the Invoke function.
 
 ---@class LeaderLibSubscribableEvent:LeaderLibSubscribableEventOptions
 ---@field Name string
@@ -24,7 +24,7 @@ local _INVOKERESULT = {
 ---@param name string
 ---@param opts LeaderLibSubscribableEventOptions|nil
 ---@return LeaderLibSubscribableEvent
-function SubscribableEvent:New(name, opts)
+function SubscribableEvent:Create(name, opts)
 	local o = {
 		First = nil,
 		NextIndex = 1,
@@ -49,7 +49,7 @@ end
 ---@field Once boolean|nil
 
 ---@class LeaderLibSubscribableEventNode
----@field Handler function
+---@field Callback function
 ---@field Index integer
 ---@field Priority integer
 ---@field Once boolean
@@ -58,21 +58,21 @@ end
 ---@field Next LeaderLibSubscribableEventNode|nil
 
 ---@generic T : function
----@param handler T
+---@param callback T
 ---@param opts LeaderLibSubscribableEventSubscribeOptions|nil
-function SubscribableEvent:Subscribe(handler, opts)
-	assert(type(handler) == "function", "handler parameter must be a function")
-	opts = type(opts) == "table" and opts or {}
+function SubscribableEvent:Subscribe(callback, opts)
+	assert(type(callback) == "function", "callback parameter must be a function")
+	local opts = type(opts) == "table" and opts or {}
 	local index = self.NextIndex
 	self.NextIndex = self.NextIndex + 1
 
 	---@type LeaderLibSubscribableEventNode
 	local sub = {
-		Handler = handler,
+		Callback = callback,
 		Index = index,
 		Priority = opts.Priority or 100,
 		Once = opts.Once or false,
-		Options = opts
+		Options = {}
 	}
 
 	self:DoSubscribe(sub)
@@ -141,21 +141,23 @@ function SubscribableEvent:RemoveNode(node)
 	node.Next = nil
 end
 
----@param handlerIndex integer
-function SubscribableEvent:Unsubscribe(handlerIndex)
+---@param indexOrCallback integer|function
+function SubscribableEvent:Unsubscribe(indexOrCallback)
+	local t = type(indexOrCallback)
 	local cur = self.First
 	if cur then
 		while cur ~= nil do
-			if cur.Index == handlerIndex then
+			if (t == "number" and cur.Index == indexOrCallback)
+			or (t == "function" and cur.Callback == indexOrCallback)
+			then
 				self:RemoveNode(cur)
 				return true
 			end
-	
 			cur = cur.Next
 		end
 	end
 
-	fprint(LOGLEVEL.WARNING, "[LeaderLib:SubscribableEvent] Attempted to remove subscriber ID %s for event '%s', but no such subscriber exists (maybe it was removed already?)", handlerIndex, self.Name)
+	fprint(LOGLEVEL.WARNING, "[LeaderLib:SubscribableEvent] Attempted to remove subscriber ID %s for event '%s', but no such subscriber exists (maybe it was removed already?)", indexOrCallback, self.Name)
 	return false
 end
 
@@ -166,7 +168,7 @@ end
 ---@param sub LeaderLibSubscribableEvent
 ---@param resultsTable table
 ---@vararg any
-local function InvokeHandlers(sub, resultsTable, ...)
+local function InvokeCallbacks(sub, resultsTable, ...)
 	local cur = sub.First
 	local gatherResults = resultsTable ~= nil
 	local result = _INVOKERESULT.Success
@@ -176,7 +178,7 @@ local function InvokeHandlers(sub, resultsTable, ...)
 			break
 		end
 
-		local b, result = xpcall(cur.Handler, debug.traceback, ...)
+		local b, result = xpcall(cur.Callback, debug.traceback, ...)
 		if not b then
 			fprint(LOGLEVEL.ERROR, "[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.Name, result)
 			result = _INVOKERESULT.Error
@@ -203,10 +205,10 @@ function SubscribableEvent:Invoke(...)
 	if cur then
 		if self.GatherResults then
 			local results = {}
-			InvokeHandlers(self, results, ...)
+			InvokeCallbacks(self, results, ...)
 			result = results
 		else
-			result = InvokeHandlers(self, nil, ...)
+			result = InvokeCallbacks(self, nil, ...)
 		end
 	end
 	self.StopInvoke = false

@@ -421,10 +421,7 @@ if Ext.Version() >= 56 then
 	end)
 end
 
----@param region string
----@param state REGIONSTATE
----@param levelType LEVELTYPE
-RegisterListener("RegionChanged", function (region, state, levelType)
+Events.RegionChanged:Subscribe(function (region, state, levelType)
 	_canBlockDeletion = state == REGIONSTATE.GAME and levelType == LEVELTYPE.GAME
 end)
 

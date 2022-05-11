@@ -288,10 +288,7 @@ end
 Classes.QuestStateData = QuestStateData
 Classes.QuestData = QuestData
 
----@param region string
----@param state REGIONSTATE
----@param levelType LEVELTYPE
-RegisterListener("RegionChanged", function (region, state, levelType)
+Events.RegionChanged:Subscribe(function (region, state, levelType)
 	if state == REGIONSTATE.STARTED then
 		RegisterQuests()
 	end

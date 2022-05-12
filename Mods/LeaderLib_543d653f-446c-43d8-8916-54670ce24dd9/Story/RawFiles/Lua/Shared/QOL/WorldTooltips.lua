@@ -91,7 +91,7 @@ else
 
 	Ext.RegisterOsirisListener("GameStarted", Data.OsirisEvents.GameStarted, "after", WorldTooltipper.OnGameStarted)
 	if Vars.DebugMode then
-		RegisterListener("LuaReset", WorldTooltipper.UpdateWorldItems)
+		Events.LuaReset:Subscribe(WorldTooltipper.UpdateWorldItems)
 	end
 end
 

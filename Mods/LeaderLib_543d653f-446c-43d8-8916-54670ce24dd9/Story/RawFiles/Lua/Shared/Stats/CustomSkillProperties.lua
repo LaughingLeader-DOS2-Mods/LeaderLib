@@ -232,7 +232,7 @@ if Ext.IsServer() then
 	end
 
 	if Vars.DebugMode then
-		RegisterListener("BeforeLuaReset", function()
+		Events.BeforeLuaReset:Subscribe(function()
 			PersistentVars.SkillPropertiesAction.MoveToTarget = {}
 		end)
 	end

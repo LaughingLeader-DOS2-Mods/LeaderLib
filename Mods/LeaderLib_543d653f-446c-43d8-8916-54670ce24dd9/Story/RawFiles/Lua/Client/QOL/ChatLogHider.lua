@@ -9,7 +9,7 @@ local _ticksSince = 0
 --Ext.UI.GetByType(6):GetRoot().log_mc.enableInput(false)
 
 
-RegisterListener("BeforeLuaReset", function()
+Events.BeforeLuaReset:Subscribe(function()
 	local chatlog = Ext.UI.GetByType(Data.UIType.chatLog)
 	if chatlog and not Common.TableHasValue(chatlog.Flags, "OF_Visible") then
 		chatlog:Show()

@@ -7,7 +7,7 @@ local isClient = Ext.IsClient()
 
 ---@class SubscribableEventCreateOptions
 ---@field GatherResults boolean If true, event results from callbacks are gathered and return in in the Invoke function.
----@field AutoInvokeOnOtherSide boolean If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
+---@field SyncInvoke boolean If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
 ---@field Disabled boolean If this event is disabled, Invoke won't invoke registered callbacks.
 ---@field ArgsKeyOrder string[]|nil
 
@@ -38,7 +38,7 @@ function SubscribableEvent:Create(id, opts)
 		ID = id,
 		Disabled = false,
 		GatherResults = false,
-		AutoInvokeOnOtherSide = false,
+		SyncInvoke = false,
 	}
 	if type(opts) == "table" then
 		for k,v in pairs(opts) do
@@ -216,7 +216,7 @@ local function SerializeArgs(args)
 		local t = type(v)
 		if t == "userdata" then
 			if v.NetID then
-				tbl[k] = {Type="Object", NetID=v.NetID}
+				tbl[k] = {Type="Object", NetID=v.NetID, UUID=v.MyGuid}
 			end
 		elseif t == "table" then
 			tbl[k] = SerializeArgs(v)
@@ -233,6 +233,9 @@ local function DeserializeArgs(args)
 		if type(v) == "table" then
 			if v.Type == "Object" then
 				tbl[k] = GameHelpers.TryGetObject(v.NetID)
+				if not tbl[k] then
+					tbl[k] = v.UUID
+				end
 			else
 				tbl[k] = DeserializeArgs(v)
 			end
@@ -248,19 +251,20 @@ end
 ---@vararg any
 ---@return any[]|SubscribableEventInvokeResult result Returns either an array of results, if GatherResults is true, or a string indicating the result (Success, Handled, or Error).
 function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
+	args = args or {}
 	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder)
 	local result = nil
 	local cur = self.First
 	if cur then
 		if self.GatherResults then
 			local results = {}
-			InvokeCallbacks(self, results, eventObject, ...)
+			InvokeCallbacks(self, eventObject, results, ...)
 			result = results
 		else
-			result = InvokeCallbacks(self, nil, eventObject, ...)
+			result = InvokeCallbacks(self, eventObject, nil, ...)
 		end
 	end
-	if not skipAutoInvoke and self.AutoInvokeOnOtherSide then
+	if not skipAutoInvoke and self.SyncInvoke then
 		local messageFunc = isClient and Ext.PostMessageToServer or GameHelpers.Net.Broadcast
 		messageFunc("LeaderLib_SubscribableEvent_Invoke", Common.JsonStringify({
 			ID = self.ID,

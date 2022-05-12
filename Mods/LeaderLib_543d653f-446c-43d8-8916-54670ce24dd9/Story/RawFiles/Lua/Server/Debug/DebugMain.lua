@@ -589,23 +589,6 @@ end)
 	end
 end) ]]
 
---[[
-Events.SummonChanged:Subscribe(function (e)
-	if not e.isItem then
-		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Character] Summon(%s) Totem(%s) Owner(%s) IsDying(%s) isItem(false)", GameHelpers.Character.GetDisplayName(e.Summon), e.Summon.Totem, GameHelpers.Character.GetDisplayName(e.Owner), e.IsDying)
-		fprint(LOGLEVEL.WARNING, "Dead(%s) Deactivated(%s) CannotDie(%s) DYING(%s)", e.Summon.Dead, e.Summon.Deactivated, e.Summon.CannotDie, e.Summon:GetStatus("DYING") and e.Summon:GetStatus("DYING").Started or "false")
-	else
-		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Item] Summon(%s) StatsId(%s) Owner(%s) IsDying(%s) isItem(true)", GameHelpers.Character.GetDisplayName(e.Summon), e.Summon.StatsId, GameHelpers.Character.GetDisplayName(e.Owner), e.IsDying)
-	end
-
-	print("Summons")
-	print("========")
-	for summon in GameHelpers.Character.GetSummons(e.Owner, true) do
-		print(GameHelpers.Character.GetDisplayName(summon), summon.MyGuid)
-	end
-	print("========")
-end)
-]]
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do names[#names+1] = k end; table.sort(names); for _,v in ipairs(names) do print(v) end; print("Time total:", Ext.MonotonicTime() - time);
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do names[#names+1] = k end; table.sort(names); for _,v in pairs(names) do print(v) end; print("Time total:", Ext.MonotonicTime() - time);
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do if not Mods.LeaderLib.Data.OsirisEvents[k] then names[#names+1] = k end; end; table.sort(names); for i=1,#names do print(names[i]) end; print("Time total:", Ext.MonotonicTime() - time);
@@ -707,7 +690,7 @@ RegisterSkillListener("Shout_InspireStart", function(skill, uuid, state, data)
 	end
 end)
 
-RegisterListener("LuaReset", function()
+Events.LuaReset:Subscribe(function()
 	for player in GameHelpers.Character.GetPlayers(true) do
 		CharacterResetCooldowns(player.MyGuid)
 	end

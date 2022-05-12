@@ -5,8 +5,9 @@ end
 local isClient = Ext.IsClient()
 
 Ext.Require("Shared/Classes/SubscribableEvent.lua")
+Ext.Require("Shared/Classes/SubscribableEventArgs.lua")
 
----@alias Event<T>{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T), opts:SubscribableEventCreateOptions|nil):void }
+---@class EmptyEventArgs:SubscribableEventArgs
 
 ---@class CharacterResurrectedEventArgs:SubscribableEventArgs
 ---@field Character EsvCharacter|EclCharacter
@@ -19,13 +20,26 @@ Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurre
 ---@field Enabled boolean
 
 ---@type SubscribableEvent<FeatureChangedEventArgs>
-Events.FeatureChanged = Classes.SubscribableEvent:Create("FeatureChanged")
+Events.FeatureChanged = Classes.SubscribableEvent:Create("FeatureChanged", {ArgsKeyOrder={"ID", "Enabled"}})
 
 ---@class InitializedEventArgs:SubscribableEventArgs
 ---@field Region string
 
+
 ---@type SubscribableEvent<InitializedEventArgs>
 Events.Initialized = Classes.SubscribableEvent:Create("Initialized")
+
+---@class LeaderLibLoadedEventArgs:InitializedEventArgs
+---Called when LeaderLib finishes loading its server-side or client-side scripts.
+---@type SubscribableEvent<LeaderLibLoadedEventArgs>
+Events.Loaded = Classes.SubscribableEvent:Create("Loaded")
+
+---@type SubscribableEvent<EmptyEventArgs>
+Events.BeforeLuaReset = Classes.SubscribableEvent:Create("BeforeLuaReset", {SyncInvoke=true})
+
+---@class LuaResetEventArgs:InitializedEventArgs
+---@type SubscribableEvent<LuaResetEventArgs>
+Events.LuaReset = Classes.SubscribableEvent:Create("LuaReset", {SyncInvoke=true})
 
 ---@class RegionChangedEventArgs:SubscribableEventArgs
 ---@field Region string
@@ -33,18 +47,17 @@ Events.Initialized = Classes.SubscribableEvent:Create("Initialized")
 ---@field LevelType LEVELTYPE
 
 ---@type SubscribableEvent<RegionChangedEventArgs>
-Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged")
+Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged", {ArgsKeyOrder={"Region", "State", "LevelType"}})
 
-if not isClient then
-	---@class SummonChangedEventArgs:SubscribableEventArgs
-	---@field Summon EsvCharacter|EsvItem
-	---@field Owner EsvCharacter
-	---@field IsDying boolean
-	---@field isItem boolean
+---@class SummonChangedEventArgs:SubscribableEventArgs
+---@field Summon EsvCharacter|EsvItem
+---@field Owner EsvCharacter
+---@field IsDying boolean
+---@field IsItem boolean
 
-	---Called when a summon is created or destroyed. Includes items like mines.
-	---@type SubscribableEvent<SummonChangedEventArgs>
-	Events.SummonChanged = Classes.SubscribableEvent:Create("SummonChanged")
-
-end
-
+---Called when a summon is created or destroyed. Includes items like mines.
+---@type SubscribableEvent<SummonChangedEventArgs>
+Events.SummonChanged = Classes.SubscribableEvent:Create("SummonChanged", {
+	SyncInvoke = true,
+	ArgsKeyOrder={"Summon", "Owner", "IsDying", "IsItem"}
+})

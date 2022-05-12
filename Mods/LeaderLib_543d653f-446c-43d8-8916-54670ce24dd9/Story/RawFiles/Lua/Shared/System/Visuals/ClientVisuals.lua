@@ -158,7 +158,7 @@ end
 --me.Visual.Attachments[5].UseLocalTransform = true
 
 
-RegisterListener("BeforeLuaReset", function ()
+Events.BeforeLuaReset:Subscribe(function ()
 	for netid,entries in pairs(ActiveVisuals) do
 		for resourceid,handler in pairs(entries) do
 			handler:Delete()

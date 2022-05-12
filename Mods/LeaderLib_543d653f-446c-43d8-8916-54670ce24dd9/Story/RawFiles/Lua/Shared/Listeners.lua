@@ -34,13 +34,8 @@ Listeners.GetTextPlaceholder = {
 }
 
 --Debug listeners
-Listeners.LuaReset = {}
-Listeners.BeforeLuaReset = {}
 ---@type table<string,fun(cmd:string, isClient:boolean, ...):void>
 Listeners.DebugCommand = {}
-
----Called when LeaderLib finishes loading its server-side or client-side scripts.
-Listeners.Loaded = {}
 
 ---Callbacks for when all global settings are loaded, or when an individual mod's settings are loaded.
 Listeners.ModSettingsLoaded = {All = {}}
@@ -286,6 +281,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 					Ext.PrintError(err)
 				end
 			end)
+			return
 		else
 			listenerTable = Listeners[event]
 		end

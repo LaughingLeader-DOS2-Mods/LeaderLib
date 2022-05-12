@@ -66,12 +66,12 @@ local function DestroyInstance(force)
 	UIExtensions.Timers = {}
 end
 
-RegisterListener("BeforeLuaReset", function()
+Events.BeforeLuaReset:Subscribe(function()
 	UI.ContextMenu:ClearCustomIcons()
 	DestroyInstance(true)
 end)
 
-RegisterListener("LuaReset", function()
+Events.LuaReset:Subscribe(function()
 	UIExtensions.SetupInstance()
 end)
 

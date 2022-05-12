@@ -207,7 +207,7 @@ local function DestroyInstance(self)
 	end
 end
 
-RegisterListener("BeforeLuaReset", function()
+Events.BeforeLuaReset:Subscribe(function()
 	local length = #_registeredUIArray
 	for i=1,length do
 		local ui = _registeredUIArray[i]

@@ -42,7 +42,7 @@ Ext.RegisterNetListener("LeaderLib_CharacterSheet_StorePartyValues", function(cm
 end)
 
 if Vars.DebugMode then
-	RegisterListener("LuaReset", function()
+	Events.LuaReset:Subscribe(function()
 		StorePartyValues()
 		GameSettingsManager.Load()
 	end)

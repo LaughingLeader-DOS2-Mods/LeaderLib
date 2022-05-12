@@ -283,12 +283,13 @@ Ext.Require("Server/Listeners/_Init.lua")
 Ext.Require("Server/ModMenu/ModMenuServerCommands.lua")
 Ext.Require("Server/Versioning.lua")
 Ext.Require("Server/Debug/ConsoleCommands.lua")
-if Vars.DebugMode then
+if Ext.IsDeveloperMode() then
 	Ext.Require("Server/Debug/DebugMain.lua")
 	Ext.Require("Server/Debug/DeveloperCommands.lua")
 	if coroutine then
 	Ext.Require("Server/Debug/CoroutineTests.lua")
 	end
+	Ext.Require("Shared/Debug/SharedDebug.lua")
 end
 Ext.Require("Server/Game/QOL/BuffStatusPreserver.lua")
 Ext.Require("Server/Game/QOL/SkipTutorial.lua")
@@ -319,4 +320,4 @@ if Ext.GameVersion() == "v3.6.51.9303" then
 	Ext.AddPathOverride("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Goals/__AAA_LeaderLib_19_TS_LuaOsirisSubscription.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OutdatedEditorQueriesFix.txt")
 end
 
-InvokeListenerCallbacks(Listeners.Loaded)
+Events.Loaded:Invoke(nil)

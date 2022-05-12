@@ -40,19 +40,21 @@ end
 ---@param keyOrder string[]|nil
 function SubscribableEventArgs:Unpack(keyOrder)
 	keyOrder = keyOrder or self.KeyOrder
+	local temp = {}
 	if type(keyOrder) == "table" then
-		local temp = {}
 		for i=1,#keyOrder do
 			local key = keyOrder[i]
 			if self.Args[key] then
 				temp[#temp+1] = self[key]
 			end
 		end
-		return table.unpack(temp)
 	else
-		--fprint(LOGLEVEL.WARNING, "[SubscribableEventArgs:Unpack] Missing a KeyOrder table for event args. Cannot unpack.")
-		return table.unpack(self.Args)
+		--Unpack unordered args as a fallback. Should work fine if the event only has one arg anyway.
+		for _,v in pairs(self.Args) do
+			temp[#temp+1] = v
+		end
 	end
+	return table.unpack(temp)
 end
 
 Classes.SubscribableEventArgs = SubscribableEventArgs

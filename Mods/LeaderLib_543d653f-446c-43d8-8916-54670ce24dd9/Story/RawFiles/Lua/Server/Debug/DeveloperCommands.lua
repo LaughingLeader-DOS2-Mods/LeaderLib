@@ -64,8 +64,8 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			delay = nil
 		end
 		Vars.Resetting = true
-		InvokeListenerCallbacks(Listeners.BeforeLuaReset)
-		GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", "BeforeLuaReset")
+		Events.BeforeLuaReset:Invoke()
+		--GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", "BeforeLuaReset")
 		delay = delay or 1000
 		if delay ~= nil then
 			delay = tonumber(delay)

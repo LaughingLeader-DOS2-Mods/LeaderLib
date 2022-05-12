@@ -183,9 +183,8 @@ function OnLuaReset()
 	end
 	IterateUsers("LeaderLib_StoreUserData")
 	pcall(DebugLoadPersistentVars)
-	Events.Initialized:Invoke({Region=region})
-	local payload = Common.JsonStringify({Event="LuaReset", Args={region}, _PrintSettings=Vars.Print, _CommandSettings = Vars.Commands})
-	GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", payload)
+	Events.LuaReset:Invoke({Region=region})
+	GameHelpers.Net.Broadcast("LeaderLib_Client_SyncDebugVars", {PrintSettings=Vars.Print, CommandSettings = Vars.Commands})
 end
 
 if Ext.Version() >= 56 then

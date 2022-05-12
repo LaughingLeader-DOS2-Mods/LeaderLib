@@ -57,11 +57,11 @@ local function DestroyInstance()
 	end
 end
 
-RegisterListener("BeforeLuaReset", function()
+Events.BeforeLuaReset:Subscribe(function()
 	DestroyInstance()
 end)
 
-RegisterListener("LuaReset", function()
+Events.LuaReset:Subscribe(function()
 	CCExt.SetupInstance()
 end)
 

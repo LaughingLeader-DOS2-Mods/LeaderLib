@@ -240,21 +240,26 @@ Ext.RegisterNetListener("LeaderLib_UI_RefreshAll", function(cmd, uuid)
 	Ext.UISetDirty(host, 0xffffffffffff)
 end)
 
+Ext.RegisterNetListener("LeaderLib_Client_SyncDebugVars", function(cmd, payload)
+	local data = Common.JsonParse(payload)
+	if data then
+		if data.PrintSettings then
+			for k,v in pairs(data.PrintSettings) do
+				Vars.Print[k] = v
+			end
+		end
+		if data.CommandSettings then
+			for k,v in pairs(data.CommandSettings) do
+				Vars.Commands[k] = v
+			end
+		end
+	end
+end)
+
 Ext.RegisterNetListener("LeaderLib_Client_InvokeListeners", function(cmd, payload)
 	local event, listeners, args = nil,nil,nil
 
 	if string.find(payload, "{") then
-		local data = Common.JsonParse(payload)
-		if data._PrintSettings then
-			for k,v in pairs(data._PrintSettings) do
-				Vars.Print[k] = v
-			end
-		end
-		if data._CommandSettings then
-			for k,v in pairs(data._CommandSettings) do
-				Vars.Commands[k] = v
-			end
-		end
 		event = data.Event
 		listeners = Listeners[data.Event]
 		args = data.Args

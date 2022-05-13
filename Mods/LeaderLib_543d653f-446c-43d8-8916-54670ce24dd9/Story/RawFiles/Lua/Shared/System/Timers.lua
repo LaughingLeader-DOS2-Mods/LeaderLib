@@ -1,125 +1,134 @@
+---@class LeaderLibTimerSystem
 Timer = {}
 
 local IsClient = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
 
----[SERVER]
----Starts an Osiris timer with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
----@param timerName string
----@param delay integer
----@param ... string|number|boolean Optional variable arguments that will be sent to the timer finished callback.
----@vararg string|number|boolean
-function Timer.Start(timerName, delay, ...)
-	if not IsClient then
-		local data = {...}
-		if #data > 0 then
-			Timer.StoreData(timerName, data)
+Timer.TimerData = {}
+Timer.TimerNameMap = {}
+
+if not IsClient then
+	setmetatable(Timer.TimerData, {
+		__index = function (_,k) return PersistentVars.TimerData[k] end,
+		__newindex = function (_,timerName,v)
+			PersistentVars.TimerData[timerName] = v
 		end
-		TimerCancel(timerName)
-		TimerLaunch(timerName, delay)
-	else
-		Ext.PrintWarning("[LeaderLib:StartTimer] This function is intended for server-side. Use Timer.StartOneshot on the client!")
+	})
+	setmetatable(Timer.TimerNameMap, {
+		__index = function (_,k) return PersistentVars.TimerNameMap[k] end,
+		__newindex = function (_,timerName,v)
+			PersistentVars.TimerNameMap[timerName] = v
+		end
+	})
+else
+	local _ClientData = {
+		TimerNameMap = {},
+		TimerData = {},
+	}
+	setmetatable(Timer.TimerData, {
+		__index = _ClientData.TimerData,
+		__newindex = function (_,timerName,v)
+			_ClientData.TimerData[timerName] = v
+		end
+	})
+	setmetatable(Timer.TimerNameMap, {
+		__index = _ClientData.TimerNameMap,
+		__newindex = function (_,timerName,v)
+			_ClientData.TimerNameMap[timerName] = v
+		end
+	})
+end
+
+local _INTERNAL = {}
+Timer._Internal = _INTERNAL
+
+function _INTERNAL.StoreData(timerName, data)
+	if not Timer.TimerData[timerName] then
+		Timer.TimerData[timerName] = {}
+	end
+	table.insert(Timer.TimerData[timerName], Lib.smallfolk.dumps(data))
+end
+
+function _INTERNAL.StoreUniqueTimerName(uniqueTimerName, generalTimerName, data)
+	Timer.TimerNameMap[uniqueTimerName] = generalTimerName
+	--Clear previous, in case the timer is being restarted
+	Timer.TimerData[uniqueTimerName] = nil
+	_INTERNAL.StoreData(uniqueTimerName, data)
+end
+
+function _INTERNAL.ClearData(timerName)
+	Timer.TimerData[timerName] = nil
+	Timer.TimerNameMap[timerName] = nil
+end
+
+function _INTERNAL.ClearObjectData(timerName, object)
+	local uuid = GameHelpers.GetUUID(object)
+	if uuid then
+		local uniqueTimerName = string.format("%s%s", timerName, uuid)
+		_INTERNAL.ClearData(uniqueTimerName)
 	end
 end
 
-local OneshotTimerData = {}
-
----Deprecated @see Timer.Start
-StartTimer = Timer.Start
-
---- Starts an Osiris timer with a callback function to run when the timer is finished.
---- Not save safe since functions can't really be saved.
 ---@param timerName string
 ---@param delay integer
----@param callback function
-function Timer.StartOneshot(timerName, delay, callback)
-	if StringHelpers.IsNullOrEmpty(timerName) then
-		timerName = string.format("LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random())
-	end
+---@param flashCallback function|nil Optional flash callback to invoke for v55 client-side timers.
+local function _StartTimer(timerName, delay, flashCallback)
 	if not IsClient then
-		if OneshotTimerData[timerName] == nil then
-			OneshotTimerData[timerName] = {}
-		else
-			-- Skip duplicate callbacks
-			for i,v in pairs(OneshotTimerData[timerName]) do
-				if v == callback then
-					TimerCancel(timerName)
-					TimerLaunch(timerName, delay)
-					return true
-				end
-			end
-		end
-		table.insert(OneshotTimerData[timerName], callback)
 		TimerCancel(timerName)
 		TimerLaunch(timerName, delay)
 	else
 		if _EXTVERSION >= 56 then
-			if OneshotTimerData[timerName] == nil then
-				OneshotTimerData[timerName] = {callback}
+			local resetTickTime = false
+			for i,v in pairs(Timer.WaitForTick) do
+				if v.ID == timerName then
+					v.TargetTime = Ext.MonotonicTime() + delay
+					v.Delay = delay
+					resetTickTime = true
+				end
+			end
+			if not resetTickTime then
 				Timer.WaitForTick[#Timer.WaitForTick+1] = {
 					ID = timerName,
 					TargetTime = Ext.MonotonicTime() + delay,
 					Delay = delay
 				}
-			else
-				local timerData = OneshotTimerData[timerName]
-				local hasWaitForTick = false
-				for i=1,#Timer.WaitForTick do
-					local v = Timer.WaitForTick[i]
-					if v.ID == timerName then
-						v.TargetTime = Ext.MonotonicTime() + delay
-						hasWaitForTick = true
-					end
-				end
-				if not hasWaitForTick then
-					Timer.WaitForTick[#Timer.WaitForTick+1] = {
-						ID = timerName,
-						TargetTime = Ext.MonotonicTime() + delay,
-						Delay = delay
-					}
-				end
-				local alreadyAdded = false
-				for i=1,#timerData do
-					local v = timerData[i]
-					if v == callback then
-						alreadyAdded = true
-					end
-				end
-				if not alreadyAdded then
-					timerData[#timerData+1] = callback
-				end
 			end
-			
 		else
-			UIExtensions.StartTimer(timerName, delay, callback)
+			UIExtensions.StartTimer(timerName, delay, flashCallback)
 		end
 	end
 	return true
 end
 
+---Starts a timer with optional data to include in the callback. Only serializable types are accepted for optional parameters.
 ---@param timerName string
 ---@param delay integer
-function Timer.RestartOneshot(timerName, delay)
-	if OneshotTimerData[timerName] then
-		if not IsClient then
-			TimerCancel(timerName)
-			TimerLaunch(timerName, delay)
-		elseif _EXTVERSION >= 56 then
-			for i,v in pairs(Timer.WaitForTick) do
-				if v.ID == timerName then
-					v.TargetTime = Ext.MonotonicTime() + (delay or v.Delay)
-				end
-			end
-		end
-		return true
+---@vararg string|number|boolean|table Optional variable arguments that will be sent to the timer finished callback.
+function Timer.Start(timerName, delay, ...)
+	local data = {...}
+	if #data > 0 then
+		_INTERNAL.StoreData(timerName, data)
 	end
-	return false
+	_StartTimer(timerName, delay)
 end
 
---Whoops
----@private
-Timer.RestartOneShot = Timer.RestartOneshot
-StartOneshotTimer = Timer.StartOneshot
+--- Starts an Osiris timer with a callback function to run when the timer is finished.
+--- Not save safe since functions can't really be saved.
+---@param timerName string
+---@param delay integer
+---@param callback fun(e:TimerFinishedEventArgs)
+function Timer.StartOneshot(timerName, delay, callback)
+	if StringHelpers.IsNullOrEmpty(timerName) then
+		timerName = string.format("LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random())
+	end
+	Events.TimerFinished:Subscribe(function(e)
+		local b,err = xpcall(callback, debug.traceback, e)
+		if not b then
+			Ext.PrintError(err)
+		end
+	end, {Once=true, MatchArgs={ID=timerName}})
+	return _StartTimer(timerName, delay)
+end
 
 ---Cancels a timer with an optional UUID for object timers.
 ---@param timerName string
@@ -130,20 +139,11 @@ function Timer.Cancel(timerName, object)
 			local uuid = GameHelpers.GetUUID(object)
 			if uuid then
 				local uniqueTimerName = string.format("%s%s", timerName, uuid)
-				if PersistentVars.TimerNameMap[uniqueTimerName] == timerName then
-					PersistentVars.TimerNameMap[uniqueTimerName] = nil
-					PersistentVars.TimerData[uniqueTimerName] = nil
-					TimerCancel(uniqueTimerName)
-				end
+				_INTERNAL.ClearData(uniqueTimerName)
 			end
-		else
-			TimerCancel(timerName)
-			OneshotTimerData[timerName] = nil
-			PersistentVars.TimerNameMap[timerName] = nil
-			PersistentVars.TimerData[timerName] = nil
 		end
+		TimerCancel(timerName)
 	else
-		OneshotTimerData[timerName] = nil
 		UIExtensions.RemoveTimerCallback(timerName)
 		if _EXTVERSION >= 56 then
 			for i,v in pairs(Timer.WaitForTick) do
@@ -153,54 +153,47 @@ function Timer.Cancel(timerName, object)
 			end
 		end
 	end
+	_INTERNAL.ClearData(timerName)
 end
 
-CancelTimer = Timer.Cancel
-
----@private
----Called from Osiris. Deprecated.
----@param event string
----@vararg string
-function OnLuaTimerFinished(event, ...) end
-
-local function WrapCallbackObjects(tbl)
-	if #tbl == 0 then
-		return
-	else
-		for i=1,#tbl do
-			tbl[i] = GameHelpers.TryGetObject(tbl[i]) or tbl[i]
-		end
-	end
-	return table.unpack(tbl)
-end
-
----@alias SerializableValue string|number|boolean
----@alias TimerCallbackObjectParam SerializableValue|EsvCharacter|EsvItem|table<string|integer, SerializableValue>
-
----A timer callback that returns any variable number of properties.
----@alias TimerCallback fun(timerName:string, ...:TimerCallbackObjectParam):void
-
----@param name string|string[]|TimerCallback Timer name or the callback if a ganeric listener.
----@param callback TimerCallback
----@param fetchGameObjects boolean|nil If true, any UUIDs passed into the timer callback are transformed into EsvCharacter/EsvItem.
-function Timer.RegisterListener(name, callback, fetchGameObjects)
+---Subscribe a callback for a timer name, or an array of timer names.
+---@param name string|string[]
+---@param callback fun(e:TimerFinishedEventArgs)
+function Timer.Subscribe(name, callback)
 	local t = type(name)
-	if t == "string" and not IsClient then
-		if not fetchGameObjects then
-			RegisterListener("NamedTimerFinished", name, callback)
-		else
-			RegisterListener("NamedTimerFinished", name, function(timerName, ...)
-				callback(timerName, WrapCallbackObjects({...}))
-			end)
+	if t == "string" then
+		Events.TimerFinished:Subscribe(callback, {MatchArgs={ID=name}})
+	elseif t == "table" then
+		for _,v in pairs(name) do
+			Timer.Subscribe(v, callback)
 		end
+	else
+		fprint(LOGLEVEL.WARNING, "[Timer.Subscribe] name(%s) is not a valid timer need. Should be a string or table of strings.", name)
+	end
+end
+
+--Support for older listeners where the callback params were (timerName, uuid|data)
+local function CreateDeprecatedWrapper(callback)
+	---@param e TimerFinishedEventArgs
+	local wrapper = function(e)
+		callback(e.ID, table.unpack(e.Data))
+	end
+	return wrapper
+end
+
+---Supports a variable amount of parameters passed to Timer.Start. Object timers will pass the object UUID as the second paramter.
+---@alias DeprecatedTimerCallback fun(timerName:string, ...)
+
+---@deprecated
+---@see LeaderLibTimerSystem#Subscribe
+---@param name string|string[] Timer name or the callback if a ganeric listener.
+---@param callback DeprecatedTimerCallback
+function Timer.RegisterListener(name, callback)
+	local t = type(name)
+	if t == "string" then
+		Events.TimerFinished:Subscribe(CreateDeprecatedWrapper(callback), {MatchArgs={ID=name}})
 	elseif t == "function" then
-		if not fetchGameObjects then
-			RegisterListener("TimerFinished", name, callback)
-		else
-			RegisterListener("TimerFinished", name, function(timerName, ...)
-				callback(timerName, WrapCallbackObjects({...}))
-			end)
-		end
+		Events.TimerFinished:Subscribe(CreateDeprecatedWrapper(callback))
 	elseif t == "table" then
 		for _,v in pairs(name) do
 			Timer.RegisterListener(v, callback)
@@ -208,165 +201,130 @@ function Timer.RegisterListener(name, callback, fetchGameObjects)
 	end
 end
 
-local function InvokeTimerListeners(tbl, timerName, data)
-	if data ~= nil then
-		if type(data) == "table" then
-			InvokeListenerCallbacks(tbl, timerName, table.unpack(data))
-		else
-			InvokeListenerCallbacks(tbl, timerName, data)
+local function OnTimerFinished(timerName)
+	local data = Timer.TimerData[timerName]
+	local realTimerName = Timer.TimerNameMap[timerName]
+
+	--Unique timer
+	if realTimerName then
+		timerName = realTimerName
+		Timer.TimerNameMap[timerName] = nil
+	end
+
+	if type(data) == "table" then
+		for i=1,#data do
+			local timerData = Lib.smallfolk.loads(data[i])
+			if timerData.UUID then
+				timerData.Object = GameHelpers.TryGetObject(timerData.UUID)
+			end
+			Events.TimerFinished:Invoke({ID=timerName, Data=timerData})
 		end
 	else
-		InvokeListenerCallbacks(tbl, timerName)
+		Events.TimerFinished:Invoke({ID=timerName, Data={data}})
+	end
+
+	if not IsClient then
+		TurnCounter.OnTimerFinished(timerName)
+	end
+
+	Timer.TimerData[timerName] = nil
+end
+
+---Starts an Osiris timer with a unique string variance, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
+---This is similar to an object timer, but you can set the unique string directly.
+---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
+---@param uniqueVariance string The string that makes this timer unique, such as a UUID.
+---@param delay integer
+---@vararg string|number|boolean|table Optional variable arguments that will be sent to the timer finished callback.
+function Timer.StartUniqueTimer(timerName, uniqueVariance, delay, ...)
+	if uniqueVariance then
+		local uniqueTimerName = string.format("%s%s", timerName, uniqueVariance)
+		Timer.Cancel(uniqueTimerName)
+		local data = {...}
+		if #data > 0 then
+			_INTERNAL.StoreUniqueTimerName(uniqueTimerName, timerName, data)
+		else
+			_INTERNAL.StoreUniqueTimerName(uniqueTimerName, timerName)
+		end
+		_StartTimer(uniqueTimerName, delay)
+	else
+		fprint(LOGLEVEL.WARNING, "[LeaderLib:StartUniqueTimer] A valid uniqueVariance is required. Parameter (%s) is invalid!", uniqueVariance or "nil")
 	end
 end
 
-local function OnTimerFinished(timerName)
-	if not IsClient then
-		local data = PersistentVars.TimerData[timerName]
-		PersistentVars.TimerData[timerName] = nil
-		
-		if PersistentVars.TimerNameMap[timerName] then
-			local realTimerName = PersistentVars.TimerNameMap[timerName]
-			PersistentVars.TimerNameMap[timerName] = nil
-			timerName = realTimerName
-		end
-		if type(data) == "table" then
-			for i=1,#data do
-				local timerData = Lib.smallfolk.loads(data[i])
-				if OneshotTimerData[timerName] ~= nil then
-					InvokeTimerListeners(OneshotTimerData[timerName], timerName, timerData)
-					OneshotTimerData[timerName] = nil
-				end
-				InvokeTimerListeners(Listeners.TimerFinished, timerName, timerData)
-				InvokeTimerListeners(Listeners.NamedTimerFinished[timerName], timerName, timerData)
-			end
-		else
-			if OneshotTimerData[timerName] ~= nil then
-				InvokeTimerListeners(OneshotTimerData[timerName], timerName, data)
-				OneshotTimerData[timerName] = nil
-			end
-			InvokeTimerListeners(Listeners.TimerFinished, timerName, data)
-			InvokeTimerListeners(Listeners.NamedTimerFinished[timerName], timerName, data)
-		end
-	
-		TurnCounter.OnTimerFinished(timerName)
+---Starts an Osiris timer for an object, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
+---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
+---@param object UUID|NETID|EsvGameObject
+---@param delay integer
+---@vararg string|number|boolean|table Optional variable arguments that will be sent to the timer finished callback.
+function Timer.StartObjectTimer(timerName, object, delay, ...)
+	local uuid = GameHelpers.GetUUID(object)
+	if uuid then
+		Timer.StartUniqueTimer(timerName, uuid, delay, ...)
 	else
-		if OneshotTimerData[timerName] ~= nil then
-			InvokeTimerListeners(OneshotTimerData[timerName], timerName)
-			OneshotTimerData[timerName] = nil
-		end
+		fprint(LOGLEVEL.WARNING, "[LeaderLib:StartObjectTimer] A valid object with a UUID is required. Parameter (%s) is invalid!", object or "nil")
 	end
 end
+
+--#region Restarting
+
+---@param timerName string|string[]
+---@param delay integer
+function Timer.Restart(timerName, delay)
+	local t = type(timerName)
+	if t == "string" then
+		return _StartTimer(timerName, delay)
+	elseif t == "table" then
+		local success = false
+		for _,v in pairs(timerName) do
+			if Timer.Restart(v, delay) then
+				success = true
+			end
+		end
+		return success
+	else
+		fprint(LOGLEVEL.WARNING, "[Timer.Restart] Invalid timerName type (%s) value(%s)", t, timerName)
+	end
+	return false
+end
+
+---@deprecated
+---@see LeaderLibTimerSystem#Restart
+---@param timerName string
+---@param delay integer
+function Timer.RestartOneshot(timerName, delay)
+	return Timer.Restart(timerName, delay)
+end
+
+---Restarts a unique timer.
+---@param timerName string The generalized timer name.
+---@param uniqueVariance string The string that makes this timer unique, such as a UUID.
+---@param delay integer
+function Timer.RestartUniqueTimer(timerName, uniqueVariance, delay)
+	local uniqueTimerName = string.format("%s%s", timerName, uniqueVariance)
+	return Timer.Restart(uniqueTimerName, delay)
+end
+
+---Restarts an object timer.
+---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
+---@param object UUID|NETID|EsvGameObject
+---@param delay integer
+function Timer.RestartObjectTimer(timerName, object, delay)
+	local uuid = GameHelpers.GetUUID(object)
+	if uuid then
+		return Timer.RestartUniqueTimer(timerName, uuid, delay)
+	end
+	return false
+end
+--#endregion
 
 if not IsClient then
-	---Starts an Osiris timer for an object, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
-	---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
-	---@param object UUID|NETID|EsvGameObject
-	---@param delay integer
-	---@param ... string|number|boolean Optional variable arguments that will be sent to the timer finished callback.
-	---@vararg string|number|boolean|table
-	function Timer.StartObjectTimer(timerName, object, delay, ...)
-		if not IsClient then
-			local uuid = GameHelpers.GetUUID(object)
-			if uuid then
-				local uniqueTimerName = string.format("%s%s", timerName, uuid)
-				local data = {...}
-				if #data > 0 then
-					Timer.StoreObjectData(uniqueTimerName, timerName, data)
-				else
-					Timer.StoreObjectData(uniqueTimerName, timerName, uuid)
-				end
-				TimerCancel(uniqueTimerName)
-				TimerLaunch(uniqueTimerName, delay)
-			else
-				fprint(LOGLEVEL.WARNING, "[LeaderLib:StartObjectTimer] A valid object is required. Parameter (%s) is invalid!", object or "nil")
-			end
-		else
-			Ext.PrintWarning("[LeaderLib:StartObjectTimer] This function is intended for server-side. Use Timer.StartOneshot on the client!")
-		end
-	end
-
-	---Restarts an object timer.
-	---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
-	---@param object UUID|NETID|EsvGameObject
-	---@param delay integer
-	function Timer.RestartObjectTimer(timerName, object, delay)
-		local uuid = GameHelpers.GetUUID(object)
-		if uuid then
-			local uniqueTimerName = string.format("%s%s", timerName, uuid)
-			TimerCancel(uniqueTimerName)
-			TimerLaunch(uniqueTimerName, delay)
-		end
-	end
-
-	---Starts an Osiris timer with a unique string variance, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
-	---This is similar to an object timer, but you can set the unique string directly.
-	---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
-	---@param uniqueVariance string The string that makes this timer unique, such as a UUID.
-	---@param delay integer
-	---@param ... string|number|boolean Optional variable arguments that will be sent to the timer finished callback.
-	---@vararg string|number|boolean|table
-	function Timer.StartUniqueTimer(timerName, uniqueVariance, delay, ...)
-		if not IsClient then
-			if uniqueVariance then
-				local uniqueTimerName = string.format("%s%s", timerName, uniqueVariance)
-				local data = {...}
-				if #data > 0 then
-					Timer.StoreObjectData(uniqueTimerName, timerName, data)
-				else
-					Timer.StoreObjectData(uniqueTimerName, timerName)
-				end
-				TimerCancel(uniqueTimerName)
-				TimerLaunch(uniqueTimerName, delay)
-			else
-				fprint(LOGLEVEL.WARNING, "[LeaderLib:StartUniqueTimer] A valid object is required. Parameter (%s) is invalid!", object or "nil")
-			end
-		else
-			Ext.PrintWarning("[LeaderLib:StartUniqueTimer] This function is intended for server-side. Use Timer.StartOneshot on the client!")
-		end
-	end
-
-	---Restarts a unique timer.
-	---@param timerName string The generalized timer name.
-	---@param uniqueVariance string The string that makes this timer unique, such as a UUID.
-	---@param delay integer
-	function Timer.RestartUniqueTimer(timerName, uniqueVariance, delay)
-		local uniqueTimerName = string.format("%s%s", timerName, uniqueVariance)
-		TimerCancel(uniqueTimerName)
-		TimerLaunch(uniqueTimerName, delay)
-	end
-
-	---@private
-	function Timer.StoreData(timerName, data)
-		if not PersistentVars.TimerData[timerName] then
-			PersistentVars.TimerData[timerName] = {}
-		end
-		table.insert(PersistentVars.TimerData[timerName], Lib.smallfolk.dumps(data))
-	end
-
-	---@private
-	function Timer.StoreObjectData(uniqueTimerName, generalTimerName, data)
-		PersistentVars.TimerNameMap[uniqueTimerName] = generalTimerName
-		--Clear previous, in case the timer is being restarted
-		PersistentVars.TimerData[uniqueTimerName] = nil
-		Timer.StoreData(uniqueTimerName, data)
-	end
-
-	---@private
-	function Timer.ClearObjectData(timerName, object)
-		local uniqueTimerName = string.format("%s%s", timerName, GameHelpers.GetUUID(object))
-		if uniqueTimerName then
-			PersistentVars.TimerData[uniqueTimerName] = nil
-		end
-	end
-
 	Ext.RegisterOsirisListener("TimerFinished", 1, "after", OnTimerFinished)
 
-	local function OnProcObjectTimerFinished(object, timerName)
-		object = StringHelpers.GetUUID(object)
-		InvokeListenerCallbacks(Listeners.ProcObjectTimerFinished[timerName], object, timerName)
-		InvokeListenerCallbacks(Listeners.ProcObjectTimerFinished["all"], object, timerName)
-		InvokeListenerCallbacks(Listeners.NamedTimerFinished[timerName], timerName, object)
+	local function OnProcObjectTimerFinished(uuid, timerName)
+		uuid = StringHelpers.GetUUID(uuid)
+		local object = GameHelpers.TryGetObject(uuid)
+		Events.TimerFinished:Invoke({ID=timerName, Data={Object=object, UUID=uuid}})
 	end
 	
 	Ext.RegisterOsirisListener("ProcObjectTimerFinished", 2, "after", OnProcObjectTimerFinished)
@@ -402,4 +360,24 @@ if _EXTVERSION >= 56 then
 		end
 	end
 	Ext.Events.Tick:Subscribe(function(data) OnTick(data.Time) end)
+end
+
+--Globals / old API support
+
+---@deprecated
+---@see LeaderLibTimerSystem#Start
+function StartTimer(timerName, delay, ...)
+	Timer.Start(timerName, delay, ...)
+end
+
+---@deprecated
+---@see LeaderLibTimerSystem#Cancel
+function CancelTimer(...)
+	Timer.Cancel(...)
+end
+
+---@deprecated
+---@see LeaderLibTimerSystem#StartOneshot
+function StartOneshotTimer(...)
+	Timer.StartOneshot(...)
 end

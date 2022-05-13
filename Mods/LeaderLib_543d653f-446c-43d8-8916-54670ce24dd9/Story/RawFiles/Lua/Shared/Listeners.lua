@@ -54,13 +54,6 @@ Listeners.ModSettingsChanged = {All = {}}
 Listeners.MessageBoxEvent = {All = {}}
 
 if Ext.IsServer() then
-	Listeners.TimerFinished = {}
-	---@type table<string,fun(uuid1:string|nil, uuid2:string|nil):void>
-	Listeners.NamedTimerFinished = {}
-	---Wrapper around ProcObjectTimerFinished for timers with a specific name, or "any" for all object timers.
-	---@type table<string, fun(uuid:string, timerName:string):void>
-	Listeners.ProcObjectTimerFinished = {}
-
 	---@type table<integer, fun(item:EsvItem, statsId:string):void>
 	Listeners.TreasureItemGenerated = {}
 

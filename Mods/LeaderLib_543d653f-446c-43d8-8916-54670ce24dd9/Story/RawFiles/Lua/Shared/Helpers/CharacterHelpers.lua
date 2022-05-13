@@ -653,12 +653,13 @@ function GameHelpers.Character.GetEquipment(character, asTable)
 	local char = GameHelpers.GetCharacter(character)
     fassert(char ~= nil, "'%s' is not a valid character", character)
 	local equipment = {}
-    local items = char:GetInventoryItems()
-	local count = math.min(#items, 14)
-	for i=1,count do
+	local items = char:GetInventoryItems()
+	-- Equipment is in order from 1-14, but inventory items take up earlier indexes in the table if the equipment panel isn't full
+	local itemCount = math.min(#items, 14)
+    for i=1,itemCount do
 		local item = GameHelpers.GetItem(items[i])
-		if item then
-            equipment[#equipment+1] = item
+		if item and Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(item)] then
+			equipment[#equipment+1] = item
 		end
 	end
 	if not asTable then
@@ -698,10 +699,20 @@ function GameHelpers.Character.GetEquippedWeapons(character)
 		else
 			local mainhand,offhand = nil,nil
 			for item in GameHelpers.Character.GetEquipment(character) do
-				if Data.EquipmentSlotNames[item.Slot] == "Weapon" then
-					mainhand = item
-				elseif Data.EquipmentSlotNames[item.Slot] == "Shield" then
-					offhand = item
+				local slot = GameHelpers.Item.GetSlot(item)
+				if slot then
+					if Data.EquipmentSlotNames[slot] == "Weapon" then
+						mainhand = item
+					elseif Data.EquipmentSlotNames[slot] == "Shield" then
+						offhand = item
+					end
+				else
+					--Fallback if slot isn't retrievable, such as in v55
+					if item.Stats.Slot == "Weapon" then
+						mainhand = item
+					elseif item.Stats.Slot == "Shield" then
+						offhand = item
+					end
 				end
 			end
 			return mainhand,offhand

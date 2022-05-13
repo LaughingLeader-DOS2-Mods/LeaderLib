@@ -435,10 +435,10 @@ function GameHelpers.Item.GetItemInSlot(character, slot)
     fassert(char ~= nil, "'%s' is not a valid character", character)
     local slotIndex = Data.EquipmentSlotNames[slot]
     fassert(slotIndex ~= nil, "'%s' is not a valid slot name", slot)
-    local items = char:GetInventoryItems()
-	local count = math.min(#items, 14)
-	if slotIndex <= count then
-        return Ext.GetItem(items[slotIndex])
+    for item in GameHelpers.Character.GetEquipment(char) do
+        if item.Slot == slotIndex then
+            return item
+        end
     end
     return nil
 end
@@ -748,4 +748,21 @@ function GameHelpers.Item.IsWeaponType(item, weaponType)
 		end
 	end
 	return false
+end
+
+---@param item EsvItem|EclItem
+---@return integer
+function GameHelpers.Item.GetSlot(item)
+    local item = GameHelpers.GetItem(item)
+    if item then
+        if _EXTVERSION >= 56 then
+            if _ISCLIENT then
+                return item.CurrentSlot
+            else
+                return item.Slot
+            end
+        elseif not _ISCLIENT then
+            return item.Slot
+        end
+    end
 end

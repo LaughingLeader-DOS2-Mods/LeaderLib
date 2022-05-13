@@ -239,12 +239,8 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	if character:HasTag(tag) then
 		return true
 	end
-	local items = character:GetInventoryItems()
-	local count = math.min(#items, 14)
-	for i=1,count do
-		local item = GameHelpers.GetItem(items[i])
-		--Data.VisibleEquipmentSlots[item.Slot]
-		if item and GameHelpers.ItemHasTag(item, tag) then
+	for item in GameHelpers.Character.GetEquipment(character) do
+		if GameHelpers.ItemHasTag(item, tag) then
 			return true
 		end
 	end
@@ -298,14 +294,7 @@ function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 						end
 					end
 				else
-					local inventoryItems = object:GetInventoryItems()
-					local count = math.min(#inventoryItems, 14)
-					for i=1,count do
-						local item = Ext.GetItem(inventoryItems[i])
-						if item and Data.VisibleEquipmentSlots[item.Slot] then
-							items[#items+1] = item
-						end
-					end
+					items = GameHelpers.Character.GetEquipment(object, true)
 				end
 			end
 		end

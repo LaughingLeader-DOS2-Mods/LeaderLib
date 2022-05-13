@@ -239,34 +239,27 @@ end
 function CharacterData:EquipTemplate(template, all)
 	local character = self:GetCharacter()
 	if character then
-		local items = character:GetInventoryItems()
-		-- Slots 1-13 are equipment slots
-		if items and #items > 13 then
-			local foundItems
-			if all == true then
-				foundItems = {}
-			end
-			for i=14,#items do
-				local v = items[i]
-				local item = Ext.GetItem(v)
-				if item and item.RootTemplate and item.RootTemplate.Id == template then
-					if ItemIsEquipable(v) == 1 then
-						NRD_CharacterEquipItem(self.UUID, v, item.Stats.Slot, 0, 0, 1, 1)
-						--CharacterEquipItem(self.UUID, v)
-						if all ~= true then
-							return item
-						else
-							foundItems[#foundItems+1] = item
-						end
-						--NRD_CharacterEquipItem(self.UUID, v, item.Stats.ItemSlot, 0, 0, 1, 1)
+		local foundItems = {}
+		for item in GameHelpers.Character.GetEquipment(character) do
+			if item.RootTemplate and item.RootTemplate.Id == template then
+				if ItemIsEquipable(item.MyGuid) == 1 then
+					NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
+					--CharacterEquipItem(self.UUID, v)
+					if all ~= true then
+						return item
+					else
+						foundItems[#foundItems+1] = item
 					end
+					--NRD_CharacterEquipItem(self.UUID, v, item.Stats.ItemSlot, 0, 0, 1, 1)
 				end
 			end
+		end
+		if all and #foundItems > 0 then
 			return foundItems
 		end
 		local item = GameHelpers.Item.CreateItemByTemplate(template)
 		if item then
-			ItemToInventory(item.MyGuid, self.UUID)
+			ItemToInventory(item.MyGuid, self.UUID, 1, 0, 0)
 			if ItemIsEquipable(item.MyGuid) == 1 then
 				--CharacterEquipItem(self.UUID, item.MyGuid)
 				NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)

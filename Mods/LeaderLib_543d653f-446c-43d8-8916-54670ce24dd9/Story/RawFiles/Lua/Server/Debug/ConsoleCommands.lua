@@ -192,10 +192,9 @@ Ext.RegisterConsoleCommand("clearinventory", function(command)
 	local x,y,z = GetPosition(host)
 	--local backpack = CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
 	for player in GameHelpers.Character.GetPlayers(false) do
-		local items = player:GetInventoryItems()
 		for i,v in pairs(player:GetInventoryItems()) do
 			local item = Ext.GetItem(v)
-			if item.Slot > 13 and not item.StoryItem then
+			if item.Slot > 14 and not item.StoryItem then
 				ItemRemove(v)
 			end
 		end

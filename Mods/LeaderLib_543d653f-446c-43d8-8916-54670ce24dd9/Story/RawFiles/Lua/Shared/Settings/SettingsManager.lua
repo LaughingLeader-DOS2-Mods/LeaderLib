@@ -2,6 +2,8 @@ SettingsManager = {
 	LoadedInitially = false
 }
 
+local isClient = Ext.IsClient()
+
 local FlagData = Classes.ModSettingsClasses.FlagData
 local VariableData = Classes.ModSettingsClasses.VariableData
 local SettingsData = Classes.ModSettingsClasses.SettingsData
@@ -66,6 +68,7 @@ end
 ---@param uuid string
 ---@param tbl ModSettings
 local function ParseModData(uuid, tbl)
+	---@type ModSettings
 	local modSettings = SettingsManager.GetMod(uuid, true, false)
 	local isOldModSettings = tbl.globalflags ~= nil or tbl.integers ~= nil
 
@@ -100,7 +103,7 @@ local function ParseModData(uuid, tbl)
 			for varname,v in pairs(integers) do
 				local intnum = math.tointeger(v)
 				modSettings.Global:AddVariable(varname, intnum, nil, nil, nil, nil, nil, true, true)
-				if Ext.IsServer() and Ext.OsirisIsCallable() then
+				if not isClient and Ext.OsirisIsCallable() then
 					Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, intnum)
 				end
 			end
@@ -162,24 +165,34 @@ function LoadGlobalSettings(skipEventInvoking)
 	end
 end
 
+local syncTimerIndex = nil
+
 function SaveGlobalSettings()
 	if not SettingsManager.LoadedInitially then
 		LoadGlobalSettings()
 	end
-	local status,err = xpcall(function()
+	local b,err = xpcall(function()
 		local export = ExportGlobalSettings(false)
 		local json = Common.JsonStringify(export)
 		Ext.SaveFile("LeaderLib_GlobalSettings.json", json)
 		fprint(LOGLEVEL.TRACE, "[LeaderLib] Saved LeaderLib_GlobalSettings.json")
 		return true
 	end, debug.traceback)
-	if not status then
+	if not b then
 		Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
 		Ext.PrintError(err)
+	elseif not isClient then
+		if syncTimerIndex then
+			Events.TimerFinished:Unsubscribe(syncTimerIndex)
+			syncTimerIndex = nil
+		end
+		syncTimerIndex = Timer.StartOneshot("LeaderLib_SyncGlobalSetting", 250, function(e)
+			SettingsManager.SyncGlobalSettings()
+		end)
 	end
 end
 
-if Ext.IsServer() then
+if not isClient then
 	function SettingsManager.SyncGlobalSettings()
 		GameHelpers.Net.Broadcast("LeaderLib_SyncGlobalSettings", Common.JsonStringify(ExportGlobalSettings(true)))
 	end

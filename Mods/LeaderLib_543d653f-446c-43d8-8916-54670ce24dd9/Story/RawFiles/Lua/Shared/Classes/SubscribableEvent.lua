@@ -117,6 +117,7 @@ end
 
 ---@param callback function
 ---@param opts EventSubscriptionOptions|nil
+---@return integer
 function SubscribableEvent:Subscribe(callback, opts)
 	assert(type(callback) == "function", "callback parameter must be a function")
 	local opts = type(opts) == "table" and opts or {}

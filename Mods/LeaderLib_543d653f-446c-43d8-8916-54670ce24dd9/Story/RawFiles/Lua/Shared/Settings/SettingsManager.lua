@@ -225,7 +225,7 @@ if Ext.IsServer() then
 	function GlobalSettings_StoreGlobalInteger(uuid, varname, valuestr)
 		local mod_settings = SettingsManager.GetMod(uuid, true)
 		if mod_settings ~= nil then
-			mod_settings.Global:AddVariable(varname, math.tointeger(tonumber(valuestr)))
+			mod_settings.Global:AddVariable(varname, tonumber(valuestr))
 		end
 	end
 	
@@ -268,5 +268,19 @@ if Ext.IsServer() then
 	---@param author string
 	function GlobalSettings_StoreModVersion_Old(modid, author, version_str)
 	
+	end
+
+	--Called from LeaderLib_GlobalSettings_SaveIntegerVariable in Goals\LeaderLib_00_0_0_GlobalSettings.txt
+	function GlobalSettings_UpdateIntegerVariable(uuid, id, value)
+		uuid = StringHelpers.GetUUID(uuid)
+		value = tonumber(value)
+		if value then
+			local settings = SettingsManager.GetMod(uuid, false, false)
+			if settings then
+				settings:SetVariable(id, value)
+			else
+				fprint(LOGLEVEL.WARNING, "[LeaderLib:GlobalSettings_UpdateIntegerVariable] Failed to get mod global settings for uuid (%s). Variable(%s) = %s", uuid, id, value)
+			end
+		end
 	end
 end

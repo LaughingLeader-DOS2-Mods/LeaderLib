@@ -75,17 +75,10 @@ function ModSettings:Update()
 		end
 	elseif not isClient then
 		if Ext.IsModLoaded(self.UUID) and Ext.OsirisIsCallable() then
-			--Janktown
-			local last_pricemod = GetGlobalPriceModifier()
+			--For older mods, Let Osiris update the variable
 			for name,v in pairs(self.Global.Variables) do
-				SetGlobalPriceModifier(123456)
 				Osi.LeaderLib_GlobalSettings_Internal_GetIntegerVariable(self.UUID, name)
-				local int_value = GetGlobalPriceModifier()
-				if int_value ~= 123456 then
-					v.Value = int_value
-				end
 			end
-			SetGlobalPriceModifier(last_pricemod)
 		end
 	end
 end

@@ -138,7 +138,7 @@ LeaderLib_GlobalSettings_SaveIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName
 THEN
 DB_NOOP(1);
 /* [OSITOOLS_ONLY]
-SetGlobalPriceModifier(_Value);
+NRD_ModCall("LeaderLib", "GlobalSettings_UpdateIntegerVariable", (STRING)_UUID, _VarName, (STRING)_Value);
 */
 
 //END_REGION

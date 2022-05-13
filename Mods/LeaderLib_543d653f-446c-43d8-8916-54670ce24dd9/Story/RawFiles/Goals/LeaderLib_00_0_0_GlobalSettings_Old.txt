@@ -66,10 +66,12 @@ DB_NOOP(1);
 //Called by other mods
 PROC
 LeaderLib_GlobalSettings_SaveIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_Value)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
 THEN
 DB_NOOP(1);
 /* [OSITOOLS_ONLY]
-SetGlobalPriceModifier(_Value);
+NRD_ModCall("LeaderLib", "GlobalSettings_UpdateIntegerVariable", (STRING)_UUID, _Name, (STRING)_Value);
 */
 //Called by LeaderLib_GlobalSettings.lua, listened for in mods
 PROC

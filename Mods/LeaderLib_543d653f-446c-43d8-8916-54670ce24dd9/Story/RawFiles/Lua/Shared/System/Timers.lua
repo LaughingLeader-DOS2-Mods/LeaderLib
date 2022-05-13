@@ -112,28 +112,47 @@ function Timer.Start(timerName, delay, ...)
 	_StartTimer(timerName, delay)
 end
 
+local _OneshotTimerIndexes = {}
+
+function _INTERNAL.ClearOneshotSubscriptions(timerName)
+	local indexes = _OneshotTimerIndexes[timerName]
+	if indexes then
+		for _,index in pairs(indexes) do
+			Events.TimerFinished:Unsubscribe(index)
+		end
+		_OneshotTimerIndexes[timerName] = nil
+	end
+end
+
 --- Starts an Osiris timer with a callback function to run when the timer is finished.
 --- Not save safe since functions can't really be saved.
 ---@param timerName string
 ---@param delay integer
 ---@param callback fun(e:TimerFinishedEventArgs)
+---@return integer index Returns the subscription callback index.
 function Timer.StartOneshot(timerName, delay, callback)
 	if StringHelpers.IsNullOrEmpty(timerName) then
 		timerName = string.format("LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random())
 	end
-	Events.TimerFinished:Subscribe(function(e)
+	local index = Events.TimerFinished:Subscribe(function(e)
 		local b,err = xpcall(callback, debug.traceback, e)
 		if not b then
 			Ext.PrintError(err)
 		end
 	end, {Once=true, MatchArgs={ID=timerName}})
-	return _StartTimer(timerName, delay)
+	if _OneshotTimerIndexes[timerName] == nil then
+		_OneshotTimerIndexes[timerName] = {}
+	end
+	table.insert(_OneshotTimerIndexes[timerName], index)
+	_StartTimer(timerName, delay)
+	return index
 end
 
 ---Cancels a timer with an optional UUID for object timers.
 ---@param timerName string
 ---@param object UUID|NETID|EsvGameObject|nil
 function Timer.Cancel(timerName, object)
+	_INTERNAL.ClearOneshotSubscriptions(timerName)
 	if not IsClient then
 		if object ~= nil then
 			local uuid = GameHelpers.GetUUID(object)
@@ -227,6 +246,7 @@ local function OnTimerFinished(timerName)
 		TurnCounter.OnTimerFinished(timerName)
 	end
 
+	_INTERNAL.ClearOneshotSubscriptions(timerName)
 	Timer.TimerData[timerName] = nil
 end
 

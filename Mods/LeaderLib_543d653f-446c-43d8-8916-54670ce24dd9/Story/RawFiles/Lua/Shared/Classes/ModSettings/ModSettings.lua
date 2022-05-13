@@ -73,12 +73,11 @@ function ModSettings:Update()
 		for i,v in pairs(self.Profiles) do
 			v.Settings:UpdateVariables(self.UpdateVariable)
 		end
-	elseif not isClient then
-		if Ext.IsModLoaded(self.UUID) and Ext.OsirisIsCallable() then
-			--For older mods, Let Osiris update the variable
-			for name,v in pairs(self.Global.Variables) do
-				Osi.LeaderLib_GlobalSettings_Internal_GetIntegerVariable(self.UUID, name)
-			end
+	end
+	--For older mods, Let Osiris update the variable
+	if not isClient and Ext.IsModLoaded(self.UUID) and Ext.OsirisIsCallable() then
+		for name,v in pairs(self.Global.Variables) do
+			Osi.LeaderLib_GlobalSettings_GetIntegerVariable(self.UUID, name)
 		end
 	end
 end

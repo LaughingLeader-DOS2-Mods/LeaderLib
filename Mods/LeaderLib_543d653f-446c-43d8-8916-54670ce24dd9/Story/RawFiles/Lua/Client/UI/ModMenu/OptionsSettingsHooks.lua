@@ -181,8 +181,6 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_CreateMenuButton", function(cmd, payl
 	end
 end)
 
-local registeredListeners = false
-
 local function OnOptionsClosed()
 	SetCurrentMenu(1)
 end
@@ -226,7 +224,6 @@ local function OnAcceptChanges(ui)
 	if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
 		ModMenuManager.CommitChanges()
-		registeredListeners = false
 	elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
 		GameSettingsMenu.SaveScroll(ui)
 		GameSettingsMenu.CommitChanges()
@@ -271,7 +268,6 @@ local function OnCancelChanges(ui, call)
 	if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
 		ModMenuManager.UndoChanges()
-		registeredListeners = false
 	elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
 		GameSettingsMenu.SaveScroll(ui)
 		GameSettingsMenu.UndoChanges()
@@ -301,8 +297,8 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end
 
-	local onOpenMenu = function(ui, ...)
-		registeredListeners = false
+	local OnOpenMenu = function(ui, ...)
+		LoadGlobalSettings()
 		SetCurrentMenu(1)
 	end
 
@@ -329,7 +325,7 @@ Ext.RegisterListener("SessionLoaded", function()
 			end
 		end)
 	
-		Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu, "openMenu", onOpenMenu)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu, "openMenu", OnOpenMenu)
 		Ext.RegisterUITypeCall(Data.UIType.gameMenu, "requestCloseUI", OnOptionsClosed)
 		Ext.RegisterUITypeCall(Data.UIType.optionsInput, "switchMenu", OnSwitchMenu)
 	else
@@ -370,7 +366,7 @@ Ext.RegisterListener("SessionLoaded", function()
 			end
 		end)
 
-		Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu_c, "openMenu", onOpenMenu)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu_c, "openMenu", OnOpenMenu)
 	end
 
 	local controlOriginalCalls = {

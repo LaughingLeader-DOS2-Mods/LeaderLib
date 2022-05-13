@@ -106,9 +106,9 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 end
 
 if not isClient then
-	---@private
-	---@param target string
-	function GameHelpers.Internal.OnForceMoveTimer(timerName, target)
+	---@param e TimerFinishedEventArgs
+	function GameHelpers.Internal.OnForceMoveTimer(e)
+		local target = e.Data.UUID
 		if target ~= nil then
 			local targetData = PersistentVars.ForceMoveData[target]
 			if targetData ~= nil then
@@ -135,13 +135,13 @@ if not isClient then
 						Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), "Lua")
 					end
 				else
-					Timer.StartObjectTimer(timerName, target, 250)
+					Timer.StartObjectTimer(e.ID, target, 250)
 				end
 			end
 		end
 	end
 
-	Timer.RegisterListener("Timers_LeaderLib_OnForceMoveAction", GameHelpers.Internal.OnForceMoveTimer)
+	Timer.Subscribe("LeaderLib_OnForceMoveAction", GameHelpers.Internal.OnForceMoveTimer)
 
 	---@private
 	function GameHelpers.CanForceMove(target, source)
@@ -199,7 +199,7 @@ if not isClient then
 					Skill = skill,
 					Distance = distanceMultiplier
 				}
-				Timer.StartObjectTimer("Timers_LeaderLib_OnForceMoveAction", target.MyGuid, 250)
+				Timer.StartObjectTimer("LeaderLib_OnForceMoveAction", target.MyGuid, 250)
 			end
 		end
 	end
@@ -228,7 +228,7 @@ if not isClient then
 				Skill = skill,
 				Distance = GameHelpers.Math.GetDistance(target.WorldPos, position)
 			}
-			Timer.StartObjectTimer("Timers_LeaderLib_OnForceMoveAction", target.MyGuid, 250)
+			Timer.StartObjectTimer("LeaderLib_OnForceMoveAction", target.MyGuid, 250)
 		end
 	end
 end

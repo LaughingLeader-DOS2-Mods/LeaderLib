@@ -190,7 +190,7 @@ end
 -- 	end
 -- end)
 
-Timer.RegisterListener("LeaderLib_UnlockCharacterInventories", function ()
+Timer.Subscribe("LeaderLib_UnlockCharacterInventories", function (e)
 	if GameHelpers.IsLevelType(LEVELTYPE.GAME) and Ext.GetGameState() == "Running" then
 		GameHelpers.Net.Broadcast("LeaderLib_UnlockCharacterInventory")
 	end

@@ -215,6 +215,7 @@ expect_object = function(string, i, tables)
 	invalid(i)
 end
 
+---@return table
 function M.loads(string, maxsize)
 	if #string > (maxsize or 10000) then
 		error 'input too large'

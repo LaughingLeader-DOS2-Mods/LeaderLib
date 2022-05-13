@@ -88,6 +88,9 @@ local function OnControlAdded(ui, call, controlType, id, index, ...)
 	end
 end
 
+---@param ui UIObject
+---@param call string
+---@param timerCallbackName string
 local function OnTimerComplete(ui, call, timerCallbackName)
 	--fprint(LOGLEVEL.DEFAULT, "[LeaderLib:UIExtensions.OnTimerComplete %s]", timerCallbackName)
 	local callbacks = UIExtensions.Timers[timerCallbackName]
@@ -100,6 +103,7 @@ local function OnTimerComplete(ui, call, timerCallbackName)
 		end
 	end
 	UIExtensions.Timers[timerCallbackName] = nil
+	Events.TimerFinished:Invoke({ID=timerCallbackName, Data={}})
 end
 
 local function OnTimerTick(ui, call, timerCallbackName)
@@ -375,16 +379,23 @@ function UIExtensions.RemoveAllControls()
 	return false
 end
 
+---Start a flash timer, with an optional calback to invoke when the timer ticks, and is complete.
+---The TimerFinished event will be invoked as well.
+---@see LeaderLibSubscriptionEvents#TimerFinished
 ---@param id string The timer name/id.
 ---@param delay number The delay of the timer in milliseconds.
----@param callbackFunction FlashTimerCallback The callback to invoke when the timer is complete, or when it ticks (if repeatTimer > 1).
+---@param callbackFunction FlashTimerCallback|nil The callback to invoke when the timer is complete, or when it ticks (if repeatTimer > 1).
 ---@param repeatTimer integer|nil The number of times to repeat the timer. If > 1 then the callback will be called each time the timer ticks.
 function UIExtensions.StartTimer(id, delay, callbackFunction, repeatTimer)
-	if UIExtensions.Timers[id] == nil then
-		UIExtensions.Timers[id] = {}
-	end
-	if not Common.TableHasEntry(UIExtensions.Timers[id], callbackFunction) then
-		table.insert(UIExtensions.Timers[id], callbackFunction)
+	if type(callbackFunction) == "function" then
+		if UIExtensions.Timers[id] == nil then
+			UIExtensions.Timers[id] = {}
+		end
+		if not Common.TableHasEntry(UIExtensions.Timers[id], callbackFunction) then
+			table.insert(UIExtensions.Timers[id], callbackFunction)
+			UIExtensions.Invoke("launchTimer", delay, id, repeatTimer or 1)
+		end
+	else
 		UIExtensions.Invoke("launchTimer", delay, id, repeatTimer or 1)
 	end
 end

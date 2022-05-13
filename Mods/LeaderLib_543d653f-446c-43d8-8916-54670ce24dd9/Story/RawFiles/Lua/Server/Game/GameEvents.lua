@@ -127,10 +127,6 @@ function OnLeaderLibInitialized(region)
 	OnInitialized(region)
 end
 
-Timer.RegisterListener("Timers_LeaderLib_Initialized_CheckGameState", function ()
-	OnLeaderLibInitialized(SharedData.RegionData.Current)
-end)
-
 Events.RegionChanged:Subscribe(function (e)
 	if e.LevelType == LEVELTYPE.GAME and e.State == REGIONSTATE.GAME then
 		OnLeaderLibInitialized(e.Region)

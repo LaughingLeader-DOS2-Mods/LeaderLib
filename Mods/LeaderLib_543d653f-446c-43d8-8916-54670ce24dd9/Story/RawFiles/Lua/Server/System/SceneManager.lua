@@ -220,7 +220,7 @@ function SceneManager.Signal(name)
 	end
 end
 
-Timer.RegisterListener("LeaderLib_SceneManager_WaitingTimer", function()
+Timer.Subscribe("LeaderLib_SceneManager_WaitingTimer", function(e)
 	local keepTimerGoing = false
 	SceneManager.CurrentTime = Ext.MonotonicTime()
 	for sceneId,data in pairs(SceneManager.Queue.Waiting) do

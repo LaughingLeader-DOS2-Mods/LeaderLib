@@ -34,16 +34,7 @@ local function skipTutorialWakeupTimer(uuid, timerName)
 	--Osi.PROC_FTJ_StartWakeUpVoicebark(uuid)
 	--Osi.Proc_FTJ_UnfreezePlayers()
 	--UserSetFlag(uuid,"QuestUpdate_FTJ_Voice_TUT_Voice",0)
-
-	Timer.StartOneshot("Timers_LeaderLib_RemoveFTJWakeUpTimerListener", 2000, function()
-		fprint(LOGLEVEL.TRACE, "Removed listener for ProcObjectTimerFinished[FTJ_GameStart_FadeIn].")
-		RemoveListener("ProcObjectTimerFinished", "FTJ_GameStart_FadeIn", skipTutorialWakeup)
-	end)
 end
-
--- if Vars.DebugMode then
--- 	RegisterListener("ProcObjectTimerFinished", "FTJ_GameStart_FadeIn", skipTutorialWakeup)
--- end
 
 function SkipTutorial.Initialize()
 	if initialized then
@@ -233,8 +224,6 @@ function SkipTutorial.Initialize()
 						skipTutorialWakeup(uuid)
 					end
 				end)
-
-				--RegisterListener("ProcObjectTimerFinished", "FTJ_GameStart_FadeIn", skipTutorialWakeup)
 			end
 		},
 		LV_HoE_Main = {

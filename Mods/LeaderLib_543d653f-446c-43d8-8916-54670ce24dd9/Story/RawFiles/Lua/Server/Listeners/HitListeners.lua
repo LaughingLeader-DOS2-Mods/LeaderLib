@@ -40,8 +40,8 @@ function GameHelpers.TrackBonusWeaponPropertiesApplied(uuid, skill)
 	Timer.StartObjectTimer("LeaderLib_ClearJustAppliedBonusWeaponStatuses", uuid, 400)
 end
 
-Timer.RegisterListener("LeaderLib_ClearJustAppliedBonusWeaponStatuses", function(timerName, uuid)
-	PersistentVars.JustAppliedBonusWeaponStatuses[uuid] = nil
+Timer.Subscribe("LeaderLib_ClearJustAppliedBonusWeaponStatuses", function(e)
+	PersistentVars.JustAppliedBonusWeaponStatuses[e.Data.UUID] = nil
 end)
 
 ---@param source EsvCharacter|EsvItem|UUID|NETID
@@ -124,7 +124,7 @@ local function OnHit(hitStatus, hitContext)
 		local applySkillProperties = Vars.ApplyZoneSkillProperties[hitStatus.SkillId]
 		if applySkillProperties and applySkillProperties[sourceId] then
 			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, targetId, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
-			Timer.RestartOneShot(applySkillProperties[sourceId], 1)
+			Timer.Restart(applySkillProperties[sourceId], 1)
 		end
 	end
 

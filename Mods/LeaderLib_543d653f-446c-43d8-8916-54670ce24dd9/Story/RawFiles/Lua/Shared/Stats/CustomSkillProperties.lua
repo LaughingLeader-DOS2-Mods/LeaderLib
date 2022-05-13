@@ -140,7 +140,7 @@ local function MoveToTarget(object, position, areaRadius, skill, prop)
 				Pos = {x,y,z}
 			}
 			ApplyStatus(object.MyGuid, "LEADERLIB_COMBAT_MOVE", -1.0, 1, object.MyGuid)
-			StartTimer("LeaderLib_SkillProperties_MoveToTargetStart", 250, object.MyGuid)
+			Timer.Start("LeaderLib_SkillProperties_MoveToTargetStart", 250, {UUID=object.MyGuid})
 			--object.Floating = true
 			-- local status = Ext.PrepareStatus(object.MyGuid, "LEADERLIB_COMBAT_MOVE", 6.0)
 			-- status.StatusSourceHandle = object.Handle
@@ -204,11 +204,11 @@ for k,v in pairs(CustomSkillProperties) do
 end
 
 if Ext.IsServer() then
-	Timer.RegisterListener("LeaderLib_SkillProperties_MoveToTargetStart", function(event, uuid)
-		local data = PersistentVars.SkillPropertiesAction.MoveToTarget[uuid]
+	Timer.Subscribe("LeaderLib_SkillProperties_MoveToTargetStart", function(e)
+		local data = PersistentVars.SkillPropertiesAction.MoveToTarget[e.Data.UUID]
 		if data then
 			local x,y,z = table.unpack(data.Pos)
-			Osi.ProcCharacterMoveToPosition(uuid, x, y, z, 1, "LeaderLib_SkillProperties_MoveToTargetDone")
+			Osi.ProcCharacterMoveToPosition(e.Data.UUID, x, y, z, 1, "LeaderLib_SkillProperties_MoveToTargetDone")
 		end
 	end)
 

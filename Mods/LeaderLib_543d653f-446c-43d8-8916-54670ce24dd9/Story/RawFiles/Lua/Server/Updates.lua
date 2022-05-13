@@ -17,9 +17,9 @@ RegisterModListener("Loaded", ModuleUUID, function(lastVersion, nextVersion)
 	end
 end)
 
--- Timer.RegisterListener("TestTimer", function(...) print(Lib.inspect({...})) end)
+-- Timer.Subscribe("TestTimer", function(...) print(Lib.inspect({...})) end)
 -- Timer.Start("TestTimer", 1500, "Test1", false, 49, "Hello")
---Mods.LeaderLib.Timer.RegisterListener("TestTimer", function(...) print("TimerFinished", Mods.LeaderLib.Lib.inspect({...})) end)
+--Mods.LeaderLib.Timer.Subscribe("TestTimer", function(...) print("TimerFinished", Mods.LeaderLib.Lib.inspect({...})) end)
 --Mods.LeaderLib.Timer.Start("TestTimer", 1500, "Test1", false, 49, "Hello", Ext.GetCharacter(host.MyGuid), function() print('test') end)
 --Mods.LeaderLib.Timer.Start("TestTimer", 1500, "Test1", false, 49, "Hello", Ext.GetCharacter(host.MyGuid), function() print('test') end)
 
@@ -27,7 +27,7 @@ end)
 
 --Timer.StartObjectTimer("TestTimer", "bbca13e7-5ea3-4da2-82bd-8a0a3d23c979", 5000, {UUID = "bbca13e7-5ea3-4da2-82bd-8a0a3d23c979", Success=false, ID = "Idk", Damage=98})
 
--- Timer.RegisterListener("TestTimer", function(timerName, data, ...)
+-- Timer.Subscribe("TestTimer", function(e)
 -- 	fprint("TestTimer(%s)", Ext.MonotonicTime())
--- 	print(Lib.inspect(data), ...)
+-- 	print(Lib.inspect(e), ...)
 -- end)

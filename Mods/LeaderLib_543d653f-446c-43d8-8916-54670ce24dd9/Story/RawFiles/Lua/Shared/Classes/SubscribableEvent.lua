@@ -11,8 +11,12 @@ local isClient = Ext.IsClient()
 ---@field Disabled boolean If this event is disabled, Invoke won't invoke registered callbacks.
 ---@field ArgsKeyOrder string[]|nil
 
---This alias is a bit of a hack so we can have a generic type in the Subscribe/Invoke function (for an event args type)
----@alias SubscribableEvent<T>{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T), opts:EventSubscriptionOptions|nil), Invoke:fun(self:SubscribableEvent, args:T, unpackedKeyOrder:string[]|nil), Unsubscribe:fun(self:SubscribableEvent, indexOrCallback:integer|function) }
+---Used for event entry in the Events table, to support one base definition with multiple event argument types.
+---T should be specific event arg classes that derive from SubscribableEventArgs.
+---Example: SubscribableEvent<CharacterResurrectedEventArgs>
+---@see SubscribableEventArgs
+---@see LeaderLibSubscriptionEvents
+---@class SubscribableEvent<T>:{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T|SubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T}|nil), Invoke:fun(self:SubscribableEvent, args:T|SubscribableEventArgs, unpackedKeyOrder:string[]|nil), Unsubscribe:fun(self:SubscribableEvent, indexOrCallback:integer|function) }
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string
@@ -56,12 +60,11 @@ end
 ---@class EventSubscriptionOptions
 ---@field Priority integer|nil
 ---@field Once boolean|nil
+---@field MatchArgs table<string,any>|nil Optional event arguments to match before the callback is invoked.
 
----@class SubscribableEventNode
+---@class SubscribableEventNode:EventSubscriptionOptions
 ---@field Callback function
 ---@field Index integer
----@field Priority integer
----@field Once boolean
 ---@field Options SubscribableEventCreateOptions
 ---@field Prev SubscribableEventNode|nil
 ---@field Next SubscribableEventNode|nil
@@ -126,6 +129,7 @@ function SubscribableEvent:Subscribe(callback, opts)
 		Index = index,
 		Priority = opts.Priority or 100,
 		Once = opts.Once or false,
+		MatchArgs = opts.MatchArgs or nil,
 		Options = {}
 	}
 
@@ -176,7 +180,37 @@ function SubscribableEvent:StopPropagation()
 	self.StopInvoke = true
 end
 
----@param sub SubscribableEvent
+local function _TablesMatch(t1,t2)
+	for k,v in pairs(t1) do
+		if t2[k] ~= v then
+			return false
+		end
+	end
+	return true
+end
+
+---@param node SubscribableEventNode
+---@param eventArgs RuntimeSubscribableEventArgs
+local function _EventArgsMatch(node, eventArgs)
+	local match = true
+	if node.MatchArgs ~= nil then
+		for k,v in pairs(node.MatchArgs) do
+			if eventArgs[k] == nil then
+				return false
+			end
+			if type(v) == "table" then
+				if not _TablesMatch(v, eventArgs[k]) then
+					return false
+				end
+			elseif eventArgs[k] ~= v then
+				return false
+			end
+		end
+	end
+	return match
+end
+
+---@param sub BaseSubscribableEvent
 ---@param args RuntimeSubscribableEventArgs
 ---@param resultsTable table
 ---@vararg any
@@ -190,18 +224,21 @@ local function InvokeCallbacks(sub, args, resultsTable, ...)
 			break
 		end
 
-		local b, result = xpcall(cur.Callback, debug.traceback, args, ...)
-		if not b then
-			fprint(LOGLEVEL.ERROR, "[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, result)
-			result = _INVOKERESULT.Error
-		elseif gatherResults and result ~= nil then
-			resultsTable[#resultsTable+1] = result
-		end
-
-		if cur.Once then
-			local last = cur
-			cur = last.Next
-			RemoveNode(sub, last)
+		if _EventArgsMatch(cur, args) then
+			local b, result = xpcall(cur.Callback, debug.traceback, args, ...)
+			if not b then
+				fprint(LOGLEVEL.ERROR, "[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, result)
+				result = _INVOKERESULT.Error
+			elseif gatherResults and result ~= nil then
+				resultsTable[#resultsTable+1] = result
+			end
+			if cur.Once then
+				local last = cur
+				cur = last.Next
+				RemoveNode(sub, last)
+			else
+				cur = cur.Next
+			end
 		else
 			cur = cur.Next
 		end

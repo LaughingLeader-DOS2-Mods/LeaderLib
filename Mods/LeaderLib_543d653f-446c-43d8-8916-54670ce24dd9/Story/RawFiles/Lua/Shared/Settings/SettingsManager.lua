@@ -18,10 +18,6 @@ function SettingsManager.AddSettings(modSettings)
 	if GlobalSettings.Mods == nil then
 		GlobalSettings.Mods = {}
 	end
-	-- print("[SHARED] Added ", modSettings.Name, "IsClient", Ext.IsClient())
-	-- if Ext.IsClient() then
-	-- 	print(Common.Dump(GlobalSettings))
-	-- end
 	GlobalSettings.Mods[modSettings.UUID] = modSettings
 end
 
@@ -133,7 +129,8 @@ local function ParseSettings(tbl)
 	end
 end
 
-function LoadGlobalSettings()
+---@param skipEventInvoking boolean|nil Skip invoking the ModSettingsLoaded event.
+function LoadGlobalSettings(skipEventInvoking)
 	local b,result = xpcall(function()
 		SettingsManager.LoadConfigFiles()
 		local saved_data = GameHelpers.IO.LoadJsonFile("LeaderLib_GlobalSettings.json")
@@ -154,9 +151,13 @@ function LoadGlobalSettings()
 			if callOsiris then
 				v:ApplyToGame()
 			end
-			InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], v)
+			if skipEventInvoking ~= true then
+				InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], v)
+			end
 		end
-		InvokeListenerCallbacks(Listeners.ModSettingsLoaded.All, GlobalSettings)
+		if skipEventInvoking ~= true then
+			InvokeListenerCallbacks(Listeners.ModSettingsLoaded.All, GlobalSettings)
+		end
 		return result
 	end
 end
@@ -169,7 +170,7 @@ function SaveGlobalSettings()
 		local export = ExportGlobalSettings(false)
 		local json = Common.JsonStringify(export)
 		Ext.SaveFile("LeaderLib_GlobalSettings.json", json)
-		PrintDebug("[LeaderLib] Saved LeaderLib_GlobalSettings.json")
+		fprint(LOGLEVEL.TRACE, "[LeaderLib] Saved LeaderLib_GlobalSettings.json")
 		return true
 	end, debug.traceback)
 	if not status then
@@ -283,4 +284,91 @@ if Ext.IsServer() then
 			end
 		end
 	end
+else
+	local function SetGlobalSettingsMetatables()
+		for _,v in pairs(GlobalSettings.Mods) do
+			setmetatable(v, Classes.ModSettingsClasses.ModSettings)
+			Classes.ModSettingsClasses.SettingsData.SetMetatables(v.Global)
+			setmetatable(v.Global, Classes.ModSettingsClasses.SettingsData)
+			for _,p in pairs(v.Profiles) do
+				Classes.ModSettingsClasses.SettingsData.SetMetatables(p.Settings)
+				setmetatable(p, Classes.ModSettingsClasses.ProfileSettings)
+				setmetatable(p.Settings, Classes.ModSettingsClasses.SettingsData)
+			end
+		end
+	end
+	
+	---@param settings GlobalSettings
+	local function LoadGlobalSettingsOnClient(settings)
+		if GlobalSettings ~= nil then
+			local length = #Listeners.ModSettingsSynced
+	
+			GlobalSettings.Version = settings.Version
+			for k,v in pairs(settings.Mods) do
+				local target = v
+				if GlobalSettings.Mods[k] == nil then
+					GlobalSettings.Mods[k] = v
+				else
+					local existing = GlobalSettings.Mods[k]
+					if existing.Global == nil then
+						existing.Global = v.Global
+					else
+						existing.Global:CopySettings(v.Global)
+					end
+					if existing.Profiles == nil then
+						existing.Profiles = v.Profiles
+					else
+						for k2,v2 in pairs(v.Profiles) do
+							local existingProfile = existing.Profiles[k2]
+							if existingProfile ~= nil then
+								existingProfile.Settings:CopySettings(v2.Settings)
+							else
+								existing.Profiles[k2] = v2
+							end
+						end
+					end
+					existing.Version = v.Version
+					target = existing
+				end
+				if length > 0 then
+					for i=1,length do
+						local callback = Listeners.ModSettingsSynced[i]
+						local status,err = xpcall(callback, debug.traceback, k, target)
+						if not status then
+							Ext.PrintError("[LeaderLib:HitListeners.lua] Error calling function for 'ModSettingsSynced':\n", err)
+						end
+					end
+				end
+			end
+			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:CLIENT] Updated GlobalSettings.")
+		else
+			Ext.PrintError("[LeaderLib:CLIENT] GlobalSettings is nil.")
+			GlobalSettings = settings
+		end
+		SetGlobalSettingsMetatables()
+	end
+	
+	Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
+		local data = Common.JsonParse(dataString)
+		if data.Features ~= nil then Features = data.Features end
+		if data.GlobalSettings ~= nil then 
+			LoadGlobalSettingsOnClient(data.GlobalSettings)
+		end
+		if data.GameSettings ~= nil then
+			GameSettings = data.GameSettings
+			setmetatable(GameSettings, Classes.LeaderLibGameSettings)
+			--SyncStatOverrides(GameSettings)
+		end
+		for uuid,v in pairs(GlobalSettings.Mods) do
+			InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], v)
+		end
+		InvokeListenerCallbacks(Listeners.ModSettingsLoaded.All, GlobalSettings)
+	end)
+
+	Ext.RegisterNetListener("LeaderLib_SyncGlobalSettings", function(cmd, dataString)
+		local data = Common.JsonParse(dataString)
+		if data ~= nil then
+			LoadGlobalSettingsOnClient(data)
+		end
+	end)
 end

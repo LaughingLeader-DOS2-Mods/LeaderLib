@@ -3,6 +3,7 @@ if GameHelpers.Ext == nil then
 end
 
 local isClient = Ext.IsClient
+local _EXTVERSION = Ext.Version()
 
 local characterStatAttributes = {
 	"Strength",
@@ -433,6 +434,7 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 	local weapon = {}
 	weapon.ItemType = "Weapon"
 	weapon.Name = stat
+	local statObject = Ext.GetStat(stat)
 	if attribute ~= nil then
 		weapon.Requirements = {
 			{
@@ -442,11 +444,11 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 			}
 		}
 	else
-		weapon.Requirements = Ext.StatGetAttribute(stat, "Requirements")
+		weapon.Requirements = statObject.Requirements
 	end
 	local weaponStat = {Name = stat}
 	for i,v in pairs(weaponStatAttributes) do
-		weaponStat[v] = Ext.StatGetAttribute(stat, v)
+		weaponStat[v] = statObject[v]
 	end
 	weapon["ModifierType"] = weaponStat["ModifierType"]
 	weapon["IsTwoHanded"] = weaponStat["IsTwoHanded"]
@@ -472,8 +474,11 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 	end
 	weaponStat.Requirements = weapon.Requirements
 	weapon.DynamicStats = {weaponStat}
+	if _EXTVERSION >= 56 then
+		weapon.ExtraProperties = statObject.ExtraProperties
+	end
 	if not isBoostStat then
-		local boostsString = Ext.StatGetAttribute(stat, "Boosts")
+		local boostsString = statObject.Boosts
 		if boostsString ~= nil and boostsString ~= "" then
 			local boosts = StringHelpers.Split(boostsString, ";")
 			for i,boostStat in pairs(boosts) do

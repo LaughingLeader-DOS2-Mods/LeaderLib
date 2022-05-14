@@ -205,8 +205,8 @@ end
 ---Get the directional vector between two objects' WorldPos.
 ---@param obj1 EsvCharacter|EsvItem
 ---@param obj2 EsvCharacter|EsvItem
----@param reverse boolean
----@param asVector3 boolean Optionally return the result as a Vector3
+---@param reverse boolean|nil
+---@param asVector3 boolean|nil Optionally return the result as a Vector3
 ---@return number[]|Vector3
 function GameHelpers.Math.GetDirectionalVectorBetweenObjects(obj1, obj2, reverse, asVector3)
 

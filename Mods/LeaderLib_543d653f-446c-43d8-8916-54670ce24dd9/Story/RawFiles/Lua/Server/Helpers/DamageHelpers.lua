@@ -434,7 +434,7 @@ local defaultHitFlags = {
 ---@field HitParams table<string,any>|nil Hit parameters to apply.
 ---@field MainWeapon StatItem|nil A weapon to use in place of the source's main weapon.
 ---@field OffhandWeapon StatItem|nil A weapon to use in place of the source's offhand weapon.
----@field GetDamageFunction fun(source:EsvCharacter, target:EsvCharacter|EsvItem, GameHelpers.Damage.ApplyDamageParams):DamageList,string|nil An optional function to use to calculate damage.
+---@field GetDamageFunction fun(skillData:StatEntrySkillData, attacker:StatCharacter, isFromItem:boolean, stealthed:boolean, attackerPos:number[], targetPos:number[], level:integer, noRandomization:boolean, mainWeapon:StatEntryWeapon|nil, offhandWeapon:StatEntryWeapon|nil):DamageList,string|nil An optional function to use to calculate damage.
 ---@field ApplySkillProperties boolean|nil
 ---@field SkillDataParamModifiers StatEntrySkillData|nil
 

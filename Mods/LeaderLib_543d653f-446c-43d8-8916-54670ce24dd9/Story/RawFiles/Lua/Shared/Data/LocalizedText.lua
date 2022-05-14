@@ -14,7 +14,7 @@ LocalizedText.DamageTypeHandles = {
 	Magic = {Text=ts:Create("hdb4307b4g1a6fg4c05g9602g6a4a6e7a29d9","Magic Armour"), Color="#7F00FF"},
 	Chaos = {Text=ts:Create("h2bc14afag7627g4db8gaaa6g19c26b9820d5","chaos damage"), Color="#9A00FF"},-- Special LeaderLib handle
 	Air = {Text=ts:Create("hdd80e44fg9585g48b8ga34dgab20dc18f077","air damage"), Color="#7D71D9"},
-	Earth = {Text=ts:Create("h68b77a37g9c43g4436gb360gd651af08d7bb","earth damage"), Color="#F7BA14"},
+	Earth = {Text=ts:Create("h68b77a37g9c43g4436gb360gd651af08d7bb","earth damage"), Color="#7F3D00"},
 	Fire = {Text=ts:Create("hc4d062edgd8e6g4048gaa44g160fe3c7b018","fire damage"), Color="#FE6E27"},
 	Poison = {Text=ts:Create("ha77d36b3ge969g4461g9b30gfff624024b18","poison damage"), Color="#65C900"},
 	Shadow = {Text=ts:Create("h256557fbg1d49g45d9g8690gb86b39d2a135","shadow damage"), Color="#797980"},
@@ -32,7 +32,7 @@ LocalizedText.DamageTypeNames = {
 	Magic = {Text=ts:Create("h02e0fcacg670eg4d35g9f20gcf5cddab7fd1","Magic"), Color="#7F00FF"},
 	Chaos = {Text=ts:Create("hf43ec8a1gb6c4g421dg983cg01535ee1bcdf","Chaos"), Color="#9A00FF"},-- Special LeaderLib color
 	Air = {Text=ts:Create("h1cea7e28gc8f1g4915ga268g31f90767522c","Air"), Color="#7D71D9"},
-	Earth = {Text=ts:Create("h85fee3f4g0226g41c6g9d38g83b7b5bf96ba","Earth"), Color="#F7BA14"},
+	Earth = {Text=ts:Create("h85fee3f4g0226g41c6g9d38g83b7b5bf96ba","Earth"), Color="#7F3D00"},
 	Fire = {Text=ts:Create("h051b2501g091ag4c93ga699g407cd2b29cdc","Fire"), Color="#FE6E27"},
 	Poison = {Text=ts:Create("haa64cdb8g22d6g40d6g9918g61961514f70f","Poison"), Color="#65C900"},
 	Shadow = {Text=ts:Create("hf4632a8fg42a7g4d53gbe26gd203f28e3d5e","Shadow"), Color="#797980"},

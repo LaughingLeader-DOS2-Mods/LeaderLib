@@ -171,35 +171,43 @@ if not isClient then
 	---@param startPos number[]|nil If set, this will be the starting position to push from. Defaults to the source's WorldPosition otherwise.
 	---@return number,number|nil
 	function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill, startPos)
-		startPos = startPos or source.WorldPos
-		local dist = GetDistanceToPosition(target.MyGuid, startPos[1], startPos[2], startPos[3])
+		---@type EsvCharacter|EsvItem
+		local sourceObject = GameHelpers.TryGetObject(source)
+		---@type EsvCharacter|EsvItem
+		local targetObject = GameHelpers.TryGetObject(target)
+		fassert(sourceObject ~= nil, "Invalid source parameter (%s)", source)
+		fassert(targetObject ~= nil, "Invalid target parameter (%s)", target)
+		if type(startPos) ~= "table" then
+			startPos = sourceObject.WorldPos
+		end
+		local dist = GameHelpers.Math.GetDistance(targetObject, startPos)
 		local distMult = math.abs(distanceMultiplier)
 		if dist > distMult then
-			fprint(LOGLEVEL.WARNING, "[GameHelpers.ForceMoveObject] target(%s) is outside of the push distance range (%s) > (%s) from the starting position(%s,%s,%s). Skipping.", target.MyGuid, dist, distMult, startPos[1], startPos[2], startPos[3])
+			fprint(LOGLEVEL.WARNING, "[GameHelpers.ForceMoveObject] target(%s) is outside of the push distance range (%s) > (%s) from the starting position(%s,%s,%s). Skipping.", targetObject.MyGuid, dist, distMult, Lib.serpent.line(startPos))
 			return false
 		end
-		local existingData = PersistentVars.ForceMoveData[target.MyGuid]
+		local existingData = PersistentVars.ForceMoveData[targetObject.MyGuid]
 		if existingData ~= nil and existingData.Handle ~= nil then
 			--NRD_GameActionDestroy(existingData.Handle)
-			PersistentVars.ForceMoveData[target.MyGuid] = nil
+			PersistentVars.ForceMoveData[targetObject.MyGuid] = nil
 		end
 		--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distMult)
-		local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(target, source, distanceMultiplier < 0)
+		local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(targetObject, sourceObject, distanceMultiplier < 0)
 		local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionalVector, distMult)
 	
 		if tx and tz then
-			local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
+			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, "", sourceObject.MyGuid)
 			if handle then
-				PersistentVars.ForceMoveData[target.MyGuid] = {
+				PersistentVars.ForceMoveData[targetObject.MyGuid] = {
 					Position = {tx,ty,tz},
 					Start = TableHelpers.Clone(startPos),
 					Handle = handle,
-					Source = source.MyGuid,
+					Source = sourceObject.MyGuid,
 					IsFromSkill = skill ~= nil,
 					Skill = skill,
 					Distance = distanceMultiplier
 				}
-				Timer.StartObjectTimer("LeaderLib_OnForceMoveAction", target.MyGuid, 250)
+				Timer.StartObjectTimer("LeaderLib_OnForceMoveAction", targetObject.MyGuid, 250)
 			end
 		end
 	end

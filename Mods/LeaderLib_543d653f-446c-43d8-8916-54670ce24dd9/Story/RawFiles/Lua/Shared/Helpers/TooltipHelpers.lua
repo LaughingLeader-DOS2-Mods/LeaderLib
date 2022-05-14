@@ -2,6 +2,8 @@ if GameHelpers.Tooltip == nil then
 	GameHelpers.Tooltip = {}
 end
 
+local _EXTVERSION = Ext.Version()
+
 local function GetTextParamValues(output, character)
 	for v in string.gmatch(output, "%[Special:.-%]") do
 		local value = ""
@@ -67,12 +69,14 @@ local function GetTextParamValues(output, character)
 	return output
 end
 
+---@param str string
+---@param character EclCharacter
 local function ReplacePlaceholders(str, character)
 	if not str then
 		return str
 	end
 	if character ~= nil and type(character) == "string" then
-		character = Ext.GetCharacter(character)
+		character = GameHelpers.GetCharacter(character)
 	end
 	if character == nil and Client then
 		character = Client:GetCharacter()
@@ -146,6 +150,34 @@ local function ReplacePlaceholders(str, character)
 							elseif result ~= nil and result ~= "" then
 								value = result
 								useDefaultSkillDamage = false
+							end
+						end
+					end
+					if useDefaultSkillDamage and _EXTVERSION >= 56 then
+						local listeners = Ext._Internal._Events.GetSkillDamage
+						if listeners then
+							for i=1,#listeners do
+								local callback = listeners[i]
+								if callback then
+									local b,damageList,deathType = xpcall(callback, debug.traceback, skill, character.Stats, false, character.Stats.IsSneaking, character.WorldPos, character.WorldPos, character.Stats.Level, true, true)
+									if b then
+										local t = type(damageList)
+										if t == "string" then
+											value = damageList
+											useDefaultSkillDamage = false
+										elseif t == "table" then
+											value = GameHelpers.Tooltip.FormatDamageRange(damageList)
+											useDefaultSkillDamage = false
+										elseif t == "userdata" and damageList.ToTable then -- DamageList
+											value = GameHelpers.Tooltip.FormatDamageRange(damageList:ToTable())
+											useDefaultSkillDamage = false
+										else
+											fprint(LOGLEVEL.WARNING, "[LeaderLib:ReplacePlaceholders] Unknown type(%s) returned from GetSkillDamage listener for skill (%s).", t, skill.Name)
+										end
+									else
+										Ext.PrintError(damageList)
+									end
+								end
 							end
 						end
 					end

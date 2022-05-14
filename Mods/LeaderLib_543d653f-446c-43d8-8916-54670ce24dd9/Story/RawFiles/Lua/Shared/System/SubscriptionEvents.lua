@@ -26,7 +26,6 @@ Events.FeatureChanged = Classes.SubscribableEvent:Create("FeatureChanged", {Args
 ---@class InitializedEventArgs
 ---@field Region string
 
-
 ---@type SubscribableEvent<InitializedEventArgs>
 Events.Initialized = Classes.SubscribableEvent:Create("Initialized")
 

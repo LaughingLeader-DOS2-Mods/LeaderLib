@@ -230,13 +230,20 @@ local function OnTimerFinished(timerName)
 		Timer.TimerNameMap[timerName] = nil
 	end
 
+	--print(timerName, Ext.DumpExport(data))
+
 	if type(data) == "table" then
 		for i=1,#data do
-			local timerData = Lib.smallfolk.loads(data[i])
-			if timerData.UUID then
-				timerData.Object = GameHelpers.TryGetObject(timerData.UUID)
+			local entry = data[i]
+			local timerData = Lib.smallfolk.loads(entry)
+			if timerData then
+				if timerData.UUID then
+					timerData.Object = GameHelpers.TryGetObject(timerData.UUID)
+				end
+				Events.TimerFinished:Invoke({ID=timerName, Data=timerData})
+			else
+				Events.TimerFinished:Invoke({ID=timerName, Data={entry}})
 			end
-			Events.TimerFinished:Invoke({ID=timerName, Data=timerData})
 		end
 	else
 		Events.TimerFinished:Invoke({ID=timerName, Data={data}})
@@ -280,7 +287,7 @@ end
 function Timer.StartObjectTimer(timerName, object, delay, ...)
 	local uuid = GameHelpers.GetUUID(object)
 	if uuid then
-		Timer.StartUniqueTimer(timerName, uuid, delay, ...)
+		Timer.StartUniqueTimer(timerName, uuid, delay, uuid, ...)
 	else
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:StartObjectTimer] A valid object with a UUID is required. Parameter (%s) is invalid!", object or "nil")
 	end

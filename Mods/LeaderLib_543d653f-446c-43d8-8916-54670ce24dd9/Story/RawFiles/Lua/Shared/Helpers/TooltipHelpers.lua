@@ -159,7 +159,7 @@ local function ReplacePlaceholders(str, character)
 							for i=1,#listeners do
 								local callback = listeners[i]
 								if callback then
-									local b,damageList,deathType = xpcall(callback, debug.traceback, skill, character.Stats, false, character.Stats.IsSneaking, character.WorldPos, character.WorldPos, character.Stats.Level, true, true)
+									local b,damageList = xpcall(callback, debug.traceback, skill, character.Stats, false, character.Stats.IsSneaking == true, character.WorldPos, character.WorldPos, character.Stats.Level, true, true)
 									if b then
 										local t = type(damageList)
 										if t == "string" then

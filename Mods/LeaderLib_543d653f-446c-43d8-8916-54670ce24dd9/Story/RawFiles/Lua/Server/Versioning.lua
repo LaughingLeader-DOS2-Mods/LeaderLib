@@ -164,14 +164,14 @@ end
 function LoadMods()
 	PrintDebug("[LeaderLib:Bootstrap.lua] Registering LeaderLib's mod info.")
 	-- LeaderLib
-	local mod = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c")
+	local mod = Ext.GetModInfo(ModuleUUID)
 	--PrintDebug(Common.JsonStringify(mod))
 	local versionInt = tonumber(mod.Version)
 	local major = math.floor(versionInt >> 28)
 	local minor = math.floor(versionInt >> 24) & 0x0F
 	local revision = math.floor(versionInt >> 16) & 0xFF
 	local build = math.floor(versionInt & 0xFFFF)
-	Osi.LeaderLib_Mods_OnModLoaded("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib", mod.Name, mod.Author, versionInt, major, minor, revision, build)
+	Osi.LeaderLib_Mods_OnModLoaded(ModuleUUID, "LeaderLib", mod.Name, mod.Author, versionInt, major, minor, revision, build)
 
 	local loadOrder = Ext.GetModLoadOrder()
 	for _,uuid in pairs(loadOrder) do

@@ -4,17 +4,13 @@ SettingsManager = {
 
 local isClient = Ext.IsClient()
 
-local FlagData = Classes.ModSettingsClasses.FlagData
-local VariableData = Classes.ModSettingsClasses.VariableData
-local SettingsData = Classes.ModSettingsClasses.SettingsData
-local ProfileSettings = Classes.ModSettingsClasses.ProfileSettings
 local ModSettings = Classes.ModSettingsClasses.ModSettings
 
 function SettingsManager.AddSettings(modSettings)
 	if GlobalSettings == nil then
 		GlobalSettings = {
 			Mods = {},
-			Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version,
+			Version = Ext.GetModInfo(ModuleUUID).Version,
 		}
 	end
 	if GlobalSettings.Mods == nil then

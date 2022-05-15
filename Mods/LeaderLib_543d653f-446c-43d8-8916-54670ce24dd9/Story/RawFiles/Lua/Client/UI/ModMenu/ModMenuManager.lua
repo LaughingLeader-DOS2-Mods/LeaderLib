@@ -109,7 +109,7 @@ end
 ---@param modUUID string The mod's UUID
 local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 	local debugEnabled = false
-	local LeaderLibSettings = GlobalSettings.Mods["7e737d2f-31d2-4751-963f-be6ccc59cd0c"]
+	local LeaderLibSettings = SettingsManager.GetMod(ModuleUUID, false, false)
 	if LeaderLibSettings ~= nil and LeaderLibSettings.Global:FlagEquals("LeaderLib_DebugModeEnabled", true) then
 		debugEnabled = true
 	end

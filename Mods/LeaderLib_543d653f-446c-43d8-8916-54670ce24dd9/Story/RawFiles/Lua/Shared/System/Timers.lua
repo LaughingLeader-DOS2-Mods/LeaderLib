@@ -230,8 +230,6 @@ local function OnTimerFinished(timerName)
 		Timer.TimerNameMap[timerName] = nil
 	end
 
-	--print(timerName, Ext.DumpExport(data))
-
 	if type(data) == "table" then
 		for i=1,#data do
 			local entry = data[i]
@@ -246,7 +244,15 @@ local function OnTimerFinished(timerName)
 			end
 		end
 	else
-		Events.TimerFinished:Invoke({ID=timerName, Data={data}})
+		if StringHelpers.IsUUID(data) then
+			local timerData = {
+				UUID = data,
+				Object = GameHelpers.TryGetObject(data)
+			}
+			Events.TimerFinished:Invoke({ID=timerName, Data=timerData})
+		else
+			Events.TimerFinished:Invoke({ID=timerName, Data={data}})
+		end
 	end
 
 	if not IsClient then
@@ -269,7 +275,11 @@ function Timer.StartUniqueTimer(timerName, uniqueVariance, delay, ...)
 		Timer.Cancel(uniqueTimerName)
 		local data = {...}
 		if #data > 0 then
-			_INTERNAL.StoreUniqueTimerName(uniqueTimerName, timerName, data)
+			if type(data[1]) == "table" and data[2] == nil then
+				_INTERNAL.StoreUniqueTimerName(uniqueTimerName, timerName, data[1])
+			else
+				_INTERNAL.StoreUniqueTimerName(uniqueTimerName, timerName, data)
+			end
 		else
 			_INTERNAL.StoreUniqueTimerName(uniqueTimerName, timerName)
 		end
@@ -287,7 +297,23 @@ end
 function Timer.StartObjectTimer(timerName, object, delay, ...)
 	local uuid = GameHelpers.GetUUID(object)
 	if uuid then
-		Timer.StartUniqueTimer(timerName, uuid, delay, uuid, ...)
+		local data = {UUID = uuid}
+		local params = {...}
+		local paramsLength = #params
+		if paramsLength > 0 then
+			data.Params = {}
+			for i=1,paramsLength do
+				local entry = params[i]
+				if type(entry) == "table" then
+					for k,v in pairs(entry) do
+						data[k] = v
+					end
+				else
+					data.Params[#data.Params+1] = entry
+				end
+			end
+		end
+		Timer.StartUniqueTimer(timerName, uuid, delay, data)
 	else
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:StartObjectTimer] A valid object with a UUID is required. Parameter (%s) is invalid!", object or "nil")
 	end

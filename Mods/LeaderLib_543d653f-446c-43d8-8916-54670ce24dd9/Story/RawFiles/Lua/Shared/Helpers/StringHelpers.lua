@@ -246,6 +246,23 @@ function StringHelpers.GetUUID(str)
 	return result
 end
 
+local _ISUUID_PATTERN = "%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x"
+
+---Checks if a string is a UUID.
+---@param str string
+---@return boolean
+function StringHelpers.IsUUID(str)
+	if str == nil or str == "" then
+		return false
+	end
+	if str == "NULL_00000000-0000-0000-0000-000000000000"
+	or str == "00000000-0000-0000-0000-000000000000"
+	then
+		return true
+	end
+	return string.match(str, _ISUUID_PATTERN) ~= nil
+end
+
 --- Split a version integer into separate values
 ---@param version integer
 ---@return integer,integer,integer,integer

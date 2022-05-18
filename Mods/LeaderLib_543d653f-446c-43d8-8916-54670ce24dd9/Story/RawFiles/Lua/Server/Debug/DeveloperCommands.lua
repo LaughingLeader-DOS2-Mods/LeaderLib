@@ -1273,16 +1273,16 @@ end)
 local cooldownsDisabled_AddedListener = false
 
 function Debug.SetCooldownMode(b)
+	if not cooldownsDisabled_AddedListener then
+		Ext.RegisterOsirisListener("SkillCast", 4, "after", function(char,...)
+			if Vars.Commands.CooldownsDisabled then
+				CharacterResetCooldowns(char)
+			end
+		end)
+		cooldownsDisabled_AddedListener = true
+	end
 	if b then
-		CharacterResetCooldowns(CharacterGetHostCharacter()) 
-		if not cooldownsDisabled_AddedListener then
-			Ext.RegisterOsirisListener("SkillCast", 4, "after", function(char,...)
-				if Vars.Commands.CooldownsDisabled then
-					CharacterResetCooldowns(char)
-				end
-			end)
-			cooldownsDisabled_AddedListener = true
-		end
+		CharacterResetCooldowns(CharacterGetHostCharacter())
 	end
 end
 

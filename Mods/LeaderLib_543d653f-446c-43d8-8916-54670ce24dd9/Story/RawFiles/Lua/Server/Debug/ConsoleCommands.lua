@@ -194,7 +194,7 @@ Ext.RegisterConsoleCommand("clearinventory", function(command)
 	for player in GameHelpers.Character.GetPlayers(false) do
 		for i,v in pairs(player:GetInventoryItems()) do
 			local item = Ext.GetItem(v)
-			if item.Slot > 14 and not item.StoryItem then
+			if Data.EquipmentSlotNames[item.Slot] and not item.StoryItem then
 				ItemRemove(v)
 			end
 		end

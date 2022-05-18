@@ -278,7 +278,7 @@ end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.PROJECTILEHIT event.
 ---@param skill string|string[]
----@param callback SkillManagerHitCallback
+---@param callback SkillManagerProjectileHitCallback
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 function SkillManager.Register.ProjectileHit(skill, callback, priority, once)

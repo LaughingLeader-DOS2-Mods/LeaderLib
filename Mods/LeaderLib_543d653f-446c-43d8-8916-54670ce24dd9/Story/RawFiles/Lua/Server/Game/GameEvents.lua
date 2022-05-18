@@ -168,7 +168,6 @@ local function DebugLoadPersistentVars()
 end
 
 function OnLuaReset()
-	Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled)
 	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
 	GameHelpers.Data.SetRegion(region)
 	GameHelpers.Data.SetGameMode()
@@ -181,6 +180,7 @@ function OnLuaReset()
 	pcall(DebugLoadPersistentVars)
 	Events.LuaReset:Invoke({Region=region})
 	GameHelpers.Net.Broadcast("LeaderLib_Client_SyncDebugVars", {PrintSettings=Vars.Print, CommandSettings = Vars.Commands})
+	Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled == true)
 end
 
 if Ext.Version() >= 56 then

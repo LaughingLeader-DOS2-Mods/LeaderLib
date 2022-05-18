@@ -184,9 +184,11 @@ function TableHelpers.TryUnpack(tbl)
 	return false
 end
 
+---@alias SerializableValue string|boolean|number
+
 ---Checks if a table has a string/boolean/number value, or any value in a table of values, if provided.
 ---@param tbl table
----@param value SerializableValue|table<any, SerializableValue> A value or table of values to check for.
+---@param value SerializableValue|SerializableValue[] A value or table of values to check for.
 ---@param deep boolean|nil If true, and table entry is a table, keep checking for the provided values.
 ---@return boolean
 function TableHelpers.HasValue(tbl, value, deep)
@@ -240,4 +242,29 @@ function TableHelpers.CopyKeys(copyTo, copyFrom)
 		copyTo[k] = v
 	end
 	return copyTo
+end
+
+---Create a copy of a table where all the values are unique, and optionally sorted.
+---@generic T : table
+---@param tbl T An array-like table.
+---@param sort boolean|nil Whether to sort the results.
+---@param sortFunc function|nil Optional function to use when sorting. Defaults to the regular table.sort otherwise.
+---@return T
+function TableHelpers.MakeUnique(tbl, sort, sortFunc)
+	local result = {}
+	local existing = {}
+	for _,v in pairs(tbl) do
+		if existing[v] == nil then
+			existing[v] = true
+			result[#result+1] = v
+		end
+	end
+	if sort then
+		if sortFunc then
+			table.sort(result, sortFunc)
+		else
+			table.sort(result)
+		end
+	end
+	return result
 end

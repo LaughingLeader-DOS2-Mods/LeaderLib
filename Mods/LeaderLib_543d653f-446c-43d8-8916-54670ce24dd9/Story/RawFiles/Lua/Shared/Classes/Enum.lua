@@ -1,4 +1,6 @@
 ---@class Enum
+---@field _Names table<string,integer>
+---@field _Integers table<integer,string>
 local Enum = {}
 
 local iter = function (tbl,i)
@@ -53,6 +55,11 @@ local function CreateEnum(target)
 		end,
 		__newindex = function() end,
 		__index = function(_,key)
+			if key == "_Names" then
+				return names
+			elseif key == "_Integers" then
+				return integers
+			end
 			return names[key] or integers[key]
 		end,
 		__pairs = iterFunc,

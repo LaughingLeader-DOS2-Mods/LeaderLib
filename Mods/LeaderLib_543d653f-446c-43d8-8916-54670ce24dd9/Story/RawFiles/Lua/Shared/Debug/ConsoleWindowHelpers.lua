@@ -31,8 +31,12 @@ if not isClient then
 			end
 			local v = char[k]
 			if type(v) == "function" then
-				return function(meTable, ...)
-					local b,result = pcall(v, char, ...)
+				return function(...)
+					local params = {...}
+					if params[1] == me then
+						table.remove(params, 1)
+					end
+					local b,result = pcall(v, char, table.unpack(params))
 					return result
 				end
 			else
@@ -259,7 +263,11 @@ else
 			local v = char[k]
 			if type(v) == "function" then
 				return function(...)
-					local b,result = pcall(v, char, ...)
+					local params = {...}
+					if params[1] == me then
+						table.remove(params, 1)
+					end
+					local b,result = pcall(v, char, table.unpack(params))
 					return result
 				end
 			else

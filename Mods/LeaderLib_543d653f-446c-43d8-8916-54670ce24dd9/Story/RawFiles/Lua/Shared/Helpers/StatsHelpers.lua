@@ -441,3 +441,37 @@ function GameHelpers.Stats.CharacterHasRequirements(character, statId)
 	end
 	return false
 end
+
+local _MaxEnumCount = {
+	["Penalty PreciseQualifier"] = 202,
+	Qualifier = 12
+}
+
+---@param value number The amount from a stat, such as the PenaltyPreciseQualifier value.
+---@return integer
+function GameHelpers.Stats.GetRangedMappedValue(value, maxEnumCount)
+	maxEnumCount = maxEnumCount or 202 -- Test value. 202 enum entries for PenaltyPreciseQualifier
+	return (100 * value - 100) / (maxEnumCount - 2)
+end
+
+local _getEnumIndex = Ext.Version() >= 56 and Ext.Stats.EnumLabelToIndex or Ext.EnumLabelToIndex
+
+---Get the scaled 
+---@param value number The Penalty PreciseQualifier amount, such as -4 in Stats_Flesh_Sacrifice.
+---@param level integer The level to scale the attribute to.
+---@return integer
+function GameHelpers.Stats.GetScaledAttribute(value, level)
+	--Norbyte: note that for enumerations, the value is the enumeration index!
+	local enumIndex = _getEnumIndex("Penalty PreciseQualifier", value)
+	local rangeMappedValue = GameHelpers.Stats.GetRangedMappedValue(enumIndex, _MaxEnumCount["Penalty PreciseQualifier"])
+	local gain = 2 * rangeMappedValue - 100
+	local absGain = math.abs(gain)
+	--0.75 by default, but the engine uses 1.0 of this key doesn't exist.
+	local growth = GameHelpers.GetExtraData("AttributeBoostGrowth", 1.0)
+	--math.sign basically
+	local gainShift = (gain > 0 and 1) or (gain == 0 and 0) or -1
+	local result = gainShift * math.ceil(((absGain/100) * level) * growth)
+	return result
+end
+
+--Mods.LeaderLib.GameHelpers.Stats.GetScaledAttribute(-4, 1)

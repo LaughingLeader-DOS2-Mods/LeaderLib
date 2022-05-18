@@ -421,7 +421,7 @@ function GameHelpers.Item.GetEquippedSlot(character, item)
     local character = GameHelpers.GetCharacter(character)
     for invItem in GameHelpers.Character.GetEquipment(character) do
         if invItem.NetID == netid then
-            return Data.EquipmentSlotNames[invItem.Slot]
+            return Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(invItem)]
         end
     end
     return nil
@@ -436,7 +436,7 @@ function GameHelpers.Item.GetItemInSlot(character, slot)
     local slotIndex = Data.EquipmentSlotNames[slot]
     fassert(slotIndex ~= nil, "'%s' is not a valid slot name", slot)
     for item in GameHelpers.Character.GetEquipment(char) do
-        if item.Slot == slotIndex then
+        if GameHelpers.Item.GetSlot(item) == slotIndex then
             return item
         end
     end
@@ -451,7 +451,7 @@ function GameHelpers.Item.GetEquippedTemplateSlot(character, template)
     for item in GameHelpers.Character.GetEquipment(character) do
         local itemTemplate = GameHelpers.GetTemplate(item)
         if itemTemplate == template then
-            return Data.EquipmentSlotNames[item.Slot],item
+            return Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(item)],item
         end
     end
     return nil
@@ -468,14 +468,14 @@ function GameHelpers.Item.GetEquippedTaggedItemSlot(character, tag)
     fassert(tagType ~= "string" or tagType ~= "table", "'%s' is not a valid tag or table of tags", tag)
     for item in GameHelpers.Character.GetEquipment(character) do
         if GameHelpers.ItemHasTag(item, tag) then
-            return Data.EquipmentSlotNames[item.Slot],item
+            return Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(item)],item
         end
     end
     return nil
 end
 
 if not _ISCLIENT then
-    
+
     ---[Server]
     ---@param character EsvCharacter|UUID|NETID
     ---@param item ItemParam
@@ -554,8 +554,7 @@ function GameHelpers.Item.ItemIsEquipped(character, item)
     local charUUID = StringHelpers.GetUUID(character)
     local itemObj = GameHelpers.GetItem(item)
     if charUUID and itemObj then
-        local slot = itemObj.Slot
-        if slot <= 13 then -- 13 is the Overhead slot, 14 is 'Sentinel'
+        if Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(itemObj)] then -- 13 is the Overhead slot, 14 is 'Sentinel'
             local owner = GameHelpers.GetCharacter(itemObj.InUseByCharacterHandle)
             return owner and owner.MyGuid == charUUID
         end
@@ -597,7 +596,7 @@ function GameHelpers.Item.FindTaggedEquipment(character, tag, asArray)
             if asArray then
                 items[#items+1] = item
             else
-                items[Data.EquipmentSlotNames[item.Slot]] = item
+                items[Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(item)]] = item
             end
         end
     end
@@ -755,14 +754,12 @@ end
 function GameHelpers.Item.GetSlot(item)
     local item = GameHelpers.GetItem(item)
     if item then
-        if _EXTVERSION >= 56 then
-            if _ISCLIENT then
-                return item.CurrentSlot
-            else
-                return item.Slot
-            end
-        elseif not _ISCLIENT then
+        if not _ISCLIENT then
             return item.Slot
+        elseif _EXTVERSION >= 56 then
+            --EclItem doesn't have a Slot property in v55
+            return item.CurrentSlot
         end
     end
+    return -1
 end

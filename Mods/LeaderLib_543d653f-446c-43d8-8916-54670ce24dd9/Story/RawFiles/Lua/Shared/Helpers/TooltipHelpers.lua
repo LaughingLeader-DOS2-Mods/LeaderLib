@@ -204,7 +204,7 @@ local function ReplacePlaceholders(str, character)
 			local props = StringHelpers.Split(fullParam, ":")
 			local skillName = ""
 			local param = ""
-			if #props >= 2 then
+			if props and #props >= 2 then
 				skillName = props[1]
 				param = props[2]
 			end

@@ -51,7 +51,7 @@ local function StatusGetDescriptionParam(status, statusSource, target, param1, p
 			if param3 == "Damage" then
 				local success,result = xpcall(function()
 					local skillSource = statusSource or target
-					local damageSkillProps = GameHelpers.Ext.CreateSkillTable(param2)
+					local damageSkillProps = GameHelpers.Ext.CreateSkillTable(param2, nil, true)
 					local damageRange = Game.Math.GetSkillDamageRange(skillSource, damageSkillProps)
 					if damageRange ~= nil then
 						local damageTexts = {}

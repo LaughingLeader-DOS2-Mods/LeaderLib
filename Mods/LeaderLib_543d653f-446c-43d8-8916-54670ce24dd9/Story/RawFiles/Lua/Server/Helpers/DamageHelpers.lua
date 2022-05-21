@@ -244,7 +244,7 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
         target = Ext.GetCharacter(target).Stats
     end
 
-    local skillData = GameHelpers.Ext.CreateSkillTable(skill)
+    local skillData = GameHelpers.Ext.CreateSkillTable(skill, nil, true)
 
     local damageList, deathType = Game.Math.GetSkillDamage(skillData, attacker, 0, GameHelpers.Status.IsSneakingOrInvisible(attacker.MyGuid), attacker.Position, target.Position, attacker.Level, noRandomization or false)
 
@@ -461,7 +461,7 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     hit.TargetHandle = target.Handle
     hit.StatusSourceHandle = source.Handle
 
-    local skillData = GameHelpers.Ext.CreateSkillTable(skill)
+    local skillData = GameHelpers.Ext.CreateSkillTable(skill, nil, true)
     if params.SkillDataParamModifiers then
         for k,v in pairs(params.SkillDataParamModifiers) do
             skillData[k] = v
@@ -563,7 +563,7 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
     local hit = NRD_HitPrepare(target.MyGuid, source.MyGuid)
     NRD_HitSetInt(hit, "SimulateHit", 1)
 
-    local skillData = GameHelpers.Ext.CreateSkillTable(skill)
+    local skillData = GameHelpers.Ext.CreateSkillTable(skill, nil, true)
     if skillDataParamModifiers then
         for k,v in pairs(skillDataParamModifiers) do
             skillData[k] = v

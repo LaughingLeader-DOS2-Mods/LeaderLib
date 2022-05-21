@@ -183,7 +183,7 @@ if not isClient then
 		local dist = GameHelpers.Math.GetDistance(targetObject, startPos)
 		local distMult = math.abs(distanceMultiplier)
 		if dist > distMult then
-			fprint(LOGLEVEL.WARNING, "[GameHelpers.ForceMoveObject] target(%s) is outside of the push distance range (%s) > (%s) from the starting position(%s,%s,%s). Skipping.", targetObject.MyGuid, dist, distMult, Lib.serpent.line(startPos))
+			fprint(LOGLEVEL.WARNING, "[GameHelpers.ForceMoveObject] target(%s) is outside of the push distance range (%s) > (%s) from the starting position. Skipping.", targetObject.DisplayName, dist, distMult)
 			return false
 		end
 		local existingData = PersistentVars.ForceMoveData[targetObject.MyGuid]

@@ -35,19 +35,26 @@ local function GetRandomPositionInCircleRadius(tx,ty,tz,radius,angle,theta)
 end
 
 ---@class LeaderLibProjectileCreationProperties:EsvShootProjectileRequest
----@field PlayCastEffects boolean
----@field PlayTargetEffects boolean
----@field EnemiesOnly boolean
----@field Height number
----@field SetHitObject boolean
----@field SourceOffset number[]
----@field TargetOffset number[]
----@field ParamsParsed fun(props:EsvShootProjectileRequest, sourceObject:EsvCharacter|EsvItem|nil, targetObject:EsvCharacter|EsvItem|nil)
+---@field PlayCastEffects boolean|nil
+---@field PlayTargetEffects boolean|nil
+---@field EnemiesOnly boolean|nil
+---@field Height number|nil
+---@field SetHitObject boolean|nil
+---@field SourceOffset number[]|nil
+---@field TargetOffset number[]|nil
+---@field ParamsParsed fun(props:EsvShootProjectileRequest, sourceObject:EsvCharacter|EsvItem|nil, targetObject:EsvCharacter|EsvItem|nil)|nil
+---@field SkillOverrides StatEntrySkillData|nil Optional table of skill attributes to override the skill logic with.
 
 local LeaderLibProjectileCreationPropertyNames = {
     PlayCastEffects = "boolean",
     PlayTargetEffects = "boolean",
     EnemiesOnly = "boolean",
+    Height = "number",
+    SetHitObject = "boolean",
+    SourceOffset = "table",
+    TargetOffset = "table",
+    ParamsParsed = "function",
+    SkillOverrides = "table",
 }
 
 ---@param target UUID|EsvCharacter|EsvItem|number[]
@@ -126,7 +133,7 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
     if targetObject and sourceObject and enemiesOnly == true then
         if sourceType == "character"
         and targetType == "character"
-        and (CharacterIsEnemy(targetObject.MyGuid, sourceObject.MyGuid) == 0 and IsTagged(target.MyGuid, "LeaderLib_FriendlyFireEnabled") == 0)
+        and (not GameHelpers.Character.IsEnemy(targetObject, sourceObject) and not targetObject:HasTag("LeaderLib_FriendlyFireEnabled"))
         then
             props.HitObject = nil
             props.HitObjectPosition = nil
@@ -156,10 +163,12 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
 
     if type(extraParams) == "table" then
         for k,v in pairs(extraParams) do
-            if v == "nil" then
-                props[k] = nil
-            else
-                props[k] = v
+            if not LeaderLibProjectileCreationPropertyNames[k] then
+                if v == "nil" then
+                    props[k] = nil
+                else
+                    props[k] = v
+                end
             end
         end
     end
@@ -226,9 +235,9 @@ local function PlayProjectileSkillEffects(skill, props, playCastEffect, playTarg
             local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
             local bone = effectEntry:gsub(".+:", "") or ""
             if props.Caster and not StringHelpers.IsNullOrEmpty(bone) then
-                PlayEffect(props.Caster, effect, bone)
+                EffectManager.PlayEffect(effect, props.Caster, {Bone=bone})
             elseif props.SourcePosition then
-                PlayEffectAtPosition(effect, table.unpack(props.SourcePosition))
+                EffectManager.PlayEffectAt(effect, props.SourcePosition)
             end
         end
     end
@@ -238,9 +247,9 @@ local function PlayProjectileSkillEffects(skill, props, playCastEffect, playTarg
             local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
             local bone = effectEntry:gsub(".+:", "") or ""
             if props.Target and not StringHelpers.IsNullOrEmpty(bone) then
-                PlayEffect(props.Target, effect, bone)
+                EffectManager.PlayEffect(effect, props.Target, {Bone=bone})
             elseif props.TargetPosition then
-                PlayEffectAtPosition(effect, table.unpack(props.TargetPosition))
+                EffectManager.PlayEffectAt(effect, props.TargetPosition)
             end
         end
     end
@@ -252,7 +261,12 @@ end
 ---@param extraParams LeaderLibProjectileCreationProperties
 function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extraParams)
     extraParams = type(extraParams) == "table" and extraParams or {}
-    local skill = Ext.GetStat(skillId)
+    local skill = GameHelpers.Ext.CreateSkillTable(skillId)
+    if type(extraParams.SkillOverrides) == "table" then
+        for k,v in pairs(extraParams.SkillOverrides) do
+            skill[k] = v
+        end
+    end
     local count = skill.StrikeCount or 0
     local props,radius = PrepareProjectileProps(target, skill, source, extraParams)
 
@@ -285,19 +299,30 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
 
     if count > 0 then
         local startingAngle = GameHelpers.Math.Clamp(skill.Angle, -44, 44)
-
-        if skill.SingleSource ~= "Yes" then
-            local tx,ty,tz = table.unpack(props.TargetPosition)
-            if skill.Distribution == "Random" then
-                positions = {}
-                for p=1,count do
-                    local cx,cy,cz = GetRandomPositionInCircleRadius(tx,ty,tz,radius)
-                    positions[p] = {cx,cy,cz}
-                end
-            elseif skill.Distribution == "Edge" then
-                positions = {}
-                local inc = 360/count
-                for p=1,count do
+        local tx,ty,tz = table.unpack(props.TargetPosition)
+        if skill.Distribution == "Random" then
+            positions = {}
+            for p=1,count do
+                local cx,cy,cz = GetRandomPositionInCircleRadius(tx,ty,tz,radius)
+                positions[p] = {cx,cy,cz}
+            end
+        elseif skill.Distribution == "Edge" then
+            positions = {}
+            local inc = 360/count
+            for p=1,count do
+                local angle = startingAngle + (inc * p)
+                local rads = math.rad(angle)
+                local cx = tx + (radius * math.cos(rads))
+                local cz = tz + (radius * math.sin(rads))
+                local cy = GameHelpers.Grid.GetY(cx,cz)
+                positions[p] = {cx,cy,cz}
+            end
+        elseif skill.Distribution == "EdgeCenter" then
+            positions = {}
+            local center = {tx,ty,tz}
+            if count > 1 then
+                local inc = 360/(count-1)
+                for p=1,count-1 do
                     local angle = startingAngle + (inc * p)
                     local rads = math.rad(angle)
                     local cx = tx + (radius * math.cos(rads))
@@ -305,44 +330,34 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
                     local cy = GameHelpers.Grid.GetY(cx,cz)
                     positions[p] = {cx,cy,cz}
                 end
-            elseif skill.Distribution == "EdgeCenter" then
-                positions = {}
-                local center = {tx,ty,tz}
-                if count > 1 then
-                    local inc = 360/(count-1)
-                    for p=1,count-1 do
-                        local angle = startingAngle + (inc * p)
-                        local rads = math.rad(angle)
-                        local cx = tx + (radius * math.cos(rads))
-                        local cz = tz + (radius * math.sin(rads))
-                        local cy = GameHelpers.Grid.GetY(cx,cz)
-                        positions[p] = {cx,cy,cz}
-                    end
+            end
+            positions[#positions+1] = center
+        elseif skill.Distribution == "Line" then -- Custom
+            positions = {}
+            --startingAngle = startingAngle - 90
+            local nextAngle = 0
+            local nextRadius = 0
+            for p=1,count do
+                local rads = math.rad(nextAngle)
+                local cx = tx + (nextRadius * math.cos(rads))
+                local cz = tz + (nextRadius * math.sin(rads))
+                local cy = GameHelpers.Grid.GetY(cx,cz)
+                positions[p] = {cx,cy,cz}
+                if nextAngle == startingAngle then
+                    nextAngle = startingAngle + 180
+                else
+                    nextAngle = startingAngle
                 end
-                positions[#positions+1] = center
-            elseif skill.Distribution == "Line" then -- Custom
-                positions = {}
-                --startingAngle = startingAngle - 90
-                local nextAngle = 0
-                local nextRadius = 0
-                for p=1,count do
-                    local rads = math.rad(nextAngle)
-                    local cx = tx + (nextRadius * math.cos(rads))
-                    local cz = tz + (nextRadius * math.sin(rads))
-                    local cy = GameHelpers.Grid.GetY(cx,cz)
-                    positions[p] = {cx,cy,cz}
-                    if nextAngle == startingAngle then
-                        nextAngle = startingAngle + 180
-                    else
-                        nextAngle = startingAngle
-                    end
-                    if nextRadius > 0 then
-                        nextRadius = -radius * p
-                    else
-                        nextRadius = radius * p
-                    end
+                if nextRadius > 0 then
+                    nextRadius = -radius * p
+                else
+                    nextRadius = radius * p
                 end
             end
+        end
+
+        if positions and skill.Shuffle == "Yes" then
+            positions = TableHelpers.ShuffleTable(positions)
         end
     end
 
@@ -351,15 +366,11 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
     --local originalSource = TableHelpers.Clone(props.SourcePosition)
 
     if count > 0 then
-        if skill.SingleSource ~= "Yes" and skill.Shuffle and string.find(skill.Distribution, "Edge") then
-            positions = TableHelpers.ShuffleTable(positions)
-        end
         local i = 1
         local timerName = string.format("Timers_LeaderLib_ProjectileStrike%s%s", id, Ext.MonotonicTime())
         local onTimer = nil
         onTimer = function()
-            local skill = Ext.GetStat(skillId)
-            if skill.SingleSource ~= "Yes" and positions ~= nil then
+            if positions ~= nil then
                 local x,y,z = table.unpack(positions[i])
                 props.TargetPosition = {x,y,z}
                 props.SourcePosition = {x,y+height,z}
@@ -382,7 +393,12 @@ end
 ---@param extraParams LeaderLibProjectileCreationProperties|nil Optional table of properties to apply on top of the properties set from the skill stat.
 function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParams)
     extraParams = type(extraParams) == "table" and extraParams or {}
-    local skill = Ext.GetStat(skillId)
+    local skill = GameHelpers.Ext.CreateSkillTable(skillId)
+    if type(extraParams.SkillOverrides) == "table" then
+        for k,v in pairs(extraParams.SkillOverrides) do
+            skill[k] = v
+        end
+    end
     if not extraParams.SourceOffset then
         extraParams.SourceOffset = {0,2,0}
     end
@@ -414,7 +430,12 @@ function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
         }
     end
     extraParams = type(extraParams) == "table" and extraParams or {}
-    local skill = Ext.GetStat(skillId)
+    local skill = GameHelpers.Ext.CreateSkillTable(skillId)
+    if type(extraParams.SkillOverrides) == "table" then
+        for k,v in pairs(extraParams.SkillOverrides) do
+            skill[k] = v
+        end
+    end
     local props,radius = PrepareProjectileProps(target, skill, source, extraParams)
 
     --Making the source and target positions match
@@ -474,12 +495,14 @@ end
 ---@field PlayCastEffects boolean
 ---@field PlayTargetEffects boolean
 ---@field ApplySkillProperties boolean
+---@field SkillOverrides StatEntrySkillData|nil Optional table of skill attributes to override the skill logic with.
 
 
 local LeaderLibZoneCreationPropertiesNames = {
     PlayCastEffects = "boolean",
     PlayTargetEffects = "boolean",
     ApplySkillProperties = "boolean",
+    SkillOverrides = "table",
 }
 
 ---Shoot a zone/cone skill at a target object or position.
@@ -488,8 +511,13 @@ local LeaderLibZoneCreationPropertiesNames = {
 ---@param target UUID|number[]|EsvCharacter|EsvItem
 ---@param extraParams LeaderLibZoneCreationProperties An optional table of properties to apply on top of the parsed skill properties.
 function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
-    ---@type StatEntrySkillData
-    local skill = Ext.GetStat(skillId)
+    extraParams = type(extraParams) == "table" and extraParams or {}
+    local skill = GameHelpers.Ext.CreateSkillTable(skillId)
+    if type(extraParams.SkillOverrides) == "table" then
+        for k,v in pairs(extraParams.SkillOverrides) do
+            skill[k] = v
+        end
+    end
     ---@type EsvZoneAction
     local action = Ext.CreateSurfaceAction("ZoneAction")
     ---@type LeaderLibZoneCreationProperties

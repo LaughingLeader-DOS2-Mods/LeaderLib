@@ -258,6 +258,7 @@ ModListeners = {
 
 LocalizedText = {}
 
+---@class LeaderLibFeatures
 Features = {
 	---Applies ExtraProperties from BonusWeapon stats in active statuses, on basic attack or hit with a skill that has UseWeaponProperties.
 	ApplyBonusWeaponStatuses = false,

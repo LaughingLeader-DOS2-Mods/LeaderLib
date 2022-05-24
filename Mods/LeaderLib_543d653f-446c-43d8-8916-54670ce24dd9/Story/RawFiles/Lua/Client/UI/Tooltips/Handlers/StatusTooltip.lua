@@ -21,13 +21,13 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 				if Features.FixChaosDamageDisplay and not Data.EngineStatus[status.StatusId] then
 					local statusType = Ext.StatGetAttribute(status.StatusId, "StatusType")
 					local descParams = Ext.StatGetAttribute(status.StatusId, "DescriptionParams")
-					if statusType == "DAMAGE" 
+					if statusType == "DAMAGE"
 						and not StringHelpers.IsNullOrEmpty(descParams)
-						and string.find(descParams, "Damage") 
+						and string.find(descParams, "Damage")
 						and not string.find(element.Label:lower(), LocalizedText.DamageTypeHandles.Chaos.Text.Value)
 					then
-						local startPos,endPos,damage = string.find(element.Label, TooltipHandler.ChaosDamagePattern)
-						if damage ~= nil then
+						local startPos,endPos,damage = string.find(element.Label, TooltipHandler.Settings.ChaosDamagePattern)
+						if damage ~= nil and not string.find(element.Label, TooltipHandler.Settings.SkipChaosDamagePattern, startPos) then
 							damage = string.gsub(damage, "%s+", "")
 							local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
 							element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))

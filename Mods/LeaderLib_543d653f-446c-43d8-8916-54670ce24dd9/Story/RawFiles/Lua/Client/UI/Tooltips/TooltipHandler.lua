@@ -2,13 +2,19 @@ if TooltipHandler == nil then
 	TooltipHandler = {}
 end
 
+--Global access for mods
+TooltipHandler.Settings = {
+	ChaosDamagePattern = "<font color=\"#C80030\">([%d-%s]+)</font>",
+	---Skills to always avoid formatting damage text for.
+	---@see LeaderLibFeatures#FixChaosDamageDisplay
+	IgnoreDamageFixingSkills = {}
+}
+
 ---@type table<string,TagTooltipData>
 TooltipHandler.TagTooltips = {}
 TooltipHandler.HasTagTooltipData = false
 ---@type EclItem
 TooltipHandler.LastItem = nil
-
-TooltipHandler.ChaosDamagePattern = "<font color=\"#C80030\">([%d-%s]+)</font>"
 ---RootTemplate -> Skill -> Enabled
 ---@type table<string,table<string,boolean>>
 TooltipHandler.SkillBookAssociatedSkills = {}

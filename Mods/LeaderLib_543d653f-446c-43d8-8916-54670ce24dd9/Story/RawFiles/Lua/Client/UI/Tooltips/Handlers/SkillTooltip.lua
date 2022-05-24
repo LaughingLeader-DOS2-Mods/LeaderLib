@@ -4,14 +4,19 @@ local FarOutManFixSkillTypes = {
 	Zone = "Range",
 }
 
+TooltipHandler.Settings.FarOutManFixSkillTypes = FarOutManFixSkillTypes
+
+--Any text with the same color following the damage numbers, as it may be trying to give chaos damage a name
+local _skipChaosDamagePattern = "<font color=\"#C80030\">[%d-%s]+</font>%s-<font color=[\"-']#C80030[\"-']>([%a-%s]+)</font>"
+TooltipHandler.Settings.SkipChaosDamagePattern = _skipChaosDamagePattern
+
 local DamageNameFixing = {
 	Chaos = {
 		IsActive = function(skill) return Features.FixChaosDamageDisplay == true end,
-		Pattern = "<font color=\"#C80030\">([%d-%s]+)</font>",
 		Name = LocalizedText.DamageTypeHandles.Chaos.Text,
 		Replace = function (self, damageType, element)
-			local startPos,endPos,damageText = string.find(element.Label, self.Pattern)
-			if damageText ~= nil then
+			local startPos,endPos,damageText = string.find(element.Label, TooltipHandler.Settings.ChaosDamagePattern)
+			if damageText ~= nil and not string.find(element.Label, _skipChaosDamagePattern, startPos) then
 				damageText = string.gsub(damageText, "%s+", "")
 				local removeText = string.gsub(string.sub(element.Label, startPos, endPos), "%-", "%%-")
 				element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText(damageType, damageText))
@@ -70,10 +75,36 @@ local DamageNameFixing = {
 	},
 }
 
+TooltipHandler.Settings.DamageNameFixing = DamageNameFixing
+
+local _skillDamagePattern = "(.+):Damage"
+
+local function GetSkillDamageTypes(id, description)
+	local skill = Ext.GetStat(id)
+	local damageTypes = {
+		[skill.DamageType] = true
+	}
+	if not StringHelpers.IsNullOrWhitespace(skill.StatsDescriptionParams) then
+		for _,v in pairs(StringHelpers.Split(skill.StatsDescriptionParams, ";")) do
+			local _,_,otherSkill = string.find(v, _skillDamagePattern)
+			if otherSkill then
+				local damageType = Ext.StatGetAttribute(otherSkill, "DamageType")
+				if damageType then
+					damageTypes[damageType] = true
+				end
+			end
+		end
+	end
+	return damageTypes
+end
+
 local function FixDamageNames(skill, element)
-	for damageType,data in pairs(DamageNameFixing) do
-		if data.IsActive(skill) then
-			data:Replace(damageType, element)
+	if not TooltipHandler.Settings.IgnoreDamageFixingSkills[skill] then
+		local validDamageTypes = GetSkillDamageTypes(skill, element.Label)
+		for damageType,data in pairs(DamageNameFixing) do
+			if validDamageTypes[damageType] and data.IsActive(skill) then
+				data:Replace(damageType, element)
+			end
 		end
 	end
 end

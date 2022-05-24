@@ -110,13 +110,13 @@ if not isClient then
 	function GameHelpers.Internal.OnForceMoveTimer(e)
 		local target = e.Data.UUID
 		if target ~= nil then
+			local targetObject = Ext.GetGameObject(target)
 			local targetData = PersistentVars.ForceMoveData[target]
 			if targetData ~= nil then
 				local x,y,z = table.unpack(targetData.Position)
 				if GetDistanceToPosition(target, x,y,z) < 1 then
 					pcall(NRD_GameActionDestroy,targetData.Handle)
 					PersistentVars.ForceMoveData[target] = nil
-					local targetObject = Ext.GetGameObject(target)
 					local source = targetData.Source
 					if source then
 						source = Ext.GetGameObject(targetData.Source)
@@ -137,11 +137,14 @@ if not isClient then
 				else
 					Timer.StartObjectTimer(e.ID, target, 250)
 				end
+			elseif targetObject then
+				fprint(LOGLEVEL.WARNING, "[LeaderLib_OnForceMoveAction] No force move data for target (%s). How did this happen?", targetObject.DisplayName)
+				InvokeListenerCallbacks(Listeners.ForceMoveFinished, targetObject, nil, 0, targetObject.WorldPos, nil)
 			end
 		end
 	end
 
-	Timer.Subscribe("LeaderLib_OnForceMoveAction", GameHelpers.Internal.OnForceMoveTimer)
+	Timer.Subscribe("LeaderLib_OnForceMoveAction", function(e) GameHelpers.Internal.OnForceMoveTimer(e) end)
 
 	---@private
 	function GameHelpers.CanForceMove(target, source)

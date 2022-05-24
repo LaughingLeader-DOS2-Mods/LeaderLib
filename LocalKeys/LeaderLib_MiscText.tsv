@@ -1,2 +1,25 @@
 Key	Content	Handle
 LeaderLib_StatusText_LeaderTrader_StealthText	<font color='#9400D3'>Stealth Mastery</font>	hc9cc1024g797fg4770g8ffagf1b4041e4c48
+LeaderLib_StatusText_ModSettingCombatRestricted	<font color='#FF0000'>Unable to open Mod Settings menu in combat.</font>"	ha4c72605gbcfdg4404g9328g194ce4fbe7c3
+LeaderLib_Autosaving_Dialog_TimeLeft	Time Left: <font color='#FF69B4'>[1]</font>	h294953c4gb842g4948gad7ag6f1c5f089665
+LeaderLib_Autosaving_Dialog_TimerNotStarted	<font color='#FFA500'>Timer not started. Enable/Disable autosaving to restart the timer.</font>	h25a5f7c1gb4cdg4da3g9044g227caec5e085
+LeaderLib_Autosaving_Dialog_Enabled	Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>[1]</font>[2]	hcd6be61fgc899g488eg8402gfc5fd66f433f
+LeaderLib_Autosaving_Dialog_Disabled	Autosaving <font color='#FF0000'>Disabled</font> | Interval: <font color='#00FFFF'>[1]</font>	hecf0a362g5ec9g406dg84d5g19c9798d1a9d
+LeaderLib_Autosaving_CurrentSuffix	<b>*Current*</b>	h48068f71g4d84g4080g98a2gabf8cd5ab4c9
+LeaderLib_Autosaving_Option1	2 Minutes	he19dee31gfcaeg4728g8ef9g5a162f33b202
+LeaderLib_Autosaving_Option2	5 Minutes	heb70e4b0g1413g4a32g816bg879c818035ca
+LeaderLib_Autosaving_Option3	10 Minutes	h45f936dcgcb43g41bcga6dfg064fd58eb3c9
+LeaderLib_Autosaving_Option4	15 Minutes	he6325545g855bg4e4fgb6efge2aeef53b48d
+LeaderLib_Autosaving_Option5	20 Minutes	h9cd49a4fg1291g4ae3gbfccg9d28611b7f48
+LeaderLib_Autosaving_Option6	25 Minutes	hef9ca7dag2c52g4d42gbc3dgf5d09d8b1449
+LeaderLib_Autosaving_Option7	30 Minutes	h562ae9eagd11cg48adg8b31ga7c7f5782fec
+LeaderLib_Autosaving_Option8	35 Minutes	h94a89d2fg2a0fg46ccg9ee4g075666c38b55
+LeaderLib_Autosaving_Option9	40 Minutes	h31a1748bg9444g48b0ga7a1g2dbc533e9d7b
+LeaderLib_Autosaving_Option10	45 Minutes	he4d074d6g9f35g4a33g86b9g1f88f65a25fc
+LeaderLib_Autosaving_Option11	60 Minutes	h36f546a7g8c42g424bgb8fagbb3eb095612c
+LeaderLib_Autosaving_Option12	90 Minutes	h8441aedfg5d90g4115g9b7cg7b2db6295cd9
+LeaderLib_Autosaving_Option13	2 Hours	hbfaa33dbg7c50g40aeg9efbg81e39a843f4a
+LeaderLib_Autosaving_Option14	3 Hours	h962fe0e4g5b33g4f5bgb774g1cc20a97f7c2
+LeaderLib_Autosaving_Option15	4 Hours	h5c9b29c0ge920g4fd8ga845g9f1196c77a9e
+LeaderLib_Minutes	Minute(s)	h15164718gc586g4ccfg8066geee22eb3d6f5
+LeaderLib_Hours	Hour(s)	h9fcff369gab94g49b3g9a5fgc63af724fb56

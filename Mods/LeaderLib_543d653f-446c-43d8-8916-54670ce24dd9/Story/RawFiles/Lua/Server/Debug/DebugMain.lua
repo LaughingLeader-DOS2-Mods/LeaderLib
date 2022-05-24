@@ -794,28 +794,14 @@ end) ]]
 
 --print(GetFaction("08348b3a-bded-4811-92ce-f127aa4310e0"), "<=>", GetFaction(host.MyGuid), CharacterGetRelationToCharacter("08348b3a-bded-4811-92ce-f127aa4310e0", host.MyGuid))
 
---[[ ---@param target EsvCharacter|EsvItem
+---@param target EsvCharacter|EsvItem
 ---@param source EsvCharacter|EsvItem|nil
 ---@param distance number
 ---@param startingPosition number[]
 ---@param skill StatEntrySkillData|nil
 RegisterListener("ForceMoveFinished", function(target, source, distance, startingPosition, skill)
 	fprint(LOGLEVEL.DEFAULT, "[ForceMoveFinished] target(%s) source(%s) distance(%s) startingPosition(%s) skill(%s)", target.DisplayName, source and source.DisplayName or "", distance, string.format("%s,%s,%s", table.unpack(startingPosition)), skill and skill.Name or "None")
-	if skill and skill.Name == "Target_LeaderLib_Debug_ExtenderPropsTest" then
-		local characters = {}
-		for i,v in pairs(Ext.GetAllCharacters()) do
-			if v ~= target.MyGuid and GetDistanceToPosition(v, target.WorldPos[1], target.WorldPos[2], target.WorldPos[3]) <= 2.0 then
-				characters[#characters+1] = v
-			end
-		end
-		for i,v in pairs(characters) do
-			local t2 = Ext.GetCharacter(v)
-			GameHelpers.ForceMoveObject(target, t2, 3.0, nil, target.WorldPos)
-			GameHelpers.Damage.ApplySkillDamage(source, t2.MyGuid, "Projectile_EnemyStaffOfMagusEarth")
-			--GameHelpers.ForceMoveObject(source, t2, 3.0, nil, target.WorldPos)
-		end
-	end
-end, nil) ]]
+end, nil)
 
 --ItemTemplateAddTo("84625ce6-ed15-46d2-aa7e-73021b1b5257", me.MyGuid, 1, 0)
 --local x,y,z = table.unpack(Mods.LeaderLib.GameHelpers.Math.ExtendPositionWithForwardDirection(Ext.GetCharacter(me.MyGuid), 4)); CreateItemTemplateAtPosition("84625ce6-ed15-46d2-aa7e-73021b1b5257", x, y, z)

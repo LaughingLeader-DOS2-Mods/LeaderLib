@@ -3,6 +3,19 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LeaderLib_Autosaving_InitSettings();
 KBSECTION
+
+//Migrating to a dynamic menu that can be translated if the extender is active.
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,7,21,0)
+THEN
+LeaderLib_DynamicMenu_ClearMenu("LeaderLib.Autosave.IntervalSettings");
+LeaderLib_Autosaving_InitSettings();
+*/
+
 //REGION SETTINGS
 PROC
 LeaderLib_Autosaving_InitSettings()
@@ -10,6 +23,7 @@ THEN
 LeaderLib_DynamicMenu_Register_DefaultMenu("LeaderLib.Autosave.IntervalSettings");
 LeaderLib_DynamicMenu_Register_Dialog("LeaderLib.Autosave.IntervalSettings", "LeaderLib_AutosaveMenu");
 
+// [BEGIN_NO_OSITOOLS]
 LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_2", "2 Minutes");
 LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_5", "5 Minutes");
 LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_10", "10 Minutes");
@@ -25,7 +39,26 @@ LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "Lea
 LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_120", "2 Hours");
 LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_180", "3 Hours");
 LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_240", "4 Hours");
+// [END_NO_OSITOOLS]
+/* [OSITOOLS_ONLY]
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_2", "he19dee31gfcaeg4728g8ef9g5a162f33b202", "2 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_5", "heb70e4b0g1413g4a32g816bg879c818035ca", "5 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_10", "h45f936dcgcb43g41bcga6dfg064fd58eb3c9", "10 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_15", "he6325545g855bg4e4fgb6efge2aeef53b48d", "15 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_20", "h9cd49a4fg1291g4ae3gbfccg9d28611b7f48", "20 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_25", "hef9ca7dag2c52g4d42gbc3dgf5d09d8b1449", "25 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_30", "h562ae9eagd11cg48adg8b31ga7c7f5782fec", "30 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_35", "h94a89d2fg2a0fg46ccg9ee4g075666c38b55", "35 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_40", "h31a1748bg9444g48b0ga7a1g2dbc533e9d7b", "40 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_45", "he4d074d6g9f35g4a33g86b9g1f88f65a25fc", "45 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_60", "h36f546a7g8c42g424bgb8fagbb3eb095612c", "60 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_90", "h8441aedfg5d90g4115g9b7cg7b2db6295cd9", "90 Minutes");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_120", "hbfaa33dbg7c50g40aeg9efbg81e39a843f4a", "2 Hours");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_180", "h962fe0e4g5b33g4f5bgb774g1cc20a97f7c2", "3 Hours");
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_240", "h5c9b29c0ge920g4fd8ga845g9f1196c77a9e", "4 Hours");
+*/
 
+SysClear("DB_LeaderLib_Autosaving_Interval", 2);
 DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_2", 2);
 DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_5", 5);
 DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_10", 10);
@@ -365,8 +398,60 @@ DB_DialogName("LeaderLib_AutosaveMenu", _Instance)
 THEN
 LeaderLib_Autosaving_Internal_UpdateDialogVar(_Instance);
 
+QRY
+LeaderLib_Autosaving_QRY_TimerDone()
+AND
+NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Autosaving_QRY_TimerDone()
+AND
+DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
+AND
+DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
+AND
+_Minutes <= 0
+THEN
+DB_NOOP(1);
+
 PROC
 LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
+THEN
+LeaderLib_Autosaving_Internal_UpdateDialogVar_Old(_Instance);
+
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, "LeaderLib.Autosave.IntervalSettings", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_GlobalFlag, (STRING)_DisplayText)
+AND
+DB_LeaderLib_Autosaving_CurrentInterval(_GlobalFlag)
+AND
+StringConcatenate(_DisplayText, " <b>*Current*</b>", _SelectedText)
+THEN
+DialogSetVariableStringForInstance(_Instance, _DialogVar, _SelectedText);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+THEN
+NRD_ModCall("LeaderLib", "Autosaving_Internal_UpdateDialogVar", (STRING)_Instance);
+
+PROC
+LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, "LeaderLib.Autosave.IntervalSettings", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_GlobalFlag, (STRING)_DisplayText)
+AND
+DB_LeaderLib_Autosaving_CurrentInterval(_GlobalFlag)
+AND
+DB_LeaderLib_DynamicMenu_TranslatedStrings("LeaderLib.Autosave.IntervalSettings", _GlobalFlag, _Handle, _ReferenceText)
+THEN
+NRD_ModCall("LeaderLib", "Autosaving_Internal_UpdateDialogVarMenuSelectedOption", (STRING)_Instance, _DialogVar, _Handle, _ReferenceText);
+*/
+
+PROC
+LeaderLib_Autosaving_Internal_UpdateDialogVar_Old((INTEGER)_Instance)
 AND
 DB_GlobalFlag("LeaderLib_AutosavingEnabled")
 AND
@@ -395,7 +480,7 @@ THEN
 DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
 
 PROC
-LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+LeaderLib_Autosaving_Internal_UpdateDialogVar_Old((INTEGER)_Instance)
 AND
 NOT DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1)
 AND
@@ -422,26 +507,8 @@ THEN
 DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
 DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1);
 
-QRY
-LeaderLib_Autosaving_QRY_TimerDone()
-AND
-NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_Autosaving_QRY_TimerDone()
-AND
-DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
-AND
-DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
-AND
-_Minutes <= 0
-THEN
-DB_NOOP(1);
-
 PROC
-LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+LeaderLib_Autosaving_Internal_UpdateDialogVar_Old((INTEGER)_Instance)
 AND
 NOT DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1)
 AND
@@ -463,7 +530,7 @@ DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
 DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1);
 
 PROC
-LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+LeaderLib_Autosaving_Internal_UpdateDialogVar_Old((INTEGER)_Instance)
 AND
 NOT DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1)
 AND
@@ -483,20 +550,11 @@ DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str2);
 DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1);
 
 PROC
-LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+LeaderLib_Autosaving_Internal_UpdateDialogVar_Old((INTEGER)_Instance)
 AND
 DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1)
 THEN
 NOT DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1);
-
-PROC
-LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, "LeaderLib.Autosave.IntervalSettings", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_GlobalFlag, (STRING)_DisplayText)
-AND
-DB_LeaderLib_Autosaving_CurrentInterval(_GlobalFlag)
-AND
-StringConcatenate(_DisplayText, " <b>*Current*</b>", _SelectedText)
-THEN
-DialogSetVariableStringForInstance(_Instance, _DialogVar, _SelectedText);
 
 PROC
 LeaderLib_DynamicMenu_OnEntrySelected("LeaderLib.Autosave.IntervalSettings", (GUIDSTRING)_Player, (INTEGER)_Instance, (STRING)_GlobalFlag)

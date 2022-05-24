@@ -4,6 +4,55 @@ INITSECTION
 
 KBSECTION
 
+//REGION CLEARING
+PROC
+LeaderLib_DynamicMenu_ClearMenu((STRING)_ID)
+THEN
+LeaderLib_Array_ClearArray(_ID);
+
+PROC
+LeaderLib_DynamicMenu_ClearMenu((STRING)_ID)
+AND
+StringConcatenate("LeaderLib_MenuVars_", _ID, _VarArrayID)
+THEN
+LeaderLib_Array_ClearArray(_VarArrayID);
+
+PROC
+LeaderLib_DynamicMenu_ClearMenu((STRING)_ID)
+AND
+DB_LeaderLib_DynamicMenu_Dialog(_ID, _Dialog)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Dialog(_ID, _Dialog);
+
+PROC
+LeaderLib_DynamicMenu_ClearMenu((STRING)_ID)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _Num, _Num2)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _Num, _Num2);
+
+PROC
+LeaderLib_DynamicMenu_ClearMenu((STRING)_ID)
+AND
+DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag);
+
+PROC
+LeaderLib_DynamicMenu_ClearMenu((STRING)_ID)
+AND
+DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag);
+
+PROC
+LeaderLib_DynamicMenu_ClearMenu((STRING)_ID)
+AND
+DB_LeaderLib_DynamicMenu_TranslatedStrings(_ID, _Key, _Handle, _ReferenceText)
+THEN
+NOT DB_LeaderLib_DynamicMenu_TranslatedStrings(_ID, _Key, _Handle, _ReferenceText);
+//END_REGION
+
 //REGION REGISTERING_AND_CONFIG
 PROC
 LeaderLib_DynamicMenu_Register_DefaultMenu((STRING)_ID)

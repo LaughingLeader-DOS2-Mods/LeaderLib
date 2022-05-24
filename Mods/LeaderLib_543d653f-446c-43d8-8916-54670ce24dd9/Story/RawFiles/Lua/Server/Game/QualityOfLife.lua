@@ -195,3 +195,58 @@ Timer.Subscribe("LeaderLib_UnlockCharacterInventories", function (e)
 		GameHelpers.Net.Broadcast("LeaderLib_UnlockCharacterInventory")
 	end
 end)
+
+
+local AutoSavingEnabledDialogText = Classes.TranslatedString:CreateFromKey("LeaderLib_Autosaving_Dialog_Enabled", "Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>[1]</font>[2]")
+local AutoSavingDisabledDialogText = Classes.TranslatedString:CreateFromKey("LeaderLib_Autosaving_Dialog_Disabled", "Autosaving <font color='#FF0000'>Disabled</font> | Interval: <font color='#00FFFF'>[1]</font>")
+local AutoSavingTimeLeftText = Classes.TranslatedString:CreateFromKey("LeaderLib_Autosaving_Dialog_TimeLeft", "Time Left: <font color='#FF69B4'>[1]</font>")
+local TimerNotStartedText = Classes.TranslatedString:CreateFromKey("LeaderLib_Autosaving_Dialog_TimerNotStarted", "<font color='#FFA500'>Timer not started. Enable/Disable autosaving to restart the timer.</font>")
+local CurrentSuffix = Classes.TranslatedString:CreateFromKey("LeaderLib_Autosaving_CurrentSuffix", "<b>*Current*</b>")
+
+---Called from LeaderLib_11_3_Autosaving.txt
+function Autosaving_Internal_UpdateDialogVar(inst)
+	inst = tonumber(inst)
+	local isEnabled = GlobalGetFlag("LeaderLib_AutosavingEnabled") == 1
+	local intervalFlag = GameHelpers.DB.Get("DB_LeaderLib_Autosaving_CurrentInterval", 1, 1, true)
+	local interval = nil
+	local db = Osi.DB_LeaderLib_Autosaving_Interval:Get(intervalFlag, nil)
+	if db and #db > 0 then
+		interval = db[1][2]
+	end
+	local intervalText = ""
+	local text = ""
+
+	if interval == nil then
+		interval = 5
+	end
+
+	if interval > 90 then
+		interval = interval / 60
+		intervalText = string.format("%i %s", interval, GameHelpers.GetStringKeyText("LeaderLib_Hours", "Hour(s)"))
+	else
+		intervalText = string.format("%i %s", interval, GameHelpers.GetStringKeyText("LeaderLib_Minutes", "Minute(s)"))
+	end
+
+	if isEnabled then
+		local timeLeftText = ""
+
+		if Osi.LeaderLib_Autosaving_QRY_TimerDone() then
+			timeLeftText = TimerNotStartedText.Value
+		else
+			local timeLeft = GameHelpers.DB.Get("DB_LeaderLib_Autosaving_Temp_Countdown", 1, 1, true) or -1
+			if timeLeft > -1 then
+				timeLeftText = AutoSavingTimeLeftText:ReplacePlaceholders(string.format("%i %s", timeLeft, GameHelpers.GetStringKeyText("LeaderLib_Minutes", "Minute(s)")))
+			end
+		end
+
+		text = AutoSavingEnabledDialogText:ReplacePlaceholders(intervalText, timeLeftText)
+	else
+		text = AutoSavingDisabledDialogText:ReplacePlaceholders(intervalText)
+	end
+	DialogSetVariableStringForInstance(inst, "LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082", text)
+end
+
+function Autosaving_Internal_UpdateDialogVarMenuSelectedOption(inst, dialogVar, handle, fallback)
+	inst = tonumber(inst)
+	DialogSetVariableStringForInstance(inst, dialogVar, string.format("%s %s", Ext.GetTranslatedString(handle, fallback), CurrentSuffix.Value))
+end

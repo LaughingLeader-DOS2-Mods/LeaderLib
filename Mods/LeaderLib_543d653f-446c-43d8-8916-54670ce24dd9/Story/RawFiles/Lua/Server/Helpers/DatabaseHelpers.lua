@@ -209,7 +209,9 @@ function GameHelpers.DB.Flatten(databaseTable)
 		local params = v
 		for i2,v2 in pairs(params) do
 			if type(v2) == "string" then
-				params[i2] = StringHelpers.GetUUID(v2)
+				if StringHelpers.IsUUID(v2) then
+					params[i2] = StringHelpers.GetUUID(v2)
+				end
 			end
 		end
 		if #params > 1 then
@@ -240,7 +242,7 @@ function GameHelpers.DB.Get(name, arity, index, unpack)
 		Ext.PrintError(result)
 		return nil
 	end
-	if unpack and result ~= nil then
+	if unpack and type(result) == "table" then
 		return table.unpack(result)
 	end
 	return result

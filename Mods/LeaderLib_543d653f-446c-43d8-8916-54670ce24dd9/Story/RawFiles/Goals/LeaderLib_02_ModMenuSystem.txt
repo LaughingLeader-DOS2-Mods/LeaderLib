@@ -1088,7 +1088,7 @@ NOT QRY_SpeakerIsAvailable(_Player)
 AND
 CharacterIsInCombat(_Player, 1)
 THEN
-CharacterStatusText(_Player, "<font color='#FF0000'>Unable to open Mod Settings menu in combat.</font>");
+CharacterStatusText(_Player, "LeaderLib_StatusText_ModSettingCombatRestricted");
 
 IF
 CharacterUsedItemTemplate(_Player, "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", _Book)

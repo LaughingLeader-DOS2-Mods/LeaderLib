@@ -646,7 +646,7 @@ local _SkillAttributes = {
 	["SurfaceType"] = "Surface Type",
 	["SurfaceLifetime"] = "ConstantInt",
 	["SurfaceStatusChance"] = "ConstantInt",
-	["SurfaceTileCollision"] = "SurfaceCollisionFlags",
+	--["SurfaceTileCollision"] = "SurfaceCollisionFlags",
 	["SurfaceGrowInterval"] = "ConstantInt",
 	["SurfaceGrowStep"] = "ConstantInt",
 	["SurfaceRadius"] = "ConstantInt",
@@ -657,10 +657,10 @@ local _SkillAttributes = {
 	["MinSurfaceSize"] = "ConstantInt",
 	["MaxSurfaceSize"] = "ConstantInt",
 	["GrowSpeed"] = "ConstantInt",
-	["GrowOnSurface"] = "SurfaceCollisionFlags",
+	--["GrowOnSurface"] = "SurfaceCollisionFlags",
 	["GrowTimeout"] = "ConstantInt",
 	["SkillBoost"] = "FixedString",
-	["SkillAttributeFlags"] = "AttributeFlags",
+	--["SkillAttributeFlags"] = "AttributeFlags",
 	["SkillProperties"] = "Properties",
 	["CleanseStatuses"] = "FixedString",
 	["AoEConditions"] = "Conditions",
@@ -763,12 +763,12 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameM
 				local stat = Ext.GetStat(skillName)
 				if stat then
 					hasValidEntry = true
-					for k,v in pairs(stat) do
-						skill[k] = v
+					for k,_ in pairs(_SkillAttributes) do
+						skill[k] = stat[k]
 					end
 				end
 			else
-				for k,t in pairs(_SkillAttributes) do
+				for k,_ in pairs(_SkillAttributes) do
 					skill[k] = Ext.StatGetAttribute(skillName, k)
 				end
 			end

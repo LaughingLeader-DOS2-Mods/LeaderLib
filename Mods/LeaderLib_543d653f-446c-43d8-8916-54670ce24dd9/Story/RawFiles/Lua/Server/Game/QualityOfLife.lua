@@ -208,25 +208,15 @@ function Autosaving_Internal_UpdateDialogVar(inst)
 	inst = tonumber(inst)
 	local isEnabled = GlobalGetFlag("LeaderLib_AutosavingEnabled") == 1
 	local intervalFlag = GameHelpers.DB.Get("DB_LeaderLib_Autosaving_CurrentInterval", 1, 1, true)
-	local interval = nil
-	local db = Osi.DB_LeaderLib_Autosaving_Interval:Get(intervalFlag, nil)
-	if db and #db > 0 then
-		interval = db[1][2]
-	end
 	local intervalText = ""
+	local db = Osi.DB_LeaderLib_DynamicMenu_TranslatedStrings:Get("LeaderLib.Autosave.IntervalSettings", intervalFlag, nil, nil)
+	if db and #db > 0 then
+		local _,_,handle,ref = table.unpack(db[1])
+		intervalText = GameHelpers.GetTranslatedString(handle, ref)
+	end
+
 	local text = ""
-
-	if interval == nil then
-		interval = 5
-	end
-
-	if interval > 90 then
-		interval = interval / 60
-		intervalText = string.format("%i %s", interval, GameHelpers.GetStringKeyText("LeaderLib_Hours", "Hour(s)"))
-	else
-		intervalText = string.format("%i %s", interval, GameHelpers.GetStringKeyText("LeaderLib_Minutes", "Minute(s)"))
-	end
-
+	
 	if isEnabled then
 		local timeLeftText = ""
 

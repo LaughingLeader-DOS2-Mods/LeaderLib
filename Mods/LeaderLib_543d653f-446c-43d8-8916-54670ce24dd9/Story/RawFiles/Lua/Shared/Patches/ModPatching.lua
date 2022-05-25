@@ -39,6 +39,84 @@ local Patches = {
 					end
 				end)
 			else
+				--Mods.WeaponExpansion.Uniques.Harvest.ProgressionData[11].Value = "Target_BlackShroud"
+
+				Mods.WeaponExpansion.EquipmentManager.SyncItemStatChanges = function (item, changes, dynamicIndex)
+					if changes.Boosts ~= nil and changes.Boosts["Damage Type"] ~= nil then
+						changes.Boosts["DamageType"] = changes.Boosts["Damage Type"]
+						changes.Boosts["Damage Type"] = nil
+					end
+					local slot = Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(item)]
+					local owner = nil
+					if slot and item.OwnerHandle ~= nil then
+						local char = Ext.GetCharacter(item.OwnerHandle)
+						if char ~= nil then
+							owner = char.NetID
+						end
+					end
+					if item ~= nil and item.NetID ~= nil then
+						--Fix for CleavePercentage not being correctly translated from the stat attribute (20 = 0.2)
+						if changes then
+							if changes.Stats then
+								if changes.Stats.CleavePercentage then
+									local cleave = Ext.StatGetAttribute(item.StatsId, "CleavePercentage")
+									if cleave > 0 then
+										changes.Stats.CleavePercentage = cleave * 0.01
+									end
+								end
+							end
+						end
+						local data = {
+							UUID = item.MyGuid,
+							NetID = item.NetID,
+							Slot = slot,
+							Owner = owner,
+							Changes = changes
+						}
+						if Mods.WeaponExpansion.EquipmentManager.ItemIsNearPlayers(item) then
+							GameHelpers.Net.Broadcast("LLWEAPONEX_SetItemStats", data)
+						end
+					end
+				end
+
+				Timer.StartOneshot("LeaderLib_WeaponEx_FixProgression", 1000, function ()
+					--Fix for duplicate skills and incorrect cleave percentages
+					for k,v in pairs(Mods.WeaponExpansion.Uniques) do
+						local hasSkills = false
+						if v.ProgressionData then
+							for _,data in pairs(v.ProgressionData) do
+								if data.Attribute == "Skills" then
+									data.IsBoost = false
+									hasSkills = true
+								end
+							end
+						end
+						if hasSkills then
+							local item = Ext.GetItem(v.UUID)
+							if item then
+								item.Stats.DynamicStats[2].Skills = ""
+								local syncData = {
+									UUID = item.MyGuid,
+									NetID = item.NetID,
+									Slot = Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(item)],
+									Owner = GameHelpers.GetNetID(ItemGetOwner(item.MyGuid)),
+									Changes = {
+										Boosts = {
+											Skills = "",
+										},
+										Stats = {}
+									}
+								}
+								local cleave = Ext.StatGetAttribute(item.StatsId, "CleavePercentage")
+								if cleave > 0 then
+									syncData.Changes.Stats.CleavePercentage = cleave * 0.01
+								end
+								GameHelpers.Net.Broadcast("LLWEAPONEX_SetItemStats", syncData)
+							end
+						end
+					end
+				end)
+
 				--Fix Custom alignment entities may fail to load when the game is loaded multiple times it seems
 				--Harken = "e446752a-13cc-4a88-a32e-5df244c90d8b",
 				local uuid = "e446752a-13cc-4a88-a32e-5df244c90d8b"

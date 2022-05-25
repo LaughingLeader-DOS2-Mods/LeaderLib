@@ -41,6 +41,11 @@ local Patches = {
 			else
 				--Mods.WeaponExpansion.Uniques.Harvest.ProgressionData[11].Value = "Target_BlackShroud"
 
+				local FixDynamicStatsValueTranslation = {
+					CleavePercentage = 0.01,
+					WeaponRange = 0.01,
+				}
+
 				Mods.WeaponExpansion.EquipmentManager.SyncItemStatChanges = function (item, changes, dynamicIndex)
 					if changes.Boosts ~= nil and changes.Boosts["Damage Type"] ~= nil then
 						changes.Boosts["DamageType"] = changes.Boosts["Damage Type"]
@@ -58,10 +63,12 @@ local Patches = {
 						--Fix for CleavePercentage not being correctly translated from the stat attribute (20 = 0.2)
 						if changes then
 							if changes.Stats then
-								if changes.Stats.CleavePercentage then
-									local cleave = Ext.StatGetAttribute(item.StatsId, "CleavePercentage")
-									if cleave > 0 then
-										changes.Stats.CleavePercentage = cleave * 0.01
+								for k,mult in pairs(FixDynamicStatsValueTranslation) do
+									if changes.Stats[k] then
+										local value = Ext.StatGetAttribute(item.StatsId, k)
+										if value and value > 0 then
+											changes.Stats[k] = value * mult
+										end
 									end
 								end
 							end

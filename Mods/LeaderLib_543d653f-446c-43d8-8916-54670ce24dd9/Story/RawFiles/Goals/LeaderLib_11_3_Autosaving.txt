@@ -576,7 +576,7 @@ LeaderLib_DynamicMenu_FetchDialogVariableByKey("LeaderLib.Autosave.IntervalSetti
 PROC
 LeaderLib_DynamicMenu_OnFetchDialogVariable("LeaderLib.Autosave.IntervalSettings", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
 THEN
-DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayText);
+LeaderLib_DynamicMenu_Internal_SetDialogVariable("LeaderLib.Autosave.IntervalSettings", _EntryKey, _DisplayText, _DialogVar, _Instance);
 //END_REGION
 
 //REGION COMBAT_SAVE

@@ -225,7 +225,7 @@ function Autosaving_Internal_UpdateDialogVar(inst)
 		else
 			local timeLeft = GameHelpers.DB.Get("DB_LeaderLib_Autosaving_Temp_Countdown", 1, 1, true) or -1
 			if timeLeft > -1 then
-				timeLeftText = AutoSavingTimeLeftText:ReplacePlaceholders(string.format("%i %s", timeLeft, GameHelpers.GetStringKeyText("LeaderLib_Minutes", "Minute(s)")))
+				timeLeftText = " | " .. AutoSavingTimeLeftText:ReplacePlaceholders(string.format("%i %s", timeLeft, GameHelpers.GetStringKeyText("LeaderLib_Minutes", "Minute(s)")))
 			end
 		end
 

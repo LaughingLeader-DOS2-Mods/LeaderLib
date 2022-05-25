@@ -292,7 +292,7 @@ LocalizedText.SkillTooltip = {
 	FromSelf = ts:Create("h727273bcg948ag461agad93gef52b2419eca", "from self"),
 	MoveToTarget = ts:Create("h19d1b9dag302dg4655g86fdgad6fe369db15", "Move to the target."),
 	--BasicAttack = ts:Create("hbdac34fdg43b6g4439g9947g6676e9c03294", "Basic Attack"),
-	LeaderLibToggleGrouping = ts:CreateFromKey("LeaderLib_Tooltip_ToggleGrouping", "<font color='#00CCFF'>Keyboard Shortcut</font><br><font color='#44CCAA'>Press CTRL + Spacebar to chain/unchain party members. No skill required.</font><br>(Note: This is the '[Handle:h310a22a4g1ebag4b1cg89d6g5cebc301c5c5:>Toggle Game Master Shroud]' [Handle:h6867dea8g129fg4a85g9368g1cf6534df65f:Key])."),
+	LeaderLibToggleGrouping = ts:CreateFromKey("LeaderLib_Tooltip_ToggleGrouping", "<font color='#00CCFF'>Keyboard Shortcut</font><br><font color='#44CCAA'>Press CTRL + Spacebar to chain/unchain party members. No skill required.</font><br>(Note: This is the '<font color='#FFAA11'>[Handle:h310a22a4g1ebag4b1cg89d6g5cebc301c5c5:Toggle Game Master Shroud]</font>' [Handle:h6867dea8g129fg4a85g9368g1cf6534df65f:Key]).", {AutoReplacePlaceholders = true}),
 }
 
 LocalizedText.WeaponType = {

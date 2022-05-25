@@ -64,4 +64,9 @@ function SubscribableEventArgs:Unpack(keyOrder)
 	return table.unpack(temp)
 end
 
+---Debug function for dumping args to the console.
+function SubscribableEventArgs:Dump()
+	Ext.Print(Lib.serpent.block(self.Args, {SimplifyUserdata = true}))
+end
+
 Classes.SubscribableEventArgs = SubscribableEventArgs

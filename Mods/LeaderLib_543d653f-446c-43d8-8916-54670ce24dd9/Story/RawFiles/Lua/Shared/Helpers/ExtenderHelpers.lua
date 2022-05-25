@@ -377,7 +377,7 @@ local characterTalents = {
 }
 
 function GameHelpers.Ext.CreateStatCharacterTable(stat, mainhand, offhand)
-	if stat == nil then 
+	if stat == nil then
 		stat = "_Hero"
 	end
 	local data = {}
@@ -405,6 +405,7 @@ function GameHelpers.Ext.CreateStatCharacterTable(stat, mainhand, offhand)
 	end
 	data.MainWeapon = mainhand
 	data.OffHandWeapon = offhand
+	return data
 end
 
 

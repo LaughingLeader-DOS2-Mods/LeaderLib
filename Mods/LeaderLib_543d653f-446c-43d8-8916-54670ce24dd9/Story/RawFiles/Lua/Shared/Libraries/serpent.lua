@@ -69,7 +69,7 @@ local function s(t, opts)
       end -- new value falls through to be serialized
     end
     if ttype == "userdata" then
-			t = DebugHelpers.TraceUserDataSerpent(t)
+			t = DebugHelpers.TraceUserDataSerpent(t, opts)
       ttype = type(t)
     end
     if ttype == "table" then

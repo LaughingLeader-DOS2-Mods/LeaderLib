@@ -478,7 +478,7 @@ userDataProps.CDivinityStats_Character = {
 	Constitution = "integer",
 	Memory = "integer",
 	Wits = "integer",
-	Accuracy = "integer",
+	Accuracy = "integer", -- Crashes in v55
 	Dodge = "integer",
 	CriticalChance = "integer",
 	FireResistance = "integer",
@@ -825,6 +825,11 @@ userDataProps.CharacterDynamicStat = {
 	BonusWeapon = "integer",
 	StepsType = "integer",
 }
+
+if Ext.Version() < 56 then
+	userDataProps.CDivinityStats_Character.Accuracy = nil
+	userDataProps.CharacterDynamicStat.Accuracy = nil
+end
 
 local CharacterTemplate = {
 	CombatTemplate = "CombatComponentTemplate",
@@ -1341,6 +1346,18 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 	local props = userDataProps[meta]
 	if meta == "CDivinityStats_Equipment_Attributes" and obj.ItemSlot == "Weapon" then
 		props = userDataProps.CDivinityStats_Weapon_Attributes
+	end
+	if opts and opts.SimplifyUserdata then
+		props = {}
+		if obj.MyGuid then
+			props.MyGuid = "string"
+		end
+		if obj.DisplayName then
+			props.DisplayName = "string"
+		end
+		if obj.NetID then
+			props.NetID = "number"
+		end
 	end
 	if props then
 		if type(props) == "function" then

@@ -9,7 +9,11 @@ if _EXTVERSION >= 56 then
 	_getTranslatedStringKeyFunction = Ext.L10N.GetTranslatedStringFromKey
 end
 
----@class TranslatedString
+---@class TranslatedStringOptions
+---@field AutoReplacePlaceholders boolean|nil If true, GameHelpers.Tooltip.ReplacePlaceholders is called when the Value is updated.
+---@field Format string|nil Text to wrap around the content. Should include an %s for the content's position in the string, such as <font color='#FF0000'>%s</font>
+
+---@class TranslatedString:TranslatedStringOptions
 local TranslatedString = {
 	Type = "TranslatedString",
 	Handle = "",
@@ -29,8 +33,9 @@ end
 
 ---@param handle string
 ---@param content string
+---@param params TranslatedStringOptions|nil
 ---@return TranslatedString
-function TranslatedString:Create(handle, content)
+function TranslatedString:Create(handle, content, params)
 	local this =
 	{
 		Handle = handle,
@@ -38,6 +43,11 @@ function TranslatedString:Create(handle, content)
 		Value = "",
 		AutoReplacePlaceholders = false,
 	}
+	if type(params) == "table" then
+		for k,v in pairs(params) do
+			this[k] = v
+		end
+	end
 	setmetatable(this, self)
 	this.Update(this)
 	_translatedStringUpdate[#_translatedStringUpdate+1] = this
@@ -53,8 +63,9 @@ end
 
 ---@param key string
 ---@param fallback string|nil
+---@param params TranslatedStringOptions|nil
 ---@return TranslatedString
-function TranslatedString:CreateFromKey(key, fallback)
+function TranslatedString:CreateFromKey(key, fallback, params)
 	local this = {
 		Key = key,
 		Content = fallback or "",
@@ -62,6 +73,11 @@ function TranslatedString:CreateFromKey(key, fallback)
 		Value = "",
 		AutoReplacePlaceholders = false,
 	}
+	if type(params) == "table" then
+		for k,v in pairs(params) do
+			this[k] = v
+		end
+	end
 	setmetatable(this, self)
 	this.Update(this)
 	_translatedStringUpdate[#_translatedStringUpdate+1] = this

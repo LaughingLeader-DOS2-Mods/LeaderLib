@@ -54,10 +54,12 @@ if Ext.Version() >= 56 then
 	Ext.Require("Client/QOL/ChatLogHider.lua")
 end
 
+local enableDebugUIListeners = nil
 if Vars.DebugMode then
 	Ext.Require("Client/UI/DialogKeywords.lua") -- TODO
 	Ext.Require("Client/Debug/UIGeneralDebug.lua")
 	Ext.Require("Client/Debug/ClientConsoleCommands.lua")
+	enableDebugUIListeners = Ext.Require("Client/Debug/UIDebugListeners.lua")
 end
 
 --Temp Workaround for mods calling this still on the client side
@@ -70,12 +72,12 @@ if not Classes.PresetData then
 end
 
 local function OnSessionLoaded()
-	if Vars.LeaderDebugMode then
-		Ext.Require("Client/Debug/UIDebugListeners.lua")
-	end
-
 	if Vars.ControllerEnabled then
 		InvokeListenerCallbacks(Listeners.ControllerModeEnabled)
+	end
+
+	if Vars.DebugMode and Vars.LeaderDebugMode and enableDebugUIListeners then
+		enableDebugUIListeners()
 	end
 end
 

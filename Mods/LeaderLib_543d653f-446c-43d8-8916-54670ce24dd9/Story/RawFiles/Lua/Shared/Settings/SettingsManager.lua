@@ -171,7 +171,6 @@ function SaveGlobalSettings()
 		local export = ExportGlobalSettings(false)
 		local json = Common.JsonStringify(export)
 		Ext.SaveFile("LeaderLib_GlobalSettings.json", json)
-		fprint(LOGLEVEL.TRACE, "[LeaderLib] Saved LeaderLib_GlobalSettings.json")
 		return true
 	end, debug.traceback)
 	if not b then
@@ -349,7 +348,6 @@ else
 					end
 				end
 			end
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:CLIENT] Updated GlobalSettings.")
 		else
 			Ext.PrintError("[LeaderLib:CLIENT] GlobalSettings is nil.")
 			GlobalSettings = settings

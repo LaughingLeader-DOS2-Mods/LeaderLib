@@ -1014,34 +1014,34 @@ local function printHelperTable(name, tbl)
 end
 
 local ignoreImports = {
---lua base
-["_G"] = true,
-tonumber = true,
-pairs = true,
-ipairs = true,
-table = true,
-tostring = true,
-math = true,
-type = true,
-print = true,
-error = true,
-next = true,
-string = true,
---ositools base
-Sandboxed = true,
-ModuleUUID = true,
-Game = true,
-Ext = true,
-Osi = true,
-PersistentVars = true,
-LoadPersistentVars = true,
---LeaderLib ignores
-Debug = true,
-Vars = true,
-Listeners = true,
-SkillListeners = true,
-ModListeners = true,
-Settings = true,
+	--lua base
+	["_G"] = true,
+	tonumber = true,
+	pairs = true,
+	ipairs = true,
+	table = true,
+	tostring = true,
+	math = true,
+	type = true,
+	print = true,
+	error = true,
+	next = true,
+	string = true,
+	--ositools base
+	Sandboxed = true,
+	ModuleUUID = true,
+	Game = true,
+	Ext = true,
+	Osi = true,
+	PersistentVars = true,
+	LoadPersistentVars = true,
+	--LeaderLib ignores
+	Debug = true,
+	Vars = true,
+	Listeners = true,
+	SkillListeners = true,
+	ModListeners = true,
+	Settings = true,
 }
 
 Ext.RegisterConsoleCommand("help", function(command, text)

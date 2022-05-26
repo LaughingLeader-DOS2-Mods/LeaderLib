@@ -216,10 +216,10 @@ local Init = function()
 		local arr = ui:GetRoot().customStats_array
 		if arr then
 			local length = #arr
-			PrintDebug("customStats_array", length)
+			Ext.Print("customStats_array", length)
 			if length > 0 then
 				for i=0,length do
-				PrintDebug(i, arr[i])
+				Ext.Print(i, arr[i])
 				end
 			end
 		end
@@ -259,9 +259,9 @@ local Init = function()
 		for i=0,#array-1 do
 			local entry = array[i]
 			if entry then
-				PrintDebug(i, entry)
+				Ext.Print(i, entry)
 			else
-				PrintDebug(i, "nil")
+				Ext.Print(i, "nil")
 			end
 		end
 	end
@@ -273,9 +273,9 @@ local Init = function()
 		for i=0,#array do
 			local entry = array[i]
 			if entry then
-				PrintDebug(i, entry)
+				Ext.Print(i, entry)
 			else
-				PrintDebug(i, "nil")
+				Ext.Print(i, "nil")
 			end
 		end
 	end
@@ -316,9 +316,9 @@ local Init = function()
 			local this = ui:GetRoot()
 			if this then
 				local printArr = function(name, arr)
-					PrintDebug(name, #arr)
+					Ext.Print(name, #arr)
 					for i=0,#arr-1 do
-						PrintDebug(name, i, arr[i].id)
+						Ext.Print(name, i, arr[i].id)
 					end
 				end
 				local arr = this.GMBar_mc.slotList.content_array

@@ -28,14 +28,11 @@ local hotBarButtons = {
 	CharacterSheet = 1
 }
 local function OnSheetEvent(ui, call, param1, ...)
-	--local params = Common.FlattenTable({...})
-	--PrintDebug("[LeaderLib_CharacterSheet.lua:OnSheetEvent] Event called. call("..tostring(call)..") params("..tostring(Common.Dump(params))..")")
 	local character = GameHelpers.Client.GetCharacter()
 	if call == "plusAbility" then
 		local index = math.floor(param1)
 		if index ~= nil then
 			local stat = Data.Ability[index]
-			PrintDebug(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusAbility] A point was added to the ability [%s](%s).", index, stat))
 			local payload = Common.JsonStringify({Stat=stat, NetID=character.NetID})
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_AbilityChanged", payload)
 			FireCharacterSheetPointListeners(character, stat, "ability")
@@ -44,7 +41,6 @@ local function OnSheetEvent(ui, call, param1, ...)
 		local index = math.floor(param1)
 		if index ~= nil then
 			local stat = Data.Attribute[index]
-			PrintDebug(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusStat] A point was added to the attribute [%s](%s).", index, stat))
 			local payload = Common.JsonStringify({Stat=stat, NetID=character.NetID})
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_AttributeChanged", payload)
 			FireCharacterSheetPointListeners(character, stat, "attribute")
@@ -57,7 +53,7 @@ local function OnSheetEvent(ui, call, param1, ...)
 	elseif call == "setHelmetOption" then
 		local state = math.floor(param1)
 		local data = {
-			NetID = character.NetID,
+			NetID = GameHelpers.GetNetID(character),
 			State = state
 		}
 		Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Common.JsonStringify(data))

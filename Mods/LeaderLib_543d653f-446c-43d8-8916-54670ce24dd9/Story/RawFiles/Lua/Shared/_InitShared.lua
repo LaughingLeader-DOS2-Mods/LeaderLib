@@ -141,11 +141,10 @@ Vars = {
 }
 
 function PrintDebug(...)
-	if Vars.DebugMode then
-		
+	if Vars.DebugMode and Vars.LeaderDebugMode then
 		--local lineNum = debug.getinfo(1).currentline
 		--local lineInfo = string.format("[%s:%s]", currentFileName(), debug.getinfo(1).currentline)
-		--print(...)
+		Ext.Print(...)
 	end
 end
 
@@ -284,6 +283,8 @@ Features = {
 	FixRifleWeaponRequirement = false,
 	---Fixed tag requirements for skills being ignored by skills granted by items. Also fixes tag changes not updating the hotbar.
 	FixSkillTagRequirements = false,
+	---Formats tag element tooltips after they've been added to flash, allowing html font colors and more.
+	FormatTagElementTooltips = false,
 	---Condenses item tooltips by simplifying the ExtraProperties text.
 	ReduceTooltipSize = true,
 	---Replaces various LeaderLib placeholders in tooltips.

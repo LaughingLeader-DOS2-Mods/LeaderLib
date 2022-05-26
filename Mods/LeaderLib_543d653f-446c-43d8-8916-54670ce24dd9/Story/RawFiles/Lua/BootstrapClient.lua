@@ -9,8 +9,8 @@ if Ext.IsDeveloperMode() then
 end
 
 local function LeaderLib_SyncRanSeed(call, seedstr)
-	_G["LEADERLIB_RAN_SEED"] = math.tointeger(seedstr)
-	PrintDebug("[LeaderLib:BootstrapClient.lua:LeaderLib_SyncRanSeed] Set [LEADERLIB_RAN_SEED] to ("..tostring(_G["LEADERLIB_RAN_SEED"])..").")
+	LEADERLIB_RAN_SEED = math.tointeger(seedstr)
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:BootstrapClient.lua:LeaderLib_SyncRanSeed] Set [LEADERLIB_RAN_SEED] to (%s", LEADERLIB_RAN_SEED)
 end
 
 Ext.RegisterNetListener("LeaderLib_SyncRanSeed", LeaderLib_SyncRanSeed)

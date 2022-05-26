@@ -247,9 +247,9 @@ function ClientData:SetClientData(id, profile, isHost, character)
 	if character ~= nil then
 		self.Character = character
 	end
-	if Vars.DebugMode then
-		fprint(LOGLEVEL.DEFAULT, "[LeaderLib:ClientData:SetClientData] ID(%s) UUID(%s) Profile(%s) IsHost(%s) Character(%s)", self.ID, self.Character.UUID, self.Profile, self.Profile, self.IsHost, self.Character)
-	end
+	-- if Vars.DebugMode then
+	-- 	fprint(LOGLEVEL.TRACE, "[LeaderLib:ClientData:SetClientData] ID(%s) UUID(%s) Profile(%s) IsHost(%s) Character(%s)", self.ID, self.Character.UUID, self.Profile, self.Profile, self.IsHost, self.Character)
+	-- end
 end
 
 ---@private

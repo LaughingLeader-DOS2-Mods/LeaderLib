@@ -67,18 +67,6 @@ public function setSlotTooltip(slot:MovieClip) : *
 }
 ]]
 
-local function OnControllerEvent(ui, event, ...)
-	--print(event, Common.Dump({...}))
-	if event == "updateStatusses" then
-		UI.PrintArray(ui, "status_array")
-	elseif event == "update" then
-		UI.PrintArray(ui, "addStats_array")
-	elseif event == "showFormattedTooltip" then
-		UI.PrintArray(ui, "tooltipArray")
-	end
-end
-
-
 local UITYPE = {
 	CHARACTER_CREATION = 4,
 	BOTTOMBAR = 59,
@@ -224,7 +212,7 @@ local updatingTooltip = false
 local function OnTooltipUpdating(ui, uiType, ...)
 	if not updatingTooltip then
 		updatingTooltip = true
-		UIExtensions.StartTimer("LeaderLib_UI_StartControllerTooltipTimer", 2, function()
+		Timer.StartOneshot("LeaderLib_UI_StartControllerTooltipTimer", 2, function()
 			updatingTooltip = false
 			OnConsoleTooltipPositioned(ui, TooltipVariables[uiType])
 		end)
@@ -237,75 +225,20 @@ local function RegisterControllerTooltipEvents()
 			if type(data.UpdateEvent) == "table" then
 				for i,v in pairs(data.UpdateEvent) do
 					Ext.RegisterUITypeInvokeListener(typeId, v, function(ui, ...)
-						--onconsoletooltippositioned(ui, data, ...)
 						OnTooltipUpdating(ui, typeId, ...)
 					end, "After")
 				end
 			else
 				Ext.RegisterUITypeInvokeListener(typeId, data.UpdateEvent, function(ui, ...)
-					--print(Common.Dump{...})
-					--OnConsoleTooltipPositioned(ui, data, ...)
 					OnTooltipUpdating(ui, typeId, ...)
 				end, "After")
 			end
 		end
 	end
-	PrintDebug("**************Registered controller UI events.************")
-
-	if Vars.DebugMode then
-		local debugEvents = {
-			"setTooltip",
-			"setEquippedTitle",
-			"toggleTooltip",
-			"enableCompare",
-			"ShowCellTooltip",
-			"SendTooltipRequest",
-			"setTooltipGroupLabel",
-			"setTooltipCompareHint",
-			"setTooltipPanelVisible",
-			"updateTooltip",
-			"updateEquipTooltip",
-			"clearTooltip",
-			"clearEquipTooltip",
-			"tooltipFadeDone",
-		}
-
-		for i,v in pairs(debugEvents) do
-			Ext.RegisterUINameInvokeListener(v, function(ui, method, ...)
-				local matched = false
-				local id = ui:GetTypeId()
-				for name,type in pairs(UITYPE) do
-					if type == id then
-						--print(string.format("[%s(%s)]:%s params(%s)", name, id, method, Common.JsonStringify({...})))
-						matched = true
-						break
-					end
-				end
-				if not matched then
-					--print(string.format("[%s(%s)]:%s params(%s)", ui:GetRoot().name, id, method, Common.JsonStringify({...})))
-				end
-				if method == "updateEquipTooltip" then
-					UI.PrintArray(ui, "equipTooltip_array")
-				end
-			end, "After")
-		end
-	end
 end
 
 Ext.RegisterListener("SessionLoaded", function()
-	local bottomBar = Ext.GetBuiltinUI("Public/Game/GUI/bottomBar_c.swf")
-	if bottomBar ~= nil then
-		-- controller mode
+	if Vars.ControllerEnabled then
 		RegisterControllerTooltipEvents()
 	end
-	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/examine_c.swf")
-	-- if ui ~= nil then
-	-- 	--Ext.RegisterUIInvokeListener(ui, "update", OnControllerEvent)
-	-- 	--Ext.RegisterUIInvokeListener(ui, "updateStatusses", OnControllerEvent)
-	-- 	Ext.RegisterUIInvokeListener(ui, "showFormattedTooltip", OnControllerEvent)
-	-- 	Ext.RegisterUICall(ui, "selectStatus", OnControllerEvent)
-	-- end
-	-- Ext.RegisterUINameCall("buttonPressed", function(ui, method, ...)
-	-- 	print(method, Common.Dump({...}))
-	-- end)
 end)

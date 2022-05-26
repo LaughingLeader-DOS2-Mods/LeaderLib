@@ -434,7 +434,7 @@ function Common.JsonStringify(tbl)
 	local b,result = xpcall(_jsonStringify, debug.traceback, tbl)
 	if not b then
 		Ext.PrintError(result)
-		Ext.Dump(table)
+		Ext.Dump(tbl)
 		return ""
 	end
 	return result

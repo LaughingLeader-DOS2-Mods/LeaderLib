@@ -148,7 +148,6 @@ local function ParseTableValue(settings, k, v)
 	if type(v) == "table" then
 		if settings[k] == nil then
 			settings[k] = v
-			--PrintDebug("[LeaderLibGameSettings] Set null ",k," to table")
 		else
 			for k2,v2 in pairs(v) do
 				ParseTableValue(settings[k], k2, v2)
@@ -156,7 +155,6 @@ local function ParseTableValue(settings, k, v)
 		end
 	else
 		settings[k] = v
-		--PrintDebug("[LeaderLibGameSettings] Set ",k," to ",v)
 	end
 end
 
@@ -290,7 +288,7 @@ GameSettings = LeaderLibGameSettings:Create()
 
 local isClient = Ext.IsClient()
 Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
-	fprint(LOGLEVEL.DEFAULT, "[LeaderLib_SyncGameSettings:%s] Loading settings.", Ext.IsClient() and "CLIENT" or "SERVER")
+	--fprint(LOGLEVEL.TRACE, "[LeaderLib_SyncGameSettings:%s] Loading settings.", Ext.IsClient() and "CLIENT" or "SERVER")
 	if isClient then
 		local clientSettings = {}
 		if GameSettings and GameSettings.Settings and GameSettings.Settings.Client then

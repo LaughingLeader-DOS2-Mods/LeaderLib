@@ -57,7 +57,6 @@ end
 local enableDebugUIListeners = nil
 if Vars.DebugMode then
 	Ext.Require("Client/UI/DialogKeywords.lua") -- TODO
-	Ext.Require("Client/Debug/UIGeneralDebug.lua")
 	Ext.Require("Client/Debug/ClientConsoleCommands.lua")
 	enableDebugUIListeners = Ext.Require("Client/Debug/UIDebugListeners.lua")
 end

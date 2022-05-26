@@ -195,7 +195,7 @@ if not isClient then
 	function SettingsManager.SyncAllSettings(id, skipSyncStatOverrides)
 		if id then
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with user (%s).", id)
-		else	
+		elseif Vars.DebugMode then
 			Ext.Print("[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with clients.")
 		end
 		local data = {
@@ -209,7 +209,7 @@ if not isClient then
 			GameHelpers.Net.Broadcast("LeaderLib_SyncAllSettings", Common.JsonStringify(data))
 		end
 		if skipSyncStatOverrides ~= true then
-			SyncStatOverrides(GameSettings, true)
+			SyncStatOverrides(GameSettings)
 		end
 	end
 	
@@ -223,7 +223,7 @@ if not isClient then
 		if flag ~= nil then
 			local mod_settings = SettingsManager.GetMod(uuid, true)
 			if mod_settings ~= nil then
-				mod_settings.Global:AddFlag(flag)
+				mod_settings.Global:AddFlag(flag, "Global")
 			end
 		end
 	end
@@ -238,6 +238,7 @@ if not isClient then
 		end
 	end
 	
+	---@deprecated
 	---@param modid string
 	---@param author string
 	---@param flag string
@@ -245,6 +246,7 @@ if not isClient then
 	
 	end
 	
+	---@deprecated
 	---@param modid string
 	---@param author string
 	---@param varname string
@@ -273,6 +275,7 @@ if not isClient then
 		end
 	end
 	
+	---@deprecated
 	---@param modid string
 	---@param author string
 	function GlobalSettings_StoreModVersion_Old(modid, author, version_str)

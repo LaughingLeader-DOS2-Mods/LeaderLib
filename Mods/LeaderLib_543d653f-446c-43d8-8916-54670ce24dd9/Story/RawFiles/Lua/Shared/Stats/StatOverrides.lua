@@ -274,12 +274,16 @@ local function AdjustAP(stat, settings)
 	return changedStat
 end
 
----@param data LeaderLibGameSettings
----@param statsLoadedState boolean
+---@param data LeaderLibGameSettings|nil
+---@param statsLoadedState boolean|nil
 local function OverrideStats(data, statsLoadedState)
-	fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SyncStatOverrides:%s] Syncing stat overrides from GameSettings.", isClient and "CLIENT" or "SERVER")
+	--fprint(LOGLEVEL.TRACE, "[LeaderLib:SyncStatOverrides:%s] Syncing stat overrides from GameSettings.", isClient and "CLIENT" or "SERVER")
 	if data == nil then
+		---@type LeaderLibGameSettings
 		data = GameSettingsManager.Load()
+	end
+	if not data then
+		ferror("[LeaderLib:OverrideStats:%s] Failed to load game settings.", isClient and "CLIENT" or "SERVER")
 	end
 	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
 	if data.Settings.StarterTierSkillOverrides or data.Settings.LowerMemorizationRequirements then
@@ -432,6 +436,6 @@ Ext.RegisterListener("StatsLoaded", function()
 	OverrideStats(nil, false)
 end)
 
-function SyncStatOverrides(data, force)
+function SyncStatOverrides(data)
 	OverrideStats(data)
 end

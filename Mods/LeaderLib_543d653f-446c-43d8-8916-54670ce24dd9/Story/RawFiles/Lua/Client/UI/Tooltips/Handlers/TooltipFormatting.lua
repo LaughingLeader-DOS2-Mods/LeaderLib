@@ -131,9 +131,6 @@ local function FormatTagText(content_array, group, isControllerMode)
 							updatedText = true
 						end
 					end
-					-- if Vars.DebugMode then
-					-- 	PrintDebug(string.format("(%s) label_txt.htmlText(%s) color(%s)", group.groupID, element.label_txt.htmlText, element.label_txt.textColor))
-					-- end
 				end
 				return true
 			end, debug.traceback)

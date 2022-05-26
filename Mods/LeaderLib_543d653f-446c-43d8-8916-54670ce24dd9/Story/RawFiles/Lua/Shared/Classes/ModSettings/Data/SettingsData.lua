@@ -49,8 +49,10 @@ function SettingsData:CanExecuteOsiris()
 	return not isClient and Ext.OsirisIsCallable()
 end
 
+---@alias LeaderLibGlobalSettingsFlagType string|"Global"|"User"|"Character"
+
 ---@param flag string
----@param flagType string Global|User|Character
+---@param flagType LeaderLibGlobalSettingsFlagType
 ---@param enabled boolean|nil
 ---@param displayName string|nil
 ---@param tooltip string|nil

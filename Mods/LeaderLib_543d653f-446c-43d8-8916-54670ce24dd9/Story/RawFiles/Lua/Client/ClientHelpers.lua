@@ -147,7 +147,7 @@ local function _pairs(t, var)
 	return var, value
 end
 
----@param arr FlashArray
+---@param arr FlashArray<any>
 ---@return table
 function GameHelpers.Client.TableFromFlashArray(arr)
 	local value = nil
@@ -166,7 +166,7 @@ function GameHelpers.Client.TableFromFlashArray(arr)
 end
 
 ---@param tbl table
----@param arr FlashArray
+---@param arr FlashArray<any>
 ---@return table
 function GameHelpers.Client.WriteTableToFlashArray(tbl, arr)
 	for i=1,#tbl do

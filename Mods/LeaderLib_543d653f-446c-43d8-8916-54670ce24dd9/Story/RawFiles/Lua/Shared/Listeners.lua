@@ -171,7 +171,7 @@ else
 	---@type OnContextMenuOpeningCallback[]
 	Listeners.OnContextMenuOpening = {}
 	
-	---@alias OnBuiltinContextMenuOpeningCallback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray, buttons:table, targetObject:EclCharacter|EclItem|nil):void
+	---@alias OnBuiltinContextMenuOpeningCallback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray<FlashMovieClip>, buttons:table, targetObject:EclCharacter|EclItem|nil):void
 	---Triggered when the regular context menu is opening.
 	---@type OnBuiltinContextMenuOpeningCallback[]
 	Listeners.OnBuiltinContextMenuOpening = {}

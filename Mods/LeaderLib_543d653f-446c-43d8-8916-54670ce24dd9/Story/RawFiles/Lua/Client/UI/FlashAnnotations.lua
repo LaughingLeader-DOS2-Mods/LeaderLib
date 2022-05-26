@@ -225,6 +225,24 @@
 ---@field toggleFadeVisibility fun():void
 ---@field toggleLock fun():void
 
+---@class FlashTweensyTimelineZero
+---@field time number
+---@field instance FlashObject
+---@field key FlashObject
+---@field ease function
+---@field easeParams FlashArray<FlashObject>
+---@field properties integer
+---@field to FlashObject
+---@field from FlashObject
+---@field duration number
+---@field delayStart number
+---@field delayEnd number
+---@field onUpdate function
+---@field onUpdateParams FlashArray<FlashObject>
+---@field onComplete function
+---@field onCompleteParams FlashArray<FlashObject>
+---@field update any
+
 ---@class CombatLogFlashFilter:FlashMovieClip
 ---@field id integer
 ---@field tooltip string
@@ -232,7 +250,7 @@
 ---@field icon_mc FlashMovieClip
 ---@field fadeTime number
 ---@field selectedB boolean
----@field timeline {} -- TweensyTimelineZero
+---@field timeline FlashTweensyTimelineZero
 ---@field textContent string
 ---@field onDown fun(param1:FlashMouseEvent):void
 ---@field onOut fun(param1:FlashMouseEvent):void

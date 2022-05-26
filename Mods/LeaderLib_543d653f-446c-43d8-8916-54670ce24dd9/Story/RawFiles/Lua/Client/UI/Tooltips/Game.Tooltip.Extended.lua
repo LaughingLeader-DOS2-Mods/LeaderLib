@@ -1106,7 +1106,7 @@ function TooltipHooks:RegisterControllerHooks()
 	-- This allows examine_c to have a character reference
 	Ext.RegisterUITypeInvokeListener(UIType.overhead, "updateOHs", function (ui, method, ...)
 		if ControllerVars.Enabled then
-			---@type {selectionInfo_array:FlashArray}
+			---@type {selectionInfo_array:FlashArray<number>}
 			local main = ui:GetRoot()
 			if main then
 				for i=0,#main.selectionInfo_array,21 do

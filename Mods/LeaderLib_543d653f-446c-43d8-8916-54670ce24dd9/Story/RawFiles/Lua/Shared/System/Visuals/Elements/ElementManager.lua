@@ -1,3 +1,5 @@
+--Server-Side Script
+
 Ext.Require("Shared/System/Visuals/Elements/Classes/VisualResourceData.lua")
 Ext.Require("Shared/System/Visuals/Elements/Classes/VisualElementData.lua")
 
@@ -100,40 +102,6 @@ RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char
 	end
 end)
 
---[[ 
--- Would work great if CharacterSetVisualElement worked in CC.
-local CCItemData = {}
-
-RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)
-	if ObjectExists(item) == 0 then
-		return
-	end
-	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
-		local itemData = GameHelpers.Ext.CreateItemTable(item)
-		CCItemData[StringHelpers.GetUUID(item)] = itemData
-	end
-	ElementManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), true)
-end, true)
-
-RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char)
-	item = StringHelpers.GetUUID(item)
-	if ObjectExists(item) == 0 then
-		if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
-			local itemData = CCItemData[item]
-			if itemData then
-				ElementManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), itemData, false)
-				CCItemData[item] = nil
-			else
-				return
-			end
-		else
-			return
-		end
-	else
-		ElementManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
-	end
-end, true) ]]
-
 Ext.RegisterNetListener("LeaderLib_OnHelmetToggled", function(cmd, payload)
 	local data = Common.JsonParse(payload)
 	if data ~= nil and data.NetID ~= nil then
@@ -151,9 +119,9 @@ Ext.RegisterNetListener("LeaderLib_OnHelmetToggled", function(cmd, payload)
 			end
 			if item ~= nil then
 				if data.State == 1 then
-					ElementManager.Events.OnEquipmentChanged(char, item, true)
+					ElementManager.OnEquipmentChanged(char, item, true)
 				else
-					ElementManager.Events.OnEquipmentChanged(char, item, false)
+					ElementManager.OnEquipmentChanged(char, item, false)
 				end
 			end
 		end

@@ -12,15 +12,19 @@ local Patches = {
 				return
 			end
 			if isClient then
+				---@diagnostic disable undefined-field
 				if Ext.Version() < 56 then
 					Ext._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
 				else
 					Ext._Internal._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
 				end
+
+				---@diagnostic enable
 	
 				Ext.RegisterNetListener("LLWEAPONEX_SetWorldTooltipText", function (cmd, payload)
 					local ui = Ext.GetUIByType(Data.UIType.tooltip)
 					if ui then
+						---@type {tf:{shortDesc:string|nil, setText:fun(text:string, type:integer)}, defaultTooltip:{shortDesc:string|nil, setText:fun(text:string, type:integer)}}
 						local main = ui:GetRoot()
 						if main ~= nil then
 							local text = payload or ""

@@ -30,18 +30,25 @@ end)
 
 ---@class StatusMovieClip
 ---@field setTurns fun(turns:string) Set the turns text.
----@field setCooldown fun(turns:number) Set the turn display border.
+---@field setCoolDown fun(turns:number) Set the turn display border.
+---@field tick fun()
 
 ---@class StatusMovieClipTable
 ---@field Status EsvStatus
 ---@field MC StatusMovieClip
+
+---@diagnostic disable undefined-field
 
 ---@param character EclCharacter The player.
 ---@param matchStatus string|table<string,boolean>|nil An optional status to look for.
 ---@return StatusMovieClipTable[]
 local function GetPlayerStatusMovieClips(character, matchStatus)
 	local statusMovieclips = {}
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/playerInfo.swf")
+	if Vars.ControllerEnabled then
+		--TODO Parse playerInfo_c
+		return statusMovieclips
+	end
+	local ui = Ext.GetUIByType(Data.UIType.playerInfo)
 	if ui ~= nil then
 		local root = ui:GetRoot()
 		if root ~= nil then
@@ -87,6 +94,8 @@ local function GetPlayerStatusMovieClips(character, matchStatus)
 	end
 	return statusMovieclips
 end
+
+---@diagnostic enable
 
 local function RefreshStatusTurns(data)
 	if data.UUID ~= nil and data.Status ~= nil then
@@ -172,7 +181,9 @@ end)
 Ext.RegisterNetListener("LeaderLib_Client_InvokeListeners", function(cmd, payload)
 	local event, listeners, args = nil,nil,nil
 
+	
 	if string.find(payload, "{") then
+		local data = Common.JsonParse(payload) or {}
 		event = data.Event
 		listeners = Listeners[data.Event]
 		args = data.Args
@@ -224,6 +235,7 @@ Ext.RegisterNetListener("LeaderLib_Debug_MusicTest", function(cmd, payload)
 	fprint(LOGLEVEL.TRACE, "Ext.Audio.SetState(\"Music_Theme\", \"%s\") = %s", theme, success2)
 end)
 
+---@diagnostic disable undefined-field
 function UI.ToggleChainGroup()
 	local targetGroupId = -1
 	local client = Client:GetCharacter()
@@ -270,6 +282,7 @@ function UI.ToggleChainGroup()
 		Ext.PostMessageToServer("LeaderLib_ToggleChainGroup", Common.JsonStringify(groupData))
 	end
 end
+---@diagnostic enable
 
 Ext.RegisterUINameCall("LeaderLib_ToggleChainGroup", function(...)
 	UI.ToggleChainGroup()

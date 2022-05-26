@@ -86,7 +86,7 @@ Ext.RegisterListener("SessionLoaded", function()
 		--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
 		Game.Tooltip.RegisterListener("CustomStat", nil, TooltipHandler.OnCustomStatTooltip)
 		--Game.Tooltip.RegisterListener("Ability", nil, TooltipHandler.OnAbilityTooltip)
-		Game.Tooltip.RegisterListener("Generic", TooltipHandler.OnGenericTooltip)
+		Game.Tooltip.RegisterListener("Generic", nil, TooltipHandler.OnGenericTooltip)
 		-- Game.Tooltip.RegisterListener("Surface", "Water", function (character, surfaceType, tooltip)
 		-- 	local description = tooltip:GetDescriptionElement()
 		-- 	if description then

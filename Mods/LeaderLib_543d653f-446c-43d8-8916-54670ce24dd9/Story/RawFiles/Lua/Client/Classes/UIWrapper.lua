@@ -1,3 +1,10 @@
+---@alias UIListenerContext string|"Before"|"After"
+
+---@class UIWrapperCallbackEntry
+---@field Callback UIWrapperCallbackHandler
+---@field Type string
+---@field Context UIListenerContext
+
 ---@class LeaderLibUIWrapper
 ---@field Root FlashMainTimeline
 ---@field Instance UIObject
@@ -11,9 +18,9 @@ local UIWrapper = {
 	ControllerID = -1,
 	ControllerPath = "",
 	Callbacks = {
-		---@type table<string, UIWrapperCallbackHandler[]>
+		---@type table<string, UIWrapperCallbackEntry[]>
 		Invoke = {},
-		---@type table<string, UIWrapperCallbackHandler[]>
+		---@type table<string, UIWrapperCallbackEntry[]>
 		Call = {}
 	}
 }
@@ -58,6 +65,7 @@ local function SetMeta(this)
 				local ui = UIWrapper.GetInstance(this)
 				if ui then
 					if _EXTVERSION >= 56 then
+						---@diagnostic disable-next-line undefined-field
 						return Common.TableHasValue(ui.Flags, "OF_Visible")
 					else
 						return true
@@ -228,7 +236,7 @@ function UIWrapper:RegisterCallListener(event, callback, eventType, uiContext)
 	end
 	if self.ControllerID ~= -1 and (uiContext == "Controller" or uiContext == "All") then
 		if self.Callbacks.Call[event] == nil then
-			sself.Callbacks.Call[event] = {}
+			self.Callbacks.Call[event] = {}
 		end
 		table.insert(self.Callbacks.Call[event], {
 			Callback = callback,
@@ -309,6 +317,7 @@ function UIWrapper:Invoke(method, ...)
 end
 
 if _EXTVERSION >= 56 then
+	---@diagnostic disable-next-line undefined-field
 	Ext.Events.UIInvoke:Subscribe(function (e)
 		local wrappers = _uiWrappers[e.UI.Type]
 		if wrappers then
@@ -319,6 +328,7 @@ if _EXTVERSION >= 56 then
 		end
 	end)
 
+	---@diagnostic disable-next-line undefined-field
 	Ext.Events.UICall:Subscribe(function (e)
 		local wrappers = _uiWrappers[e.UI.Type]
 		if wrappers then

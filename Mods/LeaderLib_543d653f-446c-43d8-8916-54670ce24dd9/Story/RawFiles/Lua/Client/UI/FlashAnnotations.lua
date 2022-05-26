@@ -1,15 +1,3 @@
----@class FlashHorizontalList:FlashListDisplay
----@field rightSided boolean
----@field m_MaxWidth integer
----@field m_MaxRowElements integer
----@field m_RowSpacing integer
----@field m_CenterHolders boolean
----@field m_RowHeight number
----@field m_holderArray table
----@field positionElements fun():void
----@field moveElementsToPosition fun(param1:number, param2:boolean):void
----@field getContainerWidth fun():number
-
 ---@class FlashListDisplay:FlashMovieClip
 ---@field content_array table
 ---@field scrollHit_mc FlashMovieClip
@@ -99,8 +87,22 @@
 ---@field cursorAccept fun():void
 ---@field isOverlappingPosition fun(targetX:number, targetY:number, shapeTest:boolean):void
 
+---@class FlashHorizontalList:FlashListDisplay
+---@field rightSided boolean
+---@field m_MaxWidth integer
+---@field m_MaxRowElements integer
+---@field m_RowSpacing integer
+---@field m_CenterHolders boolean
+---@field m_RowHeight number
+---@field m_holderArray table
+---@field positionElements fun():void
+---@field moveElementsToPosition fun(param1:number, param2:boolean):void
+---@field getContainerWidth fun():number
+
+---@class FlashScrollbar:FlashMovieClip
+
 ---@class FlashScrollList:FlashListDisplay
----@field m_scrollbar_mc scrollbar
+---@field m_scrollbar_mc FlashScrollbar
 ---@field m_bottomAligned boolean
 ---@field m_allowAutoScroll boolean
 ---@field m_SBSpacing number
@@ -124,7 +126,6 @@
 ---@field setFrame fun(param1:number, param2:number):void
 ---@field setFrameHeight fun(param1:number):void
 ---@field positionElements fun():void
-
 
 ---@class CombatLogFlashMainTimeline:FlashMainTimeline
 ---@field log_mc CombatLogFlashMC
@@ -167,7 +168,7 @@
 ---@field filterAmount number
 ---@field filterDist number
 ---@field resized boolean
----@field textList scrollList
+---@field textList FlashScrollList
 ---@field textOrder number
 ---@field currentText string
 ---@field isMouseOver boolean
@@ -231,7 +232,7 @@
 ---@field icon_mc FlashMovieClip
 ---@field fadeTime number
 ---@field selectedB boolean
----@field timeline TweensyTimelineZero
+---@field timeline {} -- TweensyTimelineZero
 ---@field textContent string
 ---@field onDown fun(param1:FlashMouseEvent):void
 ---@field onOut fun(param1:FlashMouseEvent):void

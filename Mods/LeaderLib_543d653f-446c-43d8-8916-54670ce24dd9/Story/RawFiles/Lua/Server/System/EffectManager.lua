@@ -33,6 +33,7 @@ local ObjectHandleEffectParams = {
 ---@class EffectManagerEsvEffect:EffectManagerEsvEffectParams
 ---@field NetID NETID
 ---@field Delete fun(self:EffectManagerEsvEffect)
+---@field Handle ObjectHandle
 
 ---@alias LeaderLibEffectManagerTarget UUID|NETID|EsvCharacter|EsvItem|number[]
 
@@ -165,14 +166,17 @@ end
 function _INTERNAL.PlayEffect(fx, object, params)
 	local t = type(fx)
 	assert(t == "string" or t == "table", "fx parameter must be a string or a table of strings.")
+	---@type EsvCharacter|EsvItem
 	local object = GameHelpers.TryGetObject(object)
 	assert(type(object) == "userdata", "object parameter must be a UUID, NetID, or EsvCharacter/EsvItem.")
 	if t == "string" then
 		local handle = nil
 		if _EXTVERSION >= 56 then
+			---@diagnostic disable undefined-field
 			---@type EffectManagerEsvEffect
 			local effect = Ext.Effect.CreateEffect(fx, object.Handle, params and params.Bone or "")
 			handle = Ext.HandleToDouble(effect.Handle)
+			---@diagnostic enable
 			if params and type(params) == "table" then
 				for k,v in pairs(params) do
 					if ObjectHandleEffectParams[k] then
@@ -191,8 +195,9 @@ function _INTERNAL.PlayEffect(fx, object, params)
 			return CreateEffectResult(effect, handle, effect.EffectName)
 		elseif Ext.OsirisIsCallable() then
 			if params then
-				if params.BeamTarget then
-					handle = PlayLoopBeamEffect(object.MyGuid, params.BeamTarget.MyGuid, fx, params.Bone or "", params.BeamTargetBone or "")
+				if params.BeamTarget ~= nil then
+					local beamTarget = GameHelpers.GetUUID(params.BeamTarget)
+					handle = PlayLoopBeamEffect(object.MyGuid, beamTarget, fx, params.Bone or "", params.BeamTargetBone or "")
 				else
 					handle = PlayLoopEffect(object.MyGuid, fx, params.Bone or "")
 				end
@@ -231,6 +236,7 @@ function _INTERNAL.PlayEffectAt(fx, pos, params)
 		assert(x and y and z, "Position table is invalid - {x,y,z} required.")
 		if _EXTVERSION >= 56 then
 			local handle = nil
+			---@diagnostic disable undefined-field
 			---@type EffectManagerEsvEffect
 			local effect = Ext.Effect.CreateEffect(fx, Ext.Entity.NullHandle(), "")
 			if effect then
@@ -238,7 +244,8 @@ function _INTERNAL.PlayEffectAt(fx, pos, params)
 				effect.Position[2] = y
 				effect.Position[3] = z
 			end
-			if type(params) == "table" then
+			---@diagnostic enable
+			if params and type(params) == "table" then
 				for k,v in pairs(params) do
 					if ObjectHandleEffectParams[k] then
 						local obj = GameHelpers.TryGetObject(v)
@@ -297,10 +304,10 @@ function EffectManager.PlayEffect(fx, object, params)
 	if result and params and params.Loop == true then
 		if type(result) == "table" then
 			for i,v in pairs(result) do
-				_INTERNAL.SaveObjectEffectData(uuid, v.ID, v.Handle, params)
+				_INTERNAL.SaveObjectEffectData(uuid, v.ID, params)
 			end
 		else
-			_INTERNAL.SaveObjectEffectData(uuid, result.ID, result.Handle, params)
+			_INTERNAL.SaveObjectEffectData(uuid, result.ID, params)
 		end
 	end
 	return result
@@ -321,7 +328,7 @@ function EffectManager.PlayEffectAt(fx, pos, params)
 				_INTERNAL.SaveWorldEffectData(v.Position, v.ID, v.Handle, params)
 			end
 		else
-			_INTERNAL.SaveWorldEffectData(v.Position, result.ID, result.Handle, params)
+			_INTERNAL.SaveWorldEffectData(pos, result.ID, result.Handle, params)
 		end
 	end
 	return result

@@ -139,9 +139,11 @@ Game.Tooltip.RequestProcessor = RequestProcessor
 local game = Game
 _ENV = Game.Tooltip
 _ENV.Game = game
+---@diagnostic disable deprecated
 if setfenv ~= nil then
 	setfenv(1, Game.Tooltip)
 end
+---@diagnostic enable
 
 local ControllerVars = {
 	Enabled = false,
@@ -156,6 +158,8 @@ function Game.Tooltip.PrepareIcon(ui, id, icon, w, h)
 	ui:SetCustomIcon(id, icon, w, h)
 	tooltipCustomIcons[#tooltipCustomIcons+1] = id
 end
+
+---@alias TooltipElementType string|"ItemName"|"ItemWeight"|"ItemGoldValue"|"ItemLevel"|"ItemDescription"|"ItemRarity"|"ItemUseAPCost"|"ItemAttackAPCost"|"StatBoost"|"ResistanceBoost"|"AbilityBoost"|"OtherStatBoost"|"VitalityBoost"|"ChanceToHitBoost"|"DamageBoost"|"APCostBoost"|"APMaximumBoost"|"APStartBoost"|"APRecoveryBoost"|"CritChanceBoost"|"ArmorBoost"|"ConsumableDuration"|"ConsumablePermanentDuration"|"ConsumableEffect"|"ConsumableDamage"|"ExtraProperties"|"Flags"|"ItemRequirement"|"WeaponDamage"|"WeaponDamagePenalty"|"WeaponCritMultiplier"|"WeaponCritChance"|"WeaponRange"|"Durability"|"CanBackstab"|"AccuracyBoost"|"DodgeBoost"|"EquipmentUnlockedSkill"|"WandSkill"|"WandCharges"|"ArmorValue"|"ArmorSlotType"|"Blocking"|"NeedsIdentifyLevel"|"IsQuestItem"|"PriceToIdentify"|"PriceToRepair"|"PickpocketInfo"|"Engraving"|"ContainerIsLocked"|"SkillName"|"SkillIcon"|"SkillSchool"|"SkillTier"|"SkillRequiredEquipment"|"SkillAPCost"|"SkillCooldown"|"SkillDescription"|"SkillProperties"|"SkillDamage"|"SkillRange"|"SkillExplodeRadius"|"SkillCanPierce"|"SkillCanFork"|"SkillStrikeCount"|"SkillProjectileCount"|"SkillCleansesStatus"|"SkillMultiStrikeAttacks"|"SkillWallDistance"|"SkillPathSurface"|"SkillPathDistance"|"SkillHealAmount"|"SkillDuration"|"ConsumableEffectUknown"|"Reflection"|"SkillAlreadyLearned"|"SkillOnCooldown"|"SkillAlreadyUsed"|"AbilityTitle"|"AbilityDescription"|"TalentTitle"|"TalentDescription"|"SkillMPCost"|"MagicArmorValue"|"WarningText"|"RuneSlot"|"RuneEffect"|"Equipped"|"ShowSkillIcon"|"SkillbookSkill"|"Tags"|"EmptyRuneSlot"|"StatName"|"StatsDescription"|"StatsDescriptionBoost"|"StatSTRWeight"|"StatMEMSlot"|"StatsPointValue"|"StatsTalentsBoost"|"StatsTalentsMalus"|"StatsBaseValue"|"StatsPercentageBoost"|"StatsPercentageMalus"|"StatsPercentageTotal"|"StatsGearBoostNormal"|"StatsATKAPCost"|"StatsCriticalInfos"|"StatsAPTitle"|"StatsAPDesc"|"StatsAPBase"|"StatsAPBonus"|"StatsAPMalus"|"StatsTotalDamage"|"TagDescription"|"StatusImmunity"|"StatusBonus"|"StatusMalus"|"StatusDescription"|"Title"|"SurfaceDescription"|"Duration"|"Fire"|"Water"|"Earth"|"Air"|"Poison"|"Physical"|"Sulfur"|"Heal"|"Splitter"|"ArmorSet"
 
 TooltipItemIds = {
 	"ItemName","ItemWeight","ItemGoldValue","ItemLevel","ItemDescription","ItemRarity","ItemUseAPCost","ItemAttackAPCost","StatBoost",
@@ -323,7 +327,7 @@ local _Warning = {"Warning", "string"}
 local _Unused = {nil, nil}
 local BoostSpec = {_Label, _NumValue, _Unused}
 
----@alias TooltipElement { Type:string }
+---@alias TooltipElement { Type:TooltipElementType }
 ---@alias BoostSpec { Type:string, Value:number }
 ---@alias ItemName { Type:string, Label:string }
 
@@ -862,6 +866,11 @@ end
 ---@field Stat number The stat handle.
 ---@field StatData table
 
+---@class TooltipSurfaceRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Ground string|nil
+---@field Cloud string|nil
+
 ---@class TooltipGenericRequest:TooltipRequest
 ---@field Text string
 ---@field X number|nil
@@ -872,6 +881,7 @@ end
 ---@field AllowDelay boolean|nil
 ---@field AnchorEnum integer|nil
 ---@field BackgroundType integer|nil
+---@field IsCharacterTooltip boolean|nil
 
 local previousListeners = {}
 
@@ -1061,13 +1071,17 @@ function TooltipHooks:RegisterControllerHooks()
 		if ControllerVars.Enabled then
 			local ui = Ext.GetUIByType(UIType.bottomBar_c)
 			if ui then
-				local handle = ui:GetRoot().characterHandle
-				if handle ~= nil then
-					handle = Ext.DoubleToHandle(handle)
-					ControllerVars.LastPlayer = handle
-					return handle
-				else
-					return ControllerVars.LastPlayer
+				---@type {characterHandle:number}
+				local root = ui:GetRoot()
+				if root then
+					local handle = root.characterHandle
+					if handle ~= nil then
+						handle = Ext.DoubleToHandle(handle)
+						ControllerVars.LastPlayer = handle
+						return handle
+					else
+						return ControllerVars.LastPlayer
+					end
 				end
 			end
 		end
@@ -1092,12 +1106,15 @@ function TooltipHooks:RegisterControllerHooks()
 	-- This allows examine_c to have a character reference
 	Ext.RegisterUITypeInvokeListener(UIType.overhead, "updateOHs", function (ui, method, ...)
 		if ControllerVars.Enabled then
+			---@type {selectionInfo_array:FlashArray}
 			local main = ui:GetRoot()
-			for i=0,#main.selectionInfo_array,21 do
-				local id = main.selectionInfo_array[i]
-				if id then
-					ControllerVars.LastOverhead = Ext.DoubleToHandle(id)
-					break
+			if main then
+				for i=0,#main.selectionInfo_array,21 do
+					local id = main.selectionInfo_array[i]
+					if id then
+						ControllerVars.LastOverhead = Ext.DoubleToHandle(id)
+						break
+					end
 				end
 			end
 		end
@@ -1149,11 +1166,13 @@ function TooltipHooks:Init()
 			self.NextRequest = nil
 		end
 		local tt = Ext.GetUIByType(UIType.tooltip)
-		if #tooltipCustomIcons > 0 then
-			for _,v in pairs(tooltipCustomIcons) do
-				tt:ClearCustomIcon(v)
+		if tt then
+			if #tooltipCustomIcons > 0 then
+				for _,v in pairs(tooltipCustomIcons) do
+					tt:ClearCustomIcon(v)
+				end
+				tooltipCustomIcons = {}
 			end
-			tooltipCustomIcons = {}
 		end
 	end)
 
@@ -1235,6 +1254,7 @@ function TooltipHooks:GetCompareOwner(ui, item)
 	if not ControllerVars.Enabled then
 		local hotbar = Ext.GetUIByType(UIType.hotBar)
 		if hotbar ~= nil then
+			---@type {hotbar_mc:{characterHandle:number}}
 			local main = hotbar:GetRoot()
 			if main ~= nil then
 				handle = Ext.DoubleToHandle(main.hotbar_mc.characterHandle)
@@ -1243,6 +1263,7 @@ function TooltipHooks:GetCompareOwner(ui, item)
 	else
 		local hotbar = Ext.GetUIByType(UIType.bottomBar_c)
 		if hotbar ~= nil then
+			---@type {characterHandle:number}
 			local main = hotbar:GetRoot()
 			if main ~= nil then
 				handle = Ext.DoubleToHandle(main.characterHandle)
@@ -1316,6 +1337,7 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 
 	self.IsOpen = true
 	
+	---@type TooltipItemRequest
 	local req = self.NextRequest
 	self.ActiveType = req.Type
 	self.Last.Type = req.Type
@@ -1358,7 +1380,7 @@ end
 
 ---@param ui UIObject
 ---@param propertyName string
----@param req TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTagRequest|TooltipCustomStatRequest
+---@param req TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTalentRequest|TooltipTagRequest|TooltipCustomStatRequest|TooltipSurfaceRequest
 ---@param method string
 function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 	local tt = TableFromFlash(ui, propertyName)
@@ -1657,7 +1679,9 @@ local DescriptionElements = {
 ---Gets whichever element is the description.
 ---@return TooltipElement
 function TooltipData:GetDescriptionElement()
-	for i,element in pairs(self.Data) do
+	---@type {Type:TooltipElementType, Label:string|nil}
+	local elements = self.Data
+	for _,element in pairs(elements) do
 		if DescriptionElements[element.Type] and element.Label then
 			return element
 		end
@@ -1933,6 +1957,7 @@ if version < 56 then
 	---@param ui UIObject
 	Ext.RegisterListener("UIObjectCreated", OnUICreated)
 else
+	---@diagnostic disable-next-line undefined-field
 	Ext.Events.UIObjectCreated:Subscribe(function (e)
 		OnUICreated(e.UI)
 	end)

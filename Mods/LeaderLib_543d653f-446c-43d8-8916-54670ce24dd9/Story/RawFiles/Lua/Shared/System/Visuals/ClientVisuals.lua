@@ -1,13 +1,17 @@
+--- @class ExtenderMaterialVector4
+--- @field IsColor boolean
+--- @field Value number[]
+
 ---@class ExtenderClientVisualOptions
 ---@field Bone string
 ---@field AllowTPose boolean
 ---@field ResetScale boolean
 ---@field SyncAnimationWithParent boolean
----@field Color1 MaterialVector4
----@field Color2 MaterialVector4
----@field Color3 MaterialVector4
----@field Color4 MaterialVector4
----@field Color5 MaterialVector4
+---@field Color1 ExtenderMaterialVector4
+---@field Color2 ExtenderMaterialVector4
+---@field Color3 ExtenderMaterialVector4
+---@field Color4 ExtenderMaterialVector4
+---@field Color5 ExtenderMaterialVector4
 ---@field ExcludeFromBounds boolean
 ---@field KeepRot boolean
 ---@field KeepScale boolean
@@ -100,13 +104,18 @@ end
 ---@param options ExtenderClientVisualOptions|nil
 ---@param positionOptions LeaderLibClientVisualOptions|nil
 function VisualManager.AttachVisual(character, visualResource, options, positionOptions)
+	options = options or {}
+
 	VisualManager.DeleteVisual(character, visualResource)
+	---@diagnostic disable unknown-field
 	---@type EclLuaVisualClientMultiVisual
 	local handler = Ext.Visual.CreateOnCharacter(character.Translate, character, character)
 	VisualManager.StoreVisualHandler(character, visualResource, handler)
 	local addedVisual = handler:AddVisual(visualResource, options)
 
-	if addedVisual and type(positionOptions) == "table" then
+	---@diagnostic enable
+
+	if addedVisual and positionOptions and type(positionOptions) == "table" then
 		local target = addedVisual.WorldTransform
 		if options.UseLocalTransform then
 			target = addedVisual.LocalTransform

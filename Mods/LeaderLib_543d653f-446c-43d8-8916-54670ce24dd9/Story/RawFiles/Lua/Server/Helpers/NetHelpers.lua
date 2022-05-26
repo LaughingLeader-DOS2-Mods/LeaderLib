@@ -4,8 +4,10 @@ local _postToUser = Ext.PostMessageToUser
 local _broadcast = Ext.BroadcastMessage
 
 if Ext.Version() >= 56 then
+	---@diagnostic disable undefined-field
 	_postToUser = Ext.Net.PostMessageToUser
 	_broadcast = Ext.Net.BroadcastMessage
+	---@diagnostic enable
 end
 
 local function EnsureString(payload)
@@ -62,7 +64,7 @@ end
 --Old Osiris support
 ---@deprecated
 ---@param channel string
----@param payload string
+---@param uuid string
 function BroadcastToClient(channel, uuid)
 	GameHelpers.Net.PostToUser(uuid, channel)
 end

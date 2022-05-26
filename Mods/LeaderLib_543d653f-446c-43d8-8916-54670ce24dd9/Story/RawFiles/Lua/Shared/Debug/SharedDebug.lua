@@ -1,3 +1,5 @@
+local isClient = Ext.IsClient()
+
 Events.SummonChanged:Subscribe(function (e)
 	if Vars.LeaderDebugMode then
 		if type(e.Summon) == "userdata" then

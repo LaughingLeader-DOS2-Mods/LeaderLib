@@ -1,3 +1,51 @@
+---@diagnostic disable lowercase-global
+
+---@class LOGLEVEL
+LOGLEVEL = {
+	--- Ext.Print
+	DEFAULT = 0,
+	--- print, will allow the message to show up when in input mode in the command window.
+	TRACE = 1,
+	--- Ext.PrintWarning
+	WARNING = 2,
+	--- Ext.PrintError
+	ERROR = 3,
+	--- Ext.Print if in DeveloperMode
+	TRACE2 = 4,
+}
+
+---Prints a string formatted message with optional severity.
+---@param severity integer|LOGLEVEL
+---@param str string
+function fprint(severity, str, ...)
+	if type(severity) == "string" then
+		if string.find(severity, "%s", 1, true) then
+			Ext.Print(string.format(severity, str, ...))
+		else
+			Ext.Print(severity, str, ...)
+		end
+	elseif type(str) == "string" then
+		local msg = string.format(str, ...)
+		if severity == LOGLEVEL.ERROR then
+			Ext.PrintError(msg)
+		elseif severity == LOGLEVEL.WARNING then
+			Ext.PrintWarning(msg)
+		elseif severity == LOGLEVEL.TRACE then
+			if Vars.DebugMode then
+				print(msg)
+			end
+		elseif severity == LOGLEVEL.TRACE2 then
+			if Vars.DebugMode then
+				Ext.Print(msg)
+			end
+		else
+			Ext.Print(msg)
+		end
+	else
+		Ext.Print(severity,str,...)
+	end
+end
+
 ---Similar to error, but formats a string with provided values.
 ---@param message string The error message to display.
 ---@vararg any

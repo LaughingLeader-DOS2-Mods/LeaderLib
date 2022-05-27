@@ -83,8 +83,6 @@ if Ext.IsServer() then
 	---@type OnSkillHitCallback[]
 	Listeners.OnSkillHit = {}
 
-	---@alias OnHealCallback fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem, heal:EsvStatusHeal, originalAmount:integer, handle:integer, skill:string|nil, healingSourceStatus:EsvStatusHealing|nil):void
-
 	---Server-side event for when base ability or attribute values change on players. Can fire from character sheet interaction or after respec.
 	---@type table<string, fun(uuid:string, stat:string, lastVal:integer, nextVal:integer, statType:string):void>
 	Listeners.CharacterBasePointsChanged = {}

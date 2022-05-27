@@ -174,21 +174,22 @@ function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTarge
 end
 
 ---Set a skill cooldown if the character has the skill.
----@param char string
+---@param char CharacterParam
 ---@param skill string
 ---@param cooldown number
 function GameHelpers.Skill.SetCooldown(char, skill, cooldown)
-    char = GameHelpers.GetUUID(char)
-    if CharacterHasSkill(char, skill) == 1 then
+    local uuid = GameHelpers.GetUUID(char)
+    assert(not StringHelpers.IsNullOrEmpty(uuid), "A valid EsvCharacter, NetID, or UUID is required.")
+    if CharacterHasSkill(uuid, skill) == 1 then
         if cooldown ~= 0 then
             --Cooldown 0 makes the engine stop sending updateSlotData invokes to hotBar.swf
-            NRD_SkillSetCooldown(char, skill, 0)
+            NRD_SkillSetCooldown(uuid, skill, 0)
             --Set the actual cooldown after a frame, now that the previous engine cooldown timer is done
             Timer.StartOneshot("", 1, function()
-                NRD_SkillSetCooldown(char, skill, cooldown)
+                NRD_SkillSetCooldown(uuid, skill, cooldown)
             end)
         else
-            NRD_SkillSetCooldown(char, skill, 0)
+            NRD_SkillSetCooldown(uuid, skill, 0)
         end
     end
 end

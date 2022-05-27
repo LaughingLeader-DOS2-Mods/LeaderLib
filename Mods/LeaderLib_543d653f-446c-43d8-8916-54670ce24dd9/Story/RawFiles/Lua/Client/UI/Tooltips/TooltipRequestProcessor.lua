@@ -227,7 +227,6 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 						if runeBoost then
 							statsID = runeBoost.BoostName
 						end
-						runeHandleDouble = Ext.HandleToDouble(item.Handle)
 					end
 
 					request.StatsId = statsID

@@ -529,8 +529,9 @@ end
 ---Formats a number with commas.
 ---@param amount integer
 function Common.FormatNumber(amount)
+	local k = nil
 	local formatted = amount
-	while true do  
+	while true do
 		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
 		if (k==0) then
 		break

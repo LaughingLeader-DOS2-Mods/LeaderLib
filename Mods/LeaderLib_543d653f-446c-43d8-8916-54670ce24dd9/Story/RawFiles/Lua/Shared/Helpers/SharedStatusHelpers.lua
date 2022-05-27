@@ -185,16 +185,16 @@ end
 
 local function IsHarmfulStatsId(statsId)
 	if not StringHelpers.IsNullOrWhitespace(statsId) then
-		if string.find(statsId, ";") then
-			for m in string.gmatch(statsId, "[%a%d_]+,") do
-				local statName = string.sub(m, 1, #m-1)
-				local stat = Ext.GetStat(statName)
+		local potions,isTable = GameHelpers.Stats.ParseStatsIdPotions(statsId)
+		if isTable then
+			for _,v in pairs(potions) do
+				local stat = Ext.GetStat(v.ID)
 				if stat and IsHarmfulPotion(stat) then
 					return true
 				end
 			end
 		else
-			local stat = Ext.GetStat(statsId)
+			local stat = Ext.GetStat(potions)
 			if stat and IsHarmfulPotion(stat) then
 				return true
 			end
@@ -258,16 +258,16 @@ end
 
 local function IsBeneficialStatsId(statsId, ignoreItemPotions)
 	if not StringHelpers.IsNullOrWhitespace(statsId) then
-		if string.find(statsId, ";") then
-			for m in string.gmatch(statsId, "[%a%d_]+,") do
-				local statName = string.sub(m, 1, #m-1)
-				local stat = Ext.GetStat(statName)
+		local potions,isTable = GameHelpers.Stats.ParseStatsIdPotions(statsId)
+		if isTable then
+			for _,v in pairs(potions) do
+				local stat = Ext.GetStat(v.ID)
 				if stat and IsBeneficialPotion(stat, ignoreItemPotions) then
 					return true
 				end
 			end
 		else
-			local stat = Ext.GetStat(statsId)
+			local stat = Ext.GetStat(potions)
 			if stat and IsBeneficialPotion(stat, ignoreItemPotions) then
 				return true
 			end
@@ -308,6 +308,56 @@ function GameHelpers.Status.IsBeneficial(statusId, ignoreItemPotions, ignoreStat
 		end
 	end
 	return false
+end
+
+---Checks if a potion stat has any stat boosts.
+---@param potionId string
+---@return boolean
+function GameHelpers.Stats.PotionHasStatBoosts(potionId)
+	local potions,isTable = GameHelpers.Stats.ParseStatsIdPotions(potionId)
+	if isTable then
+		for _,v in pairs(potions) do
+			local stat = Ext.GetStat(v.ID)
+			if stat then
+				for k,_ in pairs(potionProperties) do
+					if stat[k] ~= 0 then
+						return true
+					end
+				end
+			end
+		end
+	else
+		local stat = Ext.GetStat(potions)
+		if stat then
+			for k,_ in pairs(potionProperties) do
+				if stat[k] ~= 0 then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
+
+---Checks if a status has any stat boosts via StatsId.
+---@param status string|EsvStatus|EsvStatusConsumeBase
+---@return boolean
+function GameHelpers.Status.HasStatBoosts(status)
+	local t = type(status)
+	if t == "string" then
+		local stat = Ext.GetStat(status)
+		if stat and not StringHelpers.IsNullOrWhitespace(stat.StatsId) then
+			return GameHelpers.Stats.PotionHasStatBoosts(stat.StatsId)
+		end
+		return false
+	elseif (t == "userdata" or t == "table") and status.StatusId then
+		if status.StatsId and GameHelpers.Stats.PotionHasStatBoosts(status.StatsId) then
+			return true
+		end
+		return GameHelpers.Status.HasStatBoosts(status.StatusId)
+	end
+	ferror("status param (%s) is not a valid type (%s) - Should be a string or an Ecl/EsvStatus", status, t)
 end
 
 ---Returns true if the object has any of the given statuses.

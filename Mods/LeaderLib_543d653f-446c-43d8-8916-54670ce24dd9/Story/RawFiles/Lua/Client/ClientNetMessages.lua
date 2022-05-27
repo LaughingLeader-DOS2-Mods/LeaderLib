@@ -287,17 +287,3 @@ end
 Ext.RegisterUINameCall("LeaderLib_ToggleChainGroup", function(...)
 	UI.ToggleChainGroup()
 end)
-
----@see OnCharacterResurrected
----@param cmd string
----@param netidStr string
-local function OnCharacterResurrectedNetMessage(cmd, netidStr)
-	local netid = tonumber(netidStr)
-	if netid then
-		local character = GameHelpers.GetCharacter(netid)
-		if character then
-			Events.CharacterResurrected:Invoke(character)
-		end
-	end
-end
-Ext.RegisterNetListener("LeaderLib_Client_CharacterResurrected", OnCharacterResurrectedNetMessage)

@@ -475,3 +475,31 @@ function GameHelpers.Stats.GetScaledAttribute(value, level)
 end
 
 --Mods.LeaderLib.GameHelpers.Stats.GetScaledAttribute(-4, 1)
+
+local _PotionWithTurnsPattern = "(.+),(%d+)"
+
+---@class ParseStatsIdPotions.PotionResult:{ID:string, Turns:integer}
+
+---Parses a status StatsId, returning the potion stat, or a table of potion stat if it's in the `Stat,Turns;` syntax.
+---@param statsId string
+---@return string|ParseStatsIdPotions.PotionResult[] potion Returns a single potion, or a table of potions with their ID and Turns specified.
+---@return boolean isTable True if the result is a table of potions.
+function GameHelpers.Stats.ParseStatsIdPotions(statsId)
+	if string.find(statsId, ";") then
+		local potions = {}
+		for _,entry in pairs(StringHelpers.Split(statsId, ";")) do
+			local _,_,potion,turns = string.find(entry, _PotionWithTurnsPattern)
+			if potion then
+				potions[#potions+1] = {ID=potion, Turns = tonumber(turns)}
+			end
+		end
+		return potions,true
+	elseif string.find(statsId, ",") then
+		local _,_,potion,turns = string.find(statsId, _PotionWithTurnsPattern)
+		if potion then
+			return {{ID=potion, Turns = tonumber(turns)}},true
+		end
+	else
+		return statsId,false
+	end
+end

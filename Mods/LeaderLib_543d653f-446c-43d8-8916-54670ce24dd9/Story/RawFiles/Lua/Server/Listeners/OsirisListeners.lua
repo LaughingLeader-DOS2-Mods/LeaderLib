@@ -144,7 +144,6 @@ end)
 function OnCharacterResurrected(uuid)
 	local character = GameHelpers.GetCharacter(uuid)
 	if character then
-		Events.CharacterResurrected:Invoke({Character=character})
-		GameHelpers.Net.Broadcast("LeaderLib_Client_CharacterResurrected", character.NetID)
+		Events.CharacterResurrected:Invoke({Character=character, IsPlayer = GameHelpers.Character.IsPlayer(character)})
 	end
 end

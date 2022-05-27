@@ -12,9 +12,24 @@ Ext.Require("Shared/Classes/SubscribableEventArgs.lua")
 
 ---@class CharacterResurrectedEventArgs
 ---@field Character EsvCharacter|EclCharacter
+---@field IsPlayer boolean
 
 ---@type SubscribableEvent<CharacterResurrectedEventArgs>
-Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurrected")
+Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurrected", {
+	SyncInvoke=true,
+	ArgsKeyOrder={"Character", "IsPlayer"}
+})
+
+---@class CharacterLeveledUpEventArgs
+---@field Character EsvCharacter|EclCharacter
+---@field Level integer
+---@field IsPlayer boolean
+
+---@type SubscribableEvent<CharacterLeveledUpEventArgs>
+Events.CharacterLeveledUp = Classes.SubscribableEvent:Create("CharacterLeveledUp", {
+	SyncInvoke=true,
+	ArgsKeyOrder={"Character", "Level", "IsPlayer"}
+})
 
 ---@class FeatureChangedEventArgs
 ---@field ID string

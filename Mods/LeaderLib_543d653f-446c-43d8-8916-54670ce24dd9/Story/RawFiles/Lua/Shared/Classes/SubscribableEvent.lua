@@ -9,9 +9,9 @@ local isClient = Ext.IsClient()
 ---@alias SubscribableEventGetArgFunction fun(paramId:string, param:any):any
 
 ---@class SubscribableEventCreateOptions
----@field GatherResults boolean If true, event results from callbacks are gathered and return in in the Invoke function.
----@field SyncInvoke boolean If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
----@field Disabled boolean If this event is disabled, Invoke won't invoke registered callbacks.
+---@field GatherResults boolean|nil If true, event results from callbacks are gathered and return in in the Invoke function.
+---@field SyncInvoke boolean|nil If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
+---@field Disabled boolean|nil If this event is disabled, Invoke won't invoke registered callbacks.
 ---@field ArgsKeyOrder string[]|nil
 ---@field GetArg SubscribableEventGetArgFunction|nil
 
@@ -269,25 +269,6 @@ local function SerializeArgs(args)
 	return tbl
 end
 
-local function DeserializeArgs(args)
-	local tbl = {}
-	for k,v in pairs(args) do
-		if type(v) == "table" then
-			if v.Type == "Object" then
-				tbl[k] = GameHelpers.TryGetObject(v.NetID)
-				if not tbl[k] then
-					tbl[k] = v.UUID
-				end
-			else
-				tbl[k] = DeserializeArgs(v)
-			end
-		else
-			tbl[k] = v
-		end
-	end
-	return tbl
-end
-
 ---@param args table|nil
 ---@param skipAutoInvoke boolean|nil
 ---@vararg any
@@ -316,7 +297,24 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 	return result
 end
 
-Classes.SubscribableEvent = SubscribableEvent
+local function DeserializeArgs(args)
+	local tbl = {}
+	for k,v in pairs(args) do
+		if type(v) == "table" then
+			if v.Type == "Object" then
+				tbl[k] = GameHelpers.TryGetObject(v.NetID)
+				if not tbl[k] then
+					tbl[k] = v.UUID
+				end
+			else
+				tbl[k] = DeserializeArgs(v)
+			end
+		else
+			tbl[k] = v
+		end
+	end
+	return tbl
+end
 
 Ext.RegisterNetListener("LeaderLib_SubscribableEvent_Invoke", function(cmd, payload)
 	local data = Common.JsonParse(payload, true)
@@ -327,3 +325,5 @@ Ext.RegisterNetListener("LeaderLib_SubscribableEvent_Invoke", function(cmd, payl
 		end
 	end
 end)
+
+Classes.SubscribableEvent = SubscribableEvent

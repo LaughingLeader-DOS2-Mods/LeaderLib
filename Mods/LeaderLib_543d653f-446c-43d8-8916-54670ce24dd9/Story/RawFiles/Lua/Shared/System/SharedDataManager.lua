@@ -407,9 +407,19 @@ else
 	end)
 
 	local function OnPointsChanged(uuid)
-		if GameHelpers.Character.IsPlayer(uuid) then
-			GameHelpers.Data.StartSyncTimer(500)
+		local character = GameHelpers.GetCharacter(uuid)
+		if character then
+			local isPlayer = GameHelpers.Character.IsPlayer(character)
+			if isPlayer then
+				GameHelpers.Data.StartSyncTimer(500)
+			end
+			Events.CharacterLeveledUp:Invoke({
+				Character = character,
+				Level = character.Stats.Level,
+				IsPlayer = isPlayer
+			})
 		end
+
 	end
 
 	Ext.RegisterOsirisListener("CharacterLeveledUp", 1, "after", OnPointsChanged)

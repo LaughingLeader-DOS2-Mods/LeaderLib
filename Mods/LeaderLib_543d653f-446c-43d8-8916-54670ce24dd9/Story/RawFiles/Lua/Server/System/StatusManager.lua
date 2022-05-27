@@ -444,14 +444,34 @@ RegisterListener("PersistentVarsLoaded", function ()
 	_INTERNAL.ReapplyPermanentStatuses()
 end)
 
-Events.CharacterResurrected:Subscribe(function(e)
-	local permanentStatuses = PersistentVars.ActivePermanentStatuses[e.Character.MyGuid]
+---@param character EsvCharacter
+---@param refreshStatBoosts boolean|nil If true, active statuses with stat boosts will be re-applied.
+function StatusManager.ReapplyPermanentStatusesForCharacter(character, refreshStatBoosts)
+	character = GameHelpers.GetCharacter(character)
+	assert(character ~= nil, "An EsvCharacter, NetID, or UUID is required")
+	local permanentStatuses = PersistentVars.ActivePermanentStatuses[character.MyGuid]
 	if permanentStatuses then
 		for id,source in pairs(permanentStatuses) do
-			if not GameHelpers.Status.IsActive(e.Character, id) then
-				GameHelpers.Status.Apply(e.Character, id, -1, true, source)
+			if not GameHelpers.Status.IsActive(character, id) or (refreshStatBoosts and GameHelpers.Status.HasStatBoosts(id)) then
+				GameHelpers.Status.Apply(character, id, -1, true, source)
 			end
 		end
+	end
+end
+
+Timer.Subscribe("LeaderLib_StatusManager_ReapplyPermanentStatuses", function (e)
+	if e.Data.Object then
+		StatusManager.ReapplyPermanentStatusesForCharacter(e.Data.Object, e.Data.RefreshBoosts == true)
+	end
+end)
+
+Events.CharacterResurrected:Subscribe(function(e)
+	StatusManager.ReapplyPermanentStatusesForCharacter(e.Character)
+end)
+
+Events.CharacterLeveledUp:Subscribe(function(e)
+	if PersistentVars.ActivePermanentStatuses[e.Character.MyGuid] ~= nil then
+		Timer.StartObjectTimer("LeaderLib_StatusManager_ReapplyPermanentStatuses", e.Character, 1000, {RefreshBoosts=true})
 	end
 end)
 

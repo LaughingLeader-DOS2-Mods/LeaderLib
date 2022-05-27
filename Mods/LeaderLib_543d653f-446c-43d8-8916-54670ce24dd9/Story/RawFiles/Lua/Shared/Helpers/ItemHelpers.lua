@@ -297,7 +297,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
                     ItemLevelUpTo(newItem.MyGuid, properties.StatsLevel)
                 end
             end
-            InvokeListenerCallbacks(Listeners.TreasureItemGenerated, newItem, statName)
+            Events.TreasureItemGenerated:Invoke({Item=newItem, StatsId=statName})
             return newItem.MyGuid,newItem
         end
     end
@@ -335,7 +335,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     local item = constructor:Construct()
     if item ~= nil then
         item = Ext.GetItem(item.Handle)
-        InvokeListenerCallbacks(Listeners.TreasureItemGenerated, item)
+        Events.TreasureItemGenerated:Invoke({Item=item, StatsId=item.StatsId or ""})
         return item
     else
         Ext.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Error constructing item when invoking Construct() - Returned item is nil for template %s.", template))
@@ -406,8 +406,8 @@ function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
     local clone = constructor:Construct()
     if clone then
         clone = Ext.GetItem(clone.Handle)
-        InvokeListenerCallbacks(Listeners.TreasureItemGenerated, clone, item.StatsId or clone.StatsId)
-        return item
+        Events.TreasureItemGenerated:Invoke({Item=clone, StatsId=clone.StatsId or item.StatsId})
+        return clone
     else
         error("Error cloning item.", 2)
     end

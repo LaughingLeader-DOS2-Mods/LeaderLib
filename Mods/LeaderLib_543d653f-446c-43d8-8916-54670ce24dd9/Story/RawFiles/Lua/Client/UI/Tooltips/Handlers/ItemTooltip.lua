@@ -6,6 +6,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 	if tooltip == nil then
 		return
 	end
+	GameHelpers.IO.SaveFile("Dumps/ItemTooltip.json", {Item=item, Tooltip=tooltip.Data})
 	if item ~= nil then
 		TooltipHandler.LastItem = item
 		local character = Client:GetCharacter()

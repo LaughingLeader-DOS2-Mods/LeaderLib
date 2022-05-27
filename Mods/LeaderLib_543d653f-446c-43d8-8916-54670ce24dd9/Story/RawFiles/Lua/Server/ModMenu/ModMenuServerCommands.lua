@@ -31,7 +31,7 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_SaveChanges", function(cmd, payload)
 			end
 			settings:ApplyToGame()
 
-			InvokeListenerCallbacks(Listeners.ModSettingsSynced, uuid, settings)
+			Events.ModSettingsSynced:Invoke({UUID=uuid, Settings=settings})
 		end
 	end
 	SaveGlobalSettings()

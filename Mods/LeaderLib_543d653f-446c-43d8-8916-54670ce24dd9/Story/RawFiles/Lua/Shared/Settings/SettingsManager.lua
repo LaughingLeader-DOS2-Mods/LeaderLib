@@ -312,15 +312,13 @@ else
 	---@param settings GlobalSettings
 	local function LoadGlobalSettingsOnClient(settings)
 		if GlobalSettings ~= nil then
-			local length = #Listeners.ModSettingsSynced
-	
 			GlobalSettings.Version = settings.Version
-			for k,v in pairs(settings.Mods) do
+			for uuid,v in pairs(settings.Mods) do
 				local target = v
-				if GlobalSettings.Mods[k] == nil then
-					GlobalSettings.Mods[k] = v
+				if GlobalSettings.Mods[uuid] == nil then
+					GlobalSettings.Mods[uuid] = v
 				else
-					local existing = GlobalSettings.Mods[k]
+					local existing = GlobalSettings.Mods[uuid]
 					if existing.Global == nil then
 						existing.Global = v.Global
 					else
@@ -341,15 +339,7 @@ else
 					existing.Version = v.Version
 					target = existing
 				end
-				if length > 0 then
-					for i=1,length do
-						local callback = Listeners.ModSettingsSynced[i]
-						local status,err = xpcall(callback, debug.traceback, k, target)
-						if not status then
-							Ext.PrintError("[LeaderLib:HitListeners.lua] Error calling function for 'ModSettingsSynced':\n", err)
-						end
-					end
-				end
+				Events.ModSettingsSynced:Invoke({UUID=uuid, Settings=target})
 			end
 		else
 			Ext.PrintError("[LeaderLib:CLIENT] GlobalSettings is nil.")

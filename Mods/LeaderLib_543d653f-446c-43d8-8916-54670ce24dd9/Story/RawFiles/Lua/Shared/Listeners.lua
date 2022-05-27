@@ -12,7 +12,6 @@ end
 
 Listeners.ModuleResume = {}
 Listeners.SessionLoaded = {}
-Listeners.TurnDelayed = {}
 Listeners.SyncData = {}
 Listeners.ClientDataSynced = {}
 Listeners.ClientCharacterChanged = {}
@@ -39,9 +38,6 @@ Listeners.DebugCommand = {}
 
 ---Callbacks for when all global settings are loaded, or when an individual mod's settings are loaded.
 Listeners.ModSettingsLoaded = {All = {}}
----Callbacks for when ModSettings are synced on both the server and client.
----@type fun(uuid:string, settings:ModSettings):void[]
-Listeners.ModSettingsSynced = {}
 
 ---@alias ModSettingsFlagDataChangedListener fun(id:string, enabled:boolean, data:FlagData, settings:SettingsData):void
 ---@alias ModSettingsVariableDataChangedListener fun(id:string, value:integer, data:VariableData, settings:SettingsData):void
@@ -54,9 +50,6 @@ Listeners.ModSettingsChanged = {All = {}}
 Listeners.MessageBoxEvent = {All = {}}
 
 if Ext.IsServer() then
-	---@type table<integer, fun(item:EsvItem, statsId:string):void>
-	Listeners.TreasureItemGenerated = {}
-
 	---Hit listeners/callbacks, for mod compatibility.
 	---Called from HitOverrides.ComputeCharacterHit at the end of the function, if certain features are enabled or listeners are registered.
 	---@type ExtComputeCharacterHitCallback[]
@@ -83,25 +76,14 @@ if Ext.IsServer() then
 
 	---@alias OnPrepareHitCallback fun(target:string, source:string, damage:integer, handle:integer, data:HitPrepareData):void
 	---@alias OnHitCallback fun(target:string, source:string, damage:integer, handle:integer, skill:string|nil):void
-	---@alias OnStatusHitEnterCallback fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem, totalDamage:integer, hit:HitRequest, context:HitContext, hitStatus:EsvStatusHit, skill:StatEntrySkillData|nil):void
 	---@alias OnSkillHitCallback fun(skill:string, source:string, state:SKILL_STATE, data:HitData|ProjectileHitData):void
 
-	---@type OnPrepareHitCallback[]
-	Listeners.OnPrepareHit = {}
-	---@type OnHitCallback[]
-	Listeners.OnHit = {}
-	---Newer hit listener.
-	---@type OnStatusHitEnterCallback[]
-	Listeners.StatusHitEnter = {}
 	---@deprecated
 	---Fires when a skill hits, or a projectile from a skill hits.
 	---@type OnSkillHitCallback[]
 	Listeners.OnSkillHit = {}
 
 	---@alias OnHealCallback fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem, heal:EsvStatusHeal, originalAmount:integer, handle:integer, skill:string|nil, healingSourceStatus:EsvStatusHealing|nil):void
-	---Fires during NRD_OnHeal.
-	---@type OnHealCallback[]
-	Listeners.OnHeal = {}
 
 	---Server-side event for when base ability or attribute values change on players. Can fire from character sheet interaction or after respec.
 	---@type table<string, fun(uuid:string, stat:string, lastVal:integer, nextVal:integer, statType:string):void>
@@ -259,13 +241,29 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			listenerTable = event
 		else
 			for i,v in pairs(event) do
-				if Listeners[v] then
-					RegisterListener(v, callbackOrKey, callbackOrNil)
-				end
+				RegisterListener(v, callbackOrKey, callbackOrNil)
 			end
 			return
 		end
 	elseif t == "string" then
+		--Legacy support
+		if event == "OnHit" then
+			Events.OnHit:Subscribe(function (e)
+				local b,err = xpcall(callbackOrKey, debug.traceback, GameHelpers.GetUUID(e.Target), GameHelpers.GetUUID(e.Source), e.Data.Damage, e.Data.Handle, e.Data.Skill, e.HitStatus, e.Data.HitContext, e.Data)
+				if not b then
+					Ext.PrintError(err)
+				end
+			end)
+			return
+		elseif event == "StatusHitEnter" then
+			Events.OnHit:Subscribe(function (e)
+				local b,err = xpcall(callbackOrKey, debug.traceback, e.Target, e.Source, e.Data, e.HitStatus)
+				if not b then
+					Ext.PrintError(err)
+				end
+			end)
+			return
+		end
 		local subEvent = Events[event]
 		if subEvent then
 			subEvent:Subscribe(function(e)

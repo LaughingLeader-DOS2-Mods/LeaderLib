@@ -141,26 +141,7 @@ function GameHelpers.UI.RefreshStatusTurns(player, status, turns)
 end
 
 Ext.RegisterNetListener("LeaderLib_OnDelayTurnClicked", function(call, uuid, ...)
-	--print(call, uuid, "DB_LeaderLib_Combat_ActiveObject", Common.JsonStringify(Osi.DB_LeaderLib_Combat_ActiveObject:Get(nil,nil)))
-	-- local charMatch = false
-	-- for i,v in pairs(Osi.DB_LeaderLib_Combat_ActiveObject:Get(nil,nil)) do
-	-- 	if GetUUID(v[2]) == uuid then
-	-- 		charMatch = true
-	-- 	end
-	-- end
-	-- if not charMatch then
-	-- 	return
-	-- end
-	local length = #Listeners.TurnDelayed
-	if length > 0 then
-		for i=1,length do
-			local callback = Listeners.TurnDelayed[i]
-			local status,err = xpcall(callback, debug.traceback, uuid)
-			if not status then
-				Ext.PrintError("Error calling function for 'TurnDelayed':\n", err)
-			end
-		end
-	end
+	Events.TurnDelayed:Invoke({UUID = uuid, Character=GameHelpers.GetCharacter(uuid)})
 end)
 
 ---@param visible boolean

@@ -5,11 +5,15 @@ We don't have C++ event objects backing these, so they're more of a fancy way to
 
 local isClient = Ext.IsClient()
 
+---Optional function to manipulate returned parameters when the event arguments are being unpacked for legacy listeners.
+---@alias SubscribableEventGetArgFunction fun(paramId:string, param:any):any
+
 ---@class SubscribableEventCreateOptions
 ---@field GatherResults boolean If true, event results from callbacks are gathered and return in in the Invoke function.
 ---@field SyncInvoke boolean If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
 ---@field Disabled boolean If this event is disabled, Invoke won't invoke registered callbacks.
 ---@field ArgsKeyOrder string[]|nil
+---@field GetArg SubscribableEventGetArgFunction|nil
 
 ---Used for event entry in the Events table, to support one base definition with multiple event argument types.
 ---T should be specific event arg classes that derive from SubscribableEventArgs.
@@ -290,7 +294,7 @@ end
 ---@return any[]|SubscribableEventInvokeResult result Returns either an array of results, if GatherResults is true, or a string indicating the result (Success, Handled, or Error).
 function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 	args = args or {}
-	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder)
+	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg)
 	local result = nil
 	local cur = self.First
 	if cur then

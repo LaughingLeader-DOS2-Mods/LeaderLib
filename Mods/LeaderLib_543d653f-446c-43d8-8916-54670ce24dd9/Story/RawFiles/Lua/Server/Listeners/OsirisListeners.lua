@@ -136,7 +136,7 @@ end)
 
 ---@param item EsvItem
 RegisterProtectedExtenderListener("TreasureItemGenerated", function(item)
-	InvokeListenerCallbacks(Listeners.TreasureItemGenerated, item, item and item.StatsId or "")
+	Events.TreasureItemGenerated:Invoke({Item=item, StatsId=item.StatsId or ""})
 end)
 
 ---Called from LeaderLib_21_GS_Statuses.txt

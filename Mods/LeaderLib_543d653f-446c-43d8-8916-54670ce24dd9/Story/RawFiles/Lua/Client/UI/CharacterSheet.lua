@@ -145,7 +145,7 @@ local function RegisterListeners()
 
 		Ext.RegisterUITypeCall(Data.UIType.statusConsole, "GuardPressed", function(ui, call, ...)
 			Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", Client.Character.UUID)
-			InvokeListenerCallbacks(Listeners.TurnDelayed, Client.Character.UUID)
+			Events.TurnDelayed:Invoke({UUID = Client.Character.UUID, Character=Client:GetCharacter()})
 		end)
 	end
 end

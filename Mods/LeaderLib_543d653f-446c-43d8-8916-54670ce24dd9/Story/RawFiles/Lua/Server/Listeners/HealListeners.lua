@@ -65,13 +65,25 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 		end
 	end
 
-	InvokeListenerCallbacks(Listeners.OnHeal, target, source, healStatus, amount, handle, skill, healingSourceStatus)
+	Events.OnHeal:Invoke({
+		Target=target,
+		Source=source,
+		Heal=healStatus,
+		OriginalAmount=amount,
+		Handle=handle,
+		Skill=skill,
+		HealingSourceStatus=healingSourceStatus
+	})
 end)
 
 Timer.Subscribe("LeaderLib_ClearLastUsedHealingSkill", function(e)
 	PersistentVars.LastUsedHealingSkill[e.Data.UUID] = nil
 end)
 
+---@alias OnHealCallback fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem, heal:EsvStatusHeal, originalAmount:integer, handle:integer, skill:string|nil, healingSourceStatus:EsvStatusHealing|nil):void
+
+---@deprecated
+---@see OnHealEventArgs
 ---Register a listener for when NRD_OnHeal is called. LeaderLib gets the EsvStatusHeal and associated game objects, as well as a skill source, if any.
 ---@param callback OnHealCallback
 function RegisterHealListener(callback)

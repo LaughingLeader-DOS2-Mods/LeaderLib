@@ -3,7 +3,7 @@ if Events == nil then
 	Events = {}
 end
 
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 
 Ext.Require("Shared/Classes/SubscribableEvent.lua")
 Ext.Require("Shared/Classes/SubscribableEventArgs.lua")
@@ -77,3 +77,84 @@ Events.SummonChanged = Classes.SubscribableEvent:Create("SummonChanged", {
 Events.TimerFinished = Classes.SubscribableEvent:Create("TimerFinished", {
 	ArgsKeyOrder={"ID", "Data"}
 })
+
+---@class ModSettingsSyncedEventArgs
+---@field UUID string The Mod UUID
+---@field Settings ModSettings
+
+---Called when ModSettings are synced on both the server and client.
+---@type SubscribableEvent<ModSettingsSyncedEventArgs>
+Events.ModSettingsSynced = Classes.SubscribableEvent:Create("ModSettingsSynced", {
+	ArgsKeyOrder={"UUID", "Settings"}
+})
+
+---@class TurnDelayedEventArgs
+---@field UUID UUID The character UUID.
+---@field Character EsvCharacter|EclCharacter
+
+---Called when a character's turn is delayed in combat (clicking the "Shield" icon).
+---@type SubscribableEvent<TurnDelayedEventArgs>
+Events.TurnDelayed = Classes.SubscribableEvent:Create("TurnDelayed", {
+	ArgsKeyOrder={"UUID", "Character"}
+})
+
+if not _ISCLIENT then
+	---@class TreasureItemGeneratedEventArgs
+	---@field Item EsvItem
+	---@field StatsId string
+	
+	---Called when an item is generated from treasure, or console command.  
+	---🔨**Server-Only**🔨
+	---@type SubscribableEvent<TreasureItemGeneratedEventArgs>
+	Events.TreasureItemGenerated = Classes.SubscribableEvent:Create("TreasureItemGenerated", {
+		ArgsKeyOrder={"Item", "StatsId"}
+	})
+
+	---@class OnPrepareHitEventArgs
+	---@field Target EsvCharacter|EsvItem
+	---@field Source EsvCharacter|EsvItem|nil
+	---@field Damage integer
+	---@field Handle integer
+	---@field Data HitPrepareData
+	
+	---Called during NRD_OnPrepareHit, with a data wrapper for easier manipulation. 
+	---🔨**Server-Only**🔨
+	---@type SubscribableEvent<OnPrepareHitEventArgs>
+	Events.OnPrepareHit = Classes.SubscribableEvent:Create("OnPrepareHit", {
+		ArgsKeyOrder={"Target", "Source", "Damage", "Handle", "Data"},
+		GetArg = function(paramId, param)
+			if paramId == "Target" or paramId == "Source" then
+				return GameHelpers.GetUUID(param, true)
+			end
+		end
+	})
+
+	---@class OnHitEventArgs
+	---@field Target EsvCharacter|EsvItem
+	---@field Source EsvCharacter|EsvItem|nil
+	---@field Data HitData
+	---@field HitStatus EsvStatusHit
+	
+	---Called during StatusHitEnter, with a data wrapper for easier manipulation.  
+	---🔨**Server-Only**🔨
+	---@type SubscribableEvent<OnHitEventArgs>
+	Events.OnHit = Classes.SubscribableEvent:Create("OnHit", {
+		ArgsKeyOrder={"Target", "Source", "Data", "HitStatus"}
+	})
+
+	---@class OnHealEventArgs
+	---@field Target EsvCharacter
+	---@field Source EsvCharacter|EsvItem|nil
+	---@field Heal EsvStatusHeal
+	---@field OriginalAmount integer
+	---@field Handle integer
+	---@field Skill string|nil
+	---@field HealingSourceStatus EsvStatusHealing|nil
+	
+	---Called during NRD_OnHeal, with extra data for the optional skill that was used, our source EsvStatusHealing.  
+	---🔨**Server-Only**🔨
+	---@type SubscribableEvent<OnHealEventArgs>
+	Events.OnHeal = Classes.SubscribableEvent:Create("OnHeal", {
+		ArgsKeyOrder={"Target", "Source", "Heal", "OriginalAmount", "Handle", "Skill", "HealingSourceStatus"}
+	})
+end

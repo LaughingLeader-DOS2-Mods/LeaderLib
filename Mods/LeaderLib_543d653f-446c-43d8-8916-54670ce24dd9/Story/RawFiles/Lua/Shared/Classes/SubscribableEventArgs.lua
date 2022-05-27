@@ -4,6 +4,7 @@
 ---@class RuntimeSubscribableEventArgs
 ---@field Handled boolean
 ---@field KeyOrder string[]|nil When unpacking, this is the specific order to unpack values in.
+---@field GetArg SubscribableEventGetArgFunction|nil
 ---@field Args table<string,any> The table of args used to create this instance.
 local SubscribableEventArgs = {
 	Type = "SubscribableEventArgs"
@@ -15,14 +16,16 @@ end
 
 ---@param args table|nil
 ---@param unpackedKeyOrder string[]|nil
+---@param getArg SubscribableEventGetArgFunction|nil
 ---@return RuntimeSubscribableEventArgs
-function SubscribableEventArgs:Create(args, unpackedKeyOrder)
+function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg)
 	local _private = {
 		Handled = false,
 		--The table of args used to create this instance.
 		Args = args,
 		--When unpacking, this is the specific order to unpack values in.
 		KeyOrder = unpackedKeyOrder,
+		GetArg = getArg
 	}
 	local eventArgs = {}
 	if type(args) == "table" then
@@ -51,8 +54,19 @@ function SubscribableEventArgs:Unpack(keyOrder)
 	if type(keyOrder) == "table" then
 		for i=1,#keyOrder do
 			local key = keyOrder[i]
-			if self.Args[key] then
-				temp[#temp+1] = self[key]
+			if self.Args[key] ~= nil then
+				if self.GetArg then
+					local b,value = pcall(self.GetArg, key, self.Args[key])
+					if b then
+						if value ~= nil then
+							temp[#temp+1] = value
+						else
+							temp[#temp+1] = self[key]
+						end
+					end
+				else
+					temp[#temp+1] = self[key]
+				end
 			end
 		end
 	else

@@ -2,6 +2,13 @@
 ---@param status EclStatus
 ---@param tooltip TooltipData
 function TooltipHandler.OnStatusTooltip(character, status, tooltip)
+	GameHelpers.IO.SaveFile("Dumps/StatusTooltip.json", tooltip.Data)
+	if status.StatusId == "LLWEAPONEX_DEMON_GAUNTLET_EQUIPPED" then
+		local element = tooltip:GetElement("StatusDescription")
+		if element then
+			element.Label = string.format("%s<br>%s", element.Label, "Test text")
+		end
+	end
 	if Features.ReplaceTooltipPlaceholders or Features.FixChaosDamageDisplay or Features.TooltipGrammarHelper then
 		for i,element in pairs(tooltip:GetElements("StatusDescription")) do
 			if element ~= nil then

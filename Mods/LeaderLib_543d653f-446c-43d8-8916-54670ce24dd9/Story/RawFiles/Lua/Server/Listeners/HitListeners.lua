@@ -15,7 +15,13 @@ local function OnPrepareHit(target, source, damage, handle)
 		end
 	end
 
-	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle, data)
+	Events.OnPrepareHit:Invoke({
+		Target=GameHelpers.TryGetObject(target),
+		Source = GameHelpers.TryGetObject(source),
+		Damage=damage,
+		Handle=handle,
+		Data=data
+	})
 end
 
 RegisterProtectedOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
@@ -105,7 +111,8 @@ end
 ---@param hitStatus EsvStatusHit
 ---@param hitContext HitContext
 local function OnHit(hitStatus, hitContext)
-	local target,source = TryGetObject(hitStatus, "TargetHandle"),TryGetObject(hitStatus, "StatusSourceHandle")
+	local target = TryGetObject(hitStatus, "TargetHandle")
+	local source = TryGetObject(hitStatus, "StatusSourceHandle")
 
 	-- if hitContext.HitType ~= "Surface" and hitContext.HitType ~= "DoT" then
 	-- 	Ext.Dump({Context="StatusHitEnter", Damage=hitStatus.Hit.DamageList:ToTable(), TotalDamageDone=hitStatus.Hit.TotalDamageDone, HitType=hitContext.HitType})
@@ -160,9 +167,12 @@ local function OnHit(hitStatus, hitContext)
 		end
 	end
 
-	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, data, hitStatus)
-	--Old listener
-	InvokeListenerCallbacks(Listeners.OnHit, targetId, sourceId, hitRequest.TotalDamageDone, hitStatus.StatusHandle, skill and skill.Name or nil, hitStatus, hitContext, data)
+	Events.OnHit:Invoke({
+		Target=target,
+		Source=source,
+		Data=data,
+		HitStatus=hitStatus
+	})
 end
 
 if _EXTVERSION < 56 then

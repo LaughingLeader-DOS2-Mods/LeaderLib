@@ -763,3 +763,25 @@ function GameHelpers.Item.GetSlot(item)
     end
     return -1
 end
+
+---@param item EsvItem|EclItem
+---@param inKeyValueFormat boolean|nil If true, the table is returned as table<skill,boolean>
+---@return string[]|table<string,boolean>
+function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat)
+	local skills = {}
+	if _EXTVERSION >= 56 then
+		if item.RootTemplate and item.RootTemplate.OnUsePeaceActions then
+			for _,v in pairs(item.RootTemplate.OnUsePeaceActions) do
+				if v.Type == "UseSkill" or v.Type == "SkillBook" then
+                    if inKeyValueFormat then
+                        skills[#skills+1] = v.SkillID
+                    else
+                        skills[v.SkillID] = true
+                    end
+				end
+			end
+		end
+	else
+		return skills
+	end
+end

@@ -172,4 +172,19 @@ if not _ISCLIENT then
 	Events.OnHeal = Classes.SubscribableEvent:Create("OnHeal", {
 		ArgsKeyOrder={"Target", "Source", "Heal", "OriginalAmount", "Handle", "Skill", "HealingSourceStatus"}
 	})
+
+	---@class OnTurnCounterEventArgs
+	---@field ID string
+	---@field Turn integer
+	---@field LastTurn integer
+	---@field Finished boolean
+	---@field Data TurnCounterData
+
+	---Called when a turn counter progresses to the next turn, or is finished.
+	---@see LeaderLibTurnCounterSystem#CreateTurnCounter
+	---🔨**Server-Only**🔨
+	---@type SubscribableEvent<OnTurnCounterEventArgs>
+	Events.OnTurnCounter = Classes.SubscribableEvent:Create("OnTurnCounter", {
+		ArgsKeyOrder={"ID", "Turn", "LastTurn", "Finished", "Data"}
+	})
 end

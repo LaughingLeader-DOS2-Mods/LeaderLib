@@ -87,10 +87,6 @@ if Ext.IsServer() then
 	---@type table<string, fun(uuid:string, stat:string, lastVal:integer, nextVal:integer, statType:string):void>
 	Listeners.CharacterBasePointsChanged = {}
 
-	---@type TurnCounterCallback[]
-	Listeners.OnTurnCounter = {}
-	---@type table<string, TurnCounterCallback>
-	Listeners.OnNamedTurnCounter = {}
 	---@type table<string, fun(id:string, uuid:UUID):void>
 	Listeners.OnTurnEnded = {All = {}}
 
@@ -260,6 +256,21 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 					Ext.PrintError(err)
 				end
 			end)
+			return
+		elseif event == "OnNamedTurnCounter" then
+			local keyType = type(callbackOrKey)
+			if keyType == "string" then
+				Events.OnTurnCounter:Subscribe(function (e)
+					local b,err = xpcall(callbackOrNil, debug.traceback, e.ID, e.Turn, e.LastTurn, e.Finished, e.Data)
+					if not b then
+						Ext.PrintError(err)
+					end
+				end, {MatchArgs={id=callbackOrKey}})
+			elseif keyType == "table" then
+				for _,v in pairs(keyType) do
+					RegisterListener("OnNamedTurnCounter", v, callbackOrNil)
+				end
+			end
 			return
 		end
 		local subEvent = Events[event]

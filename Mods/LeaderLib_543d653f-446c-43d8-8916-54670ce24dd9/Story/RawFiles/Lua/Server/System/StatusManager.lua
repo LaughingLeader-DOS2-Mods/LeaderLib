@@ -459,6 +459,12 @@ function StatusManager.ReapplyPermanentStatusesForCharacter(character, refreshSt
 	end
 end
 
+Events.CharacterLeveledUp:Subscribe(function(e)
+	if PersistentVars.ActivePermanentStatuses[e.Character.MyGuid] ~= nil then
+		Timer.StartObjectTimer("LeaderLib_StatusManager_ReapplyPermanentStatuses", e.Character, 1000, {RefreshBoosts=true})
+	end
+end)
+
 Timer.Subscribe("LeaderLib_StatusManager_ReapplyPermanentStatuses", function (e)
 	if e.Data.Object then
 		StatusManager.ReapplyPermanentStatusesForCharacter(e.Data.Object, e.Data.RefreshBoosts == true)
@@ -467,12 +473,6 @@ end)
 
 Events.CharacterResurrected:Subscribe(function(e)
 	StatusManager.ReapplyPermanentStatusesForCharacter(e.Character)
-end)
-
-Events.CharacterLeveledUp:Subscribe(function(e)
-	if PersistentVars.ActivePermanentStatuses[e.Character.MyGuid] ~= nil then
-		Timer.StartObjectTimer("LeaderLib_StatusManager_ReapplyPermanentStatuses", e.Character, 1000, {RefreshBoosts=true})
-	end
 end)
 
 setmetatable(_INTERNAL, {

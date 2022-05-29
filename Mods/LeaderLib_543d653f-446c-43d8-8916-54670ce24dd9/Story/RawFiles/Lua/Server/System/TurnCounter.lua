@@ -1,4 +1,5 @@
 if TurnCounter == nil then
+	---@class LeaderLibTurnCounterSystem
 	TurnCounter = {}
 end
 
@@ -117,8 +118,30 @@ function TurnCounter.CountUp(id, turns, combat, params)
 	TurnCounter.CreateTurnCounter(id, 0, turns, TurnCounter.Mode.Increment, combat, params)
 end
 
+---@param id string|string[]|nil
+---@param callback fun(e:OnTurnCounterEventArgs|SubscribableEventArgs)
+function TurnCounter.Subscribe(id, callback)
+	local t = type(id)
+	if t == "table" then
+		for _,v in pairs(id) do
+			TurnCounter.Subscribe(v, callback)
+		end
+	elseif t == "string" then
+		if StringHelpers.Equals(id, "All", true, true) then
+			Events.OnTurnCounter:Subscribe(callback)
+		else
+			Events.OnTurnCounter:Subscribe(callback, {MatchArgs={ID=id}})
+		end
+	else
+		Ext.PrintWarning("[TurnCounter.Subscribe] Registering a generic turn counter listener since id is nil. Consider using \"All\" instead.")
+		Events.OnTurnCounter:Subscribe(callback)
+	end
+end
+
 ---@alias TurnCounterCallback fun(id:string, turn:integer, lastTurn:integer, finished:boolean, data:TurnCounterData):void
 
+---@deprecated
+---@see LeaderLibTurnCounterSystem#Subscribe
 ---@param id string|string[]|nil
 ---@param callback TurnCounterCallback
 function TurnCounter.RegisterListener(id, callback)

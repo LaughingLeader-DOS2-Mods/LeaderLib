@@ -114,8 +114,6 @@ function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMul
     return {x,y,z}
 end
 
-
-
 ---Sets an object's rotation.
 ---@param object UUID|EsvCharacter|EsvItem|EclCharacter|EclItem
 ---@param rotx number

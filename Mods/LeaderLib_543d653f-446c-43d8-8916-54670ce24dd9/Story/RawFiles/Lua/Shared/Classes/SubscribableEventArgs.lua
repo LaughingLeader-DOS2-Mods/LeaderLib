@@ -70,6 +70,7 @@ function SubscribableEventArgs:Unpack(keyOrder)
 					temp[count] = self[key]
 				end
 			else
+				--Workaround for args that may be nil, so they get unpacked as well
 				temp[count] = "nil"
 				temp[count] = nil
 			end

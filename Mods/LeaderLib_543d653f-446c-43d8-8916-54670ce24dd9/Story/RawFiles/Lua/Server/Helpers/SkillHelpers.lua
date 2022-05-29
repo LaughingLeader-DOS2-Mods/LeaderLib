@@ -255,10 +255,13 @@ local function PlayProjectileSkillEffects(skill, props, playCastEffect, playTarg
     end
 end
 
+---@class LeaderLibProjectileStrikeCreationProperties:LeaderLibProjectileCreationProperties
+---@field Positions number[]|nil Optional positions to use for strikes. Overrides whatever positions it would have normally determined with Distribution.
+
 ---@param target string|number[]|EsvCharacter|EsvItem
 ---@param skillId string
 ---@param source string|EsvCharacter|EsvItem
----@param extraParams LeaderLibProjectileCreationProperties
+---@param extraParams LeaderLibProjectileStrikeCreationProperties
 function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extraParams)
     extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = GameHelpers.Ext.CreateSkillTable(skillId)
@@ -297,32 +300,23 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
 
     local positions = nil
 
-    if count > 0 then
-        local startingAngle = GameHelpers.Math.Clamp(skill.Angle, -44, 44)
-        local tx,ty,tz = table.unpack(props.TargetPosition)
-        if skill.Distribution == "Random" then
-            positions = {}
-            for p=1,count do
-                local cx,cy,cz = GetRandomPositionInCircleRadius(tx,ty,tz,radius)
-                positions[p] = {cx,cy,cz}
-            end
-        elseif skill.Distribution == "Edge" then
-            positions = {}
-            local inc = 360/count
-            for p=1,count do
-                local angle = startingAngle + (inc * p)
-                local rads = math.rad(angle)
-                local cx = tx + (radius * math.cos(rads))
-                local cz = tz + (radius * math.sin(rads))
-                local cy = GameHelpers.Grid.GetY(cx,cz)
-                positions[p] = {cx,cy,cz}
-            end
-        elseif skill.Distribution == "EdgeCenter" then
-            positions = {}
-            local center = {tx,ty,tz}
-            if count > 1 then
-                local inc = 360/(count-1)
-                for p=1,count-1 do
+    if extraParams.Positions then
+        positions = extraParams.Positions
+        count = #positions
+    else
+        if count > 0 then
+            local startingAngle = GameHelpers.Math.Clamp(skill.Angle, -44, 44)
+            local tx,ty,tz = table.unpack(props.TargetPosition)
+            if skill.Distribution == "Random" then
+                positions = {}
+                for p=1,count do
+                    local cx,cy,cz = GetRandomPositionInCircleRadius(tx,ty,tz,radius)
+                    positions[p] = {cx,cy,cz}
+                end
+            elseif skill.Distribution == "Edge" then
+                positions = {}
+                local inc = 360/count
+                for p=1,count do
                     local angle = startingAngle + (inc * p)
                     local rads = math.rad(angle)
                     local cx = tx + (radius * math.cos(rads))
@@ -330,35 +324,49 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
                     local cy = GameHelpers.Grid.GetY(cx,cz)
                     positions[p] = {cx,cy,cz}
                 end
-            end
-            positions[#positions+1] = center
-        elseif skill.Distribution == "Line" then -- Custom
-            positions = {}
-            --startingAngle = startingAngle - 90
-            local nextAngle = 0
-            local nextRadius = 0
-            for p=1,count do
-                local rads = math.rad(nextAngle)
-                local cx = tx + (nextRadius * math.cos(rads))
-                local cz = tz + (nextRadius * math.sin(rads))
-                local cy = GameHelpers.Grid.GetY(cx,cz)
-                positions[p] = {cx,cy,cz}
-                if nextAngle == startingAngle then
-                    nextAngle = startingAngle + 180
-                else
-                    nextAngle = startingAngle
+            elseif skill.Distribution == "EdgeCenter" then
+                positions = {}
+                local center = {tx,ty,tz}
+                if count > 1 then
+                    local inc = 360/(count-1)
+                    for p=1,count-1 do
+                        local angle = startingAngle + (inc * p)
+                        local rads = math.rad(angle)
+                        local cx = tx + (radius * math.cos(rads))
+                        local cz = tz + (radius * math.sin(rads))
+                        local cy = GameHelpers.Grid.GetY(cx,cz)
+                        positions[p] = {cx,cy,cz}
+                    end
                 end
-                if nextRadius > 0 then
-                    nextRadius = -radius * p
-                else
-                    nextRadius = radius * p
+                positions[#positions+1] = center
+            elseif skill.Distribution == "Line" then -- Custom
+                positions = {}
+                --startingAngle = startingAngle - 90
+                local nextAngle = 0
+                local nextRadius = 0
+                for p=1,count do
+                    local rads = math.rad(nextAngle)
+                    local cx = tx + (nextRadius * math.cos(rads))
+                    local cz = tz + (nextRadius * math.sin(rads))
+                    local cy = GameHelpers.Grid.GetY(cx,cz)
+                    positions[p] = {cx,cy,cz}
+                    if nextAngle == startingAngle then
+                        nextAngle = startingAngle + 180
+                    else
+                        nextAngle = startingAngle
+                    end
+                    if nextRadius > 0 then
+                        nextRadius = -radius * p
+                    else
+                        nextRadius = radius * p
+                    end
                 end
             end
         end
+    end
 
-        if positions and skill.Shuffle == "Yes" then
-            positions = TableHelpers.ShuffleTable(positions)
-        end
+    if positions and skill.Shuffle == "Yes" then
+        positions = TableHelpers.ShuffleTable(positions)
     end
 
     PlayProjectileSkillEffects(skill, props, extraParams.PlayCastEffects, extraParams.PlayTargetEffects)
@@ -367,7 +375,7 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
 
     if count > 0 then
         local i = 1
-        local timerName = string.format("Timers_LeaderLib_ProjectileStrike%s%s", id, Ext.MonotonicTime())
+        local timerName = string.format("LeaderLib_ProjectileStrike%s_%s_%s", id, i, Ext.MonotonicTime())
         local onTimer = nil
         onTimer = function()
             if positions ~= nil then
@@ -379,11 +387,21 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
             ProcessProjectileProps(props)
             i = i + 1
             if i <= count then
-                timerName = string.format("Timers_LeaderLib_ProjectileStrike%s%s", id, Ext.MonotonicTime())
-                Timer.StartOneshot(timerName, skill.StrikeDelay or 250, onTimer)
+                local delay = skill.StrikeDelay or 250
+                if delay <= 0 then
+                    onTimer()
+                else
+                    timerName = string.format("LeaderLib_ProjectileStrike%s_%s_%s", id, i, Ext.MonotonicTime())
+                    Timer.StartOneshot(timerName, skill.StrikeDelay or 250, onTimer)
+                end
             end
         end
-        Timer.StartOneshot(timerName, skill.ProjectileDelay or 50, onTimer)
+        local initialDelay = skill.ProjectileDelay or 50
+        if initialDelay <= 0 then
+            onTimer()
+        else
+            Timer.StartOneshot(timerName, initialDelay, onTimer)
+        end
     end
 end
 
@@ -410,7 +428,7 @@ function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParam
             props.SourcePosition[2] = props.SourcePosition[2] + 2.0
         end
     end
-    local props,radius = PrepareProjectileProps(target, skill, source, extraParams)
+    local props = PrepareProjectileProps(target, skill, source, extraParams)
 
     PlayProjectileSkillEffects(skill, props, extraParams.PlayCastEffects, extraParams.PlayTargetEffects)
 
@@ -436,7 +454,7 @@ function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
             skill[k] = v
         end
     end
-    local props,radius = PrepareProjectileProps(target, skill, source, extraParams)
+    local props = PrepareProjectileProps(target, skill, source, extraParams)
 
     --Making the source and target positions match
     if not props.TargetPosition then

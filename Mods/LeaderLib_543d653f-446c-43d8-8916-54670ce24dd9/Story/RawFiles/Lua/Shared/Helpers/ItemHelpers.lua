@@ -773,7 +773,7 @@ function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat)
 		if item.RootTemplate and item.RootTemplate.OnUsePeaceActions then
 			for _,v in pairs(item.RootTemplate.OnUsePeaceActions) do
 				if v.Type == "UseSkill" or v.Type == "SkillBook" then
-                    if inKeyValueFormat then
+                    if not inKeyValueFormat then
                         skills[#skills+1] = v.SkillID
                     else
                         skills[v.SkillID] = true
@@ -781,7 +781,6 @@ function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat)
 				end
 			end
 		end
-	else
-		return skills
 	end
+    return skills
 end

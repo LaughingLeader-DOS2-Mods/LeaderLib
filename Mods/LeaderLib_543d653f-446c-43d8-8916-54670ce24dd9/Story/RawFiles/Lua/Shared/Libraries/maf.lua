@@ -22,7 +22,7 @@ local qtmp1
 Vector3 = {
 	Type = "Vector3",
 	__call = function(_, x, y, z)
-		return setmetatable({ x = x or 0, y = y or 0, z = z or 0 }, Vector3)
+		return Vector3.Create(x,y,z)
 	end,
 
 	__tostring = function(v)
@@ -46,6 +46,14 @@ Vector3 = {
 }
 Vector3.__index = Vector3
 
+---@param x number
+---@param y number
+---@param z number
+---@return Vector3
+function Vector3.Create(x, y, z)
+	return setmetatable({ x = x or 0, y = y or 0, z = z or 0 }, Vector3)
+end
+
 function Vector3.IsVector3(x)
 	if type(x) == "table" then
 		return x.Type == "Vector3"
@@ -54,13 +62,20 @@ function Vector3.IsVector3(x)
 	return false
 end
 
-function Vector3:Clone(v)
+function Vector3:Clone()
 	return Vector3(self.x, self.y, self.z)
 end
 
----@return number,number,number
-function Vector3:Unpack(v)
+---@return number x
+---@return number y
+---@return number z
+function Vector3:Unpack()
 	return self.x, self.y, self.z
+end
+
+---@return number[]
+function Vector3:ToTable()
+	return {self.x, self.y, self.z}
 end
 
 ---@param x number
@@ -135,7 +150,7 @@ function Vector3:Length(v)
 	return math.sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
 end
 
----@param out Vector3
+---@param out Vector3|nil
 function Vector3:Normalize(out)
 	out = out or self
 	local len = self:Length()

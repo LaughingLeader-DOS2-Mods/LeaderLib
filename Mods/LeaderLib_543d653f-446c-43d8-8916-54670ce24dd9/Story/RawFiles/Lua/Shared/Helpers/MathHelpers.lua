@@ -114,17 +114,20 @@ function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMul
     return {x,y,z}
 end
 
+
+
 ---Sets an object's rotation.
----@param uuid string
+---@param object UUID|EsvCharacter|EsvItem|EclCharacter|EclItem
 ---@param rotx number
 ---@param rotz number
 ---@param turnTo boolean
-function GameHelpers.Math.SetRotation(uuid, rotx, rotz, turnTo)
+function GameHelpers.Math.SetRotation(object, rotx, rotz, turnTo)
+    local uuid = GameHelpers.GetUUID(object)
     if Ext.IsServer() then
         if ObjectIsCharacter(uuid) == 1 then
             local x,y,z = 0.0,0.0,0.0
             if rotx ~= nil and rotz ~= nil then
-                local character = Ext.GetCharacter(uuid)
+                local character = GameHelpers.GetCharacter(object)
                 local pos = character.Stats.Position
                 local forwardVector = {
                     -rotx * 4.0,
@@ -183,12 +186,14 @@ end
 ---Get the directional vector between two Vector3 points.
 ---@param pos1 number[]
 ---@param pos2 number[]
----@param reverse boolean
+---@param reverse boolean Multiply the result by -1,-1,-1.
 ---@param asVector3 boolean Optionally return the result as a Vector3
 ---@return number[]|Vector3
 function GameHelpers.Math.GetDirectionalVectorBetweenPositions(pos1, pos2, reverse, asVector3)
     local vec = Classes.Vector3
+    ---@type Vector3
     local a = vec(table.unpack(pos1))
+    ---@type Vector3
     local b = vec(table.unpack(pos2))
     a:Sub(b)
     a:Normalize()

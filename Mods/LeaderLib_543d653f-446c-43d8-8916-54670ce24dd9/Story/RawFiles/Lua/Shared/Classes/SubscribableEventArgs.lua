@@ -51,31 +51,37 @@ function SubscribableEventArgs:Unpack(keyOrder)
 	---@type string[]
 	local keyOrder = keyOrder or self.KeyOrder
 	local temp = {}
+	local count = 0
 	if type(keyOrder) == "table" then
 		for i=1,#keyOrder do
+			count = count + 1
 			local key = keyOrder[i]
 			if self.Args[key] ~= nil then
 				if self.GetArg then
 					local b,value = pcall(self.GetArg, key, self.Args[key])
 					if b then
 						if value ~= nil then
-							temp[#temp+1] = value
+							temp[count] = value
 						else
-							temp[#temp+1] = self[key]
+							temp[count] = self[key]
 						end
 					end
 				else
-					temp[#temp+1] = self[key]
+					temp[count] = self[key]
 				end
+			else
+				temp[count] = "nil"
+				temp[count] = nil
 			end
 		end
 	else
 		--Unpack unordered args as a fallback. Should work fine if the event only has one arg anyway.
 		for _,v in pairs(self.Args) do
-			temp[#temp+1] = v
+			count = count + 1
+			temp[count] = v
 		end
 	end
-	return table.unpack(temp)
+	return table.unpack(temp, 1, count)
 end
 
 ---Debug function for dumping args to the console.

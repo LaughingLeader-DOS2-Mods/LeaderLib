@@ -131,6 +131,11 @@ end
 ---@param callback fun(e:TimerFinishedEventArgs)
 ---@return integer index Returns the subscription callback index.
 function Timer.StartOneshot(timerName, delay, callback)
+	delay = delay or 0
+	if delay <= 0 then
+		callback({ID=timerName, StopPropagation=function()end})
+		return -1
+	end
 	if StringHelpers.IsNullOrEmpty(timerName) then
 		timerName = string.format("LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random())
 	end

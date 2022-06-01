@@ -1682,7 +1682,7 @@
                                                 "TagText" : {
                                                    "handle" : "h8ecc120fg9d67g4faegb198gebd73e4c836c",
                                                    "type" : 28,
-                                                   "value" : "[USER] [ON] auto-opening the Mod Settings Menu when closing another mod's settings menu."
+                                                   "value" : "[OFF] Automatically Open the Mod Settings Menu - When closing another mod's settings menu, LeaderLib's Mod Settings menu will be automatically opened. [USER]<br>Note that this could possibly have unintended side-effects if that mod opens a sub-menu dialog after the main menu dialog is closed."
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1804,7 +1804,7 @@
                                                 "TagText" : {
                                                    "handle" : "h92ae656agd5f1g4471g85dcgb2871834dd03",
                                                    "type" : 28,
-                                                   "value" : "[USER] [OFF] auto-opening the Mod Settings Menu when closing another mod's settings menu.<br>Note that this could possibly have unintended side-effects if that mod opens a sub-menu dialog after the main menu dialog is closed."
+                                                   "value" : "[OFF] Automatically Open the Mod Settings Menu - When closing another mod's settings menu, LeaderLib's Mod Settings menu will be automatically opened. [USER]<br>Note that this could possibly have unintended side-effects if that mod opens a sub-menu dialog after the main menu dialog is closed."
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }

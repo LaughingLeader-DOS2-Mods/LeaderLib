@@ -5333,7 +5333,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[ON] Autosave in Combat Enabled [GLOBAL]",
+																	"value": "[ON] Autosave in Combat [GLOBAL]",
 																	"handle": "h658b85b9g49abg4c9fg9215ga09ac36d3e53"
 																},
 																"stub": {

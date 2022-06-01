@@ -1,6 +1,7 @@
 ---@class FlagData
 local FlagData = {
 	Type = "FlagData",
+	---@type LeaderLibGlobalSettingsFlagType
 	FlagType = "Global",
 	ID = "",
 	Targets = nil,
@@ -17,7 +18,7 @@ local FlagData = {
 FlagData.__index = FlagData
 
 ---@param flag string
----@param flagType string Global|User|Character
+---@param flagType LeaderLibGlobalSettingsFlagType
 ---@param enabled boolean
 function FlagData:Create(flag, flagType, enabled, displayName, tooltip, isFromFile)
     local this =

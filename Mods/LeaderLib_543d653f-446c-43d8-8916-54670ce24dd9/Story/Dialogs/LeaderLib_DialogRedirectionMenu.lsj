@@ -506,7 +506,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[ON] Redirect to Highest Persuasion - Make the party member with the highest persuasion the redirection target. [GLOBAL]",
+																	"value": "[ON] Redirect to Character with Highest Persuasion - Make the party member with the highest persuasion the redirection target. [GLOBAL]",
 																	"handle": "h7e405c6egfcadg4313gbcb8g0f5f7459d722"
 																},
 																"stub": {
@@ -1777,7 +1777,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[OFF] Redirect to Highest Persuasion - Make the party member with the highest persuasion the redirection target. [GLOBAL]",
+																	"value": "[OFF] Redirect to Character with Highest Persuasion - Make the party member with the highest persuasion the redirection target. [GLOBAL]",
 																	"handle": "hf545a1fbgccb8g481ega4adg32165aaa9288"
 																},
 																"stub": {
@@ -2035,7 +2035,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[OFF] Teleport to Dialog Disabled - Teleport your avatar to the dialog event when dialog gets redirected. [USER]",
+																	"value": "[OFF] Teleport to Dialog - Teleport your avatar to the dialog event when dialog gets redirected. [USER]",
 																	"handle": "h024f32dbg7cebg45b8g8b4eg302439dce463"
 																},
 																"stub": {

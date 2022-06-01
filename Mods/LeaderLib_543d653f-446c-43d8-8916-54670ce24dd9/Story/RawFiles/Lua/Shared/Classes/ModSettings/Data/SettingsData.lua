@@ -49,7 +49,7 @@ function SettingsData:CanExecuteOsiris()
 	return not isClient and Ext.OsirisIsCallable()
 end
 
----@alias LeaderLibGlobalSettingsFlagType string|"Global"|"User"|"Character"
+---@alias LeaderLibGlobalSettingsFlagType string|"Global"|"User"|"Character"|"Object"
 
 ---@param flag string
 ---@param flagType LeaderLibGlobalSettingsFlagType
@@ -89,7 +89,7 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 end
 
 ---@param flags string[]
----@param flagType string Global|User|Character
+---@param flagType LeaderLibGlobalSettingsFlagType|nil Defaults to "Global".
 ---@param enabled boolean|nil
 ---@param canExport boolean|nil
 function SettingsData:AddFlags(flags, flagType, enabled, canExport, isFromFile)
@@ -100,7 +100,7 @@ end
 
 ---Adds a flag that uses the flag name and Flag_Description as the DisplayName and Tooltip.
 ---@param flag string
----@param flagType string Global|User|Character
+---@param flagType LeaderLibGlobalSettingsFlagType|nil Defaults to "Global".
 ---@param enabled boolean|nil
 ---@param tooltipKey string|nil A string key to use for the tooltip. Will default to Flag_Description.
 ---@param canExport boolean|nil
@@ -115,7 +115,7 @@ end
 
 ---Same thing as AddFlags, but assumes each flag is its own DisplayName key.
 ---@param flags string[]
----@param flagType string Global|User|Character
+---@param flagType LeaderLibGlobalSettingsFlagType|nil Defaults to "Global".
 ---@param enabled boolean|nil
 ---@param canExport boolean|nil
 function SettingsData:AddLocalizedFlags(flags, flagType, enabled, canExport, isFromFile)
@@ -246,7 +246,7 @@ function SettingsData:UpdateFlags()
 		if not data.ClientSide then
 			if data.FlagType == "Global" then
 				data.Enabled = GlobalGetFlag(flag) == 1
-			elseif data.FlagType == "User" or data.FlagType == "Character" then
+			elseif data.FlagType == "User" or (data.FlagType == "Character" or data.FlagType == "Object") then
 				for player in GameHelpers.Character.GetPlayers(false) do
 					local uuid = player.MyGuid
 					if data.FlagType == "User" then
@@ -257,7 +257,7 @@ function SettingsData:UpdateFlags()
 								data:AddTarget(profileid, UserGetFlag(uuid, flag) == 1)
 							end
 						end
-					elseif data.FlagType == "Character" then
+					elseif (data.FlagType == "Character" or data.FlagType == "Object") then
 						local enabled = ObjectGetFlag(uuid, flag) == 1
 						if enabled then
 							data:AddTarget(uuid, true)

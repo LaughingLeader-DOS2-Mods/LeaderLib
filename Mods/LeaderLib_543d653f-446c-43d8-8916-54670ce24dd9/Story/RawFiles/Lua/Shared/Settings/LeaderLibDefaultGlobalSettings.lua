@@ -54,6 +54,9 @@ settings.GetMenuOrder = function()
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Fixes", "Fixes"),
 		Entries = {
 			"LeaderLib_UnhealableFix_Enabled",
+		}},	
+		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Misc", "Misc"),
+		Entries = {
 			"LeaderLib_DebugModeEnabled",
 		}}
 	}

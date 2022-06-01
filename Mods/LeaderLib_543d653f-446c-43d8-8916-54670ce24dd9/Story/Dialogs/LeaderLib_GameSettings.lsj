@@ -1687,7 +1687,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[ON] Unhealable Fix Enabled - If the 'Unhealable' status is applied, the target will not be able to be healed by statuses (Regeneration, etc). [GLOBAL]",
+																	"value": "[ON] Unhealable Fix - If the 'Unhealable' status is applied, the target will not be able to be healed by statuses (Regeneration, etc). [GLOBAL]",
 																	"handle": "h9cc2120agfe21g4721g8e33g6d1fb7621956"
 																},
 																"stub": {

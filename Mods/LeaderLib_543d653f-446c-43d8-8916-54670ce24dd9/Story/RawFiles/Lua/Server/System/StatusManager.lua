@@ -481,12 +481,12 @@ Events.CharacterResurrected:Subscribe(function(e)
 end)
 
 setmetatable(_INTERNAL, {
-	__index = function (tbl,k)
+	__index = function (_,k)
 		if k == "CanBlockDeletion" then
 			return _canBlockDeletion
 		end
 	end,
-	__newindex = function (tbl,k,v)
+	__newindex = function (_,k,v)
 		--In case a mod needs to disable this functionality
 		if k == "CanBlockDeletion" then
 			_canBlockDeletion = v == true

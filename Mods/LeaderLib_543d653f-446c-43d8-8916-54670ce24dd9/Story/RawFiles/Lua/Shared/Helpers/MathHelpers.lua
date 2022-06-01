@@ -184,8 +184,8 @@ end
 ---Get the directional vector between two Vector3 points.
 ---@param pos1 number[]
 ---@param pos2 number[]
----@param reverse boolean Multiply the result by -1,-1,-1.
----@param asVector3 boolean Optionally return the result as a Vector3
+---@param reverse boolean|nil Multiply the result by -1,-1,-1.
+---@param asVector3 boolean|nil Optionally return the result as a Vector3
 ---@return number[]|Vector3
 function GameHelpers.Math.GetDirectionalVectorBetweenPositions(pos1, pos2, reverse, asVector3)
     local vec = Classes.Vector3

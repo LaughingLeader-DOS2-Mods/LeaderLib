@@ -34,7 +34,28 @@ local function GetRandomPositionInCircleRadius(tx,ty,tz,radius,angle,theta)
     return GameHelpers.Grid.GetValidPositionInRadius({x,ty,z}, radius)
 end
 
----@class LeaderLibProjectileCreationProperties:EsvShootProjectileRequest
+--LeaderLibProjectileCreationProperties
+---@class BaseLeaderLibProjectileCreationProperties
+---@field SkillId string
+---@field CleanseStatuses string
+---@field CasterLevel integer
+---@field StatusClearChance integer
+---@field IsTrap boolean
+---@field UnknownFlag1 boolean
+---@field IsFromItem boolean
+---@field IsStealthed boolean
+---@field IgnoreObjects boolean
+---@field AlwaysDamage boolean
+---@field CanDeflect boolean
+---@field SourcePosition number[]|UUID|EsvCharacter|EsvItem
+---@field TargetPosition number[]|UUID|EsvCharacter|EsvItem
+---@field HitObjectPosition number[]|UUID|EsvCharacter|EsvItem
+---@field Caster UUID|EsvCharacter|EsvItem
+---@field Source UUID|EsvCharacter|EsvItem
+---@field Target UUID|EsvCharacter|EsvItem
+---@field HitObject UUID|EsvCharacter|EsvItem
+
+---@class LeaderLibProjectileCreationProperties:BaseLeaderLibProjectileCreationProperties
 ---@field PlayCastEffects boolean|nil
 ---@field PlayTargetEffects boolean|nil
 ---@field EnemiesOnly boolean|nil
@@ -42,7 +63,7 @@ end
 ---@field SetHitObject boolean|nil
 ---@field SourceOffset number[]|nil
 ---@field TargetOffset number[]|nil
----@field ParamsParsed fun(props:EsvShootProjectileRequest, sourceObject:EsvCharacter|EsvItem|nil, targetObject:EsvCharacter|EsvItem|nil)|nil
+---@field ParamsParsed fun(props:LeaderLibProjectileCreationProperties, sourceObject:EsvCharacter|EsvItem|nil, targetObject:EsvCharacter|EsvItem|nil)|nil
 ---@field SkillOverrides StatEntrySkillData|nil Optional table of skill attributes to override the skill logic with.
 
 local LeaderLibProjectileCreationPropertyNames = {
@@ -61,7 +82,7 @@ local LeaderLibProjectileCreationPropertyNames = {
 ---@param skill StatEntrySkillData
 ---@param source UUID|EsvCharacter|EsvItem|number[]
 ---@param extraParams LeaderLibProjectileCreationProperties
----@return EsvShootProjectileRequest
+---@return LeaderLibProjectileCreationProperties
 local function PrepareProjectileProps(target, skill, source, extraParams)
     local enemiesOnly = extraParams and extraParams.EnemiesOnly
 
@@ -74,7 +95,7 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
     local sourcePos = source and GameHelpers.Math.GetPosition(sourceObject or source, false) or targetPos
 
     local isFromItem = false
-    ---@type EsvShootProjectileRequest
+    ---@type LeaderLibProjectileCreationProperties
     local props = {}
 
     if extraParams.SourceOffset then
@@ -199,7 +220,7 @@ ProcessProjectileProps  {
 }
 ]]
 
----@param props EsvShootProjectileRequest
+---@param props LeaderLibProjectileCreationProperties
 local function ProcessProjectileProps(props)
     if not props.SourcePosition or not props.TargetPosition then
         error(string.format("[LeaderLib:ProcessProjectileProps] Invalid projectile properties. Skipping launch to avoid crashing!\n%s", Lib.inspect(props)), 2)
@@ -227,7 +248,7 @@ end
 --Mods.LeaderLib.GameHelpers.Skill.ProcessProjectileProps(CharacterGetHostCharacter(), "ProjectileStrike_HailStrike", CharacterGetHostCharacter())
 
 ---@param skill StatEntrySkillData
----@param props EsvShootProjectileRequest
+---@param props LeaderLibProjectileCreationProperties
 local function PlayProjectileSkillEffects(skill, props, playCastEffect, playTargetEffect)
     if playCastEffect and not StringHelpers.IsNullOrEmpty(skill.CastEffect) then
         local effects = StringHelpers.Split(skill.CastEffect, ";")
@@ -410,7 +431,7 @@ end
 ---@param source string|EsvCharacter|EsvItem|nil
 ---@param extraParams LeaderLibProjectileCreationProperties|nil Optional table of properties to apply on top of the properties set from the skill stat.
 function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParams)
-    extraParams = type(extraParams) == "table" and extraParams or {}
+    local extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = GameHelpers.Ext.CreateSkillTable(skillId)
     if type(extraParams.SkillOverrides) == "table" then
         for k,v in pairs(extraParams.SkillOverrides) do
@@ -447,7 +468,7 @@ function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
             EnemiesOnly = true
         }
     end
-    extraParams = type(extraParams) == "table" and extraParams or {}
+    local extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = GameHelpers.Ext.CreateSkillTable(skillId)
     if type(extraParams.SkillOverrides) == "table" then
         for k,v in pairs(extraParams.SkillOverrides) do

@@ -24,8 +24,12 @@ StatusManager.Register = {}
 ---@param callback function
 local function CreateCallbackWrapper(eventType, callback, ...)
 	local params = {...}
-	local callbackWrapper = function(target, status, source, statusType)
-		local status = Ext.GetStatus(target, NRD_StatusGetHandle(target, status)) or status
+	local getStatus = eventType ~= Vars.StatusEvent.Removed
+	local callbackWrapper = function(target, statusId, source, statusType)
+		local status = statusId
+		if getStatus then
+			status = Ext.GetStatus(target, NRD_StatusGetHandle(target, statusId)) or statusId
+		end
 		local target = GameHelpers.TryGetObject(target, true)
 		local source = GameHelpers.TryGetObject(source, true)
 		local b,err = xpcall(callback, debug.traceback, target, status, source, statusType, eventType, table.unpack(params))
@@ -82,6 +86,7 @@ end
 
 ---@param status string|string[]
 ---@param callback StatusManagerAppliedCallback
+---@vararg any
 function StatusManager.Register.Applied(status, callback, ...)
 	local t = type(status)
 	if t == "table" then

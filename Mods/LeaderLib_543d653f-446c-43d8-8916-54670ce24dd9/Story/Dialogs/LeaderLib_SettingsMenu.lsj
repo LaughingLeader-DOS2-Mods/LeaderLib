@@ -144,7 +144,7 @@
                                                 "TagText" : {
                                                    "handle" : "hb796e45cgaab4g4fcega4a2g2e424ed8b66c",
                                                    "type" : 28,
-                                                   "value" : "[OFF] Combat Log Logging" [GLOBAL]
+                                                   "value" : "[OFF] Combat Log Logging [GLOBAL]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1412,7 +1412,7 @@
                                                 "TagText" : {
                                                    "handle" : "h7a4ddc58g1cbeg4e40gaba2g0b2bf5dedd98",
                                                    "type" : 28,
-                                                   "value" : "[OFF] Debug Logging" [GLOBAL]
+                                                   "value" : "[OFF] Debug Logging [GLOBAL]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -2386,7 +2386,7 @@
                                                 "TagText" : {
                                                    "handle" : "hc394390bge3c0g4935ga60dg63c11e223a8f",
                                                    "type" : 28,
-                                                   "value" : "[ON] Debug Logging" [GLOBAL]
+                                                   "value" : "[ON] Debug Logging [GLOBAL]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -2502,7 +2502,7 @@
                                                 "TagText" : {
                                                    "handle" : "h62fcf915g9babg41e3gbc1fg7cec5eeb59ce",
                                                    "type" : 28,
-                                                   "value" : "[ON] Combat Log Logging" [GLOBAL]
+                                                   "value" : "[ON] Combat Log Logging [GLOBAL]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -2618,7 +2618,7 @@
                                                 "TagText" : {
                                                    "handle" : "hfe0169eagd031g41a8gbcd3g6b992d81fba5",
                                                    "type" : 28,
-                                                   "value" : "[OFF] Status Logging" [GLOBAL]
+                                                   "value" : "[OFF] Status Logging [GLOBAL]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -3345,7 +3345,7 @@
                                                 "TagText" : {
                                                    "handle" : "hdc5db041g39d0g4a87g81eagb26a0d11358e",
                                                    "type" : 28,
-                                                   "value" : "[ON] Status Logging" [GLOBAL]
+                                                   "value" : "[ON] Status Logging [GLOBAL]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }

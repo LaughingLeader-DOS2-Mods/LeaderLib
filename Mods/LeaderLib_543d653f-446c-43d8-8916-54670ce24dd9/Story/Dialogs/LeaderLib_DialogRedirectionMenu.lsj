@@ -132,7 +132,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[OFF] <b>Dialog Redirection</b>. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.[GLOBAL]",
+																	"value": "[OFF] Dialog Redirection Disabled. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.[GLOBAL]",
 																	"handle": "hf0eb5097g325bg4254gaf97g77255a6380ad"
 																},
 																"stub": {
@@ -506,7 +506,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[ON] making the party member with the highest persuasion the redirection target, using the closest Avatar instead. (Default)[GLOBAL]",
+																	"value": "[ON] Redirect to Highest Persuasion - Make the party member with the highest persuasion the redirection target. [GLOBAL]",
 																	"handle": "h7e405c6egfcadg4313gbcb8g0f5f7459d722"
 																},
 																"stub": {
@@ -764,7 +764,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[ON] <b>Dialog Redirection</b>. Certain dialog events will start with the closest player character available. (Default)[GLOBAL]",
+																	"value": "[ON] Dialog Redirection Enabled. Certain dialog events will start with the closest player character available. (Default) [GLOBAL]",
 																	"handle": "h26d9df87gcc82g4b87gb068g6e5e3b053113"
 																},
 																"stub": {
@@ -1034,7 +1034,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[ON] user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event. (Current Enabled)[GLOBAL]",
+																	"value": "[OFF] Use Any Party Member - Disable user ID matching when finding the closest character a party member belongs to, allowing other players in multiplayer to be the redirection target. [GLOBAL]",
 																	"handle": "ha853bcf9g311dg4e56g8725g0a9188e22344"
 																},
 																"stub": {
@@ -1292,7 +1292,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[OFF] user ID matching when finding the closest character a party member belongs to. This will only allow the closest avatar (or persuasive) character a user controls (for the initial dialog character) to be selected when redirecting. (Currently Disabled)[GLOBAL]",
+																	"value": "[ON] Use Any Party Member - Disable user ID matching when finding the closest character a party member belongs to, allowing other players in multiplayer to be the redirection target. [GLOBAL]",
 																	"handle": "h861c65b9g0db7g4799gaeb2g67ac42f57540"
 																},
 																"stub": {
@@ -1777,7 +1777,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "Automatically make the party member with the highest persuasion the redirection target. Still preserves User ID matching in multiplayer, if that setting is enabled.[GLOBAL]",
+																	"value": "[OFF] Redirect to Highest Persuasion - Make the party member with the highest persuasion the redirection target. [GLOBAL]",
 																	"handle": "hf545a1fbgccb8g481ega4adg32165aaa9288"
 																},
 																"stub": {
@@ -2035,7 +2035,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[USER] Don't teleport your avatar to the dialog event when dialog gets redirected.",
+																	"value": "[OFF] Teleport to Dialog Disabled - Teleport your avatar to the dialog event when dialog gets redirected. [USER]",
 																	"handle": "h024f32dbg7cebg45b8g8b4eg302439dce463"
 																},
 																"stub": {
@@ -2563,7 +2563,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[USER] Teleport your avatar to the dialog event when dialog gets redirected.",
+																	"value": "[ON] Teleport to Dialog - Teleport your avatar to the dialog event when dialog gets redirected. [USER]",
 																	"handle": "h59075d75g55f1g4ba4g87b7g4953c6818ee3"
 																},
 																"stub": {

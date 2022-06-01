@@ -706,7 +706,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Enable Autosaving when Combat Starts",
+																	"value": "[OFF] Autosave when Combat Starts [GLOBAL]",
 																	"handle": "h71f43d4fg54f9g4ba5gac4dg71e8d4c4e056"
 																},
 																"stub": {
@@ -954,7 +954,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Disable Autosaving when Combat Starts",
+																	"value": "[ON] Autosave when Combat Starts [GLOBAL]",
 																	"handle": "hb7be1cf4gcd0ag4fadga064g72a74b996f1a"
 																},
 																"stub": {
@@ -1693,7 +1693,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Disable Timed Autosaves",
+																	"value": "[ON] Timed Autosaves Enabled [GLOBAL]",
 																	"handle": "h5be7351cgb6eeg438fgbb32g65c8295bfb3b"
 																},
 																"stub": {
@@ -5333,7 +5333,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Disable Autosaving in Combat",
+																	"value": "[ON] Autosave in Combat Enabled [GLOBAL]",
 																	"handle": "h658b85b9g49abg4c9fg9215ga09ac36d3e53"
 																},
 																"stub": {
@@ -5581,7 +5581,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Enable Timed Autosaves",
+																	"value": "[OFF] Timed Autosaves Disabled [GLOBAL]",
 																	"handle": "h13979ba5g4916g465fga3f0ge92a3c72c887"
 																},
 																"stub": {
@@ -5829,7 +5829,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Enable Autosaving in Combat",
+																	"value": "[OFF] Autosave in Combat [GLOBAL]",
 																	"handle": "h680a3621g57dag4544g8c63gb43e64633e24"
 																},
 																"stub": {
@@ -6817,7 +6817,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Change Autosave Interval",
+																	"value": "Change Autosave Interval [GLOBAL]",
 																	"handle": "h7051ecdfgb5d8g4d31gb3f4g075f8d99c61b"
 																},
 																"stub": {

@@ -144,7 +144,7 @@
                                                 "TagText" : {
                                                    "handle" : "hb796e45cgaab4g4fcega4a2g2e424ed8b66c",
                                                    "type" : 28,
-                                                   "value" : "[GLOBAL] Enable Combat Log Logging"
+                                                   "value" : "[OFF] Combat Log Logging" [GLOBAL]
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1412,7 +1412,7 @@
                                                 "TagText" : {
                                                    "handle" : "h7a4ddc58g1cbeg4e40gaba2g0b2bf5dedd98",
                                                    "type" : 28,
-                                                   "value" : "[GLOBAL] Enable Debug Logging"
+                                                   "value" : "[OFF] Debug Logging" [GLOBAL]
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1682,7 +1682,7 @@
                                                 "TagText" : {
                                                    "handle" : "h8ecc120fg9d67g4faegb198gebd73e4c836c",
                                                    "type" : 28,
-                                                   "value" : "[USER] Disable auto-opening the Mod Settings Menu when closing another mod's settings menu."
+                                                   "value" : "[USER] [ON] auto-opening the Mod Settings Menu when closing another mod's settings menu."
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1804,7 +1804,7 @@
                                                 "TagText" : {
                                                    "handle" : "h92ae656agd5f1g4471g85dcgb2871834dd03",
                                                    "type" : 28,
-                                                   "value" : "[USER] Enable auto-opening the Mod Settings Menu when closing another mod's settings menu.<br>Note that this could possibly have unintended side-effects if that mod opens a sub-menu dialog after the main menu dialog is closed."
+                                                   "value" : "[USER] [OFF] auto-opening the Mod Settings Menu when closing another mod's settings menu.<br>Note that this could possibly have unintended side-effects if that mod opens a sub-menu dialog after the main menu dialog is closed."
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -2386,7 +2386,7 @@
                                                 "TagText" : {
                                                    "handle" : "hc394390bge3c0g4935ga60dg63c11e223a8f",
                                                    "type" : 28,
-                                                   "value" : "[GLOBAL] Disable Debug Logging"
+                                                   "value" : "[ON] Debug Logging" [GLOBAL]
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -2502,7 +2502,7 @@
                                                 "TagText" : {
                                                    "handle" : "h62fcf915g9babg41e3gbc1fg7cec5eeb59ce",
                                                    "type" : 28,
-                                                   "value" : "[GLOBAL] Disable Combat Log Logging"
+                                                   "value" : "[ON] Combat Log Logging" [GLOBAL]
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -2618,7 +2618,7 @@
                                                 "TagText" : {
                                                    "handle" : "hfe0169eagd031g41a8gbcd3g6b992d81fba5",
                                                    "type" : 28,
-                                                   "value" : "[GLOBAL] Enable Status Logging"
+                                                   "value" : "[OFF] Status Logging" [GLOBAL]
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -3345,7 +3345,7 @@
                                                 "TagText" : {
                                                    "handle" : "hdc5db041g39d0g4a87g81eagb26a0d11358e",
                                                    "type" : 28,
-                                                   "value" : "[GLOBAL] Disable Status Logging"
+                                                   "value" : "[ON] Status Logging" [GLOBAL]
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }

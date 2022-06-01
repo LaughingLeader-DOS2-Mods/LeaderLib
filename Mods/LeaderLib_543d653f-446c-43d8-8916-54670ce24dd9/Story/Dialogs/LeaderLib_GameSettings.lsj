@@ -132,7 +132,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. (Currently Disabled)",
+																	"value": "[OFF] Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. (Currently Disabled)[GLOBAL]",
 																	"handle": "h199f5401g295eg4b24ga52ag9cf3a9844635"
 																},
 																"stub": {
@@ -402,7 +402,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Automatically unlock the party inventory in multiplayer. (Currently Disabled)<br>This will allow all players to exchange items between their inventories without having to unlock them first.",
+																	"value": "Automatically unlock the party inventory in multiplayer. (Currently Disabled)<br>This will allow all players to exchange items between their inventories without having to unlock them first.[GLOBAL]",
 																	"handle": "hefbcc547g9671g4e57g9364g9cc7c9c06fc4"
 																},
 																"stub": {
@@ -682,7 +682,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Enable the Unhealable fix - If Unhealable is applied, the target will not be able to be healed by statuses (Regeneration, etc). (Currently Disabled)",
+																	"value": "[OFF] the Unhealable fix - If Unhealable is applied, the target will not be able to be healed by statuses (Regeneration, etc). (Currently Disabled)[GLOBAL]",
 																	"handle": "ha1260afagf673g4e7eg983ag834907ffeb4e"
 																},
 																"stub": {
@@ -940,7 +940,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Prevent LeaderLib registered mod books from being automatically be added to the party's inventory. (Books are currently enabled)",
+																	"value": "Prevent LeaderLib registered mod books from being automatically be added to the party's inventory. (Books are currently enabled)[GLOBAL]",
 																	"handle": "h3db4fa28g041bg45ceg9fd6g91d77d5e154f"
 																},
 																"stub": {
@@ -1210,7 +1210,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Disable automatically unlocking every inventory in multiplayer. (Currently Enabled)",
+																	"value": "[ON] automatically unlocking every inventory in multiplayer. (Currently Enabled)[GLOBAL]",
 																	"handle": "h76d37069g565dg458bg8e57gdbd6f9b81b7a"
 																},
 																"stub": {
@@ -1687,7 +1687,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Disable the Unhealable fix - If Unhealable is applied, the target will still be able to be healed. (Currently Enabled)",
+																	"value": "[ON] the Unhealable fix - If Unhealable is applied, the target will still be able to be healed. (Currently Enabled)[GLOBAL]",
 																	"handle": "h9cc2120agfe21g4721g8e33g6d1fb7621956"
 																},
 																"stub": {
@@ -1945,7 +1945,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Automatically pull party members within 30m into combat. (Currently Disabled)",
+																	"value": "Automatically pull party members within 30m into combat. (Currently Disabled)[GLOBAL]",
 																	"handle": "h7942ef1ag44d9g49f0gab10ge07e419c1d32"
 																},
 																"stub": {
@@ -2493,7 +2493,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Allow LeaderLib registered mod books to automatically be added to the party's inventory. (Books are currently disabled)",
+																	"value": "Allow LeaderLib registered mod books to automatically be added to the party's inventory. (Books are currently disabled)[GLOBAL]",
 																	"handle": "hbb9961bcg9dbfg47f9g90fdg6db3aca83f86"
 																},
 																"stub": {
@@ -2763,7 +2763,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Disable automatically pulling party members within 30m into combat. (Currently Enabled)",
+																	"value": "[ON] automatically pulling party members within 30m into combat. (Currently Enabled)[GLOBAL]",
 																	"handle": "h141a5954g5e16g417bg8d1fge2815d5d05ac"
 																},
 																"stub": {
@@ -3033,7 +3033,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Disable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. (Currently Enabled)",
+																	"value": "[ON] Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. (Currently Enabled)[GLOBAL]",
 																	"handle": "h5d6cebcagab5eg45ebgbaf0gb0b77cd0ac39"
 																},
 																"stub": {
@@ -3303,7 +3303,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[HOST] Disable Balanced Experience for All Parties - Players in other parties will no longer be automatically leveled up to the highest player level. (Currently Enabled)",
+																	"value": "[HOST] [ON] Balanced Experience for All Parties - Players in other parties will no longer be automatically leveled up to the highest player level. (Currently Enabled)",
 																	"handle": "h14956412g44e4g4890ga268gd425729622f1"
 																},
 																"stub": {
@@ -3904,7 +3904,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[HOST] Enable Balanced Experience for All Parties - Every player character will be brought up to the highest player level across all parties. (Currently Disabled)",
+																	"value": "[HOST] [OFF] Balanced Experience for All Parties - Every player character will be brought up to the highest player level across all parties. (Currently Disabled)",
 																	"handle": "hb6a0d65bga210g4882g939ega32f65189909"
 																},
 																"stub": {

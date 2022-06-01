@@ -19,7 +19,8 @@
 ---@field InheritAnimations boolean
 ---@field DoNotUpdate boolean
 ---@field Equipment boolean
----@field Armor boolean Whether it's a weapon visual.
+---@field Weapon boolean Whether it's a weapon visual.
+---@field Armor boolean
 ---@field Wings boolean
 ---@field Horns boolean
 ---@field Overhead boolean

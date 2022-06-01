@@ -174,36 +174,3 @@ end
 
 Ext.RegisterListener("StatsLoaded", function() PatchMods(false) end)
 RegisterListener("Initialized", function() PatchMods(true) end)
-
-local function TranslateGuardName(traderGUID, guardGUID)
-	local trader = Ext.GetCharacter(traderGUID)
-
-	local handle,ref = CharacterGetDisplayName(traderGUID)
-    --Get the translated name
-    local traderName = Ext.GetTranslatedString(handle, trader.DisplayName)
-
-	Ext.Print(string.format("[DB_LLFULOOT_Trader_Bodyguards] Trader DisplayName(%s) Handle(%s) TranslatedName(%s)", trader.DisplayName, handle, traderName))
-
-    local guardLabel = "Guarda-costas de"
-    local guardCustomName = string.format("%s %s", guardLabel, traderName)
-	local guard = Ext.GetCharacter(guardGUID)
-	if guard then
-		CharacterSetCustomName(guardGUID, guardCustomName)
-	end
-end
-
-Ext.RegisterOsirisListener("DB_LLFULOOT_Trader_Bodyguards", 2, "after", TranslateGuardName)
-
-Ext.RegisterOsirisListener("GameStarted", 2, "after", function (region, isEditor)
-	local db = Osi.DB_LLFULOOT_Trader_Bodyguards:Get(nil,nil)
-	if db then
-		for _,v in pairs(db) do
-			---@type string
-			local traderGUID, guardGUID = table.unpack(v)
-
-			if ObjectExists(traderGUID) == 1 and ObjectExists(guardGUID) == 1 then
-				TranslateGuardName(traderGUID, guardGUID)
-			end
-		end
-	end
-end)

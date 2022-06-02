@@ -33,7 +33,7 @@ local ObjectHandleEffectParams = {
 ---@class EffectManagerEsvEffect:EffectManagerEsvEffectParams
 ---@field NetID NETID
 ---@field Delete fun(self:EffectManagerEsvEffect)
----@field Handle ObjectHandle
+---@field Component {Handle:ObjectHandle, TypeId:integer}
 
 ---@alias LeaderLibEffectManagerTarget UUID|NETID|EsvCharacter|EsvItem|number[]
 
@@ -122,32 +122,6 @@ EffectManager.Register = {
 	end
 }
 
----@return EffectManagerStopEffectOptions
-local function PrepareOptions(tbl)
-	local opts = {
-		IsOptionTable = true
-	}
-	if type(tbl) == "table" then
-		if tbl.IsOptionTable then
-			return tbl
-		end
-		for k,v in pairs(tbl) do
-			if type(k) == "string" then
-				opts[k:lower()] = v
-			else
-				opts[k] = v
-			end
-		end
-	elseif type(tbl) == "userdata" then
-		setmetatable(opts, {
-			__index = function(_,k)
-				return tbl[k]
-			end
-		})
-	end
-	return opts
-end
-
 ---@class EffectManagerPlayEffectResult
 ---@field ID string
 ---@field Handle integer
@@ -159,6 +133,15 @@ local function CreateEffectResult(effect, handle, id, pos)
 	return {Effect = effect, Handle = handle, ID = id, Position = pos}
 end
 
+local function _ValidateParams(params)
+	params = type(params) == "table" and params or {}
+	--Default to false, otherwise the effect will loop
+	if params.Loop == nil then
+		params.Loop = false
+	end
+	return params
+end
+
 ---@param fx string|string[] The effect resource name
 ---@param object CharacterParam|ItemParam
 ---@param params EffectManagerEsvEffectParams|nil
@@ -166,6 +149,7 @@ end
 function _INTERNAL.PlayEffect(fx, object, params)
 	local t = type(fx)
 	assert(t == "string" or t == "table", "fx parameter must be a string or a table of strings.")
+	local params = _ValidateParams(params)
 	---@type EsvCharacter|EsvItem
 	local object = GameHelpers.TryGetObject(object)
 	assert(type(object) == "userdata", "object parameter must be a UUID, NetID, or EsvCharacter/EsvItem.")
@@ -174,10 +158,11 @@ function _INTERNAL.PlayEffect(fx, object, params)
 		if _EXTVERSION >= 56 then
 			---@diagnostic disable undefined-field
 			---@type EffectManagerEsvEffect
-			local effect = Ext.Effect.CreateEffect(fx, object.Handle, params and params.Bone or "")
-			handle = Ext.HandleToDouble(effect.Handle)
-			---@diagnostic enable
-			if params and type(params) == "table" then
+			local b,effect = xpcall(Ext.Effect.CreateEffect, debug.traceback, fx, object.Handle, params.Bone or "")
+			if b and effect then
+				Ext.IO.SaveFile("Dumps/Effect.json", Ext.DumpExport(effect))
+				handle = Ext.HandleToDouble(effect.Component.Handle)
+				---@diagnostic enable
 				for k,v in pairs(params) do
 					if ObjectHandleEffectParams[k] then
 						local obj = GameHelpers.TryGetObject(v)
@@ -191,8 +176,13 @@ function _INTERNAL.PlayEffect(fx, object, params)
 				if params.Loop then
 					InvokeListenerCallbacks(_INTERNAL.Callbacks.LoopEffectStarted, effect, object, handle, params.Bone or "")
 				end
+				return CreateEffectResult(effect, handle, effect.EffectName)
+			else
+				if not b then
+					Ext.PrintError(effect)
+				end
+				fprint(LOGLEVEL.ERROR, "[EffectManager.PlayEffect] Failed to create effect (%s) with params:\n%s", fx, Lib.serpent.block(params))
 			end
-			return CreateEffectResult(effect, handle, effect.EffectName)
 		elseif Ext.OsirisIsCallable() then
 			if params then
 				if params.BeamTarget ~= nil then
@@ -225,6 +215,7 @@ end
 function _INTERNAL.PlayEffectAt(fx, pos, params)
 	local t = type(fx)
 	assert(t == "string" or t == "table", "Effect parameter must be a string or a table of strings.")
+	local params = _ValidateParams(params)
 	if t == "string" then
 		local pt = type(pos)
 		local x,y,z = nil,nil,nil
@@ -238,29 +229,35 @@ function _INTERNAL.PlayEffectAt(fx, pos, params)
 			local handle = nil
 			---@diagnostic disable undefined-field
 			---@type EffectManagerEsvEffect
-			local effect = Ext.Effect.CreateEffect(fx, Ext.Entity.NullHandle(), "")
-			if effect then
+			local b,effect = xpcall(Ext.Effect.CreateEffect, debug.traceback, fx, Ext.Entity.NullHandle(), "")
+			---@diagnostic enable
+			if b and effect then
 				effect.Position[1] = x
 				effect.Position[2] = y
 				effect.Position[3] = z
-			end
-			---@diagnostic enable
-			if params and type(params) == "table" then
-				for k,v in pairs(params) do
-					if ObjectHandleEffectParams[k] then
-						local obj = GameHelpers.TryGetObject(v)
-						if obj then
-							effect[k] = obj.Handle
+
+				if params and type(params) == "table" then
+					for k,v in pairs(params) do
+						if ObjectHandleEffectParams[k] then
+							local obj = GameHelpers.TryGetObject(v)
+							if obj then
+								effect[k] = obj.Handle
+							end
+						else
+							effect[k] = v
 						end
-					else
-						effect[k] = v
+					end
+					if params.Loop then
+						handle = Ext.HandleToDouble(effect.Component.Handle)
 					end
 				end
-				if params.Loop then
-					handle = Ext.HandleToDouble(effect.Handle)
+				return CreateEffectResult(effect, handle, effect.EffectName, {x,y,z})
+			else
+				if not b then
+					Ext.PrintError(effect)
 				end
+				fprint(LOGLEVEL.ERROR, "[EffectManager.PlayEffectAt] Failed to create effect (%s) with params:\n%s", fx, Lib.serpent.block(params))
 			end
-			return CreateEffectResult(effect, handle, effect.EffectName, {x,y,z})
 		elseif Ext.OsirisIsCallable() then
 			local handle = nil
 			if params then
@@ -335,8 +332,32 @@ function EffectManager.PlayEffectAt(fx, pos, params)
 end
 
 ---@param handle integer
+function _INTERNAL.StopEffect(handle)
+	local t = type(handle)
+	if t == "number" then
+		if _EXTVERSION >= 56 then
+			handle = Ext.DoubleToHandle(handle)
+			if handle then
+				t = "userdata"
+			end
+		elseif Ext.OsirisIsCallable() then
+			StopLoopEffect(handle)
+			return true
+		end
+	end
+	if t == "userdata" then
+		local effect = Ext.Effect.GetEffect(handle)
+		if effect then
+			effect:Delete()
+			return true
+		end
+	end
+	return false
+end
+
+---@param handle integer
 function EffectManager.StopLoopEffectByHandle(handle)
-	StopLoopEffect(handle)
+	_INTERNAL.StopEffect(handle)
 	for region,dataTable in pairs(PersistentVars.WorldLoopEffects) do
 		for i,v in pairs(dataTable) do
 			if v.Handle == handle then
@@ -354,77 +375,144 @@ function EffectManager.StopLoopEffectByHandle(handle)
 end
 
 ---@class EffectManagerStopEffectOptions:table
----@field target LeaderLibEffectManagerTarget An object or position to filter the search.
----@field all boolean Stops all effects with this name.
+---@field Target LeaderLibEffectManagerTarget An object or position to filter the search.
+---@field All boolean Stops all effects with this name.
 
----@param effect string|string[]
----@param options EffectManagerStopEffectOptions
-function EffectManager.StopLoopEffectByName(effect, options)
-	options = PrepareOptions(options)
-	if type(effect) == "table" then
-		for k,v in pairs(effect) do
-			EffectManager.StopLoopEffectByName(v, options)
+---@return EffectManagerStopEffectOptions
+local function PrepareOptions(tbl)
+	local opts = {
+		IsOptionTable = true
+	}
+	if type(tbl) == "table" then
+		if tbl.IsOptionTable then
+			return tbl
 		end
-		return true
+		for k,v in pairs(tbl) do
+			if type(k) == "string" then
+				if k == "all" then
+					opts.All = v
+				elseif k == "target" then
+					opts.Target = v
+				else
+					opts[k] = v
+				end
+			else
+				opts[k] = v
+			end
+		end
+	elseif type(tbl) == "userdata" then
+		setmetatable(opts, {
+			__index = function(_,k)
+				return tbl[k]
+			end
+		})
 	end
-	local t = type(options.target)
-	if t == "table" then
-		for region,dataTable in pairs(PersistentVars.WorldLoopEffects) do
-			for i,v in pairs(dataTable) do
-				if v.Effect == effect then
-					StopLoopEffect(v.Handle)
-					table.remove(dataTable, i)
-					if not options.all then
+	return opts
+end
+
+local function _TargetsMatch(effect, uuid, uuidType)
+	if effect.Target ~= nil then
+		local obj = Ext.GetGameObject(effect.Target)
+		if obj then
+			if uuidType == "string" then
+				return uuid == obj.MyGuid
+			elseif uuidType == "table" then
+				for _,v in pairs(uuid) do
+					if obj.MyGuid == v then
 						return true
 					end
 				end
 			end
 		end
-	elseif t == "userdata" or t == "number" or t == "string" then
-		local uuid = GameHelpers.GetUUID(options.target)
-		if uuid then
-			if options.all then
-				CharacterStopAllEffectsWithName(uuid, effect)
-			end
-			local dataTable = PersistentVars.ObjectLoopEffects[uuid]
-			if dataTable then
-				local length = 0
-				for i,v in pairs(dataTable) do
-					if v.Effect == effect then
-						StopLoopEffect(v.Handle)
-						table.remove(dataTable, i)
-						if not options.all then
-							break
+	end
+	return false
+end
+
+---@param fx string|string[]|nil Optional effect ID to filter effects for.
+---@param target UUID|number[]|NETID|EsvCharacter|EsvItem Optional target to filter effects for.
+---@param distanceThreshold number|nil The maximum distance between an effect position and a target position before it's considered a match. Defaults to 0.1
+---@return EffectManagerEsvEffect[]
+function EffectManager.GetAllEffects(fx, target, distanceThreshold)
+	local effects = {}
+	if _EXTVERSION >= 56 then
+		distanceThreshold = distanceThreshold or 0.1
+
+		---@type fun(effect:EffectManagerEsvEffect):boolean
+		local targetsMatch = nil
+		local t = type(target)
+		if t == "table" then
+			local firstParamType = type(target[1])
+			--Position
+			if firstParamType == "number" then
+				targetsMatch = function (effect)
+					return GameHelpers.Math.GetDistance(effect.Position, target) <= distanceThreshold
+				end
+			elseif firstParamType == "string" then --Table of UUIDs?
+				targetsMatch = function (effect)
+					return _TargetsMatch(effect, target, "table")
+				end
+			elseif firstParamType == "userdata" then --Table of EsvCharacter\EsvItem?
+				targetsMatch = function (effect)
+					for _,v in pairs(target) do
+						if _TargetsMatch(effect, GameHelpers.GetUUID(target), "string") then
+							return true
 						end
 					end
+					return false
 				end
-				if #dataTable == 0 then
-					PersistentVars.ObjectLoopEffects[uuid] = nil
+			end
+		elseif t == "number" or t == "string" or t == "userdata" then
+			local uuid = GameHelpers.GetUUID(target)
+			targetsMatch = function (effect)
+				return _TargetsMatch(effect, uuid, "string")
+			end
+		end
+		for _,handle in pairs(Ext.Effect.GetAllEffectHandles()) do
+			---@type EffectManagerEsvEffect
+			local effect = Ext.Effect.GetEffect(handle)
+			if effect then
+				if not fx or effect.EffectName == fx then
+					if not targetsMatch or targetsMatch(effect) then
+						effects[#effects+1] = effect
+					end
 				end
+			end
+		end
+	end
+	return effects
+end
+
+---@param effect string|string[]
+---@param target UUID|NETID|EsvCharacter|EsvItem
+function EffectManager.StopEffectsByNameForObject(effect, target)
+	local success = false
+	if type(effect) == "table" then
+		for _,v in pairs(effect) do
+			if EffectManager.StopEffectsByNameForObject(v, target) then
+				success = true
+			end
+		end
+		return success
+	else
+		local uuid = GameHelpers.GetUUID(target)
+		fassert(uuid ~= nil, "Failed to get UUID for target parameter %s", target)
+		if Ext.OsirisIsCallable() then
+			if uuid then
+				CharacterStopAllEffectsWithName(uuid, effect)
+				success = true
 			end
 		else
-			fprint(LOGLEVEL.WARNING, "[LeaderLib:EffectManager:StopLoopEffectByName] Failed to get UUID from target parameter:\n%s", Lib.serpent.block(options))
-		end
-	else
-		for region,dataTable in pairs(PersistentVars.WorldLoopEffects) do
-			for i,v in pairs(dataTable) do
-				if v.Effect == effect then
-					StopLoopEffect(v.Handle)
-					table.remove(dataTable, i)
-					if not options.all then
-						break
-					end
-				end
+			for _,effect in pairs(EffectManager.GetAllEffects(effect, target)) do
+				effect:Delete()
+				success = true
 			end
 		end
-		for uuid,dataTable in pairs(PersistentVars.ObjectLoopEffects) do
+
+		local dataTable = PersistentVars.ObjectLoopEffects[uuid]
+		if dataTable then
 			for i,v in pairs(dataTable) do
 				if v.Effect == effect then
-					StopLoopEffect(v.Handle)
 					table.remove(dataTable, i)
-					if not options.all then
-						break
-					end
 				end
 			end
 			if #dataTable == 0 then
@@ -432,6 +520,43 @@ function EffectManager.StopLoopEffectByName(effect, options)
 			end
 		end
 	end
+	return success
+end
+
+---@param effect string|string[]
+---@param target number[]
+---@param distanceThreshold number|nil The maximum distance between an effect position and a target position before it should be deleted. Defaults to 0.1
+function EffectManager.StopEffectsByNameForPosition(effect, target, distanceThreshold)
+	local success = false
+	distanceThreshold = type(distanceThreshold) == "number" and distanceThreshold or 0.1
+	if type(effect) == "table" then
+		for _,v in pairs(effect) do
+			if EffectManager.StopEffectsByNameForPosition(v, target) then
+				success = true
+			end
+		end
+		return success
+	else
+		for _,effect in pairs(EffectManager.GetAllEffects(effect, target, distanceThreshold)) do
+			effect:Delete()
+			success = true
+		end
+
+		for region,dataTable in pairs(PersistentVars.WorldLoopEffects) do
+			for i,v in pairs(dataTable) do
+				if v.Effect == effect then
+					if GameHelpers.Math.GetDistance(v.Position, target) <= distanceThreshold then
+						_INTERNAL.StopEffect(v.Handle)
+						table.remove(dataTable, i)
+					end
+				end
+			end
+			if #dataTable == 0 then
+				PersistentVars.WorldLoopEffects[region] = nil
+			end
+		end
+	end
+	return success
 end
 
 function EffectManager.RestoreEffects(region)

@@ -756,8 +756,11 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameM
 		---@type StatEntrySkillData
 		local skill = {Name = skillName, AlwaysBackstab = false}
 		if isForGameMath then
-			for k,_ in pairs(_GameMathSkillAttributes) do
+			for _,k in pairs(_GameMathSkillAttributes) do
 				skill[k] = Ext.StatGetAttribute(skillName, k)
+				if not hasValidEntry and skill[k] ~= nil then
+					hasValidEntry = true
+				end
 			end
 		else
 			if _EXTVERSION >= 56 then
@@ -771,6 +774,9 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameM
 			else
 				for k,_ in pairs(_SkillAttributes) do
 					skill[k] = Ext.StatGetAttribute(skillName, k)
+					if not hasValidEntry and skill[k] ~= nil then
+						hasValidEntry = true
+					end
 				end
 			end
 		end

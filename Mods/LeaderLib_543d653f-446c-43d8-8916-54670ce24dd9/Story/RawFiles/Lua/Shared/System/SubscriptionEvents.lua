@@ -157,6 +157,103 @@ if not _ISCLIENT then
 		ArgsKeyOrder={"Target", "Source", "Data", "HitStatus"}
 	})
 
+	---@class ComputeCharacterHitEventArgs
+	---@field AlwaysBackstab boolean
+	---@field Attacker StatCharacter
+	---@field CriticalRoll CriticalRollFlag
+	---@field DamageList DamageList
+	---@field ForceReduceDurability boolean
+	---@field Handled boolean
+	---@field HighGround HighGroundFlag
+	---@field Hit HitRequest
+	---@field HitType HitTypeValues
+	---@field NoHitRoll boolean
+	---@field SkillProperties StatProperty[]
+	---@field Target StatCharacter
+	---@field Weapon StatItem
+	
+	---Hit listeners/callbacks, for mod compatibility.  
+	---Called from HitOverrides.ComputeCharacterHit at the end of the function, if certain features are enabled or listeners are registered.  
+	---🔨**Server-Only**🔨
+	---@see LeaderLibHitOverrides#ComputeCharacterHit
+	---@type SubscribableEvent<ComputeCharacterHitEventArgs>
+	Events.ComputeCharacterHit = Classes.SubscribableEvent:Create("ComputeCharacterHit", {
+		ArgsKeyOrder={"Target", "Attacker", "Weapon", "DamageList", "HitType", "NoHitRoll", "ForceReduceDurability", "Hit", "AlwaysBackstab", "HighGround", "CriticalRoll"}
+	})
+
+	---@class DoHitEventArgs
+	---@field Hit HitRequest
+	---@field DamageList DamageList
+	---@field StatusBonusDamageTypes table
+	---@field HitType HitTypeValues
+	---@field Target StatCharacter
+	---@field Attacker StatCharacter
+	
+	---Called from HitOverrides.DoHit, which overrides Game.Math.DoHit to wrap listener callbacks. The original Game.Math.DoHit is called for calculation.  
+	---🔨**Server-Only**🔨
+	---@see LeaderLibHitOverrides#DoHit
+	---@type SubscribableEvent<DoHitEventArgs>
+	Events.DoHit = Classes.SubscribableEvent:Create("DoHit", {
+		ArgsKeyOrder={"Hit", "DamageList", "StatusBonusDamageTypes", "HitType", "Target", "Attacker"}
+	})
+
+	---@class ApplyDamageCharacterBonusesEventArgs
+	---@field Target StatCharacter
+	---@field Attacker StatCharacter
+	---@field DamageList DamageList
+	---@field PreModifiedDamageList DamageList
+	---@field ResistancePenetration table<DAMAGE_TYPE, integer>
+	
+	---Called from a Game.Math.ApplyDamageCharacterBonuses override. This is where resistance penetration happens.  
+	---🔨**Server-Only**🔨
+	---@see LeaderLibHitOverrides#ApplyDamageCharacterBonuses
+	---@type SubscribableEvent<ApplyDamageCharacterBonusesEventArgs>
+	Events.ApplyDamageCharacterBonuses = Classes.SubscribableEvent:Create("ApplyDamageCharacterBonuses", {
+		ArgsKeyOrder={"Target", "Attacker", "DamageList", "PreModifiedDamageList", "ResistancePenetration"}
+	})
+
+	---@class GetHitResistanceBonusEventArgs
+	---@field Target StatCharacter
+	---@field DamageType DAMAGE_TYPE
+	---@field ResistancePenetration integer
+	---@field CurrentResistanceAmount integer
+	---@field ResistanceName string
+	
+	---Called during HitOverrides.ApplyDamageCharacterBonuses, to apply resistances to a hit.  
+	---🔨**Server-Only**🔨  
+	---@see LeaderLibHitOverrides#GetResistance
+	---@type SubscribableEvent<GetHitResistanceBonusEventArgs>
+	Events.GetHitResistanceBonus = Classes.SubscribableEvent:Create("GetHitResistanceBonus", {
+		ArgsKeyOrder={"Target", "DamageType", "ResistancePenetration", "CurrentResistanceAmount", "ResistanceName"},
+		GatherResults = true
+	})
+
+	---@class GetCanBackstabEventArgs
+	---@field CanBackstab boolean Whether the hit can be a backstab.
+	---@field SkipPositionCheck boolean If true, target/attacker positions aren't checked, allowing a hit to backstab outside of melee range, and outside the backstab angle.
+	---@field Target StatCharacter
+	---@field Attacker StatCharacter
+	---@field Weapon StatItem
+	---@field DamageList DamageList
+	---@field HitType HitTypeValues
+	---@field NoHitRoll boolean
+	---@field ForceReduceDurability boolean
+	---@field Hit HitRequest	
+	---@field AlwaysBackstab boolean
+	---@field HighGround HighGroundFlag
+	---@field CriticalRoll CriticalRollFlag
+	
+	---Modifies the result of HitOverrides.CanBackstab if true or false is returned.  
+	---The second returned boolean is optional, and will make backstabs ignore positioning.  
+	---Example: `return true, true` to make the hit a backstab, and ignore 
+	---🔨**Server-Only**🔨
+	---@see LeaderLibHitOverrides#CanBackstab
+	---@type SubscribableEvent<GetCanBackstabEventArgs>
+	Events.GetCanBackstab = Classes.SubscribableEvent:Create("GetCanBackstab", {
+		ArgsKeyOrder={"CanBackstab", "Target", "Attacker", "Weapon", "DamageList", "HitType", "NoHitRoll", "ForceReduceDurability", "Hit", "AlwaysBackstab", "HighGround", "CriticalRoll"},
+		GatherResults = true
+	})
+
 	---@class OnHealEventArgs
 	---@field Target EsvCharacter
 	---@field Source EsvCharacter|EsvItem|nil

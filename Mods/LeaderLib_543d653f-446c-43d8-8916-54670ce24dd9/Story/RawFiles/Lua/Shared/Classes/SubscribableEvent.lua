@@ -15,20 +15,22 @@ local isClient = Ext.IsClient()
 ---@field ArgsKeyOrder string[]|nil
 ---@field GetArg SubscribableEventGetArgFunction|nil
 
+---@alias SubscribableEventInvokeResultCode string|"Success"|"Handled"|"Error"
+
+---@class SubscribableEventInvokeResult<T>:{ResultCode: SubscribableEventInvokeResultCode, Results:table, Args:SubscribableEventArgs|T, Handled:boolean}
+
 ---Used for event entry in the Events table, to support one base definition with multiple event argument types.
 ---T should be specific event arg classes that derive from SubscribableEventArgs.
 ---Example: SubscribableEvent<CharacterResurrectedEventArgs>
 ---@see SubscribableEventArgs
 ---@see LeaderLibSubscriptionEvents
----@class SubscribableEvent<T>:{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T|SubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T}|nil), Invoke:fun(self:SubscribableEvent, args:T|SubscribableEventArgs, unpackedKeyOrder:string[]|nil), Unsubscribe:fun(self:SubscribableEvent, indexOrCallback:integer|function) }
+---@class SubscribableEvent<T>:{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T|SubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T}|nil), Unsubscribe:fun(self:SubscribableEvent, indexOrCallback:integer|function), Invoke:fun(self:SubscribableEvent, args:T|SubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult }
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string
 ---@field First SubscribableEventNode|nil
 ---@field NextIndex integer
 local SubscribableEvent = {}
-
----@alias SubscribableEventInvokeResult string|"Success"|"Handled"|"Error"|
 
 local _INVOKERESULT = {
 	Success = "Success",
@@ -215,42 +217,6 @@ local function _EventArgsMatch(node, eventArgs)
 	return match
 end
 
----@param sub BaseSubscribableEvent
----@param args RuntimeSubscribableEventArgs
----@param resultsTable table
----@vararg any
-local function InvokeCallbacks(sub, args, resultsTable, ...)
-	local cur = sub.First
-	local gatherResults = resultsTable ~= nil
-	local result = _INVOKERESULT.Success
-	while cur ~= nil do
-		if args.Handled then
-			result = _INVOKERESULT.Handled
-			break
-		end
-
-		if _EventArgsMatch(cur, args) then
-			local b, result = xpcall(cur.Callback, debug.traceback, args, ...)
-			if not b then
-				fprint(LOGLEVEL.ERROR, "[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, result)
-				result = _INVOKERESULT.Error
-			elseif gatherResults and result ~= nil then
-				resultsTable[#resultsTable+1] = result
-			end
-			if cur.Once then
-				local last = cur
-				cur = last.Next
-				RemoveNode(sub, last)
-			else
-				cur = cur.Next
-			end
-		else
-			cur = cur.Next
-		end
-	end
-	return result
-end
-
 --Convert userdata event args to a table with the NetID, so the other side can retrieve it.
 local function SerializeArgs(args)
 	local tbl = {}
@@ -269,22 +235,78 @@ local function SerializeArgs(args)
 	return tbl
 end
 
+---@param sub BaseSubscribableEvent
+---@param args RuntimeSubscribableEventArgs
+---@param resultsTable table
+---@vararg any
+local function InvokeCallbacks(sub, args, resultsTable, ...)
+	local cur = sub.First
+	local gatherResults = resultsTable ~= nil
+	local result = _INVOKERESULT.Success
+	while cur ~= nil do
+		if args.Handled then
+			result = _INVOKERESULT.Handled
+			break
+		end
+
+		if _EventArgsMatch(cur, args) then
+			if gatherResults then
+				local callbackResults = {xpcall(cur.Callback, debug.traceback, args, ...)}
+				if not callbackResults[1] then
+					fprint(LOGLEVEL.ERROR, "[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, callbackResults[2])
+					result = _INVOKERESULT.Error
+				elseif gatherResults and callbackResults[2] ~= nil then
+					if callbackResults[3] == nil then
+						resultsTable[#resultsTable+1] = callbackResults[2]
+					else
+						--Multiple return values
+						table.remove(callbackResults, 1)
+						resultsTable[#resultsTable+1] = callbackResults
+					end
+				end
+			else
+				local b,err = xpcall(cur.Callback, debug.traceback, args, ...)
+				if not b then
+					fprint(LOGLEVEL.ERROR, "[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, err)
+					result = _INVOKERESULT.Error
+				end
+			end
+
+			if cur.Once then
+				local last = cur
+				cur = last.Next
+				RemoveNode(sub, last)
+			else
+				cur = cur.Next
+			end
+		else
+			cur = cur.Next
+		end
+	end
+	return result
+end
+
 ---@param args table|nil
 ---@param skipAutoInvoke boolean|nil
 ---@vararg any
----@return any[]|SubscribableEventInvokeResult result Returns either an array of results, if GatherResults is true, or a string indicating the result (Success, Handled, or Error).
+---@return SubscribableEventInvokeResult result
 function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 	args = args or {}
-	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg)
-	local result = nil
+	local metatable = nil
+	if type(args.__metatable) == "table" then
+		metatable = args.__metatable
+		args.__metatable = nil
+	end
+	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg, metatable)
+	---@type SubscribableEventInvokeResultCode
+	local invokeResult = _INVOKERESULT.Success
+	local results = {}
 	local cur = self.First
 	if cur then
 		if self.GatherResults then
-			local results = {}
-			InvokeCallbacks(self, eventObject, results, ...)
-			result = results
+			invokeResult = InvokeCallbacks(self, eventObject, results, ...)
 		else
-			result = InvokeCallbacks(self, eventObject, nil, ...)
+			invokeResult = InvokeCallbacks(self, eventObject, nil, ...)
 		end
 	end
 	if not skipAutoInvoke and self.SyncInvoke then
@@ -294,7 +316,12 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 			Args = SerializeArgs(args)
 		}))
 	end
-	return result
+	local handled = false
+	if invokeResult == _INVOKERESULT.Handled then
+		invokeResult = _INVOKERESULT.Success
+		handled = true
+	end
+	return {ResultCode = invokeResult, Results = results, Args = eventObject, Handled = handled}
 end
 
 local function DeserializeArgs(args)

@@ -267,6 +267,8 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
         EffectFlags = 0,
         HitWithWeapon = skillData.UseWeaponDamage == "Yes",
         DamageList = damageList,
+        Handled = false,
+        SkillProperties = skillData.SkillProperties
     }
 
     if _EXTVERSION >= 56 then
@@ -284,7 +286,16 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
         criticalRoll = "NotCritical"
     end
 
-    return Game.Math.ComputeCharacterHit(target, attacker, attacker.MainWeapon, damageList, hitType, alwaysHit or false, false, hit, skill.AlwaysBackstab, highGroundFlag, criticalRoll)
+    local backstab = false
+    for _,v in pairs(GameHelpers.Stats.GetSkillProperties(skill)) do
+        if v.Action == "AlwaysBackstab" then
+            backstab = true
+            break
+        end
+    end
+
+    local result = HitOverrides._ComputeCharacterHitFunction(target, attacker, attacker.MainWeapon, damageList, hitType, alwaysHit or false, false, hit, backstab, highGroundFlag, criticalRoll)
+    
 end
 
 ---Applies hit request flags to a hit status.

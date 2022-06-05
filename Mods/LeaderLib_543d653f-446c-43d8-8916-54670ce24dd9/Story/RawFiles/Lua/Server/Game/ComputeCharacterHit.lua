@@ -1,3 +1,4 @@
+---@class LeaderLibHitOverrides
 HitOverrides = {
     --- The original ositools version
     DoHitOriginal = Game.Math.DoHit,
@@ -36,7 +37,13 @@ function HitOverrides.ApplyDamageCharacterBonuses(character, attacker, damageLis
         Game.Math.ApplyDamageSkillAbilityBonuses(damageList, attacker)
     end
  
-    InvokeListenerCallbacks(Listeners.ApplyDamageCharacterBonuses, character, attacker, damageList, preModifiedDamageList, resistancePenetration)
+    Events.ApplyDamageCharacterBonuses:Invoke({
+        Target = character,
+        Attacker = attacker,
+        DamageList = damageList,
+        PreModifiedDamageList = preModifiedDamageList,
+        ResistancePenetration = resistancePenetration
+    })
 end
 
 --- @param damageList DamageList
@@ -97,17 +104,23 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
 	if res > 0 and resistancePenetration ~= nil and resistancePenetration > 0 then
 		res = math.max(res - resistancePenetration, 0)
 	end
-    local length = #Listeners.GetHitResistanceBonus
-    if length > 0 then
-        for i=1,length do
-            local callback = Listeners.GetHitResistanceBonus[i]
-            local b,bonus = xpcall(callback, debug.traceback, character, damageType, resistancePenetration, res, resName)
-            if b then
-                if bonus ~= nil and type(bonus) == "number" then
-                    res = res + bonus
+    ---@type SubscribableEventInvokeResult<GetHitResistanceBonusEventArgs>
+    local invokeResult = Events.GetHitResistanceBonus:Invoke({
+        Target = character,
+        DamageType = damageType,
+        ResistancePenetration = resistancePenetration,
+        CurrentResistanceAmount = res,
+        ResistanceName = resName,
+    })
+    if invokeResult.ResultCode ~= "Error" then
+        res = invokeResult.Args.CurrentResistanceAmount
+
+        if invokeResult.Results then
+            for i=1,#invokeResult.Results do
+                local amount = invokeResult.Results[i]
+                if type(amount) == "number" then
+                    res = res + amount
                 end
-            else
-                Ext.PrintError(bonus)
             end
         end
     end
@@ -194,20 +207,42 @@ end
 --- @return boolean,boolean
 local function GetCanBackstabFinalResult(canBackstab, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     local skipPositionCheck = false
-    local length = #Listeners.GetCanBackstab
-    if length > 0 then
-        for i=1,length do
-            local callback = Listeners.GetCanBackstab[i]
-            local b,result,skipPositionResult = xpcall(callback, debug.traceback, canBackstab, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-            if b then
-                if type(result) == "boolean" then
-                    canBackstab = result
+    ---@type SubscribableEventInvokeResult<GetCanBackstabEventArgs>
+    local invokeResult = Events.GetCanBackstab:Invoke({
+        CanBackstab = canBackstab,
+        SkipPositionCheck = skipPositionCheck,
+        Target = target,
+        Attacker = attacker,
+        Weapon = weapon,
+        DamageList = damageList,
+        HitType = hitType,
+        Hit = hit,
+        NoHitRoll = noHitRoll,
+        ForceReduceDurability = forceReduceDurability,
+        AlwaysBackstab = alwaysBackstab,
+        HighGround = highGroundFlag,
+        CriticalRoll = criticalRoll,
+    })
+    if invokeResult.ResultCode ~= "Error" then
+        canBackstab = invokeResult.Args.CanBackstab == true
+        skipPositionCheck = invokeResult.Args.SkipPositionCheck == true
+        if invokeResult.Results then
+            for i=1,#invokeResult.Results do
+                local result = invokeResult.Results[i]
+                local canBackstabResult = nil
+                local skipPositionResult = nil
+                if type(result) == "table" then
+                    canBackstabResult = result[1]
+                    skipPositionResult = result[2]
+                else
+                    canBackstabResult = result[1]
+                end
+                if type(canBackstabResult) == "boolean" then
+                    canBackstab = canBackstabResult
                 end
                 if type(skipPositionResult) == "boolean" then
                     skipPositionCheck = skipPositionResult
                 end
-            else
-                Ext.PrintError(result)
             end
         end
     end
@@ -221,37 +256,42 @@ end
 --- @param hitType string
 --- @param target StatCharacter
 function HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+    local canBackstab = false
     if (weapon ~= nil and weapon.WeaponType == "Knife") then
-        return GetCanBackstabFinalResult(true, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+        canBackstab = true
     end
 
     -- Enemy Upgrade Overhaul - Backstabber Upgrade
     if Ext.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and weapon ~= nil and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab) then
-        return GetCanBackstabFinalResult(true, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+        canBackstab = true
     end
 
-    local backstabSettings = GameSettings.Settings.BackstabSettings
-    local settings = nil
-    if attacker.IsPlayer then
-        settings = GameSettings.Settings.BackstabSettings.Player
-    else
-        settings = GameSettings.Settings.BackstabSettings.NPC
-    end
-
-    if settings.Enabled then
-        if not settings.TalentRequired or (settings.TalentRequired and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab)) then
-            if weapon ~= nil then
-                return not settings.MeleeOnly or (settings.MeleeOnly and not Game.Math.IsRangedWeapon(weapon) and HitOverrides.CanBackstabWithTwoHandedWeapon(weapon))
-            elseif settings.SpellsCanBackstab then
-                if settings.MeleeOnly then
-                    return GetCanBackstabFinalResult(hitType == "Melee" or HitOverrides.WithinMeleeDistance(attacker.Position, target.Position), target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-                else
-                    return GetCanBackstabFinalResult(true, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+    if canBackstab ~= true then
+        local settings = nil
+        if attacker.IsPlayer then
+            settings = GameSettings.Settings.BackstabSettings.Player
+        else
+            settings = GameSettings.Settings.BackstabSettings.NPC
+        end
+    
+        if settings.Enabled then
+            if not settings.TalentRequired or (settings.TalentRequired and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab)) then
+                if weapon ~= nil then
+                    if not settings.MeleeOnly or (settings.MeleeOnly and not Game.Math.IsRangedWeapon(weapon) and HitOverrides.CanBackstabWithTwoHandedWeapon(weapon)) then
+                        canBackstab = true
+                    end
+                elseif settings.SpellsCanBackstab then
+                    if settings.MeleeOnly then
+                        canBackstab = hitType == "Melee" or HitOverrides.WithinMeleeDistance(attacker.Position, target.Position)
+                    else
+                        canBackstab = true
+                    end
                 end
             end
         end
     end
-    return GetCanBackstabFinalResult(false, attacker, weapon, hitType, target)
+
+    return GetCanBackstabFinalResult(canBackstab, attacker, weapon, hitType, target)
 end
 
 --endregion
@@ -352,7 +392,7 @@ function HitOverrides.ComputeOverridesEnabled()
     or Features.SpellsCanCrit == true
     or GameSettings.Settings.SpellsCanCritWithoutTalent == true
     or Features.ResistancePenetration == true
-    or #Listeners.ComputeCharacterHit > 0
+    or Events.ComputeCharacterHit.First ~= nil
 end
 
 --- @param hit HitRequest
@@ -434,8 +474,8 @@ end
 
 --- @param hitRequest HitRequest
 --- @param damageList DamageList
---- @param statusBonusDmgTypes DamageList
---- @param hitType string HitType enumeration
+--- @param statusBonusDmgTypes table
+--- @param hitType HitTypeValues HitType enumeration
 --- @param target StatCharacter
 --- @param attacker StatCharacter
 --- @param damageMultiplier number
@@ -449,7 +489,14 @@ function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType
         --TODO Waiting for a v56 Game.Math update for hit.DamageMultiplier
         DoHitUpdated(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     end
-    InvokeListenerCallbacks(Listeners.DoHit, hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker)
+    Events.DoHit:Invoke({
+        Hit = hitRequest,
+        DamageList = damageList,
+        StatusBonusDamageTypes = statusBonusDmgTypes,
+        HitType = hitType,
+        Target = target,
+        Attacker = attacker
+    })
 	return hitRequest
 end
 
@@ -464,8 +511,8 @@ end
 --- @param alwaysBackstab boolean
 --- @param highGroundFlag HighGroundFlag HighGround enumeration
 --- @param criticalRoll CriticalRollFlag CriticalRoll enumeration
+--- @return HitRequest hit
 local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-    --Ext.Dump({Before={hit=hit, weapon=weapon.Name, damageList=damageList:ToTable(), hitType=hitType, noHitRoll=noHitRoll,  forceReduceDurability=forceReduceDurability, alwaysBackstab=alwaysBackstab, highGroundFlag=highGroundFlag, criticalRoll=criticalRoll}}, true, true)
     local damageMultiplier = 1.0
 	local criticalMultiplier = 0.0
     local statusBonusDmgTypes = {}
@@ -488,6 +535,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         weapon = attacker.MainWeapon
     end
 
+    
     if hitType == "Magic" and HitOverrides.BackstabSpellMechanicsEnabled(attacker) then
         local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
         if alwaysBackstab or (canBackstab and (skipPositionCheck or Game.Math.CanBackstab(target, attacker))) then
@@ -502,7 +550,8 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         return hit
     end
 
-    if alwaysBackstab or (HitOverrides.CanBackstab(target, attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
+    local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+    if alwaysBackstab or (canBackstab and (skipPositionCheck or Game.Math.CanBackstab(target, attacker))) then
         GameHelpers.Hit.SetFlag(hit, "Backstab", true)
     end
 
@@ -561,11 +610,33 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     return hit
 end
 
+HitOverrides._ComputeCharacterHitFunction = ComputeCharacterHit
+
+-- local _ComputeMeta = {
+--     __index = function(_, k)
+        
+--     end,
+--     __newindex = function(_, k, v)
+        
+--     end
+-- }
 
 function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     if HitOverrides.ComputeOverridesEnabled() then
         ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-        InvokeListenerCallbacks(Listeners.ComputeCharacterHit, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+        Events.ComputeCharacterHit:Invoke({
+            Target = target,
+            Attacker = attacker,
+            Weapon = weapon,
+            DamageList = damageList,
+            HitType = hitType,
+            Hit = hit,
+            NoHitRoll = noHitRoll,
+            ForceReduceDurability = forceReduceDurability,
+            AlwaysBackstab = alwaysBackstab,
+            HighGround = highGroundFlag,
+            CriticalRoll = criticalRoll,
+        })
         -- Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=hitType, ["event.DamageList"]=damageList:ToTable()})
         return hit
     end

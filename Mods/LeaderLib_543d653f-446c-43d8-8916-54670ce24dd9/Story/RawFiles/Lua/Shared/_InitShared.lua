@@ -217,6 +217,8 @@ Features = {
 	ApplyBonusWeaponStatuses = false,
 	---Allows backstabs to happen with various conditions (like from spells or non-daggers), depending on game settings.
 	BackstabCalculation = false,
+	---Disables the LeaderLib ComputeCharactreHit listener.
+	DisableHitOverrides = false,
 	---Fixes the lack of a damage name for chaos damage in skills/statuses.
 	FixChaosDamageDisplay = true,
 	---Fixes chaos damage not being applied correctly when from projectile weapons (wands).

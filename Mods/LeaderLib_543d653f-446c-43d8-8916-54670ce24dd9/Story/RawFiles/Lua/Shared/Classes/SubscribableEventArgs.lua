@@ -14,11 +14,30 @@ function SubscribableEventArgs:StopPropagation()
 	self.Handled = true
 end
 
+---@param self RuntimeSubscribableEventArgs
+---@param key string
+local function _TryGetArg(self, key)
+	if self.GetArg then
+		local b,value = pcall(self.GetArg, key, self.Args[key])
+		if b then
+			if value ~= nil then
+				return value
+			end
+		end
+	end
+	return self[key]
+end
+
+---@class SubscribableEventCustomMetatable
+---@field __index fun(tbl:table, key:any):any
+---@field __newindex fun(tbl:table, key:any, value:any)
+
 ---@param args table|nil
 ---@param unpackedKeyOrder string[]|nil
 ---@param getArg SubscribableEventGetArgFunction|nil
+---@param customMeta SubscribableEventCustomMetatable|nil
 ---@return RuntimeSubscribableEventArgs
-function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg)
+function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta)
 	local _private = {
 		Handled = false,
 		--The table of args used to create this instance.
@@ -38,7 +57,26 @@ function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg)
 			if _private[k] ~= nil then
 				return _private[k]
 			end
+			if customMeta and customMeta.__index then
+				local b,value = xpcall(customMeta.__index, debug.traceback, eventArgs, k)
+				if b and value ~= nil then
+					return value
+				elseif not b then
+					Ext.PrintError(value)
+				end
+			end
 			return SubscribableEventArgs[k]
+		end,
+		__newindex = function (_, k, v)
+			if customMeta and customMeta.__newindex then
+				local b,value = xpcall(customMeta.__newindex, debug.traceback, self, k, v)
+				if not b then
+					Ext.PrintError(value)
+				else
+					return
+				end
+			end
+			rawset(eventArgs, k, v)
 		end
 	})
 	return eventArgs
@@ -57,18 +95,7 @@ function SubscribableEventArgs:Unpack(keyOrder)
 			length = length + 1
 			local key = keyOrder[i]
 			if self.Args[key] ~= nil then
-				if self.GetArg then
-					local b,value = pcall(self.GetArg, key, self.Args[key])
-					if b then
-						if value ~= nil then
-							temp[length] = value
-						else
-							temp[length] = self[key]
-						end
-					end
-				else
-					temp[length] = self[key]
-				end
+				temp[length] = _TryGetArg(self, key)
 			end
 		end
 	else

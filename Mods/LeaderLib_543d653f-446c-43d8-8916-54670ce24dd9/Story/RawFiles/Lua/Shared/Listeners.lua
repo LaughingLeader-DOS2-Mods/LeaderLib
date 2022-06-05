@@ -50,26 +50,6 @@ Listeners.ModSettingsChanged = {All = {}}
 Listeners.MessageBoxEvent = {All = {}}
 
 if Ext.IsServer() then
-	---Hit listeners/callbacks, for mod compatibility.
-	---Called from HitOverrides.ComputeCharacterHit at the end of the function, if certain features are enabled or listeners are registered.
-	---@type ExtComputeCharacterHitCallback[]
-	Listeners.ComputeCharacterHit = {}
-	---Called from HitOverrides.DoHit, which overrides Game.Math.DoHit to wrap listener callbacks. The original Game.Math.DoHit is called for calculation.
-	---If the original function was overwritten by a mod, this should still work.
-	---@type DoHitCallback[]
-	Listeners.DoHit = {}
-	---Called from a Game.Math.ApplyDamageCharacterBonuses override. This is where resistance penetration happens. 
-	---@type ApplyDamageCharacterBonusesCallback[]
-	Listeners.ApplyDamageCharacterBonuses = {}
-	---HitOverrides.GetResistance during ComputeCharacterHit.
-	---@type fun(character:StatCharacter, damageType:string, resistancePenetration:integer, currentRes:integer):integer[]
-	Listeners.GetHitResistanceBonus = {}
-
-	---Modifies the result of HitOverrides.CanBackstab if true or false is returned. The second returned boolean is optional, and will make backstabs ignore positioning.
-	---@alias LeaderLibGetCanBackstabCallback fun(canBackstab:boolean, target:StatCharacter, attacker:StatCharacter, weapon:StatItem, damageList:DamageList, hitType:string, noHitRoll:boolean, forceReduceDurability:boolean, hit:HitRequest, alwaysBackstab:boolean, highGroundFlag:HighGroundFlag, criticalRoll:CriticalRollFlag):boolean,boolean
-	---@type LeaderLibGetCanBackstabCallback[]
-	Listeners.GetCanBackstab = {}
-
 	--Flag events
 	---@type table<string, fun(flag:string, enabled:boolean):void[]>
 	Listeners.GlobalFlagChanged = {}

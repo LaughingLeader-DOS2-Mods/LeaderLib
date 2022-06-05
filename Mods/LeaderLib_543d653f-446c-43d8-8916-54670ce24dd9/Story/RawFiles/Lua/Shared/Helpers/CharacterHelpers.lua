@@ -515,8 +515,9 @@ end
 ---Returns true if the character is disabled by a status.
 ---@param character EsvCharacter|string
 ---@param checkForLoseControl boolean
+---@param checkForZeroMovement boolean
 ---@return boolean
-function GameHelpers.Character.IsDisabled(character, checkForLoseControl)
+function GameHelpers.Character.IsDisabled(character, checkForLoseControl, checkForZeroMovement)
 	if type(character) == "string" then
 		character = Ext.GetCharacter(character)
 	end
@@ -525,10 +526,13 @@ function GameHelpers.Character.IsDisabled(character, checkForLoseControl)
 	end
 	if GameHelpers.Status.HasStatusType(character.MyGuid, {"KNOCKED_DOWN", "INCAPACITATED"}) then
 		return true
-	elseif checkForLoseControl == true then -- LoseControl on items is a good way to crash
+	end
+	if checkForLoseControl == true then -- LoseControl on items is a good way to crash
 		for _,status in pairs(character:GetStatusObjects()) do
 			if status.StatusId == "CHARMED" then
-				return GameHelpers.Status.IsFromEnemy(status, character)
+				if GameHelpers.Status.IsFromEnemy(status, character) then
+					return true
+				end
 			end
 			if Data.EngineStatus[status.StatusId] ~= true then
 				local stat = Ext.GetStat(status.StatusId)
@@ -538,6 +542,11 @@ function GameHelpers.Character.IsDisabled(character, checkForLoseControl)
 					end
 				end
 			end
+		end
+	end
+	if checkForZeroMovement == true then
+		if character.Stats.Movement <= 0 then
+			return true
 		end
 	end
 	return false

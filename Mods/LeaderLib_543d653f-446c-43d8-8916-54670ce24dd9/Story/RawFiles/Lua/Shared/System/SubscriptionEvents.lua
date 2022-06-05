@@ -113,6 +113,16 @@ Events.TurnDelayed = Classes.SubscribableEvent:Create("TurnDelayed", {
 	ArgsKeyOrder={"UUID", "Character"}
 })
 
+---@class GlobalFlagChangedEventArgs
+---@field ID string The _FlagName value.
+---@field Enabled boolean
+
+---Called when a global flag is set/unset.
+---@type SubscribableEvent<GlobalFlagChangedEventArgs>
+Events.GlobalFlagChanged = Classes.SubscribableEvent:Create("GlobalFlagChanged", {
+	ArgsKeyOrder={"ID", "Enabled"}
+})
+
 if not _ISCLIENT then
 	---@class TreasureItemGeneratedEventArgs
 	---@field Item EsvItem
@@ -243,9 +253,11 @@ if not _ISCLIENT then
 	---@field HighGround HighGroundFlag
 	---@field CriticalRoll CriticalRollFlag
 	
-	---Modifies the result of HitOverrides.CanBackstab if true or false is returned.  
-	---The second returned boolean is optional, and will make backstabs ignore positioning.  
-	---Example: `return true, true` to make the hit a backstab, and ignore 
+	---Modify the result of HitOverrides.CanBackstab by setting e.CanBackstab and/or e.SkipPositionCheck  
+	---| Parameter | Description |
+	---| ----------- | ----------- |
+	---| CanBackstab | Allow the hit to backstab if the attacker is in a correct position, relative to the target. |
+	---| SkipPositionCheck | Skip positional checks for distance/angle, allowing the hit to backstab regardless. |  
 	---🔨**Server-Only**🔨
 	---@see LeaderLibHitOverrides#CanBackstab
 	---@type SubscribableEvent<GetCanBackstabEventArgs>

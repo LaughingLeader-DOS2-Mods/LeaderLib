@@ -72,19 +72,12 @@ end
 -- 	end
 -- end
 
-local function GlobalFlagChanged(flag, enabled)
-	local flagListeners = Listeners.GlobalFlagChanged[flag]
-	if flagListeners then
-		InvokeListenerCallbacks(flagListeners, flag, enabled)
-	end
-end
-
 Ext.RegisterOsirisListener("GlobalFlagSet", 1, "after", function(flag)
-	GlobalFlagChanged(flag, true)
+	Events.GlobalFlagChanged:Invoke({Flag=flag, Enabled=true})
 end)
 
 Ext.RegisterOsirisListener("GlobalFlagCleared", 1, "after", function(flag)
-	GlobalFlagChanged(flag, false)
+	Events.GlobalFlagChanged:Invoke({Flag=flag, Enabled=false})
 end)
 
 local function OnObjectDying(obj)

@@ -1,6 +1,6 @@
 TotalSkillListeners = 0
 
----@alias LeaderLibSkillListenerDataType string|'"boolean"'|'"StatEntrySkillData"'|'"HitData"'|'"ProjectileHitData"'|'"SkillEventData"'
+---@alias LeaderLibSkillListenerDataType string|"boolean"|"StatEntrySkillData"|"HitData"|"ProjectileHitData"|"SkillEventData"|"EsvShootProjectileRequest"
 
 ---@alias LeaderLibSkillListenerCallback fun(skill:string, char:string, state:SKILL_STATE, data:SkillEventData|HitData|ProjectileHitData|StatEntrySkillData|boolean, dataType:LeaderLibSkillListenerDataType)
 

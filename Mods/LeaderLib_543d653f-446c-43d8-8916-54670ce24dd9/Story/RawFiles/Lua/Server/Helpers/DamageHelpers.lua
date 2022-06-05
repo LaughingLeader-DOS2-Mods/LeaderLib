@@ -575,7 +575,7 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
     NRD_HitSetInt(hit, "SimulateHit", 1)
 
     local skillData = GameHelpers.Ext.CreateSkillTable(skill, nil, true)
-    if skillDataParamModifiers then
+    if type(skillDataParamModifiers) == "table" then
         for k,v in pairs(skillDataParamModifiers) do
             skillData[k] = v
         end

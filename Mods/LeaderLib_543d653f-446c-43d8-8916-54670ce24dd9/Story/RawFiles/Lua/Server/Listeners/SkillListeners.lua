@@ -21,7 +21,9 @@ local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, sk
 		data = Classes.SkillEventData:Create(uuid, skill, skillType, skillAbility)
 		skillDataHolder[uuid] = data
 	end
-	PersistentVars.SkillData[uuid] = data:Serialize()
+	if data then
+		PersistentVars.SkillData[uuid] = data:Serialize()
+	end
 	return data
 end
 
@@ -69,9 +71,6 @@ end
 function OnSkillPreparing(char, skillprototype)
 	char = StringHelpers.GetUUID(char)
 	local skill = GetSkillEntryName(skillprototype)
-	-- if CharacterIsControlled(char) == 0 then
-	-- 	Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
-	-- end
 	local last = PersistentVars.IsPreparingSkill[char]
 	if last and last ~= skill then
 		SkillManager.OnSkillPreparingCancel(char, "", last, true)
@@ -80,7 +79,6 @@ function OnSkillPreparing(char, skillprototype)
 	if not last or last ~= skill then
 		local skillData = Ext.GetStat(skill)
 		for callback in SkillManager.GetListeners(skill) do
-			--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
 			local status,err = xpcall(callback, debug.traceback, skill, char, SKILL_STATE.PREPARE, skillData, "StatEntrySkillData")
 			if not status then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
@@ -95,11 +93,6 @@ end
 
 -- Fires when CharacterUsedSkill fires. This happens after all the target events.
 function OnSkillUsed(char, skill, skillType, skillAbility)
-	-- if skill ~= nil then
-	-- 	Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char, skill)
-	-- else
-	-- 	Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char)
-	-- end
 	local uuid = StringHelpers.GetUUID(char)
 
 	if GameHelpers.Stats.IsHealingSkill(skill) then
@@ -116,10 +109,6 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 		end
 		local status,err = nil,nil
 		for callback in SkillManager.GetListeners(skill) do
-			if Vars.DebugMode then
-				--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") data(",data:ToString(),")")
-				--PrintDebug("params(",Common.JsonStringify({...}),")")
-			end
 			status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.USED, data, data.Type)
 			if not status then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)

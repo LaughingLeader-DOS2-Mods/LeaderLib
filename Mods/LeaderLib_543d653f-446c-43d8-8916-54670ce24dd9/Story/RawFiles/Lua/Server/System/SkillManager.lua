@@ -178,10 +178,14 @@ Ext.RegisterListener("SessionLoaded", function ()
 end)
 
 ---@alias SkillManagerAllStateCallback fun(skill:string, caster:EsvCharacter, state:SKILL_STATE, data:SkillEventData|HitData|ProjectileHitData|StatEntrySkillData|EsvProjectile|boolean, dataType:LeaderLibSkillListenerDataType)
+---@alias SkillManagerPrepareCallback fun(skill:string, caster:EsvCharacter, state:SKILL_STATE, skill:SkillEventData, dataType:LeaderLibSkillListenerDataType)
 ---@alias SkillManagerSkillEventCallback fun(skill:string, caster:EsvCharacter, state:SKILL_STATE, data:SkillEventData, dataType:LeaderLibSkillListenerDataType)
 ---@alias SkillManagerHitCallback fun(skill:string, caster:EsvCharacter, state:SKILL_STATE, data:HitData, dataType:LeaderLibSkillListenerDataType)
+---@alias SkillManagerBeforeProjectileShootCallback fun(skill:string, caster:EsvCharacter, state:SKILL_STATE, projectileRequest:EsvShootProjectileRequest, dataType:LeaderLibSkillListenerDataType)
+---@alias SkillManagerProjectileShootCallback fun(skill:string, caster:EsvCharacter, state:SKILL_STATE, projectile:EsvProjectile, dataType:LeaderLibSkillListenerDataType)
 ---@alias SkillManagerProjectileHitCallback fun(skill:string, caster:EsvCharacter, state:SKILL_STATE, data:ProjectileHitData, dataType:LeaderLibSkillListenerDataType)
----@alias SkillManagerProjectileShootCallback fun(skill:string, caster:EsvCharacter, state:SKILL_STATE, data:EsvProjectile, dataType:LeaderLibSkillListenerDataType)
+---@alias SkillManagerMemorizationChangedCallback fun(skill:string, caster:EsvCharacter, state:SKILL_STATE, memorized:boolean, dataType:LeaderLibSkillListenerDataType)
+---@alias SkillManagerLearnedCallback fun(skill:string, caster:EsvCharacter, state:SKILL_STATE, learned:boolean, dataType:LeaderLibSkillListenerDataType)
 
 ---@param state SKILL_STATE
 ---@param matchState SKILL_STATE|SKILL_STATE[]
@@ -267,22 +271,13 @@ function SkillManager.Register.All(skill, callback, onlySkillState, priority, on
 	end
 end
 
----Registers a function to call when a specific skill or array of skills has a SKILL_STATE.HIT event.
+---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.PREPARE event.
 ---@param skill string|string[]
----@param callback SkillManagerHitCallback
+---@param callback SkillManagerPrepareCallback
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
-function SkillManager.Register.Hit(skill, callback, priority, once)
-	SkillManager.Register.All(skill, callback, SKILL_STATE.HIT, priority, once)
-end
-
----Registers a function to call when a specific skill or array of skills has a SKILL_STATE.PROJECTILEHIT event.
----@param skill string|string[]
----@param callback SkillManagerProjectileHitCallback
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
-function SkillManager.Register.ProjectileHit(skill, callback, priority, once)
-	SkillManager.Register.All(skill, callback, SKILL_STATE.PROJECTILEHIT, priority, once)
+function SkillManager.Register.Prepare(skill, callback, priority, once)
+	SkillManager.Register.All(skill, callback, SKILL_STATE.PREPARE, priority, once)
 end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.USED event.
@@ -301,4 +296,60 @@ end
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 function SkillManager.Register.Cast(skill, callback, priority, once)
 	SkillManager.Register.All(skill, callback, SKILL_STATE.CAST, priority, once)
+end
+
+---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.HIT event.
+---@param skill string|string[]
+---@param callback SkillManagerHitCallback
+---@param priority integer|nil Optional listener priority
+---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+function SkillManager.Register.Hit(skill, callback, priority, once)
+	SkillManager.Register.All(skill, callback, SKILL_STATE.HIT, priority, once)
+end
+
+---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.BEFORESHOOT event.
+---@param skill string|string[]
+---@param callback SkillManagerBeforeProjectileShootCallback
+---@param priority integer|nil Optional listener priority
+---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+function SkillManager.Register.BeforeProjectileShoot(skill, callback, priority, once)
+	SkillManager.Register.All(skill, callback, SKILL_STATE.BEFORESHOOT, priority, once)
+end
+
+---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.SHOOTPROJECTILE event.
+---@param skill string|string[]
+---@param callback SkillManagerProjectileShootCallback
+---@param priority integer|nil Optional listener priority
+---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+function SkillManager.Register.ProjectileShoot(skill, callback, priority, once)
+	SkillManager.Register.All(skill, callback, SKILL_STATE.SHOOTPROJECTILE, priority, once)
+end
+
+---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.PROJECTILEHIT event.
+---@param skill string|string[]
+---@param callback SkillManagerProjectileHitCallback
+---@param priority integer|nil Optional listener priority
+---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+function SkillManager.Register.ProjectileHit(skill, callback, priority, once)
+	SkillManager.Register.All(skill, callback, SKILL_STATE.PROJECTILEHIT, priority, once)
+end
+
+---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.LEARNED event.
+---@param skill string|string[]
+---@param callback SkillManagerLearnedCallback
+---@param priority integer|nil Optional listener priority
+---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+function SkillManager.Register.Learned(skill, callback, priority, once)
+	SkillManager.Register.All(skill, callback, SKILL_STATE.LEARNED, priority, once)
+end
+
+local _MemorizationStates = {SKILL_STATE.MEMORIZED, SKILL_STATE.UNMEMORIZED}
+
+---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.UNMEMORIZED or SKILL_STATE.MEMORIZED event.
+---@param skill string|string[]
+---@param callback SkillManagerMemorizationChangedCallback
+---@param priority integer|nil Optional listener priority
+---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+function SkillManager.Register.MemorizationChanged(skill, callback, priority, once)
+	SkillManager.Register.All(skill, callback, _MemorizationStates, priority, once)
 end

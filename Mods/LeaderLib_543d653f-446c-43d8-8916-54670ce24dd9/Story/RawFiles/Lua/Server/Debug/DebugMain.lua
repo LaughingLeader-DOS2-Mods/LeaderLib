@@ -873,3 +873,4 @@ end ]]
 --local pos = GameHelpers.Math.GetPosition("e36e315e-d316-4ceb-9dc7-360ae1c8acf9"); pos[2] = pos[2] + 2; Mods.LeaderLib.EffectManager.PlayEffect("RS3_FX_GP_Projectiles_LightningBolt_Beam_01", me.MyGuid, {BeamTargetPos = pos, Loop = false})
 
 --local pos = GameHelpers.Math.GetPosition("e36e315e-d316-4ceb-9dc7-360ae1c8acf9"); pos[2] = pos[2] + 2; Mods.LeaderLib.EffectManager.PlayEffectAt("RS3_FX_GP_Projectiles_LightningBolt_Beam_01", me.WorldPos, {BeamTargetPos = pos, Loop = false})
+

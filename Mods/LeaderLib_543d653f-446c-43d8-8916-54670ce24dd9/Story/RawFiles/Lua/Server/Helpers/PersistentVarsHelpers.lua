@@ -2,7 +2,7 @@ if GameHelpers.PersistentVars == nil then
 	GameHelpers.PersistentVars = {}
 end
 
----@param modGlobalTable table The mod's global table (can just pass _G)
+---@param modGlobalTable table The mod's global table.
 ---@param defaultTable table A table of default values to copy from.
 ---@param initializedCallback function|nil If set, this function will be called during the PersistentVarsLoaded event, and PersistentVars will be updated with the default values if needed (like from older saves).
 function GameHelpers.PersistentVars.Initialize(modGlobalTable, defaultTable, initializedCallback)
@@ -22,9 +22,9 @@ end
 ---Creates a new clone of defaultPersistentVars, copies keys that match from the loaded PersistentVars, then returns the new table. Use this to effectively remove unused entries from PersistentVars, while preserving whatever default values you need, by assigning PersistentVars to the table returned from this function.
 ---@param defaultPersistentVars table A table of default values to copy from.
 ---@param loadedPersistentVars table The loaded PersistentVars.
----@return table
+---@return table PersistentVars Assign PersistentVars to this value.
 function GameHelpers.PersistentVars.Update(defaultPersistentVars, loadedPersistentVars)
-	local data = TableHelpers.Clone(defaultPersistentVars)
+	local data = TableHelpers.Clone(defaultPersistentVars, true)
 	TableHelpers.CopyExistingKeys(data, loadedPersistentVars)
 	return data
 end

@@ -50,3 +50,11 @@ function GameHelpers.IO.SaveFile(filepath, text)
 	end
 	_saveFile(filepath, output)
 end
+
+---Simple wrapper around Ext.LoadFile or Ext.IO.LoadFile, depending on the extender version.
+---@param filepath string
+---@param context string|nil
+---@return string
+function GameHelpers.IO.LoadFile(filepath, context)
+	return _loadFile(filepath, context)
+end

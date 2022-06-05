@@ -495,7 +495,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         end
     end
 
-    damageMultiplier = 1.0 + Game.Math.GetAttackerDamageMultiplier(target, attacker, highGroundFlag)
+    damageMultiplier = 1.0 + Game.Math.GetAttackerDamageMultiplier(attacker, target, highGroundFlag)
     if hitType == "Magic" or hitType == "Surface" or hitType == "DoT" or hitType == "Reflected" then
         damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier)
         HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)

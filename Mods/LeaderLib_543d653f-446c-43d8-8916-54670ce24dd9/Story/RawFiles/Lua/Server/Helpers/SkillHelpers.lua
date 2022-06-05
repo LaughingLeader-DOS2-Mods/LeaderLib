@@ -235,7 +235,7 @@ local function ProcessProjectileProps(props)
                 NRD_ProjectileSetInt(k, v)
             elseif t == "string" then
                 if projectileCreationProperties[k] == "GuidString" then
-                    NRD_ProjectileSetGuidString(k, v)
+                    NRD_ProjectileSetGuidString(k, GameHelpers.GetUUID(v))
                 else
                     NRD_ProjectileSetString(k, v)
                 end

@@ -81,11 +81,11 @@ local function GetOsirisCombatCharacters(id, filter, filterReference, asTable)
 	end
 end
 
----@param id integer
+---@param id integer|nil The combat ID, or nothing to get all characters in combat.
 ---@param filter GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback|nil Used to filter returned charaters. Allies/Enemies/Neutral are the alignment relation towards the player party. If a function is supplied instead, a character is only included if the function returns true.
----@param filterReference EsvCharacter|EsvItem For when using preset filters like "Ally", is is a reference character for relational checks.
+---@param filterReference EsvCharacter|EsvItem|nil For when using preset filters like "Ally", is is a reference character for relational checks.
 ---@param asTable boolean|nil Return results as a table, instead of an iterator function.
----@return fun():EsvCharacter
+---@return fun():EsvCharacter|EsvCharacter[]
 function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)
 	if Ext.OsirisIsCallable() then
 		return GetOsirisCombatCharacters(id, filter, filterReference, asTable)

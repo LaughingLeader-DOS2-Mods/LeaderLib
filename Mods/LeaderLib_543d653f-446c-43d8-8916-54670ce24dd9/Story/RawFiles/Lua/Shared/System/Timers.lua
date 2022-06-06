@@ -200,7 +200,18 @@ end
 local function CreateDeprecatedWrapper(callback)
 	---@param e TimerFinishedEventArgs
 	local wrapper = function(e)
-		callback(e.ID, table.unpack(e.Data))
+		if e.Data.UUID then
+			local uuid = e.Data.UUID
+			if type(e.Data.Params) == "table" then
+				callback(e.ID, uuid, table.unpack(e.Data.Params))
+			else
+				e.Data.Object = nil
+				e.Data.UUID = nil
+				callback(e.ID, uuid, table.unpack(e.Data))
+			end
+		else
+			callback(e.ID, table.unpack(e.Data))
+		end
 	end
 	return wrapper
 end

@@ -56,9 +56,16 @@ function TagManager:TagObject(object, isInCombat, ...)
 	object = GameHelpers.TryGetObject(object)
 	if object then
 		local isCharacter = GameHelpers.Ext.ObjectIsCharacter(object)
-		isInCombat = isInCombat
 		if isInCombat == nil then
-			isInCombat = (isCharacter and Ext.OsirisIsCallable() and CharacterIsInCombat(object.MyGuid) == 1)
+			if isCharacter then
+				if Ext.OsirisIsCallable() and CharacterIsInCombat(object.MyGuid) == 1 then
+					isInCombat = true
+				else
+					if object:GetStatus("COMBAT") then
+						isInCombat = true
+					end
+				end
+			end
 		end
 		InvokeListenerCallbacks(TagManager.Callbacks.TagObject, object, isInCombat, isCharacter, ...)
 	end
@@ -74,24 +81,32 @@ function TagManager:TagAll(...)
 end
 
 Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", function(uuid, combatId)
-	TagManager:TagObject(uuid, true)
+	if ObjectIsCharacter(uuid) == 1 then
+		TagManager:TagObject(uuid, true)
+	end
 end)
 
 Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "after", function(uuid, combatId)
-	TagManager:TagObject(uuid, false)
+	if ObjectIsCharacter(uuid) == 1 then
+		TagManager:TagObject(uuid, false)
+	end
 end)
 
 Ext.RegisterOsirisListener("ObjectSwitchedCombat", 3, "after", function(uuid, oldCombatId, combatId)
-	TagManager:TagObject(uuid, true)
+	if ObjectIsCharacter(uuid) == 1 then
+		TagManager:TagObject(uuid, true)
+	end
 end)
 
 Ext.RegisterOsirisListener("ObjectTransformed", 2, "after", function(uuid, template)
-	TagManager:TagObject(uuid, true)
+	if ObjectIsCharacter(uuid) == 1 then
+		TagManager:TagObject(uuid, true)
+	end
 end)
 
 Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
 	--Delay in case a player loads a save again
-	Timer.StartOneshot("LeaderLib_TagAllCharacter", 5000, function()
+	Timer.StartOneshot("LeaderLib_TagAllCharacters", 5000, function()
 		TagManager:TagAll()
 	end)
 end)

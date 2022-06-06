@@ -457,9 +457,19 @@ local getFuncs = {
 	Ext.GetGameObject
 }
 
+---@param v userdata
+---@return boolean
+local function IsHandle(v)
+	if _EXTVERSION >= 56 then
+		return Ext.Utils.IsValidHandle(v)
+	else
+		return getmetatable(v) == nil
+	end
+end
+
 local function TryGetObject(id)
 	local t = type(id)
-	local isHandle = t == "userdata" and getmetatable(id) == nil
+	local isHandle = t == "userdata" and IsHandle(id) == true
 	if Ext.OsirisIsCallable() and t == "string" then
 		if ObjectExists(id) == 0 then
 			return nil
@@ -468,6 +478,14 @@ local function TryGetObject(id)
 			return Ext.GetCharacter(id)
 		elseif ObjectIsItem(id) == 1 then
 			return Ext.GetItem(id)
+		else
+			local b,result = xpcall(Ext.GetGameObject, debug.traceback, id)
+			if not b then
+				Ext.PrintError(result)
+				return nil
+			else
+				return result
+			end
 		end
 	elseif isHandle then
 		return Ext.GetGameObject(id)

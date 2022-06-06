@@ -139,12 +139,10 @@ function Timer.StartOneshot(timerName, delay, callback)
 	if StringHelpers.IsNullOrEmpty(timerName) then
 		timerName = string.format("LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random())
 	end
-	local index = Events.TimerFinished:Subscribe(function(e)
-		local b,err = xpcall(callback, debug.traceback, e)
-		if not b then
-			Ext.PrintError(err)
-		end
-	end, {Once=true, MatchArgs={ID=timerName}})
+	local index = Events.TimerFinished:Subscribe(callback, {
+		Once=true,
+		MatchArgs={ID=timerName}
+	})
 	if _OneshotTimerIndexes[timerName] == nil then
 		_OneshotTimerIndexes[timerName] = {}
 	end
@@ -153,7 +151,7 @@ function Timer.StartOneshot(timerName, delay, callback)
 	return index
 end
 
----Cancels a timer with an optional UUID for object timers.
+---Cancels a timer, with an optional UUID for object timers.
 ---@param timerName string
 ---@param object UUID|NETID|EsvGameObject|nil
 function Timer.Cancel(timerName, object)
@@ -164,6 +162,7 @@ function Timer.Cancel(timerName, object)
 			if uuid then
 				local uniqueTimerName = string.format("%s%s", timerName, uuid)
 				_INTERNAL.ClearData(uniqueTimerName)
+				TimerCancel(uniqueTimerName)
 			end
 		end
 		TimerCancel(timerName)
@@ -183,14 +182,22 @@ end
 ---Subscribe a callback for a timer name, or an array of timer names.
 ---@param name string|string[]
 ---@param callback fun(e:TimerFinishedEventArgs)
-function Timer.Subscribe(name, callback)
+---@param once boolean|nil If true, the callback is only invoked once, and then the listener is removed.
+---@param priority integer|nil Priority value for the listener. Higher priorities run first.
+---@return integer|integer[] subscriptionIndex
+function Timer.Subscribe(name, callback, once, priority)
 	local t = type(name)
 	if t == "string" then
-		Events.TimerFinished:Subscribe(callback, {MatchArgs={ID=name}})
+		return Events.TimerFinished:Subscribe(callback, {MatchArgs={ID=name}, Priority=priority, Once=once})
 	elseif t == "table" then
+		local results = {}
 		for _,v in pairs(name) do
-			Timer.Subscribe(v, callback)
+			local index = Timer.Subscribe(v, callback)
+			if index then
+				results[#results+1] = index
+			end
 		end
+		return results
 	else
 		fprint(LOGLEVEL.WARNING, "[Timer.Subscribe] name(%s) is not a valid timer need. Should be a string or table of strings.", name)
 	end

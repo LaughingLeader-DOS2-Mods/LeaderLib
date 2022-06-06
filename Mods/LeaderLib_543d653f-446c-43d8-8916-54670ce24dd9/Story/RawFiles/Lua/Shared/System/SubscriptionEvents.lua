@@ -80,6 +80,7 @@ Events.SummonChanged = Classes.SubscribableEvent:Create("SummonChanged", {
 ---@class ObjectTimerData:table
 ---@field UUID string
 ---@field Object EsvCharacter|EsvItem|EclCharacter|EclItem|nil
+---@field Params table<integer,any> An array of assorted parameters, set if a Timer.Start function was used with variable arguments.
 
 ---@class TimerFinishedEventArgs
 ---@field ID string The timer name.

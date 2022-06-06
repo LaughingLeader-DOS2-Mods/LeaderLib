@@ -165,16 +165,28 @@ end
 ---@param data TurnCounterData
 ---@param uniqueId string
 function _INTERNAL.Started(data, uniqueId)
-	InvokeListenerCallbacks(Listeners.OnTurnCounter, data.ID, data.Turns, data.Turns, false, data)
-	InvokeListenerCallbacks(Listeners.OnNamedTurnCounter[data.ID], data.ID, data.Turns, data.Turns, false, data)
+	Events.OnTurnCounter:Invoke({
+		ID = data.ID,	
+		Turn = data.Turns,
+		LastTurn = data.Turns,
+		TargetTurns = data.TargetTurns,
+		Finished = false,
+		Data = data,
+	})
 end
 
 ---@param data TurnCounterData
 ---@param uniqueId string
 ---@param lastTurn integer
 function _INTERNAL.CountdownDone(data, uniqueId, lastTurn)
-	InvokeListenerCallbacks(Listeners.OnTurnCounter, data.ID, data.Turns, lastTurn, true, data)
-	InvokeListenerCallbacks(Listeners.OnNamedTurnCounter[data.ID], data.ID, data.Turns, lastTurn, true, data)
+	Events.OnTurnCounter:Invoke({
+		ID = data.ID,	
+		Turn = data.Turns,
+		LastTurn = data.Turns,
+		TargetTurns = data.TargetTurns,
+		Finished = true,
+		Data = data,
+	})
 	_INTERNAL.CleanupData(uniqueId)
 end
 
@@ -217,8 +229,14 @@ function _INTERNAL.TickTurn(data, uniqueId)
 			return true
 		end
 	end
-	InvokeListenerCallbacks(Listeners.OnTurnCounter, data.ID, data.Turns, last, false, data)
-	InvokeListenerCallbacks(Listeners.OnNamedTurnCounter[data.ID], data.ID, data.Turns, last, false, data)
+	Events.OnTurnCounter:Invoke({
+		ID = data.ID,	
+		Turn = data.Turns,
+		LastTurn = last,
+		TargetTurns = data.TargetTurns,
+		Finished = false,
+		Data = data,
+	})
 	return false
 end
 

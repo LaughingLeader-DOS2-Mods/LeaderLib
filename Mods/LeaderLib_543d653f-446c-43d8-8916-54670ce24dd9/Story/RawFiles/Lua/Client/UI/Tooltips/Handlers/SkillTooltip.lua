@@ -100,10 +100,13 @@ end
 
 local function FixDamageNames(skill, element)
 	if not TooltipHandler.Settings.IgnoreDamageFixingSkills[skill] then
+		local compareText = string.lower(element.Label)
 		local validDamageTypes = GetSkillDamageTypes(skill, element.Label)
 		for damageType,data in pairs(DamageNameFixing) do
 			if validDamageTypes[damageType] and data.IsActive(skill) then
-				data:Replace(damageType, element)
+				if not string.find(compareText, data.Name.Value) then
+					data:Replace(damageType, element)
+				end
 			end
 		end
 	end

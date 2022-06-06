@@ -122,13 +122,8 @@ local SkipTutorialRegions = Classes.Enum:Create({
 })
 
 local SkipTutorialRegionTooltips = {
-	None = "Go to the tutorial.",
-	FJ_FortJoy_Main = "Go to the Act I, Fort Joy.",
-	LV_HoE_Main = "Go to the Lady Vengeance, inbetween Act 1 and 2.",
-	RC_Main = "Go to Act II, Reaper's Coast.",
-	CoS_Main = "Go to Act II Part 1, the Nameless Isles.",
-	ARX_Main = "Go to Act II Part 2, Arx.",
-	ARX_Endgame = "Go to the end of the game.",
+	Tutorial = Classes.TranslatedString:CreateFromKey("LeaderLib_UI_SkipTutorial_TutorialDisplayName", "[Key:TUT_Tutorial_A:The Hold] (Tutorial)", {AutoReplacePlaceholders = true}),
+	Level = Classes.TranslatedString:CreateFromKey("LeaderLib_UI_SkipTutorial_Level", "Go to [1] ([2])"),
 }
 
 local DeveloperOnlyRegions = {
@@ -150,9 +145,22 @@ function CCExt.SetupSkipTutorialButton(this)
 		if Vars.DebugMode or DeveloperOnlyRegions[level] ~= true then
 			if level ~= "None" then
 				local name = GameHelpers.GetStringKeyText(level)
-				this.skipTutorial_mc.addEntry(name, i, SkipTutorialRegionTooltips[level])
+				local tooltip = SkipTutorialRegionTooltips.Level:ReplacePlaceholders(name, i)
+				if not Vars.DebugMode then
+					this.skipTutorial_mc.addEntry(name, i, tooltip)
+				else
+					this.skipTutorial_mc.addEntry(name, i, string.format("%s [%s]", tooltip, level))
+				end
 			else
-				this.skipTutorial_mc.addEntry("Tutorial", i, SkipTutorialRegionTooltips.None)
+				local tutorial = GameHelpers.GetStringKeyText("LeaderLib_Tutorial", "Tutorial")
+				local name = GameHelpers.GetStringKeyText("TUT_Tutorial_A")
+				local tooltip = SkipTutorialRegionTooltips.Level:ReplacePlaceholders(name, tutorial)
+				name = string.format("%s (%s)", name, tutorial)
+				if not Vars.DebugMode then
+					this.skipTutorial_mc.addEntry(name, i, tooltip)
+				else
+					this.skipTutorial_mc.addEntry(name, i, string.format("%s [TUT_Tutorial_A]", tooltip))
+				end
 			end
 		end
 	end

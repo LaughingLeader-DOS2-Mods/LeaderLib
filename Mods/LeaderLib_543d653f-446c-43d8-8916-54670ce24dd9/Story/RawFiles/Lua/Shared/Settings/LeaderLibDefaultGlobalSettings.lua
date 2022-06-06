@@ -106,7 +106,11 @@ if Ext.IsServer() then
 		end
 	end)
 	settings.Global.Flags.LeaderLib_PullPartyIntoCombat:AddListener(function(id, enabled, data, settingsData)
-		Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
+		if enabled then
+			Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
+		else
+			Timer.Cancel("LeaderLib_PullPartyIntoCombat")
+		end
 	end)
 end
 

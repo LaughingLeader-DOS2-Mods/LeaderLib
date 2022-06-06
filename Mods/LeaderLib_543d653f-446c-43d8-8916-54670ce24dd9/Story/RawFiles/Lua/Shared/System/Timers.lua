@@ -210,7 +210,11 @@ local function CreateDeprecatedWrapper(callback)
 				callback(e.ID, uuid, table.unpack(e.Data))
 			end
 		else
-			callback(e.ID, table.unpack(e.Data))
+			if e.Data.Params then
+				callback(e.ID, table.unpack(e.Data.Params))
+			else
+				callback(e.ID, table.unpack(e.Data))
+			end
 		end
 	end
 	return wrapper

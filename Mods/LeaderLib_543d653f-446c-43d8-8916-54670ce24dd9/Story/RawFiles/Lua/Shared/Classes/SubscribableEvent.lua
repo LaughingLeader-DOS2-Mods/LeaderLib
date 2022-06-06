@@ -68,12 +68,15 @@ end
 ---@field Once boolean|nil
 ---@field MatchArgs table<string,any>|nil Optional event arguments to match before the callback is invoked.
 
----@class SubscribableEventNode:EventSubscriptionOptions
+---@class SubscribableEventNode
+---@field Priority integer|nil
+---@field Once boolean|nil
 ---@field Callback function
 ---@field Index integer
 ---@field Options SubscribableEventCreateOptions
 ---@field Prev SubscribableEventNode|nil
 ---@field Next SubscribableEventNode|nil
+---@field IsMatch fun(eventArgs:table):boolean If MatchArgs has a single entry, a function is created to run a quick match.
 
 ---@param self SubscribableEvent
 ---@param node SubscribableEventNode
@@ -121,6 +124,15 @@ local function DoSubscribe(self, sub)
 	sub.Prev = last
 end
 
+local function _TablesMatch(t1,t2)
+	for k,v in pairs(t1) do
+		if t2[k] ~= v then
+			return false
+		end
+	end
+	return true
+end
+
 ---@param callback function
 ---@param opts EventSubscriptionOptions|nil
 ---@return integer
@@ -136,9 +148,42 @@ function SubscribableEvent:Subscribe(callback, opts)
 		Index = index,
 		Priority = opts.Priority or 100,
 		Once = opts.Once or false,
-		MatchArgs = opts.MatchArgs or nil,
 		Options = {}
 	}
+
+	if type(opts.MatchArgs) == "table" then
+		local matchArgs = opts.MatchArgs
+		local firstEntry = nil
+		local firstID = nil
+		local count = 0
+		for k,v in pairs(matchArgs) do
+			if firstEntry == nil then
+				firstID = k
+				firstEntry = v
+			end
+			count = count + 1
+		end
+		if count == 1 then
+			sub.IsMatch = function(args)
+				return args[firstID] == firstEntry
+			end
+		else
+			sub.IsMatch = function(args)
+				for k,v in pairs(matchArgs) do
+					if args[k] == nil then
+						return false
+					end
+					if type(v) == "table" then
+						if not _TablesMatch(v, args[k]) then
+							return false
+						end
+					elseif args[k] ~= v then
+						return false
+					end
+				end
+			end
+		end
+	end
 
 	DoSubscribe(self, sub)
 	return index
@@ -187,32 +232,12 @@ function SubscribableEvent:StopPropagation()
 	self.StopInvoke = true
 end
 
-local function _TablesMatch(t1,t2)
-	for k,v in pairs(t1) do
-		if t2[k] ~= v then
-			return false
-		end
-	end
-	return true
-end
-
 ---@param node SubscribableEventNode
 ---@param eventArgs RuntimeSubscribableEventArgs
 local function _EventArgsMatch(node, eventArgs)
 	local match = true
-	if node.MatchArgs ~= nil then
-		for k,v in pairs(node.MatchArgs) do
-			if eventArgs[k] == nil then
-				return false
-			end
-			if type(v) == "table" then
-				if not _TablesMatch(v, eventArgs[k]) then
-					return false
-				end
-			elseif eventArgs[k] ~= v then
-				return false
-			end
-		end
+	if node.IsMatch ~= nil then
+		return node.IsMatch(eventArgs)
 	end
 	return match
 end

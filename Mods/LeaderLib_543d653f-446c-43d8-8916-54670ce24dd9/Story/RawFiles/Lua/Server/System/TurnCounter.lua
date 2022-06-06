@@ -169,7 +169,6 @@ function _INTERNAL.Started(data, uniqueId)
 		ID = data.ID,	
 		Turn = data.Turns,
 		LastTurn = data.Turns,
-		TargetTurns = data.TargetTurns,
 		Finished = false,
 		Data = data,
 	})
@@ -183,7 +182,6 @@ function _INTERNAL.CountdownDone(data, uniqueId, lastTurn)
 		ID = data.ID,	
 		Turn = data.Turns,
 		LastTurn = data.Turns,
-		TargetTurns = data.TargetTurns,
 		Finished = true,
 		Data = data,
 	})
@@ -233,7 +231,6 @@ function _INTERNAL.TickTurn(data, uniqueId)
 		ID = data.ID,	
 		Turn = data.Turns,
 		LastTurn = last,
-		TargetTurns = data.TargetTurns,
 		Finished = false,
 		Data = data,
 	})

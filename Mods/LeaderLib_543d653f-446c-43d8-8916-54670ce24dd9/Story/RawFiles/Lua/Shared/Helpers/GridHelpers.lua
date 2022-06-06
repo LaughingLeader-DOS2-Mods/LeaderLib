@@ -110,11 +110,11 @@ if not isClient then
 	function GameHelpers.Internal.OnForceMoveTimer(e)
 		local target = e.Data.UUID
 		if target ~= nil then
-			local targetObject = Ext.GetGameObject(target)
+			local targetObject = e.Data.Object
 			local targetData = PersistentVars.ForceMoveData[target]
 			if targetData ~= nil then
 				local x,y,z = table.unpack(targetData.Position)
-				if GetDistanceToPosition(target, x,y,z) < 1 then
+				if GetDistanceToPosition(target, x,y,z) <= 1 then
 					pcall(NRD_GameActionDestroy,targetData.Handle)
 					PersistentVars.ForceMoveData[target] = nil
 					local source = targetData.Source

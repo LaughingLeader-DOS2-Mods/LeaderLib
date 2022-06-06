@@ -1,5 +1,8 @@
 local _EXTVERSION = Ext.Version()
 
+---@class LeaderLibQualityOfLifeTweaks
+QOL = {}
+
 local defaultPathInfluence = "Web,50;BloodCloudCursed,70;BloodCloudElectrified,100;BloodCloudElectrifiedCursed,100;BloodCursed,70;BloodElectrified,100;BloodElectrifiedCursed,100;BloodFrozen,30;BloodFrozenCursed,70;Fire,70;FireCloud,70;FireCloudCursed,100;FireCursed,100;Lava,700;Oil,30;OilCursed,70;Poison,70;PoisonCloud,70;PoisonCloudCursed,100;PoisonCursed,100;SmokeCloudCursed,70;WaterCloudCursed,70;WaterCloudElectrified,100;WaterCloudElectrifiedCursed,100;WaterCursed,70;WaterElectrified,100;WaterElectrifiedCursed,100;WaterFrozen,30;WaterFrozenCursed,70;Deathfog,200;"
 
 local defaultUndeadPathInfluence = "Web,50;BloodCloudCursed,70;BloodCloudElectrified,100;BloodCloudElectrifiedCursed,100;BloodCursed,70;BloodElectrified,100;BloodElectrifiedCursed,100;BloodFrozen,30;BloodFrozenCursed,70;Fire,70;FireCloud,70;FireCloudCursed,100;FireCursed,100;Lava,700;Oil,30;OilCursed,70;PoisonCloudCursed,100;PoisonCursed,100;SmokeCloudCursed,70;WaterCloudCursed,70;WaterCloudElectrified,100;WaterCloudElectrifiedCursed,100;WaterCursed,70;WaterElectrified,100;WaterElectrifiedCursed,100;WaterFrozen,30;WaterFrozenCursed,70;"
@@ -103,12 +106,13 @@ if Vars.DebugMode then
 	end)
 end
 
+---@return EsvCharacter
 local function GetClosestEnemy(player, enemies, maxDist)
 	local lastDist = 999
 	local lastEnemy = nil
 	for _,v in pairs(enemies) do
 		local dist = GameHelpers.Math.GetDistance(player, v)
-		if dist <= maxDist and dist < lastDist then
+		if GameHelpers.Character.IsEnemy(player, v) and dist <= maxDist and dist < lastDist then
 			lastDist = dist
 			lastEnemy = v
 		end
@@ -121,6 +125,9 @@ function PullPartyIntoCombat()
 	local settings = SettingsManager.GetMod(ModuleUUID, false)
 	local maxDist = 30
 	if settings then
+		if settings.Global:FlagEquals("LeaderLib_PullPartyIntoCombat", false) then
+			return
+		end
 		maxDist = settings.Global:GetVariable("AutoCombatRange", 30)
 	end
 	if maxDist <= 0 then
@@ -130,6 +137,7 @@ function PullPartyIntoCombat()
 	--TODO Any way to unhardcode the 30m range from the engine? You get kicked out of combat otherwise.
 	maxDist = math.min(maxDist, 30)
 
+	---@type EsvCharacter[]
 	local players = GameHelpers.Character.GetPlayers(true, true)
 	local activeCombatId = nil
 	local referencePlayer = nil
@@ -141,6 +149,7 @@ function PullPartyIntoCombat()
 		end
 	end
 	if activeCombatId and activeCombatId > 0 then
+		---@type EsvCharacter[]
 		local enemies = GameHelpers.Combat.GetCharacters(activeCombatId, "Enemy", referencePlayer, true)
 
 		if enemies and #enemies > 0 then
@@ -150,6 +159,10 @@ function PullPartyIntoCombat()
 				then
 					local enemy = GetClosestEnemy(player, enemies, maxDist)
 					if enemy then
+						-- if QOL.CombatVacuum then
+						-- 	QOL.CombatVacuum.SetArenaFlag(player.MyGuid)
+						-- 	QOL.CombatVacuum.SetArenaFlag(enemy.MyGuid)
+						-- end
 						Osi.DB_LeaderLib_Combat_Temp_EnteredCombat(player.MyGuid, activeCombatId)
 						EnterCombat(player.MyGuid, enemy.MyGuid)
 					end
@@ -159,45 +172,18 @@ function PullPartyIntoCombat()
 	end
 end
 
--- function StartAutosaving(isGameLevel)
--- 	if isGameLevel == nil then
--- 		isGameLevel = false
--- 	end
--- 	if SharedData.RegionData.Current == "" then
--- 		local level = Osi.DB_CurrentLevel:Get(nil)
--- 		if level and level[1] then
--- 			isGameLevel = IsGameLevel(level[1][1]) == 1
--- 		end
--- 	else
--- 		isGameLevel = SharedData.RegionData.LevelType == LEVELTYPE.GAME
--- 	end
--- 	if not Vars.IsEditorMode and isGameLevel then
--- 		local settings = SettingsManager.GetMod(ModuleUUID, false)
--- 		local interval = 15
--- 		if settings then
--- 			interval = settings.Global:GetVariable("AutosaveInterval", 15)
--- 		end
--- 		Osi.LeaderLib_Autosaving_InitTimer(interval)
--- 	end
--- end
-
--- RegisterListener("RegionChanged", function (region, state, levelType)
--- 	if levelType == LEVELTYPE.GAME then
--- 		local started = Osi.DB_LeaderLib_AutoSaving_Temp_TimerStarted:Get(nil)
--- 		if not started or started[1][1] ~= 1 then
--- 			StartAutosaving(true)
--- 		end
--- 	else
--- 		Osi.LeaderLib_Autosaving_Stop()
--- 	end
--- end)
-
-Timer.Subscribe("LeaderLib_UnlockCharacterInventories", function (e)
-	if GameHelpers.IsLevelType(LEVELTYPE.GAME) and Ext.GetGameState() == "Running" then
-		GameHelpers.Net.Broadcast("LeaderLib_UnlockCharacterInventory")
-	end
+Timer.Subscribe("LeaderLib_PullPartyIntoCombat", function ()
+	PullPartyIntoCombat()
 end)
 
+local function Teleported_StartTimer()
+	if SettingsManager.GetMod(ModuleUUID, false).Global:FlagEquals("LeaderLib_PullPartyIntoCombat", true) then
+		Timer.Start("LeaderLib_PullPartyIntoCombat", 2000)
+	end
+end
+
+Ext.RegisterOsirisListener("CharacterTeleportToWaypoint", 2, "after", Teleported_StartTimer)
+Ext.RegisterOsirisListener("CharacterTeleportToPyramid", 2, "after", Teleported_StartTimer)
 
 local AutoSavingEnabledDialogText = Classes.TranslatedString:CreateFromKey("LeaderLib_Autosaving_Dialog_Enabled", "Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>[1]</font>[2]")
 local AutoSavingDisabledDialogText = Classes.TranslatedString:CreateFromKey("LeaderLib_Autosaving_Dialog_Disabled", "Autosaving <font color='#FF0000'>Disabled</font> | Interval: <font color='#00FFFF'>[1]</font>")
@@ -242,3 +228,9 @@ function Autosaving_Internal_UpdateDialogVarMenuSelectedOption(inst, dialogVar, 
 	inst = tonumber(inst)
 	DialogSetVariableStringForInstance(inst, dialogVar, string.format("%s %s", Ext.GetTranslatedString(handle, fallback), CurrentSuffix.Value))
 end
+
+Timer.Subscribe("LeaderLib_UnlockCharacterInventories", function (e)
+	if GameHelpers.IsLevelType(LEVELTYPE.GAME) and Ext.GetGameState() == "Running" then
+		GameHelpers.Net.Broadcast("LeaderLib_UnlockCharacterInventory")
+	end
+end)

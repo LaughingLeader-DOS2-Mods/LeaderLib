@@ -102,11 +102,11 @@ if Ext.IsServer() then
 	end)
 	settings.Global.Variables.AutoCombatRange:AddListener(function(id, value, data, settingsData)
 		if settings.Global:FlagEquals("LeaderLib_PullPartyIntoCombat", true) then
-			Timer.Start("LeaderLib_UpdateArenaFlags", 500)
+			Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
 		end
 	end)
 	settings.Global.Flags.LeaderLib_PullPartyIntoCombat:AddListener(function(id, enabled, data, settingsData)
-		Timer.Start("LeaderLib_UpdateArenaFlags", 500)
+		Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
 	end)
 end
 

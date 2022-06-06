@@ -415,11 +415,9 @@ if Ext.Version() >= 56 then
 	Ext.Events.BeforeStatusDelete:Subscribe(function (e)
 		if _canBlockDeletion and e.Status.LifeTime == -1 then
 			local target = Ext.GetGameObject(e.Status.TargetHandle)
-			if target
+			if target ~= nil
 			and StatusManager.IsPermanentStatusActive(target.MyGuid, e.Status.StatusId)
-			and not GameHelpers.ObjectIsDead(target)
-			then
-				Ext.Print("Blocked from deletion:", e.Status.StatusId, e.Status.LifeTime)
+			and not GameHelpers.ObjectIsDead(target) then
 				e:PreventAction()
 			end
 		end

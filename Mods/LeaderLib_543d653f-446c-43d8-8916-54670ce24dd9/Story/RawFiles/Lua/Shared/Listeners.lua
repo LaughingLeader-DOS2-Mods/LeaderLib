@@ -63,18 +63,8 @@ if Ext.IsServer() then
 	---@type table<string, fun(uuid:string, stat:string, lastVal:integer, nextVal:integer, statType:string):void>
 	Listeners.CharacterBasePointsChanged = {}
 
-	---@type table<string, fun(id:string, uuid:UUID):void>
-	Listeners.OnTurnEnded = {All = {}}
-
 	---@type table<string, fun(event:string, vararg)>
 	Listeners.ObjectEvent = {}
-
-	---Called when PersistentVars should be initialized from a table of default values.
-	---@type function[]
-	Listeners.PersistentVarsLoaded = {}
-
-	---@type fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem|nil, distance:number, startingPosition:number[], skill:StatEntrySkillData|nil):void[]
-	Listeners.ForceMoveFinished = {}
 
 	---@type table<string, fun(questId:string, character:EsvCharacter):void>
 	Listeners.QuestStarted = {All = {}}
@@ -216,10 +206,13 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			return
 		end
 	elseif t == "string" then
+		local keyType = type(callbackOrKey)
+		local callback = keyType == "function" and callbackOrKey or callbackOrNil
+
 		--Legacy support
 		if event == "OnHit" then
 			Events.OnHit:Subscribe(function (e)
-				local b,err = xpcall(callbackOrKey, debug.traceback, GameHelpers.GetUUID(e.Target), GameHelpers.GetUUID(e.Source), e.Data.Damage, e.Data.Handle, e.Data.Skill, e.HitStatus, e.Data.HitContext, e.Data)
+				local b,err = xpcall(callback, debug.traceback, GameHelpers.GetUUID(e.Target), GameHelpers.GetUUID(e.Source), e.Data.Damage, e.Data.Handle, e.Data.Skill, e.HitStatus, e.Data.HitContext, e.Data)
 				if not b then
 					Ext.PrintError(err)
 				end
@@ -227,17 +220,16 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			return
 		elseif event == "StatusHitEnter" then
 			Events.OnHit:Subscribe(function (e)
-				local b,err = xpcall(callbackOrKey, debug.traceback, e.Target, e.Source, e.Data, e.HitStatus)
+				local b,err = xpcall(callback, debug.traceback, e.Target, e.Source, e.Data, e.HitStatus)
 				if not b then
 					Ext.PrintError(err)
 				end
 			end)
 			return
 		elseif event == "OnNamedTurnCounter" then
-			local keyType = type(callbackOrKey)
 			if keyType == "string" then
 				Events.OnTurnCounter:Subscribe(function (e)
-					local b,err = xpcall(callbackOrNil, debug.traceback, e.ID, e.Turn, e.LastTurn, e.Finished, e.Data)
+					local b,err = xpcall(callback, debug.traceback, e.ID, e.Turn, e.LastTurn, e.Finished, e.Data)
 					if not b then
 						Ext.PrintError(err)
 					end
@@ -247,6 +239,18 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 					RegisterListener("OnNamedTurnCounter", v, callbackOrNil)
 				end
 			end
+			return
+		elseif event == "OnTurnEnded" then
+			local opts = nil
+			if keyType == "string" and callbackOrKey ~= "All" then
+				opts = {MatchArgs={ID=callbackOrKey}}
+			end
+			Events.OnTurnEnded:Subscribe(function (e)
+				local b,err = xpcall(callback, debug.traceback, GameHelpers.GetUUID(e.Object), e.ID)
+				if not b then
+					Ext.PrintError(err)
+				end
+			end, opts)
 			return
 		end
 		local subEvent = Events[event]

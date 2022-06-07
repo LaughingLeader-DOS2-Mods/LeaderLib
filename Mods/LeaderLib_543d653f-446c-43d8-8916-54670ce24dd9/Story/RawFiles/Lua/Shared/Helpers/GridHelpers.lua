@@ -106,8 +106,10 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 end
 
 if not isClient then
+	local _INTERNAL = GameHelpers._INTERNAL
+
 	---@param e TimerFinishedEventArgs
-	function GameHelpers.Internal.OnForceMoveTimer(e)
+	function _INTERNAL.OnForceMoveTimer(e)
 		local target = e.Data.UUID
 		if target ~= nil then
 			local targetObject = e.Data.Object
@@ -127,7 +129,13 @@ if not isClient then
 					if targetData.Skill then
 						skill = Ext.GetStat(targetData.Skill)
 					end
-					InvokeListenerCallbacks(Listeners.ForceMoveFinished, targetObject, source, targetData.Distance, targetData.Start, skill)
+					Events.ForceMoveFinished:Invoke({
+						Target = targetObject,
+						Source = source,
+						Distance = targetData.Distance,
+						StartingPosition = targetData.Start,
+						Skill = skill
+					})
 					if skill then
 						Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), targetData.Skill or "Skill")
 					else
@@ -139,17 +147,24 @@ if not isClient then
 				end
 			elseif targetObject then
 				fprint(LOGLEVEL.WARNING, "[LeaderLib_OnForceMoveAction] No force move data for target (%s). How did this happen?", targetObject.DisplayName)
-				InvokeListenerCallbacks(Listeners.ForceMoveFinished, targetObject, nil, 0, targetObject.WorldPos, nil)
+				Events.ForceMoveFinished:Invoke({
+					Target = targetObject,
+					Distance = 0,
+					StartingPosition = targetObject.WorldPos
+				})
 			end
 		end
 	end
 
-	Timer.Subscribe("LeaderLib_OnForceMoveAction", function(e) GameHelpers.Internal.OnForceMoveTimer(e) end)
+	Timer.Subscribe("LeaderLib_OnForceMoveAction", function(e) _INTERNAL.OnForceMoveTimer(e) end)
 
-	---@private
-	function GameHelpers.CanForceMove(target, source)
+	---Checks if an object can be force moved with GameHelpers.ForceMoveObject.  
+	---Looks for specific tags and statuses, such as the LeaderLib_ForceImmune tag and the LEADERLIB_FORCE_IMMUNE status.
+	---@param target ObjectParam
+	---@return boolean canBeForceMoved
+	function GameHelpers.CanForceMove(target)
 		local t = type(target)
-		if t == "string" then
+		if t == "string" and Ext.OsirisIsCallable() then
 			if CharacterIsDead(target) == 1 then
 				return false
 			end
@@ -167,13 +182,16 @@ if not isClient then
 		return true
 	end
 	
+	---Push or pull a target from a source object or position.  
+	---Similar to the Force action, except it's grid-safe (no pushing objects out of the map).
 	---@param source EsvCharacter|EsvItem
 	---@param target EsvCharacter|EsvItem
 	---@param distanceMultiplier number|nil
 	---@param skill string|nil
 	---@param startPos number[]|nil If set, this will be the starting position to push from. Defaults to the source's WorldPosition otherwise.
-	---@return number,number|nil
-	function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill, startPos)
+	---@param beamEffect string|nil The beam effect to play with the NRD_CreateGameObjectMove action.
+	---@return boolean success Returns true if the force move action has started.
+	function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill, startPos, beamEffect)
 		---@type EsvCharacter|EsvItem
 		local sourceObject = GameHelpers.TryGetObject(source)
 		---@type EsvCharacter|EsvItem
@@ -199,7 +217,7 @@ if not isClient then
 		local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionalVector, distMult)
 	
 		if tx and tz then
-			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, "", sourceObject.MyGuid)
+			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, beamEffect or "", sourceObject.MyGuid)
 			if handle then
 				PersistentVars.ForceMoveData[targetObject.MyGuid] = {
 					Position = {tx,ty,tz},
@@ -211,8 +229,12 @@ if not isClient then
 					Distance = distanceMultiplier
 				}
 				Timer.StartObjectTimer("LeaderLib_OnForceMoveAction", targetObject.MyGuid, 250)
+				return true
 			end
 		end
+
+		--No valid position, or the action failed.
+		return false
 	end
 	
 	---@param source EsvCharacter

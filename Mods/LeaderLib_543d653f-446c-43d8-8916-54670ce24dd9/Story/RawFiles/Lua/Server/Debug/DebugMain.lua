@@ -794,14 +794,9 @@ end) ]]
 
 --print(GetFaction("08348b3a-bded-4811-92ce-f127aa4310e0"), "<=>", GetFaction(host.MyGuid), CharacterGetRelationToCharacter("08348b3a-bded-4811-92ce-f127aa4310e0", host.MyGuid))
 
----@param target EsvCharacter|EsvItem
----@param source EsvCharacter|EsvItem|nil
----@param distance number
----@param startingPosition number[]
----@param skill StatEntrySkillData|nil
-RegisterListener("ForceMoveFinished", function(target, source, distance, startingPosition, skill)
-	fprint(LOGLEVEL.DEFAULT, "[ForceMoveFinished] target(%s) source(%s) distance(%s) startingPosition(%s) skill(%s)", target.DisplayName, source and source.DisplayName or "", distance, string.format("%s,%s,%s", table.unpack(startingPosition)), skill and skill.Name or "None")
-end, nil)
+Events.ForceMoveFinished:Subscribe(function(e)
+	e:Dump()
+end)
 
 --ItemTemplateAddTo("84625ce6-ed15-46d2-aa7e-73021b1b5257", me.MyGuid, 1, 0)
 --local x,y,z = table.unpack(Mods.LeaderLib.GameHelpers.Math.ExtendPositionWithForwardDirection(Ext.GetCharacter(me.MyGuid), 4)); CreateItemTemplateAtPosition("84625ce6-ed15-46d2-aa7e-73021b1b5257", x, y, z)

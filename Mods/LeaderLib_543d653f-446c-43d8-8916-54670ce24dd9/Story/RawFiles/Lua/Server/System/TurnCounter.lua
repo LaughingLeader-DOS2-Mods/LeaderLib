@@ -199,14 +199,21 @@ end
 
 ---@param uuid UUID
 function _INTERNAL.InvokeTurnEndedListeners(uuid)
+	local object = GameHelpers.TryGetObject(uuid, true)
 	if PersistentVars.WaitForTurnEnding[uuid] then
 		for id,b in pairs(PersistentVars.WaitForTurnEnding[uuid]) do
 			if b then
-				InvokeListenerCallbacks(Listeners.OnTurnEnded[id], uuid, id)
-				InvokeListenerCallbacks(Listeners.OnTurnEnded.All, uuid, id)
+				Events.OnTurnEnded:Invoke({
+					ID = id,
+					Object = object
+				})
 			end
 		end
 		PersistentVars.WaitForTurnEnding[uuid] = nil
+	else
+		Events.OnTurnEnded:Invoke({
+			Object = object
+		})
 	end
 end
 

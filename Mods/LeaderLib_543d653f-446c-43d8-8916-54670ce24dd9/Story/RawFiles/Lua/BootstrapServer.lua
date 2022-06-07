@@ -130,6 +130,7 @@ end
 ---A parameter type that can be either character userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetCharacter.
 ---@see GameHelpers.GetCharacter
 ---@alias CharacterParam EsvCharacter|EclCharacter|UUID|NETID
+---@alias ObjectParam EsvCharacter|EclCharacter|EsvItem|EclItem|UUID|NETID
 
 ---@class LeaderLibPersistentVars
 local defaultPersistentVars = {
@@ -205,7 +206,7 @@ function LoadPersistentVars(skipCallback)
 	PersistentVars = GameHelpers.PersistentVars.Update(defaultPersistentVars, PersistentVars)
 	SkillManager.LoadSaveData()
 	if not skipCallback then
-		InvokeListenerCallbacks(Listeners.PersistentVarsLoaded, PersistentVars)
+		Events.PersistentVarsLoaded:Invoke({})
 	end
 end
 

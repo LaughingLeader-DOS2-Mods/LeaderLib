@@ -290,11 +290,50 @@ if not _ISCLIENT then
 	---@field Finished boolean
 	---@field Data TurnCounterData
 
-	---Called when a turn counter progresses to the next turn, or is finished.
+	---Called when a turn counter progresses to the next turn, or is finished.  
+	---Preferrably use TurnCounter.Subscribe to subscribe to specific turn counters.  
+	---🔨**Server-Only**🔨  
+	---@see LeaderLibTurnCounterSystem#Subscribe
 	---@see LeaderLibTurnCounterSystem#CreateTurnCounter
-	---🔨**Server-Only**🔨
 	---@type SubscribableEvent<OnTurnCounterEventArgs>
 	Events.OnTurnCounter = Classes.SubscribableEvent:Create("OnTurnCounter", {
 		ArgsKeyOrder={"ID", "Turn", "LastTurn", "Finished", "Data"}
 	})
+
+	---@class OnTurnEndedEventArgs
+	---@field ID string A turn counter ID tracking this character, if any.
+	---@field Object ObjectParam
+	
+	---Called when an object's turn ends in combat, or they leave combat.  
+	---If a TurnCounter is associated with this object, that ID is specified.  
+	---🔨**Server-Only**🔨  
+	---@type SubscribableEvent<OnTurnEndedEventArgs>
+	Events.OnTurnEnded = Classes.SubscribableEvent:Create("OnTurnEnded", {
+		ArgsKeyOrder={"Object", "ID"}
+	})
+
+	---@class ForceMoveFinishedEventArgs
+	---@field Target EsvCharacter
+	---@field Source EsvCharacter|EsvItem|nil
+	---@field Distance number
+	---@field StartingPosition number[]
+	---@field Skill StatEntrySkillData|nil
+	
+	---Called when a GameHelpers.ForceMoveObject action ends.  
+	---🔨**Server-Only**🔨  
+	---@see LeaderLibGameHelpers#ForceMoveObject
+	---@type SubscribableEvent<ForceMoveFinishedEventArgs>
+	Events.ForceMoveFinished = Classes.SubscribableEvent:Create("ForceMoveFinished", {
+		ArgsKeyOrder={"Target", "Source", "Distance", "StartingPosition", "Skill"}
+	})
+
+	---@class PersistentVarsLoadedEventArgs
+	
+	---Called when PersistentVars should be initialized from a table of default values.  
+	---This can be considered deprecated if `GameHelpers.PersistentVars.Initialize` is used, as that will register a PersistentVarsLoaded listener that calls the provided initialize callback function.  
+	---🔨**Server-Only**🔨  
+	---@see LeaderLibGameHelpers.PersistentVars#Initialize
+	---@see LeaderLibGameHelpers.PersistentVars#Update
+	---@type SubscribableEvent<PersistentVarsLoadedEventArgs>
+	Events.PersistentVarsLoaded = Classes.SubscribableEvent:Create("PersistentVarsLoaded")
 end

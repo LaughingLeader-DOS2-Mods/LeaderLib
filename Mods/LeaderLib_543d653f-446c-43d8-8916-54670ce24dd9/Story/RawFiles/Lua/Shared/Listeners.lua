@@ -59,13 +59,6 @@ if Ext.IsServer() then
 	---@type OnSkillHitCallback[]
 	Listeners.OnSkillHit = {}
 
-	---Server-side event for when base ability or attribute values change on players. Can fire from character sheet interaction or after respec.
-	---@type table<string, fun(uuid:string, stat:string, lastVal:integer, nextVal:integer, statType:string):void>
-	Listeners.CharacterBasePointsChanged = {}
-
-	---@type table<string, fun(event:string, vararg)>
-	Listeners.ObjectEvent = {}
-
 	---@type table<string, fun(questId:string, character:EsvCharacter):void>
 	Listeners.QuestStarted = {All = {}}
 	---@type table<string, fun(questId:string, character:EsvCharacter):void>

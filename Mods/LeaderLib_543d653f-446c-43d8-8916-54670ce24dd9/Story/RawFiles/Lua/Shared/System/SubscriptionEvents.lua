@@ -336,4 +336,37 @@ if not _ISCLIENT then
 	---@see LeaderLibGameHelpers.PersistentVars#Update
 	---@type SubscribableEvent<PersistentVarsLoadedEventArgs>
 	Events.PersistentVarsLoaded = Classes.SubscribableEvent:Create("PersistentVarsLoaded")
+
+	---@alias ObjectEventEventType string|"StoryEvent"|"CharacterCharacterEvent"|"CharacterItemEvent"
+
+	---@class ObjectEventEventArgs
+	---@field Event string
+	---@field EventType ObjectEventEventType
+	---@field Objects ObjectParam[]
+	
+	---Called when a StoryEvent, CharacterItemEvent, or CharacterCharacterEvent occurs.  
+	---🔨**Server-Only**🔨  
+	---@type SubscribableEvent<ObjectEventEventArgs>
+	Events.ObjectEvent = Classes.SubscribableEvent:Create("ObjectEvent", {
+		ArgsKeyOrder={"EventType", "Event", "Objects"}
+	})
+
+	---@class CharacterBasePointsChangedEventArgs
+	---@field Character EsvCharacter
+	---@field Stat string
+	---@field StatType string
+	---@field Last integer
+	---@field Current integer
+	
+	---Server-side event for when base ability or attribute values change on players. Can fire from character sheet interaction or after respec.  
+	---🔨**Server-Only**🔨  
+	---@type SubscribableEvent<CharacterBasePointsChangedEventArgs>
+	Events.CharacterBasePointsChanged = Classes.SubscribableEvent:Create("CharacterBasePointsChanged", {
+		ArgsKeyOrder={"Character", "Stat", "Last", "Current", "StatType"},
+		GetArg = function(paramId, param)
+			if paramId == "Character" then
+				return GameHelpers.GetUUID(param, true)
+			end
+		end
+	})
 end

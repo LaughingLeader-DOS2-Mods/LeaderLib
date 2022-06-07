@@ -49,7 +49,13 @@ if Vars.DebugMode then
 end
 
 local function FireListenerEvents(uuid, stat, lastVal, nextVal, statType)
-	InvokeListenerCallbacks(Listeners.CharacterBasePointsChanged, uuid, stat, lastVal, nextVal, statType)
+	Events.CharacterBasePointsChanged:Invoke({
+		Character = GameHelpers.GetCharacter(uuid),
+		Stat = stat,
+		StatType = statType,
+		Last = lastVal,
+		Current = nextVal,
+	})
 end
 
 local function DetectStatChanges(uuid, playerData, stat, statType)

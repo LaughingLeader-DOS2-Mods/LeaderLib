@@ -108,23 +108,31 @@ end
 Ext.RegisterOsirisListener("CharacterPrecogDying", Data.OsirisEvents.CharacterPrecogDying, "before", OnObjectDying)
 Ext.RegisterOsirisListener("ItemDestroying", Data.OsirisEvents.ItemDestroying, "before", OnObjectDying)
 
-local function OnObjectEvent(event, ...)
-	InvokeListenerCallbacks(Listeners.ObjectEvent[event], ...)
-	if event ~= "All" then
-		InvokeListenerCallbacks(Listeners.ObjectEvent.All, ...)
+local function OnObjectEvent(eventType, event, obj1, obj2)
+	if obj1 then
+		obj1 = GameHelpers.TryGetObject(obj1)
 	end
+	if obj2 then
+		obj2 = GameHelpers.TryGetObject(obj2, true)
+	end
+	Events.ObjectEvent:Invoke({
+		Event = event,
+		EventType = eventType,
+		Object1 = obj1,
+		Object2 = obj2
+	})
 end
 
 Ext.RegisterOsirisListener("StoryEvent", Data.OsirisEvents.StoryEvent, "before", function(object, event)
-	OnObjectEvent(event, StringHelpers.GetUUID(object))
+	OnObjectEvent("StoryEvent", event, StringHelpers.GetUUID(object))
 end)
 
 Ext.RegisterOsirisListener("CharacterCharacterEvent", Data.OsirisEvents.CharacterCharacterEvent, "before", function(obj1, obj2, event)
-	OnObjectEvent(event, StringHelpers.GetUUID(obj1), StringHelpers.GetUUID(obj2))
+	OnObjectEvent("CharacterCharacterEvent", event, StringHelpers.GetUUID(obj1), StringHelpers.GetUUID(obj2))
 end)
 
 Ext.RegisterOsirisListener("CharacterItemEvent", Data.OsirisEvents.CharacterItemEvent, "before", function(obj1, obj2, event)
-	OnObjectEvent(event, StringHelpers.GetUUID(obj1), StringHelpers.GetUUID(obj2))
+	OnObjectEvent("CharacterItemEvent", event, StringHelpers.GetUUID(obj1), StringHelpers.GetUUID(obj2))
 end)
 
 ---@param item EsvItem

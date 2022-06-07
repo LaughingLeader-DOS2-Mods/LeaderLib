@@ -172,12 +172,12 @@ function OnLuaReset()
 	GameHelpers.Data.SetRegion(region)
 	GameHelpers.Data.SetGameMode()
 	Vars.Initialized = false
+	pcall(DebugLoadPersistentVars)
 	OnInitialized(region, true)
 	if IsCharacterCreationLevel(region) == 1 then
 		SkipTutorial.Initialize()
 	end
 	IterateUsers("LeaderLib_StoreUserData")
-	pcall(DebugLoadPersistentVars)
 	Events.LuaReset:Invoke({Region=region})
 	GameHelpers.Net.Broadcast("LeaderLib_Client_SyncDebugVars", {PrintSettings=Vars.Print, CommandSettings = Vars.Commands})
 	Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled == true)

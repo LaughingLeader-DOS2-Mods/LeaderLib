@@ -243,7 +243,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.tutorialBox_c, "setIsCharacterCreat
 	OnCharacterCreation(isCC)
 end)
 
-UI.RegisterUICreatedListener({Data.UIType.characterCreation, Data.UIType.characterCreation_c}, function (ui, this, player)
+UI.RegisterUICreatedListener({Data.UIType.characterCreation, Data.UIType.characterCreation_c}, function (e)
 	if GameHelpers.IsLevelType(LEVELTYPE.CHARACTER_CREATION) then
 		UpdateVisibility(true)
 	end

@@ -6,14 +6,20 @@ Ext.RegisterListener("UIObjectCreated", function (callingUI)
 		if ui then
 			local this = ui:GetRoot()
 			local player = Client:GetCharacter()
-			InvokeListenerCallbacks(Listeners.UICreated[t], ui, this, player, t, name)
-			InvokeListenerCallbacks(Listeners.UICreated.All, ui, this, player, t, name)
+			Events.UICreated:Invoke({
+				UI = ui,	
+				Root = this,
+				Player = player,
+				TypeId = t,
+				Name = name,
+				Path = path
+			})
 		end
 	end
 end)
 
 ---@param typeId integer|integer[]
----@param callback UICreatedCallback
+---@param callback fun(e:UICreatedEventArgs)
 function UI.RegisterUICreatedListener(typeId, callback)
 	local t = type(typeId)
 	if t == "table" then
@@ -22,5 +28,6 @@ function UI.RegisterUICreatedListener(typeId, callback)
 		end
 	else
 		RegisterListener("UICreated", typeId, callback)
+		Events.UICreated:Subscribe(callback, {MatchArgs={TypeId=typeId}})
 	end
 end

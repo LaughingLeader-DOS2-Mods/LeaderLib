@@ -369,4 +369,35 @@ if not _ISCLIENT then
 			end
 		end
 	})
+else
+	---@class UICreatedEventArgs
+	---@field UI UIObject
+	---@field TypeId integer
+	---@field Name string
+	---@field Path string
+	---@field Root FlashMainTimeline
+	---@field Player EclCharacter
+	
+	---Called after a UI is created, when the main timeline is hopefully ready.  
+	---🔧**Client-Only**🔧
+	---@type SubscribableEvent<UICreatedEventArgs>
+	Events.UICreated = Classes.SubscribableEvent:Create("UICreated", {
+		ArgsKeyOrder={"UI", "Root", "Player", "TypeId", "Name", "Path"}
+	})
+
+	---@class OnWorldTooltipEventArgs
+	---@field UI UIObject
+	---@field Text string
+	---@field X number
+	---@field Y number
+	---@field IsFromItem boolean
+	---@field Item EclItem
+	
+	---Called when a world tooltip is created either under the cursor, or when the highlight items key is pressed.  
+	---Setting the Text property will update the tooltip.  
+	---🔧**Client-Only**🔧
+	---@type SubscribableEvent<OnWorldTooltipEventArgs>
+	Events.OnWorldTooltip = Classes.SubscribableEvent:Create("OnWorldTooltip", {
+		ArgsKeyOrder={"UI", "Text", "X", "Y", "IsFromItem", "Item"}
+	})
 end

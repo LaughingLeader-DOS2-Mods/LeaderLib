@@ -2,15 +2,21 @@ local canGetTooltipItem = Ext.GetPickingState ~= nil and not Vars.IsEditorMode
 
 local function InvokeWorldTooltipCallbacks(ui, text, x, y, isFromItem, item)
 	local textResult = text
-	local length = Listeners.OnWorldTooltip and #Listeners.OnWorldTooltip or 0
-	if length > 0 then
-		for i=1,length do
-			local callback = Listeners.OnWorldTooltip[i]
-			local b,result = xpcall(callback, debug.traceback, ui, textResult, x, y, isFromItem, item)
-			if not b then
-				Ext.PrintError(result)
-			elseif result then
-				textResult = result
+	---@type SubscribableEventInvokeResult<OnWorldTooltipEventArgs>
+	local result = Events.OnWorldTooltip:Invoke({
+		UI = ui,
+		Text = text,
+		X = x,
+		Y = y,
+		IsFromItem = isFromItem,
+		Item = item
+	})
+	textResult = result.Args.Text
+	if result.Results then
+		for i=1,#result.Results do
+			local text = result.Results[i]
+			if not StringHelpers.IsNullOrEmpty(text) then
+				textResult = text
 			end
 		end
 	end

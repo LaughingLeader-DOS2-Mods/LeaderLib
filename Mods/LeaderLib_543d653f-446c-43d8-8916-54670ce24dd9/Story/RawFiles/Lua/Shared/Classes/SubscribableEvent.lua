@@ -18,6 +18,7 @@ local isClient = Ext.IsClient()
 ---@alias SubscribableEventInvokeResultCode string|"Success"|"Handled"|"Error"
 
 ---@class SubscribableEventInvokeResult<T>:{ResultCode: SubscribableEventInvokeResultCode, Results:table, Args:SubscribableEventArgs|T, Handled:boolean}
+---@alias AnySubscribableEventInvokeResult SubscribableEventInvokeResult<EmptyEventArgs>
 
 ---Used for event entry in the Events table, to support one base definition with multiple event argument types.
 ---T should be specific event arg classes that derive from SubscribableEventArgs.

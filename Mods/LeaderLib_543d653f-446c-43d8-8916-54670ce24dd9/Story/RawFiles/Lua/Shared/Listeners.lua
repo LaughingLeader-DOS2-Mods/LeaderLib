@@ -90,11 +90,6 @@ else
 	---Called after showFormattedTooltipAfterPos is invoked.
 	Listeners.OnTooltipPositioned = {}
 
-	---@alias OnWorldTooltipCallback fun(ui:UIObject, text:string, x:number, y:number, isFromItem:boolean, item:EclItem):string
-	---Called when a world tooltip is created either under the cursor, or when the highlight items key is pressed. The callback should return new tooltip text if the text should be modified, else don't return anything.
-	---@type OnWorldTooltipCallback[]
-	Listeners.OnWorldTooltip = {}
-
 	---@alias ShouldOpenContextMenuCallback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number):boolean
 	---Triggered when right clicking with KB+M.
 	---@type ShouldOpenContextMenuCallback[]
@@ -114,12 +109,6 @@ else
 	---@alias OnContextMenuEntryClickedCallback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string, handle:number):void
 	---@type OnContextMenuEntryClickedCallback[]
 	Listeners.OnContextMenuEntryClicked = {}
-
-	---@alias UICreatedCallback fun(ui:UIObject, this:FlashMainTimeline, player:EclCharacter):void
-	---Called after a UI is created, when the main timeline is hopefully ready.
-	---Register to a UIType or "All" for all UIs.
-	---@type table<integer,UICreatedCallback>
-	Listeners.UICreated = {All = {}}
 
 	---@type fun(ui:UIExtensionsMain, control:FlashMovieClip, id:string, index:integer):void[]
 	Listeners.UIExtensionsControlAdded = {}
@@ -244,6 +233,18 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 					Ext.PrintError(err)
 				end
 			end, opts)
+			return
+		elseif event == "UICreated" then
+			if keyType == "number" and callbackOrKey ~= "All" then
+				UI.RegisterUICreatedListener(callbackOrKey, callback)
+			else
+				Events.UICreated:Subscribe(function(e)
+					local b,err = xpcall(callback, debug.traceback, e:Unpack())
+					if not b then
+						Ext.PrintError(err)
+					end
+				end)
+			end
 			return
 		end
 		local subEvent = Events[event]

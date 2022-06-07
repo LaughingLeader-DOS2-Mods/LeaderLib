@@ -544,15 +544,20 @@ end
 
 --TODO Implement World tooltip editing with Game.Tooltip
 
----@param item EclItem
-RegisterListener("OnWorldTooltip", function (ui, textResult, x, y, isFromItem, item)
-	if item and Game.Tooltip.TooltipHooks.Last.Request == nil then
+Events.OnWorldTooltip:Subscribe(function (e)
+	if e.Item and Game.Tooltip.TooltipHooks.Last.Request == nil then
 		local request = CreateRequest()
 		request.Type = "World"
-		request.ItemNetID = item.NetID
+		request.Text = e.Text
+		if e.Item then
+			request.ItemNetID = e.Item.NetID
+			request.IsFromItem = true
+		else
+			request.IsFromItem = false
+		end
 		Game.Tooltip.TooltipHooks.Last.Request = request
 	end
-end)
+end, {Priority=0})
 
 --Hack to clear the last tooltip being "World"
 Ext.RegisterUINameInvokeListener("removeTooltip", function(ui, ...)

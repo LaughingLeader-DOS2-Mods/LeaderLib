@@ -158,8 +158,7 @@ local function OnHit(hitStatus, hitContext)
 
 	if Features.ApplyBonusWeaponStatuses == true and source then
 		if skill then
-			local canApplyStatuses = skill.UseWeaponProperties == "Yes"
-			if canApplyStatuses then
+			if skill.UseWeaponProperties == "Yes" then
 				GameHelpers.ApplyBonusWeaponStatuses(source, target, skill.Name)
 			end
 		elseif isFromWeapon then

@@ -1,5 +1,8 @@
 if GameHelpers == nil then
-	GameHelpers = {}
+	---@class LeaderLibGameHelpers
+	GameHelpers = {
+		_INTERNAL = {}
+	}
 end
 
 local function InitTable(name, target)
@@ -15,7 +18,7 @@ end
 
 InitTable("Classes")
 InitTable("Common")
-InitTable({"Item", "Math", "Skill", "Status", "Tooltip", "UI", "Ext", "Internal", "Net"}, GameHelpers)
+InitTable({"Item", "Math", "Skill", "Status", "Tooltip", "UI", "Ext", "_INTERNAL", "Net"}, GameHelpers)
 
 local _EXTVERSION = Ext.Version()
 local _getTranslatedStringKeyFunction = _EXTVERSION < 56 and Ext.GetTranslatedStringFromKey or Ext.L10N.GetTranslatedStringFromKey

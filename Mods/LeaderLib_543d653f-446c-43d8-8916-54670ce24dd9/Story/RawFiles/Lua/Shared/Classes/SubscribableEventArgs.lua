@@ -1,5 +1,6 @@
 ---@class SubscribableEventArgs
----@field StopPropagation fun(self:SubscribableEventArgs):void
+---@field StopPropagation fun(self:SubscribableEventArgs) Stop the event from continuing on to other registered listeners.
+---@field Dump fun(self:SubscribableEventArgs) Dumps the event's parameters to the console.
 
 ---@class RuntimeSubscribableEventArgs
 ---@field Handled boolean
@@ -112,7 +113,7 @@ end
 
 ---Debug function for dumping args to the console.
 function SubscribableEventArgs:Dump()
-	Ext.Print(Lib.serpent.block(self.Args, {SimplifyUserdata = true}))
+	fprint(LOGLEVEL.TRACE, Lib.serpent.block(self.Args, {SimplifyUserdata = true}))
 end
 
 Classes.SubscribableEventArgs = SubscribableEventArgs

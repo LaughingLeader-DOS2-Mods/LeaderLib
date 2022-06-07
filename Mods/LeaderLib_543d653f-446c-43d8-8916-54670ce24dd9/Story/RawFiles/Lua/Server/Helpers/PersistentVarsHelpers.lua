@@ -1,16 +1,31 @@
 if GameHelpers.PersistentVars == nil then
+	---@class LeaderLibGameHelpers.PersistentVars
 	GameHelpers.PersistentVars = {}
 end
 
----@param modGlobalTable table The mod's global table.
+---@param modGlobalTable {PersistentVars:table} The mod's global table.
 ---@param defaultTable table A table of default values to copy from.
----@param initializedCallback function|nil If set, this function will be called during the PersistentVarsLoaded event, and PersistentVars will be updated with the default values if needed (like from older saves).
-function GameHelpers.PersistentVars.Initialize(modGlobalTable, defaultTable, initializedCallback)
+---@param initializedCallback fun(e:PersistentVarsLoadedEventArgs)|nil If set, this function will be called during the PersistentVarsLoaded event.
+---@param autoUpdateVars boolean|nil If true, GameHelpers.PersistentVars.Update will be called on modGlobalTable.PersistentVars, using defaultTable, during the PersistentVarsLoaded event.
+function GameHelpers.PersistentVars.Initialize(modGlobalTable, defaultTable, initializedCallback, autoUpdateVars)
 	local data = TableHelpers.Clone(defaultTable or {}, true)
+	if autoUpdateVars == true then
+		local providedCallback = initializedCallback
+		if providedCallback == nil then
+			initializedCallback = function (e)
+				modGlobalTable.PersistentVars = GameHelpers.PersistentVars.Update(defaultTable, modGlobalTable.PersistentVars)
+			end
+		else
+			initializedCallback = function (e)
+				modGlobalTable.PersistentVars = GameHelpers.PersistentVars.Update(defaultTable, modGlobalTable.PersistentVars)
+				providedCallback(e)
+			end
+		end
+	end
 	if initializedCallback then
 		local t = type(initializedCallback)
 		if t == "function" then
-			RegisterListener("PersistentVarsLoaded", initializedCallback)
+			Events.PersistentVarsLoaded:Subscribe(initializedCallback)
 		else
 			error(string.format("[GameHelpers.PersistentVars.Initialize] initializedCallback must be a function! type(%s)", t), 2)
 		end

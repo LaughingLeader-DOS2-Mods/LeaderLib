@@ -369,6 +369,53 @@ if not _ISCLIENT then
 			end
 		end
 	})
+
+	---@class OnSkillStateBaseEventArgs
+	---@field Character EsvCharacter
+	---@field State SKILL_STATE
+	---@field Skill string
+	---@field DataType LeaderLibSkillListenerDataType
+
+	---@class OnSkillStateAllEventArgs:OnSkillStateBaseEventArgs
+	---@field Data SkillEventData|HitData|ProjectileHitData|StatEntrySkillData|boolean
+
+	---@class OnSkillStatePrepareEventArgs:OnSkillStateBaseEventArgs
+	---@field Data StatEntrySkillData
+
+	---@class OnSkillStateSkillEventEventArgs:OnSkillStateBaseEventArgs
+	---@field Data SkillEventData
+
+	---@class OnSkillStateHitEventArgs:OnSkillStateBaseEventArgs
+	---@field Data HitData
+
+	---@class OnSkillStateBeforeProjectileShootEventArgs:OnSkillStateBaseEventArgs
+	---@field Data EsvShootProjectileRequest
+
+	---@class OnSkillStateProjectileShootEventArgs:OnSkillStateBaseEventArgs
+	---@field Data EsvProjectile
+
+	---@class OnSkillStateProjectileHitEventArgs:OnSkillStateBaseEventArgs
+	---@field Data ProjectileHitData
+
+	---@class OnSkillStateLearnedEventArgs:OnSkillStateBaseEventArgs
+	---@field Data boolean
+
+	---@class OnSkillStateMemorizedEventArgs:OnSkillStateBaseEventArgs
+	---@field Data boolean
+	
+	---Server-side event for when a skill state event occurs.  
+	---Use SkillManager.Register to register different skill listeners.  
+	---🔨**Server-Only**🔨  
+	---@see LeaderLibSkillManagerRegistration#All
+	---@type SubscribableEvent<OnSkillStateAllEventArgs>
+	Events.OnSkillState = Classes.SubscribableEvent:Create("OnSkillState", {
+		ArgsKeyOrder={"Skill", "Character", "State", "Data", "DataType"},
+		GetArg = function(paramId, param)
+			if paramId == "Character" then
+				return GameHelpers.GetUUID(param, true)
+			end
+		end
+	})
 else
 	---@class UICreatedEventArgs
 	---@field UI UIObject

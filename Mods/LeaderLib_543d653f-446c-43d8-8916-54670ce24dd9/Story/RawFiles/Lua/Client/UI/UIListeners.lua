@@ -27,7 +27,6 @@ function UI.RegisterUICreatedListener(typeId, callback)
 			UI.RegisterUICreatedListener(v, callback)
 		end
 	else
-		RegisterListener("UICreated", typeId, callback)
 		Events.UICreated:Subscribe(callback, {MatchArgs={TypeId=typeId}})
 	end
 end

@@ -107,7 +107,7 @@ local function OnInitialized(region, isRunning)
 		end
 	end)
 
-	if Vars.PostLoadEnableLuaListeners or TotalSkillListeners > 0 then
+	if Vars.PostLoadEnableLuaListeners or Events.OnSkillState.First ~= nil then
 		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaSkillListeners_Enabled", "LeaderLib")
 		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaEventListeners_Enabled", "LeaderLib")
 		Vars.PostLoadEnableLuaListeners = false

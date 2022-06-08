@@ -1,7 +1,6 @@
 Ext.Require("Server/Listeners/StatusListeners.lua")
 Ext.Require("Server/Listeners/ClientMessageReceiver.lua")
 Ext.Require("Server/Listeners/HitListeners.lua")
-Ext.Require("Server/Listeners/SkillListeners.lua")
 Ext.Require("Server/Listeners/OsirisListeners.lua")
 Ext.Require("Server/Listeners/CharacterStatListeners.lua")
 Ext.Require("Server/Listeners/HealListeners.lua")

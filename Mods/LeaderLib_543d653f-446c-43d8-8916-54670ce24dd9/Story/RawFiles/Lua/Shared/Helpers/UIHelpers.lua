@@ -35,21 +35,22 @@ end
 
 SetSkillEnabled = GameHelpers.UI.SetSkillEnabled
 
----@param client string Client character UUID.
+---@param client CharacterParam
 ---@param skill string
 function GameHelpers.UI.RefreshSkillBarSkillCooldown(client, skill)
-	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
-		local data = {NetID = GameHelpers.GetNetID(client), Slots = {}}
+	local character = GameHelpers.GetCharacter(client)
+	if character and GameHelpers.Character.IsPlayer(character) and character.ReservedUserID then
+		local data = {NetID = character.NetID, Slots = {}}
 		local slots = GameHelpers.Skill.GetSkillSlots(client, skill, true)
 		if #slots > 0 then
-			local cd = Ext.GetCharacter(client):GetSkillInfo(skill).ActiveCooldown
+			local cd = character:GetSkillInfo(skill).ActiveCooldown
 			for _,index in pairs(slots) do
 				table.insert(data.Slots, {
 					Index = index,
 					Cooldown = math.ceil(cd/6)
 				})
 			end
-			GameHelpers.Net.PostToUser(client, "LeaderLib_Hotbar_RefreshCooldowns", Common.JsonStringify(data))
+			GameHelpers.Net.PostToUser(character, "LeaderLib_Hotbar_RefreshCooldowns", Common.JsonStringify(data))
 		end
 	end
 end

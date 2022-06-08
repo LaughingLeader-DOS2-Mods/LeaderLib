@@ -596,7 +596,6 @@ function GameHelpers.GetTemplate(obj)
 end
 
 local _cachedLevels = {}
-setmetatable(_cachedLevels, {__mode ="kv"})
 local _ranCachedLevels = false
 
 local NonGameLevelTypes = {

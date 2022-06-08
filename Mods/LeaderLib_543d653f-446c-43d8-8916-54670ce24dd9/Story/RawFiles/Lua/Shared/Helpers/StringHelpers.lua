@@ -412,7 +412,6 @@ function StringHelpers.DelimitedStringContains(str, delimiter, value)
 end
 
 local _skillPrototypeToId = {}
---setmetatable(_skillPrototypeToId, {__mode = "kv"})
 
 ---Get a skill's real entry name. Formats away _-1, _10, etc.
 ---@param skillPrototype string A skill id like Projectile_Fireball_-1

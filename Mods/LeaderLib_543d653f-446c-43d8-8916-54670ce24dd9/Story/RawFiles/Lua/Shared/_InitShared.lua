@@ -205,6 +205,7 @@ IgnoredMods = {
 
 Ext.Require("Shared/Listeners.lua")
 
+---@deprecated
 SkillListeners = {}
 ModListeners = {
 	Registered = {},

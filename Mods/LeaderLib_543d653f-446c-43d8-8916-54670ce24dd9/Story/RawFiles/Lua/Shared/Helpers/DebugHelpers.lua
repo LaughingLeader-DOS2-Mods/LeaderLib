@@ -1348,15 +1348,20 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 		props = userDataProps.CDivinityStats_Weapon_Attributes
 	end
 	if opts and opts.SimplifyUserdata then
-		props = {}
-		if obj.MyGuid then
-			props.MyGuid = "string"
-		end
-		if obj.DisplayName then
-			props.DisplayName = "string"
-		end
-		if obj.NetID then
-			props.NetID = "number"
+		if GameHelpers.Ext.ObjectIsCharacter(obj) or GameHelpers.Ext.ObjectIsItem(obj) then
+			props = {}
+			if obj.MyGuid then
+				props.MyGuid = "string"
+			end
+			if obj.DisplayName then
+				props.DisplayName = "string"
+			end
+			if obj.NetID then
+				props.NetID = "number"
+			end
+		else
+			props = nil
+			meta = obj
 		end
 	end
 	if props then

@@ -93,6 +93,7 @@ Data.DamageTypeToResistanceWithExtras = {
 setmetatable(Data.DamageTypeToResistanceWithExtras, {__index = Data.DamageTypeToResistance})
 
 Data.DamageTypes = setmetatable({},{__index = damageTypes})
+---@return fun():integer,string
 function Data.DamageTypes:Get()
 	return iterateFromZero(self)
 end

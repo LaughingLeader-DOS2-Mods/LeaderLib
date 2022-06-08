@@ -116,4 +116,8 @@ function SubscribableEventArgs:Dump()
 	fprint(LOGLEVEL.TRACE, Lib.serpent.block(self.Args, {SimplifyUserdata = true}))
 end
 
+function SubscribableEventArgs:DumpExport()
+	return Lib.serpent.block(self.Args, {SimplifyUserdata = true})
+end
+
 Classes.SubscribableEventArgs = SubscribableEventArgs

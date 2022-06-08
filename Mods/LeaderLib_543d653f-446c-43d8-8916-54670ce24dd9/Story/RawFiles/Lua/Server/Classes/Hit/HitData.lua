@@ -262,22 +262,45 @@ function HitData:RedirectDamage(target, multiplier, aggregate)
 	NRD_HitExecute(handle)
 end
 
+local function DamageTypeEquals(damageType, compare, compareType, negate)
+	if negate then
+		if compareType == "table" then
+			return not Common.TableHasEntry(compare, damageType, true)
+		else
+			return damageType ~= compare
+		end
+	else
+		if compareType == "table" then
+			return Common.TableHasEntry(compare, damageType, true)
+		else
+			return damageType == compare
+		end
+	end
+end
+
 ---Converts specific damage types to another.
----@param damageType string Target damage type to convert.
+---@param damageType DAMAGE_TYPE|DAMAGE_TYPE[] Damage type(s) to convert.
 ---@param toDamageType string Damage type to convert to.
 ---@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
-function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate)
+---@param percentage number|nil How much of the damage amount to convert, from 0 to 1.
+---@param negate boolean|nil If true, convert damage types that *don't* match the damageType param.
+function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate, percentage, negate)
 	if aggregate then
 		self.DamageList:AggregateSameTypeDamages()
 	end
+	percentage = percentage or 1
 	local damages = self.DamageList:ToTable()
 	local damageList = Ext.NewDamageList()
+	local t = type(damageType)
 	for k,v in pairs(damages) do
 		local dType = v.DamageType
-		if dType == damageType then
-			dType = toDamageType
+		local amount = Ext.Round(v.Amount * percentage)
+		if DamageTypeEquals(dType, damageType, t, negate) then
+			damageList:Add(toDamageType, amount)
+			damageList:Add(v.DamageType, amount)
+		else
+			damageList:Add(dType, amount)
 		end
-		damageList:Add(dType, v.Amount)
 	end
 	self.DamageList:Clear()
 	self.DamageList:Merge(damageList)

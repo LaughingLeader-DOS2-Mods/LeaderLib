@@ -29,7 +29,6 @@ local _EXTVERSION = Ext.Version()
 
 ---@type table<integer,LeaderLibUIWrapper[]>
 local _uiWrappers = {}
---setmetatable(_uiWrappers, {__mode = "kv"})
 
 ---@return LeaderLibUIWrapper
 local function CreateWrapper(...)

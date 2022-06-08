@@ -1,7 +1,5 @@
 ---@type QuestData[]
 local _questRegistration = {}
---Turn into a weak table since we don't care to update entries that were deleted.
-setmetatable(_questRegistration, {__mode = "kv"})
 
 local function RegisterQuests()
 	for i=1,#_questRegistration do
@@ -11,7 +9,6 @@ local function RegisterQuests()
 		end
 	end
 	_questRegistration = {}
-	setmetatable(_questRegistration, {__mode = "kv"})
 end
 
 ---@class QuestStateData

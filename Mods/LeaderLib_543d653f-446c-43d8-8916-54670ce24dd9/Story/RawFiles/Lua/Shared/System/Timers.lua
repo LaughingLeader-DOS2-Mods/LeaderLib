@@ -439,7 +439,7 @@ if _EXTVERSION >= 56 then
 			end
 		end
 	end
-	Ext.Events.Tick:Subscribe(function(data) OnTick(data.Time) end)
+	Ext.Events.Tick:Subscribe(function(e) OnTick(e.Time) end)
 end
 
 --Globals / old API support

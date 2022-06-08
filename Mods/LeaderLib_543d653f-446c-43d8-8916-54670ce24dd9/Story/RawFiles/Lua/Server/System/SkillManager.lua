@@ -30,7 +30,7 @@ local _enabledSkills = {}
 function RegisterSkillListener(skill, callback)
 	local t = type(skill)
 	if t == "string" then
-		if StringHelpers.Equals(skill, "all", true) then
+		if StringHelpers.Equals(skill, "All", true) then
 			_enabledSkills.All = true
 			Events.OnSkillState:Subscribe(function (e)
 				callback(e:Unpack())

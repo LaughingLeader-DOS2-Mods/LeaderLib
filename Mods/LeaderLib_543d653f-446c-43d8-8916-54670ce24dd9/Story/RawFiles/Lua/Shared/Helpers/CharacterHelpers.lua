@@ -310,15 +310,17 @@ function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 		if SharedData.RegionData.LevelType == LEVELTYPE.GAME and Ext.OsirisIsCallable() then
 			for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
 				local player = GameHelpers.GetCharacter(db[1])
-				players[#players+1] = player
-				if includeSummons == true then
-					local summons = PersistentVars.Summons[player.MyGuid]
-					if summons then
-						for i,v in pairs(summons) do
-							if ObjectIsCharacter(v) == 1 then
-								local summon = GameHelpers.GetCharacter(v)
-								if summon then
-									players[#players+1] = summon
+				if player then
+					players[#players+1] = player
+					if includeSummons == true then
+						local summons = PersistentVars.Summons[player.MyGuid]
+						if summons then
+							for i,v in pairs(summons) do
+								if ObjectIsCharacter(v) == 1 then
+									local summon = GameHelpers.GetCharacter(v)
+									if summon then
+										players[#players+1] = summon
+									end
 								end
 							end
 						end

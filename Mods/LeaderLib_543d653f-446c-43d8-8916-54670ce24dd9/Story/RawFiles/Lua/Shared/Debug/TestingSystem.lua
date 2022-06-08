@@ -3,112 +3,96 @@ if Testing == nil then
 end
 
 Testing.Results = {}
-Testing.CurrentTime = 0
-Testing.LastTime = Ext.MonotonicTime()
-Testing.Waiting = {}
 Testing.Active = false
 
----@type LuaTest
-local LuaTest = Ext.Require("Shared/Debug/LuaTest.lua")
-
----@param name string
----@param operation LuaTestOperationCallback
+---@param id string
+---@param operations fun(self:LuaTest)[]
+---@param params LuaTestParams|nil
 ---@return LuaTest
-function Testing.CreateTest(name, operation)
-	return LuaTest:Create(name, operation)
+function Testing.CreateTest(id, operations, params)
+	return Classes.LuaTest.Create(id, operations, params)
 end
 
 function Testing.WriteResults(uuid)
 	if Testing.Results[uuid] and #Testing.Results[uuid] > 0 then
 		local fileName = string.format("Tests/%s-%s.txt", uuid, Ext.MonotonicTime())
-		Ext.SaveFile(fileName, StringHelpers.Join("\n", Testing.Results[uuid], false))
+		GameHelpers.IO.SaveFile(fileName, StringHelpers.Join("\n", Testing.Results[uuid], false))
 		Ext.Print("Saved test results to", fileName)
 		Testing.Results[uuid] = nil
 	end
 	Testing.Active = false
 end
 
-function Testing.OnLoop(dt)
-    Testing.CurrentTime = Testing.CurrentTime + dt
+local _runningTest = {
+	---@type LuaTest
+	Current = nil,
+	Length = 0,
+	Index = 1,
+	UUID = "",
+	Tests = {}
+}
 
-    local threadsToWake = {}
-    for co,wakeupTime in pairs(Testing.Waiting) do
-        if wakeupTime <= Testing.CurrentTime then
-            table.insert(threadsToWake, co)
-        end
-    end
-
-    -- Now wake them all up.
-    for _,co in ipairs(threadsToWake) do
-        Testing.Waiting[co] = nil -- Setting a field to nil removes it from the table
-		if coroutine.status(co) == "suspended" then
-        	coroutine.resume(co)
-		end
-    end
+---@param id string
+function Testing.EmitSignal(id)
+	if _runningTest.Current then
+		_runningTest.Current:OnSignal(id)
+	end
 end
 
-Timer.Subscribe("LeaderLib_TestingSystemLoop", function(e)
-	Testing.OnLoop(Ext.MonotonicTime() - Testing.LastTime)
-	Testing.LastTime = Ext.MonotonicTime()
-	if Testing.Active then
-		Timer.Start("LeaderLib_TestingSystemLoop", 250)
-	else
-		Testing.Waiting = {}
+function Testing.OnLoop()
+	if _runningTest.Current and _runningTest.Current.State == 0 then
+		_runningTest.Current:CheckForWake()
 	end
-end)
+end
 
 ---@param tbl LuaTest[]
----@param delay integer|nil
-function Testing.RunTests(tbl, delay, testingName, ...)
-	Testing.Active = true
-	Timer.Start("LeaderLib_TestingSystemLoop", 250)
-	local args = {...}
+---@param testingName string
+function Testing.RunTests(tbl, testingName)
+	if Testing.Active then
+		Timer.Cancel("LeaderLib_Testing_SaveResults")
+		Timer.Cancel("LeaderLib_LuaTesting_RunNext")
+		local co,isMain = coroutine.running()
+		if co and not isMain then
+			coroutine.close(co)
+		end
+	end
+
 	local testUUID = string.format("%s", testingName or Ext.MonotonicTime())
 	Testing.Results[testUUID] = {}
-	local testTextResults = Testing.Results[testUUID]
 
-	local timerLaunchFunc = Ext.IsServer() and Timer.StartOneshot or UIExtensions.StartTimer
-	local saveDelay = (#tbl+1) * (delay and delay + 1000 or 2000)
-	timerLaunchFunc("Timers_Testing_SaveResults", saveDelay, function() Testing.WriteResults(testUUID) end)
+	_runningTest = {
+		Current = tbl[1],
+		Length = #tbl,
+		Index = 1,
+		UUID = testUUID,
+		Tests = tbl
+	}
 
-	if delay and delay > 0 then
-		local i = 0
-		local runNext = nil
-		local launchTimer = function(test)
-			if test then
-				fprint(LOGLEVEL.DEFAULT, "[LeaderLib:Testing.RunTests] Test (%s) complete. Success(%s)", test.Name, test.Success)
-			end
-			timerLaunchFunc(string.format("LuaTesting_%s", Ext.MonotonicTime()), delay, runNext)
-		end
-		runNext = function()
-			local lastTest = tbl[i]
-			if lastTest then
-				table.insert(testTextResults, lastTest:GetResultText())
-				lastTest:Dispose()
-			end
-			i = i + 1
-			local test = tbl[i]
-			if test then
-				test.OnComplete = launchTimer
-				local co = coroutine.create(function()
-					local b,result = xpcall(test.Run, debug.traceback, test, table.unpack(args))
-					if not b then
-						Ext.PrintError(result)
-						launchTimer()
-					end
-				end)
-				coroutine.resume(co)
-			else
-				Testing.WriteResults(testUUID)
-			end
-		end
-		launchTimer()
-	else
-		for k,v in pairs(tbl) do
-			v:Run()
-			table.insert(testTextResults, string.format("%s: %s", v.Name, v.Success == 1 and "Passed" or "Failed"))
-			v:Dispose()
-		end
-		Testing.WriteResults(testUUID)
-	end
+	Testing.Active = true
 end
+
+RegisterTickListener(function(e)
+	if Testing.Active then
+		local test = _runningTest.Current
+		if test then
+			if test.State == -1 then
+				test:Run()
+			elseif test.State == 2 then
+				_runningTest.Current:Dispose()
+				_runningTest.Index = _runningTest.Index + 1
+				_runningTest.Current = _runningTest.Tests[_runningTest.Index]
+			end
+		else
+			_runningTest.Index = _runningTest.Index + 1
+			_runningTest.Current = _runningTest.Tests[_runningTest.Index]
+			test = _runningTest.Current
+		end
+
+		Testing.OnLoop()
+
+		if test == nil then
+			Testing.Active = false
+			Testing.WriteResults(Testing.CurrentTestUUID)
+		end
+	end
+end)

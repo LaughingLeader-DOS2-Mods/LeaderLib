@@ -278,23 +278,27 @@ local function DamageTypeEquals(damageType, compare, compareType, negate)
 	end
 end
 
+---@alias HitData.ConvertDamageTypeTo.MathRoundFunction fun(x:number):integer
+
 ---Converts specific damage types to another.
 ---@param damageType DAMAGE_TYPE|DAMAGE_TYPE[] Damage type(s) to convert.
 ---@param toDamageType string Damage type to convert to.
 ---@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
 ---@param percentage number|nil How much of the damage amount to convert, from 0 to 1.
 ---@param negate boolean|nil If true, convert damage types that *don't* match the damageType param.
-function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate, percentage, negate)
+---@param mathRoundFunction HitData.ConvertDamageTypeTo.MathRoundFunction|nil Optional function to use when rounding amounts (Ext.Round, math.ceil, etc)
+function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate, percentage, negate, mathRoundFunction)
 	if aggregate then
 		self.DamageList:AggregateSameTypeDamages()
 	end
 	percentage = percentage or 1
+	mathRoundFunction = mathRoundFunction or Ext.Round
 	local damages = self.DamageList:ToTable()
 	local damageList = Ext.NewDamageList()
 	local t = type(damageType)
 	for k,v in pairs(damages) do
 		local dType = v.DamageType
-		local amount = Ext.Round(v.Amount * percentage)
+		local amount = mathRoundFunction(v.Amount * percentage)
 		if DamageTypeEquals(dType, damageType, t, negate) then
 			damageList:Add(toDamageType, amount)
 			damageList:Add(v.DamageType, amount)

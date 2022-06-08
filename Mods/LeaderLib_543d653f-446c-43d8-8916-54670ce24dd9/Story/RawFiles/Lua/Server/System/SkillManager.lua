@@ -232,7 +232,6 @@ end
 --- @param hitStatus EsvStatusHit
 --- @param data HitData|ProjectileHitData
 function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, data)
-	print(skillId, _enabledSkills[skillId], _enabledSkills.All)
 	if not IgnoreHitTarget(target.MyGuid) and (_enabledSkills[skillId] or _enabledSkills.All) then
 		Events.OnSkillState:Invoke({
 			Character = source,

@@ -794,9 +794,9 @@ end) ]]
 
 --print(GetFaction("08348b3a-bded-4811-92ce-f127aa4310e0"), "<=>", GetFaction(host.MyGuid), CharacterGetRelationToCharacter("08348b3a-bded-4811-92ce-f127aa4310e0", host.MyGuid))
 
-Events.ForceMoveFinished:Subscribe(function(e)
-	e:Dump()
-end)
+-- Events.ForceMoveFinished:Subscribe(function(e)
+-- 	e:Dump()
+-- end)
 
 --ItemTemplateAddTo("84625ce6-ed15-46d2-aa7e-73021b1b5257", me.MyGuid, 1, 0)
 --local x,y,z = table.unpack(Mods.LeaderLib.GameHelpers.Math.ExtendPositionWithForwardDirection(Ext.GetCharacter(me.MyGuid), 4)); CreateItemTemplateAtPosition("84625ce6-ed15-46d2-aa7e-73021b1b5257", x, y, z)

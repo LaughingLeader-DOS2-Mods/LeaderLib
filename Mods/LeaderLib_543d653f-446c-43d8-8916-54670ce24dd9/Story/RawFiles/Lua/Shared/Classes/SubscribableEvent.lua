@@ -25,7 +25,7 @@ local isClient = Ext.IsClient()
 ---Example: SubscribableEvent<CharacterResurrectedEventArgs>
 ---@see SubscribableEventArgs
 ---@see LeaderLibSubscriptionEvents
----@class SubscribableEvent<T>:{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T|SubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T}|nil), Unsubscribe:fun(self:SubscribableEvent, indexOrCallback:integer|function), Invoke:fun(self:SubscribableEvent, args:T|SubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult }
+---@class SubscribableEvent<T>:{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T|SubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T}|nil), Unsubscribe:fun(self:SubscribableEvent, indexOrCallback:integer|function, matchArgs:table|nil), Invoke:fun(self:SubscribableEvent, args:T|SubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult }
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string
@@ -210,13 +210,15 @@ local function RemoveNode(self, node)
 end
 
 ---@param indexOrCallback integer|function
-function SubscribableEvent:Unsubscribe(indexOrCallback)
+---@param matchArgs table|nil
+function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
 	local t = type(indexOrCallback)
 	local cur = self.First
 	if cur then
 		while cur ~= nil do
 			if (t == "number" and cur.Index == indexOrCallback)
 			or (t == "function" and cur.Callback == indexOrCallback)
+			or (matchArgs and cur.IsMatch and cur.IsMatch(matchArgs))
 			then
 				RemoveNode(self, cur)
 				return true

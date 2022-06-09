@@ -1,6 +1,10 @@
 if GameHelpers == nil then GameHelpers = {} end
 if GameHelpers.Skill == nil then GameHelpers.Skill = {} end
 
+local function TrySetValue(target, k, v)
+    target[k] = v
+end
+
 local projectileCreationProperties = {
     SkillId = "String",
     CleanseStatuses = "String",
@@ -586,7 +590,13 @@ function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
             if GameHelpers.Ext.ObjectIsCharacter(sourceObject) then
                 local b,damageList,deathType = xpcall(Game.Math.GetSkillDamage, debug.traceback, skill, sourceObject.Stats, false, false, props.Position, props.Target, sourceObject.Stats.Level, false)
                 if b then
-                    props.DamageList = damageList
+                    if damageList then
+                        if props.DamageList == nil then
+                            props.DamageList = Ext.NewDamageList()
+                        end
+                        props.DamageList:Merge(damageList)
+                    end
+                    props.DeathType = deathType or "Physical"
                 else
                     Ext.PrintError(damageList)
                 end
@@ -637,7 +647,7 @@ function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
     PlayZoneSkillEffects(skill, sourceId, GameHelpers.GetUUID(target), props.Position, props.Target, playCastEffects, playTargetEffects)
 
     for k,v in pairs(props) do
-        action[k] = v
+        pcall(TrySetValue, action, k, v)
     end
     Ext.ExecuteSurfaceAction(action)
     return true

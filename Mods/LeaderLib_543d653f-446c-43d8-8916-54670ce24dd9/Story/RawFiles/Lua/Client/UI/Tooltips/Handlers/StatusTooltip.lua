@@ -2,11 +2,65 @@
 ---@param status EclStatus
 ---@param tooltip TooltipData
 function TooltipHandler.OnStatusTooltip(character, status, tooltip)
-	GameHelpers.IO.SaveFile("Dumps/StatusTooltip.json", tooltip.Data)
-	if status.StatusId == "LLWEAPONEX_DEMON_GAUNTLET_EQUIPPED" then
-		local element = tooltip:GetElement("StatusDescription")
-		if element then
-			element.Label = string.format("%s<br>%s", element.Label, "Test text")
+	if Features.ApplyBonusWeaponStatuses then
+		if not Data.EngineStatus[status.StatusId] and Data.StatusStatsIdTypes[status.StatusType] then
+			local potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
+			if not StringHelpers.IsNullOrWhitespace(potion) and not string.find(potion, ";") then
+				local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
+				if not StringHelpers.IsNullOrWhitespace(bonusWeapon) then
+					--ExtraProperties
+					local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
+					if extraProps and #extraProps > 0 then
+						local addedTopElement = false
+						for _,v in pairs(extraProps) do
+							local text = ""
+							if v.Type == "Status" then
+								if v.StatusChance > 0 and GameHelpers.Stats.Exists(v.Action, "StatusData") then
+									local stat = Ext.GetStat(v.Action)
+									local statusDisplayName = GameHelpers.GetStringKeyText(stat.DisplayName, stat.DisplayNameRef)
+									local chanceText = ""
+									if v.StatusChance < 1 then
+										chanceText = " " .. LocalizedText.Tooltip.Chance:ReplacePlaceholders(Ext.Round(v.StatusChance * 100))
+									end
+									if v.Duration > 0 then
+										local turns = v.Duration
+										text = LocalizedText.Tooltip.ExtraPropertiesWithTurns:ReplacePlaceholders(statusDisplayName, chanceText, "", turns)
+									else
+										text = LocalizedText.Tooltip.ExtraPropertiesPermanent:ReplacePlaceholders(statusDisplayName, chanceText, "")
+									end
+								end
+							elseif v.Type == "GameAction" then
+								if v.Action == "TargetCreateSurface" then
+									local radius = Ext.Round(v.Arg4)
+									local surface = v.Arg3
+									if surface == "None" then
+										text = LocalizedText.Tooltip.ExtraPropertiesClearSurfacesTarget:ReplacePlaceholders(radius)
+									else
+										local surfaceName = LocalizedText.Surfaces[v.Arg3]
+										if surfaceName then
+											text = LocalizedText.Tooltip.ExtraPropertiesCreateSurfaceAtTarget:ReplacePlaceholders(surfaceName.Value, radius)
+										end
+									end
+								end
+							end
+							if not StringHelpers.IsNullOrWhitespace(text) then
+								if not addedTopElement then
+									tooltip:AppendElement({
+										Type = "Flags",
+										Label = LocalizedText.Tooltip.BonusWeaponOnAttack.Value
+									})
+									addedTopElement = true
+								end
+								local element = {
+									Type = "Flags",
+									Label = text
+								}
+								tooltip:AppendElement(element)
+							end
+						end
+					end
+				end
+			end
 		end
 	end
 	if Features.ReplaceTooltipPlaceholders or Features.FixChaosDamageDisplay or Features.TooltipGrammarHelper then

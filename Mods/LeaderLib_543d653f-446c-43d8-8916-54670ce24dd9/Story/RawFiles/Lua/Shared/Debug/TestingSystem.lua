@@ -18,7 +18,7 @@ function Testing.WriteResults(uuid, results)
 		--GameHelpers.IO.SaveJsonFile(fileName, results)
 		--GameHelpers.IO.SaveFile(fileName, StringHelpers.Join("\n", results, false, function(k,v) return Lib.serpent.block(v) end))
 		local text = string.format("Test = \"%s\"\n", uuid)
-		GameHelpers.IO.SaveFile(fileName, text .. "Results=" .. Lib.serpent.block(results))
+		GameHelpers.IO.SaveFile(fileName, text .. "Results = " .. Lib.serpent.block(results))
 		Ext.Print("Saved test results to", fileName)
 	end
 	Testing.Active = false

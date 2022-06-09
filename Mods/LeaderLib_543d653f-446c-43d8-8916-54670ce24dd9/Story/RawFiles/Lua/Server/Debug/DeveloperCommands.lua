@@ -1329,6 +1329,7 @@ local function AddItemStat(stat, params)
 
 	--local item = GameHelpers.Item.CreateItemByStat("ARM_Metamorph_UpperBody", { StatsLevel = 4, GenerationItemType = "Rare", ItemType = "Rare", IsIdentified = true, GMFolding = false, HasGeneratedStats = true,}); ItemToInventory(item, CharacterGetHostCharacter(), 1, 0, 0)
 	--local item = GameHelpers.Item.CreateItemByStat("WPN_Sword", { StatsLevel = 4, GenerationItemType = "Rare", ItemType = "Rare", IsIdentified = true, GMFolding = false, HasGeneratedStats = true,}); ItemToInventory(item, CharacterGetHostCharacter(), 1, 0, 0)
+	--local item = GameHelpers.Item.CreateItemByStat("Status_LLTEST_BonusWeapon", { StatsLevel = 4, GenerationItemType = "Rare", ItemType = "Rare", IsIdentified = true, GMFolding = false, HasGeneratedStats = true, RootTemplate = "67e45b64-be99-407e-a08a-8ce60b64e289"}); ItemToInventory(item, CharacterGetHostCharacter(), 1, 0, 0)
 
 	local item = GameHelpers.Item.CreateItemByStat(stat, params)
 	if item ~= nil then

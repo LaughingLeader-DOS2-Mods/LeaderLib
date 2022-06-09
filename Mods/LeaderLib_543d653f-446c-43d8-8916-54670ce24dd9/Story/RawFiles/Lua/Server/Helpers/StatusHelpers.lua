@@ -253,26 +253,49 @@ end
 ---@param duration number
 ---@param force boolean
 ---@param source string
-local function FinallyApplyStatus(target, status, duration, force, source)
+---@param properties table<string,any>|EsvStatus|nil An optional table of properties to set on the EsvStatus.
+local function FinallyApplyStatus(target, status, duration, force, source, properties)
 	if source == nil then
 		source = StringHelpers.NULL_UUID
 	end
-	if duration == -2 then
-		local statusObject = Ext.PrepareStatus(target, status, duration)
-		if not StringHelpers.IsNullOrEmpty(source) then
-			local sourceObj = GameHelpers.TryGetObject(source)
-			if sourceObj then
-				statusObject.StatusSourceHandle = sourceObj.Handle
+	local statusObject = Ext.PrepareStatus(target, status, duration)
+	local targetObj = nil
+	local sourceObj = nil
+	if not StringHelpers.IsNullOrEmpty(target) then
+		targetObj = GameHelpers.TryGetObject(target)
+		if targetObj then
+			statusObject.TargetHandle = targetObj.Handle
+		end
+	end
+	if not StringHelpers.IsNullOrEmpty(source) then
+		sourceObj = GameHelpers.TryGetObject(source)
+		if sourceObj then
+			statusObject.StatusSourceHandle = sourceObj.Handle
+			if status == "AOO" then
+				statusObject.SourceHandle = sourceObj.Handle
+				if sourceObj.HasOwner then
+					statusObject.PartnerHandle = sourceObj.OwnerHandle
+				end
 			end
 		end
-		statusObject.KeepAlive = true
-		if force == true then
-			statusObject.ForceStatus = true
-		end
-		Ext.ApplyStatus(statusObject)
-	else
-		ApplyStatus(target, status, duration, force == true and 1 or 0, source)
 	end
+	if duration == -2 then
+		statusObject.KeepAlive = true
+	end
+	if force == true then
+		statusObject.ForceStatus = true
+	end
+	if status == "AOO" then
+		--TODO PartnerHandle?
+		statusObject.ShowOverhead = true
+		statusObject.ActivateAoOBoost = true
+	end
+	if properties then
+		for k,v in pairs(properties) do
+			statusObject[k] = v
+		end
+	end
+	Ext.ApplyStatus(statusObject)
 end
 
 ---@alias GameHelpers.Status.Remove.CanApplyCallback fun(target:string, source:string, statusId:string, targetIsItem:boolean):boolean
@@ -307,6 +330,9 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 		end
 	end
 	if force == nil then
+		force = false
+	elseif force == 1 then
+	elseif force == 0 then
 		force = false
 	end
 	local t = type(status)

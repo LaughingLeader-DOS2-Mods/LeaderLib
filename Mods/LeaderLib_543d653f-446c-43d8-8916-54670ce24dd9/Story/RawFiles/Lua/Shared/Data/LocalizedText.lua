@@ -524,6 +524,7 @@ LocalizedText.Surfaces = {
 	BloodFrozenPurified = ts:Create("h90936409g7afdg4b75gaedbgc3de9b8b22b9", "Frozen Blood"),
 	BloodPurified = ts:Create("had97d00cg1642g417fg815fg09903e8210c3", "Blood"),
 	DeathfogCloud = ts:Create("hd9494a3bg316dg4e74g9fcag80b735e2d3d9", "Deathfog"),
+	Deepwater = ts:Create("h1d2c7e49ge777g4cf4ga93dg537d356d0927", "Sea"), -- No actual DisplayName set for this surface
 	ExplosionCloud = ts:Create("hc5e88d12g5f08g4722gadaag45033d89e5a7", "Explosion Cloud"),
 	Fire = ts:Create("h9d241c17g79ccg42b2g80d8gd6baba6ad9f6", "Fire"),
 	FireBlessed = ts:Create("h3be44cfbg20beg4b06g8569g95be3f938eed", "Blessed Fire"),
@@ -555,7 +556,7 @@ LocalizedText.Surfaces = {
 	SourceBlessed = ts:Create("hb0d019b5g8b09g489dgb863g757a4f6e6897", "Blessed Source"),
 	SourceCursed = ts:Create("h21b45732g6abdg4409g8ba0g5bc86f63a573", "Cursed Source"),
 	SourcePurified = ts:Create("ha6811009g9b6dg4d7egb545g71f84ab5da8f", "Source"),
-	Sulfuric = ts:Create("h28954ca9gdeeag45a2g9db1ga3d5e2f7f49a", "Sulfurium"),
+	Sulfuric = ts:Create("h28954ca9gdeeag45a2g9db1ga3d5e2f7f49a", "Sulfurium"), -- Overwritten in LeaderLib to remove the Pipes ||
 	Water = ts:Create("h2802f36dga180g4e96gbf08g2e4cde9c8e22", "Water"),
 	WaterBlessed = ts:Create("h9ad4a6e1g5b71g4b42gb45bgbe80c5e48bda", "Blessed Water"),
 	WaterCloud = ts:Create("hb9d59adeg447cg46ccga1e0g4bfbfaba0b73", "Steam Cloud"),
@@ -580,7 +581,6 @@ LocalizedText.Surfaces = {
 	WebBlessed = ts:Create("h5855a730gc280g40c5g81ccg5e47dfc7a3dd", "Blessed Web"),
 	WebCursed = ts:Create("h32a3af9cg9befg45b2g9ec5ge9322161fc2d", "Cursed Web"),
 	WebPurified = ts:Create("h758c25fcgc899g4016g8967g1812cf70e353", "Web"),
-	Deepwater = ts:Create("h1d2c7e49ge777g4cf4ga93dg537d356d0927", "Sea"), -- No actual DisplayName set for this surface
 }
 
 Ext.RegisterListener("SessionLoaded", function ()

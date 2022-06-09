@@ -651,6 +651,45 @@ Data.EngineStatus = {
 	LEADERLIB_RECALC = true,
 }
 
+Data.StatusConsumeTypes = {
+	ACTIVE_DEFENSE = true,
+	ADRENALINE = true,
+	CHALLENGE = true,
+	CHANNELING = true,
+	CHARMED = true,
+	COMBUSTION = true,
+	CONSUME = true,
+	DAMAGE = true,
+	DAMAGE_ON_MOVE = true,
+	DARK_AVENGER = true,
+	DEACTIVATED = true,
+	DECAYING_TOUCH = true,
+	DISARMED = true,
+	ENCUMBERED = true,
+	EXTRA_TURN = true,
+	FLOATING = true,
+	FORCE_MOVE = true,
+	GUARDIAN_ANGEL = true,
+	HEAL_SHARING = true,
+	HEAL_SHARING_CASTER = true,
+	INCAPACITATED = true,
+	INFECTIOUS_DISEASED = true,
+	INVISIBLE = true,
+	LEADERSHIP = true,
+	LINGERING_WOUNDS = true,
+	MUTED = true,
+	OVERPOWER = true,
+	PLAY_DEAD = true,
+	POLYMORPHED = true,
+	REMORSE = true,
+	SHACKLES_OF_PAIN = true,
+	SHACKLES_OF_PAIN_CASTER = true,
+	SPARK = true,
+	SPIRIT_VISION = true,
+	STANCE = true,
+	WIND_WALKER = true,
+}
+
 setmetatable(Data.EngineStatus, {
 	__call = function(status)
 		return Data.EngineStatus[status] == true

@@ -182,6 +182,7 @@ function SubscribableEvent:Subscribe(callback, opts)
 						return false
 					end
 				end
+				return true
 			end
 		end
 	end

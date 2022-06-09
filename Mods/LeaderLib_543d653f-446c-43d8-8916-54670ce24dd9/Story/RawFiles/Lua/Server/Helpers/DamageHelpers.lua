@@ -535,6 +535,7 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
 
     if params.ApplySkillProperties then
         Ext.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, targetPos, "Target", false)
+        Ext.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, source.WorldPos, Data.PropertyContext.Self | Data.PropertyContext.SelfOnHit, false)
     end
 
     if damageList then
@@ -625,6 +626,7 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
 
     if applySkillProperties then
         Ext.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, targetPos, "Target", false)
+        Ext.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, source.WorldPos, Data.PropertyContext.Self | Data.PropertyContext.SelfOnHit, false)
     end
 
     if damageList then

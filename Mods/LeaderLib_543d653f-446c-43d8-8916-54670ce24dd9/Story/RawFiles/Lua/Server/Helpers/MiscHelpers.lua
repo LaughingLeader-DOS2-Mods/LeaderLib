@@ -24,22 +24,6 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 	local t = type(target)
 	if fromSkill then
 		canTargetItems = Ext.StatGetAttribute(fromSkill, "CanTargetItems") == "Yes"
-		--[[
-			if t == "table" then
-				radius = radius or math.max(stat.ExplodeRadius or stat.AreaRadius or 3)
-				GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
-				Ext.ExecuteSkillPropertiesOnPosition(skill, source.MyGuid, target, radius, "AoE", false)
-			elseif t == "userdata" then
-				GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
-				Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
-			else
-				target = GameHelpers.TryGetObject(target)
-				if target then
-					GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
-					Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
-				end
-			end
-		]]
 	end
 	if not properties then
 		return false

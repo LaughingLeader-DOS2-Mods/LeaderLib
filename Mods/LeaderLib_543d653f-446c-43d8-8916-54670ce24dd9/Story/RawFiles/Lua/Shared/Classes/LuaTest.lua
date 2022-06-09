@@ -5,12 +5,15 @@
 ---@field Params table Params to pass to invoked tasks.
 
 ---@class LuaTest:LuaTestParams
+---@field Failed boolean
+---@field Errors string[]
 ---@field Active boolean
 ---@field State integer
 ---@field Thread thread
 ---@field Tasks function[]
 ---@field CurrentTaskIndex integer
 local LuaTest = {
+	Type = "LuaTest",
 	ThrowErrors = true,
 	ErrorMessage = "",
 	SuccessMessage = "",
@@ -38,6 +41,8 @@ function LuaTest.Create(id, tasks, params)
 		State = -1,
 		ErrorMessage = "",
 		SuccessMessage = "",
+		Errors = {},
+		Failed = false,
 	}
 	if type(params) == "table" then
 		for k,v in pairs(params) do
@@ -80,6 +85,7 @@ end
 ---@param id string
 ---@param timeout number|nil
 function LuaTest:WaitForSignal(id, timeout)
+	self.SignalSuccess = nil
 	self.NextSignal = id
 	if timeout then
 		self.WakeupTime = Ext.MonotonicTime() + timeout
@@ -90,11 +96,22 @@ end
 ---@param id string
 function LuaTest:OnSignal(id)
 	if self.NextSignal == id then
+		self.SignalSuccess = id
 		if self:Resume() then
 			return true
 		end
 	end
 	return false
+end
+
+---@param self LuaTest
+local function RunTask(self)
+	local b,err = xpcall(coroutine.resume, debug.traceback, self.Thread, self, table.unpack(self.Params))
+	if not b then
+		Ext.PrintError(err)
+		self.Failed = true
+		self.Errors[#self.Errors+1] = err
+	end
 end
 
 function LuaTest:Resume()
@@ -104,7 +121,7 @@ function LuaTest:Resume()
 			self.State = 1
 			self.NextSignal = nil
 			self.WakeupTime = nil
-			coroutine.resume(self.Thread, self, table.unpack(self.Params))
+			RunTask(self)
 			return true
 		else
 			Ext.PrintError("coroutine is currently occupied with a different thread.")
@@ -123,12 +140,12 @@ local function ValueErrorMessage(msg, target, expected, t1, t2, extraMsg)
 		v2 = Lib.serpent.block(expected)
 	end
 	if t1 ~= "nil" and t2 ~= "nil" then
-		return string.format("%s%s Actual (%s)[%s] Expected (%s)[%s]", (extraMsg ~= nil and string.format("%s ", extraMsg) or ""), msg, v1, t1, v2, t2)
+		return string.format("%s%s Actual (%s)[%s] Expected (%s)[%s]", (extraMsg ~= nil and string.format("%s:\n", extraMsg) or ""), msg, v1, t1, v2, t2)
 	else
 		if v1 == nil and v2 == nil then
-			return string.format("%s%s Both values are nil.", (extraMsg ~= nil and string.format("%s ", extraMsg) or ""), msg)
+			return string.format("%s%s Both values are nil.", (extraMsg ~= nil and string.format("%s:\n", extraMsg) or ""), msg)
 		else
-			return string.format("%s%s Actual (%s) Expected (%s)", (extraMsg ~= nil and string.format("%s ", extraMsg) or ""), msg, v1, v2)
+			return string.format("%s%s Actual (%s) Expected (%s)", (extraMsg ~= nil and string.format("%s:\n", extraMsg) or ""), msg, v1, v2)
 		end
 	end
 end
@@ -172,6 +189,13 @@ function LuaTest:AssertNotEquals(target, expected, extraMsg, deepTableComparison
 	self:Failure(ValueErrorMessage("Values are equal.", target, expected, t1, t2, extraMsg), 2)
 end
 
+function LuaTest:AssertGotSignal(signalId)
+	if self.SignalSuccess == signalId then
+		return
+	end
+	self:Failure(string.format("Last successful signal (%s) does not match given signal (%s). WaitForSignal likely timed out.", self.SignalSuccess or "nil", signalId), 2)
+end
+
 function LuaTest:Complete(success, ...)
 	if self.Active then
 		fprint(LOGLEVEL.TRACE, "[LuaTest:%s] Test complete.", self.ID)
@@ -183,6 +207,13 @@ function LuaTest:Complete(success, ...)
 			end
 		end
 	end
+end
+
+function LuaTest:Reset()
+	self.Errors = {}
+	self.Failed = false
+	self.Thread = _NilThread
+	self.State = -1
 end
 
 function LuaTest:Run()
@@ -198,12 +229,14 @@ function LuaTest:Run()
 						local b,err = xpcall(task, debug.traceback, ...)
 						if not b then
 							Ext.PrintError(err)
+							self.Failed = true
+							self.Errors[#self.Errors+1] = StringHelpers.Split(StringHelpers.Replace(err, "\t", ""), "\n")
 						end
 						self.CurrentTaskIndex = self.CurrentTaskIndex + 1
 						self.Thread = _NilThread
 						self.State = -1
 					end)
-					coroutine.resume(self.Thread, self, table.unpack(self.Params))
+					RunTask(self)
 				end
 			else
 				fprint(LOGLEVEL.DEFAULT, "[LuaTest] Test (%s) is finished!", self.ID)
@@ -220,6 +253,7 @@ function LuaTest:Dispose()
 	self.Active = false
 	self.CurrentTaskIndex = 1
 	self.Thread = _NilThread
+	self.SignalSuccess = nil
 	if self.Cleanup then
 		local b,err = xpcall(self.Cleanup, debug.traceback, self)
 		if not b then

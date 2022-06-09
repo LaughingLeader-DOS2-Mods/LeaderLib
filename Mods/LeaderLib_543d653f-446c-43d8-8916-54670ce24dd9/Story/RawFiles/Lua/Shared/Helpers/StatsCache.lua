@@ -104,7 +104,9 @@ end
 function GameHelpers.Stats.GetStats(statType, asStatsEntry)
 	assert(IsStatTypeValid(statType), "statType must be one of the following: Armor|DeltaMod|Potion|Shield|SkillData|StatusData|Weapon")
 	local _cache = _GetCachedStatType(statType)
-	GameHelpers.IO.SaveJsonFile("Dumps/Stats_" .. statType .. ".json", _cache)
+	if Vars.DebugMode then
+		GameHelpers.IO.SaveJsonFile("Dumps/Stats_" .. statType .. ".json", _cache)
+	end
 	if not asStatsEntry then
 		local i = nil
 		return function ()

@@ -30,7 +30,7 @@ function GameHelpers.Character.IsPlayer(character)
 				character = character.MyGuid
 			end
 			if type(character) == "string" then
-				return CharacterIsPlayer(character) == 1 or CharacterGameMaster(character) == 1 or GameHelpers.DB.HasUUID("DB_IsPlayer", character) 
+				return CharacterIsPlayer(character) == 1 or CharacterGameMaster(character) == 1 or GameHelpers.DB.HasUUID("DB_IsPlayer", character)
 			end
 		end
 	else

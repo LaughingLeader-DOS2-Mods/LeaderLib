@@ -59,6 +59,17 @@ function GameHelpers.GetEnemiesInRange(uuid,radius)
 	return 0
 end
 
+---@param v userdata
+---@return boolean
+local function IsHandle(v)
+	if _EXTVERSION >= 56 then
+		return Ext.Utils.IsValidHandle(v)
+	else
+		return getmetatable(v) == nil
+	end
+end
+
+
 local _UNSET_USERID = -65536
 
 ---Get a character's user id, if any.
@@ -381,8 +392,13 @@ end
 ---@return EsvCharacter|EclCharacter
 function GameHelpers.GetCharacter(object)
 	local t = type(object)
-	local isHandle = t == "userdata" and getmetatable(object) == nil
-	if t == "userdata" then
+	local isHandle = t == "userdata" and IsHandle(object) == true
+	if isHandle or t == "string" or t == "number" then
+		local obj = Ext.GetCharacter(object)
+		if obj then
+			return obj
+		end
+	elseif t == "userdata" then
 		if GameHelpers.Ext.ObjectIsCharacter(object) then
 			return object
 		elseif GameHelpers.Ext.ObjectIsStatCharacter(object) then
@@ -390,11 +406,6 @@ function GameHelpers.GetCharacter(object)
 		else
 			--Object handle?
 			return Ext.GetCharacter(object)
-		end
-	elseif isHandle or t == "string" or t == "number" then
-		local obj = Ext.GetCharacter(object)
-		if obj then
-			return obj
 		end
 	end
 	return nil
@@ -405,7 +416,7 @@ end
 ---@return EsvItem|EclItem
 function GameHelpers.GetItem(object)
 	local t = type(object)
-	local isHandle = t == "userdata" and getmetatable(object) == nil
+	local isHandle = t == "userdata" and IsHandle(object) == true
 	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(object) then
 		return object
 	elseif isHandle or t == "string" or t == "number" then
@@ -456,16 +467,6 @@ local getFuncs = {
 	Ext.GetItem,
 	Ext.GetGameObject
 }
-
----@param v userdata
----@return boolean
-local function IsHandle(v)
-	if _EXTVERSION >= 56 then
-		return Ext.Utils.IsValidHandle(v)
-	else
-		return getmetatable(v) == nil
-	end
-end
 
 local function TryGetObject(id)
 	local t = type(id)

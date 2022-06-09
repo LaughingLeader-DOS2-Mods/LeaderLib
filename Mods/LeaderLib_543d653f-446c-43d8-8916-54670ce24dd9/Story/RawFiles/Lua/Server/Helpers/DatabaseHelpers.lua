@@ -165,6 +165,7 @@ end
 ---@param checkColumn integer|nil Defaults to 1 if not set.
 ---@return boolean
 function GameHelpers.DB.HasUUID(databaseName, uuid, arity, checkColumn)
+	uuid = GameHelpers.GetUUID(uuid, true)
 	arity = arity or 1
 	checkColumn = checkColumn or 1
 	local b,result = xpcall(function()

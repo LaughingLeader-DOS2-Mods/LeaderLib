@@ -173,7 +173,7 @@ end
 
 ---Clears the action queue that may block things like skill usage via scripting.
 ---@param character CharacterParam
----@param purge boolean|nil
+---@param purge boolean|nil Call CharacterPurgeQueue instead of CharacterFlushQueue.
 function GameHelpers.ClearActionQueue(character, purge)
 	character = GameHelpers.GetUUID(character)
 	if not character then

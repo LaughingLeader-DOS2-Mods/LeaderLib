@@ -651,7 +651,7 @@ Data.EngineStatus = {
 	LEADERLIB_RECALC = true,
 }
 
-Data.StatusConsumeTypes = {
+Data.StatusStatsIdTypes = {
 	ACTIVE_DEFENSE = true,
 	ADRENALINE = true,
 	CHALLENGE = true,
@@ -662,19 +662,23 @@ Data.StatusConsumeTypes = {
 	DAMAGE = true,
 	DAMAGE_ON_MOVE = true,
 	DARK_AVENGER = true,
+	DEMONIC_BARGAIN = true, --TODO Not a ConsumeStatusBase in the extender, but it has a StatsId?
 	DEACTIVATED = true,
 	DECAYING_TOUCH = true,
 	DISARMED = true,
 	ENCUMBERED = true,
 	EXTRA_TURN = true,
+	FEAR = true,
 	FLOATING = true,
 	FORCE_MOVE = true,
 	GUARDIAN_ANGEL = true,
+	HEALING = true,
 	HEAL_SHARING = true,
 	HEAL_SHARING_CASTER = true,
 	INCAPACITATED = true,
 	INFECTIOUS_DISEASED = true,
 	INVISIBLE = true,
+	KNOCKED_DOWN = true, --TODO Not a ConsumeStatusBase in the extender, but it has a StatsId?
 	LEADERSHIP = true,
 	LINGERING_WOUNDS = true,
 	MUTED = true,
@@ -2294,4 +2298,12 @@ Data.StatAttributes = {
 		"Talents",
 		"Tags",
 	},
+}
+
+Data.PropertyContext = {
+	Target = 0x01,
+	AoE = 0x02,
+	Self = 0x04,
+	SelfOnHit = 0x08,
+	SelfOnEquip = 0x10,
 }

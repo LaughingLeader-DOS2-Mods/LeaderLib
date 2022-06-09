@@ -50,10 +50,16 @@ Timer.Subscribe("LeaderLib_ClearJustAppliedBonusWeaponStatuses", function(e)
 	PersistentVars.JustAppliedBonusWeaponStatuses[e.Data.UUID] = nil
 end)
 
+local _cachedBonusWeapon = {}
+setmetatable(_cachedBonusWeapon, {__mode = "kv"})
+
+local _SelfPropertyContext = Data.PropertyContext.Self | Data.PropertyContext.SelfOnHit
+
 ---@param source EsvCharacter|EsvItem|UUID|NETID
 ---@param target EsvCharacter|EsvItem|UUID|NETID
 ---@param fromSkill string|nil If this is resulting from a skill hit.
 function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
+	target = GameHelpers.TryGetObject(target)
 	if type(source) ~= "userdata" then
 		source = GameHelpers.TryGetObject(source)
 	end
@@ -63,13 +69,19 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 		or (fromSkill and type(justApplied) == "table" and justApplied[fromSkill] == true) then
 			return false
 		end
-		for i,status in pairs(source:GetStatuses()) do
-			if not Data.EngineStatus[status] then
-				local potion = Ext.StatGetAttribute(status, "StatsId")
-				if not StringHelpers.IsNullOrWhitespace(potion) then
-					if not Ext.OsirisIsCallable() or NRD_StatExists(potion) then
-						local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
-						if not StringHelpers.IsNullOrWhitespace(bonusWeapon) then
+		---@type table<integer, EsvStatusConsumeBase>
+		local statuses = source:GetStatusObjects()
+		for _,status in pairs(statuses) do
+			if Data.StatusStatsIdTypes[status.StatusType] then
+				local potion = status.StatsId
+				if not StringHelpers.IsNullOrWhitespace(potion) and not string.find(potion, ";") then
+					local bonusWeapon = _cachedBonusWeapon[potion] or Ext.StatGetAttribute(potion, "BonusWeapon")
+					if not StringHelpers.IsNullOrWhitespace(bonusWeapon) then
+						_cachedBonusWeapon[potion] = bonusWeapon
+						if _EXTVERSION >= 56 then
+							Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, target, target.WorldPos, "Target", false, fromSkill)
+							Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, source, source.WorldPos, _SelfPropertyContext, false, fromSkill)
+						else
 							local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
 							if extraProps and #extraProps > 0 then
 								GameHelpers.ApplyProperties(source, target, extraProps, nil, nil, fromSkill)
@@ -131,6 +143,7 @@ local function OnHit(hitStatus, hitContext)
 		local applySkillProperties = Vars.ApplyZoneSkillProperties[hitStatus.SkillId]
 		if applySkillProperties and applySkillProperties[sourceId] then
 			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, targetId, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
+			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, sourceId, source.WorldPos, _SelfPropertyContext, GameHelpers.Ext.ObjectIsItem(source))
 			Timer.Restart(applySkillProperties[sourceId], 1)
 		end
 	end

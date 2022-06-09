@@ -40,25 +40,6 @@ function GameHelpers.GetExtraData(key, fallback, asInteger)
 	return fallback
 end
 
---- Get all enemies within range.
----@param uuid string The character UUID.
----@param radius number
----@return number
-function GameHelpers.GetEnemiesInRange(uuid,radius)
-	if Ext.IsServer() then
-		local character = Ext.GetCharacter(uuid)
-		local totalEnemies = 0
-		for i,v in pairs(character:GetNearbyCharacters(radius)) do
-			if CharacterIsDead(v) == 0 and CharacterIsEnemy(uuid, v) == 1 then
-				totalEnemies = totalEnemies + 1
-			end
-		end
-		return totalEnemies
-	end
-	-- TODO Client-side relation detection isn't a thing yet
-	return 0
-end
-
 ---@param v userdata
 ---@return boolean
 local function IsHandle(v)

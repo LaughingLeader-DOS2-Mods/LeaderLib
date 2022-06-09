@@ -2,7 +2,7 @@ if GameHelpers.Character == nil then
 	GameHelpers.Character = {}
 end
 
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 ---@return boolean
@@ -14,7 +14,7 @@ function GameHelpers.Character.IsPlayer(character)
 	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(character) then
 		return false
 	end
-	if not isClient then
+	if not _ISCLIENT then
 		if not Ext.OsirisIsCallable() then
 			if t == "string" or t == "number" then
 				character = GameHelpers.GetCharacter(character)
@@ -67,7 +67,7 @@ function GameHelpers.Character.IsGameMaster(character, ignorePossessed)
 	if not character then
 		return false
 	end
-	if not isClient then
+	if not _ISCLIENT then
 		return character.IsGameMaster or (not ignorePossessed and character.IsPossessed)
 	else
 		for uuid,data in pairs(SharedData.CharacterData) do
@@ -89,7 +89,7 @@ function GameHelpers.Character.IsPlayerOrPartyMember(character)
 	if GameHelpers.Character.IsPlayer(character) then
 		return true
 	end
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		return CharacterIsPartyMember(character) == 1
 	end
 	return false
@@ -97,7 +97,7 @@ end
 
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsOrigin(character)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
 		if not character then return false end
 		return GameHelpers.DB.HasUUID("DB_Origins", character)
@@ -112,7 +112,7 @@ end
 
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsInCharacterCreation(character)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
 		if not character then return false end
 		if GameHelpers.DB.HasUUID("DB_Illusionist", character, 2, 1) then
@@ -136,7 +136,7 @@ end
 
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsSummonOrPartyFollower(character)
-	if not isClient then
+	if not _ISCLIENT then
 		if type(character) == "userdata" then
 			return character.Summon or character.PartyFollower
 		elseif type(character) == "string" then
@@ -155,7 +155,7 @@ end
 
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsAllyOfParty(character)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
 		if not character then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
@@ -169,7 +169,7 @@ end
 
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsEnemyOfParty(character)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
 		if not character then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
@@ -184,7 +184,7 @@ end
 ---@param char1 UUID|NETID|EsvCharacter
 ---@param char2 UUID|NETID|EsvCharacter
 function GameHelpers.Character.IsEnemy(char1, char2)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		local a = GameHelpers.GetUUID(char1)
 		local b = GameHelpers.GetUUID(char2)
 		if not a or not b then return false end
@@ -195,7 +195,7 @@ end
 
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsNeutralToParty(character)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
 		if not character then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
@@ -209,7 +209,7 @@ end
 
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsInCombat(character)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
 		if not character then return false end
 		if CharacterIsInCombat(character) == 1 then
@@ -224,10 +224,35 @@ function GameHelpers.Character.IsInCombat(character)
 	return false
 end
 
+---Get all enemies within range.
+---@param target CharacterParam The character to use for the enemy check / central point.
+---@param radius number|nil Defaults to 2.0
+---@return number total
+function GameHelpers.Character.GetTotalEnemiesInRange(target,radius)
+	if not _ISCLIENT then
+		radius = radius or 2.0
+		local character = GameHelpers.GetCharacter(target)
+		if not character then
+			return 0
+		end
+		local pos = character.WorldPos
+		local totalEnemies = 0
+		for _,v in pairs(Ext.GetAllCharacters(SharedData.RegionData.Current)) do
+			if GameHelpers.Math.GetDistance(v, pos) <= radius 
+			and not GameHelpers.ObjectIsDead(v) and GameHelpers.Character.IsEnemy(character, v) then
+				totalEnemies = totalEnemies + 1
+			end
+		end
+		return totalEnemies
+	end
+	-- TODO Client-side relation detection isn't a thing yet
+	return 0
+end
+
 ---@return integer
 function GameHelpers.Character.GetHighestPlayerLevel()
 	local level = 1
-	if not isClient then
+	if not _ISCLIENT then
 		for player in GameHelpers.Character.GetPlayers(false) do
 			if player.Stats.Level > level then
 				level = player.Stats.Level
@@ -288,7 +313,7 @@ function GameHelpers.Character.GetDisplayName(character)
 	if character then
 		local name = character.DisplayName
 		if StringHelpers.IsNullOrWhitespace(name) or string.find(name, "|", 1, true) then
-			if not isClient then
+			if not _ISCLIENT then
 				local handle,ref = CharacterGetDisplayName(character.MyGuid)
 				return Ext.GetTranslatedString(handle, not StringHelpers.IsNullOrWhitespace(name) and name or ref)
 			else
@@ -306,7 +331,7 @@ end
 ---@return fun():EsvCharacter|EclCharacter
 function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 	local players = {}
-	if not isClient then
+	if not _ISCLIENT then
 		if SharedData.RegionData.LevelType == LEVELTYPE.GAME and Ext.OsirisIsCallable() then
 			for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
 				local player = GameHelpers.GetCharacter(db[1])
@@ -373,7 +398,7 @@ end
 function GameHelpers.Character.GetPartySize(includeSummons)
 	local count = 0
 	local players = {}
-	if not isClient then
+	if not _ISCLIENT then
 		for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
 			local player = GameHelpers.GetCharacter(db[1])
 			if player then
@@ -411,7 +436,7 @@ function GameHelpers.Character.GetSummons(owner, getItems)
 
 	local matchId = nil
 
-	if not isClient then
+	if not _ISCLIENT then
 		if type(owner) == "userdata" then
 			matchId = owner.MyGuid
 		elseif type(owner) == "string" then
@@ -460,7 +485,7 @@ function GameHelpers.Character.GetWeaponRange(character, asMeters)
 	local range = Ext.GetStat("NoWeapon").WeaponRange
 	character = GameHelpers.GetCharacter(character)
 	if character then
-		if isClient then
+		if _ISCLIENT then
 			local mainhand = character:GetItemBySlot("Weapon")
 			local offhand = character:GetItemBySlot("Shield")
 			if mainhand then
@@ -500,7 +525,7 @@ end
 
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsUnsheathed(character)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
 		if not character then return false end
 		return HasActiveStatus(character, "UNSHEATHED") == 1 or CharacterIsInFightMode(character) == 1
@@ -569,7 +594,7 @@ function GameHelpers.Character.IsSneakingOrInvisible(character)
     return false
 end
 
-if not isClient then
+if not _ISCLIENT then
 	Ext.NewQuery(GameHelpers.Character.IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "[in](GUIDSTRING)_Object, [out](INTEGER)_Bool")
 end
 
@@ -599,7 +624,7 @@ end
 ---@param item EclItem|UUID
 ---@return boolean
 function GameHelpers.Character.EquipItem(character, item)
-	if not isClient then
+	if not _ISCLIENT then
 		local uuid = GameHelpers.GetUUID(character)
 		fassert(not StringHelpers.IsNullOrEmpty(uuid) and ObjectExists(uuid) == 1, "Character (%s) must be a valid UUID or EsvCharacter", character)
 		item = GameHelpers.GetItem(item)
@@ -694,7 +719,7 @@ end
 function GameHelpers.Character.GetEquippedWeapons(character)
 	local char = GameHelpers.GetCharacter(character)
     fassert(char ~= nil, "'%s' is not a valid character", character)
-	if isClient then
+	if _ISCLIENT then
 		return char:GetItemBySlot("Weapon"),char:GetItemBySlot("Shield")
 	else
 		if Ext.OsirisIsCallable() then
@@ -748,7 +773,7 @@ end
 ---@param flag string|string[]
 ---@return boolean
 function GameHelpers.Character.HasFlag(character, flag)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(character)
 		if uuid then
 			local t = type(flag)

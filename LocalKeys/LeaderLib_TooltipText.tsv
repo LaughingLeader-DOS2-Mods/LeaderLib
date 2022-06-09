@@ -2,7 +2,11 @@ Key	Content	Handle
 LeaderLib_Tooltip_ResistancePenetrationBoost	[1] Penetration	hf638bc67g5cb6g4dcfg8663gce1951caad2b
 LeaderLib_Tooltip_ItemDescription_AutoLeveling	<font color='#80FFC3' size='18'>Automatically levels up with the wearer.</font>	hca27994egc60eg495dg8146g7f81c970e265
 LeaderLib_Tooltip_CreatedBy	[1]<br>Created by [2]	h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba
-LeaderLib_Tooltip_ExtraPropertiesCondensed	Apply On Hit:<br>[1] for [2] turns(s). ([3] Chance)	h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0
+LeaderLib_Tooltip_Chance	([1]% Chance)	hb2ee903eg6063g4474gaa22gbe8568f3df87
+LeaderLib_Tooltip_BonusWeaponOnAttack	On Basic Attack or Weapon Skill:	h88b2276agaeafg4d22gb75dg53c357748d51
+LeaderLib_Tooltip_ExtraPropertiesClearSurfaces	Clears surfaces in a [1]m range at the location of your target(s).	h16278a77g90bbg4f23g80b1g4f326bed3d4a
+LeaderLib_Tooltip_ExtraPropertiesCondensed	On Hit:<br>Set [1] for [2] turns(s).[3]	h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0
+LeaderLib_Tooltip_ExtraPropertiesCondensedPermanent	On Hit:<br>Set [1].[3]	hf90daa3cgba5cg471cgbebcgedb58a337a9f
 LeaderLib_Tooltip_Expander_Inactive	Hold [1] for More Info	h17380891g0e8eg42d3gbb55g9478bba4f684
 LeaderLib_Tooltip_Expander_Active	Release [1] for Less Info	h7b3bd7e6g9a34g4959gad11g241f6d8d33c1
 LeaderLib_Tooltip_SafeForce	Pushes targets [1]m [2].	h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc

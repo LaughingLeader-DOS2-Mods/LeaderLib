@@ -67,6 +67,7 @@
 	<content contentuid="h26695cfdg01c9g421dga695ge2d6661643bf">Actions</content>
 	<content contentuid="h26c43244gcf21g46cdg8969g6ed6a17dad03">Minute(s)</content>
 	<content contentuid="h26d9df87gcc82g4b87gb068g6e5e3b053113">[ON] Dialog Redirection Enabled. Certain dialog events will start with the closest player character available. (Default) [GLOBAL]</content>
+	<content contentuid="h27c279ceg2a80g4b51gb52age44b39b83d07">Sulfurium</content>
 	<content contentuid="h27d11f50gaecbg4d8fgaf81g0b7f26fb61f3">LeaderLib - Debug</content>
 	<content contentuid="h28bc1942gc4f1g42bag8fc3g83b33f653c17">Anyway, I figure I&apos;ll make this my little home away from home, and sell some old junk I&apos;ve accumulated over the years.</content>
 	<content contentuid="h294e6b91g0ba8g4116g9b44g2763b441ea8a">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
@@ -106,7 +107,7 @@
 	<content contentuid="h3e9f92b4g5634g425egb6f8g75b06a572a2c">Unknown Resistance</content>
 	<content contentuid="h3eb917d7g036fg483dg8ee5gc83743845400">Welcome!</content>
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
-	<content contentuid="h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0">Apply On Hit:&lt;br&gt;[1] for [2] turns(s). ([3] Chance)</content>
+	<content contentuid="h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0">On Hit:&lt;br&gt;Set [1] for [2] turns(s).[3]</content>
 	<content contentuid="h3fb60439g4406g4623ga6b7gb53cda538fcb">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
 	<content contentuid="h409bfd42g2257g4cb8gb3fbgedcb8adecaed">Extra Stats</content>
 	<content contentuid="h40ac3891g3661g43eag878dg6510b001704a">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
@@ -118,6 +119,7 @@
 	<content contentuid="h456c5c8bg7103g4b19g9185ge4cd6ddbab30">Show Status in Portrait UI</content>
 	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9">Hidden Backpack</content>
 	<content contentuid="h46c05d65g039dg4651gb24eg027244f86897">Undead Dwarf</content>
+	<content contentuid="h46f32bf7gf965g4146ga6e1g4951c5d8c2fa">Clears surfaces in a [1]m range at the location of your target(s).</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d">Undead Human</content>
 	<content contentuid="h47d73bfcg16eag4504g83c0ge7b9c0048f13">*Ask to see the trader&apos;s goods.*</content>
 	<content contentuid="h4afd5d2bg1af0g4cc3g9a53gdb6c327d2d04">Enable Dialog Redirection</content>
@@ -139,6 +141,7 @@
 	<content contentuid="h52804b8ag97ccg478eg90f8gc8b6f735dab2">&lt;font color=&apos;#FF0000&apos; size=&apos;32&apos;&gt;ERROR&lt;/font&gt;&lt;br&gt;You are missing the Script Extender, and the host has mods that require it!&lt;br&gt;&lt;font color=&apos;#FF00CC&apos; size=&apos;22&apos;&gt;Please exit the game and install the Script Extender.&lt;/font&gt;&lt;br&gt;The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.</content>
 	<content contentuid="h529c36c6g6b68g46e2g867dg863184908d5a">Remove the Mod Menu Skill (Self)</content>
 	<content contentuid="h52a29657gf5f3g4577gb783g6fa0c0052e5e">Timed Autosaving</content>
+	<content contentuid="h538e28f2g01fag43dcga7c2g040a105e38c1">([1]% Chance)</content>
 	<content contentuid="h5515ca23gf576g491dgb562ge71243c72ed8">Cancel Shapeshifting</content>
 	<content contentuid="h562f0a3bg4566g452eg860egb5c2ff3e750e">Undead Elf</content>
 	<content contentuid="h5671b6e0gf0c5g4a01g9513g36382bea3418">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
@@ -273,6 +276,7 @@
 	<content contentuid="h9863bb3eg058dg45acg8926gefb0f24ece72">Save When Combat Starts</content>
 	<content contentuid="h98bf1217gf2bfg4d82g99b9g6747f36f9aab">&lt;font color=&apos;#FF0000&apos;&gt;Script Extender Missing!&lt;/font&gt;</content>
 	<content contentuid="h98d315c5g189cg431eg9862g7cea569a5e3b">Hmm?</content>
+	<content contentuid="h9a089091g504ag4446ga707g787ad2d73d89">Go to [1] ([2])</content>
 	<content contentuid="h9ade7360g8608g42f6g8e7cgff542d517949">&lt;font color=&apos;#BB77FF&apos; size=&apos;22&apos;&gt;Preset Selection&lt;/font&gt;&lt;br&gt;Toggle the the Preset Selection dropdown.</content>
 	<content contentuid="h9b4fce0fge5a9g4369gb3e8g1567058cc47c">If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like Invisible and healing statuses. </content>
 	<content contentuid="h9b843d3agc42eg4295g8381ge2eb54eeac08">Dialog Redirection Settings</content>
@@ -283,6 +287,7 @@
 	<content contentuid="h9c91bca1g6c8eg4381gb975gb58c0c8f7320">[-] Previous Page</content>
 	<content contentuid="h9cc2120agfe21g4721g8e33g6d1fb7621956">[ON] Unhealable Fix - If the &apos;Unhealable&apos; status is applied, the target will not be able to be healed by statuses (Regeneration, etc). [GLOBAL]</content>
 	<content contentuid="h9d00c99fgf7a1g4cb0gbfd9gb015d525148f">*Ask if he&apos;s still selling things.*</content>
+	<content contentuid="h9d070c75g8d3fg4737g9097g1ba448c6dcf9">On Hit:&lt;br&gt;Set [1].[3]</content>
 	<content contentuid="h9ff30ae0ge39eg480bg82a3ge975aafed5fd">[LeaderLib_ModMenu_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17]</content>
 	<content contentuid="ha0c0e557g4b01g46a5ga70fge7793eda87b7">Recovery</content>
 	<content contentuid="ha0fda551gb11fg4b9eg9ceag34948486896f">Require Backstab Talent</content>
@@ -327,18 +332,21 @@
 	<content contentuid="hb48f1258g4031g4ab2g8d73gbb24956d5d74">I definitely activated these mods at one point! Why are they no longer active?</content>
 	<content contentuid="hb4a1f383gc0b5g449bgb28egc09586c81b68">If enabled, spells can critical hit without the Savage Sortilege talent.</content>
 	<content contentuid="hb5265b58gcf15g40dfg8769gb5dcc430a99f">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
+	<content contentuid="hb5f12e88g0069g4179gab3dg951865078bc7">On Basic Attack or Weapon Skill:</content>
 	<content contentuid="hb62538b3gfff2g4bb4g9b70g7463f658f4f7">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
 	<content contentuid="hb6a0d65bga210g4882g939ega32f65189909">[OFF] Balanced Experience for All Parties - Every player character will be brought up to the highest player level across all parties. [GLOBAL]</content>
 	<content contentuid="hb6ecdc41g4c2fg4940ga84bgc781c616de71">You&apos;re already aware that I&apos;m selling things, right? That&apos;s the plan here too, of course.</content>
 	<content contentuid="hb78cd437g6402g485bg837dga7c59b959cd3">[Last]</content>
 	<content contentuid="hb796e45cgaab4g4fcega4a2g2e424ed8b66c">[OFF] Combat Log Logging [GLOBAL]</content>
 	<content contentuid="hb7be1cf4gcd0ag4fadga064g72a74b996f1a">[ON] Autosave when Combat Starts [GLOBAL]</content>
+	<content contentuid="hb82bb4cag0308g4fc0g9071g3b38ad72991c">Tutorial</content>
 	<content contentuid="hb8f5a682g5a19g4fe4ga26ag701bf0ba4e8b">Give me a moment to prepare my things, and we can begin trading again.</content>
 	<content contentuid="hb9335219gb6b3g49ffg9291gd3bf78a2f84f">Pause Autosaving in Combat</content>
 	<content contentuid="hb955eb39g2068g4c7dga389gfabcaa42462d">Loading mod menu...</content>
 	<content contentuid="hb987d743g981dg43f6g9aa8g08109349d4e9">LeaderLib Successfully Loaded Global Settings</content>
 	<content contentuid="hba3c2c4fge700g47bfg877dg00a16a26a454">If enabled, characters require the Backstab talent to be able to backstab with non-dagger equipment or skills.&lt;br&gt;(Default: Enabled)</content>
 	<content contentuid="hba8ffff9gf198g45ddg8ee7gf74d6497cd1d">Good riddance.</content>
+	<content contentuid="hbac8ae9dg2b22g415ega98fgd4216182c093">[Key:TUT_Tutorial_A:The Hold] (Tutorial)</content>
 	<content contentuid="hbb25dcedgbd28g4408g80dcg3ab34bed0164">Remove the Mod Menu Skill (Party)</content>
 	<content contentuid="hbb9961bcg9dbfg47f9g90fdg6db3aca83f86">[OFF] Automatically Add Books - Allow LeaderLib registered mod books to automatically be added to the party&apos;s inventory. [GLOBAL]</content>
 	<content contentuid="hbbc07b7cgc1d4g41c8gbec8gdadfd3486b3f">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>

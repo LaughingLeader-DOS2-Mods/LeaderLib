@@ -38,7 +38,7 @@ function SkillEventData:Create(skillSource, skill, skillType, skillAbility)
 		TargetPositions = {},
 		TotalTargetObjects = 0,
 		TotalTargetPositions = 0,
-		Stat = Ext.GetStat(skill) or {}
+		Stat = GameHelpers.Ext.CreateSkillTable(skill)
 	}
 	setmetatable(this, self)
     return this

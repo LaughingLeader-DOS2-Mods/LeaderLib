@@ -22,7 +22,8 @@ local ACTION_ID = {
 ---@field RemoveFromList boolean
 ---@field CallingUI integer
 
----@class ContextMenu:table
+---@class ContextMenu
+---@field Register ContextMenuRegistration
 local ContextMenu = {
 	---@type UIObject
 	Instance = nil,
@@ -421,7 +422,8 @@ end
 function ContextMenu:OnBuiltinMenuUpdating(ui, event)
 	local targetObject = nil
 	if ContextMenu.LastObjectDouble ~= nil then
-		targetObject = GameHelpers.TryGetObject(Ext.DoubleToHandle(ContextMenu.LastObjectDouble))
+		local handle = Ext.DoubleToHandle(ContextMenu.LastObjectDouble)
+		targetObject = GameHelpers.TryGetObject(handle)
 	end
 	local this = ui:GetRoot()
 	local buttonArr = this.buttonArr
@@ -801,30 +803,33 @@ end
 
 ContextMenu:Init()
 
-ContextMenu.Register = {}
+---@class ContextMenuRegistration
+local Register = {}
+
+ContextMenu.Register = Register
 
 ---@param callback ShouldOpenContextMenuCallback
-function ContextMenu.Register.ShouldOpenListener(callback)
+function Register.ShouldOpenListener(callback)
 	RegisterListener("ShouldOpenContextMenu", callback)
 end
 
 ---@param callback OnContextMenuOpeningCallback
-function ContextMenu.Register.OpeningListener(callback)
+function Register.OpeningListener(callback)
 	RegisterListener("OnContextMenuOpening", callback)
 end
 
 ---@param callback OnBuiltinContextMenuOpeningCallback
-function ContextMenu.Register.BuiltinOpeningListener(callback)
+function Register.BuiltinOpeningListener(callback)
 	RegisterListener("OnBuiltinContextMenuOpening", callback)
 end
 
 ---@param callback OnContextMenuEntryClickedCallback
-function ContextMenu.Register.EntryClickedListener(callback)
+function Register.EntryClickedListener(callback)
 	RegisterListener("OnContextMenuEntryClicked", callback)
 end
 
 ---@param action ContextMenuAction
-function ContextMenu.Register.Action(action)
+function Register.Action(action)
 	ContextMenu.Actions[action.ID] = action
 end
 

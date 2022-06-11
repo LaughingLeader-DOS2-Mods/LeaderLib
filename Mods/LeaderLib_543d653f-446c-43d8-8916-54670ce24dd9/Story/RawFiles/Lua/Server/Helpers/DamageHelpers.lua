@@ -229,13 +229,14 @@ end
 
 GameHelpers.GetSkillHitType = GetSkillHitType
 
+---@deprecated
 ---@param skill string
 ---@param attacker string|StatCharacter
 ---@param target string|StatCharacter
----@param handle integer
----@param noRandomization boolean
----@param forceCrit boolean
----@param alwaysHit boolean
+---@param handle integer|nil
+---@param noRandomization boolean|nil
+---@param forceCrit boolean|nil
+---@param alwaysHit boolean|nil
 function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle, noRandomization, forceCrit, alwaysHit)
     if type(attacker) == "string" then
         attacker = Ext.GetCharacter(attacker).Stats
@@ -246,7 +247,7 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
 
     local skillData = GameHelpers.Ext.CreateSkillTable(skill, nil, true)
 
-    local damageList, deathType = Game.Math.GetSkillDamage(skillData, attacker, 0, GameHelpers.Status.IsSneakingOrInvisible(attacker.MyGuid), attacker.Position, target.Position, attacker.Level, noRandomization or false)
+    local damageList, deathType = Game.Math.GetSkillDamage(skillData, attacker, 0, GameHelpers.Status.IsSneakingOrInvisible(attacker.MyGuid), attacker.Position, target.Position, attacker.Level, noRandomization or false, nil, nil)
 
     local highGroundFlag = ""
     if attacker.Character.WorldPos[1] > target.Character.WorldPos[1] then
@@ -322,17 +323,19 @@ function GameHelpers.Damage.ApplyHitRequestFlags(hit, target, handle)
     end
 end
 
---- @param skill StatEntrySkillData
---- @param attacker StatCharacter
---- @param target StatCharacter
---- @param isFromItem boolean
---- @param stealthed boolean
---- @param attackerPos number[]
---- @param targetPos number[]
---- @param level integer
---- @param noRandomization boolean
---- @param mainWeapon StatItem  Optional mainhand weapon to use in place of the attacker's.
---- @param offHandWeapon StatItem   Optional offhand weapon to use in place of the attacker's.
+---@param skill StatEntrySkillData
+---@param attacker StatCharacter
+---@param target StatCharacter
+---@param isFromItem boolean
+---@param stealthed boolean
+---@param attackerPos number[]
+---@param targetPos number[]
+---@param level integer
+---@param noRandomization boolean
+---@param mainWeapon StatItem  Optional mainhand weapon to use in place of the attacker's.
+---@param offHandWeapon StatItem   Optional offhand weapon to use in place of the attacker's.
+---@return DamageList damageList
+---@return DeathType deathType
 local function GetSkillDamageWithTarget(skill, attacker, target, isFromItem, stealthed, attackerPos, targetPos, level, noRandomization, mainWeapon, offHandWeapon)
     if attacker ~= nil and level < 0 then
         level = attacker.Level
@@ -442,13 +445,17 @@ local defaultHitFlags = {
 }
 
 ---@class GameHelpers.Damage.ApplySkillDamageParams
+---@field CriticalRoll CriticalRollFlag|nil Used when computating a character hit. Defaults to "Roll".
+---@field HighGroundFlag HighGroundFlag|nil Used when computating a character hit. If not set, this will be determined using the height difference.
 ---@field HitParams table<string,any>|nil Hit parameters to apply.
 ---@field MainWeapon StatItem|nil A weapon to use in place of the source's main weapon.
 ---@field OffhandWeapon StatItem|nil A weapon to use in place of the source's offhand weapon.
 ---@field GetDamageFunction fun(skillData:StatEntrySkillData, attacker:StatCharacter, isFromItem:boolean, stealthed:boolean, attackerPos:number[], targetPos:number[], level:integer, noRandomization:boolean, mainWeapon:StatEntryWeapon|nil, offhandWeapon:StatEntryWeapon|nil):DamageList,string|nil An optional function to use to calculate damage.
 ---@field ApplySkillProperties boolean|nil
 ---@field SkillDataParamModifiers StatEntrySkillData|nil
+---@field DivideDamageTargets integer|nil If the skill has DivideDamage set, divide the damage between this many targets. Defaults to 1.
 
+---@type GameHelpers.Damage.ApplySkillDamageParams
 local _defaultSkillParams = {
     HitType = "Magic"
 }
@@ -465,6 +472,10 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     fassert(target ~= nil, "Failed to get object for target (%s)", target)
 
     params = params or _defaultSkillParams
+
+    local criticalRoll = params.CriticalRoll or "Roll"
+    ---@type HighGroundFlag
+    local highGroundFlag = params.HighGroundFlag or nil
 
     ---@type EsvStatusHit
     local hit = Ext.PrepareStatus(target.MyGuid, "HIT", 0.0)
@@ -518,7 +529,25 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     local targetPos = target.WorldPos
     local level = source.Stats.Level
 
-    local damageList,deathType = nil,nil
+    local alwaysBackstab = false
+    if skillData.SkillProperties then
+        for _,v in pairs(skillData.SkillProperties) do
+            if v.Action == "AlwaysBackstab" then
+                alwaysBackstab = true
+            elseif v.Action == "AlwaysHighGround" then
+                highGroundFlag = "HighGround"
+            end
+        end
+    end
+
+    if highGroundFlag == nil then
+        highGroundFlag = GameHelpers.Character.GetHighGroundFlag(source, target)
+    end
+
+    ---@type DamageList
+    local damageList = nil
+    ---@type DeathType
+    local deathType = "None"
 
     if params.GetDamageFunction ~= nil then
         local b,result,result2 = xpcall(params.GetDamageFunction, debug.traceback, skillData, source.Stats, false, false, pos, targetPos, level, false, params.MainWeapon, params.OffhandWeapon)
@@ -539,8 +568,22 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     end
 
     if damageList then
+        if skillData.SkillType == "Projectile" and skillData.DivideDamage == "Yes" and skillData.ProjectileCount and skillData.ProjectileCount > 0 then
+            --The engine splits the damage by the ProjectileCount
+            local hitCount = math.min(params.DivideDamageTargets or 1, skillData.ProjectileCount)
+            
+            --Skip doing anything if the damage divider would be 1 anyway
+            if hitCount > 0 and hitCount ~= skillData.ProjectileCount then
+                local damages = GameHelpers.Damage.DivideDamage(damageList, hitCount)
+                --Use the last entry, since it gets the remainder
+                damageList = damages[#damages]
+            end
+        end
         hit.Hit.DamageList:Merge(damageList)
         GameHelpers.Hit.RecalculateLifeSteal(hit.Hit, target.Stats, source.Stats, hitType, true, true)
+        if GameHelpers.Ext.ObjectIsCharacter(target) and GameHelpers.Ext.ObjectIsCharacter(source) then
+            HitOverrides._ComputeCharacterHitFunction(target.Stats, source.Stats, source.Stats.MainWeapon, damageList, hitType, false, false, hit.Hit, alwaysBackstab, highGroundFlag, criticalRoll)
+        end
         for _,damage in pairs(damageList:ToTable()) do
             hit.Hit.TotalDamageDone = hit.Hit.TotalDamageDone + damage.Amount
             hit.Hit.DamageDealt = hit.Hit.DamageDealt + damage.Amount
@@ -653,7 +696,7 @@ end
 ---@param source EsvCharacter
 ---@param target EsvCharacter|EclItem
 ---@param damageEnum DamageEnum|nil
----@param damageType DAMAGE_TYPE|nil
+---@param damageType DamageType|nil
 ---@param damageMultiplier number|nil
 ---@param damageRange number|nil
 ---@return DamageList

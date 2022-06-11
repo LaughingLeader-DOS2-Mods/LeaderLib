@@ -213,7 +213,7 @@ if not _ISCLIENT then
 	---@field Attacker StatCharacter
 	---@field DamageList DamageList
 	---@field PreModifiedDamageList DamageList
-	---@field ResistancePenetration table<DAMAGE_TYPE, integer>
+	---@field ResistancePenetration table<DamageType, integer>
 	
 	---Called from a Game.Math.ApplyDamageCharacterBonuses override. This is where resistance penetration happens.  
 	---🔨**Server-Only**🔨
@@ -225,7 +225,7 @@ if not _ISCLIENT then
 
 	---@class GetHitResistanceBonusEventArgs
 	---@field Target StatCharacter
-	---@field DamageType DAMAGE_TYPE
+	---@field DamageType DamageType
 	---@field ResistancePenetration integer
 	---@field CurrentResistanceAmount integer
 	---@field ResistanceName string

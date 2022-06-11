@@ -19,7 +19,8 @@ end
 local function iterateFromZero(t) return _pairs, t, -1 end
 local function iterateDefault(t) return _pairs, t, 0 end
 
----@alias DAMAGE_TYPE string|'"None"'|'"Physical"'|'"Piercing"'|'"Corrosive"'|'"Magic"'|'"Chaos"'|'"Fire"'|'"Air"'|'"Water"'|'"Earth"'|'"Poison"'|'"Shadow"'
+---@alias DamageType string|'"None"'|'"Physical"'|'"Piercing"'|'"Corrosive"'|'"Magic"'|'"Chaos"'|'"Fire"'|'"Air"'|'"Water"'|'"Earth"'|'"Poison"'|'"Shadow"'
+---@alias DeathType string | "Sulfur" | "FrozenShatter" | "Surrender" | "Lifetime" | "KnockedDown" | "Piercing" | "Physical" | "Sentinel" | "DoT" | "Explode" | "Arrow" | "None" | "Acid" | "PetrifiedShatter" | "Hang" | "Incinerate" | "Electrocution"
 
 local damageTypes = {
 	[0] = "None",

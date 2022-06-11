@@ -21,7 +21,7 @@ end
 
 ---@param target EsvCharacter|EclCharacter|NETID|UUID
 ---@param amount integer
----@param damageType DAMAGE_TYPE
+---@param damageType DamageType
 function Overhead.AddDamage(target, amount, damageType)
 	--public function addOverheadDamage(charID:Number, text:String) : *
 	if not isClient then

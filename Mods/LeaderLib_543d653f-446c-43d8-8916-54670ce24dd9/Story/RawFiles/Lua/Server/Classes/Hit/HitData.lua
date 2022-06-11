@@ -281,7 +281,7 @@ end
 ---@alias HitData.ConvertDamageTypeTo.MathRoundFunction fun(x:number):integer
 
 ---Converts specific damage types to another.
----@param damageType DAMAGE_TYPE|DAMAGE_TYPE[] Damage type(s) to convert.
+---@param damageType DamageType|DamageType[] Damage type(s) to convert.
 ---@param toDamageType string Damage type to convert to.
 ---@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
 ---@param percentage number|nil How much of the damage amount to convert, from 0 to 1.

@@ -535,6 +535,7 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
             if v.Action == "AlwaysBackstab" then
                 alwaysBackstab = true
             elseif v.Action == "AlwaysHighGround" then
+                --Supersedes any MARKED behavior
                 highGroundFlag = "HighGround"
             end
         end

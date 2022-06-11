@@ -168,10 +168,10 @@ if Ext.IsServer() then
     end)
 end
 
----Get the distance between two Vector3 points.
----@param pos1 number[]|string
----@param pos2 number[]|string
----@return number
+---Get the distance between two Vector3 points, or objects.
+---@param pos1 number[]|ObjectParam First position array, or an object with a WorldPos.
+---@param pos2 number[]|ObjectParam Second position array, or an object with a WorldPos.
+---@return number distance
 function GameHelpers.Math.GetDistance(pos1, pos2)
     local x,y,z = GameHelpers.Math.GetPosition(pos1, true)
     local tx,ty,tz = GameHelpers.Math.GetPosition(pos2, true)

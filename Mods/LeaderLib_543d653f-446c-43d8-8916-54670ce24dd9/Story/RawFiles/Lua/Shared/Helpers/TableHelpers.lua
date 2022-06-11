@@ -192,18 +192,18 @@ end
 ---@param deep boolean|nil If true, and table entry is a table, keep checking for the provided values.
 ---@return boolean
 function TableHelpers.HasValue(tbl, value, deep)
-	if type(tbl) ~= nil then
+	if type(tbl) ~= "table" then
 		return false
 	end
 	local t = type(value)
 	if t == "table" then
-		for k,v in pairs(value) do
-			if TableHelpers.HasValue(table, v, deep) then
+		for _,v in pairs(value) do
+			if TableHelpers.HasValue(tbl, v, deep) then
 				return true
 			end
 		end
 	else
-		for k,v in pairs(tbl) do
+		for _,v in pairs(tbl) do
 			if v == value then
 				return true
 			end

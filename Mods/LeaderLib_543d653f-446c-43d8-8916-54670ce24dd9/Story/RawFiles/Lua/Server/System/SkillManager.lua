@@ -310,7 +310,7 @@ RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "aft
 	uuid = StringHelpers.GetUUID(uuid)
 	learned = learned == 1 and true or false
 	if (_enabledSkills[skill] or _enabledSkills.All) then
-		local character = GameHelpers.GetCharacter(character)
+		local character = GameHelpers.GetCharacter(uuid)
 		Events.OnSkillState:Invoke({
 			Character = character,
 			Skill = skill,

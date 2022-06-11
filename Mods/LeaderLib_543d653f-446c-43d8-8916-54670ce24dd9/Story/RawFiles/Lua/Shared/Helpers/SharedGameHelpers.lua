@@ -701,3 +701,52 @@ function GameHelpers.ParseResistancePenetrationTag(tag)
 		end
 	end
 end
+
+--local amt = 3; local dl = Ext.NewDamageList(); dl:Add("Fire", 4); dl:Add("Water", 3); local ndl = Mods.LeaderLib.GameHelpers.Damage.DivideDamage(dl, amt); local pdl = {}; for _,v in pairs(ndl) do table.insert(pdl, v:ToTable()) end; Ext.Dump(pdl)
+
+---@param damageList DamageList
+---@param divider integer
+---@return DamageList[] damages
+function GameHelpers.Damage.DivideDamage(damageList, divider)
+	damageList:AggregateSameTypeDamages()
+    local damages = damageList:ToTable()
+	local damagePerType = {}
+	local totalDamagePerType = {}
+	local totalDamage = 0
+    for _,v in pairs(damages) do
+		totalDamage = totalDamage + v.Amount
+		if not totalDamagePerType[v.DamageType] then
+			totalDamagePerType[v.DamageType] = 0
+		end
+        totalDamagePerType[v.DamageType] = totalDamagePerType[v.DamageType] + v.Amount 
+		damagePerType[v.DamageType] = math.floor(v.Amount / divider)
+    end
+    if totalDamage > 0 then
+		local newDamages = {}
+        local remainingDamage = totalDamage
+        for i=1,divider do
+            if remainingDamage > 0 then
+				local newDamageList = Ext.NewDamageList()
+				for damageType,amount in pairs(damagePerType) do
+					local addDamage = math.min(totalDamagePerType[damageType], amount)
+					if addDamage > 0 then
+						totalDamagePerType[damageType] = totalDamagePerType[damageType] - addDamage
+						remainingDamage = remainingDamage - addDamage
+						newDamageList:Add(damageType, addDamage)
+					end
+				end
+				if remainingDamage > 0 and i == divider then
+					for damageType,amount in pairs(totalDamagePerType) do
+						if amount > 0 then
+							newDamageList:Add(damageType, amount)
+						end
+					end
+				end
+				newDamages[#newDamages+1] = newDamageList
+            end
+        end
+        return newDamages
+    else
+        return {damageList}
+    end
+end

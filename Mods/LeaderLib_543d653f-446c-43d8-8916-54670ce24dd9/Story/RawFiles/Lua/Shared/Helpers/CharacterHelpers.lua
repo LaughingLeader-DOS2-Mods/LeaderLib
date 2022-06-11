@@ -832,3 +832,23 @@ function GameHelpers.Character.IsFemale(character)
 	end
 	return false
 end
+
+---Similar to GameHelpers.Math.GetHighGroundFlag, but takes into account whether the attacker or target has the MARKED status.
+---@param attacker CharacterParam
+---@param target CharacterParam
+---@return HighGroundFlag
+function GameHelpers.Character.GetHighGroundFlag(attacker, target)
+	local attacker = GameHelpers.GetCharacter(attacker)
+	local target = GameHelpers.GetCharacter(target)
+	assert(attacker ~= nil, "attacker parameter must be a character UUID, NetID, or Esv/EclCharacter")
+	assert(target ~= nil, "target parameter must be a character UUID, NetID, or Esv/EclCharacter")
+	local highGroundFlag = GameHelpers.Math.GetHighGroundFlag(attacker.WorldPos, target.WorldPos)
+	--MARKED mechanics
+    --Character no longer receives high ground bonuses. When attacked from lower ground, attackers receive no penalties.
+	if highGroundFlag == "LowGround" and target:GetStatus("MARKED") then
+        highGroundFlag = "EvenGround"
+    elseif highGroundFlag == "HighGround" and attacker:GetStatus("MARKED") then
+        highGroundFlag = "EvenGround"
+    end
+	return highGroundFlag
+end

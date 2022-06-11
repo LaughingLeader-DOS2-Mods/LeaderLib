@@ -426,3 +426,50 @@ function GameHelpers.Math.GetPositionWithAngle(startPos, angle, distanceMult, un
         return {tx,ty,tz}
     end
 end
+
+---@param sourcePos number[]|ObjectParam
+---@param targetPos number[]|ObjectParam
+---@return HighGroundFlag
+function GameHelpers.Math.GetHighGroundFlag(sourcePos, targetPos)
+    local sourcePos = GameHelpers.Math.GetPosition(sourcePos)
+    local targetPos = GameHelpers.Math.GetPosition(targetPos)
+    if not sourcePos or not targetPos then
+        return "EvenGround"
+    end
+    local heightDiff = sourcePos[2] - targetPos[2]
+    local threshold = GameHelpers.GetExtraData("HighGroundThreshold", 2.4)
+    print(heightDiff, threshold)
+    if heightDiff < threshold then
+        if -threshold >= heightDiff then
+            return "LowGround"
+        end
+    else
+        return "HighGround"
+    end
+    return "EvenGround"
+end
+
+---@param chance integer The roll must be below or equal to this number.
+---@param bonusRolls integer|nil How many times to roll if the first roll is unsuccessful. Defaults to 0.
+---@param minValue integer|nil Minimum value for the random range. Defaults to 1.
+---@param maxValue integer|nil Maximum value for the random range. Defaults to 100.
+---@return boolean success
+function Game.Math.Roll(chance, bonusRolls, minValue, maxValue)
+    minValue = minValue or 1
+    maxValue = maxValue or 100
+    if chance <= minValue then
+        return false
+    end
+    if chance == maxValue then
+        return true
+    end
+    bonusRolls = bonusRolls or 0
+    bonusRolls = bonusRolls + 1
+    for i=bonusRolls,0,-1 do
+        local roll = Ext.Random(minValue, maxValue)
+        if roll <= chance then
+            return true
+        end
+    end
+    return false
+end

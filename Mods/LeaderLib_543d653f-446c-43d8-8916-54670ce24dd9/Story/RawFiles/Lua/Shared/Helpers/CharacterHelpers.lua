@@ -642,16 +642,19 @@ function GameHelpers.Character.EquipItem(character, item)
 					ItemLockUnEquip(offhand.MyGuid, 0)
 					ItemToInventory(offhand.MyGuid, uuid, 1, 0, 0)
 				end
+				SetOnStage(item.MyGuid, 1)
 				NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
 				return true
 			else
 				if mainhand then
 					if not offhand then
+						SetOnStage(item.MyGuid, 1)
 						NRD_CharacterEquipItem(uuid, item.MyGuid, "Shield", 0, 0, 1, 1)
 						return true
 					else
 						ItemLockUnEquip(mainhand.MyGuid, 0)
 						ItemToInventory(mainhand.MyGuid, uuid, 1, 0, 0)
+						SetOnStage(item.MyGuid, 1)
 						NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
 						return true
 					end
@@ -666,6 +669,7 @@ function GameHelpers.Character.EquipItem(character, item)
 				ItemLockUnEquip(offhand.MyGuid, 0)
 				ItemToInventory(offhand.MyGuid, uuid, 1, 0, 0)
 			end
+			SetOnStage(item.MyGuid, 1)
 			NRD_CharacterEquipItem(uuid, item.MyGuid, "Shield", 0, 0, 1, 1)
 			return true
 		else
@@ -674,6 +678,7 @@ function GameHelpers.Character.EquipItem(character, item)
 				ItemLockUnEquip(existing.MyGuid, 0)
 				ItemToInventory(existing.MyGuid, uuid, 1, 0, 0)
 			end
+			SetOnStage(item.MyGuid, 1)
 			NRD_CharacterEquipItem(uuid, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
 			return true
 		end

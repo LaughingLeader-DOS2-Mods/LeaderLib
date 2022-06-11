@@ -243,6 +243,7 @@ function CharacterData:EquipTemplate(template, all)
 		for item in GameHelpers.Character.GetEquipment(character) do
 			if item.RootTemplate and item.RootTemplate.Id == template then
 				if ItemIsEquipable(item.MyGuid) == 1 then
+					SetOnStage(item.MyGuid, 1)
 					NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
 					--CharacterEquipItem(self.UUID, v)
 					if all ~= true then
@@ -261,7 +262,7 @@ function CharacterData:EquipTemplate(template, all)
 		if item then
 			ItemToInventory(item.MyGuid, self.UUID, 1, 0, 0)
 			if ItemIsEquipable(item.MyGuid) == 1 then
-				--CharacterEquipItem(self.UUID, item.MyGuid)
+				SetOnStage(item.MyGuid, 1)
 				NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
 			end
 			return item

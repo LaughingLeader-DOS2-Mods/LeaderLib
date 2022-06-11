@@ -484,9 +484,10 @@ if not _ISCLIENT then
     function GameHelpers.Item.EquipInSlot(character, item, slot)
         if Ext.OsirisIsCallable() then
             local char = GameHelpers.GetUUID(character)
-            local itemUUID = GameHelpers.GetUUID(item)
-            if ObjectExists(itemUUID) == 1 and ObjectExists(char) == 1 then
-                NRD_CharacterEquipItem(char, itemUUID, slot, 0, 0, 1, 1)
+            local itemGUID = GameHelpers.GetUUID(item)
+            if ObjectExists(itemGUID) == 1 and ObjectExists(char) == 1 then
+                SetOnStage(itemGUID, 1)
+                NRD_CharacterEquipItem(char, itemGUID, slot, 0, 0, 1, 1)
                 return true
             end
         else
@@ -525,15 +526,19 @@ if not _ISCLIENT then
     ---[Server]
     ---@param character EsvCharacter|UUID|NETID
     ---@param slot ItemSlot
-    ---@param delete boolean Whether to destroy the item or simply unequip it.
+    ---@param delete boolean|nil Whether to destroy the item or simply unequip it.
+    ---@param bypassLock boolean|nil Forcefully unequiped items that are locked via ItemLockUnEquip.
     ---@return boolean
-    function GameHelpers.Item.UnequipItemInSlot(character, slot, delete)
+    function GameHelpers.Item.UnequipItemInSlot(character, slot, delete, bypassLock)
         character = GameHelpers.GetCharacter(character)
         local item = GameHelpers.Item.GetItemInSlot(character, slot)
         if item ~= nil then
-            CharacterUnequipItem(character.MyGuid, item.MyGuid)
-            if delete == true and not item.Global then
-                ItemRemove(item.MyGuid)
+            if bypassLock == true or not GameHelpers.Item.ItemIsLocked(item) then
+                ItemLockUnEquip(item.MyGuid, 0)
+                CharacterUnequipItem(character.MyGuid, item.MyGuid)
+                if delete == true and not item.Global then
+                    ItemRemove(item.MyGuid)
+                end
             end
         end
     end

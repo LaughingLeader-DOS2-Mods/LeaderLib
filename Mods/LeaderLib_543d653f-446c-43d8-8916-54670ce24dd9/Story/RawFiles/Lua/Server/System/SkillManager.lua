@@ -301,6 +301,7 @@ RegisterProtectedExtenderListener("ShootProjectile", function (projectile)
 				Data = projectile,
 				DataType = "EsvProjectile"
 			})
+			
 			InvokeListenerCallbacks(Listeners.OnSkillHit, object.MyGuid, skill, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile")
 		end
 	end

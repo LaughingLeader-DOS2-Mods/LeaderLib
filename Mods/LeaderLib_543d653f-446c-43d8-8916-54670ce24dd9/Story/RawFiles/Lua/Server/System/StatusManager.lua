@@ -58,8 +58,10 @@ function StatusManager.Register.BeforeAttempt(status, callback, ...)
 			local b,result = xpcall(callback, debug.traceback, target, status, source, statusType, Vars.StatusEvent.BeforeAttempt, table.unpack(params))
 			if not b then
 				error(result, 2)
-			elseif result then
+			elseif result == false then
 				NRD_StatusPreventApply(target.MyGuid, handle, 1)
+			elseif result == true then
+				NRD_StatusPreventApply(target.MyGuid, handle, 0)
 			end
 		end
 		RegisterStatusListener(Vars.StatusEvent.BeforeAttempt, status, callbackWrapper)

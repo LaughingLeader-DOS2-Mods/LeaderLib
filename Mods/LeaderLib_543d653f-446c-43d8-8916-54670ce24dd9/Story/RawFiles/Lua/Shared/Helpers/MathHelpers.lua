@@ -454,7 +454,7 @@ end
 ---@param minValue integer|nil Minimum value for the random range. Defaults to 1.
 ---@param maxValue integer|nil Maximum value for the random range. Defaults to 100.
 ---@return boolean success
-function Game.Math.Roll(chance, bonusRolls, minValue, maxValue)
+function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)
     minValue = minValue or 1
     maxValue = maxValue or 100
     if chance <= minValue then

@@ -114,9 +114,8 @@ if not isClient then
 		if target ~= nil then
 			local targetObject = e.Data.Object
 			local targetData = PersistentVars.ForceMoveData[target]
-			if targetData ~= nil then
-				local x,y,z = table.unpack(targetData.Position)
-				if GetDistanceToPosition(target, x,y,z) <= 1 then
+			if targetData ~= nil and targetData.Position then
+				if GameHelpers.Math.GetDistance(target, targetData.Position) <= 1 then
 					pcall(NRD_GameActionDestroy,targetData.Handle)
 					PersistentVars.ForceMoveData[target] = nil
 					local source = targetData.Source

@@ -420,3 +420,61 @@ function GameHelpers.Status.HasStatusType(object, statusType)
 	end
     return false
 end
+
+---@param status string
+---@param checkForLoseControl boolean
+---@return boolean isDisabling
+---@return boolean isLoseControl
+function GameHelpers.Status.IsDisablingStatus(status, checkForLoseControl)
+	local statusType = GameHelpers.Status.GetStatusType(status)
+	if statusType == "KNOCKED_DOWN" or statusType == "INCAPACITATED" then
+		return true,false
+	end
+	if checkForLoseControl == true then
+		if status == "CHARMED" then
+			return true,true
+		end
+		if not Data.EngineStatus[status] then
+			local stat = Ext.GetStat(status)
+			if stat and stat.LoseControl == "Yes" then
+				return true,true
+			end
+		end
+	end
+	return false,false
+end
+
+---Returns true if the object is affected by a "LoseControl" status.
+---@param character EsvCharacter|string
+---@param onlyFromEnemy boolean|nil Only return true if the source of a status is from an enemy.
+---@return boolean
+function GameHelpers.Status.CharacterLostControl(character, onlyFromEnemy)
+	if type(character) == "string" then
+		character = Ext.GetCharacter(character)
+	end
+	if character == nil then
+		return false
+	end
+	for i,status in pairs(character:GetStatusObjects()) do
+		if status.StatusId == "CHARMED" then
+			if onlyFromEnemy ~= true then
+				return true
+			else
+				return GameHelpers.Status.IsFromEnemy(status, character)
+			end
+		end
+		if Data.EngineStatus[status.StatusId] ~= true then
+			local stat = Ext.GetStat(status.StatusId)
+			if stat and stat.LoseControl == "Yes" then
+				if onlyFromEnemy ~= true then
+					return true
+				else
+					if GameHelpers.Status.IsFromEnemy(status, character) then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
+end

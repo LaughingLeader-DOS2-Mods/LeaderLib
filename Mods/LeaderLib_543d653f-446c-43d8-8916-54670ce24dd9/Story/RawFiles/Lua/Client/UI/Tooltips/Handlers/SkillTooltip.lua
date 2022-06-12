@@ -123,33 +123,63 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 		end
 	end
 
-	if Features.FixRifleWeaponRequirement and Data.ActionSkills[skill] ~= true then
-		local requirement = Ext.StatGetAttribute(skill, "Requirement")
-		if requirement == "RifleWeapon" then
-			local skillRequirements = tooltip:GetElements("SkillRequiredEquipment")
-			local addRifleText = true
-			if skillRequirements ~= nil and #skillRequirements > 0 then
-				for i,element in pairs(skillRequirements) do
-					if string.find(element.Label, LocalizedText.SkillTooltip.RifleWeapon.Value) then
-						addRifleText = false
-						break
+	if Data.ActionSkills[skill] ~= true then
+		if Features.FixRifleWeaponRequirement then
+			local requirement = Ext.StatGetAttribute(skill, "Requirement")
+			if requirement == "RifleWeapon" then
+				local skillRequirements = tooltip:GetElements("SkillRequiredEquipment")
+				local addRifleText = true
+				if skillRequirements ~= nil and #skillRequirements > 0 then
+					for i,element in pairs(skillRequirements) do
+						if string.find(element.Label, LocalizedText.SkillTooltip.RifleWeapon.Value) then
+							addRifleText = false
+							break
+						end
 					end
 				end
+				if addRifleText then
+					local hasRequirement = character.Stats.MainWeapon ~= nil and character.Stats.MainWeapon.WeaponType == "Rifle"
+					local text = LocalizedText.SkillTooltip.SkillRequiredEquipment:ReplacePlaceholders(LocalizedText.SkillTooltip.RifleWeapon.Value)
+					tooltip:AppendElement({
+						Type="SkillRequiredEquipment",
+						RequirementMet = hasRequirement,
+						Label = text
+					})
+				end
 			end
-			if addRifleText then
-				local hasRequirement = character.Stats.MainWeapon ~= nil and character.Stats.MainWeapon.WeaponType == "Rifle"
-				local text = LocalizedText.SkillTooltip.SkillRequiredEquipment:ReplacePlaceholders(LocalizedText.SkillTooltip.RifleWeapon.Value)
-				tooltip:AppendElement({
-					Type="SkillRequiredEquipment",
-					RequirementMet = hasRequirement,
-					Label = text
-				})
+		end
+
+		if Features.FixFarOutManSkillRangeTooltip 
+		and (character ~= nil and character.Stats ~= nil
+		and character.Stats.TALENT_FaroutDude == true) then
+			local skillType = Ext.StatGetAttribute(skill, "SkillType")
+			local rangeAttribute = FarOutManFixSkillTypes[skillType]
+			if rangeAttribute ~= nil then
+				local element = tooltip:GetElement("SkillRange")
+				if element ~= nil then
+					local range = Ext.StatGetAttribute(skill, rangeAttribute)
+					element.Value = tostring(range).."m"
+				end
+			end
+		end
+
+		if not Vars.ControllerEnabled then
+			if skill == "Shout_LeaderLib_ChainAll" or skill == "Shout_LeaderLib_UnchainAll" then
+				tooltip:MarkDirty()
+				if tooltip:IsExpanded() then
+					local desc = tooltip:GetDescriptionElement()
+					if desc then
+						desc.Label = string.format("%s<br>%s", desc.Label, LocalizedText.SkillTooltip.LeaderLibToggleGrouping.Value)
+					end
+				end
 			end
 		end
 	end
 
 	for i,element in pairs(tooltip:GetElements("SkillDescription")) do
-		FixDamageNames(skill, element)
+		if Data.ActionSkills[skill] ~= true then
+			FixDamageNames(skill, element)
+		end
 		if Features.TooltipGrammarHelper == true then
 			element.Label = string.gsub(element.Label, "a 8", "an 8")
 			local startPos,endPos = string.find(element.Label , "a <font.->8")
@@ -160,32 +190,6 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 		end
 		if Features.ReplaceTooltipPlaceholders == true then
 			element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
-		end
-	end
-
-	if Data.ActionSkills[skill] ~= true
-	and Features.FixFarOutManSkillRangeTooltip 
-	and (character ~= nil and character.Stats ~= nil and character.Stats.TALENT_FaroutDude == true) then
-		local skillType = Ext.StatGetAttribute(skill, "SkillType")
-		local rangeAttribute = FarOutManFixSkillTypes[skillType]
-		if rangeAttribute ~= nil then
-			local element = tooltip:GetElement("SkillRange")
-			if element ~= nil then
-				local range = Ext.StatGetAttribute(skill, rangeAttribute)
-				element.Value = tostring(range).."m"
-			end
-		end
-	end
-
-	if not Vars.ControllerEnabled then
-		if skill == "Shout_LeaderLib_ChainAll" or skill == "Shout_LeaderLib_UnchainAll" then
-			tooltip:MarkDirty()
-			if tooltip:IsExpanded() then
-				local desc = tooltip:GetDescriptionElement()
-				if desc then
-					desc.Label = string.format("%s<br>%s", desc.Label, LocalizedText.SkillTooltip.LeaderLibToggleGrouping.Value)
-				end
-			end
 		end
 	end
 end

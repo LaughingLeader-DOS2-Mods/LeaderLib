@@ -651,6 +651,7 @@ Ext.RegisterConsoleCommand("clonedeltamodtest", function(command, amount)
 	properties.DeltaMods = deltamods
 	properties.RootTemplate = "3dd01bc4-65e7-4468-9854-b19bc980b3f8"
 	properties.OriginalRootTemplate = "3dd01bc4-65e7-4468-9854-b19bc980b3f8"
+	properties.StatsEntryName = "WPN_Sword_1H"
 	properties.GenerationStatsId = "WPN_Sword_1H"
 	properties.StatsLevel = 10
 	properties.GenerationLevel = 10

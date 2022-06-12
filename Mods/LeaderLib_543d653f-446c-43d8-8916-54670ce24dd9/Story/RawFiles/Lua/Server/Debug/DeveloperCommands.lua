@@ -1312,6 +1312,13 @@ local function AddItemStat(stat, params)
 			params.Rarity = nil
 		end
 	end
+	if GameHelpers.Stats.Exists(stat) then
+		local statObj = Ext.GetStat(stat)
+		if statObj.Unique == 1 then
+			params.HasGeneratedStats = nil
+			params.ItemType = "Unique"
+		end
+	end
 	if params.StatsLevel == nil then
 		params.StatsLevel = CharacterGetLevel(CharacterGetHostCharacter())
 	end

@@ -270,6 +270,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
 
         props.RootTemplate = rootTemplate
         props.OriginalRootTemplate = rootTemplate
+        props.StatsEntryName = stat.Name
         props.GenerationStatsId = stat.Name
         props.HasGeneratedStats = hasGeneratedStats
         props.StatsLevel = level
@@ -366,6 +367,7 @@ function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
         local stats = GameHelpers.Item.GetStatsForRootTemplate(item)
         if stats and #stats > 0 then
             props.GenerationStatsId = stats[1]
+            props.StatsEntryName = stats[1]
         end
     elseif item.StatsId then
         if item.RootTemplate then
@@ -378,6 +380,7 @@ function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
                 props.OriginalRootTemplate = templates[1]
             end
         end
+        props.StatsEntryName = item.StatsId
         props.GenerationStatsId = item.StatsId
     end
     --props:ResetProgression(props)

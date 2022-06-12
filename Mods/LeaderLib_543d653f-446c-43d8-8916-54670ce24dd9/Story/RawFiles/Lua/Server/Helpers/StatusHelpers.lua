@@ -201,6 +201,12 @@ local function FinallyApplyStatus(target, status, duration, force, source, prope
 	if source == nil then
 		source = StringHelpers.NULL_UUID
 	end
+	local isInstantEffect = false
+	if duration == 0 and GameHelpers.Status.GetStatusType(status) == "EFFECT" then
+		--EFFECT types need a duration for attributes like BeamEffect to work
+		duration = 0.1
+		isInstantEffect = true
+	end
 	local statusObject = Ext.PrepareStatus(target, status, duration)
 	if not statusObject then
 		fprint(LOGLEVEL.ERROR, "[LeaderLib:FinallyApplyStatus] Failed to create status (%s). Does the stat exist?", status)
@@ -242,6 +248,10 @@ local function FinallyApplyStatus(target, status, duration, force, source, prope
 			statusObject[k] = v
 		end
 	end
+	-- if isInstantEffect then
+	-- 	statusObject.StartTimer = 0
+	-- 	statusObject.TurnTimer = 0
+	-- end
 	Ext.ApplyStatus(statusObject)
 end
 
@@ -293,7 +303,7 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 			end
 		else
 			radius = radius or 1.0
-			local statusType = GetStatusType(status)
+			local statusType = GameHelpers.Status.GetStatusType(status)
 			local x,y,z = table.unpack(target)
 			if not x or not y or not z then
 				error(string.format("No valid position set (%s). Failed to apply status (%s)", Lib.inspect(target), status), 2)

@@ -84,12 +84,9 @@ end
 
 ---@param target number[]
 ---@param effect string
----@param handle integer
+---@param handle integer|ObjectHandle
 ---@param params EffectManagerEsvEffectParams|nil
 function _INTERNAL.SaveWorldEffectData(target, effect, handle, params)
-	if type(handle) ~= "number" then
-		return
-	end
 	local region = SharedData.RegionData.Current
 
 	if PersistentVars.WorldLoopEffects[region] == nil then
@@ -99,7 +96,8 @@ function _INTERNAL.SaveWorldEffectData(target, effect, handle, params)
 	local data = {
 		Effect = effect,
 		Position = target,
-		Handle = handle
+		--TODO Save handle somehow
+		--Handle = handle
 	}
 	if params then
 		data.Params = params
@@ -160,8 +158,9 @@ function _INTERNAL.PlayEffect(fx, object, params)
 			---@type EffectManagerEsvEffect
 			local b,effect = xpcall(Ext.Effect.CreateEffect, debug.traceback, fx, object.Handle, params.Bone or "")
 			if b and effect then
-				Ext.IO.SaveFile("Dumps/Effect.json", Ext.DumpExport(effect))
-				handle = Ext.HandleToDouble(effect.Component.Handle)
+				--TODO Ext.HandleToDouble is client-side
+				--handle = Ext.HandleToDouble(effect.Component.Handle)
+				handle = effect.Component.Handle
 				---@diagnostic enable
 				for k,v in pairs(params) do
 					if ObjectHandleEffectParams[k] then
@@ -248,7 +247,7 @@ function _INTERNAL.PlayEffectAt(fx, pos, params)
 						end
 					end
 					if params.Loop then
-						handle = Ext.HandleToDouble(effect.Component.Handle)
+						handle = effect.Component.Handle
 					end
 				end
 				return CreateEffectResult(effect, handle, effect.EffectName, {x,y,z})
@@ -331,18 +330,33 @@ function EffectManager.PlayEffectAt(fx, pos, params)
 	return result
 end
 
----@param handle integer
+---Play a client-side effect, which has support for weapon bones, and parsing an effect string like in skills/statuses.
+---@param fx string|string[] The effect string or name.
+---@param target ObjectParam|number[]
+---@param params EffectManagerEsvEffectParams|nil
+---@param client CharacterParam|integer|nil A specific client to play the effect for. Leave nil to broadcast it to all clients.
+---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]
+function EffectManager.PlayClientEffect(fx, target, params, client)
+	if not client then
+		GameHelpers.Net.Broadcast("LeaderLib_EffectManager_PlayClientEffect", {Target = target, FX = fx, Params = params})
+	else
+		GameHelpers.Net.PostToUser(client, "LeaderLib_EffectManager_PlayClientEffect", {Target = target, FX = fx, Params = params})
+	end
+end
+
+---@param handle integer|ObjectHandle
 function _INTERNAL.StopEffect(handle)
 	local t = type(handle)
 	if t == "number" then
-		if _EXTVERSION >= 56 then
-			handle = Ext.DoubleToHandle(handle)
-			if handle then
-				t = "userdata"
-			end
-		elseif Ext.OsirisIsCallable() then
+		if Ext.OsirisIsCallable() then
 			StopLoopEffect(handle)
 			return true
+		elseif _EXTVERSION >= 56 then
+			--TODO Need some way to convert handles
+			-- handle = Ext.DoubleToHandle(handle)
+			-- if handle then
+			-- 	t = "userdata"
+			-- end
 		end
 	end
 	if t == "userdata" then
@@ -372,42 +386,6 @@ function EffectManager.StopLoopEffectByHandle(handle)
 			end
 		end
 	end
-end
-
----@class EffectManagerStopEffectOptions:table
----@field Target LeaderLibEffectManagerTarget An object or position to filter the search.
----@field All boolean Stops all effects with this name.
-
----@return EffectManagerStopEffectOptions
-local function PrepareOptions(tbl)
-	local opts = {
-		IsOptionTable = true
-	}
-	if type(tbl) == "table" then
-		if tbl.IsOptionTable then
-			return tbl
-		end
-		for k,v in pairs(tbl) do
-			if type(k) == "string" then
-				if k == "all" then
-					opts.All = v
-				elseif k == "target" then
-					opts.Target = v
-				else
-					opts[k] = v
-				end
-			else
-				opts[k] = v
-			end
-		end
-	elseif type(tbl) == "userdata" then
-		setmetatable(opts, {
-			__index = function(_,k)
-				return tbl[k]
-			end
-		})
-	end
-	return opts
 end
 
 local function _TargetsMatch(effect, uuid, uuidType)
@@ -559,11 +537,22 @@ function EffectManager.StopEffectsByNameForPosition(effect, target, distanceThre
 	return success
 end
 
+local function InvalidateLoopEffects(region)
+	local worldEffects = PersistentVars.WorldLoopEffects[region]
+	if worldEffects then
+		for i,v in pairs(worldEffects) do
+			v.Handle = nil
+		end
+	end
+end
+
 function EffectManager.RestoreEffects(region)
 	local worldEffects = PersistentVars.WorldLoopEffects[region]
 	if worldEffects then
 		for i,v in pairs(worldEffects) do
-			StopLoopEffect(v.Handle)
+			if v.Handle and v.Handle ~= -1 then
+				StopLoopEffect(v.Handle)
+			end
 			if v.Params then
 				EffectManager.PlayEffectAt(v.Effect, v.Position, v.Params)
 			else
@@ -600,7 +589,9 @@ function EffectManager.DeleteLoopEffects(region)
 end
 
 Events.RegionChanged:Subscribe(function (e)
-	if e.State == REGIONSTATE.GAME then
+	if e.State == REGIONSTATE.STARTED then
+		InvalidateLoopEffects(e.Region)
+	elseif e.State == REGIONSTATE.GAME then
 		EffectManager.RestoreEffects(e.Region)
 	elseif e.State == REGIONSTATE.ENDED then
 		EffectManager.DeleteLoopEffects(e.Region)

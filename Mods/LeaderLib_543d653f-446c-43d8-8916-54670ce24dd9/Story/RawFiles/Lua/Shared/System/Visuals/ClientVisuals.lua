@@ -190,3 +190,59 @@ Ext.RegisterConsoleCommand("lltestvisual", function ()
 		Translate = {-100,-100,-100},
 	})
 end)
+
+function VisualManager.CreateClientEffect(fx, target, params)
+	params = params or {}
+	local ft = type(fx)
+	if ft == "string" then
+		local t = type(target)
+		---@type EclLuaVisualClientMultiVisual
+		local handler = nil
+		if t == "table" then
+			if type(target[1]) == "number" then
+				--Position
+				handler = Ext.Visual.Create(target)
+			end
+		elseif t == "number" then
+			--NetID
+			local object = GameHelpers.TryGetObject(target)
+			if object then
+				local otherTarget = nil
+				if params.Target then
+					otherTarget = GameHelpers.TryGetObject(params.Target)
+				end
+				if not otherTarget then
+					otherTarget = object
+				end
+				if GameHelpers.Ext.ObjectIsCharacter(object) then
+					handler = Ext.Visual.CreateOnCharacter(object.WorldPos, object, otherTarget)
+				elseif GameHelpers.Ext.ObjectIsItem(object) then
+					handler = Ext.Visual.CreateOnItem(object.WorldPos, object, otherTarget)
+				end
+			end
+		end
+		if handler then
+			handler:ParseFromStats(fx, params.WeaponBones or nil)
+			GameHelpers.IO.SaveFile("Dumps/ClientMultiVisual.json", Ext.DumpExport(handler))
+			-- for i,v in pairs(handler.Effects) do
+			-- 	local effect = Ext.Visual.Get(v)
+			-- 	print(effect, v)
+			-- end
+			-- GameHelpers.IO.SaveFile("Dumps/ClientMultiVisual_Effect.json", Ext.DumpExport(Ext.Types.GetObjectType(handler.Effects)))
+			-- for _,v in pairs(handler.Effects) do
+			-- 	v.
+			-- end
+		end
+	elseif ft == "table" then
+		for _,v in pairs(fx) do
+			VisualManager.CreateClientEffect(v, target, params)
+		end
+	end
+end
+
+Ext.RegisterNetListener("LeaderLib_EffectManager_PlayClientEffect", function (cmd, payload)
+	local data = Common.JsonParse(payload)
+	if data then
+		VisualManager.CreateClientEffect(data.FX, data.Target, data.Params)
+	end
+end)

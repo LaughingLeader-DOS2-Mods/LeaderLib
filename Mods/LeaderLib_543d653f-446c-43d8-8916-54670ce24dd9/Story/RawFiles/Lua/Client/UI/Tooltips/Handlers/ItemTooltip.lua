@@ -39,6 +39,8 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					if _EXTVERSION >= 56 then
 						---Invokes skill tooltip listeners if the item has skill elements
 						for skill,b in pairs(GameHelpers.Item.GetUseActionSkills(item, true)) do
+							tooltip.IsFromItem = true
+							tooltip.ItemHasSkill = true
 							--TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 							Game.Tooltip.TooltipHooks:NotifyAll(Game.Tooltip.TooltipHooks.TypeListeners.Skill, character, skill, tooltip)
 							if Game.Tooltip.TooltipHooks.ObjectListeners.Skill ~= nil then

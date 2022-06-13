@@ -212,9 +212,10 @@ local function CreateDeprecatedWrapper(callback)
 			if type(e.Data.Params) == "table" then
 				callback(e.ID, uuid, table.unpack(e.Data.Params))
 			else
-				e.Data.Object = nil
-				e.Data.UUID = nil
-				callback(e.ID, uuid, table.unpack(e.Data))
+				local params = TableHelpers.Clone(e.Data)
+				params.Object = nil
+				params.UUID = nil
+				callback(e.ID, uuid, table.unpack(params))
 			end
 		else
 			if e.Data.Params then
@@ -226,6 +227,8 @@ local function CreateDeprecatedWrapper(callback)
 	end
 	return wrapper
 end
+
+Timer._Internal.CreateDeprecatedWrapper = CreateDeprecatedWrapper
 
 ---Supports a variable amount of parameters passed to Timer.Start. Object timers will pass the object UUID as the second paramter.
 ---@alias DeprecatedTimerCallback fun(timerName:string, ...)
@@ -257,13 +260,21 @@ local function OnTimerFinished(timerName)
 		Timer.TimerNameMap[timerName] = nil
 	end
 
+
 	if type(data) == "table" then
 		for i=1,#data do
 			local entry = data[i]
 			local timerData = Lib.smallfolk.loads(entry)
 			if timerData then
 				if timerData.UUID then
-					timerData.Object = GameHelpers.TryGetObject(timerData.UUID)
+					local uuid = timerData.UUID
+					setmetatable(timerData, {
+						__index = function (_, k)
+							if k == "Object" then
+								return GameHelpers.TryGetObject(uuid)
+							end
+						end
+					})
 				end
 				Events.TimerFinished:Invoke({ID=timerName, Data=timerData})
 			else
@@ -273,9 +284,16 @@ local function OnTimerFinished(timerName)
 	else
 		if StringHelpers.IsUUID(data) then
 			local timerData = {
-				UUID = data,
-				Object = GameHelpers.TryGetObject(data)
+				UUID = data
 			}
+			local uuid = timerData.UUID
+			setmetatable(timerData, {
+				__index = function (_, k)
+					if k == "Object" then
+						return GameHelpers.TryGetObject(uuid)
+					end
+				end
+			})
 			Events.TimerFinished:Invoke({ID=timerName, Data=timerData})
 		else
 			Events.TimerFinished:Invoke({ID=timerName, Data={data}})

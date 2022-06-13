@@ -5,6 +5,8 @@ local Patches = {
 	["c60718c3-ba22-4702-9c5d-5ad92b41ba5f"] = {
 		Version = 153288706,
 		Patch = function (initialized)
+			Ext.PrintWarning("[LeaderLib] Patching Weapon Expansion version [153288706]")
+
 			--Fix Patches an event name conflict that prevented Soul Harvest's bonus from applying.
 			Ext.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript")
 			
@@ -44,6 +46,71 @@ local Patches = {
 				end)
 			else
 				--Mods.WeaponExpansion.Uniques.Harvest.ProgressionData[11].Value = "Target_BlackShroud"
+				--TradeGenerationStarted("680d2702-721c-412d-b083-4f5e816b945a")
+
+				--Fix this flag not being cleared
+				ObjectClearFlag("680d2702-721c-412d-b083-4f5e816b945a", "LLWEAPONEX_VendingMachine_OrderMenuDisabled", 0)
+
+				--FIX Vending Machine ordering bug, from the backpack inventory being accessed too soon. Also identifies items it generates.
+				Mods.WeaponExpansion.GenerateTradeTreasure = function(uuid, treasure)
+					if uuid == "680d2702-721c-412d-b083-4f5e816b945a" then
+						ObjectClearFlag(uuid, "LLWEAPONEX_VendingMachine_OrderMenuDisabled", 0)
+						--This event was mistakenly not fired like it was previously, causing the order flag to not clear
+						SetStoryEvent(uuid, "LLWEAPONEX_VendingMachine_OnOrderGenerated")
+					end
+					local object = GameHelpers.TryGetObject(uuid)
+					if ObjectIsCharacter(uuid) == 1 then
+						local x,y,z = GetPosition(uuid)
+						--LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830
+						local backpackGUID = CreateItemTemplateAtPosition("98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
+						Timer.StartOneshot("", 50, function ()
+							fprint(LOGLEVEL.TRACE, "[WeaponExpansion:GenerateTradeTreasure] Generating treasure table (%s) for (%s)", treasure, object.DisplayName, uuid)
+							local backpack = Ext.GetItem(backpackGUID)
+							if backpack then
+								GenerateTreasure(backpackGUID, treasure, object.Stats.Level, uuid)
+								ContainerIdentifyAll(backpackGUID)
+								for i,v in pairs(backpack:GetInventoryItems()) do
+									local tItem = Ext.GetItem(v)
+									if tItem ~= nil then
+										tItem.UnsoldGenerated = true -- Trade treasure flag
+										ItemToInventory(v, uuid, tItem.Amount, 0, 0)
+									else
+										ItemToInventory(v, uuid, 1, 0, 0)
+									end
+									ItemSetOwner(v, uuid)
+									ItemSetOriginalOwner(v, uuid)
+								end
+								ItemRemove(backpackGUID)
+							else
+								Ext.PrintError("[WeaponExpansion:GenerateTradeTreasure] Failed to create backpack from root template 'LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830'")
+								CharacterGiveReward(uuid, treasure, 1)
+							end
+						end)
+					elseif ObjectIsItem(uuid) == 1 then
+						GenerateTreasure(uuid, treasure, not GameHelpers.Item.IsObject(object) and object.Stats.Level or 1, uuid)
+					end
+				end
+
+				--Ext.IO.SaveFile("Dumps/ST_LLWEAPONEX_VendingMachine.json", Ext.DumpExport(Ext.GetTreasureTable("ST_LLWEAPONEX_VendingMachine")))
+				--Buff weapon treasure drop amounts
+				local treasureTable = Ext.GetTreasureTable("ST_LLWEAPONEX_VendingMachine")
+				local dropAmount = 16
+				if treasureTable then
+					fprint(LOGLEVEL.TRACE, "[LeaderLib] Buffing the ST_LLWEAPONEX_VendingMachine treasure table with more drops.")
+					for _,sub in pairs(treasureTable.SubTables) do
+						local checkTable = sub.Categories[1] and sub.Categories[1].TreasureTable or ""
+						if string.find(checkTable, "Weapons") then
+							sub.TotalCount = dropAmount
+							if Ext.Version() < 56 then
+								--Chance is amount for some reason
+								sub.DropCounts = {{Amount = 1, Chance = dropAmount}}
+							else
+								sub.DropCounts = {{Amount = dropAmount, Chance = 1}}
+							end
+						end
+					end
+				end
+				Ext.UpdateTreasureTable(treasureTable)
 
 				local FixDynamicStatsValueTranslation = {
 					CleavePercentage = 0.01,

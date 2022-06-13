@@ -101,12 +101,8 @@ local Patches = {
 						local checkTable = sub.Categories[1] and sub.Categories[1].TreasureTable or ""
 						if string.find(checkTable, "Weapons") then
 							sub.TotalCount = dropAmount
-							if Ext.Version() < 56 then
-								--Chance is amount for some reason
-								sub.DropCounts = {{Amount = 1, Chance = dropAmount}}
-							else
-								sub.DropCounts = {{Amount = dropAmount, Chance = 1}}
-							end
+							--Chance is actually Amount for some reason, and Amount if Chance/Frequency
+							sub.DropCounts = {{Amount = 1, Chance = dropAmount}}
 						end
 					end
 				end

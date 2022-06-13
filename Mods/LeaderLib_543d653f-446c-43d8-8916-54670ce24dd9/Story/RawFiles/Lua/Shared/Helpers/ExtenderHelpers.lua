@@ -746,6 +746,13 @@ local _SkillAttributes = {
 	["IgnoreHeight"] = "YesNo",
 }
 
+
+if _EXTVERSION < 56 then
+	_SkillAttributes.TargetConditions = nil
+	_SkillAttributes.CycleConditions = nil
+	_SkillAttributes.AoEConditions = nil
+end
+
 ---@param skillName string
 ---@param useWeaponDamage boolean|nil Overrides the UseWeaponDamage with true/false if set.
 ---@param isForGameMath boolean|nil If true, only attributes used in Game.Math functions are assigned.

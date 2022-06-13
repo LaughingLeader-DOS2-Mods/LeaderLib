@@ -77,7 +77,9 @@ function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta
 					return
 				end
 			end
-			rawset(eventArgs, k, v)
+			if _private[k] == nil then
+				rawset(eventArgs, k, v)
+			end
 		end
 	})
 	return eventArgs

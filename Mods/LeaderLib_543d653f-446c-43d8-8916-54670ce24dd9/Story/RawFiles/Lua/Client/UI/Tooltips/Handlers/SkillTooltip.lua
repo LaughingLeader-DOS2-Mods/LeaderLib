@@ -84,6 +84,7 @@ local function GetSkillDamageTypes(id, description)
 	local damageTypes = {
 		[skill.DamageType] = true
 	}
+	
 	if not StringHelpers.IsNullOrWhitespace(skill.StatsDescriptionParams) then
 		for _,v in pairs(StringHelpers.Split(skill.StatsDescriptionParams, ";")) do
 			local _,_,otherSkill = string.find(v, _skillDamagePattern)

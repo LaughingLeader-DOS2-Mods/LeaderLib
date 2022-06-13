@@ -2,8 +2,9 @@
 ---@param status EclStatus
 ---@param tooltip TooltipData
 function TooltipHandler.OnStatusTooltip(character, status, tooltip)
+	local statusType = GameHelpers.Status.GetStatusType(status.StatusId)
 	if Features.ApplyBonusWeaponStatuses then
-		if not Data.EngineStatus[status.StatusId] and Data.StatusStatsIdTypes[status.StatusType] then
+		if not Data.EngineStatus[status.StatusId] and Data.StatusStatsIdTypes[statusType] then
 			local potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
 			if not StringHelpers.IsNullOrWhitespace(potion) and not string.find(potion, ";") then
 				local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")

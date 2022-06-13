@@ -94,8 +94,8 @@ local Patches = {
 				--Ext.IO.SaveFile("Dumps/ST_LLWEAPONEX_VendingMachine.json", Ext.DumpExport(Ext.GetTreasureTable("ST_LLWEAPONEX_VendingMachine")))
 				--Buff weapon treasure drop amounts
 				local treasureTable = Ext.GetTreasureTable("ST_LLWEAPONEX_VendingMachine")
-				local dropAmount = 16
 				if treasureTable then
+					local dropAmount = 16
 					fprint(LOGLEVEL.TRACE, "[LeaderLib] Buffing the ST_LLWEAPONEX_VendingMachine treasure table with more drops.")
 					for _,sub in pairs(treasureTable.SubTables) do
 						local checkTable = sub.Categories[1] and sub.Categories[1].TreasureTable or ""
@@ -105,8 +105,8 @@ local Patches = {
 							sub.DropCounts = {{Amount = 1, Chance = dropAmount}}
 						end
 					end
+					Ext.UpdateTreasureTable(treasureTable)
 				end
-				Ext.UpdateTreasureTable(treasureTable)
 
 				local FixDynamicStatsValueTranslation = {
 					CleavePercentage = 0.01,

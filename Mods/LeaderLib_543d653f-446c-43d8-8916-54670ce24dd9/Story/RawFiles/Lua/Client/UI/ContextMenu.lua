@@ -46,7 +46,7 @@ local ContextMenu = {
 	LastObjectDouble = nil,
 	Icons = {}
 }
-ContextMenu.__index = ContextMenu
+
 local self = ContextMenu
 
 ---@type ContextMenuEntry[]
@@ -191,11 +191,20 @@ function ContextMenu:OnEntryClicked(ui, event, index, actionID, handle, isBuiltI
 	elseif not stayOpen then
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
 	end
-	InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, index, actionID, handle)
-	if stayOpen and result == false then
-		ui:GetRoot().showContextMenu(false)
-	elseif not stayOpen and result ~= true then
-		ui:GetRoot().showContextMenu(false)
+	Events.OnContextMenuEntryClicked:Invoke({
+		ContextMenu = self,	
+		UI = ui,
+		ID = index,
+		ActionID = actionID,
+		Handle = handle
+	})
+	local this = ui:GetRoot()
+	if this and this.showContextMenu then
+		if stayOpen and result == false then
+			this.showContextMenu(false)
+		elseif not stayOpen and result ~= true then
+			this.showContextMenu(false)
+		end
 	end
 end
 
@@ -241,19 +250,28 @@ local function GetShouldOpen(contextMenu, x, y)
 		return true
 	end
 
-	local callbacks = Listeners.ShouldOpenContextMenu
-	local length = callbacks and #callbacks or 0
-	if length > 0 then
-		for i=1,length do
-			local callback = callbacks[i]
-			local success,b = xpcall(callback, debug.traceback, contextMenu, x, y)
-			if not success then
-				Ext.PrintError(b)
-			elseif b then
-				return true
-			end
+	---@type SubscribableEventInvokeResult<ShouldOpenContextMenuEventArgs>
+	local invokeResult = Events.ShouldOpenContextMenu:Invoke({
+		ContextMenu = contextMenu,
+		X = x,
+		Y = y,
+		ShouldOpen = false
+	})
+	if invokeResult.ResultCode ~= "Error" then
+		local shouldOpen = invokeResult.Args.ShouldOpen == true
+        if invokeResult.Results then
+            for i=1,#invokeResult.Results do
+                local b = invokeResult.Results[i]
+                if type(b) == "boolean" then
+                    shouldOpen = b
+                end
+            end
+        end
+		if shouldOpen then
+			return true
 		end
-	end
+    end
+
 	return false
 end
 
@@ -301,7 +319,11 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 					end
 				end
 
-				InvokeListenerCallbacks(Listeners.OnContextMenuOpening, self, x, y)
+				Events.OnContextMenuOpening:Invoke({
+					ContextMenu = self,	
+					X = x,
+					Y = y
+				})
 
 				self:MoveAndRebuild(x,y)
 				return
@@ -333,7 +355,11 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 					_enabledActionsForContext[actionId] = nil
 				end
 			end
-			InvokeListenerCallbacks(Listeners.OnContextMenuOpening, self, x, y)
+			Events.OnContextMenuOpening:Invoke({
+				ContextMenu = self,	
+				X = x,
+				Y = y
+			})
 			self:Open()
 		end
 	end
@@ -418,6 +444,18 @@ function ContextMenu:AddBuiltinEntry(actionId, callback, label, visible, useClic
 	lastBuiltinID = lastBuiltinID + 1
 end
 
+---A wrapper around contextMenu.buttonArr entries. Supports getting/setting the individual entries in the array.
+---@class ContextMenuBuiltinOpeningArrayEntry
+---@field Index integer The beginning index in the array. Read-only.
+---@field ID integer
+---@field ActionID string
+---@field UseClickSound boolean Whether to use a click sound when the context menu entry is clicked.
+---@field Unused boolean Whether to use a click sound when the context menu entry is clicked.
+---@field Label string
+---@field Disabled boolean
+---@field Visible boolean
+---@field Legal boolean If this is false, the entry uses red text (like pickpocketing).
+
 ---@private
 function ContextMenu:OnBuiltinMenuUpdating(ui, event)
 	local targetObject = nil
@@ -437,19 +475,58 @@ function ContextMenu:OnBuiltinMenuUpdating(ui, event)
 		text = String(this.buttonArr[i + 4]);
 		disabled = Boolean(this.buttonArr[i + 5]);
 		legal = Boolean(this.buttonArr[i + 6]); ]]
-		local entry = {
-			id = this.buttonArr[i],
-			actionID = this.buttonArr[i+1],
-			clickSound = this.buttonArr[i+2],
-			unused = this.buttonArr[i+3],
-			text = this.buttonArr[i+4],
-			disabled = this.buttonArr[i+5],
-			legal = this.buttonArr[i+6],
-		}
+		local entry = {}
+		setmetatable(entry, {
+			__index = function (_, k)
+				if k == "Index" then
+					return i
+				elseif k == "ID" then
+					return this.buttonArr[i]
+				elseif k == "ActionID" then
+					return this.buttonArr[i+1]
+				elseif k == "UseClickSound" then
+					return this.buttonArr[i+2]
+				elseif k == "Unused" then
+					return this.buttonArr[i+3]
+				elseif k == "Text" then
+					return this.buttonArr[i+4]
+				elseif k == "Disabled" then
+					return this.buttonArr[i+5]
+				elseif k == "Legal" then
+					return this.buttonArr[i+6]
+				end
+			end,
+			__newindex = function (_, k, v)
+				if k == "ID" then
+					this.buttonArr[i] = v
+				elseif k == "ActionID" then
+					this.buttonArr[i+1] = v
+				elseif k == "UseClickSound" then
+					this.buttonArr[i+2] = v
+				elseif k == "Unused" then
+					this.buttonArr[i+3] = v
+				elseif k == "Text" then
+					this.buttonArr[i+4] = v
+				elseif k == "Disabled" then
+					this.buttonArr[i+5] = v
+				elseif k == "Legal" then
+					this.buttonArr[i+6] = v
+				elseif k == "Index" then
+					return
+				end
+			end
+		})
 		buttons[#buttons+1] = entry
 		--ContextMenu:AddEntry()
 	end
-	InvokeListenerCallbacks(Listeners.OnBuiltinContextMenuOpening, self, ui, this, buttonArr, buttons, targetObject)
+	Events.OnBuiltinContextMenuOpening:Invoke({
+		ContextMenu = self,
+		UI = ui,
+		Root = this,
+		ButtonArray = buttonArr,
+		Entries = buttons,
+		Target = targetObject
+	})
 
 	local i = length
 	for _,v in pairs(builtinEntries) do
@@ -479,7 +556,13 @@ function ContextMenu:OnBuiltinMenuClicked(ui, event, id, actionID, handleAlwaysZ
 		else
 			fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
 		end
-		InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, id, actionID, entry.Handle)
+		Events.OnContextMenuEntryClicked:Invoke({
+			ContextMenu = self,	
+			UI = ui,
+			ID = id,
+			ActionID = actionID,
+			Handle = entry.Handle
+		})
 	end
 end
 
@@ -808,24 +891,36 @@ local Register = {}
 
 ContextMenu.Register = Register
 
----@param callback ShouldOpenContextMenuCallback
+---@deprecated
+---@param callback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number):boolean
 function Register.ShouldOpenListener(callback)
-	RegisterListener("ShouldOpenContextMenu", callback)
+	Events.ShouldOpenContextMenu:Subscribe(function (e)
+		callback(e:Unpack())
+	end)
 end
 
----@param callback OnContextMenuOpeningCallback
+---@deprecated
+---@param callback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number)
 function Register.OpeningListener(callback)
-	RegisterListener("OnContextMenuOpening", callback)
+	Events.OnContextMenuOpening:Subscribe(function (e)
+		callback(e:Unpack())
+	end)
 end
 
----@param callback OnBuiltinContextMenuOpeningCallback
+---@deprecated
+---@param callback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray<FlashMovieClip>, buttons:table, targetObject:EclCharacter|EclItem|nil)
 function Register.BuiltinOpeningListener(callback)
-	RegisterListener("OnBuiltinContextMenuOpening", callback)
+	Events.OnBuiltinContextMenuOpening:Subscribe(function (e)
+		callback(e:Unpack())
+	end)
 end
 
----@param callback OnContextMenuEntryClickedCallback
+---@deprecated
+---@param callback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string, handle:string|number|boolean|nil)
 function Register.EntryClickedListener(callback)
-	RegisterListener("OnContextMenuEntryClicked", callback)
+	Events.OnContextMenuEntryClicked:Subscribe(function (e)
+		callback(e:Unpack())
+	end)
 end
 
 ---@param action ContextMenuAction

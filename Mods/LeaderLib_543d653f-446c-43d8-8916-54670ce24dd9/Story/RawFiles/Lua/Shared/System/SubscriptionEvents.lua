@@ -447,4 +447,65 @@ else
 	Events.OnWorldTooltip = Classes.SubscribableEvent:Create("OnWorldTooltip", {
 		ArgsKeyOrder={"UI", "Text", "X", "Y", "IsFromItem", "Item"}
 	})
+
+	---@class ShouldOpenContextMenuEventArgs
+	---@field ContextMenu ContextMenu
+	---@field x number The cursor's x position.
+	---@field Y number The cursor's y position.
+	---@field ShouldOpen boolean Whether the context menu should open. Set to true.
+	
+	---Called when right clicking with KB+M.  
+	---This event is used to determine if the LeaderLib context menu should be opened, allowing context menus for anything in the UI.  
+	---🔧**Client-Only**🔧
+	---@type SubscribableEvent<ShouldOpenContextMenuEventArgs>
+	Events.ShouldOpenContextMenu = Classes.SubscribableEvent:Create("ShouldOpenContextMenu", {
+		ArgsKeyOrder={"ContextMenu", "X", "Y"},
+		GatherResults = true,
+	})
+
+	---@class OnContextMenuOpeningEventArgs
+	---@field ContextMenu ContextMenu
+	---@field x number The cursor's x position.
+	---@field Y number The cursor's y position.
+	
+	---Called the LeaderLib regular context menu is opening.  
+	---Add entries via e.ContextMenu:AddEntry  
+	---🔧**Client-Only**🔧
+	---@see ContextMenu#AddEntry
+	---@type SubscribableEvent<OnContextMenuOpeningEventArgs>
+	Events.OnContextMenuOpening = Classes.SubscribableEvent:Create("OnContextMenuOpening", {
+		ArgsKeyOrder={"ContextMenu", "X", "Y"},
+	})
+
+	---@class OnBuiltinContextMenuOpeningEventArgs
+	---@field ContextMenu ContextMenu
+	---@field Entries ContextMenuBuiltinOpeningArrayEntry[] A table of each entry in the buttonArr, allowing you to change specific properties easier (i.e. Entries[1].Label = "Test"). Note that adding entries to this table won't add them to buttonArr - Use e.ContextMenu:AddBuiltinEntry instead.
+	---@field Target EclCharacter|EclItem|nil If the "openContextMenu" ExternalInterface.call was invoked, this is the object passed into the call, if any. May be nil. Use Ext.GetPickingState to get whatever is under the cursor.
+	---@field UI UIObject The ui for the context menu (contextMenu.swf).
+	---@field Root FlashMainTimeline Equivalent to ui:GetRoot()
+	---@field ButtonArray FlashArray<FlashMovieClip> The raw root.buttonArr flash array.
+	
+	---Called when the regular context menu is opening.  
+	---Add entries via e.ContextMenu:AddBuiltinEntry  
+	---🔧**Client-Only**🔧
+	---@see ContextMenu#AddBuiltinEntry
+	---@see Ext#GetPickingState
+	---@type SubscribableEvent<OnBuiltinContextMenuOpeningEventArgs>
+	Events.OnBuiltinContextMenuOpening = Classes.SubscribableEvent:Create("OnBuiltinContextMenuOpening", {
+		ArgsKeyOrder={"ContextMenu", "UI", "Root", "ButtonArray", "Entries", "Target"}
+	})
+
+	---@class OnContextMenuEntryClickedEventArgs
+	---@field ID integer The generated ID, or assigned ID if this is a built-in entry.
+	---@field ActionID string The ID of the action, used to associate entries with readable callbacks (like "LLCM_CopyInfo1")
+	---@field Handle integer|string|boolean|nil Whatever handle value was passed to the context menu UI when the entry was created, if any. May be nil.
+	---@field ContextMenu ContextMenu
+	---@field UI UIObject The ui for the context menu (contextMenu.swf).
+	
+	---Called when a context menu entry is clicked.  
+	---🔧**Client-Only**🔧
+	---@type SubscribableEvent<OnContextMenuEntryClickedEventArgs>
+	Events.OnContextMenuEntryClicked = Classes.SubscribableEvent:Create("OnContextMenuEntryClicked", {
+		ArgsKeyOrder={"ContextMenu", "UI", "ID", "ActionID", "Handle"}
+	})
 end

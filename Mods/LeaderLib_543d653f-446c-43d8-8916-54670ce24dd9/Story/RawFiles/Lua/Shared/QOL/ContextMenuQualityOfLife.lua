@@ -17,8 +17,6 @@ if isClient then
 
 	local openTarget = ""
 
-	local registeredListeners = false
-
 	local NETID_TO_UUID = {
 		Character = {},
 		Item = {}
@@ -134,92 +132,107 @@ if isClient then
 		end
 	end
 
-	Ext.RegisterListener("SessionLoaded", function()
-		if not registeredListeners then
-			UI.ContextMenu.Register.ShouldOpenListener(function(contextMenu, x, y)
-				openTarget = ""
-				if Game.Tooltip.LastRequestTypeEquals("Generic") and Game.Tooltip.IsOpen() then
-					---@type TooltipGenericRequest
-					local data = Game.Tooltip.GetCurrentOrLastRequest()
-					if combatLogTooltip:Equals(data.Text) then
-						openTarget = TARGET.CombatLog
-						return true
-					end
+	Events.ShouldOpenContextMenu:Subscribe(function (e)
+		openTarget = ""
+		if Game.Tooltip.LastRequestTypeEquals("Generic") and Game.Tooltip.IsOpen() then
+			---@type TooltipGenericRequest
+			local data = Game.Tooltip.GetCurrentOrLastRequest()
+			if combatLogTooltip:Equals(data.Text) then
+				openTarget = TARGET.CombatLog
+				e.ShouldOpen = true
+			end
+		end
+	end)
+
+	Events.OnContextMenuOpening:Subscribe(function (e)
+		if openTarget == TARGET.CombatLog then
+			e.ContextMenu:AddEntry("LLCM_ClearCombatLog", ClearCombatLog, GameHelpers.GetStringKeyText("LeaderLib_UI_ContextMenu_ClearCombatLog", "<font color='#CC5500'>Clear Combat Log</font>"))
+		end
+		openTarget = ""
+	end)
+
+	Events.OnBuiltinContextMenuOpening:Subscribe(function (e)
+		local characterTargetHandle = nil
+		if not Vars.IsEditorMode then
+			local cursor = Ext.GetPickingState()
+			if cursor then
+				if cursor.HoverCharacter then
+					characterTargetHandle = Ext.HandleToDouble(cursor.HoverCharacter)
 				end
-			end)
-		
-			UI.ContextMenu.Register.OpeningListener(function(contextMenu, x, y)
-				if openTarget == TARGET.CombatLog then
-					contextMenu:AddEntry("LLCM_ClearCombatLog", ClearCombatLog, GameHelpers.GetStringKeyText("LeaderLib_UI_ContextMenu_ClearCombatLog", "<font color='#CC5500'>Clear Combat Log</font>"))
+			end
+		end
+		if characterTargetHandle then
+			e.ContextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(cm, ui, id, actionID, handle)
+				local target = GameHelpers.TryGetObject(Ext.DoubleToHandle(handle))
+				if target then
+					local source = Client:GetCharacter().WorldPos
+					fprint(LOGLEVEL.DEFAULT, "[HighGroundFlag] Result(%s) me.Y(%s) target.Y(%s) heightDiff(%s) HighGroundThreshold(%s)", GameHelpers.Math.GetHighGroundFlag(source, target.WorldPos), source[2], target.WorldPos[2], source[2] - target.WorldPos[2], Ext.ExtraData.HighGroundThreshold)
 				end
-				openTarget = ""
-			end)
-		
-			UI.ContextMenu.Register.BuiltinOpeningListener(function(contextMenu, ui, this, buttonsArr, buttons, targetObject)
-				if Vars.DebugMode then
-					local entries = {}
-					local characterTargetHandle = nil
-					if not Vars.IsEditorMode then
-						local cursor = Ext.GetPickingState()
-						if cursor then
-							if cursor.HoverCharacter then
-								characterTargetHandle = Ext.HandleToDouble(cursor.HoverCharacter)
-							end
-							entries = {
-								TryProcessHoverObject("LLCM_CopyInfo1", cursor.HoverItem, "Item", contextMenu, "Save Cursor Item to File"),
-								TryProcessHoverObject("LLCM_CopyInfo2", cursor.HoverCharacter, "Character", contextMenu, "Save Cursor Character to File"),
-								TryProcessHoverObject("LLCM_CopyInfo3", cursor.HoverCharacter2, "Character", contextMenu, "Save Cursor Character (2) to File"),
-							}
-							for i=1,#entries-1 do
-								if entries[i] == nil then
-									table.remove(entries, i)
-								end
-							end
-							if cursor.HoverEntity and (cursor.HoverItem ~= cursor.HoverEntity and cursor.HoverCharacter ~= cursor.HoverEntity) then
-								local result = TryProcessHoverObject("LLCM_CopyInfo4", cursor.HoverEntity, nil, contextMenu, "Save Cursor Entity to File")
-								if result then
-									table.insert(entries, result)
-								end
-							end
-						end
-					else
-						---@type TooltipRequest
-						local req = Game.Tooltip.GetCurrentOrLastRequest()
-						if req and req.ItemNetID then
-							local result = TryProcessHoverObject("LLCM_CopyInfoEditorItem", req.Item, "Item", contextMenu, "Save Cursor Item to File")
-							if result then
-								table.insert(entries, result)
-							end
+			end, "Print HighGroundFlag", true, true, false, true, characterTargetHandle)
+		end
+	end)
+
+	Events.OnBuiltinContextMenuOpening:Subscribe(function (e)
+		if Vars.DebugMode then
+			local entries = {}
+			local characterTargetHandle = nil
+			if not Vars.IsEditorMode then
+				local cursor = Ext.GetPickingState()
+				if cursor then
+					if cursor.HoverCharacter then
+						characterTargetHandle = Ext.HandleToDouble(cursor.HoverCharacter)
+					end
+					entries = {
+						TryProcessHoverObject("LLCM_CopyInfo1", cursor.HoverItem, "Item", e.ContextMenu, "Save Cursor Item to File"),
+						TryProcessHoverObject("LLCM_CopyInfo2", cursor.HoverCharacter, "Character", e.ContextMenu, "Save Cursor Character to File"),
+						TryProcessHoverObject("LLCM_CopyInfo3", cursor.HoverCharacter2, "Character", e.ContextMenu, "Save Cursor Character (2) to File"),
+					}
+					for i=1,#entries-1 do
+						if entries[i] == nil then
+							table.remove(entries, i)
 						end
 					end
-					if targetObject and GameHelpers.Ext.ObjectIsItem(targetObject) then
-						local result = TryProcessHoverObject("LLCM_CopyEquipmentInfo", targetObject, "Item", contextMenu, "Save Cursor EQ to File")
+					if cursor.HoverEntity and (cursor.HoverItem ~= cursor.HoverEntity and cursor.HoverCharacter ~= cursor.HoverEntity) then
+						local result = TryProcessHoverObject("LLCM_CopyInfo4", cursor.HoverEntity, nil, e.ContextMenu, "Save Cursor Entity to File")
 						if result then
 							table.insert(entries, result)
 						end
 					end
-					if #entries > 1 then
-						contextMenu:AddBuiltinEntry("LLCM_CopyInfoAll", function(contextMenu, ui, id, actionID, none)
-							for i,v in pairs(entries) do
-								if v ~= nil then
-									SaveInfoToFile(v)
-								end
-							end
-						end, "Save All Cursor Info to File", true, true, false, true)
-					end
-					if characterTargetHandle then
-						contextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(contextMenu, ui, id, actionID, handle)
-							local target = GameHelpers.TryGetObject(Ext.DoubleToHandle(handle))
-							if target then
-								local source = Client:GetCharacter().WorldPos
-								fprint(LOGLEVEL.DEFAULT, "[HighGroundFlag] Result(%s) me.Y(%s) target.Y(%s) heightDiff(%s) HighGroundThreshold(%s)", GameHelpers.Math.GetHighGroundFlag(source, target.WorldPos), source[2], target.WorldPos[2], source[2] - target.WorldPos[2], Ext.ExtraData.HighGroundThreshold)
-							end
-						end, "Print HighGroundFlag", true, true, false, true, characterTargetHandle)
+				end
+			else
+				---@type TooltipRequest
+				local req = Game.Tooltip.GetCurrentOrLastRequest()
+				if req and req.ItemNetID then
+					local result = TryProcessHoverObject("LLCM_CopyInfoEditorItem", req.Item, "Item", e.ContextMenu, "Save Cursor Item to File")
+					if result then
+						table.insert(entries, result)
 					end
 				end
-			end)
-			
-			registeredListeners = true
+			end
+			if e.Target and GameHelpers.Ext.ObjectIsItem(e.Target) then
+				local result = TryProcessHoverObject("LLCM_CopyEquipmentInfo", e.Target, "Item", e.ContextMenu, "Save Cursor EQ to File")
+				if result then
+					table.insert(entries, result)
+				end
+			end
+			if #entries > 1 then
+				e.ContextMenu:AddBuiltinEntry("LLCM_CopyInfoAll", function(cm, ui, id, actionID, none)
+					for i,v in pairs(entries) do
+						if v ~= nil then
+							SaveInfoToFile(v)
+						end
+					end
+				end, "Save All Cursor Info to File", true, true, false, true)
+			end
+			if characterTargetHandle then
+				e.ContextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(cm, ui, id, actionID, handle)
+					local target = GameHelpers.TryGetObject(Ext.DoubleToHandle(handle))
+					if target then
+						local source = Client:GetCharacter().WorldPos
+						fprint(LOGLEVEL.DEFAULT, "[HighGroundFlag] Result(%s) me.Y(%s) target.Y(%s) heightDiff(%s) HighGroundThreshold(%s)", GameHelpers.Math.GetHighGroundFlag(source, target.WorldPos), source[2], target.WorldPos[2], source[2] - target.WorldPos[2], Ext.ExtraData.HighGroundThreshold)
+					end
+				end, "Print HighGroundFlag", true, true, false, true, characterTargetHandle)
+			end
 		end
 	end)
 

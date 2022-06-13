@@ -137,7 +137,7 @@ function Timer.StartOneshot(timerName, delay, callback)
 		return -1
 	end
 	if StringHelpers.IsNullOrEmpty(timerName) then
-		timerName = string.format("LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random())
+		timerName = string.format("LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random(0,999999))
 	end
 	local index = Events.TimerFinished:Subscribe(callback, {
 		Once=true,

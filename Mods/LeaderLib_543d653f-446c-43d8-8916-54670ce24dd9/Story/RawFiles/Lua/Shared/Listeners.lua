@@ -246,6 +246,16 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 				end)
 			end
 			return
+		elseif event == "TimerFinished" then
+			Events.TimerFinished:Subscribe(Timer._Internal.CreateDeprecatedWrapper(callback))
+			return
+		elseif event == "NamedTimerFinished" then
+			local opts = nil
+			if keyType == "string" and callbackOrKey ~= "All" then
+				opts = {MatchArgs={ID=callbackOrKey}}
+			end
+			Events.TimerFinished:Subscribe(Timer._Internal.CreateDeprecatedWrapper(callback), opts)
+			return
 		end
 		local subEvent = Events[event]
 		if subEvent then

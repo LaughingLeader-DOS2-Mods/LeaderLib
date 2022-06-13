@@ -176,7 +176,7 @@ local function RedirectDamage_Call(target, defender, attacker, handle_param, red
     else
         local reduction = Common.SafeguardParam(reduction_perc, "number", 0.5)
         local isHit = is_hit_param == true or (Common.SafeguardParam(is_hit_param, "integer", 0) and is_hit_param == 1)
-        GameHelpers.RedirectDamage(target, defender, attacker, handle, reduction, isHit)
+        GameHelpers.Damage.RedirectDamage(target, defender, attacker, handle, reduction, isHit)
     end
 end
 

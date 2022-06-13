@@ -87,7 +87,7 @@ local function GetSkillDamageTypes(id, description)
 	if not StringHelpers.IsNullOrWhitespace(skill.StatsDescriptionParams) then
 		for _,v in pairs(StringHelpers.Split(skill.StatsDescriptionParams, ";")) do
 			local _,_,otherSkill = string.find(v, _skillDamagePattern)
-			if otherSkill then
+			if otherSkill and GameHelpers.Stats.Exists(otherSkill, "SkillData") then
 				local damageType = Ext.StatGetAttribute(otherSkill, "DamageType")
 				if damageType then
 					damageTypes[damageType] = true

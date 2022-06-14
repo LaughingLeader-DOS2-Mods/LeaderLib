@@ -793,17 +793,23 @@ function GameHelpers.Item.GetSlot(item)
     return -1
 end
 
----@param item EsvItem|EclItem
+---@param item ItemParam
 ---@param inKeyValueFormat boolean|nil If true, the table is returned as table<skill,boolean>
 ---@param consumableOnly boolean|nil
----@return string[]|table<string,boolean>
+---@return string[]|table<string,boolean> skills
+---@return boolean isConsumeable
 function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableOnly)
 	local skills = {}
+    local isConsumeable = false
 	if _EXTVERSION >= 56 then
-		if item.RootTemplate and item.RootTemplate.OnUsePeaceActions then
+        item = GameHelpers.GetItem(item)
+		if item and item.RootTemplate and item.RootTemplate.OnUsePeaceActions then
 			for _,v in pairs(item.RootTemplate.OnUsePeaceActions) do
 				if (v.Type == "UseSkill" or v.Type == "SkillBook") and not StringHelpers.IsNullOrWhitespace(v.SkillID)
                 and (not consumableOnly or v.Consume == true) then
+                    if v.Consume then
+                        isConsumeable = true
+                    end
                     if not inKeyValueFormat then
                         skills[#skills+1] = v.SkillID
                     else
@@ -813,5 +819,20 @@ function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableO
 			end
 		end
 	end
-    return skills
+    return skills,isConsumeable
+end
+
+---@param item ItemParam
+---@return string
+function GameHelpers.Item.GetItemStat(item)
+	item = GameHelpers.GetItem(item)
+    if item then
+        if item.StatsId and not Data.ItemRarity[item.StatsId] then
+            return item.StatsId
+        end
+        if not GameHelpers.Item.IsObject(item) and item.Stats then
+            return item.Stats.Name
+        end
+    end
+    return ""
 end

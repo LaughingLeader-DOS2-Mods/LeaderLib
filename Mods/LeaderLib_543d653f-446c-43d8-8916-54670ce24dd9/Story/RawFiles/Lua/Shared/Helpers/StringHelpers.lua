@@ -429,7 +429,7 @@ GetSkillEntryName = StringHelpers.GetSkillEntryName
 
 ---Helper for string.find with some additional options.
 ---@param s string
----@param pattern string
+---@param pattern string|string[]
 ---@param caseInsensitive boolean|nil Searches for a string.lower version of s.
 ---@param startPos integer|nil If set, start the find from this position.
 ---@param endPos integer|nil If set, end the find at this position.
@@ -440,10 +440,60 @@ function StringHelpers.Find(s, pattern, caseInsensitive, startPos, endPos, findS
 	if caseInsensitive then
 		s = string.lower(s)
 	end
-	if startPos then
-		local subText = string.sub(s, startPos, endPos)
-		return string.find(subText, pattern, findStartPos, findPlain)
-	else
-		return string.find(s, pattern, findStartPos, findPlain)
+	local t = type(pattern)
+	if t == "string" then
+		if startPos then
+			local subText = string.sub(s, startPos, endPos)
+			return string.find(subText, pattern, findStartPos, findPlain)
+		else
+			return string.find(s, pattern, findStartPos, findPlain)
+		end
+	elseif t == "table" then
+		for k,v in pairs(pattern) do
+			local results = {StringHelpers.Find(s, v, caseInsensitive, startPos, endPos, findStartPos, findPlain)}
+			if results[1] then
+				return table.unpack(results)
+			end
+		end
 	end
+end
+
+---Similar to string.find, except it just checks that the result isn't nil, and supports an array of strings to check.
+---@param str string|string[]
+---@param pattern string|string[]
+---@param caseInsensitive boolean|nil Searches for a string.lower version of s.
+---@param startPos integer|nil If set, start the find from this position.
+---@param endPos integer|nil If set, end the find at this position.
+---@param findStartPos integer|nil
+---@param findPlain boolean|nil
+---@return boolean stringContainsPattern
+function StringHelpers.Contains(str, pattern, caseInsensitive, startPos, endPos, findStartPos, findPlain)
+	local strType = type(str)
+	if strType == "string" then
+		if caseInsensitive then
+			str = string.lower(str)
+		end
+		local t = type(pattern)
+		if t == "string" then
+			if startPos then
+				local subText = string.sub(str, startPos, endPos)
+				return string.find(subText, pattern, findStartPos, findPlain) ~= nil
+			else
+				return string.find(str, pattern, findStartPos, findPlain) ~= nil
+			end
+		elseif t == "table" then
+			for _,v in pairs(pattern) do
+				if StringHelpers.Contains(str, v, caseInsensitive, startPos, endPos, findStartPos, findPlain) then
+					return true
+				end
+			end
+		end
+	elseif strType == "table" then
+		for _,v in pairs(str) do
+			if StringHelpers.Contains(v, pattern, caseInsensitive, startPos, endPos, findStartPos, findPlain) then
+				return true
+			end
+		end
+	end
+	return false
 end

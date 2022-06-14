@@ -20,6 +20,8 @@ local _enabledSkills = {}
 
 ---@alias LeaderLibSkillListenerCallback fun(skill:string, char:string, state:SKILL_STATE, data:SkillEventData|HitData|ProjectileHitData|StatEntrySkillData|boolean, dataType:LeaderLibSkillListenerDataType)
 
+local _EXTVERSION = Ext.Version()
+
 ---Registers a function to call when skill events fire for a skill or table of skills.
 ---@param skill string|string[]
 ---@param callback LeaderLibSkillListenerCallback
@@ -137,6 +139,42 @@ end
 -- Example: Finding the base skill of an enemy skill
 -- GetBaseSkill(skill, "Enemy")
 
+local _lastUsedSkillItems = {}
+
+---@param character EsvCharacter
+---@param skill string
+local function _GetSkillSourceItem(character, skill)
+	local sourceItem = nil
+	if _EXTVERSION >= 56 then
+		if character.SkillManager.CurrentSkillState and Ext.Utils.IsValidHandle(character.SkillManager.CurrentSkillState.SourceItemHandle) then
+			sourceItem = GameHelpers.GetItem(character.SkillManager.CurrentSkillState.SourceItemHandle)
+		end
+	end
+	if sourceItem == nil then
+		local lastItemData = _lastUsedSkillItems[character.MyGuid]
+		if lastItemData then
+			if StringHelpers.Contains(lastItemData.Skills, skill) then
+				sourceItem = GameHelpers.GetItem(lastItemData.Item)
+			end
+		end
+	end
+	return sourceItem
+end
+
+if _EXTVERSION >= 56 then
+	Ext.RegisterOsirisListener("CanUseItem", 3, "after", function(charGUID, itemGUID, requestId)
+		if ObjectExists(charGUID) == 1 and ObjectExists(itemGUID) == 1 then
+			local skills,isConsumeable = GameHelpers.Item.GetUseActionSkills(itemGUID, false, false)
+			if isConsumeable and skills[1] then
+				charGUID = StringHelpers.GetUUID(charGUID)
+				itemGUID = StringHelpers.GetUUID(itemGUID)
+				_lastUsedSkillItems[charGUID] = {Item = itemGUID, Skills = skills}
+				Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", charGUID)
+			end
+		end
+	end)
+end
+
 function OnSkillPreparing(char, skillprototype)
 	char = StringHelpers.GetUUID(char)
 	local skill = GetSkillEntryName(skillprototype)
@@ -153,13 +191,36 @@ function OnSkillPreparing(char, skillprototype)
 			Skill = skill,
 			State = SKILL_STATE.PREPARE,
 			Data = skillData,
-			DataType = "StatEntrySkillData"
+			DataType = "StatEntrySkillData",
+			SourceItem = _GetSkillSourceItem(caster, skill),
 		})
 	end
 
 	-- Clear previous data for this character in case SkillCast never fired (interrupted)
 	RemoveCharacterSkillData(char)
 	PersistentVars.IsPreparingSkill[char] = skill
+end
+
+function SkillManager.OnSkillPreparingCancel(char, skillprototype, skill, skipRemoval)
+	skill = skill or StringHelpers.GetSkillEntryName(skillprototype)
+	local skillData = Ext.GetStat(skill)
+	if (_enabledSkills[skill] or _enabledSkills.All) then
+		local character = GameHelpers.GetCharacter(char)
+		Events.OnSkillState:Invoke({
+			Character = character,
+			Skill = skill,
+			State = SKILL_STATE.CANCEL,
+			Data = skillData,
+			DataType = "StatEntrySkillData",
+			SourceItem = _GetSkillSourceItem(character, skill)
+		})
+	end
+
+	_lastUsedSkillItems[char] = nil
+
+	if skipRemoval ~= true then
+		SkillManager.RemoveCharacterSkillData(char)
+	end
 end
 
 -- Fires when CharacterUsedSkill fires. This happens after all the target events.
@@ -185,7 +246,8 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 				Skill = skill,
 				State = SKILL_STATE.USED,
 				Data = data,
-				DataType = data.Type
+				DataType = data.Type,
+				SourceItem = _GetSkillSourceItem(caster, skill),
 			})
 		end
 	end
@@ -204,13 +266,26 @@ function OnSkillCast(char, skill, skilLType, skillAbility)
 				Skill = skill,
 				State = SKILL_STATE.CAST,
 				Data = data,
-				DataType = data.Type
+				DataType = data.Type,
+				SourceItem = _GetSkillSourceItem(caster, skill)
 			})
 			data:Clear()
 		end
 	end
 	RemoveCharacterSkillData(uuid, skill)
+	Timer.StartObjectTimer("LeaderLib_SkillManager_RemoveLastUsedSkillItem", uuid, 5000, {Skill = skill})
 end
+
+Timer.Subscribe("LeaderLib_SkillManager_RemoveLastUsedSkillItem", function (e)
+	if e.Data.UUID and e.Data.Skill then
+		local lastItemData = _lastUsedSkillItems[e.Data.UUID]
+		if lastItemData then
+			if StringHelpers.Contains(lastItemData.Skills, e.Data.Skill) then
+				_lastUsedSkillItems[e.Data.UUID] = nil
+			end
+		end
+	end
+end)
 
 local function IgnoreHitTarget(target)
 	if IsTagged(target, "MovingObject") == 1 then
@@ -238,7 +313,8 @@ function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, da
 			Skill = skillId,
 			State = SKILL_STATE.HIT,
 			Data = data,
-			DataType = data.Type
+			DataType = data.Type,
+			SourceItem = _GetSkillSourceItem(source, skillId)
 		})
 	end
 	InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skillId, SKILL_STATE.HIT, data)
@@ -262,7 +338,8 @@ RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObje
 					Skill = skill,
 					State = SKILL_STATE.PROJECTILEHIT,
 					Data = data,
-					DataType = data.Type
+					DataType = data.Type,
+					SourceItem = _GetSkillSourceItem(object, skill)
 				})
 				InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.PROJECTILEHIT, data, data.Type)
 			end
@@ -281,7 +358,8 @@ RegisterProtectedExtenderListener("BeforeShootProjectile", function (request)
 				Skill = skill,
 				State = SKILL_STATE.BEFORESHOOT,
 				Data = request,
-				DataType = "EsvShootProjectileRequest"
+				DataType = "EsvShootProjectileRequest",
+				SourceItem = _GetSkillSourceItem(object, skill)
 			})
 			InvokeListenerCallbacks(Listeners.OnSkillHit, object.MyGuid, skill, SKILL_STATE.BEFORESHOOT, request, "EsvShootProjectileRequest")
 		end
@@ -299,7 +377,8 @@ RegisterProtectedExtenderListener("ShootProjectile", function (projectile)
 				Skill = skill,
 				State = SKILL_STATE.SHOOTPROJECTILE,
 				Data = projectile,
-				DataType = "EsvProjectile"
+				DataType = "EsvProjectile",
+				SourceItem = _GetSkillSourceItem(object, skill)
 			})
 			
 			InvokeListenerCallbacks(Listeners.OnSkillHit, object.MyGuid, skill, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile")
@@ -317,7 +396,8 @@ RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "aft
 			Skill = skill,
 			State = SKILL_STATE.LEARNED,
 			Data = learned,
-			DataType = "boolean"
+			DataType = "boolean",
+			SourceItem = _GetSkillSourceItem(character, skill)
 		})
 	end
 end)
@@ -338,7 +418,8 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 			Skill = skill,
 			State = SKILL_STATE.MEMORIZED,
 			Data = learned,
-			DataType = "boolean"
+			DataType = "boolean",
+			SourceItem = _GetSkillSourceItem(character, skill)
 		})
 	end
 end)
@@ -362,7 +443,8 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 			Skill = skill,
 			State = SKILL_STATE.UNMEMORIZED,
 			Data = learned,
-			DataType = "boolean"
+			DataType = "boolean",
+			SourceItem = _GetSkillSourceItem(character, skill)
 		})
 	end
 end)
@@ -458,25 +540,6 @@ function SkillManager.LoadSaveData()
 				PersistentVars.SkillData[uuid] = nil
 			end
 		end
-	end
-end
-
-function SkillManager.OnSkillPreparingCancel(char, skillprototype, skill, skipRemoval)
-	skill = skill or StringHelpers.GetSkillEntryName(skillprototype)
-	local skillData = Ext.GetStat(skill)
-	if (_enabledSkills[skill] or _enabledSkills.All) then
-		local character = GameHelpers.GetCharacter(char)
-		Events.OnSkillState:Invoke({
-			Character = character,
-			Skill = skill,
-			State = SKILL_STATE.CANCEL,
-			Data = skillData,
-			DataType = "StatEntrySkillData"
-		})
-	end
-
-	if skipRemoval ~= true then
-		SkillManager.RemoveCharacterSkillData(char)
 	end
 end
 
@@ -589,6 +652,16 @@ end
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function _REGISTER.Prepare(skill, callback, priority, once)
 	return _REGISTER.All(skill, callback, SKILL_STATE.PREPARE, priority, once)
+end
+
+---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.CANCEL event (when the skill preparation is cancelled).
+---@param skill string|string[]
+---@param callback fun(e:OnSkillStatePrepareEventArgs)
+---@param priority integer|nil Optional listener priority
+---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
+function _REGISTER.Cancel(skill, callback, priority, once)
+	return _REGISTER.All(skill, callback, SKILL_STATE.CANCEL, priority, once)
 end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.USED event.

@@ -1,5 +1,6 @@
 ---Data passed to callbacks for the various functions in SkillListeners.lua
 ---@class SkillEventData
+---@field SourceItemGUID UUID|nil Possible item GUID that this skill is originating from, such as a scroll or grenade.
 local SkillEventData = {
 	Type = "SkillEventData",
 	Source = nil,

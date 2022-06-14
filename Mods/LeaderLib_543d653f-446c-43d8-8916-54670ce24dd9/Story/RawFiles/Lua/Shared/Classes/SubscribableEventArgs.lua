@@ -36,7 +36,7 @@ end
 ---@param args table|nil
 ---@param unpackedKeyOrder string[]|nil
 ---@param getArg SubscribableEventGetArgFunction|nil
----@param customMeta SubscribableEventCustomMetatable|nil
+---@param customMeta SubscribableEventCustomMetatable|nil Automatically set if the args table had key set for '__metatable'
 ---@return RuntimeSubscribableEventArgs
 function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta)
 	local _private = {

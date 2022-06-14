@@ -1,3 +1,10 @@
+---@class LeaderLibContextMenuFlashMainTimeline:FlashMainTimeline
+---@field showContextMenu fun(visible:boolean, x:number|nil, y:number|nil)
+---@field clearButtons function
+---@field contextMenuMC {clearButtons:function, updateDone:function}
+---@field screenWidth number
+---@field screenHeight number
+
 ---@alias ContextMenuActionCallback fun(self:ContextMenu, ui:UIObject, id:integer, actionID:integer, handle:number)
 
 ---@class ContextMenuEntry:table
@@ -198,6 +205,7 @@ function ContextMenu:OnEntryClicked(ui, event, index, actionID, handle, isBuiltI
 		ActionID = actionID,
 		Handle = handle
 	})
+	---@type LeaderLibContextMenuFlashMainTimeline
 	local this = ui:GetRoot()
 	if this and this.showContextMenu then
 		if stayOpen and result == false then
@@ -614,14 +622,14 @@ function ContextMenu:Init()
 end
 
 ---@param id string
----@param callback ContextMenuActionCallback
----@param label string
----@param visible string
----@param useClickSound boolean
----@param disabled boolean
----@param isLegal boolean
----@param handle any
----@param children ContextMenuEntry[]
+---@param callback ContextMenuActionCallback|nil
+---@param label string|nil
+---@param visible string|nil
+---@param useClickSound boolean|nil
+---@param disabled boolean|nil
+---@param isLegal boolean|nil
+---@param handle any|nil
+---@param children ContextMenuEntry[]|nil
 ---@return ContextMenuEntry
 function ContextMenu:AddEntry(id, callback, label, visible, useClickSound, disabled, isLegal, handle, children)
 	if not self.Entries then
@@ -648,8 +656,11 @@ function ContextMenu:Close()
 	local instance = UIExtensions.GetInstance()
 	if instance then
 		self:ClearCustomIcons()
+		---@type LeaderLibContextMenuFlashMainTimeline
 		local main = instance:GetRoot()
-		main.showContextMenu(false)
+		if main and main.showContextMenu then
+			main.showContextMenu(false)
+		end
 	end
 end
 
@@ -666,7 +677,7 @@ function ContextMenu:SaveCustomIcon(iconId, iconName, w, h)
 	UIExtensions.Instance:SetCustomIcon(iconId, iconName, w, h)
 end
 
----@param targetContextMenu FlashMovieClip
+---@param targetContextMenu {addEntry:function, list:FlashListDisplay}
 ---@param entry ContextMenuAction
 local function AddEntryMC(targetContextMenu, entry, depth)
 	if not entry then
@@ -698,19 +709,22 @@ end
 function ContextMenu:MoveAndRebuild(x,y)
 	local instance = UIExtensions.GetInstance()
 	if instance then
-		local main = instance:GetRoot()
-		local contextMenu = main.contextMenuMC
-		contextMenu.clearButtons()
-
 		_actionMap = {}
 
-		local totalEntries = #self.Entries
-		for i=1,totalEntries do
-			local entry = self.Entries[i]
-			AddEntryMC(contextMenu, entry, 0)
-		end
+		---@type LeaderLibContextMenuFlashMainTimeline
+		local main = instance:GetRoot()
+		local contextMenu = main.contextMenuMC
+		if contextMenu then
+			contextMenu.clearButtons()
 
-		contextMenu.updateDone()
+			local totalEntries = #self.Entries
+			for i=1,totalEntries do
+				local entry = self.Entries[i]
+				AddEntryMC(contextMenu, entry, 0)
+			end
+	
+			contextMenu.updateDone()
+		end
 		
 		local paddingX,paddingY = 8,-24
 		if self.ContextStatus.CallingUI == Data.UIType.examine then
@@ -740,6 +754,7 @@ function ContextMenu:Open()
 	self:Init()
 	local instance = UIExtensions.GetInstance()
 	if instance then
+		---@type LeaderLibContextMenuFlashMainTimeline
 		local main = instance:GetRoot()
 		local contextMenu = main.contextMenuMC
 		contextMenu.clearButtons()
@@ -810,6 +825,7 @@ local function GetExamineCursorStatus(x,y)
 	if not ui then
 		return nil
 	end
+	---@type {examine_mc:{statusContainer_mc:{list:FlashListDisplay}}}
 	local main = ui:GetRoot()
 	if not main then
 		return nil
@@ -838,6 +854,8 @@ local function GetPlayerInfoCursorStatus(x,y)
 	if not ui then
 		return nil
 	end
+	---@alias PlayerInfoFlashPlayerArrayEntry {statusHolder_mc:FlashMovieClip, status_array:FlashArray<{hitTestPoint:fun(x:number, y:number, shapeFlag:boolean), id:number, owner:number}>, summonList:FlashListDisplay}
+	---@type {player_array:FlashArray<PlayerInfoFlashPlayerArrayEntry>}
 	local main = ui:GetRoot()
 	if not main then
 		return nil
@@ -853,6 +871,7 @@ local function GetPlayerInfoCursorStatus(x,y)
 			end
 			if player_mc.summonList then
 				for j=0,#player_mc.summonList.content_array do
+					---@type PlayerInfoFlashPlayerArrayEntry
 					local summon_mc = player_mc.summonList.content_array[j]
 					if summon_mc then
 						for k=0,#summon_mc.status_array do
@@ -894,6 +913,7 @@ ContextMenu.Register = Register
 ---@deprecated
 ---@param callback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number):boolean
 function Register.ShouldOpenListener(callback)
+	---@param e RuntimeSubscribableEventArgs
 	Events.ShouldOpenContextMenu:Subscribe(function (e)
 		callback(e:Unpack())
 	end)
@@ -902,6 +922,7 @@ end
 ---@deprecated
 ---@param callback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number)
 function Register.OpeningListener(callback)
+	---@param e RuntimeSubscribableEventArgs
 	Events.OnContextMenuOpening:Subscribe(function (e)
 		callback(e:Unpack())
 	end)
@@ -910,6 +931,7 @@ end
 ---@deprecated
 ---@param callback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray<FlashMovieClip>, buttons:table, targetObject:EclCharacter|EclItem|nil)
 function Register.BuiltinOpeningListener(callback)
+	---@param e RuntimeSubscribableEventArgs
 	Events.OnBuiltinContextMenuOpening:Subscribe(function (e)
 		callback(e:Unpack())
 	end)
@@ -918,6 +940,7 @@ end
 ---@deprecated
 ---@param callback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string, handle:string|number|boolean|nil)
 function Register.EntryClickedListener(callback)
+	---@param e RuntimeSubscribableEventArgs
 	Events.OnContextMenuEntryClicked:Subscribe(function (e)
 		callback(e:Unpack())
 	end)

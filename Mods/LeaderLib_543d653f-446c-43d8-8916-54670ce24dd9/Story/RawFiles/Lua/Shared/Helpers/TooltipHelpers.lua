@@ -3,6 +3,7 @@ if GameHelpers.Tooltip == nil then
 end
 
 local _EXTVERSION = Ext.Version()
+local _ISCLIENT = Ext.IsClient()
 
 local function GetTextParamValues(output, character)
 	for v in string.gmatch(output, "%[Special:.-%]") do
@@ -69,6 +70,82 @@ local function GetTextParamValues(output, character)
 	return output
 end
 
+---@param skillId string The skill ID, i.e "Projectile_Fireball".
+---@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
+---@param skillParams StatEntrySkillData|nil A table of attributes to set on the skill table before calculating the damage.
+---@return string damageText
+function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
+	if not StringHelpers.IsNullOrWhitespace(skillId) then
+		local skill = GameHelpers.Ext.CreateSkillTable(skillId, nil, true)
+		if type(skillParams) == "table" then
+			for k,v in pairs(skillParams) do
+				skill[k] = v
+			end
+		end
+		if skill ~= nil then
+			if character then
+				character = GameHelpers.GetCharacter(character)
+			end
+			if character == nil then
+				if _ISCLIENT then
+					character = Client:GetCharacter()
+				elseif Ext.OsirisIsCallable() then
+					character = Ext.GetCharacter(CharacterGetHostCharacter())
+				end
+			end
+			if character ~= nil and character.Stats ~= nil then
+				local useDefaultSkillDamage = true
+				local length = #Listeners.GetTooltipSkillDamage
+				if length > 0 then
+					for i=1,length do
+						local callback = Listeners.GetTooltipSkillDamage[i]
+						local b,result = xpcall(callback, debug.traceback, skill, character.Stats)
+						if not b then
+							Ext.PrintError("[LeaderLib:ReplacePlaceholders] Error calling function for 'GetTooltipSkillDamage':\n", result)
+						elseif result ~= nil and result ~= "" then
+							value = result
+							useDefaultSkillDamage = false
+						end
+					end
+				end
+				if useDefaultSkillDamage and _EXTVERSION >= 56 then
+					local listeners = Ext._Internal._Events.GetSkillDamage
+					if listeners then
+						for i=1,#listeners do
+							local callback = listeners[i]
+							if callback then
+								local b,damageList = xpcall(callback, debug.traceback, skill, character.Stats, false, character.Stats.IsSneaking == true, character.WorldPos, character.WorldPos, character.Stats.Level, true, true)
+								if b then
+									local t = type(damageList)
+									if t == "string" then
+										value = damageList
+										useDefaultSkillDamage = false
+									elseif t == "table" then
+										value = GameHelpers.Tooltip.FormatDamageRange(damageList)
+										useDefaultSkillDamage = false
+									elseif t == "userdata" and damageList.ToTable then -- DamageList
+										value = GameHelpers.Tooltip.FormatDamageRange(damageList:ToTable())
+										useDefaultSkillDamage = false
+									else
+										fprint(LOGLEVEL.WARNING, "[LeaderLib:ReplacePlaceholders] Unknown type(%s) returned from GetSkillDamage listener for skill (%s).", t, skill.Name)
+									end
+								else
+									Ext.PrintError(damageList)
+								end
+							end
+						end
+					end
+				end
+				if useDefaultSkillDamage then
+					local damageRange = Game.Math.GetSkillDamageRange(character.Stats, skill)
+					return GameHelpers.Tooltip.FormatDamageRange(damageRange)
+				end
+			end
+		end
+	end
+	return ""
+end
+
 ---@param str string
 ---@param character EclCharacter
 local function ReplacePlaceholders(str, character)
@@ -133,60 +210,7 @@ local function ReplacePlaceholders(str, character)
 		local value = ""
 		local skillName = v:gsub("%[SkillDamage:", ""):gsub("%]", "")
 		if not StringHelpers.IsNullOrWhitespace(skillName) then
-			local skill = GameHelpers.Ext.CreateSkillTable(skillName)
-			if skill ~= nil then
-				if character == nil then
-					character = Client:GetCharacter()
-				end
-				if character ~= nil and character.Stats ~= nil then
-					local useDefaultSkillDamage = true
-					local length = #Listeners.GetTooltipSkillDamage
-					if length > 0 then
-						for i=1,length do
-							local callback = Listeners.GetTooltipSkillDamage[i]
-							local b,result = xpcall(callback, debug.traceback, skill, character.Stats)
-							if not b then
-								Ext.PrintError("[LeaderLib:ReplacePlaceholders] Error calling function for 'GetTooltipSkillDamage':\n", result)
-							elseif result ~= nil and result ~= "" then
-								value = result
-								useDefaultSkillDamage = false
-							end
-						end
-					end
-					if useDefaultSkillDamage and _EXTVERSION >= 56 then
-						local listeners = Ext._Internal._Events.GetSkillDamage
-						if listeners then
-							for i=1,#listeners do
-								local callback = listeners[i]
-								if callback then
-									local b,damageList = xpcall(callback, debug.traceback, skill, character.Stats, false, character.Stats.IsSneaking == true, character.WorldPos, character.WorldPos, character.Stats.Level, true, true)
-									if b then
-										local t = type(damageList)
-										if t == "string" then
-											value = damageList
-											useDefaultSkillDamage = false
-										elseif t == "table" then
-											value = GameHelpers.Tooltip.FormatDamageRange(damageList)
-											useDefaultSkillDamage = false
-										elseif t == "userdata" and damageList.ToTable then -- DamageList
-											value = GameHelpers.Tooltip.FormatDamageRange(damageList:ToTable())
-											useDefaultSkillDamage = false
-										else
-											fprint(LOGLEVEL.WARNING, "[LeaderLib:ReplacePlaceholders] Unknown type(%s) returned from GetSkillDamage listener for skill (%s).", t, skill.Name)
-										end
-									else
-										Ext.PrintError(damageList)
-									end
-								end
-							end
-						end
-					end
-					if useDefaultSkillDamage then
-						local damageRange = Game.Math.GetSkillDamageRange(character.Stats, skill)
-						value = GameHelpers.Tooltip.FormatDamageRange(damageRange)
-					end
-				end
-			end
+			value = GameHelpers.Tooltip.GetSkillDamageText(skillName, character)
 		end
 		if value ~= nil then
 			if type(value) == "number" then

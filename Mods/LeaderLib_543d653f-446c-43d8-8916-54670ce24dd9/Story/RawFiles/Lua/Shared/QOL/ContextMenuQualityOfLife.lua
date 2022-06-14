@@ -24,7 +24,7 @@ if isClient then
 	local CharacterServerData = {}
 
 	local function SaveInfoToFile(netid, hoverType)
-		---@type EclCharacter
+		---@type EclCharacter|EclItem
 		local obj = nil
 		if hoverType then
 			if hoverType == "Character" then
@@ -82,9 +82,11 @@ if isClient then
 				end
 
 				existingEntry.RootTemplateName = obj.RootTemplate.Name
-				existingEntry.StatsId = GameHelpers.Ext.ObjectIsItem(obj) and obj.StatsId or obj.Stats.Name
 				existingEntry.Tags = StringHelpers.Join(";", obj:GetTags())
-				if GameHelpers.Ext.ObjectIsItem(obj) then
+				if GameHelpers.Ext.ObjectIsItem(obj) then 
+					if not GameHelpers.Item.IsObject(obj) then
+						existingEntry.StatsId = obj.StatsId or obj.Stats.Name
+					end
 					existingEntry.WorldPos = obj.WorldPos
 					if serverData then
 						existingEntry.Rotation = serverData.Rotation
@@ -160,6 +162,8 @@ if isClient then
 					characterTargetHandle = Ext.HandleToDouble(cursor.HoverCharacter)
 				end
 			end
+		elseif e.Target and GameHelpers.Ext.ObjectIsCharacter(e.Target) then
+			characterTargetHandle = Ext.HandleToDouble(e.Target.Handle)
 		end
 		if characterTargetHandle then
 			e.ContextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(cm, ui, id, actionID, handle)
@@ -200,7 +204,7 @@ if isClient then
 					end
 				end
 			else
-				---@type TooltipRequest
+				---@type TooltipItemRequest
 				local req = Game.Tooltip.GetCurrentOrLastRequest()
 				if req and req.ItemNetID then
 					local result = TryProcessHoverObject("LLCM_CopyInfoEditorItem", req.Item, "Item", e.ContextMenu, "Save Cursor Item to File")

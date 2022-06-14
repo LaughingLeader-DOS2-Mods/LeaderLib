@@ -85,6 +85,12 @@ end
 ---@param id string
 ---@param timeout number|nil
 function LuaTest:WaitForSignal(id, timeout)
+	--For situations where this got a signal before the previous one was resumed
+	if self.LastUnmatchedSignal == id then
+		self.LastUnmatchedSignal = nil
+		self.SignalSuccess = id
+		return true
+	end
 	self.SignalSuccess = nil
 	self.NextSignal = id
 	if timeout then
@@ -100,6 +106,8 @@ function LuaTest:OnSignal(id)
 		if self:Resume() then
 			return true
 		end
+	else
+		self.LastUnmatchedSignal = id
 	end
 	return false
 end
@@ -254,6 +262,7 @@ function LuaTest:Dispose()
 	self.CurrentTaskIndex = 1
 	self.Thread = _NilThread
 	self.SignalSuccess = nil
+	self.LastUnmatchedSignal = nil
 	if self.Cleanup then
 		local b,err = xpcall(self.Cleanup, debug.traceback, self)
 		if not b then

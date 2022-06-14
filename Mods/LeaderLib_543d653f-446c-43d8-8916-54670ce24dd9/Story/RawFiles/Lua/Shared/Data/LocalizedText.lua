@@ -93,6 +93,22 @@ LocalizedText.AbilityNames = {
 	Brewmaster = ts:Create("hab7acde6g5af6g47a7ga65dgc633aef193cf","Brew Master"),
 }
 
+LocalizedText.SkillAbility = {
+	None = ts:Create("h4bd36f71g030cg41bega79ega89506adf728","Special"),
+	Warrior = LocalizedText.AbilityNames.WarriorLore,
+	Ranger = LocalizedText.AbilityNames.RangerLore,
+	Rogue = LocalizedText.AbilityNames.RogueLore,
+	Source = LocalizedText.AbilityNames.Sourcery,
+	Fire = LocalizedText.AbilityNames.FireSpecialist,
+	Water = LocalizedText.AbilityNames.WaterSpecialist,
+	Air = LocalizedText.AbilityNames.AirSpecialist,
+	Earth = LocalizedText.AbilityNames.EarthSpecialist,
+	Death = LocalizedText.AbilityNames.Necromancy,
+	Summoning = LocalizedText.AbilityNames.Summoning,
+	Polymorph = LocalizedText.AbilityNames.Polymorph,
+	Sulfurology = LocalizedText.AbilityNames.Sulfurology,
+}
+
 LocalizedText.AttributeNames = {
 	Strength = ts:Create("hb4e3a075g5f82g4a0dgaffbg456e5c15c3db","Strength"),
 	Finesse = ts:Create("h281c2da7g2d2bg4d69g986agfd124c7f569f","Finesse"),

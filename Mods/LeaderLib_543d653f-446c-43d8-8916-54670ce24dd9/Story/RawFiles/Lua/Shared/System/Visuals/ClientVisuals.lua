@@ -215,9 +215,9 @@ function VisualManager.CreateClientEffect(fx, target, params)
 					otherTarget = object
 				end
 				if GameHelpers.Ext.ObjectIsCharacter(object) then
-					handler = Ext.Visual.CreateOnCharacter(object.WorldPos, object, otherTarget)
+					handler = Ext.Visual.CreateOnCharacter(object.WorldPos, object, object)
 				elseif GameHelpers.Ext.ObjectIsItem(object) then
-					handler = Ext.Visual.CreateOnItem(object.WorldPos, object, otherTarget)
+					handler = Ext.Visual.CreateOnItem(object.WorldPos, object, object)
 				end
 			end
 		end

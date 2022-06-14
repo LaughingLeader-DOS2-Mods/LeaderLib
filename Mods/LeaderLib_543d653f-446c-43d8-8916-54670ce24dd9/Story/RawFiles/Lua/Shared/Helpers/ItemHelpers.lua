@@ -687,6 +687,27 @@ function GameHelpers.Item.IsObject(item)
 	return false
 end
 
+---Returns true if the item can cast a skill, like a scroll.
+---@param item ItemParam
+---@return boolean
+function GameHelpers.Item.HasConsumeableSkillAction(item)
+    local item = GameHelpers.GetItem(item)
+    if item then
+        if GameHelpers.Item.IsObject(item) then
+			if _EXTVERSION >= 56 then
+                for _,v in pairs(item.RootTemplate.OnUsePeaceActions) do
+                    if v.Type == "UseSkill" and v.Consume == true and not StringHelpers.IsNullOrEmpty(v.SkillID) then
+                        return true
+                    end
+                end
+            else
+                return item:HasTag("SCROLL")
+            end
+		end
+    end
+	return false
+end
+
 ---@param item ItemParam
 ---@param returnNilUUID boolean|nil
 ---@return UUID
@@ -774,13 +795,15 @@ end
 
 ---@param item EsvItem|EclItem
 ---@param inKeyValueFormat boolean|nil If true, the table is returned as table<skill,boolean>
+---@param consumableOnly boolean|nil
 ---@return string[]|table<string,boolean>
-function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat)
+function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableOnly)
 	local skills = {}
 	if _EXTVERSION >= 56 then
 		if item.RootTemplate and item.RootTemplate.OnUsePeaceActions then
 			for _,v in pairs(item.RootTemplate.OnUsePeaceActions) do
-				if v.Type == "UseSkill" or v.Type == "SkillBook" then
+				if (v.Type == "UseSkill" or v.Type == "SkillBook") and not StringHelpers.IsNullOrWhitespace(v.SkillID)
+                and (not consumableOnly or v.Consume == true) then
                     if not inKeyValueFormat then
                         skills[#skills+1] = v.SkillID
                     else

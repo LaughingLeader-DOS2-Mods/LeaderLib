@@ -1,7 +1,7 @@
 ---@type table<string, table<StatType,boolean>>
 local _statNameToType = {}
 
----@type table<StatType, StatEntryArmor|StatEntryCharacter|StatEntryObject|StatEntryPotion|StatEntryShield|StatEntrySkillData|StatEntryStatusData|StatEntryWeapon[]>
+---@type table<StatType, StatEntryType[]>
 local _cachedStatData = {}
 
 local _colorPattern = 'new itemcolor "(.+)","(.+)","(.*)","(.*)"'
@@ -99,8 +99,8 @@ local function IsStatTypeValid(statType)
 end
 
 ---@param statType StatType
----@param asStatsEntry boolean|nil Return the StatEntrySkillData instead of string.
----@return fun():string|StatEntrySkillData
+---@param asStatsEntry boolean|nil Return the StatEntryType instead of string.
+---@return fun():string|StatEntryType
 function GameHelpers.Stats.GetStats(statType, asStatsEntry)
 	assert(IsStatTypeValid(statType), "statType must be one of the following: Armor|DeltaMod|Potion|Shield|SkillData|StatusData|Weapon")
 	local _cache = _GetCachedStatType(statType)
@@ -136,6 +136,12 @@ end
 ---@return fun():string|StatEntryStatusData
 function GameHelpers.Stats.GetStatuses(asStatsEntry)
 	return GameHelpers.Stats.GetStats("StatusData", asStatsEntry)
+end
+
+---@param asStatsEntry boolean|nil Return the StatEntrySkillData instead of string.
+---@return fun():string|StatEntryObject
+function GameHelpers.Stats.GetObjects(asStatsEntry)
+	return GameHelpers.Stats.GetStats("Object", asStatsEntry)
 end
 
 ---@param id string
@@ -198,4 +204,33 @@ function GameHelpers.Stats.Exists(id, statType)
 		local b,stat = pcall(Ext.GetStat, id)
 		return b and stat ~= nil
 	end
+end
+
+local _cachedSkillToSkillbook = {}
+
+---Get a root template GUID that grants a specific skill.  
+---This helper will parse object stats to try and find associated skillbooks, if a result hasn't been found already.
+---@param skill string The skill ID.
+---@return string rootTemplate A root template that grants this skill, if any.
+function GameHelpers.Stats.GetSkillbookForSkill(skill)
+	local template = _cachedSkillToSkillbook[skill]
+	if template then
+		return template
+	end
+	for stat in GameHelpers.Stats.GetObjects(true) do
+		if stat.Using == "_Skillbooks" or (stat.Requirements and Data.AbilityEnum[stat.Requirements[1].Requirement]) then
+			---@type ItemTemplate
+			local root = Ext.Template.GetTemplate(stat.RootTemplate)
+			--Ext.IO.SaveFile("Dumps/ECLRootTemplate_SKILLBOOK_Water_VampiricHungerAura.json", Ext.DumpExport(Ext.Template.GetTemplate("2398983b-d9f3-40ca-9269-9a4fb0860931")))
+			if root and root.OnUsePeaceActions then
+				for _,v in pairs(root.OnUsePeaceActions) do
+					if v.Type == "SkillBook" and v.SkillID == skill then
+						_cachedSkillToSkillbook[skill] = stat.RootTemplate
+						return stat.RootTemplate
+					end
+				end
+			end
+		end
+	end
+	return nil
 end

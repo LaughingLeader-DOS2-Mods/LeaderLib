@@ -41,9 +41,21 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		
 		for name,data in pairs(Mods) do
 			if data.PersistentVars ~= nil then
-				local b,err = xpcall(Ext.JsonStringify, debug.traceback, data.PersistentVars)
+				local b,err = xpcall(Common.JsonStringify, debug.traceback, data.PersistentVars)
 				if not b then
 					Ext.PrintError("Error stringifying PersistentVars for", name)
+					local checkTable = nil
+					checkTable = function(tbl)
+						for k,v in pairs(tbl) do
+							if type(k) == "userdata" or type(v) == "userdata" then
+								Ext.PrintError(k,v)
+							elseif type(v) == "table" then
+								Ext.PrintError(k)
+								checkTable(v)
+							end
+						end
+					end
+					checkTable(data.PersistentVars)
 				end
 				varData[name] = TableHelpers.SanitizeTable(data.PersistentVars, nil, true)
 			end

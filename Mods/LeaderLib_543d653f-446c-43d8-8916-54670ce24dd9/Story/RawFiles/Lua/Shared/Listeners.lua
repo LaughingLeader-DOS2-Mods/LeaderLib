@@ -90,10 +90,10 @@ else
 	---Called after showFormattedTooltipAfterPos is invoked.
 	Listeners.OnTooltipPositioned = {}
 
-	---@type fun(ui:UIExtensionsMain, control:FlashMovieClip, id:string, index:integer):void[]
+	---@type fun(ui:UIExtensionsMain, control:FlashMovieClip, id:string, index:integer)[]
 	Listeners.UIExtensionsControlAdded = {}
 
-	---@type fun(ui:UIExtensionsMain, width:number, height:number):void[]
+	---@type fun(ui:UIExtensionsMain, width:number, height:number)[]
 	Listeners.UIExtensionsResized = {}
 
 	---Simple listener called when Vars.ControllerEnabled is set to true.

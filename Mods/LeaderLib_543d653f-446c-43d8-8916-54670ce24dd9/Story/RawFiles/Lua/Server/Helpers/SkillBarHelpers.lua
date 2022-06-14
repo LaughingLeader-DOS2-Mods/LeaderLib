@@ -206,6 +206,21 @@ function GameHelpers.Skill.RemoveFromSlots(char, skill)
     end
 end
 
+---Removes all skills from a character.
+---@param char CharacterParam
+function GameHelpers.Skill.RemoveAllSkills(char)
+    local char = GameHelpers.GetCharacter(char)
+    if char then
+        if not Ext.OsirisIsCallable() then
+            fprint(LOGLEVEL.WARNING, "[GameHelpers.Skill.RemoveAllSkills] Can't remove skills from (%s)[%s] - Osiris is not callable.", GameHelpers.Character.GetDisplayName(char), char.MyGuid)
+            return
+        end
+        for _,v in pairs(char:GetSkills()) do
+            CharacterRemoveSkill(char.MyGuid, v)
+        end
+    end
+end
+
 GameHelpers.Skill.StoreCooldownData = StoreSkillCooldownData
 GameHelpers.Skill.StoreSlots = StoreSkillSlots
 GameHelpers.Skill.TrySetSlot = TrySetSkillSlot

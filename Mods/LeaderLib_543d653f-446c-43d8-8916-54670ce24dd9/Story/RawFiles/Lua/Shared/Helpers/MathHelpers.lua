@@ -438,7 +438,6 @@ function GameHelpers.Math.GetHighGroundFlag(sourcePos, targetPos)
     end
     local heightDiff = sourcePos[2] - targetPos[2]
     local threshold = GameHelpers.GetExtraData("HighGroundThreshold", 2.4)
-    print(heightDiff, threshold)
     if heightDiff < threshold then
         if -threshold >= heightDiff then
             return "LowGround"

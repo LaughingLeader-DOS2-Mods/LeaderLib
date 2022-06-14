@@ -307,14 +307,21 @@ function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 	return tags
 end
 
+local function _GetMyGuid(obj)
+	return obj.MyGuid
+end
+
 ---Tries to get a string UUID from whatever variable type object is.
 ---@param object EsvGameObject|EclGameObject|string|number
 ---@param returnNullId boolean|nil If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
 ---@return UUID
 function GameHelpers.GetUUID(object, returnNullId)
 	local t = type(object)
-	if t == "userdata" and object.MyGuid then
-		return object.MyGuid
+	if t == "userdata" then
+		local b,uuid = pcall(_GetMyGuid, object)
+		if uuid then
+			return uuid
+		end
 	elseif t == "string" then
 		return StringHelpers.GetUUID(object)
 	elseif t == "number" then

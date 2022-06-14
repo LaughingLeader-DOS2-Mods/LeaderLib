@@ -250,6 +250,8 @@ end
 
 ---@type table<integer,string>
 Data.Ability = setmetatable({},{__index = abilityValues})
+
+---@return fun():integer,string
 function Data.Ability:Get()
 	return iterateFromZero(self)
 end

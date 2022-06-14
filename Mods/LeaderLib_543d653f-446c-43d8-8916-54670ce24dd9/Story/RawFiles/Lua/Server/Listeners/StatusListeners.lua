@@ -176,6 +176,8 @@ end
 ---@param target EsvCharacter|EsvItem
 ---@param source EsvCharacter|EsvItem
 ---@param handle integer
+---@param targetId UUID
+---@param sourceId UUID
 local function BeforeStatusAttempt(statusId, target, source, handle, targetId, sourceId)
 	local statusType = GameHelpers.Status.GetStatusType(statusId)
 	--Crash fix
@@ -227,9 +229,12 @@ end
 
 RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(target,status,handle,source)
 	if not IgnoreStatus(status) then
-		target = GameHelpers.GetUUID(target, true)
-		source = GameHelpers.GetUUID(source, true)
-		BeforeStatusAttempt(status, GameHelpers.TryGetObject(target), GameHelpers.TryGetObject(source), handle, target, source)
+		local targetObject = GameHelpers.TryGetObject(target)
+		local sourceObject = nil
+		if not StringHelpers.IsNullOrEmpty(source) then
+			sourceObject = GameHelpers.TryGetObject(source)
+		end
+		BeforeStatusAttempt(status, targetObject, sourceObject, handle, target, source)
 	end
 end)
 

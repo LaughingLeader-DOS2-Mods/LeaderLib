@@ -4,7 +4,7 @@ end
 
 local _ISCLIENT = Ext.IsClient()
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@return boolean
 function GameHelpers.Character.IsPlayer(character)
 	if not character then
@@ -52,7 +52,7 @@ function GameHelpers.Character.IsPlayer(character)
 end
 
 ---Returns true if the character IsGameMaster or IsPossessed
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param ignorePossessed boolean|nil
 ---@return boolean
 function GameHelpers.Character.IsGameMaster(character, ignorePossessed)
@@ -83,7 +83,7 @@ function GameHelpers.Character.IsGameMaster(character, ignorePossessed)
 	return false
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@return boolean
 function GameHelpers.Character.IsPlayerOrPartyMember(character)
 	if GameHelpers.Character.IsPlayer(character) then
@@ -95,7 +95,7 @@ function GameHelpers.Character.IsPlayerOrPartyMember(character)
 	return false
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 function GameHelpers.Character.IsOrigin(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
@@ -110,7 +110,7 @@ function GameHelpers.Character.IsOrigin(character)
 	return false
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 function GameHelpers.Character.IsInCharacterCreation(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
@@ -134,7 +134,7 @@ function GameHelpers.Character.IsInCharacterCreation(character)
 	return false
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 function GameHelpers.Character.IsSummonOrPartyFollower(character)
 	if not _ISCLIENT then
 		if type(character) == "userdata" then
@@ -153,7 +153,7 @@ function GameHelpers.Character.IsSummonOrPartyFollower(character)
 	return false
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 function GameHelpers.Character.IsAllyOfParty(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
@@ -167,7 +167,7 @@ function GameHelpers.Character.IsAllyOfParty(character)
 	return false
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 function GameHelpers.Character.IsEnemyOfParty(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
@@ -193,7 +193,7 @@ function GameHelpers.Character.IsEnemy(char1, char2)
 	return false
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 function GameHelpers.Character.IsNeutralToParty(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
@@ -207,7 +207,7 @@ function GameHelpers.Character.IsNeutralToParty(character)
 	return false
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 function GameHelpers.Character.IsInCombat(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
@@ -269,7 +269,7 @@ function GameHelpers.Character.GetHighestPlayerLevel()
 	return level
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@return boolean
 function GameHelpers.Character.IsUndead(character)
 	if type(character) ~= "userdata" then
@@ -283,8 +283,21 @@ function GameHelpers.Character.IsUndead(character)
 	return false
 end
 
+---Returns true if the character is dead, or if it has the DYING status.
+---@param character CharacterParam
+---@return boolean
+function GameHelpers.Character.IsDeadOrDying(character)
+	local character = GameHelpers.GetCharacter(character)
+	if character then
+		if character.Dead or character:GetStatus("DYING") then
+			return true
+		end
+	end
+	return false
+end
+
 ---Returns true if the character is one of the regular humanoid races.
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@return boolean
 function GameHelpers.Character.IsHumanoid(character)
 	character = GameHelpers.GetCharacter(character)
@@ -301,7 +314,7 @@ function GameHelpers.Character.IsHumanoid(character)
 	return false
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@return boolean
 function GameHelpers.Character.GetDisplayName(character)
 	if not character then
@@ -428,7 +441,7 @@ function GameHelpers.Character.GetPartySize(includeSummons)
 end
 
 ---Gets all the active summons of a character.
----@param owner EsvCharacter|EclCharacter|UUID|NETID
+---@param owner CharacterParam
 ---@param getItems boolean|nil If on the server, item summons can be fetched as well.
 ---@return fun():EsvCharacter|EclCharacter
 function GameHelpers.Character.GetSummons(owner, getItems)
@@ -523,7 +536,7 @@ function GameHelpers.Character.IsWithinWeaponRange(character, target)
 	return GameHelpers.Math.GetDistance(character, target) <= weaponRange
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 function GameHelpers.Character.IsUnsheathed(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
@@ -687,7 +700,7 @@ function GameHelpers.Character.EquipItem(character, item)
 end
 
 ---Get a table of the character's equipment.
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param asTable boolean|nil Return the results as a table, instead of an iterator.
 ---@return EsvItem[]|EclItem[]|fun():EsvItem|EclItem
 function GameHelpers.Character.GetEquipment(character, asTable)
@@ -718,7 +731,7 @@ function GameHelpers.Character.GetEquipment(character, asTable)
 end
 
 ---Get a character's mainhand and offhand item.
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@return EsvItem|EclItem|nil
 ---@return EsvItem|EclItem|nil
 function GameHelpers.Character.GetEquippedWeapons(character)
@@ -762,7 +775,7 @@ function GameHelpers.Character.GetEquippedWeapons(character)
 	return nil
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 function GameHelpers.Character.IsImmobile(character)
 	local character = GameHelpers.GetCharacter(character)
 	if character then
@@ -774,7 +787,7 @@ function GameHelpers.Character.IsImmobile(character)
 end
 
 ---Checks if a character has a specific object/party/user flag.
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param flag string|string[]
 ---@return boolean
 function GameHelpers.Character.HasFlag(character, flag)

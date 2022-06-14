@@ -3,7 +3,7 @@ local isClient = Ext.IsClient()
 local Patches = {
 	--Weapon Expansion
 	["c60718c3-ba22-4702-9c5d-5ad92b41ba5f"] = {
-		Version = 153288706,
+		Version = 153288705,
 		Patch = function (initialized)
 			Ext.PrintWarning("[LeaderLib] Patching Weapon Expansion version [153288706]")
 
@@ -141,6 +141,7 @@ local Patches = {
 							end
 						end
 						local data = {
+							ID = item.StatsId,
 							UUID = item.MyGuid,
 							NetID = item.NetID,
 							Slot = slot,
@@ -170,6 +171,7 @@ local Patches = {
 							if item then
 								item.Stats.DynamicStats[2].Skills = ""
 								local syncData = {
+									ID = item.StatsId,
 									UUID = item.MyGuid,
 									NetID = item.NetID,
 									Slot = Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(item)],
@@ -185,7 +187,9 @@ local Patches = {
 								if cleave > 0 then
 									syncData.Changes.Stats.CleavePercentage = cleave * 0.01
 								end
-								GameHelpers.Net.Broadcast("LLWEAPONEX_SetItemStats", syncData)
+								if Mods.WeaponExpansion.EquipmentManager.ItemIsNearPlayers(item) then
+									GameHelpers.Net.Broadcast("LLWEAPONEX_SetItemStats", syncData)
+								end
 							end
 						end
 					end

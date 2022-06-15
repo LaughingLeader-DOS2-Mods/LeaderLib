@@ -995,18 +995,19 @@ local function copyValuesFromRef(target, source, refTable, objId)
 	end
 end
 
+---@param item ItemParam
 function GameHelpers.Ext.CreateItemTable(item)
-	local itemTable = {}
-	if type(item) == "string" then
-		item = Ext.GetItem(item)
-		if item then
-			if Ext.IsServer() then
-				local refTable = DebugHelpers.userDataProps["esv::Item"]
-				copyValuesFromRef(itemTable, item, refTable, item.MyGuid)
-			else
-				local refTable = DebugHelpers.userDataProps["ecl::Item"]
-				copyValuesFromRef(itemTable, item, refTable, item.NetID)
-			end
+	local itemTable = {
+		IsCopy = true
+	}
+	item = GameHelpers.GetItem(item)
+	if item then
+		if Ext.IsServer() then
+			local refTable = DebugHelpers.userDataProps["esv::Item"]
+			copyValuesFromRef(itemTable, item, refTable, item.MyGuid)
+		else
+			local refTable = DebugHelpers.userDataProps["ecl::Item"]
+			copyValuesFromRef(itemTable, item, refTable, item.NetID)
 		end
 	end
 	return itemTable

@@ -16,6 +16,14 @@ local skillEventDataTable = {}
 
 local _enabledSkills = {}
 
+function SkillManager.EnableForAllSkills(enabled)
+	if enabled ~= false then
+		_enabledSkills.All = true
+	else
+		_enabledSkills.All = false
+	end
+end
+
 ---@alias LeaderLibSkillListenerDataType string|"boolean"|"StatEntrySkillData"|"HitData"|"ProjectileHitData"|"SkillEventData"|"EsvShootProjectileRequest"
 
 ---@alias LeaderLibSkillListenerCallback fun(skill:string, char:string, state:SKILL_STATE, data:SkillEventData|HitData|ProjectileHitData|StatEntrySkillData|boolean, dataType:LeaderLibSkillListenerDataType)
@@ -143,7 +151,8 @@ local _lastUsedSkillItems = {}
 
 ---@param character EsvCharacter
 ---@param skill string
-local function _GetSkillSourceItem(character, skill)
+---@param returnStoredtemData boolean|nil Returns the last item data as a table, if the item no longer exists.
+local function _GetSkillSourceItem(character, skill, returnStoredtemData)
 	local sourceItem = nil
 	if _EXTVERSION >= 56 then
 		if character.SkillManager.CurrentSkillState and Ext.Utils.IsValidHandle(character.SkillManager.CurrentSkillState.SourceItemHandle) then
@@ -154,7 +163,18 @@ local function _GetSkillSourceItem(character, skill)
 		local lastItemData = _lastUsedSkillItems[character.MyGuid]
 		if lastItemData then
 			if StringHelpers.Contains(lastItemData.Skills, skill) then
-				sourceItem = GameHelpers.GetItem(lastItemData.Item)
+				if returnStoredtemData == true then
+					sourceItem = {
+						RootTemplate = lastItemData.Template,
+						StatsId = lastItemData.StatsId,
+						DisplayName = lastItemData.DisplayName
+					}
+					if _EXTVERSION >= 56 then
+						sourceItem.RootTemplate = Ext.Template.GetTemplate(lastItemData.Template)
+					end
+				elseif ObjectExists(lastItemData.Item) == 1 then
+					sourceItem = GameHelpers.GetItem(lastItemData.Item)			
+				end
 			end
 		end
 	end
@@ -168,7 +188,16 @@ if _EXTVERSION >= 56 then
 			if isConsumeable and skills[1] then
 				charGUID = StringHelpers.GetUUID(charGUID)
 				itemGUID = StringHelpers.GetUUID(itemGUID)
-				_lastUsedSkillItems[charGUID] = {Item = itemGUID, Skills = skills}
+				local item = GameHelpers.GetItem(itemGUID)
+				local statsId = GameHelpers.Item.GetItemStat(item)
+				local template = GameHelpers.GetTemplate(item)
+				_lastUsedSkillItems[charGUID] = {
+					Item = itemGUID,
+					Skills = skills,
+					StatsId = statsId,
+					Template = template,
+					DisplayName = item.DisplayName
+				}
 				Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", charGUID)
 			end
 		end
@@ -391,13 +420,18 @@ RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "aft
 	learned = learned == 1 and true or false
 	if (_enabledSkills[skill] or _enabledSkills.All) then
 		local character = GameHelpers.GetCharacter(uuid)
+		local sourceItem = _GetSkillSourceItem(character, skill, true)
+		if sourceItem then
+			Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", character)
+			_lastUsedSkillItems[uuid] = nil
+		end
 		Events.OnSkillState:Invoke({
 			Character = character,
 			Skill = skill,
 			State = SKILL_STATE.LEARNED,
 			Data = learned,
 			DataType = "boolean",
-			SourceItem = _GetSkillSourceItem(character, skill)
+			SourceItem = sourceItem
 		})
 	end
 end)

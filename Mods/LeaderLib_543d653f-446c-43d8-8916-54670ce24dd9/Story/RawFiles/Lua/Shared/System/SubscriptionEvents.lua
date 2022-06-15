@@ -375,21 +375,19 @@ if not _ISCLIENT then
 	---@field State SKILL_STATE
 	---@field Skill string
 	---@field DataType LeaderLibSkillListenerDataType
+	---@field SourceItem EsvItem|nil
 
 	---@class OnSkillStateAllEventArgs:OnSkillStateBaseEventArgs
 	---@field Data SkillEventData|HitData|ProjectileHitData|StatEntrySkillData|boolean
 
 	---@class OnSkillStatePrepareEventArgs:OnSkillStateBaseEventArgs
 	---@field Data StatEntrySkillData
-	---@field SourceItem EsvItem|nil
 
 	---@class OnSkillStateCancelEventArgs:OnSkillStateBaseEventArgs
 	---@field Data StatEntrySkillData
-	---@field SourceItem EsvItem|nil
 
 	---@class OnSkillStateSkillEventEventArgs:OnSkillStateBaseEventArgs
 	---@field Data SkillEventData
-	---@field SourceItem EsvItem|nil
 
 	---@class OnSkillStateHitEventArgs:OnSkillStateBaseEventArgs
 	---@field Data HitData

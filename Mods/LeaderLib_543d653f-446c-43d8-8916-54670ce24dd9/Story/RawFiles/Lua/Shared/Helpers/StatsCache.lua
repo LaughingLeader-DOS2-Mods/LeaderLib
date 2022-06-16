@@ -208,6 +208,18 @@ end
 
 local _cachedSkillToSkillbook = {}
 
+---@param stat StatEntryObject
+local function _StatHasAbilityRequirement(stat)
+	if stat.Requirements then
+		for _,v in pairs(stat.Requirements) do
+			if Data.AbilityEnum[v.Requirement] then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 ---Get a root template GUID that grants a specific skill.  
 ---This helper will parse object stats to try and find associated skillbooks, if a result hasn't been found already.
 ---@param skill string The skill ID.
@@ -218,7 +230,7 @@ function GameHelpers.Stats.GetSkillbookForSkill(skill)
 		return template
 	end
 	for stat in GameHelpers.Stats.GetObjects(true) do
-		if stat.Using == "_Skillbooks" or (stat.Requirements and Data.AbilityEnum[stat.Requirements[1].Requirement]) then
+		if GameHelpers.Stats.HasParent(stat.Name, "_Skillbooks") or _StatHasAbilityRequirement(stat) then
 			---@type ItemTemplate
 			local root = Ext.Template.GetTemplate(stat.RootTemplate)
 			--Ext.IO.SaveFile("Dumps/ECLRootTemplate_SKILLBOOK_Water_VampiricHungerAura.json", Ext.DumpExport(Ext.Template.GetTemplate("2398983b-d9f3-40ca-9269-9a4fb0860931")))

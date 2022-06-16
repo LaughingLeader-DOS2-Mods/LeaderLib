@@ -154,29 +154,6 @@ if isClient then
 	end)
 
 	Events.OnBuiltinContextMenuOpening:Subscribe(function (e)
-		local characterTargetHandle = nil
-		if not Vars.IsEditorMode then
-			local cursor = Ext.GetPickingState()
-			if cursor then
-				if cursor.HoverCharacter then
-					characterTargetHandle = Ext.HandleToDouble(cursor.HoverCharacter)
-				end
-			end
-		elseif e.Target and GameHelpers.Ext.ObjectIsCharacter(e.Target) then
-			characterTargetHandle = Ext.HandleToDouble(e.Target.Handle)
-		end
-		if characterTargetHandle then
-			e.ContextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(cm, ui, id, actionID, handle)
-				local target = GameHelpers.TryGetObject(Ext.DoubleToHandle(handle))
-				if target then
-					local source = Client:GetCharacter().WorldPos
-					fprint(LOGLEVEL.DEFAULT, "[HighGroundFlag] Result(%s) me.Y(%s) target.Y(%s) heightDiff(%s) HighGroundThreshold(%s)", GameHelpers.Math.GetHighGroundFlag(source, target.WorldPos), source[2], target.WorldPos[2], source[2] - target.WorldPos[2], Ext.ExtraData.HighGroundThreshold)
-				end
-			end, "Print HighGroundFlag", true, true, false, true, characterTargetHandle)
-		end
-	end)
-
-	Events.OnBuiltinContextMenuOpening:Subscribe(function (e)
 		if Vars.DebugMode then
 			local entries = {}
 			local characterTargetHandle = nil
@@ -228,15 +205,15 @@ if isClient then
 					end
 				end, "Save All Cursor Info to File", true, true, false, true)
 			end
-			if characterTargetHandle then
-				e.ContextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(cm, ui, id, actionID, handle)
-					local target = GameHelpers.TryGetObject(Ext.DoubleToHandle(handle))
-					if target then
-						local source = Client:GetCharacter().WorldPos
-						fprint(LOGLEVEL.DEFAULT, "[HighGroundFlag] Result(%s) me.Y(%s) target.Y(%s) heightDiff(%s) HighGroundThreshold(%s)", GameHelpers.Math.GetHighGroundFlag(source, target.WorldPos), source[2], target.WorldPos[2], source[2] - target.WorldPos[2], Ext.ExtraData.HighGroundThreshold)
-					end
-				end, "Print HighGroundFlag", true, true, false, true, characterTargetHandle)
-			end
+			-- if characterTargetHandle then
+			-- 	e.ContextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(cm, ui, id, actionID, handle)
+			-- 		local target = GameHelpers.TryGetObject(Ext.DoubleToHandle(handle))
+			-- 		if target then
+			-- 			local source = Client:GetCharacter().WorldPos
+			-- 			fprint(LOGLEVEL.DEFAULT, "[HighGroundFlag] Result(%s) me.Y(%s) target.Y(%s) heightDiff(%s) HighGroundThreshold(%s)", GameHelpers.Math.GetHighGroundFlag(source, target.WorldPos), source[2], target.WorldPos[2], source[2] - target.WorldPos[2], Ext.ExtraData.HighGroundThreshold)
+			-- 		end
+			-- 	end, "Print HighGroundFlag", true, true, false, true, characterTargetHandle)
+			-- end
 		end
 	end)
 

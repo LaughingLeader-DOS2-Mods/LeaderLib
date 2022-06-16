@@ -252,6 +252,9 @@ local _ISUUID_PATTERN = "%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%
 ---@param str string
 ---@return boolean
 function StringHelpers.IsUUID(str)
+	if type(str) ~= "string" then
+		return false
+	end
 	if str == nil or str == "" then
 		return false
 	end

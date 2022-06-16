@@ -757,3 +757,27 @@ function GameHelpers.Damage.DivideDamage(damageList, divider)
         return {damageList}
     end
 end
+
+---@param obj CharacterParam|ItemParam
+function GameHelpers.GetDisplayName(obj)
+	local obj = GameHelpers.TryGetObject(obj)
+	if obj then
+		if GameHelpers.Ext.ObjectIsCharacter(obj) then
+			return GameHelpers.Character.GetDisplayName(obj)
+		elseif GameHelpers.Ext.ObjectIsItem(obj) then
+			if _EXTVERSION >= 56 then
+				if string.find(obj.DisplayName, "|") then
+					if GameHelpers.Item.IsObject(obj) and not StringHelpers.IsNullOrEmpty(obj.StatsId) and not Data.ItemRarity[obj.StatsId] then
+						local name = GameHelpers.GetStringKeyText(obj.StatsId, "")
+						if not StringHelpers.IsNullOrEmpty(name) then
+							return name
+						end
+					end
+					return GameHelpers.GetTranslatedStringValue(obj.RootTemplate.DisplayName, obj.DisplayName)
+				end
+			end
+			return obj.DisplayName
+		end
+	end
+	return ""
+end

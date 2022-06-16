@@ -83,6 +83,7 @@ end
 ---@param y number
 ---@param z number
 ---@param forwardVector number[]|nil
+---@return number[] position
 function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMult, x,y,z, forwardVector)
     local character = GameHelpers.GetCharacter(source)
     if character then
@@ -381,7 +382,7 @@ end
 
 ---Convert an {X,Y,Z} table using euler angle values to a rotation matrix.
 ---@param euler number[]|Vector3
----@return number[]
+---@return number[] rotation 3x3 matrix, i.e. {0,0,0,0,0,0,0,0,0}
 function GameHelpers.Math.EulerToRotationMatrix(euler)
     return GameHelpers.Math.XYZToRotationMatrix(table.unpack(euler))
 end
@@ -398,6 +399,19 @@ function GameHelpers.Math.RotationMatrixToEuler(rot)
         gamma,
     }
     return euler
+end
+
+--Ext.Dump(Mods.LeaderLib.GameHelpers.Math.ObjectRotationToEuler(me.Stats.Rotation)) Ext.Dump({GetRotation(me.MyGuid)})
+
+---@param rot number[]
+---@return number[]
+function GameHelpers.Math.ObjectRotationToEuler(rot)
+    local x,y,z = 0,0,0
+    local cosy = 1 / cos(arcsin(rot[2]))
+    x = arctan(rot[5] * cosy, rot[8] * cosy)
+    y = rot[2]
+    z = arctan(rot[1] * cosy, rot[7] * cosy)
+    return {x*57.295776,y*57.295776,z*57.295776}
 end
 
 ---@param startPos number[]

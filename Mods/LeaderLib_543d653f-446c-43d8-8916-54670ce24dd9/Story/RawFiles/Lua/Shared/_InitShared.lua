@@ -18,7 +18,7 @@ end
 
 InitTable("Classes")
 InitTable("Common")
-InitTable({"Item", "Math", "Damage", "Skill", "Status", "Tooltip", "UI", "Ext", "_INTERNAL", "Net"}, GameHelpers)
+InitTable({"Audio", "Item", "Math", "Damage", "Skill", "Status", "Tooltip", "UI", "Ext", "_INTERNAL", "Net"}, GameHelpers)
 
 local _EXTVERSION = Ext.Version()
 local _getTranslatedStringKeyFunction = _EXTVERSION < 56 and Ext.GetTranslatedStringFromKey or Ext.L10N.GetTranslatedStringFromKey

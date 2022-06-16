@@ -15,6 +15,11 @@ RegisterModListener("Loaded", ModuleUUID, function(lastVersion, nextVersion)
 		Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(nil,nil)
 		Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(nil,nil,nil)
 	end
+	if lastVersion < 387252230 then
+		--Object timer data wasn't being cleared, so clear all the data
+		PersistentVars.TimerData = {}
+		PersistentVars.TimerNameMap = {}
+	end
 end)
 
 -- Timer.Subscribe("TestTimer", function(...) print(Lib.inspect({...})) end)

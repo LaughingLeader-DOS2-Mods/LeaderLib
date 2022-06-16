@@ -251,6 +251,7 @@ function Timer.RegisterListener(name, callback)
 end
 
 local function OnTimerFinished(timerName)
+	local originalTimerName = timerName
 	local data = Timer.TimerData[timerName]
 	local realTimerName = Timer.TimerNameMap[timerName]
 
@@ -259,7 +260,6 @@ local function OnTimerFinished(timerName)
 		timerName = realTimerName
 		Timer.TimerNameMap[timerName] = nil
 	end
-
 
 	if type(data) == "table" then
 		for i=1,#data do
@@ -305,7 +305,7 @@ local function OnTimerFinished(timerName)
 	end
 
 	_INTERNAL.ClearOneshotSubscriptions(timerName)
-	Timer.TimerData[timerName] = nil
+	_INTERNAL.ClearData(originalTimerName)
 end
 
 ---Starts an Osiris timer with a unique string variance, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.

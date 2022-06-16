@@ -712,20 +712,17 @@ function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
             SetVarFloat3(source.MyGuid, "LeaderLib_ShootWorldConeAt_Source", sx, sy, sz)
             SetStoryEvent(source.MyGuid, "LeaderLog_Commands_ShootWorldConeAt")
     
-            Timer.StartOneshot("", 30, function ()
-                ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Skill")
-                ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Target")
-            end)
+            ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Skill")
+            ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Target")
+            ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Source")
         else
             SetVarFixedString(source.MyGuid, "LeaderLib_ShootLocalConeAt_Skill", skillId)
             local x,y,z = GameHelpers.Math.GetPosition(target, true, source.WorldPos)
             SetVarFloat3(source.MyGuid, "LeaderLib_ShootLocalConeAt_Target", x, y, z)
             SetStoryEvent(source.MyGuid, "LeaderLog_Commands_ShootLocalConeAt")
     
-            Timer.StartOneshot("", 30, function ()
-                ClearVarObject(source.MyGuid, "LeaderLib_ShootLocalConeAt_Skill")
-                ClearVarObject(source.MyGuid, "LeaderLib_ShootLocalConeAt_Target")
-            end)
+            ClearVarObject(source.MyGuid, "LeaderLib_ShootLocalConeAt_Skill")
+            ClearVarObject(source.MyGuid, "LeaderLib_ShootLocalConeAt_Target")
         end
     else
         _CreateZoneActionFromSkill(skillId, source, target, extraParams)

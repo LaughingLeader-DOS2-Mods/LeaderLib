@@ -477,10 +477,15 @@ function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)
         return true
     end
     bonusRolls = bonusRolls or 0
-    bonusRolls = bonusRolls + 1
-    for i=bonusRolls,0,-1 do
+    --Increase random range to increase randomness (low ranges tend to give more successes)
+    if maxValue == 100 then
+        minValue = minValue * 100
+        maxValue = maxValue * 100
+        chance = chance * 100
+    end
+    for i=bonusRolls+1,0,-1 do
         local roll = Ext.Random(minValue, maxValue)
-        if roll <= chance then
+        if roll > 0 and roll <= chance then
             return true
         end
     end

@@ -212,6 +212,7 @@ function OnSkillPreparing(char, skillprototype)
 		SkillManager.OnSkillPreparingCancel(char, "", last, true)
 	end
 
+	--(not last or last ~= skill) prevents invoke spam for PCs, since the PrepareSkill fires constantly for them
 	if (_enabledSkills[skill] or _enabledSkills.All) and (not last or last ~= skill) then
 		local skillData = Ext.GetStat(skill)
 		local caster = GameHelpers.GetCharacter(char)
@@ -422,6 +423,7 @@ RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "aft
 		local character = GameHelpers.GetCharacter(uuid)
 		local sourceItem = _GetSkillSourceItem(character, skill, true)
 		if sourceItem then
+			--This item is probably going to be deleted, so it's safe to clear immediately
 			Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", character)
 			_lastUsedSkillItems[uuid] = nil
 		end
@@ -483,14 +485,14 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 	end
 end)
 
--- Ext.RegisterOsirisListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)
--- 	if state == "PrepareSkill" then
--- 		local skillprototype = NRD_ActionStateGetString(char, "SkillId")
--- 		if skillprototype ~= nil and skillprototype ~= "" then
--- 			OnSkillPreparing(char, skillprototype)
--- 		end
--- 	end
--- end)
+RegisterProtectedOsirisListener("NRD_OnActionStateEnter", 2, "after", function(char, state)
+	if state == "PrepareSkill" then
+		local skillprototype = NRD_ActionStateGetString(char, "SkillId")
+		if not StringHelpers.IsNullOrEmpty(skillprototype) then
+			OnSkillPreparing(char, skillprototype)
+		end
+	end
+end)
 
 -- Ext.RegisterOsirisListener("NRD_OnActionStateExit", Data.OsirisEvents.NRD_OnActionStateExit, "after", function(char, state)
 -- 	if state == "PrepareSkill" then

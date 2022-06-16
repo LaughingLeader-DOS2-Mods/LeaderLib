@@ -3,14 +3,6 @@ SubGoalCombiner SGC_AND
 INITSECTION
 KBSECTION
 /* [OSITOOLS_ONLY]
-IF
-NRD_OnActionStateEnter(_Char, "PrepareSkill")
-AND
-NRD_ActionStateGetString(_Char, "SkillId", _SkillPrototype)
-//AND NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, (STRING)_)
-THEN
-NRD_ModCall("LeaderLib", "OnSkillPreparing", (STRING)_Char, _SkillPrototype);
-
 // Fires when objects are targeted directly. Either a position or target event will fire for a target - Not both!
 IF
 CharacterUsedSkillOnTarget(_Char, _Target, _Skill, _SkillType, _SkillElement)

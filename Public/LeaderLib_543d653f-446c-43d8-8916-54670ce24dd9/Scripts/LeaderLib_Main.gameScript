@@ -19,6 +19,8 @@ INIT
 	FIXEDSTRING:%LeaderLib_InventoryIterator_Tag = ""
 	
 	CHARACTER:%LeaderLib_CreateByStat_Dummy = null
+
+	FLOAT3:%LeaderLib_ConeOffset = {0;0;0}
 	
 	USING LeaderLib_TypeHelpers
 	USING LeaderLib_ForceHelpers
@@ -741,6 +743,46 @@ ELIF "c1"
 	HasFlag(_Char, "LeaderLib_SkillRequirement_WandWeapon")
 THEN
 	ClearFlag(_Char, "LeaderLib_SkillRequirement_WandWeapon")
+ENDIF
+
+EVENT LeaderLog_Commands_ShootLocalConeAt
+VARS
+	CHARACTER:_Char
+	FLOAT3:_TargetPos
+	SKILL:_Skill
+	FLOAT:_LevelF
+	INT:_Level
+ON
+	OnCharacterEvent(_Char, "LeaderLog_Commands_ShootLocalConeAt")
+ACTIONS
+IF "c1&c2&c3"
+	GetVar(_Skill, _Char, "LeaderLib_ShootLocalConeAt_Skill")
+	GetVar(_TargetPos, _Char, "LeaderLib_ShootLocalConeAt_Target")
+	CharacterGetStat(_LevelF, _Item, Level)
+THEN
+	Cast(_Level, _LevelF)
+	ShootLocalConeAt(_Skill, _Char, %LeaderLib_ConeOffset, _TargetPos, _Level, _Char)
+ENDIF
+
+EVENT LeaderLog_Commands_ShootWorldConeAt
+VARS
+	CHARACTER:_Char
+	FLOAT3:_TargetPos
+	FLOAT3:_SourcePos
+	SKILL:_Skill
+	FLOAT:_LevelF
+	INT:_Level
+ON
+	OnCharacterEvent(_Char, "LeaderLog_Commands_ShootWorldConeAt")
+ACTIONS
+IF "c1&c2&c3&c4"
+	GetVar(_Skill, _Char, "LeaderLib_ShootWorldConeAt_Skill")
+	GetVar(_SourcePos, _Char, "LeaderLib_ShootWorldConeAt_Source")
+	GetVar(_TargetPos, _Char, "LeaderLib_ShootWorldConeAt_Target")
+	CharacterGetStat(_LevelF, _Item, Level)
+THEN
+	Cast(_Level, _LevelF)
+	ShootWorldConeAt(_Skill, _Char, _SourcePos, _TargetPos, _Level)
 ENDIF
 
 // EVENT LeaderLib_CrashFix_Madness

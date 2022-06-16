@@ -2,7 +2,14 @@ if GameHelpers == nil then GameHelpers = {} end
 if GameHelpers.Skill == nil then GameHelpers.Skill = {} end
 
 local function TrySetValue(target, k, v)
-    target[k] = v
+    if k == "DamageList" then
+        Ext.Dump(v:ToTable())
+        local dlist = target[k]
+        dlist:Clear()
+        dlist:Merge(v)
+    else
+        target[k] = v
+    end
 end
 
 local projectileCreationProperties = {
@@ -548,13 +555,11 @@ local LeaderLibZoneCreationPropertiesNames = {
     SkillOverrides = "table",
 }
 
----Shoot a zone/cone skill at a target object or position.
 ---@param skillId string Zone or Cone type skill.
 ---@param source UUID|EsvCharacter|EsvItem
 ---@param target UUID|number[]|EsvCharacter|EsvItem
 ---@param extraParams LeaderLibZoneCreationProperties An optional table of properties to apply on top of the parsed skill properties.
-function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
-    extraParams = type(extraParams) == "table" and extraParams or {}
+local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
     local skill = GameHelpers.Ext.CreateSkillTable(skillId)
     if type(extraParams.SkillOverrides) == "table" then
         for k,v in pairs(extraParams.SkillOverrides) do
@@ -588,17 +593,42 @@ function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
             props.Position = sourceObject.WorldPos
 
             if GameHelpers.Ext.ObjectIsCharacter(sourceObject) then
-                local b,damageList,deathType = xpcall(Game.Math.GetSkillDamage, debug.traceback, skill, sourceObject.Stats, false, false, props.Position, props.Target, sourceObject.Stats.Level, false)
-                if b then
-                    if damageList then
-                        if props.DamageList == nil then
-                            props.DamageList = Ext.NewDamageList()
+                props.DamageList = Ext.NewDamageList()
+
+                local useDefaultSkillDamage = true
+                if Ext.Version() >= 56 then
+					local listeners = Ext._Internal._Events.GetSkillDamage
+					if listeners then
+						for i=1,#listeners do
+							local callback = listeners[i]
+							if callback then
+								local b,damageList,deathType = xpcall(callback, debug.traceback, skill, sourceObject.Stats, false, sourceObject.Stats.IsSneaking == true, props.Position, props.Target, sourceObject.Stats.Level, false)
+								if b then
+                                    if damageList then
+                                        props.DamageList:Clear()
+                                        props.DamageList:Merge(damageList)
+                                    end
+                                    props.DeathType = deathType or "Physical"
+                                    useDefaultSkillDamage = false
+								else
+									Ext.PrintError(damageList)
+								end
+							end
+						end
+					end
+				end
+
+                if useDefaultSkillDamage then
+                    local b,damageList,deathType = xpcall(Game.Math.GetSkillDamage, debug.traceback, skill, sourceObject.Stats, false, sourceObject.Stats.IsSneaking == true, props.Position, props.Target, sourceObject.Stats.Level, false)
+                    if b then
+                        if damageList then
+                            props.DamageList:Clear()
+                            props.DamageList:Merge(damageList)
                         end
-                        props.DamageList:Merge(damageList)
+                        props.DeathType = deathType or "Physical"
+                    else
+                        Ext.PrintError(damageList)
                     end
-                    props.DeathType = deathType or "Physical"
-                else
-                    Ext.PrintError(damageList)
                 end
             end
         end
@@ -646,10 +676,60 @@ function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
 
     PlayZoneSkillEffects(skill, sourceId, GameHelpers.GetUUID(target), props.Position, props.Target, playCastEffects, playTargetEffects)
 
+    --TODO EsvZoneAction.DamageList results in an __index error, despite it existing in the struct
+    if props.DamageList then
+        props.DamageList = nil
+    end
+
+    local dumpAction = false
     for k,v in pairs(props) do
-        pcall(TrySetValue, action, k, v)
+        local b,err = xpcall(TrySetValue, debug.traceback, action, k, v)
+        if not b then
+            Ext.PrintError(err)
+            dumpAction = true
+        end
+    end
+    if dumpAction then
+        GameHelpers.IO.SaveFile("Dumps/EsvZoneAction.json", Ext.DumpExport(action))
     end
     Ext.ExecuteSurfaceAction(action)
+end
+
+---Shoot a zone/cone skill at a target object or position.
+---@param skillId string Zone or Cone type skill.
+---@param source UUID|EsvCharacter|EsvItem
+---@param target UUID|number[]|EsvCharacter|EsvItem
+---@param extraParams LeaderLibZoneCreationProperties An optional table of properties to apply on top of the parsed skill properties.
+function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
+    extraParams = type(extraParams) == "table" and extraParams or {}
+    local source = GameHelpers.TryGetObject(source)
+    if GameHelpers.Ext.ObjectIsCharacter(source) then
+        if extraParams.Position then
+            SetVarFixedString(source.MyGuid, "LeaderLib_ShootWorldConeAt_Skill", skillId)
+            local x,y,z = GameHelpers.Math.GetPosition(target, true, source.WorldPos)
+            local sx,sy,sz = table.unpack(extraParams.Position)
+            SetVarFloat3(source.MyGuid, "LeaderLib_ShootWorldConeAt_Target", x, y, z)
+            SetVarFloat3(source.MyGuid, "LeaderLib_ShootWorldConeAt_Source", sx, sy, sz)
+            SetStoryEvent(source.MyGuid, "LeaderLog_Commands_ShootWorldConeAt")
+    
+            Timer.StartOneshot("", 30, function ()
+                ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Skill")
+                ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Target")
+            end)
+        else
+            SetVarFixedString(source.MyGuid, "LeaderLib_ShootLocalConeAt_Skill", skillId)
+            local x,y,z = GameHelpers.Math.GetPosition(target, true, source.WorldPos)
+            SetVarFloat3(source.MyGuid, "LeaderLib_ShootLocalConeAt_Target", x, y, z)
+            SetStoryEvent(source.MyGuid, "LeaderLog_Commands_ShootLocalConeAt")
+    
+            Timer.StartOneshot("", 30, function ()
+                ClearVarObject(source.MyGuid, "LeaderLib_ShootLocalConeAt_Skill")
+                ClearVarObject(source.MyGuid, "LeaderLib_ShootLocalConeAt_Target")
+            end)
+        end
+    else
+        _CreateZoneActionFromSkill(skillId, source, target, extraParams)
+    end
     return true
 end
 

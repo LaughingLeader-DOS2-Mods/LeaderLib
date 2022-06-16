@@ -766,7 +766,7 @@ function GameHelpers.GetDisplayName(obj)
 			return GameHelpers.Character.GetDisplayName(obj)
 		elseif GameHelpers.Ext.ObjectIsItem(obj) then
 			if _EXTVERSION >= 56 then
-				if string.find(obj.DisplayName, "|") then
+				if string.find(obj.DisplayName, "|") or obj.RootTemplate.DisplayName.Handle == nil then
 					if GameHelpers.Item.IsObject(obj) and not StringHelpers.IsNullOrEmpty(obj.StatsId) and not Data.ItemRarity[obj.StatsId] then
 						local name = GameHelpers.GetStringKeyText(obj.StatsId, "")
 						if not StringHelpers.IsNullOrEmpty(name) then

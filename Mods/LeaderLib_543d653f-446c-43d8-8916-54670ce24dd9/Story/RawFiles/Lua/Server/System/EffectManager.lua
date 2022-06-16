@@ -231,9 +231,8 @@ function _INTERNAL.PlayEffectAt(fx, pos, params)
 			local b,effect = xpcall(Ext.Effect.CreateEffect, debug.traceback, fx, Ext.Entity.NullHandle(), "")
 			---@diagnostic enable
 			if b and effect then
-				effect.Position[1] = x
-				effect.Position[2] = y
-				effect.Position[3] = z
+				effect.Position = {x,y,z}
+				effect.ForgetEffect = true
 
 				if params and type(params) == "table" then
 					for k,v in pairs(params) do

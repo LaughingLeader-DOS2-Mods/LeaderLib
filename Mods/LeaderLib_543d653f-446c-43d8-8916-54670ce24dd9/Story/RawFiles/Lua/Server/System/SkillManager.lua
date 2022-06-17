@@ -153,6 +153,9 @@ local _lastUsedSkillItems = {}
 ---@param skill string
 ---@param returnStoredtemData boolean|nil Returns the last item data as a table, if the item no longer exists.
 local function _GetSkillSourceItem(character, skill, returnStoredtemData)
+	if not character then
+		return nil
+	end
 	local sourceItem = nil
 	if _EXTVERSION >= 56 then
 		if character.SkillManager.CurrentSkillState and Ext.Utils.IsValidHandle(character.SkillManager.CurrentSkillState.SourceItemHandle) then
@@ -255,8 +258,10 @@ end
 
 -- Fires when CharacterUsedSkill fires. This happens after all the target events.
 function OnSkillUsed(char, skill, skillType, skillAbility)
+	if ObjectExists(char) == 0 then
+		return
+	end
 	local uuid = StringHelpers.GetUUID(char)
-
 	if GameHelpers.Stats.IsHealingSkill(skill) then
 		PersistentVars.LastUsedHealingSkill[uuid] = skill
 		Timer.StartObjectTimer("LeaderLib_ClearLastUsedHealingSkill", uuid, 3000)
@@ -290,15 +295,17 @@ function OnSkillCast(char, skill, skilLType, skillAbility)
 		---@type SkillEventData
 		local data = GetCharacterSkillData(skill, uuid, true, skilLType, skillAbility, Vars.DebugMode, "OnSkillCast")
 		if data ~= nil then
-			local caster = GameHelpers.GetCharacter(char)
-			Events.OnSkillState:Invoke({
-				Character = caster,
-				Skill = skill,
-				State = SKILL_STATE.CAST,
-				Data = data,
-				DataType = data.Type,
-				SourceItem = _GetSkillSourceItem(caster, skill)
-			})
+			local character = GameHelpers.GetCharacter(char)
+			if character then
+				Events.OnSkillState:Invoke({
+					Character = character,
+					Skill = skill,
+					State = SKILL_STATE.CAST,
+					Data = data,
+					DataType = data.Type,
+					SourceItem = _GetSkillSourceItem(character, skill)
+				})
+			end
 			data:Clear()
 		end
 	end
@@ -318,6 +325,9 @@ Timer.Subscribe("LeaderLib_SkillManager_RemoveLastUsedSkillItem", function (e)
 end)
 
 local function IgnoreHitTarget(target)
+	if ObjectExists(target) == 0 then
+		return true
+	end
 	if IsTagged(target, "MovingObject") == 1 then
 		return true
 	elseif ObjectIsCharacter(target) == 1 and Osi.LeaderLib_Helper_QRY_IgnoreCharacter(target) == true then
@@ -417,28 +427,36 @@ RegisterProtectedExtenderListener("ShootProjectile", function (projectile)
 end)
 
 RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "after", function(uuid, skill, learned)
+	if ObjectExists(uuid) == 0 then
+		return
+	end
 	uuid = StringHelpers.GetUUID(uuid)
 	learned = learned == 1 and true or false
 	if (_enabledSkills[skill] or _enabledSkills.All) then
 		local character = GameHelpers.GetCharacter(uuid)
-		local sourceItem = _GetSkillSourceItem(character, skill, true)
-		if sourceItem then
-			--This item is probably going to be deleted, so it's safe to clear immediately
-			Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", character)
-			_lastUsedSkillItems[uuid] = nil
+		if character then
+			local sourceItem = _GetSkillSourceItem(character, skill, true)
+			if sourceItem then
+				--This item is probably going to be deleted, so it's safe to clear immediately
+				Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", character)
+				_lastUsedSkillItems[uuid] = nil
+			end
+			Events.OnSkillState:Invoke({
+				Character = character,
+				Skill = skill,
+				State = SKILL_STATE.LEARNED,
+				Data = learned,
+				DataType = "boolean",
+				SourceItem = sourceItem
+			})
 		end
-		Events.OnSkillState:Invoke({
-			Character = character,
-			Skill = skill,
-			State = SKILL_STATE.LEARNED,
-			Data = learned,
-			DataType = "boolean",
-			SourceItem = sourceItem
-		})
 	end
 end)
 
 RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivated, "after", function(uuid, skill)
+	if ObjectExists(uuid) == 0 then
+		return
+	end
 	uuid = StringHelpers.GetUUID(uuid)
 	local learned = false
 	local character = Ext.GetCharacter(uuid)
@@ -447,16 +465,16 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 		if skillInfo then
 			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
 		end
-	end
-	if (_enabledSkills[skill] or _enabledSkills.All) then
-		Events.OnSkillState:Invoke({
-			Character = character,
-			Skill = skill,
-			State = SKILL_STATE.MEMORIZED,
-			Data = learned,
-			DataType = "boolean",
-			SourceItem = _GetSkillSourceItem(character, skill)
-		})
+		if (_enabledSkills[skill] or _enabledSkills.All) then
+			Events.OnSkillState:Invoke({
+				Character = character,
+				Skill = skill,
+				State = SKILL_STATE.MEMORIZED,
+				Data = learned,
+				DataType = "boolean",
+				SourceItem = _GetSkillSourceItem(character, skill)
+			})
+		end
 	end
 end)
 
@@ -472,21 +490,21 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 		if skillInfo then
 			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
 		end
-	end
-	if (_enabledSkills[skill] or _enabledSkills.All) then
-		Events.OnSkillState:Invoke({
-			Character = character,
-			Skill = skill,
-			State = SKILL_STATE.UNMEMORIZED,
-			Data = learned,
-			DataType = "boolean",
-			SourceItem = _GetSkillSourceItem(character, skill)
-		})
+		if (_enabledSkills[skill] or _enabledSkills.All) then
+			Events.OnSkillState:Invoke({
+				Character = character,
+				Skill = skill,
+				State = SKILL_STATE.UNMEMORIZED,
+				Data = learned,
+				DataType = "boolean",
+				SourceItem = _GetSkillSourceItem(character, skill)
+			})
+		end
 	end
 end)
 
 RegisterProtectedOsirisListener("NRD_OnActionStateEnter", 2, "after", function(char, state)
-	if state == "PrepareSkill" then
+	if state == "PrepareSkill" and ObjectExists(char) == 1 then
 		local skillprototype = NRD_ActionStateGetString(char, "SkillId")
 		if not StringHelpers.IsNullOrEmpty(skillprototype) then
 			OnSkillPreparing(char, skillprototype)

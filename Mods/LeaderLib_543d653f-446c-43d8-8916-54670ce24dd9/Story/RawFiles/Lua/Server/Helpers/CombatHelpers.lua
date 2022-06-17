@@ -17,7 +17,7 @@ local function GetOsirisCombatCharacters(id, filter, filterReference, asTable)
 		local objects = {}
 		for i,v in pairs(combat) do
 			local character = GameHelpers.GetCharacter(v[1])
-			if character then
+			if character and not character.OffStage then
 				local uuid = character.MyGuid
 				if filter then
 					local t = type(filter)
@@ -95,44 +95,47 @@ function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)
 		local refuuid = GameHelpers.GetUUID(filterReference)
 		local objects = {}
 		for i,v in pairs(combat:GetAllTeams()) do
-			if filter then
-				local t = type(filter)
-				if t == "function" then
-					local b,result = xpcall(filter, debug.traceback, v.Character, v.CombatId, v.TeamId, v.Initiative, v.StillInCombat)
-					if not b then
-						Ext.PrintError(result)
-					elseif result == true then
-						objects[#objects+1] = v.Character
-					end
-				elseif t == "string" then
-					if refuuid then
-						if filter == "Player" and v.Character.IsPlayer then
-							objects[#objects+1] = v.Character
-						elseif filter == "Ally" and CharacterIsAlly(refuuid, v.Character.MyGuid) == 1 then
-							objects[#objects+1] = v.Character
-						elseif filter == "Enemy" and CharacterIsEnemy(refuuid, v.Character.MyGuid) == 1 then
-							objects[#objects+1] = v.Character
-						elseif filter == "Neutral" and CharacterIsNeutral(refuuid, v.Character.MyGuid) == 1 then
-							objects[#objects+1] = v.Character
-						elseif filter == "None" then
+			if v.Character and not v.Character.OffStage then
+				if filter then
+					local t = type(filter)
+					if t == "function" then
+						local b,result = xpcall(filter, debug.traceback, v.Character, v.CombatId, v.TeamId, v.Initiative, v.StillInCombat)
+						if not b then
+							Ext.PrintError(result)
+						elseif result == true then
 							objects[#objects+1] = v.Character
 						end
-					else
-						if filter == "Player" and v.Character.IsPlayer then
-							objects[#objects+1] = v.Character
-						elseif filter == "Ally" and GameHelpers.Character.IsAllyOfParty(v.Character.MyGuid) then
-							objects[#objects+1] = v.Character
-						elseif filter == "Enemy" and GameHelpers.Character.IsEnemyOfParty(v.Character.MyGuid) then
-							objects[#objects+1] = v.Character
-						elseif filter == "Neutral" and GameHelpers.Character.IsNeutralToParty(v.Character.MyGuid) then
-							objects[#objects+1] = v.Character
-						elseif filter == "None" then
-							objects[#objects+1] = v.Character
+					elseif t == "string" then
+						--TODO Replace osiris queries
+						if refuuid and Ext.OsirisIsCallable() then
+							if filter == "Player" and v.Character.IsPlayer then
+								objects[#objects+1] = v.Character
+							elseif filter == "Ally" and CharacterIsAlly(refuuid, v.Character.MyGuid) == 1 then
+								objects[#objects+1] = v.Character
+							elseif filter == "Enemy" and CharacterIsEnemy(refuuid, v.Character.MyGuid) == 1 then
+								objects[#objects+1] = v.Character
+							elseif filter == "Neutral" and CharacterIsNeutral(refuuid, v.Character.MyGuid) == 1 then
+								objects[#objects+1] = v.Character
+							elseif filter == "None" then
+								objects[#objects+1] = v.Character
+							end
+						else
+							if filter == "Player" and v.Character.IsPlayer then
+								objects[#objects+1] = v.Character
+							elseif filter == "Ally" and GameHelpers.Character.IsAllyOfParty(v.Character.MyGuid) then
+								objects[#objects+1] = v.Character
+							elseif filter == "Enemy" and GameHelpers.Character.IsEnemyOfParty(v.Character.MyGuid) then
+								objects[#objects+1] = v.Character
+							elseif filter == "Neutral" and GameHelpers.Character.IsNeutralToParty(v.Character.MyGuid) then
+								objects[#objects+1] = v.Character
+							elseif filter == "None" then
+								objects[#objects+1] = v.Character
+							end
 						end
 					end
+				else
+					objects[#objects+1] = v.Character
 				end
-			else
-				objects[#objects+1] = v.Character
 			end
 		end
 

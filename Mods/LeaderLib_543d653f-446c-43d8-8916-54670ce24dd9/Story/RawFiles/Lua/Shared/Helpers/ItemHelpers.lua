@@ -596,7 +596,7 @@ end
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 ---@param tag string|string[]
 ---@param asArray boolean|nil Optional param to make the table returned just be an array of UUIDs, instead of <slot,UUID>
----@return table<string,EsvItem|EclItem>
+---@return table<string,EsvItem|EclItem>|EsvItem[]|EclItem[]
 function GameHelpers.Item.FindTaggedEquipment(character, tag, asArray)
     local items = {}
     for item in GameHelpers.Character.GetEquipment(character) do

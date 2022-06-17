@@ -384,7 +384,8 @@ end
 ---@param euler number[]|Vector3
 ---@return number[] rotation 3x3 matrix, i.e. {0,0,0,0,0,0,0,0,0}
 function GameHelpers.Math.EulerToRotationMatrix(euler)
-    return GameHelpers.Math.XYZToRotationMatrix(table.unpack(euler))
+    local x,y,z = table.unpack(euler)
+    return GameHelpers.Math.XYZToRotationMatrix(x,y,z)
 end
 
 ---@param rot number[]
@@ -401,6 +402,7 @@ function GameHelpers.Math.RotationMatrixToEuler(rot)
     return euler
 end
 
+--local rot = Mods.LeaderLib.GameHelpers.Math.RotationMatrixToEuler(me.Stats.Rotation); local angle = rot[2]; local effectRot = Mods.LeaderLib.GameHelpers.Math.AngleToEffectRotationMatrix(angle); Mods.LeaderLib.EffectManager.PlayEffectAt("RS3_FX_Skills_Warrior_GroundSmash_Cast_01", me.WorldPos, {Rotation=effectRot})
 --Ext.Dump(Mods.LeaderLib.GameHelpers.Math.ObjectRotationToEuler(me.Stats.Rotation)) Ext.Dump({GetRotation(me.MyGuid)})
 
 ---@param rot number[]
@@ -412,6 +414,16 @@ function GameHelpers.Math.ObjectRotationToEuler(rot)
     y = rot[2]
     z = arctan(rot[1] * cosy, rot[7] * cosy)
     return {x*57.295776,y*57.295776,z*57.295776}
+end
+
+---Takes an angle value, like from the query GetRotation, and returns a 3x3 matrix that can be used with effects like ones created with Ext.Effect.CreateEffect.
+---@param angle number Angle in degrees
+---@return number[] matrix 3x3 matrix, i.e. {0,0,0,0,0,0,0,0,0}
+function GameHelpers.Math.AngleToEffectRotationMatrix(angle)
+    angle = math.rad(angle)
+    return {
+        cos(angle), 0, -sin(angle), 0, 1, 0, sin(angle), 0, cos(angle)
+    }
 end
 
 ---@param startPos number[]
@@ -470,10 +482,10 @@ end
 function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)
     minValue = minValue or 1
     maxValue = maxValue or 100
-    if chance <= minValue then
+    if chance < minValue then
         return false
     end
-    if chance == maxValue then
+    if chance >= maxValue then
         return true
     end
     bonusRolls = bonusRolls or 0

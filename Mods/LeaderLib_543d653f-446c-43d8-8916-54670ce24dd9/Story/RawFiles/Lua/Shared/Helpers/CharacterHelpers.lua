@@ -732,8 +732,8 @@ end
 
 ---Get a character's mainhand and offhand item.
 ---@param character CharacterParam
----@return EsvItem|EclItem|nil
----@return EsvItem|EclItem|nil
+---@return EsvItem|EclItem|nil mainhand
+---@return EsvItem|EclItem|nil offhand
 function GameHelpers.Character.GetEquippedWeapons(character)
 	local char = GameHelpers.GetCharacter(character)
     fassert(char ~= nil, "'%s' is not a valid character", character)

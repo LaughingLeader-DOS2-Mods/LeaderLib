@@ -160,8 +160,9 @@ local function ReplacePlaceholders(str, character)
 	end
 	local output = str
 	for v in string.gmatch(output, "%[ExtraData.-%]") do
-		local key = v:gsub("%[ExtraData:", ""):gsub("%]", "")
-		local value = Ext.ExtraData[key] or ""
+		local text = v:gsub("%[ExtraData:", ""):gsub("%]", "")
+		local key,fallback = table.unpack(StringHelpers.Split(text, ":"))
+		local value = Ext.ExtraData[key] or fallback or ""
 		if value ~= "" and type(value) == "number" then
 			local trailingStr = ""
 			local startPos,endPos = string.find(output, v, 1, true)

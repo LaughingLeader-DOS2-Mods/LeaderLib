@@ -600,3 +600,132 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 	end
 	return nil
 end
+
+---@alias GameHelpers_Grid_GetNearbyObjectsOptionsTargetType string|"Character"|"Item"|"All"
+
+---@class GameHelpers_Grid_GetNearbyObjectsOptionsRelationOptions
+---@field Ally boolean|nil
+---@field Neutral boolean|nil
+---@field Enemy boolean|nil
+---@field CanAdd fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem|number[]):boolean Optional function that will be used to filter targets.
+
+---@class GameHelpers_Grid_GetNearbyObjectsOptions
+---@field Radius number The max distance between the source and objects. Defaults to 3.0 if not set.
+---@field Position number[]|nil Use this position for distance checks, instead of the source.
+---@field AsTable boolean|nil Return the result as a table, instead of an iterator.
+---@field Type GameHelpers_Grid_GetNearbyObjectsOptionsTargetType|nil
+---@field AllowDead boolean|nil Allow returning dead characters/destroyed items.
+---@field AllowOffStage boolean|nil Allow returning offstage objects.
+---@field Relation GameHelpers_Grid_GetNearbyObjectsOptionsRelationOptions|nil Filter returned characters by this relation, such as "Ally" "Neutral".
+
+---@type GameHelpers_Grid_GetNearbyObjectsOptions
+local _defaultGetNearbyObjectsOptions = {
+	Radius = 3.0,
+	Type = "Character"
+}
+
+---@alias GameHelpers_Grid_GetNearbyObjectsFunctionResult fun():EsvCharacter|EsvItem
+---@alias GameHelpers_Grid_GetNearbyObjectsTableResult EsvCharacter[]|EsvItem[]
+
+---@param source ObjectParam|number[] An object or position.
+---@param opts GameHelpers_Grid_GetNearbyObjectsOptions
+---@return GameHelpers_Grid_GetNearbyObjectsFunctionResult|GameHelpers_Grid_GetNearbyObjectsTableResult objects
+function GameHelpers.Grid.GetNearbyObjects(source, opts)
+	local opts = opts
+
+	if not opts then
+		opts = _defaultGetNearbyObjectsOptions
+	else
+		if not opts.Radius then
+			opts.Radius = _defaultGetNearbyObjectsOptions.Radius
+		end
+		if not opts.Type then
+			opts.Type = _defaultGetNearbyObjectsOptions.Type
+		end
+	end
+
+	local objects = {}
+
+	local GUID = GameHelpers.GetUUID(source, true)
+	local sourceIsCharacter = GameHelpers.Ext.ObjectIsCharacter(source)
+
+	local pos = GameHelpers.Math.GetPosition(source)
+	if opts.Position then
+		pos = opts.Position
+	end
+
+	if opts.Type == "All" or opts.Type == "Item" then
+		local entries = Ext.GetAllItems(SharedData.RegionData.Current)
+		local len = #entries
+		for i=1,len do
+			local v = entries[i]
+			if v ~= GUID and GameHelpers.Math.GetDistance(v, pos) <= opts.Radius then
+				local obj = GameHelpers.GetItem(v)
+				if obj then
+					if opts.AllowDead or not GameHelpers.ObjectIsDead(obj) and opts.AllowOffStage or not obj.OffStage then
+						if opts.Relation and opts.Relation.CanAdd then
+							local b,result = xpcall(opts.Relation.CanAdd, debug.traceback, obj, source)
+							if not b then
+								Ext.PrintError(result)
+							elseif result == true then
+								objects[#objects+1] = obj
+							end
+						else
+							objects[#objects+1] = obj
+						end
+					end
+				end
+			end
+		end
+	end
+	if opts.Type == "All" or opts.Type == "Character" then
+		local entries = Ext.GetAllCharacters(SharedData.RegionData.Current)
+		local len = #entries
+		for i=1,len do
+			local v = entries[i]
+			if v ~= GUID and GameHelpers.Math.GetDistance(v, pos) <= opts.Radius then
+				local obj = GameHelpers.GetCharacter(v)
+				if obj and (opts.AllowDead or not GameHelpers.ObjectIsDead(obj) and opts.AllowOffStage or not obj.OffStage) then
+					if opts.Relation and sourceIsCharacter then
+						if opts.Relation.Ally and CharacterIsAlly(GUID, v) == 1 then
+							objects[#objects+1] = obj
+						elseif opts.Relation.Enemy and GameHelpers.Character.CanAttackTarget(GUID, v, true) then
+							objects[#objects+1] = obj
+						elseif opts.Relation.Neutral and CharacterIsNeutral(GUID, v) == 1 then
+							objects[#objects+1] = obj
+						elseif opts.Relation.CanAdd then
+							local b,result = xpcall(opts.Relation.CanAdd, debug.traceback, obj, source)
+							if not b then
+								Ext.PrintError(result)
+							elseif result == true then
+								objects[#objects+1] = obj
+							end
+						end
+					else
+						objects[#objects+1] = obj
+					end
+				end
+			end
+		end
+	else
+		fprint(LOGLEVEL.WARNING, "[GameHelpers.Grid.GetNearbyObjects] opts.Type(%s) is not a valid target type. Should be All, Item, or Character")
+		if not opts.AsTable then
+			return function() end
+		else
+			return {}
+		end
+	end
+
+	if not opts.AsTable then
+		local i = 0
+		local count = #objects
+		return function ()
+			i = i + 1
+			if i <= count then
+				return objects[i]
+			end
+		end
+	else
+		return objects
+	end
+end

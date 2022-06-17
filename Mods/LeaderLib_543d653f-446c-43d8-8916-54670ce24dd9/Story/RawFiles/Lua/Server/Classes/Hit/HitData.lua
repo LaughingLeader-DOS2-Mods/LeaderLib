@@ -207,9 +207,12 @@ end
 ---Adds damage.
 ---@param damageType string
 ---@param amount number
-function HitData:AddDamage(damageType, amount)
+---@param skipApplying boolean|nil If true, self:ApplyDamageList is skipped.
+function HitData:AddDamage(damageType, amount, skipApplying)
 	self.DamageList:Add(damageType, amount)
-	self:ApplyDamageList(true)
+	if skipApplying ~= true then
+		self:ApplyDamageList(true)
+	end
 end
 
 ---Multiplies all damage by a value.

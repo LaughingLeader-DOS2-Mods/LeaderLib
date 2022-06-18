@@ -70,6 +70,8 @@ local function GetTextParamValues(output, character)
 	return output
 end
 
+--Ext.Dump(GameHelpers.Tooltip.GetSkillDamageText("Target_LLWEAPONEX_Steal", Ext.GetCharacter(me.MyGuid)))
+
 ---@param skillId string The skill ID, i.e "Projectile_Fireball".
 ---@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
 ---@param skillParams StatEntrySkillData|nil A table of attributes to set on the skill table before calculating the damage.
@@ -102,40 +104,87 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 						local b,result = xpcall(callback, debug.traceback, skill, character.Stats)
 						if not b then
 							Ext.PrintError("[LeaderLib:ReplacePlaceholders] Error calling function for 'GetTooltipSkillDamage':\n", result)
-						elseif result ~= nil and result ~= "" then
-							value = result
-							useDefaultSkillDamage = false
+						elseif not StringHelpers.IsNullOrEmpty(result) then
+							return result
 						end
 					end
 				end
-				if useDefaultSkillDamage and _EXTVERSION >= 56 then
-					local listeners = Ext._Internal._Events.GetSkillDamage
-					if listeners then
-						for i=1,#listeners do
-							local callback = listeners[i]
-							if callback then
-								local b,damageList = xpcall(callback, debug.traceback, skill, character.Stats, false, character.Stats.IsSneaking == true, character.WorldPos, character.WorldPos, character.Stats.Level, true, true)
-								if b then
-									local t = type(damageList)
-									if t == "string" then
-										value = damageList
-										useDefaultSkillDamage = false
-									elseif t == "table" then
-										value = GameHelpers.Tooltip.FormatDamageRange(damageList)
-										useDefaultSkillDamage = false
-									elseif t == "userdata" and damageList.ToTable then -- DamageList
-										value = GameHelpers.Tooltip.FormatDamageRange(damageList:ToTable())
-										useDefaultSkillDamage = false
-									else
-										fprint(LOGLEVEL.WARNING, "[LeaderLib:ReplacePlaceholders] Unknown type(%s) returned from GetSkillDamage listener for skill (%s).", t, skill.Name)
-									end
-								else
-									Ext.PrintError(damageList)
+				if useDefaultSkillDamage then
+					if _EXTVERSION >= 56 then
+						if _ISCLIENT then
+							if Ext.Events.SkillGetDescriptionParam then
+								---@type {Character:StatCharacter, Description:string, IsFromItem:boolean, Skill:StatEntrySkillData, Params:string[]}
+								local evt = {
+									Skill = skill,
+									Character = character.Stats,
+									Description = "",
+									IsFromItem = false,
+									Params = {"Damage"},
+									Stopped = false
+								}
+								evt.StopPropagation = function (self)
+									evt.Stopped = true
 								end
+								Ext.Events.SkillGetDescriptionParam:Throw(evt)
+								if not StringHelpers.IsNullOrWhitespace(evt.Description) then
+									return evt.Description
+								end
+							end
+						end
+						if Ext.Events.GetSkillDamage then
+							---@type {Attacker:StatCharacter, AttackerPosition:number[], DamageList:DamageList, DeathType:DeathType, IsFromItem:boolean, Level:integer, Skill:StatEntrySkillData, Stealthed:boolean, TargetPosition:number[]}
+							local evt = {
+								Skill = skill,
+								Attacker = character.Stats,
+								AttackerPosition = character.WorldPos,
+								TargetPosition = character.WorldPos,
+								DamageList = Ext.NewDamageList(),
+								DeathType = "None",
+								Stealthed = character.Stats.IsSneaking == true,
+								IsFromItem = false,
+								Level = character.Stats.Level,
+								Stopped = false
+							}
+							evt.StopPropagation = function (self)
+								evt.Stopped = true
+							end
+							Ext.Events.GetSkillDamage:Throw(evt)
+							if evt.DamageList then
+								local hasDamage = false
+								for _,v in pairs(evt.DamageList:ToTable()) do
+									if v.Amount > 0 then
+										hasDamage = true
+										break
+									end
+								end
+								if hasDamage then
+									return GameHelpers.Tooltip.FormatDamageList(evt.DamageList)
+								end
+							end
+						end
+					else
+						if _ISCLIENT then
+							local b,result = pcall(Ext._SkillGetDescriptionParam, skill, character, false, "Damage")
+							if not StringHelpers.IsNullOrEmpty(result) then
+								return result
+							end
+						end
+						local b,damageList = pcall(Ext._GetSkillDamage, skill, character.Stats, false, character.Stats.IsSneaking == true, character.WorldPos, character.WorldPos, character.Stats.Level, true)
+						if damageList then
+							local hasDamage = false
+							for _,v in pairs(damageList:ToTable()) do
+								if v.Amount > 0 then
+									hasDamage = true
+									break
+								end
+							end
+							if hasDamage then
+								return GameHelpers.Tooltip.FormatDamageList(damageList)
 							end
 						end
 					end
 				end
+
 				if useDefaultSkillDamage then
 					local damageRange = Game.Math.GetSkillDamageRange(character.Stats, skill)
 					return GameHelpers.Tooltip.FormatDamageRange(damageRange)
@@ -333,6 +382,28 @@ function GameHelpers.Tooltip.FormatDamageRange(damageRange)
 				end
 				totalDamageTypes = totalDamageTypes + 1
 			end
+		end
+		if totalDamageTypes > 0 then
+			if totalDamageTypes > 1 then
+				return StringHelpers.Join(", ", damageTexts)
+			else
+				return damageTexts[1]
+			end
+		end
+	end
+	return ""
+end
+
+--- Formats a damage range typically returned from GameHelpers.Math.GetSkillDamageRange
+---@param damageList DamageList
+---@return string
+function GameHelpers.Tooltip.FormatDamageList(damageList)
+	if damageList ~= nil then
+		local damageTexts = {}
+		local totalDamageTypes = 0
+		for _,v in pairs(damageList:ToTable()) do
+			table.insert(damageTexts, GameHelpers.GetDamageText(v.DamageType, string.format("%i", v.Amount)))
+			totalDamageTypes = totalDamageTypes + 1
 		end
 		if totalDamageTypes > 0 then
 			if totalDamageTypes > 1 then

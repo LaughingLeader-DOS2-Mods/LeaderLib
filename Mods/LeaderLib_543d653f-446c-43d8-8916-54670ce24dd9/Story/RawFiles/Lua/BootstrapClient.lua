@@ -56,6 +56,7 @@ if Ext.Version() >= 56 then
 	Ext.Require("Client/QOL/ChatLogHider.lua")
 	Ext.Require("Shared/QOL/ExtenderVisualSupport.lua")
 end
+Ext.Require("Client/UI/JournalChangelog.lua")
 Ext.Require("Client/_Init.lua")
 Ext.Require("Shared/UI/CombatLog.lua")
 Ext.Require("Shared/UI/MessageBox.lua")

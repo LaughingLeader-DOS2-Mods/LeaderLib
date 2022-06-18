@@ -203,13 +203,20 @@ function GameHelpers.SetScale(object, scale, persist)
 	end
 end
 
+---@param uuid ObjectParam
 function GameHelpers.IsInCombat(uuid)
-	if ObjectIsCharacter(uuid) == 1 and CharacterIsInCombat(uuid) == 1 then
-		return true
-	else
-		local db = Osi.DB_CombatObjects:Get(uuid, nil)
-		if db ~= nil and #db > 0 then
+	if Ext.OsirisIsCallable() then
+		local uuid = GameHelpers.GetUUID(uuid)
+		if not uuid then
+			return false
+		end
+		if ObjectIsCharacter(uuid) == 1 and CharacterIsInCombat(uuid) == 1 then
 			return true
+		else
+			local db = Osi.DB_CombatObjects:Get(uuid, nil)
+			if db ~= nil and #db > 0 then
+				return true
+			end
 		end
 	end
 	return false

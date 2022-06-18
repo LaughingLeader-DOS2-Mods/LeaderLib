@@ -19,7 +19,7 @@ local function OnSessionLoaded()
 		InvokeListenerCallbacks(Listeners.ControllerModeEnabled)
 	end
 
-	if Vars.DebugMode and Vars.LeaderDebugMode and enableDebugUIListeners then
+	if enableDebugUIListeners then
 		enableDebugUIListeners()
 	end
 end

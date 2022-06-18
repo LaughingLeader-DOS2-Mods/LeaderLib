@@ -931,6 +931,7 @@ Data.UIType = {
 	itemAction = 86,
 	itemGenerator = 106,
 	journal = 22,
+	journal_c = 140, -- TODO
 	journal_csp = 140,
 	loadingScreen = 23,
 	mainMenu = 28,

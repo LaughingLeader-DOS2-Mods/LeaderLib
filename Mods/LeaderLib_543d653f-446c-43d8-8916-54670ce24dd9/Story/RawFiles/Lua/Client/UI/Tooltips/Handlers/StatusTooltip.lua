@@ -99,19 +99,40 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 			end
 		end
 	end
-	if Features.ReduceTooltipSize then
+
+	local settings = GameSettingsManager.GetSettings()
+
+	if settings.Client.CondenseStatusTooltips then
 		local immunityElements = tooltip:GetElements("StatusImmunity")
 		if immunityElements then
 			local immunitiesCombined = {Type="StatusImmunity", Label=""}
+			local preserveElements = {}
 			local immunities = {}
 			local replaceText = StringHelpers.Replace(LocalizedText.Tooltip.ImmunityTo.Value, " [1]<br>", "")
 			for _,v in pairs(immunityElements) do
-				immunities[#immunities+1] = StringHelpers.Trim(StringHelpers.Replace(StringHelpers.Replace(v.Label, replaceText, ""), "<br>", ""))
+				if string.find(v.Label, replaceText) then
+					local text = StringHelpers.Trim(StringHelpers.Replace(StringHelpers.Replace(v.Label, replaceText, ""), "<br>", ""))
+					if not StringHelpers.IsNullOrWhitespace(text) then
+						if string.sub(text, -1) == "." then
+							text = string.sub(text, 1, string.len(text)-1)
+						end
+						immunities[#immunities+1] = text
+					else
+						preserveElements[#preserveElements+1] = v
+					end
+				else
+					preserveElements[#preserveElements+1] = v
+				end
 			end
-			table.sort(immunities)
+			table.sort(immunities, function(a,b)
+				return a:lower() < b:lower()
+			end)
 			tooltip:RemoveElements("StatusImmunity")
 			immunitiesCombined.Label = LocalizedText.Tooltip.ImmunityTo:ReplacePlaceholders(StringHelpers.Join(", ", immunities))
-			tooltip:AppendElement(immunitiesCombined)
+			if not StringHelpers.IsNullOrWhitespace(immunitiesCombined.Label) then
+				tooltip:AppendElement(immunitiesCombined)
+			end
+			tooltip:AppendElements(preserveElements)
 		end
 	end
 end

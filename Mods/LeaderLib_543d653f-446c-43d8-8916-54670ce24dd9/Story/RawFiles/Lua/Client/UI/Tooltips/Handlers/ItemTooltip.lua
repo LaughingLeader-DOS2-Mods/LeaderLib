@@ -212,7 +212,8 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				end
 			end
 		end
-		if Features.ReduceTooltipSize then
+		local settings = GameSettingsManager.GetSettings()
+		if settings.Client.CondenseItemTooltips then
 			local elements = tooltip:GetElements("ExtraProperties")
 			if elements ~= nil and #elements > 0 then
 				for i,v in pairs(elements) do

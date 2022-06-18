@@ -71,6 +71,8 @@ local DefaultSettings = {
 		AlwaysDisplayWeaponScalingText = true,
 		DivineTalentsEnabled = false,
 		AlwaysExpandTooltips = false,
+		CondenseStatusTooltips = false,
+		CondenseItemTooltips = true,
 		HideChatLog = Ext.IsDeveloperMode(),
 	},
 	EnableDeveloperTests = false,

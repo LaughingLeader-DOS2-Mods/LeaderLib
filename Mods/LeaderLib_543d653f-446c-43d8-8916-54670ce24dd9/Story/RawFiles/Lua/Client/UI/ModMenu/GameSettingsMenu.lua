@@ -189,6 +189,10 @@ local text = {
 	Client_AlwaysExpandTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysExpandTooltips_Description"),
 	Client_HideChatLog = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideChatLog", "Hide Chat Log"),
 	Client_HideChatLog_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideChatLog_Description", "Aggressively prevent the chat log from being visible or toggleable."),
+	Client_CondenseItemTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseItemTooltips", "Condense Item Tooltips"),
+	Client_CondenseItemTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseItemTooltips_Description", "Try to reduce max item tooltip size by combining elements, such as \"On Hit\" actions."),
+	Client_CondenseStatusTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips", "Condense Status Tooltips"),
+	Client_CondenseStatusTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips_Description", "Try to reduce max status tooltip size by combining elements, such as immunities."),
 }
 
 for k,v in pairs(text) do
@@ -303,7 +307,10 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuLabel(text.Section_Client.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client_AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client_AlwaysExpandTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client_AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client_AlwaysDisplayWeaponScalingText_Description.Value)
-
+		
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseItemTooltips"), text.Client_CondenseItemTooltips.Value, true, settings.Client.CondenseItemTooltips and 1 or 0, false, text.Client_CondenseItemTooltips_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseStatusTooltips"), text.Client_CondenseStatusTooltips.Value, true, settings.Client.CondenseStatusTooltips and 1 or 0, false, text.Client_CondenseStatusTooltips_Description.Value)
+		
 		if Mods.CharacterExpansionLib then
 			mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled"), text.Client_DivineTalentsEnabled.Value, true, settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client_DivineTalentsEnabled_Description.Value)
 		end

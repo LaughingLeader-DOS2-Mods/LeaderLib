@@ -1762,6 +1762,14 @@ function TooltipData:AppendElement(ele)
 	return ele
 end
 
+---@param tbl TooltipElement[]
+---@return TooltipElement
+function TooltipData:AppendElements(tbl)
+	for i=1,#tbl do
+		self.Data[#self.Data+1] = tbl[i]
+	end
+end
+
 ---@param ele TooltipElement
 ---@param appendAfter TooltipElement
 ---@return TooltipElement

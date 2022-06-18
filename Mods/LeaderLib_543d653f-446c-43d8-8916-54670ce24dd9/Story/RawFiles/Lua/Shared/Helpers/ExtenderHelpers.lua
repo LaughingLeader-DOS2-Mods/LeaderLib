@@ -376,6 +376,9 @@ local characterTalents = {
 	TALENT_Zombie = "boolean",
 }
 
+---@param stat string
+---@param mainhand StatItemDynamic|nil
+---@param offhand StatItemDynamic|nil
 function GameHelpers.Ext.CreateStatCharacterTable(stat, mainhand, offhand)
 	if stat == nil then
 		stat = "_Hero"

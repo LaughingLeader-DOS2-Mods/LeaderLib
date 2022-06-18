@@ -276,6 +276,9 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
         props.StatsLevel = level
         props.ItemType = targetRarity
 
+        --props.HasGeneratedStats = true
+        --props.GenerationBoosts = {"Boost_Weapon_Status_Set_Petrify_Club"}
+
         if properties and type(properties) == "table" then
             for k,v in pairs(properties) do
                 if itemConstructorProps[k] == true then

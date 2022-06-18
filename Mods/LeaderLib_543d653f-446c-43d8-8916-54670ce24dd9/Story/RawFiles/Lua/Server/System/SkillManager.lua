@@ -668,13 +668,21 @@ function _REGISTER.All(skill, callback, onlySkillState, priority, once)
 	if t == "table" then
 		local indexes = {}
 		for _,v in pairs(skill) do
-			local index = _REGISTER.All(v, callback, onlySkillState, priority, once)
-			if index then
-				indexes[#indexes+1] = index
+			if not Data.ActionSkills[v] then
+				local index = _REGISTER.All(v, callback, onlySkillState, priority, once)
+				if index then
+					indexes[#indexes+1] = index
+				end
+			else
+				fprint(LOGLEVEL.WARNING, "[SkillManager.Register.All] Skill (%s) is a hotbar action, and not an actual skill. Skipping.", v)
 			end
 		end
 		return indexes
 	elseif t == "string" then
+		if Data.ActionSkills[skill] then
+			fprint(LOGLEVEL.WARNING, "[SkillManager.Register.All] Skill (%s) is a hotbar action, and not an actual skill. Skipping.", skill)
+			return nil
+		end
 		local callbackWrapper = nil
 		if not onlySkillState then
 			callbackWrapper = callback

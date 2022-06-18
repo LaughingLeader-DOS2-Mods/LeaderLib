@@ -59,7 +59,6 @@
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
 	<content contentuid="h209bda66g55d1g48a9gbc1bg22a2a6e25941">Autosaving &lt;font color=&apos;#FF0000&apos;&gt;Disabled&lt;/font&gt; | Interval: &lt;font color=&apos;#00FFFF&apos;&gt;[1]&lt;/font&gt;</content>
 	<content contentuid="h21fd2959g743dg49e6g9922g02b39ce3c8b8">Pulls targets [1]m [2] ([3]% Chance).</content>
-	<content contentuid="h22d93605g2b72g49e4g8f1ege30c4c796752">Info</content>
 	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
 	<content contentuid="h24533724ga73fg4d76gb62egc700a193eb89">Must you, really?</content>
 	<content contentuid="h24972fbcg741ag4ee0g8cadg41e13aa0ef53">LeaderLib</content>
@@ -144,6 +143,7 @@
 	<content contentuid="h52804b8ag97ccg478eg90f8gc8b6f735dab2">&lt;font color=&apos;#FF0000&apos; size=&apos;32&apos;&gt;ERROR&lt;/font&gt;&lt;br&gt;You are missing the Script Extender, and the host has mods that require it!&lt;br&gt;&lt;font color=&apos;#FF00CC&apos; size=&apos;22&apos;&gt;Please exit the game and install the Script Extender.&lt;/font&gt;&lt;br&gt;The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.</content>
 	<content contentuid="h529c36c6g6b68g46e2g867dg863184908d5a">Remove the Mod Menu Skill (Self)</content>
 	<content contentuid="h52a29657gf5f3g4577gb783g6fa0c0052e5e">Timed Autosaving</content>
+	<content contentuid="h533d5081g8959g4a8eg817fg873c32143e01">&lt;b&gt;&lt;font size=&apos;24&apos;&gt;1.7.21.6&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Fixed an issue where object timer data wasn&apos;t being cleared (important bug to fix to prevent repeated timer results).&lt;br&gt;• (v56) Fixed an issue prevents world effects from working.&lt;br&gt;• Added a workaround for EsvZoneAction surfaces not dealing damage.&lt;br&gt;&lt;br&gt;&lt;b&gt;&lt;font size=&apos;24&apos;&gt;1.7.21.5&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Fixed red console text from trying to check unavailable properties in v55 extender (they&apos;re available in v56).&lt;br&gt;• Fixed an oversight where action icons were being checked for damage types in skill tooltips.&lt;br&gt;• Fixed some red console text that resulted from checking StatsDescriptionParams with a specific name (:Damage).&lt;br&gt;• Fixed a typo preventing the learned parameter from passing to &quot;Learned&quot; skill state listeners.&lt;br&gt;• Fixed an issue where unique timers wouldn&apos;t be cancelled with Timer.Cancel.&lt;br&gt;• Fixed an issue with older timer listeners not getting the correct timer data passed.&lt;br&gt;• Fixed an issue where registered older timer listeners resulted in timer data being unset.&lt;br&gt;• Fixed an issue where the !additemstat command wasn&apos;t able to generate unique items.</content>
 	<content contentuid="h538e28f2g01fag43dcga7c2g040a105e38c1">([1]% Chance)</content>
 	<content contentuid="h5515ca23gf576g491dgb562ge71243c72ed8">Cancel Shapeshifting</content>
 	<content contentuid="h562f0a3bg4566g452eg860egb5c2ff3e750e">Undead Elf</content>
@@ -386,7 +386,6 @@
 	<content contentuid="hca27994egc60eg495dg8146g7f81c970e265">&lt;font color=&apos;#80FFC3&apos; size=&apos;18&apos;&gt;Automatically levels up with the wearer.&lt;/font&gt;</content>
 	<content contentuid="hcb2933a4g9bf6g4b7ega556g974d319d1faf">Redirect to Character with Highest Persuasion</content>
 	<content contentuid="hcb33afd9g09cbg42e2ga180g1e4fa15cb804">Enabled</content>
-	<content contentuid="hcb87b248g3780g49efg99f3g5b18f49dea12">Info</content>
 	<content contentuid="hcb9853aaga052g447dga36fgafeb4902bd4f">I didn&apos;t survive war to end up dead by the likes of you!</content>
 	<content contentuid="hcd40ab3egabe1g4111g9217gb2381b466a2a">Argh!</content>
 	<content contentuid="hce06e1a4gdd0fg44aeg83f5g10ee6caab1d7">I&apos;m too old for this...</content>
@@ -440,6 +439,7 @@
 	<content contentuid="head5217fga96cg4b34gafb1geb56b80bd8e0">Take control of a summon or follower you own.</content>
 	<content contentuid="hed9e1aaeg3fceg4d9cg87edg9a4630c24fe7">Character is in an undead form.</content>
 	<content contentuid="hedb1dff8g5ad9g429bgaea8g84ecec77dee1">Clear the status blacklist, which is used to hide statuses next to portraits when &lt;font color=&apos;#CCAA00&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideStatuses]&lt;/font&gt; is disabled.</content>
+	<content contentuid="hede41196gce79g4bfcg828fge84d6501cc46">INFO</content>
 	<content contentuid="hee326232gbe82g49c2gbe8eg1d0511d29248">LeaderLib</content>
 	<content contentuid="hee75e144g1d75g4094ga8c9g4a0508c5cf67">LeaderLib Successfully Saved Global Settings</content>
 	<content contentuid="hef0c737eg2a72g4564ga5cfg088484ac8b45">Shadow Resistance</content>

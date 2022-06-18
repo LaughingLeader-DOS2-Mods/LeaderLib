@@ -238,17 +238,20 @@ function Common.TableHasEntry(tbl, value, caseInsensitive)
 		return false
 	end
 	local t = type(value)
-	for k,v in pairs(tbl) do
-		if type(v) == t then
-			if t == "string" and StringHelpers.Equals(value, v, caseInsensitive) then
-				return true
-			elseif t == "table" and Common.TableHasEntry(v, value, caseInsensitive) then
-				return true
-			elseif v == value then
-				return true
+	if type(tbl) == "table" then
+		for k,v in pairs(tbl) do
+			if type(v) == t then
+				if t == "string" and StringHelpers.Equals(value, v, caseInsensitive) then
+					return true
+				elseif t == "table" and Common.TableHasEntry(v, value, caseInsensitive) then
+					return true
+				elseif v == value then
+					return true
+				end
 			end
 		end
-
+	elseif tbl == value then
+		return true
 	end
 	return false
 end

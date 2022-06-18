@@ -1,4 +1,6 @@
 Key	Content	Handle
+LeaderLib	LeaderLib	h3c617bceg2070g41fegb93bgf26df45f9155
+LeaderLib_Description	LeaderLib is a library mod used to provide common functionality to other mods, as well as providing quality-of-life features for players. Features include a centralized mod menu, autosaving with a customizable interval, dialog redirection, and more.	h95801399g4f88g408egba02gb4c42f9d27eb
 LeaderLib_StatusText_LeaderTrader_StealthText	<font color='#9400D3'>Stealth Mastery</font>	hc9cc1024g797fg4770g8ffagf1b4041e4c48
 LeaderLib_StatusText_ModSettingCombatRestricted	<font color='#FF0000'>Unable to open Mod Settings menu in combat.</font>"	ha4c72605gbcfdg4404g9328g194ce4fbe7c3
 LeaderLib_Autosaving_Dialog_TimeLeft	Time Left: <font color='#FF69B4'>[1]</font>	h294953c4gb842g4948gad7ag6f1c5f089665

@@ -9,6 +9,7 @@
 	<content contentuid="h031b0a74g0630g4f79ga05fg71c06e49015d">*Step away.*</content>
 	<content contentuid="h03e70da4g57d5g4cc6g9f3dg2af32a56a3e6">Take a look.</content>
 	<content contentuid="h0580f26cg207fg494cgbe80g9d468b0c4996">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
+	<content contentuid="h058cca28gcf05g4254gae26g428887ad5cff">Try to reduce max item tooltip size by combining elements, such as &quot;On Hit&quot; actions.</content>
 	<content contentuid="h05e3a637g0755g4659g9aa9g99888bc32ed5">Undead Lizard</content>
 	<content contentuid="h07b0d455gbe0fg48a4gbe1eg3ae23e84b2eb">Confirm Preset Selection</content>
 	<content contentuid="h07ede36bgda99g42ecg813bgbc1496640e7d">Skip Tutorial (LB + Select)</content>
@@ -58,8 +59,10 @@
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
 	<content contentuid="h209bda66g55d1g48a9gbc1bg22a2a6e25941">Autosaving &lt;font color=&apos;#FF0000&apos;&gt;Disabled&lt;/font&gt; | Interval: &lt;font color=&apos;#00FFFF&apos;&gt;[1]&lt;/font&gt;</content>
 	<content contentuid="h21fd2959g743dg49e6g9922g02b39ce3c8b8">Pulls targets [1]m [2] ([3]% Chance).</content>
+	<content contentuid="h22d93605g2b72g49e4g8f1ege30c4c796752">Info</content>
 	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
 	<content contentuid="h24533724ga73fg4d76gb62egc700a193eb89">Must you, really?</content>
+	<content contentuid="h24972fbcg741ag4ee0g8cadg41e13aa0ef53">LeaderLib</content>
 	<content contentuid="h24e93debgf7e1g4a6ag9841g5ecca2c911f5">Non-Player Action Point Settings</content>
 	<content contentuid="h25737285gb844g4142gad4cg1d5dc420fb0b">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="h25bf34f3g1b21g4b69gb041g896d6e346f36">[LeaderLib_ModMenu_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16]</content>
@@ -239,6 +242,7 @@
 	<content contentuid="h8679b603g4c2cg4d2eg8e25g5c17e7078f22">*Take your leave.*</content>
 	<content contentuid="h86a5860ag96ddg46e0g84f7g82aac62689f9">Fixes</content>
 	<content contentuid="h86be6c1eg4261g4c62gb949gab7b24bfd1f8">Commands</content>
+	<content contentuid="h8726cca0g7e2fg4651ga4f2g6108a8e13f10">LeaderLib is a library mod used to provide common functionality to other mods, as well as providing quality-of-life features for players. Features include a centralized mod menu, autosaving with a customizable interval, dialog redirection, and more.</content>
 	<content contentuid="h87df678agafbeg4816gbd41g1708cb5b2a41">Add Chain/Unchain Skills (User - All Owned Characters)</content>
 	<content contentuid="h8859d107g3e28g44dega723gc7434a93f206">Add the Mod Menu Skill (Party)</content>
 	<content contentuid="h898ea651g71ddg40f0g8a76g6296ffc9581f">[First]</content>
@@ -276,6 +280,7 @@
 	<content contentuid="h9863bb3eg058dg45acg8926gefb0f24ece72">Save When Combat Starts</content>
 	<content contentuid="h98bf1217gf2bfg4d82g99b9g6747f36f9aab">&lt;font color=&apos;#FF0000&apos;&gt;Script Extender Missing!&lt;/font&gt;</content>
 	<content contentuid="h98d315c5g189cg431eg9862g7cea569a5e3b">Hmm?</content>
+	<content contentuid="h9904f967g424bg4099gb4f3ge3b46fe30a68">Try to reduce max status tooltip size by combining elements, such as immunities.</content>
 	<content contentuid="h9a089091g504ag4446ga707g787ad2d73d89">Go to [1] ([2])</content>
 	<content contentuid="h9ade7360g8608g42f6g8e7cgff542d517949">&lt;font color=&apos;#BB77FF&apos; size=&apos;22&apos;&gt;Preset Selection&lt;/font&gt;&lt;br&gt;Toggle the the Preset Selection dropdown.</content>
 	<content contentuid="h9b4fce0fge5a9g4369gb3e8g1567058cc47c">If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like Invisible and healing statuses. </content>
@@ -327,6 +332,7 @@
 	<content contentuid="haf24c059g3811g4babgb529g348a34b47d05">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
 	<content contentuid="hafb63d24gd9b3g47d2gbe4cg1ecb09f9c1c9">from target</content>
 	<content contentuid="hb09fdd2dg134cg4361g8b7dg9a2b23a1ec41">Open Menu</content>
+	<content contentuid="hb1db6515g4bf7g4c7eg8eabga55f4a93beda">Fix Status Tooltips</content>
 	<content contentuid="hb2822093gaf6ag417dgab70g447f0b730fb4">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
 	<content contentuid="hb2e82c9dg3175g429cga865g3c670288b3c6">Always display the &quot;Scales With x&quot; text that isn&apos;t visible if the weapon has an attribute requirement above 0.</content>
 	<content contentuid="hb48f1258g4031g4ab2g8d73gbb24956d5d74">I definitely activated these mods at one point! Why are they no longer active?</content>
@@ -375,10 +381,12 @@
 	<content contentuid="hc78dbfbbg99e3g4b81gbb3fg8068e2d4ecda">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc848f133g22fdg41c0g8205g8041758e7309">If enabled, status hiding settings will also apply to statuses under the healthbar when examining a character.</content>
 	<content contentuid="hc9377dd3g70d6g4d84g8c8fg812246a61029">Hide Status from Portrait UI</content>
+	<content contentuid="hc9ad7f0cg9a5bg4617gb138gce551f82c341">Removes the status malus icon and extra spacing, caused by a typo in Larian&apos;s UI code, and organizes bonuses and maluses together, while also sorting them alphabetically.</content>
 	<content contentuid="hc9cc1024g797fg4770g8ffagf1b4041e4c48">&lt;font color=&apos;#9400D3&apos;&gt;Stealth Mastery&lt;/font&gt;</content>
 	<content contentuid="hca27994egc60eg495dg8146g7f81c970e265">&lt;font color=&apos;#80FFC3&apos; size=&apos;18&apos;&gt;Automatically levels up with the wearer.&lt;/font&gt;</content>
 	<content contentuid="hcb2933a4g9bf6g4b7ega556g974d319d1faf">Redirect to Character with Highest Persuasion</content>
 	<content contentuid="hcb33afd9g09cbg42e2ga180g1e4fa15cb804">Enabled</content>
+	<content contentuid="hcb87b248g3780g49efg99f3g5b18f49dea12">Info</content>
 	<content contentuid="hcb9853aaga052g447dga36fgafeb4902bd4f">I didn&apos;t survive war to end up dead by the likes of you!</content>
 	<content contentuid="hcd40ab3egabe1g4111g9217gb2381b466a2a">Argh!</content>
 	<content contentuid="hce06e1a4gdd0fg44aeg83f5g10ee6caab1d7">I&apos;m too old for this...</content>
@@ -402,11 +410,13 @@
 	<content contentuid="hd6d9366dg5fe9g424cga28egc15c030b747c">*The old man looks to you as you approach.* Welcome, welcome!</content>
 	<content contentuid="hd77eb765g4fbfg48bag8ee8g665d3792ec28">Melee Equipment/Skills Only</content>
 	<content contentuid="hd7ef9f3egf089g4b40gbd4agd0f9b9b967c8">[LeaderLib_DynamicMenu_MenuOption7_36c11cee-0a1b-4f4b-bd66-3bf0d100439b]</content>
+	<content contentuid="hd8f802d3gc621g4209g823agdc9721955cc6">Mod Changes</content>
 	<content contentuid="hd90e217bga98dg4b24g86e0g5eafa5afc923">Of course, of course. I have plenty to sell.</content>
 	<content contentuid="hd9f00ef8g890eg475bg88ddg9cda39e551fe">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="hda816c8bg2b06g4c93ga526gb61ed29a8760">&quot;Let me get my things in order here...&quot; *He presumably situates a bag of goods that&apos;s strangely out of sight.*</content>
 	<content contentuid="hdc5db041g39d0g4a87g81eagb26a0d11358e">[ON] Status Logging [GLOBAL]</content>
 	<content contentuid="hdc816addgda80g4d5dg8d6dgccf0824c220a">Reset Settings</content>
+	<content contentuid="hdca46b30gaf33g45e0g803cgf1ce00e284d2">Condense Item Tooltips</content>
 	<content contentuid="hdd673ac0g2ae1g423cg853eg5a7b8149cd13">*He spits out what is presumably seaweed.* So, what can I do for you today?</content>
 	<content contentuid="hdefd7688g4811g445ag94a4gbe304b43168b">I managed to sneak away before that nasty Kraken showed up. *He groans and rubs his shoulders.* Damn if I won&apos;t feel it tomorrow, though...</content>
 	<content contentuid="he037429fgcbf9g4a78gb1c2ge9613039ef62">Preset Menu (Locked - Check Back in 30 Seconds)</content>
@@ -455,6 +465,7 @@
 	<content contentuid="hf81e591cgfafag442cg977dg1423751caade">If skill backstabbing is enabled, this is the maximum distance allowed between the attacker and target (meaning they must be within this distance).&lt;br&gt;(Default: 2.5m)</content>
 	<content contentuid="hf8c6e866g9949g4d30g9cf2g3a9ba53d2f28">Follow me.</content>
 	<content contentuid="hf94f7e90ge895g48bcg98e0g7350149e94de">Mod Menu</content>
+	<content contentuid="hfafdf1f4g1daeg4b29g98e8gb0bbf3e668e0">Condense Status Tooltips</content>
 	<content contentuid="hfb5060fbgaee1g4ae6g8795g4a0f133edd2b">Clear Blacklist</content>
 	<content contentuid="hfb5e41d2gbcc7g4ed4gb962g13f831ed95c8">I&apos;ll stay here.</content>
 	<content contentuid="hfc57ba23gd6adg420fg814cgeb89ab9347b6">This is likely an issue of the mod not copying to the right folder after subscribing.&lt;br&gt;Check the discussion pinned at LeaderLib&apos;s steam workshop page titled:&lt;br&gt;&lt;b&gt;Support: Mod Doesn&apos;t Appear in the Mod List&lt;/b&gt;</content>

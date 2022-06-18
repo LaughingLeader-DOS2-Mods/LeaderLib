@@ -20,7 +20,7 @@ Changelog:RegisterInvokeListener("updateJournal", function (self, ui, event)
 
 	local this = ui:GetRoot()
 	if this and this.add_tutEntry then
-		local tabTitle = string.upper(GameHelpers.GetStringKeyText("LeaderLib_UI_Journal_ButtonTitleOverride", "INFO"))
+		local tabTitle = string.upper(GameHelpers.GetStringKeyText("LeaderLib_UI_Journal_InfoButton_Title", "INFO"))
 		local tutorialTab = GameHelpers.GetTranslatedString("h7a7a3449g5a44g44a7g8132gcf3bb11fe0d5", "TUTORIALS")
 
 		for i=0,#this.journal_mc.tabList.content_array-1 do

@@ -99,6 +99,21 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 			end
 		end
 	end
+	if Features.ReduceTooltipSize then
+		local immunityElements = tooltip:GetElements("StatusImmunity")
+		if immunityElements then
+			local immunitiesCombined = {Type="StatusImmunity", Label=""}
+			local immunities = {}
+			local replaceText = StringHelpers.Replace(LocalizedText.Tooltip.ImmunityTo.Value, " [1]<br>", "")
+			for _,v in pairs(immunityElements) do
+				immunities[#immunities+1] = StringHelpers.Trim(StringHelpers.Replace(StringHelpers.Replace(v.Label, replaceText, ""), "<br>", ""))
+			end
+			table.sort(immunities)
+			tooltip:RemoveElements("StatusImmunity")
+			immunitiesCombined.Label = LocalizedText.Tooltip.ImmunityTo:ReplacePlaceholders(StringHelpers.Join(", ", immunities))
+			tooltip:AppendElement(immunitiesCombined)
+		end
+	end
 end
 
 ---@param status EsvStatus

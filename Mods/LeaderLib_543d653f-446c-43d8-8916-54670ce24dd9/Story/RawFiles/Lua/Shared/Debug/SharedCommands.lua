@@ -152,3 +152,14 @@ if _EXTVERSION >= 56 then
 		end
 	end)
 end
+
+Ext.RegisterConsoleCommand("modorder", function(command)
+	fprint(LOGLEVEL.TRACE, "Mods [%s]", Ext.IsClient() and "CLIENT" or "SERVER")
+	PrintDebug("=============")
+	local mods = Ext.GetModLoadOrder()
+	for i=1,#mods do
+		local info = Ext.GetModInfo(mods[i])
+		fprint(LOGLEVEL.TRACE, "[%i] %s (%s) [%s]", i, info and info.Name or "???", mods[i], info and info.ModuleType or "")
+	end
+	PrintDebug("=============")
+end)

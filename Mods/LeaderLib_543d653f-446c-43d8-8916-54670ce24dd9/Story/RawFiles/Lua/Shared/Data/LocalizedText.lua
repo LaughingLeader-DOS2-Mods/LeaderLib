@@ -336,6 +336,7 @@ LocalizedText.Tooltip = {
 	StatBase = ts:Create("hbb9884d7g3b9ag43dfga88egdcc32db8bd74", "<br>Base: [1]"),
 	AbilityCurrentLevel = ts:Create("h8154ae8eg2b37g4f0fgb6b6gd7e27fed37a6", "Level [1]: [2]"),
 	AbilityNextLevel = ts:Create("he31d5820g9ddbg4e08gac83g1358e22e499b", "Next Level [1]: [2]"),
+	ImmunityTo = ts:Create("h0b55e55fg0b1dg4c92g899egca5204be3932", "Immunity to [1]<br>"),
 }
 
 LocalizedText.Input = {

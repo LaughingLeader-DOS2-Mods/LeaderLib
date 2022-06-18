@@ -17,7 +17,7 @@ local _EXTVERSION = Ext.Version()
 local HitData = {
 	Type = "HitData",
 	Skill = "",
-	IsFromSkll = false,
+	IsFromSkill = false,
 	DamageList = {}
 }
 
@@ -101,11 +101,11 @@ function HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill
 		this.DamageList = CreateDamageMetaList(target, this.HitStatus.StatusHandle)
 	end
 	if this.SkillData ~= nil then
-		this.Skill = skill.Name
-		this.IsFromSkll = true
+		this.Skill = this.SkillData.Name
+		this.IsFromSkill = true
 	else
 		this.Skill = ""
-		this.IsFromSkll = false
+		this.IsFromSkill = false
 	end
 	SetMeta(this)
     return this

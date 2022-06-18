@@ -102,13 +102,13 @@ function GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute)
 end
 
 ---@param statName string
----@return StatProperty[]
+---@return AnyStatProperty[]
 function GameHelpers.Stats.GetSkillProperties(statName)
 	return GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, "SkillProperties") or {}
 end
 
 ---@param statName string
----@return StatProperty[]
+---@return AnyStatProperty[]
 function GameHelpers.Stats.GetExtraProperties(statName)
 	return GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, "ExtraProperties") or {}
 end
@@ -502,4 +502,19 @@ function GameHelpers.Stats.ParseStatsIdPotions(statsId)
 	else
 		return statsId,false
 	end
+end
+
+---Returns the DisplayName (translated) or the DisplayNameRef.
+---@param id string
+---@param statType StatType|nil
+---@return string
+function GameHelpers.Stats.GetDisplayName(id, statType)
+	if type(id) == "userdata" then
+		id = id.StatusId
+	end
+	if not StringHelpers.IsNullOrEmpty(id) and GameHelpers.Stats.Exists(id, statType) then
+		local stat = Ext.GetStat(id)
+		return GameHelpers.GetStringKeyText(stat.DisplayName, stat.DisplayNameRef)
+	end
+	return ""
 end

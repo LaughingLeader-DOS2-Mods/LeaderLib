@@ -3,6 +3,7 @@ if GameHelpers.Character == nil then
 end
 
 local _ISCLIENT = Ext.IsClient()
+local _EXTVERSION = Ext.Version()
 
 ---@param character CharacterParam
 ---@return boolean
@@ -157,7 +158,7 @@ end
 function GameHelpers.Character.IsAllyOfParty(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
-		if not character then return false end
+		if not character or ObjectIsCharacter(character) == 0 then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
 			if CharacterIsAlly(character, player.MyGuid) == 1 then
 				return true
@@ -325,6 +326,9 @@ function GameHelpers.Character.GetDisplayName(character)
 	end
 	if character then
 		local name = character.DisplayName
+		if _EXTVERSION >= 56 and not _ISCLIENT and character.CustomDisplayName ~= nil then
+			return character.CustomDisplayName
+		end
 		if StringHelpers.IsNullOrWhitespace(name) or string.find(name, "|", 1, true) then
 			if not _ISCLIENT then
 				local handle,ref = CharacterGetDisplayName(character.MyGuid)
@@ -820,8 +824,8 @@ end
 ---@return boolean
 function GameHelpers.Character.CanAttackTarget(target, attacker, allowItems)
 	target = GameHelpers.TryGetObject(target)
-	if allowItems and GameHelpers.Ext.ObjectIsItem(target) then
-		return true
+	if GameHelpers.Ext.ObjectIsItem(target) then
+		return allowItems == true
 	end
 	assert(GameHelpers.Ext.ObjectIsCharacter(target), "target parameter must be a UUID, NetID, or Esv/EclCharacter")
 	if target:HasTag("LeaderLib_FriendlyFireEnabled") then

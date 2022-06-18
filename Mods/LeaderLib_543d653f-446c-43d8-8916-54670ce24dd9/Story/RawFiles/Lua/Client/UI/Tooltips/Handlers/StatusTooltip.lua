@@ -1,3 +1,7 @@
+local function _AlphabeticalCaseInsensitiveLabelSort(a,b)
+	return string.lower(a.Label) < string.lower(b.Label)
+end
+
 ---@param character EclCharacter
 ---@param status EclStatus
 ---@param tooltip TooltipData
@@ -102,39 +106,53 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 
 	local settings = GameSettingsManager.GetSettings()
 
+	--Better tooltip sorting
+	if settings.Client.FixStatusTooltips then
+		local maluses = tooltip:GetElements("StatusMalus")
+		local bonuses = tooltip:GetElements("StatusBonus")
+		tooltip:RemoveElements("StatusMalus")
+		tooltip:RemoveElements("StatusBonus")
+		table.sort(maluses, _AlphabeticalCaseInsensitiveLabelSort)
+		table.sort(bonuses, _AlphabeticalCaseInsensitiveLabelSort)
+		tooltip:AppendElements(bonuses)
+		tooltip:AppendElements(maluses)
+	end
+
+	local immunityElements = tooltip:GetElements("StatusImmunity")
+	tooltip:RemoveElements("StatusImmunity")
+	table.sort(immunityElements, _AlphabeticalCaseInsensitiveLabelSort)
 	if settings.Client.CondenseStatusTooltips then
-		local immunityElements = tooltip:GetElements("StatusImmunity")
-		if immunityElements then
-			local immunitiesCombined = {Type="StatusImmunity", Label=""}
-			local preserveElements = {}
-			local immunities = {}
-			local replaceText = StringHelpers.Replace(LocalizedText.Tooltip.ImmunityTo.Value, " [1]<br>", "")
-			for _,v in pairs(immunityElements) do
-				if string.find(v.Label, replaceText) then
-					local text = StringHelpers.Trim(StringHelpers.Replace(StringHelpers.Replace(v.Label, replaceText, ""), "<br>", ""))
-					if not StringHelpers.IsNullOrWhitespace(text) then
-						if string.sub(text, -1) == "." then
-							text = string.sub(text, 1, string.len(text)-1)
-						end
-						immunities[#immunities+1] = text
-					else
-						preserveElements[#preserveElements+1] = v
+		local immunitiesCombined = {Type="StatusImmunity", Label=""}
+		local preserveElements = {}
+		local immunities = {}
+		local replaceText = StringHelpers.Replace(LocalizedText.Tooltip.ImmunityTo.Value, " [1]<br>", "")
+		local length = #immunityElements
+		for i=1,length do
+			local v = immunityElements[i]
+			if string.find(v.Label, replaceText) then
+				local text = StringHelpers.Trim(StringHelpers.Replace(StringHelpers.Replace(v.Label, replaceText, ""), "<br>", ""))
+				if not StringHelpers.IsNullOrWhitespace(text) then
+					if string.sub(text, -1) == "." then
+						text = string.sub(text, 1, string.len(text)-1)
 					end
+					immunities[#immunities+1] = text
 				else
 					preserveElements[#preserveElements+1] = v
 				end
+			else
+				preserveElements[#preserveElements+1] = v
 			end
-			table.sort(immunities, function(a,b)
-				return a:lower() < b:lower()
-			end)
-			tooltip:RemoveElements("StatusImmunity")
-			immunitiesCombined.Label = LocalizedText.Tooltip.ImmunityTo:ReplacePlaceholders(StringHelpers.Join(", ", immunities))
-			if not StringHelpers.IsNullOrWhitespace(immunitiesCombined.Label) then
-				tooltip:AppendElement(immunitiesCombined)
-			end
-			tooltip:AppendElements(preserveElements)
+		end
+		table.sort(immunities, function(a,b)
+			return a:lower() < b:lower()
+		end)
+		immunityElements = preserveElements
+		immunitiesCombined.Label = LocalizedText.Tooltip.ImmunityTo:ReplacePlaceholders(StringHelpers.Join(", ", immunities))
+		if not StringHelpers.IsNullOrWhitespace(immunitiesCombined.Label) then
+			preserveElements[#preserveElements+1] = immunitiesCombined
 		end
 	end
+	tooltip:AppendElements(immunityElements)
 end
 
 ---@param status EsvStatus

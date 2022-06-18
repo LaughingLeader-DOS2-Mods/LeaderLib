@@ -177,7 +177,7 @@ local Init = function()
 	-- local optionsSettings = UIListenerWrapper:Create(Data.UIType.optionsSettings, enabledParam)
 	-- local skills = UIListenerWrapper:Create(Data.UIType.skills)
 	-- local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole)
-	--local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, enabledParam)
+	local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, enabledParam)
 	--local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip, enabledParam)
 	--local textDisplay = UIListenerWrapper:Create(Data.UIType.textDisplay, enabledParam)
 

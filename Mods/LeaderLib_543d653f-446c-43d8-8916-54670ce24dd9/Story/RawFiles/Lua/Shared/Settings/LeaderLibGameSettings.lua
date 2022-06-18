@@ -73,6 +73,7 @@ local DefaultSettings = {
 		AlwaysExpandTooltips = false,
 		CondenseStatusTooltips = false,
 		CondenseItemTooltips = true,
+		FixStatusTooltips = true,
 		HideChatLog = Ext.IsDeveloperMode(),
 	},
 	EnableDeveloperTests = false,

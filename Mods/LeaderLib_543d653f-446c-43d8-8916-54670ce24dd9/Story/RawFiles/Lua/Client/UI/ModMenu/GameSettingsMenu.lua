@@ -193,6 +193,8 @@ local text = {
 	Client_CondenseItemTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseItemTooltips_Description", "Try to reduce max item tooltip size by combining elements, such as \"On Hit\" actions."),
 	Client_CondenseStatusTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips", "Condense Status Tooltips"),
 	Client_CondenseStatusTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips_Description", "Try to reduce max status tooltip size by combining elements, such as immunities."),
+	Client_FixStatusTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FixStatusTooltips", "Fix Status Tooltips"),
+	Client_FixStatusTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FixStatusTooltips_Description", "Removes the status malus icon and extra spacing, caused by a typo in Larian's UI code, and organizes bonuses and maluses together, while also sorting them alphabetically."),
 }
 
 for k,v in pairs(text) do
@@ -310,6 +312,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseItemTooltips"), text.Client_CondenseItemTooltips.Value, true, settings.Client.CondenseItemTooltips and 1 or 0, false, text.Client_CondenseItemTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseStatusTooltips"), text.Client_CondenseStatusTooltips.Value, true, settings.Client.CondenseStatusTooltips and 1 or 0, false, text.Client_CondenseStatusTooltips_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "FixStatusTooltips"), text.Client_FixStatusTooltips.Value, true, settings.Client.FixStatusTooltips and 1 or 0, false, text.Client_FixStatusTooltips_Description.Value)
 		
 		if Mods.CharacterExpansionLib then
 			mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled"), text.Client_DivineTalentsEnabled.Value, true, settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client_DivineTalentsEnabled_Description.Value)

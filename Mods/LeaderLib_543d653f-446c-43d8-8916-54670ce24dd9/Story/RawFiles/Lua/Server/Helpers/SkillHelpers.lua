@@ -165,7 +165,7 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
     if targetObject and sourceObject and enemiesOnly == true then
         if sourceType == "character"
         and targetType == "character"
-        and (not GameHelpers.Character.IsEnemy(targetObject, sourceObject) and not targetObject:HasTag("LeaderLib_FriendlyFireEnabled"))
+        and (not GameHelpers.Character.CanAttackTarget(targetObject, sourceObject))
         then
             props.HitObject = nil
             props.HitObjectPosition = nil

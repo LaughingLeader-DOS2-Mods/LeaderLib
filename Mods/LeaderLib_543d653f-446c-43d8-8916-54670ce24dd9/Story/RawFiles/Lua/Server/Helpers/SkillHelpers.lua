@@ -1,6 +1,8 @@
 if GameHelpers == nil then GameHelpers = {} end
 if GameHelpers.Skill == nil then GameHelpers.Skill = {} end
 
+local _EXTVERSION = Ext.Version()
+
 local function TrySetValue(target, k, v)
     if k == "DamageList" then
         Ext.Dump(v:ToTable())
@@ -546,6 +548,7 @@ end
 ---@field PlayTargetEffects boolean
 ---@field ApplySkillProperties boolean
 ---@field SkillOverrides StatEntrySkillData|nil Optional table of skill attributes to override the skill logic with.
+---@field SkillProperties AnyStatProperty[]
 
 
 local LeaderLibZoneCreationPropertiesNames = {
@@ -596,26 +599,37 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
                 props.DamageList = Ext.NewDamageList()
 
                 local useDefaultSkillDamage = true
-                if Ext.Version() >= 56 then
-					local listeners = Ext._Internal._Events.GetSkillDamage
-					if listeners then
-						for i=1,#listeners do
-							local callback = listeners[i]
-							if callback then
-								local b,damageList,deathType = xpcall(callback, debug.traceback, skill, sourceObject.Stats, false, sourceObject.Stats.IsSneaking == true, props.Position, props.Target, sourceObject.Stats.Level, false)
-								if b then
-                                    if damageList then
-                                        props.DamageList:Clear()
-                                        props.DamageList:Merge(damageList)
-                                    end
-                                    props.DeathType = deathType or "Physical"
-                                    useDefaultSkillDamage = false
-								else
-									Ext.PrintError(damageList)
-								end
-							end
-						end
-					end
+                if _EXTVERSION >= 56 then
+                    local evt = {
+                        Skill = skill,
+                        Attacker = sourceObject.Stats,
+                        AttackerPosition = props.Position,
+                        TargetPosition = props.Target,
+                        DamageList = Ext.NewDamageList(),
+                        DeathType = "Physical",
+                        Stealthed = sourceObject.Stats.IsSneaking == true,
+                        IsFromItem = false,
+                        Level = sourceObject.Stats.Level,
+                        Stopped = false
+                    }
+                    evt.StopPropagation = function (self)
+                        evt.Stopped = true
+                    end
+                    Ext.Events.GetSkillDamage:Throw(evt)
+                    if evt.DamageList then
+                        local hasDamage = false
+                        for _,v in pairs(evt.DamageList:ToTable()) do
+                            if v.Amount > 0 then
+                                hasDamage = true
+                                break
+                            end
+                        end
+                        if hasDamage then
+                            props.DamageList:CopyFrom(evt.DamageList)
+                            props.DeathType = evt.DeathType or "Physical"
+                            useDefaultSkillDamage = false
+                        end
+                    end
 				end
 
                 if useDefaultSkillDamage then
@@ -672,14 +686,12 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
         if GetDistanceToPosition(sourceId, props.Position[1], props.Position[2], props.Position[3]) <= 1 then
             Ext.ExecuteSkillPropertiesOnTarget(skillId, sourceId, sourceId, props.Position, "Self", false)
         end
+        if not props.SkillProperties then
+            props.SkillProperties = GameHelpers.Stats.GetSkillProperties(skillId)
+        end
     end
 
     PlayZoneSkillEffects(skill, sourceId, GameHelpers.GetUUID(target), props.Position, props.Target, playCastEffects, playTargetEffects)
-
-    --TODO EsvZoneAction.DamageList results in an __index error, despite it existing in the struct
-    if props.DamageList then
-        props.DamageList = nil
-    end
 
     local dumpAction = false
     for k,v in pairs(props) do
@@ -695,6 +707,8 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
     Ext.ExecuteSurfaceAction(action)
 end
 
+local _USE_BEHAVIOR = Ext.Version() < 56
+
 ---Shoot a zone/cone skill at a target object or position.
 ---@param skillId string Zone or Cone type skill.
 ---@param source UUID|EsvCharacter|EsvItem
@@ -703,7 +717,7 @@ end
 function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
     extraParams = type(extraParams) == "table" and extraParams or {}
     local source = GameHelpers.TryGetObject(source)
-    if GameHelpers.Ext.ObjectIsCharacter(source) then
+    if _USE_BEHAVIOR and GameHelpers.Ext.ObjectIsCharacter(source) then
         if extraParams.Position then
             SetVarFixedString(source.MyGuid, "LeaderLib_ShootWorldConeAt_Skill", skillId)
             local x,y,z = GameHelpers.Math.GetPosition(target, true, source.WorldPos)

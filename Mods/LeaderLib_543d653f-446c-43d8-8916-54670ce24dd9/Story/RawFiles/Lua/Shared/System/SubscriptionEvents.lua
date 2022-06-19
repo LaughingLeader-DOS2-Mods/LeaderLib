@@ -128,12 +128,15 @@ if not _ISCLIENT then
 	---@class TreasureItemGeneratedEventArgs
 	---@field Item EsvItem
 	---@field StatsId string
+	---@field IsClone boolean True if the item was generated via GameHelpers.Item.Clone.
+	---@field OriginalItem EsvItem|nil If IsClone is true, this is the item the clone was created from.
 	
-	---Called when an item is generated from treasure, or console command.  
-	---🔨**Server-Only**🔨
+	---Called when an item is generated from treasure (the extender "TreasureItemGenerated" event), GameHelpers.Item helpers, or by console command.  
+	---🔨**Server-Only**🔨  
+	---@see GameHelpers.Item#Clone
 	---@type SubscribableEvent<TreasureItemGeneratedEventArgs>
 	Events.TreasureItemGenerated = Classes.SubscribableEvent:Create("TreasureItemGenerated", {
-		ArgsKeyOrder={"Item", "StatsId"}
+		ArgsKeyOrder={"Item", "StatsId", "IsClone", "OriginalItem"}
 	})
 
 	---@class OnPrepareHitEventArgs

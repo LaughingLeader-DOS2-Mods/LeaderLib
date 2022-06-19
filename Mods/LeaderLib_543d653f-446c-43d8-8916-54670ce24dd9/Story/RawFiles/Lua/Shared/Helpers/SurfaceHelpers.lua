@@ -5,7 +5,7 @@ end
 local _ISCLIENT = Ext.IsClient()
 
 if not _ISCLIENT then
-	---[Server]
+	---🔨**Server-Only**🔨  
 	---@param startPos number[]
 	---@param endPos number[]
 	function GameHelpers.Surface.CreateRectSurface(startPos, endPos, surface, width, lengthModifier, duration, speed, statusChance, deathType, owner, lineCheckBlock)
@@ -26,7 +26,7 @@ if not _ISCLIENT then
 		return surf
 	end
 
-	---[Server]
+	---🔨**Server-Only**🔨  
 	---@param pos number[]|string
 	---@param surface string
 	---@param radius number|nil
@@ -55,7 +55,7 @@ if not _ISCLIENT then
 	---@type table<integer,EsvChangeSurfaceOnPathAction>
 	local surfaceActions = {}
 
-	---[Server]
+	---🔨**Server-Only**🔨  
 	local function CreateFollowSurface(projectile)
 		---@type EsvChangeSurfaceOnPathAction
 		local surf = Ext.CreateSurfaceAction("ChangeSurfaceOnPathAction")
@@ -70,7 +70,7 @@ if not _ISCLIENT then
 		return surf
 	end
 
-	---[Server]
+	---🔨**Server-Only**🔨  
 	function GameHelpers.Surface.UpdateRules()
 		if GameSettings.Settings.SurfaceSettings.PoisonDoesNotIgnite == true then
 			local rulesUpdated = false
@@ -103,7 +103,7 @@ if not _ISCLIENT then
 		end
 	end
 
-	---[Server]
+	---🔨**Server-Only**🔨  
 	---@param pos number[]|string
 	---@param action string
 	---@param layer integer
@@ -130,7 +130,7 @@ if not _ISCLIENT then
 		Ext.ExecuteSurfaceAction(surf)
 	end
 
-	---[Server]
+	---🔨**Server-Only**🔨  
 	function GameHelpers.Surface.TransformSurfaces(transformToSurfaceType, matchNames, x, z, radius, layer, duration, ownerHandle, statusChance, explicitMatch, grid, ignoreCursed, createdSurfaceSize)
 		createdSurfaceSize = createdSurfaceSize or 1.0
 		local surfaces = GameHelpers.Grid.GetSurfaces(x, z, grid, radius, 18)

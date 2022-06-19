@@ -1,4 +1,5 @@
 if GameHelpers.Item == nil then
+    ---@class GameHelpers.Item
     GameHelpers.Item = {}
 end
 
@@ -36,8 +37,9 @@ local itemConstructorProps = {
     ["DeltaMods"] = true,
 }
 
----Clone an item for a character.
----[Server]
+---@deprecated
+---Clone an item for a character.  
+---🔨**Server-Only**🔨  
 ---@param char string
 ---@param item string
 ---@param completion_event string
@@ -123,11 +125,12 @@ function GameHelpers.Item.GetStatsForRootTemplate(template, statType)
             end
         end
         if not statType then
-            Common.MergeTables(stats, Ext.GetStatEntries("Weapon"))
-            Common.MergeTables(stats, Ext.GetStatEntries("Armor"))
-            Common.MergeTables(stats, Ext.GetStatEntries("Shield"))
+            Common.MergeTables(stats, GameHelpers.Stats.GetStats("Weapon"))
+            Common.MergeTables(stats, GameHelpers.Stats.GetStats("Armor"))
+            Common.MergeTables(stats, GameHelpers.Stats.GetStats("Shield"))
         end
-        for _,statName in pairs(stats) do
+        for i=1, #stats do
+            local statName = stats[i]
             if matchedgroups[Ext.StatGetAttribute(statName, "ItemGroup")] == true then
                 table.insert(matches, statName)
             end
@@ -136,10 +139,11 @@ function GameHelpers.Item.GetStatsForRootTemplate(template, statType)
     if not isEquipment then
         if not statType then
             stats = {}
-            Common.MergeTables(stats, Ext.GetStatEntries("Object"))
-            Common.MergeTables(stats, Ext.GetStatEntries("Potion"))
+            Common.MergeTables(stats, GameHelpers.Stats.GetStats("Object"))
+            Common.MergeTables(stats, GameHelpers.Stats.GetStats("Potion"))
         end
-        for _,statName in pairs(stats) do
+        for i=1, #stats do
+            local statName = stats[i]
             if Ext.StatGetAttribute(statName, "RootTemplate") == template then
                 table.insert(matches, statName)
             end
@@ -191,7 +195,7 @@ function GameHelpers.Item.GetSupportedGenerationValues(itemGroupId, minLevel, ma
 end
 
 ---Creates an item by stat, provided it has an ItemGroup set (for equipment).
----[Server]
+---🔨**Server-Only**🔨  
 ---@param statName string
 ---@param creationProperties ItemDefinition|nil
 ---@return string,EsvItem
@@ -301,14 +305,14 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
                     ItemLevelUpTo(newItem.MyGuid, properties.StatsLevel)
                 end
             end
-            Events.TreasureItemGenerated:Invoke({Item=newItem, StatsId=statName})
+            Events.TreasureItemGenerated:Invoke({Item=newItem, StatsId=statName, IsClone=false})
             return newItem.MyGuid,newItem
         end
     end
     return nil
 end
 
----[Server]
+---🔨**Server-Only**🔨  
 ---@param template string
 ---@param setProperties ItemDefinition|nil
 ---@return EsvItem
@@ -339,7 +343,8 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     local item = constructor:Construct()
     if item ~= nil then
         item = Ext.GetItem(item.Handle)
-        Events.TreasureItemGenerated:Invoke({Item=item, StatsId=item.StatsId or ""})
+        local statsId = GameHelpers.Item.GetItemStat(item)
+        Events.TreasureItemGenerated:Invoke({Item=item, StatsId=statsId, IsClone=false})
         return item
     else
         Ext.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Error constructing item when invoking Construct() - Returned item is nil for template %s.", template))
@@ -347,15 +352,27 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     return nil
 end
 
----[Server]
----@param item ItemParam
+---@class GameHelpers_Item_CloneOptions
+---@field DeltaMods string[]|nil An optional array of deltamods to add to the ItmeDefinition deltamods. The deltamod is checked for before it gets added.
+---@field CopyTags boolean|nil Copy all tags from the target item.
+---@field CopyFlags boolean|nil Copy all object flags from the target item.
+
+---🔨**Server-Only**🔨  
+---@param item ItemParam The target item to clone.
 ---@param setProperties ItemDefinition|nil
----@param addDeltaMods string[]|nil An optional array of deltamods to add to the ItmeDefinition deltamods. The deltamod is checked for before it gets added.
+---@param opts GameHelpers_Item_CloneOptions|nil Optional table of additional options.
 ---@return EsvItem
-function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
+function GameHelpers.Item.Clone(item, setProperties, opts)
     if _ISCLIENT then
         error("[GameHelpers.Item.Clone] is server-side only.", 2)
     end
+    local item = GameHelpers.GetItem(item)
+    if not item then
+        error("item parameter is not a valid item.", 2)
+    end
+
+    ---@type GameHelpers_Item_CloneOptions
+    opts = opts or {}
     local constructor = Ext.CreateItemConstructor(item)
     ---@type ItemDefinition
     local props = constructor[1]
@@ -396,14 +413,14 @@ function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
             end
         end
     end
-    if addDeltaMods then
+    if type(opts.DeltaMods) == "table" then
         local originalDeltaMods = {}
         for i,v in pairs(props.DeltaMods) do
             originalDeltaMods[#originalDeltaMods+1] = v
         end
-        for i=1,#addDeltaMods do
-            if not Common.TableHasValue(originalDeltaMods, addDeltaMods[i]) then
-                originalDeltaMods[#originalDeltaMods+1] = addDeltaMods[i]
+        for i=1,#opts.DeltaMods do
+            if not Common.TableHasValue(originalDeltaMods, opts.DeltaMods[i]) then
+                originalDeltaMods[#originalDeltaMods+1] = opts.DeltaMods[i]
             end
         end
         props.DeltaMods = originalDeltaMods
@@ -412,7 +429,17 @@ function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
     local clone = constructor:Construct()
     if clone then
         clone = Ext.GetItem(clone.Handle)
-        Events.TreasureItemGenerated:Invoke({Item=clone, StatsId=clone.StatsId or item.StatsId})
+        if opts.CopyTags then
+            for _,v in pairs(item:GetTags()) do
+                SetTag(clone.MyGuid, v)
+            end
+        end
+        --TODO No way to get all of an object's flags currently.
+        -- if opts.CopyFlags then
+            
+        -- end
+        local cloneStatsId = GameHelpers.Item.GetItemStat(clone)
+        Events.TreasureItemGenerated:Invoke({Item=clone, StatsId=cloneStatsId, IsClone=true, OriginalItem=item})
         return clone
     else
         error("Error cloning item.", 2)
@@ -482,7 +509,7 @@ end
 
 if not _ISCLIENT then
 
-    ---[Server]
+    ---🔨**Server-Only**🔨  
     ---@param character EsvCharacter|UUID|NETID
     ---@param item ItemParam
     ---@param slot ItemSlot
@@ -512,7 +539,7 @@ if not _ISCLIENT then
     end
 
     ---Removes matching rune templates from items in any equipment slots.
-    ---[Server]
+    ---🔨**Server-Only**🔨  
     ---@param character EclCharacter|EsvCharacter|UUID|NETID
     ---@param runeTemplates table
     function GameHelpers.Item.RemoveRunes(character, runeTemplates)
@@ -529,7 +556,7 @@ if not _ISCLIENT then
     end
 
     ---Removes an item in a slot, if one exists.
-    ---[Server]
+    ---🔨**Server-Only**🔨  
     ---@param character EsvCharacter|UUID|NETID
     ---@param slot ItemSlot
     ---@param delete boolean|nil Whether to destroy the item or simply unequip it.
@@ -782,14 +809,21 @@ function GameHelpers.Item.IsWeaponType(item, weaponType)
 end
 
 ---@param item EsvItem|EclItem
----@return integer
-function GameHelpers.Item.GetSlot(item)
+---@param asName boolean|nil Return the slot as a name, such as "Weapon".
+---@return integer|ItemSlot slotIndexOrName
+function GameHelpers.Item.GetSlot(item, asName)
     local item = GameHelpers.GetItem(item)
     if item then
         if not _ISCLIENT then
+            if asName then
+                return Data.EquipmentSlotNames[item.Slot] or item.Slot
+            end
             return item.Slot
         elseif _EXTVERSION >= 56 then
             --EclItem doesn't have a Slot property in v55
+            if asName then
+                return Data.EquipmentSlotNames[item.CurrentSlot] or item.CurrentSlot
+            end
             return item.CurrentSlot
         end
     end

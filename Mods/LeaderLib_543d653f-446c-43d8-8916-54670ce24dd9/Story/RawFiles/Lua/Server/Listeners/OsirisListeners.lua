@@ -137,7 +137,8 @@ end)
 
 ---@param item EsvItem
 RegisterProtectedExtenderListener("TreasureItemGenerated", function(item)
-	Events.TreasureItemGenerated:Invoke({Item=item, StatsId=item.StatsId or ""})
+	local statsId = GameHelpers.Item.GetItemStat(item)
+	Events.TreasureItemGenerated:Invoke({Item=item, StatsId=statsId, IsClone=false})
 end)
 
 ---Called from LeaderLib_21_GS_Statuses.txt

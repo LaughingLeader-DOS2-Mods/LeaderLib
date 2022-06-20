@@ -1,3 +1,5 @@
+local _type = type
+
 if GameHelpers.Audio == nil then
 	GameHelpers.Audio = {}
 end

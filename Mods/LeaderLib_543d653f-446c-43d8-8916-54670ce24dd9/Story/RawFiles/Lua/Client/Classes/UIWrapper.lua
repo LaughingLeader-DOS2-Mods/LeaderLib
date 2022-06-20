@@ -172,8 +172,8 @@ end
 
 ---@param event string The method name.
 ---@param callback UIWrapperCallbackHandler
----@param eventType UICallbackEventType
----@param uiContext UIWrapperEventContextType
+---@param eventType UICallbackEventType|nil
+---@param uiContext UIWrapperEventContextType|nil
 function UIWrapper:RegisterInvokeListener(event, callback, eventType, uiContext)
 	if self.ID ~= -1 and uiContext ~= "Controller" then
 		if self.Callbacks.Invoke[event] == nil then

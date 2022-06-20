@@ -2,6 +2,7 @@ if GameHelpers.Character == nil then
 	GameHelpers.Character = {}
 end
 
+local _type = type
 local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
 
@@ -221,6 +222,61 @@ function GameHelpers.Character.IsInCombat(character)
 	else
 		character = GameHelpers.GetCharacter(character)
 		return character and character:GetStatus("COMBAT") ~= nil
+	end
+	return false
+end
+
+---@param character CharacterParam
+---@param skill string|string[]
+---@return boolean
+function GameHelpers.Character.HasSkill(character, skill)
+	character = GameHelpers.GetCharacter(character)
+	if not character then
+		return false
+	end
+	local t = type(skill)
+	if _EXTVERSION >= 56 and character.SkillManager then
+		local _skills = character.SkillManager.Skills
+		if t == "string" then
+			return _skills[skill] ~= nil
+		elseif t == "table" then
+			for i=1,#skill do
+				if _skills[skill[i]] ~= nil then
+					return true
+				end
+			end
+		end
+	else
+		if not _ISCLIENT and Ext.OsirisIsCallable() then
+			if t == "string" then
+				if Ext.OsirisIsCallable() then
+					return CharacterHasSkill(character.MyGuid, skill) == 1
+				else
+					for _,v in pairs(character:GetSkills()) do
+						if v == skill then
+							return true
+						end
+					end
+				end
+			elseif t == "table" then
+				if Ext.OsirisIsCallable() then
+					for i=1,#skill do
+						if CharacterHasSkill(character.MyGuid, skill[i]) == 1 then
+							return true
+						end
+					end
+				else
+					local characterSkills = character:GetSkills()
+					for _,v in pairs(characterSkills) do
+						for i=1,#skill do
+							if v == skill[i] then
+								return true
+							end
+						end
+					end
+				end
+			end
+		end
 	end
 	return false
 end

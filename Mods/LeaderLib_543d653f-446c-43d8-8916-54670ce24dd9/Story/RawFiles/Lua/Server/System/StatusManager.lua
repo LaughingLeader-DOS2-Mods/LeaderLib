@@ -1,3 +1,5 @@
+local _type = type
+
 if StatusManager == nil then
 	StatusManager = {}
 end
@@ -14,11 +16,13 @@ StatusManager._Internal = _INTERNAL
 
 StatusManager.Register = {}
 
+
 ---If false is returned, the status will be blocked.
 ---@alias StatusManagerBeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):boolean
 ---@alias StatusManagerAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):void
----@alias StatusManagerRemovedCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):void
 ---@alias StatusManagerAppliedCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):void
+---Source is usually nil unless specifically tracked before the status is removed.
+---@alias StatusManagerRemovedCallback fun(target:EsvCharacter|EsvItem, status:string, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):void
 
 ---@param eventType string
 ---@param callback function
@@ -43,7 +47,7 @@ end
 ---@param status string|string[]
 ---@param callback StatusManagerBeforeStatusAttemptCallback If false is returned, the status will be blocked.
 function StatusManager.Register.BeforeAttempt(status, callback, ...)
-	local t = type(status)
+	local t = _type(status)
 	if t == "table" then
 		for i,v in pairs(status) do
 			StatusManager.Register.BeforeAttempt(v, callback, ...)
@@ -73,7 +77,7 @@ end
 ---@param status string|string[]
 ---@param callback StatusManagerAttemptCallback
 function StatusManager.Register.Attempt(status, callback, ...)
-	local t = type(status)
+	local t = _type(status)
 	if t == "table" then
 		for i,v in pairs(status) do
 			StatusManager.Register.Attempt(v, callback, ...)
@@ -90,7 +94,7 @@ end
 ---@param callback StatusManagerAppliedCallback
 ---@vararg any
 function StatusManager.Register.Applied(status, callback, ...)
-	local t = type(status)
+	local t = _type(status)
 	if t == "table" then
 		for i,v in pairs(status) do
 			StatusManager.Register.Applied(v, callback, ...)
@@ -106,7 +110,7 @@ end
 ---@param status string|string[]
 ---@param callback StatusManagerRemovedCallback
 function StatusManager.Register.Removed(status, callback, ...)
-	local t = type(status)
+	local t = _type(status)
 	if t == "table" then
 		for i,v in pairs(status) do
 			StatusManager.Register.Removed(v, callback, ...)
@@ -123,7 +127,7 @@ end
 ---@param status string|string[]
 ---@param callback StatusManagerBeforeStatusAttemptCallback|StatusManagerAttemptCallback|StatusManagerRemovedCallback|StatusManagerAppliedCallback
 function StatusManager.Register.All(status, callback, ...)
-	local t = type(status)
+	local t = _type(status)
 	if t == "table" then
 		for i,v in pairs(status) do
 			StatusManager.Register.All(v, callback, ...)
@@ -142,7 +146,7 @@ StatusManager.Register.Type = {
 	---@param statusType string|string[]
 	---@param callback StatusManagerBeforeStatusAttemptCallback If false is returned, the status will be blocked.
 	BeforeAttempt = function(statusType, callback)
-		local t = type(statusType)
+		local t = _type(statusType)
 		if t == "table" then
 			for i,v in pairs(statusType) do
 				StatusManager.Register.Type.BeforeAttempt(v, callback)
@@ -168,7 +172,7 @@ StatusManager.Register.Type = {
 	---@param statusType string|string[]
 	---@param callback StatusManagerAttemptCallback
 	Attempt = function(statusType, callback)
-		local t = type(statusType)
+		local t = _type(statusType)
 		if t == "table" then
 			for i,v in pairs(statusType) do
 				StatusManager.Register.Attempt(v, callback)
@@ -184,7 +188,7 @@ StatusManager.Register.Type = {
 	---@param statusType string|string[]
 	---@param callback StatusManagerAppliedCallback
 	Applied = function(statusType, callback)
-		local t = type(statusType)
+		local t = _type(statusType)
 		if t == "table" then
 			for i,v in pairs(statusType) do
 				StatusManager.Register.Applied(v, callback)
@@ -200,7 +204,7 @@ StatusManager.Register.Type = {
 	---@param statusType string|string[]
 	---@param callback StatusManagerRemovedCallback
 	Removed = function(statusType, callback)
-		local t = type(statusType)
+		local t = _type(statusType)
 		if t == "table" then
 			for i,v in pairs(statusType) do
 				StatusManager.Register.Removed(v, callback)
@@ -217,7 +221,7 @@ StatusManager.Register.Type = {
 	---@param statusType string|string[]
 	---@param callback StatusManagerBeforeStatusAttemptCallback|StatusManagerAttemptCallback|StatusManagerRemovedCallback|StatusManagerAppliedCallback
 	All = function(statusType, callback)
-		local t = type(statusType)
+		local t = _type(statusType)
 		if t == "table" then
 			for i,v in pairs(statusType) do
 				StatusManager.Register.Type.All(v, callback)
@@ -377,7 +381,7 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 		local sourceId = source and GameHelpers.GetUUID(source) or false
 		PersistentVars.ActivePermanentStatuses[uuid][status] = sourceId
 		if not statusIsActive then
-			--fassert(type(status) == "string" and GameHelpers.Stats.Exists(status), "Status (%s) does not exist.", status)
+			--fassert(_type(status) == "string" and GameHelpers.Stats.Exists(status), "Status (%s) does not exist.", status)
 			GameHelpers.Status.Apply(target, status, -1.0, true, source or target)
 		end
 	end

@@ -129,13 +129,16 @@ end
 GetSkillSlots = GameHelpers.Skill.GetSkillSlots
 
 ---Swaps a skill with another one.
----@param char string
+---@param char CharacterParam
 ---@param targetSkill string The skill to find and replace.
 ---@param replacementSkill string The skill to replace the target one with.
 ---@param removeTargetSkill boolean Optional, removes the swapped skill from the character.
 ---@param resetCooldowns boolean Optional, defaults to true.
 function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTargetSkill, resetCooldowns)
     char = GameHelpers.GetUUID(char)
+    if not char then
+        return false
+    end
     local cd = nil
     if CharacterHasSkill(char, targetSkill) == 1 then
         cd = NRD_SkillGetCooldown(char, targetSkill)

@@ -2,7 +2,7 @@ if DebugHelpers == nil then
 	DebugHelpers = {}
 end
 
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 
 local userDataProps = {}
 
@@ -1000,7 +1000,7 @@ userDataProps["eoc::ItemTemplate"] = {
 	WalkThrough = "boolean",
 }
 
-if not isClient then
+if not _ISCLIENT then
 	userDataProps["eoc::ItemTemplate"].ItemDescription = "string"
 	userDataProps["eoc::ItemTemplate"].ItemDisplayName = "boolean"
 end

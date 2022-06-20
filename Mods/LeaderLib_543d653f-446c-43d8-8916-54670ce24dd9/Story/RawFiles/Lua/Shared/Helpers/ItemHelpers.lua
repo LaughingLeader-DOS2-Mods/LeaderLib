@@ -355,7 +355,7 @@ end
 ---@class GameHelpers_Item_CloneOptions
 ---@field DeltaMods string[]|nil An optional array of deltamods to add to the ItmeDefinition deltamods. The deltamod is checked for before it gets added.
 ---@field CopyTags boolean|nil Copy all tags from the target item.
----@field CopyFlags boolean|nil Copy all object flags from the target item.
+---@field InvokeEvent boolean|nil Invoke the LeaderLib event, Events.TreasureItemGenerated. This allows mods subscribed to this event to alter the item.
 
 ---🔨**Server-Only**🔨  
 ---@param item ItemParam The target item to clone.
@@ -438,8 +438,10 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
         -- if opts.CopyFlags then
             
         -- end
-        local cloneStatsId = GameHelpers.Item.GetItemStat(clone)
-        Events.TreasureItemGenerated:Invoke({Item=clone, StatsId=cloneStatsId, IsClone=true, OriginalItem=item})
+        if opts.InvokeEvent then
+            local cloneStatsId = GameHelpers.Item.GetItemStat(clone)
+            Events.TreasureItemGenerated:Invoke({Item=clone, StatsId=cloneStatsId, IsClone=true, OriginalItem=item})
+        end
         return clone
     else
         error("Error cloning item.", 2)

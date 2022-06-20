@@ -2,8 +2,9 @@ if GameHelpers.Ext == nil then
 	GameHelpers.Ext = {}
 end
 
-local isClient = Ext.IsClient
+local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
+local _type = type
 
 local characterStatAttributes = {
 	"Strength",
@@ -1052,7 +1053,7 @@ function GameHelpers.Ext.ObjectIsCharacter(obj)
 		if obj == StringHelpers.NULL_UUID then
 			return false
 		end
-		if not isClient and Ext.OsirisIsCallable() then
+		if not _ISCLIENT and Ext.OsirisIsCallable() then
 			return ObjectIsCharacter(obj) == 1
 		end
 	end

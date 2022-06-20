@@ -2,7 +2,17 @@ if StringHelpers == nil then
 	StringHelpers = {} 
 end
 
+--Optimize global function usage by assigning locals. We're only doing this since string helpers are used often.
 local _type = type
+local _gsub = string.gsub
+local _sub = string.sub
+local _lower = string.lower
+local _upper = string.upper
+local _reverse = string.reverse
+local _format = string.format
+local _find = string.find
+local _match = string.match
+local _tostring = tostring
 
 ---Check if a string is equal to another. Case-insenstive.
 ---@param a string
@@ -17,8 +27,8 @@ function StringHelpers.Equals(a,b, insensitive, trimWhitespace)
 			a = StringHelpers.Trim(a)
 			b = StringHelpers.Trim(b)
 		end
-		if insensitive and _type(a) == "string" and _type(b) == "string" then
-			return string.upper(a) == string.upper(b)
+		if insensitive then
+			return _upper(_tostring(a)) == _upper(_tostring(b))
 		else
 			return a == b
 		end
@@ -47,14 +57,14 @@ end
 ---@return boolean
 function StringHelpers.IsNullOrWhitespace(str)
 	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
-	return str == nil or str == "" or NULL_UUID[str] or _type(str) ~= "string" or string.gsub(str, "%s+", "") == ""
+	return str == nil or str == "" or NULL_UUID[str] or _type(str) ~= "string" or _gsub(str, "%s+", "") == ""
 end
 
 ---Capitalize a string.
 ---@param s string
 ---@return string
 function StringHelpers.Capitalize(s)
-	return s:sub(1,1):upper()..s:sub(2)
+	return _upper(_sub(s, 1,1)).._sub(s, 2)
 end
 
 ---@alias StringHelpersJoinGetStringCallback fun(k:any,v:any):string
@@ -89,9 +99,9 @@ function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 			if _type(result) ~= "string" then
 				result = tostring(result)
 			end
-			if not uniqueOnly or (uniqueOnly and not string.find(finalResult, result)) then
+			if not uniqueOnly or (uniqueOnly and not _find(finalResult, result)) then
 				if i > 1 and finalResult ~= "" then
-					finalResult = string.format("%s%s%s", finalResult, delimiter, result)
+					finalResult = _format("%s%s%s", finalResult, delimiter, result)
 				else
 					finalResult = result
 				end
@@ -131,9 +141,9 @@ function StringHelpers.DebugJoin(delimiter, list, uniqueOnly, getStringFunction)
 			else
 				result = '"'..result..'"'
 			end
-			if not uniqueOnly or (uniqueOnly and not string.find(finalResult, result)) then
+			if not uniqueOnly or (uniqueOnly and not _find(finalResult, result)) then
 				if i > 1 then
-					finalResult = string.format("%s%s%s", finalResult, delimiter, result)
+					finalResult = _format("%s%s%s", finalResult, delimiter, result)
 				else
 					finalResult = result
 				end
@@ -153,17 +163,17 @@ function StringHelpers.Split(str, delimiter)
 		return nil
 	end
 	local list = {}; local pos = 1
-	if string.find("", delimiter, 1) then
+	if _find("", delimiter, 1) then
 		table.insert(list, str)
 		return list
 	end
 	while 1 do
-		local first, last = string.find(str, delimiter, pos)
+		local first, last = _find(str, delimiter, pos)
 		if first then
-			table.insert(list, string.sub(str, pos, first-1))
+			table.insert(list, _sub(str, pos, first-1))
 			pos = last+1
 		else
-			table.insert(list, string.sub(str, pos))
+			table.insert(list, _sub(str, pos))
 			break
 		end
 	end
@@ -184,42 +194,44 @@ function StringHelpers.ReplacePlaceholders(text, ...)
 			text = values[1]
 		else
 			for i,v in pairs(values) do
-				text = string.gsub(text, "%["..tostring(math.tointeger(i)).."%]", v)
+				text = _gsub(text, "%["..tostring(math.tointeger(i)).."%]", v)
 			end
 		end
 	end
 	return text
 end
 
---- Remove leading/trailing whitespaces from a string.
+--- Remove **only** leading/trailing whitespaces from a string.
 --- @param s string
 --- @return string
 function StringHelpers.Trim(s)
-	return (s:gsub("^%s*(.-)%s*$", "%1"))
+	return _gsub(s, "^%s*(.-)%s*$", "%1")
 end
 
---- Remove all whitespace from a string.
+--- Remove **all** whitespace from a string.
 --- @param s string
 --- @return string
 function StringHelpers.RemoveWhitespace(s)
-	return (s:gsub("%s+", ""))
+	return _gsub(s, "%s+", "")
 end
 
 --- Escapes all magic characters, such as -
 --- @param s string
 --- @return string
-function StringHelpers.EscapeMagic(s)
-	return (s:gsub('[%^%$%(%)%%%.%[%]%*%+%-%?]','%%%1'))
+local function _escape(s)
+	return _gsub(s, '[%^%$%(%)%%%.%[%]%*%+%-%?]','%%%1')
 end
 
---- Similar to string.gsub, but escapes all magic characters in the pattern beforehand.
+StringHelpers.EscapeMagic = _escape
+
+--- Similar to gsub, but escapes all magic characters in the pattern beforehand.
 --- @param s string
 --- @param pattern string
 --- @param repl string|table|function
 --- @param n integer|nil
 --- @return string
 function StringHelpers.Replace(s, pattern, repl, n)
-	return string.gsub(s, StringHelpers.EscapeMagic(pattern), repl, n)
+	return _gsub(s, _escape(pattern), repl, n)
 end
 
 local _cachedParsedGUID = {}
@@ -237,9 +249,9 @@ function StringHelpers.GetUUID(str)
 	end
 	local result = _cachedParsedGUID[str]
 	if result == nil then
-		local start = string.find(str, "_[^_]*$") or 0
+		local start = _find(str, "_[^_]*$") or 0
 		if start > 0 then
-			result = string.sub(str, start+1)
+			result = _sub(str, start+1)
 		else
 			result = str
 		end
@@ -265,7 +277,7 @@ function StringHelpers.IsUUID(str)
 	then
 		return true
 	end
-	return string.match(str, _ISUUID_PATTERN) ~= nil
+	return _match(str, _ISUUID_PATTERN) ~= nil
 end
 
 --- Split a version integer into separate values
@@ -298,7 +310,7 @@ function StringHelpers.VersionIntegerToVersionString(version)
 		end
 		local major,minor,revision,build = ParseVersion(version)
 		if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
-			result = string.format("%s.%s.%s.%s", major, minor, revision, build)
+			result = _format("%s.%s.%s.%s", major, minor, revision, build)
 			_versionIntToString[version] = result
 		elseif major == -1 and minor == -1 and revision == -1 and build == -1 then
 			result = "-1"
@@ -319,7 +331,7 @@ function StringHelpers.Append(a,b,appendWith)
 	if a == nil or a == "" then
 		return b
 	else
-		return string.format("%s%s%s", a, (appendWith or ""), b)
+		return _format("%s%s%s", a, (appendWith or ""), b)
 	end
 end
 
@@ -336,12 +348,12 @@ function StringHelpers.StripFont(str)
 	if str == nil or str == "" then
 		return str
 	end
-	return string.gsub(str, "<font.-'>", ""):gsub("</font>", "")
+	return _gsub(str, "<font.-'>", ""):gsub("</font>", "")
 end
 
 function StringHelpers.IsMatch(str, match, explicit)
 	if not explicit then
-		str = string.lower(str)
+		str = _lower(str)
 	end
 	if _type(match) == "table" then
 		for i,v in pairs(match) do
@@ -350,7 +362,7 @@ function StringHelpers.IsMatch(str, match, explicit)
 					return true
 				end
 			else
-				if string.find(str, string.lower(v)) then
+				if _find(str, _lower(v)) then
 					return true
 				end
 			end
@@ -359,7 +371,7 @@ function StringHelpers.IsMatch(str, match, explicit)
 		if explicit then
 			return str == match
 		else
-			if string.find(str, string.lower(match)) then
+			if _find(str, _lower(match)) then
 				return true
 			end
 		end
@@ -383,12 +395,12 @@ function StringHelpers.GetShortNumberString(n)
             steps.use = _
         end
     end
-    local result = string.format("%.1f", n / steps[steps.use][1])
+    local result = _format("%.1f", n / steps[steps.use][1])
     if tonumber(result) >= 1e3 and steps.use < #steps then
         steps.use = steps.use + 1
-        result = string.format("%.1f", tonumber(result) / 1e3)
+        result = _format("%.1f", tonumber(result) / 1e3)
     end
-    result = string.sub(result,0,string.sub(result,-1) == "0" and -3 or -1) -- Remove .0 (just if it is zero!)
+    result = _sub(result,0,_sub(result,-1) == "0" and -3 or -1) -- Remove .0 (just if it is zero!)
     return result .. steps[steps.use][2]
 end
 
@@ -399,8 +411,12 @@ function StringHelpers.CommaNumber(n)
 	if n == nil then
 		return ""
 	end
-	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
-	return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
+	local left,num,right = _match(n,'^([^%d]*%d)(%d*)(.-)$')
+	if left then
+		return _format("%s%s%s", left, _reverse(_gsub(_reverse(num), "(%d%d%d)", "%1,")), right or "")
+	end
+	return ""
+	--return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
 end
 
 ---Check if a string separated by a delimiter has a value.
@@ -424,7 +440,7 @@ local _skillPrototypeToId = {}
 function StringHelpers.GetSkillEntryName(skillPrototype)
 	local result = _skillPrototypeToId[skillPrototype]
 	if result == nil then
-		result = string.gsub(skillPrototype, "_%-?%d+$", "")
+		result = _gsub(skillPrototype, "_%-?%d+$", "")
 		_skillPrototypeToId[skillPrototype] = result
 	end
 	return result
@@ -432,10 +448,10 @@ end
 
 GetSkillEntryName = StringHelpers.GetSkillEntryName
 
----Helper for string.find with some additional options.
+---Helper for find with some additional options.
 ---@param s string
 ---@param pattern string|string[]
----@param caseInsensitive boolean|nil Searches for a string.lower version of s.
+---@param caseInsensitive boolean|nil Searches for a lower version of s.
 ---@param startPos integer|nil If set, start the find from this position.
 ---@param endPos integer|nil If set, end the find at this position.
 ---@param findStartPos integer|nil
@@ -443,15 +459,15 @@ GetSkillEntryName = StringHelpers.GetSkillEntryName
 ---@return integer,integer,string
 function StringHelpers.Find(s, pattern, caseInsensitive, startPos, endPos, findStartPos, findPlain)
 	if caseInsensitive then
-		s = string.lower(s)
+		s = _lower(s)
 	end
 	local t = _type(pattern)
 	if t == "string" then
 		if startPos then
-			local subText = string.sub(s, startPos, endPos)
-			return string.find(subText, pattern, findStartPos, findPlain)
+			local subText = _sub(s, startPos, endPos)
+			return _find(subText, pattern, findStartPos, findPlain)
 		else
-			return string.find(s, pattern, findStartPos, findPlain)
+			return _find(s, pattern, findStartPos, findPlain)
 		end
 	elseif t == "table" then
 		for k,v in pairs(pattern) do
@@ -463,10 +479,10 @@ function StringHelpers.Find(s, pattern, caseInsensitive, startPos, endPos, findS
 	end
 end
 
----Similar to string.find, except it just checks that the result isn't nil, and supports an array of strings to check.
+---Similar to find, except it just checks that the result isn't nil, and supports an array of strings to check.
 ---@param str string|string[]
 ---@param pattern string|string[]
----@param caseInsensitive boolean|nil Searches for a string.lower version of s.
+---@param caseInsensitive boolean|nil Searches for a lower version of s.
 ---@param startPos integer|nil If set, start the find from this position.
 ---@param endPos integer|nil If set, end the find at this position.
 ---@param findStartPos integer|nil
@@ -476,15 +492,15 @@ function StringHelpers.Contains(str, pattern, caseInsensitive, startPos, endPos,
 	local strType = _type(str)
 	if strType == "string" then
 		if caseInsensitive then
-			str = string.lower(str)
+			str = _lower(str)
 		end
 		local t = _type(pattern)
 		if t == "string" then
 			if startPos then
-				local subText = string.sub(str, startPos, endPos)
-				return string.find(subText, pattern, findStartPos, findPlain) ~= nil
+				local subText = _sub(str, startPos, endPos)
+				return _find(subText, pattern, findStartPos, findPlain) ~= nil
 			else
-				return string.find(str, pattern, findStartPos, findPlain) ~= nil
+				return _find(str, pattern, findStartPos, findPlain) ~= nil
 			end
 		elseif t == "table" then
 			for _,v in pairs(pattern) do

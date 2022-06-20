@@ -2,15 +2,17 @@ if TableHelpers == nil then
 	TableHelpers = {}
 end
 
+local _type = type
+
 ---@param orig table
 ---@param deep boolean|nil If true, metatables are copied as well.
 function TableHelpers.Clone(orig, deep)
 	if deep ~= true then
-		local t = type(orig)
+		local t = _type(orig)
 		local copy = {}
 		if t == "table" then
 			for k, v in pairs(orig) do
-				if type(v) == "table" then
+				if _type(v) == "table" then
 					copy[k] = TableHelpers.Clone(v, deep)
 				else
 					copy[k] = v
@@ -66,14 +68,14 @@ local validTypes = {
 ---@return table<string|number|boolean,string|number|boolean|table>
 function TableHelpers.SanitizeTable(tbl, supportedExtraTypes, forJson)
 	local output = {}
-	local tableType = type(tbl)
+	local tableType = _type(tbl)
 	if tableType ~= "table" and tableType ~= "userdata" then
 		return output
 	end
 	for k,v in pairs(tbl) do
-		local keyType = type(k)
+		local keyType = _type(k)
 		if (forJson and validKeyTypes[keyType]) or not (forJson and validTypes[keyType]) then
-			local t = type(v)
+			local t = _type(v)
 			if validTypes[t] or (supportedExtraTypes and supportedExtraTypes[t]) then
 				if t == "table" or t == "userdata" then
 					output[k] = TableHelpers.SanitizeTable(v, supportedExtraTypes, forJson)
@@ -93,14 +95,14 @@ end
 ---@param deep boolean|nil If true, iterate into table values to AddOrUpdate them as well.
 ---@return table target Returns the target table.
 function TableHelpers.AddOrUpdate(target, addFrom, skipExisting, deep)
-	if type(target) ~= "table" or type(addFrom) ~= "table" then
+	if _type(target) ~= "table" or _type(addFrom) ~= "table" then
 		return target
 	end
 	for k,v in pairs(addFrom) do
 		if target[k] == nil then
 			target[k] = v
 		else
-			if deep and (type(v) == "table" and type(target[k]) == "table") then
+			if deep and (_type(v) == "table" and _type(target[k]) == "table") then
 				TableHelpers.AddOrUpdate(target[k], v, skipExisting)
 			elseif skipExisting ~= true then
 				target[k] = v
@@ -119,7 +121,7 @@ function TableHelpers.CopyExistingKeys(target, addFrom)
 	end
 	for k,v in pairs(target) do
 		if addFrom[k] ~= nil then
-			if type(v) == "table" then
+			if _type(v) == "table" then
 				TableHelpers.AddOrUpdate(v, addFrom[k])
 			else
 				target[k] = addFrom[k]
@@ -140,16 +142,16 @@ function TableHelpers.ToString(tbl, indent)
 	indent = indent + 1
 	for k, v in pairs(tbl) do
 		toprint = toprint .. string.rep(" ", indent)
-		if (type(k) == "number") then
+		if (_type(k) == "number") then
 			toprint = toprint .. "[" .. k .. "] = "
-		elseif (type(k) == "string") then
+		elseif (_type(k) == "string") then
 			toprint = toprint  .. k ..  " = " 
 		end
-		if (type(v) == "number") then
+		if (_type(v) == "number") then
 			toprint = toprint .. v .. ",\n"
-		elseif (type(v) == "string") then
+		elseif (_type(v) == "string") then
 			toprint = toprint .. "\"" .. v .. "\",\n"
-		elseif (type(v) == "table") then
+		elseif (_type(v) == "table") then
 			toprint = toprint .. TableHelpers.ToString(v, indent + 2) .. ",\n"
 		else
 			toprint = toprint .. "\"" .. tostring(v) .. "\",\n"
@@ -178,7 +180,7 @@ end
 ---@param tbl table
 ---@return boolean,...
 function TableHelpers.TryUnpack(tbl)
-	if type(tbl) == "table" then
+	if _type(tbl) == "table" then
 		return true,table.unpack(tbl)
 	end
 	return false
@@ -192,10 +194,10 @@ end
 ---@param deep boolean|nil If true, and table entry is a table, keep checking for the provided values.
 ---@return boolean
 function TableHelpers.HasValue(tbl, value, deep)
-	if type(tbl) ~= "table" then
+	if _type(tbl) ~= "table" then
 		return false
 	end
-	local t = type(value)
+	local t = _type(value)
 	if t == "table" then
 		for _,v in pairs(value) do
 			if TableHelpers.HasValue(tbl, v, deep) then
@@ -207,7 +209,7 @@ function TableHelpers.HasValue(tbl, value, deep)
 			if v == value then
 				return true
 			end
-			if deep and type(v) == "table" and TableHelpers.HasValue(v, value, deep) then
+			if deep and _type(v) == "table" and TableHelpers.HasValue(v, value, deep) then
 				return true
 			end
 		end
@@ -221,7 +223,7 @@ end
 ---@param copyFrom any[]
 ---@return table copyTo Returns the copyTo table
 function TableHelpers.AppendArrays(copyTo, copyFrom)
-	if type(copyFrom) ~= "table" then
+	if _type(copyFrom) ~= "table" then
 		return copyTo
 	end
 	for k,v in pairs(copyFrom) do
@@ -235,7 +237,7 @@ end
 ---@param copyFrom table
 ---@return table copyTo Returns the copyTo table
 function TableHelpers.CopyKeys(copyTo, copyFrom)
-	if type(copyFrom) ~= "table" then
+	if _type(copyFrom) ~= "table" then
 		return copyTo
 	end
 	for k,v in pairs(copyFrom) do

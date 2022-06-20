@@ -1,5 +1,6 @@
 local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
+local _type = type
 
 if GameHelpers.Visual == nil then
 	GameHelpers.Visual = {}

@@ -6,6 +6,7 @@ local _EXTVERSION = Ext.Version()
 
 local _loadFile = _EXTVERSION < 56 and Ext.LoadFile or Ext.IO.LoadFile
 local _saveFile = _EXTVERSION < 56 and Ext.SaveFile or Ext.IO.SaveFile
+local _type = type
 
 function GameHelpers.IO.LoadJsonFile(filepath, fallback)
 	local file =_loadFile(filepath)
@@ -17,7 +18,7 @@ end
 
 function GameHelpers.IO.SaveJsonFile(filepath, data)
 	local output = data
-	local t = type(data)
+	local t = _type(data)
 	if t == "table" then
 		output = Common.JsonStringify(data)
 	elseif t ~= "string" then
@@ -30,7 +31,7 @@ end
 ---@param filepath string
 ---@param text string|number|boolean|table|userdata|fun():string
 function GameHelpers.IO.SaveFile(filepath, text)
-	local t = type(text)
+	local t = _type(text)
 	local output = text
 	if t ~= "string" then
 		if t == "table" or t == "userdata" then

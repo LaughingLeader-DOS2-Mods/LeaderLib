@@ -1,5 +1,6 @@
 local _EXTVERSION = Ext.Version()
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
+local _type = type
 
 if GameHelpers.Grid == nil then
 	GameHelpers.Grid = {}
@@ -11,7 +12,7 @@ local _getGrid = function() end
 if _EXTVERSION >= 56 then
 	_getGrid = Ext.Entity.GetAiGrid
 else
-	if not isClient then
+	if not _ISCLIENT then
 		_getGrid = Ext.GetAiGrid
 	end
 end
@@ -105,7 +106,7 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 	end
 end
 
-if not isClient then
+if not _ISCLIENT then
 	local _INTERNAL = GameHelpers._INTERNAL
 
 	---@param e TimerFinishedEventArgs
@@ -162,7 +163,7 @@ if not isClient then
 	---@param target ObjectParam
 	---@return boolean canBeForceMoved
 	function GameHelpers.CanForceMove(target)
-		local t = type(target)
+		local t = _type(target)
 		if t == "string" and Ext.OsirisIsCallable() then
 			if CharacterIsDead(target) == 1 then
 				return false
@@ -197,7 +198,7 @@ if not isClient then
 		local targetObject = GameHelpers.TryGetObject(target)
 		fassert(sourceObject ~= nil, "Invalid source parameter (%s)", source)
 		fassert(targetObject ~= nil, "Invalid target parameter (%s)", target)
-		if type(startPos) ~= "table" then
+		if _type(startPos) ~= "table" then
 			startPos = sourceObject.WorldPos
 		end
 		local dist = GameHelpers.Math.GetDistance(targetObject, startPos)
@@ -305,7 +306,7 @@ end
 ---@field HasSurface fun(name:string, containingName:boolean|nil, onlyLayer:integer|nil):boolean
 
 local function GetSurfaceType(data)
-	if not isClient then
+	if not _ISCLIENT then
 		return data.SurfaceType
 	else
 		return data
@@ -314,7 +315,7 @@ end
 
 ---@param data LeaderLibCellSurfaceData
 local function HasSurfaceSingle(data, name, containingName, onlyLayer)
-	local t = type(name)
+	local t = _type(name)
 	if t == "table" then
 		for _,v in pairs(name) do
 			if data.HasSurface(v, containingName, onlyLayer) then
@@ -344,7 +345,7 @@ end
 
 ---@param data LeaderLibSurfaceRadiusData
 local function HasSurfaceRadius(data, name, containingName, onlyLayer)
-	if type(name) == "table" then
+	if _type(name) == "table" then
 		for _,v in pairs(name) do
 			if HasSurfaceRadius(data, v, containingName, onlyLayer) then
 				return true
@@ -486,7 +487,7 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 	---@type AiGrid
 	grid = grid or _getGrid()
 	if grid then
-		if type(maxRadius) ~= "number" or maxRadius <= 0 then
+		if _type(maxRadius) ~= "number" or maxRadius <= 0 then
 			local cell = grid:GetCellInfo(x, z)
 			if cell then
 				local data = {
@@ -497,7 +498,7 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 				data.HasSurface = function(s, name, containingName, onlyLayer)
 					return HasSurfaceSingle(s, name, containingName, onlyLayer)
 				end
-				if not isClient then
+				if not _ISCLIENT then
 					if cell.GroundSurface then
 						data.Ground = Ext.GetSurface(cell.GroundSurface)
 					end
@@ -539,7 +540,7 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 						if not data.Cell[tx][tz] then
 							data.Cell[tx][tz] = cell
 
-							if not isClient then
+							if not _ISCLIENT then
 								if cell.GroundSurface then
 									local surfaceData = {
 										Surface = Ext.GetSurface(cell.GroundSurface),

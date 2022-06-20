@@ -1,5 +1,6 @@
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
+local _type = type
 
 ---@param pickpocketSkill integer
 ---@return number
@@ -57,7 +58,7 @@ local _UNSET_USERID = -65536
 ---@param obj UUID|EsvCharacter|EclCharacter
 ---@return integer|nil
 function GameHelpers.GetUserID(obj)
-	local t = type(obj)
+	local t = _type(obj)
 	local id = nil
 	if t == "number" then
 		return obj
@@ -84,8 +85,8 @@ function GameHelpers.CharacterUsersMatch(char1, char2)
 	---@type EsvCharacter
 	local character2 = char2
 
-	local t1 = type(char1)
-	local t2 = type(char2)
+	local t1 = _type(char1)
+	local t2 = _type(char2)
 
 	if Ext.IsServer() then
 		if t1 == "string" and t2 == t1 then
@@ -111,7 +112,7 @@ end
 ---@param statItem StatItem
 ---@param tag string|string[]
 function GameHelpers.StatItemHasTag(statItem, tag)
-	local t = type(tag)
+	local t = _type(tag)
 	if t == "string" then
 		if StringHelpers.DelimitedStringContains(statItem.Tags, ";", tag) then
 			return true
@@ -150,7 +151,7 @@ end
 ---@param item EsvItem|EclItem|UUID
 ---@param tag string|string[]
 function GameHelpers.ItemHasTag(item, tag)
-	local t = type(tag)
+	local t = _type(tag)
 	if t == "table" then
 		for i=1,#tag do
 			if GameHelpers.ItemHasTag(item, tag[i]) then
@@ -158,10 +159,10 @@ function GameHelpers.ItemHasTag(item, tag)
 			end
 		end
 	elseif t == "string" then
-		if type(item) == "string" then
+		if _type(item) == "string" then
 			item = GameHelpers.GetItem(item)
 		end
-		if type(item) == "table" then
+		if _type(item) == "table" then
 			if item.HasTag and item.HasTag(item, tag) == true then
 				return true
 			end
@@ -221,7 +222,7 @@ end
 ---@param character EsvCharacter|EclCharacter|UUID|NETID|ObjectHandle
 ---@param tag string
 function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
-	if type(character) ~= "userdata" then
+	if _type(character) ~= "userdata" then
 		character = GameHelpers.GetCharacter(character)
 		if not character then
 			fprint(LOGLEVEL.ERROR, "GameHelpers.CharacterOrEquipmentHasTag requires a uuid, netid, ObjectHandle, or EsvCharacter/EclCharacter. Values provided: character(%s) tag(%s)", character, tag)
@@ -246,7 +247,7 @@ end
 ---@return string[]|table<string,boolean>
 function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 	local tags = {}
-	local t = type(object)
+	local t = _type(object)
 	if (t == "userdata" or t == "table") and object.GetTags then
 		for _,v in pairs(object:GetTags()) do
 			if inDictionaryFormat then
@@ -268,7 +269,7 @@ function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 	if addEquipmentTags and GameHelpers.Ext.ObjectIsCharacter(object) then
 		local items = {}
 		for _,slot in Data.VisibleEquipmentSlots:Get() do
-			if isClient then
+			if _ISCLIENT then
 				local uuid = object:GetItemBySlot(slot)
 				if not StringHelpers.IsNullOrEmpty(uuid) then
 					local item = Ext.GetItem(uuid)
@@ -316,7 +317,7 @@ end
 ---@param returnNullId boolean|nil If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
 ---@return UUID
 function GameHelpers.GetUUID(object, returnNullId)
-	local t = type(object)
+	local t = _type(object)
 	if t == "userdata" then
 		local b,uuid = pcall(_GetMyGuid, object)
 		if uuid then
@@ -337,7 +338,7 @@ end
 ---@param object EsvGameObject|EclGameObject|string|number
 ---@return NETID
 function GameHelpers.GetNetID(object)
-	local t = type(object)
+	local t = _type(object)
 	if t == "userdata" and object.NetID then
 		return object.NetID
 	elseif t == "string" then
@@ -355,9 +356,9 @@ end
 ---@param object EsvCharacter|EclCharacter|string|number
 ---@return UUID|NETID
 function GameHelpers.GetCharacterID(object)
-	local t = type(object)
+	local t = _type(object)
 	if t == "userdata" and object.NetID then
-		if not isClient then
+		if not _ISCLIENT then
 			return object.MyGuid
 		else
 			return object.NetID
@@ -365,7 +366,7 @@ function GameHelpers.GetCharacterID(object)
 	elseif t == "string" or t == "number" then
 		local obj = Ext.GetCharacter(object)
 		if obj then
-			if not isClient then
+			if not _ISCLIENT then
 				return obj.MyGuid
 			else
 				return obj.NetID
@@ -379,7 +380,7 @@ end
 ---@param object EsvGameObject|EclGameObject|string|number|StatCharacter
 ---@return EsvCharacter|EclCharacter
 function GameHelpers.GetCharacter(object)
-	local t = type(object)
+	local t = _type(object)
 	local isHandle = t == "userdata" and IsHandle(object) == true
 	if isHandle or t == "string" or t == "number" then
 		local obj = Ext.GetCharacter(object)
@@ -403,7 +404,7 @@ end
 ---@param object EsvGameObject|EclGameObject|string|number
 ---@return EsvItem|EclItem
 function GameHelpers.GetItem(object)
-	local t = type(object)
+	local t = _type(object)
 	local isHandle = t == "userdata" and IsHandle(object) == true
 	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(object) then
 		return object
@@ -422,7 +423,7 @@ end
 ---@param object EsvGameObject|EclGameObject|string|number
 ---@return boolean
 function GameHelpers.ObjectExists(object)
-	local t = type(object)
+	local t = _type(object)
 	if t == "string" and StringHelpers.IsNullOrWhitespace(object) then
 		return false
 	end
@@ -457,7 +458,7 @@ local getFuncs = {
 }
 
 local function TryGetObject(id)
-	local t = type(id)
+	local t = _type(id)
 	local isHandle = t == "userdata" and IsHandle(id) == true
 	if Ext.OsirisIsCallable() and t == "string" then
 		if ObjectExists(id) == 0 then
@@ -518,13 +519,13 @@ function GameHelpers.ObjectIsDead(object)
 	local object = GameHelpers.TryGetObject(object)
 	if object then
 		if GameHelpers.Ext.ObjectIsCharacter(object) then
-			if isClient then
+			if _ISCLIENT then
 				return object.Stats.CurrentVitality == 0
 			else
 				return object.Dead
 			end
 		elseif GameHelpers.Ext.ObjectIsItem(object) then
-			if isClient then
+			if _ISCLIENT then
 				return object.RootTemplate.Destroyed
 			else
 				return object.Destroyed
@@ -543,7 +544,7 @@ end
 ---@param obj EsvCharacter|EsvItem|UUID|NETID
 ---@param flag string
 function GameHelpers.ObjectHasFlag(obj, flag)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(obj)
 		if uuid then
 			return ObjectGetFlag(uuid, flag) == 1
@@ -559,7 +560,7 @@ end
 ---@param obj EsvCharacter|EclCharacter|EsvItem|EclItem|UUID|NETID
 ---@return string
 function GameHelpers.GetTemplate(obj)
-	if not isClient and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(obj)
 		if uuid then
 			return StringHelpers.GetUUID(GetTemplate(uuid))
@@ -603,7 +604,7 @@ local LevelAttributeNames = {
 }
 
 local function _cacheAllModLevels()
-	local manager = isClient and Ext.Client.GetModManager() or not isClient and Ext.Server.GetModManager()
+	local manager = _ISCLIENT and Ext.Client.GetModManager() or not _ISCLIENT and Ext.Server.GetModManager()
 	if manager then
 		_ranCachedLevels = true
 		local adventureMod = manager.BaseModule

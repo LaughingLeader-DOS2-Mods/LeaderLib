@@ -2,6 +2,13 @@ if GameHelpers.Math == nil then
 	GameHelpers.Math = {}
 end
 
+local _type = type
+local cos = math.cos
+local sin = math.sin
+local arccos = math.acos
+local arcsin = math.asin
+local arctan = math.atan
+
 ---Tries to get the position from whatever the variable is.
 ---@param obj number[]|UUID|EsvCharacter|EsvItem|Vector3
 ---@param unpackResult boolean|nil If true, the position value is returned as separate numbers.
@@ -10,7 +17,7 @@ end
 ---@return number|nil
 ---@return number|nil
 function GameHelpers.Math.GetPosition(obj, unpackResult, fallback)
-    local t = type(obj)
+    local t = _type(obj)
     local pos = nil
     if t == "string" and Ext.OsirisIsCallable() then
         local x,y,z = GetPosition(obj)
@@ -98,7 +105,7 @@ function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMul
             }
         end
     end
-    if type(distanceMult) ~= "number" then
+    if _type(distanceMult) ~= "number" then
         distanceMult = 1.0
     end
     if forwardVector then
@@ -267,7 +274,7 @@ end
 ---Returns true if a number is NaN, probably.
 ---@param x number
 function GameHelpers.Math.IsNaN(x)
-    if type(x) == "number" then
+    if _type(x) == "number" then
         local str = tostring(x)
         return str == "nan" or str == tostring(0/0)
     end
@@ -297,7 +304,7 @@ GameHelpers.Math.Normalize = _normalize
 ---@param hex string
 ---@return integer,integer,integer
 function GameHelpers.Math.HexToRGB(hex)
-    local t = type(hex)
+    local t = _type(hex)
     if t == "number" then
         hex = tostring(hex)
         t = "string"
@@ -351,12 +358,6 @@ end
 ---@field X number
 ---@field Y number
 ---@field Z number
-
-local cos = math.cos
-local sin = math.sin
-local arccos = math.acos
-local arcsin = math.asin
-local arctan = math.atan
 
 ---Convert xyz angle values to a rotation matrix.
 ---@param x number
@@ -434,7 +435,7 @@ end
 ---@return number|nil
 ---@return number|nil
 function GameHelpers.Math.GetPositionWithAngle(startPos, angle, distanceMult, unpack)
-    if type(distanceMult) ~= "number" then
+    if _type(distanceMult) ~= "number" then
         distanceMult = 1.0
     end
     angle = math.rad(angle)

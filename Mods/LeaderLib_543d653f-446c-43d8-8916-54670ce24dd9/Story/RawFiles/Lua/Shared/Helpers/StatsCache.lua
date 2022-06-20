@@ -1,3 +1,5 @@
+local _type = type
+
 ---@type table<string, table<StatType,boolean>>
 local _statNameToType = {}
 

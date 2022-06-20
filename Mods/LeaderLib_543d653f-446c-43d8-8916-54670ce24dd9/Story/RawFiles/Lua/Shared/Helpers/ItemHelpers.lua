@@ -5,6 +5,7 @@ end
 
 local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
+local _type = type
 
 local itemConstructorProps = {
     ["RootTemplate"] = true,
@@ -204,9 +205,9 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
         error("[GameHelpers.Item.CreateItemByStat] is server-side only.", 2)
     end
     local properties = creationProperties or {}
-    if type(creationProperties) == "boolean" then
+    if _type(creationProperties) == "boolean" then
         local args = {...}
-        if #args > 0 and type(args[1]) == "table" then
+        if #args > 0 and _type(args[1]) == "table" then
             properties = args[1]
         end
     end
@@ -220,7 +221,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
     local rootTemplate = properties and properties.RootTemplate or nil
     local itemGroup = nil
 
-    if type(statName) == "string" then
+    if _type(statName) == "string" then
         stat = Ext.GetStat(statName, level)
         statType = GameHelpers.Stats.GetStatType(statName)
     else
@@ -283,7 +284,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
         --props.HasGeneratedStats = true
         --props.GenerationBoosts = {"Boost_Weapon_Status_Set_Petrify_Club"}
 
-        if properties and type(properties) == "table" then
+        if properties and _type(properties) == "table" then
             for k,v in pairs(properties) do
                 if itemConstructorProps[k] == true then
                     props[k] = v
@@ -324,7 +325,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     ---@type ItemDefinition
     local props = constructor[1]
     props:ResetProgression()
-    -- if type(template) == "String" then
+    -- if _type(template) == "String" then
     --     props.RootTemplate = template
     --     props.OriginalRootTemplate = template
     --     props.GenerationStatsId = "WPN_Sword_1H"
@@ -381,7 +382,7 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
     props.StatsLevel = level
     props.GenerationLevel = level
 
-    if type(item) == "string" then
+    if _type(item) == "string" then
         props.RootTemplate = item
         props.OriginalRootTemplate = item
         local stats = GameHelpers.Item.GetStatsForRootTemplate(item)
@@ -413,7 +414,7 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
             end
         end
     end
-    if type(opts.DeltaMods) == "table" then
+    if _type(opts.DeltaMods) == "table" then
         local originalDeltaMods = {}
         for i,v in pairs(props.DeltaMods) do
             originalDeltaMods[#originalDeltaMods+1] = v
@@ -499,7 +500,7 @@ end
 function GameHelpers.Item.GetEquippedTaggedItemSlot(character, tag)
     local char = GameHelpers.GetCharacter(character)
     fassert(char ~= nil, "'%s' is not a valid character", character)
-    local tagType = type(tag)
+    local tagType = _type(tag)
     fassert(tagType ~= "string" or tagType ~= "table", "'%s' is not a valid tag or table of tags", tag)
     for item in GameHelpers.Character.GetEquipment(character) do
         if GameHelpers.ItemHasTag(item, tag) then
@@ -703,7 +704,7 @@ GameHelpers.Item.ContainerHasContents = ContainerHasContents
 ---@param item ItemParam
 ---@return boolean
 function GameHelpers.Item.IsObject(item)
-	local t = type(item)
+	local t = _type(item)
 	if t == "userdata" then
 		if GameHelpers.Ext.ObjectIsItem(item) then
 			if Data.ObjectStats[item.StatsId] or item.ItemType == "Object" then
@@ -776,7 +777,7 @@ end
 ---@param weaponType string|string[]
 ---@return boolean
 function GameHelpers.Item.IsWeaponType(item, weaponType)
-	if type(item) == "table" then
+	if _type(item) == "table" then
 		local hasMatch = false
 		for i,v in pairs(item) do
 			if GameHelpers.Item.IsWeaponType(v, weaponType) then
@@ -794,7 +795,7 @@ function GameHelpers.Item.IsWeaponType(item, weaponType)
 		if not GameHelpers.Ext.ObjectIsStatItem(item) then
 			return false
 		end
-		local t = type(weaponType)
+		local t = _type(weaponType)
 		if t == "table" then
 			for _,v in pairs(weaponType) do
 				if GameHelpers.Item.IsWeaponType(item, v) then

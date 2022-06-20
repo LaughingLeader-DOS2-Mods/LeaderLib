@@ -3,6 +3,7 @@ if GameHelpers.Surface == nil then
 end
 
 local _ISCLIENT = Ext.IsClient()
+local _type = type
 
 if not _ISCLIENT then
 	---🔨**Server-Only**🔨  
@@ -36,7 +37,7 @@ if not _ISCLIENT then
 	---@param statusChance number|nil
 	---@return EsvSurfaceAction
 	function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, ownerHandle, ignoreCursed, statusChance)
-		if type(pos) == "string" then
+		if _type(pos) == "string" then
 			pos = table.pack(GetPosition(pos))
 		end
 		---@type EsvRectangleSurfaceAction
@@ -113,7 +114,7 @@ if not _ISCLIENT then
 	---@param statusChance number
 	---@return EsvSurfaceAction
 	function GameHelpers.Surface.Transform(pos, action, layer, duration, ownerHandle, originSurface, statusChance)
-		if type(pos) == "string" then
+		if _type(pos) == "string" then
 			pos = table.pack(GetPosition(pos))
 		end
 
@@ -178,7 +179,7 @@ end
 function GameHelpers.Surface.GetSurfacesWithKeyword(keyword)
 	---@type string[]
 	local matches = {}
-	local t = type(keyword)
+	local t = _type(keyword)
 	if t == "string" then
 		for name,id in pairs(Data.Surfaces._Names) do
 			if string.find(name, keyword) then

@@ -4,6 +4,7 @@ end
 
 local _EXTVERSION = Ext.Version()
 local _ISCLIENT = Ext.IsClient()
+local _type = type
 
 local function GetTextParamValues(output, character)
 	for v in string.gmatch(output, "%[Special:.-%]") do
@@ -58,7 +59,7 @@ local function GetTextParamValues(output, character)
 
 		end		
 		if value ~= nil and value ~= "" then
-			if type(value) == "number" then
+			if _type(value) == "number" then
 				value = string.format("%i", math.floor(value))
 			end
 		elseif value == nil then
@@ -79,7 +80,7 @@ end
 function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 	if not StringHelpers.IsNullOrWhitespace(skillId) then
 		local skill = GameHelpers.Ext.CreateSkillTable(skillId, nil, true)
-		if type(skillParams) == "table" then
+		if _type(skillParams) == "table" then
 			for k,v in pairs(skillParams) do
 				skill[k] = v
 			end
@@ -201,13 +202,13 @@ local function ReplacePlaceholders(str, character)
 	if not str then
 		return str
 	end
-	if character ~= nil and type(character) == "string" then
+	if character ~= nil and _type(character) == "string" then
 		character = GameHelpers.GetCharacter(character)
 	end
 	if character == nil and Client then
 		character = Client:GetCharacter()
 	end
-	if type(str) == "table" and str.Type == "TranslatedString" then
+	if _type(str) == "table" and str.Type == "TranslatedString" then
 		str = str.Value
 	end
 	local output = str
@@ -215,7 +216,7 @@ local function ReplacePlaceholders(str, character)
 		local text = v:gsub("%[ExtraData:", ""):gsub("%]", "")
 		local key,fallback = table.unpack(StringHelpers.Split(text, ":"))
 		local value = Ext.ExtraData[key] or fallback or ""
-		if value ~= "" and type(value) == "number" then
+		if value ~= "" and _type(value) == "number" then
 			local trailingStr = ""
 			local startPos,endPos = string.find(output, v, 1, true)
 			if endPos then
@@ -249,7 +250,7 @@ local function ReplacePlaceholders(str, character)
 			value = Ext.StatGetAttribute(stat, property)
 		end
 		if value ~= nil and value ~= "" then
-			if type(value) == "number" then
+			if _type(value) == "number" then
 				value = string.format("%i", math.floor(value))
 			end
 		elseif value == nil then
@@ -266,7 +267,7 @@ local function ReplacePlaceholders(str, character)
 			value = GameHelpers.Tooltip.GetSkillDamageText(skillName, character)
 		end
 		if value ~= nil then
-			if type(value) == "number" then
+			if _type(value) == "number" then
 				value = string.format("%i", math.floor(value))
 			end
 			local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
@@ -305,7 +306,7 @@ local function ReplacePlaceholders(str, character)
 				end
 			end			
 			if value ~= nil and value ~= "" then
-				if type(value) == "number" then
+				if _type(value) == "number" then
 					value = string.format("%i", math.floor(value))
 				end
 			elseif value == nil then

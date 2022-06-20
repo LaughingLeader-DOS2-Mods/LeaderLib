@@ -1019,7 +1019,7 @@ end
 
 
 function GameHelpers.Ext.ObjectIsStatItem(obj)
-	if type(obj) == "userdata" then
+	if _type(obj) == "userdata" then
 		local meta = getmetatable(obj)
 		return meta == Data.ExtenderClass.StatItem or meta == Data.ExtenderClass.StatItemArmor
 	end
@@ -1027,7 +1027,7 @@ function GameHelpers.Ext.ObjectIsStatItem(obj)
 end
 
 function GameHelpers.Ext.ObjectIsItem(obj)
-	local t = type(obj)
+	local t = _type(obj)
 	if t == "userdata" then
 		local meta = getmetatable(obj)
 		return meta == Data.ExtenderClass.EsvItem or meta == Data.ExtenderClass.EclItem
@@ -1045,7 +1045,7 @@ end
 
 ---@param obj EsvGameObject|EclGameObject|UUID
 function GameHelpers.Ext.ObjectIsCharacter(obj)
-	local t = type(obj)
+	local t = _type(obj)
 	if t == "userdata" then
 		local meta = getmetatable(obj)
 		return meta == Data.ExtenderClass.EsvCharacter or meta == Data.ExtenderClass.EclCharacter
@@ -1067,7 +1067,7 @@ function GameHelpers.Ext.ObjectIsCharacter(obj)
 end
 
 function GameHelpers.Ext.ObjectIsStatCharacter(obj)
-	if type(obj) == "userdata" then
+	if _type(obj) == "userdata" then
 		return getmetatable(obj) == Data.ExtenderClass.StatCharacter
 	end
 	return false
@@ -1076,7 +1076,7 @@ end
 ---@param obj EsvItem|EclItem|StatItem
 ---@return string
 function GameHelpers.Ext.GetItemStatName(obj)
-	local t = type(obj)
+	local t = _type(obj)
 	if t == "string" or t == "number" then
 		if obj == StringHelpers.NULL_UUID then
 			return false

@@ -2,7 +2,8 @@ if GameHelpers.Status == nil then
 	GameHelpers.Status = {}
 end
 
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
+local _type = type
 
 
 local harmfulStatusTypes = {
@@ -58,7 +59,7 @@ GameHelpers.Status.Data = {
 function GameHelpers.Status.GetStatusType(statusId)
 	local statusType = _statusIdToStatusType[statusId]
 	if statusType == nil then
-		if not isClient and Ext.OsirisIsCallable() then
+		if not _ISCLIENT and Ext.OsirisIsCallable() then
 			if NRD_StatExists(statusId) then
 				statusType = GetStatusType(statusId)
 			end
@@ -154,7 +155,7 @@ local function IsBeneficialPotion(stat, ignoreItemPotions)
 	local totalNegative = 0
 	for k,b in pairs(potionProperties) do
 		local value = stat[k]
-		local t = type(value)
+		local t = _type(value)
 		if t == "number" then
 			if (b == true and value > 0) or (b == false and value < 0) then
 				--return true
@@ -207,7 +208,7 @@ end
 ---@param stat string|StatEntryPotion|table
 ---@return boolean
 function GameHelpers.Status.IsHarmfulPotion(stat)
-	if type(stat) == "string" then
+	if _type(stat) == "string" then
 		return IsHarmfulStatsId(stat)
 	else
 		return IsHarmfulPotion(stat)
@@ -281,7 +282,7 @@ end
 ---@param ignoreItemPotions boolean|nil Ignore potions with IsFood or IsConsumable.
 ---@return boolean
 function GameHelpers.Status.IsBeneficialPotion(stat, ignoreItemPotions)
-	if type(stat) == "string" then
+	if _type(stat) == "string" then
 		return IsBeneficialStatsId(stat, ignoreItemPotions)
 	else
 		return IsBeneficialPotion(stat, ignoreItemPotions)
@@ -344,7 +345,7 @@ end
 ---@param status string|EsvStatus|EsvStatusConsumeBase
 ---@return boolean
 function GameHelpers.Status.HasStatBoosts(status)
-	local t = type(status)
+	local t = _type(status)
 	if t == "string" then
 		local stat = Ext.GetStat(status)
 		if stat and not StringHelpers.IsNullOrWhitespace(stat.StatsId) then
@@ -368,7 +369,7 @@ end
 function GameHelpers.Status.IsActive(object, statusId, checkAll)
 	local uuid = GameHelpers.GetUUID(object)
 	if uuid then
-		local t = type(statusId)
+		local t = _type(statusId)
 		if t == "table" then
 			local totalActive = 0
 			local total = 0
@@ -403,7 +404,7 @@ end
 function GameHelpers.Status.HasStatusType(object, statusType)
 	object = GameHelpers.TryGetObject(object)
 	if object and object.GetStatusObjects then
-		local t = type(statusType)
+		local t = _type(statusType)
 		if t == "table" then
 			for i,v in pairs(statusType) do
 				if GameHelpers.Status.HasStatusType(object, v) then
@@ -449,7 +450,7 @@ end
 ---@param onlyFromEnemy boolean|nil Only return true if the source of a status is from an enemy.
 ---@return boolean
 function GameHelpers.Status.CharacterLostControl(character, onlyFromEnemy)
-	if type(character) == "string" then
+	if _type(character) == "string" then
 		character = Ext.GetCharacter(character)
 	end
 	if character == nil then

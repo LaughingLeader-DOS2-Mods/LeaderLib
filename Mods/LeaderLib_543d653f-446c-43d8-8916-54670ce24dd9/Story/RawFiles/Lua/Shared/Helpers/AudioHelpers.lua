@@ -13,7 +13,7 @@ local _ISCLIENT = Ext.IsClient()
 function GameHelpers.Audio.PlaySound(target, sound, soundPosition, specificPlayer)
 	if not _ISCLIENT then
 		local data = {Target=target, Event=sound, Position=soundPosition}
-		local t = type(target)
+		local t = _type(target)
 		if t == "userdata" or (t == "string" and StringHelpers.IsUUID(target)) then
 			local obj = GameHelpers.TryGetObject(target)
 			if obj then

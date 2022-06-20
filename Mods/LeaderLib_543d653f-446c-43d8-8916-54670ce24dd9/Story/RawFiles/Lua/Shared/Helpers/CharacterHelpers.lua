@@ -12,7 +12,7 @@ function GameHelpers.Character.IsPlayer(character)
 	if not character then
 		return false
 	end
-	local t = type(character)
+	local t = _type(character)
 	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(character) then
 		return false
 	end
@@ -31,7 +31,7 @@ function GameHelpers.Character.IsPlayer(character)
 				end
 				character = character.MyGuid
 			end
-			if type(character) == "string" then
+			if _type(character) == "string" then
 				return CharacterIsPlayer(character) == 1 or CharacterGameMaster(character) == 1 or GameHelpers.DB.HasUUID("DB_IsPlayer", character)
 			end
 		end
@@ -61,7 +61,7 @@ function GameHelpers.Character.IsGameMaster(character, ignorePossessed)
 	if not character then
 		return false
 	end
-	local t = type(character)
+	local t = _type(character)
 	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(character) then
 		return false
 	end
@@ -105,7 +105,7 @@ function GameHelpers.Character.IsOrigin(character)
 		return GameHelpers.DB.HasUUID("DB_Origins", character)
 	else
 		character = GameHelpers.GetCharacter(character)
-		if type(character) == "userdata" then
+		if _type(character) == "userdata" then
 			return character.PlayerCustomData and not StringHelpers.IsNullOrWhitespace(character.PlayerCustomData.OriginName)
 		end
 	end
@@ -126,7 +126,7 @@ function GameHelpers.Character.IsInCharacterCreation(character)
 	else
 		---@type EclCharacter
 		local player = GameHelpers.GetCharacter(character)
-		if type(player) == "userdata" then
+		if _type(player) == "userdata" then
 			local currentCC = GameHelpers.Client.GetCharacterCreationCharacter()
 			if currentCC and currentCC.NetID == player.NetID then
 				return true
@@ -139,13 +139,13 @@ end
 ---@param character CharacterParam
 function GameHelpers.Character.IsSummonOrPartyFollower(character)
 	if not _ISCLIENT then
-		if type(character) == "userdata" then
+		if _type(character) == "userdata" then
 			return character.Summon or character.PartyFollower
-		elseif type(character) == "string" then
+		elseif _type(character) == "string" then
 			return CharacterIsSummon(character) == 1 or CharacterIsPartyFollower(character) == 1
 		end
 	else
-		if type(character) ~= "userdata" then
+		if _type(character) ~= "userdata" then
 			character = GameHelpers.GetCharacter(character)
 		end
 		if character then
@@ -234,7 +234,7 @@ function GameHelpers.Character.HasSkill(character, skill)
 	if not character then
 		return false
 	end
-	local t = type(skill)
+	local t = _type(skill)
 	if _EXTVERSION >= 56 and character.SkillManager then
 		local _skills = character.SkillManager.Skills
 		if t == "string" then
@@ -329,7 +329,7 @@ end
 ---@param character CharacterParam
 ---@return boolean
 function GameHelpers.Character.IsUndead(character)
-	if type(character) ~= "userdata" then
+	if _type(character) ~= "userdata" then
 		character = GameHelpers.GetCharacter(character)
 	end
 	if character and character.HasTag then
@@ -377,7 +377,7 @@ function GameHelpers.Character.GetDisplayName(character)
 	if not character then
 		return ""
 	end
-	if type(character) ~= "userdata" then
+	if _type(character) ~= "userdata" then
 		character = GameHelpers.GetCharacter(character)
 	end
 	if character then
@@ -510,9 +510,9 @@ function GameHelpers.Character.GetSummons(owner, getItems)
 	local matchId = nil
 
 	if not _ISCLIENT then
-		if type(owner) == "userdata" then
+		if _type(owner) == "userdata" then
 			matchId = owner.MyGuid
-		elseif type(owner) == "string" then
+		elseif _type(owner) == "string" then
 			matchId = owner
 		end
 		for ownerId,tbl in pairs(PersistentVars.Summons) do
@@ -528,7 +528,7 @@ function GameHelpers.Character.GetSummons(owner, getItems)
 			end
 		end
 	else
-		if type(owner) == "userdata" then
+		if _type(owner) == "userdata" then
 			matchId = Ext.HandleToDouble(owner.Handle)
 		else
 			matchId = owner
@@ -618,7 +618,7 @@ end
 ---@param checkForZeroMovement boolean
 ---@return boolean
 function GameHelpers.Character.IsDisabled(character, checkForLoseControl, checkForZeroMovement)
-	if type(character) == "string" then
+	if _type(character) == "string" then
 		character = Ext.GetCharacter(character)
 	end
 	if character == nil then
@@ -854,7 +854,7 @@ function GameHelpers.Character.HasFlag(character, flag)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(character)
 		if uuid then
-			local t = type(flag)
+			local t = _type(flag)
 			if t == "table" then
 				for k,v in pairs(flag) do
 					if GameHelpers.Character.HasFlag(character, v) then

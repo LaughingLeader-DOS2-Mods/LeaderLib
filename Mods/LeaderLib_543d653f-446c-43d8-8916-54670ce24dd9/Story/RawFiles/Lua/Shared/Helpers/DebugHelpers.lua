@@ -1284,7 +1284,7 @@ end
 
 function DebugHelpers.ProcessProps(obj, props, data, printNil)
 	for k,v in pairs(props) do
-		if type(v) == "function" then
+		if _type(v) == "function" then
 			pcall(v, obj, data, k, printNil)
 		else
 			if v == "ObjectHandle" or v == "StatusHandle" then
@@ -1293,7 +1293,7 @@ function DebugHelpers.ProcessProps(obj, props, data, printNil)
 			else
 				local b,value = xpcall(TryGetValue, debug.traceback, obj, k, v)
 				if b and value ~= nil then
-					if props == userDataProps.CDivinityStats_Equipment_Attributes and ((type(value) == "number" and value == 0) or (type(value) == "string" and value == "None" or value == "")) then
+					if props == userDataProps.CDivinityStats_Equipment_Attributes and ((_type(value) == "number" and value == 0) or (_type(value) == "string" and value == "None" or value == "")) then
 						-- skip
 					else
 						data[k] = value
@@ -1316,7 +1316,7 @@ function DebugHelpers.TraceUserData(obj, printNil)
 		if meta == "CDivinityStats_Equipment_Attributes" and obj.ItemSlot == "Weapon" then
 			props = userDataProps.CDivinityStats_Weapon_Attributes
 		end
-		if type(props) == "function" then
+		if _type(props) == "function" then
 			local b,result = xpcall(props, debug.traceback, obj)
 			if b then
 				return result
@@ -1365,7 +1365,7 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 		end
 	end
 	if props then
-		if type(props) == "function" then
+		if _type(props) == "function" then
 			local b,result = xpcall(props, debug.traceback, obj)
 			if b then
 				return result

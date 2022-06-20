@@ -2,7 +2,8 @@ if GameHelpers.Stats == nil then
 	GameHelpers.Stats = {}
 end
 
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
+local _type = type
 
 --- @param stat string
 --- @param match string
@@ -83,7 +84,7 @@ end
 function GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute)
 	---@type StatEntrySkillData
 	local stat = nil
-	local t = type(statName)
+	local t = _type(statName)
 	if t == "string" then
 		stat = Ext.GetStat(statName)
 	elseif t == "userdata" then
@@ -144,7 +145,7 @@ local rangeTypes = {"Bow", "Crossbow", "Wand", "Arrow", "Rifle"}
 
 local HasStatValue = function (character, req, param, b)
 	local current = character.Stats[req]
-	if type(current) == "boolean" then
+	if _type(current) == "boolean" then
 		return current ~= b
 	else
 		return (current >= param) ~= b
@@ -509,7 +510,7 @@ end
 ---@param statType StatType|nil
 ---@return string
 function GameHelpers.Stats.GetDisplayName(id, statType)
-	if type(id) == "userdata" then
+	if _type(id) == "userdata" then
 		id = id.StatusId
 	end
 	if not StringHelpers.IsNullOrEmpty(id) and GameHelpers.Stats.Exists(id, statType) then

@@ -2,6 +2,8 @@ if StringHelpers == nil then
 	StringHelpers = {} 
 end
 
+local _type = type
+
 ---Check if a string is equal to another. Case-insenstive.
 ---@param a string
 ---@param b string
@@ -15,7 +17,7 @@ function StringHelpers.Equals(a,b, insensitive, trimWhitespace)
 			a = StringHelpers.Trim(a)
 			b = StringHelpers.Trim(b)
 		end
-		if insensitive and type(a) == "string" and type(b) == "string" then
+		if insensitive and _type(a) == "string" and _type(b) == "string" then
 			return string.upper(a) == string.upper(b)
 		else
 			return a == b
@@ -37,7 +39,7 @@ StringHelpers.UNSET_HANDLE = "ls::TranslatedStringRepository::s_HandleUnknown"
 ---@return boolean
 function StringHelpers.IsNullOrEmpty(str)
 	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
-	return str == nil or str == "" or NULL_UUID[str] or type(str) ~= "string"
+	return str == nil or str == "" or NULL_UUID[str] or _type(str) ~= "string"
 end
 
 ---Checks if a string is null or only whitespace.
@@ -45,7 +47,7 @@ end
 ---@return boolean
 function StringHelpers.IsNullOrWhitespace(str)
 	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
-	return str == nil or str == "" or NULL_UUID[str] or type(str) ~= "string" or string.gsub(str, "%s+", "") == ""
+	return str == nil or str == "" or NULL_UUID[str] or _type(str) ~= "string" or string.gsub(str, "%s+", "") == ""
 end
 
 ---Capitalize a string.
@@ -65,7 +67,7 @@ end
 ---@param getStringFunction StringHelpersJoinGetStringCallback|nil
 function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 	local finalResult = ""
-	local useFunction = type(getStringFunction) == "function"
+	local useFunction = _type(getStringFunction) == "function"
 
 	local i = 0
 	for o,v in TableHelpers.TryOrderedEach(list) do
@@ -84,7 +86,7 @@ function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 			result = v
 		end
 		if result ~= nil then
-			if type(result) ~= "string" then
+			if _type(result) ~= "string" then
 				result = tostring(result)
 			end
 			if not uniqueOnly or (uniqueOnly and not string.find(finalResult, result)) then
@@ -107,7 +109,7 @@ end
 ---@param getStringFunction table
 function StringHelpers.DebugJoin(delimiter, list, uniqueOnly, getStringFunction)
 	local finalResult = ""
-	local useFunction = type(getStringFunction) == "function"
+	local useFunction = _type(getStringFunction) == "function"
 
 	local i = 0
 	for k,v in TableHelpers.TryOrderedEach(list) do
@@ -124,7 +126,7 @@ function StringHelpers.DebugJoin(delimiter, list, uniqueOnly, getStringFunction)
 			result = v
 		end
 		if result ~= nil then
-			if type(result) ~= "string" then
+			if _type(result) ~= "string" then
 				result = tostring(result)
 			else
 				result = '"'..result..'"'
@@ -147,7 +149,7 @@ end
 ---@param delimiter string
 ---@return string[]|nil
 function StringHelpers.Split(str, delimiter)
-	if type(str) ~= "string" then
+	if _type(str) ~= "string" then
 		return nil
 	end
 	local list = {}; local pos = 1
@@ -175,7 +177,7 @@ end
 function StringHelpers.ReplacePlaceholders(text, ...)
 	local values = {...}
 	if #values > 0 then
-		if type(values[1]) == "table" then
+		if _type(values[1]) == "table" then
 			values = values[1]
 		end
 		if text == "" then
@@ -252,7 +254,7 @@ local _ISUUID_PATTERN = "%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%
 ---@param str string
 ---@return boolean
 function StringHelpers.IsUUID(str)
-	if type(str) ~= "string" then
+	if _type(str) ~= "string" then
 		return false
 	end
 	if str == nil or str == "" then
@@ -270,9 +272,9 @@ end
 ---@param version integer
 ---@return integer,integer,integer,integer
 function ParseVersion(version)
-	if type(version) == "string" then
+	if _type(version) == "string" then
 		version = math.floor(tonumber(version))
-	elseif type(version) == "number" then
+	elseif _type(version) == "number" then
 		version = math.tointeger(version)
 	end
 	local major = math.floor(version >> 28)
@@ -341,7 +343,7 @@ function StringHelpers.IsMatch(str, match, explicit)
 	if not explicit then
 		str = string.lower(str)
 	end
-	if type(match) == "table" then
+	if _type(match) == "table" then
 		for i,v in pairs(match) do
 			if explicit then
 				if v == str then
@@ -443,7 +445,7 @@ function StringHelpers.Find(s, pattern, caseInsensitive, startPos, endPos, findS
 	if caseInsensitive then
 		s = string.lower(s)
 	end
-	local t = type(pattern)
+	local t = _type(pattern)
 	if t == "string" then
 		if startPos then
 			local subText = string.sub(s, startPos, endPos)
@@ -471,12 +473,12 @@ end
 ---@param findPlain boolean|nil
 ---@return boolean stringContainsPattern
 function StringHelpers.Contains(str, pattern, caseInsensitive, startPos, endPos, findStartPos, findPlain)
-	local strType = type(str)
+	local strType = _type(str)
 	if strType == "string" then
 		if caseInsensitive then
 			str = string.lower(str)
 		end
-		local t = type(pattern)
+		local t = _type(pattern)
 		if t == "string" then
 			if startPos then
 				local subText = string.sub(str, startPos, endPos)

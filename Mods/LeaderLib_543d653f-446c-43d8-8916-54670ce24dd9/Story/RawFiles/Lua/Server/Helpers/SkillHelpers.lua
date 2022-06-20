@@ -167,7 +167,7 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
     if targetObject and sourceObject and enemiesOnly == true then
         if sourceType == "character"
         and targetType == "character"
-        and (not GameHelpers.Character.CanAttackTarget(targetObject, sourceObject))
+        and not GameHelpers.Character.CanAttackTarget(targetObject, sourceObject)
         then
             props.HitObject = nil
             props.HitObjectPosition = nil
@@ -683,7 +683,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
     end
 
     if applySkillProperties then
-        if GetDistanceToPosition(sourceId, props.Position[1], props.Position[2], props.Position[3]) <= 1 then
+        if GameHelpers.Math.GetDistance(sourceId, props.Position) <= 1 then
             Ext.ExecuteSkillPropertiesOnTarget(skillId, sourceId, sourceId, props.Position, "Self", false)
         end
         if not props.SkillProperties then

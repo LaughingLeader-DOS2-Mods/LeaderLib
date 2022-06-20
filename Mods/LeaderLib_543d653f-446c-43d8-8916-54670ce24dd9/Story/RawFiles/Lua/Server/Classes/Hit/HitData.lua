@@ -353,14 +353,14 @@ function HitData:SetLifeSteal(amount)
 	self:UpdateHitRequest()
 end
 
----@param flag string|string[]
+---@param flag HitFlagID|HitFlagID[]
 ---@param value boolean
 function HitData:SetHitFlag(flag, value)
 	GameHelpers.Hit.SetFlag(self.HitRequest, flag, value)
 	self:UpdateHitRequest()
 end
 
----@param flag string|string[]
+---@param flag HitFlagID|HitFlagID[]
 ---@param value boolean
 function HitData:HasHitFlag(flag, value)
 	if value == nil then

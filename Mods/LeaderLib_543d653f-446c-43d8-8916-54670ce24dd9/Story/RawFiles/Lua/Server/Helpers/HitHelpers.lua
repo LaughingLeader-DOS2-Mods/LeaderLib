@@ -284,8 +284,10 @@ function GameHelpers.Hit.HasFlag(hit, flag)
     end
 end
 
+--- @alias HitFlagID string | "Burning" | "DontCreateBloodSurface" | "Flanking" | "Missed" | "Backstab" | "Hit" | "CriticalHit" | "FromSetHP" | "NoDamageOnOwner" | "FromShacklesOfPain" | "DoT" | "DamagedVitality" | "PropagatedFromOwner" | "CounterAttack" | "Reflection" | "ProcWindWalker" | "DamagedPhysicalArmor" | "Poisoned" | "Bleeding" | "NoEvents" | "Dodged" | "Blocked" | "Surface" | "DamagedMagicArmor"
+
 ---@param hit HitRequest
----@param flag integer|string|table A flag value or key in Game.Math.HitFlags.
+---@param flag integer|HitFlagID|HitFlagID[] A flag value or key in Game.Math.HitFlags.
 ---@param b boolean Whether a flag is enabled or disabled.
 ---@return boolean
 function GameHelpers.Hit.SetFlag(hit, flag, b)

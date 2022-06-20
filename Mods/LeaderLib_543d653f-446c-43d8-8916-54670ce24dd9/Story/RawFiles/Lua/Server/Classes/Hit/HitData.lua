@@ -124,10 +124,14 @@ local function CopyDamageList(target, source)
 	if not target or target == source then
 		return
 	end
-	for _,damageType in Data.DamageTypes:Get() do
-		target:Clear(damageType)
+	if _EXTVERSION < 56 then
+		for _,damageType in Data.DamageTypes:Get() do
+			target:Clear(damageType)
+		end
+		target:Merge(source)
+	else
+		target:CopyFrom(source)
 	end
-	target:Merge(source)
 end
 
 ---Updates HitStatus.Hit and HitContext.Hit to HitRequest, so property changes are applied.
@@ -164,7 +168,7 @@ function HitData:ApplyDamageList(recalculate)
 			NRD_HitStatusAddDamage(self.Target, self.Handle, v.DamageType, v.Amount)
 		end
 	else
-		CopyDamageList(self.HitStatus.Hit.DamageList, self.DamageList)
+		self.HitStatus.Hit.DamageList:CopyFrom(self.DamageList)
 	end
 	if recalculate then
 		self:Recalculate(true, true)

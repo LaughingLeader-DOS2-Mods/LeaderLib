@@ -3,6 +3,7 @@ if DebugHelpers == nil then
 end
 
 local _ISCLIENT = Ext.IsClient()
+local _type = type
 
 local userDataProps = {}
 

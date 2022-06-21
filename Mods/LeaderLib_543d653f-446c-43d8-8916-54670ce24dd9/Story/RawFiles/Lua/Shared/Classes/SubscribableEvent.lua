@@ -11,6 +11,7 @@ local isClient = Ext.IsClient()
 ---@class SubscribableEventCreateOptions
 ---@field GatherResults boolean|nil If true, event results from callbacks are gathered and return in in the Invoke function.
 ---@field SyncInvoke boolean|nil If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
+---@field CanSync fun(self:SubscribableEvent, args:SubscribableEventArgs, ...):boolean If set, this event can only sync is this function returns true.
 ---@field Disabled boolean|nil If this event is disabled, Invoke won't invoke registered callbacks.
 ---@field ArgsKeyOrder string[]|nil
 ---@field GetArg SubscribableEventGetArgFunction|nil
@@ -25,7 +26,7 @@ local isClient = Ext.IsClient()
 ---Example: SubscribableEvent<CharacterResurrectedEventArgs>
 ---@see SubscribableEventArgs
 ---@see LeaderLibSubscriptionEvents
----@class SubscribableEvent<T>:{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T|SubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T}|nil), Unsubscribe:fun(self:SubscribableEvent, indexOrCallback:integer|function, matchArgs:table|nil), Invoke:fun(self:SubscribableEvent, args:T|SubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult }
+---@class SubscribableEvent<T>:{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T|SubscribableEventArgs), opts:{Priority:integer, Once:boolean,  MatchArgs:T, CanSync:fun(self:SubscribableEvent, args:T)}|nil), Unsubscribe:fun(self:SubscribableEvent, indexOrCallback:integer|function, matchArgs:table|nil), Invoke:fun(self:SubscribableEvent, args:T|SubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult }
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string
@@ -339,11 +340,22 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 		end
 	end
 	if not skipAutoInvoke and self.SyncInvoke then
-		local messageFunc = isClient and Ext.PostMessageToServer or GameHelpers.Net.Broadcast
-		messageFunc("LeaderLib_SubscribableEvent_Invoke", Common.JsonStringify({
-			ID = self.ID,
-			Args = SerializeArgs(args)
-		}))
+		local canSync = true
+		if self.CanSync then
+			local b,result = xpcall(self.CanSync, debug.traceback, self, args, ...)
+			if not b then
+				Ext.PrintError(result)
+			else
+				canSync = result == true
+			end
+		end
+		if canSync then
+			local messageFunc = isClient and Ext.PostMessageToServer or GameHelpers.Net.Broadcast
+			messageFunc("LeaderLib_SubscribableEvent_Invoke", Common.JsonStringify({
+				ID = self.ID,
+				Args = SerializeArgs(args)
+			}))
+		end
 	end
 	local handled = false
 	if invokeResult == _INVOKERESULT.Handled then

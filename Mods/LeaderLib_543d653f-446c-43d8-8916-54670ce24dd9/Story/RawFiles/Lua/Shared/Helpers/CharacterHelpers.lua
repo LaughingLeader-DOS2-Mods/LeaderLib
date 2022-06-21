@@ -500,12 +500,17 @@ function GameHelpers.Character.GetPartySize(includeSummons)
 	return count
 end
 
+---@alias GameHelpers_Character_GetSummonsResultType EsvCharacter|EclCharacter|EsvItem|EclItem
+
 ---Gets all the active summons of a character.
 ---@param owner CharacterParam
 ---@param getItems boolean|nil If on the server, item summons can be fetched as well.
----@return fun():EsvCharacter|EclCharacter
-function GameHelpers.Character.GetSummons(owner, getItems)
+---@param asTable boolean|nil Return the result as a table, instead of an iterator.
+---@param ignoreObjects table<NETID|UUID, boolean>|nil Specific MyGuid or NetID values to ignore.
+---@return GameHelpers_Character_GetSummonsResultType[]|fun():GameHelpers_Character_GetSummonsResultType summons
+function GameHelpers.Character.GetSummons(owner, getItems, asTable, ignoreObjects)
 	local summons = {}
+	local ignore = ignoreObjects or {}
 
 	local matchId = nil
 
@@ -515,13 +520,28 @@ function GameHelpers.Character.GetSummons(owner, getItems)
 		elseif _type(owner) == "string" then
 			matchId = owner
 		end
+		local _osirisEnabled = Ext.OsirisIsCallable()
 		for ownerId,tbl in pairs(PersistentVars.Summons) do
 			if not matchId or ownerId == matchId then
-				for i,character in pairs(tbl) do
-					if getItems == true or ObjectIsItem(character) == false then
-						local summon = GameHelpers.TryGetObject(character)
-						if summon then
-							summons[#summons+1] = summon
+				local len = #tbl
+				for i=1,len do
+					local obj = tbl[i]
+					if not ignore[obj] then
+						local exists = false
+						if _osirisEnabled then
+							exists = ObjectExists(obj) == 1	
+						else
+							exists = GameHelpers.ObjectExists(obj)
+						end
+						if exists then
+							if getItems == true or GameHelpers.Ext.ObjectIsCharacter(obj) then
+								local summon = GameHelpers.TryGetObject(obj)
+								if summon and not ignore[summon.NetID] then
+									summons[#summons+1] = summon
+								end
+							end
+						else
+							table.remove(tbl, i)
 						end
 					end
 				end
@@ -535,18 +555,22 @@ function GameHelpers.Character.GetSummons(owner, getItems)
 		end
 		for mc in StatusHider.PlayerInfo:GetSummonMovieClips(matchId) do
 			local character = GameHelpers.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
-			if character then
+			if character and not ignore[character.NetID] then
 				summons[#summons+1] = character
 			end
 		end
 	end
 
-	local i = 0
-	local count = #summons
-	return function ()
-		i = i + 1
-		if i <= count then
-			return summons[i]
+	if asTable then
+		return summons
+	else
+		local i = 0
+		local count = #summons
+		return function ()
+			i = i + 1
+			if i <= count then
+				return summons[i]
+			end
 		end
 	end
 end

@@ -157,7 +157,7 @@ local function _GetSkillSourceItem(character, skill, returnStoredtemData)
 		return nil
 	end
 	local sourceItem = nil
-	if _EXTVERSION >= 56 then
+	if _EXTVERSION >= 56 and GameHelpers.Ext.ObjectIsCharacter(character) then
 		if character.SkillManager.CurrentSkillState and Ext.Utils.IsValidHandle(character.SkillManager.CurrentSkillState.SourceItemHandle) then
 			sourceItem = GameHelpers.GetItem(character.SkillManager.CurrentSkillState.SourceItemHandle)
 		end
@@ -390,8 +390,9 @@ end)
 ---@param request EsvShootProjectileRequest
 RegisterProtectedExtenderListener("BeforeShootProjectile", function (request)
 	local skill = GetSkillEntryName(request.SkillId)
-	if not StringHelpers.IsNullOrEmpty(skill) and request.Source and (_enabledSkills[skill] or _enabledSkills.All) then
-		local object = Ext.GetGameObject(request.Source)
+	if not StringHelpers.IsNullOrEmpty(skill) and request.Caster and (_enabledSkills[skill] or _enabledSkills.All) then
+		--request.Source could be a grenade, instead of the actual caster
+		local object = Ext.GetGameObject(request.Caster)
 		if object then
 			Events.OnSkillState:Invoke({
 				Character = object,

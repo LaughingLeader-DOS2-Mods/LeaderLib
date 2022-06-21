@@ -167,28 +167,50 @@ end
 --me.Visual.Attachments[5].Visual.WorldTransform.Scale[1] = 10
 --me.Visual.Attachments[5].UseLocalTransform = true
 
-
+--Only works for visuals created via the console, since they have no lifetime
 Events.BeforeLuaReset:Subscribe(function ()
-	for netid,entries in pairs(ActiveVisuals) do
-		for resourceid,handler in pairs(entries) do
-			handler:Delete()
+	pcall(function ()
+		for netid,entries in pairs(ActiveVisuals) do
+			for resourceid,handler in pairs(entries) do
+				if handler then
+					handler:Delete()
+				end
+			end
 		end
-	end
+	end)
 end)
 
-Ext.RegisterConsoleCommand("lltestvisual", function ()
-	VisualManager.AttachVisual(Client:GetCharacter(), "df8b6237-d031-44d7-b729-a80eb074f3b3",
-	{
-		Bone="LowerArm_R_Twist_Bone",
-		Weapon=true,
-		UseLocalTransform=true,
-		-- InheritAnimations=true,
-		-- SyncAnimationWithParent=true
-	},
-	{
-		Rotate=GameHelpers.Math.EulerToRotationMatrix({90,0,0}),
-		Translate = {-100,-100,-100},
-	})
+local testMountVisual = nil
+
+Ext.RegisterConsoleCommand("lltestvisual", function (cmd, t)
+	if StringHelpers.IsNullOrEmpty(t) then
+		VisualManager.AttachVisual(Client:GetCharacter(), "df8b6237-d031-44d7-b729-a80eb074f3b3",
+		{
+			Bone="LowerArm_R_Twist_Bone",
+			Weapon=true,
+			UseLocalTransform=true,
+			-- InheritAnimations=true,
+			-- SyncAnimationWithParent=true
+		},
+		{
+			Rotate=GameHelpers.Math.EulerToRotationMatrix({90,0,0}),
+			Translate = {-100,-100,-100},
+		})
+	elseif t == "mount" then
+		if testMountVisual then
+			testMountVisual:Delete()
+		end
+		--Wolf
+		testMountVisual = VisualManager.AttachVisual(Client:GetCharacter(), "ebcf1ade-cfa1-4d48-9f10-e5e409830dcc",
+		{
+			Bone="Dummy_Root",
+			Armor=true,
+			InheritAnimations = true,
+			SyncAnimationWithParent = true,
+		})
+
+		--Mods.LeaderLib.VisualManager.AttachVisual(_C(), "ebcf1ade-cfa1-4d48-9f10-e5e409830dcc",{Bone="Dummy_Root",Armor=true,SyncAnimationWithParent = true,InheritAnimations=true})
+	end
 end)
 
 function VisualManager.CreateClientEffect(fx, target, params)

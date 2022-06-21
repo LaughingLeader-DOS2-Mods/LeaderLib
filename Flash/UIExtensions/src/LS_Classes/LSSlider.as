@@ -458,7 +458,7 @@ package LS_Classes
          }
       }
       
-     public  function handleOn(e:Event) : *
+     public function handleOn(e:Event) : *
       {
          if(!this.m_disabled)
          {

@@ -248,7 +248,9 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
         hasGeneratedStats = properties.HasGeneratedStats
     end
 
-    if stat and (statType ~= "Object" and statType ~= "Potion") then
+    local isObject = statType == "Object" or statType == "Potion"
+
+    if stat and not isObject then
         if not StringHelpers.IsNullOrWhitespace(stat.ItemGroup) then
             itemGroup = stat.ItemGroup
             local rootGroups = nil
@@ -259,12 +261,8 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
         end
     end
 
-    if rootTemplate == nil then
-        if (statType == "Object" or statType == "Potion") then
-            if stat.RootTemplate ~= nil and stat.RootTemplate ~= "" then
-                rootTemplate = stat.RootTemplate
-            end
-        end
+    if rootTemplate == nil and isObject and not StringHelpers.IsNullOrEmpty(stat.RootTemplate) then
+        rootTemplate = stat.RootTemplate
     end
 
     if rootTemplate ~= nil then
@@ -276,10 +274,14 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
         props.RootTemplate = rootTemplate
         props.OriginalRootTemplate = rootTemplate
         props.StatsEntryName = stat.Name
-        props.GenerationStatsId = stat.Name
-        props.HasGeneratedStats = hasGeneratedStats
-        props.StatsLevel = level
-        props.ItemType = targetRarity
+        if not isObject then
+            props.GenerationStatsId = stat.Name
+            props.HasGeneratedStats = hasGeneratedStats
+            props.StatsLevel = level
+            props.ItemType = targetRarity
+            props.GenerationLevel = generationLevel
+            props.GenerationItemType = generatedRarity
+        end
 
         --props.HasGeneratedStats = true
         --props.GenerationBoosts = {"Boost_Weapon_Status_Set_Petrify_Club"}
@@ -292,8 +294,10 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
             end
         end
 
-        props.GenerationLevel = generationLevel
-        props.GenerationItemType = generatedRarity
+        if isObject then
+            props.HasGeneratedStats = false
+            props.StatsLevel = stat.Level
+        end
 
         local newItem = constructor:Construct()
         if newItem then

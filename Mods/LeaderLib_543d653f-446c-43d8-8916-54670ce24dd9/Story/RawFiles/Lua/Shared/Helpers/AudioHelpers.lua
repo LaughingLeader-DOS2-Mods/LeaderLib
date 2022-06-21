@@ -1,10 +1,9 @@
-local _type = type
-
 if GameHelpers.Audio == nil then
 	GameHelpers.Audio = {}
 end
 
 local _ISCLIENT = Ext.IsClient()
+local _type = type
 
 ---@param target ObjectParam|SoundObjectID Object or built-in sound type ID
 ---@param sound string Sound event ID

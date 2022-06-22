@@ -17,24 +17,24 @@ Vars.StatusEvent = {
 
 StatusListeners = {
 	---@type table<string, BeforeStatusAttemptCallback[]>
-	[Vars.StatusEvent.BeforeAttempt] = {},
+	BeforeAttempt = {},
 	---@type table<string, StatusEventCallback[]>
-	[Vars.StatusEvent.Attempt] = {},
+	Attempt = {},
 	---@type table<string, StatusEventCallback[]>
-	[Vars.StatusEvent.Applied] = {},
+	Applied = {},
 	---@type table<string, StatusEventCallback[]>
-	[Vars.StatusEvent.Removed] = {},
+	Removed = {},
 }
 
 StatusTypeListeners = {
 	---@type table<string, BeforeStatusAttemptCallback[]>
-	[Vars.StatusEvent.BeforeAttempt] = {},
+	BeforeAttempt = {},
 	---@type table<string, StatusEventCallback[]>
-	[Vars.StatusEvent.Attempt] = {},
+	Attempt = {},
 	---@type table<string, StatusEventCallback[]>
-	[Vars.StatusEvent.Applied] = {},
+	Applied = {},
 	---@type table<string, StatusEventCallback[]>
-	[Vars.StatusEvent.Removed] = {},
+	Removed = {},
 }
 
 ---If a mod registers a listener for an ignored status (such as HIT), it will be added to this table to allow callbacks to run for that status.
@@ -165,7 +165,8 @@ local function TryGetStatus(target, handle)
 end
 
 local function InvokeStatusListeners(event, status, statusType, ...)
-	local statusEventHolder, statusTypeEventHolder = StatusListeners[event], StatusTypeListeners[event]
+	local statusEventHolder = StatusListeners[event]
+	local statusTypeEventHolder = StatusTypeListeners[event]
 	InvokeListenerCallbacks(statusEventHolder[status], ...)
 	InvokeListenerCallbacks(statusEventHolder.All, ...)
 	InvokeListenerCallbacks(statusTypeEventHolder[statusType], ...)
@@ -186,11 +187,19 @@ local function BeforeStatusAttempt(statusId, target, source, handle, targetId, s
 		return
 	end
 	local b,status = xpcall(TryGetStatus, debug.traceback, targetId, handle)
-	if not b then
-		if Vars.DebugMode then
+	if not b or not status then
+		if not b and Vars.DebugMode then
 			fprint(LOGLEVEL.ERROR, "[LeaderLib:BeforeStatusAttempt] Error getting status (%s) by handle(%s) for target(%s):\n%s", statusId, handle, target.MyGuid, status)
 		end
 		status = statusId
+	else
+		--Make Unhealable block all heals
+		if target and statusType == "HEAL" or statusType == "HEALING" and status.HealAmount > 0
+		and SettingsManager:GetMod(ModuleUUID).Global:FlagEquals("LeaderLib_UnhealableFix_Enabled", true) then
+			if GameHelpers.Status.IsActive(target, "UNHEALABLE") then
+				NRD_StatusPreventApply(targetId, handle, 1)
+			end
+		end
 	end
 	if target and source then 
 		local canRedirect = redirectStatusId[statusId] or redirectStatusType[statusType]

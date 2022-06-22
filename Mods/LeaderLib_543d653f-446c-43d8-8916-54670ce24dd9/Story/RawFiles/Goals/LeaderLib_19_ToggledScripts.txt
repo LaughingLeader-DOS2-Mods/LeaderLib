@@ -55,9 +55,6 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Character"
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Item", "LeaderLib_SummonEvents_Item_Enabled");
 //LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Unhealable_Toggling", "LeaderLib_UnhealableFix_Enabled");
-LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_Unhealable_BlockHealing", "LeaderLib_Unhealable_Active", 0);
-
 LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_Auras_TurnAura", "LeaderLib_Auras_TurnAuraEnabled", 0);
 LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_Auras_TimerAura", "LeaderLib_Auras_TimerAuraEnabled", 0);
 
@@ -317,6 +314,14 @@ DB_LeaderLib_ToggleScripts_Registered("LeaderLib_19_TS_Top_DummyCrimes", _Global
 THEN
 NOT DB_LeaderLib_ToggleScripts_Registered("LeaderLib_19_TS_Top_DummyCrimes", _GlobalFlag);
 DB_LeaderLib_ToggleScripts_Registered("__AAA_Z_LeaderLib_TS_Top_DummyCrimes", _GlobalFlag);
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,7,22,0)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Registered("LeaderLib_19_TS_Unhealable_Toggling", "LeaderLib_UnhealableFix_Enabled");
+NOT DB_LeaderLib_ToggleScripts_Registered("LeaderLib_19_TS_Unhealable_BlockHealing", "LeaderLib_Unhealable_Active", 0);
 //END_REGION
 
 //REGION REGISTERING

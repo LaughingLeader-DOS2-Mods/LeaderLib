@@ -1,11 +1,32 @@
 local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
 local _type = type
+local _pcall = pcall
+
+local _getGameObject = Ext.GetGameObject
+local _getCharacter = Ext.GetCharacter
+local _getItem = Ext.GetItem
+local _getTrigger = Ext.GetTrigger
+local _isValidHandle = nil
+local _osirisIsCallable = Ext.OsirisIsCallable
+local _round = Ext.Round
+
+if _EXTVERSION >= 56 then
+	_getGameObject = Ext.Entity.GetGameObject
+	_getCharacter = Ext.Entity.GetCharacter
+	_getItem = Ext.Entity.GetItem
+	_getTrigger = Ext.Entity.GetTrigger
+	_isValidHandle = Ext.Utils.IsValidHandle
+	if not _ISCLIENT then
+		_osirisIsCallable = Ext.Osiris.IsCallable
+	end
+	_round = Ext.Utils.Round
+end
 
 ---@param pickpocketSkill integer
 ---@return number
 function GameHelpers.GetPickpocketPricing(pickpocketSkill)
-	local expLevel = Ext.Round(pickpocketSkill * Ext.ExtraData.PickpocketExperienceLevelsPerPoint)
+	local expLevel = _round(pickpocketSkill * Ext.ExtraData.PickpocketExperienceLevelsPerPoint)
 	local priceGrowthExp = Ext.ExtraData.PriceGrowth ^ (expLevel - 1)
 	if (expLevel >= Ext.ExtraData.FirstPriceLeapLevel) then
 	  priceGrowthExp = priceGrowthExp * Ext.ExtraData.FirstPriceLeapGrowth / Ext.ExtraData.PriceGrowth;
@@ -20,7 +41,7 @@ function GameHelpers.GetPickpocketPricing(pickpocketSkill)
 	  priceGrowthExp = priceGrowthExp * Ext.ExtraData.FourthPriceLeapGrowth / Ext.ExtraData.PriceGrowth
 	end
 	local price = math.ceil(Ext.ExtraData.PickpocketGoldValuePerPoint * priceGrowthExp * Ext.ExtraData.GlobalGoldValueMultiplier)
-	return 50 * Ext.Round(price / 50.0)
+	return 50 * _round(price / 50.0)
 end
 
 --- Get an ExtraData entry, with an optional fallback value if the key does not exist.
@@ -45,12 +66,81 @@ end
 ---@return boolean
 local function IsHandle(v)
 	if _EXTVERSION >= 56 then
-		return Ext.Utils.IsValidHandle(v)
+		return _isValidHandle(v)
 	else
 		return getmetatable(v) == nil
 	end
 end
 
+local getFuncs = {
+	_getCharacter,
+	_getItem,
+	_getGameObject,
+	_getTrigger
+}
+
+local function TryGetObject(id)
+	local t = _type(id)
+	local isHandle = t == "userdata" and IsHandle(id) == true
+	if _osirisIsCallable() and t == "string" then
+		if ObjectExists(id) == 0 then
+			return nil
+		end
+		if ObjectIsCharacter(id) == 1 then
+			local b,obj = _pcall(_getCharacter, id)
+			if b and obj then
+				return obj
+			end
+		elseif ObjectIsItem(id) == 1 then
+			local b,obj = _pcall(_getItem, id)
+			if b and obj then
+				return obj
+			end
+		else
+			local b,obj = _pcall(_getGameObject, id)
+			if b and obj then
+				return obj
+			end
+		end
+	elseif isHandle then
+		local b,obj = _pcall(_getGameObject, id)
+		if b and obj then
+			return obj
+		end
+	elseif t == "number" then
+		--Assuming id is a NetID, try Character first, then Item
+		for i=1,3 do
+			local func = getFuncs[i]
+			local b,result = _pcall(func, id)
+			if b and result then
+				return result
+			end
+		end
+	elseif t == "userdata" then
+		return id
+	end
+	return nil
+end
+
+---Tries to get a game object if the target exists, otherwise returns nil.
+---@param id string|integer|ObjectHandle
+---@param returnOriginal boolean|nil Return the original value if failed. Defaults to false, so nil is returned.
+---@return EsvCharacter|EsvItem|nil
+local function _tryGetObject(id, returnOriginal)
+	local b,result = _pcall(TryGetObject, id)
+	if not b then
+		if Vars.DebugMode then
+			fprint(LOGLEVEL.ERROR, "[GameHelpers.TryGetObject] Error getting object from id (%s):\n%s", id, result)
+		end
+		return returnOriginal == true and id or nil
+	end
+	if result == nil and returnOriginal == true then
+		return id
+	end
+	return result
+end
+
+GameHelpers.TryGetObject = _tryGetObject
 
 local _UNSET_USERID = -65536
 
@@ -88,20 +178,20 @@ function GameHelpers.CharacterUsersMatch(char1, char2)
 	local t1 = _type(char1)
 	local t2 = _type(char2)
 
-	if Ext.IsServer() then
+	if not _ISCLIENT then
 		if t1 == "string" and t2 == t1 then
 			return CharacterGetReservedUserID(char1) == CharacterGetReservedUserID(char2)
 		end
 	end
 
 	if t1 == "string" or t1 == "number" then
-		character1 = Ext.GetCharacter(char1)
+		character1 = _getCharacter(char1)
 	end
 	if t2 == "string" or t2 == "number" then
-		character2 = Ext.GetCharacter(char2)
+		character2 = _getCharacter(char2)
 	end
 
-	if Ext.IsServer() then
+	if not _ISCLIENT then
 		return character1 ~= nil and character2 ~= nil and character1.ReservedUserID == character2.ReservedUserID
 	else
 		Ext.PrintWarning("[LeaderLib:SharedGameHelpers.lua:GameHelpers.CharacterUsersMatch] This check probably won't work on the client since UserID gets unset when a character isn't controlled, and ReservedUserID is not set/accessible.")
@@ -272,16 +362,16 @@ function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 			if _ISCLIENT then
 				local uuid = object:GetItemBySlot(slot)
 				if not StringHelpers.IsNullOrEmpty(uuid) then
-					local item = Ext.GetItem(uuid)
+					local item = _getItem(uuid)
 					if item then
 						items[#items+1] = item
 					end
 				end
 			else
-				if Ext.OsirisIsCallable() then
+				if _osirisIsCallable() then
 					local uuid = CharacterGetEquippedItem(object.MyGuid, slot)
 					if not StringHelpers.IsNullOrEmpty(uuid) then
-						local item = Ext.GetItem(uuid)
+						local item = _getItem(uuid)
 						if item then
 							items[#items+1] = item
 						end
@@ -319,14 +409,14 @@ end
 function GameHelpers.GetUUID(object, returnNullId)
 	local t = _type(object)
 	if t == "userdata" then
-		local b,uuid = pcall(_GetMyGuid, object)
+		local b,uuid = _pcall(_GetMyGuid, object)
 		if uuid then
 			return uuid
 		end
 	elseif t == "string" then
 		return StringHelpers.GetUUID(object)
 	elseif t == "number" then
-		local obj = Ext.GetGameObject(object)
+		local obj = _getGameObject(object)
 		if obj then
 			return obj.MyGuid
 		end
@@ -342,7 +432,7 @@ function GameHelpers.GetNetID(object)
 	if t == "userdata" and object.NetID then
 		return object.NetID
 	elseif t == "string" then
-		local obj = Ext.GetGameObject(object)
+		local obj = _getGameObject(object)
 		if obj then
 			return obj.NetID
 		end
@@ -364,7 +454,7 @@ function GameHelpers.GetCharacterID(object)
 			return object.NetID
 		end
 	elseif t == "string" or t == "number" then
-		local obj = Ext.GetCharacter(object)
+		local obj = GameHelpers.GetCharacter(object)
 		if obj then
 			if not _ISCLIENT then
 				return obj.MyGuid
@@ -383,8 +473,8 @@ function GameHelpers.GetCharacter(object)
 	local t = _type(object)
 	local isHandle = t == "userdata" and IsHandle(object) == true
 	if isHandle or t == "string" or t == "number" then
-		local obj = Ext.GetCharacter(object)
-		if obj then
+		local b,obj = _pcall(_getCharacter, object)
+		if b and obj then
 			return obj
 		end
 	elseif t == "userdata" then
@@ -392,9 +482,11 @@ function GameHelpers.GetCharacter(object)
 			return object
 		elseif GameHelpers.Ext.ObjectIsStatCharacter(object) then
 			return object.Character
-		else
-			--Object handle?
-			return Ext.GetCharacter(object)
+		elseif IsHandle(object) then
+			local b,obj = _pcall(_getCharacter, object)
+			if b then
+				return obj
+			end
 		end
 	end
 	return nil
@@ -409,11 +501,9 @@ function GameHelpers.GetItem(object)
 	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(object) then
 		return object
 	elseif isHandle or t == "string" or t == "number" then
-		local b,obj = xpcall(Ext.GetItem, debug.traceback, object)
-		if b then
+		local b,obj = _pcall(_getItem, object)
+		if b and obj then
 			return obj
-		else
-			Ext.PrintError(obj)
 		end
 	end
 	return nil
@@ -427,96 +517,35 @@ function GameHelpers.ObjectExists(object)
 	if t == "string" and StringHelpers.IsNullOrWhitespace(object) then
 		return false
 	end
-	if Ext.OsirisIsCallable() then
-		if t == "userdata" and object.MyGuid then
-			return ObjectExists(object.MyGuid) == 1
-		elseif t == "string" and not StringHelpers.IsNullOrWhitespace(object) then
+	if _osirisIsCallable() then
+		if t == "userdata" then
+			if IsHandle(object) then
+				return _tryGetObject(object) ~= nil
+			elseif object.MyGuid then
+				return ObjectExists(object.MyGuid) == 1
+			end
+		elseif t == "string" then
 			return ObjectExists(object) == 1
 		elseif t == "number" then
-			local obj = Ext.GetGameObject(object)
-			if obj then
-				return ObjectExists(obj.MyGuid) == 1
-			end
+			return _tryGetObject(object) ~= nil
 		end
-	else
-		if t == "userdata" then
-			return true
-		elseif (t == "string" and not StringHelpers.IsNullOrWhitespace(object)) or t == "number" then
-			local obj = GameHelpers.TryGetObject(object)
-			if obj then
-				return true
-			end
+	end
+	if t == "userdata" then
+		if IsHandle(object) then
+			return _tryGetObject(object) ~= nil
+		else
+			return GameHelpers.Ext.ObjectIsAnyType(object)
 		end
+	elseif t == "string" or t == "number" then
+		return _tryGetObject(object) ~= nil
 	end
 	return false
 end
 
-local getFuncs = {
-	Ext.GetCharacter,
-	Ext.GetItem,
-	Ext.GetGameObject
-}
-
-local function TryGetObject(id)
-	local t = _type(id)
-	local isHandle = t == "userdata" and IsHandle(id) == true
-	if Ext.OsirisIsCallable() and t == "string" then
-		if ObjectExists(id) == 0 then
-			return nil
-		end
-		if ObjectIsCharacter(id) == 1 then
-			return Ext.GetCharacter(id)
-		elseif ObjectIsItem(id) == 1 then
-			return Ext.GetItem(id)
-		else
-			local b,result = xpcall(Ext.GetGameObject, debug.traceback, id)
-			if not b then
-				Ext.PrintError(result)
-				return nil
-			else
-				return result
-			end
-		end
-	elseif isHandle then
-		return Ext.GetGameObject(id)
-	elseif t == "number" then
-		--Assuming id is a NetID, try Character first, then Item
-		for i=1,3 do
-			local func = getFuncs[i]
-			local b,result = xpcall(func, debug.traceback, id)
-			if b and result then
-				return result
-			end
-		end
-	elseif t == "userdata" then
-		return id
-	end
-	return nil
-end
-
----Tries to get a game object if the target exists, otherwise returns nil.
----@param id string|integer|ObjectHandle
----@param returnOriginal boolean|nil Return the original value if failed. Defaults to false, so nil is returned.
----@return EsvCharacter|EsvItem|nil
-function GameHelpers.TryGetObject(id, returnOriginal)
-	local b,result = xpcall(TryGetObject, debug.traceback, id)
-	if not b then
-		if Vars.DebugMode then
-			fprint(LOGLEVEL.ERROR, "[GameHelpers.TryGetObject] Error getting object from id (%s):\n%s", id, result)
-		end
-		return returnOriginal == true and id or nil
-	end
-	if result == nil and returnOriginal == true then
-		return id
-	end
-	return result
-end
-
-
 ---@param object UUID|NETID|EsvGameObject|ObjectHandle
 ---@return boolean
 function GameHelpers.ObjectIsDead(object)
-	local object = GameHelpers.TryGetObject(object)
+	local object = _tryGetObject(object)
 	if object then
 		if GameHelpers.Ext.ObjectIsCharacter(object) then
 			if _ISCLIENT then
@@ -544,7 +573,7 @@ end
 ---@param obj EsvCharacter|EsvItem|UUID|NETID
 ---@param flag string
 function GameHelpers.ObjectHasFlag(obj, flag)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _osirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(obj)
 		if uuid then
 			return ObjectGetFlag(uuid, flag) == 1
@@ -560,13 +589,13 @@ end
 ---@param obj EsvCharacter|EclCharacter|EsvItem|EclItem|UUID|NETID
 ---@return string
 function GameHelpers.GetTemplate(obj)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _osirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(obj)
 		if uuid then
 			return StringHelpers.GetUUID(GetTemplate(uuid))
 		end
 	end
-	local object = GameHelpers.TryGetObject(obj)
+	local object = _tryGetObject(obj)
 	if object and object.RootTemplate then
 		if _EXTVERSION < 56 then
 			if object.RootTemplate.TemplateName ~= "" then
@@ -656,7 +685,7 @@ function GameHelpers.GetLevelType(levelName)
 				return LEVELTYPE.LOBBY
 			end
 		end
-	elseif Ext.OsirisIsCallable() then
+	elseif _osirisIsCallable() then
 		if IsGameLevel(levelName) == 1 then
 			return LEVELTYPE.GAME
 		elseif IsCharacterCreationLevel(levelName) == 1 then
@@ -761,7 +790,7 @@ end
 
 ---@param obj CharacterParam|ItemParam
 function GameHelpers.GetDisplayName(obj)
-	local obj = GameHelpers.TryGetObject(obj)
+	local obj = _tryGetObject(obj)
 	if obj then
 		if GameHelpers.Ext.ObjectIsCharacter(obj) then
 			return GameHelpers.Character.GetDisplayName(obj)
@@ -817,9 +846,9 @@ function GameHelpers.GetMovement(obj, asFullAmount)
 		if boost ~= 0 then
 			local boostMult = boost * 0.01
 			if movement > 0 then
-				return Ext.Round(movement * boostMult)
+				return _round(movement * boostMult)
 			else
-				return Ext.Round(movement * math.abs(boostMult))
+				return _round(movement * math.abs(boostMult))
 			end
 		else
 			return movement
@@ -828,12 +857,35 @@ function GameHelpers.GetMovement(obj, asFullAmount)
 		if boost ~= 0 then
 			local boostMult = boost * 0.01
 			if movement > 0 then
-				return Ext.Round((movement * boostMult) * 0.01)
+				return _round((movement * boostMult) * 0.01)
 			else
-				return Ext.Round((movement * math.abs(boostMult)) * 0.01)
+				return _round((movement * math.abs(boostMult)) * 0.01)
 			end
 		else
-			return Ext.Round(movement * 0.01)
+			return _round(movement * 0.01)
+		end
+	end
+end
+
+---Set an item or character's scale, and sync it to clients.
+---@param object EsvCharacter|string
+---@param scale number
+---@param persist boolean|nil
+function GameHelpers.SetScale(object, scale, persist)
+	object = GameHelpers.TryGetObject(object)
+	if object and object.Scale then
+		if _EXTVERSION < 56 then
+			if object.SetScale then
+				object:SetScale(scale)
+			end
+		else
+			object.Scale = scale
+		end
+		if not _ISCLIENT then
+			GameHelpers.SyncScale(object)
+			if persist == true then
+				PersistentVars.ScaleOverride[object.MyGuid] = scale
+			end
 		end
 	end
 end

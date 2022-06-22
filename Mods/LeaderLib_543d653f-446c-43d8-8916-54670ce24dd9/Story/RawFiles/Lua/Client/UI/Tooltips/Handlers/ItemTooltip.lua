@@ -135,7 +135,8 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		if TooltipHandler.HasTagTooltipData then
 			TooltipHandler.AddTooltipTags(item, tooltip)
 		end
-		if (Features.TooltipGrammarHelper or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText)
+		if character ~= nil and character.Stats
+		and(Features.TooltipGrammarHelper or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText)
 		and not GameHelpers.Item.IsObject(item)
 		and item.Stats.Requirements ~= nil
 		and #item.Stats.Requirements > 0

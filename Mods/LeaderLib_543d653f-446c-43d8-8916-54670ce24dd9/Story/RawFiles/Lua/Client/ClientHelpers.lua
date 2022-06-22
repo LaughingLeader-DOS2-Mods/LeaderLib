@@ -87,6 +87,15 @@ function GameHelpers.Client.GetCharacter()
 				character = GameHelpers.Client.TryGetCharacterFromDouble(main.characterHandle)
 			end
 		end
+		if not character then
+			local ui = Ext.GetUIByType(Data.UIType.statusConsole)
+			if ui ~= nil then
+				local handle = ui:GetPlayerHandle()
+				if handle ~= nil then
+					character = GameHelpers.GetCharacter(handle)
+				end
+			end
+		end
 	end
 	return character
 end

@@ -101,9 +101,9 @@ end
 ---@param character CharacterParam
 function GameHelpers.Character.IsOrigin(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
-		character = GameHelpers.GetUUID(character)
-		if not character then return false end
-		return GameHelpers.DB.HasUUID("DB_Origins", character)
+		local GUID = GameHelpers.GetUUID(character)
+		if not GUID then return false end
+		return GameHelpers.DB.HasUUID("DB_Origins", GUID)
 	else
 		character = GameHelpers.GetCharacter(character)
 		if _type(character) == "userdata" then
@@ -116,13 +116,13 @@ end
 ---@param character CharacterParam
 function GameHelpers.Character.IsInCharacterCreation(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
-		character = GameHelpers.GetUUID(character)
-		if not character then return false end
-		if GameHelpers.DB.HasUUID("DB_Illusionist", character, 2, 1) then
+		local GUID = GameHelpers.GetUUID(character)
+		if not GUID then return false end
+		if GameHelpers.DB.HasUUID("DB_Illusionist", GUID, 2, 1) then
 			return true
 		end
 		if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
-			return GameHelpers.DB.HasUUID("DB_AssignedDummyForUser", character, 2, 2)
+			return GameHelpers.DB.HasUUID("DB_AssignedDummyForUser", GUID, 2, 2)
 		end
 	else
 		---@type EclCharacter
@@ -173,10 +173,10 @@ end
 ---@param character CharacterParam
 function GameHelpers.Character.IsEnemyOfParty(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
-		character = GameHelpers.GetUUID(character)
-		if not character then return false end
+		local GUID = GameHelpers.GetUUID(character)
+		if not GUID then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
-			if CharacterIsEnemy(character, player.MyGuid) == 1 then
+			if CharacterIsEnemy(GUID, player.MyGuid) == 1 then
 				return true
 			end
 		end
@@ -199,10 +199,10 @@ end
 ---@param character CharacterParam
 function GameHelpers.Character.IsNeutralToParty(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
-		character = GameHelpers.GetUUID(character)
-		if not character then return false end
+		local GUID = GameHelpers.GetUUID(character)
+		if not GUID then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
-			if CharacterIsNeutral(character, player.MyGuid) == 1 then
+			if CharacterIsNeutral(GUID, player.MyGuid) == 1 then
 				return true
 			end
 		end

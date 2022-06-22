@@ -1,5 +1,5 @@
 Vars.ConsoleWindowVariables = {}
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 
 local consoleEnvironment = getmetatable(_ENV).__index
 
@@ -16,9 +16,62 @@ if Vars.DebugMode then
 	AddConsoleVariable("CombatLog", CombatLog)
 	AddConsoleVariable("inspect", Lib.inspect)
 	AddConsoleVariable("serpent", Lib.serpent)
+
+	--local x,y,z = table.unpack(_ctxt.WorldPos); ItemMoveToPosition(_ctxt.MyGuid, x, y + 4, z, 2, 2, "", 0);
+	--local x,y,z = table.unpack(_ctxt.WorldPos); local rx,rt,rz = GetRotation(_ctxt.MyGuid); ItemToTransform(_ctxt.MyGuid, x, y + 4, z, rx,rt,rz, 1, "");
+	Ext.RegisterNetListener("LeaderLib_SetLastContextTarget", function (cmd, uuid)
+		Vars.LastContextTarget = uuid
+	end)
+
+	local _getLastContextObject = function()
+		if Vars.LastContextTarget then
+			return GameHelpers.TryGetObject(Vars.LastContextTarget)
+		end
+	end
+	local _ctxt = {}
+	setmetatable(_ctxt, {
+		__call = _getLastContextObject,
+		__index = function(tbl,k)
+			local obj = _getLastContextObject()
+			if obj then
+				if k == "Print" then
+					return Lib.serpent.block(obj, {SimplifyUserData = true})
+				end
+				local v = obj[k]
+				if type(v) == "function" then
+					return function(...)
+						local params = {...}
+						if params[1] == _ctxt then
+							table.remove(params, 1)
+						end
+						local b,result = pcall(v, obj, table.unpack(params))
+						if not b then
+							Ext.PrintError(result)
+						else
+							return result
+						end
+					end
+				else
+					return v
+				end
+			else
+				fprint(LOGLEVEL.WARNING, "[_ctxt] Vars.LastContextTarget is not set.")
+			end
+		end,
+		__newindex = function(tbl,k,v)
+			local obj = _getLastContextObject()
+			if obj then
+				obj[k] = v
+			end
+		end,
+		__tostring = function()
+			return Vars.LastContextTarget or "nil"
+		end
+	})
+	AddConsoleVariable("_ctxt", _ctxt)
 end
 
-if not isClient then
+if not _ISCLIENT then
 	local me = {}
 	setmetatable(me, {
 		__call = function()
@@ -171,7 +224,7 @@ if not isClient then
 			return Common.JsonStringify(data)
 		end
 	})
-	AddConsoleVariable("party", party)
+	AddConsoleVariable("_party", party)
 
 
 	if Vars.DebugMode then
@@ -247,7 +300,7 @@ if not isClient then
 				return character
 			end
 		})
-		AddConsoleVariable("character", character)
+		AddConsoleVariable("_character", character)
 	end
 else
 	local me = {}

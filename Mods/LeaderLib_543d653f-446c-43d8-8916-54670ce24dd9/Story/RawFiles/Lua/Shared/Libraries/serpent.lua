@@ -164,6 +164,7 @@ end
 ---@field valtypeignore table allows to specify a list of value types to ignore (as keys).
 ---@field custom function provide custom output for tables.
 ---@field name string name; triggers full serialization with self-ref section.
+---@field SimplifyUserdata boolean|nil Simplifies userdata to just display MyGuid, NetID, and DisplayName.
 
 ---Lua serializer and pretty printer.
 ---@class serpent:table

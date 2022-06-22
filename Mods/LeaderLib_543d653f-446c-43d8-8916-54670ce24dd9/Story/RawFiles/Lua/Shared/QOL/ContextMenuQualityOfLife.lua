@@ -45,6 +45,8 @@ if isClient then
 			end
 			local uuid = obj.MyGuid or NETID_TO_UUID[hoverType][obj.NetID]
 			if uuid then
+				Vars.LastContextTarget = uuid
+				Ext.PostMessageToServer("LeaderLib_SetLastContextTarget", uuid)
 				local data = {}
 				local existing = Ext.LoadFile("LeaderLib_UUIDHelper.json")
 				if existing then
@@ -235,6 +237,7 @@ else
 		if data then
 			local object = GameHelpers.TryGetObject(data.NetID)
 			if object then
+				Vars.LastContextTarget = object.MyGuid
 				local data = {
 					NetID = object.NetID,
 					UUID = object.MyGuid,

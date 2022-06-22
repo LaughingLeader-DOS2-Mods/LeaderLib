@@ -113,6 +113,9 @@ Vars = {
 	},
 	DebugMode = Ext.IsDeveloperMode() == true,
 	LeaderDebugMode = false,
+	---The last GUID of a context menu object, in developer mode.
+	---@type UUID|nil
+	LastContextTarget = nil,
 	Print = {
 		HitPrepare = false,
 		Hit = false,

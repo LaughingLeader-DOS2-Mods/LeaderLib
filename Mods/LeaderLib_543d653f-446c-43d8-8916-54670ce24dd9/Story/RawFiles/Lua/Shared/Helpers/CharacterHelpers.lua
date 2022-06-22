@@ -92,7 +92,8 @@ function GameHelpers.Character.IsPlayerOrPartyMember(character)
 		return true
 	end
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
-		return CharacterIsPartyMember(character) == 1
+		local GUID = GameHelpers.GetUUID(character)
+		return GUID and CharacterIsPartyMember(GUID) == 1
 	end
 	return false
 end
@@ -212,11 +213,11 @@ end
 ---@param character CharacterParam
 function GameHelpers.Character.IsInCombat(character)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
-		character = GameHelpers.GetUUID(character)
-		if not character then return false end
-		if CharacterIsInCombat(character) == 1 then
+		local GUID = GameHelpers.GetUUID(character)
+		if not GUID then return false end
+		if CharacterIsInCombat(GUID) == 1 then
 			return true
-		elseif GameHelpers.DB.HasUUID("DB_CombatCharacters", character, 2, 1) then
+		elseif GameHelpers.DB.HasUUID("DB_CombatCharacters", GUID, 2, 1) then
 			return true
 		end
 	else

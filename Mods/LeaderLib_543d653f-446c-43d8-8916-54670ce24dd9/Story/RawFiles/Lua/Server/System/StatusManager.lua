@@ -175,7 +175,7 @@ StatusManager.Register.Type = {
 		local t = _type(statusType)
 		if t == "table" then
 			for i,v in pairs(statusType) do
-				StatusManager.Register.Attempt(v, callback)
+				StatusManager.Register.Type.Attempt(v, callback)
 			end
 		elseif t == "string" then
 			local callbackWrapper = CreateCallbackWrapper(Vars.StatusEvent.Attempt, callback)
@@ -191,7 +191,7 @@ StatusManager.Register.Type = {
 		local t = _type(statusType)
 		if t == "table" then
 			for i,v in pairs(statusType) do
-				StatusManager.Register.Applied(v, callback)
+				StatusManager.Register.Type.Applied(v, callback)
 			end
 		elseif t == "string" then
 			local callbackWrapper = CreateCallbackWrapper(Vars.StatusEvent.Applied, callback)
@@ -207,7 +207,7 @@ StatusManager.Register.Type = {
 		local t = _type(statusType)
 		if t == "table" then
 			for i,v in pairs(statusType) do
-				StatusManager.Register.Removed(v, callback)
+				StatusManager.Register.Type.Removed(v, callback)
 			end
 		elseif t == "string" then
 			local callbackWrapper = CreateCallbackWrapper(Vars.StatusEvent.Removed, callback)

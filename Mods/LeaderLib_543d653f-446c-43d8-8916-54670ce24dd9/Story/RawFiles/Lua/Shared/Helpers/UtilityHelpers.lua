@@ -208,66 +208,7 @@ if not _ISCLIENT then
 	---@field StartAnimation string|nil The animation to play when the movement starts. Defaults to "knockdown_fall". Set to "" to disable.
 	---@field ActiveAnimation string|nil The animation to play when the movement is happening, after StartAnimation. Defaults to "knockdown_loop". Set to "" to disable.
 	---@field EndAnimation string|nil The animation to play when the movement ends. Defaults to "knockdown_getup". Set to "" to disable.
-
-	---@param e TimerFinishedEventArgs
-	function _INTERNAL.OnCheckKnockupDistance(e)
-		local target = e.Data.UUID
-		if target ~= nil then
-			local targetObject = e.Data.Object
-			local targetData = PersistentVars.ForceMoveData[target]
-			if targetData ~= nil and targetData.Position then
-				Ext.Print("ForceMoveData", Ext.DumpExport(targetData))
-				local heightDiff = math.abs(targetObject.WorldPos[2] - targetData.Position[2])
-				print("heightDiff", heightDiff)
-				if heightDiff < 1 then
-					pcall(NRD_GameActionDestroy,targetData.Handle)
-					PersistentVars.ForceMoveData[target] = nil
-					local source = targetData.Source
-					if source then
-						source = Ext.GetGameObject(targetData.Source)
-					else
-						source = targetObject
-					end
-					local skill = nil
-					if targetData.Skill then
-						skill = Ext.GetStat(targetData.Skill)
-					end
-					if targetData.EndAnimation and not StringHelpers.IsNullOrWhitespace(targetData.EndAnimation) then
-						CharacterSetAnimationOverride(targetObject.MyGuid, "")
-						targetObject.AnimationOverride = ""
-						print("PlayAnimation", targetObject.MyGuid, targetData.EndAnimation)
-						PlayAnimation(targetObject.MyGuid, targetData.EndAnimation, "")
-					end
-					Events.ForceMoveFinished:Invoke({
-						ID = targetData.ID or "",
-						Target = targetObject,
-						Source = source,
-						Distance = targetData.Distance,
-						StartingPosition = targetData.Start,
-						Skill = skill
-					})
-					if skill then
-						Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), targetData.Skill or "Skill")
-					else
-						--LeaderLib_Force_OnLanded((GUIDSTRING)_Target, (GUIDSTRING)_Source, (STRING)_Event)
-						Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), "Lua")
-					end
-				else
-					Timer.StartObjectTimer("LeaderLib_CheckKnockupDistance", target, _INTERNAL.FORCE_MOVE_UPDATE_MS)
-				end
-			elseif targetObject then
-				fprint(LOGLEVEL.WARNING, "[OnCheckKnockupDistance] No force move data for target (%s). How did this happen?", targetObject.DisplayName)
-				Events.ForceMoveFinished:Invoke({
-					ID = "",
-					Target = targetObject,
-					Distance = 0,
-					StartingPosition = targetObject.WorldPos
-				})
-			end
-		end
-	end
-
-	Timer.Subscribe("LeaderLib_CheckKnockupDistance", function(e) _INTERNAL.OnCheckKnockupDistance(e) end)
+	---@field Gravity number|nil Overrides the default gravity amount of 12.
 
 	local function HasKnockupData(uuid)
 		uuid = GameHelpers.GetUUID(uuid)
@@ -288,6 +229,9 @@ if not _ISCLIENT then
 	---@param height number
 	---@param opts KnockUpObjectObjectParameters|nil
 	function GameHelpers.Utils.KnockUpObject(target, height, opts)
+		if _EXTVERSION < 56 then
+			return
+		end
 		fassert(_type(height) == "number", "Invalid height parameter (%s)", Lib.serpent.line(height))
 		local tobj = GameHelpers.TryGetObject(target)
 		fassert(tobj ~= nil, "Invalid target parameter (%s)", Lib.serpent.line(target))
@@ -333,15 +277,6 @@ if not _ISCLIENT then
 			CharacterPurgeQueue(tobj.MyGuid)
 			PlayAnimation(tobj.MyGuid, "knockdown_fall", eventId)
 		end
-		-- PersistentVars.ForceMoveData[tobj.MyGuid] = {
-		-- 	Position = {tx,ty,tz},
-		-- 	Start = startPos,
-		-- 	Source = sobj.MyGuid,
-		-- 	IsFromSkill = opts.Skill ~= nil,
-		-- 	Skill = opts.Skill,
-		-- 	Distance = height,
-		-- 	EndAnimation = opts.EndAnimation
-		-- }
 		GameHelpers.Status.Apply(tobj, "LEADERLIB_IN_AIR", 30.0, true, sobj)
 		PersistentVars.KnockupData.ObjectData[#PersistentVars.KnockupData.ObjectData+1] = {
 			ID = opts.ID or "",
@@ -356,76 +291,73 @@ if not _ISCLIENT then
 			Gravity = opts.Gravity or _GRAVITY,
 		}
 		PersistentVars.KnockupData.Active = true
-		--Timer.StartObjectTimer("LeaderLib_CheckKnockupDistance", tobj.MyGuid, _INTERNAL.FORCE_MOVE_UPDATE_MS)
-		-- local handle = NRD_CreateGameObjectMove(tobj.MyGuid, tx + 1, ty, tz + 1, opts.BeamEffect or "", sobj.MyGuid)
-		-- if handle ~= nil then
-
-		-- end
 	end
 
-	Ext.Events.Tick:Subscribe(function (e)
-		if Ext.GetGameState() == "Running" and PersistentVars.KnockupData.Active then
-			local len = #PersistentVars.KnockupData.ObjectData
-			local positionSync = {}
-			local positionSyncLen = 0
-			local grid = Ext.GetAiGrid()
-			for i=1,len do
-				local data = PersistentVars.KnockupData.ObjectData[i]
-				---@type EsvCharacter|EsvItem
-				local obj = Ext.GetGameObject(data.GUID)
-				if not obj then
-					table.remove(PersistentVars.KnockupData.ObjectData, i)
-				end
-				local gravity = data.Gravity or _GRAVITY
-				local x,y,z = table.unpack(obj.Translate)
-				local currentY = y
-				if data.Falling then
-					local floorY = GameHelpers.Grid.GetY(x, z, grid)
-					if y > data.Start[2] then
-						y = y - ((_FALLMULT * gravity) * e.Time.DeltaTime)
-						if y < floorY then
-							y = floorY
-						end
-						if y ~= currentY then
-							positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = y}
-							positionSyncLen = positionSyncLen + 1
-						end
-						obj.Translate = {x,y,z}
-					else
+	if _EXTVERSION >= 56 then
+		Ext.Events.Tick:Subscribe(function (e)
+			if Ext.GetGameState() == "Running" and PersistentVars.KnockupData.Active then
+				local len = #PersistentVars.KnockupData.ObjectData
+				local positionSync = {}
+				local positionSyncLen = 0
+				local grid = Ext.GetAiGrid()
+				for i=1,len do
+					local data = PersistentVars.KnockupData.ObjectData[i]
+					---@type EsvCharacter|EsvItem
+					local obj = Ext.GetGameObject(data.GUID)
+					if not obj then
 						table.remove(PersistentVars.KnockupData.ObjectData, i)
-						obj.Translate = {x,floorY,z}
-						positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = floorY}
-						positionSyncLen = positionSyncLen + 1
-						if data.EndAnimation then
-							CharacterSetAnimationOverride(obj.MyGuid, "")
-							CharacterPurgeQueue(obj.MyGuid)
-							PlayAnimation(obj.MyGuid, data.EndAnimation, "")
-						end
-						GameHelpers.Status.Remove(obj, "LEADERLIB_IN_AIR")
 					end
-				else
-					local dist = math.abs(data.End[2]) - math.abs(y)
-					if dist > 0 then
-						local apexMult = math.max(0.2, dist/data.Height)
-						y = y + ((gravity * apexMult) * e.Time.DeltaTime)
-						if y ~= currentY then
-							positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = y}
+					local gravity = data.Gravity or _GRAVITY
+					local x,y,z = table.unpack(obj.Translate)
+					local currentY = y
+					if data.Falling then
+						local floorY = GameHelpers.Grid.GetY(x, z, grid)
+						if y > data.Start[2] then
+							y = y - ((_FALLMULT * gravity) * e.Time.DeltaTime)
+							if y < floorY then
+								y = floorY
+							end
+							if y ~= currentY then
+								positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = y}
+								positionSyncLen = positionSyncLen + 1
+							end
+							obj.Translate = {x,y,z}
+						else
+							table.remove(PersistentVars.KnockupData.ObjectData, i)
+							obj.Translate = {x,floorY,z}
+							positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = floorY}
 							positionSyncLen = positionSyncLen + 1
+							if data.EndAnimation then
+								CharacterSetAnimationOverride(obj.MyGuid, "")
+								CharacterPurgeQueue(obj.MyGuid)
+								PlayAnimation(obj.MyGuid, data.EndAnimation, "")
+							end
+							GameHelpers.Status.Remove(obj, "LEADERLIB_IN_AIR")
 						end
-						obj.Translate = {x,y,z}
 					else
-						data.Falling = true
+						local dist = math.abs(data.End[2]) - math.abs(y)
+						if dist > 0 then
+							local apexMult = math.max(0.2, dist/data.Height)
+							y = y + ((gravity * apexMult) * e.Time.DeltaTime)
+							if y ~= currentY then
+								positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = y}
+								positionSyncLen = positionSyncLen + 1
+							end
+							obj.Translate = {x,y,z}
+						else
+							data.Falling = true
+						end
 					end
 				end
+				if #PersistentVars.KnockupData.ObjectData == 0 then
+					PersistentVars.KnockupData.Active = false
+				end
+				if positionSyncLen > 0 then
+					GameHelpers.Net.Broadcast("LeaderLib_KnockUp_SyncPositions", positionSync)
+				end
 			end
-			if #PersistentVars.KnockupData.ObjectData == 0 then
-				PersistentVars.KnockupData.Active = false
-			end
-			if positionSyncLen > 0 then
-				GameHelpers.Net.Broadcast("LeaderLib_KnockUp_SyncPositions", positionSync)
-			end
-		end
-	end)
+		end)
+	end
 else
 	Ext.RegisterNetListener("LeaderLib_KnockUp_SyncPositions", function (cmd, payload)
 		local data = Common.JsonParse(payload)

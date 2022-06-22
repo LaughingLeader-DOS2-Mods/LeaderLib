@@ -316,6 +316,7 @@ if not _ISCLIENT then
 	})
 
 	---@class ForceMoveFinishedEventArgs
+	---@field ID string A way to identify this action, if any.
 	---@field Target EsvCharacter
 	---@field Source EsvCharacter|EsvItem|nil
 	---@field Distance number

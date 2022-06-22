@@ -79,6 +79,11 @@ local defaultPersistentVars = {
 	---@type table<UUID,table<string,UUID|boolean>>
 	ActivePermanentStatuses = {},
 	ForceMoveData = {},
+	KnockupData = {
+		Active = false,
+		---@type {ID:string, GUID:UUID, Start:number[], End:number[], Source:UUID, Skill:string, Falling:boolean}[]
+		ObjectData = {}
+	},
 	SceneData = {
 		ActiveScene = {},
 		Queue = {}

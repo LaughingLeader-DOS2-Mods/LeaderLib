@@ -110,7 +110,7 @@ if not _ISCLIENT then
 	local _INTERNAL = GameHelpers._INTERNAL
 
 	---@param e TimerFinishedEventArgs
-	function _INTERNAL.OnForceMoveTimer(e)
+	function _INTERNAL.OnForceMoveTimer_Old(e)
 		local target = e.Data.UUID
 		if target ~= nil then
 			local targetObject = e.Data.Object
@@ -146,7 +146,7 @@ if not _ISCLIENT then
 					Timer.StartObjectTimer(e.ID, target, 250)
 				end
 			elseif targetObject then
-				fprint(LOGLEVEL.WARNING, "[LeaderLib_OnForceMoveAction] No force move data for target (%s). How did this happen?", targetObject.DisplayName)
+				fprint(LOGLEVEL.WARNING, "[LeaderLib_OnForceMoveAction_Old] No force move data for target (%s). How did this happen?", targetObject.DisplayName)
 				Events.ForceMoveFinished:Invoke({
 					Target = targetObject,
 					Distance = 0,
@@ -156,7 +156,7 @@ if not _ISCLIENT then
 		end
 	end
 
-	Timer.Subscribe("LeaderLib_OnForceMoveAction", function(e) _INTERNAL.OnForceMoveTimer(e) end)
+	Timer.Subscribe("LeaderLib_OnForceMoveAction_Old", function(e) _INTERNAL.OnForceMoveTimer_Old(e) end)
 
 	---Checks if an object can be force moved with GameHelpers.ForceMoveObject.  
 	---Looks for specific tags and statuses, such as the LeaderLib_ForceImmune tag and the LEADERLIB_FORCE_IMMUNE status.
@@ -207,11 +207,11 @@ if not _ISCLIENT then
 			fprint(LOGLEVEL.WARNING, "[GameHelpers.ForceMoveObject] target(%s) is outside of the push distance range (%s) > (%s) from the starting position. Skipping.", targetObject.DisplayName, dist, distMult)
 			return false
 		end
-		local existingData = PersistentVars.ForceMoveData[targetObject.MyGuid]
-		if existingData ~= nil and existingData.Handle ~= nil then
-			--NRD_GameActionDestroy(existingData.Handle)
-			PersistentVars.ForceMoveData[targetObject.MyGuid] = nil
-		end
+
+		Timer.Cancel("LeaderLib_OnForceMoveAction", targetObject)
+		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
+		PersistentVars.ForceMoveData[targetObject.MyGuid] = nil
+
 		--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distMult)
 		local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(targetObject, sourceObject, distanceMultiplier < 0)
 		local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionalVector, distMult)
@@ -228,7 +228,7 @@ if not _ISCLIENT then
 					Skill = skill,
 					Distance = distanceMultiplier
 				}
-				Timer.StartObjectTimer("LeaderLib_OnForceMoveAction", targetObject.MyGuid, 250)
+				Timer.StartObjectTimer("LeaderLib_OnForceMoveAction_Old", targetObject.MyGuid, 250)
 				return true
 			end
 		end
@@ -241,27 +241,33 @@ if not _ISCLIENT then
 	---@param target EsvCharacter|EsvItem
 	---@param position number[]
 	---@param skill string|nil
+	---@param beamEffect string|nil The beam effect to play with the NRD_CreateGameObjectMove action.
 	---@return number,number|nil
-	function GameHelpers.ForceMoveObjectToPosition(source, target, position, skill)
-		local existingData = PersistentVars.ForceMoveData[target.MyGuid]
-		if existingData ~= nil and existingData.Handle ~= nil then
-			--NRD_GameActionDestroy(existingData.Handle)
-			PersistentVars.ForceMoveData[target.MyGuid] = nil
+	function GameHelpers.ForceMoveObjectToPosition(source, target, position, skill, beamEffect)
+		local sourceObject = GameHelpers.TryGetObject(source)
+		local targetObject = GameHelpers.TryGetObject(target)
+		if not sourceObject and targetObject then
+			fprint(LOGLEVEL.ERROR, "[GameHelpers.ForceMoveObjectToPosition] Invalid source(%s) or target(%s) parameters.", source, target)
 		end
-		local x,y,z = table.unpack(target.WorldPos)
+
+		Timer.Cancel("LeaderLib_OnForceMoveAction", targetObject)
+		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
+		PersistentVars.ForceMoveData[targetObject.MyGuid] = nil
+		
+		local x,y,z = table.unpack(targetObject.WorldPos)
 		local tx,ty,tz = table.unpack(position)
-		local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
+		local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, beamEffect or "", sourceObject.MyGuid)
 		if handle ~= nil then
-			PersistentVars.ForceMoveData[target.MyGuid] = {
+			PersistentVars.ForceMoveData[targetObject.MyGuid] = {
 				Position = {tx,ty,tz},
-				Start = TableHelpers.Clone(target.WorldPos),
+				Start = {x,y,z},
 				Handle = handle,
-				Source = source.MyGuid,
+				Source = sourceObject.MyGuid,
 				IsFromSkill = skill ~= nil,
 				Skill = skill,
-				Distance = GameHelpers.Math.GetDistance(target.WorldPos, position)
+				Distance = GameHelpers.Math.GetDistance(targetObject.WorldPos, position)
 			}
-			Timer.StartObjectTimer("LeaderLib_OnForceMoveAction", target.MyGuid, 250)
+			Timer.StartObjectTimer("LeaderLib_OnForceMoveAction_Old", targetObject.MyGuid, 250)
 		end
 	end
 end

@@ -782,3 +782,58 @@ function GameHelpers.GetDisplayName(obj)
 	end
 	return ""
 end
+
+---Calculates Movement and MovementSpeedBoost from DynamicStats.
+---@param obj ObjectParam|StatCharacter|StatItemDynamic
+---@param asFullAmount boolean|nil Return Movement in the full amount (like 500), instead of multiplying it by 0.01 and rounding the result.
+---@return number
+function GameHelpers.GetMovement(obj, asFullAmount)
+	local stats = nil
+	if GameHelpers.Ext.ObjectIsStatCharacter(obj) or GameHelpers.Ext.ObjectIsStatItem(obj) then
+		stats = obj
+	else
+		local t = _type(obj)
+		if t == "userdata" or t == "table" and obj.Stats then
+			stats = obj.Stats
+		end
+	end
+	if not stats then
+		return 0
+	end
+	local movement = 0
+	local boost = 0
+	for i=1,#stats.DynamicStats do
+		local v = stats.DynamicStats[i]
+		if v then
+			movement = movement + v.Movement
+			boost = boost + v.MovementSpeedBoost
+		end
+	end
+	if movement == 0 then
+		return 0
+	end
+
+	if asFullAmount then
+		if boost ~= 0 then
+			local boostMult = boost * 0.01
+			if movement > 0 then
+				return Ext.Round(movement * boostMult)
+			else
+				return Ext.Round(movement * math.abs(boostMult))
+			end
+		else
+			return movement
+		end
+	else
+		if boost ~= 0 then
+			local boostMult = boost * 0.01
+			if movement > 0 then
+				return Ext.Round((movement * boostMult) * 0.01)
+			else
+				return Ext.Round((movement * math.abs(boostMult)) * 0.01)
+			end
+		else
+			return Ext.Round(movement * 0.01)
+		end
+	end
+end

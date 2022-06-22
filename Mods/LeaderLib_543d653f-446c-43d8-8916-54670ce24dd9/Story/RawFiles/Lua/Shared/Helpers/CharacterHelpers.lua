@@ -669,7 +669,7 @@ function GameHelpers.Character.IsDisabled(character, checkForLoseControl, checkF
 		end
 	end
 	if checkForZeroMovement == true then
-		if character.Stats.Movement <= 0 then
+		if GameHelpers.GetMovement(character.Stats) <= 0 then
 			return true
 		end
 	end
@@ -863,9 +863,7 @@ end
 function GameHelpers.Character.IsImmobile(character)
 	local character = GameHelpers.GetCharacter(character)
 	if character then
-		if character.Stats.Movement <= 0 then
-			return true
-		end
+		return GameHelpers.GetMovement(character.Stats) <= 0
 	end
 	return false
 end

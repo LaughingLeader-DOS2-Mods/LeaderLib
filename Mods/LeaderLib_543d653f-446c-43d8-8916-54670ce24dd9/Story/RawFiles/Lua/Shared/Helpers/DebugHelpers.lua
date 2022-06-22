@@ -1355,7 +1355,7 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 				props.MyGuid = "string"
 			end
 			if obj.DisplayName then
-				props.DisplayName = "string"
+				props.DisplayName = function(_obj) return GameHelpers.GetDisplayName(_obj) end
 			end
 			if obj.NetID then
 				props.NetID = "number"

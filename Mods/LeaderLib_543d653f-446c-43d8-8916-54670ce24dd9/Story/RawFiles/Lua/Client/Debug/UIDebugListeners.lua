@@ -348,8 +348,7 @@ local Init = function()
 		this.isGM = Client.Character.IsGameMaster
 		this.Initialize()
 	end
-
-	--local char = Mods.LeaderLib.GameHelpers.Client.GetGMTargetCharacter(); local movement = {}; for i,v in ipairs(char.Stats.DynamicStats) do if v.Movement > 0 then table.insert(movement, {Index=i, Value=v.Movement}); end end print(Mods.LeaderLib.Lib.serpent.block(movement))
+	
 	_initialized = true
 end
 

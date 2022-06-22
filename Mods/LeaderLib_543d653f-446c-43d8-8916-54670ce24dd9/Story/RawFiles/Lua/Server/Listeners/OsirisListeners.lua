@@ -110,16 +110,15 @@ Ext.RegisterOsirisListener("ItemDestroying", Data.OsirisEvents.ItemDestroying, "
 
 local function OnObjectEvent(eventType, event, obj1, obj2)
 	if obj1 then
-		obj1 = GameHelpers.TryGetObject(obj1)
+		obj1 = GameHelpers.TryGetObject(obj1) or obj1
 	end
 	if obj2 then
-		obj2 = GameHelpers.TryGetObject(obj2, true)
+		obj2 = GameHelpers.TryGetObject(obj2) or obj2
 	end
 	Events.ObjectEvent:Invoke({
 		Event = event,
 		EventType = eventType,
-		Object1 = obj1,
-		Object2 = obj2
+		Objects = {obj1,obj2},
 	})
 end
 

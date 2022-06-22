@@ -329,20 +329,7 @@ local RequirementFunctions = {
 	-- MaxKarma = HasStatValue,
 	---@param character EclCharacter
 	Immobile = function (character, req, param, b)
-		local totalMoveRange = 0
-		local totalMoveSpeedBoost = 0
-		--for i,v in pairs(character.Stats.DynamicStats) do
-		local length = #character.Stats.DynamicStats
-		for i=1,length do
-			local v = character.Stats.DynamicStats[i]
-			totalMoveRange = totalMoveRange + v.Movement
-			totalMoveSpeedBoost = totalMoveSpeedBoost + v.MovementSpeedBoost
-		end
-		if totalMoveSpeedBoost == 0 then
-			totalMoveSpeedBoost = 1
-		end
-		local isImmobile = (totalMoveRange * totalMoveSpeedBoost) <= 0
-		return isImmobile ~= b
+		return GameHelpers.Character.IsImmobile(character) ~= b
 	end,
 	Tag = function (character, req, param, b)
 		return character:HasTag(param) ~= b

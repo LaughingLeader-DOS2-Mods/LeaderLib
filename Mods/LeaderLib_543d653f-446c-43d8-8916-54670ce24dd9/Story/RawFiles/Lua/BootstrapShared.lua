@@ -110,6 +110,8 @@ Ext.Require("Shared/Stats/StatOverrides.lua")
 Ext.Require("Shared/System/FeaturesHandler.lua")
 Ext.Require("Shared/System/Visuals/VisualManager.lua")
 
+Ext.Require("Shared/Helpers/UtilityHelpers.lua")
+
 Ext.Require("Shared/QOL/WingsWorkaround.lua")
 Ext.Require("Shared/QOL/WorldTooltips.lua")
 Ext.Require("Shared/QOL/ContextMenuQualityOfLife.lua")

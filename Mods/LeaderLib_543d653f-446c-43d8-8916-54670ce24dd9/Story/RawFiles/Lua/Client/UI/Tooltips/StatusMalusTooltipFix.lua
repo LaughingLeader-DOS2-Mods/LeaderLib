@@ -3,9 +3,6 @@
 local ArmorSetGroupID = 45
 local StatusMalusGroupID = 33
 
-Ext.PrintError("ArmorSet", ArmorSetGroupID)
-Ext.PrintError("StatusMalus", StatusMalusGroupID)
-
 local function IsStatusMalupGroup(group)
 	local len = #group.list.content_array - 1
 	for i=0,len do

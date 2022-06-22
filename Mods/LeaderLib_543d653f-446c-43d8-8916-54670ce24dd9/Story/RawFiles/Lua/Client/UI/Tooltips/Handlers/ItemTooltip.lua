@@ -135,8 +135,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		if TooltipHandler.HasTagTooltipData then
 			TooltipHandler.AddTooltipTags(item, tooltip)
 		end
-		if character ~= nil and character.Stats
-		and(Features.TooltipGrammarHelper or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText)
+		if (Features.TooltipGrammarHelper or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText)
 		and not GameHelpers.Item.IsObject(item)
 		and item.Stats.Requirements ~= nil
 		and #item.Stats.Requirements > 0
@@ -157,14 +156,17 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 			local attributeName = ""
 			local attributeValue = 0
 			local requirementsMet = true
+			local hasCharacterStats = character ~= nil and character.Stats ~= nil
 			for i,v in pairs(item.Stats.Requirements) do
 				if Data.AttributeEnum[v.Requirement] ~= nil then
 					attributeName = LocalizedText.AttributeNames[v.Requirement].Value
 					if type(v.Param) == "number" and v.Param > 0 then
 						attributeValue = v.Param
 						requiresPointsHigherThanZero = true
-						if character.Stats[v.Requirement] < v.Param then
-							requirementsMet = false
+						if hasCharacterStats then
+							if character.Stats[v.Requirement] < v.Param then
+								requirementsMet = false
+							end
 						end
 					end
 				end

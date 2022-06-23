@@ -158,6 +158,7 @@ function _INTERNAL.PlayEffect(fx, object, params)
 			---@type EffectManagerEsvEffect
 			local b,effect = xpcall(Ext.Effect.CreateEffect, debug.traceback, fx, object.Handle, params.Bone or "")
 			if b and effect then
+				effect.Loop = false
 				--TODO Ext.HandleToDouble is client-side
 				--handle = Ext.HandleToDouble(effect.Component.Handle)
 				handle = effect.Component.Handle
@@ -233,6 +234,7 @@ function _INTERNAL.PlayEffectAt(fx, pos, params)
 			if b and effect then
 				effect.Position = {x,y,z}
 				effect.ForgetEffect = true
+				effect.Loop = false
 
 				if params and type(params) == "table" then
 					for k,v in pairs(params) do

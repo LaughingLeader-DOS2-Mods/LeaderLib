@@ -1,3 +1,6 @@
+local _EXTVERSION = Ext.Version()
+local _ISCLIENT = Ext.IsClient()
+
 if Testing == nil then
 	Testing = {}
 end
@@ -81,6 +84,11 @@ function Testing.RunTests(tbl, testingName)
 		end
 	
 		Testing.Active = true
+
+		if _EXTVERSION < 56 and _ISCLIENT then
+			TimerCancel("LeaderLib_v55_Tick")
+			TimerLaunch("LeaderLib_v55_Tick", 30)
+		end
 	else
 		Ext.Dump(tests)
 		Ext.PrintError("[TestingSystem] Tests is an invalid table. Should be an array of LuaTest tables.")
@@ -96,6 +104,10 @@ function Testing.Stop()
 		end
 		
 		Testing.WriteResults(_runningTest.UUID, _runningTest.Results)
+		_runningTest = {}
+	end
+	if not _ISCLIENT then
+		TimerCancel("LeaderLib_v55_Tick")
 	end
 end
 
@@ -137,8 +149,7 @@ RegisterTickListener(function(e)
 		Testing.OnLoop()
 
 		if test == nil then
-			Testing.Active = false
-			Testing.WriteResults(_runningTest.UUID, _runningTest.Results)
+			Testing.Stop()
 		end
 	end
 end)

@@ -1,13 +1,17 @@
 ---@class LeaderLibTimerSystem
-Timer = {}
+Timer = {
+	IgnoredTimers = {
+		LeaderLib_v55_Tick = true
+	}
+}
 
-local IsClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
 
 Timer.TimerData = {}
 Timer.TimerNameMap = {}
 
-if not IsClient then
+if not _ISCLIENT then
 	setmetatable(Timer.TimerData, {
 		__index = function (_,k) return PersistentVars.TimerData[k] end,
 		__newindex = function (_,timerName,v)
@@ -73,7 +77,7 @@ end
 ---@param delay integer
 ---@param flashCallback function|nil Optional flash callback to invoke for v55 client-side timers.
 local function _StartTimer(timerName, delay, flashCallback)
-	if not IsClient then
+	if not _ISCLIENT then
 		TimerCancel(timerName)
 		TimerLaunch(timerName, delay)
 	else
@@ -129,8 +133,9 @@ end
 ---@param timerName string
 ---@param delay integer
 ---@param callback fun(e:TimerFinishedEventArgs)
+---@param stopPrevious boolean|nil Stop any previous timers with the same name.
 ---@return integer index Returns the subscription callback index.
-function Timer.StartOneshot(timerName, delay, callback)
+function Timer.StartOneshot(timerName, delay, callback, stopPrevious)
 	delay = delay or 0
 	if delay <= 0 then
 		callback({ID=timerName, StopPropagation=function()end})
@@ -138,6 +143,9 @@ function Timer.StartOneshot(timerName, delay, callback)
 	end
 	if StringHelpers.IsNullOrEmpty(timerName) then
 		timerName = string.format("LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random(0,999999))
+	end
+	if stopPrevious then
+		Timer.Cancel(timerName)
 	end
 	local index = Events.TimerFinished:Subscribe(callback, {
 		Once=true,
@@ -156,7 +164,7 @@ end
 ---@param object UUID|NETID|EsvGameObject|nil
 function Timer.Cancel(timerName, object)
 	_INTERNAL.ClearOneshotSubscriptions(timerName)
-	if not IsClient then
+	if not _ISCLIENT then
 		if object ~= nil then
 			local uuid = GameHelpers.GetUUID(object)
 			if uuid then
@@ -251,6 +259,9 @@ function Timer.RegisterListener(name, callback)
 end
 
 local function OnTimerFinished(timerName)
+	if Timer.IgnoredTimers[timerName] then
+		return
+	end
 	local originalTimerName = timerName
 	local data = Timer.TimerData[timerName]
 	local realTimerName = Timer.TimerNameMap[timerName]
@@ -300,7 +311,7 @@ local function OnTimerFinished(timerName)
 		end
 	end
 
-	if not IsClient then
+	if not _ISCLIENT then
 		TurnCounter.OnTimerFinished(timerName)
 	end
 
@@ -416,7 +427,7 @@ function Timer.RestartObjectTimer(timerName, object, delay)
 end
 --#endregion
 
-if not IsClient then
+if not _ISCLIENT then
 	Ext.RegisterOsirisListener("TimerFinished", 1, "after", OnTimerFinished)
 
 	local function OnProcObjectTimerFinished(uuid, timerName)

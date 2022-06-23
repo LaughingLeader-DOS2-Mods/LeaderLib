@@ -5,6 +5,7 @@
 ---@alias LeaderLibClientListenerEvent string|'"CharacterSheetPointChanged"' | '"ControllerModeEnabled"' | '"InputEvent"' | '"ModMenuSectionCreated"' | '"MouseInputEvent"' | '"NamedInputEvent"' | '"OnContextMenuEntryClicked"' | '"OnContextMenuOpening"' | '"OnTalentArrayUpdating"' | '"OnTooltipPositioned"' | '"OnWorldTooltip"' | '"ShouldOpenContextMenu"' | '"UICreated"'
 
 local _EXTVERSION = Ext.Version()
+local _ISCLIENT = Ext.IsClient()
 
 if not Listeners then
 	Listeners = {}
@@ -109,6 +110,8 @@ Ext.RegisterListener("GameStateChanged", function (from, to)
 	_state = to
 end)
 
+Ext.Require("Shared/System/SubscriptionEvents.lua")
+
 ---@class GameTime
 ---@field Time number
 ---@field DeltaTime number
@@ -118,9 +121,12 @@ end)
 ---@type fun(e:GameTime):void[]
 Listeners.Tick = {}
 
+local _startTickTimer = false
+
 ---@param callback fun(e:GameTime):void
 ---@param runningOnly boolean|nil
 function RegisterTickListener(callback, runningOnly)
+	_startTickTimer = true
 	if runningOnly then
 		Listeners.Tick[#Listeners.Tick+1] = function (e)
 			if _state == "Running" and not Vars.Resetting then
@@ -142,11 +148,45 @@ end
 
 if _EXTVERSION >= 56 then
 	Ext.Events.Tick:Subscribe(OnTick)
+elseif Ext.IsDeveloperMode() and not _ISCLIENT then
+	local _minTime = 0.1 -- 10 FPS
+	local _maxTime = 0.016 -- 30 FPS
+	local _monoTime = Ext.MonotonicTime
+	local _clamp = nil
+
+	local _lastTime = _monoTime()
+
+	local _OnTick = nil
+	_OnTick = function()
+		local _ts = _monoTime()
+		local _dt = _clamp((_ts - _lastTime) / 1000000, _maxTime, _minTime)
+		--local _dt = (_ts - _lastTime) / 1000000
+		--fprint(LOGLEVEL.DEFAULT, "DeltaTime(%s)(%s) Ticks(%s) Time(%s)", _dt, (_ts - _lastTime)/ 1000000, _ts, _ts / 1000000)
+		_lastTime = _ts
+		OnTick({Time = {
+			DeltaTime = _dt,
+			Ticks = _ts,
+			Time = _ts / 1000000}})
+
+		--Timer.StartOneshot("LeaderLib_v55_Tick", 30, _OnTick, true)
+		if Testing.Active then
+			TimerCancel("LeaderLib_v55_Tick")
+			TimerLaunch("LeaderLib_v55_Tick", 30)
+		end
+	end
+
+	Ext.RegisterOsirisListener("TimerFinished", 1, "after", function (timerName)
+		if timerName == "LeaderLib_v55_Tick" then
+			_OnTick()
+		end
+	end)
+
+	Ext.RegisterListener("SessionLoaded", function ()
+		_clamp = GameHelpers.Math.Clamp
+	end)
 end
 
 ---endregion
-
-Ext.Require("Shared/System/SubscriptionEvents.lua")
 
 ---@class LeaderLibGlobals:table
 ---@field RegisterListener fun(event:LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[], callbackOrKey:function|string, callbackOrNil:function|nil):void

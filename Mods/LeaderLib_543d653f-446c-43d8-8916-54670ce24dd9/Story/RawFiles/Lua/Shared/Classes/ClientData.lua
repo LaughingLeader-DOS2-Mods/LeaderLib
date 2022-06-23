@@ -204,10 +204,10 @@ function ClientData:GetCharacter()
 	local character = nil
 	if self.Character ~= nil then
 		if self.Character.NetID ~= -1 and self.Character.NetID ~= nil then
-			character = Ext.GetCharacter(self.Character.NetID)
+			character = GameHelpers.GetCharacter(self.Character.NetID)
 		end
 		if character == nil and not StringHelpers.IsNullOrEmpty(self.Character.UUID) then
-			character = Ext.GetCharacter(self.Character.UUID)
+			character = GameHelpers.GetCharacter(self.Character.UUID)
 		end
 	end
 	if character == nil then

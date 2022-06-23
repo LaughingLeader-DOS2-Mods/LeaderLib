@@ -56,7 +56,7 @@ function BuffStatusPreserver.PreserveStatus(character, status, skipCheck)
 			PersistentVars.BuffStatuses[character.MyGuid] = {}
 		end
 		local savedStatusData = PersistentVars.BuffStatuses[character.MyGuid]
-		savedStatusData[status.StatusId] = math.ceil(status.CurrentLifeTime)
+		savedStatusData[status.StatusId] = math.ceil(status.LifeTime) -- Set it to the max duration
 		status.CurrentLifeTime = -1.0
 		status.LifeTime = -1.0
 		status.RequestClientSync = true
@@ -90,7 +90,7 @@ function BuffStatusPreserver.PreserveAllStatuses(character)
 	end
 	for _,status in pairs(character:GetStatusObjects()) do
 		local statusType = GameHelpers.Status.GetStatusType(status.StatusId)
-		if statusType == "CONSUME" then
+		if statusType == "CONSUME" and not status.KeepAlive then
 			BuffStatusPreserver.PreserveStatus(character, status)
 		end
 	end
@@ -116,11 +116,15 @@ function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
 	if data then
 		local character = GameHelpers.GetCharacter(GUID)
 		if character then
-			for id,duration in pairs(data) do
-				local status = character:GetStatus(id)
-				if status then
+			for _,status in pairs(character:GetStatusObjects()) do
+				local duration = data[status.StatusId]
+				if duration then
+					--TODO For some reason, when the status is made non-permanent again, it reduces the turns by 1
+					duration = duration + 6.0
+					--status.TurnTimer = 0.032444998621941
 					status.CurrentLifeTime = duration
 					status.LifeTime = duration
+					status.IsLifeTimeSet = true
 					status.RequestClientSync = true
 				end
 			end
@@ -175,6 +179,7 @@ function BuffStatusPreserver.OnSkillUsed(caster, skill, skillType, skillElement)
 	end
 end
 
+local _combatLeftEnabled = false
 --Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "after", BuffStatusPreserver.OnLeftCombat)
 Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", BuffStatusPreserver.OnEnteredCombat)
 Ext.RegisterOsirisListener("CharacterUsedSkill", 4, "after", BuffStatusPreserver.OnSkillUsed)
@@ -195,8 +200,9 @@ end
 
 if Vars.DebugMode then
 	local buffTest = Classes.LuaTest.Create("buffstatuspreserver", {
-		---@param self LuaTest
+		--[[ ---@param self LuaTest
 		function(self)
+			--Apply Foritiied out of combat and check that the duration is permanent
 			local host = CharacterGetHostCharacter()
 			_testingEnabled = true
 			self.Cleanup = function ()
@@ -211,9 +217,50 @@ if Vars.DebugMode then
 			local duration = GameHelpers.Status.GetDuration(host, "FORTIFIED")
 			self:AssertEquals(duration == -1, true, string.format("Failed to make FORTIFIED permanent (%s)", duration))
 			return true
+		end, ]]
+		---@param self LuaTest
+		function(self)
+			--Apply Foritiied out of combat, then enter combat and check that the duration is made non-permanent
+			local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
+			_testingEnabled = true
+			local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(host, 6.0)
+			local enemy = TemporaryCharacterCreateAtPosition(x, y, z, "13ee7ec6-70c3-4f2c-9145-9a5e85feb7d3", 0)
+			self.Cleanup = function ()
+				GameHelpers.Status.Remove(host, "FORTIFIED")
+				BuffStatusPreserver.ClearSavedStatus(host, "FORTIFIED")
+				RemoveTemporaryCharacter(enemy)
+				_testingEnabled = false
+			end
+			SetStoryEvent(enemy, "ClearPeaceReturn")
+			CharacterSetReactionPriority(enemy, "StateManager", 0)
+			CharacterSetReactionPriority(enemy, "ResetInternalState", 0)
+			CharacterSetReactionPriority(enemy, "ReturnToPeacePosition", 0)
+			CharacterSetReactionPriority(enemy, "CowerIfNeutralSeeCombat", 0)
+			SetTag(enemy, "LeaderLib_TemporaryCharacter")
+			CharacterUseSkill(host, "Target_EnemyFortify", host, 1, 1, 1)
+			self:WaitForSignal("BUFFSTATUSPRESERVER_SkillUsed", 10000)
+			self:AssertGotSignal("BUFFSTATUSPRESERVER_SkillUsed")
+			self:Wait(3000)
+			local duration = GameHelpers.Status.GetDuration(host, "FORTIFIED")
+			self:AssertEquals(duration == -1, true, string.format("Failed to make FORTIFIED permanent (%s)", duration))
+			local intendedDuration = PersistentVars.BuffStatuses[host].FORTIFIED
+			self:Wait(250)
+			SetFaction(enemy, "PVP_1")
+			self:Wait(250)
+			CharacterSetTemporaryHostileRelation(host, enemy)
+			self:Wait(250)
+			EnterCombat(host, enemy)
+			self:Wait(50)
+			JumpToTurn(host)
+			self:Wait(500)
+			local duration = GameHelpers.Status.GetDuration(host, "FORTIFIED")
+			self:AssertEquals(duration == intendedDuration, true, string.format("Failed to make FORTIFIED (-1 turns) non-permanent (%s) in combat (Resulting duration: %s)", intendedDuration, duration))
+			self:Wait(3000)
+			return true
 		end,
 		---@param self LuaTest
 		function(self)
+			--Apply Foritiied in combat and check that the duration is non-permanent
 			local host = CharacterGetHostCharacter()
 			_testingEnabled = true
 			local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(host, 6.0)
@@ -230,7 +277,6 @@ if Vars.DebugMode then
 			CharacterSetReactionPriority(enemy, "ReturnToPeacePosition", 0)
 			CharacterSetReactionPriority(enemy, "CowerIfNeutralSeeCombat", 0)
 			SetTag(enemy, "LeaderLib_TemporaryCharacter")
-			self:Wait(250)
 			SetFaction(enemy, "PVP_1")
 			self:Wait(250)
 			CharacterSetTemporaryHostileRelation(host, enemy)
@@ -238,12 +284,19 @@ if Vars.DebugMode then
 			EnterCombat(host, enemy)
 			self:Wait(50)
 			JumpToTurn(host)
+			self:Wait(500)
 			CharacterUseSkill(host, "Target_EnemyFortify", host, 1, 1, 1)
 			self:WaitForSignal("BUFFSTATUSPRESERVER_SkillUsed", 10000)
 			self:AssertGotSignal("BUFFSTATUSPRESERVER_SkillUsed")
 			self:Wait(5000)
 			local duration = GameHelpers.Status.GetDuration(host, "FORTIFIED")
 			self:AssertEquals(duration > 0, true, string.format("Failed to make FORTIFIED non-permanent in combat (%s)", duration))
+			if _combatLeftEnabled then
+				RemoveTemporaryCharacter(enemy)
+				self:Wait(10000)
+				local duration = GameHelpers.Status.GetDuration(host, "FORTIFIED")
+				self:AssertEquals(duration == -1, true, string.format("Failed to make FORTIFIED permanent after combat ended (%s)", duration))
+			end
 			return true
 		end,
 	},{

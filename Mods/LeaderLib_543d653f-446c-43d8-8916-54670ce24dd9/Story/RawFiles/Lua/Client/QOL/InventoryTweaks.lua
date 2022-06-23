@@ -1,7 +1,5 @@
 local PartyInventory = Classes.UIWrapper:CreateFromType(Data.UIType.partyInventory, {ControllerID=Data.UIType.partyInventory_c, IsControllerSupported=true})
 
-local _inventoryWasOpened = false
-
 ---@param ui UIObject
 local function UnlockInventories(ui)
 	if not ui then
@@ -21,6 +19,8 @@ local function ShouldUnlockInventories()
 	end
 	return false
 end
+
+local _inventoryWasOpened = false
 
 PartyInventory:RegisterInvokeListener("setSortBtnTexts", function (self, ui, event, ...)
 	if ShouldUnlockInventories() then

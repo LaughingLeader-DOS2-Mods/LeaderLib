@@ -860,6 +860,36 @@ function GameHelpers.Character.GetEquippedWeapons(character)
 	return nil
 end
 
+---Gets items with specific tag(s) in a character's inventory (or equipment).
+---@param character CharacterParam
+---@param tag string|string[]
+---@param asTable boolean|nil
+---@return fun():EsvItem|EsvItem[] items
+function GameHelpers.Character.GetTaggedItems(character, tag, asTable)
+    local items = {}
+    character = GameHelpers.GetCharacter(character)
+    if character then
+        for i,v in pairs(character:GetInventoryItems()) do
+            local item = Ext.GetItem(v)
+            if item and GameHelpers.ItemHasTag(item, tag) then
+                items[#items+1] = item
+            end
+        end
+    end
+	if not asTable then
+		local i = 0
+		local count = #items
+		return function ()
+			i = i + 1
+			if i <= count then
+				return items[i]
+			end
+		end
+	else
+		return items
+	end
+end
+
 ---@param character CharacterParam
 function GameHelpers.Character.IsImmobile(character)
 	local character = GameHelpers.GetCharacter(character)

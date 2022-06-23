@@ -234,3 +234,21 @@ Timer.Subscribe("LeaderLib_UnlockCharacterInventories", function (e)
 		GameHelpers.Net.Broadcast("LeaderLib_UnlockCharacterInventory")
 	end
 end)
+
+---@param character CharacterParam
+---@param tag string|nil
+function LevelUpItemsWithTag(character, tag)
+	tag = tag or "LeaderLib_AutoLevel"
+	local character = GameHelpers.GetCharacter(character)
+	if character then
+		local level = character.Stats.Level
+		for item in GameHelpers.Character.GetTaggedItems(character, tag) do
+			if not GameHelpers.Item.IsObject(item) and item.Stats then
+				if item.Stats.Level < level then
+					ItemLevelUpTo(item.MyGuid, level)
+					CharacterItemSetEvent(character.MyGuid, item.MyGuid, "LeaderLib_Events_ItemLeveledUp")
+				end
+			end
+		end
+	end
+end

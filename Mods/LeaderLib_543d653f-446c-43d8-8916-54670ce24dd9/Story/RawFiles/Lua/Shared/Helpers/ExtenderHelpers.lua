@@ -1102,3 +1102,11 @@ end
 function GameHelpers.Ext.UserDataIsType(obj, typeName, meta)
 	return (meta or getmetatable(obj)) == typeName
 end
+
+---@param obj ObjectParam
+function GameHelpers.Ext.ObjectIsAnyType(obj)
+	return (GameHelpers.Ext.ObjectIsCharacter(obj)
+	or GameHelpers.Ext.ObjectIsItem(obj)
+	or GameHelpers.Ext.ObjectIsStatCharacter(obj)
+	or GameHelpers.Ext.ObjectIsStatItem(obj))
+end

@@ -179,7 +179,7 @@ ObjectIsCharacter(_Cause, 0)
 AND
 LeaderLib_Helper_QRY_SetStoryEvent(_Cause, "LeaderLib_Commands_SetItemLevel")
 AND
-GetVarInteger(_Cause, "LeaderLib_Level", _Level)
+NRD_ItemGetInt((ITEMGUID)_Cause, "Level", _Level)
 THEN
 LeaderLib_Explode_Internal_ExplodeProjectile(_Target, _Skill, _Cause, _Level, _HasExplodeRadius);
 */

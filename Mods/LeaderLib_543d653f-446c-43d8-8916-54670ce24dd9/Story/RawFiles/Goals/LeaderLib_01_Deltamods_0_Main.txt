@@ -172,7 +172,12 @@ DB_LeaderLib_Deltamods_WithChance(_Group, _Rarity, _Deltamod, _Chance, _MinLevel
 AND
 NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _Deltamod)
 AND
+/* [OSITOOLS_ONLY]
+NRD_ItemGetInt(_Item, "Level", _Level)
+*/
+// [BEGIN_NO_OSITOOLS]
 GetVarInteger(_Item, "LeaderLib_Level", _Level)
+// [END_NO_OSITOOLS]
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamodsWithRarity] Attempting to apply deltamod [",_Group,"][",_Rarity,"][",_Deltamod,"] to item.");
 LeaderLib_Deltamods_Internal_RollForDeltamod(_Item, _Deltamod, _Chance, _Level, _MinLevel, _MaxLevel);
@@ -210,60 +215,15 @@ GetUUID(_Item, _ID)
 AND
 StringConcatenate("LeaderLib_Array_Deltamods_", _ID, _ArrayID)
 AND
+/* [OSITOOLS_ONLY]
+NRD_ItemGetInt(_Item, "Level", _Level)
+*/
+// [BEGIN_NO_OSITOOLS]
 GetVarInteger(_Item, "LeaderLib_Level", _Level)
+// [END_NO_OSITOOLS]
 THEN
 DB_LeaderLib_Deltamods_Temp_RollingForDeltamods(_Item, _Group, _TotalRolls, _Level);
 LeaderLib_Deltamods_Internal_ApplyDeltamodsByList(_Item, _Group, _ArrayID, _TotalRolls, _Level);
-//END_REGION
-
-//REGION APPLYING_MODE
-/*
-PROC
-LeaderLib_Deltamods_ApplyDeltamodsByMode((ITEMGUID)_Item, (STRING)_Mode)
-AND
-LeaderLib_Deltamods_QRY_RaritySet(_Item)
-AND
-GetVarFixedString(_Item, "LeaderLib_Rarity", _Rarity)
-THEN
-LeaderLib_Deltamods_Internal_ApplyDeltamodsByMode(_Item, _Rarity, _Mode);
-
-PROC
-LeaderLib_Deltamods_ApplyDeltamodsByMode((ITEMGUID)_Item, (STRING)_Mode)
-AND
-NOT LeaderLib_Deltamods_QRY_RaritySet(_Item)
-THEN
-DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Mode);
-SetVarString(_Item, "LeaderLib_ItemVariablesSetEvent", "LeaderLib_Deltamods_VariablesSet");
-SetStoryEvent(_Item, "LeaderLib_Commands_SetItemVariables");
-
-IF
-StoryEvent((ITEMGUID)_Item, "LeaderLib_Deltamods_VariablesSet")
-AND
-DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Mode)
-AND
-GetVarFixedString(_Item, "LeaderLib_Rarity", _Rarity)
-THEN
-NOT DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Mode);
-LeaderLib_Deltamods_Internal_ApplyDeltamodsByMode(_Item, _Rarity, _Mode);
-
-PROC
-LeaderLib_Deltamods_Internal_ApplyDeltamodsByMode((ITEMGUID)_Item, (STRING)_BaseRarity, "Template")
-AND
-GetTemplate(_Item, _Template)
-AND
-DB_LeaderLib_Deltamods_Templates(_Group, _Template)
-AND
-DB_LeaderLib_Deltamods_Rarities(_BaseRarity, _AssociatedRarity)
-AND
-DB_LeaderLib_Deltamods_WithChance(_Group, _AssociatedRarity, _Deltamod, _Chance, _MinLevel, _MaxLevel)
-AND
-ItemHasDeltaModifier(_Item, _Deltamod, 0)
-AND
-GetVarInteger(_Item, "LeaderLib_Level", _Level)
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamodsByMode] Attempting to apply deltamod [",_Group,"][",_Rarity,"][",_Deltamod,"] to item.");
-LeaderLib_Deltamods_Internal_ApplyDeltamod(_Item, _Deltamod, _Chance, _Level, _MinLevel, _MaxLevel);
-*/
 //END_REGION
 
 //REGION FINALLY_APPLYING

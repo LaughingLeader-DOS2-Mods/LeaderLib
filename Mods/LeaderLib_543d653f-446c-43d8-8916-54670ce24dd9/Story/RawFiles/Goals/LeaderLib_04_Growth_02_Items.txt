@@ -178,8 +178,10 @@ THEN
 //Handled in LeaderLib_Main.gameScript, iterates an inventory and gets the item's level stat
 SetStoryEvent(_Character, "LeaderLib_Events_AutoLevelItems_Start");
 
+
+// [BEGIN_NO_OSITOOLS]
 QRY
-LeaderLib_Growtn_Items_QRY_ItemShouldLevelUp((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+LeaderLib_Growth_Items_QRY_ItemShouldLevelUp((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 GetVarInteger(_Item, "LeaderLib_Level", _ItemLevel)
 AND
@@ -190,18 +192,32 @@ THEN
 DB_NOOP(1);
 
 QRY
-LeaderLib_Growtn_Items_QRY_ItemShouldLevelUp((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+LeaderLib_Growth_Items_QRY_ItemShouldLevelUp((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 NOT GetVarInteger(_Item, "LeaderLib_Level", _)
 THEN
 DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Growth_Items_QRY_ItemShouldLevelUp((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NRD_ItemGetInt(_Item, "Level", _ItemLevel)
+AND
+CharacterGetLevel(_Character, _Level)
+AND
+_ItemLevel < _Level
+THEN
+DB_NOOP(1);
+*/
 
 PROC
 LeaderLib_Growth_Items_LevelUpItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item)
 AND
-LeaderLib_Growtn_Items_QRY_ItemShouldLevelUp(_Character, _Item)
+LeaderLib_Growth_Items_QRY_ItemShouldLevelUp(_Character, _Item)
 THEN
 LeaderLib_Growth_Items_TransformItem(_Character, _Item);
 LeaderLib_Growth_Items_Internal_CheckItemLevel(_Character, _Item);
@@ -233,6 +249,7 @@ LeaderLib_Growth_Items_Internal_LevelUpNow((CHARACTERGUID)_Character, (ITEMGUID)
 THEN
 LeaderLib_Timers_CancelCharacterItemTimer(_Character, _Item, "LeaderLib_Timers_AutoLevelItemFallback");
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_Growth_Items_Internal_LevelUpNow((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
@@ -261,6 +278,39 @@ _ItemLevel < _Level
 THEN
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
 LeaderLog_LogInt("DEBUG", "[LeaderLib:Growth:Items:LevelUpNow] Leveling up item from level [",_ItemLevel,"] to [",_Level,"].");
+ItemLevelUpTo(_Item, _Level);
+SetVarInteger(_Item, "LeaderLib_Level", _Level);
+CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Growth_Items_Internal_LevelUpNow((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
+AND
+NRD_ItemGetInt(_Item, "Level", _ItemLevel)
+AND
+CharacterGetLevel(_Character, _Level)
+AND
+_ItemLevel < _Level
+THEN
+DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Growth:Items:LevelUpNow] Leveling up item from level [",_ItemLevel,"] to [",_Level,"].");
+ItemLevelUpTo(_Item, _Level);
+SetVarInteger(_Item, "LeaderLib_Level", _Level);
+CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
+*/
+
+PROC
+LeaderLib_Growth_Items_Internal_LevelUpNow((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
+AND
+CharacterGetLevel(_Character, _Level)
+THEN
+DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Growth:Items:LevelUpNow] Item variable not set. Using Character's level (",_Level,").");
 ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
@@ -318,18 +368,31 @@ IsTagged(_Item, _Tag, 1)
 THEN
 DB_NOOP(1);
 
+// [BEGIN_NO_OSITOOLS]
 QRY
 LeaderLib_Growth_Items_QRY_DeltaModsAddedThisLevel((ITEMGUID)_Item)
 AND
 GetVarInteger(_Item, "LeaderLib_Level", _Level)
 AND
 GetVarInteger(_Item, "LeaderLib_LastDeltamodLevel", _Last)
-//AND
-//LeaderLog_QRY_LogInt("DEBUG", "[LeaderLib:Growth:Items:QRY_DeltaModsAddedThisLevel] LeaderLib_Level [",_Level,"] LeaderLib_LastDeltamodLevel [",_Last,"].")
 AND
 _Last >= _Level
 THEN
 DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Growth_Items_QRY_DeltaModsAddedThisLevel((ITEMGUID)_Item)
+AND
+NRD_ItemGetInt(_Item, "Level", _Level)
+AND
+GetVarInteger(_Item, "LeaderLib_LastDeltamodLevel", _Last)
+AND
+_Last >= _Level
+THEN
+DB_NOOP(1);
+*/
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp")
@@ -378,6 +441,7 @@ _Owner != NULL_00000000-0000-0000-0000-000000000000
 THEN
 LeaderLib_Growth_Items_ApplyDeltaMods(_Owner, _Item);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
@@ -394,6 +458,16 @@ AND
 GetVarInteger(_Item, "LeaderLib_Level", _Level)
 THEN
 SetVarInteger(_Item, "LeaderLib_LastDeltamodLevel", _Level);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NRD_ItemGetInt(_Item, "Level", _Level)
+THEN
+SetVarInteger(_Item, "LeaderLib_LastDeltamodLevel", _Level);
+*/
 
 QRY
 LeaderLib_Growth_Items_QRY_CanAddRuneSlotDeltaMod((ITEMGUID)_Item, (STRING)_DeltaMod)
@@ -446,6 +520,7 @@ _Count < _Limit
 THEN
 DB_NOOP(1);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
@@ -461,6 +536,25 @@ LeaderLib_Growth_Items_QRY_CanAddDeltaMod(_Item, _DeltaMod)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods(Tag)] Added deltamod [",_DeltaMod,"] to item with tag [",_Tag,"].");
 ItemAddDeltaModifier(_Item, _DeltaMod);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NRD_ItemGetInt(_Item, "Level", _ItemLevel)
+AND
+DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Tag", _Tag)
+AND
+IsTagged(_Item, _Tag, 1)
+AND
+_ItemLevel >= _MinLevel
+AND
+LeaderLib_Growth_Items_QRY_CanAddDeltaMod(_Item, _DeltaMod)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods(Tag)] Added deltamod [",_DeltaMod,"] to item with tag [",_Tag,"].");
+ItemAddDeltaModifier(_Item, _DeltaMod);
+*/
 
 QRY
 LeaderLib_Growth_Items_QRY_Internal_GetID((ITEMGUID)_Item)
@@ -471,6 +565,7 @@ DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template)
 THEN
 DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
@@ -512,6 +607,50 @@ LeaderLib_Growth_Items_QRY_CanAddDeltaMod(_Item, _DeltaMod)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods(Template)] Added deltamod [",_DeltaMod,"] to item.");
 ItemAddDeltaModifier(_Item, _DeltaMod);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NRD_ItemGetInt(_Item, "Level", _ItemLevel)
+AND
+LeaderLib_Growth_Items_QRY_Internal_GetID(_Item)
+AND
+DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID)
+AND
+DB_LeaderLib_Growth_Items_DeltaMods(_GroupID, _MinLevel, _DeltaMod, "ID", _ID)
+AND
+_ItemLevel >= _MinLevel
+AND
+LeaderLib_Growth_Items_QRY_CanAddDeltaMod(_Item, _DeltaMod)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods(ID)] Added deltamod [",_DeltaMod,"] to item via matched ID [",_ID,"].");
+ItemAddDeltaModifier(_Item, _DeltaMod);
+
+PROC
+LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID)
+THEN
+NOT DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID);
+
+PROC
+LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NRD_ItemGetInt(_Item, "Level", _ItemLevel)
+AND
+GetTemplate(_Item, _Template)
+AND
+DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
+AND
+_ItemLevel >= _MinLevel
+AND
+LeaderLib_Growth_Items_QRY_CanAddDeltaMod(_Item, _DeltaMod)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods(Template)] Added deltamod [",_DeltaMod,"] to item.");
+ItemAddDeltaModifier(_Item, _DeltaMod);
+*/
 //END_REGION
 
 //REGION DELTAMOD_CHECK
@@ -625,12 +764,14 @@ THEN
 DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _Template, _TransformedFlag);
 ObjectSetFlag(_Item, _TransformedFlag);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_Growth_Items_OnItemTransformed((ITEMGUID)_Item, (STRING)_Template)
 AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
 THEN
 SetVarInteger(_Item, "LeaderLib_Level", 1);
+// [END_NO_OSITOOLS]
 
 PROC
 LeaderLib_Growth_Items_OnItemTransformed((ITEMGUID)_Item, (STRING)_Template)

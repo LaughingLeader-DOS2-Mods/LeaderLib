@@ -2,7 +2,10 @@
 ---@field ID string
 ---@field OnComplete fun(self:LuaTest)
 ---@field Cleanup fun(self:LuaTest)
+---@field CallCleanupAfterEachTask boolean If true, Cleanup will be invoked between tasks.
 ---@field Params table Params to pass to invoked tasks.
+
+---@alias LuaTestTaskCallback fun(self:LuaTest, ...:any):boolean
 
 ---@class LuaTest:LuaTestParams
 ---@field Failed boolean
@@ -10,13 +13,14 @@
 ---@field Active boolean
 ---@field State integer
 ---@field Thread thread
----@field Tasks function[]
+---@field Tasks LuaTestTaskCallback[]
 ---@field CurrentTaskIndex integer
 local LuaTest = {
 	Type = "LuaTest",
 	ThrowErrors = true,
 	ErrorMessage = "",
 	SuccessMessage = "",
+	CallCleanupAfterEachTask = false
 }
 setmetatable(LuaTest, {
 	__call = function (_, ...)
@@ -27,7 +31,7 @@ setmetatable(LuaTest, {
 local _NilThread = {}
 
 ---@param id string
----@param tasks function[]
+---@param tasks LuaTestTaskCallback[]
 ---@param params LuaTestParams|nil
 ---@return LuaTest
 function LuaTest.Create(id, tasks, params)
@@ -224,6 +228,15 @@ function LuaTest:Reset()
 	self.State = -1
 end
 
+local function _SafeCleanup(self, ...)
+	if self.Cleanup then
+		local b,err = xpcall(self.Cleanup, debug.traceback, self, ...)
+		if not b then
+			fprint(LOGLEVEL.ERROR, "[LuaTest:%s] Error invoking Cleanup function:\n%s", self.ID, err)
+		end
+	end
+end
+
 function LuaTest:Run()
 	if self.Thread == _NilThread then
 		self.Active = true
@@ -239,6 +252,9 @@ function LuaTest:Run()
 							Ext.PrintError(err)
 							self.Failed = true
 							self.Errors[#self.Errors+1] = StringHelpers.Split(StringHelpers.Replace(err, "\t", ""), "\n")
+						end
+						if self.CallCleanupAfterEachTask then
+							_SafeCleanup(self)
 						end
 						self.CurrentTaskIndex = self.CurrentTaskIndex + 1
 						self.Thread = _NilThread
@@ -263,12 +279,7 @@ function LuaTest:Dispose()
 	self.Thread = _NilThread
 	self.SignalSuccess = nil
 	self.LastUnmatchedSignal = nil
-	if self.Cleanup then
-		local b,err = xpcall(self.Cleanup, debug.traceback, self)
-		if not b then
-			fprint(LOGLEVEL.ERROR, "[LuaTest:%s] Error invoking Cleanup function:\n%s", self.ID, err)
-		end
-	end
+	_SafeCleanup(self)
 end
 
 Classes.LuaTest = LuaTest

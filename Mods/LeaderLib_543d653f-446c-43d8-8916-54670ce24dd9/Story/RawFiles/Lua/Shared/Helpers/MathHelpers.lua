@@ -3,11 +3,17 @@ if GameHelpers.Math == nil then
 end
 
 local _type = type
-local cos = math.cos
-local sin = math.sin
-local arccos = math.acos
-local arcsin = math.asin
-local arctan = math.atan
+local _cos = math.cos
+local _sin = math.sin
+local _arccos = math.acos
+local _arcsin = math.asin
+local _arctan = math.atan
+local _max = math.max
+local _min = math.min
+local _floor = math.floor
+local _sqrt = math.sqrt
+local _unpack = table.unpack
+local _ran = Ext.Random
 
 ---Tries to get the position from whatever the variable is.
 ---@param obj number[]|UUID|EsvCharacter|EsvItem|Vector3
@@ -41,7 +47,7 @@ function GameHelpers.Math.GetPosition(obj, unpackResult, fallback)
     end
     if pos then
         if unpackResult then
-            return table.unpack(pos)
+            return _unpack(pos)
         end
         return pos
     end
@@ -62,7 +68,7 @@ end
 function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
     ---@type EsvCharacter
     local character = GameHelpers.GetCharacter(char)
-    local x,y,z = table.unpack(character.WorldPos)
+    local x,y,z = _unpack(character.WorldPos)
     if character ~= nil then
         if distanceMult == nil then
             distanceMult = 1.0
@@ -95,7 +101,7 @@ function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMul
     local character = GameHelpers.GetCharacter(source)
     if character then
         if not x and not y and not z then
-            x,y,z = table.unpack(character.WorldPos)
+            x,y,z = _unpack(character.WorldPos)
         end
         if not forwardVector then
             forwardVector = {
@@ -186,7 +192,7 @@ function GameHelpers.Math.GetDistance(pos1, pos2)
     local xDiff = x - tx
     local yDiff = y - ty
     local zDiff = z - tz
-    return math.sqrt((xDiff^2) + (yDiff^2) + (zDiff^2))
+    return _sqrt((xDiff^2) + (yDiff^2) + (zDiff^2))
 end
 
 ---Get the directional vector between two Vector3 points.
@@ -198,9 +204,9 @@ end
 function GameHelpers.Math.GetDirectionalVectorBetweenPositions(pos1, pos2, reverse, asVector3)
     local vec = Classes.Vector3
     ---@type Vector3
-    local a = vec(table.unpack(pos1))
+    local a = vec(_unpack(pos1))
     ---@type Vector3
-    local b = vec(table.unpack(pos2))
+    local b = vec(_unpack(pos2))
     a:Sub(b)
     a:Normalize()
     if reverse then
@@ -256,7 +262,7 @@ end
 
 function GameHelpers.Math.Round(num, numPlaces)
 	local mult = 10^(numPlaces or 0)
-	return math.floor(num * mult + 0.5) / mult
+	return _floor(num * mult + 0.5) / mult
 end
 
 function GameHelpers.Math.ScaleToRange(val, minRange, maxRange, minScale, maxScale)
@@ -268,7 +274,7 @@ function GameHelpers.Math.ScaleToRange(val, minRange, maxRange, minScale, maxSca
 	local diff = maxRange - val
     local diffMult = diff/(maxRange - minRange)
     local result = diffMult*(maxScale - minScale)
-    return math.min(maxScale, math.max(result, minScale))
+    return _min(maxScale, _max(result, minScale))
 end
 
 ---Returns true if a number is NaN, probably.
@@ -285,7 +291,7 @@ end
 ---@param minValue number
 ---@param maxValue number
 function GameHelpers.Math.Clamp(value, minValue, maxValue)
-    return math.max(math.min(value, maxValue), minValue)
+    return _max(_min(value, maxValue), minValue)
 end
 
 ---@param v number
@@ -365,8 +371,8 @@ end
 ---@param z number
 ---@return number[]
 function GameHelpers.Math.XYZToRotationMatrix(x, y, z)
-    local cy,cx,cz = cos(y), cos(x), cos(z)
-    local sy,sx,sz = sin(y), sin(x), sin(z)
+    local cy,cx,cz = _cos(y), _cos(x), _cos(z)
+    local sy,sx,sz = _sin(y), _sin(x), _sin(z)
     local rot = {
         cy*cz,
         sx*sy*cz - sz*cx,
@@ -385,16 +391,16 @@ end
 ---@param euler number[]|Vector3
 ---@return number[] rotation 3x3 matrix, i.e. {0,0,0,0,0,0,0,0,0}
 function GameHelpers.Math.EulerToRotationMatrix(euler)
-    local x,y,z = table.unpack(euler)
+    local x,y,z = _unpack(euler)
     return GameHelpers.Math.XYZToRotationMatrix(x,y,z)
 end
 
 ---@param rot number[]
 ---@return number[]
 function GameHelpers.Math.RotationMatrixToEuler(rot)
-    local beta = -arcsin(rot[7])
-    local alpha = arctan(rot[8]/cos(beta), rot[9]/cos(beta))
-    local gamma = arctan(rot[4]/cos(beta), rot[1]/cos(beta))
+    local beta = -_arcsin(rot[7])
+    local alpha = _arctan(rot[8]/_cos(beta), rot[9]/_cos(beta))
+    local gamma = _arctan(rot[4]/_cos(beta), rot[1]/_cos(beta))
     local euler = {
         beta,
         alpha,
@@ -410,10 +416,10 @@ end
 ---@return number[]
 function GameHelpers.Math.ObjectRotationToEuler(rot)
     local x,y,z = 0,0,0
-    local cosy = 1 / cos(arcsin(rot[2]))
-    x = arctan(rot[5] * cosy, rot[8] * cosy)
+    local cosy = 1 / _cos(_arcsin(rot[2]))
+    x = _arctan(rot[5] * cosy, rot[8] * cosy)
     y = rot[2]
-    z = arctan(rot[1] * cosy, rot[7] * cosy)
+    z = _arctan(rot[1] * cosy, rot[7] * cosy)
     return {x*57.295776,y*57.295776,z*57.295776}
 end
 
@@ -421,9 +427,9 @@ end
 ---@param angle number Angle in degrees
 ---@return number[] matrix 3x3 matrix, i.e. {0,0,0,0,0,0,0,0,0}
 function GameHelpers.Math.AngleToEffectRotationMatrix(angle)
-    angle = math.rad(angle)
+    angle = _rad(angle)
     return {
-        cos(angle), 0, -sin(angle), 0, 1, 0, sin(angle), 0, cos(angle)
+        _cos(angle), 0, -_sin(angle), 0, 1, 0, _sin(angle), 0, _cos(angle)
     }
 end
 
@@ -438,14 +444,14 @@ function GameHelpers.Math.GetPositionWithAngle(startPos, angle, distanceMult, un
     if _type(distanceMult) ~= "number" then
         distanceMult = 1.0
     end
-    angle = math.rad(angle)
-    local x,y,z = table.unpack(startPos)
+    angle = _rad(angle)
+    local x,y,z = _unpack(startPos)
     --y = GameHelpers.Grid.GetY(tx,tz)
 
     local tx,ty,tz = GameHelpers.Grid.GetValidPositionInRadius({
-        x + (math.cos(angle) * distanceMult),
+        x + (_cos(angle) * distanceMult),
         y,
-        z + (math.sin(angle) * distanceMult)},6.0)
+        z + (_sin(angle) * distanceMult)},6.0)
 
     if unpack then
         return tx,ty,tz
@@ -497,7 +503,7 @@ function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)
         chance = chance * 100
     end
     for i=bonusRolls+1,0,-1 do
-        local roll = Ext.Random(minValue, maxValue)
+        local roll = _ran(minValue, maxValue)
         if roll > 0 and roll <= chance then
             return true
         end

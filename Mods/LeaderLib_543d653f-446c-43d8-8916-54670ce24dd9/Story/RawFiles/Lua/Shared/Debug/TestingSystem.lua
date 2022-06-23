@@ -142,3 +142,59 @@ RegisterTickListener(function(e)
 		end
 	end
 end)
+
+---@alias TestingSystemGetDescriptionCallback fun(id, ...:string):string
+---@alias TestingSystemGetTestsCallback fun(id:string, ...:string):LuaTest[]
+
+---@type table<string, {Description:string|TestingSystemGetDescriptionCallback, Tests:LuaTest[]|TestingSystemGetTestsCallback}>
+local _consoleCommandTests = {}
+
+---@param id string
+---@param test LuaTest|LuaTest[]|TestingSystemGetTestsCallback
+---@param description string|TestingSystemGetDescriptionCallback|nil
+function Testing.RegisterConsoleCommandTest(id, test, description)
+	local t = type(test)
+	local desc = description or ""
+	if t == "table" then
+		if test.Type == "LuaTest" then
+			id = id or test.ID
+			_consoleCommandTests[id] = {Description=desc, Tests={test}}
+		elseif test[1] then
+			_consoleCommandTests[id] = {Description=desc, Tests=test}
+		end
+	elseif t == "function" then
+		_consoleCommandTests[id] = {Description=desc, Tests=test}
+	end
+end
+
+Ext.RegisterConsoleCommand("test", function (cmd, id, ...)
+	if id == "help" then
+		Ext.Print("[test] Available tests:")
+		Ext.Print("==========")
+		for id,data in pairs(_consoleCommandTests) do
+			if type(data.Description) == "function" then
+				fprint(LOGLEVEL.DEFAULT, "\"%s\": %s", id, data.Description(id, ...))
+			else
+				fprint(LOGLEVEL.DEFAULT, "\"%s\": %s", id, data.Description)
+			end
+		end
+		Ext.Print("==========")
+		Ext.Print("Run a test with the command:")
+		Ext.Print("!test id subid")
+		Ext.Print("(subid optional, depending on the above)")
+	else
+		local data = _consoleCommandTests[id]
+		if data then
+			if type(data.Tests) == "function" then
+				local tests = data.Tests(id, ...)
+				if type(tests) == "table" then
+					Testing.RunTests(tests, id)
+				else
+					fprint(LOGLEVEL.ERROR, "[test] Failed to get table from Tests function for test id (%s)", id)
+				end
+			else
+				Testing.RunTests(data.Tests, id)
+			end
+		end
+	end
+end)

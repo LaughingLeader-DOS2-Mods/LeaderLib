@@ -214,21 +214,27 @@ end
 ---@param indexOrCallback integer|function
 ---@param matchArgs table|nil
 function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
-	local t = type(indexOrCallback)
-	local cur = self.First
-	if cur then
-		while cur ~= nil do
-			if (t == "number" and cur.Index == indexOrCallback)
-			or (t == "function" and cur.Callback == indexOrCallback)
-			or (matchArgs and cur.IsMatch and cur.IsMatch(matchArgs))
-			then
-				RemoveNode(self, cur)
-				return true
+	if not self._Invoking then
+		local t = type(indexOrCallback)
+		local cur = self.First
+		if cur then
+			while cur ~= nil do
+				if (t == "number" and cur.Index == indexOrCallback)
+				or (t == "function" and cur.Callback == indexOrCallback)
+				or (matchArgs and cur.IsMatch and cur.IsMatch(matchArgs))
+				then
+					RemoveNode(self, cur)
+					return true
+				end
+				cur = cur.Next
 			end
-			cur = cur.Next
 		end
+	else
+		if self._RemoveNext == nil then
+			self._RemoveNext = {}
+		end
+		self._RemoveNext[#self._RemoveNext+1] = {Index = indexOrCallback, MatchArgs = matchArgs}
 	end
-
 	--fprint(LOGLEVEL.WARNING, "[LeaderLib:SubscribableEvent] Attempted to remove subscriber ID %s for event '%s', but no such subscriber exists (maybe it was removed already?)", indexOrCallback, self.ID)
 	return false
 end
@@ -242,7 +248,10 @@ end
 local function _EventArgsMatch(node, eventArgs)
 	local match = true
 	if node.IsMatch ~= nil then
-		return node.IsMatch(eventArgs)
+		local b,result = pcall(node.IsMatch, eventArgs)
+		if result ~= nil then
+			match = result
+		end
 	end
 	return match
 end
@@ -273,6 +282,7 @@ local function InvokeCallbacks(sub, args, resultsTable, ...)
 	local cur = sub.First
 	local gatherResults = resultsTable ~= nil
 	local result = _INVOKERESULT.Success
+	local c = 0
 	while cur ~= nil do
 		if args.Handled then
 			result = _INVOKERESULT.Handled
@@ -302,7 +312,7 @@ local function InvokeCallbacks(sub, args, resultsTable, ...)
 				end
 			end
 
-			if cur.Once then
+			if cur.Once or args.__unsubscribeListener == true then
 				local last = cur
 				cur = last.Next
 				RemoveNode(sub, last)
@@ -331,12 +341,20 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 	---@type SubscribableEventInvokeResultCode
 	local invokeResult = _INVOKERESULT.Success
 	local results = {}
-	local cur = self.First
-	if cur then
+	if self.First ~= nil then
+		self._Invoking = true
 		if self.GatherResults then
 			invokeResult = InvokeCallbacks(self, eventObject, results, ...)
 		else
 			invokeResult = InvokeCallbacks(self, eventObject, nil, ...)
+		end
+		self._Invoking = nil
+		if self._RemoveNext then
+			for i=1,#self._RemoveNext do
+				local v = self._RemoveNext[i]
+				self:Unsubscribe(v.Index, v.MatchArgs)
+			end
+			self._RemoveNext = nil
 		end
 	end
 	if not skipAutoInvoke and self.SyncInvoke then

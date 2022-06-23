@@ -291,7 +291,7 @@ end
 ---@param b boolean Whether a flag is enabled or disabled.
 ---@return boolean
 function GameHelpers.Hit.SetFlag(hit, flag, b)
-    if not flag or not hit or not hit.EffectFlags then
+    if not flag or not hit or (_EXTVERSION < 56 and not hit.EffectFlags) then
         fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.Hit.SetFlag] Invalid hit (%s) or flag (%s)", hit, flag)
         return false
     end

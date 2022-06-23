@@ -82,6 +82,17 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 	pointsInCircle = pointsInCircle or 9
 	local grid = _getGrid()
 	if grid then
+		local t = _type(startPos)
+		if t == "string" or t == "userdata" then
+			local obj = GameHelpers.TryGetObject(startPos)
+			if obj then
+				startPos = obj.WorldPos
+				t = "table"
+			end
+		end
+		if t ~= "table" then
+			ferror("Invalid startPos parameter:\n%s", Lib.serpent.block(startPos))
+		end
 		if GameHelpers.Grid.IsValidPosition(startPos[1], startPos[3], grid) then
 			return startPos[1], startPos[2], startPos[3]
 		elseif maxRadius > 0 then

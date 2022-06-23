@@ -124,7 +124,6 @@ else
 		end
 		if client == nil then
 			local totalUsers = Common.TableLength(UserIds, true)
-			--GameHelpers.Net.Broadcast("LeaderLib_SharedData_StoreData", Common.JsonStringify(SharedData))
 			if totalUsers <= 0 then
 				IterateUsers("LeaderLib_StoreUserData")
 			else
@@ -198,6 +197,7 @@ else
 
 	function GameHelpers.Data.StartSyncTimer(delay, syncSettings)
 		syncSettingsNext = true
+		Timer.Cancel("LeaderLib_SyncSharedData")
 		Timer.StartOneshot("LeaderLib_SyncSharedData", delay or 50, OnSyncTimer)
 	end
 

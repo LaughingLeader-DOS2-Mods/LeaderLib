@@ -1,16 +1,25 @@
 Vars.ConsoleWindowVariables = {}
 local _ISCLIENT = Ext.IsClient()
 
+local _consoleVars = {}
+
 local consoleEnvironment = getmetatable(_ENV).__index
+if consoleEnvironment then
+	local meta = getmetatable(consoleEnvironment)
+	if meta == nil then
+		setmetatable(consoleEnvironment, {
+			__index = _consoleVars
+		})
+	end
+end
 
 function AddConsoleVariable(name, value)
-	if consoleEnvironment[name] == nil then
-		consoleEnvironment[name] = value
-	end
+	_consoleVars[name] = value
 	Vars.ConsoleWindowVariables[name] = value
 end
 
 if Vars.DebugMode then
+
 	AddConsoleVariable("Common", Common)
 	AddConsoleVariable("GameHelpers", GameHelpers)
 	AddConsoleVariable("CombatLog", CombatLog)
@@ -65,7 +74,7 @@ if Vars.DebugMode then
 			end
 		end,
 		__tostring = function()
-			return Vars.LastContextTarget or "nil"
+			return string.format("Last Context Menu Target: %s", Vars.LastContextTarget or "nil")
 		end
 	})
 	AddConsoleVariable("_ctxt", _ctxt)

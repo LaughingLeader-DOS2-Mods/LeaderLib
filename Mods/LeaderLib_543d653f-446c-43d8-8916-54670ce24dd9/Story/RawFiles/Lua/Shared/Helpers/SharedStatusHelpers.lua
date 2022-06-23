@@ -397,6 +397,33 @@ function GameHelpers.Status.IsActive(object, statusId, checkAll)
 	return false
 end
 
+---Returns true if the object has any of the given statuses.
+---@param object ObjectParam
+---@param statusId string
+---@param asTurns boolean|nil Return the duration in turns.
+---@return number|integer durationOrTurns
+function GameHelpers.Status.GetDuration(object, statusId, asTurns)
+	local object = GameHelpers.TryGetObject(object)
+	if object then
+		local duration = 0
+		for _,v in pairs(object:GetStatusObjects()) do
+			if v.StatusId == statusId then
+				if v.CurrentLifeTime < 0 then
+					duration = v.CurrentLifeTime
+				elseif duration >= 0 then
+					duration = math.max(duration, v.CurrentLifeTime)
+				end
+			end
+		end
+		if asTurns then
+			Ext.Round(duration / 6.0)
+		else
+			return duration
+		end
+	end
+	return 0
+end
+
 ---Returns true if the object has a status with a specific type.
 ---@param object EsvGameObject|UUID|NETID
 ---@param statusType string|string[]

@@ -92,7 +92,7 @@ end
 
 ---@param status string|string[]
 ---@param callback StatusManagerAppliedCallback
----@vararg any
+---@vararg SerializableValue
 function StatusManager.Register.Applied(status, callback, ...)
 	local t = _type(status)
 	if t == "table" then

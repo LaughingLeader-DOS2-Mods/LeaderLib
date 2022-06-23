@@ -43,14 +43,14 @@ local function ShouldUnlockInventories()
 	return false
 end
 
-PartyInventory:RegisterInvokeListener("setSortBtnTexts", function (self, ui, event, vararg)
+PartyInventory:RegisterInvokeListener("setSortBtnTexts", function (self, ui, event, ...)
 	if ShouldUnlockInventories() then
 		_inventoryWasOpened = true
 		UnlockInventories(ui)
 	end
 end, "After", "Keyboard")
 
-PartyInventory:RegisterInvokeListener("setPanelTitle", function (self, ui, event, vararg)
+PartyInventory:RegisterInvokeListener("setPanelTitle", function (self, ui, event, ...)
 	if ShouldUnlockInventories() then
 		_inventoryWasOpened = true
 		UnlockInventories(ui)

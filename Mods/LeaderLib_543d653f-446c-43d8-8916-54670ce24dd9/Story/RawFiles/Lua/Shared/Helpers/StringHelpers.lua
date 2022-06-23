@@ -182,7 +182,7 @@ end
 
 --- Replace placeholder values in a string, such as [1], [2], etc. 
 --- Takes a variable numbers of values.
---- @vararg any
+--- @vararg SerializableValue
 --- @return string
 function StringHelpers.ReplacePlaceholders(text, ...)
 	local values = {...}

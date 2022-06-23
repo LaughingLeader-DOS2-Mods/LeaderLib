@@ -141,7 +141,7 @@ function UIWrapper:CreateFromPath(path, params)
 end
 
 ---@alias UIWrapperEventContextType string|'"Keyboard"'|'"Controller"'|'"All"'
----@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, ui:UIObject, event:string, vararg):void
+---@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, ui:UIObject, event:string, ...:SerializableValue):void
 
 function UIWrapper:InvokeCallbacks(callbackType, e, ui, event, eventType, args)
 	if not self.Callbacks[callbackType] then
@@ -290,7 +290,7 @@ function UIWrapper:GetRoot()
 end
 
 ---@param call string
----@vararg any
+---@vararg SerializableValue
 function UIWrapper:ExternalInterfaceCall(call, ...)
 	local ui = self:GetInstance()
 	if ui then
@@ -299,7 +299,7 @@ function UIWrapper:ExternalInterfaceCall(call, ...)
 end
 
 ---@param method string
----@vararg any
+---@vararg SerializableValue
 function UIWrapper:Invoke(method, ...)
 	local root = self:GetRoot()
 	if root then

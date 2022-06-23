@@ -2,7 +2,7 @@ local _EXTVERSION = Ext.Version()
 
 ---@class TooltipRequestProcessor
 local RequestProcessor = {
-	---@type table<string,fun(request:TooltipRequest, ui:UIObject, uiType:integer, event:string, vararg):TooltipRequest>
+	---@type table<string,fun(request:TooltipRequest, ui:UIObject, uiType:integer, event:string, ...:SerializableValue):TooltipRequest>
 	CallbackHandler = {},
 	---@type TooltipHooks
 	Tooltip = nil

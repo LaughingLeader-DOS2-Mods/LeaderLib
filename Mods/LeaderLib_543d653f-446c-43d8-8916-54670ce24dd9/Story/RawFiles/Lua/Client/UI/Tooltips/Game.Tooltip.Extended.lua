@@ -1517,7 +1517,7 @@ function TooltipHooks:RegisterBeforeNotifyListener(requestType, listener)
 end
 
 ---@param request TooltipRequest
----@vararg any
+---@vararg SerializableValue
 function TooltipHooks:InvokeBeforeNotifyListeners(request, ...)
     local rTypeTable = self.BeforeNotifyListeners[request.Type]
 	if rTypeTable then
@@ -1530,7 +1530,7 @@ end
 ---@param name string
 ---@param request TooltipRequest
 ---@param tooltip TooltipData
----@vararg any
+---@vararg SerializableValue
 function TooltipHooks:NotifyListeners(requestType, name, request, tooltip, ...)
     local args = {...}
     table.insert(args, tooltip)
@@ -1863,7 +1863,7 @@ function Game.Tooltip.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackO
 	end
 end
 
----@alias GameTooltipRequestListener fun(request:TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTagRequest|TooltipCustomStatRequest|TooltipGenericRequest, ui:UIObject, uiType:integer, event:string, id:any, vararg):void
+---@alias GameTooltipRequestListener fun(request:TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTagRequest|TooltipCustomStatRequest|TooltipGenericRequest, ui:UIObject, uiType:integer, event:string, id:any, ...:SerializableValue):void
 
 ---@param typeOrCallback string|GameTooltipRequestListener
 ---@param callbackOrNil GameTooltipRequestListener

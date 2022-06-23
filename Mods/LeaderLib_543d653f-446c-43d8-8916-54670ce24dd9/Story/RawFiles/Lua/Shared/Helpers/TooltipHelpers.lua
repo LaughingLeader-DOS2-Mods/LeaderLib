@@ -56,7 +56,6 @@ local function GetTextParamValues(output, character)
 					end
 				end
 			end
-
 		end		
 		if value ~= nil and value ~= "" then
 			if _type(value) == "number" then

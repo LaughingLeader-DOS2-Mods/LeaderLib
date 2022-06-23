@@ -18,7 +18,7 @@ Listeners.ClientCharacterChanged = {}
 
 ---@alias LeaderLibGetTooltipSkillDamageCallback fun(skill:SkillEventData, character:StatCharacter):string
 ---@alias LeaderLibGetTooltipSkillParam fun(skill:SkillEventData, character:StatCharacter, param:string):string
----@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter, vararg):string
+---@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter, ...:string):string
 
 ---Called from GameHelpers.Tooltip.ReplacePlaceholders when [SkillDamage:SkillId] text exists in the string.
 ---@type LeaderLibGetTooltipSkillDamageCallback[]

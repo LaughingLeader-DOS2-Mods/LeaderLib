@@ -277,7 +277,7 @@ end
 ---@param sub BaseSubscribableEvent
 ---@param args RuntimeSubscribableEventArgs
 ---@param resultsTable table
----@vararg any
+---@vararg SerializableValue
 local function InvokeCallbacks(sub, args, resultsTable, ...)
 	local cur = sub.First
 	local gatherResults = resultsTable ~= nil

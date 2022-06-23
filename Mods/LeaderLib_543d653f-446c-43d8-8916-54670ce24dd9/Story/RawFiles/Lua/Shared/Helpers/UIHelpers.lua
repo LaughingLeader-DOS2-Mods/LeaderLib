@@ -168,7 +168,7 @@ if not _ISCLIENT then
 else
 	---@param id integer|string
 	---@param method string
-	---@vararg any
+	---@vararg SerializableValue
 	---@return boolean
 	function GameHelpers.UI.TryInvoke(id, method, ...)
 		local ui = nil

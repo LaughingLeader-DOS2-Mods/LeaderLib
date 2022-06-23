@@ -22,11 +22,11 @@ local UIObjectExtended = {
 
 ---@type table<string, UIObjectExtended>
 local _registeredUIs = {}
-setmetatable(_registeredUIs, {__mode = "kv"})
+--setmetatable(_registeredUIs, {__mode = "kv"})
 
 ---@type UIObjectExtended[]
 local _registeredUIArray = {}
-setmetatable(_registeredUIArray, {__mode = "kv"})
+--setmetatable(_registeredUIArray, {__mode = "kv"})
 
 local function GetIndex(tbl, k)
 	if k == "Instance" then
@@ -227,6 +227,18 @@ local function OnTick(e)
 end
 
 RegisterTickListener(OnTick, true)
+
+Ext.RegisterListener("GameStateChanged", function (from, to)
+	if to == "Disconnect" or to == "Menu" then
+		local length = #_registeredUIArray
+		for i=1,length do
+			local ui = _registeredUIArray[i]
+			DestroyInstance(ui)
+		end
+		_registeredUIArray = {}
+		_registeredUIs = {}
+	end
+end)
 
 Ext.RegisterUINameCall("LeaderLib_OnEventResolution", function (ui, event, id)
 	local data = _registeredUIs[id]

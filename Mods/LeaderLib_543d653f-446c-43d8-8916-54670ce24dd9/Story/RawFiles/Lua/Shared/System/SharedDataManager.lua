@@ -80,14 +80,6 @@ SetCurrentLevelData()
 Ext.RegisterListener("SessionLoading", SetCurrentLevelData)
 Ext.RegisterListener("SessionLoaded", SetCurrentLevelData)
 
-local function CreateEventArgs(region, state, levelType)
-	return {
-		Region = region,
-		State = state,
-		LevelType = levelType
-	}
-end
-
 if isClient then
 	---@type ClientData
 	Client = Classes.ClientData:Create("")
@@ -187,8 +179,19 @@ else
 	end
 
 	local syncSettingsNext = false
+	local syncOnGameState = false
+
+	local _validSyncStates = {
+		Running = true,
+		Paused = true,
+		GameMasterPause = true,
+	}
 
 	local function OnSyncTimer()
+		if not _validSyncStates[Ext.GetGameState()] then
+			syncOnGameState = true
+			return
+		end
 		GameHelpers.Data.SyncSharedData(syncSettingsNext)
 		syncSettingsNext = false
 	end
@@ -216,25 +219,48 @@ else
 	Ext.RegisterOsirisListener("RegionStarted", 1, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.STARTED
 		GameHelpers.Data.SetRegion(region)
-		Events.RegionChanged:Invoke(CreateEventArgs(region, SharedData.RegionData.State, SharedData.RegionData.LevelType))
+		Events.RegionChanged:Invoke({
+			Region = region,
+			State = SharedData.RegionData.State,
+			LevelType = SharedData.RegionData.LevelType
+		})
+		GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
 	end)
 	
 	Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.GAME
 		GameHelpers.Data.SetRegion(region)
-		Events.RegionChanged:Invoke(CreateEventArgs(region, SharedData.RegionData.State, SharedData.RegionData.LevelType))
+		Events.RegionChanged:Invoke({
+			Region = region,
+			State = SharedData.RegionData.State,
+			LevelType = SharedData.RegionData.LevelType
+		})
+		if Ext.GetGameState() ~= "Running" then
+			GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
+		end
 	end)
 	
 	Ext.RegisterOsirisListener("RegionEnded", 1, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.ENDED
 		GameHelpers.Data.SetRegion(region)
-		Events.RegionChanged:Invoke(CreateEventArgs(region, SharedData.RegionData.State, SharedData.RegionData.LevelType))
+		Events.RegionChanged:Invoke({
+			Region = region,
+			State = SharedData.RegionData.State,
+			LevelType = SharedData.RegionData.LevelType
+		})
+		if Ext.GetGameState() ~= "Running" then
+			GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
+		end
 	end)
 	
 	Events.LuaReset:Subscribe(function(e)
 		SharedData.RegionData.State = REGIONSTATE.GAME
 		GameHelpers.Data.SetRegion(e.Region)
-		Events.RegionChanged:Invoke(CreateEventArgs(e.Region, SharedData.RegionData.State, SharedData.RegionData.LevelType))
+		Events.RegionChanged:Invoke({
+			Region = SharedData.RegionData.Current,
+			State = SharedData.RegionData.State,
+			LevelType = SharedData.RegionData.LevelType
+		})
 	end)
 
 	function GameHelpers.Data.SetGameMode(gameMode)
@@ -435,9 +461,15 @@ else
 	-- Ext.RegisterOsirisListener("CharacterRemoveMaxSourcePointsOverride", 2, "after", OnPointsChanged)
 
 	Ext.RegisterListener("GameStateChanged", function(from, to)
-		if to == "Running" and from ~= "Paused" and from ~= "GameMasterPause" then
-			IterateUsers("LeaderLib_StoreUserData")
-			GameHelpers.Data.StartSyncTimer()
+		if syncOnGameState and _validSyncStates[to] then
+			syncOnGameState = false
+			GameHelpers.Data.SyncSharedData(syncSettingsNext)
+			syncSettingsNext = false
+		else
+			if to == "Running" and from ~= "Paused" and from ~= "GameMasterPause" then
+				IterateUsers("LeaderLib_StoreUserData")
+				GameHelpers.Data.StartSyncTimer()
+			end
 		end
 	end)
 
@@ -509,7 +541,7 @@ if isClient then
 		end
 		--Fallback in case all we have is a netid
 		if netid then
-			local character = Ext.GetCharacter(netid)
+			local character = GameHelpers.GetCharacter(netid)
 			if character then
 				SharedData.CharacterData[profile] = Classes.ClientCharacterData:Create({
 					UUID = character.MyGuid,
@@ -533,7 +565,7 @@ if isClient then
 		currentCharacter = currentCharacter or GetClientCharacter()
 		if Vars.DebugMode then
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:ActiveCharacterChanged] Profile(%s) NameOrID(%s) Last(%s)", currentCharacter.Profile, (GameHelpers.Character.GetDisplayName(currentCharacter.NetID)) or currentCharacter.NetID, (last and GameHelpers.Character.GetDisplayName(last)) or -1)
-			local character = Ext.GetCharacter(currentCharacter.NetID)
+			local character = GameHelpers.GetCharacter(currentCharacter.NetID)
 			if character then
 				fprint(LOGLEVEL.DEFAULT, "DisplayName(%s) StoryDisplayName(%s) OriginalDisplayName(%s) PlayerCustomData.Name(%s)", character.DisplayName, character.StoryDisplayName, character.OriginalDisplayName, character.PlayerCustomData and character.PlayerCustomData.Name or "")
 			end
@@ -541,17 +573,60 @@ if isClient then
 		InvokeListenerCallbacks(Listeners.ClientCharacterChanged, currentCharacter.UUID, currentCharacter.ID, currentCharacter.Profile, currentCharacter.NetID, currentCharacter.IsHost)
 	end
 
+	Ext.RegisterNetListener("LeaderLib_SharedData_SetRegionData", function(cmd, payload)
+		local data = Common.JsonParse(payload)
+		if data then
+			local invokeRegionChanged = false
+			if not SharedData then
+				SharedData = {
+					RegionData = data
+				}
+				invokeRegionChanged = true
+			else
+				local lastRegion = nil
+				local lastRegionState = nil
+				if SharedData.RegionData then
+					lastRegion = SharedData.RegionData.Current
+					lastRegionState = SharedData.RegionData.State
+				end
+				for k,v in pairs(data) do
+					SharedData.RegionData[k] = v
+				end
+
+				invokeRegionChanged = lastRegion ~= SharedData.RegionData.Current or lastRegionState ~= SharedData.RegionData.State
+			end
+
+			if invokeRegionChanged then
+				Events.RegionChanged:Invoke({
+					Region = SharedData.RegionData.Current,
+					State = SharedData.RegionData.State,
+					LevelType = SharedData.RegionData.LevelType
+				})
+			end
+		end
+	end)
+
 	local function StoreData(cmd, payload)
 		local last = GetClientCharacter().NetID
 		local data = Common.JsonParse(payload)
 		if data ~= nil then
+			local invokeRegionChanged = false
 			if not SharedData then
 				SharedData = data.Shared
+				invokeRegionChanged = true
 			else
+				local lastRegion = nil
+				local lastRegionState = nil
+				if SharedData.RegionData then
+					lastRegion = SharedData.RegionData.Current
+					lastRegionState = SharedData.RegionData.State
+				end
 				--Update to new values this way, in case mods have set a variable to LeaderLib.SharedData
 				for k,v in pairs(data.Shared) do
 					SharedData[k] = v
 				end
+
+				invokeRegionChanged = lastRegion ~= SharedData.RegionData.Current or lastRegionState ~= SharedData.RegionData.State
 			end
 			Client:SetClientData(data.ID, data.Profile, data.IsHost, GetClientCharacter(data.Profile, data.NetID))
 			InvokeListenerCallbacks(Listeners.ClientDataSynced, SharedData.ModData, SharedData)
@@ -562,7 +637,13 @@ if isClient then
 				Events.Initialized:Invoke({Region=SharedData.RegionData.Current})
 				Vars.Initialized = true
 			end
-			Events.RegionChanged:Invoke(CreateEventArgs(SharedData.RegionData.Current, SharedData.RegionData.State, SharedData.RegionData.LevelType))
+			if invokeRegionChanged then
+				Events.RegionChanged:Invoke({
+					Region = SharedData.RegionData.Current,
+					State = SharedData.RegionData.State,
+					LevelType = SharedData.RegionData.LevelType
+				})
+			end
 			return true
 		else
 			error("Error parsing json?", payload)

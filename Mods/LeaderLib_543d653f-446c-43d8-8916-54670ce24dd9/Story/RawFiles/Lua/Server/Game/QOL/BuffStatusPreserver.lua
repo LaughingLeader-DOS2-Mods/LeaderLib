@@ -1,7 +1,13 @@
 if BuffStatusPreserver == nil then
 	BuffStatusPreserver = {}
 end
+
+local _testingEnabled = false
+
 BuffStatusPreserver.Enabled = function()
+	if _testingEnabled then
+		return true
+	end
 	local settings = SettingsManager.GetMod(ModuleUUID, false)
 	if settings then
 		return settings.Global:FlagEquals("LeaderLib_BuffStatusPreserverEnabled", true)
@@ -43,9 +49,9 @@ end
 ---@param character EsvCharacter
 ---@param status EsvStatus
 function BuffStatusPreserver.PreserveStatus(character, status, skipCheck)
-	if not IgnoreStatus(status.StatusId)
-	and status.CurrentLifeTime > 0 
-	and (skipCheck == true or GameHelpers.Status.IsBeneficial(status.StatusId, true, BuffStatusPreserver.IgnoredStatusTypes)) then
+	if skipCheck or (not IgnoreStatus(status.StatusId)
+	and status.CurrentLifeTime > 0
+	and GameHelpers.Status.IsBeneficial(status.StatusId, true, BuffStatusPreserver.IgnoredStatusTypes)) then
 		if not PersistentVars.BuffStatuses[character.MyGuid] then
 			PersistentVars.BuffStatuses[character.MyGuid] = {}
 		end
@@ -61,8 +67,27 @@ function BuffStatusPreserver.PreserveStatus(character, status, skipCheck)
 end
 
 ---@param character EsvCharacter
+---@param statusId string|string[]
+function BuffStatusPreserver.ClearSavedStatus(character, statusId)
+	if type(statusId) == "table" then
+		for _,v in pairs(statusId) do	
+			BuffStatusPreserver.ClearSavedStatus(character, v)
+		end
+	else
+		local GUID = GameHelpers.GetUUID(character)
+		if GUID and PersistentVars.BuffStatuses[GUID] then
+			PersistentVars.BuffStatuses[GUID][statusId] = nil
+		end
+	end
+end
+
+---@param character EsvCharacter
 function BuffStatusPreserver.PreserveAllStatuses(character)
 	if not BuffStatusPreserver.Enabled() then return end
+	local character = GameHelpers.GetCharacter(character)
+	if not character then
+		return false
+	end
 	for _,status in pairs(character:GetStatusObjects()) do
 		local statusType = GameHelpers.Status.GetStatusType(status.StatusId)
 		if statusType == "CONSUME" then
@@ -71,9 +96,11 @@ function BuffStatusPreserver.PreserveAllStatuses(character)
 	end
 end
 
-function BuffStatusPreserver.OnLeftCombat(obj, id)
+---@param obj UUID
+---@param combatId integer
+function BuffStatusPreserver.OnLeftCombat(obj, combatId)
 	if not BuffStatusPreserver.Enabled() then return end
-	if GameHelpers.Character.IsPlayerOrPartyMember(obj) then
+	if GameHelpers.ObjectExists(obj) and GameHelpers.Character.IsPlayerOrPartyMember(obj) then
 		local player = GameHelpers.GetCharacter(obj)
 		if player then
 			BuffStatusPreserver.PreserveAllStatuses(player)
@@ -81,11 +108,13 @@ function BuffStatusPreserver.OnLeftCombat(obj, id)
 	end
 end
 
+---@param obj UUID
+---@param combatId integer
 function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
-	local uuid = StringHelpers.GetUUID(obj)
-	local data = PersistentVars.BuffStatuses[uuid]
+	local GUID = GameHelpers.GetUUID(obj)
+	local data = PersistentVars.BuffStatuses[GUID]
 	if data then
-		local character = GameHelpers.GetCharacter(uuid)
+		local character = GameHelpers.GetCharacter(GUID)
 		if character then
 			for id,duration in pairs(data) do
 				local status = character:GetStatus(id)
@@ -96,7 +125,7 @@ function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
 				end
 			end
 		end
-		PersistentVars.BuffStatuses[uuid] = nil
+		PersistentVars.BuffStatuses[GUID] = nil
 	end
 end
 
@@ -110,10 +139,13 @@ function BuffStatusPreserver.OnStatusApplied(target, status, source, statusType,
 	if GameHelpers.Ext.ObjectIsCharacter(target)
 	and not GameHelpers.Character.IsInCombat(target)
 	and GameHelpers.Character.IsPlayerOrPartyMember(target) then
-		local data = BuffStatusPreserver.NextBuffStatus[target.MyGuid]
-		if data and data[status.StatusId] then
-			BuffStatusPreserver.NextBuffStatus[target.MyGuid][status] = nil
-			BuffStatusPreserver.PreserveStatus(target, status, true)
+		local GUID = GameHelpers.GetUUID(target)
+		if GUID then
+			local data = BuffStatusPreserver.NextBuffStatus[GUID]
+			if data and data[status.StatusId] then
+				BuffStatusPreserver.NextBuffStatus[GUID][status] = nil
+				BuffStatusPreserver.PreserveStatus(target, status, true)
+			end
 		end
 	end
 end
@@ -121,8 +153,8 @@ end
 --Only preserve beneficial statuses applied by skills.
 function BuffStatusPreserver.OnSkillUsed(caster, skill, skillType, skillElement)
 	if not BuffStatusPreserver.Enabled() then return end
-	if CharacterIsInCombat(caster) == 0 and GameHelpers.Character.IsPlayerOrPartyMember(caster) then
-		caster = StringHelpers.GetUUID(caster)
+	local GUID = GameHelpers.GetUUID(caster)
+	if GUID and not GameHelpers.Character.IsInCombat(GUID) and GameHelpers.Character.IsPlayerOrPartyMember(GUID) then
 		---@type StatProperty[]
 		local props = GameHelpers.Stats.GetSkillProperties(skill)
 		if props then
@@ -130,13 +162,16 @@ function BuffStatusPreserver.OnSkillUsed(caster, skill, skillType, skillElement)
 				if v.Type == "Status"
 				and not IgnoreStatus(v.Action)
 				and GameHelpers.Status.IsBeneficial(v.Action, true, BuffStatusPreserver.IgnoredStatusTypes) then
-					if BuffStatusPreserver.NextBuffStatus[caster] == nil then
-						BuffStatusPreserver.NextBuffStatus[caster] = {}
+					if BuffStatusPreserver.NextBuffStatus[GUID] == nil then
+						BuffStatusPreserver.NextBuffStatus[GUID] = {}
 					end
-					BuffStatusPreserver.NextBuffStatus[caster][v.Action] = true
+					BuffStatusPreserver.NextBuffStatus[GUID][v.Action] = true
 				end
 			end
 		end
+	end
+	if _testingEnabled then
+		Testing.EmitSignal("BUFFSTATUSPRESERVER_SkillUsed")
 	end
 end
 
@@ -148,8 +183,71 @@ StatusManager.Register.Type.Applied("CONSUME", BuffStatusPreserver.OnStatusAppli
 ---@private
 function BuffStatusPreserver.Disable()
 	if PersistentVars.BuffStatuses then
-		for uuid,data in pairs(PersistentVars.BuffStatuses) do
-			BuffStatusPreserver.OnEnteredCombat(uuid, 0)
+		for GUID,data in pairs(PersistentVars.BuffStatuses) do
+			if GameHelpers.ObjectExists(GUID) then
+				BuffStatusPreserver.OnEnteredCombat(GUID, 0)
+			else
+				PersistentVars.BuffStatuses[GUID] = nil
+			end
 		end
 	end
+end
+
+if Vars.DebugMode then
+	local buffTest = Classes.LuaTest.Create("buffstatuspreserver", {
+		---@param self LuaTest
+		function(self)
+			local host = CharacterGetHostCharacter()
+			_testingEnabled = true
+			self.Cleanup = function ()
+				GameHelpers.Status.Remove(host, "FORTIFIED")
+				BuffStatusPreserver.ClearSavedStatus(host, "FORTIFIED")
+				_testingEnabled = false
+			end
+			CharacterUseSkill(host, "Target_EnemyFortify", host, 1, 1, 1)
+			self:WaitForSignal("BUFFSTATUSPRESERVER_SkillUsed", 10000)
+			self:AssertGotSignal("BUFFSTATUSPRESERVER_SkillUsed")
+			self:Wait(5000)
+			local duration = GameHelpers.Status.GetDuration(host, "FORTIFIED")
+			self:AssertEquals(duration == -1, true, string.format("Failed to make FORTIFIED permanent (%s)", duration))
+			return true
+		end,
+		---@param self LuaTest
+		function(self)
+			local host = CharacterGetHostCharacter()
+			_testingEnabled = true
+			local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(host, 6.0)
+			local enemy = TemporaryCharacterCreateAtPosition(x, y, z, "13ee7ec6-70c3-4f2c-9145-9a5e85feb7d3", 0)
+			self.Cleanup = function ()
+				GameHelpers.Status.Remove(host, "FORTIFIED")
+				BuffStatusPreserver.ClearSavedStatus(host, "FORTIFIED")
+				RemoveTemporaryCharacter(enemy)
+				_testingEnabled = false
+			end
+			SetStoryEvent(enemy, "ClearPeaceReturn")
+			CharacterSetReactionPriority(enemy, "StateManager", 0)
+			CharacterSetReactionPriority(enemy, "ResetInternalState", 0)
+			CharacterSetReactionPriority(enemy, "ReturnToPeacePosition", 0)
+			CharacterSetReactionPriority(enemy, "CowerIfNeutralSeeCombat", 0)
+			SetTag(enemy, "LeaderLib_TemporaryCharacter")
+			self:Wait(250)
+			SetFaction(enemy, "PVP_1")
+			self:Wait(250)
+			CharacterSetTemporaryHostileRelation(host, enemy)
+			self:Wait(250)
+			EnterCombat(host, enemy)
+			self:Wait(50)
+			JumpToTurn(host)
+			CharacterUseSkill(host, "Target_EnemyFortify", host, 1, 1, 1)
+			self:WaitForSignal("BUFFSTATUSPRESERVER_SkillUsed", 10000)
+			self:AssertGotSignal("BUFFSTATUSPRESERVER_SkillUsed")
+			self:Wait(5000)
+			local duration = GameHelpers.Status.GetDuration(host, "FORTIFIED")
+			self:AssertEquals(duration > 0, true, string.format("Failed to make FORTIFIED non-permanent in combat (%s)", duration))
+			return true
+		end,
+	},{
+		CallCleanupAfterEachTask = true
+	})
+	Testing.RegisterConsoleCommandTest(buffTest.ID, buffTest, "Test the BuffStatusPreserver QoL feature.")
 end

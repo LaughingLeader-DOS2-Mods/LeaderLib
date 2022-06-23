@@ -183,7 +183,7 @@ local _combatLeftEnabled = false
 --Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "after", BuffStatusPreserver.OnLeftCombat)
 Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", BuffStatusPreserver.OnEnteredCombat)
 Ext.RegisterOsirisListener("CharacterUsedSkill", 4, "after", BuffStatusPreserver.OnSkillUsed)
-StatusManager.Register.Type.Applied("CONSUME", BuffStatusPreserver.OnStatusApplied)
+--StatusManager.Register.Type.Applied("CONSUME", BuffStatusPreserver.OnStatusApplied)
 
 ---@private
 function BuffStatusPreserver.Disable()

@@ -84,9 +84,13 @@ else
 	Ext.RegisterOsirisListener("ItemEnteredRegion", Data.OsirisEvents.ItemEnteredRegion, "after", function(uuid, region)
 		--Sync state safety
 		if Ext.GetGameState() == "Running" 
+		and SharedData.RegionData.State == REGIONSTATE.GAME
 		and SettingsManager.GetMod(ModuleUUID).Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true)
 		then
-			WorldTooltips.OnItemEnteredWorld(Ext.GetItem(uuid), region)
+			local item = GameHelpers.GetItem(uuid)
+			if item and not StringHelpers.IsNullOrEmpty(item.CurrentLevel) then
+				WorldTooltips.OnItemEnteredWorld(item, region)
+			end
 		end
 	end)
 

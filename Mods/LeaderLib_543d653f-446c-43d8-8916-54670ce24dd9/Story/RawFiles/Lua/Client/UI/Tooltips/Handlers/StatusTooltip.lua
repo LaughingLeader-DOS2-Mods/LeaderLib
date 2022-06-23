@@ -119,40 +119,47 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 	end
 
 	local immunityElements = tooltip:GetElements("StatusImmunity")
-	tooltip:RemoveElements("StatusImmunity")
-	table.sort(immunityElements, _AlphabeticalCaseInsensitiveLabelSort)
-	if settings.Client.CondenseStatusTooltips then
-		local immunitiesCombined = {Type="StatusImmunity", Label=""}
-		local preserveElements = {}
-		local immunities = {}
-		local replaceText = StringHelpers.Replace(LocalizedText.Tooltip.ImmunityTo.Value, " [1]<br>", "")
-		local length = #immunityElements
-		for i=1,length do
-			local v = immunityElements[i]
-			if string.find(v.Label, replaceText) then
-				local text = StringHelpers.Trim(StringHelpers.Replace(StringHelpers.Replace(v.Label, replaceText, ""), "<br>", ""))
-				if not StringHelpers.IsNullOrWhitespace(text) then
-					if string.sub(text, -1) == "." then
-						text = string.sub(text, 1, string.len(text)-1)
+	local len = #immunityElements
+	if len > 0 then
+		tooltip:RemoveElements("StatusImmunity")
+		--Place immunities at the bottom of the tooltips, but only sort/check them if there's more than 1 element
+		if len > 1 then
+			table.sort(immunityElements, _AlphabeticalCaseInsensitiveLabelSort)
+			if settings.Client.CondenseStatusTooltips then
+				local immunitiesCombined = {Type="StatusImmunity", Label=""}
+				local preserveElements = {}
+				local immunities = {}
+				local replaceText = StringHelpers.Replace(LocalizedText.Tooltip.ImmunityTo.Value, " [1]<br>", "")
+				for i=1,len do
+					local v = immunityElements[i]
+					if string.find(v.Label, replaceText) then
+						local text = StringHelpers.Trim(StringHelpers.Replace(StringHelpers.Replace(v.Label, replaceText, ""), "<br>", ""))
+						if not StringHelpers.IsNullOrWhitespace(text) then
+							if string.sub(text, -1) == "." then
+								text = string.sub(text, 1, string.len(text)-1)
+							end
+							immunities[#immunities+1] = text
+						else
+							preserveElements[#preserveElements+1] = v
+						end
+					else
+						preserveElements[#preserveElements+1] = v
 					end
-					immunities[#immunities+1] = text
-				else
-					preserveElements[#preserveElements+1] = v
 				end
-			else
-				preserveElements[#preserveElements+1] = v
+				table.sort(immunities, function(a,b)
+					return a:lower() < b:lower()
+				end)
+				immunitiesCombined.Label = LocalizedText.Tooltip.ImmunityTo:ReplacePlaceholders(StringHelpers.Join(", ", immunities))
+				if not StringHelpers.IsNullOrWhitespace(immunitiesCombined.Label) then
+					preserveElements[#preserveElements+1] = immunitiesCombined
+				end
+				if #preserveElements > 0 then
+					immunityElements = preserveElements
+				end
 			end
 		end
-		table.sort(immunities, function(a,b)
-			return a:lower() < b:lower()
-		end)
-		immunityElements = preserveElements
-		immunitiesCombined.Label = LocalizedText.Tooltip.ImmunityTo:ReplacePlaceholders(StringHelpers.Join(", ", immunities))
-		if not StringHelpers.IsNullOrWhitespace(immunitiesCombined.Label) then
-			preserveElements[#preserveElements+1] = immunitiesCombined
-		end
+		tooltip:AppendElements(immunityElements)
 	end
-	tooltip:AppendElements(immunityElements)
 end
 
 ---@param status EsvStatus

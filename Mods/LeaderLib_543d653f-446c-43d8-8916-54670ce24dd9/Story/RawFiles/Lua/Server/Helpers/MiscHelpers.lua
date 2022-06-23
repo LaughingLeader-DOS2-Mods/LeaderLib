@@ -182,27 +182,6 @@ function GameHelpers.SyncScale(object)
 	end
 end
 
----Set an item or character's scale, and sync it to clients.
----@param object EsvCharacter|string
----@param scale number
----@param persist boolean|nil
-function GameHelpers.SetScale(object, scale, persist)
-	object = GameHelpers.TryGetObject(object)
-	if object and object.Scale then
-		if _EXTVERSION <= 56 then
-			if object.SetScale then
-				object:SetScale(scale)
-			end
-		else
-			object.Scale = scale
-		end
-		GameHelpers.SyncScale(object)
-		if persist == true then
-			PersistentVars.ScaleOverride[object.MyGuid] = scale
-		end
-	end
-end
-
 ---@param uuid ObjectParam
 function GameHelpers.IsInCombat(uuid)
 	if Ext.OsirisIsCallable() then

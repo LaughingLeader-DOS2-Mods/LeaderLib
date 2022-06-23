@@ -344,7 +344,7 @@ end)
 
 if Vars.DebugMode then
 	RegisterListener("QuestStarted", "TUT_ShipMurder", function (id, character)
-		Ext.PrintError("THERE'S BEEN A MURDER!", character.DisplayName)
+		Ext.PrintError("[QuestStarted:TUT_ShipMurder] THERE'S BEEN A MURDER!", character.DisplayName)
 	end)
 
 	RegisterListener("QuestStarted", function (id, character)

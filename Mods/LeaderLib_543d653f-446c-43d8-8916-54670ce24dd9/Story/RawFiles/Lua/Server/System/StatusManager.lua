@@ -194,8 +194,8 @@ StatusManager.Register.Type = {
 				StatusManager.Register.Type.Applied(v, callback)
 			end
 		elseif t == "string" then
-			local callbackWrapper = CreateCallbackWrapper(Vars.StatusEvent.Applied, callback)
-			RegisterStatusTypeListener(Vars.StatusEvent.Applied, statusType, callbackWrapper)
+			local callbackWrapper = CreateCallbackWrapper("Applied", callback)
+			RegisterStatusTypeListener("Applied", statusType, callbackWrapper)
 		else
 			fprint(LOGLEVEL.ERROR, "[StatusManager.Register.Type.Applied] Invalid type for statusType param(%s) value (%s)", t, statusType)
 		end
@@ -345,29 +345,29 @@ StatusManager.Register.DisablingStatus = {
 	end
 }
 
----@param target EsvCharacter|EsvItem|UUID|NETID
+---@param target CharacterParam
 ---@param status string
 function StatusManager.IsPermanentStatusActive(target, status)
-	local uuid = GameHelpers.GetUUID(target)
-	fassert(uuid ~= nil, "Target parameter type (%s) is invalid. An EsvCharacter, EsvItem, UUID, or NetID should be provided.", target)
-	if PersistentVars.ActivePermanentStatuses[uuid] then
-		return PersistentVars.ActivePermanentStatuses[uuid][status] ~= nil
+	local GUID = GameHelpers.GetUUID(target)
+	fassert(GUID ~= nil, "Target parameter type (%s) is invalid. An EsvCharacter, EsvItem, UUID, or NetID should be provided.", target)
+	if PersistentVars.ActivePermanentStatuses[GUID] then
+		return PersistentVars.ActivePermanentStatuses[GUID][status] ~= nil
 	end
 	return false
 end
 
----@param target EsvCharacter|EsvItem|UUID|NETID
+---@param target CharacterParam
 ---@param status string
 ---@param enabled boolean
----@param source EsvCharacter|EsvItem|UUID|NETID|nil A source to use when applying the status, if any. Defaults to the target.
+---@param source CharacterParam|nil A source to use when applying the status, if any. Defaults to the target.
 function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
-	local uuid = GameHelpers.GetUUID(target)
+	local GUID = GameHelpers.GetUUID(target)
 	local statusIsActive = GameHelpers.Status.IsActive(target, status)
 	if not enabled then
-		if PersistentVars.ActivePermanentStatuses[uuid] then
-			PersistentVars.ActivePermanentStatuses[uuid][status] = nil
-			if Common.TableLength(PersistentVars.ActivePermanentStatuses[uuid], true) == 0 then
-				PersistentVars.ActivePermanentStatuses[uuid] = nil
+		if PersistentVars.ActivePermanentStatuses[GUID] then
+			PersistentVars.ActivePermanentStatuses[GUID][status] = nil
+			if Common.TableLength(PersistentVars.ActivePermanentStatuses[GUID], true) == 0 then
+				PersistentVars.ActivePermanentStatuses[GUID] = nil
 			end
 		end
 
@@ -375,11 +375,11 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 			GameHelpers.Status.Remove(target, status)
 		end
 	else
-		if PersistentVars.ActivePermanentStatuses[uuid] == nil then
-			PersistentVars.ActivePermanentStatuses[uuid] = {}
+		if PersistentVars.ActivePermanentStatuses[GUID] == nil then
+			PersistentVars.ActivePermanentStatuses[GUID] = {}
 		end
 		local sourceId = source and GameHelpers.GetUUID(source) or false
-		PersistentVars.ActivePermanentStatuses[uuid][status] = sourceId
+		PersistentVars.ActivePermanentStatuses[GUID][status] = sourceId
 		if not statusIsActive then
 			--fassert(_type(status) == "string" and GameHelpers.Stats.Exists(status), "Status (%s) does not exist.", status)
 			GameHelpers.Status.Apply(target, status, -1.0, true, source or target)
@@ -388,25 +388,46 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 end
 
 ---Applies permanent status. The given status will be blocked from deletion.
----@param target EsvCharacter|EsvItem|UUID|NETID
+---@param target CharacterParam
 ---@param status string
----@param source EsvCharacter|EsvItem|UUID|NETID|nil A source to use when applying the status, if any. Defaults to the target.
+---@param source CharacterParam|nil A source to use when applying the status, if any. Defaults to the target.
 ---@return boolean isActive Returns whether the permanent status is active or not.
 function StatusManager.ApplyPermanentStatus(target, status, source)
 	_INTERNAL.SetPermanentStatus(target, status, true, source)
 end
 
----Removed a registered permanent status for the given character.
----@param target EsvCharacter|EsvItem|UUID|NETID
+---Remove a registered permanent status for the given character.
+---@param target CharacterParam
 ---@param status string
 function StatusManager.RemovePermanentStatus(target, status)
 	_INTERNAL.SetPermanentStatus(target, status, false)
 end
 
+---Removed all registered permanent statuses for the given character.
+---@param target CharacterParam
+function StatusManager.RemoveAllPermanentStatuses(target)
+	local GUID = GameHelpers.GetUUID(target)
+	if GUID and PersistentVars.ActivePermanentStatuses then
+		local statuses = PersistentVars.ActivePermanentStatuses[GUID]
+		if statuses then
+			target = GameHelpers.GetCharacter(target)
+			if target then
+				for id,source in pairs(statuses) do
+					local duration = GameHelpers.Status.GetDuration(target, id)
+					if duration == -1 then
+						GameHelpers.Status.Remove(GUID, id)
+					end
+				end
+			end
+			PersistentVars.ActivePermanentStatuses[GUID] = nil
+		end
+	end
+end
+
 ---Makes a permanent status active or not, depending on if it's active already. The given status will be blocked from deletion.
----@param target EsvCharacter|EsvItem|UUID|NETID
+---@param target CharacterParam
 ---@param status string
----@param source EsvCharacter|EsvItem|UUID|NETID|nil A source to use when applying the status, if any. Defaults to the target.
+---@param source CharacterParam|nil A source to use when applying the status, if any. Defaults to the target.
 ---@return boolean isActive Returns whether the permanent status is active or not.
 function StatusManager.TogglePermanentStatus(target, status, source)
 	_INTERNAL.SetPermanentStatus(target, status, not StatusManager.IsPermanentStatusActive(target, status), source)

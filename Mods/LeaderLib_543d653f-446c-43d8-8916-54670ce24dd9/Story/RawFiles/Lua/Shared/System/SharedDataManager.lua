@@ -634,8 +634,8 @@ if isClient then
 				ActiveCharacterChanged(Client.Character, last)
 			end
 			if not Vars.Initialized then
-				Events.Initialized:Invoke({Region=SharedData.RegionData.Current})
 				Vars.Initialized = true
+				Events.Initialized:Invoke({Region=SharedData.RegionData.Current})
 			end
 			if invokeRegionChanged then
 				Events.RegionChanged:Invoke({

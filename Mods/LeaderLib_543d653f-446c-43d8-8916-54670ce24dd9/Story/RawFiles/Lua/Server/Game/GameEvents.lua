@@ -80,6 +80,7 @@ local function InvokeOnInitializedCallbacks(region)
 end
 
 local function OnInitialized(region, isRunning)
+	Vars.Initialized = true
 	GameHelpers.Data.SetGameMode()
 	region = region or SharedData.RegionData.Current
 	if region == nil and Ext.OsirisIsCallable() then
@@ -89,14 +90,15 @@ local function OnInitialized(region, isRunning)
 		end
 	end
 
-	if not Vars.Initialized then
+	if not Vars.InitializedLeaveActionWorkarounds then
 		local status,err = xpcall(OverrideLeaveActionStatuses, debug.traceback)
 		if not status then
 			Ext.PrintError(err)
+		else
+			Vars.InitializedLeaveActionWorkarounds = true
 		end
 	end
 
-	Vars.Initialized = true
 	pcall(function()
 		if not LoadGlobalSettings() then
 			SaveGlobalSettings()
@@ -122,14 +124,9 @@ local function OnInitialized(region, isRunning)
 	end
 end
 
---Called from Osiris, Osi.LeaderLib_Initialized
-function OnLeaderLibInitialized(region)
-	OnInitialized(region)
-end
-
 Events.RegionChanged:Subscribe(function (e)
 	if e.LevelType == LEVELTYPE.GAME and e.State == REGIONSTATE.GAME then
-		OnLeaderLibInitialized(e.Region)
+		OnInitialized(e.Region)
 	end
 end)
 
@@ -168,12 +165,11 @@ local function DebugLoadPersistentVars()
 end
 
 function OnLuaReset()
+	Vars.Initialized = false
 	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
 	GameHelpers.Data.SetRegion(region)
 	GameHelpers.Data.SetGameMode()
-	Vars.Initialized = false
 	pcall(DebugLoadPersistentVars)
-	OnInitialized(region, true)
 	if IsCharacterCreationLevel(region) == 1 then
 		SkipTutorial.Initialize()
 	end

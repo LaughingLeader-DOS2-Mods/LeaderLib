@@ -897,8 +897,8 @@ function GameHelpers.Character.HasFlag(character, flag)
 end
 
 ---Returns true if the target is an enemy or Friendly Fire is enabled.
----@param target UUID|NETID|EsvCharacter|EclCharacter
----@param attacker UUID|NETID|EsvCharacter|EclCharacter|nil If not specified, then this will return true if the target is an enemy of the party.
+---@param target CharacterParam
+---@param attacker CharacterParam|nil If not specified, then this will return true if the target is an enemy of the party.
 ---@param allowItems boolean|nil If true, this will return true if target is an item.
 ---@return boolean
 function GameHelpers.Character.CanAttackTarget(target, attacker, allowItems)
@@ -919,7 +919,7 @@ function GameHelpers.Character.CanAttackTarget(target, attacker, allowItems)
 end
 
 ---Returns true if the character has a FEMALE tag or IsMale is false in PlayerCustomData.
----@param character UUID|NETID|EsvCharacter|EclCharacter
+---@param character CharacterParam
 ---@return boolean
 function GameHelpers.Character.IsFemale(character)
 	character = GameHelpers.TryGetObject(character)
@@ -930,6 +930,36 @@ function GameHelpers.Character.IsFemale(character)
 	if GameHelpers.Character.IsPlayer(character) and character.PlayerCustomData
 	and not character.PlayerCustomData.IsMale then
 		return true
+	end
+	return false
+end
+
+---Returns true if the character has a status with IsInvulnerable set.
+---@param character CharacterParam
+---@return boolean
+function GameHelpers.Character.IsInvulnerable(character)
+	character = GameHelpers.TryGetObject(character)
+	if character then
+		for _,v in pairs(character:GetStatusObjects()) do
+			if v.IsInvulnerable then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+---Returns true if the character has a status with IsResistingDeath set.
+---@param character CharacterParam
+---@return boolean
+function GameHelpers.Character.IsResistingDeath(character)
+	character = GameHelpers.TryGetObject(character)
+	if character then
+		for _,v in pairs(character:GetStatusObjects()) do
+			if v.IsResistingDeath then
+				return true
+			end
+		end
 	end
 	return false
 end

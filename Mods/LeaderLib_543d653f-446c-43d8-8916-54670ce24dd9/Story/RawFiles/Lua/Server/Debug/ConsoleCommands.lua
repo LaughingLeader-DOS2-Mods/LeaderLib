@@ -149,6 +149,11 @@ Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force
 	if status == nil then
 		status = "HASTED"
 	end
+	local character = GameHelpers.GetCharacter(host)
+	if character.CannotDie or GameHelpers.Character.IsInvulnerable(character) then
+		--Invulnerable/Immortality can block statuses
+		force = 1
+	end
 	PrintDebug(command,status,target,source,duration,force)
 	ApplyStatus(target,status,duration,force,source)
 end)

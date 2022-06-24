@@ -354,8 +354,6 @@ local function InvokeCallbacks(sub, args, resultsTable, ...)
 	return result
 end
 
-local _netMessageFunc = _ISCLIENT and Ext.PostMessageToServer or GameHelpers.Net.Broadcast
-
 ---@param args table|nil
 ---@param skipAutoInvoke boolean|nil
 ---@vararg any
@@ -398,6 +396,7 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 			end
 		end
 		if canSync then
+			local _netMessageFunc = _ISCLIENT and Ext.PostMessageToServer or GameHelpers.Net.Broadcast
 			_netMessageFunc("LeaderLib_SubscribableEvent_Invoke", Common.JsonStringify({
 				ID = self.ID,
 				Args = SerializeArgs(args)

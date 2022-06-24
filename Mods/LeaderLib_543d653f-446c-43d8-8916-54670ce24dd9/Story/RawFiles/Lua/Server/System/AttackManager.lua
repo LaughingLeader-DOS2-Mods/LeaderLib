@@ -1,191 +1,172 @@
----@private
----@class BasicAttackListenerEntry
----@field Priority integer
+local _INTERNAL = {}
 
----@private
----@class BasicAttackOnStartCallbackEntry : BasicAttackListenerEntry
----@field Callback BasicAttackOnStartCallback
-
----@private
----@class BasicAttackOnHitCallbackEntry : BasicAttackListenerEntry
----@field Callback BasicAttackOnHitCallback
-
----@private
----@class BasicAttackOnWeaponTagHitCallbackEntry : BasicAttackListenerEntry
----@field Callback BasicAttackOnWeaponTagHitCallback
-
----@private
----@class BasicAttackOnWeaponTypeHitCallbackEntry : BasicAttackListenerEntry
----@field Callback BasicAttackOnWeaponTypeHitCallback
-
----@alias BasicAttackOnStartCallback fun(attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], targetIsObject:boolean):void
----@alias BasicAttackOnHitCallback fun(attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData|DamageList, targetIsObject:boolean, skill:StatEntrySkillData):void
----@alias BasicAttackOnWeaponTagHitCallback fun(tag:string, attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData, targetIsObject:boolean, skill:StatEntrySkillData):void
----@alias BasicAttackOnWeaponTypeHitCallback fun(weaponType:string, attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData, targetIsObject:boolean, skill:StatEntrySkillData):void
-
+---@class LeaderLibAttackManager
 AttackManager = {
-	OnStart = {
-		---@private
-		---@type BasicAttackOnStartCallbackEntry[]
-		Listeners = {},
-
-		---@param callback BasicAttackOnStartCallback|BasicAttackOnStartCallback[]
-		---@param allowSkills boolean|nil
-		---@param priority integer|nil Optional priority to assign to this callback.
-		Register = function(callback, allowSkills, priority)
-			if type(priority) ~= "number" then
-				priority = 99
-			end
-			local t = type(callback)
-			if t == "table" then
-				for _,v in pairs(callback) do 
-					AttackManager.OnStart.Register(v, allowSkills, priority)
-				end
-			else
-				table.insert(AttackManager.OnStart.Listeners, {Callback=callback, Priority = priority, AllowSkills = allowSkills})
-			end
-		end
-	},
-	OnHit = {
-		---@private
-		---@type BasicAttackOnHitCallbackEntry[]
-		Listeners = {},
-
-		---@param callback BasicAttackOnHitCallback|BasicAttackOnHitCallback[]
-		---@param allowSkills boolean|nil
-		---@param priority integer|nil Optional priority to assign to this callback.
-		Register = function(callback, allowSkills, priority)
-			if type(priority) ~= "number" then
-				priority = 99
-			end
-			local t = type(callback)
-			if t == "table" then
-				for _,v in pairs(callback) do
-					AttackManager.OnHit.Register(v, allowSkills, priority)
-				end
-			else
-				table.insert(AttackManager.OnHit.Listeners, {Callback=callback, Priority = priority, AllowSkills = allowSkills})
-			end
-		end
-	},
-	OnWeaponTagHit = {
-		---@private
-		---@type table<string,BasicAttackOnWeaponTagHitCallbackEntry[]>
-		Listeners = {},
-
-		---Register a listener that fires when a hit occurs with a specific weapon tag.
-		---@param tag string|string[]
-		---@param callback BasicAttackOnWeaponTagHitCallback
-		---@param allowSkills boolean|nil
-		---@param priority integer|nil Optional priority to assign to this callback.
-		Register = function(tag, callback, allowSkills, priority)
-			if type(priority) ~= "number" then
-				priority = 99
-			end
-			local t = type(tag)
-			if t == "table" then
-				for k,v in pairs(tag) do 
-					AttackManager.OnWeaponTagHit.Register(v, callback, allowSkills, priority) 
-				end
-			elseif t == "string" then
-				if not AttackManager.OnWeaponTagHit.Listeners[tag] then
-					AttackManager.OnWeaponTagHit.Listeners[tag] = {}
-				end
-				table.insert(AttackManager.OnWeaponTagHit.Listeners[tag], {Callback=callback, Priority = priority, AllowSkills = allowSkills})
-			end
-		end
-	},
-	OnWeaponTypeHit = {
-		---@private
-		---@type table<string,BasicAttackOnWeaponTypeHitCallbackEntry[]>
-		Listeners = {},
-
-		---Register a listener that fires when a hit occurs with a specific weapon type.
-		---@param weaponType string|string[]
-		---@param callback BasicAttackOnWeaponTypeHitCallback
-		---@param allowSkills boolean|nil
-		---@param priority integer Optional priority to assign to this callback.
-		Register = function(weaponType, callback, allowSkills, priority)
-			if type(priority) ~= "number" then
-				priority = 99
-			end
-			local t = type(weaponType)
-			if t == "table" then
-				for k,v in pairs(weaponType) do 
-					AttackManager.OnWeaponTypeHit.Register(v, callback, allowSkills, priority) 
-				end
-			elseif t == "string" then
-				if not AttackManager.OnWeaponTypeHit.Listeners[weaponType] then
-					AttackManager.OnWeaponTypeHit.Listeners[weaponType] = {}
-				end
-				table.insert(AttackManager.OnWeaponTypeHit.Listeners[weaponType], {Callback=callback, Priority = priority, AllowSkills = allowSkills})
-			end
-		end
-	},
+	_Internal = _INTERNAL,
+	---@type table<string,boolean>
+	EnabledTags = {}
 }
 
----@private
----@param a BasicAttackListenerEntry
----@param b BasicAttackListenerEntry
-function AttackManager.PrioritySort(a, b)
-	return a.Priority < b.Priority
-end
+---@alias DeprecatedBasicAttackOnStartCallback fun(attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], targetIsObject:boolean):void
+---@alias DeprecatedBasicAttackOnHitCallback fun(attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData|DamageList, targetIsObject:boolean, skill:StatEntrySkillData):void
+---@alias DeprecatedBasicAttackOnWeaponTagHitCallback fun(tag:string, attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData, targetIsObject:boolean, skill:StatEntrySkillData):void
+---@alias DeprecatedBasicAttackOnWeaponTypeHitCallback fun(weaponType:string, attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData, targetIsObject:boolean, skill:StatEntrySkillData):void
 
----@private
-function AttackManager.SortCallbacks()
-	table.sort(AttackManager.OnHit.Listeners, AttackManager.PrioritySort)
-	table.sort(AttackManager.OnStart.Listeners, AttackManager.PrioritySort)
-	table.sort(AttackManager.OnWeaponTagHit.Listeners, AttackManager.PrioritySort)
-	table.sort(AttackManager.OnWeaponTypeHit.Listeners, AttackManager.PrioritySort)
-end
+AttackManager.OnStart = {
+	---@deprecated
+	---@param callback DeprecatedBasicAttackOnStartCallback|DeprecatedBasicAttackOnStartCallback[]
+	---@param allowSkills boolean|nil
+	---@param priority integer|nil Optional priority to assign to this callback.
+	Register = function(callback, allowSkills, priority)
+		Events.OnBasicAttackStart:Subscribe(function (e)
+			callback(e.Attacker, e.Target, e.TargetIsObject)
+		end, {Priority=priority})
+	end
+}
 
----@private
-function AttackManager.InvokeCallbacks(isFromSkill, tbl, ...)
-	for k,v in pairs(tbl) do
-		if not isFromSkill or v.AllowSkills ~= false then
-			local b,err = xpcall(v.Callback, debug.traceback, ...)
-			if not b then
-				Ext.PrintError(err)
+AttackManager.OnHit = {
+	---@deprecated
+	---@param callback DeprecatedBasicAttackOnHitCallback|DeprecatedBasicAttackOnHitCallback[]
+	---@param allowSkills boolean|nil
+	---@param priority integer|nil Optional priority to assign to this callback.
+	Register = function(callback, allowSkills, priority)
+		if not allowSkills then
+			Events.OnWeaponHit:Subscribe(function (e)
+				if not e.SkillData then
+					callback(e.Attacker, e.Target, e.Data, e.TargetIsObject, e.SkillData)
+				end
+			end, {Priority=priority})
+		else
+			Events.OnWeaponHit:Subscribe(function (e)
+				callback(e.Attacker, e.Target, e.Data, e.TargetIsObject, e.SkillData)
+			end, {Priority=priority})
+		end
+	end
+}
+AttackManager.OnWeaponTagHit = {
+	---@deprecated
+	---Register a listener that fires when a hit occurs with a specific weapon tag.
+	---@param tag string|string[]
+	---@param callback DeprecatedBasicAttackOnWeaponTagHitCallback
+	---@param allowSkills boolean|nil
+	---@param priority integer|nil Optional priority to assign to this callback.
+	Register = function(tag, callback, allowSkills, priority)
+		local t = type(tag)
+		if t == "table" then
+			for k,v in pairs(tag) do 
+				AttackManager.OnWeaponTagHit.Register(v, callback, allowSkills, priority) 
+			end
+		elseif t == "string" then
+			AttackManager.EnabledTags[tag] = true
+			if not allowSkills then
+				Events.OnWeaponTagHit:Subscribe(function (e)
+					if not e.SkillData then
+						callback(e.Tag, e.Attacker, e.Target, e.Data, e.TargetIsObject, e.SkillData)
+					end
+				end, {Priority=priority, MatchArgs={Tag=tag}})
+			else
+				Events.OnWeaponTagHit:Subscribe(function (e)
+					callback(e.Tag, e.Attacker, e.Target, e.Data, e.TargetIsObject, e.SkillData)
+				end, {Priority=priority, MatchArgs={Tag=tag}})
 			end
 		end
 	end
-end
-
----@param attacker string
----@param target string
-local function SaveBasicAttackTarget(attacker, target)
-	if PersistentVars.BasicAttackData[attacker] == nil then
-		PersistentVars.BasicAttackData[attacker] = {}
+}
+AttackManager.OnWeaponTypeHit = {
+	---@deprecated
+	---Register a listener that fires when a hit occurs with a specific weapon type.
+	---@param weaponType string|string[]
+	---@param callback DeprecatedBasicAttackOnWeaponTypeHitCallback
+	---@param allowSkills boolean|nil
+	---@param priority integer Optional priority to assign to this callback.
+	Register = function(weaponType, callback, allowSkills, priority)
+		if type(priority) ~= "number" then
+			priority = 99
+		end
+		local t = type(weaponType)
+		if t == "table" then
+			for k,v in pairs(weaponType) do 
+				AttackManager.OnWeaponTypeHit.Register(v, callback, allowSkills, priority) 
+			end
+		elseif t == "string" then
+			if not allowSkills then
+				Events.OnWeaponTypeHit:Subscribe(function (e)
+					if not e.SkillData then
+						callback(e.WeaponType, e.Attacker, e.Target, e.Data, e.TargetIsObject, e.SkillData)
+					end
+				end, {Priority=priority, MatchArgs={WeaponType=weaponType}})
+			else
+				Events.OnWeaponTypeHit:Subscribe(function (e)
+					callback(e.WeaponType, e.Attacker, e.Target, e.Data, e.TargetIsObject, e.SkillData)
+				end, {Priority=priority, MatchArgs={WeaponType=weaponType}})
+			end
+		end
 	end
-	PersistentVars.BasicAttackData[attacker].Target = target
-end
+}
 
----@param attacker string
-local function GetBasicAttackTarget(attacker)
-	if PersistentVars.BasicAttackData ~= nil and PersistentVars.BasicAttackData[attacker] ~= nil then
-		return PersistentVars.BasicAttackData[attacker]
-	end
-	return nil
-end
-
-local function OnBasicAttackTarget(target, owner, attacker)
+RegisterProtectedOsirisListener("CharacterStartAttackObject", 3, "after", function (target, owner, attacker)
 	attacker = GameHelpers.GetCharacter(attacker)
 	target = GameHelpers.TryGetObject(target)
 	if attacker and target then
-		AttackManager.InvokeCallbacks(false, AttackManager.OnStart.Listeners, attacker, target, true)
+		Events.OnBasicAttackStart:Invoke({
+			Attacker = attacker,
+			Target = target,
+			TargetIsObject = true,
+		})
 	end
-end
-RegisterProtectedOsirisListener("CharacterStartAttackObject", 3, "after", OnBasicAttackTarget)
+end)
 
-local function OnBasicAttackPosition(x, y, z, owner, attacker)
+RegisterProtectedOsirisListener("CharacterStartAttackPosition", 5, "after", function (x, y, z, owner, attacker)
 	attacker = GameHelpers.GetCharacter(attacker)
-	local target = {x,y,z}
-	PersistentVars.StartAttackPosition[attacker.MyGuid] = target
 	if attacker then
-		AttackManager.InvokeCallbacks(false, AttackManager.OnStart.Listeners, attacker, target, false)
+		local target = {x,y,z}
+		PersistentVars.StartAttackPosition[attacker.MyGuid] = target
+		Events.OnBasicAttackStart:Invoke({
+			Attacker = attacker,
+			Target = target,
+			TargetIsObject = false,
+		})
+	end
+end)
+
+--- @param attacker EsvCharacter|EsvItem
+--- @param target EsvCharacter|EsvItem|number[]
+--- @param data HitData|DamageList
+--- @param skill StatEntrySkillData|nil
+function _INTERNAL.InvokeWeaponEvents(attacker, target, targetIsObject, data, skill)
+	local _tags = GameHelpers.GetAllTags(attacker, true, true)
+	for tag,_ in pairs(AttackManager.EnabledTags) do
+		if _tags[tag] then
+			Events.OnWeaponTagHit:Invoke({
+				Tag = tag,
+				Attacker = attacker,
+				Target = target,
+				TargetIsObject = targetIsObject,
+				Data = data,
+				Skill = skill and skill.Name or nil,
+				SkillData = skill
+			})
+		end
+	end
+	local weaponTypes = {}
+	if attacker.Stats.MainWeapon then
+		weaponTypes[attacker.Stats.MainWeapon.WeaponType] = true
+	end
+	if attacker.Stats.OffHandWeapon then
+		weaponTypes[attacker.Stats.OffHandWeapon.WeaponType] = true
+	end
+	for weaponType,_ in pairs(weaponTypes) do
+		Events.OnWeaponTypeHit:Invoke({
+			WeaponType = weaponType,
+			Attacker = attacker,
+			Target = target,
+			TargetIsObject = targetIsObject,
+			Data = data,
+			Skill = skill and skill.Name or nil,
+			SkillData = skill
+		})
 	end
 end
-RegisterProtectedOsirisListener("CharacterStartAttackPosition", 5, "after", OnBasicAttackPosition)
 
 --- @param isFromHit boolean
 --- @param attacker EsvCharacter|EsvItem
@@ -195,36 +176,33 @@ RegisterProtectedOsirisListener("CharacterStartAttackPosition", 5, "after", OnBa
 function AttackManager.InvokeOnHit(isFromHit, attacker, target, data, skill)
 	local targetIsObject = type(target) == "userdata"
 	local isFromSkill = skill ~= nil
-	AttackManager.InvokeCallbacks(isFromSkill, AttackManager.OnHit.Listeners, attacker, target, data, targetIsObject, skill)
+	Events.OnWeaponHit:Invoke({
+		Attacker = attacker,
+		Target = target,
+		TargetIsObject = targetIsObject,
+		Data = data,
+		Skill = isFromSkill and skill.Name or nil,
+		SkillData = skill
+	})
 	if GameHelpers.Ext.ObjectIsCharacter(attacker) then
-		for tag,callbacks in pairs(AttackManager.OnWeaponTagHit.Listeners) do
-			if GameHelpers.CharacterOrEquipmentHasTag(attacker, tag) then
-				AttackManager.InvokeCallbacks(isFromSkill, callbacks, tag, attacker, target, data, targetIsObject, skill)
-			end
-		end
-		local weaponTypes = {}
-		if attacker.Stats.MainWeapon then
-			weaponTypes[attacker.Stats.MainWeapon.WeaponType] = true
-		end
-		if attacker.Stats.OffHandWeapon then
-			weaponTypes[attacker.Stats.OffHandWeapon.WeaponType] = true
-		end
-		for weaponType,_ in pairs(weaponTypes) do
-			local callbacks = AttackManager.OnWeaponTypeHit.Listeners[weaponType]
-			if callbacks then
-				AttackManager.InvokeCallbacks(isFromSkill, callbacks, weaponType, attacker, target, data, targetIsObject, skill)
-			end
-		end
+		_INTERNAL.InvokeWeaponEvents(attacker, target, targetIsObject, data, skill)
 	end
 end
 
---- @param caster EsvGameObject
---- @param position number[]
+--- @param attacker EsvGameObject
+--- @param target number[]
 --- @param damageList DamageList
-RegisterProtectedExtenderListener("GroundHit", function(caster, position, damageList)
+RegisterProtectedExtenderListener("GroundHit", function(attacker, target, damageList)
 	--Also fires when a projectile hits the ground (exploding projectiles too!), so we need this table entry
-	if caster and PersistentVars.StartAttackPosition[caster.MyGuid] then
-		PersistentVars.StartAttackPosition[caster.MyGuid] = nil
-		AttackManager.InvokeOnHit(false, caster, position, damageList)
+	if attacker and PersistentVars.StartAttackPosition[attacker.MyGuid] then
+		PersistentVars.StartAttackPosition[attacker.MyGuid] = nil
+		local data = {Type="DamageList", DamageList = damageList}
+		Events.OnWeaponHit:Invoke({
+			Attacker = attacker,
+			Target = target,
+			TargetIsObject = false,
+			Data = data
+		})
+		_INTERNAL.InvokeWeaponEvents(attacker, target, false, data, nil)
 	end
 end)

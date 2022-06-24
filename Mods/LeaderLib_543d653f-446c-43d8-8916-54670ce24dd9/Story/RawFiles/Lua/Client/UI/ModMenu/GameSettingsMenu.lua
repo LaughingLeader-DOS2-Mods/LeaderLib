@@ -228,7 +228,7 @@ function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listPro
 	if GameSettingsMenu.Controls[id] == nil and controlType ~= "menuLabel" then
 		return
 	end
-	local controlsEnabled = Client.IsHost == true
+	local controlsEnabled = type(extraParam1) ~= "boolean" or extraParam1 == true
 	local main = ui:GetRoot()
 	if main ~= nil then
 		---@type MainMenuMC
@@ -238,8 +238,9 @@ function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listPro
 			local element = list.content_array[listIndex]
 			if element ~= nil then
 				if controlType == "slider" then
-					element.alpha = controlsEnabled and 1.0 or 0.3
-					element.slider_mc.m_disabled = not controlsEnabled
+					local enabled = element.amount_txt.visible
+					element.alpha = enabled and 1.0 or 0.3
+					element.slider_mc.m_disabled = not enabled
 				elseif controlType == "menuLabel" then
 					if extraParam1 == text.MainTitle.Value then
 						element.tooltip = text.MainTitle_Description.Value
@@ -290,20 +291,20 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuLabel(text.APSettings_Group_Player.Value)
 		--mainMenu.addMenuInfoLabel(GetNewID({Value=text.APSettings_Group_Player}), text.APSettings_Group_Player.Value, "TesT")
 		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.Player, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.Player.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Start"), text.APSettings_Start.Value, settings.APSettings.Player.Start, -1, apSliderMax, 1, false, text.APSettings_Start_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.Player.Recovery, -1, apSliderMax, 1, false, text.APSettings_Recovery_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Max"), text.APSettings_Max.Value, settings.APSettings.Player.Max, -1, apSliderMax, 1, false, text.APSettings_Max_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Start"), text.APSettings_Start.Value, settings.APSettings.Player.Start, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Start_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.Player.Recovery, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Recovery_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Max"), text.APSettings_Max.Value, settings.APSettings.Player.Max, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Max_Description.Value)
 
 		mainMenu.addMenuLabel(text.APSettings_Group_NPC.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.NPC, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.NPC.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Start"), text.APSettings_Start.Value, settings.APSettings.NPC.Start, -1, apSliderMax, 1, false, text.APSettings_Start_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.NPC.Recovery, -1, apSliderMax, 1, false, text.APSettings_Recovery_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Max"), text.APSettings_Max.Value, settings.APSettings.NPC.Max, -1, apSliderMax, 1, false, text.APSettings_Max_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Start"), text.APSettings_Start.Value, settings.APSettings.NPC.Start, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Start_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.NPC.Recovery, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Recovery_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Max"), text.APSettings_Max.Value, settings.APSettings.NPC.Max, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Max_Description.Value)
 
 		mainMenu.addMenuLabel(text.Section_Backstab.Value)
 
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings, "AllowTwoHandedWeapons"), text.BackstabSettings_AllowTwoHandedWeapons.Value, controlsEnabled, settings.BackstabSettings.AllowTwoHandedWeapons and 1 or 0, false, text.BackstabSettings_AllowTwoHandedWeapons_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.BackstabSettings, "MeleeSpellBackstabMaxDistance"), text.BackstabSettings_MeleeSpellBackstabMaxDistance.Value, settings.BackstabSettings.MeleeSpellBackstabMaxDistance, 0.1, 30.0, 0.1, false, text.BackstabSettings_MeleeSpellBackstabMaxDistance_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.BackstabSettings, "MeleeSpellBackstabMaxDistance"), text.BackstabSettings_MeleeSpellBackstabMaxDistance.Value, settings.BackstabSettings.MeleeSpellBackstabMaxDistance, 0.1, 30.0, 0.1, not controlsEnabled, text.BackstabSettings_MeleeSpellBackstabMaxDistance_Description.Value)
 
 		mainMenu.addMenuLabel(text.BackstabSettings_Group_Player.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "Enabled", "BackstabSettings.Player.Enabled"), text.BackstabSetting_Enabled.Value, controlsEnabled, settings.BackstabSettings.Player.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)

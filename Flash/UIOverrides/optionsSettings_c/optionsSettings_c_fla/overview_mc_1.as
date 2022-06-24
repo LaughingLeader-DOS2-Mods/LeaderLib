@@ -124,25 +124,25 @@ package optionsSettings_c_fla
 			this.title_txt.htmlText = param1.toUpperCase();
 		}
 		
-		public function addMenuCheckbox(param1:Number, param2:String, param3:Boolean, param4:Number, param5:Boolean, param6:String) : *
+		public function addMenuCheckbox(id:Number, label:String, enabled:Boolean, state:Number, param5:Boolean, tooltip:String) : *
 		{
 			var val8:* = undefined;
-			this.addMenuSelector(param1,param2,param6);
-			var val7:MovieClip = this.getElementByID(param1);
+			this.addMenuSelector(id,label,tooltip);
+			var val7:MovieClip = this.getElementByID(id);
 			if(val7)
 			{
 				val7.isCheckBox = true;
-				this.setMenuDropDownEnabled(param1,param3);
-				this.setMenuDropDownTooltip(param1,param6,true);
+				this.setMenuDropDownEnabled(id,enabled);
+				this.setMenuDropDownTooltip(id,tooltip,true);
 				val8 = 0;
 				while(val8 < this.checkBoxOptions.length)
 				{
-					this.addMenuSelectorEntry(param1,this.checkBoxOptions[val8]);
+					this.addMenuSelectorEntry(id,this.checkBoxOptions[val8]);
 					val8++;
 				}
-				this.selectMenuSelectorEntry(param1,param4);
+				this.selectMenuSelectorEntry(id,state);
 
-				ExternalInterface.call("controlAdded", "checkbox", val7.id, val7.list_pos, "list");
+				ExternalInterface.call("controlAdded", "checkbox", val7.id, val7.list_pos, "list", enabled);
 			}
 		}
 		
@@ -263,7 +263,7 @@ package optionsSettings_c_fla
 				this.maxWidth = this.minWidth;
 			}
 			this.resetBG();
-			ExternalInterface.call("controlAdded", "menuSelector", val4.id, val4.list_pos, "list");
+			ExternalInterface.call("controlAdded", "menuSelector", val4.id, val4.list_pos, "list", true);
 		}
 		
 		public function addMenuSelectorEntry(param1:Number, param2:String) : *
@@ -456,74 +456,74 @@ package optionsSettings_c_fla
 			return Math.round(param1 * 100) / 100;
 		}
 		
-		public function addMenuSlider(param1:Number, param2:String, param3:Number, param4:Number, param5:Number, param6:Number, param7:Boolean, param8:String) : *
+		public function addMenuSlider(id:Number, label:String, value:Number, min:Number, max:Number, interval:Number, disabled:Boolean, tooltip:String) : *
 		{
 			var val10:Number = NaN;
-			var val9:MovieClip = new SliderComp();
-			val9.x = this.elementX;
-			val9.label_txt.htmlText = param2;
-			val9.id = param1;
-			val9.name = "item" + this.list.length + "_mc";
-			val9.heightOverride = 104;
-			val9.tooltip = param8;
-			val9.slider_mc.maximum = this.roundFloat(param5);
-			val9.slider_mc.minimum = this.roundFloat(param4);
-			val9.min_txt.htmlText = String(this.roundFloat(param4));
-			val9.max_txt.htmlText = String(this.roundFloat(param5));
-			val9.slider_mc.snapInterval = this.roundFloat(param6);
-			val9.hl_mc.visible = false;
-			val9.amount_txt.visible = !param7;
-			val9.min_txt.visible = !param7;
-			val9.max_txt.visible = !param7;
-			val9.slider_mc.bgToWidthDiff = -20;
-			if(param6 != 0)
+			var slider_mc:MovieClip = new SliderComp();
+			slider_mc.x = this.elementX;
+			slider_mc.label_txt.htmlText = label;
+			slider_mc.id = id;
+			slider_mc.name = "item" + this.list.length + "_mc";
+			slider_mc.heightOverride = 104;
+			slider_mc.tooltip = tooltip;
+			slider_mc.slider_mc.maximum = this.roundFloat(max);
+			slider_mc.slider_mc.minimum = this.roundFloat(min);
+			slider_mc.min_txt.htmlText = String(this.roundFloat(min));
+			slider_mc.max_txt.htmlText = String(this.roundFloat(max));
+			slider_mc.slider_mc.snapInterval = this.roundFloat(interval);
+			slider_mc.hl_mc.visible = false;
+			slider_mc.amount_txt.visible = !disabled;
+			slider_mc.min_txt.visible = !disabled;
+			slider_mc.max_txt.visible = !disabled;
+			slider_mc.slider_mc.bgToWidthDiff = -20;
+			if(interval != 0)
 			{
-				val10 = (param5 - param4) / param6;
+				val10 = (max - min) / interval;
 				if(val10 <= 10)
 				{
-					val9.slider_mc.m_NotchLeftOffset = 9;
-					val9.slider_mc.useNotches = true;
-					val9.slider_mc.m_notches_mc.y = 11;
+					slider_mc.slider_mc.m_NotchLeftOffset = 9;
+					slider_mc.slider_mc.useNotches = true;
+					slider_mc.slider_mc.m_notches_mc.y = 11;
 				}
 				else
 				{
-					val9.slider_mc.useNotches = false;
+					slider_mc.slider_mc.useNotches = false;
 				}
 			}
-			val9.slider_mc.liveDragging = true;
-			val9.amount_txt.htmlText = this.roundFloat(param3);
-			if(param5 > 50)
+			slider_mc.slider_mc.liveDragging = true;
+			slider_mc.amount_txt.htmlText = this.roundFloat(value);
+			if(max > 50)
 			{
-				val9.slider_mc.tickInterval = 10;
+				slider_mc.slider_mc.tickInterval = 10;
 			}
-			else if(param5 > 20)
+			else if(max > 20)
 			{
-				val9.slider_mc.tickInterval = 5;
+				slider_mc.slider_mc.tickInterval = 5;
 			}
 			else
 			{
-				val9.slider_mc.tickInterval = 1;
+				slider_mc.slider_mc.tickInterval = 1;
 			}
-			val9.amount_txt.mouseEnabled = false;
-			val9.min_txt.mouseEnabled = false;
-			val9.max_txt.mouseEnabled = false;
-			if(val9.label_txt.textWidth > this.minWidth)
+			slider_mc.amount_txt.mouseEnabled = false;
+			slider_mc.min_txt.mouseEnabled = false;
+			slider_mc.max_txt.mouseEnabled = false;
+			if(slider_mc.label_txt.textWidth > this.minWidth)
 			{
-				if(this.maxWidth < val9.label_txt.textWidth)
+				if(this.maxWidth < slider_mc.label_txt.textWidth)
 				{
-					this.maxWidth = val9.label_txt.textWidth;
+					this.maxWidth = slider_mc.label_txt.textWidth;
 				}
 			}
 			else
 			{
 				this.maxWidth = this.minWidth;
 			}
-			this.list.addElement(val9);
-			this.setMenuDropDownTooltip(param1,param8,true);
+			this.list.addElement(slider_mc);
+			this.setMenuDropDownTooltip(id,tooltip,true);
 			this.resetBG();
-			val9.slider_mc.value = param3;
-			val9.resetAmountPos();
-			ExternalInterface.call("controlAdded", "slider", val9.id, val9.list_pos, "list");
+			slider_mc.slider_mc.value = value;
+			slider_mc.resetAmountPos();
+			ExternalInterface.call("controlAdded", "slider", slider_mc.id, slider_mc.list_pos, "list", !disabled);
 		}
 		
 		public function setMenuSlider(param1:Number, param2:Number) : *
@@ -573,7 +573,7 @@ package optionsSettings_c_fla
 				button.bg_mc.visible = enabled;
 				this.list.addElement(button);
 				this.resetBG();
-				ExternalInterface.call("controlAdded", "button", button.id, button.list_pos, "list");
+				ExternalInterface.call("controlAdded", "button", button.id, button.list_pos, "list", enabled);
 			}
 			else
 			{

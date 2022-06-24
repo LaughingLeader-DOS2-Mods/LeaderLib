@@ -132,17 +132,17 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 				local min = v.Min or 0
 				local max = v.Max or 999
 				local displayName, tooltip = PrepareText(name, v)
-				mainMenu.addMenuSlider(ModMenuManager.LastID, displayName, v.Value, min, max, interval, false, tooltip)
+				local controlsEnabled = v.ClientSide or Client.IsHost == true
+				mainMenu.addMenuSlider(ModMenuManager.LastID, displayName, v.Value, min, max, interval, not controlsEnabled, tooltip)
 				AddControl(v, modUUID, v.Value)
 				
 				local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
 				if slider ~= nil and slider.slider_mc ~= nil then
-					local controlsEnabled = v.ClientSide or Client.IsHost == true
 					slider.alpha = controlsEnabled and 1.0 or 0.3
 					slider.slider_mc.m_disabled = not controlsEnabled
 				end
 			elseif varType == "boolean" then
-				local enableControl = v.ClientSide or Client.IsHost == true -- TODO: Specify on entries whether clients can edit them?
+				local enableControl = v.ClientSide or Client.IsHost == true
 				local state = v.Value == true and 1 or 0
 				local displayName, tooltip = PrepareText(name, v, true)
 				mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)

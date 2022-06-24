@@ -107,7 +107,7 @@ package optionsSettings_fla
 				}
 				this.menuButtonContainer_mc.x = this.menuButtonContainerCenterPos.x - this.menuBtnList.width * 0.5;
 				this.menuButtonContainer_mc.y = this.menuButtonContainerCenterPos.y;
-				ExternalInterface.call("controlAdded", "optionButton", btn.buttonID, btn.list_pos, "menuBtnList");
+				ExternalInterface.call("controlAdded", "optionButton", btn.buttonID, btn.list_pos, "menuBtnList", !setDisabled);
 			}
 			else
 			{
@@ -189,39 +189,39 @@ package optionsSettings_fla
 			this.title_txt.htmlText = param1.toUpperCase();
 		}
 		
-		public function addMenuCheckbox(param1:Number, param2:String, param3:Boolean, param4:Number, param5:Boolean, param6:String) : *
+		public function addMenuCheckbox(id:Number, label:String, enabled:Boolean, state:Number, filterBool:Boolean, tooltip:String) : *
 		{
-			var val7:MovieClip = new Checkbox();
-			val7.x = this.elementX;
-			val7.label_txt.htmlText = param2;
-			val7.id = param1;
-			val7.name = "item" + this.list.length + "_mc";
-			val7.mHeight = 30;
-			val7.filterBool = param5;
-			val7.stateID = param4;
-			val7.tooltip = param6;
-			val7.bg_mc.gotoAndStop(param4 * 3 + 1);
-			this.totalHeight = this.totalHeight + (val7.mHeight + this.elementHSpacing);
-			if(val7.label_txt.textWidth > this.minWidth)
+			var checkbox_mc:MovieClip = new Checkbox();
+			checkbox_mc.x = this.elementX;
+			checkbox_mc.label_txt.htmlText = label;
+			checkbox_mc.id = id;
+			checkbox_mc.name = "item" + this.list.length + "_mc";
+			checkbox_mc.mHeight = 30;
+			checkbox_mc.filterBool = filterBool;
+			checkbox_mc.stateID = state;
+			checkbox_mc.tooltip = tooltip;
+			checkbox_mc.bg_mc.gotoAndStop(state * 3 + 1);
+			this.totalHeight = this.totalHeight + (checkbox_mc.mHeight + this.elementHSpacing);
+			if(checkbox_mc.label_txt.textWidth > this.minWidth)
 			{
-				if(this.maxWidth < val7.label_txt.textWidth)
+				if(this.maxWidth < checkbox_mc.label_txt.textWidth)
 				{
-					this.maxWidth = val7.label_txt.textWidth;
+					this.maxWidth = checkbox_mc.label_txt.textWidth;
 				}
 			}
 			else
 			{
 				this.maxWidth = this.minWidth;
 			}
-			val7.enable = param3;
-			if(param3 == false)
+			checkbox_mc.enable = enabled;
+			if(enabled == false)
 			{
-				val7.alpha = 0.3;
+				checkbox_mc.alpha = 0.3;
 			}
-			this.list.addElement(val7);
-			val7.formHL_mc.alpha = 0;
+			this.list.addElement(checkbox_mc);
+			checkbox_mc.formHL_mc.alpha = 0;
 			this.HLCounter = this.HLCounter + 1;
-			ExternalInterface.call("controlAdded", "checkbox", val7.id, val7.list_pos, "list");
+			ExternalInterface.call("controlAdded", "checkbox", checkbox_mc.id, checkbox_mc.list_pos, "list", enabled);
 		}
 		
 		public function setMenuCheckbox(param1:Number, param2:Boolean, param3:Number) : *
@@ -303,16 +303,16 @@ package optionsSettings_fla
 		{
 		}
 		
-		public function addMenuSelectorEntry(param1:Number, param2:String) : *
+		public function addMenuSelectorEntry(id:Number, label:String) : *
 		{
 			var select_mc:MovieClip = null;
-			var selector_mc:MovieClip = this.getElementByID(param1);
+			var selector_mc:MovieClip = this.getElementByID(id);
 			if(selector_mc)
 			{
 				select_mc = new SelectElement();
-				select_mc.label_txt.htmlText = param2;
+				select_mc.label_txt.htmlText = label;
 				selector_mc.selList.addElement(select_mc);
-				ExternalInterface.call("controlAdded", "menuLabel", select_mc.id, select_mc.list_pos, "selList", param1);
+				ExternalInterface.call("controlAdded", "menuLabel", select_mc.id, select_mc.list_pos, "selList", id);
 			}
 		}
 		
@@ -405,17 +405,17 @@ package optionsSettings_fla
 			}
 		}
 		
-		public function addMenuDropDown(param1:Number, param2:String, param3:String) : *
+		public function addMenuDropDown(id:Number, label:String, tooltip:String) : *
 		{
 			var dropdown_mc:MovieClip = new DropDown();
 			dropdown_mc.combo_mc.bgTopSizeDiff = -20;
 			dropdown_mc.customElHeight = this.elementHeight;
 			dropdown_mc.x = this.elementX;
-			dropdown_mc.label_txt.htmlText = param2;
-			dropdown_mc.id = param1;
+			dropdown_mc.label_txt.htmlText = label;
+			dropdown_mc.id = id;
 			dropdown_mc.name = "item" + this.list.length + "_mc";
 			dropdown_mc.mHeight = 30;
-			dropdown_mc.tooltip = param3;
+			dropdown_mc.tooltip = tooltip;
 			this.totalHeight = this.totalHeight + (dropdown_mc.mHeight + this.elementHSpacing);
 			dropdown_mc.combo_mc.addEventListener(Event.CLOSE,this.onComboClose);
 			dropdown_mc.combo_mc.addEventListener(Event.OPEN,this.onComboOpen);
@@ -460,73 +460,73 @@ package optionsSettings_fla
 			return Math.round(param1 * 100) / 100;
 		}
 		
-		public function addMenuSlider(param1:Number, param2:String, param3:Number, param4:Number, param5:Number, param6:Number, param7:Boolean, param8:String) : *
+		public function addMenuSlider(id:Number, label:String, value:Number, min:Number, max:Number, interval:Number, disabled:Boolean, tooltip:String) : *
 		{
 			var val10:Number = NaN;
-			var val9:MovieClip = new SliderComp();
-			val9.x = this.elementX;
-			val9.label_txt.htmlText = param2;
-			val9.id = param1;
-			val9.name = "item" + this.list.length + "_mc";
-			val9.mHeight = 30;
-			val9.tooltip = param8;
-			val9.slider_mc.maximum = this.roundFloat(param5);
-			val9.slider_mc.minimum = this.roundFloat(param4);
-			val9.min_txt.htmlText = String(this.roundFloat(param4));
-			val9.max_txt.htmlText = String(this.roundFloat(param5));
-			val9.slider_mc.snapInterval = this.roundFloat(param6);
-			val9.amount_txt.visible = !param7;
-			val9.min_txt.visible = !param7;
-			val9.max_txt.visible = !param7;
-			if(param6 != 0)
+			var slider_mc:MovieClip = new SliderComp();
+			slider_mc.x = this.elementX;
+			slider_mc.label_txt.htmlText = label;
+			slider_mc.id = id;
+			slider_mc.name = "item" + this.list.length + "_mc";
+			slider_mc.mHeight = 30;
+			slider_mc.tooltip = tooltip;
+			slider_mc.slider_mc.maximum = this.roundFloat(max);
+			slider_mc.slider_mc.minimum = this.roundFloat(min);
+			slider_mc.min_txt.htmlText = String(this.roundFloat(min));
+			slider_mc.max_txt.htmlText = String(this.roundFloat(max));
+			slider_mc.slider_mc.snapInterval = this.roundFloat(interval);
+			slider_mc.amount_txt.visible = !disabled;
+			slider_mc.min_txt.visible = !disabled;
+			slider_mc.max_txt.visible = !disabled;
+			if(interval != 0)
 			{
-				val10 = (param5 - param4) / param6;
+				val10 = (max - min) / interval;
 				if(val10 <= 10)
 				{
-					val9.slider_mc.useNotches = true;
+					slider_mc.slider_mc.useNotches = true;
 				}
 				else
 				{
-					val9.slider_mc.useNotches = false;
+					slider_mc.slider_mc.useNotches = false;
 				}
 			}
-			val9.slider_mc.liveDragging = true;
-			val9.amount_txt.htmlText = this.roundFloat(param3);
-			if(param5 > 50)
+			slider_mc.slider_mc.liveDragging = true;
+			slider_mc.amount_txt.htmlText = this.roundFloat(value);
+			if(max > 50)
 			{
-				val9.slider_mc.tickInterval = 10;
+				slider_mc.slider_mc.tickInterval = 10;
 			}
-			else if(param5 > 20)
+			else if(max > 20)
 			{
-				val9.slider_mc.tickInterval = 5;
+				slider_mc.slider_mc.tickInterval = 5;
 			}
 			else
 			{
-				val9.slider_mc.tickInterval = 1;
+				slider_mc.slider_mc.tickInterval = 1;
 			}
-			val9.amount_txt.mouseEnabled = false;
-			val9.min_txt.mouseEnabled = false;
-			val9.max_txt.mouseEnabled = false;
-			val9.slider_mc.bgToWidthDiff = -6;
-			this.totalHeight = this.totalHeight + (val9.mHeight + this.elementHSpacing);
-			if(val9.label_txt.textWidth > this.minWidth)
+			slider_mc.amount_txt.mouseEnabled = false;
+			slider_mc.min_txt.mouseEnabled = false;
+			slider_mc.max_txt.mouseEnabled = false;
+			slider_mc.slider_mc.bgToWidthDiff = -6;
+			this.totalHeight = this.totalHeight + (slider_mc.mHeight + this.elementHSpacing);
+			if(slider_mc.label_txt.textWidth > this.minWidth)
 			{
-				if(this.maxWidth < val9.label_txt.textWidth)
+				if(this.maxWidth < slider_mc.label_txt.textWidth)
 				{
-					this.maxWidth = val9.label_txt.textWidth;
+					this.maxWidth = slider_mc.label_txt.textWidth;
 				}
 			}
 			else
 			{
 				this.maxWidth = this.minWidth;
 			}
-			val9.label_txt.y = 26 - Math.round(val9.label_txt.textHeight * 0.5);
-			this.list.addElement(val9);
-			val9.formHL_mc.alpha = 0;
+			slider_mc.label_txt.y = 26 - Math.round(slider_mc.label_txt.textHeight * 0.5);
+			this.list.addElement(slider_mc);
+			slider_mc.formHL_mc.alpha = 0;
 			this.HLCounter = this.HLCounter + 1;
-			val9.slider_mc.value = param3;
-			val9.resetAmountPos();
-			ExternalInterface.call("controlAdded", "slider", val9.id, val9.list_pos, "list");
+			slider_mc.slider_mc.value = value;
+			slider_mc.resetAmountPos();
+			ExternalInterface.call("controlAdded", "slider", slider_mc.id, slider_mc.list_pos, "list", !disabled);
 		}
 		
 		public function setMenuSlider(param1:Number, param2:Number) : *
@@ -547,39 +547,39 @@ package optionsSettings_fla
 		
 		public function addMenuButton(id:Number, label:String, clickSound:String, enabled:Boolean, tooltip:String) : *
 		{
-			var val6:MovieClip = new Menu_button();
-			val6.x = this.elementX;
-			val6.label_txt.htmlText = label;
-			val6.id = id;
-			val6.name = "item" + this.list.length + "_mc";
-			val6.mHeight = 70;
-			val6.tooltip = tooltip;
-			this.totalHeight = this.totalHeight + (val6.mHeight + this.elementHSpacing);
-			if(val6.label_txt.textWidth > this.minWidth)
+			var button_mc:MovieClip = new Menu_button();
+			button_mc.x = this.elementX;
+			button_mc.label_txt.htmlText = label;
+			button_mc.id = id;
+			button_mc.name = "item" + this.list.length + "_mc";
+			button_mc.mHeight = 70;
+			button_mc.tooltip = tooltip;
+			this.totalHeight = this.totalHeight + (button_mc.mHeight + this.elementHSpacing);
+			if(button_mc.label_txt.textWidth > this.minWidth)
 			{
-				if(this.maxWidth < val6.label_txt.textWidth)
+				if(this.maxWidth < button_mc.label_txt.textWidth)
 				{
-					this.maxWidth = val6.label_txt.textWidth;
+					this.maxWidth = button_mc.label_txt.textWidth;
 				}
 			}
 			else
 			{
 				this.maxWidth = this.minWidth;
 			}
-			val6.disable_mc.visible = !enabled;
-			val6.bg_mc.visible = enabled;
-			this.list.addElement(val6);
-			val6.formHL_mc.alpha = 0;
+			button_mc.disable_mc.visible = !enabled;
+			button_mc.bg_mc.visible = enabled;
+			this.list.addElement(button_mc);
+			button_mc.formHL_mc.alpha = 0;
 			if(clickSound.length > 0)
 			{
-				val6.snd_onUp = clickSound;
+				button_mc.snd_onUp = clickSound;
 			}
 			else
 			{
-				val6.snd_onUp = "UI_Gen_XButton_Click";
+				button_mc.snd_onUp = "UI_Gen_XButton_Click";
 			}
 			this.HLCounter = this.HLCounter + 1;
-			ExternalInterface.call("controlAdded", "button", val6.id, val6.list_pos, "list");
+			ExternalInterface.call("controlAdded", "button", button_mc.id, button_mc.list_pos, "list", enabled);
 		}
 		
 		public function setButtonEnabled(param1:Number, param2:Boolean) : *

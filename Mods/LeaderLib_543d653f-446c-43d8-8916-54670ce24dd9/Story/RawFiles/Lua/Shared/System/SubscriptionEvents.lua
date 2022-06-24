@@ -477,7 +477,12 @@ if not _ISCLIENT then
 	---@see LeaderLibAttackManager
 	---@type SubscribableEvent<OnWeaponTagHitEventArgs>
 	Events.OnWeaponTagHit = Classes.SubscribableEvent:Create("OnWeaponTagHit", {
-		ArgsKeyOrder={"Tag", "Attacker", "Target", "Data", "TargetIsObject", "Skill"}
+		ArgsKeyOrder={"Tag", "Attacker", "Target", "Data", "TargetIsObject", "Skill"},
+		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
+			if matchArgsType == "table" and type(opts.MatchArgs.Tag) == "string" then
+				AttackManager.EnabledTags[opts.MatchArgs.Tag] = true
+			end
+		end
 	})
 else
 	---@class UICreatedEventArgs

@@ -187,6 +187,28 @@ local _sheetTypeTooltips = {
 	Tag = true,
 }
 
+local function TrySetTooltipDelay(root, lastRequestType)
+	local settings = GameSettingsManager.GetSettings()
+	if not settings then
+		return
+	end
+	if root.tf then
+		if settings.Client.EnableTooltipDelay.Item and _itemTypeTooltips[lastRequestType] then
+			root.tf.allowDelay = true
+		elseif settings.Client.EnableTooltipDelay.Skill and lastRequestType == "Skill" then
+			root.tf.allowDelay = true
+		elseif settings.Client.EnableTooltipDelay.Status and lastRequestType == "Status" then
+			root.tf.allowDelay = true
+		elseif settings.Client.EnableTooltipDelay.CharacterSheet and _sheetTypeTooltips[lastRequestType] then
+			root.tf.allowDelay = true
+		elseif settings.Client.EnableTooltipDelay.Generic and lastRequestType == "Generic" then
+			root.tf.allowDelay = true
+		elseif root.tf.allowDelay == true then
+			root.tf.allowDelay = false
+		end
+	end
+end
+
 --Fires after TooltipHooks.NextRequest is processed and made nil.
 function TooltipHandler.OnTooltipPositioned(ui, ...)
 	local root = ui:GetRoot()
@@ -198,24 +220,13 @@ function TooltipHandler.OnTooltipPositioned(ui, ...)
 			lastRequestType = lastRequest.Type
 			lastRequestUIType = lastRequest.UIType
 		end
-		local settings = GameSettingsManager.GetSettings()
-		if root.tf then
-			if settings.Client.EnableTooltipDelay.Item and _itemTypeTooltips[lastRequestType] then
-				root.tf.allowDelay = true
-			elseif settings.Client.EnableTooltipDelay.Skill and lastRequestType == "Skill" then
-				root.tf.allowDelay = true
-			elseif settings.Client.EnableTooltipDelay.Status and lastRequestType == "Status" then
-				root.tf.allowDelay = true
-			elseif settings.Client.EnableTooltipDelay.CharacterSheet and _sheetTypeTooltips[lastRequestType] then
-				root.tf.allowDelay = true
-			elseif settings.Client.EnableTooltipDelay.Generic and lastRequestType == "Generic" then
-				root.tf.allowDelay = true
-			elseif root.tf.allowDelay == true then
-				root.tf.allowDelay = false
-			end
+
+		local b,err = xpcall(TrySetTooltipDelay, debug.traceback, root, lastRequestType)
+		if not b then
+			Ext.PrintError(err)
 		end
 
-		if lastRequestType == "Item" and TooltipHandler.HasTagTooltipData or #Listeners.OnTooltipPositioned > 0 then
+		if lastRequestType == "Item" and (TooltipHandler.HasTagTooltipData or #Listeners.OnTooltipPositioned > 0) then
 			local tooltips = {}
 
 			if root.formatTooltip ~= nil then

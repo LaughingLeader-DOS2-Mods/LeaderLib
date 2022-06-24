@@ -821,7 +821,7 @@ function DebugTooltipEncoding(ui)
 end
 
 ---@class TooltipRequest:table
----@field Type string
+---@field Type GameTooltipType
 ---@field UIType integer
 
 ---@class TooltipItemRequest:TooltipRequest
@@ -1835,7 +1835,7 @@ function TooltipData:AppendElementBeforeType(ele, elementType)
 	return ele
 end
 
----@alias GameTooltipType string|'"Ability"'|'"CustomStat"'|'"Generic"'|'"Item"'|'"Pyramid"'|'"Rune"'|'"Skill"'|'"Stat"'|'"Status"'|'"Tag"'|'"Talent"'
+---@alias GameTooltipType string|"Ability"|"CustomStat"|"Generic"|"Item"|"Pyramid"|"Rune"|"Skill"|"Stat"|"Status"|"Tag"|"Talent"
 
 ---Register a function to call when a tooltip occurs.
 ---Examples:

@@ -74,6 +74,13 @@ local DefaultSettings = {
 		CondenseStatusTooltips = false,
 		CondenseItemTooltips = true,
 		FixStatusTooltips = true,
+		EnableTooltipDelay = {
+			CharacterSheet = false,
+			Generic = false,
+			Item = false,
+			Skill = false,
+			Status = false,
+		},
 		HideChatLog = Ext.IsDeveloperMode(),
 	},
 	EnableDeveloperTests = false,

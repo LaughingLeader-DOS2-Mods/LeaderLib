@@ -163,11 +163,59 @@ local function FormatTagTooltip(ui, tooltip_mc, ...)
 	end
 end
 
+local _itemTypeTooltips = {
+	Item = true,
+	Rune = true,
+	Pyramid = true
+}
+
+--Check the UI Type so we don't delay item tools in the hotbar
+local _itemTypeTooltipsUIs = {
+	[Data.UIType.partyInventory] = true,
+	[Data.UIType.partyInventory_c] = true,
+	[Data.UIType.containerInventory] = true,
+	[Data.UIType.containerInventoryGM] = true,
+	[Data.UIType.reward] = true,
+	[Data.UIType.reward_c] = true,
+}
+
+local _sheetTypeTooltips = {
+	Ability = true,
+	Stat = true,
+	CustomStat = true,
+	Talent = true,
+	Tag = true,
+}
+
 --Fires after TooltipHooks.NextRequest is processed and made nil.
 function TooltipHandler.OnTooltipPositioned(ui, ...)
-	if Game.Tooltip.LastRequestTypeEquals("Item") and TooltipHandler.HasTagTooltipData or #Listeners.OnTooltipPositioned > 0 then
-		local root = ui:GetRoot()
-		if root ~= nil then
+	local root = ui:GetRoot()
+	if root ~= nil then
+		local lastRequestType = ""
+		local lastRequest = Game.Tooltip.GetCurrentOrLastRequest()
+		local lastRequestUIType = nil
+		if lastRequest then
+			lastRequestType = lastRequest.Type
+			lastRequestUIType = lastRequest.UIType
+		end
+		local settings = GameSettingsManager.GetSettings()
+		if root.tf then
+			if settings.Client.EnableTooltipDelay.Item and _itemTypeTooltips[lastRequestType] then
+				root.tf.allowDelay = true
+			elseif settings.Client.EnableTooltipDelay.Skill and lastRequestType == "Skill" then
+				root.tf.allowDelay = true
+			elseif settings.Client.EnableTooltipDelay.Status and lastRequestType == "Status" then
+				root.tf.allowDelay = true
+			elseif settings.Client.EnableTooltipDelay.CharacterSheet and _sheetTypeTooltips[lastRequestType] then
+				root.tf.allowDelay = true
+			elseif settings.Client.EnableTooltipDelay.Generic and lastRequestType == "Generic" then
+				root.tf.allowDelay = true
+			elseif root.tf.allowDelay == true then
+				root.tf.allowDelay = false
+			end
+		end
+
+		if lastRequestType == "Item" and TooltipHandler.HasTagTooltipData or #Listeners.OnTooltipPositioned > 0 then
 			local tooltips = {}
 
 			if root.formatTooltip ~= nil then
@@ -180,8 +228,10 @@ function TooltipHandler.OnTooltipPositioned(ui, ...)
 				tooltips[#tooltips+1] = root.offhandTooltip.tooltip_mc
 			end
 
-			if #tooltips > 0 then
-				for i,tooltip_mc in pairs(tooltips) do
+			local len = #tooltips
+			if len > 0 then
+				for i=1,len do
+					local tooltip_mc = tooltips[i]
 					if Features.FormatTagElementTooltips then
 						FormatTagTooltip(ui, tooltip_mc)
 					end

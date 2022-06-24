@@ -172,29 +172,44 @@ local text = {
 	BackstabSettings_SpellsCanBackstab = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab"),
 	BackstabSettings_SpellsCanBackstab_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab_Description"),
 	Section_Client = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_Client"),
-	Client_AlwaysDisplayWeaponScalingText = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText"),
-	Client_AlwaysDisplayWeaponScalingText_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText_Description"),
 	Section_StatusHider = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_StatusHider", "Status Hiding"),
-	Client_HideStatuses = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses"),
-	Client_HideStatuses_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses_Description"),
-	Client_StatusOptions_AffectHealthbar = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar"),
-	Client_StatusOptions_AffectHealthbar_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar_Description"),
+	Section_Tooltips_Delay = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_TooltipsDelay", "Tooltip Delays"),
 	Button_ClearWhitelist = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearWhitelist"),
 	Button_ClearWhitelist_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearWhitelist_Description"),
 	Button_ClearBlacklist = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearBlacklist"),
 	Button_ClearBlacklist_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearBlacklist_Description"),
-	Client_DivineTalentsEnabled = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled"),
-	Client_DivineTalentsEnabled_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled_Description"),
-	Client_AlwaysExpandTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysExpandTooltips"),
-	Client_AlwaysExpandTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysExpandTooltips_Description"),
-	Client_HideChatLog = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideChatLog", "Hide Chat Log"),
-	Client_HideChatLog_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideChatLog_Description", "Aggressively prevent the chat log from being visible or toggleable."),
-	Client_CondenseItemTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseItemTooltips", "Condense Item Tooltips"),
-	Client_CondenseItemTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseItemTooltips_Description", "Try to reduce max item tooltip size by combining elements, such as \"On Hit\" actions."),
-	Client_CondenseStatusTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips", "Condense Status Tooltips"),
-	Client_CondenseStatusTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips_Description", "Try to reduce max status tooltip size by combining elements, such as immunities."),
-	Client_FixStatusTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FixStatusTooltips", "Fix Status Tooltips"),
-	Client_FixStatusTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FixStatusTooltips_Description", "Removes the status malus icon and extra spacing, caused by a typo in Larian's UI code, and organizes bonuses and maluses together, while also sorting them alphabetically."),
+	Client = {
+		AlwaysDisplayWeaponScalingText_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText_Description"),
+		AlwaysDisplayWeaponScalingText = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText"),
+		DivineTalentsEnabled = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled"),
+		HideStatuses = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses"),
+		HideStatuses_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses_Description"),
+		StatusOptions_AffectHealthbar = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar"),
+		StatusOptions_AffectHealthbar_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar_Description"),
+		DivineTalentsEnabled_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled_Description"),
+		AlwaysExpandTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysExpandTooltips"),
+		AlwaysExpandTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysExpandTooltips_Description"),
+		HideChatLog = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideChatLog", "Hide Chat Log"),
+		HideChatLog_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideChatLog_Description", "Aggressively prevent the chat log from being visible or toggleable."),
+		CondenseItemTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseItemTooltips", "Condense Item Tooltips"),
+		CondenseItemTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseItemTooltips_Description", "Try to reduce max item tooltip size by combining elements, such as \"On Hit\" actions."),
+		CondenseStatusTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips", "Condense Status Tooltips"),
+		CondenseStatusTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips_Description", "Try to reduce max status tooltip size by combining elements, such as immunities."),
+		FixStatusTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FixStatusTooltips", "Fix Status Tooltips"),
+		FixStatusTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FixStatusTooltips_Description", "Removes the status malus icon and extra spacing, caused by a typo in Larian's UI code, and organizes bonuses and maluses together, while also sorting them alphabetically."),
+		EnableTooltipDelay = {
+			CharacterSheet = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_CharacterSheet", "Delay Character Sheet Tooltips"),
+			CharacterSheet_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_CharacterSheet_Description", "Enable a 0.5 second delay for tooltips in the Character Sheet (abilities, stats, talents)."),
+			Generic = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Generic", "Delay Generic Tooltips"),
+			Generic_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Generic_Description", "Enable a 0.5 second delay for generic tooltips (things like button tooltips)."),
+			Item = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Item", "Delay Item Tooltips"),
+			Item_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Item_Description", "Enable a 0.5 second delay for item tooltips (includes the hotbar)."),
+			Status = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Status", "Delay Status Tooltips"),
+			Status_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Status_Description", "Enable a 0.5 second delay for status tooltips (statuses next to portraits, and the examine window)."),
+			Skill = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Skill", "Delay Skill Tooltips"),
+			Skill_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Skill_Description", "Enable a 0.5 second delay for skill tooltips."),
+		},
+	},
 }
 
 for k,v in pairs(text) do
@@ -307,24 +322,31 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, controlsEnabled, settings.BackstabSettings.NPC.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
 
 		mainMenu.addMenuLabel(text.Section_Client.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client_AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client_AlwaysExpandTooltips_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client_AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client_AlwaysDisplayWeaponScalingText_Description.Value)
-		
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseItemTooltips"), text.Client_CondenseItemTooltips.Value, true, settings.Client.CondenseItemTooltips and 1 or 0, false, text.Client_CondenseItemTooltips_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseStatusTooltips"), text.Client_CondenseStatusTooltips.Value, true, settings.Client.CondenseStatusTooltips and 1 or 0, false, text.Client_CondenseStatusTooltips_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "FixStatusTooltips"), text.Client_FixStatusTooltips.Value, true, settings.Client.FixStatusTooltips and 1 or 0, false, text.Client_FixStatusTooltips_Description.Value)
-		
 		if Mods.CharacterExpansionLib then
-			mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled"), text.Client_DivineTalentsEnabled.Value, true, settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client_DivineTalentsEnabled_Description.Value)
+			mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled"), text.Client.DivineTalentsEnabled.Value, true, settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client.DivineTalentsEnabled_Description.Value)
 		end
 
 		if _EXTVERSION >= 56 then
-			mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideChatLog"), text.Client_HideChatLog.Value, true, settings.Client.HideChatLog and 1 or 0, false, text.Client_HideChatLog_Description.Value)
+			mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideChatLog"), text.Client.HideChatLog.Value, true, settings.Client.HideChatLog and 1 or 0, false, text.Client.HideChatLog_Description.Value)
 		end
 
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client.AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client.AlwaysExpandTooltips_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client.AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client.AlwaysDisplayWeaponScalingText_Description.Value)
+		
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseItemTooltips"), text.Client.CondenseItemTooltips.Value, true, settings.Client.CondenseItemTooltips and 1 or 0, false, text.Client.CondenseItemTooltips_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseStatusTooltips"), text.Client.CondenseStatusTooltips.Value, true, settings.Client.CondenseStatusTooltips and 1 or 0, false, text.Client.CondenseStatusTooltips_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "FixStatusTooltips"), text.Client.FixStatusTooltips.Value, true, settings.Client.FixStatusTooltips and 1 or 0, false, text.Client.FixStatusTooltips_Description.Value)
+
+		mainMenu.addMenuLabel(text.Section_Tooltips_Delay.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "CharacterSheet"), text.Client.EnableTooltipDelay.CharacterSheet.Value, true, settings.Client.EnableTooltipDelay.CharacterSheet and 1 or 0, false, text.Client.EnableTooltipDelay.CharacterSheet_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Generic"), text.Client.EnableTooltipDelay.Generic.Value, true, settings.Client.EnableTooltipDelay.Generic and 1 or 0, false, text.Client.EnableTooltipDelay.Generic_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Item"), text.Client.EnableTooltipDelay.Item.Value, true, settings.Client.EnableTooltipDelay.Item and 1 or 0, false, text.Client.EnableTooltipDelay.Item_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Skill"), text.Client.EnableTooltipDelay.Skill.Value, true, settings.Client.EnableTooltipDelay.Skill and 1 or 0, false, text.Client.EnableTooltipDelay.Skill_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Status"), text.Client.EnableTooltipDelay.Status.Value, true, settings.Client.EnableTooltipDelay.Status and 1 or 0, false, text.Client.EnableTooltipDelay.Status_Description.Value)
+
 		mainMenu.addMenuLabel(text.Section_StatusHider.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "HideAll"), text.Client_HideStatuses.Value, true, settings.Client.StatusOptions.HideAll and 1 or 0, false, text.Client_HideStatuses_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "AffectHealthbar"), text.Client_StatusOptions_AffectHealthbar.Value, true, settings.Client.StatusOptions.AffectHealthbar and 1 or 0, false, text.Client_StatusOptions_AffectHealthbar_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "HideAll"), text.Client.HideStatuses.Value, true, settings.Client.StatusOptions.HideAll and 1 or 0, false, text.Client.HideStatuses_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "AffectHealthbar"), text.Client.StatusOptions_AffectHealthbar.Value, true, settings.Client.StatusOptions.AffectHealthbar and 1 or 0, false, text.Client.StatusOptions_AffectHealthbar_Description.Value)
 
 		mainMenu.addMenuButton(AddButton("ClearBlacklist", function()
 			GameSettings.Settings.Client.StatusOptions.Blacklist = {}

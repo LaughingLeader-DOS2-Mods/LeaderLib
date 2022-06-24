@@ -223,7 +223,6 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		if settings.Client.CondenseItemTooltips then
 			local elements = tooltip:GetElements("ExtraProperties")
 			if #elements > 1 then
-				Ext.Dump(elements)
 				for i,v in pairs(elements) do
 					if StringHelpers.IsNullOrEmpty(StringHelpers.Trim(v.Label)) then
 						table.remove(elements, i)

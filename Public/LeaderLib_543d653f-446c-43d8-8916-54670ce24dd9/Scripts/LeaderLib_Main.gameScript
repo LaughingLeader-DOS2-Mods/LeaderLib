@@ -758,7 +758,7 @@ ACTIONS
 IF "c1&c2&c3"
 	GetVar(_Skill, _Char, "LeaderLib_ShootLocalConeAt_Skill")
 	GetVar(_TargetPos, _Char, "LeaderLib_ShootLocalConeAt_Target")
-	CharacterGetStat(_LevelF, _Item, Level)
+	CharacterGetStat(_LevelF, _Char, Level)
 THEN
 	Cast(_Level, _LevelF)
 	ShootLocalConeAt(_Skill, _Char, %LeaderLib_ConeOffset, _TargetPos, _Level, _Char)
@@ -779,7 +779,7 @@ IF "c1&c2&c3&c4"
 	GetVar(_Skill, _Char, "LeaderLib_ShootWorldConeAt_Skill")
 	GetVar(_SourcePos, _Char, "LeaderLib_ShootWorldConeAt_Source")
 	GetVar(_TargetPos, _Char, "LeaderLib_ShootWorldConeAt_Target")
-	CharacterGetStat(_LevelF, _Item, Level)
+	CharacterGetStat(_LevelF, _Char, Level)
 THEN
 	Cast(_Level, _LevelF)
 	ShootWorldConeAt(_Skill, _Char, _SourcePos, _TargetPos, _Level)

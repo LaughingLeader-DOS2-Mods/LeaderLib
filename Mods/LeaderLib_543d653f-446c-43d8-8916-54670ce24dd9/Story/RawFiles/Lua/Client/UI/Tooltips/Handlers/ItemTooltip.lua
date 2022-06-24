@@ -2,6 +2,10 @@ local appendRequirementsAfterTypes = {ItemRequirement=true, ItemLevel=true, APCo
 
 local _EXTVERSION = Ext.Version()
 
+local function _AlphabeticalCaseInsensitiveLabelSort(a,b)
+	return string.lower(a.Label) < string.lower(b.Label)
+end
+
 ---@param item EclItem
 ---@param tooltip TooltipData
 function TooltipHandler.OnItemTooltip(item, tooltip)
@@ -218,20 +222,29 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		local settings = GameSettingsManager.GetSettings()
 		if settings.Client.CondenseItemTooltips then
 			local elements = tooltip:GetElements("ExtraProperties")
-			if elements ~= nil and #elements > 0 then
+			if #elements > 1 then
+				Ext.Dump(elements)
 				for i,v in pairs(elements) do
 					if StringHelpers.IsNullOrEmpty(StringHelpers.Trim(v.Label)) then
-						elements[i] = nil
-						tooltip:RemoveElement(v)
+						table.remove(elements, i)
 					end
 				end
-				local result = GameHelpers.Tooltip.CondensePropertiesText(tooltip, elements)
+				table.sort(elements, _AlphabeticalCaseInsensitiveLabelSort)
+				local result,removedElements = GameHelpers.Tooltip.CondensePropertiesText(tooltip, elements)
 				if result ~= nil then
+					tooltip:RemoveElements("ExtraProperties")
 					local combined = {
 						Type = "ExtraProperties",
 						Label = result
 					}
 					tooltip:AppendElement(combined)
+					if removedElements then
+						for i,v in ipairs(elements) do
+							if not removedElements[i] then
+								tooltip:AppendElement(v)
+							end
+						end
+					end
 				end
 			end
 		end

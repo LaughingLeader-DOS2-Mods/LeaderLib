@@ -127,7 +127,8 @@ RegisterTickListener(function(e)
 				else
 					_runningTest.Results[#_runningTest.Results+1] = {
 						ID = test.ID,
-						Success = true
+						Success = true,
+						Message = not StringHelpers.IsNullOrEmpty(test.SuccessMessage) and test.SuccessMessage or nil
 					}
 				end
 				_runningTest.Current:Dispose()

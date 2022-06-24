@@ -269,6 +269,17 @@ else
 		end
 	end
 
+	---Adds text to the combat filter for all players.
+	---@param text string
+	---@param onlyClient integer|UUID|EsvCharacter
+	function CombatLog.AddCombatText(text, onlyClient)
+		if not onlyClient then
+			GameHelpers.Net.Broadcast("LeaderLib_CombatLog_AddTextToFilter", {ID=CombatLog.Filters.Combat, Text=text})
+		else
+			GameHelpers.Net.PostToUser(onlyClient, "LeaderLib_CombatLog_AddTextToFilter", {ID=CombatLog.Filters.Combat, Text=text})
+		end
+	end
+
 	---Adds standard damage text to the combat log.
 	---@param targetDisplayName string
 	---@param damageType string

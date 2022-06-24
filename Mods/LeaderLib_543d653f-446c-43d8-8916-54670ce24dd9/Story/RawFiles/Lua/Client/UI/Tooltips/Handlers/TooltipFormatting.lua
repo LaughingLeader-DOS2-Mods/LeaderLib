@@ -187,24 +187,25 @@ local _sheetTypeTooltips = {
 	Tag = true,
 }
 
-local function TrySetTooltipDelay(root, lastRequestType)
+local function TrySetTooltipDelay(this, lastRequestType)
 	local settings = GameSettingsManager.GetSettings()
 	if not settings then
 		return
 	end
-	if root.tf then
+	local tf = this.tf or this.formatTooltip
+	if tf then
 		if settings.Client.EnableTooltipDelay.Item and _itemTypeTooltips[lastRequestType] then
-			root.tf.allowDelay = true
+			tf.allowDelay = true
 		elseif settings.Client.EnableTooltipDelay.Skill and lastRequestType == "Skill" then
-			root.tf.allowDelay = true
+			tf.allowDelay = true
 		elseif settings.Client.EnableTooltipDelay.Status and lastRequestType == "Status" then
-			root.tf.allowDelay = true
+			tf.allowDelay = true
 		elseif settings.Client.EnableTooltipDelay.CharacterSheet and _sheetTypeTooltips[lastRequestType] then
-			root.tf.allowDelay = true
+			tf.allowDelay = true
 		elseif settings.Client.EnableTooltipDelay.Generic and lastRequestType == "Generic" then
-			root.tf.allowDelay = true
-		elseif root.tf.allowDelay == true then
-			root.tf.allowDelay = false
+			tf.allowDelay = true
+		elseif tf.allowDelay == true then
+			tf.allowDelay = false
 		end
 	end
 end

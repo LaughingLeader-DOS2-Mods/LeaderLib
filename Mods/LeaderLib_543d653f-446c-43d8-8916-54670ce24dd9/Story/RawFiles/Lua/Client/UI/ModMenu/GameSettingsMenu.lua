@@ -228,7 +228,7 @@ function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listPro
 	if GameSettingsMenu.Controls[id] == nil and controlType ~= "menuLabel" then
 		return
 	end
-	local controlsEnabled = type(extraParam1) ~= "boolean" or extraParam1 == true
+	local controlsEnabled = type(extraParam1) ~= "boolean" or extraParam1 == true or Client.IsHost
 	local main = ui:GetRoot()
 	if main ~= nil then
 		---@type MainMenuMC

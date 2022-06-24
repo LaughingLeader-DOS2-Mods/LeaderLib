@@ -3,7 +3,21 @@ Adapted from ScriptExtender\LuaScripts\Libs\Event.lua in Extender v56 by Norbyte
 We don't have C++ event objects backing these, so they're more of a fancy way to register listeners.
 ]]
 
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
+local _EXTVERSION = Ext.Version()
+local _type = type
+local _pairs = pairs
+local _pcall = pcall
+local _xpcall = xpcall
+local _traceback = debug.traceback
+local _tblremove = table.remove
+
+local _printError = Ext.PrintError
+local _format = string.format
+
+local _errormsg = function (str, ...)
+	_printError(_format(str, ...))
+end
 
 ---Optional function to manipulate returned parameters when the event arguments are being unpacked for legacy listeners.
 ---@alias SubscribableEventGetArgFunction fun(paramId:string, param:any):any
@@ -15,11 +29,13 @@ local isClient = Ext.IsClient()
 ---@field Disabled boolean|nil If this event is disabled, Invoke won't invoke registered callbacks.
 ---@field ArgsKeyOrder string[]|nil
 ---@field GetArg SubscribableEventGetArgFunction|nil
+---@field OnSubscribe fun(callback:function, opts:SubscribableEventCreateOptions|nil, matchArgs:table|nil, matchArgsType:string) Called when a callback is subscribed to the event.
 
 ---@alias SubscribableEventInvokeResultCode string|"Success"|"Handled"|"Error"
 
 ---@class SubscribableEventInvokeResult<T>:{ResultCode: SubscribableEventInvokeResultCode, Results:table, Args:SubscribableEventArgs|T, Handled:boolean}
 ---@alias AnySubscribableEventInvokeResult SubscribableEventInvokeResult<EmptyEventArgs>
+---@alias MatchArgsCallback<T> fun(e:T):boolean
 
 ---Used for event entry in the Events table, to support one base definition with multiple event argument types.
 ---T should be specific event arg classes that derive from SubscribableEventArgs.
@@ -52,8 +68,8 @@ function SubscribableEvent:Create(id, opts)
 		GatherResults = false,
 		SyncInvoke = false,
 	}
-	if type(opts) == "table" then
-		for k,v in pairs(opts) do
+	if _type(opts) == "table" then
+		for k,v in _pairs(opts) do
 			if SubscribableEvent[k] == nil then
 				o[k] = v
 			end
@@ -127,7 +143,7 @@ local function DoSubscribe(self, sub)
 end
 
 local function _TablesMatch(t1,t2)
-	for k,v in pairs(t1) do
+	for k,v in _pairs(t1) do
 		if t2[k] ~= v then
 			return false
 		end
@@ -139,8 +155,8 @@ end
 ---@param opts EventSubscriptionOptions|nil
 ---@return integer
 function SubscribableEvent:Subscribe(callback, opts)
-	assert(type(callback) == "function", "callback parameter must be a function")
-	local opts = type(opts) == "table" and opts or {}
+	assert(_type(callback) == "function", "callback parameter must be a function")
+	local opts = _type(opts) == "table" and opts or {}
 	local index = self.NextIndex
 	self.NextIndex = self.NextIndex + 1
 
@@ -153,12 +169,13 @@ function SubscribableEvent:Subscribe(callback, opts)
 		Options = {}
 	}
 
-	if type(opts.MatchArgs) == "table" then
-		local matchArgs = opts.MatchArgs
+	local matchArgs = opts.MatchArgs
+	local matchArgsType = _type(matchArgs)
+	if matchArgsType == "table" then
 		local firstEntry = nil
 		local firstID = nil
 		local count = 0
-		for k,v in pairs(matchArgs) do
+		for k,v in _pairs(matchArgs) do
 			if firstEntry == nil then
 				firstID = k
 				firstEntry = v
@@ -171,11 +188,11 @@ function SubscribableEvent:Subscribe(callback, opts)
 			end
 		else
 			sub.IsMatch = function(args)
-				for k,v in pairs(matchArgs) do
+				for k,v in _pairs(matchArgs) do
 					if args[k] == nil then
 						return false
 					end
-					if type(v) == "table" then
+					if _type(v) == "table" then
 						if not _TablesMatch(v, args[k]) then
 							return false
 						end
@@ -186,9 +203,18 @@ function SubscribableEvent:Subscribe(callback, opts)
 				return true
 			end
 		end
+	elseif matchArgsType == "function" then
+		sub.IsMatch = function(...)
+			return matchArgs(...) == true
+		end
+	end
+	
+	DoSubscribe(self, sub)
+	
+	if self.OnSubscribe then
+		self.OnSubscribe(callback, opts, matchArgs, matchArgsType)
 	end
 
-	DoSubscribe(self, sub)
 	return index
 end
 
@@ -214,8 +240,11 @@ end
 ---@param indexOrCallback integer|function
 ---@param matchArgs table|nil
 function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
+	if indexOrCallback == nil then
+		return false
+	end
 	if not self._Invoking then
-		local t = type(indexOrCallback)
+		local t = _type(indexOrCallback)
 		local cur = self.First
 		if cur then
 			while cur ~= nil do
@@ -248,7 +277,7 @@ end
 local function _EventArgsMatch(node, eventArgs)
 	local match = true
 	if node.IsMatch ~= nil then
-		local b,result = pcall(node.IsMatch, eventArgs)
+		local b,result = _pcall(node.IsMatch, eventArgs)
 		if result ~= nil then
 			match = result
 		end
@@ -259,8 +288,8 @@ end
 --Convert userdata event args to a table with the NetID, so the other side can retrieve it.
 local function SerializeArgs(args)
 	local tbl = {}
-	for k,v in pairs(args) do
-		local t = type(v)
+	for k,v in _pairs(args) do
+		local t = _type(v)
 		if t == "userdata" then
 			if v.NetID then
 				tbl[k] = {Type="Object", NetID=v.NetID, UUID=v.MyGuid}
@@ -282,7 +311,6 @@ local function InvokeCallbacks(sub, args, resultsTable, ...)
 	local cur = sub.First
 	local gatherResults = resultsTable ~= nil
 	local result = _INVOKERESULT.Success
-	local c = 0
 	while cur ~= nil do
 		if args.Handled then
 			result = _INVOKERESULT.Handled
@@ -291,23 +319,23 @@ local function InvokeCallbacks(sub, args, resultsTable, ...)
 
 		if _EventArgsMatch(cur, args) then
 			if gatherResults then
-				local callbackResults = {xpcall(cur.Callback, debug.traceback, args, ...)}
+				local callbackResults = {_xpcall(cur.Callback, _traceback, args, ...)}
 				if not callbackResults[1] then
-					fprint(LOGLEVEL.ERROR, "[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, callbackResults[2])
+					_errormsg("[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, callbackResults[2])
 					result = _INVOKERESULT.Error
 				elseif gatherResults and callbackResults[2] ~= nil then
 					if callbackResults[3] == nil then
 						resultsTable[#resultsTable+1] = callbackResults[2]
 					else
 						--Multiple return values
-						table.remove(callbackResults, 1)
+						_tblremove(callbackResults, 1)
 						resultsTable[#resultsTable+1] = callbackResults
 					end
 				end
 			else
-				local b,err = xpcall(cur.Callback, debug.traceback, args, ...)
+				local b,err = _xpcall(cur.Callback, _traceback, args, ...)
 				if not b then
-					fprint(LOGLEVEL.ERROR, "[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, err)
+					_errormsg("[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, err)
 					result = _INVOKERESULT.Error
 				end
 			end
@@ -326,6 +354,8 @@ local function InvokeCallbacks(sub, args, resultsTable, ...)
 	return result
 end
 
+local _netMessageFunc = _ISCLIENT and Ext.PostMessageToServer or GameHelpers.Net.Broadcast
+
 ---@param args table|nil
 ---@param skipAutoInvoke boolean|nil
 ---@vararg any
@@ -333,7 +363,7 @@ end
 function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 	args = args or {}
 	local metatable = nil
-	if type(args.__metatable) == "table" then
+	if _type(args.__metatable) == "table" then
 		metatable = args.__metatable
 		args.__metatable = nil
 	end
@@ -360,7 +390,7 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 	if not skipAutoInvoke and self.SyncInvoke then
 		local canSync = true
 		if self.CanSync then
-			local b,result = xpcall(self.CanSync, debug.traceback, self, args, ...)
+			local b,result = _xpcall(self.CanSync, _traceback, self, args, ...)
 			if not b then
 				Ext.PrintError(result)
 			else
@@ -368,8 +398,7 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 			end
 		end
 		if canSync then
-			local messageFunc = isClient and Ext.PostMessageToServer or GameHelpers.Net.Broadcast
-			messageFunc("LeaderLib_SubscribableEvent_Invoke", Common.JsonStringify({
+			_netMessageFunc("LeaderLib_SubscribableEvent_Invoke", Common.JsonStringify({
 				ID = self.ID,
 				Args = SerializeArgs(args)
 			}))
@@ -385,8 +414,8 @@ end
 
 local function DeserializeArgs(args)
 	local tbl = {}
-	for k,v in pairs(args) do
-		if type(v) == "table" then
+	for k,v in _pairs(args) do
+		if _type(v) == "table" then
 			if v.Type == "Object" then
 				tbl[k] = GameHelpers.TryGetObject(v.NetID)
 				if not tbl[k] then

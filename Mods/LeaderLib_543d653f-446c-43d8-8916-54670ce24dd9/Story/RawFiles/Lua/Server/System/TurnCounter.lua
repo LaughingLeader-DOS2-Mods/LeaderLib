@@ -188,32 +188,38 @@ function _INTERNAL.CountdownDone(data, uniqueId, lastTurn)
 	_INTERNAL.CleanupData(uniqueId)
 end
 
----@param uuid UUID
+---@param obj ObjectParam
 ---@param id string The id to use in the callback.
-function _INTERNAL.ListenForTurnEnding(uuid, id)
-	if PersistentVars.WaitForTurnEnding[uuid] == nil then
-		PersistentVars.WaitForTurnEnding[uuid] = {}
+function TurnCounter.ListenForTurnEnding(obj, id)
+	local GUID = GameHelpers.GetUUID(obj)
+	if GUID then
+		if PersistentVars.WaitForTurnEnding[GUID] == nil then
+			PersistentVars.WaitForTurnEnding[GUID] = {}
+		end
+		PersistentVars.WaitForTurnEnding[GUID][id] = true
 	end
-	PersistentVars.WaitForTurnEnding[uuid][id] = true
 end
 
----@param uuid UUID
-function _INTERNAL.InvokeTurnEndedListeners(uuid)
-	local object = GameHelpers.TryGetObject(uuid, true)
-	if PersistentVars.WaitForTurnEnding[uuid] then
-		for id,b in pairs(PersistentVars.WaitForTurnEnding[uuid]) do
-			if b then
-				Events.OnTurnEnded:Invoke({
-					ID = id,
-					Object = object
-				})
+---@param obj ObjectParam
+function _INTERNAL.InvokeTurnEndedListeners(obj)
+	local GUID = GameHelpers.GetUUID(obj)
+	local object = GameHelpers.TryGetObject(GUID)
+	if GUID and object then
+		if PersistentVars.WaitForTurnEnding[GUID] then
+			for id,b in pairs(PersistentVars.WaitForTurnEnding[GUID]) do
+				if b then
+					Events.OnTurnEnded:Invoke({
+						ID = id,
+						Object = object
+					})
+				end
 			end
+			PersistentVars.WaitForTurnEnding[obj] = nil
+		else
+			Events.OnTurnEnded:Invoke({
+				Object = object
+			})
 		end
-		PersistentVars.WaitForTurnEnding[uuid] = nil
-	else
-		Events.OnTurnEnded:Invoke({
-			Object = object
-		})
 	end
 end
 

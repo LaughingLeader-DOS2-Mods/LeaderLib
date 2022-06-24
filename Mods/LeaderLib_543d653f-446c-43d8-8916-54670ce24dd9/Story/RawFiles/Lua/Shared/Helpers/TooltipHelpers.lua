@@ -428,7 +428,17 @@ if Vars.IsClient then
 	---@return string combinedText
 	---@return table<integer,boolean> indexes Removed element indexes.
 	function GameHelpers.Tooltip.CondensePropertiesText(tooltip, inputElements, addColor)
-		local turnsPattern = LocalizedText.Tooltip.ExtraPropertiesWithTurns:ReplacePlaceholders("(.-)", "(.*)", "(.*)", "([0-9]+)"):gsub("%(s%)%.", "%%(s%%)%%.")
+		local _,periodCharacterStart = string.find(LocalizedText.Tooltip.ExtraPropertiesWithTurns.Value, "turn(s)", nil, true)
+		periodCharacterStart = periodCharacterStart + 1
+		local periodCharacter = string.sub(LocalizedText.Tooltip.ExtraPropertiesWithTurns.Value, periodCharacterStart, periodCharacterStart)
+		local periodReplace = ""
+		if periodCharacter == "." then
+			periodCharacter = "%."
+			periodReplace = "%%."
+		else
+			periodReplace = periodCharacter
+		end
+		local turnsPattern = LocalizedText.Tooltip.ExtraPropertiesWithTurns:ReplacePlaceholders("(.-)", "(.*)", "(.*)", "([0-9]+)"):gsub("%(s%)"..periodCharacter, "%%(s%%)"..periodReplace)
 		--local permanentPattern = LocalizedText.Tooltip.ExtraPropertiesPermanent:ReplacePlaceholders("(.-)", "(.-)", "(.-)"):gsub("%)%.%(", ")%%.(")
 		local entries = {}
 		local removedElements = {}
@@ -438,7 +448,7 @@ if Vars.IsClient then
 			local _,_,status,turns,chance,extra = string.find(v.Label, turnsPattern)
 			if status ~= nil and turns ~= nil and chance ~= nil then
 				if chance then
-					local _,_,chanceNumber = string.find(chance, LocalizedText.Tooltip.ChanceToSucceed:ReplacePlaceholders("([0-9]+)"):gsub("%%", "%%%%"))
+					local _,_,chanceNumber = string.find(chance, "(%d+)")
 					if not chanceNumber then
 						chance = 100
 					end
@@ -456,12 +466,12 @@ if Vars.IsClient then
 			local finalStatusText = ""
 			local finalTurnsText = ""
 			local finalChanceText = ""
-			if hasChances then
-				finalChanceText = " ("
-			end
 			for i,v in pairs(entries) do
 				finalStatusText = finalStatusText .. v.Status
 				finalTurnsText = finalTurnsText .. v.Turns
+				if hasChances then
+					finalChanceText = finalChanceText .. v.Chance
+				end
 				if i >= 1 and i < #entries then
 					finalStatusText = finalStatusText .. "/"
 					finalTurnsText = finalTurnsText .. "/"
@@ -471,9 +481,9 @@ if Vars.IsClient then
 				end
 			end
 			if hasChances then
-				finalChanceText = finalChanceText .. ")"
+				finalChanceText = " " .. LocalizedText.Tooltip.Chance:ReplacePlaceholders(finalChanceText)
 			end
-			return LocalizedText.Tooltip.ExtraPropertiesOnHit:ReplacePlaceholders(finalStatusText, finalTurnsText, finalChanceText),removedElements
+			return StringHelpers.Trim(LocalizedText.Tooltip.ExtraPropertiesOnHit:ReplacePlaceholders(finalStatusText, finalTurnsText, finalChanceText)),removedElements
 		end
 	end
 

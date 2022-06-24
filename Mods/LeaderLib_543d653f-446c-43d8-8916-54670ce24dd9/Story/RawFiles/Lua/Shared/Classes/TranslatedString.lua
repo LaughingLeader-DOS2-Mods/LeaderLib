@@ -1,7 +1,7 @@
 ---@type TranslatedString[]
 local _translatedStringUpdate = {}
 --Turn into a weak table since we don't care to update variables that were deleted.
-setmetatable(_translatedStringUpdate, {__mode = "kv"})
+--setmetatable(_translatedStringUpdate, {__mode = "kv"})
 
 local _EXTVERSION = Ext.Version()
 local _getTranslatedStringKeyFunction = Ext.GetTranslatedStringFromKey
@@ -222,6 +222,11 @@ if Vars.DebugMode then
 		table.sort(keys)
 		Ext.Print("Missing Keys:")
 		Ext.Dump(keys)
-		GameHelpers.IO.SaveJsonFile("Dumps/LeaderLib_MissingKeys.json", kv)
+		local text = "Key\tContent\n"
+		for i,v in ipairs(keys) do
+			text = text .. string.format("%s\t%s\n", v, kv[v])
+		end
+		Ext.Print("Saved key/values to 'Dumps/LeaderLib_MissingKeys.tsv'")
+		GameHelpers.IO.SaveFile("Dumps/LeaderLib_MissingKeys.tsv", text)
 	end)
 end

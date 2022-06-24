@@ -526,6 +526,10 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     local statusBonusDmgTypes = {}
     local hitBlocked = false
 
+    if hitType == "Reflected" then
+        GameHelpers.Hit.SetFlag(hit, "Reflection", true)
+    end
+
     if attacker == nil then
         HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
         return hit
@@ -534,7 +538,6 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     if weapon == nil then
         weapon = attacker.MainWeapon
     end
-
     
     if hitType == "Magic" and HitOverrides.BackstabSpellMechanicsEnabled(attacker) then
         local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
@@ -622,7 +625,7 @@ HitOverrides._ComputeCharacterHitFunction = ComputeCharacterHit
 -- }
 
 function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-    if HitOverrides.ComputeOverridesEnabled() then
+    if HitOverrides.ComputeOverridesEnabled() or Vars.DebugMode then
         ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
         Events.ComputeCharacterHit:Invoke({
             Target = target,
@@ -646,11 +649,10 @@ if _EXTVERSION < 56 then
     Ext.RegisterListener("ComputeCharacterHit", HitOverrides.ComputeCharacterHit)
 else
     Ext.Events.ComputeCharacterHit:Subscribe(function(event)
-        --local ms = Ext.MonotonicTime()
         local hit = HitOverrides.ComputeCharacterHit(event.Target, event.Attacker, event.Weapon, event.DamageList, event.HitType, event.NoHitRoll, event.ForceReduceDurability, event.Hit, event.AlwaysBackstab, event.HighGround, event.CriticalRoll)
+        Ext.IO.SaveFile(string.format("Dumps/CCH_Hit_%s_%s.json", event.HitType, Ext.MonotonicTime()), Ext.DumpExport(event.Hit))
         if hit then
             event.Handled = true
-            --fprint(LOGLEVEL.ERROR, "[LeaderLib] Hit calculation took (%s)ms", Ext.MonotonicTime() - ms)
             --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})
         end
     end)

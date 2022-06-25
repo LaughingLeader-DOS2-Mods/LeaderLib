@@ -27,7 +27,7 @@ local DefaultSettings = {
 			SpellsCanBackstab = false,
 		},
 		NPC = {
-			Enabled = true,
+			Enabled = false,
 			TalentRequired = true,
 			MeleeOnly = true,
 			SpellsCanBackstab = false,

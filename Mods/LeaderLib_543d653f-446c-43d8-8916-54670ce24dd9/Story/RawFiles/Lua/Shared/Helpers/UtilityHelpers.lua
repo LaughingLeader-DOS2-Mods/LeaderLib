@@ -294,18 +294,19 @@ if not _ISCLIENT then
 	end
 
 	if _EXTVERSION >= 56 then
-		Ext.Events.Tick:Subscribe(function (e)
-			if Ext.GetGameState() == "Running" and PersistentVars.KnockupData.Active then
-				local len = #PersistentVars.KnockupData.ObjectData
+		local function _OnTick(e)
+			local knockupData = PersistentVars.KnockupData
+			if Ext.GetGameState() == "Running" and knockupData and knockupData.Active then
+				local len = #knockupData.ObjectData
 				local positionSync = {}
 				local positionSyncLen = 0
 				local grid = Ext.GetAiGrid()
 				for i=1,len do
-					local data = PersistentVars.KnockupData.ObjectData[i]
+					local data = knockupData.ObjectData[i]
 					---@type EsvCharacter|EsvItem
 					local obj = Ext.GetGameObject(data.GUID)
 					if not obj then
-						table.remove(PersistentVars.KnockupData.ObjectData, i)
+						table.remove(knockupData.ObjectData, i)
 					end
 					local gravity = data.Gravity or _GRAVITY
 					local x,y,z = table.unpack(obj.Translate)
@@ -323,7 +324,7 @@ if not _ISCLIENT then
 							end
 							obj.Translate = {x,y,z}
 						else
-							table.remove(PersistentVars.KnockupData.ObjectData, i)
+							table.remove(knockupData.ObjectData, i)
 							obj.Translate = {x,floorY,z}
 							positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = floorY}
 							positionSyncLen = positionSyncLen + 1
@@ -349,12 +350,19 @@ if not _ISCLIENT then
 						end
 					end
 				end
-				if #PersistentVars.KnockupData.ObjectData == 0 then
-					PersistentVars.KnockupData.Active = false
+				if #knockupData.ObjectData == 0 then
+					knockupData.Active = false
 				end
 				if positionSyncLen > 0 then
 					GameHelpers.Net.Broadcast("LeaderLib_KnockUp_SyncPositions", positionSync)
 				end
+			end
+		end
+		local _registeredTickListener = false
+		Events.PersistentVarsLoaded:Subscribe(function ()
+			if not _registeredTickListener then
+				_registeredTickListener = true
+				Ext.Events.Tick:Subscribe(_OnTick)
 			end
 		end)
 	end

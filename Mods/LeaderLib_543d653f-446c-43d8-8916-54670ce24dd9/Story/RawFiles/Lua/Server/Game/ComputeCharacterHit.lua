@@ -504,7 +504,7 @@ end
 --- @param attacker StatCharacter
 --- @param weapon StatItem
 --- @param preDamageList DamageList
---- @param hitType string HitType enumeration
+--- @param hitType HitTypeValues HitType enumeration
 --- @param noHitRoll boolean
 --- @param forceReduceDurability boolean
 --- @param hit HitRequest
@@ -526,6 +526,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     local statusBonusDmgTypes = {}
     local hitBlocked = false
 
+    --Fix: Temp fix for infinite reflection damage via Shackles of Pain + Retribution. This flag isn't being set or something in v56.
     if hitType == "Reflected" then
         GameHelpers.Hit.SetFlag(hit, "Reflection", true)
     end
@@ -650,9 +651,9 @@ if _EXTVERSION < 56 then
 else
     Ext.Events.ComputeCharacterHit:Subscribe(function(event)
         local hit = HitOverrides.ComputeCharacterHit(event.Target, event.Attacker, event.Weapon, event.DamageList, event.HitType, event.NoHitRoll, event.ForceReduceDurability, event.Hit, event.AlwaysBackstab, event.HighGround, event.CriticalRoll)
-        Ext.IO.SaveFile(string.format("Dumps/CCH_Hit_%s_%s.json", event.HitType, Ext.MonotonicTime()), Ext.DumpExport(event.Hit))
         if hit then
             event.Handled = true
+            --Ext.IO.SaveFile(string.format("Dumps/CCH_Hit_%s_%s.json", event.HitType, Ext.MonotonicTime()), Ext.DumpExport(event.Hit))
             --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})
         end
     end)

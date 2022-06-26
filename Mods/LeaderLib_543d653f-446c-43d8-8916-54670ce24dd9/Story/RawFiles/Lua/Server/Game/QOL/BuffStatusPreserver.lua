@@ -131,6 +131,7 @@ function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
 		end
 		PersistentVars.BuffStatuses[GUID] = nil
 	end
+	BuffStatusPreserver.NextBuffStatus[GUID] = nil
 end
 
 ---@param target EsvCharacter|EsvItem
@@ -150,7 +151,7 @@ function BuffStatusPreserver.OnStatusApplied(target, status, source, statusType,
 			BuffStatusPreserver.PreserveStatus(target, status, true)
 			Timer.Cancel("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID)
 			Timer.StartObjectTimer("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID, 500)
-		elseif GUID2 then
+		elseif GUID2 and GameHelpers.Character.IsPlayerOrPartyMember(target) then -- Allow players to apply permanent buffs to other party members
 			local data = BuffStatusPreserver.NextBuffStatus[GUID2]
 			if data and data[status.StatusId] then
 				BuffStatusPreserver.PreserveStatus(target, status, true)

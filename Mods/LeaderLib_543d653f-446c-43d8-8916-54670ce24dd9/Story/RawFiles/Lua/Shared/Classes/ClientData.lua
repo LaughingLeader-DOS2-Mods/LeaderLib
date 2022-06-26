@@ -22,6 +22,7 @@ local ClientCharacterData = {
 	IsPossessed = false,
 	IsGameMaster = false,
 	IsPlayer = true,
+	Username = "",
 	Points = {
 		Attribute = 0,
 		Ability = 0,
@@ -52,7 +53,8 @@ function ClientCharacterData:Create(params)
 		IsPossessed = false,
 		IsGameMaster = false,
 		IsPlayer = true,
-		Points = {}
+		Points = {},
+		Username = ""
 	}
 	if params and type(params) == "table" then
 		for k,v in pairs(params) do
@@ -78,7 +80,7 @@ function ClientCharacterData:Create(params)
 	return this
 end
 
----@param params ClientCharacterDataParams|table
+---@param params ClientCharacterDataParams|nil
 function ClientCharacterData:Update(params)
 	if params and type(params) == "table" then
 		for k,v in pairs(params) do
@@ -86,27 +88,6 @@ function ClientCharacterData:Update(params)
 		end
 	end
 	self:UpdatePoints(self.UUID)
-	-- if not isClient and _EXTVERSION >= 56 and GameHelpers.Character.IsPlayer(self.UUID) then
-	-- 	local character = Ext.GetCharacter(self.UUID)
-	-- 	if character and character.PlayerData then
-	-- 		self.Skillbar = {}
-	-- 		for i,v in pairs(character.PlayerData.SkillBar) do
-	-- 			if v.Type ~= "None" then
-	-- 				self.Skillbar[i] = {
-	-- 					SkillOrStatId = v.SkillOrStatId,
-	-- 					Type = v.Type
-	-- 				}
-	-- 				if v.Type == "Item" then
-	-- 					local item = Ext.GetItem(v.ItemHandle)
-	-- 					if item then
-	-- 						self.Skillbar[i].ItemHandle = item.NetID
-	-- 						self.Skillbar[i].Amount = item.Amount
-	-- 					end
-	-- 				end
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
 	return self
 end
 
@@ -149,6 +130,7 @@ function ClientCharacterData:Export()
 		IsPossessed = self.IsPossessed,
 		IsGameMaster = self.IsGameMaster,
 		IsPlayer = self.IsPlayer,
+		Username = self.Username,
 		Points = {
 			Attribute = self.Points.Attribute or 0,
 			Ability = self.Points.Ability or 0,

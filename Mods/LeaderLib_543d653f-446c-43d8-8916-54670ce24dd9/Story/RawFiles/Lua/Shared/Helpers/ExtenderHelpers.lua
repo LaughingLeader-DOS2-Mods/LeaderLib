@@ -1009,7 +1009,6 @@ function GameHelpers.Ext.CreateStatCharacterTable(stat, mainhand, offhand)
 	return data
 end
 
-
 local weaponStatAttributes = {
 	"ModifierType",
 	"Damage",

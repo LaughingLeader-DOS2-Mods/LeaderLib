@@ -346,6 +346,7 @@ else
 					IsPlayer = character.IsPlayer,
 					Profile = profileId,
 					ID = id,
+					Username = GetUserName(id),
 				}
 				if SharedData.CharacterData[profileId] == nil then
 					--Create(character.MyGuid, id, profileId, character.NetID, isHost, isInCharacterCreation)

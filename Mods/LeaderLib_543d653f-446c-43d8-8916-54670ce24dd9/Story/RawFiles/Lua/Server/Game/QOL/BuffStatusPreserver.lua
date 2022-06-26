@@ -144,11 +144,18 @@ function BuffStatusPreserver.OnStatusApplied(target, status, source, statusType,
 	and not GameHelpers.Character.IsInCombat(target)
 	and GameHelpers.Character.IsPlayerOrPartyMember(target) then
 		local GUID = GameHelpers.GetUUID(target)
-		if GUID then
-			local data = BuffStatusPreserver.NextBuffStatus[GUID]
+		local GUID2 = source and GameHelpers.GetUUID(source) or nil
+		local data = BuffStatusPreserver.NextBuffStatus[GUID]
+		if data and data[status.StatusId] then
+			BuffStatusPreserver.PreserveStatus(target, status, true)
+			Timer.Cancel("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID)
+			Timer.StartObjectTimer("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID, 500)
+		elseif GUID2 then
+			local data = BuffStatusPreserver.NextBuffStatus[GUID2]
 			if data and data[status.StatusId] then
-				BuffStatusPreserver.NextBuffStatus[GUID][status] = nil
 				BuffStatusPreserver.PreserveStatus(target, status, true)
+				Timer.Cancel("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID2)
+				Timer.StartObjectTimer("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID2, 500)
 			end
 		end
 	end
@@ -159,6 +166,7 @@ function BuffStatusPreserver.OnSkillUsed(caster, skill, skillType, skillElement)
 	if not BuffStatusPreserver.Enabled() then return end
 	local GUID = GameHelpers.GetUUID(caster)
 	if GUID and not GameHelpers.Character.IsInCombat(GUID) and GameHelpers.Character.IsPlayerOrPartyMember(GUID) then
+		local statusesToApply = {}
 		---@type StatProperty[]
 		local props = GameHelpers.Stats.GetSkillProperties(skill)
 		if props then
@@ -170,6 +178,8 @@ function BuffStatusPreserver.OnSkillUsed(caster, skill, skillType, skillElement)
 						BuffStatusPreserver.NextBuffStatus[GUID] = {}
 					end
 					BuffStatusPreserver.NextBuffStatus[GUID][v.Action] = true
+					Timer.Cancel("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID)
+					Timer.StartObjectTimer("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID, 2000)
 				end
 			end
 		end
@@ -179,13 +189,18 @@ function BuffStatusPreserver.OnSkillUsed(caster, skill, skillType, skillElement)
 	end
 end
 
+Timer.Subscribe("LeaderLib_BuffStatusPreserver_ClearStatusData", function (e)
+	if e.Data.UUID then
+		BuffStatusPreserver.NextBuffStatus[e.Data.UUID] = nil
+	end
+end)
+
 local _combatLeftEnabled = false
 --Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "after", BuffStatusPreserver.OnLeftCombat)
 Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", BuffStatusPreserver.OnEnteredCombat)
 Ext.RegisterOsirisListener("CharacterUsedSkill", 4, "after", BuffStatusPreserver.OnSkillUsed)
---StatusManager.Register.Type.Applied("CONSUME", BuffStatusPreserver.OnStatusApplied)
+StatusManager.Register.Type.Applied("CONSUME", BuffStatusPreserver.OnStatusApplied)
 
----@private
 function BuffStatusPreserver.Disable()
 	if PersistentVars.BuffStatuses then
 		for GUID,data in pairs(PersistentVars.BuffStatuses) do

@@ -1,6 +1,6 @@
 ---@class ContextMenuActionSettings
 ---@field ID string
----@field ShouldOpen fun(contextMenu:ContextMenu, x:number, y:number):boolean
+---@field ShouldOpen fun(contextMenu:ContextMenu, x:number, y:number):boolean Called when the context menu is looking to open. If this returns true, the context menu will be visible.
 ---@field OnUpdate fun(self:ContextMenuAction):void Called before this action is added to the context menu. Use it to set Disabled/Legal etc.
 ---@field Callback ContextMenuActionCallback
 ---@field Visible boolean

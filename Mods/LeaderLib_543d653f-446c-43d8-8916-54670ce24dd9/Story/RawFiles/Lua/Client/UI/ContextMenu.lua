@@ -7,7 +7,7 @@
 
 ---@alias ContextMenuActionCallback fun(self:ContextMenu, ui:UIObject, id:integer, actionID:integer, handle:number)
 
----@class ContextMenuEntry:table
+---@class BuiltinContextMenuEntry
 ---@field ID integer
 ---@field ActionID string
 ---@field Visible boolean
@@ -17,7 +17,6 @@
 ---@field Legal boolean
 ---@field Callback ContextMenuActionCallback
 ---@field Handle number
----@field Children ContextMenuEntry[]
 
 local ACTION_ID = {
 	HideStatus = "hideStatus",
@@ -34,7 +33,7 @@ local ACTION_ID = {
 local ContextMenu = {
 	---@type UIObject
 	Instance = nil,
-	---@type ContextMenuEntry[]
+	---@type ContextMenuAction[]
 	Entries = {},
 	---@type table<string, ContextMenuAction>
 	Actions = {},
@@ -56,10 +55,10 @@ local ContextMenu = {
 
 local self = ContextMenu
 
----@type ContextMenuEntry[]
+---@type BuiltinContextMenuEntry[]
 local builtinEntries = {}
 local lastBuiltinID = 999
----@type table<integer,ContextMenuEntry>
+---@type table<integer,BuiltinContextMenuEntry|ContextMenuAction>
 local GENERATED_ID_TO_ENTRY = {}
 
 ContextMenu.DefaultActionCallbacks[ACTION_ID.HideStatus] = function(self, ui, id, actionID, handle)
@@ -283,7 +282,11 @@ local function GetShouldOpen(contextMenu, x, y)
 	return false
 end
 
----@private
+---@param eventName string
+---@param pressed boolean
+---@param id integer
+---@param inputMap table<integer,boolean>
+---@param controllerEnabled boolean
 function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
 	local settings = GameSettings.Settings.Client.StatusOptions
 	--fprint(LOGLEVEL.DEFAULT, "[ContextMenu:OnRightClick] IsOpening(%s) Visible(%s) pressed(%s)", self.IsOpening, self.Visible, pressed)
@@ -416,7 +419,7 @@ local function GetVar(var, fallback)
 end
 
 local BuiltinContextMenuEntry = {
-	Type = "ContextMenuEntry",
+	Type = "BuiltinContextMenuEntry",
 	Visible = true,
 	Disabled = false,
 	Legal = true,
@@ -629,8 +632,8 @@ end
 ---@param disabled boolean|nil
 ---@param isLegal boolean|nil
 ---@param handle any|nil
----@param children ContextMenuEntry[]|nil
----@return ContextMenuEntry
+---@param children ContextMenuAction[]|nil
+---@return ContextMenuAction
 function ContextMenu:AddEntry(id, callback, label, visible, useClickSound, disabled, isLegal, handle, children)
 	if not self.Entries then
 		self.Entries = {}
@@ -679,6 +682,7 @@ end
 
 ---@param targetContextMenu {addEntry:function, list:FlashListDisplay}
 ---@param entry ContextMenuAction
+---@param depth integer
 local function AddEntryMC(targetContextMenu, entry, depth)
 	if not entry then
 		return

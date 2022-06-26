@@ -117,6 +117,17 @@ local StatFixes = {
 			}}
 		}
 	},
+
+	--Displays the wrong damage range
+	Target_FlamingCrescendo = {
+		CanChange = function (stat)
+			return stat.StatsDescriptionParams == "Weapon:Skill_FlamingCrescendo:Damage"
+		end,
+		Changes = {
+			StatsDescriptionParams = "Skill:Projectile_FlamingCrescendo_Explosion:Damage"
+		}
+	},
+	
 	--Original: "_Vitality_ShieldBoost". This isn't a status that exists.
 	WPN_UNIQUE_WithermooreShield = {
 		CanChange = function (stat)
@@ -133,6 +144,8 @@ local StatFixes = {
 		}
 	},
 }
+
+StatFixes.Target_EnemyFlamingCrescendo = StatFixes.Target_FlamingCrescendo
 
 Vars.StatFixes = StatFixes
 

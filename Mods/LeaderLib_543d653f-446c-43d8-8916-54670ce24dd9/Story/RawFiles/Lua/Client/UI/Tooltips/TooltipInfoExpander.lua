@@ -2,8 +2,8 @@
 This script allows tooltips to be re-rendered when shift is pressed or released,
 allowing mods to alter how much text/info they provide in a tooltip.
 
-Mods should check TooltipExpander.IsExpanded() when determining which text to write, 
-and call TooltipExpander.MarkDirty() when the current tooltip can be changed when the key is pressed or released.
+Mods should check tooltip.IsExpanded() when determining which text to write, 
+and call tooltip.MarkDirty() when the current tooltip can be changed when the key is pressed or released.
 ]]
 
 if not TooltipExpander then
@@ -261,3 +261,21 @@ function TooltipExpander.AppendHelpText(request, tooltip)
 		end
 	end
 end
+
+
+Ext.RegisterListener("SessionLoaded", function ()
+	---Whether or not the tooltip should be expanded. Check this when setting up tooltip elements.
+	---@return boolean
+	Game.Tooltip.TooltipHooks.IsExpanded = function(self)
+		return TooltipExpander.IsExpanded()
+	end
+
+	---Signals to the tooltip expander that pressing or releasing the expand key will cause the current visible tooltip to re-render.
+	Game.Tooltip.TooltipHooks.MarkDirty = function(self)
+		return TooltipExpander.MarkDirty()
+	end
+
+	Game.Tooltip.RegisterListener(nil, function (request, tooltip)
+		TooltipExpander.AppendHelpText(request, tooltip)
+	end)
+end)

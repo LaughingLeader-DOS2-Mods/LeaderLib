@@ -13,8 +13,8 @@ local table = table
 local tostring = tostring
 local type = type
 local xpcall = xpcall
-local version = Ext.Version()
-local isDeveloperMode = Ext.IsDeveloperMode()
+local _EXTVERSION = Ext.Version()
+local _DEBUG = Ext.IsDeveloperMode()
 
 local UIType = {
 	actionProgression = 0,
@@ -573,7 +573,7 @@ function ParseTooltipElement(tt, index, spec, typeName)
 		if field[1] ~= nil then
 			element[field[1]] = val
 		end
-		if isDeveloperMode and (field[2] ~= nil and type(val) ~= field[2]) then
+		if _DEBUG and (field[2] ~= nil and type(val) ~= field[2]) then
 			Ext.PrintWarning("Type of field " .. typeName .. "." .. field[1] .. " differs: " .. type(val) .. " vs " .. field[2] .. ":", val)
 		end
 	end
@@ -702,7 +702,7 @@ function EncodeTooltipElement(tt, spec, element)
 			table.insert(tt, "")
 		else
 			if fieldType ~= nil and type(val) ~= fieldType then
-				if isDeveloperMode then
+				if _DEBUG then
 					Ext.PrintWarning("Type of field " .. element.Type .. "." .. name .. " differs: " .. type(val) .. " vs " .. fieldType .. ":", val)
 				end
 				val = nil
@@ -771,7 +771,7 @@ function EncodeTooltipArray(elements)
 		if element then
 			local type = TooltipItemTypes[element.Type]
 			if type == nil then
-				if isDeveloperMode then
+				if _DEBUG then
 					Ext.PrintError("Couldn't encode tooltip element with unknown type:", element.Type)
 					Ext.Dump(element)
 				end
@@ -785,7 +785,7 @@ function EncodeTooltipArray(elements)
 				else
 					local spec = TooltipSpecs[element.Type]
 					if spec == nil then
-						if isDeveloperMode then
+						if _DEBUG then
 							Ext.PrintError("No encoder found for tooltip element type:", element.Type)
 							Ext.Dump(element)
 						end
@@ -1329,7 +1329,7 @@ end
 ---@param ui UIObject
 function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	if self.NextRequest == nil then
-		if isDeveloperMode then
+		if _DEBUG then
 			Ext.PrintWarning(string.format("[Game.Tooltip] Got tooltip render request, but did not find original tooltip info! method(%s)", method))
 		end
 		return
@@ -1540,8 +1540,6 @@ function TooltipHooks:NotifyListeners(requestType, name, request, tooltip, ...)
     end
 
     self:NotifyAll(self.GlobalListeners, request, tooltip)
-
-	Mods.LeaderLib.TooltipExpander.AppendHelpText(request, tooltip)
 end
 
 function TooltipHooks:NotifyAll(listeners, ...)
@@ -1649,19 +1647,6 @@ function TooltipData:Create(data, uiType)
 		end
 	})
 	return tt
-end
-
----LeaderLib addition
----Whether or not the tooltip should be expanded. Check this when setting up tooltip elements.
----@return boolean
-function TooltipData:IsExpanded()
-	return Mods.LeaderLib.TooltipExpander.IsExpanded()
-end
-
----LeaderLib addition
----Signals to the tooltip expander that pressing or releasing the expand key will cause the current visible tooltip to re-render.
-function TooltipData:MarkDirty()
-	return Mods.LeaderLib.TooltipExpander.MarkDirty()
 end
 
 local DescriptionElements = {
@@ -1844,7 +1829,7 @@ end
 ---Game.Tooltip.RegisterListener(myFunction) - Register a function for every kind of tooltip.
 ---@param tooltipTypeOrCallback GameTooltipType|function The tooltip type, such as "Skill".
 ---@param idOrNil string|function The tooltip ID, such as "Projectile_Fireball".
----@param callbackOrNil function If the first two parameters are set, this is the function to invoke.
+---@param callbackOrNil function|nil If the first two parameters are set, this is the function to invoke.
 function Game.Tooltip.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
 	if type(callbackOrNil) == "function" then
 		--assert(type(tooltipTypeOrCallback) == "string", "If the third parameter is a function, the first parameter must be a string (TooltipType).")
@@ -1961,7 +1946,7 @@ local function OnUICreated(ui)
 	end
 end
 
-if version < 56 then
+if _EXTVERSION < 56 then
 	---@param ui UIObject
 	Ext.RegisterListener("UIObjectCreated", OnUICreated)
 else

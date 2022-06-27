@@ -68,9 +68,11 @@ local function IsHandle(v)
 	if _EXTVERSION >= 56 then
 		return _isValidHandle(v)
 	else
-		return getmetatable(v) == nil
+		return v ~= nil and getmetatable(v) == nil
 	end
 end
+
+GameHelpers.IsValidHandle = IsHandle
 
 local getFuncs = {
 	_getCharacter,

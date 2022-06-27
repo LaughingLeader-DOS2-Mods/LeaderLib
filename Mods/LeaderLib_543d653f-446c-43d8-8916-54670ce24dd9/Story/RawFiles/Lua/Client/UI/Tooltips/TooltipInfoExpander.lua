@@ -266,16 +266,16 @@ end
 Ext.RegisterListener("SessionLoaded", function ()
 	---Whether or not the tooltip should be expanded. Check this when setting up tooltip elements.
 	---@return boolean
-	Game.Tooltip.TooltipHooks.IsExpanded = function(self)
+	Game.Tooltip.TooltipData.IsExpanded = function(self)
 		return TooltipExpander.IsExpanded()
 	end
 
 	---Signals to the tooltip expander that pressing or releasing the expand key will cause the current visible tooltip to re-render.
-	Game.Tooltip.TooltipHooks.MarkDirty = function(self)
+	Game.Tooltip.TooltipData.MarkDirty = function(self)
 		return TooltipExpander.MarkDirty()
 	end
 
-	Game.Tooltip.RegisterListener(nil, function (request, tooltip)
+	Game.Tooltip.RegisterListener(nil, nil, function (request, tooltip)
 		TooltipExpander.AppendHelpText(request, tooltip)
 	end)
 end)

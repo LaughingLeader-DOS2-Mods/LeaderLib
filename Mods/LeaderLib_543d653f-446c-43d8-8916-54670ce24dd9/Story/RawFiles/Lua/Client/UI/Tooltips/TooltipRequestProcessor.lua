@@ -36,11 +36,24 @@ local ControllerCharacterCreationCalls = {
 	Pyramid = "pyramidOver"
 }
 
-local function GetNetID(obj)
-	if obj then
-		return obj.NetID
+---@param doubleHandle integer
+---@return EclCharacter|EclItem
+local function __TryGetObjectFromDouble(doubleHandle)
+	if GameHelpers.Math.IsNaN(doubleHandle) then
+		return nil
+	end
+	local handle = Ext.DoubleToHandle(doubleHandle)
+	if GameHelpers.IsValidHandle(handle) then
+		return Ext.GetGameObject(handle)
 	end
 	return nil
+end
+
+---@param doubleHandle integer
+---@return EclCharacter|EclItem
+local function _GetObjectFromDouble(doubleHandle)
+	local b,result = pcall(__TryGetObjectFromDouble, doubleHandle)
+	return result
 end
 
 ---@return TooltipRequest
@@ -50,32 +63,33 @@ local function CreateRequest()
 	}
 	setmetatable(request, {
 		__index = function(tbl,k)
-			if k == "Character" then
-				if request.CharacterNetID then
-					return Ext.GetCharacter(request.CharacterNetID)
-				end
-			elseif k == "Item" then
-				if request.ItemNetID then
-					return Ext.GetItem(request.ItemNetID)
+			if k == "Character" or k == "Item" or k == "RuneItem" then
+				if request.ObjectHandleDouble then
+					return _GetObjectFromDouble(request.ObjectHandleDouble)
 				end
 			elseif k == "Status" then
-				if request.StatusHandle and request.CharacterNetID then
-					return Ext.GetStatus(request.CharacterNetID, Ext.DoubleToHandle(request.StatusHandle))
+				if request.StatusHandleDouble and request.ObjectHandleDouble then
+					local handle = Ext.DoubleToHandle(request.ObjectHandleDouble)
+					local statusHandle = Ext.DoubleToHandle(request.StatusHandleDouble)
+					if GameHelpers.IsValidHandle(handle) and GameHelpers.IsValidHandle(statusHandle) then
+						return Ext.GetStatus(handle, statusHandle)
+					end
 				end
 			elseif k == "StatusId" then
-				if request.StatusHandle and request.CharacterNetID then
-					local status = Ext.GetStatus(request.CharacterNetID, Ext.DoubleToHandle(request.StatusHandle))
-					if status then
-						request.StatusId = status.StatusId
+				if request.StatusHandleDouble and request.ObjectHandleDouble then
+					local handle = Ext.DoubleToHandle(request.ObjectHandleDouble)
+					local statusHandle = Ext.DoubleToHandle(request.StatusHandleDouble)
+					if GameHelpers.IsValidHandle(handle) and GameHelpers.IsValidHandle(statusHandle) then
+						local status = Ext.GetStatus(handle, statusHandle)
+						if status then
+							request.StatusId = status.StatusId
+							return request.StatusId
+						end
 					end
 				end
 			elseif k == "Rune" then
 				if not StringHelpers.IsNullOrEmpty(request.StatsId) then
 					return Ext.GetStat(request.StatsId)
-				end
-			elseif k == "RuneItem" then
-				if request.RuneHandleDouble then
-					return GameHelpers.GetItem(Ext.DoubleToHandle(request.RuneHandleDouble))
 				end
 			end
 		end
@@ -91,7 +105,7 @@ RequestProcessor.CallbackHandler[TooltipCalls.Skill] = function(request, ui, uiT
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Status] = function(request, ui, uiType, event, id)
-	request.StatusHandle = id
+	request.StatusHandleDouble = id
 	local status = Ext.GetStatus(request.Character.Handle, Ext.DoubleToHandle(id))
 	if status then
 		request.StatusId = status and status.StatusId or ""
@@ -135,14 +149,14 @@ RequestProcessor.CallbackHandler[TooltipCalls.Item] = function (request, ui, uiT
 			fprint(LOGLEVEL.WARNING, "[LeaderLib:TooltipRequestProcessor] Item handle (%s) is nil? UI(%s) Event(%s)", id, uiType, event)
 			return request
 		end
-		request.ItemNetID = GetNetID(Ext.GetItem(Ext.DoubleToHandle(id)))
+		request.ObjectHandleDouble = id
 	end
 	return request
 end
 
 --ExternalInterface.call("pyramidOver",param1.id,val2.x,val2.y,param1.width,param1.height,"bottom");
 RequestProcessor.CallbackHandler[TooltipCalls.Pyramid] = function(request, ui, uiType, event, id, x, y, width, height, side)
-	request.ItemNetID = GetNetID(Ext.GetItem(Ext.DoubleToHandle(id)))
+	request.ObjectHandleDouble = id
 	return request
 end
 
@@ -199,17 +213,18 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 	local this = ui:GetRoot()
 	if this then
 		if uiType == Data.UIType.uiCraft then
-			local item = Ext.GetItem(Ext.DoubleToHandle(this.craftPanel_mc.runesPanel_mc.targetHit_mc.itemHandle))
+			local doubleHandle = this.craftPanel_mc.runesPanel_mc.targetHit_mc.itemHandle
+			local item = Ext.GetItem(Ext.DoubleToHandle(doubleHandle))
 			if item then
-				request.ItemNetID = GetNetID(item)
+				request.ObjectHandleDouble = doubleHandle
 				request.StatsId = item.Stats.DynamicStats[3+slot].BoostName
 			end
 		elseif uiType == Data.UIType.craftPanel_c then
 			local runePanel = this.craftPanel_mc.runePanel_mc
 			if runePanel then
-				request.RuneHandleDouble = runePanel.runes_mc.runeTargetHandle
-				local item = Ext.GetItem(Ext.DoubleToHandle(request.RuneHandleDouble))
-				request.ItemNetID = GetNetID(item)
+				local doubleHandle = runePanel.runes_mc.runeTargetHandle
+				local item = Ext.GetItem(Ext.DoubleToHandle(doubleHandle))
+				request.ObjectHandleDouble = doubleHandle
 				if slot == 0 then
 					-- The target item is selected instead of a rune, so this should be an item tooltip
 					request.Type = "Item"
@@ -283,23 +298,56 @@ RequestProcessor.CallbackHandler[TooltipInvokes.Surface] = function(request, ui,
 	return request
 end
 
+---The last double handle of the object under the cursor in KB+M mode, when the context menu was opened.
+---@type number|nil
+local lastCursorObjectDoubleHandle = nil
+
+local function _CaptureCursorObject(ui, event)
+	local cursor = Ext.GetPickingState()
+	if cursor then
+		if GameHelpers.IsValidHandle(cursor.HoverCharacter) then
+			lastCursorObjectDoubleHandle = Ext.HandleToDouble(cursor.HoverCharacter)
+		elseif GameHelpers.IsValidHandle(cursor.HoverCharacter2) then
+			lastCursorObjectDoubleHandle = Ext.HandleToDouble(cursor.HoverCharacter2)
+		elseif GameHelpers.IsValidHandle(cursor.HoverItem) then
+			lastCursorObjectDoubleHandle = Ext.HandleToDouble(cursor.HoverItem)
+		end
+	end
+end
+
+local function _OnExamineWindowClosed(ui, event)
+	lastCursorObjectDoubleHandle = nil
+end
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.contextMenu.Object, "open", _CaptureCursorObject)
+Ext.RegisterUITypeCall(Data.UIType.examine, "hideUI", _OnExamineWindowClosed)
+
+--ExternalInterface.call("showTooltip",param1.type,param2,val3.x,val3.y + val5,val4,param1.height,"right");
 function RequestProcessor.OnExamineTooltip(ui, method, typeIndex, id, ...)
-	---@type EclCharacter
-	local character = nil
+	local object = nil
 
-	local characterHandle = ui:GetPlayerHandle()
-	if characterHandle then
-		character = GameHelpers.GetCharacter(characterHandle)
+	--id is nil for statuses, for some reason
+
+	local params = {...}
+
+	--GetPlayerHandle returns the examine character or item
+	local handle = ui:GetPlayerHandle()
+	if GameHelpers.IsValidHandle(handle) then
+		object = GameHelpers.TryGetObject(handle)
 	end
 
-	if not character then
-		character = Client:GetCharacter()
+	if object == nil and lastCursorObjectDoubleHandle then
+		object = GameHelpers.TryGetObject(Ext.DoubleToHandle(lastCursorObjectDoubleHandle))
 	end
 
+	if not object then
+		object = Client:GetCharacter()
+	end
+	
 	local request = CreateRequest()
-
-	if character then
-		request.CharacterNetID = character.NetID
+	
+	if object then
+		request.ObjectHandleDouble = Ext.HandleToDouble(object.Handle)
 	end
 
 	if typeIndex == 1 then
@@ -324,15 +372,20 @@ function RequestProcessor.OnExamineTooltip(ui, method, typeIndex, id, ...)
 		end
 	elseif typeIndex == 7 then
 		request.Type = "Status"
-		request.StatusHandle = id
-		local status = Ext.GetStatus(request.Character.Handle, Ext.DoubleToHandle(id))
-		if status then
-			request.StatusId = status and status.StatusId or ""
+		if id then
+			local statusHandle = Ext.DoubleToHandle(id)
+			if GameHelpers.IsValidHandle(statusHandle) then
+				request.StatusHandleDouble = id
+				local status = Ext.GetStatus(object.Handle, statusHandle)
+				if status then
+					request.StatusId = status and status.StatusId or ""
+				end
+			end
 		end
 	else
 		local text = typeIndex
 		local x = id
-		local y, width, height, side, allowDelay = table.unpack({...})
+		local y, width, height, side, allowDelay = table.unpack(params)
 		--text, x, y, width, height, side, allowDelay
 		--Generic type
 		request.Type = "Generic"
@@ -427,7 +480,7 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHan
 	
 	local request = CreateRequest()
 	request.Type = requestType
-	request.CharacterNetID = character.NetID
+	request.ObjectHandleDouble = Ext.HandleToDouble(character.Handle)
 
 	RequestProcessor.Tooltip:InvokeRequestListeners(request, "before", ui, uiType, event, id, statOrWidth, ...)
 	if RequestProcessor.CallbackHandler[event] then
@@ -550,7 +603,7 @@ Events.OnWorldTooltip:Subscribe(function (e)
 		request.Type = "World"
 		request.Text = e.Text
 		if e.Item then
-			request.ItemNetID = e.Item.NetID
+			request.ObjectHandleDouble = Ext.HandleToDouble(e.Item.Handle)
 			request.IsFromItem = true
 		else
 			request.IsFromItem = false

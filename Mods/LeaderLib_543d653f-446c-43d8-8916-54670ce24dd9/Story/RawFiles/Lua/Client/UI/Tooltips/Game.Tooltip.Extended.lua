@@ -1354,9 +1354,9 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 		if mainArray and mainArray[0] ~= nil then
 			local compareItem = self:GetCompareItem(ui, reqItem, false)
 			if compareItem ~= nil then
-				req.ItemNetID = Ext.GetItem(compareItem).NetID
+				req.ObjectHandleDouble = Ext.HandleToDouble(Ext.GetItem(compareItem).Handle)
 				self:OnRenderSubTooltip(ui, arrayData.CompareMain, req, method, ...)
-				req.ItemNetID = reqItem.NetID
+				req.ObjectHandleDouble = reqItem.ObjectHandleDouble
 			else
 				Ext.PrintError("Tooltip compare render failed: Couldn't find item to compare")
 			end
@@ -1365,9 +1365,9 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 		if compareArray and compareArray[0] ~= nil then
 			local compareItem = self:GetCompareItem(ui, reqItem, true)
 			if compareItem ~= nil then
-				req.ItemNetID = Ext.GetItem(compareItem).NetID
+				req.ObjectHandleDouble = Ext.HandleToDouble(Ext.GetItem(compareItem).Handle)
 				self:OnRenderSubTooltip(ui, arrayData.CompareOff, req, method, ...)		
-				req.ItemNetID = reqItem.NetID
+				req.ObjectHandleDouble = req.ObjectHandleDouble
 			else
 				Ext.PrintError("Tooltip compare render failed: Couldn't find off-hand item to compare")
 			end
@@ -1455,7 +1455,7 @@ function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id, characterHa
 	end
 
 	if characterHandle ~= nil then
-		request.CharacterNetID = GameHelpers.GetNetID(characterHandle)
+		request.ObjectHandleDouble = characterHandle
 	end
 
 	if method == "selectStatus" then
@@ -1621,6 +1621,8 @@ end
 ---@field UIType integer
 ---@field Instance UIObject
 ---@field Root FlashMainTimeline
+---@field MarkDirty function
+---@field IsExpanded fun():boolean
 TooltipData = {}
 
 ---@class GenericTooltipData:TooltipData

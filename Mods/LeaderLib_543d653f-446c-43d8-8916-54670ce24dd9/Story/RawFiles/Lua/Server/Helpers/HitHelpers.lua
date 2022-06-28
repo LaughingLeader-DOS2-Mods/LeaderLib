@@ -187,19 +187,20 @@ function GameHelpers.Hit.IsFromWeapon(hit, skill, hitStatus)
     end
     local hitType = GameHelpers.Hit.GetHitType(hit)
 
-    if not skill and hitType == "Melee" then
-        return true
-    end
+    if skill then
+        return skill.UseWeaponDamage == "Yes" and WeaponHitProperties.SkillHitType[hitType] == true
+    else
+        if hitType == "Melee" then
+            return true
+        end
 
-    if skill and skill.UseWeaponDamage == "Yes" and WeaponHitProperties.SkillHitType[hitType] == true then
-        return true
-    end
-
-    if hitStatus then
-        if WeaponHitProperties.DamageSourceType[hitStatus.DamageSourceType] == true and hitType then
-            return WeaponHitProperties.HitType[hitType] == true and GameHelpers.IsValidHandle(hitStatus.WeaponHandle)
+        if hitStatus then
+            if WeaponHitProperties.DamageSourceType[hitStatus.DamageSourceType] == true and hitType then
+                return WeaponHitProperties.HitType[hitType] == true and GameHelpers.IsValidHandle(hitStatus.WeaponHandle)
+            end
         end
     end
+
     return false
 end
 

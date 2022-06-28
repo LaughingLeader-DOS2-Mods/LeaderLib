@@ -129,7 +129,7 @@ local function RebuildTooltip()
 				local request = Game.Tooltip.RequestProcessor.CreateRequest()
 				request.Type = "Generic"
 				request.Text = text
-				request.UIType = TooltipExpander.CallData.UI
+				request.CallingUIType = TooltipExpander.CallData.UI
 				request.X = x
 				request.Y = y
 				request.Width = width
@@ -185,6 +185,7 @@ end
 Input.RegisterListener(keyboardKey, function (eventName, pressed, id, inputMap, controllerEnabled)
 	RebuildTooltip()
 end)
+
 Input.RegisterListener(controllerKey, function(eventName, pressed, id, inputMap, controllerEnabled)
 	if controllerEnabled then
 		RebuildTooltip()
@@ -264,6 +265,9 @@ end
 
 
 Ext.RegisterListener("SessionLoaded", function ()
+	---Simple variable a mod can check to see if this is a LeaderLib tooltip.
+	Game.Tooltip.TooltipData.IsExtended = true
+
 	---Whether or not the tooltip should be expanded. Check this when setting up tooltip elements.
 	---@return boolean
 	Game.Tooltip.TooltipData.IsExpanded = function(self)
@@ -275,7 +279,24 @@ Ext.RegisterListener("SessionLoaded", function ()
 		return TooltipExpander.MarkDirty()
 	end
 
-	Game.Tooltip.RegisterListener(nil, nil, function (request, tooltip)
-		TooltipExpander.AppendHelpText(request, tooltip)
-	end)
+	---@param request AnyTooltipRequest
+	---@param tooltip TooltipData
+	-- Game.Tooltip.RegisterListener(nil, nil, function (request, tooltip)
+	-- 	local obj = request.Object
+	-- 	Ext.Dump({
+	-- 		Request = request.Type,
+	-- 		Tooltip = tooltip,
+	-- 		Object = obj and GameHelpers.GetDisplayName(obj),
+	-- 	})
+	-- 	TooltipExpander.AppendHelpText(request, tooltip)
+	-- end)
+
+	---@param item EclItem|nil
+	---@param tooltip TooltipData
+	-- Game.Tooltip.RegisterListener("World", nil, function (item, tooltip)
+	-- 	local desc = tooltip:GetDescriptionElement()
+	-- 	if desc then
+	-- 		desc.Label = ""
+	-- 	end
+	-- end)
 end)

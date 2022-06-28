@@ -383,7 +383,7 @@ end
 
 function HitData:IsFromWeapon()
 	if self.HitType then
-		return GameHelpers.Hit.TypesAreFromWeapon(self.HitType, self.DamageSourceType, self.WeaponHandle, self.Skill)
+		return GameHelpers.Hit.TypesAreFromWeapon(self.HitType, self.DamageSourceType, self.WeaponHandle, self.SkillData)
 	end
 	return GameHelpers.Hit.IsFromWeapon(self.HitContext, self.SkillData, self.HitStatus)
 end

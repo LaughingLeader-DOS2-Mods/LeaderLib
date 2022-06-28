@@ -45,7 +45,7 @@ if Game.Tooltip == nil then
 end
 
 ---@type GameTooltipRequestProcessor
-local RequestProcessor = Ext.Utils.Include(nil, "builtin://Libs/Game.Tooltip.RequestProcessor.lua")
+local RequestProcessor = Ext.Require("Client/UI/Tooltips/TooltipRequestProcessor.lua")
 Game.Tooltip.RequestProcessor = RequestProcessor
 
 local game = Game
@@ -1882,7 +1882,7 @@ local function CaptureBuiltInUIs()
 end
 
 local function EnableHooks()
-	RequestProcessor.ControllerEnabled = (Ext.UI.GetByPath("Public/Game/GUI/msgBox_c.swf") or GetUIByType(_UITYPE.msgBox_c)) ~= nil
+	RequestProcessor.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or GetUIByType(_UITYPE.msgBox_c)) ~= nil
 
 	if TooltipHooks.InitializationRequested then
 		TooltipHooks:Init()

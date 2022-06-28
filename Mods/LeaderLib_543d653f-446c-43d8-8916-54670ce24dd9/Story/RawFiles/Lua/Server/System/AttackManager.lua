@@ -176,6 +176,7 @@ end
 function AttackManager.InvokeOnHit(isFromHit, attacker, target, data, skill)
 	local targetIsObject = type(target) == "userdata"
 	local isFromSkill = skill ~= nil
+	--fprint(LOGLEVEL.DEFAULT, "[AttackManager.InvokeOnHit] skill(%s) HitType(%s) DamageSourceType(%s) WeaponHandle(%s)", skill and skill.Name or "", GameHelpers.Hit.GetHitType(data.HitContext), data.HitStatus.DamageSourceType, data.HitStatus.WeaponHandle)
 	Events.OnWeaponHit:Invoke({
 		Attacker = attacker,
 		Target = target,

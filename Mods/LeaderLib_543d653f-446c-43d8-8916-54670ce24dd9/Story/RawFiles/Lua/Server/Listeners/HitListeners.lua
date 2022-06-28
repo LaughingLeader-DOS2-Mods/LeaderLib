@@ -168,6 +168,8 @@ local function OnHit(hitStatus, hitContext)
 
 	local isFromWeapon = GameHelpers.Hit.IsFromWeapon(hitContext, skill, hitStatus)
 
+	--fprint(LOGLEVEL.DEFAULT, "[OnHit] isFromWeapon(%s) data:IsFromWeapon(%s) skill(%s) HitType(%s) DamageSourceType(%s) WeaponHandle(%s)", isFromWeapon, data:IsFromWeapon(), skill and skill.Name or "", GameHelpers.Hit.GetHitType(data.HitContext), data.HitStatus.DamageSourceType, data.HitStatus.WeaponHandle)
+
 	if isFromWeapon then
 		AttackManager.InvokeOnHit(true, source, target, data, skill)
 	end

@@ -131,23 +131,6 @@ end
 --     GM = 8,
 -- }
 
-local WeaponHitProperties = {
-    HitType = {
-        Melee = true,
-        Magic = true,
-        Ranged = true,
-    },
-    DamageSourceType = {
-        Attack = true,
-        Offhand = true
-    },
-    SkillHitType = {
-        Melee = true,
-        Magic = true,
-        WeaponDamage = true,
-    }
-}
-
 ---@param hitType string|integer|HitContext
 ---@param toInteger boolean|nil
 ---@param t string|nil The variable type for hitType, usually passed along automatically.
@@ -176,6 +159,23 @@ function GameHelpers.Hit.GetHitType(hitType, toInteger, t)
     return nil
 end
 
+local WeaponHitProperties = {
+    HitType = {
+        Melee = true,
+        Magic = true,
+        Ranged = true,
+    },
+    DamageSourceType = {
+        Attack = true,
+        Offhand = true
+    },
+    SkillHitType = {
+        Melee = true,
+        Magic = true,
+        WeaponDamage = true,
+    }
+}
+
 ---Returns true if a hit is from a basic attack or weapon skill, if a skill is provided.
 ---@param hit HitContext
 ---@param skill StatEntrySkillData|nil
@@ -186,7 +186,8 @@ function GameHelpers.Hit.IsFromWeapon(hit, skill, hitStatus)
         return false
     end
     local hitType = GameHelpers.Hit.GetHitType(hit)
-    if hitType == "Melee" then
+
+    if not skill and hitType == "Melee" then
         return true
     end
 
@@ -196,7 +197,7 @@ function GameHelpers.Hit.IsFromWeapon(hit, skill, hitStatus)
 
     if hitStatus then
         if WeaponHitProperties.DamageSourceType[hitStatus.DamageSourceType] == true and hitType then
-            return WeaponHitProperties.HitType[hitType] == true and hitStatus.WeaponHandle ~= nil
+            return WeaponHitProperties.HitType[hitType] == true and GameHelpers.IsValidHandle(hitStatus.WeaponHandle)
         end
     end
     return false

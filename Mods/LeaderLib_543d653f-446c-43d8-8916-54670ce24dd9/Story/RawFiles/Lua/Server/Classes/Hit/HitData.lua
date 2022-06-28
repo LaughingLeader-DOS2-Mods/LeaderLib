@@ -164,7 +164,9 @@ function HitData:ApplyDamageList(recalculate)
 	if _EXTVERSION < 56 then
 		self.HitRequest.DamageList = self.DamageList
 		NRD_HitStatusClearAllDamage(self.Target, self.Handle)
-		for k,v in pairs(self.DamageList:ToTable()) do
+		local damages = self.DamageList:ToTable()
+		for i=1,#damages do
+			local v = damages[i]
 			NRD_HitStatusAddDamage(self.Target, self.Handle, v.DamageType, v.Amount)
 		end
 	else

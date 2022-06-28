@@ -160,15 +160,23 @@ local function OnHit(hitStatus, hitContext)
 		skill = Ext.GetStat(GetSkillEntryName(hitStatus.SkillId))
 	end
 
-	local data = Classes.HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill)
+	local hitType = GameHelpers.Hit.GetHitType(hitContext)
+	local damageSourceType = hitStatus.DamageSourceType
+	local weaponHandle = hitStatus.WeaponHandle
+
+	local data = Classes.HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill, {
+		HitType = hitType,
+		DamageSourceType = damageSourceType,
+		WeaponHandle = weaponHandle
+	})
 
 	if skill and source then
 		OnSkillHit(skill.Name, target, source, hitRequest.TotalDamageDone, hitRequest, hitContext, hitStatus, data)
 	end
 
-	local isFromWeapon = GameHelpers.Hit.IsFromWeapon(hitContext, skill, hitStatus)
+	local isFromWeapon = GameHelpers.Hit.TypesAreFromWeapon(hitType, damageSourceType, weaponHandle, skill)
 
-	--fprint(LOGLEVEL.DEFAULT, "[OnHit] isFromWeapon(%s) data:IsFromWeapon(%s) skill(%s) HitType(%s) DamageSourceType(%s) WeaponHandle(%s)", isFromWeapon, data:IsFromWeapon(), skill and skill.Name or "", GameHelpers.Hit.GetHitType(data.HitContext), data.HitStatus.DamageSourceType, data.HitStatus.WeaponHandle)
+	fprint(LOGLEVEL.DEFAULT, "[OnHit] IsFromWeapon(%s) Data:IsFromWeapon(%s) Skill(%s) HitType(%s) DamageSourceType(%s) WeaponHandleSet(%s)", isFromWeapon, data:IsFromWeapon(), skill and skill.Name or "", hitType, damageSourceType, GameHelpers.IsValidHandle(weaponHandle))
 
 	if isFromWeapon then
 		AttackManager.InvokeOnHit(true, source, target, data, skill)

@@ -83,8 +83,9 @@ end
 ---@param hitContext HitContext
 ---@param hitRequest HitRequest
 ---@param skill StatEntrySkillData|nil
+---@param params table|nil
 ---@return HitData
-function HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill)
+function HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill, params)
 	---@type HitData
     local this =
     {
@@ -95,6 +96,11 @@ function HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill
 		HitRequest = hitRequest,
 		SkillData = skill
 	}
+	if params then
+		for k,v in pairs(params) do
+			this[k] = v
+		end
+	end
 	if this.HitRequest then
 		this.DamageList = this.HitRequest.DamageList
 	else
@@ -376,6 +382,9 @@ function HitData:HasHitFlag(flag, value)
 end
 
 function HitData:IsFromWeapon()
+	if self.HitType then
+		return GameHelpers.Hit.TypesAreFromWeapon(self.HitType, self.DamageSourceType, self.WeaponHandle, self.Skill)
+	end
 	return GameHelpers.Hit.IsFromWeapon(self.HitContext, self.SkillData, self.HitStatus)
 end
 

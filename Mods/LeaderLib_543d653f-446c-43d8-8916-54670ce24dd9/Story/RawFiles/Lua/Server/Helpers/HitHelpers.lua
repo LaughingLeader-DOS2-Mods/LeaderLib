@@ -205,6 +205,24 @@ function GameHelpers.Hit.IsFromWeapon(hit, skill, hitStatus, hitType)
 	return false
 end
 
+---Returns true if a hit is from a basic attack or weapon skill, if a skill is provided.
+---@param hitType HitTypeValues
+---@param damageSourceType string
+---@param weaponHandle userdata|nil
+---@param skill StatEntrySkillData|nil
+---@return boolean
+function GameHelpers.Hit.TypesAreFromWeapon(hitType, damageSourceType, weaponHandle, skill)
+	if skill then
+		return skill.UseWeaponDamage == "Yes" and WeaponHitProperties.SkillHitType[hitType] == true
+	else
+		if WeaponHitProperties.DamageSourceType[damageSourceType] == true and WeaponHitProperties.HitType[hitType] then
+			return GameHelpers.IsValidHandle(weaponHandle)
+		end
+	end
+
+	return false
+end
+
 ---Returns true if a hit is from the source directly (not from a surface, DoT etc).
 ---@param hit EsvStatusHit|HitContext
 ---@return boolean

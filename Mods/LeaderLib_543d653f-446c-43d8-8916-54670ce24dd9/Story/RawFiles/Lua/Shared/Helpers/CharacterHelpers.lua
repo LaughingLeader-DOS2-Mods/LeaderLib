@@ -184,8 +184,8 @@ function GameHelpers.Character.IsEnemyOfParty(character)
 	return false
 end
 
----@param char1 UUID|NETID|EsvCharacter
----@param char2 UUID|NETID|EsvCharacter
+---@param char1 CharacterParam
+---@param char2 CharacterParam
 function GameHelpers.Character.IsEnemy(char1, char2)
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		local a = GameHelpers.GetUUID(char1)

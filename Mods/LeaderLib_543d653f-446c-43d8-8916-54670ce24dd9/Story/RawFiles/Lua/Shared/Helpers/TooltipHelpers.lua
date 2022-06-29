@@ -13,7 +13,7 @@ local function GetTextParamValues(output, character)
 		local props = StringHelpers.Split(fullParam, ":")
 		local param = ""
 		local skipUnpack = false
-		if #props >= 0 then
+		if props and #props >= 0 then
 			param = props[1]
 			table.remove(props, 1)
 			if #props == 0 then
@@ -196,7 +196,7 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 end
 
 ---@param str string|TranslatedString
----@param character EclCharacter
+---@param character EclCharacter|EsvCharacter
 local function ReplacePlaceholders(str, character)
 	if not str then
 		return str
@@ -320,7 +320,8 @@ local function ReplacePlaceholders(str, character)
 	
 	for v in string.gmatch(output, "%[Key:.-%]") do
 		local text = v:gsub("%[Key:", ""):gsub("%]", "")
-		local key,fallback = table.unpack(StringHelpers.Split(text, ":"))
+		local split = StringHelpers.Split(text, ":") or {}
+		local key,fallback = table.unpack(split)
 		if fallback == nil then 
 			fallback = key
 		end

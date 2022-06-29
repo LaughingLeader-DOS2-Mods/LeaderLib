@@ -157,10 +157,10 @@ end
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param str string
 ---@param delimiter string
----@return string[]|nil
+---@return string[]
 function StringHelpers.Split(str, delimiter)
 	if _type(str) ~= "string" then
-		return nil
+		return {}
 	end
 	local list = {}; local pos = 1
 	if _find("", delimiter, 1) then

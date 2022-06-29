@@ -518,7 +518,7 @@ else
 
 	---@class ShouldOpenContextMenuEventArgs
 	---@field ContextMenu ContextMenu
-	---@field x number The cursor's x position.
+	---@field X number The cursor's x position.
 	---@field Y number The cursor's y position.
 	---@field ShouldOpen boolean Whether the context menu should open. Set to true.
 	
@@ -533,7 +533,7 @@ else
 
 	---@class OnContextMenuOpeningEventArgs
 	---@field ContextMenu ContextMenu
-	---@field x number The cursor's x position.
+	---@field X number The cursor's x position.
 	---@field Y number The cursor's y position.
 	
 	---Called the LeaderLib regular context menu is opening.  

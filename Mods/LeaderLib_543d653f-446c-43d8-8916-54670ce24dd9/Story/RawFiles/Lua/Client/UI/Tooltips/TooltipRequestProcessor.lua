@@ -122,7 +122,7 @@ local function _GetObjectFromDouble(doubleHandle, resolveFunc)
 	return nil
 end
 
----@param handle ComponentHandle
+---@param handle number
 ---@param resolveFunc _ResolveObjectHandler|nil
 ---@return EclCharacter|EclItem
 local function _GetObjectFromHandle(handle, resolveFunc)
@@ -301,8 +301,8 @@ end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Status] = function(request, ui, uiType, event, id)
 	request.StatusHandleDouble = id
-	local status = Ext.GetStatus(request.Character.Handle, _DoubleToHandle(id))
-	if status then
+	local b,status = pcall(_GetStatus, _DoubleToHandle(request.ObjectHandleDouble), _DoubleToHandle(id))
+	if b and status then
 		request.StatusId = status and status.StatusId or ""
 	end
 	return request
@@ -348,7 +348,6 @@ RequestProcessor.CallbackHandler[TooltipCalls.Item] = function (request, ui, uiT
 		local id,x,y,width,height,contextParam,side = table.unpack(params)
 		if id == 0 then
 			--mc.itemHandle is always 0 for ingredients in the recipe UI, which is the first param
-			print(...)
 			request.ObjectHandleDouble = nil
 			request.Type = "Generic"
 			request.X = x

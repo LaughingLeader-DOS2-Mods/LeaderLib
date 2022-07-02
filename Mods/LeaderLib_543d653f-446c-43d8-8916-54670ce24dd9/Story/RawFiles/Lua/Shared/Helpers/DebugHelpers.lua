@@ -2,6 +2,7 @@ if DebugHelpers == nil then
 	DebugHelpers = {}
 end
 
+local _EXTVERSION = Ext.Version()
 local _ISCLIENT = Ext.IsClient()
 local _type = type
 
@@ -1286,7 +1287,10 @@ end
 function DebugHelpers.ProcessProps(obj, props, data, printNil)
 	for k,v in pairs(props) do
 		if _type(v) == "function" then
-			pcall(v, obj, data, k, printNil)
+			local b,result = pcall(v, obj, data, k, printNil)
+			if b and result ~= nil then
+				data[k] = result
+			end
 		else
 			if v == "ObjectHandle" or v == "StatusHandle" then
 				--data[k] = "ObjectHandle"
@@ -1357,6 +1361,9 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 			if obj.DisplayName then
 				props.DisplayName = function(_obj) return GameHelpers.GetDisplayName(_obj) end
 			end
+			if _EXTVERSION >= 56 then
+				props.UserdataType = function(_obj) return Ext.Types.GetObjectType(_obj) end
+			end
 			if obj.NetID then
 				props.NetID = "number"
 			end
@@ -1380,10 +1387,44 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 			return data
 		end
 	else
-		if meta then
-			return tostring(meta)
+		if _EXTVERSION >= 56 then
+			local data = {
+				UserdataType = Ext.Types.GetObjectType(obj)
+			}
+			local _proccessEntry = nil
+			_proccessEntry = function(_d, k,v)
+				local t = _type(v)
+				if t == "userdata" then
+					local b,result = pcall(DebugHelpers.TraceUserDataSerpent, v, opts)
+					if b and result ~= nil then
+						_d[k] = result
+					end
+				elseif t == "table" then
+					_d[k] = {}
+					for k2,v2 in pairs(v) do
+						_proccessEntry(_d[k], k2,v2)
+					end
+				else
+					_d[k] = Ext.DumpExport(v)
+				end
+			end
+			local b,err = xpcall(function()
+				for k,v in pairs(obj) do
+					if k ~= "AttributeFlags" then
+						_proccessEntry(data, k,v)
+					end
+				end
+			end, debug.traceback)
+			if not b then
+				data.Data = Ext.DumpExport(obj)
+			end
+			return data
 		else
-			return tostring(obj)
+			if meta then
+				return tostring(meta)
+			else
+				return tostring(obj)
+			end
 		end
 	end
 end

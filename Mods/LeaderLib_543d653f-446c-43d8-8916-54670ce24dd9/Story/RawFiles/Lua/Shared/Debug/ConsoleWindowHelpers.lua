@@ -44,7 +44,7 @@ if Vars.DebugMode then
 			local obj = _getLastContextObject()
 			if obj then
 				if k == "Print" then
-					return Lib.serpent.block(obj, {SimplifyUserData = true})
+					return Lib.serpent.block(obj, {SimplifyUserdata = true})
 				end
 				local v = obj[k]
 				if type(v) == "function" then

@@ -94,7 +94,8 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 			ferror("Invalid startPos parameter:\n%s", Lib.serpent.block(startPos))
 		end
 		if GameHelpers.Grid.IsValidPosition(startPos[1], startPos[3], grid) then
-			return startPos[1], startPos[2], startPos[3]
+			local y = grid:GetHeight(startPos[1],startPos[3]) or startPos[2]
+			return startPos[1], y, startPos[3]
 		elseif maxRadius > 0 then
 			local radius = 1.0
 			local slice = 2 * math.pi / pointsInCircle

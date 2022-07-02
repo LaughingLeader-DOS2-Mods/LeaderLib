@@ -49,11 +49,19 @@ if isClient then
 
 	local ButtonConfirmations = {
 		CharacterCreationCancel = {
-			IsActive = function(this) return StringHelpers.Equals(this.popup_mc.title_txt.htmlText, LocalizedText.MessageBox.CancelChangesTitle.Value, true, true) end,
+			IsActive = function(this) 
+				local text_mc = this.popup_mc.title_txt
+				return text_mc and StringHelpers.Equals(text_mc.htmlText, LocalizedText.MessageBox.CancelChangesTitle.Value, true, true) end,
 			Yes = 1
 		},
 		CharacterCreationConfirm = {
-			IsActive = function(this) return StringHelpers.Equals(this.popup_mc.text_mc.text_txt.htmlText, LocalizedText.MessageBox.HasPointsDescription.Value, true, true) end,
+			IsActive = function(this)
+				local text_mc = this.popup_mc.text_mc
+				if Vars.ControllerEnabled then
+					text_mc = this.popup_mc.text_txt
+				end
+				return text_mc and StringHelpers.Equals(text_mc.htmlText, LocalizedText.MessageBox.HasPointsDescription.Value, true, true)
+			end,
 			Yes = 1
 		}
 	}

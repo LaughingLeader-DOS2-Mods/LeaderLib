@@ -1,8 +1,8 @@
----@class SubscribableEventArgs
----@field StopPropagation fun(self:SubscribableEventArgs) Stop the event from continuing on to other registered listeners.
----@field Dump fun(self:SubscribableEventArgs) Dumps the event's parameters to the console.
+---@class LeaderLibSubscribableEventArgs
+---@field StopPropagation fun(self:LeaderLibSubscribableEventArgs) Stop the event from continuing on to other registered listeners.
+---@field Dump fun(self:LeaderLibSubscribableEventArgs) Dumps the event's parameters to the console.
 
----@class RuntimeSubscribableEventArgs
+---@class LeaderLibRuntimeSubscribableEventArgs
 ---@field Handled boolean
 ---@field KeyOrder string[]|nil When unpacking, this is the specific order to unpack values in.
 ---@field GetArg SubscribableEventGetArgFunction|nil
@@ -15,7 +15,7 @@ function SubscribableEventArgs:StopPropagation()
 	self.Handled = true
 end
 
----@param self RuntimeSubscribableEventArgs
+---@param self LeaderLibRuntimeSubscribableEventArgs
 ---@param key string
 local function _TryGetArg(self, key)
 	if self.GetArg then
@@ -37,7 +37,7 @@ end
 ---@param unpackedKeyOrder string[]|nil
 ---@param getArg SubscribableEventGetArgFunction|nil
 ---@param customMeta SubscribableEventCustomMetatable|nil Automatically set if the args table had key set for '__metatable'
----@return RuntimeSubscribableEventArgs
+---@return LeaderLibRuntimeSubscribableEventArgs
 function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta)
 	local _private = {
 		Handled = false,

@@ -917,7 +917,7 @@ ContextMenu.Register = Register
 ---@deprecated
 ---@param callback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number):boolean
 function Register.ShouldOpenListener(callback)
-	---@param e RuntimeSubscribableEventArgs
+	---@param e LeaderLibRuntimeSubscribableEventArgs
 	Events.ShouldOpenContextMenu:Subscribe(function (e)
 		callback(e:Unpack())
 	end)
@@ -926,7 +926,7 @@ end
 ---@deprecated
 ---@param callback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number)
 function Register.OpeningListener(callback)
-	---@param e RuntimeSubscribableEventArgs
+	---@param e LeaderLibRuntimeSubscribableEventArgs
 	Events.OnContextMenuOpening:Subscribe(function (e)
 		callback(e:Unpack())
 	end)
@@ -935,7 +935,7 @@ end
 ---@deprecated
 ---@param callback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray<FlashMovieClip>, buttons:table, targetObject:EclCharacter|EclItem|nil)
 function Register.BuiltinOpeningListener(callback)
-	---@param e RuntimeSubscribableEventArgs
+	---@param e LeaderLibRuntimeSubscribableEventArgs
 	Events.OnBuiltinContextMenuOpening:Subscribe(function (e)
 		callback(e:Unpack())
 	end)
@@ -944,7 +944,7 @@ end
 ---@deprecated
 ---@param callback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string, handle:string|number|boolean|nil)
 function Register.EntryClickedListener(callback)
-	---@param e RuntimeSubscribableEventArgs
+	---@param e LeaderLibRuntimeSubscribableEventArgs
 	Events.OnContextMenuEntryClicked:Subscribe(function (e)
 		callback(e:Unpack())
 	end)

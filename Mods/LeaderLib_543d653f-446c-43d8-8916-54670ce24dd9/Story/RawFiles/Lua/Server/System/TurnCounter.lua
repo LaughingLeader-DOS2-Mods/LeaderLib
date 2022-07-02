@@ -119,7 +119,7 @@ function TurnCounter.CountUp(id, turns, combat, params)
 end
 
 ---@param id string|string[]|nil
----@param callback fun(e:OnTurnCounterEventArgs|SubscribableEventArgs)
+---@param callback fun(e:OnTurnCounterEventArgs|LeaderLibSubscribableEventArgs)
 function TurnCounter.Subscribe(id, callback)
 	local t = type(id)
 	if t == "table" then

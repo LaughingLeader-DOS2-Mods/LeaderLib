@@ -25,7 +25,7 @@ end
 ---@class SubscribableEventCreateOptions
 ---@field GatherResults boolean|nil If true, event results from callbacks are gathered and return in in the Invoke function.
 ---@field SyncInvoke boolean|nil If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
----@field CanSync fun(self:SubscribableEvent, args:SubscribableEventArgs, ...):boolean If set, this event can only sync is this function returns true.
+---@field CanSync fun(self:LeaderLibSubscribableEvent, args:LeaderLibSubscribableEventArgs, ...):boolean If set, this event can only sync is this function returns true.
 ---@field Disabled boolean|nil If this event is disabled, Invoke won't invoke registered callbacks.
 ---@field ArgsKeyOrder string[]|nil
 ---@field GetArg SubscribableEventGetArgFunction|nil
@@ -33,7 +33,7 @@ end
 
 ---@alias SubscribableEventInvokeResultCode string|"Success"|"Handled"|"Error"
 
----@class SubscribableEventInvokeResult<T>:{ResultCode: SubscribableEventInvokeResultCode, Results:table, Args:SubscribableEventArgs|T, Handled:boolean}
+---@class SubscribableEventInvokeResult<T>:{ResultCode: SubscribableEventInvokeResultCode, Results:table, Args:LeaderLibSubscribableEventArgs|T, Handled:boolean}
 ---@alias AnySubscribableEventInvokeResult SubscribableEventInvokeResult<EmptyEventArgs>
 ---@alias MatchArgsCallback<T> fun(e:T):boolean
 
@@ -42,7 +42,7 @@ end
 ---Example: SubscribableEvent<CharacterResurrectedEventArgs>
 ---@see SubscribableEventArgs
 ---@see LeaderLibSubscriptionEvents
----@class SubscribableEvent<T>:{ Subscribe:fun(self:SubscribableEvent, callback:fun(e:T|SubscribableEventArgs), opts:{Priority:integer, Once:boolean,  MatchArgs:T, CanSync:fun(self:SubscribableEvent, args:T)}|nil), Unsubscribe:fun(self:SubscribableEvent, indexOrCallback:integer|function, matchArgs:table|nil), Invoke:fun(self:SubscribableEvent, args:T|SubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult }
+---@class LeaderLibSubscribableEvent<T>:{ Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer, Once:boolean,  MatchArgs:T, CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil), Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:table|nil), Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult }
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string
@@ -58,7 +58,7 @@ local _INVOKERESULT = {
 
 ---@param id string
 ---@param opts SubscribableEventCreateOptions|nil
----@return SubscribableEvent
+---@return LeaderLibSubscribableEvent
 function SubscribableEvent:Create(id, opts)
 	local o = {
 		First = nil,
@@ -96,7 +96,7 @@ end
 ---@field Next SubscribableEventNode|nil
 ---@field IsMatch fun(eventArgs:table):boolean If MatchArgs has a single entry, a function is created to run a quick match.
 
----@param self SubscribableEvent
+---@param self LeaderLibSubscribableEvent
 ---@param node SubscribableEventNode
 ---@param sub SubscribableEventNode
 local function DoSubscribeBefore(self, node, sub)
@@ -112,7 +112,7 @@ local function DoSubscribeBefore(self, node, sub)
 	node.Prev = sub
 end
 
----@param self SubscribableEvent
+---@param self LeaderLibSubscribableEvent
 ---@param sub SubscribableEventNode
 local function DoSubscribe(self, sub)
 	if self.First == nil then
@@ -218,7 +218,7 @@ function SubscribableEvent:Subscribe(callback, opts)
 	return index
 end
 
----@param self SubscribableEvent
+---@param self LeaderLibSubscribableEvent
 ---@param node SubscribableEventNode
 local function RemoveNode(self, node)
 	if node.Prev ~= nil then
@@ -273,7 +273,7 @@ function SubscribableEvent:StopPropagation()
 end
 
 ---@param node SubscribableEventNode
----@param eventArgs RuntimeSubscribableEventArgs
+---@param eventArgs LeaderLibRuntimeSubscribableEventArgs
 local function _EventArgsMatch(node, eventArgs)
 	local match = true
 	if node.IsMatch ~= nil then
@@ -304,7 +304,7 @@ local function SerializeArgs(args)
 end
 
 ---@param sub BaseSubscribableEvent
----@param args RuntimeSubscribableEventArgs
+---@param args LeaderLibRuntimeSubscribableEventArgs
 ---@param resultsTable table
 ---@vararg SerializableValue
 local function InvokeCallbacks(sub, args, resultsTable, ...)

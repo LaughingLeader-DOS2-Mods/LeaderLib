@@ -14,7 +14,7 @@ Ext.Require("Shared/Classes/SubscribableEventArgs.lua")
 ---@field Character EsvCharacter|EclCharacter
 ---@field IsPlayer boolean
 
----@type SubscribableEvent<CharacterResurrectedEventArgs>
+---@type LeaderLibSubscribableEvent<CharacterResurrectedEventArgs>
 Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurrected", {
 	SyncInvoke=true,
 	ArgsKeyOrder={"Character", "IsPlayer"}
@@ -25,7 +25,7 @@ Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurre
 ---@field Level integer
 ---@field IsPlayer boolean
 
----@type SubscribableEvent<CharacterLeveledUpEventArgs>
+---@type LeaderLibSubscribableEvent<CharacterLeveledUpEventArgs>
 Events.CharacterLeveledUp = Classes.SubscribableEvent:Create("CharacterLeveledUp", {
 	SyncInvoke=true,
 	ArgsKeyOrder={"Character", "Level", "IsPlayer"}
@@ -35,25 +35,25 @@ Events.CharacterLeveledUp = Classes.SubscribableEvent:Create("CharacterLeveledUp
 ---@field ID string
 ---@field Enabled boolean
 
----@type SubscribableEvent<FeatureChangedEventArgs>
+---@type LeaderLibSubscribableEvent<FeatureChangedEventArgs>
 Events.FeatureChanged = Classes.SubscribableEvent:Create("FeatureChanged", {ArgsKeyOrder={"ID", "Enabled"}})
 
 ---@class InitializedEventArgs
 ---@field Region string
 
----@type SubscribableEvent<InitializedEventArgs>
+---@type LeaderLibSubscribableEvent<InitializedEventArgs>
 Events.Initialized = Classes.SubscribableEvent:Create("Initialized")
 
 ---@class LeaderLibLoadedEventArgs:InitializedEventArgs
 ---Called when LeaderLib finishes loading its server-side or client-side scripts.
----@type SubscribableEvent<LeaderLibLoadedEventArgs>
+---@type LeaderLibSubscribableEvent<LeaderLibLoadedEventArgs>
 Events.Loaded = Classes.SubscribableEvent:Create("Loaded")
 
----@type SubscribableEvent<EmptyEventArgs>
+---@type LeaderLibSubscribableEvent<EmptyEventArgs>
 Events.BeforeLuaReset = Classes.SubscribableEvent:Create("BeforeLuaReset", {SyncInvoke=true})
 
 ---@class LuaResetEventArgs:InitializedEventArgs
----@type SubscribableEvent<LuaResetEventArgs>
+---@type LeaderLibSubscribableEvent<LuaResetEventArgs>
 Events.LuaReset = Classes.SubscribableEvent:Create("LuaReset", {SyncInvoke=true})
 
 ---@class RegionChangedEventArgs
@@ -61,7 +61,7 @@ Events.LuaReset = Classes.SubscribableEvent:Create("LuaReset", {SyncInvoke=true}
 ---@field State REGIONSTATE
 ---@field LevelType LEVELTYPE
 
----@type SubscribableEvent<RegionChangedEventArgs>
+---@type LeaderLibSubscribableEvent<RegionChangedEventArgs>
 Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged", {ArgsKeyOrder={"Region", "State", "LevelType"}})
 
 ---@class SummonChangedEventArgs
@@ -71,7 +71,7 @@ Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged", {ArgsKe
 ---@field IsItem boolean
 
 ---Called when a summon is created or destroyed. Includes items like mines.
----@type SubscribableEvent<SummonChangedEventArgs>
+---@type LeaderLibSubscribableEvent<SummonChangedEventArgs>
 Events.SummonChanged = Classes.SubscribableEvent:Create("SummonChanged", {
 	SyncInvoke = true,
 	ArgsKeyOrder={"Summon", "Owner", "IsDying", "IsItem"}
@@ -89,7 +89,7 @@ Events.SummonChanged = Classes.SubscribableEvent:Create("SummonChanged", {
 ---@see LeaderLibTimerSystem#RegisterListener
 ---Called when TimerFinished in Osiris occurs, or a tick timer finishes on the client side.
 ---Specify a MatchArgs table in the subscription options to register a named timer listener.
----@type SubscribableEvent<TimerFinishedEventArgs>
+---@type LeaderLibSubscribableEvent<TimerFinishedEventArgs>
 Events.TimerFinished = Classes.SubscribableEvent:Create("TimerFinished", {
 	ArgsKeyOrder={"ID", "Data"}
 })
@@ -99,7 +99,7 @@ Events.TimerFinished = Classes.SubscribableEvent:Create("TimerFinished", {
 ---@field Settings ModSettings
 
 ---Called when ModSettings are synced on both the server and client.
----@type SubscribableEvent<ModSettingsSyncedEventArgs>
+---@type LeaderLibSubscribableEvent<ModSettingsSyncedEventArgs>
 Events.ModSettingsSynced = Classes.SubscribableEvent:Create("ModSettingsSynced", {
 	ArgsKeyOrder={"UUID", "Settings"}
 })
@@ -109,7 +109,7 @@ Events.ModSettingsSynced = Classes.SubscribableEvent:Create("ModSettingsSynced",
 ---@field Character EsvCharacter|EclCharacter
 
 ---Called when a character's turn is delayed in combat (clicking the "Shield" icon).
----@type SubscribableEvent<TurnDelayedEventArgs>
+---@type LeaderLibSubscribableEvent<TurnDelayedEventArgs>
 Events.TurnDelayed = Classes.SubscribableEvent:Create("TurnDelayed", {
 	ArgsKeyOrder={"UUID", "Character"}
 })
@@ -119,7 +119,7 @@ Events.TurnDelayed = Classes.SubscribableEvent:Create("TurnDelayed", {
 ---@field Enabled boolean
 
 ---Called when a global flag is set/unset.
----@type SubscribableEvent<GlobalFlagChangedEventArgs>
+---@type LeaderLibSubscribableEvent<GlobalFlagChangedEventArgs>
 Events.GlobalFlagChanged = Classes.SubscribableEvent:Create("GlobalFlagChanged", {
 	ArgsKeyOrder={"ID", "Enabled"}
 })
@@ -134,7 +134,7 @@ if not _ISCLIENT then
 	---Called when an item is generated from treasure (the extender "TreasureItemGenerated" event), GameHelpers.Item helpers, or by console command.  
 	---🔨**Server-Only**🔨  
 	---@see GameHelpers.Item#Clone
-	---@type SubscribableEvent<TreasureItemGeneratedEventArgs>
+	---@type LeaderLibSubscribableEvent<TreasureItemGeneratedEventArgs>
 	Events.TreasureItemGenerated = Classes.SubscribableEvent:Create("TreasureItemGenerated", {
 		ArgsKeyOrder={"Item", "StatsId", "IsClone", "OriginalItem"}
 	})
@@ -148,7 +148,7 @@ if not _ISCLIENT then
 	
 	---Called during NRD_OnPrepareHit, with a data wrapper for easier manipulation. 
 	---🔨**Server-Only**🔨
-	---@type SubscribableEvent<OnPrepareHitEventArgs>
+	---@type LeaderLibSubscribableEvent<OnPrepareHitEventArgs>
 	Events.OnPrepareHit = Classes.SubscribableEvent:Create("OnPrepareHit", {
 		ArgsKeyOrder={"Target", "Source", "Damage", "Handle", "Data"},
 		GetArg = function(paramId, param)
@@ -166,7 +166,7 @@ if not _ISCLIENT then
 	
 	---Called during StatusHitEnter, with a data wrapper for easier manipulation.  
 	---🔨**Server-Only**🔨
-	---@type SubscribableEvent<OnHitEventArgs>
+	---@type LeaderLibSubscribableEvent<OnHitEventArgs>
 	Events.OnHit = Classes.SubscribableEvent:Create("OnHit", {
 		ArgsKeyOrder={"Target", "Source", "Data", "HitStatus"}
 	})
@@ -190,7 +190,7 @@ if not _ISCLIENT then
 	---Called from HitOverrides.ComputeCharacterHit at the end of the function, if certain features are enabled or listeners are registered.  
 	---🔨**Server-Only**🔨
 	---@see LeaderLibHitOverrides#ComputeCharacterHit
-	---@type SubscribableEvent<ComputeCharacterHitEventArgs>
+	---@type LeaderLibSubscribableEvent<ComputeCharacterHitEventArgs>
 	Events.ComputeCharacterHit = Classes.SubscribableEvent:Create("ComputeCharacterHit", {
 		ArgsKeyOrder={"Target", "Attacker", "Weapon", "DamageList", "HitType", "NoHitRoll", "ForceReduceDurability", "Hit", "AlwaysBackstab", "HighGround", "CriticalRoll"}
 	})
@@ -206,7 +206,7 @@ if not _ISCLIENT then
 	---Called from HitOverrides.DoHit, which overrides Game.Math.DoHit to wrap listener callbacks. The original Game.Math.DoHit is called for calculation.  
 	---🔨**Server-Only**🔨
 	---@see LeaderLibHitOverrides#DoHit
-	---@type SubscribableEvent<DoHitEventArgs>
+	---@type LeaderLibSubscribableEvent<DoHitEventArgs>
 	Events.DoHit = Classes.SubscribableEvent:Create("DoHit", {
 		ArgsKeyOrder={"Hit", "DamageList", "StatusBonusDamageTypes", "HitType", "Target", "Attacker"}
 	})
@@ -221,7 +221,7 @@ if not _ISCLIENT then
 	---Called from a Game.Math.ApplyDamageCharacterBonuses override. This is where resistance penetration happens.  
 	---🔨**Server-Only**🔨
 	---@see LeaderLibHitOverrides#ApplyDamageCharacterBonuses
-	---@type SubscribableEvent<ApplyDamageCharacterBonusesEventArgs>
+	---@type LeaderLibSubscribableEvent<ApplyDamageCharacterBonusesEventArgs>
 	Events.ApplyDamageCharacterBonuses = Classes.SubscribableEvent:Create("ApplyDamageCharacterBonuses", {
 		ArgsKeyOrder={"Target", "Attacker", "DamageList", "PreModifiedDamageList", "ResistancePenetration"}
 	})
@@ -236,7 +236,7 @@ if not _ISCLIENT then
 	---Called during HitOverrides.ApplyDamageCharacterBonuses, to apply resistances to a hit.  
 	---🔨**Server-Only**🔨  
 	---@see LeaderLibHitOverrides#GetResistance
-	---@type SubscribableEvent<GetHitResistanceBonusEventArgs>
+	---@type LeaderLibSubscribableEvent<GetHitResistanceBonusEventArgs>
 	Events.GetHitResistanceBonus = Classes.SubscribableEvent:Create("GetHitResistanceBonus", {
 		ArgsKeyOrder={"Target", "DamageType", "ResistancePenetration", "CurrentResistanceAmount", "ResistanceName"},
 		GatherResults = true
@@ -264,7 +264,7 @@ if not _ISCLIENT then
 	---| SkipPositionCheck | Skip positional checks for distance/angle, allowing the hit to backstab regardless. |  
 	---🔨**Server-Only**🔨
 	---@see LeaderLibHitOverrides#CanBackstab
-	---@type SubscribableEvent<GetCanBackstabEventArgs>
+	---@type LeaderLibSubscribableEvent<GetCanBackstabEventArgs>
 	Events.GetCanBackstab = Classes.SubscribableEvent:Create("GetCanBackstab", {
 		ArgsKeyOrder={"CanBackstab", "Target", "Attacker", "Weapon", "DamageList", "HitType", "NoHitRoll", "ForceReduceDurability", "Hit", "AlwaysBackstab", "HighGround", "CriticalRoll"},
 		GatherResults = true
@@ -281,7 +281,7 @@ if not _ISCLIENT then
 	
 	---Called during NRD_OnHeal, with extra data for the optional skill that was used, our source EsvStatusHealing.  
 	---🔨**Server-Only**🔨
-	---@type SubscribableEvent<OnHealEventArgs>
+	---@type LeaderLibSubscribableEvent<OnHealEventArgs>
 	Events.OnHeal = Classes.SubscribableEvent:Create("OnHeal", {
 		ArgsKeyOrder={"Target", "Source", "Heal", "OriginalAmount", "Handle", "Skill", "HealingSourceStatus"}
 	})
@@ -298,7 +298,7 @@ if not _ISCLIENT then
 	---🔨**Server-Only**🔨  
 	---@see LeaderLibTurnCounterSystem#Subscribe
 	---@see LeaderLibTurnCounterSystem#CreateTurnCounter
-	---@type SubscribableEvent<OnTurnCounterEventArgs>
+	---@type LeaderLibSubscribableEvent<OnTurnCounterEventArgs>
 	Events.OnTurnCounter = Classes.SubscribableEvent:Create("OnTurnCounter", {
 		ArgsKeyOrder={"ID", "Turn", "LastTurn", "Finished", "Data"}
 	})
@@ -310,7 +310,7 @@ if not _ISCLIENT then
 	---Called when an object's turn ends in combat, or they leave combat.  
 	---If a TurnCounter is associated with this object, that ID is specified.  
 	---🔨**Server-Only**🔨  
-	---@type SubscribableEvent<OnTurnEndedEventArgs>
+	---@type LeaderLibSubscribableEvent<OnTurnEndedEventArgs>
 	Events.OnTurnEnded = Classes.SubscribableEvent:Create("OnTurnEnded", {
 		ArgsKeyOrder={"Object", "ID"}
 	})
@@ -326,7 +326,7 @@ if not _ISCLIENT then
 	---Called when a GameHelpers.ForceMoveObject action ends.  
 	---🔨**Server-Only**🔨  
 	---@see LeaderLibGameHelpers#ForceMoveObject
-	---@type SubscribableEvent<ForceMoveFinishedEventArgs>
+	---@type LeaderLibSubscribableEvent<ForceMoveFinishedEventArgs>
 	Events.ForceMoveFinished = Classes.SubscribableEvent:Create("ForceMoveFinished", {
 		ArgsKeyOrder={"Target", "Source", "Distance", "StartingPosition", "Skill"}
 	})
@@ -338,7 +338,7 @@ if not _ISCLIENT then
 	---🔨**Server-Only**🔨  
 	---@see LeaderLibGameHelpers.PersistentVars#Initialize
 	---@see LeaderLibGameHelpers.PersistentVars#Update
-	---@type SubscribableEvent<PersistentVarsLoadedEventArgs>
+	---@type LeaderLibSubscribableEvent<PersistentVarsLoadedEventArgs>
 	Events.PersistentVarsLoaded = Classes.SubscribableEvent:Create("PersistentVarsLoaded")
 
 	---@alias ObjectEventEventType string|"StoryEvent"|"CharacterCharacterEvent"|"CharacterItemEvent"
@@ -350,7 +350,7 @@ if not _ISCLIENT then
 	
 	---Called when a StoryEvent, CharacterItemEvent, or CharacterCharacterEvent occurs.  
 	---🔨**Server-Only**🔨  
-	---@type SubscribableEvent<ObjectEventEventArgs>
+	---@type LeaderLibSubscribableEvent<ObjectEventEventArgs>
 	Events.ObjectEvent = Classes.SubscribableEvent:Create("ObjectEvent", {
 		ArgsKeyOrder={"EventType", "Event", "Objects"}
 	})
@@ -364,7 +364,7 @@ if not _ISCLIENT then
 	
 	---Server-side event for when base ability or attribute values change on players. Can fire from character sheet interaction or after respec.  
 	---🔨**Server-Only**🔨  
-	---@type SubscribableEvent<CharacterBasePointsChangedEventArgs>
+	---@type LeaderLibSubscribableEvent<CharacterBasePointsChangedEventArgs>
 	Events.CharacterBasePointsChanged = Classes.SubscribableEvent:Create("CharacterBasePointsChanged", {
 		ArgsKeyOrder={"Character", "Stat", "Last", "Current", "StatType"},
 		GetArg = function(paramId, param)
@@ -415,7 +415,7 @@ if not _ISCLIENT then
 	---Use SkillManager.Register to register different skill listeners.  
 	---🔨**Server-Only**🔨  
 	---@see LeaderLibSkillManagerRegistration#All
-	---@type SubscribableEvent<OnSkillStateAllEventArgs>
+	---@type LeaderLibSubscribableEvent<OnSkillStateAllEventArgs>
 	Events.OnSkillState = Classes.SubscribableEvent:Create("OnSkillState", {
 		ArgsKeyOrder={"Skill", "Character", "State", "Data", "DataType"},
 		GetArg = function(paramId, param)
@@ -433,7 +433,7 @@ if not _ISCLIENT then
 	---Called via AttackManager, when a character starts a basic attack.
 	---🔨**Server-Only**🔨
 	---@see LeaderLibAttackManager
-	---@type SubscribableEvent<OnBasicAttackStartEventArgs>
+	---@type LeaderLibSubscribableEvent<OnBasicAttackStartEventArgs>
 	Events.OnBasicAttackStart = Classes.SubscribableEvent:Create("OnBasicAttackStart", {
 		ArgsKeyOrder={"Attacker", "Target", "Data"}
 	})
@@ -451,7 +451,7 @@ if not _ISCLIENT then
 	---Called via AttackManager, when an object or position is hit with a basic attack or weapon skill.
 	---🔨**Server-Only**🔨
 	---@see LeaderLibAttackManager
-	---@type SubscribableEvent<OnWeaponHitEventArgs>
+	---@type LeaderLibSubscribableEvent<OnWeaponHitEventArgs>
 	Events.OnWeaponHit = Classes.SubscribableEvent:Create("OnWeaponHit", {
 		ArgsKeyOrder={"Attacker", "Target", "Data", "TargetIsObject", "SkillData"}
 	})
@@ -464,7 +464,7 @@ if not _ISCLIENT then
 	---Called via AttackManager, when an object or position is hit with a basic attack or weapon skill.
 	---🔨**Server-Only**🔨
 	---@see LeaderLibAttackManager
-	---@type SubscribableEvent<OnWeaponTypeHitEventArgs>
+	---@type LeaderLibSubscribableEvent<OnWeaponTypeHitEventArgs>
 	Events.OnWeaponTypeHit = Classes.SubscribableEvent:Create("OnWeaponTypeHit", {
 		ArgsKeyOrder={"WeaponType", "Attacker", "Target", "Data", "TargetIsObject", "Skill"}
 	})
@@ -475,7 +475,7 @@ if not _ISCLIENT then
 	---Called via AttackManager, when an object or position is hit with a basic attack or weapon skill.
 	---🔨**Server-Only**🔨
 	---@see LeaderLibAttackManager
-	---@type SubscribableEvent<OnWeaponTagHitEventArgs>
+	---@type LeaderLibSubscribableEvent<OnWeaponTagHitEventArgs>
 	Events.OnWeaponTagHit = Classes.SubscribableEvent:Create("OnWeaponTagHit", {
 		ArgsKeyOrder={"Tag", "Attacker", "Target", "Data", "TargetIsObject", "Skill"},
 		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
@@ -495,7 +495,7 @@ else
 	
 	---Called after a UI is created, when the main timeline is hopefully ready.  
 	---🔧**Client-Only**🔧
-	---@type SubscribableEvent<UICreatedEventArgs>
+	---@type LeaderLibSubscribableEvent<UICreatedEventArgs>
 	Events.UICreated = Classes.SubscribableEvent:Create("UICreated", {
 		ArgsKeyOrder={"UI", "Root", "Player", "TypeId", "Name", "Path"}
 	})
@@ -511,7 +511,7 @@ else
 	---Called when a world tooltip is created either under the cursor, or when the highlight items key is pressed.  
 	---Setting the Text property will update the tooltip.  
 	---🔧**Client-Only**🔧
-	---@type SubscribableEvent<OnWorldTooltipEventArgs>
+	---@type LeaderLibSubscribableEvent<OnWorldTooltipEventArgs>
 	Events.OnWorldTooltip = Classes.SubscribableEvent:Create("OnWorldTooltip", {
 		ArgsKeyOrder={"UI", "Text", "X", "Y", "IsFromItem", "Item"}
 	})
@@ -525,7 +525,7 @@ else
 	---Called when right clicking with KB+M.  
 	---This event is used to determine if the LeaderLib context menu should be opened, allowing context menus for anything in the UI.  
 	---🔧**Client-Only**🔧
-	---@type SubscribableEvent<ShouldOpenContextMenuEventArgs>
+	---@type LeaderLibSubscribableEvent<ShouldOpenContextMenuEventArgs>
 	Events.ShouldOpenContextMenu = Classes.SubscribableEvent:Create("ShouldOpenContextMenu", {
 		ArgsKeyOrder={"ContextMenu", "X", "Y"},
 		GatherResults = true,
@@ -540,7 +540,7 @@ else
 	---Add entries via e.ContextMenu:AddEntry  
 	---🔧**Client-Only**🔧
 	---@see ContextMenu#AddEntry
-	---@type SubscribableEvent<OnContextMenuOpeningEventArgs>
+	---@type LeaderLibSubscribableEvent<OnContextMenuOpeningEventArgs>
 	Events.OnContextMenuOpening = Classes.SubscribableEvent:Create("OnContextMenuOpening", {
 		ArgsKeyOrder={"ContextMenu", "X", "Y"},
 	})
@@ -558,7 +558,7 @@ else
 	---🔧**Client-Only**🔧
 	---@see ContextMenu#AddBuiltinEntry
 	---@see Ext#GetPickingState
-	---@type SubscribableEvent<OnBuiltinContextMenuOpeningEventArgs>
+	---@type LeaderLibSubscribableEvent<OnBuiltinContextMenuOpeningEventArgs>
 	Events.OnBuiltinContextMenuOpening = Classes.SubscribableEvent:Create("OnBuiltinContextMenuOpening", {
 		ArgsKeyOrder={"ContextMenu", "UI", "Root", "ButtonArray", "Entries", "Target"}
 	})
@@ -572,7 +572,7 @@ else
 	
 	---Called when a context menu entry is clicked.  
 	---🔧**Client-Only**🔧
-	---@type SubscribableEvent<OnContextMenuEntryClickedEventArgs>
+	---@type LeaderLibSubscribableEvent<OnContextMenuEntryClickedEventArgs>
 	Events.OnContextMenuEntryClicked = Classes.SubscribableEvent:Create("OnContextMenuEntryClicked", {
 		ArgsKeyOrder={"ContextMenu", "UI", "ID", "ActionID", "Handle"}
 	})

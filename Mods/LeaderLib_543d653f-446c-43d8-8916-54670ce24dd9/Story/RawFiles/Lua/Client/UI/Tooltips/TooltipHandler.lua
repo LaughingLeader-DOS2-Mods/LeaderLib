@@ -75,32 +75,31 @@ Ext.Require("Client/UI/Tooltips/Handlers/RuneTooltip.lua")
 Ext.Require("Client/UI/Tooltips/Handlers/WorldTooltip.lua")
 Ext.Require("Client/UI/Tooltips/Handlers/TooltipFormatting.lua")
 
-Ext.RegisterListener("SessionLoaded", function()
-	Game.Tooltip.RegisterListener("Item", nil, TooltipHandler.OnItemTooltip)
-	Game.Tooltip.RegisterListener("Skill", nil, HotbarFixer.UpdateSkillRequirements)
-	Game.Tooltip.RegisterListener("Skill", nil, TooltipHandler.OnSkillTooltip)
-	Game.Tooltip.RegisterListener("Status", nil, TooltipHandler.OnStatusTooltip)
-	Game.Tooltip.RegisterListener("Stat", nil, TooltipHandler.OnStatTooltip)
+local function RegisterTooltipHandlers()
+	local _r = Game.Tooltip.Register
+	_r.Item(TooltipHandler.OnItemTooltip)
+	_r.Skill(function (...)
+		HotbarFixer.UpdateSkillRequirements(...)
+		TooltipHandler.OnSkillTooltip(...)
+	end)
+	_r.Status(TooltipHandler.OnStatusTooltip)
+	_r.Stat(TooltipHandler.OnStatTooltip)
+
 	if Vars.DebugMode then
-		Game.Tooltip.RegisterListener("Rune", nil, TooltipHandler.OnRuneTooltip)
-		--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
-		Game.Tooltip.RegisterListener("CustomStat", nil, TooltipHandler.OnCustomStatTooltip)
-		--Game.Tooltip.RegisterListener("Ability", nil, TooltipHandler.OnAbilityTooltip)
-		Game.Tooltip.RegisterListener("Generic", nil, TooltipHandler.OnGenericTooltip)
-		-- Game.Tooltip.RegisterListener("Surface", "Water", function (character, surfaceType, tooltip)
-		-- 	local description = tooltip:GetDescriptionElement()
-		-- 	if description then
-		-- 		description.Label = description.Label .. "<br><font color='#33FF00'>Water can be transformed into poison with Contamination.</font>"
-		-- 	end
-		-- 	--Ext.Dump({Description=description or "nil",SurfaceType = surfaceType, Tooltip=tooltip.Data})
-		-- end)
+		_r.Rune(TooltipHandler.OnRuneTooltip)
+		_r.CustomStat(TooltipHandler.OnCustomStatTooltip)
+		_r.Generic(TooltipHandler.OnGenericTooltip)
+		_r.Surface(function (character, surfaceType, tooltip)
+			local description = tooltip:GetDescriptionElement()
+			if description then
+				description.Label = description.Label .. "<br><font color='#33FF00'>Water can be transformed into poison with Contamination.</font>"
+			end
+		end, "Water")
 	end
+end
 
-
-	-- if Vars.DebugMode then
-	-- 	Game.Tooltip.RegisterListener(nil, nil, function (...)
-	-- 		local params =  {...}
-	-- 		Ext.Dump(params)
-	-- 	end)
-	-- end
-end)
+if Ext.Version() < 56 then
+	Ext.RegisterListener("SessionLoaded",RegisterTooltipHandlers)
+else
+	Ext.Events.SessionLoaded:Subscribe(RegisterTooltipHandlers, {Priority = 0})
+end

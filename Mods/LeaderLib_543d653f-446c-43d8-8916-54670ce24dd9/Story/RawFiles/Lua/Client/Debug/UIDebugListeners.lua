@@ -1,5 +1,7 @@
 local _initialized = false
 
+local _format = string.format
+
 local Init = function()
 	if _initialized then
 		return
@@ -7,12 +9,24 @@ local Init = function()
 
 	local UIListenerWrapper = Classes.UIListenerWrapper
 
-	local lastEvent = "";
+	local printAll = false
+	local _logText = ""
+	local _logPrefix = Ext.MonotonicTime()
+	local _logName = _format("Logs/UI/%s_All.log", _logPrefix)
+
+	local function _print(str, ...)
+		if not printAll then
+			fprint(LOGLEVEL.TRACE2, ...)
+		else
+			_logText = _logText .. "\n" .. _format(str, ...)
+			Ext.IO.SaveFile(_logName, _logText)
+		end
+	end
 
 	---@param self UIListenerWrapper
 	---@param ui UIObject
 	local function OnUIListener(self, eventType, ui, event, ...)
-		if self.Enabled and Vars.DebugMode and (Vars.Print.UI --[[ or Vars.LeaderDebugMode ]]) and not self.Ignored[event] then
+		if self.Enabled and (Vars.DebugMode and (Vars.Print.UI or printAll)) and not self.Ignored[event] then
 			if event == "addTooltip" then
 				local txt = table.unpack({...})
 				if string.find(txt, "Experience:", 1, true) then
@@ -22,16 +36,14 @@ local Init = function()
 			-- 	return
 			end
 			if self.PrintParams then
-				fprint(LOGLEVEL.TRACE2, "[%s(%s)][%s] %s(%s) [%s]", self.Name, ui:GetTypeId(), eventType, event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
+				_print("[%s(%s)][%s] %s(%s) [%s]", self.Name, ui:GetTypeId(), eventType, event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
 			else
-				fprint(LOGLEVEL.TRACE2, "[%s(%s)][%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
+				_print("[%s(%s)][%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
 			end
 
 			if self.CustomCallback[event] then
 				self.CustomCallback[event](self, ui, event, ...)
 			end
-
-			lastEvent = event
 		end
 	end
 
@@ -57,6 +69,16 @@ local Init = function()
 		clearAnchor = true,
 		clearAll = true,
 		removeTooltip = true,
+		updateOHs = true,
+		updateStatusses = true,
+		clearObsoleteOHTs = true,
+		removingOHT = true,
+		updateBtnInfos = true,
+		setBar1Progress = true,
+		updateButtonHints = true,
+		clearTooltipText = 43,
+		removeText = 43,
+		addText = 43,
 	}
 
 	local lastTimeSinceIgnored = {}
@@ -73,13 +95,18 @@ local Init = function()
 			-- end
 		end
 		local t = ui:GetTypeId()
-		local listener = UIListenerWrapper._TypeListeners[t]
-		if listener then
-			if version < 56 then
-				OnUIListener(listener, "call", ui, event, arg1, ...)
-			else
-				--arg1 is "When" now.
-				OnUIListener(listener, "call", ui, event, ...)
+		if printAll then
+			local name = Data.UITypeToName[t]
+			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "call", event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
+		else
+			local listener = UIListenerWrapper._TypeListeners[t]
+			if listener then
+				if version < 56 then
+					OnUIListener(listener, "call", ui, event, arg1, ...)
+				else
+					--arg1 is "When" now.
+					OnUIListener(listener, "call", ui, event, ...)
+				end
 			end
 		end
 	end)
@@ -94,13 +121,18 @@ local Init = function()
 			-- end
 		end
 		local t = ui:GetTypeId()
-		local listener = UIListenerWrapper._TypeListeners[t]
-		if listener then
-			if version < 56 then
-				OnUIListener(listener, "method", ui, event, arg1, ...)
-			else
-				--arg1 is "When" now.
-				OnUIListener(listener, "method", ui, event, ...)
+		if printAll then
+			local name = Data.UITypeToName[t]
+			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "invoke", event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
+		else
+			local listener = UIListenerWrapper._TypeListeners[t]
+			if listener then
+				if version < 56 then
+					OnUIListener(listener, "method", ui, event, arg1, ...)
+				else
+					--arg1 is "When" now.
+					OnUIListener(listener, "method", ui, event, ...)
+				end
 			end
 		end
 	end)
@@ -126,22 +158,22 @@ local Init = function()
 	local enabledParam = {Enabled=true}
 
 	--local contextMenu = UIListenerWrapper:Create(Data.UIType.contextMenu, enabledParam)
-	local characterSheet = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
-	local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, enabledParam)
+	--local characterSheet = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
+	--local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, enabledParam)
 	--local chatLog = UIListenerWrapper:Create(Data.UIType.chatLog, enabledParam)
 	-- local areaInteract_c = UIListenerWrapper:Create(Data.UIType.areaInteract_c)
 	-- local containerInventory = UIListenerWrapper:Create(Data.UIType.containerInventory, enabledParam)
 	-- local uiCraft = UIListenerWrapper:Create(Data.UIType.uiCraft, enabledParam)
 	-- local dialog = UIListenerWrapper:Create(Data.UIType.dialog,enabledParam)
 	-- local enemyHealthBar = UIListenerWrapper:Create(Data.UIType.enemyHealthBar)
-	-- local examine = UIListenerWrapper:Create(Data.UIType.examine, enabledParam)
+	local examine = UIListenerWrapper:Create(Data.UIType.examine, enabledParam)
 	-- local gmPanelHUD = UIListenerWrapper:Create(Data.UIType.GMPanelHUD)
 	-- local journal_csp = UIListenerWrapper:Create(Data.UIType.journal_csp)
 	-- local LeaderLib_UIExtensions = UIListenerWrapper:Create("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf", enabledParam)
 	-- local mainMenu = UIListenerWrapper:Create(Data.UIType.mainMenu)
 	-- local msgBox = UIListenerWrapper:Create(Data.UIType.msgBox, enabledParam)
 	-- local msgBox_c = UIListenerWrapper:Create(Data.UIType.msgBox_c, enabledParam)
-	local overhead = UIListenerWrapper:Create(Data.UIType.overhead, enabledParam)
+	local overhead = UIListenerWrapper:Create(Data.UIType.overhead)
 	overhead.CustomCallback.updateOHs = function(self, ui, method)
 		local root = ui:GetRoot()
 		local data = {
@@ -164,7 +196,7 @@ local Init = function()
 			hasData = true
 		end
 		if hasData then
-			--GameHelpers.IO.SaveJsonFile(string.format("Dumps/overhead_%s.json", Ext.MonotonicTime()), Ext.DumpExport(data))
+			--GameHelpers.IO.SaveJsonFile(_format("Dumps/overhead_%s.json", Ext.MonotonicTime()), Ext.DumpExport(data))
 			GameHelpers.IO.SaveJsonFile("Dumps/overhead.json", Ext.DumpExport(data))
 		end
 	end
@@ -178,7 +210,7 @@ local Init = function()
 	-- local skills = UIListenerWrapper:Create(Data.UIType.skills)
 	-- local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole)
 	--local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, enabledParam)
-	UIListenerWrapper:Create(Data.UIType.journal, enabledParam)
+	--UIListenerWrapper:Create(Data.UIType.journal, enabledParam)
 	--local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip, enabledParam)
 	--local textDisplay = UIListenerWrapper:Create(Data.UIType.textDisplay, enabledParam)
 

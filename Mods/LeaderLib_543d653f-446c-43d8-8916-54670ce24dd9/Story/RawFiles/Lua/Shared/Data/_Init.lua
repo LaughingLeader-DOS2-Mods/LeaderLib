@@ -888,6 +888,7 @@ Data.SurfaceChange = {
 
 Classes.Enum:Create(Data.SurfaceChange)
 
+---@overload fun(string:UISWFName):integer
 Data.UIType = {
 	actionProgression = 0,
 	addContent = 57,
@@ -912,7 +913,7 @@ Data.UIType = {
 	connectivity_c = 34,
 	--consoleHints_c = -1,
 	--consoleHintsPS_c = -1,
-	containerInventory = 37,
+	containerInventory = { Default = 9, Pickpocket = 37},
 	--containerInventory_lib = -1,
 	containerInventoryGM = 143,
 	contextMenu = { Default = 10, Object = 11 },
@@ -1033,11 +1034,43 @@ Data.UIType = {
 	worldTooltip = 48,
 }
 
+local _MultiTypeUI = {
+	contextMenu = true,
+	contextMenu_c = true,
+	containerInventory = true,
+	optionsSettings = true,
+	optionsSettings_c = true,
+}
+
+---@param tbl table
+---@param key string
+---@return integer
+local function _UITypeIDCall(tbl, key)
+	local id = tbl[key]
+	if _MultiTypeUI[key] then
+		local _default = id.Default
+		for k,v in pairs(id) do
+			if k ~= "Default" then
+				local ui = Ext.GetUIByType(v)
+				if ui then
+					return v
+				end
+			end
+		end
+		return _default
+	end
+	return id
+end
+
+setmetatable(Data.UIType, {
+	__call = _UITypeIDCall
+})
+
 ---@type table<integer, string>
 Data.UITypeToName = {}
 
 for k,v in pairs(Data.UIType) do
-	if type(v) == "table" then
+	if _MultiTypeUI[k] then
 		for _,v2 in pairs(v) do
 			Data.UITypeToName[v2] = k
 		end

@@ -34,12 +34,26 @@ Changelog:RegisterInvokeListener("updateJournal", function (self, ui, event)
 		local tabTitle = string.upper(GameHelpers.GetStringKeyText("LeaderLib_UI_Journal_InfoButton_Title", "INFO"))
 		local tutorialTab = GameHelpers.GetTranslatedString("h7a7a3449g5a44g44a7g8132gcf3bb11fe0d5", "TUTORIALS")
 
-		for i=0,#this.journal_mc.tabList.content_array-1 do
-			local tab = this.journal_mc.tabList.content_array[i]
-			if tab then
-				--fprint(LOGLEVEL.DEFAULT, "[tab] id(%s) funcId(%s) label(%s)", tab.id, tab.funcId, tab.text_txt.htmlText)
-				if tab.id == 7 or StringHelpers.Equals(tab.text_txt.htmlText, tutorialTab, true, true) then
-					tab.text_txt.htmlText = tabTitle
+		local tabs = this.journal_mc.tabList
+		if Vars.ControllerEnabled then
+			tabs = this.journal_mc.journalSubTabList
+		end
+		if tabs and tabs.content_array then
+			local arr = tabs.content_array
+			local len = #arr-1
+			for i=0,len do
+				local tab = arr[i]
+				if tab then
+					local text_mc = tab.text_txt
+					if Vars.ControllerEnabled then
+						text_mc = tab.tabEntry_mc.text_txt
+					end
+					if text_mc then
+						--fprint(LOGLEVEL.DEFAULT, "[tab] id(%s) funcId(%s) label(%s)", tab.id, tab.funcId, tab.text_txt.htmlText)
+						if tab.id == 7 or StringHelpers.Equals(text_mc.htmlText, tutorialTab, true, true) then
+							text_mc.htmlText = tabTitle
+						end
+					end
 				end
 			end
 		end
@@ -108,43 +122,6 @@ Changelog:RegisterInvokeListener("updateTutorials", function (self, ui, event)
 			end
 
 			initializedEntries = true
-			
-			-- if lastGroup then
-			-- 	Timer.StartOneshot("", 250, function ()
-			-- 		local this = Changelog:GetRoot()
-			-- 		if this and this.journal_mc and this.journal_mc.tutorialList then
-			-- 			tutorialList = this.journal_mc.tutorialList
-			-- 			local groups_array = tutorialList.content_array
-			-- 			for i=0,#groups_array-1 do
-			-- 				local group = groups_array[i]
-			-- 				if group then
-			-- 					if group.gName == lastGroup then
-			-- 						print(group.gName, lastGroup, group.gName == lastGroup)
-			-- 						tutorialList.clearSelection()
-			-- 						group.setOpen(true)
-			-- 						group.selectElement()
-			-- 						--group.list.content_array[1].selectElement()
-			-- 						group.list.content_array.selectFirst()
-			-- 						tutorialList.select(lastGroup, true)
-			-- 						print(tutorialList.currentSelection, lastGroup)
-			-- 						break
-			-- 					end
-			-- 				end
-			-- 			end
-			-- 		end
-			-- 	end)
-			-- end
-	
-			-- if tutorialList.currentSelection and _IDS[tutorialList.currentSelection.id] then
-				
-			-- end
-	
-			-- if groupId then
-			-- 	this.journal_mc.tutorialContainer_mc.title_txt.htmlText = ""
-			-- 	this.journal_mc.tutorialContainer_mc.desc_txt.htmlText = ""
-			-- 	tutorialList.clearSelection()
-			-- 	tutorialList.select(groupId)
-			-- end
 		end
 	end
 end, "After", "All")

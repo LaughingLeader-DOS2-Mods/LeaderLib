@@ -103,6 +103,12 @@ function UIWrapper:CreateFromType(id, params)
 	if _uiWrappers[id] == nil then
 		_uiWrappers[id] = {}
 	end
+	if this.ControllerID and this.ControllerID > -1 then
+		if _uiWrappers[this.ControllerID] == nil then
+			_uiWrappers[this.ControllerID] = {}
+		end
+		table.insert(_uiWrappers[this.ControllerID], this)
+	end
 	table.insert(_uiWrappers[id], this)
 	return this
 end

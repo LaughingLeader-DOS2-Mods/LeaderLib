@@ -170,6 +170,8 @@ local function OnHit(hitStatus, hitContext)
 		WeaponHandle = weaponHandle
 	})
 
+	--data:DumpToFile()
+
 	if skill and source then
 		OnSkillHit(skill.Name, target, source, hitRequest.TotalDamageDone, hitRequest, hitContext, hitStatus, data)
 	end

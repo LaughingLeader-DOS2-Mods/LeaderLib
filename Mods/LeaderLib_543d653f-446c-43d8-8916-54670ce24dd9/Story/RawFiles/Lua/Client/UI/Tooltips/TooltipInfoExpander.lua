@@ -279,24 +279,18 @@ Ext.RegisterListener("SessionLoaded", function ()
 		return TooltipExpander.MarkDirty()
 	end
 
-	---@param request AnyTooltipRequest
-	---@param tooltip TooltipData
-	-- Game.Tooltip.RegisterListener(nil, nil, function (request, tooltip)
-	-- 	local obj = request.Object
-	-- 	Ext.Dump({
-	-- 		Request = request.Type,
-	-- 		Tooltip = tooltip,
-	-- 		Object = obj and GameHelpers.GetDisplayName(obj),
-	-- 	})
-	-- 	TooltipExpander.AppendHelpText(request, tooltip)
-	-- end)
-
-	---@param item EclItem|nil
-	---@param tooltip TooltipData
-	-- Game.Tooltip.RegisterListener("World", nil, function (item, tooltip)
-	-- 	local desc = tooltip:GetDescriptionElement()
-	-- 	if desc then
-	-- 		desc.Label = ""
-	-- 	end
-	-- end)
+	if Vars.DebugMode and Vars.LeaderDebugMode then
+		Game.Tooltip.Register.Global(function (request, tooltip, ...)
+			if Vars.DebugMode then
+				local text = "local tooltip = " .. Lib.serpent.dump({
+					Request = request.Type,
+					Tooltip = tooltip,
+					Params = {...},
+				}, {SimplifyUserdata=true})
+				GameHelpers.IO.SaveFile("Dumps/LastTooltip.lua", text)
+				GameHelpers.IO.SaveFile(string.format("Dumps/Tooltips/%s_%sTooltip.lua", Ext.MonotonicTime(), request.Type), text)
+			end
+			TooltipExpander.AppendHelpText(request, tooltip)
+		end)
+	end
 end)

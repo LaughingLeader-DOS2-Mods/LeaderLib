@@ -149,18 +149,7 @@ function HitData:UpdateHitRequest()
 			if self.HitContext and self.HitContext.Hit then
 				self.HitContext.Hit = self.HitRequest
 			end
-		else
-			-- Ext.Dump({
-			-- 	HitRequest = self.HitRequest and self.HitRequest.DamageList:ToTable() or "nil",
-			-- 	HitContext = (self.HitContext and self.HitContext.CharacterHitDamageList) and self.HitContext.CharacterHitDamageList:ToTable() or "nil",
-			-- 	HitStatus = (self.HitStatus and self.HitStatus.Hit) and self.HitStatus.Hit.DamageList:ToTable() or "nil",
-			-- })
 		end
-		-- Ext.IO.SaveFile("Dumps/HitCrap.json", Ext.DumpExport({
-		-- 	HitStatus = self.HitStatus,
-		-- 	HitRequest = self.HitRequest,
-		-- 	HitContext = self.HitContext
-		-- }))
 	end
 end
 
@@ -391,6 +380,20 @@ end
 ---Returns true if the hit isn't from a surface, DoT, status tick, etc.
 function HitData:IsDirect()
 	return GameHelpers.Hit.IsDirect(self.HitContext.HitType)
+end
+
+---Saves the hit to Osiris Data/Dumps/Hits/Time_HitType.lua
+function HitData:DumpToFile()
+	-- GameHelpers.IO.SaveFile(string.format("Dumps/Hits/%s_%s.lua", Ext.MonotonicTime(), self.HitType), "local hit = " .. Lib.serpent.block({
+	-- 	HitStatus = self.HitStatus,
+	-- 	HitRequest = self.HitRequest,
+	-- 	HitContext = self.HitContext
+	-- }))
+	GameHelpers.IO.SaveJsonFile(string.format("Dumps/Hit/%s_%s.json", Ext.MonotonicTime(), self.HitType), Ext.DumpExport({
+		HitStatus = self.HitStatus,
+		HitRequest = self.HitRequest,
+		HitContext = self.HitContext
+	}))
 end
 
 Classes.HitData = HitData

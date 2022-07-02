@@ -3,11 +3,12 @@ local _DEBUG = Ext.IsDeveloperMode()
 
 local _type = type
 
-local _GetGameObject = GameHelpers.TryGetObject
 local _IsValidHandle = GameHelpers.IsValidHandle
-
 local _DoubleToHandle = Ext.DoubleToHandle
 local _HandleToDouble = Ext.HandleToDouble
+
+local _IsNaN = GameHelpers.Math.IsNaN
+
 local _GetUIByType = Ext.GetUIByType
 local _GetUIGetByPath = Ext.GetBuiltinUI
 
@@ -17,6 +18,7 @@ local _GetTranslatedStringFromKey = Ext.GetTranslatedStringFromKey
 
 local _GetAiGrid = Ext.GetAiGrid
 local _GetStatus = Ext.GetStatus
+local _GetGameObject = GameHelpers.TryGetObject
 local _GetCharacter = Ext.GetCharacter
 local _GetItem = Ext.GetItem
 local _GetPickingState = Ext.GetPickingState
@@ -27,6 +29,7 @@ local _EnumIndexToLabel = Ext.EnumIndexToLabel
 
 local _PrintWarning = Ext.PrintWarning
 local _PrintError = Ext.PrintError
+local _Print = Ext.Print
 
 local _UITYPE = Data.UIType
 
@@ -76,74 +79,49 @@ local ControllerCharacterCreationCalls = {
 	Pyramid = "pyramidOver"
 }
 
----Returns true if a number is NaN, probably.
----@param x number
-local function _IsNaN(x)
-	if x == nil then
-		return true
-	end
-	if _type(x) == "number" then
-		local str = tostring(x)
-		return str == "nan" or str == tostring(0/0)
-	end
-	return true
-end
-
----@alias _ResolveObjectHandler fun(handle:userdata):EclCharacter|EclItem
+---@alias GameTooltipRequestProcessorInternals.GetObjectFunction fun(handle:ComponentHandle|number|string):EclCharacter|EclItem|nil
 
 ---@param doubleHandle integer
----@param resolveFunc _ResolveObjectHandler|nil
----@return EclCharacter|EclItem
-local function __TryGetObjectFromDouble(doubleHandle, resolveFunc)
+---@param getObjectFunc GameTooltipRequestProcessorInternals.GetObjectFunction|nil
+---@return EclCharacter|EclItem|nil
+local function __TryGetObjectFromDouble(doubleHandle, getObjectFunc)
 	if _IsNaN(doubleHandle) then
 		return nil
 	end
 	local handle = _DoubleToHandle(doubleHandle)
 	if _IsValidHandle(handle) then
-		if resolveFunc then
-			return resolveFunc(handle)
-		end
-		return _GetGameObject(handle)
+		getObjectFunc = getObjectFunc or _GetGameObject
+		return getObjectFunc(handle)
 	end
 	return nil
 end
 
----@param doubleHandle integer
----@param resolveFunc _ResolveObjectHandler|nil
----@return EclCharacter|EclItem
-local function _GetObjectFromDouble(doubleHandle, resolveFunc)
-	local b,result = pcall(__TryGetObjectFromDouble, doubleHandle, resolveFunc)
+---@param doubleHandle number
+---@param getObjectFunc function|nil
+---@return EclCharacter|EclItem|nil
+local function _GetObjectFromDouble(doubleHandle, getObjectFunc)
+	local b,result = pcall(__TryGetObjectFromDouble, doubleHandle, getObjectFunc)
 	if b then
 		return result
-	elseif _DEBUG then
-		Ext.PrintError(result)
-		Ext.PrintError("_GetObjectFromDouble", doubleHandle)
 	end
 	return nil
 end
 
----@param handle number
----@param resolveFunc _ResolveObjectHandler|nil
----@return EclCharacter|EclItem
-local function _GetObjectFromHandle(handle, resolveFunc)
+---@param handle ComponentHandle|nil
+---@param getObjectFunc function|nil
+---@return EclCharacter|EclItem|nil
+local function _GetObjectFromHandle(handle, getObjectFunc)
 	if _IsValidHandle(handle) then
-		if not resolveFunc then
-			resolveFunc = _GetGameObject
+		if not getObjectFunc then
+			getObjectFunc = _GetGameObject
 		end
-		local b,result = pcall(resolveFunc, handle)
+		local b,result = pcall(getObjectFunc, handle)
 		if b then
 			return result
 		elseif _DEBUG then
 			Ext.PrintError(result)
 			Ext.PrintError("_GetObjectFromHandle", handle)
 		end
-	end
-	return nil
-end
-
-local function _GetNetID(obj)
-	if obj then
-		return obj.NetID
 	end
 	return nil
 end
@@ -193,7 +171,7 @@ local function _GetClientCharacter()
 		if not character then
 			local ui = _GetUIByType(_UITYPE.statusConsole)
 			if ui ~= nil then
-				character = _GetObjectFromHandle(ui:GetPlayerHandle())
+				character = _GetObjectFromHandle(ui:GetPlayerHandle(), _GetCharacter)
 			end
 		end
 	end
@@ -230,6 +208,13 @@ local _StatsIdTooltipTypes = {
 	Rune = true,
 }
 
+local _ObjectParamNames = {
+	Character = true,
+	Item = true,
+	RuneItem = true,
+	Object = true,
+}
+
 ---@return TooltipRequest
 local function _CreateRequest()
 	local request = {
@@ -239,52 +224,55 @@ local function _CreateRequest()
 	setmetatable(request, {
 		__index = function(tbl,k)
 			local tooltipType = rawget(tbl, "Type")
-			if k == "Character" then
+			if _ObjectParamNames[k] then
 				local objectHandleDouble = rawget(tbl, "ObjectHandleDouble")
 				if objectHandleDouble then
-					return _GetObjectFromDouble(objectHandleDouble, _GetCharacter)
-				end
-			elseif k == "Item" or k == "RuneItem" or k == "Object" then
-				local objectHandleDouble = rawget(tbl, "ObjectHandleDouble")
-				if objectHandleDouble then
-					return _GetObjectFromDouble(objectHandleDouble, _GetItem)
-				end
-			elseif k == "Object" then
-				local objectHandleDouble = rawget(tbl, "ObjectHandleDouble")
-				if objectHandleDouble then
-					return _GetObjectFromDouble(objectHandleDouble)
-				end
-			elseif "StatsId" and _StatsIdTooltipTypes[tooltipType] then
-				local objectHandleDouble = rawget(tbl, "ObjectHandleDouble")
-				if objectHandleDouble then
-					local obj = _GetObjectFromDouble(objectHandleDouble, _GetItem)
-					if obj then
-						rawset(tbl, "StatsId", obj.StatsId)
-						return obj.StatsId
+					if k == "Character" then
+						return _GetObjectFromDouble(objectHandleDouble, _GetCharacter)
+					elseif k == "Item" or k == "RuneItem" then
+						return _GetObjectFromDouble(objectHandleDouble, _GetItem)
+					elseif "Object" then
+						return _GetObjectFromDouble(objectHandleDouble)
 					end
 				end
-			elseif k == "Status" or k == "StatusId" then
-				local objectHandleDouble = rawget(tbl, "ObjectHandleDouble")
-				local statusHandleDouble = rawget(tbl, "StatusHandleDouble")
-				if statusHandleDouble and objectHandleDouble then
-					local handle = _DoubleToHandle(objectHandleDouble)
-					local statusHandle = _DoubleToHandle(request.StatusHandleDouble)
-					if _IsValidHandle(handle) and _IsValidHandle(statusHandle) then
-						local status = _GetStatus(handle, statusHandle)
-						if status then
-							if k == "StatusId" then
-								rawset(tbl, "StatusId", status.StatusId)
-								return status.StatusId
-							else
-								return status
+			else
+				if k == "Owner" and tooltipType == "Item" then
+					local objectHandleDouble = rawget(tbl, "OwnerDoubleHandle")
+					if objectHandleDouble then
+						return _GetObjectFromDouble(objectHandleDouble)
+					end
+				elseif k == "StatsId" and _StatsIdTooltipTypes[tooltipType] then
+					local objectHandleDouble = rawget(tbl, "ObjectHandleDouble")
+					if objectHandleDouble then
+						local obj = _GetObjectFromDouble(objectHandleDouble)
+						if obj and _GetObjectType(obj) == "ecl::Item" then
+							rawset(tbl, "StatsId", obj.StatsId)
+							return obj.StatsId
+						end
+					end
+				elseif k == "Status" or k == "StatusId" then
+					local objectHandleDouble = rawget(tbl, "ObjectHandleDouble")
+					local statusHandleDouble = rawget(tbl, "StatusHandleDouble")
+					if statusHandleDouble and objectHandleDouble then
+						local handle = _DoubleToHandle(objectHandleDouble)
+						local statusHandle = _DoubleToHandle(request.StatusHandleDouble)
+						if _IsValidHandle(handle) and _IsValidHandle(statusHandle) then
+							local status = _GetStatus(handle, statusHandle)
+							if status then
+								if k == "StatusId" then
+									rawset(tbl, "StatusId", status.StatusId)
+									return status.StatusId
+								else
+									return status
+								end
 							end
 						end
 					end
-				end
-			elseif k == "Rune" then
-				local statsId = rawget(tbl, "StatsId")
-				if statsId ~= nil and statsId ~= "" then
-					return _GetStat(statsId)
+				elseif k == "Rune" then
+					local statsId = rawget(tbl, "StatsId")
+					if statsId ~= nil and statsId ~= "" then
+						return _GetStat(statsId)
+					end
 				end
 			end
 		end
@@ -324,30 +312,34 @@ RequestProcessor.CallbackHandler[TooltipCalls.Item] = function (request, ui, uiT
 			for i=0,#inventoryArray do
 				local playerInventory = inventoryArray[i]
 				if playerInventory ~= nil then
+					if ownerHandle == nil then
+						ownerHandle = playerInventory.ownerHandle
+					end
 					local localInventory = playerInventory.localInventory
 					if localInventory._currentIdx >= 0 then
 						local currentItem = localInventory._itemArray[localInventory._currentIdx]
 						if currentItem ~= nil then
 							id = currentItem.itemHandle
-						end
-						if ownerHandle == nil then
-							ownerHandle = playerInventory.ownerHandle
+							break
 						end
 					end
 				end
 			end
 		end
+		if id then
+			request.ObjectHandleDouble = id
+		end
 		if ownerHandle ~= nil and ownerHandle ~= 0 then
 			local inventoryHandle = _DoubleToHandle(ownerHandle)
-			if inventoryHandle ~= nil then
-				request.Inventory = _GetObjectFromHandle(inventoryHandle)
+			if _IsValidHandle(inventoryHandle) then
+				request.OwnerDoubleHandle = ownerHandle
 			end
 		end
 	elseif uiType == _UITYPE.uiCraft then
 		--Tooltip support for ingredient tooltips
 		local id,x,y,width,height,contextParam,side = table.unpack(params)
 		if id == 0 then
-			--mc.itemHandle is always 0 for ingredients in the recipe UI, which is the first param
+			--mc.itemHandle is always 0 for ingredients in the recipe UI, which is the first param		
 			request.ObjectHandleDouble = nil
 			request.Type = "Generic"
 			request.X = x
@@ -361,6 +353,11 @@ RequestProcessor.CallbackHandler[TooltipCalls.Item] = function (request, ui, uiT
 			request.ObjectHandleDouble = id
 		else
 			_PrintWarning(string.format("[Game.Tooltip.RequestProcessor:%s] Item handle (%s) is nil? UI(%s)", event, id, uiType))
+		end
+	elseif uiType == _UITYPE.containerInventory.Default or uiType == _UITYPE.containerInventory.Pickpocket then
+		local doubleHandle = params[1]
+		if not _IsNaN(doubleHandle) and doubleHandle > 0 then
+			request.ObjectHandleDouble = doubleHandle
 		end
 	else
 		local id = params[1]
@@ -438,7 +435,7 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 	if this then
 		if uiType == _UITYPE.uiCraft then
 			local doubleHandle = this.craftPanel_mc.runesPanel_mc.targetHit_mc.itemHandle
-			local item = _GetObjectFromDouble(doubleHandle, _GetItem)
+			local item = _GetObjectFromDouble(doubleHandle)
 			if item then
 				request.ObjectHandleDouble = doubleHandle
 				local boostEntry = item.Stats.DynamicStats[3+slot]
@@ -447,10 +444,11 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 				end
 			end
 		elseif uiType == _UITYPE.craftPanel_c then
+			--The tooltip may not be visible yet, but we can still update it
 			local runePanel = this.craftPanel_mc.runePanel_mc
 			if runePanel then
 				request.ObjectHandleDouble = runePanel.runes_mc.runeTargetHandle
-				local item = _GetObjectFromDouble(request.ObjectHandleDouble, _GetItem)
+				local item = _GetObjectFromDouble(request.ObjectHandleDouble)
 				if slot == 0 then
 					-- The target item is selected instead of a rune, so this should be an item tooltip
 					request.Type = "Item"
@@ -459,7 +457,7 @@ RequestProcessor.CallbackHandler[TooltipCalls.Rune] = function(request, ui, uiTy
 					slot = slot - 1
 					request.Slot = slot
 					request.ObjectHandleDouble = runePanel.item_array[runePanel.currentHLSlot].itemHandle
-					local rune = _GetObjectFromDouble(request.ObjectHandleDouble, _GetItem)
+					local rune = _GetObjectFromDouble(request.ObjectHandleDouble)
 					local statsID = ""
 					if rune then
 						statsID = rune.StatsId
@@ -538,7 +536,7 @@ local SurfaceFlags = {
 }
 
 ---@param flags integer
----@param data {Cell:_GridCell, Ground:string, Cloud:string}
+---@param data {Cell:_GameTooltipGridCell, Ground:string, Cloud:string}
 local function SetSurfaceFromFlags(flags, data)
 	for k,f in pairs(SurfaceFlags.Ground.Type) do
 		if (flags & f) ~= 0 then
@@ -576,12 +574,12 @@ local function SetSurfaceFromFlags(flags, data)
 	end
 end
 
----@alias _GridCell {Flags:integer, Height:number, Objects:ComponentHandle[]|nil}
+---@alias _GameTooltipGridCell {Flags:integer, Height:number, Objects:ComponentHandle[]|nil}
 
 ---@param x number
 ---@param z number
----@param grid AiGrid
----@return {Cell:_GridCell, Ground:string|nil, Cloud:string|nil}
+---@param grid EocAiGrid
+---@return {Cell:_GameTooltipGridCell, Ground:string|nil, Cloud:string|nil}
 local function _GetSurfaces(x, z, grid)
 	local cell = grid:GetCellInfo(x, z)
 	if cell then
@@ -637,7 +635,7 @@ end
 Ext.RegisterUITypeInvokeListener(_UITYPE.contextMenu.Object, "open", _CaptureCursorObject)
 Ext.RegisterUITypeCall(_UITYPE.examine, "hideUI", _OnExamineWindowClosed)
 
-function RequestProcessor.OnExamineTooltip(ui, method, typeIndex, id, ...)
+function RequestProcessor.OnExamineTooltip(ui, event, typeIndex, id, ...)
 	---@type EclCharacter|EclItem
 	local object = nil
 
@@ -671,7 +669,7 @@ function RequestProcessor.OnExamineTooltip(ui, method, typeIndex, id, ...)
 	elseif typeIndex == 3 then
 		if id == 0 then
 			--Tooltip for "This character has no talents" doesn't exist.
-			RequestProcessor.Tooltip.Last.Event = method
+			RequestProcessor.Tooltip.Last.Event = event
 			RequestProcessor.Tooltip.Last.UIType = ui:GetTypeId()
 			return
 		else
@@ -684,9 +682,11 @@ function RequestProcessor.OnExamineTooltip(ui, method, typeIndex, id, ...)
 			local statusHandle = _DoubleToHandle(id)
 			if _IsValidHandle(statusHandle) then
 				request.StatusHandleDouble = id
-				local status = _GetStatus(object.Handle, statusHandle)
-				if status then
-					request.StatusId = status and status.StatusId or ""
+				if object then
+					local status = _GetStatus(object.Handle, statusHandle)
+					if status then
+						request.StatusId = status.StatusId
+					end
 				end
 			end
 		end
@@ -714,15 +714,18 @@ function RequestProcessor.OnExamineTooltip(ui, method, typeIndex, id, ...)
 	end
 
 	RequestProcessor.Tooltip.NextRequest = request
-	RequestProcessor.Tooltip.Last.Event = method
-	RequestProcessor.Tooltip.Last.UIType = ui:GetTypeId()
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "before", ui, request.UIType, event, typeIndex, id, ...)
+
+	RequestProcessor.Tooltip.Last.Event = event
+	RequestProcessor.Tooltip.Last.UIType = request.UIType
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, request.UIType, event, typeIndex, id, ...)
 end
 
 ---@param ui UIObject
----@param method string
+---@param event string
 ---@param id string
 ---@param objectHandle number|nil
-function RequestProcessor.OnControllerExamineTooltip(ui, method, id, objectHandle)
+function RequestProcessor.OnControllerExamineTooltip(ui, event, id, objectHandle)
 	local request = RequestProcessor.CreateRequest()
 	local uiTypeId = ui:GetTypeId()
 	request.UIType = uiTypeId
@@ -742,8 +745,11 @@ function RequestProcessor.OnControllerExamineTooltip(ui, method, id, objectHandl
 		local uiType = ui:GetTypeId()
 		if uiType == _UITYPE.examine_c then
 			object = _GetObjectFromDouble(Game.Tooltip.ControllerVars.LastOverhead)
-		elseif uiType == _UITYPE.statsPanel_c then
-			object = _GetClientCharacter()
+		else
+			object = _GetObjectFromHandle(ui:GetPlayerHandle())
+			if not object and uiType == _UITYPE.statsPanel_c then
+				object = _GetClientCharacter()
+			end
 		end
 	end
 
@@ -755,25 +761,27 @@ function RequestProcessor.OnControllerExamineTooltip(ui, method, id, objectHandl
 		request.ObjectHandleDouble = _HandleToDouble(object.Handle)
 	end
 
-	if method == "selectStatus" then
+	if event == "selectStatus" then
 		request.Type = "Status"
 		if not _IsNaN(id) then
 			local statusHandle = _DoubleToHandle(id)
 			if _IsValidHandle(statusHandle) then
 				request.StatusHandleDouble = id
-				local status = _GetStatus(object.Handle, statusHandle)
-				if status then
-					request.StatusId = status and status.StatusId or ""
+				if object then
+					local status = _GetStatus(object.Handle, statusHandle)
+					if status then
+						request.StatusId = status.StatusId
+					end
 				end
 			end
 		end
-	elseif method == "selectAbility" then
+	elseif event == "selectAbility" then
 		request.Type = "Ability"
 		request.Ability = _EnumIndexToLabel("AbilityType", id)
-	elseif method == "selectTalent" then
+	elseif event == "selectTalent" then
 		request.Type = "Talent"
 		request.Talent = _EnumIndexToLabel("TalentType", id)
-	elseif method == "selectStat" or method == "selectedAttribute" then
+	elseif event == "selectStat" or event == "selectedAttribute" then
 		request.Type = "Stat"
 		request.Stat = id
 		local stat = Game.Tooltip.TooltipStatAttributes[request.Stat]
@@ -782,21 +790,27 @@ function RequestProcessor.OnControllerExamineTooltip(ui, method, id, objectHandl
 		else
 			_PrintWarning(string.format("[RequestProcessor.OnControllerExamineTooltip] Requested tooltip for unknown stat ID (%s)", request.Stat))
 		end
-	elseif method == "selectCustomStat" then
+	elseif event == "selectCustomStat" then
 		request.Type = "CustomStat"
 		request.Stat = id
-	elseif method == "selectTag" then
+	elseif event == "selectTag" then
 		request.Type = "Tag"
 		request.Tag = id
 		request.Category = ""
 	end
 
 	RequestProcessor.Tooltip.NextRequest = request
-	RequestProcessor.Tooltip.Last.Event = method
-	RequestProcessor.Tooltip.Last.UIType = uiTypeId
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "before", ui, request.UIType, event, id, objectHandle)
+	if object then
+		Game.Tooltip.ControllerVars.LastPlayer = request.ObjectHandleDouble
+	end
+
+	RequestProcessor.Tooltip.Last.Event = event
+	RequestProcessor.Tooltip.Last.UIType = request.UIType
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, request.UIType, event, id, objectHandle)
 end
 
-function RequestProcessor.OnGenericTooltip(ui, call, text, x, y, width, height, side, allowDelay)
+function RequestProcessor.OnGenericTooltip(ui, event, text, x, y, width, height, side, allowDelay)
 	if RequestProcessor.Tooltip.NextRequest == nil then
 		---@type TooltipGenericRequest
 		local request = _CreateRequest()
@@ -814,8 +828,11 @@ function RequestProcessor.OnGenericTooltip(ui, call, text, x, y, width, height, 
 		end
 
 		RequestProcessor.Tooltip.NextRequest = request
-		RequestProcessor.Tooltip.Last.Event = call
+		RequestProcessor.Tooltip:InvokeRequestListeners(request, "before", ui, request.UIType, event, text, x, y, width, height, side, allowDelay)
+
+		RequestProcessor.Tooltip.Last.Event = event
 		RequestProcessor.Tooltip.Last.UIType = request.UIType
+		RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, request.UIType, event, text, x, y, width, height, side, allowDelay)
 	end
 end
 
@@ -847,6 +864,11 @@ function RequestProcessor.SetWorldHoverTooltipRequest(request, ui, uiType, event
 	return request
 end
 
+local _requestDumpOpts = {Beautify = true,
+StringifyInternalTypes = true,
+IterateUserdata = false,
+AvoidRecursion = true}
+
 ---@param requestType string
 ---@param ui UIObject
 ---@param uiType integer
@@ -859,15 +881,13 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrDou
 	local this = ui:GetRoot()
 
 	---@type EclCharacter
-	local character = _GetObjectFromHandle(ui:GetPlayerHandle(), _GetCharacter)
+	local character = _GetObjectFromHandle(ui:GetPlayerHandle())
 	local id = idOrDoubleHandle
-	local doubleHandle = id
 
 	if (event == "showSkillTooltip" or event == "showStatusTooltip") then
 		id = statOrWidth
-		if not character and idOrDoubleHandle then
-			character = _GetObjectFromDouble(idOrDoubleHandle, _GetCharacter)
-			doubleHandle = idOrDoubleHandle
+		if not character then
+			character = _GetObjectFromDouble(idOrDoubleHandle)
 		end
 	end
 
@@ -876,8 +896,7 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrDou
 	end
 
 	if not character and this and this.characterHandle then
-		doubleHandle = this.characterHandle
-		character = _GetObjectFromDouble(this.characterHandle, _GetCharacter)
+		character = _GetObjectFromDouble(this.characterHandle)
 	end
 
 	if not character then
@@ -899,28 +918,30 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrDou
 
 	local request = _CreateRequest()
 	request.Type = requestType
-	if character and character.Handle then
+	if character then
 		request.ObjectHandleDouble = _HandleToDouble(character.Handle)
-	else
-		request.ObjectHandleDouble = doubleHandle
 	end
 	request.UIType = uiType
+
+	RequestProcessor.Tooltip.NextRequest = request
 
 	RequestProcessor.Tooltip:InvokeRequestListeners(request, "before", ui, uiType, event, id, statOrWidth, ...)
 	if RequestProcessor.CallbackHandler[event] then
 		local b,r = xpcall(RequestProcessor.CallbackHandler[event], debug.traceback, request, ui, uiType, event, id, statOrWidth, ...)
 		if b then
 			RequestProcessor.Tooltip.NextRequest = r
-			request = RequestProcessor.Tooltip.NextRequest
+			request = r
 		else
 			_PrintError(string.format("[Game.Tooltips.RequestProcessor] Error invoking tooltip handler for event (%s):\n%s", event, r))
 		end
 	end
-	if RequestProcessor.ControllerEnabled then
-		Game.Tooltip.ControllerVars.LastPlayer = request.ObjectHandleDouble
+	if RequestProcessor.ControllerEnabled and character then
+		Game.Tooltip.ControllerVars.LastPlayer = _HandleToDouble(character.Handle)
 	end
 	RequestProcessor.Tooltip.Last.Event = event
 	RequestProcessor.Tooltip.Last.UIType = uiType
+
+	--_Print("RequestProcessor.HandleCallback", Ext.Json.Stringify({Character = character and character.DisplayName or "nil", ObjectHandleDouble = request.ObjectHandleDouble, Object = request.Object, TypeId = uiType}, _requestDumpOpts))
 
 	RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, uiType, event, id, statOrWidth, ...)
 end
@@ -951,7 +972,8 @@ function RequestProcessor:Init(tooltip)
 			local id = nil
 			-- 4 is for non-skills like Flee, Sheathe etc
 			if slotType == 1 or slotType == 4 then
-				id = slotsHolder_mc.tooltipStr
+				event = TooltipCalls.Skill
+				RequestProcessor.HandleCallback(requestType, ui, ui:GetTypeId(), event, nil, slotsHolder_mc.tooltipStr)
 			elseif slotType == 2 then
 				-- Sometimes tooltipSlot will be set to the tooltip index instead of the slot's handle value
 				if slotNum == slotHandle then
@@ -964,35 +986,45 @@ function RequestProcessor:Init(tooltip)
 					local handle = _DoubleToHandle(slotHandle)
 					if _IsValidHandle(handle) then
 						requestType = "Item"
-						id = handle
+						event = TooltipCalls.Item
+						RequestProcessor.HandleCallback(requestType, ui, ui:GetTypeId(), event, slotHandle)
 					end
 				end
 			end
-			RequestProcessor.HandleCallback(requestType, ui, ui:GetTypeId(), event, id)
 		end
 	end, "Before")
 	-- slotOver is called when selecting any slot, item or not
 	Ext.RegisterUITypeCall(_UITYPE.equipmentPanel_c, "slotOver", function (ui, event, ...)
-		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, ...)
+		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, ...)
 	end, "Before")
 	-- itemOver is called when selecting a slot with an item, in addition to slotOver
 	-- Ext.RegisterUITypeCall(_uiType.equipmentPanel_c, "itemOver", function (ui, event, ...)
 	-- 	RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, ...)
 	-- end, "Before")
 	Ext.RegisterUITypeCall(_UITYPE.craftPanel_c, "slotOver", function (ui, event, ...)
-		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, ...)
+		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, ...)
 	end, "Before")
 	Ext.RegisterUITypeCall(_UITYPE.partyInventory_c, "slotOver", function (ui, event, ...)
-		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, ...)
+		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, ...)
+	end, "Before")
+	Ext.RegisterUITypeCall(_UITYPE.containerInventory.Default, "slotOver", function (ui, event, id, slot)
+		if id ~= 0 then
+			RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, id, slot)
+		end
+	end, "Before")
+	Ext.RegisterUITypeCall(_UITYPE.containerInventory.Pickpocket, "slotOver", function (ui, event, id, slot)
+		if id ~= 0 then
+			RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, id, slot)
+		end
 	end, "Before")
 	-- Ext.RegisterUITypeCall(_uiType.craftPanel_c, "overItem", function (ui, event, ...)
 	-- 	RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, ...)
 	-- end, "Before")
 	Ext.RegisterUITypeCall(_UITYPE.craftPanel_c, "runeSlotOver", function (ui, event, ...)
-		RequestProcessor.HandleCallback("Rune", ui, ui:GetTypeId(), event, ...)
+		RequestProcessor.HandleCallback("Rune", ui, ui:GetTypeId(), TooltipCalls.Rune, ...)
 	end, "Before")
 	Ext.RegisterUITypeCall(_UITYPE.equipmentPanel_c, "itemDollOver", function (ui, event, ...)
-		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, ...)
+		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, ...)
 	end, "Before")
 	-- Ext.RegisterUITypeCall(_uiType.equipmentPanel_c, "setTooltipPanelVisible", function (ui, event, visible, ...)
 	-- 	RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, nil, nil, ...)
@@ -1000,16 +1032,16 @@ function RequestProcessor:Init(tooltip)
 	-- When the tooltip is opened without moving slots
 	Ext.RegisterUITypeCall(_UITYPE.partyInventory_c, "setTooltipVisible", function (ui, event, visible, ...)
 		if visible == true then
-			RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, nil, nil, ...)
+			RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item)
 		end
 	end, "Before")
 
 	Ext.RegisterUITypeCall(_UITYPE.trade_c, "overItem", function(ui, event, itemHandleDouble)
-		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, itemHandleDouble)
+		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, itemHandleDouble)
 	end)
 
 	Ext.RegisterUITypeCall(_UITYPE.reward_c, "refreshTooltip", function(ui, event, itemHandleDouble)
-		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, itemHandleDouble)
+		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, itemHandleDouble)
 	end)
 
 	-- Disabled for now since this function doesn't include any ID for the tag.
@@ -1180,16 +1212,17 @@ local function _CreateWorldTooltipRequest(ui, event, text, x, y, isItem, item)
 	RequestProcessor.Tooltip.Last.Event = event
 	RequestProcessor.Tooltip.Last.UIType = uiType
 	RequestProcessor.Tooltip.Last.Request = request
-
+	
 	RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, uiType, event, text, x, y, isItem, item)
-
+	
 	local tooltipData = Game.Tooltip.TooltipData:Create({{
 		Type = "Description",
 		Label = text,
 		X = x,
 		Y = y,
 	}}, uiType, uiType)
-
+	
+	RequestProcessor.Tooltip.ActiveType = request.Type
 	RequestProcessor.Tooltip:NotifyListeners("World", nil, request, tooltipData, request.Item)
 
 	local desc = tooltipData:GetDescriptionElement()
@@ -1205,6 +1238,7 @@ Ext.RegisterUITypeInvokeListener(_UITYPE.worldTooltip, "updateTooltips", functio
 		--public function setTooltip(param1:uint, param2:Number, param3:Number, param4:Number, param5:String, param6:Number, param7:Boolean, param8:uint = 16777215, param9:uint = 0
 		--this.setTooltip(val2,val3,val4,val5,val6,this.worldTooltip_array[val2++],this.worldTooltip_array[val2++]);
 		for i=0,#this.worldTooltip_array-1,6 do
+			---@type number
 			local doubleHandle = this.worldTooltip_array[i]
 			if doubleHandle then
 				local x = this.worldTooltip_array[i+1]
@@ -1213,7 +1247,7 @@ Ext.RegisterUITypeInvokeListener(_UITYPE.worldTooltip, "updateTooltips", functio
 				--local sortHelper = main.worldTooltip_array[i+4]
 				local isItem = this.worldTooltip_array[i+5]
 				if isItem then
-					local item = _GetObjectFromDouble(doubleHandle, _GetItem)
+					local item = _GetObjectFromDouble(doubleHandle)
 					if item then
 						local textReplacement = _CreateWorldTooltipRequest(ui, "updateTooltips", text, x, y, true, item)
 						if textReplacement and textReplacement ~= text then
@@ -1240,10 +1274,8 @@ Ext.RegisterUINameInvokeListener("removeTooltip", function(ui, ...)
 end)
 
 RequestProcessor.Utils = {
-	IsNaN = _IsNaN,
 	GetObjectFromDouble = _GetObjectFromDouble,
 	GetObjectFromHandle = _GetObjectFromHandle,
-	GetNetID = _GetNetID,
 	GetGMTargetCharacter = _GetGMTargetCharacter,
 	GetClientCharacter = _GetClientCharacter,
 	GetCharacterSheetCharacter = _GetCharacterSheetCharacter,

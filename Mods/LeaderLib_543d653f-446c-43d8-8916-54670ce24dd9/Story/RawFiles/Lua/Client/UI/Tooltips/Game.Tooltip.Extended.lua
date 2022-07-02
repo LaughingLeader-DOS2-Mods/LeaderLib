@@ -6,35 +6,44 @@ local ipairs = ipairs
 local math = math
 local pairs = pairs
 local pcall = pcall
+local xpcall = xpcall
 local print = print
 local setmetatable = setmetatable
 local string = string
 local table = table
 local tostring = tostring
 local type = type
-local xpcall = xpcall
 
 local _EXTVERSION = Ext.Version()
 local _DEBUG = Ext.IsDeveloperMode()
 
 local _UITYPE = Data.UIType
-local GetCharacter = Ext.GetCharacter
-local GetUIByType = Ext.GetUIByType
-local HandleToDouble = Ext.HandleToDouble
-local DoubleToHandle = Ext.DoubleToHandle
-local IsValidHandle = GameHelpers.IsValidHandle
 
-local Stringify = Common.JsonStringify
+local _GetCharacter = Ext.GetCharacter
+local _GetGameState = Ext.GetGameState()
+
+local _GetUIByType = Ext.GetUIByType
+local _GetUIByPath = Ext.GetBuiltinUI
+
+local _HandleToDouble = Ext.HandleToDouble
+local _DoubleToHandle = Ext.DoubleToHandle
+local _IsValidHandle = GameHelpers.IsValidHandle
+
+local _Stringify = Common.JsonStringify
+local _IsNaN = GameHelpers.Math.IsNaN
 
 local _RegisterUITypeInvokeListener = Ext.RegisterUITypeInvokeListener
 local _RegisterRegisterUITypeCall = Ext.RegisterUITypeCall
 local _RegisterUINameCall = Ext.RegisterUINameCall
 local _RegisterUINameInvokeListener = Ext.RegisterUINameInvokeListener
 
+local _Require = Ext.Require
+
 local _Print = Ext.Print
 local _PrintWarning = Ext.PrintWarning
 local _PrintError = Ext.PrintError
 local _Dump = Ext.Dump
+local _DumpExport = Ext.DumpExport
 
 if Game == nil then
 	Game = {}
@@ -45,7 +54,7 @@ if Game.Tooltip == nil then
 end
 
 ---@type GameTooltipRequestProcessor
-local RequestProcessor = Ext.Require("Client/UI/Tooltips/TooltipRequestProcessor.lua")
+local RequestProcessor = _Require(nil, "builtin://Libs/Game.Tooltip.RequestProcessor.lua")
 Game.Tooltip.RequestProcessor = RequestProcessor
 
 local game = Game
@@ -65,12 +74,19 @@ Game.Tooltip.ControllerVars = ControllerVars
 
 local tooltipCustomIcons = {}
 
-function Game.Tooltip.PrepareIcon(ui, id, icon, w, h)
-	ui:SetCustomIcon(id, icon, w, h)
-	tooltipCustomIcons[#tooltipCustomIcons+1] = id
+---Add a custom icon to the tooltip UI.  
+---Use this with tooltip elements that have an Icon string property, such as WandSkill.
+---@param id string
+---@param icon string
+---@param w integer
+---@param h integer
+function Game.Tooltip.AddCustomIconToTooltip(id, icon, w, h)
+	local ui = _GetUIByType(_UITYPE.tooltip)
+	if ui then
+		ui:SetCustomIcon(id, icon, w, h)
+		tooltipCustomIcons[#tooltipCustomIcons+1] = id
+	end
 end
-
----@alias TooltipElementType string|"ItemName"|"ItemWeight"|"ItemGoldValue"|"ItemLevel"|"ItemDescription"|"ItemRarity"|"ItemUseAPCost"|"ItemAttackAPCost"|"StatBoost"|"ResistanceBoost"|"AbilityBoost"|"OtherStatBoost"|"VitalityBoost"|"ChanceToHitBoost"|"DamageBoost"|"APCostBoost"|"APMaximumBoost"|"APStartBoost"|"APRecoveryBoost"|"CritChanceBoost"|"ArmorBoost"|"ConsumableDuration"|"ConsumablePermanentDuration"|"ConsumableEffect"|"ConsumableDamage"|"ExtraProperties"|"Flags"|"ItemRequirement"|"WeaponDamage"|"WeaponDamagePenalty"|"WeaponCritMultiplier"|"WeaponCritChance"|"WeaponRange"|"Durability"|"CanBackstab"|"AccuracyBoost"|"DodgeBoost"|"EquipmentUnlockedSkill"|"WandSkill"|"WandCharges"|"ArmorValue"|"ArmorSlotType"|"Blocking"|"NeedsIdentifyLevel"|"IsQuestItem"|"PriceToIdentify"|"PriceToRepair"|"PickpocketInfo"|"Engraving"|"ContainerIsLocked"|"SkillName"|"SkillIcon"|"SkillSchool"|"SkillTier"|"SkillRequiredEquipment"|"SkillAPCost"|"SkillCooldown"|"SkillDescription"|"SkillProperties"|"SkillDamage"|"SkillRange"|"SkillExplodeRadius"|"SkillCanPierce"|"SkillCanFork"|"SkillStrikeCount"|"SkillProjectileCount"|"SkillCleansesStatus"|"SkillMultiStrikeAttacks"|"SkillWallDistance"|"SkillPathSurface"|"SkillPathDistance"|"SkillHealAmount"|"SkillDuration"|"ConsumableEffectUknown"|"Reflection"|"SkillAlreadyLearned"|"SkillOnCooldown"|"SkillAlreadyUsed"|"AbilityTitle"|"AbilityDescription"|"TalentTitle"|"TalentDescription"|"SkillMPCost"|"MagicArmorValue"|"WarningText"|"RuneSlot"|"RuneEffect"|"Equipped"|"ShowSkillIcon"|"SkillbookSkill"|"Tags"|"EmptyRuneSlot"|"StatName"|"StatsDescription"|"StatsDescriptionBoost"|"StatSTRWeight"|"StatMEMSlot"|"StatsPointValue"|"StatsTalentsBoost"|"StatsTalentsMalus"|"StatsBaseValue"|"StatsPercentageBoost"|"StatsPercentageMalus"|"StatsPercentageTotal"|"StatsGearBoostNormal"|"StatsATKAPCost"|"StatsCriticalInfos"|"StatsAPTitle"|"StatsAPDesc"|"StatsAPBase"|"StatsAPBonus"|"StatsAPMalus"|"StatsTotalDamage"|"TagDescription"|"StatusImmunity"|"StatusBonus"|"StatusMalus"|"StatusDescription"|"Title"|"SurfaceDescription"|"Duration"|"Fire"|"Water"|"Earth"|"Air"|"Poison"|"Physical"|"Sulfur"|"Heal"|"Splitter"|"ArmorSet"
 
 TooltipItemIds = {
 	"ItemName","ItemWeight","ItemGoldValue","ItemLevel","ItemDescription","ItemRarity","ItemUseAPCost","ItemAttackAPCost","StatBoost",
@@ -226,10 +242,6 @@ TooltipItemTypes = {
 
 Game.Tooltip.TooltipItemTypes = TooltipItemTypes
 
--- for i,type in pairs(TooltipItemIds) do
--- 	TooltipItemTypes[type] = i
--- end
-
 local _Label = {"Label", "string"}
 local _Value = {"Value", "string"}
 local _NumValue = {"Value", "number"}
@@ -237,11 +249,6 @@ local _Icon = {"Icon", "string"}
 local _Warning = {"Warning", "string"}
 local _Unused = {nil, nil}
 local BoostSpec = {_Label, _NumValue, _Unused}
-
----@alias TooltipElement { Type:TooltipElementType }
----@alias BoostSpec { Type:string, Value:number }
----@alias ItemName { Type:string, Label:string }
-
 TooltipSpecs = {
 	ItemName = {_Label},
 	ItemWeight = {_Label, _Unused},
@@ -723,16 +730,16 @@ function DebugTooltipEncoding(ui)
 		tooltipArray2[i] = s
 	end
 
-	_Print("tooltip_array: " .. Stringify(tooltipArray2))
+	_Print("tooltip_array: " .. _Stringify(tooltipArray2))
 	local parsed = ParseTooltipArray(tooltipArray)
-	_Print("Parsed: " .. Stringify(parsed))
+	_Print("Parsed: " .. _Stringify(parsed))
 	local encoded = EncodeTooltipArray(parsed)
 	local parsed2 = ParseTooltipArray(encoded)
-	_Print("Encoding matches: ", Stringify(parsed2) == Stringify(parsed))
+	_Print("Encoding matches: ", _Stringify(parsed2) == _Stringify(parsed))
 end
 
 ---@class TooltipRequest:table
----@field Type GameTooltipType
+---@field Type TooltipRequestType
 ---@field UIType integer The UI type ID for the UI that initially called for a tooltip.
 ---@field TooltipUIType integer The UI type ID for the tooltip UI.
 ---@field ObjectHandleDouble number|nil
@@ -898,6 +905,9 @@ local TooltipArrayNames = {
 		CharacterCreation = {
 			Main = "tooltipArray",
 		},
+		ContainerInventory = {
+			Main = "tooltip_array",
+		},
 		PartyInventory = {
 			Main = "tooltip_array",
 			CompareMain = "compareTooltip_array",
@@ -943,6 +953,14 @@ function TooltipHooks:RegisterControllerHooks()
 		self:OnRenderTooltip(TooltipArrayNames.Console.CraftPanel, ui, ...)
 	end)
 
+	_RegisterUITypeInvokeListener(_UITYPE.containerInventory.Default, "updateTooltip", function (ui, ...)
+		self:OnRenderTooltip(TooltipArrayNames.Console.ContainerInventory, ui, ...)
+	end)
+
+	_RegisterUITypeInvokeListener(_UITYPE.containerInventory.Pickpocket, "updateTooltip", function (ui, ...)
+		self:OnRenderTooltip(TooltipArrayNames.Console.ContainerInventory, ui, ...)
+	end)
+
 	_RegisterUITypeInvokeListener(_UITYPE.statsPanel_c, "showTooltip", function (ui, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.StatsPanel, ui, ...)
 	end)
@@ -956,9 +974,9 @@ function TooltipHooks:RegisterControllerHooks()
 	end)
 	_RegisterUITypeInvokeListener(_UITYPE.bottomBar_c, "setPlayerHandle", function (ui, method, doubleHandle)
 		if doubleHandle ~= nil and doubleHandle ~= 0 then
-			local handle = DoubleToHandle(doubleHandle)
-			if IsValidHandle(handle) then
-				local character = GetCharacter(handle)
+			local handle = _DoubleToHandle(doubleHandle)
+			if _IsValidHandle(handle) then
+				local character = _GetCharacter(handle)
 				if character then
 					ControllerVars.LastPlayer = character.NetID
 				end
@@ -970,16 +988,16 @@ function TooltipHooks:RegisterControllerHooks()
 	self.GetLastPlayer = function(self)
 		if RequestProcessor.ControllerEnabled then
 			if ControllerVars.LastPlayer then
-				local character = GetCharacter(ControllerVars.LastPlayer)
+				local character = _GetCharacter(ControllerVars.LastPlayer)
 				if character then
 					return character
 				end
 			end
-			local ui = GetUIByType(_UITYPE.bottomBar_c)
+			local ui = _GetUIByType(_UITYPE.bottomBar_c)
 			if ui then
 				---@type {characterHandle:number}
 				local this = ui:GetRoot()
-				if this and not RequestProcessor.Utils.IsNaN(this.characterHandle) then
+				if this and not _IsNaN(this.characterHandle) then
 					local character = RequestProcessor.Utils.GetObjectFromDouble(this.characterHandle)
 					if character then
 						ControllerVars.LastPlayer = character.NetID
@@ -1014,7 +1032,7 @@ function TooltipHooks:RegisterControllerHooks()
 			if main then
 				for i=0,#main.selectionInfo_array,21 do
 					local id = main.selectionInfo_array[i]
-					if id and not RequestProcessor.Utils.IsNaN(id) then
+					if id and not _IsNaN(id) then
 						ControllerVars.LastOverhead = id
 						break
 					end
@@ -1068,7 +1086,7 @@ function TooltipHooks:Init()
 			self.Last.Request = self.NextRequest
 			self.NextRequest = nil
 		end
-		local tt = GetUIByType(_UITYPE.tooltip)
+		local tt = _GetUIByType(_UITYPE.tooltip)
 		if tt then
 			if #tooltipCustomIcons > 0 then
 				for _,v in pairs(tooltipCustomIcons) do
@@ -1148,6 +1166,9 @@ function TooltipHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay,
 			Y = y,
 		}}, ui:GetTypeId(), req.UIType)
 
+		self.ActiveType = req.Type
+		self.Last.Type = req.Type
+
 		if req.Type == "World" then
 			local item = req.Item
 			if item then
@@ -1168,7 +1189,6 @@ function TooltipHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay,
 			if desc.Y then self.GenericTooltipData.Y = desc.Y end
 		end
 	
-		self.Last.Type = req.Type
 		self.Last.Request = self.NextRequest
 		self.NextRequest = nil
 	end
@@ -1181,7 +1201,7 @@ function TooltipHooks:GetCompareOwner(ui, item)
 	local owner = ui:GetPlayerHandle()
 
 	if owner ~= nil then
-		local char = GetCharacter(owner)
+		local char = _GetCharacter(owner)
 		if char.Stats.IsPlayer then
 			return char
 		end
@@ -1189,27 +1209,30 @@ function TooltipHooks:GetCompareOwner(ui, item)
 
 	local handle = nil
 	if not RequestProcessor.ControllerEnabled then
-		local hotbar = GetUIByType(_UITYPE.hotBar)
+		local hotbar = _GetUIByType(_UITYPE.hotBar)
 		if hotbar ~= nil then
 			---@type {hotbar_mc:{characterHandle:number}}
 			local main = hotbar:GetRoot()
 			if main ~= nil then
-				handle = DoubleToHandle(main.hotbar_mc.characterHandle)
+				handle = _DoubleToHandle(main.hotbar_mc.characterHandle)
 			end
 		end
 	else
-		local hotbar = GetUIByType(_UITYPE.bottomBar_c)
+		local hotbar = _GetUIByType(_UITYPE.bottomBar_c)
 		if hotbar ~= nil then
 			---@type {characterHandle:number}
 			local main = hotbar:GetRoot()
 			if main ~= nil then
-				handle = DoubleToHandle(main.characterHandle)
+				handle = _DoubleToHandle(main.characterHandle)
 			end
 		end
 	end
 
 	if handle ~= nil then
-		return GetCharacter(handle)
+		local char = _GetCharacter(handle)
+		if char then
+			return char
+		end
 	end
 
 	local character = RequestProcessor.Utils.GetClientCharacter()
@@ -1218,7 +1241,7 @@ function TooltipHooks:GetCompareOwner(ui, item)
 		--Fallback to the item's owner last, since it may not be the active character.
 		local itemOwner = item:GetOwnerCharacter()
 		if itemOwner ~= nil then
-			local ownerCharacter = GetCharacter(itemOwner)
+			local ownerCharacter = _GetCharacter(itemOwner)
 			if ownerCharacter ~= nil and ownerCharacter.Stats.IsPlayer then
 				return ownerCharacter
 			end
@@ -1289,9 +1312,12 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 			local compareItem = self:GetCompareItem(ui, reqItem, false)
 			if compareItem ~= nil then
 				local lastObjectHandle = req.ObjectHandleDouble
-				req.ObjectHandleDouble = HandleToDouble(compareItem.Handle)
+				local lastStatsId = req.StatsId
+				req.ObjectHandleDouble = _HandleToDouble(compareItem.Handle)
+				req.StatsId = compareItem.StatsId
 				self:OnRenderSubTooltip(ui, arrayData.CompareMain, req, method, ...)
 				req.ObjectHandleDouble = lastObjectHandle
+				req.StatsId = lastStatsId
 			else
 				_PrintError("Tooltip compare render failed: Couldn't find item to compare")
 			end
@@ -1301,9 +1327,12 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 			local compareItem = self:GetCompareItem(ui, reqItem, true)
 			if compareItem ~= nil then
 				local lastObjectHandle = req.ObjectHandleDouble
-				req.ObjectHandleDouble = HandleToDouble(compareItem.Handle)
+				local lastStatsId = req.StatsId
+				req.ObjectHandleDouble = _HandleToDouble(compareItem.Handle)
+				req.StatsId = compareItem.StatsId
 				self:OnRenderSubTooltip(ui, arrayData.CompareOff, req, method, ...)		
 				req.ObjectHandleDouble = lastObjectHandle
+				req.StatsId = lastStatsId
 			else
 				_PrintError("Tooltip compare render failed: Couldn't find off-hand item to compare")
 			end
@@ -1424,7 +1453,7 @@ function TooltipHooks:NotifyListeners(requestType, name, request, tooltip, ...)
 		self:NotifyAll(self.ObjectListeners[requestType][name], table.unpack(args))
 	end
 
-	self:NotifyAll(self.GlobalListeners, request, tooltip)
+	self:NotifyAll(self.GlobalListeners, request, tooltip, ...)
 end
 
 function TooltipHooks:NotifyAll(listeners, ...)
@@ -1525,9 +1554,9 @@ function TooltipData:Create(data, tooltipUIType, requestingUIType)
 	setmetatable(tt, {
 		__index = function(tbl, k)
 			if k == "Instance" then
-				return GetUIByType(tooltipUIType)
+				return _GetUIByType(tooltipUIType)
 			elseif k == "Root" then
-				local ui = GetUIByType(tooltipUIType)
+				local ui = _GetUIByType(tooltipUIType)
 				if ui then
 					return ui:GetRoot()
 				end
@@ -1560,9 +1589,14 @@ function TooltipData:GetDescriptionElement()
 			return element
 		end
 	end
+	return nil
 end
 
-local function ElementTypeMatch(e,t,isTable)
+local function _IsTooltipElement(ele)
+	return type(ele) == "table" and TooltipItemTypes[ele.Type] ~= nil
+end
+
+local function _ElementTypeMatch(e,t,isTable)
 	if isTable then
 		for i=1,#t do
 			if t[i] == e then
@@ -1572,75 +1606,127 @@ local function ElementTypeMatch(e,t,isTable)
 	elseif e == t then
 		return true
 	end
+	return false
 end
 
----@param t string|string[] The tooltip element type.
----@param fallback TooltipElement|nil If an element of the type isn't found, the fallback is appended and returned, if set.
----@return TooltipElement
+---@overload fun(self:TooltipData, t:TooltipElementType, fallback:TooltipElement|nil)
+---@generic T:TooltipElement|TooltipElementType
+---@param t `T`|`T`[] The tooltip element type, or an array of element types.
+---@param fallback TooltipElement|nil If an element of the desired type isn't found, append and return this fallback element.
+---@return T|nil elementOrFallback
 function TooltipData:GetElement(t, fallback)
 	local isTable = type(t) == "table"
-	for i,element in pairs(self.Data) do
-		if ElementTypeMatch(element.Type, t, isTable) then
+	for i=1,#self.Data do
+		local element = self.Data[i]
+		if element and _ElementTypeMatch(element.Type, t, isTable) then
 			return element
 		end
 	end
 	--If this element wasn't found, and fallback is set, append it.
-	if fallback ~= nil then
+	if _IsTooltipElement(fallback) then
 		self:AppendElement(fallback)
 		return fallback
 	end
+	return nil
 end
 
-function TooltipData:GetLastElement(t)
+---Get the last element in the tooltip data of the given type.
+---@overload fun(self:TooltipData, t:TooltipElementType, fallback:TooltipElement|nil)
+---@generic T:TooltipElement|TooltipElementType
+---@param t `T`|`T`[] The tooltip element type, or an array of element types.
+---@param fallback TooltipElement|nil If an element of the desired type isn't found, append and return this fallback element.
+---@return T|nil lastElementOrFallback
+function TooltipData:GetLastElement(t, fallback)
 	local isTable = type(t) == "table"
 	for i=#self.Data,1,-1 do
 		local element = self.Data[i]
-		if element and ElementTypeMatch(element.Type, t, isTable) then
+		if element and _ElementTypeMatch(element.Type, t, isTable) then
 			return element
 		end
 	end
+	if type(fallback) == "table" then
+		self:AppendElement(fallback)
+		return fallback
+	end
+	return nil
 end
 
+---@overload fun(self:TooltipData, t:TooltipElementType)
+---@generic T:TooltipElement|TooltipElementType
+---@param t `T`|`T`[] The tooltip element type, or an array of element types.
+---@return T[] elements An array of elements, or an empty table.
 function TooltipData:GetElements(t)
 	local isTable = type(t) == "table"
 	local elements = {}
-	for i,element in ipairs(self.Data) do
-		if ElementTypeMatch(element.Type, t, isTable) then
-			table.insert(elements, element)
+	for i=1,#self.Data do
+		local element = self.Data[i]
+		if element and _ElementTypeMatch(element.Type, t, isTable) then
+			elements[#elements+1] = element
 		end
 	end
 	return elements
 end
 
-function TooltipData:RemoveElements(type)
-	for i=#self.Data,1,-1 do
-		if self.Data[i].Type == type then
-			table.remove(self.Data, i)
+---Remove all elements matching the given tooltip element type(s).
+---@param t TooltipElementType|TooltipElementType[] The tooltip element type, or an array of element types.
+---@return boolean success Whether any elements matching the given types were removed.
+function TooltipData:RemoveElements(t)
+	local isTable = type(t) == "table"
+	local success = false
+	local j = 1
+	local n = #self.Data
+	--Alternative table.remove optimization
+	--https://stackoverflow.com/a/53038524/2290477
+	for i=1,n do
+		if not _ElementTypeMatch(self.Data[i].Type, t, isTable) then
+			if (i ~= j) then
+				self.Data[j] = self.Data[i]
+				self.Data[i] = nil
+			end
+			j = j + 1
+		else
+			self.Data[i] = nil
 		end
 	end
+	return success
 end
 
+---Remove the provided tooltip element.
+---@param ele TooltipElement
+---@return boolean success Whether the element was removed.
 function TooltipData:RemoveElement(ele)
 	for i,element in pairs(self.Data) do
 		if element == ele then
 			table.remove(self.Data, i)
-			break
+			return true
 		end
 	end
+	return false
 end
 
+---Append a tooltip element to the end of the tooltip data.
 ---@param ele TooltipElement
 ---@return TooltipElement
 function TooltipData:AppendElement(ele)
-	table.insert(self.Data, ele)
+	if _IsTooltipElement(ele) then
+		self.Data[#self.Data+1] = ele
+	else
+		_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElement] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
+	end
 	return ele
 end
 
+---Append a table of elements to the end of the tooltip data.
 ---@param tbl TooltipElement[]
 ---@return TooltipElement
 function TooltipData:AppendElements(tbl)
 	for i=1,#tbl do
-		self.Data[#self.Data+1] = tbl[i]
+		local ele = tbl[i]
+		if _IsTooltipElement(ele) then
+			self.Data[#self.Data+1] = ele
+		else
+			_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElements] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
+		end
 	end
 end
 
@@ -1648,14 +1734,20 @@ end
 ---@param appendAfter TooltipElement
 ---@return TooltipElement
 function TooltipData:AppendElementAfter(ele, appendAfter)
-	for i,element in pairs(self.Data) do
-		if element == appendAfter then
-			table.insert(self.Data, i+1, ele)
-			return ele
+	if _IsTooltipElement(ele) then
+		if _IsTooltipElement(appendAfter) then
+			for i=1,#self.Data do
+				local compareEle = self.Data[i]
+				if compareEle == appendAfter then
+					table.insert(self.Data, i+1, ele)
+					return ele
+				end
+			end
 		end
+		self.Data[#self.Data+1] = ele
+	else
+		_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElementAfter] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
 	end
-
-	table.insert(self.Data, ele)
 	return ele
 end
 
@@ -1663,109 +1755,146 @@ end
 ---@param appendBefore TooltipElement
 ---@return TooltipElement
 function TooltipData:AppendElementBefore(ele, appendBefore)
-	for i=1,#self.Data do
-		local element = self.Data[i]
-		if element == appendBefore then
-			table.insert(self.Data, i-1, ele)
-			return ele
+	if _IsTooltipElement(ele) then
+		if _IsTooltipElement(appendBefore) then
+			for i=1,#self.Data do
+				local compareEle = self.Data[i]
+				if compareEle == appendBefore then
+					table.insert(self.Data, i-1, ele)
+					return ele
+				end
+			end
 		end
+		self.Data[#self.Data+1] = ele
+	else
+		_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElementBefore] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
 	end
-
-	table.insert(self.Data, ele)
 	return ele
 end
 
+---Append an element after a specific element type.
 ---@param ele TooltipElement
----@param elementType string|table<string,boolean>
+---@param elementType TooltipElementType|table<TooltipElementType,boolean> Either an TooltipElementType (string), or a table where the key is a TooltipElementType (i.e. `enableTypes = { SkillDescription = true, ItemDescription = true}`)
 ---@return TooltipElement
 function TooltipData:AppendElementAfterType(ele, elementType)
-	local t = type(elementType)
-	for i=1,#self.Data do
-		local element = self.Data[i]
-		if (t == "string" and element.Type == elementType) or (t == "table" and elementType[element.Type] == true) then
-			table.insert(self.Data, i+1, ele)
-			return ele
+	if _IsTooltipElement(ele) then
+		local t = type(elementType)
+		for i=1,#self.Data do
+			local element = self.Data[i]
+			if (t == "string" and element.Type == elementType) or (t == "table" and elementType[element.Type] == true) then
+				table.insert(self.Data, i+1, ele)
+				return ele
+			end
 		end
+		self.Data[#self.Data+1] = ele
+	else
+		_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElementAfterType] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
 	end
 
-	table.insert(self.Data, ele)
 	return ele
 end
 
+---Append an element before a specific element type.
 ---@param ele TooltipElement
----@param elementType string|table<string,boolean>
+---@param elementType TooltipElementType|table<TooltipElementType,boolean> Either an TooltipElementType (string), or a table where the key is a TooltipElementType (i.e. `enableTypes = { SkillDescription = true, ItemDescription = true}`)
 ---@return TooltipElement
 function TooltipData:AppendElementBeforeType(ele, elementType)
-	local t = type(elementType)
-	for i=1,#self.Data do
-		local element = self.Data[i]
-		if (t == "string" and element.Type == elementType) or (t == "table" and elementType[element.Type] == true) then
-			table.insert(self.Data, i-1, ele)
-			return ele
+	if _IsTooltipElement(ele) then
+		local t = type(elementType)
+		for i=1,#self.Data do
+			local element = self.Data[i]
+			if (t == "string" and element.Type == elementType) or (t == "table" and elementType[element.Type] == true) then
+				table.insert(self.Data, i-1, ele)
+				return ele
+			end
 		end
+		self.Data[#self.Data+1] = ele
+	else
+		_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElementAfterType] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
 	end
 
-	table.insert(self.Data, ele)
 	return ele
 end
-
----@alias GameTooltipType string|"Ability"|"CustomStat"|"Generic"|"Item"|"Pyramid"|"Rune"|"Skill"|"Stat"|"Status"|"Tag"|"Talent"|"World"
 
 Game.Tooltip.Register = {
 	---@param callback fun(request:AnyTooltipRequest, tooltip:TooltipData)
 	Global = function(callback)
 		TooltipHooks:RegisterListener(nil, nil, callback)
 	end,
+
 	---@param callback fun(character:EclCharacter, ability:StatsAbilityType|string, tooltip:TooltipData)
 	---@param ability StatsAbilityType|nil Optional ability to filter by.
 	Ability = function(callback, ability)
 		TooltipHooks:RegisterListener("Ability", ability, callback)
 	end,
+
 	---@param callback fun(character:EclCharacter, statData:{ID:string}, tooltip:TooltipData)
 	---@param id string|nil Optional CustomStat ID to filter by.
 	CustomStat = function(callback, id)
 		TooltipHooks:RegisterListener("CustomStat", id, callback)
 	end,
+	
 	---@param callback fun(tooltip:TooltipData)
 	Generic = function(callback)
 		TooltipHooks:RegisterListener("Generic", nil, callback)
 	end,
+
 	---@param callback fun(item:EclItem, tooltip:TooltipData)
 	---@param statsId string|nil Optional Rune StatsId to filter by.
 	Item = function(callback, statsId)
 		TooltipHooks:RegisterListener("Item", statsId, callback)
 	end,
+
+	---Called when a tooltip is created when hovering over a player portrait.
+	---@param callback fun(character:EclCharacter|nil, tooltip:TooltipData)
+	PlayerPortrait = function(callback)
+		TooltipHooks:RegisterListener("PlayerPortrait", nil, callback)
+	end,
+
 	---@param callback fun(item:EclItem, tooltip:TooltipData)
 	---@param statsId string|nil Optional Rune StatsId to filter by.
 	Pyramid = function(callback, statsId)
 		TooltipHooks:RegisterListener("Pyramid", statsId, callback)
 	end,
+
 	---@param callback fun(item:EclItem, tooltip:TooltipData)
 	---@param statsId string|nil Optional Rune StatsId to filter by.
 	Rune = function(callback, statsId)
 		TooltipHooks:RegisterListener("Rune", statsId, callback)
 	end,
+
 	---@param callback fun(character:EclCharacter, skill:string, tooltip:TooltipData)
 	---@param skillId string|nil Optional Skill ID to filter by.
 	Skill = function(callback, skillId)
 		TooltipHooks:RegisterListener("Skill", skillId, callback)
 	end,
+
 	---Register a callback for stat tooltips in the character sheet, such as attributes and resistances.
 	---@param callback fun(character:EclCharacter, stat:StatsCharacterStatGetterType|string, tooltip:TooltipData)
 	---@param id StatsCharacterStatGetterType|string|nil Optional Stat ID to filter by, such as "Damage".
 	Stat = function(callback, id)
 		TooltipHooks:RegisterListener("Stat", id, callback)
 	end,
+
 	---@param callback fun(character:EclCharacter, status:EclStatus, tooltip:TooltipData)
 	---@param statusId string|nil Optional Status ID to filter by.
 	Status = function(callback, statusId)
 		TooltipHooks:RegisterListener("Status", statusId, callback)
 	end,
+
+	---Register a callback for when cloud and ground surface tooltip text is shown.
+	---@param callback fun(character:EclCharacter, surface:string, tooltip:TooltipData)
+	---@param surfaceId SurfaceType|nil Optional Surface ID to filter by.
+	Surface = function(callback, surfaceId)
+		TooltipHooks:RegisterListener("Surface", surfaceId, callback)
+	end,
+
 	---@param callback fun(character:EclCharacter, tag:string, tooltip:TooltipData)
 	---@param tag string|nil Optional Tag ID to filter by.
 	Tag = function(callback, tag)
 		TooltipHooks:RegisterListener("Tag", tag, callback)
 	end,
+
 	---@param callback fun(character:EclCharacter, talent:StatsTalentType|string, tooltip:TooltipData)
 	---@param talentId StatsTalentType|nil Optional Talent ID to filter by.
 	Talent = function(callback, talentId)
@@ -1778,12 +1907,6 @@ Game.Tooltip.Register = {
 	World = function(callback, statsId)
 		TooltipHooks:RegisterListener("World", statsId, callback)
 	end,
-
-	---Called when a tooltip is created when hovering over a player portrait.
-	---@param callback fun(character:EclCharacter|nil, tooltip:TooltipData)
-	PlayerPortrait = function(callback)
-		TooltipHooks:RegisterListener("PlayerPortrait", nil, callback)
-	end,
 }
 
 ---Register a function to call when a tooltip occurs.
@@ -1791,7 +1914,7 @@ Game.Tooltip.Register = {
 ---Game.Tooltip.RegisterListener("Skill", nil, myFunction) - Register a function for skill type tooltips.
 ---Game.Tooltip.RegisterListener("Status", "HASTED", myFunction) - Register a function for a HASTED status tooltip.
 ---Game.Tooltip.RegisterListener(myFunction) - Register a function for every kind of tooltip.
----@param tooltipTypeOrCallback GameTooltipType|function The tooltip type, such as "Skill".
+---@param tooltipTypeOrCallback TooltipRequestType|function The tooltip type, such as "Skill".
 ---@param idOrNil string|function The tooltip ID, such as "Projectile_Fireball".
 ---@param callbackOrNil function If the first two parameters are set, this is the function to invoke.
 function Game.Tooltip.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
@@ -1811,8 +1934,6 @@ function Game.Tooltip.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackO
 		_PrintError(string.format("[Game.Tooltip.RegisterListener] Invalid arguments - 1: [%s](%s), 2: [%s](%s), 3: [%s](%s)", tooltipTypeOrCallback, t1, idOrNil, t2, callbackOrNil, t3))
 	end
 end
-
----@alias AnyTooltipRequest TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTalentRequest|TooltipStatRequest|TooltipSurfaceRequest|TooltipPyramidRequest|TooltipTagRequest|TooltipCustomStatRequest|TooltipGenericRequest|TooltipWorldRequest
 
 ---@alias GameTooltipRequestListener fun(request:AnyTooltipRequest, ui:UIObject, uiType:integer, event:string, id:string|number|boolean|nil, ...:string|number|boolean|nil)
 
@@ -1844,6 +1965,9 @@ function Game.Tooltip.RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil
 	end
 end
 
+---Check if the current tooltip request type matches the given type.
+---@param t TooltipRequestType
+---@return boolean
 function Game.Tooltip.RequestTypeEquals(t)
 	if TooltipHooks.ActiveType == t or (TooltipHooks.NextRequest and TooltipHooks.NextRequest.Type == t) then
 		return true
@@ -1851,6 +1975,9 @@ function Game.Tooltip.RequestTypeEquals(t)
 	return false
 end
 
+---Check if the last tooltip request type matches the given type.
+---@param t TooltipRequestType
+---@return boolean
 function Game.Tooltip.LastRequestTypeEquals(t)
 	if TooltipHooks.Last.Type == t or (TooltipHooks.NextRequest and TooltipHooks.NextRequest.Type == t) then
 		return true
@@ -1858,14 +1985,20 @@ function Game.Tooltip.LastRequestTypeEquals(t)
 	return false
 end
 
----@return TooltipRequest
+---Get the current or last request table and type.
+---@return AnyTooltipRequest request
+---@return TooltipRequestType requestType
 function Game.Tooltip.GetCurrentOrLastRequest()
 	if TooltipHooks.NextRequest then
-		return TooltipHooks.NextRequest
+		return TooltipHooks.NextRequest,TooltipHooks.ActiveType
 	end
-	return TooltipHooks.Last.Request
+	if TooltipHooks.Last then
+		return TooltipHooks.Last.Request,TooltipHooks.Last.Type
+	end
+	return nil,""
 end
 
+---Returns true if a tooltip is currently open.
 ---@return boolean
 function Game.Tooltip.IsOpen()
 	return TooltipHooks.IsOpen
@@ -1873,7 +2006,7 @@ end
 
 local function CaptureBuiltInUIs()
 	for i = 1,150 do
-		local ui = GetUIByType(i)
+		local ui = _GetUIByType(i)
 		if ui ~= nil then
 			ui:CaptureExternalInterfaceCalls()
 			ui:CaptureInvokes()
@@ -1882,7 +2015,7 @@ local function CaptureBuiltInUIs()
 end
 
 local function EnableHooks()
-	RequestProcessor.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or GetUIByType(_UITYPE.msgBox_c)) ~= nil
+	RequestProcessor.ControllerEnabled = (_GetUIByPath("Public/Game/GUI/msgBox_c.swf") or _GetUIByType(_UITYPE.msgBox_c)) ~= nil
 
 	if TooltipHooks.InitializationRequested then
 		TooltipHooks:Init()
@@ -1891,24 +2024,23 @@ local function EnableHooks()
 	CaptureBuiltInUIs()
 end
 
-Ext.RegisterListener("SessionLoaded", function (from, to)
+Ext.RegisterListener("GameStateChanged", function (from, to)
 	if to == "Menu" then
 		EnableHooks()
 	end
 end)
 
-Ext.RegisterListener("SessionLoaded", function ()
+Ext.RegisterListener("SessionLoaded", function()
 	TooltipHooks.SessionLoaded = true
 	EnableHooks()
 end)
 
----@param ui UIObject
 Ext.RegisterListener("UIObjectCreated", function(ui)
 	ui:CaptureExternalInterfaceCalls()
 	-- Has the 'no flash player' warning if the root is nil
 	if ui:GetRoot() ~= nil then
 		ui:CaptureInvokes()
-	elseif Ext.GetGameState() == "Running" then
+	elseif _GetGameState() == "Running" then
 		Ext.PostMessageToServer("LeaderLib_DeferUICapture", tostring(Mods.LeaderLib.Client.ID))
 	end
 end)
@@ -1916,3 +2048,229 @@ end)
 Ext.RegisterNetListener("LeaderLib_CaptureActiveUIs", function()
 	CaptureBuiltInUIs()
 end)
+
+--#region Annotations
+
+---@alias TooltipElementType string|"AbilityBoost"|"AbilityDescription"|"AbilityTitle"|"AccuracyBoost"|"APCostBoost"|"APMaximumBoost"|"APRecoveryBoost"|"APStartBoost"|"ArmorBoost"|"ArmorSet"|"ArmorSlotType"|"ArmorValue"|"Blocking"|"CanBackstab"|"ChanceToHitBoost"|"ConsumableDamage"|"ConsumableDuration"|"ConsumableEffect"|"ConsumableEffectUknown"|"ConsumablePermanentDuration"|"ContainerIsLocked"|"CritChanceBoost"|"DamageBoost"|"DodgeBoost"|"Durability"|"EmptyRuneSlot"|"Engraving"|"EquipmentUnlockedSkill"|"Equipped"|"ExtraProperties"|"Flags"|"IsQuestItem"|"ItemAttackAPCost"|"ItemDescription"|"ItemGoldValue"|"ItemLevel"|"ItemName"|"ItemRarity"|"ItemRequirement"|"ItemUseAPCost"|"ItemWeight"|"MagicArmorValue"|"NeedsIdentifyLevel"|"OtherStatBoost"|"PickpocketInfo"|"PriceToIdentify"|"PriceToRepair"|"Reflection"|"ResistanceBoost"|"RuneEffect"|"RuneSlot"|"ShowSkillIcon"|"SkillAlreadyLearned"|"SkillAlreadyUsed"|"SkillAPCost"|"SkillbookSkill"|"SkillCanFork"|"SkillCanPierce"|"SkillCleansesStatus"|"SkillCooldown"|"SkillDamage"|"SkillDescription"|"SkillDuration"|"SkillExplodeRadius"|"SkillHealAmount"|"SkillIcon"|"SkillMPCost"|"SkillMultiStrikeAttacks"|"SkillName"|"SkillOnCooldown"|"SkillPathDistance"|"SkillPathSurface"|"SkillProjectileCount"|"SkillProperties"|"SkillRange"|"SkillRequiredEquipment"|"SkillSchool"|"SkillStrikeCount"|"SkillTier"|"SkillWallDistance"|"StatBoost"|"StatMEMSlot"|"StatName"|"StatsAPBase"|"StatsAPBonus"|"StatsAPDesc"|"StatsAPMalus"|"StatsAPTitle"|"StatsATKAPCost"|"StatsBaseValue"|"StatsCriticalInfos"|"StatsDescription"|"StatsDescriptionBoost"|"StatsGearBoostNormal"|"StatsPercentageBoost"|"StatsPercentageMalus"|"StatsPercentageTotal"|"StatsPointValue"|"StatsTalentsBoost"|"StatsTalentsMalus"|"StatsTotalDamage"|"StatSTRWeight"|"StatusBonus"|"StatusDescription"|"StatusImmunity"|"StatusMalus"|"TagDescription"|"Tags"|"TalentDescription"|"TalentTitle"|"VitalityBoost"|"WandCharges"|"WandSkill"|"WarningText"|"WeaponCritChance"|"WeaponCritMultiplier"|"WeaponDamage"|"WeaponDamagePenalty"|"WeaponRange"|
+---@alias TooltipRequestType "Ability"|"CustomStat"|"Generic"|"Item"|"PlayerPortrait"|"Pyramid"|"Rune"|"Skill"|"Stat"|"Status"|"Surface"|"Tag"|"Talent"|"World"
+---@alias AnyTooltipRequest TooltipItemRequest|TooltipRuneRequest|TooltipSkillRequest|TooltipStatusRequest|TooltipAbilityRequest|TooltipTalentRequest|TooltipStatRequest|TooltipSurfaceRequest|TooltipPyramidRequest|TooltipTagRequest|TooltipCustomStatRequest|TooltipGenericRequest|TooltipWorldRequest
+
+---@class TooltipElement
+---@field Type TooltipElementType
+
+---@class TooltipLabelElement
+---@field Label string
+
+---@class TooltipLabelDamageElement
+---@field Label string
+---@field DamageType integer
+---@field MinDamage integer
+---@field MaxDamage integer
+
+---@class TooltipLabelNumValueElement
+---@field Label string
+---@field Value number
+
+---@class TooltipLabelStringValueElement
+---@field Label string
+---@field Value string
+
+---@class BoostSpec:TooltipElement
+---@field Type string
+---@field Value number
+
+---@class ItemName:TooltipLabelElement
+---@class ItemWeight:TooltipLabelElement
+---@class ItemGoldValue:TooltipLabelElement
+---@class ItemLevel:TooltipLabelNumValueElement
+---@class ItemDescription:TooltipLabelElement
+---@class ItemRarity:TooltipLabelElement
+
+---@class ItemUseAPCost:TooltipLabelNumValueElement
+---@field RequirementMet boolean
+
+---@class ItemAttackAPCost:TooltipLabelNumValueElement
+---@field Warning string
+---@field RequirementMet boolean
+
+---@class StatBoost:BoostSpec
+---@class ResistanceBoost:BoostSpec
+---@class AbilityBoost:BoostSpec
+---@class OtherStatBoost:TooltipLabelStringValueElement
+---@class VitalityBoost:BoostSpec
+---@class ChanceToHitBoost:BoostSpec
+---@class DamageBoost:BoostSpec
+---@class APCostBoost:BoostSpec
+---@class APMaximumBoost:BoostSpec
+---@class APStartBoost:BoostSpec
+---@class APRecoveryBoost:BoostSpec
+---@class CritChanceBoost:BoostSpec
+---@class ArmorBoost:BoostSpec
+---@class ConsumableDuration:TooltipLabelStringValueElement
+---@class ConsumablePermanentDuration:TooltipLabelStringValueElement
+---@class ConsumableEffect:TooltipLabelStringValueElement
+
+---@class ConsumableDamage:TooltipLabelDamageElement
+
+---@class ExtraProperties:TooltipLabelElement
+---@class Flags:TooltipLabelElement
+
+---@class ItemRequirement:TooltipLabelElement
+---@field RequirementMet boolean
+
+---@class WeaponDamage:TooltipLabelDamageElement
+
+---@class WeaponDamagePenalty:TooltipLabelElement
+---@class WeaponCritMultiplier:TooltipLabelStringValueElement
+---@class WeaponCritChance:TooltipLabelStringValueElement
+---@class WeaponRange:TooltipLabelStringValueElement
+
+---@class Durability:TooltipLabelNumValueElement
+---@field Max number
+
+---@class CanBackstab:TooltipLabelElement
+---@class AccuracyBoost:TooltipLabelNumValueElement
+---@class DodgeBoost:TooltipLabelNumValueElement
+
+---@class EquipmentUnlockedSkill:TooltipLabelStringValueElement
+---@field Icon number
+
+---@class WandSkill:TooltipLabelStringValueElement
+---@field Icon string
+---@field Warning string
+
+---@class WandCharges:TooltipLabelNumValueElement
+---@field MaxValue number
+
+---@class ArmorValue:TooltipLabelNumValueElement
+---@class ArmorSlotType:TooltipLabelElement
+---@class Blocking:TooltipLabelNumValueElement
+---@class NeedsIdentifyLevel:TooltipLabelElement
+---@class IsQuestItem:TooltipElement
+---@class PriceToIdentify:TooltipLabelStringValueElement
+---@class PriceToRepair:TooltipLabelStringValueElement
+---@class PickpocketInfo:TooltipLabelElement
+---@class Engraving:TooltipLabelElement
+---@class ContainerIsLocked:TooltipLabelElement
+
+---@class Tags:TooltipLabelStringValueElement
+---@field Warning string
+
+---@class SkillName:TooltipLabelElement
+---@class SkillIcon:TooltipLabelElement
+
+---@class SkillSchool:TooltipLabelElement
+---@field Icon number
+
+---@class SkillTier:TooltipLabelElement
+
+---@class SkillRequiredEquipment:TooltipLabelElement
+---@field RequirementMet boolean
+
+---@class SkillAPCost:TooltipLabelNumValueElement
+---@field Warning string
+---@field RequirementMet boolean
+
+---@class SkillCooldown:TooltipLabelNumValueElement
+---@field Warning string
+---@field ValueText string
+
+---@class SkillDescription:TooltipLabelElement
+---@class SkillDamage:TooltipLabelDamageElement
+---@class SkillRange:TooltipLabelStringValueElement
+---@class SkillExplodeRadius:TooltipLabelStringValueElement
+---@class SkillCanPierce:TooltipLabelStringValueElement
+---@class SkillCanFork:TooltipLabelStringValueElement
+---@class SkillStrikeCount:TooltipLabelStringValueElement
+---@class SkillProjectileCount:TooltipLabelStringValueElement
+---@class SkillCleansesStatus:TooltipLabelStringValueElement
+---@class SkillMultiStrikeAttacks:TooltipLabelStringValueElement
+---@class SkillWallDistance:TooltipLabelStringValueElement
+---@class SkillPathSurface:TooltipLabelStringValueElement
+---@class SkillPathDistance:TooltipLabelStringValueElement
+---@class SkillHealAmount:TooltipLabelStringValueElement
+
+---@class SkillDuration:TooltipLabelNumValueElement
+---@field Warning string
+
+---@class ConsumableEffectUknown:TooltipLabelElement
+---@class Reflection:TooltipLabelElement
+---@class SkillAlreadyLearned:TooltipLabelElement
+---@class SkillOnCooldown:TooltipLabelElement
+---@class SkillAlreadyUsed:TooltipLabelElement
+---@class AbilityTitle:TooltipLabelElement
+
+---@class AbilityDescription:TooltipElement
+---@field AbilityId number
+---@field Description string
+---@field Description2 string
+---@field CurrentLevelEffect string
+---@field NextLevelEffect string
+
+---@class TalentTitle:TooltipLabelElement
+
+---@class TalentDescription:TooltipElement
+---@field TalentId number
+---@field Description string
+---@field Requirement string
+---@field IncompatibleWith string
+---@field Selectable boolean
+---@field Unknown boolean
+
+---@class SkillMPCost:TooltipLabelNumValueElement
+---@field RequirementMet boolean
+
+---@class MagicArmorValue:TooltipLabelNumValueElement
+---@field RequirementMet boolean
+
+---@class WarningText:TooltipLabelElement
+---@class RuneSlot:TooltipLabelStringValueElement
+
+---@class RuneEffect:TooltipElement
+---@field Unknown1 number
+---@field Rune1 string
+---@field Rune2 string
+---@field Rune3 string
+---@field Label string
+---@field Label2 string
+
+---@class Equipped:TooltipLabelElement
+---@field EquippedBy string
+---@field Slot string
+
+---@class ShowSkillIcon:TooltipElement
+---@class SkillbookSkill:TooltipLabelStringValueElement
+---@field Icon number
+
+---@class EmptyRuneSlot:TooltipLabelStringValueElement
+---@class StatName:TooltipLabelElement
+---@class StatsDescription:TooltipLabelElement
+---@class StatsDescriptionBoost:TooltipLabelNumValueElement
+---@class StatSTRWeight:TooltipLabelElement
+---@class StatMEMSlot:TooltipLabelElement
+---@class StatsPointValue:TooltipLabelElement
+---@class StatsTalentsBoost:TooltipLabelElement
+---@class StatsTalentsMalus:TooltipLabelElement
+---@class StatsBaseValue:TooltipLabelElement
+---@class StatsPercentageBoost:TooltipLabelElement
+---@class StatsPercentageMalus:TooltipLabelElement
+---@class StatsPercentageTotal:TooltipLabelNumValueElement
+---@class StatsGearBoostNormal:TooltipLabelElement
+---@class StatsATKAPCost:TooltipLabelElement
+---@class StatsCriticalInfos:TooltipLabelElement
+---@class StatsAPTitle:TooltipLabelElement
+---@class StatsAPDesc:TooltipLabelElement
+---@class StatsAPBase:TooltipLabelElement
+---@class StatsAPBonus:TooltipLabelElement
+---@class StatsAPMalus:TooltipLabelElement
+---@class StatsTotalDamage:TooltipLabelElement
+
+---@class TagDescription:TooltipLabelElement
+---@field Image number
+
+---@class StatusImmunity:TooltipLabelElement
+---@class StatusBonus:TooltipLabelElement
+---@class StatusMalus:TooltipLabelElement
+---@class StatusDescription:TooltipLabelElement
+
+--#endregion

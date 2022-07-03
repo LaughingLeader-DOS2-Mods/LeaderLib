@@ -280,7 +280,7 @@ Ext.RegisterListener("SessionLoaded", function ()
 		return TooltipExpander.MarkDirty()
 	end
 
-	function Game.Tooltip.PrepareIcon(ui, id, icon, w, h)
+	Game.Tooltip.PrepareIcon = function(ui, id, icon, w, h)
 		ui:SetCustomIcon(id, icon, w, h)
 		tooltipCustomIcons[#tooltipCustomIcons+1] = id
 	end

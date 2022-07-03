@@ -1569,6 +1569,7 @@ end
 
 local DescriptionElements = {
 	AbilityDescription = true,
+	Description = true, -- World/Generic Tooltips
 	ItemDescription = true,
 	SkillDescription = true,
 	StatsDescription = true,
@@ -1576,24 +1577,31 @@ local DescriptionElements = {
 	SurfaceDescription = true,
 	TagDescription = true,
 	TalentDescription = true,
-	Description = true, -- World Tooltips
 }
 
+---@alias AnyTooltipDescriptionElement AbilityDescription|GenericDescription|ItemDescription|SkillDescription|StatsDescription|StatusDescription|SurfaceDescription|TagDescription|TalentDescription
+
 ---Gets whichever element is the description.
----@return {Type:string, Label:string}
+---@return AnyTooltipDescriptionElement
 function TooltipData:GetDescriptionElement()
 	---@type {Type:TooltipElementType, Label:string|nil}
 	local elements = self.Data
 	for _,element in pairs(elements) do
-		if DescriptionElements[element.Type] and element.Label then
+		if DescriptionElements[element.Type] then
 			return element
 		end
 	end
 	return nil
 end
 
+local _CustomTooltipTypes = {
+	Description = true
+}
+
+Game.Tooltip.CustomTooltipTypes = _CustomTooltipTypes
+
 local function _IsTooltipElement(ele)
-	return type(ele) == "table" and TooltipItemTypes[ele.Type] ~= nil
+	return type(ele) == "table" and (TooltipItemTypes[ele.Type] ~= nil or _CustomTooltipTypes[ele.Type])
 end
 
 local function _ElementTypeMatch(e,t,isTable)
@@ -1644,7 +1652,7 @@ function TooltipData:GetLastElement(t, fallback)
 			return element
 		end
 	end
-	if type(fallback) == "table" then
+	if _IsTooltipElement(fallback) then
 		self:AppendElement(fallback)
 		return fallback
 	end
@@ -2074,6 +2082,15 @@ end)
 ---@class TooltipLabelStringValueElement
 ---@field Label string
 ---@field Value string
+
+---The tooltip element for Generic, PlayerPortrait, and World tooltips.  
+---The Type is just `"Description"`.
+---@class GenericDescription:TooltipLabelElement
+---@field X number
+---@field Y number
+
+---The tooltip element for Surface tooltips.
+---@class SurfaceDescription:TooltipLabelElement
 
 ---@class BoostSpec:TooltipElement
 ---@field Type string

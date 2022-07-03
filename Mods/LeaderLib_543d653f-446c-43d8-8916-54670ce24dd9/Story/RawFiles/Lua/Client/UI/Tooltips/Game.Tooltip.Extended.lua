@@ -1253,6 +1253,16 @@ function TooltipHooks:GetCompareOwner(ui, item)
 	return nil
 end
 
+local _GetItem = Ext.GetItem
+
+local function _TryGetItem(uuid)
+	local b,result = pcall(_GetItem, uuid)
+	if b then
+		return result
+	end
+	return nil
+end
+
 --- @param ui UIObject
 --- @param item EclItem
 --- @param offHand boolean
@@ -1265,20 +1275,38 @@ function TooltipHooks:GetCompareItem(ui, item, offHand)
 		return nil
 	end
 
-	if item.Stats.ItemSlot == "Weapon" then
-		if offHand then
-			return char:GetItemObjectBySlot("Shield")
+	if _EXTVERSION >= 56 then
+		if item.Stats.ItemSlot == "Weapon" then
+			if offHand then
+				return char:GetItemObjectBySlot("Shield")
+			else
+				return char:GetItemObjectBySlot("Weapon")
+			end
+		elseif item.Stats.ItemSlot == "Ring" or item.Stats.ItemSlot == "Ring2" then
+			if offHand then
+				return char:GetItemObjectBySlot("Ring2")
+			else
+				return char:GetItemObjectBySlot("Ring")
+			end
 		else
-			return char:GetItemObjectBySlot("Weapon")
-		end
-	elseif item.Stats.ItemSlot == "Ring" or item.Stats.ItemSlot == "Ring2" then
-		if offHand then
-			return char:GetItemObjectBySlot("Ring2")
-		else
-			return char:GetItemObjectBySlot("Ring")
+			return char:GetItemObjectBySlot(item.Stats.ItemSlot)
 		end
 	else
-		return char:GetItemObjectBySlot(item.Stats.ItemSlot)
+		if item.Stats.ItemSlot == "Weapon" then
+			if offHand then
+				return _TryGetItem(char:GetItemBySlot("Shield"))
+			else
+				return _TryGetItem(char:GetItemBySlot("Weapon"))
+			end
+		elseif item.Stats.ItemSlot == "Ring" or item.Stats.ItemSlot == "Ring2" then
+			if offHand then
+				return _TryGetItem(char:GetItemBySlot("Ring2"))
+			else
+				return _TryGetItem(char:GetItemBySlot("Ring"))
+			end
+		else
+			return _TryGetItem(char:GetItemBySlot(item.Stats.ItemSlot))
+		end
 	end
 end
 

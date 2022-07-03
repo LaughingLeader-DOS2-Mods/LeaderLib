@@ -270,12 +270,11 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 	if (_enabledSkills[skill] or _enabledSkills.All) then
 		local data = GetCharacterSkillData(skill, uuid, true, skillType, skillAbility)
 		if data then
+			local caster = GameHelpers.GetCharacter(char)
 			--Quake doesn't fire any target events, but works like a shout
 			if skillType == "quake" then
-				local x,y,z = GetPosition(char)
-				data:AddTargetPosition(x,y,z)
+				data:AddTargetPosition(table.unpack(caster.WorldPos))
 			end
-			local caster = GameHelpers.GetCharacter(char)
 			Events.OnSkillState:Invoke({
 				Character = caster,
 				Skill = skill,

@@ -266,7 +266,8 @@ end
 ---@param radius number|nil
 ---@param canTargetItems boolean|nil
 ---@param canApplyCallback GameHelpers.Status.Remove.CanApplyCallback|nil An optional function to use when attempting to apply a status in a radius.
-function GameHelpers.Status.Apply(target, status, duration, force, source, radius, canTargetItems, canApplyCallback)
+---@param statusOpts {StatsMultiplier:number}|nil Optional fields to set on the prepared status before it's applied, such as StatsMultiplier.
+function GameHelpers.Status.Apply(target, status, duration, force, source, radius, canTargetItems, canApplyCallback, statusOpts)
 	if not duration then
 		duration = 6.0
 		local potion = Ext.StatGetAttribute(status, "StatsId")
@@ -299,7 +300,7 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 		if targetType ~= "table" then
 			target = GameHelpers.GetUUID(target)
 			if target then
-				FinallyApplyStatus(target, status, duration, force, source)
+				FinallyApplyStatus(target, status, duration, force, source, statusOpts)
 			end
 		else
 			radius = radius or 1.0
@@ -313,10 +314,10 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 					if canApplyCallback then
 						local b,result = pcall(canApplyCallback, v, source, status, false)
 						if b and result == true then
-							FinallyApplyStatus(v, status, duration, force, source)
+							FinallyApplyStatus(v, status, duration, force, source, statusOpts)
 						end
 					else
-						FinallyApplyStatus(v, status, duration, force, source)
+						FinallyApplyStatus(v, status, duration, force, source, statusOpts)
 					end
 				end
 			end
@@ -326,10 +327,10 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 						if canApplyCallback then
 							local b,result = pcall(canApplyCallback, v, source, status, true)
 							if b and result == true then
-								FinallyApplyStatus(v, status, duration, force, source)
+								FinallyApplyStatus(v, status, duration, force, source, statusOpts)
 							end
 						else
-							FinallyApplyStatus(v, status, duration, force, source)
+							FinallyApplyStatus(v, status, duration, force, source, statusOpts)
 						end
 					end
 				end

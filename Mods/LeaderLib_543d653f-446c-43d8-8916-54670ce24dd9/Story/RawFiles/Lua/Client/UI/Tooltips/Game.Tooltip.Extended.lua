@@ -20,7 +20,7 @@ local _DEBUG = Ext.IsDeveloperMode()
 local _UITYPE = Data.UIType
 
 local _GetCharacter = Ext.GetCharacter
-local _GetGameState = Ext.GetGameState()
+local _GetGameState = Ext.GetGameState
 
 local _GetUIByType = Ext.GetUIByType
 local _GetUIByPath = Ext.GetBuiltinUI

@@ -54,7 +54,7 @@ if Game.Tooltip == nil then
 end
 
 ---@type GameTooltipRequestProcessor
-local RequestProcessor = _Require(nil, "builtin://Libs/Game.Tooltip.RequestProcessor.lua")
+local RequestProcessor = _Require("Client/UI/Tooltips/TooltipRequestProcessor.lua")
 Game.Tooltip.RequestProcessor = RequestProcessor
 
 local game = Game

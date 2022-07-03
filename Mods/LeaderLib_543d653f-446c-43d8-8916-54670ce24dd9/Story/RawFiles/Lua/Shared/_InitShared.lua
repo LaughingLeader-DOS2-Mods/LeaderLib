@@ -1,15 +1,11 @@
-if GameHelpers == nil then
-	---@class LeaderLibGameHelpers
-	GameHelpers = {
-		_INTERNAL = {}
-	}
-end
+---@class LeaderLibGameHelpers
+GameHelpers = {}
 
 local function InitTable(name, target)
 	target = target or Mods.LeaderLib
 	if type(name) == "table" then
-		for k,v in pairs(name) do
-			InitTable(v, target)
+		for _,v in pairs(name) do
+			target[v] = {}
 		end
 	elseif target[name] == nil then
 		target[name] = {}
@@ -18,7 +14,7 @@ end
 
 InitTable("Classes")
 InitTable("Common")
-InitTable({"Audio", "Item", "Math", "Damage", "Skill", "Status", "Tooltip", "UI", "Ext", "_INTERNAL", "Net"}, GameHelpers)
+InitTable({"_INTERNAL", "Audio", "Damage", "Ext", "Item", "Math", "Net", "Skill", "Status", "Tooltip", "UI", "Utils"}, GameHelpers)
 
 local _EXTVERSION = Ext.Version()
 local _getTranslatedStringKeyFunction = _EXTVERSION < 56 and Ext.GetTranslatedStringFromKey or Ext.L10N.GetTranslatedStringFromKey

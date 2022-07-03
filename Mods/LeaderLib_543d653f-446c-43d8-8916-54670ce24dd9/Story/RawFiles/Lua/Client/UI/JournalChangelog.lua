@@ -60,11 +60,12 @@ Changelog:RegisterInvokeListener("updateJournal", function (self, ui, event)
 	end
 end, "After", "All")
 
----@return string
+---@return string|nil
 local function GetLastGroupId(tutorialList)
 	if tutorialList.m_CurrentSelection and tutorialList.m_CurrentSelection.list_pos then
 		return tutorialList.content_array[tutorialList.m_CurrentSelection.list_pos].gName
 	end
+	return nil
 end
 
 local initializedEntries = false

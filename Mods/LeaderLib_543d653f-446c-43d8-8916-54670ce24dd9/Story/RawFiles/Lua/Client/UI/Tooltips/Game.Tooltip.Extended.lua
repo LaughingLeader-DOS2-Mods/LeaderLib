@@ -19,6 +19,8 @@ local _DEBUG = Ext.IsDeveloperMode()
 
 local _UITYPE = Data.UIType
 
+local _ObjectIsItem = GameHelpers.Ext.ObjectIsItem
+
 local _GetCharacter = Ext.GetCharacter
 local _GetGameState = Ext.GetGameState
 
@@ -1256,6 +1258,9 @@ end
 local _GetItem = Ext.GetItem
 
 local function _TryGetItem(uuid)
+	if ObjectIsItem(uuid) then
+		return uuid
+	end
 	local b,result = pcall(_GetItem, uuid)
 	if b then
 		return result

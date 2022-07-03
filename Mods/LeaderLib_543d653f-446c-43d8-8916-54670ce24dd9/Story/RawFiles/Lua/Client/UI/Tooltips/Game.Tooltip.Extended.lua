@@ -1258,8 +1258,9 @@ end
 local _GetItem = Ext.GetItem
 
 local function _TryGetItem(uuid)
-	if ObjectIsItem(uuid) then
-		return uuid
+	local b,item = _ObjectIsItem(uuid)
+	if b and item then
+		return item
 	end
 	local b,result = pcall(_GetItem, uuid)
 	if b then

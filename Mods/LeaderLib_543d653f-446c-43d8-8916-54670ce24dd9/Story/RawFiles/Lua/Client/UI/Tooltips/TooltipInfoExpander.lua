@@ -264,6 +264,7 @@ function TooltipExpander.AppendHelpText(request, tooltip)
 end
 
 
+local tooltipCustomIcons = {}
 Ext.RegisterListener("SessionLoaded", function ()
 	---Simple variable a mod can check to see if this is a LeaderLib tooltip.
 	Game.Tooltip.TooltipData.IsExtended = true
@@ -279,6 +280,11 @@ Ext.RegisterListener("SessionLoaded", function ()
 		return TooltipExpander.MarkDirty()
 	end
 
+	function Game.Tooltip.PrepareIcon(ui, id, icon, w, h)
+		ui:SetCustomIcon(id, icon, w, h)
+		tooltipCustomIcons[#tooltipCustomIcons+1] = id
+	end
+
 	if Vars.DebugMode and Vars.LeaderDebugMode then
 		Game.Tooltip.Register.Global(function (request, tooltip, ...)
 			if Vars.DebugMode then
@@ -292,5 +298,17 @@ Ext.RegisterListener("SessionLoaded", function ()
 			end
 			TooltipExpander.AppendHelpText(request, tooltip)
 		end)
+	end
+end)
+
+Ext.RegisterUINameCall("hideTooltip", function (ui, call, ...)
+	local tt = Ext.GetUIByType(Data.UIType.tooltip)
+	if tt then
+		if #tooltipCustomIcons > 0 then
+			for _,v in pairs(tooltipCustomIcons) do
+				tt:ClearCustomIcon(v)
+			end
+			tooltipCustomIcons = {}
+		end
 	end
 end)

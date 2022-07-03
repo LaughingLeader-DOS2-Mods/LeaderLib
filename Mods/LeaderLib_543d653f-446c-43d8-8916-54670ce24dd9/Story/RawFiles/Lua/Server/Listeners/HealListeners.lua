@@ -96,7 +96,12 @@ function ParseHealingStatusToSkills()
 		local props = GameHelpers.Stats.GetSkillProperties(skillId)
 		if props then
 			for _,v in pairs(props) do
-				if v.Type == "Status" and v.Action ~= "" and not Data.EngineStatus[v.Action] and v.Action ~= "TryKill" then
+				if v.Type == "Status"
+				and not StringHelpers.IsNullOrWhitespace(v.Action)
+				and not Data.EngineStatus[v.Action]
+				and v.Action ~= "TryKill"
+				and GameHelpers.Stats.Exists(v.Action, "StatusData")
+				then
 					local statusType = GameHelpers.Status.GetStatusType(v.Action)
 					if statusType == "HEAL" or statusType == "HEALING" then
 						if not Vars.HealingStatusToSkills[v.Action] then

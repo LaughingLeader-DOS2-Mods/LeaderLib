@@ -1159,7 +1159,7 @@ local _SlotNames = {
 
 ---@param item EclItem
 local function _GetItemSlotName(item)
-	if item.StatsId ~= "" and item.StatsId ~= nil and not _itemRarity[item.StatsId] then
+	if not _ObjectIsItem(item) and item.StatsId ~= "" and item.StatsId ~= nil and not _itemRarity[item.StatsId] then
 		---@type StatEntryWeapon
 		local stat = _GetStat(item.StatsId)
 		if stat then

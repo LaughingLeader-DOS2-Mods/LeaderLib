@@ -1282,6 +1282,7 @@ RequestProcessor.Utils = {
 	GetClientCharacter = _GetClientCharacter,
 	GetCharacterSheetCharacter = _GetCharacterSheetCharacter,
 	GetSurfaces = _GetSurfaces,
+	ItemRarity = _itemRarity
 }
 
 return RequestProcessor

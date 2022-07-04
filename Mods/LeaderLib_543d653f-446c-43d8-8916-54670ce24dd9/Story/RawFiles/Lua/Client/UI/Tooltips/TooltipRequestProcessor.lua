@@ -11,6 +11,7 @@ local _IsNaN = GameHelpers.Math.IsNaN
 
 local _GetUIByType = Ext.GetUIByType
 local _GetUIGetByPath = Ext.GetBuiltinUI
+local _ObjectIsItem = GameHelpers.Ext.ObjectIsItem
 
 local _GetStat = Ext.GetStat
 local _GetTranslatedString = Ext.GetTranslatedString
@@ -244,7 +245,7 @@ local function _CreateRequest()
 					local objectHandleDouble = rawget(tbl, "ObjectHandleDouble")
 					if objectHandleDouble then
 						local obj = _GetObjectFromDouble(objectHandleDouble)
-						if obj and _GetObjectType(obj) == "ecl::Item" then
+						if obj and _ObjectIsItem(obj) then
 							rawset(tbl, "StatsId", obj.StatsId)
 							return obj.StatsId
 						end

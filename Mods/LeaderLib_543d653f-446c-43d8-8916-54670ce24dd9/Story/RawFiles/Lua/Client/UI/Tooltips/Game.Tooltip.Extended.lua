@@ -1343,10 +1343,10 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	local arrayId = arrayData.Main
 	local compareMain = arrayData.CompareMain
 	local compareOff = arrayData.CompareOff
-	local skipCompare = req.Type ~= "Item"
+	local checkCompare = req.Type == "Item"
 
 	if ui:GetTypeId() == _UITYPE.equipmentPanel_c then
-		skipCompare = true	
+		checkCompare = false	
 		if method == "updateTooltip" then
 			arrayId = TooltipArrayNames.Console.EquipmentPanel.CompareMain
 		end
@@ -1355,7 +1355,7 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	self:OnRenderSubTooltip(ui, arrayId, req, method, ...)
 	
 	--equipmentPanel_c updates each array in separate invokes, so we don't need to setup comparison tooltips
-	if not skipCompare then
+	if checkCompare then
 		local this = ui:GetRoot()
 
 		local reqItem = req.Item

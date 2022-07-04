@@ -295,7 +295,7 @@ end
 ---@param target string|number[]|EsvCharacter|EsvItem
 ---@param skillId string
 ---@param source string|EsvCharacter|EsvItem
----@param extraParams LeaderLibProjectileStrikeCreationProperties
+---@param extraParams LeaderLibProjectileStrikeCreationProperties|nil
 function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extraParams)
     extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = GameHelpers.Ext.CreateSkillTable(skillId)

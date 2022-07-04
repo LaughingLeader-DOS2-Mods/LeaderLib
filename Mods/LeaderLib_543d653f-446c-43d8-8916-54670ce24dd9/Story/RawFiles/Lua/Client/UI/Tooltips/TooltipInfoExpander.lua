@@ -289,7 +289,8 @@ Ext.RegisterListener("SessionLoaded", function ()
 		Game.Tooltip.Register.Global(function (request, tooltip, ...)
 			if Vars.DebugMode then
 				local text = "local tooltip = " .. Lib.serpent.dump({
-					Request = request.Type,
+					_Type = request.Type,
+					Request = request,
 					Tooltip = tooltip,
 					Params = {...},
 				}, {SimplifyUserdata=true})

@@ -47,6 +47,8 @@ local _PrintError = Ext.PrintError
 local _Dump = Ext.Dump
 local _DumpExport = Ext.DumpExport
 
+local _ItemIsObject = GameHelpers.Item.IsObject
+
 if Game == nil then
 	Game = {}
 end
@@ -930,8 +932,8 @@ local TooltipArrayNames = {
 			Main = "tooltip_array",
 		},
 		EquipmentPanel = {
-			Main = "tooltip_array",
-			CompareMain = "equipTooltip_array",
+			Main = "equipTooltip_array",
+			CompareMain = "tooltip_array",
 		},
 		StatsPanel = {
 			Main = "tooltipArray",
@@ -1281,6 +1283,11 @@ function TooltipHooks:GetCompareItem(ui, item, offHand)
 		return nil
 	end
 
+	if not _ItemIsObject(item) or item.Stats == nil then
+		_PrintWarning("[Game.Tooltip:GetCompareItem] Trying to compare an item with no Stats?", item.StatsId)
+		return nil
+	end
+
 	if _EXTVERSION >= 56 then
 		if item.Stats.ItemSlot == "Weapon" then
 			if offHand then
@@ -1333,14 +1340,27 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	self.ActiveType = req.Type
 	self.Last.Type = req.Type
 
-	self:OnRenderSubTooltip(ui, arrayData.Main, req, method, ...)
+	local arrayId = arrayData.Main
+	local compareMain = arrayData.CompareMain
+	local compareOff = arrayData.CompareOff
+	local skipCompare = req.Type ~= "Item"
+
+	if ui:GetTypeId() == _UITYPE.equipmentPanel_c then
+		skipCompare = true	
+		if method == "updateTooltip" then
+			arrayId = TooltipArrayNames.Console.EquipmentPanel.CompareMain
+		end
+	end
+
+	self:OnRenderSubTooltip(ui, arrayId, req, method, ...)
 	
-	if req.Type == "Item" then
+	--equipmentPanel_c updates each array in separate invokes, so we don't need to setup comparison tooltips
+	if not skipCompare then
 		local this = ui:GetRoot()
 
 		local reqItem = req.Item
-		local mainArray = arrayData.CompareMain and this[arrayData.CompareMain] or nil
-		local compareArray = arrayData.CompareOff and this[arrayData.CompareOff] or nil
+		local mainArray = compareMain and this[arrayData.CompareMain]
+		local compareArray = compareOff and this[arrayData.CompareOff]
 
 		if mainArray and mainArray[0] ~= nil then
 			local compareItem = self:GetCompareItem(ui, reqItem, false)
@@ -1353,7 +1373,7 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 				req.ObjectHandleDouble = lastObjectHandle
 				req.StatsId = lastStatsId
 			else
-				_PrintError("Tooltip compare render failed: Couldn't find item to compare")
+				_PrintError("Tooltip compare render failed: Couldn't find item to compare", method, compareMain)
 			end
 		end
 
@@ -1368,7 +1388,7 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 				req.ObjectHandleDouble = lastObjectHandle
 				req.StatsId = lastStatsId
 			else
-				_PrintError("Tooltip compare render failed: Couldn't find off-hand item to compare")
+				_PrintError("Tooltip compare render failed: Couldn't find off-hand item to compare", method, compareOff)
 			end
 		end
 	end

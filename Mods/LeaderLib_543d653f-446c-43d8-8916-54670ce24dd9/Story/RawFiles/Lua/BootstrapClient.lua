@@ -45,7 +45,7 @@ Ext.Require("Client/UI/UITypeWorkaround.lua")
 Ext.Require("Client/UI/UIListeners.lua")
 Ext.Require("Client/QOL/StatusHider.lua")
 Ext.Require("Client/QOL/InventoryTweaks.lua")
-if Ext.Version() < 57 and EnableGameTooltipOverride() then
+if Ext.Version() < 56 or EnableGameTooltipOverride() then
 	Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 end
 Ext.Require("Client/UI/CharacterSheet.lua")

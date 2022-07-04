@@ -3,6 +3,9 @@ if GameSettingsManager == nil then
 end
 GameSettingsManager.__index = GameSettingsManager
 function GameSettingsManager.GetSettings()
+	if not GameSettings.Loaded then
+		GameSettingsManager.Load(false)
+	end
 	return GameSettings.Settings
 end
 
@@ -16,6 +19,7 @@ function GameSettingsManager.Apply(sync)
 	GameSettings:Apply()
 end
 
+---@return LeaderLibGameSettings
 function GameSettingsManager.Load(sync)
 	local b,result = xpcall(function()
 		return GameSettings:LoadString(Ext.LoadFile("LeaderLib_GameSettings.json"))

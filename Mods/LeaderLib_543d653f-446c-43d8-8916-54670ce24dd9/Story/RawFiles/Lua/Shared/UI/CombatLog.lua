@@ -253,24 +253,23 @@ if _ISCLIENT then
 		end
 	end, "Before")
 
-	Ext.RegisterListener("SessionLoaded", function ()
-		if not clientHidCombatLog then
-			local settings = GameSettingsManager.GetSettings()
-			if settings and settings.Client.ToggleCombatLog == true then
-				local this = CombatLog.Root
-				if this then
-					if not this.log_mc.visible then
-						if not Vars.ControllerEnabled then
+	Events.RegionChanged:Subscribe(function(e)
+		if not clientHidCombatLog and e.LevelType == LEVELTYPE.GAME and e.State == REGIONSTATE.GAME then
+			Timer.StartOneshot("LeaderLib_CombatLog_Enable", 1250, function ()
+				local settings = GameSettingsManager.GetSettings()
+				if settings and settings.Client.ToggleCombatLog == true then
+					local this = CombatLog.Root
+					if this and not this.log_mc.visible then
+						--[[ if not Vars.ControllerEnabled then
 							local hotbar = Ext.GetUIByType(Data.UIType.hotBar)
 							if hotbar then
 								hotbar:ExternalInterfaceCall("CombatLogBtnPressed")
 							end
-						else
-							this.setLogVisible(true)
-						end
+						end ]]
+						this.log_mc.visible = true
 					end
 				end
-			end
+			end)
 		end
 	end)
 else

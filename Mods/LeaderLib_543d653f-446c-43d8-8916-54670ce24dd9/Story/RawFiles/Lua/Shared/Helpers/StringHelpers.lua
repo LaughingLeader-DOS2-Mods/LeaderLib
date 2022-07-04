@@ -45,7 +45,7 @@ StringHelpers.NULL_UUID = "NULL_00000000-0000-0000-0000-000000000000"
 StringHelpers.UNSET_HANDLE = "ls::TranslatedStringRepository::s_HandleUnknown"
 
 ---Checks if a string is null or empty.
----@param str string
+---@param str string|nil
 ---@return boolean
 function StringHelpers.IsNullOrEmpty(str)
 	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
@@ -53,7 +53,7 @@ function StringHelpers.IsNullOrEmpty(str)
 end
 
 ---Checks if a string is null or only whitespace.
----@param str string
+---@param str string|nil
 ---@return boolean
 function StringHelpers.IsNullOrWhitespace(str)
 	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_

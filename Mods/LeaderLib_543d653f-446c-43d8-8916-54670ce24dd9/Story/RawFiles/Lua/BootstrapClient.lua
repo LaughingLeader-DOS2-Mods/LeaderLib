@@ -28,6 +28,13 @@ Vars.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ex
 -- 	Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
 -- end
 
+local function EnableGameTooltipOverride()
+	if Game and Game.Tooltip and Game.Tooltip.RequestProcessor then
+		return false
+	end
+	return true
+end
+
 Ext.Require("Client/Classes/_Init.lua")
 Ext.Require("Client/Data/_Init.lua")
 Ext.Require("Client/ClientHelpers.lua")
@@ -38,7 +45,7 @@ Ext.Require("Client/UI/UITypeWorkaround.lua")
 Ext.Require("Client/UI/UIListeners.lua")
 Ext.Require("Client/QOL/StatusHider.lua")
 Ext.Require("Client/QOL/InventoryTweaks.lua")
-if Ext.Version() < 57 then
+if Ext.Version() < 57 and EnableGameTooltipOverride() then
 	Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 end
 Ext.Require("Client/UI/CharacterSheet.lua")

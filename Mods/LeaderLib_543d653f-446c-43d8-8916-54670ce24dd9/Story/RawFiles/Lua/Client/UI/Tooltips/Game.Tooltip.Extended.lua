@@ -1388,7 +1388,8 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 		local tooltip = TooltipData:Create(params, ui:GetTypeId(), req.UIType)
 		self:InvokeBeforeNotifyListeners(req, ui, method, tooltip, ...)
 		if req.Type == "Stat" then
-			self:NotifyListeners("Stat", req.Stat, req, tooltip, req.Character, req.Stat)
+			local stat = req.Stat or ""
+			self:NotifyListeners("Stat", stat, req, tooltip, req.Character, stat)
 		elseif req.Type == "CustomStat" then
 			if req.StatData ~= nil then
 				self:NotifyListeners("CustomStat", tostring(req.StatData), req, tooltip, req.Character, req.StatData)
@@ -1396,13 +1397,22 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 				self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, {ID=req.Stat})
 			end
 		elseif req.Type == "Skill" then
-			self:NotifyListeners("Skill", req.Skill, req, tooltip, req.Character, req.Skill)
+			local skill = req.Skill or ""
+			self:NotifyListeners("Skill", skill, req, tooltip, req.Character, skill)
 		elseif req.Type == "Ability" then
-			self:NotifyListeners("Ability", req.Ability, req, tooltip, req.Character, req.Ability)
+			local ability = req.Ability or ""
+			self:NotifyListeners("Ability", ability, req, tooltip, req.Character, ability)
 		elseif req.Type == "Talent" then
-			self:NotifyListeners("Talent", req.Talent, req, tooltip, req.Character, req.Talent)
+			local talent = req.Talent or ""
+			self:NotifyListeners("Talent", talent, req, tooltip, req.Character, talent)
 		elseif req.Type == "Status" then
-			self:NotifyListeners("Status", req.StatusId, req, tooltip, req.Character, req.Status)
+			local status = req.Status
+			if not status then
+				_PrintError("[Game.Tooltip:OnRenderSubTooltip] Failed to fetch status for upcoming status tooltip:", _DumpExport(req))
+				--Try to preserve parameter order
+				status = {}
+			end
+			self:NotifyListeners("Status", req.StatusId, req, tooltip, req.Character, status)
 		elseif req.Type == "Item" then
 			self:NotifyListeners("Item", req.StatsId, req, tooltip, req.Item)
 		elseif req.Type == "Pyramid" then

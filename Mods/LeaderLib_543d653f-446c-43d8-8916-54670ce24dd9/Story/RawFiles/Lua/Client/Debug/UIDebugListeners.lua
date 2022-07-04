@@ -19,7 +19,7 @@ local Init = function()
 			fprint(LOGLEVEL.TRACE2, ...)
 		else
 			_logText = _logText .. "\n" .. _format(str, ...)
-			Ext.IO.SaveFile(_logName, _logText)
+			GameHelpers.IO.SaveFile(_logName, _logText)
 		end
 	end
 

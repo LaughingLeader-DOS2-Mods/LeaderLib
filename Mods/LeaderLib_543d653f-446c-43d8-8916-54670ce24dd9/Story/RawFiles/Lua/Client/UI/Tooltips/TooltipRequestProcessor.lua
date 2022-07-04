@@ -100,6 +100,8 @@ local function _GetObjectFromDouble(doubleHandle, getObjectFunc)
 	local b,result = pcall(__TryGetObjectFromDouble, doubleHandle, getObjectFunc)
 	if b then
 		return result
+	elseif _DEBUG then
+		Ext.PrintError(result)
 	end
 	return nil
 end
@@ -358,7 +360,7 @@ RequestProcessor.CallbackHandler[TooltipCalls.Item] = function (request, ui, uiT
 		end
 	else
 		local id = params[1]
-		if id == nil then
+		if _IsNaN(id) then
 			_PrintWarning(string.format("[Game.Tooltip.RequestProcessor:%s] Item handle (%s) is nil? UI(%s)", event, id, uiType))
 			return request
 		end
@@ -947,6 +949,12 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrDou
 	RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, uiType, event, id, statOrWidth, ...)
 end
 
+local function RedirectControllerTooltip(tooltipType, ui, event, ...)
+	--Redirect to standard events, so the regular handlers work
+	local event = TooltipCalls[tooltipType] or event
+	RequestProcessor.HandleCallback(tooltipType, ui, ui:GetTypeId(), event, ...)
+end
+
 ---@param tooltip TooltipHooks
 function RequestProcessor:Init(tooltip)
 	self.Tooltip = tooltip
@@ -957,11 +965,7 @@ function RequestProcessor:Init(tooltip)
 		Ext.RegisterUINameInvokeListener(v, function(ui, event, ...) RequestProcessor.HandleCallback(t, ui, ui:GetTypeId(), event, ...) end, "Before")
 	end
 	for t,v in pairs(ControllerCharacterCreationCalls) do
-		Ext.RegisterUITypeCall(_UITYPE.characterCreation_c, v, function(ui, event, ...)
-			--Redirect to standard events, so the regular handlers work
-			local event = TooltipCalls[t] or event
-			RequestProcessor.HandleCallback(t, ui, ui:GetTypeId(), event, ...)
-		end, "Before")
+		Ext.RegisterUITypeCall(_UITYPE.characterCreation_c, v, RedirectControllerTooltip, "Before")
 	end
 
 	--Custom controller tooltip calls.
@@ -999,18 +1003,24 @@ function RequestProcessor:Init(tooltip)
 		end
 	end, "Before")
 	-- slotOver is called when selecting any slot, item or not
-	Ext.RegisterUITypeCall(_UITYPE.equipmentPanel_c, "slotOver", function (ui, event, ...)
-		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, ...)
+	Ext.RegisterUITypeCall(_UITYPE.equipmentPanel_c, "slotOver", function (ui, event, id, ...)
+		if id ~= 0 then
+			RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, id, ...)
+		end
 	end, "Before")
 	-- itemOver is called when selecting a slot with an item, in addition to slotOver
 	-- Ext.RegisterUITypeCall(_uiType.equipmentPanel_c, "itemOver", function (ui, event, ...)
 	-- 	RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, ...)
 	-- end, "Before")
-	Ext.RegisterUITypeCall(_UITYPE.craftPanel_c, "slotOver", function (ui, event, ...)
-		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, ...)
+	Ext.RegisterUITypeCall(_UITYPE.craftPanel_c, "slotOver", function (ui, event, id, ...)
+		if id ~= 0 then
+			RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, id, ...)
+		end
 	end, "Before")
-	Ext.RegisterUITypeCall(_UITYPE.partyInventory_c, "slotOver", function (ui, event, ...)
-		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, ...)
+	Ext.RegisterUITypeCall(_UITYPE.partyInventory_c, "slotOver", function (ui, event, id, ...)
+		if id ~= 0 then
+			RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, id, ...)
+		end
 	end, "Before")
 	Ext.RegisterUITypeCall(_UITYPE.containerInventory.Default, "slotOver", function (ui, event, id, slot)
 		if id ~= 0 then
@@ -1025,11 +1035,14 @@ function RequestProcessor:Init(tooltip)
 	-- Ext.RegisterUITypeCall(_uiType.craftPanel_c, "overItem", function (ui, event, ...)
 	-- 	RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, ...)
 	-- end, "Before")
+	
 	Ext.RegisterUITypeCall(_UITYPE.craftPanel_c, "runeSlotOver", function (ui, event, ...)
 		RequestProcessor.HandleCallback("Rune", ui, ui:GetTypeId(), TooltipCalls.Rune, ...)
 	end, "Before")
-	Ext.RegisterUITypeCall(_UITYPE.equipmentPanel_c, "itemDollOver", function (ui, event, ...)
-		RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, ...)
+	Ext.RegisterUITypeCall(_UITYPE.equipmentPanel_c, "itemDollOver", function (ui, event, id, ...)
+		if id ~= 0 then
+			RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), TooltipCalls.Item, id, ...)
+		end
 	end, "Before")
 	-- Ext.RegisterUITypeCall(_uiType.equipmentPanel_c, "setTooltipPanelVisible", function (ui, event, visible, ...)
 	-- 	RequestProcessor.HandleCallback("Item", ui, ui:GetTypeId(), event, nil, nil, ...)

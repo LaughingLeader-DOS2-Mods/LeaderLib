@@ -953,7 +953,11 @@ function RequestProcessor:Init(tooltip)
 		Ext.RegisterUINameInvokeListener(v, function(ui, event, ...) RequestProcessor.HandleCallback(t, ui, ui:GetTypeId(), event, ...) end, "Before")
 	end
 	for t,v in pairs(ControllerCharacterCreationCalls) do
-		Ext.RegisterUITypeCall(_UITYPE.characterCreation_c, v, function(ui, event, ...) RequestProcessor.HandleCallback(t, ui, ui:GetTypeId(), event, ...) end, "Before")
+		Ext.RegisterUITypeCall(_UITYPE.characterCreation_c, v, function(ui, event, ...)
+			--Redirect to standard events, so the regular handlers work
+			local event = TooltipCalls[t] or event
+			RequestProcessor.HandleCallback(t, ui, ui:GetTypeId(), event, ...)
+		end, "Before")
 	end
 
 	--Custom controller tooltip calls.

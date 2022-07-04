@@ -191,6 +191,8 @@ local text = {
 		AlwaysExpandTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysExpandTooltips_Description"),
 		HideChatLog = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideChatLog", "Hide Chat Log"),
 		HideChatLog_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideChatLog_Description", "Aggressively prevent the chat log from being visible or toggleable."),
+		ToggleCombatLog = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_ToggleCombatLog", "Toggle Combat Log"),
+		ToggleCombatLog_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_ToggleCombatLog_Description", "Make the combat log visible initially."),
 		CondenseItemTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseItemTooltips", "Condense Item Tooltips"),
 		CondenseItemTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseItemTooltips_Description", "Try to reduce max item tooltip size by combining elements, such as \"On Hit\" actions."),
 		CondenseStatusTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips", "Condense Status Tooltips"),
@@ -330,6 +332,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		if _EXTVERSION >= 56 then
 			mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideChatLog"), text.Client.HideChatLog.Value, true, settings.Client.HideChatLog and 1 or 0, false, text.Client.HideChatLog_Description.Value)
 		end
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "ToggleCombatLog"), text.Client.ToggleCombatLog.Value, true, settings.Client.ToggleCombatLog and 1 or 0, false, text.Client.ToggleCombatLog_Description.Value)
 
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client.AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client.AlwaysExpandTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client.AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client.AlwaysDisplayWeaponScalingText_Description.Value)

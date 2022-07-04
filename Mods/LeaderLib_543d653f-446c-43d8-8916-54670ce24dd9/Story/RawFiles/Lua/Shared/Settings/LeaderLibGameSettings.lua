@@ -82,6 +82,7 @@ local DefaultSettings = {
 			Status = false,
 		},
 		HideChatLog = Ext.IsDeveloperMode(),
+		ToggleCombatLog = false
 	},
 	EnableDeveloperTests = false,
 	Version = Ext.GetModInfo(ModuleUUID).Version

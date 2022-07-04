@@ -1,20 +1,32 @@
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 
-if CombatLog == nil then
-	CombatLog = {}
-end
+---@class LeaderLibCombatLog
+---@field Instance UIObject
+---@field Root CombatLogFlashMainTimeline
+---@field PrintFilters function Prints this.log_mc.filterList.content_array contents.
+CombatLog = {}
 
 setmetatable(CombatLog, {
 	__index = function(tbl,k)
-		if isClient then
-			if k == "Root" then
+		if _ISCLIENT then
+			if k == "Instance" then
 				return CombatLog.GetInstance()
+			elseif k == "Root" then
+				local ui = CombatLog.GetInstance()
+				if ui then
+					return ui:GetRoot()
+				end
 			elseif k == "PrintFilters" then
-				local this = CombatLog.GetInstance()
-				local arr = this.log_mc.filterList.content_array
-				for i=0,#arr-1 do
-					local mc = arr[i]
-					fprint(LOGLEVEL.TRACE, "log_mc.filterList.content_array[%s] = id(%s) tooltip(%s)", i, mc.id, mc.tooltip)
+				local ui = CombatLog.GetInstance()
+				if ui then
+					local this = ui:GetRoot()
+					if this then
+						local arr = this.log_mc.filterList.content_array
+						for i=0,#arr-1 do
+							local mc = arr[i]
+							fprint(LOGLEVEL.TRACE, "log_mc.filterList.content_array[%s] = id(%s) tooltip(%s)", i, mc.id, mc.tooltip)
+						end
+					end
 				end
 			end
 		end
@@ -44,31 +56,23 @@ CombatLog.Filters = {
 	}
 }
 
-if isClient then
-	---@type CombatLogFlashMainTimeline
-	CombatLog.Instance = nil
-	---@type UIObject
-	CombatLog.UI = nil
-
+if _ISCLIENT then
 	CombatLog.LastID = 776
 
 	local self = CombatLog
 
-	---@return CombatLogFlashMainTimeline
+	---@return UIObject
 	function CombatLog.GetInstance()
-		if self.Instance == nil or self.UI == nil then
-			local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.combatLog) or Ext.GetBuiltinUI("Public/Game/GUI/combatLog_c.swf")
-			if ui then
-				self.Instance = ui:GetRoot()
-				self.UI = ui
-			end
+		local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.combatLog) or Ext.GetUIByType(Data.UIType.combatLog_c)
+		if ui then
+			return ui
 		end
-		return self.Instance
+		return nil
 	end
 
 	---@private
 	function CombatLog.UpdateIndexes()
-		local this = self.GetInstance()
+		local this = self.Root
 		if not this then 
 			return
 		end
@@ -105,7 +109,7 @@ if isClient then
 	---@param enabled boolean|nil If true/false, the filter is enabled or disabled. Enabled by default if not set.
 	---@param frame integer|nil
 	function CombatLog.AddFilter(id, tooltip, enabled, frame)
-		local this = self.GetInstance()
+		local this = self.Root
 		if not this then 
 			return false
 		end
@@ -154,7 +158,7 @@ if isClient then
 	function CombatLog.RemoveFilter(id)
 		local filter = self.Filters[id]
 		if filter then
-			local this = self.GetInstance()
+			local this = self.Root
 			if this then
 				this.clearFilter(filter.ID)
 				this.log_mc.filterList.removeElement(filter.ID)
@@ -167,7 +171,7 @@ if isClient then
 	---@param id string
 	---@param text string
 	function CombatLog.AddTextToFilter(id, text)
-		local this = self.GetInstance()
+		local this = self.Root
 		if this then 
 			local t = type(id)
 			if t == "string" and not StringHelpers.IsNullOrWhitespace(id) then
@@ -188,7 +192,7 @@ if isClient then
 	---@param index integer
 	---@param text string
 	function CombatLog.AddTextToIndex(index, text)
-		local this = self.GetInstance()
+		local this = self.Root
 		if this then 
 			this.addTextToFilter(index, text)
 		end
@@ -197,7 +201,7 @@ if isClient then
 	function CombatLog.SetFilterEnabled(id, enabled)
 		local filter = self.Filters[id]
 		if filter then
-			local this = self.GetInstance()
+			local this = self.Root
 			if this then 
 				this.setFilterSelection(filter.ID, enabled)
 			end
@@ -207,7 +211,7 @@ if isClient then
 	end
 
 	function CombatLog.Clear()
-		local this = self.GetInstance()
+		local this = self.Root
 		if this then
 			if not Vars.ControllerEnabled then
 				this.clearAllTexts()
@@ -231,9 +235,42 @@ if isClient then
 		end
 	end)
 
+	local clientHidCombatLog = false
+
 	Ext.RegisterUITypeInvokeListener(Data.UIType.combatLog, "setLogVisible", function(ui, event, b)
 		if b == true then
 			CombatLog.UpdateIndexes()
+			clientHidCombatLog = false
+		end
+	end)
+
+
+	Ext.RegisterUITypeCall(Data.UIType.hotBar, "CombatLogBtnPressed", function ()
+		clientHidCombatLog = false
+		local this = CombatLog.Root
+		if this and this.log_mc.visible then
+			clientHidCombatLog = true			
+		end
+	end, "Before")
+
+	Ext.RegisterListener("SessionLoaded", function ()
+		if not clientHidCombatLog then
+			local settings = GameSettingsManager.GetSettings()
+			if settings and settings.Client.ToggleCombatLog == true then
+				local this = CombatLog.Root
+				if this then
+					if not this.log_mc.visible then
+						if not Vars.ControllerEnabled then
+							local hotbar = Ext.GetUIByType(Data.UIType.hotBar)
+							if hotbar then
+								hotbar:ExternalInterfaceCall("CombatLogBtnPressed")
+							end
+						else
+							this.setLogVisible(true)
+						end
+					end
+				end
+			end
 		end
 	end)
 else

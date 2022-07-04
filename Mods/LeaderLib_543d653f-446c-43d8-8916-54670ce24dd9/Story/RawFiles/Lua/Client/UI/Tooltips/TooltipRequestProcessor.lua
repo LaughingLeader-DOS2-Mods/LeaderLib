@@ -374,26 +374,30 @@ RequestProcessor.CallbackHandler[TooltipCalls.Pyramid] = function(request, ui, u
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Stat] = function(request, ui, uiType, event, id)
-	local stat = Game.Tooltip.TooltipStatAttributes[id]
-	request.Stat = stat or id
+	if request.Stat == nil then
+		local stat = Game.Tooltip.TooltipStatAttributes[id]
+		request.Stat = stat or id
+	end
 	return request
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.CustomStat] = function(request, ui, uiType, event, id, index)
-	request.Stat = id or -1
-	request.StatIndex = index or -1
+	if request.Stat == nil then
+		request.Stat = id or -1
+		request.StatIndex = index or -1
+	end
 	return request
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Ability] = function(request, ui, uiType, event, id)
-	if not request.Ability then
+	if request.Ability == nil then
 		request.Ability = _EnumIndexToLabel("AbilityType", id) or id
 	end
 	return request
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Talent] = function(request, ui, uiType, event, id, ...)
-	if not request.Talent then
+	if request.Talent == nil then
 		request.Talent = _EnumIndexToLabel("TalentType", id) or id
 	end
 	return request

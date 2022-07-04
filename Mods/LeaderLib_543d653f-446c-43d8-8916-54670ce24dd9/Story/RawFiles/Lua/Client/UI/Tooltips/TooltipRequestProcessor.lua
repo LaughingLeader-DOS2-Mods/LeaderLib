@@ -72,11 +72,8 @@ local ControllerCharacterCreationCalls = {
 	Skill = "requestSkillTooltip",
 	Stat = "requestAttributeTooltip",
 	Ability = "requestAbilityTooltip",
-	Item = {"slotOver", "itemDollOver"},
 	Talent = "requestTalentTooltip",
 	Tag = "requestTagTooltip",
-	Rune = "runeSlotOver",
-	Pyramid = "pyramidOver"
 }
 
 ---@alias GameTooltipRequestProcessorInternals.GetObjectFunction fun(handle:ComponentHandle|number|string):EclCharacter|EclItem|nil

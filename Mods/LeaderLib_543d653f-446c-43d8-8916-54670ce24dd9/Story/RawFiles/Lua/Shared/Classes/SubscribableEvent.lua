@@ -68,6 +68,7 @@ function SubscribableEvent:Create(id, opts)
 		Disabled = false,
 		GatherResults = false,
 		SyncInvoke = false,
+		Options = opts or {}
 	}
 	if _type(opts) == "table" then
 		for k,v in _pairs(opts) do
@@ -79,7 +80,7 @@ function SubscribableEvent:Create(id, opts)
 	setmetatable(o, {
 		__index = SubscribableEvent
 	})
-    return o
+	return o
 end
 
 ---@class EventSubscriptionOptions
@@ -245,19 +246,19 @@ function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
 		return false
 	end
 	if not self._Invoking then
-		local matchArgs = self.Options.MatchArgs
-		local matchArgsType = _type(matchArgs)
 		local t = _type(indexOrCallback)
 		local cur = self.First
 		if cur then
 			while cur ~= nil do
+				local matchArgs = cur.Options and cur.Options.MatchArgs
+				local matchArgsType = _type(matchArgs)
 				if (t == "number" and cur.Index == indexOrCallback)
 				or (t == "function" and cur.Callback == indexOrCallback)
 				or (matchArgs and cur.IsMatch and cur.IsMatch(matchArgs))
 				then
 					RemoveNode(self, cur)
 					if self.OnUnsubscribe then
-						self.OnUnsubscribe(cur.Callback, self.Options, matchArgs, matchArgsType)
+						self.OnUnsubscribe(cur.Callback, cur.Options, matchArgs, matchArgsType)
 					end
 				end
 				cur = cur.Next

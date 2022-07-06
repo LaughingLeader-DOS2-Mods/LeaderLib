@@ -69,6 +69,8 @@ function _INTERNALREG.All(status, callback, priority, statusEvent)
 			indexes[#indexes+1] = StatusManager.Subscribe.All(statusEvent, v, callback, priority)
 		end
 		return indexes
+	else
+		ferror("status(%s) param is not a valid type(%s)", status, t)
 	end
 end
 

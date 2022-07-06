@@ -30,6 +30,7 @@ end
 ---@field ArgsKeyOrder string[]|nil
 ---@field GetArg SubscribableEventGetArgFunction|nil
 ---@field OnSubscribe fun(callback:function, opts:SubscribableEventCreateOptions|nil, matchArgs:table|nil, matchArgsType:string) Called when a callback is subscribed to the event.
+---@field OnUnsubscribe fun(callback:function, opts:SubscribableEventCreateOptions|nil, matchArgs:table|nil, matchArgsType:string) Called when a callback is unsubscribed to the event.
 
 ---@alias SubscribableEventInvokeResultCode string|"Success"|"Handled"|"Error"
 
@@ -42,7 +43,7 @@ end
 ---Example: SubscribableEvent<CharacterResurrectedEventArgs>
 ---@see SubscribableEventArgs
 ---@see LeaderLibSubscriptionEvents
----@class LeaderLibSubscribableEvent<T>:{ Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer, Once:boolean,  MatchArgs:T, CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil), Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:table|nil), Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult }
+---@class LeaderLibSubscribableEvent<T>:{ (Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T, CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:table|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult) }
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string
@@ -166,7 +167,7 @@ function SubscribableEvent:Subscribe(callback, opts)
 		Index = index,
 		Priority = opts.Priority or 100,
 		Once = opts.Once or false,
-		Options = {}
+		Options = opts or {}
 	}
 
 	local matchArgs = opts.MatchArgs
@@ -244,6 +245,8 @@ function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
 		return false
 	end
 	if not self._Invoking then
+		local matchArgs = self.Options.MatchArgs
+		local matchArgsType = _type(matchArgs)
 		local t = _type(indexOrCallback)
 		local cur = self.First
 		if cur then
@@ -253,7 +256,9 @@ function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
 				or (matchArgs and cur.IsMatch and cur.IsMatch(matchArgs))
 				then
 					RemoveNode(self, cur)
-					return true
+					if self.OnUnsubscribe then
+						self.OnUnsubscribe(cur.Callback, self.Options, matchArgs, matchArgsType)
+					end
 				end
 				cur = cur.Next
 			end

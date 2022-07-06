@@ -425,6 +425,96 @@ if not _ISCLIENT then
 		end
 	})
 
+	---@class OnStatusBaseEventArgs
+	---@field Target EsvCharacter|EsvItem
+	---@field Source EsvCharacter|EsvItem|nil
+	---@field TargetGUID string
+	---@field SourceGUID string
+	---@field StatusId string
+	---@field StatusType string
+	---@field StatusEvent StatusEventID
+
+	---@class OnStatusBeforeAttemptEventArgs:OnStatusBaseEventArgs
+	---@field PreventApply boolean
+	---@field Status EsvStatus
+
+	---@class OnStatusAttemptEventArgs:OnStatusBaseEventArgs
+	---@field Status string
+
+	---@class OnStatusAppliedEventArgs:OnStatusBaseEventArgs
+	---@field Status EsvStatus
+	
+	---@class OnStatusRemovedEventArgs:OnStatusBaseEventArgs
+	---@field Status string
+
+	---@alias OnStatusEventArgs OnStatusBeforeAttemptEventArgs|OnStatusAttemptEventArgs|OnStatusAppliedEventArgs|OnStatusRemovedEventArgs
+	
+	---Server-side event for when a status event occurs.  
+	---Use StatusManager.Register to register different status listeners.  
+	---🔨**Server-Only**🔨  
+	---@see LeaderLibSkillManagerRegistration#All
+	---@type LeaderLibSubscribableEvent<OnStatusEventArgs>
+	Events.OnStatus = Classes.SubscribableEvent:Create("OnStatusEvent", {
+		ArgsKeyOrder={"Target", "Status", "Source", "StatusType", "StatusEvent"},
+		---@param param EsvStatus
+		GetArg = function(paramId, param)
+			if paramId == "Target" then
+				return GameHelpers.GetUUID(param, true)
+			elseif paramId == "Source" then
+				return GameHelpers.GetUUID(param, true)
+			elseif paramId == "Status" then
+				if type(param) == "string" then
+					return param
+				end
+				return param.StatusId
+			end
+		end,
+		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
+			if matchArgsType == "table" and type(opts.MatchArgs.Status) == "string" then
+				if type(opts.MatchArgs.StatusEvent) == "string" then
+					if StatusManager._Internal.EnabledStatuses[opts.MatchArgs.StatusEvent] then
+						StatusManager._Internal.EnabledStatuses[opts.MatchArgs.StatusEvent][opts.MatchArgs.Status] = true
+					end
+				else
+					StatusManager._Internal.EnabledStatuses.All[opts.MatchArgs.Status] = true
+				end
+			end
+		end,
+		OnUnsubscribe = function (callback, opts, matchArgs, matchArgsType)
+			--Cleanup StatusManager._Internal.EnabledStatuses table if nothing else is subscribed
+			if matchArgsType == "table" and type(opts.MatchArgs.Status) == "string" then
+				local checkStatus = opts.MatchArgs.Status
+				local checkEvent = opts.MatchArgs.StatusEvent
+				if checkStatus then
+					local cur = Events.OnStatus.First
+					if cur then
+						while cur ~= nil do
+							if cur.Options and cur.MatchArgs then
+								if cur.MatchArgs.Status == checkStatus or cur.MatchArgs.StatusType == checkStatus then
+									checkStatus = nil
+								end
+								if cur.MatchArgs.StatusEvent == checkEvent then
+									checkEvent = nil
+								end
+							end
+							--Matches found
+							if not checkStatus and not checkEvent then
+								break
+							end
+							cur = cur.Next
+						end
+					end
+					if checkStatus then
+						StatusManager._Internal.EnabledStatuses.All[checkStatus] = nil
+						if checkEvent then
+							StatusManager._Internal.EnabledStatuses[checkEvent][checkStatus] = nil
+						end
+					end
+				end
+			end
+		end
+	})
+
 	---@class OnBasicAttackStartEventArgs
 	---@field Attacker EsvCharacter
 	---@field Target EsvCharacter|EsvItem|number[]

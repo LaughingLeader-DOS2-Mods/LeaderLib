@@ -16,6 +16,7 @@ InitTable("Classes")
 InitTable("Common")
 InitTable({"_INTERNAL", "Audio", "Damage", "Ext", "Item", "Math", "Net", "Skill", "Status", "Tooltip", "UI", "Utils"}, GameHelpers)
 
+local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
 local _getTranslatedStringKeyFunction = _EXTVERSION < 56 and Ext.GetTranslatedStringFromKey or Ext.L10N.GetTranslatedStringFromKey
 local _getTranslatedStringFunction = _EXTVERSION < 56 and Ext.GetTranslatedString or Ext.L10N.GetTranslatedString
@@ -139,8 +140,20 @@ Vars = {
 	},
 	---Table of base game stat fixes.
 	StatFixes = {},
-	Version = Ext.Version()
+	Version = Ext.Version(),
+	StatusEvent = {
+		BeforeAttempt = "BeforeAttempt",
+		Attempt = "Attempt",
+		Applied = "Applied",
+		Removed = "Removed",
+	},
 }
+
+if not _ISCLIENT then
+	---If a mod registers a listener for an ignored status (such as HIT), it will be added to this table to allow callbacks to run for that status.
+	---@type table<string,boolean>
+	Vars.RegisteredIgnoredStatus = {}
+end
 
 function PrintDebug(...)
 	if Vars.DebugMode and Vars.LeaderDebugMode then

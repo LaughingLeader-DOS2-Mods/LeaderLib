@@ -4,18 +4,159 @@ if StatusManager == nil then
 	StatusManager = {}
 end
 
+---@alias StatusEventID string|"BeforeAttempt"|"Attempt"|"Applied"|"Removed"
+
+---@alias StatusTypeID string|"CONSUME"|"DAMAGE"|"HEAL"|"HEALING"|"ACTIVE_DEFENSE"|"BLIND"|"CHALLENGE"|"CHARMED"|"DAMAGE_ON_MOVE"|"DEACTIVATED"|"DECAYING_TOUCH"|"DEMONIC_BARGAIN"|"DISARMED"|"EFFECT"|"EXTRA_TURN"|"FEAR"|"FLOATING"|"GUARDIAN_ANGEL"|"HEAL_SHARING_CASTER"|"HEAL_SHARING"|"INCAPACITATED"|"INVISIBLE"|"KNOCKED_DOWN"|"MUTED"|"PLAY_DEAD"|"POLYMORPHED"|"SPARK"|"STANCE"
+
 ---Automatically set to true after GameStarted.
 ---This is a local variable, instead of a key in _INTERNAL, so the BeforeStatusDelete listener doesn't need to parse a table within a table for every status firing the event.
 local _canBlockDeletion = false
 
 ---@class StatusManagerInternals
 ---@field CanBlockDeletion boolean Whether the StatusManager can block status deletion in BeforeStatusDelete, for active permanent statuses.
-local _INTERNAL = {}
+local _INTERNAL = {
+	EnabledStatuses = {
+		---@type table<string, boolean>
+		All = {},
+		---@type table<string, boolean>
+		BeforeAttempt = {},
+		---@type table<string, boolean>
+		Attempt = {},
+		---@type table<string, boolean>
+		Applied = {},
+		---@type table<string, boolean>
+		Removed = {},
+	},
+	EnableAll = {Status = false, Event = false}
+}
+
+local _enableAllMeta = {
+	__index = function (_,k)
+		if k == "All" then
+			return true
+		end
+	end
+}
+
+for k,v in pairs(_INTERNAL.EnabledStatuses) do
+	setmetatable(v, _enableAllMeta)
+end
+
 
 StatusManager._Internal = _INTERNAL
 
 StatusManager.Register = {}
 
+local _INTERNALREG = {}
+StatusManager.Subscribe = _INTERNALREG
+
+---@param status string|string[]
+---@param callback fun(e:OnStatusEventArgs)
+---@param priority integer|nil
+---@param statusEvent StatusEventID|nil
+---@return integer index
+function _INTERNALREG.All(status, callback, priority, statusEvent)
+	local t = type(status)
+	if t == "string" then
+		if not statusEvent or not Vars.StatusEvent[statusEvent] then
+			return Events.OnStatus:Subscribe(callback, {MatchArgs={Status=status}, Priority=priority})
+		else
+			return Events.OnStatus:Subscribe(callback, {MatchArgs={Status=status, StatusEvent=statusEvent}, Priority=priority})
+		end
+	elseif t == "table" then
+		local indexes = {}
+		for k,v in pairs(status) do
+			indexes[#indexes+1] = StatusManager.Subscribe.All(statusEvent, v, callback, priority)
+		end
+		return indexes
+	end
+end
+
+---@param status string|string[]
+---@param callback fun(e:OnStatusBeforeAttemptEventArgs)
+---@param priority integer|nil
+---@return integer index
+function _INTERNALREG.BeforeAttempt(status, callback, priority)
+	return _INTERNALREG.All(status, callback, priority, "BeforeAttempt")
+end
+
+---@param status string|string[]
+---@param callback fun(e:OnStatusAttemptEventArgs)
+---@param priority integer|nil
+---@return integer index
+function _INTERNALREG.Attempt(status, callback, priority)
+	return _INTERNALREG.All(status, callback, priority, "Attempt")
+end
+
+---@param status string|string[]
+---@param callback fun(e:OnStatusAppliedEventArgs)
+---@param priority integer|nil
+---@return integer index
+function _INTERNALREG.Applied(status, callback, priority)
+	return _INTERNALREG.All(status, callback, priority, "Applied")
+end
+
+---@param status string|string[]
+---@param callback fun(e:OnStatusRemovedEventArgs)
+---@param priority integer|nil
+---@return integer index
+function _INTERNALREG.Removed(status, callback, priority)
+	return _INTERNALREG.All(status, callback, priority, "Removed")
+end
+
+---@param statusType string|string[]
+---@param callback fun(e:OnStatusEventArgs)
+---@param priority integer|nil
+---@param statusEvent StatusEventID|nil
+---@return integer index
+function _INTERNALREG.AllType(statusType, callback, priority, statusEvent)
+	local t = type(statusType)
+	if t == "string" then
+		if not statusEvent or not Vars.StatusEvent[statusEvent] then
+			return Events.OnStatus:Subscribe(callback, {MatchArgs={StatusType=statusType}, Priority=priority})
+		else
+			return Events.OnStatus:Subscribe(callback, {MatchArgs={StatusType=statusType, StatusEvent=statusEvent}, Priority=priority})
+		end
+	elseif t == "table" then
+		local indexes = {}
+		for k,v in pairs(statusType) do
+			indexes[#indexes+1] = StatusManager.Subscribe.All(statusEvent, v, callback, priority)
+		end
+		return indexes
+	end
+end
+
+---@param statusType string|string[]
+---@param callback fun(e:OnStatusBeforeAttemptEventArgs)
+---@param priority integer|nil
+---@return integer index
+function _INTERNALREG.BeforeAttemptType(statusType, callback, priority)
+	return _INTERNALREG.AllType(statusType, callback, priority, "BeforeAttempt")
+end
+
+---@param statusType string|string[]
+---@param callback fun(e:OnStatusAttemptEventArgs)
+---@param priority integer|nil
+---@return integer index
+function _INTERNALREG.AttemptType(statusType, callback, priority)
+	return _INTERNALREG.AllType(statusType, callback, priority, "Attempt")
+end
+
+---@param statusType string|string[]
+---@param callback fun(e:OnStatusAppliedEventArgs)
+---@param priority integer|nil
+---@return integer index
+function _INTERNALREG.AppliedType(statusType, callback, priority)
+	return _INTERNALREG.AllType(statusType, callback, priority, "Applied")
+end
+
+---@param statusType string|string[]
+---@param callback fun(e:OnStatusRemovedEventArgs)
+---@param priority integer|nil
+---@return integer index
+function _INTERNALREG.RemovedType(statusType, callback, priority)
+	return _INTERNALREG.AllType(statusType, callback, priority, "Removed")
+end
 
 ---If false is returned, the status will be blocked.
 ---@alias StatusManagerBeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):boolean
@@ -505,6 +646,295 @@ Events.CharacterResurrected:Subscribe(function(e)
 	StatusManager.ReapplyPermanentStatusesForCharacter(e.Character)
 end)
 
+--#region Status Events
+
+local function IsRegistered(status, statusEvent)
+	if _INTERNAL.EnabledStatuses.All[status] then
+		return true
+	end
+	return _INTERNAL.EnabledStatuses[statusEvent][status] == true
+end
+
+local function IgnoreStatus(status, statusEvent)
+	if IsRegistered(status, statusEvent) then
+		return false
+	end
+	if Data.IgnoredStatus[status] == true and Vars.RegisteredIgnoredStatus[status] ~= true then
+		return true
+	end
+	return false
+end
+
+local redirectStatusType = {
+	DAMAGE = true,
+	DAMAGE_ON_MOVE = true,
+	HIT = true,
+	CHARMED = true,
+}
+
+local redirectStatusId = {
+	TAUNTED = true,
+	MADNESS = true,
+}
+
+RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targetGUID,statusID,handle,sourceGUID)
+	local statusType = GameHelpers.Status.GetStatusType(statusID)
+	if ObjectIsItem(targetGUID) == 1 and (statusID == "MADNESS" or statusType == "DAMAGE_ON_MOVE") then
+		NRD_StatusPreventApply(targetGUID, handle, 1)
+		return
+	end
+
+	if not IgnoreStatus(statusID, "BeforeAttempt") then
+		local target = GameHelpers.TryGetObject(targetGUID)
+		local source = GameHelpers.TryGetObject(sourceGUID, true)
+
+		local status = Ext.GetStatus(target, handle)
+
+		local preventApply = false
+
+		--Make Unhealable block all heals
+		if target and statusType == "HEAL" or statusType == "HEALING" and status.HealAmount > 0
+		and target:GetStatus("UNHEALABLE")
+		and SettingsManager.GetMod(ModuleUUID, false, false).Global:FlagEquals("LeaderLib_UnhealableFix_Enabled", true) then
+			NRD_StatusPreventApply(targetGUID, handle, 1)
+			preventApply = true
+		end
+
+		if target and source then 
+			local canRedirect = redirectStatusId[statusID] or redirectStatusType[statusType]
+			if canRedirect and source.Summon and GameHelpers.IsValidHandle(source.OwnerHandle) then
+				if ObjectIsItem(sourceGUID) == 1 then
+					--Set the source of statuses summoned items apply to their caster owner character.
+					status.StatusSourceHandle = source.OwnerHandle
+					source = GameHelpers.TryGetObject(source.OwnerHandle)
+					sourceGUID = GameHelpers.GetUUID(source)
+				end
+			elseif source:HasTag("LeaderLib_Dummy") then
+				--Redirect the source of statuses applied by dummies to their owners
+				local owner = GetVarObject(sourceGUID, "LeaderLib_Dummy_Owner")
+				if not StringHelpers.IsNullOrEmpty(owner) and ObjectExists(owner) == 1 then
+					NRD_StatusSetGuidString(targetGUID, handle, "StatusSourceHandle", owner)
+					source = GameHelpers.TryGetObject(owner)
+					sourceGUID = GameHelpers.GetUUID(owner)
+				end
+			end
+		end
+
+		local data = {
+			Target = target or targetGUID,
+			Source = source or sourceGUID,
+			Status = status or statusID,
+			TargetGUID = targetGUID,
+			SourceGUID = sourceGUID,
+			StatusId = statusID,
+			StatusEvent = "BeforeAttempt",
+			StatusType = statusType,
+			PreventApply = preventApply,
+		}
+
+		Events.OnStatus:Invoke(data)
+
+		if data.PreventApply then
+			NRD_StatusPreventApply(targetGUID, handle, 1)
+		end
+	end
+end)
+
+local function OnStatusAttempt(targetGUID,statusID,sourceGUID)
+	local target = GameHelpers.TryGetObject(targetGUID)
+	local source = GameHelpers.TryGetObject(sourceGUID)
+	
+	if not target then
+		return
+	end
+	
+	local statusType = GameHelpers.Status.GetStatusType(statusID)
+
+	Events.OnStatus:Invoke({
+		Target = target or targetGUID,
+		Source = source or sourceGUID,
+		TargetGUID = targetGUID,
+		SourceGUID = sourceGUID,
+		Status = statusID,
+		StatusId = statusID,
+		StatusEvent = "Attempt",
+		StatusType = statusType
+	})
+end
+
+local function ParseStatusAttempt(target,status,source)
+	if not IgnoreStatus(status, "Attempt") then
+		target = StringHelpers.GetUUID(target)
+		source = StringHelpers.GetUUID(source)
+		OnStatusAttempt(target, status, source)
+	end
+end
+
+RegisterProtectedOsirisListener("CharacterStatusAttempt", 3, "after", ParseStatusAttempt)
+RegisterProtectedOsirisListener("ItemStatusAttempt", 3, "after", ParseStatusAttempt)
+
+local function TrackStatusSource(target, status, source)
+	if PersistentVars.StatusSource[status] == nil then
+		PersistentVars.StatusSource[status] = {}
+	end
+	PersistentVars.StatusSource[status][target] = source
+end
+
+local function GetStatusSource(target, status)
+	if PersistentVars.StatusSource[status] ~= nil then
+		return PersistentVars.StatusSource[status][target]
+	end
+	return nil
+end
+
+local function ClearStatusSource(target, status, source)
+	if PersistentVars.StatusSource[status] ~= nil then
+		local canRemove = true
+		---@type EsvCharacter|EsvItem
+		local obj = Ext.GetGameObject(target)
+		if obj then
+			local activeStatus = obj:GetStatus(status)
+			if activeStatus and activeStatus.StatusSourceHandle then
+				local otherSource = Ext.GetGameObject(activeStatus.StatusSourceHandle)
+				if otherSource and otherSource.MyGuid == source then
+					canRemove = false
+				end
+			end
+		end
+		if canRemove then
+			PersistentVars.StatusSource[status][target] = nil
+			if not Common.TableHasEntry(PersistentVars.StatusSource[status]) then
+				PersistentVars.StatusSource[status] = nil
+			end
+		end
+	end
+end
+
+local forceStatuses = {
+	LEADERLIB_FORCE_PUSH1 = 1,
+	LEADERLIB_FORCE_PUSH2 = 2,
+	LEADERLIB_FORCE_PUSH3 = 3,
+	LEADERLIB_FORCE_PUSH4 = 4,
+	LEADERLIB_FORCE_PUSH5 = 5,
+	LEADERLIB_FORCE_PUSH6 = 6,
+	LEADERLIB_FORCE_PUSH7 = 7,
+	LEADERLIB_FORCE_PUSH8 = 8,
+	LEADERLIB_FORCE_PUSH9 = 9,
+	LEADERLIB_FORCE_PUSH10 = 10,
+	LEADERLIB_FORCE_PUSH11 = 11,
+	LEADERLIB_FORCE_PUSH12 = 12,
+	LEADERLIB_FORCE_PUSH13 = 13,
+	LEADERLIB_FORCE_PUSH14 = 14,
+	LEADERLIB_FORCE_PUSH15 = 15,
+	LEADERLIB_FORCE_PUSH16 = 16,
+	LEADERLIB_FORCE_PUSH17 = 17,
+	LEADERLIB_FORCE_PUSH18 = 18,
+	LEADERLIB_FORCE_PUSH19 = 19,
+	LEADERLIB_FORCE_PUSH20 = 20,
+}
+
+local function OnStatusApplied(targetGUID,statusID,sourceGUID)
+	local target = GameHelpers.TryGetObject(targetGUID)
+	local source = GameHelpers.TryGetObject(sourceGUID)
+	
+	if not target then
+		return
+	end
+	
+	local status = target:GetStatus(statusID)
+	local statusType = GameHelpers.Status.GetStatusType(statusID)
+
+	if status == "SUMMONING" and target then
+		local owner = nil
+		if GameHelpers.IsValidHandle(target.OwnerHandle) then
+			owner = GameHelpers.TryGetObject(target.OwnerHandle)
+		end
+		if owner then
+			if not PersistentVars.Summons[owner.MyGuid] then
+				PersistentVars.Summons[owner.MyGuid] = {}
+			end
+			table.insert(PersistentVars.Summons[owner.MyGuid], target.MyGuid)
+		end
+		Events.SummonChanged:Invoke({Summon=target, Owner=owner, IsDying=false, IsItem=GameHelpers.Ext.ObjectIsItem(target)})
+	end
+
+
+	if Vars.LeaveActionData.Total > 0 then
+		local skill = Vars.LeaveActionData.Statuses[statusID]
+		if skill then
+			if status.CurrentLifeTime == 0 then
+				GameHelpers.Skill.Explode(target, skill, source)
+			elseif not StringHelpers.IsNullOrEmpty(sourceGUID) then
+				TrackStatusSource(targetGUID, statusID, sourceGUID)
+			end
+		end
+	end
+
+	Events.OnStatus:Invoke({
+		Target = target or targetGUID,
+		Source = source or sourceGUID,
+		Status = status,
+		TargetGUID = targetGUID,
+		SourceGUID = sourceGUID,
+		StatusId = statusID,
+		StatusEvent = "Applied",
+		StatusType = statusType
+	})
+
+	if forceStatuses[status] and target and source then
+		GameHelpers.ForceMoveObject(source, target, forceStatuses[status], nil, target.WorldPos)
+	end
+end
+
+local function ParseStatusApplied(target,status,source)
+	if not IgnoreStatus(status, "Applied") then
+		target = StringHelpers.GetUUID(target)
+		source = StringHelpers.GetUUID(source)
+		OnStatusApplied(target, status, source)
+	end
+end
+
+local function OnStatusRemoved(targetGUID,status,sourceGUID)
+	local target = GameHelpers.TryGetObject(targetGUID, true)
+	local statusType = GameHelpers.Status.GetStatusType(status)
+	local source = nil
+	if Vars.LeaveActionData.Total > 0 then
+		sourceGUID = GetStatusSource(targetGUID, status)
+		if sourceGUID then
+			source = GameHelpers.TryGetObject(sourceGUID)
+			local skill = Vars.LeaveActionData.Statuses[status]
+			if skill then
+				GameHelpers.Skill.Explode(target, skill, source)
+			end
+		else
+			sourceGUID = StringHelpers.NULL_UUID
+		end
+	end
+	ClearStatusSource(targetGUID, status)
+	Events.OnStatus:Invoke({
+		Target = target,
+		Source = source or sourceGUID,
+		TargetGUID = targetGUID,
+		SourceGUID = sourceGUID,
+		Status = status,
+		StatusEvent = "Removed",
+		StatusType = statusType
+	})
+end
+
+local function ParseStatusRemoved(target,status)
+	if not IgnoreStatus(status, "Removed") then
+		target = StringHelpers.GetUUID(target)
+		OnStatusRemoved(target, status)
+	end
+end
+
+RegisterProtectedOsirisListener("CharacterStatusApplied", 3, "after", ParseStatusApplied)
+RegisterProtectedOsirisListener("ItemStatusChange", 3, "after", ParseStatusApplied)
+RegisterProtectedOsirisListener("CharacterStatusRemoved", 3, "before", ParseStatusRemoved)
+RegisterProtectedOsirisListener("ItemStatusRemoved", 3, "before", ParseStatusRemoved)
+--#endregion
+
 setmetatable(_INTERNAL, {
 	__index = function (_,k)
 		if k == "CanBlockDeletion" then
@@ -518,3 +948,86 @@ setmetatable(_INTERNAL, {
 		end
 	end
 })
+
+--#region Deprecated
+
+---@alias BeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, handle:integer, statusType:string):void
+---@alias StatusEventCallback fun(target:string, status:string, source:string|nil, statusType:string):void
+
+---@deprecated
+---@param event StatusEventID BeforeAttempt, Attempt, Applied, Removed
+---@param status string|string[] A status id or status type.
+---@param callback StatusEventCallback
+function RegisterStatusListener(event, status, callback)
+	local t = type(status)
+	if t == "table" then
+		for i,v in pairs(status) do
+			RegisterStatusListener(event, v, callback)
+		end
+	elseif t == "string" then
+		if StringHelpers.Equals(status, "All", true) then
+			Events.OnStatus:Subscribe(function (e)
+				callback(e.TargetGUID, e.StatusId, e.SourceGUID, e.StatusType)
+			end, {Status="All", StatusEvent=event})
+			return true
+		elseif Data.IgnoredStatus[status] == true then
+			Vars.RegisteredIgnoredStatus[status] = true
+		end
+		Events.OnStatus:Subscribe(function (e)
+			callback(e.TargetGUID, e.StatusId, e.SourceGUID, e.StatusType)
+		end, {Status=status, StatusEvent=event})
+	else
+		error(string.format("%s is not a valid status! type(%s)", status, t), 2)
+	end
+end
+
+---@deprecated
+---@param event StatusEventID
+---@param status string
+---@param callback StatusEventCallback
+---@param removeAll boolean|nil
+function RemoveStatusListener(event, status, callback, removeAll)
+    if removeAll ~= true then
+		Events.OnStatus:Unsubscribe(callback, {Status=status, StatusEvent=event})
+	else
+		Events.OnStatus:Unsubscribe(nil, {Status=status, StatusEvent=event})
+	end
+end
+
+---@deprecated
+---@param event StatusEventID BeforeAttempt, Attempt, Applied, Removed
+---@param statusType StatusTypeID|StatusTypeID[]
+---@param callback StatusEventCallback
+function RegisterStatusTypeListener(event, statusType, callback)
+	if type(statusType) == "table" then
+		for i,v in pairs(statusType) do
+			RegisterStatusTypeListener(event, v, callback)
+		end
+	else
+		if StringHelpers.Equals(statusType, "All", true) then
+			Events.OnStatus:Subscribe(function (e)
+				callback(e.TargetGUID, e.StatusId, e.SourceGUID, e.StatusType)
+			end, {StatusType="All", StatusEvent=event})
+			return true
+		elseif Data.IgnoredStatus[statusType] == true then
+			Vars.RegisteredIgnoredStatus[statusType] = true
+		end
+		Events.OnStatus:Subscribe(function (e)
+			callback(e.TargetGUID, e.StatusId, e.SourceGUID, e.StatusType)
+		end, {StatusType=statusType, StatusEvent=event})
+	end
+end
+
+---@deprecated
+---@param event StatusEventID
+---@param statusType StatusTypeID|StatusTypeID[]
+---@param callback StatusEventCallback
+---@param removeAll boolean|nil
+function RemoveStatusTypeListener(event, statusType, callback, removeAll)
+    if removeAll ~= true then
+		Events.OnStatus:Unsubscribe(callback, {StatusType=statusType, StatusEvent=event})
+	else
+		Events.OnStatus:Unsubscribe(nil, {StatusType=statusType, StatusEvent=event})
+	end
+end
+--#endregion

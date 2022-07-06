@@ -362,7 +362,7 @@ function GameHelpers.Status.HasStatBoosts(status)
 end
 
 ---Returns true if the object has any of the given statuses.
----@param object EsvGameObject|UUID|NETID
+---@param object ObjectParam
 ---@param statusId string|string[]
 ---@param checkAll boolean|nil If true and statusId is a table, only return true if every given status is active.
 ---@return boolean

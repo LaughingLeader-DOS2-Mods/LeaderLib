@@ -6,18 +6,18 @@
 -- Modified for DOS2 by LaughingLeader, mainly name casing and EmmyLua support for VSCode.
 
 ---@class Vector3
-local Vector3
+local Vector3 = nil
 ---@class Quaternion
-local Quaternion
+local Quaternion = nil
 
 ---@type Vector3
-local forward
+local forward = nil
 ---@type Vector3
-local vtmp1
+local vtmp1 = nil
 ---@type Vector3
-local vtmp2
+local vtmp2 = nil
 ---@type Quaternion
-local qtmp1
+local qtmp1 = nil
 
 Vector3 = {
 	Type = "Vector3",

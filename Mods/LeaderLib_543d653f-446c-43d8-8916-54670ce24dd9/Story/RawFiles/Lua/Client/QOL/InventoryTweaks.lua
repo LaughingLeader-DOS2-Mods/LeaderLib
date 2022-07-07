@@ -12,10 +12,8 @@ end
 
 local function ShouldUnlockInventories()
 	local settings = SettingsManager.GetMod(ModuleUUID, false)
-	if settings then
-		if settings.Global:FlagEquals("LeaderLib_UnlockCharacterInventories", true) then
-			return true
-		end
+	if settings and settings.Global:FlagEquals("LeaderLib_UnlockCharacterInventories", true) then
+		return true
 	end
 	return false
 end

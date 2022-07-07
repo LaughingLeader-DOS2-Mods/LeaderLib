@@ -250,7 +250,7 @@ local Patches = {
 
 local function PatchMods(initialized)
 	for uuid,data in pairs(Patches) do
-		if Ext.IsModLoaded(uuid) and Ext.GetModInfo(uuid).Version <= data.Version then
+		if Ext.IsModLoaded(uuid) and (not data.Version or Ext.GetModInfo(uuid).Version <= data.Version) then
 			data.Patch(initialized)
 		end
 	end

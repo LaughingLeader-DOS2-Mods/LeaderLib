@@ -803,7 +803,6 @@ end
 
 local function ParseStatusAttempt(targetGUID,statusID,sourceGUID)
 	if IgnoreDead(targetGUID, statusID) then
-		print(targetGUID, statusID)
 		return
 	end
 	if not IgnoreStatus(statusID, "Attempt") then

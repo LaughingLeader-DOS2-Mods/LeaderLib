@@ -39,10 +39,6 @@ function TooltipHandler.RegisterItemTooltipTag(tag, title, description)
 	TooltipHandler.HasTagTooltipData = true
 end
 
-if not UI then
-	UI = {}
-end
-
 ---Deprecated
 ---@see TooltipHandler.RegisterItemTooltipTag
 UI.RegisterItemTooltipTag = TooltipHandler.RegisterItemTooltipTag

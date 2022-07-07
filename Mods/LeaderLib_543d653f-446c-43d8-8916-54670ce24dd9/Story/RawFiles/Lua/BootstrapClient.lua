@@ -1,7 +1,30 @@
 Ext.Require("BootstrapShared.lua")
+
 if UI == nil then
+	---@class LeaderLibUIHelpers
 	UI = {}
 end
+
+UI.MaxHotbarSlots = 29
+
+Ext.RegisterUITypeCall(Data.UIType.hotBar, "updateSlots", function (ui, call, maxSlots)
+	UI.MaxHotbarSlots = maxSlots
+	ui:GetRoot()._totalVisibleSlots = maxSlots
+end)
+Ext.RegisterUITypeCall(Data.UIType.bottomBar_c, "updateSlots", function (ui, call, maxSlots)
+	UI.MaxHotbarSlots = maxSlots
+	ui:GetRoot()._totalVisibleSlots = maxSlots
+end)
+
+Events.LuaReset:Subscribe(function ()
+	local ui = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.hotBar or Data.UIType.bottomBar_c)
+	if ui then
+		local this = ui:GetRoot()
+		if this and this._totalVisibleSlots then
+			UI.MaxHotbarSlots = this._totalVisibleSlots
+		end
+	end
+end)
 
 ---Deprecated since UIListeners were moved to the regular Listeners.
 ---Registers a function to call when a specific Lua LeaderLib UI event fires.

@@ -203,9 +203,9 @@ else
 end
 
 ---Refresh the whole active skillbar. Useful for refreshing if a skill is clickable from tag requirements changing.
----@param client string|integer|EsvCharacter Client character UUID, user ID, or EsvCharacter.
+---@param client CharacterParam|integer|nil Client character UUID, user ID, or Esv/EclCharacter.
 function GameHelpers.UI.RefreshSkillBar(client)
-	if not Vars.IsClient then
+	if not _ISCLIENT then
 		local player = GameHelpers.GetCharacter(client)
 		if player and player.CharacterControl then
 			GameHelpers.Net.PostToUser(player, "LeaderLib_Hotbar_Refresh", "")
@@ -213,9 +213,15 @@ function GameHelpers.UI.RefreshSkillBar(client)
 	else
 		local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.hotBar) or Vars.ControllerEnabled and Ext.GetBuiltinUI(Data.UIType.bottomBar_c)
 		if ui then
-			ui:ExternalInterfaceCall("updateSlots", ui:GetValue("maxSlots", "number"))
+			ui:ExternalInterfaceCall("updateSlots", UI.MaxHotbarSlots)
 		end
 	end
+end
+
+if _ISCLIENT then
+	Ext.RegisterNetListener("LeaderLib_Hotbar_Refresh", function(call, payload)
+		GameHelpers.UI.RefreshSkillBar(nil)
+	end)
 end
 
 RefreshSkillBar = GameHelpers.UI.RefreshSkillBar

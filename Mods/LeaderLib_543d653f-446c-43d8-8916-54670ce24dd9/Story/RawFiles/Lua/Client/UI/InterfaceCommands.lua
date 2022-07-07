@@ -202,13 +202,6 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 	end
 end)
 
-Ext.RegisterNetListener("LeaderLib_Hotbar_Refresh", function(call, payload)
-	local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.hotBar) or Vars.ControllerEnabled and Ext.GetBuiltinUI(Data.UIType.bottomBar_c)
-	if ui then
-		ui:ExternalInterfaceCall("updateSlots", ui:GetValue("maxSlots", "number"))
-	end
-end)
-
 --Useless if hotBar is spamming updateSlotData
 Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, datastr)
 	local data = Common.JsonParse(datastr)

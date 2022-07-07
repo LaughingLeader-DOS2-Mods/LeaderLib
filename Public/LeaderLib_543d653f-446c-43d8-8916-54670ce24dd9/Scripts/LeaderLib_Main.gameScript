@@ -683,7 +683,7 @@ THEN
 	ENDIF
 ENDIF
 
-EVENT LeaderLog_Commands_SetWeaponRequirement
+EVENT LeaderLib_Commands_SetWeaponRequirement
 VARS
 	CHARACTER:_Char
 ON
@@ -745,7 +745,7 @@ THEN
 	ClearFlag(_Char, "LeaderLib_SkillRequirement_WandWeapon")
 ENDIF
 
-EVENT LeaderLog_Commands_ShootLocalConeAt
+EVENT LeaderLib_Commands_ShootLocalConeAt
 VARS
 	CHARACTER:_Char
 	FLOAT3:_TargetPos
@@ -753,7 +753,7 @@ VARS
 	FLOAT:_LevelF
 	INT:_Level
 ON
-	OnCharacterEvent(_Char, "LeaderLog_Commands_ShootLocalConeAt")
+	OnCharacterEvent(_Char, "LeaderLib_Commands_ShootLocalConeAt")
 ACTIONS
 IF "c1&c2&c3"
 	GetVar(_Skill, _Char, "LeaderLib_ShootLocalConeAt_Skill")
@@ -764,7 +764,7 @@ THEN
 	ShootLocalConeAt(_Skill, _Char, %LeaderLib_ConeOffset, _TargetPos, _Level, _Char)
 ENDIF
 
-EVENT LeaderLog_Commands_ShootWorldConeAt
+EVENT LeaderLib_Commands_ShootWorldConeAt
 VARS
 	CHARACTER:_Char
 	FLOAT3:_TargetPos
@@ -773,7 +773,7 @@ VARS
 	FLOAT:_LevelF
 	INT:_Level
 ON
-	OnCharacterEvent(_Char, "LeaderLog_Commands_ShootWorldConeAt")
+	OnCharacterEvent(_Char, "LeaderLib_Commands_ShootWorldConeAt")
 ACTIONS
 IF "c1&c2&c3&c4"
 	GetVar(_Skill, _Char, "LeaderLib_ShootWorldConeAt_Skill")
@@ -783,6 +783,19 @@ IF "c1&c2&c3&c4"
 THEN
 	Cast(_Level, _LevelF)
 	ShootWorldConeAt(_Skill, _Char, _SourcePos, _TargetPos, _Level)
+ENDIF
+
+EVENT LeaderLib_Commands_RemoveStatusInfluence
+VARS
+	CHARACTER:_Char
+	STATUS:_Status
+ON
+	OnCharacterEvent(_Char, "LeaderLib_Commands_RemoveStatusInfluence")
+ACTIONS
+IF "c1"
+	GetVar(_Status, _Char, "LeaderLib_RemoveStatusInfluence_ID")
+THEN
+	RemoveStatusInfluence(_Char, _Status, 999999)
 ENDIF
 
 // EVENT LeaderLib_CrashFix_Madness

@@ -349,76 +349,59 @@ else
 	AddConsoleVariable("me", me)
 
 	if Vars.DebugMode then
-		local sheet = {}
-		setmetatable(sheet, {
-			__call = function()
-				return Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
-			end,
-			__index = function(tbl,k)
-				local ui = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
-				local v = ui[k]
-				if type(v) == "function" then
-					return function(...)
-						local b,result = pcall(v, ui, ...)
-						return result
-					end
-				else
-					return v
-				end
-			end,
-			__newindex = function(tbl,k,v)
-				local ui = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
-				if ui then
-					ui[k] = v
-				end
-			end,
-			__tostring = function()
-				return tostring(Data.UIType.characterSheet)
-			end
-		})
-		AddConsoleVariable("sheet", sheet)
-
-		local tutorialBox = {}
-		setmetatable(tutorialBox, {
-			__call = function()
-				return Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.tutorialBox or Data.UIType.tutorialBox_c):GetRoot()
-			end,
-			__index = function(tbl,k)
-				local ui = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.tutorialBox or Data.UIType.tutorialBox_c)
-				if ui then
-					if k == "Instance" then
-						return ui
-					elseif k == "Root" then
+		local function CreateUIWrapperTable(uiType, controllerUIType)
+			local tbl = {}
+			local _getInst = function() return Ext.GetUIByType(not Vars.ControllerEnabled and uiType or controllerUIType) end
+			setmetatable(tbl, {
+				__call = function()
+					local ui = _getInst()
+					if ui then
 						return ui:GetRoot()
 					end
-					local this = ui:GetRoot()
-					local v = this[k]
-					if type(v) == "function" then
-						return function(...)
-							local b,result = pcall(v, this, ...)
-							return result
+				end,
+				__index = function(tbl,k)
+					local ui = _getInst()
+					if ui then
+						if k == "Instance" then
+							return ui
 						end
-					else
-						return v
+						local this = ui:GetRoot()
+						if k == "Root" then
+							return this
+						end
+						local v = this[k] or ui[k]
+						if type(v) == "function" then
+							return function(...)
+								local b,result = pcall(v, this, ...)
+								return result
+							end
+						else
+							return v
+						end
 					end
-				end
-			end,
-			__newindex = function(tbl,k,v)
-				local ui = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.tutorialBox or Data.UIType.tutorialBox_c)
-				if ui then
-					local this = ui:GetRoot()
-					if this then
+				end,
+				__newindex = function(tbl,k,v)
+					local ui = _getInst()
+					if ui then
+						local t = type(ui[k])
+						if t == "number" or t == "string" or t == "boolean" or t == "table" then
+							ui[k] = v
+							return
+						end
+						local this = ui:GetRoot()
 						this[k] = v
 					end
+				end,
+				__tostring = function()
+					return tostring(not Vars.ControllerEnabled and uiType or controllerUIType)
 				end
-			end,
-			__tostring = function()
-				local ui = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.tutorialBox or Data.UIType.tutorialBox_c)
-				return ui and Ext.DumpExport(ui) or "nil"
-			end
-		})
-		AddConsoleVariable("tutorialBox", tutorialBox)
+			})
+		end
 
-		--tutorialBox.fadeInNonModalPointer("Test here!", 100, 200, 0)
+		AddConsoleVariable("_ui_sheet", CreateUIWrapperTable(Data.UIType.characterSheet, Data.UIType.statsPanel_c))
+		AddConsoleVariable("_ui_hotbar", CreateUIWrapperTable(Data.UIType.hotBar, Data.UIType.bottomBar_c))
+		AddConsoleVariable("_ui_tutorialBox", CreateUIWrapperTable(Data.UIType.tutorialBox, Data.UIType.tutorialBox_c))
+
+		--_ui_tutorialBox.fadeInNonModalPointer("Test here!", 100, 200, 0)
 	end
 end

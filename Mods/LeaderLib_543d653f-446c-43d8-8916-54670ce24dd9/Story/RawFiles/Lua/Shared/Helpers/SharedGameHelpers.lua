@@ -44,6 +44,7 @@ function GameHelpers.GetPickpocketPricing(pickpocketSkill)
 	return 50 * _round(price / 50.0)
 end
 
+---@overload fun(key:string, fallback:integer, asInteger:boolean):integer
 --- Get an ExtraData entry, with an optional fallback value if the key does not exist.
 ---@param key string
 ---@param fallback number|integer
@@ -547,6 +548,16 @@ end
 ---@param object UUID|NETID|EsvGameObject|ObjectHandle
 ---@return boolean
 function GameHelpers.ObjectIsDead(object)
+	if Ext.OsirisIsCallable() then
+		local GUID = GameHelpers.GetUUID(object)
+		if not GUID then
+			return false
+		end
+		if CharacterIsDead(GUID) == 1 or ItemIsDestroyed(GUID) == 1 then
+			return true
+		end
+		return false
+	end
 	local object = _tryGetObject(object)
 	if object then
 		if GameHelpers.Ext.ObjectIsCharacter(object) then

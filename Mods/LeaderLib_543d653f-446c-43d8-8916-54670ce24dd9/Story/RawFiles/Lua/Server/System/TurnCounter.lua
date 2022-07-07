@@ -16,34 +16,37 @@ local _INTERNAL = {}
 
 TurnCounter._Internal = _INTERNAL
 
----@class TurnCounterData:table
+---@class TurnCounterData
 ---@field ID string
 ---@field Turns integer
 ---@field TargetTurns integer By default, 0 in decrement mode.
 ---@field Combat integer
----@field OutOfCombatSpeed ?integer
----@field CombatOnly ?boolean If true, turn counting will only occur in combat.
----@field CountSkipDisabled ?boolean If true, turn counting will not count a turn ending if it was skipped. Otherwise, turn delays count towards the total.
----@field Position number[]|nil
----@field Target string|nil An optional target for this counter. If set then only their turn ending will count the timer down.
----@field Infinite boolean
+---@field OutOfCombatSpeed integer
+---@field CombatOnly boolean If true, turn counting will only occur in combat.
+---@field CountSkipDisabled boolean If true, turn counting will not count a turn ending if it was skipped. Otherwise, turn delays count towards the total.
+---@field ClearOnDeath boolean If the Target is an object, this turn counter will be cleared if they die.
+---@field Position number[]
+---@field Region string The level this turn counter was created in.
+---@field Target string An optional target for this counter. If set then only their turn ending will count the timer down.
+---@field Infinite boolean If true, this counter will count until stopped, or if the counter is cleared (target death if ClearOnDeath is set). 
 ---@field Mode TURNCOUNTER_MODE
 ---@field Data table Optional data to store in PersistentVars, such as a UUID.
 
 function _INTERNAL.CleanupData(uniqueId)
 	PersistentVars.TurnCounterData[uniqueId] = nil
+	Timer.Cancel(uniqueId)
 end
 
 ---@param id string Identifier for this countdown.
 ---@param turns integer How many turns to count.
 ---@param targetTurns integer The target turns when the counting should be complete, such as 0 in decrement mode.
 ---@param mode TURNCOUNTER_MODE
----@param combat integer The combat id or character to get the combat id from.
+---@param combat integer|CharacterParam|number[] The combat id or character to get the combat id from.
 ---@param params TurnCounterData|nil
 function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, params)
 	local t = type(combat)
-	if t == "string" then
-		local cid = CombatGetIDForCharacter(combat)
+	if t == "string" or GameHelpers.Ext.ObjectIsCharacter(combat) then
+		local cid = GameHelpers.Combat.GetID(combat)
 		if cid then
 			combat = cid
 		end
@@ -71,16 +74,17 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, par
 			tbl[k] = v
 		end
 	end
+	tbl.Region = SharedData.RegionData.Current
 	PersistentVars.TurnCounterData[uniqueId] = tbl
-	if not GameHelpers.IsActiveCombat(combat) then
+	if not GameHelpers.IsActiveCombat(combat) and tbl.CombatOnly ~= true then
 		local speed = tbl.OutOfCombatSpeed or TurnCounter.DefaultTimerSpeed
-		StartTimer(uniqueId, speed)
+		Timer.Start(uniqueId, speed)
 	end
 	_INTERNAL.Started(tbl, uniqueId)
 end
 
 ---@param id string Identifier for this countdown.
----@param combatOrTarget integer|UUID|number[]|nil If specified, only turn counters with this specific combat ID, target, or position will be cleared.
+---@param combatOrTarget integer|CharacterParam|number[]|nil If specified, only turn counters with this specific combat ID, target, or position will be cleared.
 function TurnCounter.ClearTurnCounter(id, combatOrTarget)
 	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
 		if data.ID == id then
@@ -88,15 +92,18 @@ function TurnCounter.ClearTurnCounter(id, combatOrTarget)
 				local t = type(combatOrTarget)
 				if t == "number" then
 					if data.Combat == combatOrTarget then
-						PersistentVars.TurnCounterData[uniqueId] = nil
+						_INTERNAL.CleanupData(uniqueId)
 					end
-				elseif t == "table" and data.Position == combatOrTarget then
-					PersistentVars.TurnCounterData[uniqueId] = nil
-				elseif data.Target == combatOrTarget then
-					PersistentVars.TurnCounterData[uniqueId] = nil
+				elseif t == "table" and GameHelpers.Math.PositionsEqual(data.Position, combatOrTarget) then
+					_INTERNAL.CleanupData(uniqueId)
+				else
+					local GUID = GameHelpers.GetUUID(combatOrTarget)
+					if GUID and GUID == data.Target then
+						_INTERNAL.CleanupData(uniqueId)
+					end
 				end
 			else
-				PersistentVars.TurnCounterData[uniqueId] = nil
+				_INTERNAL.CleanupData(uniqueId)
 			end
 		end
 	end
@@ -104,15 +111,15 @@ end
 
 ---@param id string Identifier for this countdown.
 ---@param turns integer How many turns to count down for.
----@param combat integer The combat id or character to get the combat id from.
+---@param combat integer|CharacterParam|nil The combat id or character to get the combat id from.
 ---@param params TurnCounterData|nil
 function TurnCounter.CountDown(id, turns, combat, params)
 	TurnCounter.CreateTurnCounter(id, turns, 0,  TurnCounter.Mode.Decrement, combat, params)
 end
 
 ---@param id string Identifier for this countdown.
----@param turns integer How many turns to count down for.
----@param combat integer The combat id or character to get the combat id from.
+---@param turns integer How many turns to count up for.
+---@param combat integer|CharacterParam|nil The combat id or character to get the combat id from.
 ---@param params TurnCounterData|nil
 function TurnCounter.CountUp(id, turns, combat, params)
 	TurnCounter.CreateTurnCounter(id, 0, turns, TurnCounter.Mode.Increment, combat, params)
@@ -162,11 +169,41 @@ function TurnCounter.RegisterListener(id, callback)
 	end
 end
 
+---Check if a turn counter is active.
+---@param id string|string[] The turn counter ID.
+---@param target ObjectParam|number[]|nil Option target to check turn counters for.
+---@return boolean
+function TurnCounter.IsActive(id, target)
+	if target then
+		if type(target) == "table" then
+			for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+				if GameHelpers.Math.PositionsEqual(data.Position, target) then
+					return true
+				end
+			end
+		else
+			local GUID = GameHelpers.GetUUID(target)
+			for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+				if data.Target == GUID then
+					return true
+				end
+			end
+		end
+	else
+		for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+			if data.ID == id then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 ---@param data TurnCounterData
 ---@param uniqueId string
 function _INTERNAL.Started(data, uniqueId)
 	Events.OnTurnCounter:Invoke({
-		ID = data.ID,	
+		ID = data.ID,
 		Turn = data.Turns,
 		LastTurn = data.Turns,
 		Finished = false,
@@ -252,14 +289,13 @@ end
 
 local justSkippedTurn = {}
 
----@private
 function _INTERNAL.OnTurnEnded(uuid)
 	if justSkippedTurn[uuid] then
 		justSkippedTurn[uuid] = nil
 		return false
 	end
 	_INTERNAL.InvokeTurnEndedListeners(uuid)
-	local id = CombatGetIDForCharacter(uuid)
+	local id = GameHelpers.Combat.GetID(uuid)
 	if id then
 		for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
 			if data.Combat == id and (not data.Target or data.Target == uuid) then
@@ -269,7 +305,6 @@ function _INTERNAL.OnTurnEnded(uuid)
 	end
 end
 
----@private
 function _INTERNAL.OnTurnSkipped(uuid)
 	local id = CombatGetIDForCharacter(uuid)
 	if id then
@@ -281,7 +316,6 @@ function _INTERNAL.OnTurnSkipped(uuid)
 	end
 end
 
----@private
 function TurnCounter.OnTimerFinished(uniqueId)
 	local data = PersistentVars.TurnCounterData[uniqueId]
 	if data then
@@ -293,33 +327,45 @@ function TurnCounter.OnTimerFinished(uniqueId)
 	end
 end
 
----@private
-function _INTERNAL.OnCombatStarted(id)
-	local characters = GameHelpers.GetCombatCharacters(id)
-	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
-		if data.Combat and data.Combat == id then
-			Timer.Cancel(uniqueId)
-		else
-			local pos = nil
-			if data.Position then
-				pos = data.Position
-			elseif data.Target then
-				pos = GameHelpers.Math.GetPosition(data.Target)
+---@param id integer
+---@param uniqueId string
+---@param data TurnCounterData
+---@param characters EsvCharacter[]
+local function SetCombatForEntry(id, uniqueId, data, characters)
+	if data.Combat and data.Combat == id then
+		Timer.Cancel(uniqueId)
+	else
+		local pos = nil
+		if data.Position then
+			pos = data.Position
+		elseif data.Target then
+			local id = GameHelpers.Combat.GetID(data.Target)
+			if id == id then
+				data.Combat = id
+				Timer.Cancel(uniqueId)
+				return true
 			end
-			if pos and characters then
-				for i,v in pairs(characters) do
-					if GameHelpers.Math.GetDistance(pos, v.WorldPos) <= TurnCounter.CombatMinDistance then
-						data.Combat = id
-						Timer.Cancel(uniqueId)
-						break
-					end
+			pos = GameHelpers.Math.GetPosition(data.Target)
+		end
+		if pos and characters then
+			for _,v in pairs(characters) do
+				if GameHelpers.Math.GetDistance(pos, v.WorldPos) <= TurnCounter.CombatMinDistance then
+					data.Combat = id
+					Timer.Cancel(uniqueId)
+					return true
 				end
 			end
 		end
 	end
 end
 
----@private
+function _INTERNAL.OnCombatStarted(id)
+	local characters = GameHelpers.GetCombatCharacters(id)
+	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+		SetCombatForEntry(id, uniqueId, data, characters)
+	end
+end
+
 function _INTERNAL.OnCombatEnded(id)
 	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
 		if data.Combat == id then
@@ -331,13 +377,56 @@ function _INTERNAL.OnCombatEnded(id)
 	end
 end
 
----@private
 function _INTERNAL.OnLeftCombat(uuid, id)
 	_INTERNAL.InvokeTurnEndedListeners(uuid)
 end
 
-RegisterProtectedOsirisListener("CombatStarted", Data.OsirisEvents.CombatStarted, "after", _INTERNAL.OnCombatStarted)
-RegisterProtectedOsirisListener("CombatEnded", Data.OsirisEvents.CombatEnded, "after", _INTERNAL.OnCombatEnded)
-RegisterProtectedOsirisListener("ObjectTurnEnded", Data.OsirisEvents.ObjectTurnEnded, "after", function(uuid) _INTERNAL.OnTurnEnded(StringHelpers.GetUUID(uuid)) end)
-RegisterProtectedOsirisListener("CharacterGuarded", Data.OsirisEvents.CharacterGuarded, "after", function(uuid) _INTERNAL.OnTurnSkipped(StringHelpers.GetUUID(uuid)) end)
-RegisterProtectedOsirisListener("ObjectLeftCombat", Data.OsirisEvents.ObjectLeftCombat, "after", function(uuid, id) _INTERNAL.OnLeftCombat(StringHelpers.GetUUID(uuid), id) end)
+function _INTERNAL.OnCharacterDied(uuid)
+	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+		if data.Target == uuid and data.ClearOnDeath then
+			_INTERNAL.CleanupData(uniqueId)
+		end
+	end
+end
+
+local _GetUUID = StringHelpers.GetUUID
+
+RegisterProtectedOsirisListener("CombatStarted", 1, "after", _INTERNAL.OnCombatStarted)
+RegisterProtectedOsirisListener("CombatEnded", 1, "after", _INTERNAL.OnCombatEnded)
+RegisterProtectedOsirisListener("ObjectTurnEnded", 1, "after", function(uuid) _INTERNAL.OnTurnEnded(_GetUUID(uuid)) end)
+RegisterProtectedOsirisListener("CharacterGuarded", 1, "after", function(uuid) _INTERNAL.OnTurnSkipped(_GetUUID(uuid)) end)
+RegisterProtectedOsirisListener("ObjectLeftCombat", 2, "after", function(uuid, id) _INTERNAL.OnLeftCombat(_GetUUID(uuid), id) end)
+RegisterProtectedOsirisListener("CharacterDied", 1, "after", function(uuid) _INTERNAL.OnCharacterDied(_GetUUID(uuid)) end)
+
+---@param uniqueId string
+---@param data TurnCounterData
+---@param region string
+local function CheckDataForDeletion(uniqueId, data, region)
+	local t = type(data.Target)
+	if t == "string" then
+		if ObjectExists(data.Target) ~= 1 then
+			_INTERNAL.CleanupData(uniqueId)
+			return true
+		elseif ObjectIsGlobal(data.Target) == 1 then
+			data.Region = region
+		end
+	end
+	if data.Position then
+		if data.Region ~= region then
+			_INTERNAL.CleanupData(uniqueId)
+			return true
+		end
+	end
+	if not data.Target and not data.Position then
+		_INTERNAL.CleanupData(uniqueId)
+		return true
+	end
+end
+
+Events.Initialized:Subscribe(function (e)
+	local region = e.Region
+	--Cleanup turn counters that shouldn't exist
+	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+		CheckDataForDeletion(uniqueId, data, region)
+	end
+end)

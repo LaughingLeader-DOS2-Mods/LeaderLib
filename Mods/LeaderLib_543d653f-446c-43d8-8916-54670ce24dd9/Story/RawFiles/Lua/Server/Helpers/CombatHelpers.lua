@@ -158,3 +158,19 @@ function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)
 		return {}
 	end
 end
+
+---@param obj ObjectParam
+---@return integer
+function GameHelpers.Combat.GetID(obj)
+	if Ext.OsirisIsCallable() then
+		local GUID = GameHelpers.GetUUID(obj)
+		if GUID then
+			--TODO replace with obj.RootTempate.CombatComponent index, if that's made available
+			local db = Osi.DB_CombatObjects:Get(GUID, nil)
+			if db then
+				return db[1][2]
+			end
+		end
+	end
+	return -1
+end

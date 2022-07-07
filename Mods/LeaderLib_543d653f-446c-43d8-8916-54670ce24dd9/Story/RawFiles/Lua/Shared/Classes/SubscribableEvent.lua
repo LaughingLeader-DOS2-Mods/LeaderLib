@@ -48,7 +48,7 @@ end
 ---Example: SubscribableEvent<CharacterResurrectedEventArgs>
 ---@see SubscribableEventArgs
 ---@see LeaderLibSubscriptionEvents
----@class LeaderLibSubscribableEvent<T>:{ (Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T, CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:table|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult) }
+---@class LeaderLibSubscribableEvent<T>:{ (Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T, CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:T|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult) }
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string
@@ -74,7 +74,8 @@ function SubscribableEvent:Create(id, opts)
 		GatherResults = false,
 		SyncInvoke = false,
 		Options = opts or {},
-		Benchmark = false
+		Benchmark = false,
+		_EnterCount = 0
 	}
 	if _type(opts) == "table" then
 		for k,v in _pairs(opts) do
@@ -252,7 +253,7 @@ function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
 	if indexOrCallback == nil then
 		return false
 	end
-	if not self._Invoking then
+	if self._EnterCount == 0 then
 		local t = _type(indexOrCallback)
 		local cur = self.First
 		if cur then
@@ -279,6 +280,19 @@ function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
 	end
 	--fprint(LOGLEVEL.WARNING, "[LeaderLib:SubscribableEvent] Attempted to remove subscriber ID %s for event '%s', but no such subscriber exists (maybe it was removed already?)", indexOrCallback, self.ID)
 	return false
+end
+
+local function _ProcessRemoveNext(self)
+	if self._EnterCount == 0 and self._RemoveNext then
+		local len = #self._RemoveNext
+		if len > 0 then
+			for i=1,len do
+				local v = self._RemoveNext[i]
+				self:Unsubscribe(v.Index, v.MatchArgs)
+			end
+		end
+		self._RemoveNext = nil
+	end
 end
 
 function SubscribableEvent:StopPropagation()
@@ -369,11 +383,12 @@ local function InvokeCallbacks(sub, args, resultsTable, ...)
 	return result
 end
 
+---@param self LeaderLibSubscribableEvent
 ---@param args table|nil
 ---@param skipAutoInvoke boolean|nil
 ---@vararg any
 ---@return SubscribableEventInvokeResult result
-function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
+local function _TryInvoke(self, args, skipAutoInvoke, ...)
 	args = args or {}
 	local metatable = nil
 	if _type(args.__metatable) == "table" then
@@ -386,19 +401,10 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 	local invokeResult = _INVOKERESULT.Success
 	local results = {}
 	if self.First ~= nil then
-		self._Invoking = true
 		if self.GatherResults then
 			invokeResult = InvokeCallbacks(self, eventObject, results, ...)
 		else
 			invokeResult = InvokeCallbacks(self, eventObject, nil, ...)
-		end
-		self._Invoking = nil
-		if self._RemoveNext then
-			for i=1,#self._RemoveNext do
-				local v = self._RemoveNext[i]
-				self:Unsubscribe(v.Index, v.MatchArgs)
-			end
-			self._RemoveNext = nil
 		end
 	end
 	if not skipAutoInvoke and self.SyncInvoke then
@@ -436,6 +442,20 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 		end
 	end
 	return {ResultCode = invokeResult, Results = results, Args = eventObject, Handled = handled}
+end
+
+---@param args table|nil
+---@param skipAutoInvoke boolean|nil
+---@return SubscribableEventInvokeResult result
+function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
+	self._EnterCount = self._EnterCount + 1
+	local b,result = _pcall(_TryInvoke, self, args, skipAutoInvoke, ...)
+	self._EnterCount = self._EnterCount - 1
+	_ProcessRemoveNext(self)
+	if b then
+		return result
+	end
+	return nil
 end
 
 local function DeserializeArgs(args)

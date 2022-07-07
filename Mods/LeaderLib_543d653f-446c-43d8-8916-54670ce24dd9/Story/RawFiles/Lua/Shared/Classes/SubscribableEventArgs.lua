@@ -19,7 +19,7 @@ end
 ---@param key string
 local function _TryGetArg(self, key)
 	if self.GetArg then
-		local b,value = pcall(self.GetArg, key, self.Args[key])
+		local b,value = pcall(self.GetArg, self, key, self.Args[key])
 		if b then
 			if value ~= nil then
 				return value

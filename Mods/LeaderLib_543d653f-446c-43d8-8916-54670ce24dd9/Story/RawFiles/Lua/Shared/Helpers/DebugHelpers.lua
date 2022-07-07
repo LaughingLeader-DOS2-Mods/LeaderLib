@@ -1367,6 +1367,14 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 			if obj.NetID then
 				props.NetID = "number"
 			end
+		elseif string.find(meta, "esv::Status") then
+			props = {
+				StatusId = "string",
+				StatusType = "string",
+				CurrentLifeTime = "number",
+				LifeTime = "number",
+				StatsMultiplier = "number",
+			}
 		else
 			props = nil
 			meta = obj

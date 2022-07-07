@@ -1,6 +1,5 @@
-if Lib == nil then
-	Lib = {}
-end
+if Lib == nil then Lib = {} end
+if Classes == nil then Classes = {} end
 
 local maf = Ext.Require("Shared/Libraries/maf.lua")
 ---@type Vector3

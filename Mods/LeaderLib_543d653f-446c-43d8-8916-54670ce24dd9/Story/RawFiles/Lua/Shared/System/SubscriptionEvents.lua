@@ -151,7 +151,7 @@ if not _ISCLIENT then
 	---@type LeaderLibSubscribableEvent<OnPrepareHitEventArgs>
 	Events.OnPrepareHit = Classes.SubscribableEvent:Create("OnPrepareHit", {
 		ArgsKeyOrder={"Target", "Source", "Damage", "Handle", "Data"},
-		GetArg = function(paramId, param)
+		GetArg = function(self, paramId, param)
 			if paramId == "Target" or paramId == "Source" then
 				return GameHelpers.GetUUID(param, true)
 			end
@@ -367,7 +367,7 @@ if not _ISCLIENT then
 	---@type LeaderLibSubscribableEvent<CharacterBasePointsChangedEventArgs>
 	Events.CharacterBasePointsChanged = Classes.SubscribableEvent:Create("CharacterBasePointsChanged", {
 		ArgsKeyOrder={"Character", "Stat", "Last", "Current", "StatType"},
-		GetArg = function(paramId, param)
+		GetArg = function(self, paramId, param)
 			if paramId == "Character" then
 				return GameHelpers.GetUUID(param, true)
 			end
@@ -418,7 +418,7 @@ if not _ISCLIENT then
 	---@type LeaderLibSubscribableEvent<OnSkillStateAllEventArgs>
 	Events.OnSkillState = Classes.SubscribableEvent:Create("OnSkillState", {
 		ArgsKeyOrder={"Skill", "Character", "State", "Data", "DataType"},
-		GetArg = function(paramId, param)
+		GetArg = function(self, paramId, param)
 			if paramId == "Character" then
 				return GameHelpers.GetUUID(param, true)
 			end
@@ -455,18 +455,21 @@ if not _ISCLIENT then
 	---@see LeaderLibSkillManagerRegistration#All
 	---@type LeaderLibSubscribableEvent<OnStatusEventArgs>
 	Events.OnStatus = Classes.SubscribableEvent:Create("OnStatusEvent", {
-		ArgsKeyOrder={"Target", "Status", "Source", "StatusType", "StatusEvent"},
+		Benchmark = false,
+		ArgsKeyOrder={"TargetGUID", "Status", "SourceGUID", "StatusType", "StatusEvent"},
 		---@param param EsvStatus
-		GetArg = function(paramId, param)
-			if paramId == "Target" then
-				return GameHelpers.GetUUID(param, true)
-			elseif paramId == "Source" then
+		GetArg = function(self, paramId, param)
+			if paramId == "Target" or paramId == "Source" then
 				return GameHelpers.GetUUID(param, true)
 			elseif paramId == "Status" then
 				if type(param) == "string" then
 					return param
 				end
-				return param.StatusId
+				if self.Args.StatusEvent == "BeforeAttempt" then
+					return param
+				else
+					return param.StatusId
+				end
 			end
 		end,
 		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)

@@ -70,6 +70,7 @@ end
 
 if Classes == nil then Classes = {} end
 
+Ext.Require("Shared/Libraries/_Init.lua")
 Ext.Require("Shared/_InitShared.lua")
 Ext.Require("Shared/Classes/Enum.lua")
 Ext.Require("Shared/Data/_Init.lua")
@@ -98,7 +99,6 @@ Ext.Require("Shared/Helpers/GridHelpers.lua")
 Ext.Require("Shared/Helpers/SurfaceHelpers.lua")
 Ext.Require("Shared/Helpers/UIHelpers.lua")
 Ext.Require("Shared/Settings/LeaderLibGameSettings.lua")
-Ext.Require("Shared/Libraries/_Init.lua")
 Ext.Require("Shared/Settings/SettingsManager.lua")
 Ext.Require("Shared/Settings/ModSettingsConfigLoader.lua")
 Ext.Require("Shared/Settings/LeaderLibDefaultGlobalSettings.lua")

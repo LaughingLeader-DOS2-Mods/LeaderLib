@@ -13,14 +13,18 @@ local _traceback = debug.traceback
 local _tblremove = table.remove
 
 local _printError = Ext.PrintError
+local _printWarning = Ext.PrintWarning
+local _print = Ext.Print
 local _format = string.format
+local _sline = Lib.serpent.line
+local _serpentOpts = {SimplifyUserdata=true}
 
 local _errormsg = function (str, ...)
 	_printError(_format(str, ...))
 end
 
 ---Optional function to manipulate returned parameters when the event arguments are being unpacked for legacy listeners.
----@alias SubscribableEventGetArgFunction fun(paramId:string, param:any):any
+---@alias SubscribableEventGetArgFunction fun(self:LeaderLibRuntimeSubscribableEventArgs, paramId:string, param:any):any
 
 ---@class SubscribableEventCreateOptions
 ---@field GatherResults boolean|nil If true, event results from callbacks are gathered and return in in the Invoke function.
@@ -31,6 +35,7 @@ end
 ---@field GetArg SubscribableEventGetArgFunction|nil
 ---@field OnSubscribe fun(callback:function, opts:SubscribableEventCreateOptions|nil, matchArgs:table|nil, matchArgsType:string) Called when a callback is subscribed to the event.
 ---@field OnUnsubscribe fun(callback:function, opts:SubscribableEventCreateOptions|nil, matchArgs:table|nil, matchArgsType:string) Called when a callback is unsubscribed to the event.
+---@field Benchmark boolean|nil Print the time it takes to invoke listeners in DeveloperMode.
 
 ---@alias SubscribableEventInvokeResultCode string|"Success"|"Handled"|"Error"
 
@@ -68,7 +73,8 @@ function SubscribableEvent:Create(id, opts)
 		Disabled = false,
 		GatherResults = false,
 		SyncInvoke = false,
-		Options = opts or {}
+		Options = opts or {},
+		Benchmark = false
 	}
 	if _type(opts) == "table" then
 		for k,v in _pairs(opts) do
@@ -76,6 +82,9 @@ function SubscribableEvent:Create(id, opts)
 				o[k] = v
 			end
 		end
+	end
+	if o.Benchmark and not Ext.IsDeveloperMode() then
+		o.Benchmark = false
 	end
 	setmetatable(o, {
 		__index = SubscribableEvent
@@ -177,28 +186,26 @@ function SubscribableEvent:Subscribe(callback, opts)
 		local firstEntry = nil
 		local firstID = nil
 		local count = 0
+		---@type {Key:string, Value:any}[]
+		local _matchArray = {}
 		for k,v in _pairs(matchArgs) do
 			if firstEntry == nil then
 				firstID = k
 				firstEntry = v
 			end
+			_matchArray[#_matchArray+1] = {Key=k, Value=v}
 			count = count + 1
 		end
 		if count == 1 then
+			_matchArray = nil
 			sub.IsMatch = function(args)
 				return args[firstID] == firstEntry
 			end
-		else
+		elseif count > 1 then
 			sub.IsMatch = function(args)
-				for k,v in _pairs(matchArgs) do
-					if args[k] == nil then
-						return false
-					end
-					if _type(v) == "table" then
-						if not _TablesMatch(v, args[k]) then
-							return false
-						end
-					elseif args[k] ~= v then
+				for i=1,count do
+					local m = _matchArray[i]
+					if args[m.Key] ~= m.Value then
 						return false
 					end
 				end
@@ -286,6 +293,8 @@ local function _EventArgsMatch(node, eventArgs)
 		local b,result = _pcall(node.IsMatch, eventArgs)
 		if result ~= nil then
 			match = result
+		elseif not b then
+			match = false
 		end
 	end
 	return match
@@ -371,6 +380,7 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 		metatable = args.__metatable
 		args.__metatable = nil
 	end
+	local ts = Ext.MonotonicTime()
 	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg, metatable)
 	---@type SubscribableEventInvokeResultCode
 	local invokeResult = _INVOKERESULT.Success
@@ -413,6 +423,17 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
 	if invokeResult == _INVOKERESULT.Handled then
 		invokeResult = _INVOKERESULT.Success
 		handled = true
+	end
+	if self.Benchmark then
+		local timeTaken = Ext.MonotonicTime() - ts
+		local msg = _format("[LeaderLib:%s:Invoke] Took (%s) ms to invoke callbacks.\nArgs:%s", self.ID, timeTaken, _sline(args, _serpentOpts))
+		if timeTaken > 100 then
+			_printWarning(msg)
+		elseif timeTaken >= 1000 then
+			_printError(msg)
+		else
+			_print(msg)
+		end
 	end
 	return {ResultCode = invokeResult, Results = results, Args = eventObject, Handled = handled}
 end

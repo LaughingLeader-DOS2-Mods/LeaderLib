@@ -13,6 +13,7 @@ local _min = math.min
 local _floor = math.floor
 local _sqrt = math.sqrt
 local _unpack = table.unpack
+local _rad = math.rad
 local _ran = Ext.Random
 
 ---Tries to get the position from whatever the variable is.
@@ -458,6 +459,15 @@ function GameHelpers.Math.GetPositionWithAngle(startPos, angle, distanceMult, un
     else
         return {tx,ty,tz}
     end
+end
+
+---@param pos1 number[]
+---@param pos2 number[]
+---@return boolean
+function GameHelpers.Math.PositionsEqual(pos1, pos2)
+    local x,y,z = GameHelpers.Math.GetPosition(pos1, true)
+    local x2,y2,z2 = GameHelpers.Math.GetPosition(pos2, true)
+    return x == x2 and y == y2 and z == z2
 end
 
 ---@param sourcePos number[]|ObjectParam

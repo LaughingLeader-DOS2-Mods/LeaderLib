@@ -1,10 +1,10 @@
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 
 local Patches = {
 	--Weapon Expansion
 	["c60718c3-ba22-4702-9c5d-5ad92b41ba5f"] = {
 		Version = 153288705,
-		Patch = function (initialized)
+		Patch = function (initialized, region)
 			Ext.PrintWarning("[LeaderLib] Patching Weapon Expansion version [153288706]")
 
 			--Fix Patches an event name conflict that prevented Soul Harvest's bonus from applying.
@@ -13,7 +13,7 @@ local Patches = {
 			if not initialized then
 				return
 			end
-			if isClient then
+			if _ISCLIENT then
 				---@diagnostic disable undefined-field
 				if Ext.Version() < 56 then
 					Ext._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
@@ -228,6 +228,23 @@ local Patches = {
 				end
 			end
 		end
+	},
+	--Origins Campaign
+	["1301db3d-1f54-4e98-9be5-5094030916e4"] = {
+		Patch = function (initialized, region)
+			if not _ISCLIENT then
+				if region == "FJ_FortJoy_Main" then
+					--[[ WARM Attempt Spam Fix
+						Fix for this corpse in an ArmorSets area in Fort Joy getting a "WARM" status influence, 
+						due to it "entering" the trigger before it died.
+						Trigger:"ccac77ee-d0b8-4d1f-b25c-dc53632a9a33"]]
+					if ObjectExists("702becec-f2c1-44b2-b7ab-c247f8da97ac") == 1 then
+						SetVarFixedString("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_RemoveStatusInfluence_ID", "WARM")
+						SetStoryEvent("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_Commands_RemoveStatusInfluence")
+					end
+				end
+			end
+		end
 	}
 }
 
@@ -240,4 +257,4 @@ local function PatchMods(initialized)
 end
 
 Ext.RegisterListener("StatsLoaded", function() PatchMods(false) end)
-RegisterListener("Initialized", function() PatchMods(true) end)
+Events.Initialized:Subscribe(function(e) PatchMods(true, e.Region) end, {Priority=999})

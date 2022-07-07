@@ -433,10 +433,6 @@ end
 
 GameHelpers.GetAbilityName = GetAbilityName
 
----@class ResistanceTextEntry
----@field Text TranslatedString
----@field Color string
-
 LocalizedText.ResistanceNames = {
 	PureResistance = {Text=ts:Create("h71766947g9564g4a6bg936bga055cccc01a0","Pure Resistance"), Color="#13D177"}, -- Special LeaderLib handle
 	PhysicalResistance = {Text=ts:Create("hcd84ee03g9912g4b0dga49age6bce09b19d1","Physical Resistance"), Color="#AE9F95"},
@@ -470,6 +466,10 @@ LocalizedText.CombatLog = {
 	WasHitBySurface = ts:Create("h3cc306cdg95b4g4803g803ag2dd33a722d6c", "[1] was [2] for [3] by a surface"),
 	WasDestroyed = ts:Create("h3d2c57b3g8b84g4315ga619g04367092ce5f", "[2] was destroyed"),
 }
+
+---@class ResistanceTextEntry
+---@field Text TranslatedString
+---@field Color string
 
 ---Get localized resistance text wrapped in that resistance's color.
 ---@param resistance string

@@ -444,12 +444,16 @@ local defaultHitFlags = {
     Hit = true,
 }
 
----@class GameHelpers.Damage.ApplySkillDamageParams
+---@class GameHelpers.Damage.BaseApplyDamageParams
 ---@field CriticalRoll CriticalRollFlag|nil Used when computating a character hit. Defaults to "Roll".
 ---@field HighGroundFlag HighGroundFlag|nil Used when computating a character hit. If not set, this will be determined using the height difference.
 ---@field HitParams table<string,any>|nil Hit parameters to apply.
 ---@field MainWeapon StatItem|nil A weapon to use in place of the source's main weapon.
 ---@field OffhandWeapon StatItem|nil A weapon to use in place of the source's offhand weapon.
+---@field HitType HitTypeValues|nil The hit type. Defaults to "Magic".
+---@field StatusParams EsvStatusHit|nil Params to set on the hit status
+
+---@class GameHelpers.Damage.ApplySkillDamageParams:GameHelpers.Damage.BaseApplyDamageParams
 ---@field GetDamageFunction fun(skillData:StatEntrySkillData, attacker:StatCharacter, isFromItem:boolean, stealthed:boolean, attackerPos:number[], targetPos:number[], level:integer, noRandomization:boolean, mainWeapon:StatEntryWeapon|nil, offhandWeapon:StatEntryWeapon|nil):DamageList,string|nil An optional function to use to calculate damage.
 ---@field ApplySkillProperties boolean|nil
 ---@field SkillDataParamModifiers StatEntrySkillData|nil
@@ -601,6 +605,201 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     end
 end
 
+---@alias HitTypeValues string|'"Melee"'|'"Magic"'|'"Ranged"'|'"WeaponDamage"'|'"Surface"'|'"DoT"'|'"Reflected"'
+---@alias DamageEnum string|'"BaseLevelDamage"'|'"AverageLevelDamge"'|'"MonsterWeaponDamage"'|'"SourceMaximumVitality"'|'"SourceMaximumPhysicalArmor"'|'"SourceMaximumMagicArmor"'|'"SourceCurrentVitality"'|'"SourceCurrentPhysicalArmor"'|'"SourceCurrentMagicArmor"'|'"SourceShieldPhysicalArmor"'|'"TargetMaximumVitality"'|'"TargetMaximumPhysicalArmor"'|'"TargetMaximumMagicArmor"'|'"TargetCurrentVitality"'|'"TargetCurrentPhysicalArmor"'|'"TargetCurrentMagicArmor"'
+
+---@param source EsvCharacter
+---@param target EsvCharacter|EclItem
+---@param damageEnum DamageEnum|nil
+---@param damageType DamageType|nil
+---@param damageMultiplier number|nil
+---@param damageRange number|nil
+---@return DamageList
+---@return DeathType
+local function GetBasicDamage(source, target, damageEnum, damageType, damageMultiplier, damageRange)
+    local attacker = source.Stats
+    damageEnum = damageEnum or "AverageLevelDamge"
+    damageType = damageType or "Physical"
+    damageMultiplier = damageMultiplier or 100
+    damageRange = damageRange or 10
+
+    local randomMultiplier = 1.0 + (Ext.Random(0, damageRange) - damageRange/2) * 0.01
+    local baseDamage = Game.Math.CalculateBaseDamage(damageEnum, source.Stats, target.Stats, source.Stats.Level)
+
+    local damageList = Ext.NewDamageList()
+
+    local attrDamageScale = 0
+    if damageEnum == "BaseLevelDamage" or damageEnum == "AverageLevelDamge" or damageEnum == "MonsterWeaponDamage" then
+        local main = attacker.MainWeapon
+        local offHand = attacker.OffHandWeapon
+        local primaryAttr = 0
+        if offHand ~= nil and Game.Math.IsRangedWeapon(main) == Game.Math.IsRangedWeapon(offHand) then
+            primaryAttr = (Game.Math.GetItemRequirementAttribute(attacker, main) + Game.Math.GetItemRequirementAttribute(attacker, offHand)) * 0.5
+        else
+            primaryAttr = Game.Math.GetItemRequirementAttribute(attacker, main)
+        end
+        attrDamageScale = 1.0 + Game.Math.ScaledDamageFromPrimaryAttribute(primaryAttr)
+    else
+        attrDamageScale = 1.0
+    end
+
+    local damageBoost = 0
+    if attacker ~= nil then
+        damageBoost = attacker.DamageBoost / 100.0 + 1.0
+    else
+        damageBoost = 1.0
+    end
+    
+    local finalDamage = baseDamage * randomMultiplier * attrDamageScale * damageMultiplier
+    finalDamage = math.max(Ext.Round(finalDamage), 1)
+    finalDamage = math.ceil(finalDamage * damageBoost)
+    damageList:Add(damageType, finalDamage)
+
+    if attacker ~= nil then
+        Game.Math.ApplyDamageBoosts(attacker, damageList)
+    end
+
+    return damageList, (Game.Math.GetDamageListDeathType(damageList) or "None")
+end
+
+---@class GameHelpers.Damage.ApplyDamageParams:GameHelpers.Damage.BaseApplyDamageParams
+---@field GetDamageFunction fun(source:EsvCharacter, target:EsvCharacter|EsvItem, GameHelpers.Damage.ApplyDamageParams):DamageList,string|nil An optional function to use to calculate damage.
+---@field UseWeaponDamage boolean|nil
+---@field DamageMultiplier number|nil
+---@field DamageRange number|nil
+---@field DamageType string|nil
+---@field DamageEnum DamageEnum|nil
+---@field FixedAmount integer|nil Skip calculating damage, and just apply a fixed amount instead.
+
+---@type GameHelpers.Damage.ApplyDamageParams
+local _defaultParams = {
+    HitType = "Magic",
+    DamageType = "Physical",
+    DamageMultiplier = 1,
+    DamageRange = 1,
+    DamageEnum = "AverageLevelDamge",
+    UseWeaponDamage = false,
+    CriticalRoll = "Roll",
+}
+
+---Create a HIT status and apply the corresponding skill parameters.
+---@param source ObjectParam
+---@param target ObjectParam
+---@param params GameHelpers.Damage.ApplyDamageParams|nil
+function GameHelpers.Damage.ApplyDamage(source, target, params)
+    source = GameHelpers.TryGetObject(source)
+    fassert(source ~= nil, "Failed to get object for source (%s)", source)
+    target = GameHelpers.TryGetObject(target)
+    fassert(target ~= nil, "Failed to get object for target (%s)", target)
+
+    params = params or _defaultParams
+
+    local criticalRoll = params.CriticalRoll or _defaultParams.CriticalRoll
+    ---@type HighGroundFlag
+    local highGroundFlag = params.HighGroundFlag or nil
+
+    ---@type EsvStatusHit
+    local status = Ext.PrepareStatus(target.MyGuid, "HIT", 0.0)
+
+    status.TargetHandle = target.Handle
+    status.StatusSourceHandle = source.Handle
+
+    local hitType = params.HitType or _defaultParams.HitType
+    status.ImpactOrigin = source.WorldPos
+    status.ImpactPosition = target.WorldPos
+    status.ImpactDirection = {-target.Stats.Rotation[7],0,-target.Stats.Rotation[9]}
+    status.HitReason = Data.HitReason.ApplyDamage
+    status.Hit.Hit = true
+    status.Hit.DamageType = params.DamageType or _defaultParams.DamageType
+    status.Hit.Missed = false
+    status.Hit.Blocked = false
+    status.Hit.Dodged = false
+    status.Hit.NoEvents = true
+    status.ForceInterrupt = false
+    status.ForceStatus = true
+    status.AllowInterruptAction = false
+    status.Interruption = false
+    status.HitByHandle = source.Handle
+
+    if params.UseWeaponDamage then
+        status.Hit.HitWithWeapon = true
+    end
+
+    local hitParams = params.HitParams or defaultHitFlags
+    if type(hitParams) == "table" then
+        for k,v in pairs(hitParams) do
+            if k == "HitType" then
+                hitType = v
+            else
+                pcall(function ()
+                    status.Hit[k] = v
+                end)
+            end
+        end
+    end
+
+    if type(params.StatusParams) == "table" then
+        for k,v in pairs(params.StatusParams) do
+            pcall(function ()
+                status[k] = v
+            end)
+        end
+    end
+
+    local alwaysBackstab = false
+
+    if highGroundFlag == nil then
+        highGroundFlag = GameHelpers.Character.GetHighGroundFlag(source, target)
+    end
+
+    ---@type DamageList
+    local damageList = nil
+    ---@type DeathType
+    local deathType = "None"
+
+    if params.FixedAmount then
+        damageList = Ext.NewDamageList()
+        damageList:Add(status.Hit.DamageType, params.FixedAmount)
+    else
+        if params.GetDamageFunction ~= nil then
+            local b,result,result2 = xpcall(params.GetDamageFunction, debug.traceback, source, target, params)
+    
+            if not b then
+                Ext.PrintError(result)
+            else
+                damageList = result
+                deathType = result2 or deathType or "None"
+            end
+        else
+            damageList,deathType = GetBasicDamage(source, target, params.DamageEnum, params.DamageType, params.DamageMultiplier, params.DamageRange)
+        end
+    end
+
+    if damageList then
+        status.Hit.DamageList:Merge(damageList)
+        GameHelpers.Hit.RecalculateLifeSteal(status.Hit, target.Stats, source.Stats, hitType, true, true)
+        if GameHelpers.Ext.ObjectIsCharacter(target) and GameHelpers.Ext.ObjectIsCharacter(source) then
+            if HitOverrides._ComputeCharacterHitFunction(target.Stats, source.Stats, source.Stats.MainWeapon, damageList, hitType, false, false, status.Hit, alwaysBackstab, highGroundFlag, criticalRoll) then
+                if params.FixedAmount then
+                    damageList:Clear(status.Hit.DamageType)
+                    damageList:Add(status.Hit.DamageType, params.FixedAmount)
+                end
+            end
+        end
+        for _,damage in pairs(damageList:ToTable()) do
+            status.Hit.TotalDamageDone = status.Hit.TotalDamageDone + damage.Amount
+            status.Hit.DamageDealt = status.Hit.DamageDealt + damage.Amount
+            if StringHelpers.IsNullOrEmpty(status.Hit.DamageType) then
+                status.Hit.DamageType = damage.DamageType
+            end
+        end
+        if not StringHelpers.IsNullOrEmpty(deathType) then
+            status.Hit.DeathType = deathType
+        end
+        Ext.ApplyStatus(status)
+    end
+end
+
 ---@deprecated
 ---Uses the older NRD_HitPrepare syntax to create a hit using skill properties.
 ---@param source EsvCharacter|UUID|NETID
@@ -688,140 +887,6 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
             elseif t == "string" then
                 print(k, NRD_HitGetString(hit, k))
             end
-        end
-        NRD_HitExecute(hit)
-    end
-end
-
----@alias HitTypeValues string|'"Melee"'|'"Magic"'|'"Ranged"'|'"WeaponDamage"'|'"Surface"'|'"DoT"'|'"Reflected"'
----@alias DamageEnum string|'"BaseLevelDamage"'|'"AverageLevelDamge"'|'"MonsterWeaponDamage"'|'"SourceMaximumVitality"'|'"SourceMaximumPhysicalArmor"'|'"SourceMaximumMagicArmor"'|'"SourceCurrentVitality"'|'"SourceCurrentPhysicalArmor"'|'"SourceCurrentMagicArmor"'|'"SourceShieldPhysicalArmor"'|'"TargetMaximumVitality"'|'"TargetMaximumPhysicalArmor"'|'"TargetMaximumMagicArmor"'|'"TargetCurrentVitality"'|'"TargetCurrentPhysicalArmor"'|'"TargetCurrentMagicArmor"'
-
----@param source EsvCharacter
----@param target EsvCharacter|EclItem
----@param damageEnum DamageEnum|nil
----@param damageType DamageType|nil
----@param damageMultiplier number|nil
----@param damageRange number|nil
----@return DamageList
----@return string|nil
-local function GetBasicDamage(source, target, damageEnum, damageType, damageMultiplier, damageRange)
-    local attacker = source.Stats
-    damageEnum = damageEnum or "AverageLevelDamge"
-    damageType = damageType or "Physical"
-    damageMultiplier = damageMultiplier or 100
-    damageRange = damageRange or 10
-
-    local randomMultiplier = 1.0 + (Ext.Random(0, damageRange) - damageRange/2) * 0.01
-    local baseDamage = Game.Math.CalculateBaseDamage(damageEnum, source.Stats, target.Stats, source.Stats.Level)
-
-    local damageList = Ext.NewDamageList()
-
-    local attrDamageScale = 0
-    if damageEnum == "BaseLevelDamage" or damageEnum == "AverageLevelDamge" or damageEnum == "MonsterWeaponDamage" then
-        local main = attacker.MainWeapon
-        local offHand = attacker.OffHandWeapon
-        local primaryAttr = 0
-        if offHand ~= nil and Game.Math.IsRangedWeapon(main) == Game.Math.IsRangedWeapon(offHand) then
-            primaryAttr = (Game.Math.GetItemRequirementAttribute(attacker, main) + Game.Math.GetItemRequirementAttribute(attacker, offHand)) * 0.5
-        else
-            primaryAttr = Game.Math.GetItemRequirementAttribute(attacker, main)
-        end
-        attrDamageScale = 1.0 + Game.Math.ScaledDamageFromPrimaryAttribute(primaryAttr)
-    else
-        attrDamageScale = 1.0
-    end
-
-    local damageBoost = 0
-    if attacker ~= nil then
-        damageBoost = attacker.DamageBoost / 100.0 + 1.0
-    else
-        damageBoost = 1.0
-    end
-    
-    local finalDamage = baseDamage * randomMultiplier * attrDamageScale * damageMultiplier
-    finalDamage = math.max(Ext.Round(finalDamage), 1)
-    finalDamage = math.ceil(finalDamage * damageBoost)
-    damageList:Add(damageType, finalDamage)
-
-    if attacker ~= nil then
-        Game.Math.ApplyDamageBoosts(attacker, damageList)
-    end
-
-    return damageList,Game.Math.GetDamageListDeathType(damageList)
-end
-
----@class GameHelpers.Damage.ApplyDamageParams
----@field HitType HitTypeValues|nil The hit type. Defaults to "Magic".
----@field HitParams table<string,any>|nil Hit parameters to apply.
----@field MainWeapon StatItem|nil A weapon to use in place of the source's main weapon.
----@field OffhandWeapon StatItem|nil A weapon to use in place of the source's offhand weapon.
----@field GetDamageFunction fun(source:EsvCharacter, target:EsvCharacter|EsvItem, GameHelpers.Damage.ApplyDamageParams):DamageList,string|nil An optional function to use to calculate damage.
----@field UseWeaponDamage boolean|nil
----@field DamageMultiplier number|nil
----@field DamageRange number|nil
----@field DamageType string|nil
----@field DamageEnum DamageEnum|nil
-
-local _defaultParams = {
-    HitType = "Magic"
-}
-
----@param source EsvCharacter|UUID|NETID
----@param target EsvCharacter|EsvItem|UUID|NETID
----@param params GameHelpers.Damage.ApplyDamageParams|nil
-function GameHelpers.Damage.ApplyDamage(source, target, params)
-    params = params or _defaultParams
-
-    source = GameHelpers.TryGetObject(source)
-    fassert(source ~= nil, "Failed to get object for source (%s)", source)
-    target = GameHelpers.TryGetObject(target)
-    fassert(target ~= nil, "Failed to get object for target (%s)", target)
-
-    local hit = NRD_HitPrepare(target.MyGuid, source.MyGuid)
-    NRD_HitSetInt(hit, "SimulateHit", 1)
-
-    local hitParams = params.HitParams or defaultHitFlags
-    if hitParams ~= nil then
-        for k,v in pairs(hitParams) do
-            if type(k) == "string" then
-                local t = type(v)
-                if t == "number" then
-                    NRD_HitSetInt(hit, k, v)
-                elseif t == "boolean" then
-                    NRD_HitSetInt(hit, k, v and 1 or 0)
-                elseif t == "string" then
-                    NRD_HitSetString(hit, k, v)
-                end
-            end
-        end
-    end
-
-    NRD_HitSetString(hit, "HitType", params.HitType or "Magic")
-
-    if params.UseWeaponDamage then
-        NRD_HitSetInt(hit, "HitWithWeapon", 1)
-    end
-
-    local damageList,deathType = nil,nil
-
-    if params.GetDamageFunction ~= nil then
-        local b,result,result2 = xpcall(params.GetDamageFunction, debug.traceback, source, target, params)
-
-        if not b then
-            Ext.PrintError(result)
-        else
-            damageList = result
-            deathType = result2
-        end
-    else
-        damageList,deathType = GetBasicDamage(source, target, params.DamageEnum, params.DamageType, params.DamageMultiplier, params.DamageRange)
-    end
-    if damageList then
-        for _,damage in pairs(damageList:ToTable()) do
-            NRD_HitAddDamage(hit, damage.DamageType, damage.Amount)
-        end
-        if not StringHelpers.IsNullOrEmpty(deathType) then
-            NRD_HitSetString(hit, "DeathType", deathType)
         end
         NRD_HitExecute(hit)
     end

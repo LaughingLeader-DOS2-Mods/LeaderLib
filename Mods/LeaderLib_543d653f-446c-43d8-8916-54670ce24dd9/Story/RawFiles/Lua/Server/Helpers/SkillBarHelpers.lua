@@ -258,14 +258,14 @@ function GameHelpers.Skill.CanMemorize(char, skill)
     return true
 end
 
----@param character UUID|NETID|EsvCharacter|EclCharacter
+---@param character CharacterParam
 ---@param skill string
 ---@return boolean
 function GameHelpers.Skill.HasRequirements(character, skill)
     local character = GameHelpers.GetCharacter(character)
-    ---@type StatEntrySkillData
     local skillData = Ext.GetStat(skill)
     if skillData then
+        ---@cast skillData StatEntrySkillData
         local spCost = skillData["Magic Cost"]
         for _,prop in pairs(skillData.Requirements) do
             if prop.Requirement == "Tag" then

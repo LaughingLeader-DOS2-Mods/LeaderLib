@@ -425,7 +425,7 @@ function GameHelpers.Status.GetDuration(object, statusId, asTurns)
 end
 
 ---Returns true if the object has a status with a specific type.
----@param object EsvGameObject|UUID|NETID
+---@param object ObjectParam
 ---@param statusType string|string[]
 ---@return boolean
 function GameHelpers.Status.HasStatusType(object, statusType)

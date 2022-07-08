@@ -35,8 +35,6 @@ local ObjectHandleEffectParams = {
 ---@field Delete fun(self:EffectManagerEsvEffect)
 ---@field Component {Handle:ObjectHandle, TypeId:integer}
 
----@alias LeaderLibEffectManagerTarget UUID|NETID|EsvCharacter|EsvItem|number[]
-
 ---@class LeaderLibObjectLoopEffectSaveData
 ---@field Effect string
 ---@field Bone string
@@ -111,7 +109,7 @@ _INTERNAL.Callbacks = {
 	LoopEffectStarted = {}
 }
 
----@alias EffectManagerLoopEffectStartedCallback fun(effect:string, target:LeaderLibEffectManagerTarget, handle:integer, bone:string|nil):void
+---@alias EffectManagerLoopEffectStartedCallback fun(effect:string, target:ObjectParam|number[], handle:integer, bone:string|nil):void
 
 EffectManager.Register = {
 	---@param callback EffectManagerLoopEffectStartedCallback
@@ -462,7 +460,7 @@ function EffectManager.GetAllEffects(fx, target, distanceThreshold)
 end
 
 ---@param effect string|string[]
----@param target UUID|NETID|EsvCharacter|EsvItem
+---@param target ObjectParam
 function EffectManager.StopEffectsByNameForObject(effect, target)
 	local success = false
 	if type(effect) == "table" then

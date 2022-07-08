@@ -453,7 +453,7 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
     end
 end
 
----@param character EclCharacter|EsvCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param item ItemParam
 ---@return ItemSlot|nil
 function GameHelpers.Item.GetEquippedSlot(character, item)
@@ -467,7 +467,7 @@ function GameHelpers.Item.GetEquippedSlot(character, item)
     return nil
 end
 
----@param character EclCharacter|EsvCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param slot ItemSlot
 ---@return EsvItem|EclItem|nil
 function GameHelpers.Item.GetItemInSlot(character, slot)
@@ -483,7 +483,7 @@ function GameHelpers.Item.GetItemInSlot(character, slot)
     return nil
 end
 
----@param character EclCharacter|EsvCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param template string
 ---@return ItemSlot|nil
 ---@return EsvItem|EclItem|nil
@@ -497,7 +497,7 @@ function GameHelpers.Item.GetEquippedTemplateSlot(character, template)
     return nil
 end
 
----@param character EclCharacter|EsvCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param tag string|string[]
 ---@return ItemSlot|nil
 ---@return EsvItem|EclItem|nil
@@ -517,7 +517,7 @@ end
 if not _ISCLIENT then
 
     ---🔨**Server-Only**🔨  
-    ---@param character EsvCharacter|UUID|NETID
+    ---@param character CharacterParam
     ---@param item ItemParam
     ---@param slot ItemSlot
     ---@return boolean
@@ -537,7 +537,7 @@ if not _ISCLIENT then
     end
 
     ---@deprecated
-    ---@param character EsvCharacter|UUID|NETID
+    ---@param character CharacterParam
     ---@param item ItemParam
     ---@param slot ItemSlot
     ---@return boolean
@@ -547,7 +547,7 @@ if not _ISCLIENT then
 
     ---Removes matching rune templates from items in any equipment slots.
     ---🔨**Server-Only**🔨  
-    ---@param character EclCharacter|EsvCharacter|UUID|NETID
+    ---@param character CharacterParam
     ---@param runeTemplates table
     function GameHelpers.Item.RemoveRunes(character, runeTemplates)
         local char = GameHelpers.GetUUID(character)
@@ -564,7 +564,7 @@ if not _ISCLIENT then
 
     ---Removes an item in a slot, if one exists.
     ---🔨**Server-Only**🔨  
-    ---@param character EsvCharacter|UUID|NETID
+    ---@param character CharacterParam
     ---@param slot ItemSlot
     ---@param delete boolean|nil Whether to destroy the item or simply unequip it.
     ---@param bypassLock boolean|nil Forcefully unequiped items that are locked via ItemLockUnEquip.
@@ -592,7 +592,7 @@ if not _ISCLIENT then
     Ext.NewQuery(ItemIsLockedQRY, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](ITEMGUID)_Item, [out](INTEGER)_Locked")
 end
 
----@param character EclCharacter|EsvCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param item ItemParam
 ---@return boolean
 function GameHelpers.Item.ItemIsEquipped(character, item)
@@ -630,7 +630,7 @@ function GameHelpers.Item.HasTagEquipped(character, tag)
 end
 
 ---Builds a list of items with a specific tag.
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param tag string|string[]
 ---@param asArray boolean|nil Optional param to make the table returned just be an array of UUIDs, instead of <slot,UUID>
 ---@return table<string,EsvItem|EclItem>|EsvItem[]|EclItem[]
@@ -649,7 +649,7 @@ function GameHelpers.Item.FindTaggedEquipment(character, tag, asArray)
 end
 
 ---Gets an array of items with specific tag(s) on a character.
----@param character EsvCharacter|EclCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param tag string|string[]
 ---@param asEsvItem boolean
 ---@return string[]|EsvItem[]

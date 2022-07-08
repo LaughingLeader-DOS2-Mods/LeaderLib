@@ -9,7 +9,6 @@ function VisualManager.Events.OnEquipmentChanged(char,item,equipped)
 	if char == nil or item == nil then
 		return false
 	end
-	
 end
 
 RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)

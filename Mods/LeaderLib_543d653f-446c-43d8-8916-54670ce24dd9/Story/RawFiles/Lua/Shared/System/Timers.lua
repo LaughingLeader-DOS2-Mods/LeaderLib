@@ -161,7 +161,7 @@ end
 
 ---Cancels a timer, with an optional UUID for object timers.
 ---@param timerName string
----@param object UUID|NETID|EsvGameObject|nil
+---@param object ObjectParam|nil
 function Timer.Cancel(timerName, object)
 	_INTERNAL.ClearOneshotSubscriptions(timerName)
 	if not _ISCLIENT then
@@ -347,7 +347,7 @@ end
 
 ---Starts an Osiris timer for an object, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
 ---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
----@param object UUID|NETID|EsvGameObject
+---@param object ObjectParam
 ---@param delay integer
 ---@vararg string|number|boolean|table Optional variable arguments that will be sent to the timer finished callback.
 function Timer.StartObjectTimer(timerName, object, delay, ...)
@@ -416,7 +416,7 @@ end
 
 ---Restarts an object timer.
 ---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
----@param object UUID|NETID|EsvGameObject
+---@param object ObjectParam
 ---@param delay integer
 function Timer.RestartObjectTimer(timerName, object, delay)
 	local uuid = GameHelpers.GetUUID(object)

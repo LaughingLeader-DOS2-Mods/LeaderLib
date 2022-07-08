@@ -465,8 +465,8 @@ local _defaultSkillParams = {
 }
 
 ---Create a HIT status and apply the corresponding skill parameters.
----@param source EsvCharacter|UUID|NETID
----@param target EsvCharacter|EclItem|UUID|NETID
+---@param source CharacterParam
+---@param target ObjectParam
 ---@param skill string
 ---@param params GameHelpers.Damage.ApplySkillDamageParams|nil
 function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
@@ -802,8 +802,8 @@ end
 
 ---@deprecated
 ---Uses the older NRD_HitPrepare syntax to create a hit using skill properties.
----@param source EsvCharacter|UUID|NETID
----@param target EsvCharacter|EclItem|UUID|NETID
+---@param source ObjectParam
+---@param target ObjectParam
 ---@param skill string
 ---@param hitParams table<string,any>|nil
 ---@param mainWeapon StatItem|nil

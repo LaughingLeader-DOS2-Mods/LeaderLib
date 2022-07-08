@@ -227,7 +227,7 @@ end
 RefreshSkillBar = GameHelpers.UI.RefreshSkillBar
 
 ---Refresh the skillbar's cooldowns.
----@param client UUID|NETID|EsvCharacter
+---@param client CharacterParam
 ---@param delay integer
 function GameHelpers.UI.RefreshSkillBarAfterDelay(client, delay)
 	local uuid = GameHelpers.GetUUID(client)

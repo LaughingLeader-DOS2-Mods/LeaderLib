@@ -60,12 +60,12 @@ end
 
 ---A parameter type that can be either item userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetItem.
 ---@see GameHelpers.GetItem
----@alias ItemParam EsvItem|EclItem|UUID|NETID
+---@alias ItemParam EsvItem|EclItem|UUID|NETID|ObjectHandle
 
 ---A parameter type that can be either character userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetCharacter.
 ---@see GameHelpers.GetCharacter
----@alias CharacterParam EsvCharacter|EclCharacter|UUID|NETID
----@alias ObjectParam EsvCharacter|EclCharacter|EsvItem|EclItem|UUID|NETID
+---@alias CharacterParam EsvCharacter|EclCharacter|UUID|NETID|ObjectHandle
+---@alias ObjectParam EsvCharacter|EclCharacter|EsvItem|EclItem|UUID|NETID|ObjectHandle
 
 ---@class LeaderLibPersistentVars
 local defaultPersistentVars = {

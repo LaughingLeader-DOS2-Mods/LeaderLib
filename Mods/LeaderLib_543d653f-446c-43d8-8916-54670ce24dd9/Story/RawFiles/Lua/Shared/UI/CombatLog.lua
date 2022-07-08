@@ -283,7 +283,7 @@ else
 		end
 	end
 
-	---@param client EsvCharacter|UUID|NETID
+	---@param client CharacterParam
 	---@param filterId string|integer
 	---@param text string
 	function CombatLog.AddTextToPlayer(client, filterId, text)

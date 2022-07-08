@@ -55,15 +55,15 @@ setmetatable(_cachedBonusWeapon, {__mode = "kv"})
 
 local _SelfPropertyContext = Data.PropertyContext.Self | Data.PropertyContext.SelfOnHit
 
----@param source EsvCharacter|EsvItem|UUID|NETID
----@param target EsvCharacter|EsvItem|UUID|NETID
+---@param source ObjectParam
+---@param target ObjectParam
 ---@param fromSkill string|nil If this is resulting from a skill hit.
 function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 	target = GameHelpers.TryGetObject(target)
 	if type(source) ~= "userdata" then
 		source = GameHelpers.TryGetObject(source)
 	end
-	if source and source.GetStatuses then
+	if target and source and source.GetStatuses then
 		local justApplied = PersistentVars.JustAppliedBonusWeaponStatuses[source.MyGuid]
 		if justApplied == true 
 		or (fromSkill and type(justApplied) == "table" and justApplied[fromSkill] == true) then

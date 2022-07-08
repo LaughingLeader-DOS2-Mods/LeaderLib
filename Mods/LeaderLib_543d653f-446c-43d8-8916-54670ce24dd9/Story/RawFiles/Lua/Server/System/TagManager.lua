@@ -49,7 +49,7 @@ TagManager.Register.TagObject(function(object, isInCombat, isCharacter, ...)
 	end
 end)
 
----@param object UUID|NETID|EsvCharacter|EsvItem
+---@param object ObjectParam
 ---@param isInCombat boolean|nil
 ---@param ... any Optional parameters to pass to listeners.
 function TagManager:TagObject(object, isInCombat, ...)

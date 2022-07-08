@@ -318,7 +318,7 @@ function GameHelpers.GetDialogInstance(dialog, ...)
 	return nil
 end
 
----@param object EsvCharacter|EsvItem|UUID|NETID
+---@param object ObjectParam
 ---@param level integer
 function GameHelpers.SetExperienceLevel(object, level)
 	if type(object) ~= "userdata" then
@@ -371,7 +371,7 @@ function GameHelpers.SetExperienceLevel(object, level)
 	return false
 end
 
----@param character EsvCharacter|UUID|NETID
+---@param character CharacterParam
 ---@param level integer
 function GameHelpers.Character.SetLevel(character, level)
 	return GameHelpers.SetExperienceLevel(character, level)

@@ -680,7 +680,7 @@ end
 GameHelpers.Status.IsDisabled = GameHelpers.Character.IsDisabled
 
 ---Returns true if the object is sneaking or has an INVISIBLE type status.
----@param character EsvCharacter|UUID|NETID
+---@param character CharacterParam
 ---@return boolean
 function GameHelpers.Character.IsSneakingOrInvisible(character)
 	if GameHelpers.Status.IsActive(character, "SNEAKING")

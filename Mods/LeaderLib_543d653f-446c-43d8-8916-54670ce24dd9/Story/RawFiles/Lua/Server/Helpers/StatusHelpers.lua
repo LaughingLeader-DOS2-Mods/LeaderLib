@@ -346,7 +346,7 @@ end
 ---@alias GameHelpers.Status.Remove.CanRemoveCallback fun(target:string, statusId:string, targetIsItem:boolean):boolean
 
 ---Removed a status from a target, or targets around a position.
----@param target EsvCharacter|EsvItem|UUID|NETID|number[] Either an item/character related value, an array of characters/items, or a position array.
+---@param target ObjectParam|number[] Either an item/character related value, an array of characters/items, or a position array.
 ---@param status string|string[] A status or array of statuses to remove.
 ---@param radius number|nil If target is a position array, this is the radius to look for target objects.
 ---@param canTargetItems boolean|nil If true, items can be targeted by the positional search as well.

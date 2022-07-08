@@ -41,6 +41,8 @@ local _translatedStringUpdate = {}
 ---@field AutoReplacePlaceholders boolean|nil If true, GameHelpers.Tooltip.ReplacePlaceholders is called when the Value is updated.
 ---@field Format string|nil Text to wrap around the content. Should include an %s for the content's position in the string, such as <font color='#FF0000'>%s</font>
 
+---Wrapper class around a translated string or string key, that auto-updates itself with the translated value when the session is loaded.   
+---Allows easily replacing placeholders ([1], [2] etc) with variables.  
 ---@class TranslatedString:TranslatedStringOptions
 local TranslatedString = {
 	Type = "TranslatedString",

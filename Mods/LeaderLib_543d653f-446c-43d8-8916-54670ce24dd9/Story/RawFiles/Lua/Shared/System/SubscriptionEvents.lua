@@ -523,7 +523,7 @@ if not _ISCLIENT then
 	---@field Target EsvCharacter|EsvItem|number[]
 	---@field TargetIsObject boolean
 	
-	---Called via AttackManager, when a character starts a basic attack.
+	---Called via AttackManager, when a character starts a basic attack.  
 	---🔨**Server-Only**🔨
 	---@see LeaderLibAttackManager
 	---@type LeaderLibSubscribableEvent<OnBasicAttackStartEventArgs>

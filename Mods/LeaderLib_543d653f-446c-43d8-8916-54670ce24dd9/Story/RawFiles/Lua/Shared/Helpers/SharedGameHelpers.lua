@@ -126,9 +126,9 @@ local function TryGetObject(id)
 end
 
 ---Tries to get a game object if the target exists, otherwise returns nil.
----@param id string|integer|ObjectHandle
+---@param id ObjectParam|ObjectHandle
 ---@param returnOriginal boolean|nil Return the original value if failed. Defaults to false, so nil is returned.
----@return EsvCharacter|EsvItem|nil
+---@return EsvCharacter|EclCharacter|EsvItem|EclItem
 local function _tryGetObject(id, returnOriginal)
 	local b,result = _pcall(TryGetObject, id)
 	if not b then
@@ -312,7 +312,7 @@ function GameHelpers.GetItemTags(item, inDictionaryFormat, skipStats)
 	return tbl
 end
 
----@param character EsvCharacter|EclCharacter|UUID|NETID|ObjectHandle
+---@param character CharacterParam
 ---@param tag string
 function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	if _type(character) ~= "userdata" then
@@ -446,7 +446,7 @@ function GameHelpers.GetNetID(object)
 end
 
 ---Tries to get a UUID on the server or NetID on the client.
----@param object EsvCharacter|EclCharacter|string|number
+---@param object CharacterParam
 ---@return UUID|NETID
 function GameHelpers.GetCharacterID(object)
 	local t = _type(object)
@@ -545,7 +545,7 @@ function GameHelpers.ObjectExists(object)
 	return false
 end
 
----@param object UUID|NETID|EsvGameObject|ObjectHandle
+---@param object ObjectParam
 ---@return boolean
 function GameHelpers.ObjectIsDead(object)
 	if Ext.OsirisIsCallable() then
@@ -583,7 +583,7 @@ function GameHelpers.GetGameDifficulty()
 	return Data.Difficulty(Ext.GetDifficulty())	
 end
 
----@param obj EsvCharacter|EsvItem|UUID|NETID
+---@param obj ObjectParam
 ---@param flag string
 function GameHelpers.ObjectHasFlag(obj, flag)
 	if not _ISCLIENT and _osirisIsCallable() then
@@ -599,7 +599,7 @@ function GameHelpers.ObjectHasFlag(obj, flag)
 end
 
 ---Get an object's root template UUID.
----@param obj EsvCharacter|EclCharacter|EsvItem|EclItem|UUID|NETID
+---@param obj ObjectParam
 ---@return string
 function GameHelpers.GetTemplate(obj)
 	if not _ISCLIENT and _osirisIsCallable() then

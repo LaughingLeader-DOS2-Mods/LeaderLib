@@ -58,9 +58,9 @@ if _ISCLIENT then
 	---@field WeaponOverlayFX boolean
 	---@field Wings boolean
 
-	---Gets all active weapon visuals for a character.
-	---🔧**Client-Only**🔧
-	---@param character UUID|NETID|EclCharacter
+	---Gets all active weapon visuals for a character.  
+	---🔧**Client-Only**🔧  
+	---@param character CharacterParam
 	---@param includeShield boolean|nil If true, include shield visuals.
 	---@return ExtenderClientVisualAttachment[]
 	function GameHelpers.Visual.GetWeaponVisuals(character, includeShield)
@@ -89,7 +89,7 @@ if _ISCLIENT then
 
 	---Gets all attached effect visuals for a character's weapons. These may be visuals such as the effect damage type overlays.
 	---🔧**Client-Only**🔧
-	---@param character UUID|NETID|EclCharacter
+	---@param character CharacterParam
 	---@param includeShield boolean|nil If true, include shield visuals.
 	---@return ExtenderClientVisualAttachment[]
 	function GameHelpers.Visual.GetAttachedWeaponEffectVisuals(character, includeShield)

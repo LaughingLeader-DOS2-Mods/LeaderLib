@@ -133,7 +133,7 @@ local function _GetGMTargetCharacter()
 	if ui then
 		local this = ui:GetRoot()
 		if this then
-			return _GetObjectFromDouble(ui.targetHandle, _GetCharacter)
+			return _GetObjectFromDouble(this.targetHandle, _GetCharacter)
 		end
 	end
 	return nil

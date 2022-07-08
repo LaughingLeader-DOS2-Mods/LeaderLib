@@ -12,6 +12,7 @@ local _IsNaN = GameHelpers.Math.IsNaN
 local _GetUIByType = Ext.GetUIByType
 local _GetUIGetByPath = Ext.GetBuiltinUI
 local _ObjectIsItem = GameHelpers.Ext.ObjectIsItem
+local _ItemIsObject = GameHelpers.Item.IsObject
 
 local _GetStat = Ext.GetStat
 local _GetTranslatedString = Ext.GetTranslatedString
@@ -1159,7 +1160,7 @@ local _SlotNames = {
 
 ---@param item EclItem
 local function _GetItemSlotName(item)
-	if not _ObjectIsItem(item) and item.StatsId ~= "" and item.StatsId ~= nil and not _itemRarity[item.StatsId] then
+	if not _ItemIsObject(item) and item.StatsId ~= "" and item.StatsId ~= nil and not _itemRarity[item.StatsId] then
 		---@type StatEntryWeapon
 		local stat = _GetStat(item.StatsId)
 		if stat then
@@ -1179,8 +1180,8 @@ local _equipmentPattern = "<font color=\"#ffffff\">%s</font><font size=\"15\"><b
 Ext.RegisterUITypeInvokeListener(_UITYPE.enemyHealthBar, "setText", function(ui, event, text, levelText, shortenWidth)
 	local cursor = _GetPickingState()
 	if cursor and _IsValidHandle(cursor.HoverItem) then
-		---@type EclItem
 		local item = _GetItem(cursor.HoverItem)
+		---@cast item EclItem
 		if item and item.RootTemplate and item.RootTemplate.Tooltip > 0 then
 			local objectHandleDouble = _HandleToDouble(cursor.HoverItem)
 			local request = _CreateRequest()

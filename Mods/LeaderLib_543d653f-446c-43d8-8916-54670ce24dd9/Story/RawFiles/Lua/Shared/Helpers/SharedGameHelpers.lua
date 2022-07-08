@@ -445,10 +445,10 @@ function GameHelpers.GetNetID(object)
 	return nil
 end
 
----Tries to get a UUID on the server or NetID on the client.
----@param object CharacterParam
+---Tries to get a `UUID` on the server side or `NetID` on the client side.
+---@param object ObjectParam
 ---@return UUID|NETID
-function GameHelpers.GetCharacterID(object)
+function GameHelpers.GetObjectID(object)
 	local t = _type(object)
 	if t == "userdata" and object.NetID then
 		if not _ISCLIENT then
@@ -457,7 +457,7 @@ function GameHelpers.GetCharacterID(object)
 			return object.NetID
 		end
 	elseif t == "string" or t == "number" then
-		local obj = GameHelpers.GetCharacter(object)
+		local obj = GameHelpers.TryGetObject(object)
 		if obj then
 			if not _ISCLIENT then
 				return obj.MyGuid

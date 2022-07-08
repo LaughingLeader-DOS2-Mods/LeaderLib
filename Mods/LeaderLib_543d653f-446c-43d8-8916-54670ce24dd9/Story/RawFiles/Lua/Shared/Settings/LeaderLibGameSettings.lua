@@ -81,7 +81,7 @@ local DefaultSettings = {
 			Skill = false,
 			Status = false,
 		},
-		HideChatLog = Ext.IsDeveloperMode(),
+		HideChatLog = false,
 		ToggleCombatLog = false
 	},
 	EnableDeveloperTests = false,

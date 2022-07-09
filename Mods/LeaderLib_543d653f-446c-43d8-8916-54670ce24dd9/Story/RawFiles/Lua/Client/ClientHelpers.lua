@@ -47,9 +47,12 @@ function GameHelpers.Client.GetGMTargetCharacter()
 	local character = nil
 	local ui = Ext.GetUIByType(Data.UIType.GMPanelHUD)
 	if ui then
-		local handle = ui:GetValue("targetHandle", "number")
-		if handle and handle ~= 0 then
-			character = GameHelpers.Client.TryGetCharacterFromDouble(handle)
+		local this = ui:GetRoot()
+		if this then
+			local handle = this.targetHandle
+			if not GameHelpers.Math.IsNaN(handle) and handle ~= 0 then
+				character = GameHelpers.Client.TryGetCharacterFromDouble(handle)
+			end
 		end
 	end
 	return character
@@ -135,14 +138,16 @@ function GameHelpers.Client.IsGameMaster(ui, this)
 	return false
 end
 
-local function ProcessDoubleHandle(double)
+---@param double number
+---@param func fun(handle:ObjectHandle):EclCharacter|EclItem
+local function ProcessDoubleHandle(double, func)
 	if not GameHelpers.Math.IsNaN(double) then
 		local handle = Ext.DoubleToHandle(double)
-		if handle then
-			return Ext.GetCharacter(handle)
+		if GameHelpers.IsValidHandle(handle) then
+			return func(handle)
 		end
 	else
-		fprint(LOGLEVEL.WARNING, "[GameHelpers.Client.TryGetCharacterFromDouble] Double handle is NaN (not a number)!")
+		fprint(LOGLEVEL.WARNING, "[GameHelpers.Client.ProcessDoubleHandle] Double handle is NaN (not a number)! Double(%s)", double)
 		return nil
 	end
 end
@@ -151,18 +156,22 @@ end
 ---@param double number
 ---@return EclCharacter
 function GameHelpers.Client.TryGetCharacterFromDouble(double)
-	local b,character = xpcall(ProcessDoubleHandle, debug.traceback, double)
+	local b,character = pcall(ProcessDoubleHandle, double, GameHelpers.GetCharacter)
 	if b then
 		return character
 	end
 	return nil
 end
 
-local function _pairs(t, var)
-	var = var + 1
-	local value = t[var]
-	if value == nil then return end
-	return var, value
+---Tries to get an item from a double value.
+---@param double number
+---@return EclItem
+function GameHelpers.Client.TryGetItemFromDouble(double)
+	local b,item = pcall(ProcessDoubleHandle, double, GameHelpers.GetItem)
+	if b then
+		return item
+	end
+	return nil
 end
 
 ---@param arr FlashArray<any>

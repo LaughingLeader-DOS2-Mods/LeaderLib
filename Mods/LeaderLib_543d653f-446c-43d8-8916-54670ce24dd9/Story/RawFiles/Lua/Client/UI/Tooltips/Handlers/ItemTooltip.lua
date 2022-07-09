@@ -42,7 +42,8 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				if tooltip:GetElement("SkillDescription") ~= nil then
 					if _EXTVERSION >= 56 then
 						---Invokes skill tooltip listeners if the item has skill elements
-						for skill,b in pairs(GameHelpers.Item.GetUseActionSkills(item, true)) do
+						local skills,itemParams = GameHelpers.Item.GetUseActionSkills(item, true)
+						for skill,b in pairs(skills) do
 							tooltip.IsFromItem = true
 							tooltip.ItemHasSkill = true
 							--TooltipHandler.OnSkillTooltip(character, skill, tooltip)

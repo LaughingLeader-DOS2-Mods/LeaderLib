@@ -841,19 +841,29 @@ end
 ---@param inKeyValueFormat boolean|nil If true, the table is returned as table<skill,boolean>
 ---@param consumableOnly boolean|nil
 ---@return string[]|table<string,boolean> skills
----@return boolean isConsumeable
+---@return {IsSkillbook:boolean, IsConsumable:boolean, CastsSkill:boolean} itemParams
 function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableOnly)
 	local skills = {}
-    local isConsumeable = false
+    local itemParams = {
+        IsSkillbook = false,
+        IsConsumable = false,
+        CastsSkill = false
+    }
 	if _EXTVERSION >= 56 then
         item = GameHelpers.GetItem(item)
 		if item and item.RootTemplate and item.RootTemplate.OnUsePeaceActions then
 			for _,v in pairs(item.RootTemplate.OnUsePeaceActions) do
+                if v.Type == "SkillBook" then
+                    itemParams.IsSkillbook = true
+                elseif v.Type == "UseSkill" then
+                    itemParams.CastsSkill = true
+                end
+                if (v.Type == "UseSkill" or v.Type == "SkillBook") and v.Consume then
+                    itemParams.IsConsumable = true
+                end
+
 				if (v.Type == "UseSkill" or v.Type == "SkillBook") and not StringHelpers.IsNullOrWhitespace(v.SkillID)
                 and (not consumableOnly or v.Consume == true) then
-                    if v.Consume then
-                        isConsumeable = true
-                    end
                     if not inKeyValueFormat then
                         skills[#skills+1] = v.SkillID
                     else
@@ -863,7 +873,7 @@ function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableO
 			end
 		end
 	end
-    return skills,isConsumeable
+    return skills,itemParams
 end
 
 ---@param item ItemParam

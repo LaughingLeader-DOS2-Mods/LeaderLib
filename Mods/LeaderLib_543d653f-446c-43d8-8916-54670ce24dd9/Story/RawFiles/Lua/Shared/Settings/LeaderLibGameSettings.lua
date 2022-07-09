@@ -1,4 +1,4 @@
----@class LeaderLibDefaultSettings
+---@class LeaderLibGameSettings
 local DefaultSettings = {
 	StarterTierSkillOverrides = false,
 	LowerMemorizationRequirements = false,
@@ -82,7 +82,11 @@ local DefaultSettings = {
 			Status = false,
 		},
 		HideChatLog = false,
-		ToggleCombatLog = false
+		ToggleCombatLog = false,
+		FadeInventoryItems = {
+			Enabled = false,
+			KnownSkillbooks = 30,
+		}
 	},
 	EnableDeveloperTests = false,
 	Version = Ext.GetModInfo(ModuleUUID).Version
@@ -102,9 +106,9 @@ local function cloneTable(orig)
 	return copy
 end
 
----@class LeaderLibGameSettings
+---@class LeaderLibGameSettingsWrapper
 local LeaderLibGameSettings = {
-	---@type LeaderLibDefaultSettings
+	---@type LeaderLibGameSettings
 	Settings = cloneTable(DefaultSettings),
 	Default = cloneTable(DefaultSettings),
 	Loaded = false
@@ -120,7 +124,7 @@ function LeaderLibGameSettings:ToString()
     return Common.JsonStringify(copy)
 end
 
----@return LeaderLibGameSettings
+---@return LeaderLibGameSettingsWrapper
 function LeaderLibGameSettings:Create()
     local this =
     {
@@ -297,10 +301,11 @@ end
 Classes.LeaderLibGameSettings = LeaderLibGameSettings
 GameSettings = LeaderLibGameSettings:Create()
 
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
+
 Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
 	--fprint(LOGLEVEL.TRACE, "[LeaderLib_SyncGameSettings:%s] Loading settings.", Ext.IsClient() and "CLIENT" or "SERVER")
-	if isClient then
+	if _ISCLIENT then
 		local clientSettings = {}
 		if GameSettings and GameSettings.Settings and GameSettings.Settings.Client then
 			for k,v in pairs(GameSettings.Settings.Client) do
@@ -321,10 +326,12 @@ Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
 	GameSettings:Apply()
 	GameSettings.Loaded = true
 
-	if isClient then
+	if _ISCLIENT then
 		if not Client.IsHost then
 			GameSettingsManager.Save()
 		end
-		SyncStatOverrides(GameSettings, false)
+		SyncStatOverrides(GameSettings)
 	end
+
+	Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings})
 end)

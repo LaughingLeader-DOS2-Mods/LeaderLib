@@ -187,8 +187,8 @@ end
 if _EXTVERSION >= 56 then
 	Ext.RegisterOsirisListener("CanUseItem", 3, "after", function(charGUID, itemGUID, requestId)
 		if ObjectExists(charGUID) == 1 and ObjectExists(itemGUID) == 1 then
-			local skills,isConsumeable = GameHelpers.Item.GetUseActionSkills(itemGUID, false, false)
-			if isConsumeable and skills[1] then
+			local skills,data = GameHelpers.Item.GetUseActionSkills(itemGUID, false, false)
+			if data.IsConsumable and skills[1] then
 				charGUID = StringHelpers.GetUUID(charGUID)
 				itemGUID = StringHelpers.GetUUID(itemGUID)
 				local item = GameHelpers.GetItem(itemGUID)

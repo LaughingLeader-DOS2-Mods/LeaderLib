@@ -174,6 +174,7 @@ local text = {
 	Section_Client = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_Client"),
 	Section_StatusHider = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_StatusHider", "Status Hiding"),
 	Section_Tooltips_Delay = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_TooltipsDelay", "Tooltip Delays"),
+	Section_InventoryFade = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_InventoryFade", "Inventory Item Fading"),
 	Button_ClearWhitelist = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearWhitelist"),
 	Button_ClearWhitelist_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearWhitelist_Description"),
 	Button_ClearBlacklist = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearBlacklist"),
@@ -210,6 +211,12 @@ local text = {
 			Status_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Status_Description", "Enable a 0.5 second delay for status tooltips (statuses next to portraits, and the examine window)."),
 			Skill = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Skill", "Delay Skill Tooltips"),
 			Skill_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Skill_Description", "Enable a 0.5 second delay for skill tooltips."),
+		},
+		Fade = {
+			Enabled = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FadeInventory_Enabled", "Enabled"),
+			Enabled_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FadeInventory_Description", "If enabled, specific items will be less visible in the inventory, such as memorized skillsbooks being less opaque."),
+			KnownSkillbooks = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_KnownSkillbooks", "Known Skillbooks"),
+			KnownSkillbooks_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_KnownSkillbooks_Description", "Fade skillbooks that have already been memorized by this amount.<br>Default: 30%<br><font color='#FF9900'>Fading is disabled at 100 (fully visible), while 0 makes the item completely invisible.</font>"),
 		},
 	},
 }
@@ -348,6 +355,12 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Skill"), text.Client.EnableTooltipDelay.Skill.Value, true, settings.Client.EnableTooltipDelay.Skill and 1 or 0, false, text.Client.EnableTooltipDelay.Skill_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Status"), text.Client.EnableTooltipDelay.Status.Value, true, settings.Client.EnableTooltipDelay.Status and 1 or 0, false, text.Client.EnableTooltipDelay.Status_Description.Value)
 
+		if _EXTVERSION >= 56 then
+			mainMenu.addMenuLabel(text.Section_InventoryFade.Value)
+			mainMenu.addMenuCheckbox(AddControl(settings.Client.FadeInventoryItems, "Enabled"), text.Client.Fade.Enabled.Value, true, settings.Client.FadeInventoryItems.Enabled and 1 or 0, false, text.Client.Fade.Enabled_Description.Value)
+			mainMenu.addMenuSlider(AddControl(settings.Client.FadeInventoryItems, "KnownSkillbooks"), text.Client.Fade.KnownSkillbooks.Value, settings.Client.FadeInventoryItems.KnownSkillbooks, 0, 100, 1, false, text.Client.Fade.KnownSkillbooks_Description.Value)
+		end
+
 		mainMenu.addMenuLabel(text.Section_StatusHider.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "HideAll"), text.Client.HideStatuses.Value, true, settings.Client.StatusOptions.HideAll and 1 or 0, false, text.Client.HideStatuses_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "AffectHealthbar"), text.Client.StatusOptions_AffectHealthbar.Value, true, settings.Client.StatusOptions.AffectHealthbar and 1 or 0, false, text.Client.StatusOptions_AffectHealthbar_Description.Value)
@@ -422,12 +435,12 @@ function GameSettingsMenu.CommitChanges()
 			--Ext.Print(string.format("[LeaderLib:GameSettingsMenu.CommitChanges] Set %s to %s Data(%s) EqualsLast(%s)", v.Name, v.Value, v.Data, v.Value ~= v.Last))
 		end
 	end
-	Ext.Print("Committed LeaderLib_GameSettings changes.")
 	GameSettingsManager.Save()
 	GameSettings:Apply()
 	if Client.IsHost then
 		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", GameSettings:ToString())
 	end
+	Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings})
 	--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
 end
 

@@ -287,12 +287,12 @@ local function AdjustAP(stat, settings)
 	return changedStat
 end
 
----@param data LeaderLibGameSettings|nil
+---@param data LeaderLibGameSettingsWrapper|nil
 ---@param statsLoadedState boolean|nil
 local function OverrideStats(data, statsLoadedState)
 	--fprint(LOGLEVEL.TRACE, "[LeaderLib:SyncStatOverrides:%s] Syncing stat overrides from GameSettings.", isClient and "CLIENT" or "SERVER")
 	if data == nil then
-		---@type LeaderLibGameSettings
+		---@type LeaderLibGameSettingsWrapper
 		data = GameSettingsManager.Load()
 	end
 	if not data then

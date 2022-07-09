@@ -104,6 +104,13 @@ Events.ModSettingsSynced = Classes.SubscribableEvent:Create("ModSettingsSynced",
 	ArgsKeyOrder={"UUID", "Settings"}
 })
 
+---@class GameSettingsChangedEventArgs
+---@field Settings LeaderLibGameSettings
+
+---GameSettings changes are applied in the options menu. 
+---@type LeaderLibSubscribableEvent<GameSettingsChangedEventArgs>
+Events.GameSettingsChanged = Classes.SubscribableEvent:Create("GameSettingsChanged")
+
 ---@class TurnDelayedEventArgs
 ---@field UUID UUID The character UUID.
 ---@field Character EsvCharacter|EclCharacter

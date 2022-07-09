@@ -9,17 +9,17 @@ function GameSettingsManager.GetSettings()
 	return GameSettings.Settings
 end
 
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 local self = GameSettingsManager
 
 function GameSettingsManager.Apply(sync)
-	if not isClient and sync then
+	if not _ISCLIENT and sync then
 		SyncStatOverrides(GameSettings, true)
 	end
 	GameSettings:Apply()
 end
 
----@return LeaderLibGameSettings
+---@return LeaderLibGameSettingsWrapper
 function GameSettingsManager.Load(sync)
 	local b,result = xpcall(function()
 		return GameSettings:LoadString(Ext.LoadFile("LeaderLib_GameSettings.json"))
@@ -64,7 +64,7 @@ function GameSettingsManager.Sync(id)
 	if not GameSettings.Loaded then
 		GameSettingsManager.Load(false)
 	end
-	if not isClient then
+	if not _ISCLIENT then
 		if id ~= nil then
 			GameHelpers.Net.PostToUser(id, "LeaderLib_SyncGameSettings", GameSettings:ToString())
 		else
@@ -75,16 +75,16 @@ function GameSettingsManager.Sync(id)
 	end
 end
 
-if not isClient then
+if not _ISCLIENT then
 	Ext.RegisterNetListener("LeaderLib_GameSettingsChanged", function(call, gameSettingsStr)
-		fprint(LOGLEVEL.TRACE, "[%s]", call)
 		GameSettings:LoadString(gameSettingsStr)
 		self.Apply(true)
+		Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings})
 	end)
 end
 
 Ext.RegisterListener("GameStateChanged", function(from, to)
-	fprint(LOGLEVEL.TRACE, "[GameStateChanged:%s] (%s) => (%s)", isClient and "CLIENT" or "SERVER", from, to)
+	fprint(LOGLEVEL.TRACE, "[GameStateChanged:%s] (%s) => (%s)", _ISCLIENT and "CLIENT" or "SERVER", from, to)
 end)
 
 --Ext.RegisterListener("ModuleLoadStarted", LoadSettings)

@@ -174,7 +174,7 @@ function RegisterLeaveActionPrefix(prefix)
 	table.insert(Vars.LeaveActionData.Prefixes, prefix)
 end
 
----@type LeaderLibGameSettings
+---@type LeaderLibGameSettingsWrapper
 GameSettings = {Settings = {}}
 
 ---@class GlobalSettings

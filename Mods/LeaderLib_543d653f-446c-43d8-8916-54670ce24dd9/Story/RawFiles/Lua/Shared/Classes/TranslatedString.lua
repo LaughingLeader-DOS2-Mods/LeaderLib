@@ -189,8 +189,10 @@ function TranslatedString:ReplacePlaceholders(...)
 			end
 		end
 	end
-	if str ~= "" and #values > 0 then
-		for i,v in _pairs(values) do
+	local len = #values
+	if str ~= "" and len > 0 then
+		for i=1,len do
+			local v = values[i]
 			local pattern = _format("%%[%i%%]", i)
 			local t = _type(v)
 			if t == "number" then
@@ -203,7 +205,8 @@ function TranslatedString:ReplacePlaceholders(...)
 				_printWarning(_format("[TranslatedString:ReplacePlaceholders(%s)] Entry (%s) in params is a table (%s). Joining with ', '", self.Key or self.Handle, i, Lib.serpent.line(v, {SimplifyUserdata=true})))
 				str = _gsub(str, pattern, _gsub(StringHelpers.Join(", ", v), "%%", "%%%%"))
 			elseif t == "string" then
-				str = _gsub(str, pattern, _gsub(v, "%%", "%%%%"))
+				v = _gsub(v, "%%", "%%%%")
+				str = _gsub(str, pattern, v)
 			end
 		end
 	end

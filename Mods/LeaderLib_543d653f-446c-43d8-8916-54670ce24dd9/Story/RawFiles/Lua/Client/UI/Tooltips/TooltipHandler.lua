@@ -85,12 +85,12 @@ local function RegisterTooltipHandlers()
 		_r.Rune(TooltipHandler.OnRuneTooltip)
 		_r.CustomStat(TooltipHandler.OnCustomStatTooltip)
 		_r.Generic(TooltipHandler.OnGenericTooltip)
-		_r.Surface(function (character, surfaceType, tooltip)
-			local description = tooltip:GetDescriptionElement()
-			if description then
-				description.Label = description.Label .. "<br><font color='#33FF00'>Water can be transformed into poison with Contamination.</font>"
-			end
-		end, "Water")
+		-- _r.Surface(function (character, surfaceType, tooltip)
+		-- 	local description = tooltip:GetDescriptionElement()
+		-- 	if description then
+		-- 		description.Label = description.Label .. "<br><font color='#33FF00'>Water can be transformed into poison with Contamination.</font>"
+		-- 	end
+		-- end, "Water")
 	end
 end
 

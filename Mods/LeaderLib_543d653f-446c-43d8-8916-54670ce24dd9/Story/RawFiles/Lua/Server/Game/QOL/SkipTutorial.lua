@@ -150,7 +150,7 @@ function SkipTutorial.Initialize()
 		},
 		FJ_FortJoy_Main = {
 			StartTrigger = "34d67d87-441c-427d-97bb-4cc506b42fe0",
-			---@param settings LeaderLibDefaultSettings
+			---@param settings LeaderLibGameSettings
 			Setup = function(settings)
 				Ext.Print("[LeaderLib:SkipTutorial] Running Fort Joy setup.")
 

@@ -124,7 +124,7 @@ local sheetEvents = {
 }
 
 local function RegisterListeners()
-	---@type LeaderLibGameSettings
+	---@type LeaderLibGameSettingsWrapper
 	local data = GameSettings
 	if GameSettings == nil or GameSettings.Loaded == false then
 		-- This function may run before the game is "Running" and the settings load normally.

@@ -1,7 +1,14 @@
 local _EXTVERSION = Ext.Version()
 
+local pairs = pairs
+
+local _GetUseActionSkills = GameHelpers.Item.GetUseActionSkills
+local _TryGetItemFromDouble = GameHelpers.Client.TryGetItemFromDouble
+local _GetTemplate = GameHelpers.GetTemplate
+
 local PartyInventory = Classes.UIWrapper:CreateFromType(Data.UIType.partyInventory, {ControllerID=Data.UIType.partyInventory_c, IsControllerSupported=true})
 local ContainerInventory = Classes.UIWrapper:CreateFromType(Data.UIType.containerInventory.Default, {ControllerID=Data.UIType.containerInventory.Default, IsControllerSupported=true})
+local Trade = Classes.UIWrapper:CreateFromType(Data.UIType.trade, {ControllerID=Data.UIType.trade_c, IsControllerSupported=true})
 
 ---@param ui UIObject
 local function UnlockInventories(ui)
@@ -72,7 +79,7 @@ if _EXTVERSION >= 56 then
 							local slot_mc = inv.content_array[j]
 							if slot_mc then
 								if slot_mc.itemHandle ~= 0 then
-									local item = GameHelpers.Client.TryGetItemFromDouble(slot_mc.itemHandle)
+									local item = _TryGetItemFromDouble(slot_mc.itemHandle)
 									if item then
 										entries[#entries+1] = {SlotMC=slot_mc, Item = item}
 									end
@@ -109,7 +116,7 @@ if _EXTVERSION >= 56 then
 					local slot_mc = this.inv_mc.slot_array[i]
 					if slot_mc then
 						if slot_mc.itemHandle ~= 0 then
-							local item = GameHelpers.Client.TryGetItemFromDouble(slot_mc.itemHandle)
+							local item = _TryGetItemFromDouble(slot_mc.itemHandle)
 							if item then
 								entries[#entries+1] = {SlotMC=slot_mc, Item = item}
 							end
@@ -134,9 +141,36 @@ if _EXTVERSION >= 56 then
 		end
 	end
 
-	---@type boolean|number
-	local adjustedSlotColor = false
-	local lastEnabled = nil
+	local BACKGROUND_COLOR = 0xFF0b0907
+	---RootTemplate to Skills
+	---@type table<string, table<string, boolean>>
+	local _cachedSkills = {}
+
+	---@param item EclItem
+	---@param skillsDict table<string, table>
+	local function SkillbookIsKnown(item, skillsDict)
+		local template = _GetTemplate(item)
+		local skills = _cachedSkills[template]
+		local isSkillBook = skills ~= nil
+		if not skills then
+			local itemSkills,itemParams = _GetUseActionSkills(item, true, true)
+			if itemParams.IsSkillbook then
+				isSkillBook = true
+				skills = itemSkills
+				_cachedSkills[item.StatsId] = skills
+			end
+		end
+
+		if isSkillBook then
+			for id,b in pairs(skills) do
+				if skillsDict[id] then
+					return true
+				end
+			end
+		end
+
+		return false
+	end
 
 	local function AdjustSlots(isContainer, slotSize, posOffset)
 		posOffset = posOffset or -1
@@ -147,6 +181,7 @@ if _EXTVERSION >= 56 then
 		local enabled = settings.Client.FadeInventoryItems.Enabled
 		local player = Client:GetCharacter()
 		if player then
+			local skillsDict = player.SkillManager.Skills
 			local items = nil
 			if not isContainer then
 				items = GetInventoryItems()
@@ -155,29 +190,22 @@ if _EXTVERSION >= 56 then
 			end
 			for entry in items do
 				local matched = false
+				local gfx = entry.SlotMC.graphics
 				if enabled and sfade > 0 then
-					local skills,itemParams = GameHelpers.Item.GetUseActionSkills(entry.Item, true, true)
-					if itemParams.IsSkillbook then
-						for id,b in pairs(skills) do
-							if player.SkillManager.Skills[id] then
-								--local size = entry.SlotMC.width
-								local gfx = entry.SlotMC.graphics
-								--gfx.lineStyle(1,16711680)
-								gfx.clear()
-								gfx.beginFill(0xFF0b0907, sfade)
-								--gfx.beginFill(0xFF0000, 1)
-								--gfx.drawRect(-1,-1,51,51)
-								gfx.drawRect(posOffset,posOffset,slotSize,slotSize)
-								gfx.endFill()
-								adjustedSlotColor = skillbookFade
-								matched = true
-								break
-							end
-						end
+					if SkillbookIsKnown(entry.Item, skillsDict) then
+						--local size = entry.SlotMC.width
+						--gfx.lineStyle(1,16711680)
+						gfx.clear()
+						gfx.beginFill(BACKGROUND_COLOR, sfade)
+						--gfx.beginFill(0xFF0000, 1)
+						--gfx.drawRect(-1,-1,51,51)
+						gfx.drawRect(posOffset,posOffset,slotSize,slotSize)
+						gfx.endFill()
+						matched = true
 					end
 				end
 				if not matched then
-					entry.SlotMC.graphics.clear()
+					gfx.clear()
 				end
 			end
 		end

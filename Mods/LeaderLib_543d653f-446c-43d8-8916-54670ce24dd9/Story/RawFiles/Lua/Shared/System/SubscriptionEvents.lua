@@ -584,6 +584,20 @@ if not _ISCLIENT then
 			end
 		end
 	})
+
+	---@class SyncDataEventArgs
+	---@field UserID integer
+	---@field Profile string
+	---@field UUID UUID
+	---@field IsHost boolean
+	
+	---Called via SharedData, when it syncs data for a specific user.
+	---🔨**Server-Only**🔨
+	---@see LeaderLibAttackManager
+	---@type LeaderLibSubscribableEvent<SyncDataEventArgs>
+	Events.SyncData = Classes.SubscribableEvent:Create("SyncData", {
+		ArgsKeyOrder={"UserID", "Profile", "UUID", "IsHost"}
+	})
 else
 	---@class UICreatedEventArgs
 	---@field UI UIObject

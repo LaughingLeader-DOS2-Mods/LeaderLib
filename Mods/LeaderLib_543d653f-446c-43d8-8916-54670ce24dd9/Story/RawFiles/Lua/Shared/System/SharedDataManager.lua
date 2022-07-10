@@ -89,7 +89,12 @@ else
 	---@param uuid string
 	---@param isHost boolean
 	local function SendSyncListenerEvent(id, profile, uuid, isHost)
-		InvokeListenerCallbacks(Listeners.SyncData, id, profile, uuid, isHost)
+		Events.SyncData:Invoke({
+			UserID=id,
+			Profile = profile,
+			UUID = uuid,
+			IsHost = isHost == true
+		})
 	end
 
 	local function GetNetID(uuid)

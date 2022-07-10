@@ -13,7 +13,6 @@ end
 
 Listeners.ModuleResume = {}
 Listeners.SessionLoaded = {}
-Listeners.SyncData = {}
 Listeners.ClientDataSynced = {}
 Listeners.ClientCharacterChanged = {}
 

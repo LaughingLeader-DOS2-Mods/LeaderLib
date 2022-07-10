@@ -72,8 +72,9 @@ if _EXTVERSION >= 56 then
 		local b,err = xpcall(function ()
 			local this = PartyInventory.Root
 			if this then
-				for i=0,#this.inventory_mc.list.content_array-1 do
-					local inv = this.inventory_mc.list.content_array[i].inv
+				local arr = this.inventory_mc.list.content_array
+				for i=0,#arr-1 do
+					local inv = arr[i].inv
 					if inv then
 						for j=0,#inv.content_array-1 do
 							local slot_mc = inv.content_array[j]
@@ -112,8 +113,45 @@ if _EXTVERSION >= 56 then
 		local b,err = xpcall(function ()
 			local this = ContainerInventory.Root
 			if this then
-				for i=0,#this.inv_mc.slot_array-1 do
-					local slot_mc = this.inv_mc.slot_array[i]
+				local arr = this.inv_mc.slot_array
+				for i=0,#arr-1 do
+					local slot_mc = arr[i]
+					if slot_mc then
+						if slot_mc.itemHandle ~= 0 then
+							local item = _TryGetItemFromDouble(slot_mc.itemHandle)
+							if item then
+								entries[#entries+1] = {SlotMC=slot_mc, Item = item}
+							end
+						else
+							slot_mc.graphics.clear()
+						end
+					end
+				end
+			end
+		end, debug.traceback)
+		if not b and Vars.DebugMode then
+			Ext.PrintError(err)
+		end
+
+		local i = 0
+		local count = #entries
+		return function ()
+			i = i + 1
+			if i <= count then
+				return entries[i]
+			end
+		end
+	end
+
+	---@return fun():{SlotMC:FlashMovieClip, Item:EclItem}
+	local function GetTradeItems(controllerEnabled)
+		local entries = {}
+		local b,err = xpcall(function ()
+			local this = Trade.Root
+			if this then
+				local arr = not controllerEnabled and this.trade_mc.item_array or this.trade_mc.inventory_mc.item_array
+				for i=0,#arr-1 do
+					local slot_mc = arr[i]
 					if slot_mc then
 						if slot_mc.itemHandle ~= 0 then
 							local item = _TryGetItemFromDouble(slot_mc.itemHandle)
@@ -142,6 +180,12 @@ if _EXTVERSION >= 56 then
 	end
 
 	local BACKGROUND_COLOR = 0xFF0b0907
+	local SLOT_SETTINGS = {
+		Inventory = {Offset=-1, Size=51},
+		Container = {Offset=-1, Size=64},
+		Trade = {Offset=-1, Size=51},
+	}
+
 	---RootTemplate to Skills
 	---@type table<string, table<string, boolean>>
 	local _cachedSkills = {}
@@ -172,9 +216,12 @@ if _EXTVERSION >= 56 then
 		return false
 	end
 
-	local function AdjustSlots(isContainer, slotSize, posOffset)
-		posOffset = posOffset or -1
-		slotSize = slotSize or 51
+	---@param getItemsFunc fun(controllerEnabled:boolean):(fun():EclItem)
+	---@param slotSettings {Size:number, Offset:number}
+	local function AdjustSlots(getItemsFunc, slotSettings)
+		local posOffset = slotSettings.Offset -1
+		local slotSize = slotSettings.Size or 51
+
 		local settings = GameSettingsManager.GetSettings()
 		local skillbookFade = settings.Client.FadeInventoryItems.KnownSkillbooks
 		local sfade = GameHelpers.Math.Clamp(1 - (skillbookFade * 0.01), 0, 1)
@@ -182,12 +229,7 @@ if _EXTVERSION >= 56 then
 		local player = Client:GetCharacter()
 		if player then
 			local skillsDict = player.SkillManager.Skills
-			local items = nil
-			if not isContainer then
-				items = GetInventoryItems()
-			else
-				items = GetContainerItems()
-			end
+			local items = getItemsFunc(Vars.ControllerEnabled)
 			for entry in items do
 				local matched = false
 				local gfx = entry.SlotMC.graphics
@@ -213,10 +255,13 @@ if _EXTVERSION >= 56 then
 
 	local function UpdateInventoryFade()
 		if PartyInventory.Visible then
-			AdjustSlots()
+			AdjustSlots(GetInventoryItems, SLOT_SETTINGS.Inventory)
 		end
 		if ContainerInventory.Visible then
-			AdjustSlots(true, 64, 0)
+			AdjustSlots(GetContainerItems, SLOT_SETTINGS.Container)
+		end
+		if Trade.Visible then
+			AdjustSlots(GetTradeItems, SLOT_SETTINGS.Trade)
 		end
 	end
 
@@ -226,16 +271,23 @@ if _EXTVERSION >= 56 then
 	PartyInventory:RegisterInvokeListener("updateItems", function (self, ui, event, ...)
 		local settings = GameSettingsManager.GetSettings()
 		if settings.Client.FadeInventoryItems.Enabled then
-			Timer.StartOneshot("LeaderLib_PartyInventory_AdjustItems", 1, function() AdjustSlots(false) end)
+			Timer.StartOneshot("LeaderLib_PartyInventory_AdjustItems", 1, function() AdjustSlots(GetInventoryItems, SLOT_SETTINGS.Inventory) end)
 		end
 	end, "After", "Keyboard")
 	
 	ContainerInventory:RegisterInvokeListener("updateItems", function (self, ui, event, ...)
 		local settings = GameSettingsManager.GetSettings()
 		if settings.Client.FadeInventoryItems.Enabled then
-			Timer.StartOneshot("LeaderLib_ContainerInventory_AdjustItems", 1, function() AdjustSlots(true, 64, -1) end)
+			Timer.StartOneshot("LeaderLib_ContainerInventory_AdjustItems", 1, function() AdjustSlots(GetContainerItems, SLOT_SETTINGS.Container) end)
 		end
 	end, "After", "Keyboard")
+
+	ContainerInventory:RegisterInvokeListener("updateItems", function (self, ui, event, ...)
+		local settings = GameSettingsManager.GetSettings()
+		if settings.Client.FadeInventoryItems.Enabled then
+			Timer.StartOneshot("LeaderLib_ContainerInventory_AdjustItems", 1, function() AdjustSlots(GetTradeItems, SLOT_SETTINGS.Trade) end)
+		end
+	end, "After", "All")
 end
 
 --#endregion

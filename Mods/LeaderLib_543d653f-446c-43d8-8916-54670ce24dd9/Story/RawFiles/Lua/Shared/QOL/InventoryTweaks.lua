@@ -229,7 +229,7 @@ if _ISCLIENT then
 			return false
 		end
 
-		---@param getItemsFunc fun(controllerEnabled:boolean):(fun():EclItem)
+		---@param getItemsFunc fun(controllerEnabled:boolean):(fun():{SlotMC:FlashMovieClip, Item:EclItem})
 		---@param slotSettings {Size:number, Offset:number}
 		local function AdjustSlots(getItemsFunc, slotSettings)
 			local posOffset = slotSettings.Offset -1
@@ -314,7 +314,7 @@ if _ISCLIENT then
 			end
 		end, "After", "Keyboard")
 
-		ContainerInventory:RegisterInvokeListener("updateItems", function (self, ui, event, ...)
+		Trade:RegisterInvokeListener("updateItems", function (self, ui, event, ...)
 			local settings = GameSettingsManager.GetSettings()
 			if settings.Client.FadeInventoryItems.Enabled then
 				Timer.StartOneshot("LeaderLib_ContainerInventory_AdjustItems", 1, function() AdjustSlots(GetTradeItems, SLOT_SETTINGS.Trade) end)

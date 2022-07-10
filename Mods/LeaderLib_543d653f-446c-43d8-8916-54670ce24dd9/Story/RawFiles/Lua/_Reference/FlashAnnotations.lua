@@ -1,3 +1,5 @@
+---@diagnostic disable
+
 ---@class FlashListDisplay:FlashMovieClip
 ---@field content_array table
 ---@field scrollHit_mc FlashMovieClip
@@ -54,7 +56,7 @@
 ---@field resetListPos fun():void
 ---@field stopElementTweens fun(param1:number):void
 ---@field fadeOutAndRemoveElement fun(param1:number, param2:number, param3:number, param4:boolean, param5:boolean):void
----@field removeElement fun(param1:number, param2:boolean, param3:boolean, param4:number):void
+---@field removeElement fun(param1:number, param2:boolean|nil, param3:boolean|nil, param4:number|nil):void
 ---@field removeElementByListId fun(param1:number, param2:boolean):boolean
 ---@field clearElements fun():void
 ---@field next fun():void

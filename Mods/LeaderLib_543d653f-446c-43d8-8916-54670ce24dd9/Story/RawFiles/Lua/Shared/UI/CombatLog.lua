@@ -118,7 +118,7 @@ if _ISCLIENT then
 		local exists = false
 		--Check if a filter already exists
 		for i=0,#arr-1 do
-			---@type CombatLogFlashFilter
+			---@type {registeredId:string, tooltip:string, gotoAndStop:fun(frame:string|integer)}
 			local filter = arr[i]
 			if filter then
 				if filter.registeredId == id or filter.tooltip == tooltip then

@@ -219,7 +219,7 @@ local text = {
 			KnownSkillbooks = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_KnownSkillbooks", "Known Skillbooks"),
 			KnownSkillbooks_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_KnownSkillbooks_Description", "Fade skillbooks that have already been memorized by this amount.[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]"),
 			ReadBooks = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_ReadBooks", "Books Read"),
-			ReadBooks_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_ReadBooks_Description", "Fade books (recipes, lore) that have already been read by this amount.[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]"),
+			ReadBooks_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_ReadBooks_Description", "Fade books (recipes, lore) that have already been read by this amount.<br><font color='#FF33FF'>Note: This setting isn't retroactive, so previous books read in the save may need to be read again, once.</font>[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]"),
 		},
 	},
 }

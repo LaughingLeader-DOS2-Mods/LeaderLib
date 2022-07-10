@@ -215,8 +215,11 @@ local text = {
 		Fade = {
 			Enabled = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FadeInventory_Enabled", "Enabled"),
 			Enabled_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FadeInventory_Description", "If enabled, specific items will be less visible in the inventory, such as memorized skillsbooks being less opaque."),
+			FadeDescriptionInfo = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo", "<br>Default: 30%<br><font color='#FF9900'>Fading is disabled at 100 (fully visible), while 0 makes the item completely invisible.</font>"),
 			KnownSkillbooks = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_KnownSkillbooks", "Known Skillbooks"),
-			KnownSkillbooks_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_KnownSkillbooks_Description", "Fade skillbooks that have already been memorized by this amount.<br>Default: 30%<br><font color='#FF9900'>Fading is disabled at 100 (fully visible), while 0 makes the item completely invisible.</font>"),
+			KnownSkillbooks_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_KnownSkillbooks_Description", "Fade skillbooks that have already been memorized by this amount.[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]"),
+			ReadBooks = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_ReadBooks", "Books Read"),
+			ReadBooks_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_Fade_ReadBooks_Description", "Fade books (recipes, lore) that have already been read by this amount.[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]"),
 		},
 	},
 }
@@ -356,9 +359,16 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Status"), text.Client.EnableTooltipDelay.Status.Value, true, settings.Client.EnableTooltipDelay.Status and 1 or 0, false, text.Client.EnableTooltipDelay.Status_Description.Value)
 
 		if _EXTVERSION >= 56 then
+			local fadeMin = 1
+			local fadeMax = 100
+			local fadeStep = 1
+			local clamp = function(v) return GameHelpers.Math.Clamp(v, fadeMin, fadeMax) end
+
 			mainMenu.addMenuLabel(text.Section_InventoryFade.Value)
 			mainMenu.addMenuCheckbox(AddControl(settings.Client.FadeInventoryItems, "Enabled"), text.Client.Fade.Enabled.Value, true, settings.Client.FadeInventoryItems.Enabled and 1 or 0, false, text.Client.Fade.Enabled_Description.Value)
-			mainMenu.addMenuSlider(AddControl(settings.Client.FadeInventoryItems, "KnownSkillbooks"), text.Client.Fade.KnownSkillbooks.Value, settings.Client.FadeInventoryItems.KnownSkillbooks, 0, 100, 1, false, text.Client.Fade.KnownSkillbooks_Description.Value)
+
+			mainMenu.addMenuSlider(AddControl(settings.Client.FadeInventoryItems, "KnownSkillbooks"), text.Client.Fade.KnownSkillbooks.Value, clamp(settings.Client.FadeInventoryItems.KnownSkillbooks), fadeMin, fadeMax, fadeStep, false, text.Client.Fade.KnownSkillbooks_Description.Value)
+			mainMenu.addMenuSlider(AddControl(settings.Client.FadeInventoryItems, "ReadBooks"), text.Client.Fade.ReadBooks.Value, clamp(settings.Client.FadeInventoryItems.ReadBooks), fadeMin, fadeMax, fadeStep, false, text.Client.Fade.ReadBooks_Description.Value)
 		end
 
 		mainMenu.addMenuLabel(text.Section_StatusHider.Value)

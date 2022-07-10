@@ -130,6 +130,10 @@ local defaultPersistentVars = {
 
 	BasicAttackData = {},
 	StartAttackPosition = {},
+
+	---UserID to RootTemplate, to BookId
+	---@type table<integer,table<string, string>>
+	ReadBooks = {}
 }
 
 Ext.Require("BootstrapShared.lua")

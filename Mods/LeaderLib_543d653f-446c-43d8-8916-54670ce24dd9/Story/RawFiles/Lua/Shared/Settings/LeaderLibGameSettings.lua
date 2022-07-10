@@ -86,6 +86,7 @@ local DefaultSettings = {
 		FadeInventoryItems = {
 			Enabled = false,
 			KnownSkillbooks = 30,
+			ReadBooks = 30
 		}
 	},
 	EnableDeveloperTests = false,

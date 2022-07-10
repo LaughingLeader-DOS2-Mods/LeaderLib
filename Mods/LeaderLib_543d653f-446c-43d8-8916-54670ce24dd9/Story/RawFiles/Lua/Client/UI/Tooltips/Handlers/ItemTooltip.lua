@@ -13,6 +13,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		return
 	end
 	if item ~= nil then
+		local isRead = false
 		TooltipHandler.LastItem = item
 		local character = Client:GetCharacter()
 		if character ~= nil then
@@ -39,6 +40,8 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 
 			local rootTemplate = GameHelpers.GetTemplate(item)
 			if rootTemplate then
+				isRead = UI.InventoryTweaks.ReadBooks[rootTemplate] ~= nil
+
 				if tooltip:GetElement("SkillDescription") ~= nil then
 					if _EXTVERSION >= 56 then
 						---Invokes skill tooltip listeners if the item has skill elements
@@ -210,8 +213,8 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				end
 			end
 		end
+		local element = tooltip:GetElement("ItemDescription", {Type="ItemDescription", Label=""})
 		if item:HasTag("LeaderLib_AutoLevel") then
-			local element = tooltip:GetElement("ItemDescription", {Type="ItemDescription", Label=""})
 			if not string.find(string.lower(element.Label), "automatically level") then
 				if not StringHelpers.IsNullOrEmpty(element.Label) then
 					element.Label = element.Label .. "<br>" .. LocalizedText.Tooltip.AutoLevel.Value
@@ -219,6 +222,10 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					element.Label = LocalizedText.Tooltip.AutoLevel.Value
 				end
 			end
+		end
+		if isRead then
+			--tooltip:GetElement("SkillAlreadyLearned", {Type="SkillAlreadyLearned", Label = LocalizedText.Tooltip.BookIsKnown.Value})
+			element.Label = element.Label .. "<br>" .. LocalizedText.Tooltip.BookIsKnown.Value
 		end
 		local settings = GameSettingsManager.GetSettings()
 		if settings.Client.CondenseItemTooltips then

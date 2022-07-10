@@ -8,6 +8,8 @@ if _ISCLIENT then
 	local _TryGetItemFromDouble = GameHelpers.Client.TryGetItemFromDouble
 	local _GetTemplate = GameHelpers.GetTemplate
 
+	UI.InventoryTweaks = {}
+
 	local PartyInventory = Classes.UIWrapper:CreateFromType(Data.UIType.partyInventory, {ControllerID=Data.UIType.partyInventory_c, IsControllerSupported=true})
 	local ContainerInventory = Classes.UIWrapper:CreateFromType(Data.UIType.containerInventory.Default, {ControllerID=Data.UIType.containerInventory.Default, IsControllerSupported=true})
 	local Trade = Classes.UIWrapper:CreateFromType(Data.UIType.trade, {ControllerID=Data.UIType.trade_c, IsControllerSupported=true})
@@ -199,6 +201,8 @@ if _ISCLIENT then
 		---@type table<string, string>
 		local _readBooks = {}
 
+		UI.InventoryTweaks.ReadBooks = _readBooks
+
 		---@param item EclItem
 		---@param skillsDict table<string, table>
 		---@param template string
@@ -321,6 +325,9 @@ if _ISCLIENT then
 			local data = Common.JsonParse(payload)
 			if data then
 				_readBooks = data
+				UI.InventoryTweaks.ReadBooks = _readBooks
+
+				UpdateInventoryFade()
 			end
 		end)
 	end

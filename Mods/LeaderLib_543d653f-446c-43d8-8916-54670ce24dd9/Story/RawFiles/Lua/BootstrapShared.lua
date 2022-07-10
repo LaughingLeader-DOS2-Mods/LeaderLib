@@ -118,9 +118,6 @@ Ext.Require("Shared/QOL/WingsWorkaround.lua")
 Ext.Require("Shared/QOL/WorldTooltips.lua")
 Ext.Require("Shared/QOL/ContextMenuQualityOfLife.lua")
 Ext.Require("Shared/QOL/HotbarSkillTagRequirements.lua")
-if _EXTVERSION >= 56 then
-	Ext.Require("Shared/QOL/InventoryTweaks.lua")
-end
 if Ext.IsDeveloperMode() then
 	Ext.Require("Shared/Debug/TestingSystem.lua")
 end

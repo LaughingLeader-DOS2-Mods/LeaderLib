@@ -219,6 +219,7 @@ Ext.Require("Server/Game/QOL/BuffStatusPreserver.lua")
 Ext.Require("Server/Game/QOL/SkipTutorial.lua")
 if Ext.Version() >= 56 then
 	Ext.Require("Shared/QOL/ExtenderVisualSupport.lua")
+	Ext.Require("Shared/QOL/InventoryTweaks.lua")
 end
 Ext.Require("Server/Updates.lua")
 

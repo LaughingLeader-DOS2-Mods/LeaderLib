@@ -31,6 +31,20 @@ Events.CharacterLeveledUp = Classes.SubscribableEvent:Create("CharacterLeveledUp
 	ArgsKeyOrder={"Character", "Level", "IsPlayer"}
 })
 
+---@class OnBookReadEventArgs
+---@field Character EsvCharacter|EclCharacter
+---@field Item EsvItem|EclItem
+---@field Template string
+---@field ID string The book ID or recipe ID.
+---@field BookType string|"Book"|"Recipe"|"Skillbook"
+
+---Called when a player reads a book for the first time.  
+---@type LeaderLibSubscribableEvent<OnBookReadEventArgs>
+Events.OnBookRead = Classes.SubscribableEvent:Create("OnBookRead", {
+	SyncInvoke=true,
+	ArgsKeyOrder={"Character", "Item", "Template", "ID"}
+})
+
 ---@class FeatureChangedEventArgs
 ---@field ID string
 ---@field Enabled boolean

@@ -331,8 +331,72 @@ if _ISCLIENT then
 			end
 		end)
 	end
+
 	--#endregion
+
+	--#region Open Container in Trade Window
+
+	--[[ local _lastRightClickItemDoubleHandle = nil
+
+	ContainerInventory:RegisterCallListener("startDragging", function (self, ui, event, doubleHandle)
+		if Trade.Visible then
+			local slot = Trade.Root.trade_mc.currentHLList
+			Ext.PrintError("startDragging", slot, doubleHandle)
+			local handle = Ext.DoubleToHandle(doubleHandle)
+			local playerId = Client:GetCharacter().UserID
+			Ext.UI.GetDragDrop():StartDraggingObject(playerId, handle)
+			--Trade:ExternalInterfaceCall("startDragging", slot, doubleHandle)
+		end
+	end, "After", "Keyboard")
+
+	--Allow opening containers in the trade UI
+	Trade:RegisterCallListener("itemRightClick", function (self, ui, event, doubleHandle)
+		_lastRightClickItemDoubleHandle = doubleHandle
+		Ext.PrintError("itemRightClick", _lastRightClickItemDoubleHandle, UI.ContextMenu.IsOpening, UI.ContextMenu.Visible)
+		if not UI.ContextMenu.Visible then
+			UI.ContextMenu:OnRightClick()
+		end
+	end, "After", "Keyboard")
+
+	Events.ShouldOpenContextMenu:Subscribe(function (e)
+		if not GameHelpers.Math.IsNaN(_lastRightClickItemDoubleHandle) then
+			Ext.PrintError(e.X, e.Y)
+			e.ShouldOpen = true
+		end
+	end)
+
+	Events.OnContextMenuOpening:Subscribe(function (e)
+		if not GameHelpers.Math.IsNaN(_lastRightClickItemDoubleHandle) then
+			local item = GameHelpers.Client.TryGetItemFromDouble(_lastRightClickItemDoubleHandle)
+			_lastRightClickItemDoubleHandle = nil
+			if item then
+				local hasItems = #item:GetInventoryItems() > 0
+				local hasOwner = item:GetOwnerCharacter() == Client.Character.UUID
+				if (hasItems and hasOwner) or Vars.DebugMode then
+					local netid = item.NetID
+					e.ContextMenu:AddEntry("LeaderLib_Trade_OpenContainer", function ()
+						Ext.PostMessageToServer("LeaderLib_Trade_OpenContainer", Common.JsonStringify({Item=netid, Player=Client:GetCharacter().NetID}))
+					end, "Open")
+				end
+			end
+		end
+	end) ]]
+
+	--#endregion
+
 else
+	Ext.RegisterNetListener("LeaderLib_Trade_OpenContainer", function (channel, payload, user)
+		---@type {Item:NETID, Player:NETID}
+		local data = Common.JsonParse(payload)
+		if data then
+			local item = GameHelpers.GetItem(data.Item)
+			local player = GameHelpers.GetCharacter(data.Player)
+			if item and player then
+				CharacterUseItem(player.MyGuid, item.MyGuid, "")
+			end
+		end
+	end)
+
 	---@param id integer|nil
 	local function SyncReadBooks(id)
 		if id then
@@ -361,26 +425,47 @@ else
 			local item = GameHelpers.GetItem(itemGUID)
 			local userID = GameHelpers.GetUserID(player)
 			if item and item.RootTemplate then
+				local bookType = ""
+				local textID = nil
+				local template = GameHelpers.GetTemplate(item)
 				for _,v in pairs(item.RootTemplate.OnUsePeaceActions) do
 					if v.Type == "Book" and not StringHelpers.IsNullOrWhitespace(v.BookId) then
 						if PersistentVars.ReadBooks[userID] == nil then
 							PersistentVars.ReadBooks[userID] = {}
 						end
-						PersistentVars.ReadBooks[userID][GameHelpers.GetTemplate(item)] = v.BookId
-						updatedData = true
+						textID = v.BookId
+						updatedData = PersistentVars.ReadBooks[userID][template] == nil
+						PersistentVars.ReadBooks[userID][template] = v.BookId
+						bookType = "Book"
 						break
 					elseif v.Type == "Recipe" and not StringHelpers.IsNullOrWhitespace(v.RecipeID) then
 						if PersistentVars.ReadBooks[userID] == nil then
 							PersistentVars.ReadBooks[userID] = {}
 						end
-						PersistentVars.ReadBooks[userID][GameHelpers.GetTemplate(item)] = v.RecipeID
-						updatedData = true
+						textID = v.RecipeID
+						updatedData = PersistentVars.ReadBooks[userID][template] == nil
+						PersistentVars.ReadBooks[userID][template] = v.RecipeID
+						bookType = "Recipe"
 						break
+					elseif v.Type == "SkillBook" and v.Consume == true and not StringHelpers.IsNullOrWhitespace(v.SkillID) then
+						textID = v.SkillID
+						bookType = "Skillbook"
 					end
 				end
-			end
-			if updatedData then
-				SyncReadBooks(userID)
+				if textID then
+					---@cast textID string
+					
+					Events.OnBookRead:Invoke({
+						Character = player,
+						Item = item,
+						Template = template,
+						ID = textID,
+						BookType = bookType
+					})
+				end
+				if updatedData then
+					SyncReadBooks(userID)
+				end
 			end
 		end
 	end)

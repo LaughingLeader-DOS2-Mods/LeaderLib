@@ -406,7 +406,7 @@ local function _GetMyGuid(obj)
 end
 
 ---Tries to get a string UUID from whatever variable type object is.
----@param object EsvGameObject|EclGameObject|string|number
+---@param object ObjectParam
 ---@param returnNullId boolean|nil If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
 ---@return UUID
 function GameHelpers.GetUUID(object, returnNullId)
@@ -428,7 +428,7 @@ function GameHelpers.GetUUID(object, returnNullId)
 end
 
 ---Tries to get a NetID from whatever variable type object is.
----@param object EsvGameObject|EclGameObject|string|number
+---@param object ObjectParam
 ---@return NETID
 function GameHelpers.GetNetID(object)
 	local t = _type(object)
@@ -470,7 +470,7 @@ function GameHelpers.GetObjectID(object)
 end
 
 ---Tries to get an Esv/EclCharacter from whatever the value is.
----@param object EsvGameObject|EclGameObject|string|number|StatCharacter
+---@param object CharacterParam|StatCharacter|ObjectHandle|userdata
 ---@return EsvCharacter|EclCharacter
 function GameHelpers.GetCharacter(object)
 	local t = _type(object)

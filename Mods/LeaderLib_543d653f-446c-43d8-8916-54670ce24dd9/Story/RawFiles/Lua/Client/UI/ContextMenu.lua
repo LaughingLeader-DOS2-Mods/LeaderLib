@@ -5,7 +5,7 @@
 ---@field screenWidth number
 ---@field screenHeight number
 
----@alias ContextMenuActionCallback fun(self:ContextMenu, ui:UIObject, id:integer, actionID:integer, handle:number)
+---@alias ContextMenuActionCallback fun(self:ContextMenu, ui:UIObject, id:integer, actionID:string, handle:number, entry:ContextMenuAction)
 
 ---@class BuiltinContextMenuEntry
 ---@field ID integer

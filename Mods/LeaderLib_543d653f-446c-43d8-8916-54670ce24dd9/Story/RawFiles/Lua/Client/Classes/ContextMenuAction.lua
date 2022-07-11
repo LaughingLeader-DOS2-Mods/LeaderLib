@@ -10,6 +10,7 @@
 ---@field UseClickSound boolean
 ---@field Disabled boolean
 ---@field IsLegal boolean Results in the label being red if true (used for actions like pickpocketing).
+---@field Handle any
 ---@field StayOpen boolean
 ---@field Children ContextMenuActionSettings[]
 
@@ -21,7 +22,7 @@ local ContextMenuAction = {
 	UseClickSound = true,
 	Disabled = false,
 	StayOpen = false,
-	IsLegal = true
+	IsLegal = true,
 }
 
 local function GetIndex(tbl, k)

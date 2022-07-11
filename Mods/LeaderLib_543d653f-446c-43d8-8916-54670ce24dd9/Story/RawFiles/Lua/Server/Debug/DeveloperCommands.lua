@@ -76,9 +76,10 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			delay = nil
 		end
 		Vars.Resetting = true
-		Events.BeforeLuaReset:Invoke()
+		Events.BeforeLuaReset:Invoke({})
 		--GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", "BeforeLuaReset")
 		delay = delay or 1000
+		Ext.PrintWarning("[LeaderLib:luareset] Resetting lua after (%s) ms", delay)
 		if delay ~= nil then
 			delay = tonumber(delay)
 			if delay > 0 then

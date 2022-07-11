@@ -1,7 +1,9 @@
 ---@class LeaderLibTimerSystem
 Timer = {
 	IgnoredTimers = {
-		LeaderLib_v55_Tick = true
+		LeaderLib_v55_Tick = true,
+		Timers_LeaderLib_Debug_LuaReset = true,
+		Timers_LeaderLib_Debug_ResetLua = true,
 	}
 }
 

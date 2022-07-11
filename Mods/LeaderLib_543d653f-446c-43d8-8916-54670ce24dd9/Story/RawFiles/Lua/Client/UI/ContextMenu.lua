@@ -282,12 +282,7 @@ local function GetShouldOpen(contextMenu, x, y)
 	return false
 end
 
----@param eventName string
----@param pressed boolean
----@param id integer
----@param inputMap table<integer,boolean>
----@param controllerEnabled boolean
-function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
+function ContextMenu:OnRightClick()
 	local settings = GameSettings.Settings.Client.StatusOptions
 	--fprint(LOGLEVEL.DEFAULT, "[ContextMenu:OnRightClick] IsOpening(%s) Visible(%s) pressed(%s)", self.IsOpening, self.Visible, pressed)
 	if not self.IsOpening then
@@ -722,6 +717,10 @@ function ContextMenu:MoveAndRebuild(x,y)
 			contextMenu.clearButtons()
 
 			local totalEntries = #self.Entries
+			if totalEntries == 0 then
+				self:Close()
+				return
+			end
 			for i=1,totalEntries do
 				local entry = self.Entries[i]
 				AddEntryMC(contextMenu, entry, 0)

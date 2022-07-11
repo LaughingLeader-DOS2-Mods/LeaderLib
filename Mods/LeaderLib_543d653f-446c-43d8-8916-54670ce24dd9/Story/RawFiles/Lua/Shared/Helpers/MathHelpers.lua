@@ -17,12 +17,11 @@ local _rad = math.rad
 local _ran = Ext.Random
 
 ---Tries to get the position from whatever the variable is.
----@param obj number[]|UUID|EsvCharacter|EsvItem|Vector3
+---@overload fun(obj:number[]|Vector3|ObjectParam, unpackResult:boolean, fallback:number[]|nil):number,number,number
+---@param obj number[]|Vector3|ObjectParam
 ---@param unpackResult boolean|nil If true, the position value is returned as separate numbers.
 ---@param fallback number[]|nil If no position is found, this value or {0,0,0} is returned.
----@return number[]|number
----@return number|nil
----@return number|nil
+---@return number[]
 function GameHelpers.Math.GetPosition(obj, unpackResult, fallback)
     local t = _type(obj)
     local pos = nil

@@ -626,7 +626,7 @@ end
 ---@field Ally boolean|nil
 ---@field Neutral boolean|nil
 ---@field Enemy boolean|nil
----@field CanAdd fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem|number[]):boolean Optional function that will be used to filter targets.
+---@field CanAdd fun(target:ServerObject, source:ServerObject|number[]):boolean Optional function that will be used to filter targets.
 
 ---@class GameHelpers_Grid_GetNearbyObjectsOptions
 ---@field Radius number The max distance between the source and objects. Defaults to 3.0 if not set.
@@ -636,15 +636,41 @@ end
 ---@field AllowDead boolean|nil Allow returning dead characters/destroyed items.
 ---@field AllowOffStage boolean|nil Allow returning offstage objects.
 ---@field Relation GameHelpers_Grid_GetNearbyObjectsOptionsRelationOptions|nil Filter returned characters by this relation, such as "Ally" "Neutral".
+---@field Sort string|"Distance"|"Random"|"LowestHP"|"HighestHP"|"None"|fun(a:ServerObject,b:ServerObject):boolean
 
 ---@type GameHelpers_Grid_GetNearbyObjectsOptions
 local _defaultGetNearbyObjectsOptions = {
 	Radius = 3.0,
-	Type = "Character"
+	Type = "Character",
+	Sort = "None"
 }
 
----@alias GameHelpers_Grid_GetNearbyObjectsFunctionResult fun():EsvCharacter|EsvItem
----@alias GameHelpers_Grid_GetNearbyObjectsTableResult EsvCharacter[]|EsvItem[]
+---@param distances table<UUID,number>
+---@return fun(a:ServerObject, b:ServerObject):boolean
+local function _SortDistance(distances)
+	---@param a ServerObject
+	---@param b ServerObject
+	return function (a,b)
+		local d1 = distances[a.MyGuid] or 9999
+		local d2 = distances[b.MyGuid] or 9999
+		return d1 < d2
+	end
+end
+
+---@param reverse boolean|nil
+---@return fun(a:ServerObject, b:ServerObject):boolean
+local function _SortVitality(reverse)
+	---@param a ServerObject
+	---@param b ServerObject
+	return function (a,b)
+		local d1 = a.Stats and a.Stats.CurrentVitality or 999999
+		local d2 = b.Stats and b.Stats.CurrentVitality or 999999
+		return not reverse and (d1 < d2) or (d1 > d2)
+	end
+end
+
+---@alias GameHelpers_Grid_GetNearbyObjectsFunctionResult fun():ServerObject
+---@alias GameHelpers_Grid_GetNearbyObjectsTableResult ServerObject[]
 
 ---@param source ObjectParam|number[] An object or position.
 ---@param opts GameHelpers_Grid_GetNearbyObjectsOptions
@@ -673,12 +699,16 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 		pos = opts.Position
 	end
 
+	local _distances = {}
+
 	if opts.Type == "All" or opts.Type == "Item" then
 		local entries = Ext.GetAllItems(SharedData.RegionData.Current)
 		local len = #entries
 		for i=1,len do
 			local v = entries[i]
-			if v ~= GUID and GameHelpers.Math.GetDistance(v, pos) <= opts.Radius then
+			local dist = GameHelpers.Math.GetDistance(v, pos)
+			_distances[v] = dist
+			if v ~= GUID and dist <= opts.Radius then
 				local obj = GameHelpers.GetItem(v)
 				if obj then
 					if opts.AllowDead or not GameHelpers.ObjectIsDead(obj) and opts.AllowOffStage or not obj.OffStage then
@@ -702,7 +732,9 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 		local len = #entries
 		for i=1,len do
 			local v = entries[i]
-			if v ~= GUID and GameHelpers.Math.GetDistance(v, pos) <= opts.Radius then
+			local dist = GameHelpers.Math.GetDistance(v, pos)
+			_distances[v] = dist
+			if v ~= GUID and dist <= opts.Radius then
 				local obj = GameHelpers.GetCharacter(v)
 				if obj and (opts.AllowDead or not GameHelpers.ObjectIsDead(obj) and opts.AllowOffStage or not obj.OffStage) then
 					if opts.Relation and sourceIsCharacter then
@@ -732,6 +764,20 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 			return function() end
 		else
 			return {}
+		end
+	end
+
+	if opts.Sort ~= "None" then
+		if opts.Sort == "Random" then
+			objects = Common.ShuffleTable(objects)
+		elseif opts.Sort == "Distance" then
+			table.sort(objects, _SortDistance(_distances))
+		elseif opts.Sort == "LowestHP" then
+			table.sort(objects, _SortVitality(false))
+		elseif opts.Sort == "HighestHP" then
+			table.sort(objects, _SortVitality(true))
+		elseif type(opts.Sort) == "function" then
+			table.sort(objects, opts.Sort)
 		end
 	end
 

@@ -66,6 +66,8 @@ end
 ---@see GameHelpers.GetCharacter
 ---@alias CharacterParam EsvCharacter|EclCharacter|UUID|NETID|ObjectHandle
 ---@alias ObjectParam EsvCharacter|EclCharacter|EsvItem|EclItem|UUID|NETID|ObjectHandle
+---@alias ServerObject EsvCharacter|EsvItem
+---@alias ClientObject EclCharacter|EclItem
 
 ---@class LeaderLibPersistentVars
 local defaultPersistentVars = {

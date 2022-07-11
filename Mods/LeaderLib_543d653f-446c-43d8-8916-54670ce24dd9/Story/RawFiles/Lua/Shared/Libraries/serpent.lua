@@ -175,8 +175,8 @@ end
 return { _NAME = n, _COPYRIGHT = c, _DESCRIPTION = d, _VERSION = v, serialize = s,
   load = deserialize,
   --dump = function(a, opts) return s(a, merge({name = '_', compact = true, sparse = true}, opts)) end,
-  dump = function(a, opts) return s(a, merge({compact = false, sparse = false, indent = '\t', comment = false}, opts)) end,
-  line = function(a, opts) return s(a, merge({sortkeys = true, comment = false}, opts)) end,
-  block = function(a, opts) return s(a, merge({indent = '\t', sortkeys = true, comment = false}, opts)) end,
+  dump = function(a, opts) return s(a, merge({compact = false, sparse = false, indent = '\t', comment = false, SimplifyUserdata = true}, opts)) end,
+  line = function(a, opts) return s(a, merge({sortkeys = true, comment = false, SimplifyUserdata = true}, opts)) end,
+  block = function(a, opts) return s(a, merge({indent = '\t', sortkeys = true, comment = false, SimplifyUserdata = true}, opts)) end,
   raw = function(a, opts) return s(a, merge({}, opts)) end,
 }

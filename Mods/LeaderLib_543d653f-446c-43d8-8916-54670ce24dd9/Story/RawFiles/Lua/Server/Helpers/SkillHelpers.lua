@@ -26,12 +26,9 @@ local projectileCreationProperties = {
     IgnoreObjects = "Flag",
     AlwaysDamage = "Flag",
     CanDeflect = "Flag",
-    --SourcePosition = "Vector3",
-    SourcePosition = "GuidString",
-    --TargetPosition = "Vector3",
-    TargetPosition = "GuidString",
-    --HitObjectPosition = "Vector3",
-    HitObjectPosition = "GuidString",
+    SourcePosition = "Vector3/GuidString",
+    TargetPosition = "Vector3/GuidString",
+    HitObjectPosition = "Vector3/GuidString",
     Caster = "GuidString",
     Source = "GuidString",
     Target = "GuidString",
@@ -201,13 +198,17 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
                 if v == "nil" then
                     props[k] = nil
                 else
-                    props[k] = v
+                    if projectileCreationProperties[k] == "GuidString" then
+                        props[k] = GameHelpers.GetUUID(v)
+                    else
+                        props[k] = v
+                    end
                 end
             end
         end
     end
 
-    if extraParams.ParamsParsed then
+    if type(extraParams.ParamsParsed) == "function" then
         local b,err = xpcall(extraParams.ParamsParsed, debug.traceback, props, sourceObject, targetObject)
         if not b then
             Ext.PrintError(err)
@@ -247,10 +248,16 @@ local function ProcessProjectileProps(props)
             elseif t == "number" then
                 NRD_ProjectileSetInt(k, v)
             elseif t == "string" then
-                if projectileCreationProperties[k] == "GuidString" then
+                local propType = projectileCreationProperties[k]
+                if propType == "GuidString" or propType == "Vector3/GuidString" then
                     NRD_ProjectileSetGuidString(k, GameHelpers.GetUUID(v))
                 else
                     NRD_ProjectileSetString(k, v)
+                end
+            elseif t == "userdata" and projectileCreationProperties[k] == "GuidString" then
+                local uuid = GameHelpers.GetUUID(v)
+                if uuid then
+                    NRD_ProjectileSetGuidString(k, uuid)
                 end
             end
         end
@@ -439,9 +446,9 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
     end
 end
 
----@param target string|number[]|EsvCharacter|EsvItem
+---@param target ObjectParam|number[]
 ---@param skillId string
----@param source string|EsvCharacter|EsvItem|nil
+---@param source ObjectParam|nil
 ---@param extraParams LeaderLibProjectileCreationProperties|nil Optional table of properties to apply on top of the properties set from the skill stat.
 function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParams)
     local extraParams = type(extraParams) == "table" and extraParams or {}
@@ -456,10 +463,13 @@ function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParam
     end
     if not extraParams.ParamsParsed and source ~= nil and type(source) ~= "table" then
         extraParams.ParamsParsed = function(props, sourceObj, targetObj)
-            --Modifies the SourcePosition to between the source and target
-            local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenPositions(props.SourcePosition, props.TargetPosition)
-	        props.SourcePosition = {GameHelpers.Grid.GetValidPositionAlongLine(props.SourcePosition, directionalVector, 1.0)}
-            props.SourcePosition[2] = props.SourcePosition[2] + 2.0
+            if sourceObj and not props.SourcePosition and props.TargetPosition then
+                --Modifies the SourcePosition to between the source and target
+                local sourcePos = GameHelpers.Math.GetPosition(sourceObj)
+                local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenPositions(sourcePos, props.TargetPosition)
+                props.SourcePosition = {GameHelpers.Grid.GetValidPositionAlongLine(sourcePos, directionalVector, 1.0)}
+                props.SourcePosition[2] = props.SourcePosition[2] + 2.0
+            end
         end
     end
     local props = PrepareProjectileProps(target, skill, source, extraParams)

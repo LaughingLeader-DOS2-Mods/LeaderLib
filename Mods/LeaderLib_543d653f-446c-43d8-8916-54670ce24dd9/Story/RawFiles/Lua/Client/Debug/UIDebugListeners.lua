@@ -1,6 +1,7 @@
 local _initialized = false
 
 local _format = string.format
+if UI.Debug == nil then UI.Debug = {} end
 
 local Init = function()
 	if _initialized then
@@ -9,24 +10,26 @@ local Init = function()
 
 	local UIListenerWrapper = Classes.UIListenerWrapper
 
-	local printAll = false
+	UI.Debug.PrintAll = false
 	local _logText = ""
 	local _logPrefix = Ext.MonotonicTime()
 	local _logName = _format("Logs/UI/%s_All.log", _logPrefix)
 
 	local function _print(str, ...)
-		if not printAll then
+		if not UI.Debug.PrintAll then
 			fprint(LOGLEVEL.TRACE2, ...)
 		else
 			_logText = _logText .. "\n" .. _format(str, ...)
-			GameHelpers.IO.SaveFile(_logName, _logText)
+			Timer.Cancel("LeaderLib_Debug_SaveUILog")
+			Timer.StartOneshot("LeaderLib_Debug_SaveUILog", 500, function ()
+				GameHelpers.IO.SaveFile(_logName, _logText)
+			end)
 		end
 	end
-
 	---@param self UIListenerWrapper
 	---@param ui UIObject
 	local function OnUIListener(self, eventType, ui, event, ...)
-		if self.Enabled and (Vars.DebugMode and (Vars.Print.UI or printAll)) and not self.Ignored[event] then
+		if self.Enabled and (Vars.DebugMode and (Vars.Print.UI or UI.Debug.PrintAll)) and not self.Ignored[event] then
 			if event == "addTooltip" then
 				local txt = table.unpack({...})
 				if string.find(txt, "Experience:", 1, true) then
@@ -95,7 +98,7 @@ local Init = function()
 			-- end
 		end
 		local t = ui:GetTypeId()
-		if printAll then
+		if UI.Debug.PrintAll then
 			local name = Data.UITypeToName[t]
 			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "call", event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
 		else
@@ -121,7 +124,7 @@ local Init = function()
 			-- end
 		end
 		local t = ui:GetTypeId()
-		if printAll then
+		if UI.Debug.PrintAll then
 			local name = Data.UITypeToName[t]
 			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "invoke", event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
 		else

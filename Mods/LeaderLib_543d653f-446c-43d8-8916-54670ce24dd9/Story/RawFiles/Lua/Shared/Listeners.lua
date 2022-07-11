@@ -128,7 +128,7 @@ function RegisterTickListener(callback, runningOnly)
 	_startTickTimer = true
 	if runningOnly then
 		Listeners.Tick[#Listeners.Tick+1] = function (e)
-			if _state == "Running" and not Vars.Resetting then
+			if _state == "Running" and not Vars.Resetting and Vars.Initialized then
 				callback(e)
 			end
 		end

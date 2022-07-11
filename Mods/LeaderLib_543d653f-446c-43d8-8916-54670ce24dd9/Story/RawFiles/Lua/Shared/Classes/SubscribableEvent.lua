@@ -66,6 +66,11 @@ local _INVOKERESULT = {
 ---@param opts SubscribableEventCreateOptions|nil
 ---@return LeaderLibSubscribableEvent
 function SubscribableEvent:Create(id, opts)
+	local _privateKeys = {
+		First = true,
+		NextIndex = true,
+		_EnterCount = true,
+	}
 	local o = {
 		First = nil,
 		NextIndex = 1,
@@ -79,7 +84,7 @@ function SubscribableEvent:Create(id, opts)
 	}
 	if _type(opts) == "table" then
 		for k,v in _pairs(opts) do
-			if SubscribableEvent[k] == nil then
+			if not _privateKeys[k] and SubscribableEvent[k] == nil then
 				o[k] = v
 			end
 		end
@@ -88,7 +93,9 @@ function SubscribableEvent:Create(id, opts)
 		o.Benchmark = false
 	end
 	setmetatable(o, {
-		__index = SubscribableEvent
+		__index = function (_,k)
+			return SubscribableEvent[k]
+		end
 	})
 	return o
 end
@@ -108,6 +115,7 @@ end
 ---@field Next SubscribableEventNode|nil
 ---@field IsMatch fun(eventArgs:table):boolean If MatchArgs has a single entry, a function is created to run a quick match.
 
+local wasSet = false
 ---@param self LeaderLibSubscribableEvent
 ---@param node SubscribableEventNode
 ---@param sub SubscribableEventNode
@@ -124,6 +132,7 @@ local function DoSubscribeBefore(self, node, sub)
 	node.Prev = sub
 end
 
+
 ---@param self LeaderLibSubscribableEvent
 ---@param sub SubscribableEventNode
 local function DoSubscribe(self, sub)
@@ -134,23 +143,18 @@ local function DoSubscribe(self, sub)
 
 	local cur = self.First
 	local last = nil
-
-	if cur ~= nil then
-		while cur ~= nil do
-			last = cur
-			if sub.Priority > cur.Priority then
-				DoSubscribeBefore(self, cur, sub)
-				return
-			end
-
-			cur = cur.Next
+	
+	while cur ~= nil do
+		last = cur
+		if sub.Priority > cur.Priority then
+			DoSubscribeBefore(self, cur, sub)
+			return
 		end
+
+		cur = cur.Next
 	end
 
-	if last then
-		last.Next = sub
-	end
-
+	last.Next = sub
 	sub.Prev = last
 end
 
@@ -255,14 +259,13 @@ function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
 	end
 	if self._EnterCount == 0 then
 		local t = _type(indexOrCallback)
+		local matchArgsType = _type(matchArgs)
 		local cur = self.First
 		if cur then
 			while cur ~= nil do
-				local matchArgs = cur.Options and cur.Options.MatchArgs
-				local matchArgsType = _type(matchArgs)
 				if (t == "number" and cur.Index == indexOrCallback)
 				or (t == "function" and cur.Callback == indexOrCallback)
-				or (matchArgs and cur.IsMatch and cur.IsMatch(matchArgs))
+				or (matchArgsType == "table" and cur.IsMatch and cur.IsMatch(matchArgs))
 				then
 					RemoveNode(self, cur)
 					if self.OnUnsubscribe then
@@ -299,9 +302,10 @@ function SubscribableEvent:StopPropagation()
 	self.StopInvoke = true
 end
 
+---@param self BaseSubscribableEvent
 ---@param node SubscribableEventNode
 ---@param eventArgs LeaderLibRuntimeSubscribableEventArgs
-local function _EventArgsMatch(node, eventArgs)
+local function _EventArgsMatch(self, node, eventArgs)
 	local match = true
 	if node.IsMatch ~= nil then
 		local b,result = _pcall(node.IsMatch, eventArgs)
@@ -332,25 +336,20 @@ local function SerializeArgs(args)
 	return tbl
 end
 
----@param sub BaseSubscribableEvent
+---@param self BaseSubscribableEvent
 ---@param args LeaderLibRuntimeSubscribableEventArgs
 ---@param resultsTable table
 ---@vararg SerializableValue
-local function InvokeCallbacks(sub, args, resultsTable, ...)
-	local cur = sub.First
+local function InvokeCallbacks(self, args, resultsTable, ...)
+	local cur = self.First
 	local gatherResults = resultsTable ~= nil
 	local result = _INVOKERESULT.Success
 	while cur ~= nil do
-		if args.Handled then
-			result = _INVOKERESULT.Handled
-			break
-		end
-
-		if _EventArgsMatch(cur, args) then
+		if _EventArgsMatch(self, cur, args) then
 			if gatherResults then
 				local callbackResults = {_xpcall(cur.Callback, _traceback, args, ...)}
 				if not callbackResults[1] then
-					_errormsg("[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, callbackResults[2])
+					_errormsg("[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", self.ID, callbackResults[2])
 					result = _INVOKERESULT.Error
 				elseif gatherResults and callbackResults[2] ~= nil then
 					if callbackResults[3] == nil then
@@ -364,20 +363,23 @@ local function InvokeCallbacks(sub, args, resultsTable, ...)
 			else
 				local b,err = _xpcall(cur.Callback, _traceback, args, ...)
 				if not b then
-					_errormsg("[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", sub.ID, err)
+					_errormsg("[LeaderLib:SubscribableEvent] Error while dispatching event %s:\n%s", self.ID, err)
 					result = _INVOKERESULT.Error
 				end
 			end
 
-			if cur.Once or args.__unsubscribeListener == true then
+			if cur.Once == true or args.__unsubscribeListener == true then
 				local last = cur
 				cur = last.Next
-				RemoveNode(sub, last)
+				RemoveNode(self, last)
 			else
 				cur = cur.Next
 			end
 		else
 			cur = cur.Next
+		end
+		if args.Handled then
+			return _INVOKERESULT.Handled
 		end
 	end
 	return result

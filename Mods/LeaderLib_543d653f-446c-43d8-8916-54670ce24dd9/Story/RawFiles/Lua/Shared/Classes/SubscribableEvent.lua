@@ -177,7 +177,7 @@ function SubscribableEvent:Subscribe(callback, opts)
 		Callback = callback,
 		Index = index,
 		Priority = opts.Priority or 100,
-		Once = opts.Once or false,
+		Once = opts.Once == true,
 		Options = opts or {}
 	}
 

@@ -207,8 +207,10 @@ function Timer.Subscribe(name, callback, once, priority)
 		end
 		return results
 	else
-		fprint(LOGLEVEL.WARNING, "[Timer.Subscribe] name(%s) is not a valid timer need. Should be a string or table of strings.", name)
+		--fprint(LOGLEVEL.WARNING, "[Timer.Subscribe] name(%s) is not a valid timer name. Should be a string or table of strings.", name)
+		error(string.format("[Timer.Subscribe] name(%s) is not a valid timer name. Should be a string or table of strings.", name), 2)
 	end
+	return nil
 end
 
 --Support for older listeners where the callback params were (timerName, uuid|data)

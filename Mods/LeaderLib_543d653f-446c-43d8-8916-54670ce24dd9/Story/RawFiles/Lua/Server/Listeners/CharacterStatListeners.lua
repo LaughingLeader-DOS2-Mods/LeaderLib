@@ -1,55 +1,42 @@
+---@type table<UUID, LeaderLibCharacterStatListenersPlayerData>
 local statChanges = {}
 
-local function GetStoredPlayerValues(uuid, skipCreation)
-	local playerData = statChanges[uuid]
-	if playerData == nil and skipCreation ~= true then
-		playerData = {
-			attributes = {},
-			abilities = {}
-		}
-		statChanges[uuid] = playerData
-		for _,stat in Data.Attribute:Get() do
-			playerData.attributes[stat] = CharacterGetBaseAttribute(uuid, stat) or 0
-		end
-		for _,stat in Data.Ability:Get() do
-			playerData.abilities[stat] = CharacterGetBaseAbility(uuid, stat) or 0
-		end
+---@alias LeaderLibCharacterStatListenersPlayerData {Attributes:table<string,integer>, Abilities:table<string,integer>, Talents:table<string,boolean>}
+
+---@param uuid UUID
+local function CreatePlayerData(uuid, player)
+	--local player = player or GameHelpers.GetCharacter(uuid)
+	local playerData = {
+		Attributes = {},
+		Abilities = {},
+		Talents = {},
+	}
+	statChanges[uuid] = playerData
+	for _,stat in Data.Attribute:Get() do
+		playerData.Attributes[stat] = CharacterGetBaseAttribute(uuid, stat) or 0
+	end
+	for _,stat in Data.Ability:Get() do
+		playerData.Abilities[stat] = CharacterGetBaseAbility(uuid, stat) or 0
+	end
+	for _,stat in Data.Talents:Get() do
+		playerData.Talents[stat] = CharacterHasTalent(uuid, stat) == 1
 	end
 	return playerData
 end
 
 local function StorePartyValues()
-	local players = Osi.DB_IsPlayer:Get(nil)
-	for _,entry in pairs(players) do
-		local uuid = StringHelpers.GetUUID(entry[1])
-		local playerData = {
-			attributes = {},
-			abilities = {}
-		}
-		statChanges[uuid] = playerData
-		for _,stat in Data.Attribute:Get() do
-			playerData.attributes[stat] = CharacterGetBaseAttribute(uuid, stat) or 0
-		end
-		for _,stat in Data.Ability:Get() do
-			playerData.abilities[stat] = CharacterGetBaseAbility(uuid, stat) or 0
-		end
+	for player in GameHelpers.Character.GetPlayers(false) do
+		CreatePlayerData(player.MyGuid, player)
 	end
-	--PrintDebug("[LeaderLib_ClientMessageReceiver.lua:StorePartyValues] Stored party stat data:\n("..Common.Dump(statChanges)..").")
 end
 
 Ext.RegisterNetListener("LeaderLib_CharacterSheet_StorePartyValues", function(cmd, param)
 	StorePartyValues()
 end)
 
-if Vars.DebugMode then
-	Events.LuaReset:Subscribe(function()
-		StorePartyValues()
-		GameSettingsManager.Load()
-	end)
-end
-
 local function FireListenerEvents(uuid, stat, lastVal, nextVal, statType)
 	Events.CharacterBasePointsChanged:Invoke({
+		UUID = uuid,
 		Character = GameHelpers.GetCharacter(uuid),
 		Stat = stat,
 		StatType = statType,
@@ -58,43 +45,52 @@ local function FireListenerEvents(uuid, stat, lastVal, nextVal, statType)
 	})
 end
 
+---@param uuid UUID
+---@param playerData LeaderLibCharacterStatListenersPlayerData
+---@param stat string
+---@param statType string|"Attribute"|"Ability"|"Talent"
 local function DetectStatChanges(uuid, playerData, stat, statType)
-	if statType == "attribute" then
-		local lastVal = playerData.attributes[stat] or 0
+	if statType == "Attribute" then
+		local lastVal = playerData.Attributes[stat] or 0
 		local baseVal = CharacterGetBaseAttribute(uuid, stat) or 0
 		if lastVal ~= baseVal then
-			if Vars.DebugMode then
-				PrintLog("[LeaderLib:CharacterStatListeners.lua:DetectStatChanges] (%s) base stat (%s) changed: %s => %s", uuid, stat, lastVal, baseVal)
-			end
 			Osi.LeaderLib_CharacterSheet_AttributeChanged(uuid, stat, lastVal, baseVal)
 			FireListenerEvents(uuid, stat, lastVal, baseVal, statType)
-			playerData.attributes[stat] = baseVal
+			playerData.Attributes[stat] = baseVal
 		end
-	elseif statType == "ability" then
-		local lastVal = playerData.abilities[stat] or 0
+	elseif statType == "Ability" then
+		local lastVal = playerData.Abilities[stat] or 0
 		local baseVal = CharacterGetBaseAbility(uuid, stat) or 0
 		if lastVal ~= baseVal then
-			if Vars.DebugMode then
-				PrintLog("[LeaderLib:CharacterStatListeners.lua:DetectStatChanges] (%s) base stat (%s) changed: %s => %s", uuid, stat, lastVal, baseVal)
-			end
 			Osi.LeaderLib_CharacterSheet_AbilityChanged(uuid, stat, lastVal, baseVal)
 			FireListenerEvents(uuid, stat, lastVal, baseVal, statType)
-			playerData.abilities[stat] = baseVal
+			playerData.Abilities[stat] = baseVal
+		end
+	elseif statType == "Talent" then
+		local lastVal = playerData.Talents[stat] or false
+		local baseVal = CharacterHasTalent(uuid, stat) == 1
+		if lastVal ~= baseVal then
+			Osi.LeaderLib_CharacterSheet_AbilityChanged(uuid, stat, lastVal, baseVal)
+			FireListenerEvents(uuid, stat, lastVal, baseVal, statType)
+			playerData.Talents[stat] = baseVal
 		end
 	end
 end
 
 local function SignalPartyValueChanges()
-	for _,entry in pairs(Osi.DB_IsPlayer:Get(nil)) do
-		local uuid = StringHelpers.GetUUID(entry[1])
-		local playerData = GetStoredPlayerValues(uuid)
-		if playerData ~= nil then
-			for _,stat in Data.Attribute:Get() do
-				DetectStatChanges(uuid, playerData, stat, "attribute")
-			end
-			for _,stat in Data.Ability:Get() do
-				DetectStatChanges(uuid, playerData, stat, "ability")
-			end
+	for _,stat in Data.Attribute:Get() do
+		for uuid,data in pairs(statChanges) do
+			DetectStatChanges(uuid, data, stat, "Attribute")
+		end
+	end
+	for _,stat in Data.Ability:Get() do
+		for uuid,data in pairs(statChanges) do
+			DetectStatChanges(uuid, data, stat, "Ability")
+		end
+	end
+	for _,stat in Data.Talents:Get() do
+		for uuid,data in pairs(statChanges) do
+			DetectStatChanges(uuid, data, stat, "Talent")
 		end
 	end
 end
@@ -113,39 +109,8 @@ function CharacterSheet_StorePartyValues()
 	end
 end
 
-local function RunChangesDetectionTimer()
-	TimerCancel("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges")
-	TimerLaunch("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges", 1000)
-end
-
-local function OnCharacterSheetStatChanged(cmd, uuid, stat, statType)
-	--print("OnCharacterSheetStatChanged", cmd, uuid, stat, statType)
-	RunChangesDetectionTimer()
-	-- Timer.StartOneshot("Timers_LeaderLib_CheckStatChanges_"..uuid, 1000, function()
-	-- 	Osi.LeaderLib_CharacterSheet_PointsChanged(stat)
-	-- 	local playerData = GetStoredPlayerValues(uuid)
-	-- 	if playerData ~= nil then
-	-- 		DetectStatChanges(uuid, playerData, stat, statType)
-	-- 	else
-	-- 		RunChangesDetectionTimer()
-	-- 	end
-	-- end)
-end
-
-Ext.RegisterNetListener("LeaderLib_CharacterSheet_AttributeChanged", function(cmd, payload)
-	local data = Common.JsonParse(payload)
-	if data then
-		local uuid = Ext.GetCharacter(data.NetID).MyGuid
-		OnCharacterSheetStatChanged(cmd, uuid, data.Stat, "attribute")
-	end
-end)
-
-Ext.RegisterNetListener("LeaderLib_CharacterSheet_AbilityChanged", function(cmd, payload)
-	local data = Common.JsonParse(payload)
-	if data then
-		local uuid = Ext.GetCharacter(data.NetID).MyGuid
-		OnCharacterSheetStatChanged(cmd, uuid, data.Stat, "ability")
-	end
+Ext.RegisterNetListener("LeaderLib_CharacterSheet_PointsChanged", function(cmd, payload)
+	Timer.StartOneshot("CharacterSheet_SignalPartyValueChanges", 1000, CharacterSheet_SignalPartyValueChanges, true)
 end)
 
 ---@param uuid string
@@ -156,22 +121,30 @@ local function OnCharacterBaseAbilityChanged(uuid, ability, old, new)
 	if CharacterIsPlayer(uuid) == 1 then
 		uuid = StringHelpers.GetUUID(uuid)
 		FireListenerEvents(uuid, ability, old, new)
-		if Data.AbilityEnum[ability] then
-			statChanges[uuid][ability] = new
-		end
 	end
 end
 
 RegisterProtectedOsirisListener("CharacterBaseAbilityChanged", 4, "after", OnCharacterBaseAbilityChanged)
-
 RegisterProtectedOsirisListener("CharacterJoinedParty", 1, "after", function(partyMember)
-	--Create the data
-	GetStoredPlayerValues(StringHelpers.GetUUID(partyMember))
-	--GameHelpers.Net.Broadcast("LeaderLib_UI_UpdateStatusVisibility", "")
+	if CharacterIsPlayer(partyMember) == 1 and ObjectIsGlobal(partyMember) == 1 then
+		CreatePlayerData(StringHelpers.GetUUID(partyMember))
+	end
 end)
 
 RegisterProtectedOsirisListener("CharacterLeftParty", 1, "after", function(partyMember)
 	if CharacterIsPlayer(partyMember) == 0 then
 		statChanges[StringHelpers.GetUUID(partyMember)] = nil
+	end
+end)
+
+RegisterProtectedOsirisListener("DB_Illusionist", 1, "after", function(db)
+	StorePartyValues()
+end)
+
+Events.RegionChanged:Subscribe(function (e)
+	if e.State == REGIONSTATE.ENDED and e.LevelType == LEVELTYPE.CHARACTER_CREATION then
+		StorePartyValues()
+	elseif e.State == REGIONSTATE.GAME and e.LevelType == LEVELTYPE.GAME then
+		StorePartyValues()
 	end
 end)

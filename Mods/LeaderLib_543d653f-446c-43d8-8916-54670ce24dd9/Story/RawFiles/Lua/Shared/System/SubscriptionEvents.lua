@@ -431,6 +431,7 @@ if not _ISCLIENT then
 	})
 
 	---@class CharacterBasePointsChangedEventArgs
+	---@field UUID UUID
 	---@field Character EsvCharacter
 	---@field Stat string
 	---@field StatType string
@@ -441,12 +442,7 @@ if not _ISCLIENT then
 	---🔨**Server-Only**🔨  
 	---@type LeaderLibSubscribableEvent<CharacterBasePointsChangedEventArgs>
 	Events.CharacterBasePointsChanged = Classes.SubscribableEvent:Create("CharacterBasePointsChanged", {
-		ArgsKeyOrder={"Character", "Stat", "Last", "Current", "StatType"},
-		GetArg = function(self, paramId, param)
-			if paramId == "Character" then
-				return GameHelpers.GetUUID(param, true)
-			end
-		end
+		ArgsKeyOrder={"UUID", "Stat", "Last", "Current", "StatType"}
 	})
 
 	---@class OnSkillStateBaseEventArgs

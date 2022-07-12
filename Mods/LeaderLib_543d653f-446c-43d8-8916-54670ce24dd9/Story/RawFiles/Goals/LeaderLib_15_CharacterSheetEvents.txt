@@ -3,50 +3,19 @@ SubGoalCombiner SGC_AND
 INITSECTION
 KBSECTION
 
-/* [OSITOOLS_ONLY]
-IF
-TimerFinished("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges")
-THEN
-NRD_ModCall("LeaderLib", "CharacterSheet_SignalPartyValueChanges");
-
-PROC
-LeaderLib_Initialized((STRING)_Region)
-THEN
-NRD_ModCall("LeaderLib", "CharacterSheet_StorePartyValues");
-
-// Initial CC ended
-IF
-RegionEnded(_Region)
-AND
-IsCharacterCreationLevel(_Region, 1)
-THEN
-NRD_ModCall("LeaderLib", "CharacterSheet_StorePartyValues");
-
-// Respec mirror
-IF
-DB_Illusionist(_Player, _Mirror)
-THEN
-NRD_ModCall("LeaderLib", "CharacterSheet_StorePartyValues");
-
-IF
-TimerFinished("CharacterCreation")
-THEN
-TimerCancel("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges");
-TimerLaunch("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges", 500);
-*/
-
-/* These procs are fired by Lua scripts, signaled by client UI events when plus buttons are clicked. */
+//Deprecated
 PROC
 LeaderLib_CharacterSheet_AttributeChanged((CHARACTERGUID)_Player, (STRING)_Stat, (INTEGER)_Last, (INTEGER)_Next)
 THEN
 DB_NOOP(1);
 
+//Deprecated
 PROC
 LeaderLib_CharacterSheet_AbilityChanged((CHARACTERGUID)_Player, (STRING)_Stat, (INTEGER)_Last, (INTEGER)_Next)
 THEN
 DB_NOOP(1);
 
-/* General listener for when a point is changed in the character sheet. */
+//Deprecated
 PROC
 LeaderLib_CharacterSheet_PointsChanged((STRING)_Stat)
 THEN

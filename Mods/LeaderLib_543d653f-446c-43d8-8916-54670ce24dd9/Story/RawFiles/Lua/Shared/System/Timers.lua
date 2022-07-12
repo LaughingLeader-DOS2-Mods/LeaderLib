@@ -283,10 +283,14 @@ local function OnTimerFinished(timerName)
 			if timerData then
 				if timerData.UUID then
 					local uuid = timerData.UUID
+					local obj = nil
 					setmetatable(timerData, {
 						__index = function (_, k)
 							if k == "Object" then
-								return GameHelpers.TryGetObject(uuid)
+								if not obj then
+									obj = GameHelpers.TryGetObject(uuid)
+								end
+								return obj
 							end
 						end
 					})

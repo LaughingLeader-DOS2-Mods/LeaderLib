@@ -102,6 +102,7 @@ Data.EquipmentSlots = {
 }
 
 Classes.Enum:Create(Data.EquipmentSlots)
+Data.EquipmentSlotNames = Data.EquipmentSlots
 
 ---@type Enum
 Data.VisibleEquipmentSlots = {

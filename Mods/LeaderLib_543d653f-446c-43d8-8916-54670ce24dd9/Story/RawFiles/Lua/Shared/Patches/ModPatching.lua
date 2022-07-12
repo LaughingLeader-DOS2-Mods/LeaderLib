@@ -118,7 +118,7 @@ local Patches = {
 						changes.Boosts["DamageType"] = changes.Boosts["Damage Type"]
 						changes.Boosts["Damage Type"] = nil
 					end
-					local slot = Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(item)]
+					local slot = Data.EquipmentSlots[GameHelpers.Item.GetSlot(item)]
 					local owner = nil
 					if slot and item.OwnerHandle ~= nil then
 						local char = Ext.GetCharacter(item.OwnerHandle)
@@ -174,7 +174,7 @@ local Patches = {
 									ID = item.StatsId,
 									UUID = item.MyGuid,
 									NetID = item.NetID,
-									Slot = Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(item)],
+									Slot = Data.EquipmentSlots[GameHelpers.Item.GetSlot(item)],
 									Owner = GameHelpers.GetNetID(ItemGetOwner(item.MyGuid)),
 									Changes = {
 										Boosts = {

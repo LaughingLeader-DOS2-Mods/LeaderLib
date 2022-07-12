@@ -797,7 +797,7 @@ function GameHelpers.Character.GetEquipment(character, asTable)
 	local itemCount = math.min(#items, 14)
     for i=1,itemCount do
 		local item = GameHelpers.GetItem(items[i])
-		if item and Data.EquipmentSlotNames[GameHelpers.Item.GetSlot(item)] then
+		if item and Data.EquipmentSlots[GameHelpers.Item.GetSlot(item)] then
 			equipment[#equipment+1] = item
 		end
 	end
@@ -840,9 +840,9 @@ function GameHelpers.Character.GetEquippedWeapons(character)
 			for item in GameHelpers.Character.GetEquipment(character) do
 				local slot = GameHelpers.Item.GetSlot(item)
 				if slot then
-					if Data.EquipmentSlotNames[slot] == "Weapon" then
+					if Data.EquipmentSlots[slot] == "Weapon" then
 						mainhand = item
-					elseif Data.EquipmentSlotNames[slot] == "Shield" then
+					elseif Data.EquipmentSlots[slot] == "Shield" then
 						offhand = item
 					end
 				else

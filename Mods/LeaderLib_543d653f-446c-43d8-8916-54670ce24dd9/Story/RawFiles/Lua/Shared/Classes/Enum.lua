@@ -1,6 +1,7 @@
 ---@class Enum
 ---@field _Names table<string,integer>
 ---@field _Integers table<integer,string>
+---@field Get fun():integer,string
 local Enum = {}
 
 local iter = function (tbl,i)
@@ -16,23 +17,35 @@ local function stateless_iter(tbl, k)
 	if nil~=v then return k,v end
 end
 
-local function CreateEnum(target)
+---@param target table
+---@param integersTbl table<integer, string>|nil
+---@param namesTbl table<string, integer>|nil
+---@param startIndex integer|nil
+local function CreateEnum(target, integersTbl, namesTbl, startIndex)
 	local integers = {}
 	local names = {}
-	local startIndex = 1
-	for k,v in pairs(target) do
-		local t = type(k)
-		if t == "string" then
-			if v == 0 then startIndex = 0 end
-			names[k] = v
-			if type(v) == "number" then
-				integers[v] = k
-			end
-		elseif t == "number" then
-			if k == 0 then startIndex = 0 end
-			integers[k] = v
-			if type(v) == "string" then
-				names[v] = k
+	local startIndex = startIndex or 1
+	if integersTbl then
+		integers = integersTbl
+	end
+	if namesTbl then
+		names = namesTbl
+	end
+	if not namesTbl or not integersTbl then
+		for k,v in pairs(target) do
+			local t = type(k)
+			if t == "string" then
+				if v == 0 then startIndex = 0 end
+				names[k] = v
+				if type(v) == "number" then
+					integers[v] = k
+				end
+			elseif t == "number" then
+				if k == 0 then startIndex = 0 end
+				integers[k] = v
+				if type(v) == "string" then
+					names[v] = k
+				end
 			end
 		end
 	end
@@ -59,6 +72,8 @@ local function CreateEnum(target)
 				return names
 			elseif key == "_Integers" then
 				return integers
+			elseif key == "Get" then
+				return iterFunc
 			end
 			return names[key] or integers[key]
 		end,
@@ -68,9 +83,14 @@ local function CreateEnum(target)
 	return target
 end
 
-function Enum:Create(target)
-	return CreateEnum(target)
+---@param target table
+---@param integersTbl table<integer, string>|nil
+---@param namesTbl table<string, integer>|nil
+---@param startIndex integer|nil
+function Enum:Create(target, integersTbl, namesTbl, startIndex)
+	return CreateEnum(target, integersTbl, namesTbl, startIndex)
 end
+
 setmetatable(Enum, {
 	__call = CreateEnum
 })

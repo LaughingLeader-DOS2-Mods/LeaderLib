@@ -10,36 +10,8 @@ Data.ObjectStats = {}
 --Valid items with a Stats table can still have an empty StatsId for some reason.
 --Data.ObjectStats = {[""] = true}
 
-local function _pairs(t, var)
-	var = var + 1
-	local value = t[var]
-	if value == nil then return end
-	return var, value
-end
-local function iterateFromZero(t) return _pairs, t, -1 end
-local function iterateDefault(t) return _pairs, t, 0 end
-
 ---@alias DamageType string|'"None"'|'"Physical"'|'"Piercing"'|'"Corrosive"'|'"Magic"'|'"Chaos"'|'"Fire"'|'"Air"'|'"Water"'|'"Earth"'|'"Poison"'|'"Shadow"'
 ---@alias DeathType string | "Sulfur" | "FrozenShatter" | "Surrender" | "Lifetime" | "KnockedDown" | "Piercing" | "Physical" | "Sentinel" | "DoT" | "Explode" | "Arrow" | "None" | "Acid" | "PetrifiedShatter" | "Hang" | "Incinerate" | "Electrocution"
-
-local damageTypes = {
-	[0] = "None",
-	"Physical",
-	"Piercing",
-	"Corrosive",
-	"Magic",
-	"Chaos",
-	"Fire",
-	"Air",
-	"Water",
-	"Earth",
-	"Poison",
-	"Shadow"
-}
-Data.DamageTypes = setmetatable({},{__index = damageTypes})
-function Data.DamageTypes:Get()
-	return iterateFromZero(self)
-end
 
 Data.DamageTypeEnums = {
 	None = 0,
@@ -69,6 +41,7 @@ Data.DamageTypeEnums = {
 }
 
 Classes.Enum:Create(Data.DamageTypeEnums)
+Data.DamageTypes = Data.DamageTypesEnums
 
 Data.DamageTypeToResistance = {
 	Physical = "PhysicalResistance",
@@ -93,37 +66,9 @@ Data.DamageTypeToResistanceWithExtras = {
 
 setmetatable(Data.DamageTypeToResistanceWithExtras, {__index = Data.DamageTypeToResistance})
 
-Data.DamageTypes = setmetatable({},{__index = damageTypes})
----@return fun():integer,string
-function Data.DamageTypes:Get()
-	return iterateFromZero(self)
-end
-
 ---@alias ItemSlot '"Weapon"'|'"Shield"'|'"Helmet"'|'"Breast"'|'"Gloves"'|'"Leggings"'|'"Boots"'|'"Belt"'|'"Amulet"'|'"Ring"'|'"Ring2"'|'"Wings"'|'"Horns"'|'"Overhead"'|'"Sentintel"'
 
 Data.EquipmentSlots = {
-	[0]="Helmet",
-	[1]="Breast",
-	[2]="Leggings",
-	[3]="Weapon",
-	[4]="Shield",
-	[5]="Ring",
-	[6]="Belt",
-	[7]="Boots",
-	[8]="Gloves",
-	[9]="Amulet",
-	[10]="Ring2",
-	[11]="Wings",
-	[12]="Horns",
-	[13]="Overhead",
-	[14]="Sentinel"
-}
-
-function Data.EquipmentSlots:Get()
-	return iterateFromZero(self)
-end
-
-Data.EquipmentSlotNames = {
 	Helmet = 0,
 	Breast = 1,
 	Leggings = 2,
@@ -156,31 +101,10 @@ Data.EquipmentSlotNames = {
 	[14] = "Sentinel",
 }
 
-Classes.Enum:Create(Data.EquipmentSlotNames)
+Classes.Enum:Create(Data.EquipmentSlots)
 
-local itemslot = {
-	[0] = "Helmet",
-	"Breast",
-	"Leggings",
-	"Weapon",
-	"Shield",
-	"Ring",
-	"Belt",
-	"Boots",
-	"Gloves",
-	"Amulet",
-	"Ring2",
-	"Wings",
-	"Horns",
-	"Overhead",
-}
-
-Data.DeltaModSlotType = setmetatable({},{__index = itemslot})
-function Data.DeltaModSlotType:Get()
-	return iterateFromZero(self)
-end
-
-local visibleEquipmentSlots = {
+---@type Enum
+Data.VisibleEquipmentSlots = {
 	[0]="Helmet",
 	[1]="Breast",
 	[2]="Leggings",
@@ -192,14 +116,22 @@ local visibleEquipmentSlots = {
 	[8]="Gloves",
 	[9]="Amulet",
 	[10]="Ring2",
+	Helmet = 0,
+	Breast = 1,
+	Leggings = 2,
+	Weapon = 3,
+	Shield = 4,
+	Ring = 5,
+	Belt = 6,
+	Boots = 7,
+	Gloves = 8,
+	Amulet = 9,
+	Ring2 = 10,
 }
-Data.VisibleEquipmentSlots = setmetatable({},{__index = visibleEquipmentSlots})
-function Data.VisibleEquipmentSlots:Get()
-	return iterateFromZero(self)
-end
+Classes.Enum:Create(Data.VisibleEquipmentSlots)
 
 --- Enums for every ability in the game.
----@type table<string,integer>
+---@type Enum
 Data.AbilityEnum = {
 	WarriorLore = 0,
 	RangerLore = 1,
@@ -243,184 +175,29 @@ Data.AbilityEnum = {
 	Sulfurology = 39,
 	--Sentinel = 40,
 }
-local abilityValues = {}
-for name,i in pairs(Data.AbilityEnum) do
-	abilityValues[i] = name
-end
 
----@type table<integer,string>
-Data.Ability = setmetatable({},{__index = abilityValues})
+Classes.Enum:Create(Data.AbilityEnum)
+Data.Ability = Data.AbilityEnum
 
----@return fun():integer,string
-function Data.Ability:Get()
-	return iterateFromZero(self)
-end
-
-local attributes = {
-	[0] = "Strength",
-	"Finesse",
-	"Intelligence",
-	"Constitution",
-	"Memory",
-	"Wits"
-}
-Data.Attribute = setmetatable({},{__index = attributes})
-function Data.Attribute:Get()
-	return iterateFromZero(self)
-end
-
+---@type Enum
 Data.AttributeEnum = {
 	Strength = 0,
 	Finesse = 1,
 	Intelligence = 2,
 	Constitution = 3,
 	Memory = 4,
-	Wits = 5
+	Wits = 5,
+	[0] = "Strength",
+	[1] ="Finesse",
+	[2] ="Intelligence",
+	[3] ="Constitution",
+	[4] ="Memory",
+	[5] ="Wits"
 }
+Classes.Enum:Create(Data.AttributeEnum)
+Data.Attribute = Data.AttributeEnum
 
-local talents = {
-	[1] = "ItemMovement",
-	[2] = "ItemCreation",
-	[3] = "Flanking",
-	[4] = "AttackOfOpportunity",
-	[5] = "Backstab",
-	[6] = "Trade",
-	[7] = "Lockpick",
-	[8] = "ChanceToHitRanged",
-	[9] = "ChanceToHitMelee",
-	[10] = "Damage",
-	[11] = "ActionPoints",
-	[12] = "ActionPoints2",
-	[13] = "Criticals",
-	[14] = "IncreasedArmor",
-	[15] = "Sight",
-	[16] = "ResistFear",
-	[17] = "ResistKnockdown",
-	[18] = "ResistStun",
-	[19] = "ResistPoison",
-	[20] = "ResistSilence",
-	[21] = "ResistDead",
-	[22] = "Carry",
-	[23] = "Throwing",
-	[24] = "Repair",
-	[25] = "ExpGain",
-	[26] = "ExtraStatPoints",
-	[27] = "ExtraSkillPoints",
-	[28] = "Durability",
-	[29] = "Awareness",
-	[30] = "Vitality",
-	[31] = "FireSpells",
-	[32] = "WaterSpells",
-	[33] = "AirSpells",
-	[34] = "EarthSpells",
-	[35] = "Charm",
-	[36] = "Intimidate",
-	[37] = "Reason",
-	[38] = "Luck",
-	[39] = "Initiative",
-	[40] = "InventoryAccess",
-	[41] = "AvoidDetection",
-	[42] = "AnimalEmpathy",
-	[43] = "Escapist",
-	[44] = "StandYourGround",
-	[45] = "SurpriseAttack",
-	[46] = "LightStep",
-	[47] = "ResurrectToFullHealth",
-	[48] = "Scientist",
-	[49] = "Raistlin",
-	[50] = "MrKnowItAll",
-	[51] = "WhatARush",
-	[52] = "FaroutDude",
-	[53] = "Leech",
-	[54] = "ElementalAffinity",
-	[55] = "FiveStarRestaurant",
-	[56] = "Bully",
-	[57] = "ElementalRanger",
-	[58] = "LightningRod",
-	[59] = "Politician",
-	[60] = "WeatherProof",
-	[61] = "LoneWolf",
-	[62] = "Zombie",
-	[63] = "Demon",
-	[64] = "IceKing",
-	[65] = "Courageous",
-	[66] = "GoldenMage",
-	[67] = "WalkItOff",
-	[68] = "FolkDancer",
-	[69] = "SpillNoBlood",
-	[70] = "Stench",
-	[71] = "Kickstarter",
-	[72] = "WarriorLoreNaturalArmor",
-	[73] = "WarriorLoreNaturalHealth",
-	[74] = "WarriorLoreNaturalResistance",
-	[75] = "RangerLoreArrowRecover",
-	[76] = "RangerLoreEvasionBonus",
-	[77] = "RangerLoreRangedAPBonus",
-	[78] = "RogueLoreDaggerAPBonus",
-	[79] = "RogueLoreDaggerBackStab",
-	[80] = "RogueLoreMovementBonus",
-	[81] = "RogueLoreHoldResistance",
-	[82] = "NoAttackOfOpportunity",
-	[83] = "WarriorLoreGrenadeRange",
-	[84] = "RogueLoreGrenadePrecision",
-	[85] = "WandCharge",
-	[86] = "DualWieldingDodging",
-	[87] = "Human_Inventive",
-	[88] = "Human_Civil",
-	[89] = "Elf_Lore",
-	[90] = "Elf_CorpseEating",
-	[91] = "Dwarf_Sturdy",
-	[92] = "Dwarf_Sneaking",
-	[93] = "Lizard_Resistance",
-	[94] = "Lizard_Persuasion",
-	[95] = "Perfectionist",
-	[96] = "Executioner",
-	[97] = "ViolentMagic",
-	[98] = "QuickStep",
-	[99] = "Quest_SpidersKiss_Str",
-	[100] = "Quest_SpidersKiss_Int",
-	[101] = "Quest_SpidersKiss_Per",
-	[102] = "Quest_SpidersKiss_Null",
-	[103] = "Memory",
-	[104] = "Quest_TradeSecrets",
-	[105] = "Quest_GhostTree",
-	[106] = "BeastMaster",
-	[107] = "LivingArmor",
-	[108] = "Torturer",
-	[109] = "Ambidextrous",
-	[110] = "Unstable",
-	[111] = "ResurrectExtraHealth",
-	[112] = "NaturalConductor",
-	[113] = "Quest_Rooted",
-	[114] = "PainDrinker",
-	[115] = "DeathfogResistant",
-	[116] = "Sourcerer",
-	[117] = "Rager",
-	[118] = "Elementalist",
-	[119] = "Sadist",
-	[120] = "Haymaker",
-	[121] = "Gladiator",
-	[122] = "Indomitable",
-	[123] = "WildMag",
-	[124] = "Jitterbug",
-	[125] = "Soulcatcher",
-	[126] = "MasterThief",
-	[127] = "GreedyVessel",
-	[128] = "MagicCycles",
-}
-
-Data.Talents = setmetatable({}, {
-	__index = talents,
-	__pairs = function() 
-		return iterateDefault(talents) 
-	end
-})
-
-function Data.Talents:Get()
-	return iterateDefault(talents)
-	--return iterateFromZero(talents)
-end
-
+---@type Enum
 Data.TalentEnum = {
 	ItemMovement = 1,
 	ItemCreation = 2,
@@ -551,6 +328,9 @@ Data.TalentEnum = {
 	GreedyVessel = 127,
 	MagicCycles = 128,
 }
+
+Classes.Enum:Create(Data.TalentEnum)
+Data.Talents = Data.TalentEnum
 
 Data.ItemRarity = {
 	Common = 0,

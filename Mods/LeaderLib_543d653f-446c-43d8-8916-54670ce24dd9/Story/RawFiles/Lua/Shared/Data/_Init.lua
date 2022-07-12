@@ -13,6 +13,7 @@ Data.ObjectStats = {}
 ---@alias DamageType string|'"None"'|'"Physical"'|'"Piercing"'|'"Corrosive"'|'"Magic"'|'"Chaos"'|'"Fire"'|'"Air"'|'"Water"'|'"Earth"'|'"Poison"'|'"Shadow"'
 ---@alias DeathType string | "Sulfur" | "FrozenShatter" | "Surrender" | "Lifetime" | "KnockedDown" | "Piercing" | "Physical" | "Sentinel" | "DoT" | "Explode" | "Arrow" | "None" | "Acid" | "PetrifiedShatter" | "Hang" | "Incinerate" | "Electrocution"
 
+---@type Enum
 Data.DamageTypeEnums = {
 	None = 0,
 	Physical = 1,
@@ -41,7 +42,7 @@ Data.DamageTypeEnums = {
 }
 
 Classes.Enum:Create(Data.DamageTypeEnums)
-Data.DamageTypes = Data.DamageTypesEnums
+Data.DamageTypes = Data.DamageTypeEnums
 
 Data.DamageTypeToResistance = {
 	Physical = "PhysicalResistance",

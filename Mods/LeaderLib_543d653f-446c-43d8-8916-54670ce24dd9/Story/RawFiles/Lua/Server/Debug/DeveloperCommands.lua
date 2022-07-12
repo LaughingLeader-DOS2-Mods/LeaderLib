@@ -83,7 +83,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		if delay ~= nil then
 			delay = tonumber(delay)
 			if delay > 0 then
-				Timer.StartOneshot("Timers_LeaderLib_Debug_ResetLua", delay, ResetLua)
+				TimerLaunch("Timers_LeaderLib_Debug_ResetLua", delay)
 			else
 				ResetLua()
 			end
@@ -91,6 +91,12 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			ResetLua()
 		end
 	end
+
+	Ext.RegisterOsirisListener("TimerFinished", 1, "after", function (timerName)
+		if timerName == "Timers_LeaderLib_Debug_ResetLua" then
+			ResetLua()
+		end
+	end)
 	
 	Ext.RegisterConsoleCommand("luareset", OnLuaResetCommand)
 	Ext.RegisterNetListener("LeaderLib_Client_RequestLuaReset", OnLuaResetCommand)

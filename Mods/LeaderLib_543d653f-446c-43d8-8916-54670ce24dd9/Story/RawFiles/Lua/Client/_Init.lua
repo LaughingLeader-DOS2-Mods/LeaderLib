@@ -15,10 +15,7 @@ if not Classes.PresetData then
 end
 
 local function OnSessionLoaded()
-	if Vars.ControllerEnabled then
-		InvokeListenerCallbacks(Listeners.ControllerModeEnabled)
-	end
-
+	Vars.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
 	if enableDebugUIListeners then
 		enableDebugUIListeners()
 	end

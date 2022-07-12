@@ -36,7 +36,7 @@ end
 ---@param args table|nil
 ---@param unpackedKeyOrder string[]|nil
 ---@param getArg SubscribableEventGetArgFunction|nil
----@param customMeta SubscribableEventCustomMetatable|nil Automatically set if the args table had key set for '__metatable'
+---@param customMeta SubscribableEventCustomMetatable|nil Automatically set if the args table had a metatable set.
 ---@return LeaderLibRuntimeSubscribableEventArgs
 function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta)
 	local _private = {
@@ -53,13 +53,25 @@ function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta
 			eventArgs[k] = v
 		end
 	end
+	local getCustomMetaIndex = nil
+	if customMeta then
+		local indexType = type(customMeta.__index)
+		if indexType == "table" then
+			getCustomMetaIndex = function (tbl, k)
+				return customMeta.__index[k]
+			end
+		elseif indexType == "function" then
+			getCustomMetaIndex = customMeta.__index
+		end
+	end
+
 	setmetatable(eventArgs, {
 		__index = function (_,k)
 			if _private[k] ~= nil then
 				return _private[k]
 			end
-			if customMeta and customMeta.__index then
-				local b,value = xpcall(customMeta.__index, debug.traceback, eventArgs, k)
+			if getCustomMetaIndex then
+				local b,value = xpcall(getCustomMetaIndex, debug.traceback, eventArgs, k)
 				if b and value ~= nil then
 					return value
 				elseif not b then

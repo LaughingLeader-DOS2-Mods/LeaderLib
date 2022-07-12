@@ -1,8 +1,8 @@
----@alias LeaderLibGlobalListenerEvent string|'"FeatureEnabled"' | '"FeatureDisabled"' | '"Initialized"' | '"ModuleResume"' | '"SessionLoaded"' | '"TurnDelayed"' | '"SyncData"' | '"ClientDataSynced"' | '"ClientCharacterChanged"' | '"GetTooltipSkillDamage"' | '"GetTooltipSkillParam"' | '"LuaReset"' | '"BeforeLuaReset"' | '"Loaded"' | '"ModSettingsLoaded"' | '"ModSettingsSynced"' | '"ModSettingsChanged"'
+---@alias LeaderLibGlobalListenerEvent string|"FeatureEnabled" | "FeatureDisabled" | "Initialized" | "ModuleResume" | "SessionLoaded" | "TurnDelayed" | "SyncData" | "ClientDataSynced" | "ClientCharacterChanged" | "GetTooltipSkillDamage" | "GetTooltipSkillParam" | "LuaReset" | "BeforeLuaReset" | "Loaded" | "ModSettingsLoaded" | "ModSettingsSynced" | "ModSettingsChanged"
 
----@alias LeaderLibServerListenerEvent string|'"ApplyDamageCharacterBonuses"' | '"CharacterBasePointsChanged"' | '"ComputeCharacterHit"' | '"DoHit"' | '"GetHitResistanceBonus"' | '"GlobalFlagChanged"' | '"NamedTimerFinished"' | '"ObjectEvent"' | '"OnHit"' | '"OnNamedTurnCounter"' | '"OnPrepareHit"' | '"OnSkillHit"' | '"OnSummonChanged"' | '"OnTurnCounter"' | '"PersistentVarsLoaded"' | '"ProcObjectTimerFinished"' | '"StatusHitEnter"' | '"TimerFinished"' | '"TreasureItemGenerated"'
+---@alias LeaderLibServerListenerEvent string|"ApplyDamageCharacterBonuses" | "CharacterBasePointsChanged" | "ComputeCharacterHit" | "DoHit" | "GetHitResistanceBonus" | "GlobalFlagChanged" | "NamedTimerFinished" | "ObjectEvent" | "OnHit" | "OnNamedTurnCounter" | "OnPrepareHit" | "OnSkillHit" | "OnSummonChanged" | "OnTurnCounter" | "PersistentVarsLoaded" | "ProcObjectTimerFinished" | "StatusHitEnter" | "TimerFinished" | "TreasureItemGenerated"
 
----@alias LeaderLibClientListenerEvent string|'"CharacterSheetPointChanged"' | '"ControllerModeEnabled"' | '"InputEvent"' | '"ModMenuSectionCreated"' | '"MouseInputEvent"' | '"NamedInputEvent"' | '"OnContextMenuEntryClicked"' | '"OnContextMenuOpening"' | '"OnTalentArrayUpdating"' | '"OnTooltipPositioned"' | '"OnWorldTooltip"' | '"ShouldOpenContextMenu"' | '"UICreated"'
+---@alias LeaderLibClientListenerEvent string|"CharacterSheetPointChanged" | "InputEvent" | "ModMenuSectionCreated" | "MouseInputEvent" | "NamedInputEvent" | "OnContextMenuEntryClicked" | "OnContextMenuOpening" | "OnTalentArrayUpdating" | "OnTooltipPositioned" | "OnWorldTooltip" | "ShouldOpenContextMenu" | "UICreated"
 
 local _EXTVERSION = Ext.Version()
 local _ISCLIENT = Ext.IsClient()
@@ -10,27 +10,6 @@ local _ISCLIENT = Ext.IsClient()
 if not Listeners then
 	Listeners = {}
 end
-
-Listeners.ModuleResume = {}
-Listeners.SessionLoaded = {}
-Listeners.ClientDataSynced = {}
-Listeners.ClientCharacterChanged = {}
-
----@alias LeaderLibGetTooltipSkillDamageCallback fun(skill:SkillEventData, character:StatCharacter):string
----@alias LeaderLibGetTooltipSkillParam fun(skill:SkillEventData, character:StatCharacter, param:string):string
----@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter, ...:string):string
-
----Called from GameHelpers.Tooltip.ReplacePlaceholders when [SkillDamage:SkillId] text exists in the string.
----@type LeaderLibGetTooltipSkillDamageCallback[]
-Listeners.GetTooltipSkillDamage = {}
----Called from GameHelpers.Tooltip.ReplacePlaceholders when [Skill:SkillId:Param] text exists in the string.
----@type LeaderLibGetTooltipSkillParam[]
-Listeners.GetTooltipSkillParam = {}
----Called from GameHelpers.Tooltip.ReplacePlaceholders when [Special:ID] text exists in the string.
----@type table<string, LeaderLibGetTextPlaceholderCallback[]>
-Listeners.GetTextPlaceholder = {
-	All = {}
-}
 
 --Debug listeners
 ---@type table<string,fun(cmd:string, isClient:boolean, ...):void>
@@ -70,9 +49,7 @@ else
 	---Callbacks for when a mod's Mod Menu section is created in the options menu.
 	---@type fun(uuid:string, settings:ModSettings, ui:UIObject, mainMenu:MainMenuMC):void[]
 	Listeners.ModMenuSectionCreated = {}
-	---Client-side event for when sheet buttons are clicked.
-	---@type table<string, fun(character:EclCharacter, stat:string, statType:string):void>
-	Listeners.CharacterSheetPointChanged = {}
+
 	---@type fun(ui:UIObject, player:EclCharacter, startIndex:integer, talentEnumReference:table<string,integer>):void[]
 	Listeners.OnTalentArrayUpdating = {}
 
@@ -95,10 +72,6 @@ else
 
 	---@type fun(ui:UIExtensionsMain, width:number, height:number)[]
 	Listeners.UIExtensionsResized = {}
-
-	---Simple listener called when Vars.ControllerEnabled is set to true.
-	---@type function[]
-	Listeners.ControllerModeEnabled = {}
 end
 
 ---region Tick Listeners
@@ -274,6 +247,15 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 				opts = {MatchArgs={ID=callbackOrKey}}
 			end
 			Events.TimerFinished:Subscribe(Timer._Internal.CreateDeprecatedWrapper(callback), opts)
+			return
+		elseif event == "GetTextPlaceholder" then
+			local opts = nil
+			if keyType == "string" and callbackOrKey ~= "All" then
+				opts = {MatchArgs={ID=callbackOrKey}}
+			end
+			Events.GetTextPlaceholder:Subscribe(function (e)
+				return callback(e.ID, e.Character, table.unpack(e.ExtraParams))
+			end, opts)
 			return
 		end
 		local subEvent = Events[event]

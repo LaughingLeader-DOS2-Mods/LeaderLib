@@ -392,10 +392,9 @@ end
 ---@return SubscribableEventInvokeResult result
 local function _TryInvoke(self, args, skipAutoInvoke, ...)
 	args = args or {}
-	local metatable = nil
-	if _type(args.__metatable) == "table" then
-		metatable = args.__metatable
-		args.__metatable = nil
+	local metatable = getmetatable(args)
+	if metatable then
+		setmetatable(args, nil)
 	end
 	local ts = Ext.MonotonicTime()
 	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg, metatable)

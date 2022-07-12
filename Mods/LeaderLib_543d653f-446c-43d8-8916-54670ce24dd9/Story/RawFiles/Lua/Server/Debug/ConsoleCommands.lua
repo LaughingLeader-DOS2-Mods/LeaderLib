@@ -550,7 +550,7 @@ Ext.RegisterConsoleCommand("printdeltamods", function(cmd, attributeFilter, filt
 	for _,v in pairs(deltamods) do
 		local deltamod = Ext.GetDeltaMod(v.Name, v.ModifierType)
 		local canPrint = false
-		local slotType = Data.DeltaModSlotType[deltamod.SlotType]
+		local slotType = Data.EquipmentSlots[deltamod.SlotType]
 		if attributeFilter == "SlotType" then
 			canPrint = slotType == filterValue
 		else

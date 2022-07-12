@@ -11,7 +11,7 @@ end
 --- Supports events, built-in queries, DBs, PROCs, QRYs (user queries).
 --- @param name string Osiris function/database name
 --- @param arity number Number of columns for DBs or the number of parameters (both IN and OUT) for functions
---- @param event string Event type ('before' - triggered before Osiris call; 'after' - after Osiris call; 'beforeDelete'/'afterDelete' - before/after delete from DB)
+--- @param event OsirisEventType Event type ('before' - triggered before Osiris call; 'after' - after Osiris call; 'beforeDelete'/'afterDelete' - before/after delete from DB)
 --- @param handler function Lua function to run when the event fires
 --- @param anyLevelType boolean|nil If true, the function will only be called for non-game levels as well (lobby, character creation).
 function RegisterProtectedOsirisListener(name, arity, event, handler, anyLevelType)
@@ -155,16 +155,6 @@ function LoadPersistentVars(skipCallback)
 		Events.PersistentVarsLoaded:Invoke({})
 	end
 end
-
-local function ModuleResume()
-	InvokeListenerCallbacks(Listeners.ModuleResume)
-end
-Ext.RegisterListener("ModuleResume", ModuleResume)
-
-local function SessionLoaded()
-	InvokeListenerCallbacks(Listeners.SessionLoaded)
-end
-Ext.RegisterListener("SessionLoaded", SessionLoaded)
 
 function SetModIsActiveFlag(uuid, modid)
 	--local flag = string.gsub(modid, "%s+", "_") -- Replace spaces

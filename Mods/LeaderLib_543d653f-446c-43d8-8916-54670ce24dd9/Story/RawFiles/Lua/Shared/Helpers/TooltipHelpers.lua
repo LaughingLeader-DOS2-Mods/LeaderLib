@@ -24,35 +24,21 @@ local function GetTextParamValues(output, character)
 			character = Client:GetCharacter()
 		end
 		if character ~= nil and character.Stats ~= nil then
-			if Listeners.GetTextPlaceholder[param] then
-				for _,callback in pairs(Listeners.GetTextPlaceholder[param]) do
-					local b = true
-					local result = nil
-					if skipUnpack then
-						b,result = xpcall(callback, debug.traceback, param, character.Stats)
-					else
-						b,result = xpcall(callback, debug.traceback, param, character.Stats, table.unpack(props))
-					end
-					if not b then
-						Ext.PrintError("[LeaderLib:ReplacePlaceholders] Error calling function for 'GetTextPlaceholder':\n", result)
-					elseif result ~= nil then
-						value = result
-					end
-				end
-			end
-			if Listeners.GetTextPlaceholder.All then
-				for _,callback in pairs(Listeners.GetTextPlaceholder.All) do
-					local b = true
-					local result = nil
-					if skipUnpack then
-						b,result = xpcall(callback, debug.traceback, param, character.Stats)
-					else
-						b,result = xpcall(callback, debug.traceback, param, character.Stats, table.unpack(props))
-					end
-					if not b then
-						Ext.PrintError("[LeaderLib:ReplacePlaceholders] Error calling function for 'GetTextPlaceholder':\n", result)
-					elseif result ~= nil then
-						value = result
+			---@type SubscribableEventInvokeResult<GetTextPlaceholderEventArgs>
+			local invokeResult = Events.GetTextPlaceholder:Invoke({
+				Character = character.Stats,
+				ID = param,
+				ExtraParams = props or {},
+				Result = ""
+			})
+			if invokeResult.ResultCode ~= "Error" then
+				value = invokeResult.Args.Result
+				if invokeResult.Results then
+					for i=1,#invokeResult.Results do
+						local v = invokeResult.Results[i]
+						if type(v) == "string" then
+							value = v
+						end
 					end
 				end
 			end
@@ -92,21 +78,30 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 				if _ISCLIENT then
 					character = Client:GetCharacter()
 				elseif Ext.OsirisIsCallable() then
-					character = Ext.GetCharacter(CharacterGetHostCharacter())
+					character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 				end
 			end
 			if character ~= nil and character.Stats ~= nil then
 				local useDefaultSkillDamage = true
-				local length = #Listeners.GetTooltipSkillDamage
-				if length > 0 then
-					for i=1,length do
-						local callback = Listeners.GetTooltipSkillDamage[i]
-						local b,result = xpcall(callback, debug.traceback, skill, character.Stats)
-						if not b then
-							Ext.PrintError("[LeaderLib:ReplacePlaceholders] Error calling function for 'GetTooltipSkillDamage':\n", result)
-						elseif not StringHelpers.IsNullOrEmpty(result) then
-							return result
+				---@type SubscribableEventInvokeResult<GetTooltipSkillDamageEventArgs>
+				local invokeResult = Events.GetTooltipSkillDamage:Invoke({
+					Character = character.Stats,
+					Skill = skillId,
+					SkillData = skill,
+					Result = ""
+				})
+				if invokeResult.ResultCode ~= "Error" then
+					local result = invokeResult.Args.Result
+					if invokeResult.Results then
+						for i=1,#invokeResult.Results do
+							local v = invokeResult.Results[i]
+							if type(v) == "string" and not StringHelpers.IsNullOrEmpty(v) then
+								result = v
+							end
 						end
+					end
+					if not StringHelpers.IsNullOrEmpty(result) then
+						return result
 					end
 				end
 				if useDefaultSkillDamage then
@@ -273,47 +268,55 @@ local function ReplacePlaceholders(str, character)
 			output = string.gsub(output, escapedReplace, value)
 		end
 	end
-	local length = Listeners.GetTooltipSkillParam and #Listeners.GetTooltipSkillParam or 0
-	if length > 0 then
+	for v in string.gmatch(output, "%[Skill:.-%]") do
 		local value = ""
-		for v in string.gmatch(output, "%[Skill:.-%]") do
-			local fullParam = v:gsub("%[Skill:", ""):gsub("%]", "")
-			local props = StringHelpers.Split(fullParam, ":")
-			local skillName = ""
-			local param = ""
-			if props and #props >= 2 then
-				skillName = props[1]
-				param = props[2]
-			end
-			if not StringHelpers.IsNullOrWhitespace(skillName) then
-				local skill = GameHelpers.Ext.CreateSkillTable(skillName)
-				if skill ~= nil then
-					if character == nil then
-						character = Client:GetCharacter()
-					end
-					if character ~= nil and character.Stats ~= nil then
-						for i=1,length do
-							local callback = Listeners.GetTooltipSkillParam[i]
-							local b,result = xpcall(callback, debug.traceback, skill, character.Stats, param)
-							if not b then
-								Ext.PrintError("[LeaderLib:ReplacePlaceholders] Error calling function for 'GetTooltipSkillParam':\n", result)
-							elseif result ~= nil then
-								value = result
+		local fullParam = v:gsub("%[Skill:", ""):gsub("%]", "")
+		local props = StringHelpers.Split(fullParam, ":")
+		local skillName = ""
+		local param = ""
+		if props and #props >= 2 then
+			skillName = props[1]
+			param = props[2]
+		end
+		if not StringHelpers.IsNullOrWhitespace(skillName) then
+			local skill = GameHelpers.Ext.CreateSkillTable(skillName)
+			if skill ~= nil then
+				if character == nil then
+					character = Client:GetCharacter()
+				end
+				if character ~= nil and character.Stats ~= nil then
+					---@type SubscribableEventInvokeResult<GetTooltipSkillParamEventArgs>
+					local invokeResult = Events.GetTooltipSkillParam:Invoke({
+						Character = character.Stats,
+						Skill = skillName,
+						SkillData = skill,
+						Param = param,
+						Result = ""
+					})
+					if invokeResult.ResultCode ~= "Error" then
+						local result = invokeResult.Args.Result
+						if invokeResult.Results then
+							for i=1,#invokeResult.Results do
+								local v = invokeResult.Results[i]
+								if v ~= nil then
+									result = v
+								end
 							end
 						end
+						value = result
 					end
 				end
-			end			
-			if value ~= nil and value ~= "" then
-				if _type(value) == "number" then
-					value = string.format("%i", math.floor(value))
-				end
-			elseif value == nil then
-				value = ""
 			end
-			local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-			output = string.gsub(output, escapedReplace, value)
+		end			
+		if value ~= nil and value ~= "" then
+			if _type(value) == "number" then
+				value = string.format("%i", math.floor(value))
+			end
+		elseif value == nil then
+			value = ""
 		end
+		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+		output = string.gsub(output, escapedReplace, value)
 	end
 
 	output = GetTextParamValues(output, character)

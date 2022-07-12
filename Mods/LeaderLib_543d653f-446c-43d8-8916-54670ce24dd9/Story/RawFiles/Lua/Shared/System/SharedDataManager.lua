@@ -569,14 +569,30 @@ if isClient then
 	---@param currentCharacter ClientCharacterData
 	local function ActiveCharacterChanged(currentCharacter, last)
 		currentCharacter = currentCharacter or GetClientCharacter()
-		if Vars.DebugMode then
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:ActiveCharacterChanged] Profile(%s) NameOrID(%s) Last(%s)", currentCharacter.Profile, (GameHelpers.Character.GetDisplayName(currentCharacter.NetID)) or currentCharacter.NetID, (last and GameHelpers.Character.GetDisplayName(last)) or -1)
-			local character = GameHelpers.GetCharacter(currentCharacter.NetID)
-			if character then
-				fprint(LOGLEVEL.DEFAULT, "DisplayName(%s) StoryDisplayName(%s) OriginalDisplayName(%s) PlayerCustomData.Name(%s)", character.DisplayName, character.StoryDisplayName, character.OriginalDisplayName, character.PlayerCustomData and character.PlayerCustomData.Name or "")
+		local data = {
+			UUID = currentCharacter.UUID,
+			UserID = currentCharacter.ID,
+			Profile = currentCharacter.Profile,
+			NetID = currentCharacter.NetID,
+			IsHost = currentCharacter.IsHost,
+			CharacterData = currentCharacter,
+		}
+		local netid = currentCharacter.NetID
+		local character = GameHelpers.GetCharacter(netid)
+		setmetatable(data, {
+			__index = function (_,k)
+				if k == "Character" then
+					if not character then
+						--Lifetime expired?
+						character = GameHelpers.GetCharacter(netid)
+					end
+					if character then
+						return character
+					end
+				end
 			end
-		end
-		InvokeListenerCallbacks(Listeners.ClientCharacterChanged, currentCharacter.UUID, currentCharacter.ID, currentCharacter.Profile, currentCharacter.NetID, currentCharacter.IsHost)
+		})
+		Events.ClientCharacterChanged:Invoke(data)
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_SetRegionData", function(cmd, payload)
@@ -635,7 +651,7 @@ if isClient then
 				invokeRegionChanged = lastRegion ~= SharedData.RegionData.Current or lastRegionState ~= SharedData.RegionData.State
 			end
 			Client:SetClientData(data.ID, data.Profile, data.IsHost, GetClientCharacter(data.Profile, data.NetID))
-			InvokeListenerCallbacks(Listeners.ClientDataSynced, SharedData.ModData, SharedData)
+			Events.ClientDataSynced:Invoke({ModData=SharedData.ModData, Data=SharedData})
 			if Client.Character.NetID ~= last then
 				ActiveCharacterChanged(Client.Character, last)
 			end

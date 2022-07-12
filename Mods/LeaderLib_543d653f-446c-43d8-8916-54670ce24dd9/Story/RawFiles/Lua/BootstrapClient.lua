@@ -39,8 +39,6 @@ Ext.RegisterListener("UIObjectCreated", function(ui)
 	if ui:GetTypeId() == Data.UIType.msgBox_c then
 		if not Vars.ControllerEnabled then
 			Vars.ControllerEnabled = true
-			Ext.Print("[LeaderLib] Controller mod enabled.")
-			InvokeListenerCallbacks(Listeners.ControllerModeEnabled)
 		end
 	end
 end)

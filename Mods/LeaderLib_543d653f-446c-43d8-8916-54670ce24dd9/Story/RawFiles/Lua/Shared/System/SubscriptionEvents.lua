@@ -75,6 +75,8 @@ Events.LuaReset = Classes.SubscribableEvent:Create("LuaReset", {SyncInvoke=true}
 ---@field State REGIONSTATE
 ---@field LevelType LEVELTYPE
 
+---Called when the region or state (Started, Game, Ended) changes.  
+---🔨🔧**Server/Client**🔧🔨  
 ---@type LeaderLibSubscribableEvent<RegionChangedEventArgs>
 Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged", {ArgsKeyOrder={"Region", "State", "LevelType"}})
 
@@ -84,7 +86,8 @@ Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged", {ArgsKe
 ---@field IsDying boolean
 ---@field IsItem boolean
 
----Called when a summon is created or destroyed. Includes items like mines.
+---Called when a summon is created or destroyed. Includes items like mines.  
+---🔨🔧**Server/Client**🔧🔨  
 ---@type LeaderLibSubscribableEvent<SummonChangedEventArgs>
 Events.SummonChanged = Classes.SubscribableEvent:Create("SummonChanged", {
 	SyncInvoke = true,
@@ -102,7 +105,8 @@ Events.SummonChanged = Classes.SubscribableEvent:Create("SummonChanged", {
 
 ---@see LeaderLibTimerSystem#RegisterListener
 ---Called when TimerFinished in Osiris occurs, or a tick timer finishes on the client side.
----Specify a MatchArgs table in the subscription options to register a named timer listener.
+---Specify a MatchArgs table in the subscription options to register a named timer listener.  
+---🔨🔧**Server/Client**🔧🔨  
 ---@type LeaderLibSubscribableEvent<TimerFinishedEventArgs>
 Events.TimerFinished = Classes.SubscribableEvent:Create("TimerFinished", {
 	ArgsKeyOrder={"ID", "Data"}
@@ -112,7 +116,8 @@ Events.TimerFinished = Classes.SubscribableEvent:Create("TimerFinished", {
 ---@field UUID string The Mod UUID
 ---@field Settings ModSettings
 
----Called when ModSettings are synced on both the server and client.
+---Called when ModSettings are synced on both the server and client.  
+---🔨🔧**Server/Client**🔧🔨  
 ---@type LeaderLibSubscribableEvent<ModSettingsSyncedEventArgs>
 Events.ModSettingsSynced = Classes.SubscribableEvent:Create("ModSettingsSynced", {
 	ArgsKeyOrder={"UUID", "Settings"}
@@ -121,7 +126,8 @@ Events.ModSettingsSynced = Classes.SubscribableEvent:Create("ModSettingsSynced",
 ---@class GameSettingsChangedEventArgs
 ---@field Settings LeaderLibGameSettings
 
----GameSettings changes are applied in the options menu. 
+---Called when GameSettings changes are applied in the options menu.  
+---🔨🔧**Server/Client**🔧🔨  
 ---@type LeaderLibSubscribableEvent<GameSettingsChangedEventArgs>
 Events.GameSettingsChanged = Classes.SubscribableEvent:Create("GameSettingsChanged")
 
@@ -129,23 +135,71 @@ Events.GameSettingsChanged = Classes.SubscribableEvent:Create("GameSettingsChang
 ---@field UUID UUID The character UUID.
 ---@field Character EsvCharacter|EclCharacter
 
----Called when a character's turn is delayed in combat (clicking the "Shield" icon).
+---Called when a character's turn is delayed in combat (clicking the "Shield" icon).  
+---🔨🔧**Server/Client**🔧🔨  
 ---@type LeaderLibSubscribableEvent<TurnDelayedEventArgs>
 Events.TurnDelayed = Classes.SubscribableEvent:Create("TurnDelayed", {
 	ArgsKeyOrder={"UUID", "Character"}
 })
 
----@class GlobalFlagChangedEventArgs
----@field ID string The _FlagName value.
----@field Enabled boolean
+---@class GetTooltipSkillDamageEventArgs
+---@field Skill string
+---@field SkillData StatEntrySkillData
+---@field Character StatCharacter
+---@field Result string The text to replace the placeholder with.
 
----Called when a global flag is set/unset.
----@type LeaderLibSubscribableEvent<GlobalFlagChangedEventArgs>
-Events.GlobalFlagChanged = Classes.SubscribableEvent:Create("GlobalFlagChanged", {
-	ArgsKeyOrder={"ID", "Enabled"}
+---Called from GameHelpers.Tooltip.ReplacePlaceholders when [SkillDamage:SkillId] text exists in the string.  
+---Set e.Result to specify the text replacement.  
+---🔨🔧**Server/Client**🔧🔨  
+---@type LeaderLibSubscribableEvent<GetTooltipSkillDamageEventArgs>
+Events.GetTooltipSkillDamage = Classes.SubscribableEvent:Create("GetTooltipSkillDamage", {
+	ArgsKeyOrder={"SkillData", "Character"},
+	GatherResults = true
+})
+
+---@class GetTooltipSkillParamEventArgs
+---@field Skill string
+---@field SkillData StatEntrySkillData
+---@field Character StatCharacter
+---@field Param string
+---@field Result string The text to replace the placeholder with.
+
+---Called from GameHelpers.Tooltip.ReplacePlaceholders when [Skill:SkillId:Param] text exists in the string.  
+---Set e.Result to specify the text replacement.  
+---🔨🔧**Server/Client**🔧🔨  
+---@type LeaderLibSubscribableEvent<GetTooltipSkillParamEventArgs>
+Events.GetTooltipSkillParam = Classes.SubscribableEvent:Create("GetTooltipSkillParam", {
+	ArgsKeyOrder={"SkillData", "Character", "Param"},
+	GatherResults = true
+})
+
+---@class GetTextPlaceholderEventArgs
+---@field ID string
+---@field Character StatCharacter
+---@field ExtraParams string[]
+---@field Result string The text to replace the placeholder with.
+
+---Called from GameHelpers.Tooltip.ReplacePlaceholders when [Special:ID] text exists in the string.  
+---Set e.Result to specify the text replacement.  
+---🔨🔧**Server/Client**🔧🔨  
+---@type LeaderLibSubscribableEvent<GetTextPlaceholderEventArgs>
+Events.GetTextPlaceholder = Classes.SubscribableEvent:Create("GetTextPlaceholder", {
+	ArgsKeyOrder={"ID", "Character", "ExtraParams"},
+	GatherResults = true
 })
 
 if not _ISCLIENT then
+	---@class GlobalFlagChangedEventArgs
+	---@field ID string The _FlagName value.
+	---@field Enabled boolean
+	
+	---Called when a global flag is set/unset.  
+	---🔨**Server-Only**🔨  
+	---@type LeaderLibSubscribableEvent<GlobalFlagChangedEventArgs>
+	Events.GlobalFlagChanged = Classes.SubscribableEvent:Create("GlobalFlagChanged", {
+		ArgsKeyOrder={"ID", "Enabled"}
+	})
+
 	---@class TreasureItemGeneratedEventArgs
 	---@field Item EsvItem
 	---@field StatsId string
@@ -613,6 +667,49 @@ if not _ISCLIENT then
 		ArgsKeyOrder={"UserID", "Profile", "UUID", "IsHost"}
 	})
 else
+	---@class ClientDataSyncedEventArgs
+	---@field Data SharedData
+	---@field ModData table
+	
+	---Called when SharedData is synced on the client.  
+	---ModData is the SharedData.ModData table, which mods can add to to simplify data that needs to be synced to clients.  
+	---🔧**Client-Only**🔧  
+	---@see LeaderLibAttackManager
+	---@type LeaderLibSubscribableEvent<ClientDataSyncedEventArgs>
+	Events.ClientDataSynced = Classes.SubscribableEvent:Create("ClientDataSynced", {
+		ArgsKeyOrder={"ModData", "Data"}
+	})
+
+	---@class ClientCharacterChangedEventArgs
+	---@field Character EclCharacter
+	---@field CharacterData ClientCharacterData
+	---@field UUID string
+	---@field UserID integer
+	---@field Profile string
+	---@field NetID integer
+	---@field IsHost boolean
+	
+	---Called when the active character changes on the client-side.  
+	---🔧**Client-Only**🔧  
+	---@see LeaderLibAttackManager
+	---@type LeaderLibSubscribableEvent<ClientCharacterChangedEventArgs>
+	Events.ClientCharacterChanged = Classes.SubscribableEvent:Create("ClientCharacterChanged", {
+		ArgsKeyOrder={"UUID", "UserID", "Profile", "NetID", "IsHost"}
+	})
+
+	---@class CharacterSheetPointChangedEventArgs
+	---@field Character EclCharacter
+	---@field Stat string
+	---@field StatType string
+	
+	---Called when character sheet buttons are clicked.   
+	---🔧**Client-Only**🔧  
+	---@see LeaderLibAttackManager
+	---@type LeaderLibSubscribableEvent<CharacterSheetPointChangedEventArgs>
+	Events.CharacterSheetPointChanged = Classes.SubscribableEvent:Create("CharacterSheetPointChanged", {
+		ArgsKeyOrder={"Character", "Stat", "StatType"}
+	})
+
 	---@class UICreatedEventArgs
 	---@field UI UIObject
 	---@field TypeId integer

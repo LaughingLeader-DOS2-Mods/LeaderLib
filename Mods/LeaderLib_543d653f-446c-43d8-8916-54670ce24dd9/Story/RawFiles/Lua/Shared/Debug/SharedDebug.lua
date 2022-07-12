@@ -33,3 +33,7 @@ local _ISCLIENT = Ext.IsClient()
 		end
 	end
 end) ]]
+
+Events.ClientCharacterChanged:Subscribe(function (e)
+	e:Dump()
+end)

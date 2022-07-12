@@ -167,8 +167,11 @@ function GameHelpers.Combat.GetID(obj)
 		if GUID then
 			--TODO replace with obj.RootTempate.CombatComponent index, if that's made available
 			local db = Osi.DB_CombatObjects:Get(GUID, nil)
-			if db then
-				return db[1][2]
+			if db and db[1] then
+				local _,id = table.unpack(db[1])
+				if id then
+					return id
+				end
 			end
 		end
 	end

@@ -176,13 +176,13 @@ end
 ---|"DISABLE" # Any status that returns true with GameHelpers.Status.IsDisablingStatus.
 ---|"LOSE_CONTROL" # Any status with IsLoseControl set to "Yes".
 ---|"DISABLE|LOSE_CONTROL" # Any status that has IsDisabling or IsLoseControl true in the status event.
----|StatsStatusType
+---|StatStatusType
 
 ---@param statusType LeaderLibStatusType|LeaderLibStatusType[] Status type(s) to register the callback for
 ---@param callback fun(e:OnStatusEventArgs) The function to call when this status event occurs
 ---@param priority integer|nil Optional listener priority
 ---@param statusEvent StatusEventID|nil The status event
----@param secondaryStatusType StatsStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
+---@param secondaryStatusType StatStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
 ---@return integer|integer[] index
 function _INTERNALREG.AllType(statusType, callback, priority, statusEvent, secondaryStatusType)
 	local t = _type(statusType)
@@ -223,7 +223,7 @@ end
 ---@param statusType LeaderLibStatusType|LeaderLibStatusType[] Status type(s) to register the callback for
 ---@param callback fun(e:OnStatusBeforeAttemptEventArgs) The function to call when this status event occurs
 ---@param priority integer|nil Optional listener priority
----@param secondaryStatusType StatsStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
+---@param secondaryStatusType StatStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
 ---@return integer|integer[] index
 function _INTERNALREG.BeforeAttemptType(statusType, callback, priority, secondaryStatusType)
 	return _INTERNALREG.AllType(statusType, callback, priority, "BeforeAttempt", secondaryStatusType)
@@ -232,7 +232,7 @@ end
 ---@param statusType LeaderLibStatusType|LeaderLibStatusType[] Status type(s) to register the callback for
 ---@param callback fun(e:OnStatusAttemptEventArgs) The function to call when this status event occurs
 ---@param priority integer|nil Optional listener priority
----@param secondaryStatusType StatsStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
+---@param secondaryStatusType StatStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
 ---@return integer|integer[] index
 function _INTERNALREG.AttemptType(statusType, callback, priority, secondaryStatusType)
 	return _INTERNALREG.AllType(statusType, callback, priority, "Attempt", secondaryStatusType)
@@ -241,7 +241,7 @@ end
 ---@param statusType LeaderLibStatusType|LeaderLibStatusType[] Status type(s) to register the callback for
 ---@param callback fun(e:OnStatusAppliedEventArgs) The function to call when this status event occurs
 ---@param priority integer|nil Optional listener priority
----@param secondaryStatusType StatsStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
+---@param secondaryStatusType StatStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
 ---@return integer|integer[] index
 function _INTERNALREG.AppliedType(statusType, callback, priority, secondaryStatusType)
 	return _INTERNALREG.AllType(statusType, callback, priority, "Applied", secondaryStatusType)
@@ -250,7 +250,7 @@ end
 ---@param statusType LeaderLibStatusType|LeaderLibStatusType[] Status type(s) to register the callback for
 ---@param callback fun(e:OnStatusBeforeDeleteEventArgs) The function to call when this status event occurs
 ---@param priority integer|nil Optional listener priority
----@param secondaryStatusType StatsStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
+---@param secondaryStatusType StatStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
 ---@return integer|integer[] index
 function _INTERNALREG.BeforeDeleteType(statusType, callback, priority, secondaryStatusType)
 	return _INTERNALREG.AllType(statusType, callback, priority, "BeforeDelete", secondaryStatusType)
@@ -259,7 +259,7 @@ end
 ---@param statusType LeaderLibStatusType|LeaderLibStatusType[] Status type(s) to register the callback for
 ---@param callback fun(e:OnStatusRemovedEventArgs) The function to call when this status event occurs
 ---@param priority integer|nil Optional listener priority
----@param secondaryStatusType StatsStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
+---@param secondaryStatusType StatStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
 ---@return integer|integer[] index
 function _INTERNALREG.RemovedType(statusType, callback, priority, secondaryStatusType)
 	return _INTERNALREG.AllType(statusType, callback, priority, "Removed", secondaryStatusType)
@@ -1106,7 +1106,7 @@ end
 
 ---@deprecated
 ---@param event StatusEventID BeforeAttempt, Attempt, Applied, Removed
----@param statusType StatsStatusType|StatsStatusType[]
+---@param statusType StatStatusType|StatStatusType[]
 ---@param callback StatusEventCallback
 function RegisterStatusTypeListener(event, statusType, callback)
 	if _type(statusType) == "table" then
@@ -1130,7 +1130,7 @@ end
 
 ---@deprecated
 ---@param event StatusEventID
----@param statusType StatsStatusType|StatsStatusType[]
+---@param statusType StatStatusType|StatStatusType[]
 ---@param callback StatusEventCallback
 ---@param removeAll boolean|nil
 function RemoveStatusTypeListener(event, statusType, callback, removeAll)

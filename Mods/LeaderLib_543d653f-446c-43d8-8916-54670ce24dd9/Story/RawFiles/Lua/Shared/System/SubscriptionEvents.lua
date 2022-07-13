@@ -502,7 +502,7 @@ if not _ISCLIENT then
 	---@field TargetGUID string|
 	---@field SourceGUID string
 	---@field StatusId string
-	---@field StatusType StatsStatusType
+	---@field StatusType StatStatusType
 	---@field StatusEvent StatusEventID
 	---@field IsDisabling boolean Whether GameHelpers.Status.IsDisablingStatus is true.
 	---@field IsLoseControl boolean Whether LoseControl from GameHelpers.Status.IsDisablingStatus is true.

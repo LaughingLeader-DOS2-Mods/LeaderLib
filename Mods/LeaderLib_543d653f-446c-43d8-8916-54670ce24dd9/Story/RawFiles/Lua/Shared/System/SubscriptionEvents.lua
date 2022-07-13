@@ -545,12 +545,24 @@ if not _ISCLIENT then
 		end,
 		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
 			if matchArgsType == "table" and type(opts.MatchArgs.Status) == "string" then
-				if type(opts.MatchArgs.StatusEvent) == "string" then
-					if StatusManager._Internal.EnabledStatuses[opts.MatchArgs.StatusEvent] then
-						StatusManager._Internal.EnabledStatuses[opts.MatchArgs.StatusEvent][opts.MatchArgs.Status] = true
+				local status = opts.MatchArgs.Status
+				local statusEvent = opts.MatchArgs.StatusEvent
+				local statusEventType = type(statusEvent)
+				if statusEventType == "string" then
+					if StatusManager._Internal.EnabledStatuses[statusEvent] then
+						StatusManager._Internal.EnabledStatuses[statusEvent][status] = true
+					end
+				elseif statusEventType == "table" then
+					for k,v in pairs(statusEvent) do
+						if StatusManager._Internal.EnabledStatuses[v] then
+							StatusManager._Internal.EnabledStatuses[v][status] = true
+						end
 					end
 				else
-					StatusManager._Internal.EnabledStatuses.All[opts.MatchArgs.Status] = true
+					StatusManager._Internal.EnabledStatuses.All[status] = true
+				end
+				if Data.IgnoredStatus[status] == true then
+					Vars.RegisteredIgnoredStatus[status] = true
 				end
 			end
 		end,

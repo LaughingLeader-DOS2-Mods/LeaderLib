@@ -10,9 +10,6 @@ Data.ObjectStats = {}
 --Valid items with a Stats table can still have an empty StatsId for some reason.
 --Data.ObjectStats = {[""] = true}
 
----@alias DamageType string|'"None"'|'"Physical"'|'"Piercing"'|'"Corrosive"'|'"Magic"'|'"Chaos"'|'"Fire"'|'"Air"'|'"Water"'|'"Earth"'|'"Poison"'|'"Shadow"'
----@alias DeathType string | "Sulfur" | "FrozenShatter" | "Surrender" | "Lifetime" | "KnockedDown" | "Piercing" | "Physical" | "Sentinel" | "DoT" | "Explode" | "Arrow" | "None" | "Acid" | "PetrifiedShatter" | "Hang" | "Incinerate" | "Electrocution"
-
 ---@type Enum
 Data.DamageTypeEnums = {
 	None = 0,
@@ -66,8 +63,6 @@ Data.DamageTypeToResistanceWithExtras = {
 }
 
 setmetatable(Data.DamageTypeToResistanceWithExtras, {__index = Data.DamageTypeToResistance})
-
----@alias ItemSlot '"Weapon"'|'"Shield"'|'"Helmet"'|'"Breast"'|'"Gloves"'|'"Leggings"'|'"Boots"'|'"Belt"'|'"Amulet"'|'"Ring"'|'"Ring2"'|'"Wings"'|'"Horns"'|'"Overhead"'|'"Sentintel"'
 
 Data.EquipmentSlots = {
 	Helmet = 0,
@@ -1278,7 +1273,7 @@ if Vars.IsClient then
 		OF_PreventCameraMove = 0x40000000,
 	}
 
-	Data.DefaultUIFlags = Data.UIFlags.OF_Load | Data.UIFlags.OF_PlayerInput1 | Data.UIFlags.OF_DeleteOnChildDestroy
+	Data.DefaultUIFlags = Data.UIFlags.OF_Load|Data.UIFlags.OF_PlayerInput1|Data.UIFlags.OF_DeleteOnChildDestroy
 end
 
 Data.StatAttributes = {

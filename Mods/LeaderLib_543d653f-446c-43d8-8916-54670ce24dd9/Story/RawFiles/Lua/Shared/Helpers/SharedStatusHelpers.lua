@@ -451,9 +451,10 @@ end
 
 ---@param status string
 ---@param checkForLoseControl boolean
+---@param stat StatEntryStatusData|nil
 ---@return boolean isDisabling
 ---@return boolean isLoseControl
-function GameHelpers.Status.IsDisablingStatus(status, checkForLoseControl)
+function GameHelpers.Status.IsDisablingStatus(status, checkForLoseControl, stat)
 	local statusType = GameHelpers.Status.GetStatusType(status)
 	if statusType == "KNOCKED_DOWN" or statusType == "INCAPACITATED" then
 		return true,false
@@ -463,7 +464,7 @@ function GameHelpers.Status.IsDisablingStatus(status, checkForLoseControl)
 			return true,true
 		end
 		if not Data.EngineStatus[status] then
-			local stat = Ext.GetStat(status)
+			local stat = stat or Ext.GetStat(status)
 			if stat and stat.LoseControl == "Yes" then
 				return true,true
 			end

@@ -22,9 +22,12 @@ end
 ---Allow BeforeAttempt and Attempt events to invoke on dead characters. Only specific engine statuses can apply to corpses, so this is normally ignored.
 StatusManager.AllowDead = false
 
----@alias StatusEventID string|"BeforeAttempt"|"Attempt"|"Applied"|"Removed"
-
----@alias StatusTypeID string|"CONSUME"|"DAMAGE"|"HEAL"|"HEALING"|"ACTIVE_DEFENSE"|"BLIND"|"CHALLENGE"|"CHARMED"|"DAMAGE_ON_MOVE"|"DEACTIVATED"|"DECAYING_TOUCH"|"DEMONIC_BARGAIN"|"DISARMED"|"EFFECT"|"EXTRA_TURN"|"FEAR"|"FLOATING"|"GUARDIAN_ANGEL"|"HEAL_SHARING_CASTER"|"HEAL_SHARING"|"INCAPACITATED"|"INVISIBLE"|"KNOCKED_DOWN"|"MUTED"|"PLAY_DEAD"|"POLYMORPHED"|"SPARK"|"STANCE"
+---@alias StatusEventID string
+---|"BeforeAttempt" # NRD_OnStatusAttempt
+---|"Attempt" # CharacterStatusAttempt/ItemStatusAttempt
+---|"Applied" # CharacterStatusApplied/ItemStatusChange
+---|"BeforeDelete" # Ext.Events.BeforeStatusDelete
+---|"Removed" # CharacterStatusRemoved/ItemStatusRemoved
 
 ---Automatically set to true after GameStarted.
 ---This is a local variable, instead of a key in _INTERNAL, so the BeforeStatusDelete listener doesn't need to parse a table within a table for every status firing the event.
@@ -43,6 +46,8 @@ local _INTERNAL = {
 		---@type table<string, boolean>
 		Applied = {},
 		---@type table<string, boolean>
+		BeforeDelete = {},
+		---@type table<string, boolean>
 		Removed = {},
 	},
 	EnableAll = {Status = false, Event = false}
@@ -60,8 +65,43 @@ for k,v in pairs(_INTERNAL.EnabledStatuses) do
 	setmetatable(v, _enableAllMeta)
 end
 
-
 StatusManager._Internal = _INTERNAL
+
+local _DisablingStatuses = {
+	Initialized = false,
+	---@type table<string, {IsDisabling:boolean, IsLoseControl:boolean}>
+	Statuses = {
+		CHARMED = {IsDisabling = false, IsLoseControl = true}
+	},
+}
+
+_INTERNAL.DisablingStatuses = _DisablingStatuses
+
+function _DisablingStatuses.UpdateStatuses()
+	local statuses = {}
+	--Preserves statuses mods may have added manually.
+	for statusId,data in _pairs(_DisablingStatuses.Statuses) do
+		statuses[statusId] = data
+	end
+	_DisablingStatuses.Statuses = {}
+	for v in GameHelpers.Stats.GetStats("StatusData", true) do
+		---@cast v -string
+		local isDisabling,isLoseControl = GameHelpers.Status.IsDisablingStatus(v.Name, true, v)
+		if isDisabling or isLoseControl then
+			_DisablingStatuses.Statuses[v.Name] = {IsDisabling = isDisabling, IsLoseControl = isLoseControl}
+		end
+	end
+	for name,data in pairs(statuses) do
+		if not _DisablingStatuses.Statuses[name] then
+			_DisablingStatuses.Statuses[name] = {IsDisablingStatus = data.IsDisabling == true, IsLoseControl = data.IsLoseControl == true}
+		end
+	end
+	_DisablingStatuses.Initialized = true
+end
+
+Ext.RegisterListener("SessionLoaded", function()
+	_DisablingStatuses.UpdateStatuses()
+end)
 
 StatusManager.Register = {}
 
@@ -124,23 +164,54 @@ function _INTERNALREG.Removed(status, callback, priority)
 	return _INTERNALREG.All(status, callback, priority, "Removed")
 end
 
----@param statusType string|string[]
+---@param status string|string[]
+---@param callback fun(e:OnStatusRemovedEventArgs)
+---@param priority integer|nil
+---@return integer|integer[] index
+function _INTERNALREG.BeforeDelete(status, callback, priority)
+	return _INTERNALREG.All(status, callback, priority, "Removed")
+end
+
+---@alias LeaderLibStatusType string
+---| "DISABLE" # Any status that returns true with GameHelpers.Status.IsDisablingStatus.
+---| "LOSE_CONTROL" # Any status with IsLoseControl set to "Yes".
+---| "DISABLE|LOSE_CONTROL" # Match if IsDisabling or IsLoseControl is true in the status event.
+
+---@param statusType LeaderLibStatusType|BaseStatusType|string[]
 ---@param callback fun(e:OnStatusEventArgs)
 ---@param priority integer|nil
 ---@param statusEvent StatusEventID|nil
+---@param secondaryStatusType BaseStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type.
 ---@return integer|integer[] index
-function _INTERNALREG.AllType(statusType, callback, priority, statusEvent)
+function _INTERNALREG.AllType(statusType, callback, priority, statusEvent, secondaryStatusType)
 	local t = _type(statusType)
 	if t == "string" then
-		if not statusEvent or not Vars.StatusEvent[statusEvent] then
-			return Events.OnStatus:Subscribe(callback, {MatchArgs={StatusType=statusType}, Priority=priority})
+		local matchArgs = nil
+		if statusType == "DISABLE" then
+			matchArgs = {IsDisabling=true, StatusEvent=statusEvent}
+		elseif statusType == "LOSE_CONTROL" then
+			matchArgs = {IsLoseControl=true, StatusEvent=statusEvent}
+		elseif statusType == "DISABLE|LOSE_CONTROL" then
+			---@param args OnStatusEventArgs
+			matchArgs = function(args)
+				if args.IsLoseControl == true or args.IsDisabling == true then
+					local statusTypeMatch = not secondaryStatusType or args.StatusType == secondaryStatusType
+					if statusEvent then
+						return args.StatusEvent == statusEvent and statusTypeMatch
+					else
+						return statusTypeMatch
+					end
+				end
+				return false
+			end
 		else
-			return Events.OnStatus:Subscribe(callback, {MatchArgs={StatusType=statusType, StatusEvent=statusEvent}, Priority=priority})
+			matchArgs = {StatusType=statusType, StatusEvent=statusEvent}
 		end
+		return Events.OnStatus:Subscribe(callback, {MatchArgs=matchArgs, Priority=priority})
 	elseif t == "table" then
 		local indexes = {}
-		for k,v in pairs(statusType) do
-			indexes[#indexes+1] = StatusManager.Subscribe.All(statusEvent, v, callback, priority)
+		for _,v in pairs(statusType) do
+			indexes[#indexes+1] = _INTERNALREG.AllType(v, callback, priority, statusEvent, secondaryStatusType)
 		end
 		return indexes
 	else
@@ -148,36 +219,49 @@ function _INTERNALREG.AllType(statusType, callback, priority, statusEvent)
 	end
 end
 
----@param statusType string|string[]
+---@param statusType LeaderLibStatusType|LeaderLibStatusType[]|BaseStatusType|BaseStatusType[]
 ---@param callback fun(e:OnStatusBeforeAttemptEventArgs)
 ---@param priority integer|nil
+---@param secondaryStatusType BaseStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type.
 ---@return integer|integer[] index
-function _INTERNALREG.BeforeAttemptType(statusType, callback, priority)
-	return _INTERNALREG.AllType(statusType, callback, priority, "BeforeAttempt")
+function _INTERNALREG.BeforeAttemptType(statusType, callback, priority, secondaryStatusType)
+	return _INTERNALREG.AllType(statusType, callback, priority, "BeforeAttempt", secondaryStatusType)
 end
 
----@param statusType string|string[]
+---@param statusType LeaderLibStatusType|LeaderLibStatusType[]|BaseStatusType|BaseStatusType[]
 ---@param callback fun(e:OnStatusAttemptEventArgs)
 ---@param priority integer|nil
+---@param secondaryStatusType BaseStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type.
 ---@return integer|integer[] index
-function _INTERNALREG.AttemptType(statusType, callback, priority)
-	return _INTERNALREG.AllType(statusType, callback, priority, "Attempt")
+function _INTERNALREG.AttemptType(statusType, callback, priority, secondaryStatusType)
+	return _INTERNALREG.AllType(statusType, callback, priority, "Attempt", secondaryStatusType)
 end
 
----@param statusType string|string[]
+---@param statusType LeaderLibStatusType|LeaderLibStatusType[]|BaseStatusType|BaseStatusType[]
 ---@param callback fun(e:OnStatusAppliedEventArgs)
 ---@param priority integer|nil
+---@param secondaryStatusType BaseStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type.
 ---@return integer|integer[] index
-function _INTERNALREG.AppliedType(statusType, callback, priority)
-	return _INTERNALREG.AllType(statusType, callback, priority, "Applied")
+function _INTERNALREG.AppliedType(statusType, callback, priority, secondaryStatusType)
+	return _INTERNALREG.AllType(statusType, callback, priority, "Applied", secondaryStatusType)
 end
 
----@param statusType string|string[]
+---@param statusType LeaderLibStatusType|LeaderLibStatusType[]|BaseStatusType|BaseStatusType[]
+---@param callback fun(e:OnStatusBeforeDeleteEventArgs)
+---@param priority integer|nil
+---@param secondaryStatusType BaseStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type.
+---@return integer|integer[] index
+function _INTERNALREG.BeforeDeleteType(statusType, callback, priority, secondaryStatusType)
+	return _INTERNALREG.AllType(statusType, callback, priority, "BeforeDelete", secondaryStatusType)
+end
+
+---@param statusType LeaderLibStatusType|LeaderLibStatusType[]|BaseStatusType|BaseStatusType[]
 ---@param callback fun(e:OnStatusRemovedEventArgs)
 ---@param priority integer|nil
+---@param secondaryStatusType BaseStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type.
 ---@return integer|integer[] index
-function _INTERNALREG.RemovedType(statusType, callback, priority)
-	return _INTERNALREG.AllType(statusType, callback, priority, "Removed")
+function _INTERNALREG.RemovedType(statusType, callback, priority, secondaryStatusType)
+	return _INTERNALREG.AllType(statusType, callback, priority, "Removed", secondaryStatusType)
 end
 
 ---If false is returned, the status will be blocked.
@@ -292,7 +376,7 @@ function StatusManager.Register.All(status, callback, ...)
 end
 
 StatusManager.Register.Type = {
-	---@param statusType string|string[]
+	---@param statusType LeaderLibStatusType|LeaderLibStatusType[]|BaseStatusType|BaseStatusType[]
 	---@param callback StatusManagerBeforeStatusAttemptCallback If false is returned, the status will be blocked.
 	BeforeAttempt = function(statusType, callback)
 		local t = _type(statusType)
@@ -318,7 +402,7 @@ StatusManager.Register.Type = {
 		end
 	end,
 
-	---@param statusType string|string[]
+	---@param statusType LeaderLibStatusType|LeaderLibStatusType[]|BaseStatusType|BaseStatusType[]
 	---@param callback StatusManagerAttemptCallback
 	Attempt = function(statusType, callback)
 		local t = _type(statusType)
@@ -333,7 +417,7 @@ StatusManager.Register.Type = {
 		end
 	end,
 
-	---@param statusType string|string[]
+	---@param statusType LeaderLibStatusType|LeaderLibStatusType[]|BaseStatusType|BaseStatusType[]
 	---@param callback StatusManagerAppliedCallback
 	Applied = function(statusType, callback)
 		local t = _type(statusType)
@@ -348,7 +432,7 @@ StatusManager.Register.Type = {
 		end
 	end,
 
-	---@param statusType string|string[]
+	---@param statusType LeaderLibStatusType|LeaderLibStatusType[]|BaseStatusType|BaseStatusType[]
 	---@param callback StatusManagerRemovedCallback
 	Removed = function(statusType, callback)
 		local t = _type(statusType)
@@ -364,7 +448,7 @@ StatusManager.Register.Type = {
 	end,
 
 	---Register a statusType listener for every state of a statusType.
-	---@param statusType string|string[]
+	---@param statusType LeaderLibStatusType|LeaderLibStatusType[]|BaseStatusType|BaseStatusType[]
 	---@param callback StatusManagerBeforeStatusAttemptCallback|StatusManagerAttemptCallback|StatusManagerRemovedCallback|StatusManagerAppliedCallback
 	All = function(statusType, callback)
 		local t = _type(statusType)
@@ -380,114 +464,6 @@ StatusManager.Register.Type = {
 		else
 			fprint(LOGLEVEL.ERROR, "[StatusManager.Register.Type.All] Invalid type for statusType param(%s) value (%s)", t, statusType)
 		end
-	end
-}
-
----@private
-StatusManager.DisablingStatuses = {
-	Initialized = false,
-	Statuses = {
-		"CHARMED"
-	},
-	IsLoseControl = {
-		CHARMED = true
-	},
-	DeferredListeners = {
-		BeforeAttempt = {},
-		Attempt = {},
-		Applied = {},
-		Removed = {}
-	},
-}
-
-Ext.RegisterListener("SessionLoaded", function()
-	StatusManager.DisablingStatuses.UpdateStatuses()
-end)
-
----If false is returned, the status will be blocked.
----@alias StatusManagerBeforeStatusAttemptDisablingStatusCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID, loseControl:boolean):boolean
----@alias StatusManagerAttemptDisablingStatusCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID, loseControl:boolean):void
----@alias StatusManagerRemovedDisablingStatusCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID, loseControl:boolean):void
----@alias StatusManagerAppliedDisablingStatusCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID, loseControl:boolean):void
-
-function StatusManager.DisablingStatuses.RegisterCallback(eventType, callback)
-	local registerFunction = StatusManager.Register[eventType]
-	for _,status in _pairs(StatusManager.DisablingStatuses.Statuses) do
-		local loseControl = StatusManager.DisablingStatuses.IsLoseControl[status] == true
-		registerFunction(StatusManager.DisablingStatuses.Statuses, callback, loseControl)
-	end
-end
-
-function StatusManager.DisablingStatuses.UpdateStatuses()
-	local statuses = {}
-	--Preserves statuses mods may have added manually.
-	for _,statusId in _pairs(StatusManager.DisablingStatuses.Statuses) do
-		statuses[statusId] = StatusManager.DisablingStatuses.IsLoseControl[statusId] == true
-	end
-	for _,v in _pairs(Ext.GetStatEntries("StatusData")) do
-		local isDisabling,isLoseControl = GameHelpers.Status.IsDisablingStatus(v, true)
-		if isDisabling then
-			statuses[v] = isLoseControl
-		end
-	end
-	StatusManager.DisablingStatuses.Statuses = {}
-	for statusId,isLoseControl in _pairs(statuses) do
-		StatusManager.DisablingStatuses.Statuses[#StatusManager.DisablingStatuses.Statuses+1] = statusId
-		StatusManager.DisablingStatuses.IsLoseControl[statusId] = isLoseControl
-	end
-	table.sort(StatusManager.DisablingStatuses.Statuses)
-	for eventType,listeners in _pairs(StatusManager.DisablingStatuses.DeferredListeners) do
-		for _,callback in _pairs(listeners) do
-			StatusManager.DisablingStatuses.RegisterCallback(eventType, callback)
-		end
-	end
-	StatusManager.DisablingStatuses.Initialized = true
-end
-
-StatusManager.Register.DisablingStatus = {
-	---@param callback StatusManagerBeforeStatusAttemptDisablingStatusCallback If false is returned, the status will be blocked.
-	BeforeAttempt = function(callback)
-		if StatusManager.DisablingStatuses.Initialized then
-			StatusManager.DisablingStatuses.RegisterCallback(Vars.StatusEvent.BeforeAttempt, callback)
-		else
-			table.insert(StatusManager.DisablingStatuses.DeferredListeners.BeforeAttempt, callback)
-		end
-	end,
-
-	---@param callback StatusManagerAttemptDisablingStatusCallback
-	Attempt = function(callback)
-		if StatusManager.DisablingStatuses.Initialized then
-			StatusManager.DisablingStatuses.RegisterCallback(Vars.StatusEvent.Attempt, callback)
-		else
-			table.insert(StatusManager.DisablingStatuses.DeferredListeners.Attempt, callback)
-		end
-	end,
-
-	---@param callback StatusManagerAppliedDisablingStatusCallback
-	Applied = function(callback)
-		if StatusManager.DisablingStatuses.Initialized then
-			StatusManager.DisablingStatuses.RegisterCallback(Vars.StatusEvent.Applied, callback)
-		else
-			table.insert(StatusManager.DisablingStatuses.DeferredListeners.Applied, callback)
-		end
-	end,
-
-	---@param callback StatusManagerRemovedDisablingStatusCallback
-	Removed = function(callback)
-		if StatusManager.DisablingStatuses.Initialized then
-			StatusManager.DisablingStatuses.RegisterCallback(Vars.StatusEvent.Removed, callback)
-		else
-			table.insert(StatusManager.DisablingStatuses.DeferredListeners.Removed, callback)
-		end
-	end,
-
-	---Register a listener for every state of a disabling status.
-	---@param callback StatusManagerBeforeStatusAttemptDisablingStatusCallback|StatusManagerAttemptDisablingStatusCallback|StatusManagerRemovedDisablingStatusCallback|StatusManagerAppliedDisablingStatusCallback
-	All = function(callback)
-		StatusManager.Register.DisablingStatus.BeforeAttempt(callback)
-		StatusManager.Register.DisablingStatus.Attempt(callback)
-		StatusManager.Register.DisablingStatus.Applied(callback)
-		StatusManager.Register.DisablingStatus.Removed(callback)
 	end
 }
 
@@ -585,13 +561,54 @@ if Ext.Version() >= 56 then
 	---@field PreventAction fun(self:ExtenderBeforeStatusDeleteEventParams):void
 
 	---@param e ExtenderBeforeStatusDeleteEventParams
+	local function OnBeforeStatusDelete(e)
+		local target = _GetObject(e.Status.TargetHandle)
+		local statusType = e.Status.StatusType
+		local source = _GetObject(e.Status.StatusSourceHandle)
+
+		local targetGUID = target.MyGuid
+		local sourceGUID = source and source.MyGuid or StringHelpers.NULL_UUID
+
+		local isDisabling = false
+		local isLoseControl = false
+
+		local disablingData = _DisablingStatuses.Statuses[e.Status.StatusId]
+		if disablingData then
+			isDisabling = disablingData.IsDisabling == true
+			isLoseControl = disablingData.IsLoseControl == true
+		end
+
+		---@type SubscribableEventInvokeResult<OnStatusBeforeDeleteEventArgs>
+		local result = Events.OnStatus:Invoke({
+			Target = target,
+			Source = source,
+			TargetGUID = targetGUID,
+			SourceGUID = sourceGUID,
+			Status = e.Status,
+			StatusId = e.Status.StatusId,
+			StatusEvent = "BeforeDelete",
+			StatusType = statusType,
+			PreventDelete = false,
+			IsDisabling = isDisabling,
+			IsLoseControl = isLoseControl
+		})
+
+		if result.ResultCode ~= "Error" and result.Args.PreventDelete == true then
+			e:PreventAction()
+		end
+	end
+
+	---@param e ExtenderBeforeStatusDeleteEventParams
 	Ext.Events.BeforeStatusDelete:Subscribe(function (e)
-		if _canBlockDeletion and e.Status.LifeTime == -1 and _IsValidHandle(e.Status.TargetHandle) then
-			local target = _GetGameObject(e.Status.TargetHandle)
-			if target ~= nil
-			and StatusManager.IsPermanentStatusActive(target.MyGuid, e.Status.StatusId)
-			and not GameHelpers.ObjectIsDead(target) then
-				e:PreventAction()
+		if _IsValidHandle(e.Status.TargetHandle) then
+			OnBeforeStatusDelete(e)
+			if _canBlockDeletion and e.Status.LifeTime == -1 then
+				local target = _GetGameObject(e.Status.TargetHandle)
+				if target ~= nil
+				and StatusManager.IsPermanentStatusActive(target.MyGuid, e.Status.StatusId)
+				and not GameHelpers.ObjectIsDead(target) then
+					e:PreventAction()
+				end
 			end
 		end
 	end)
@@ -757,7 +774,17 @@ RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targ
 			end
 		end
 
-		local data = {
+		local isDisabling = false
+		local isLoseControl = false
+
+		local disablingData = _DisablingStatuses.Statuses[statusID]
+		if disablingData then
+			isDisabling = disablingData.IsDisabling == true
+			isLoseControl = disablingData.IsLoseControl == true
+		end
+
+		---@type SubscribableEventInvokeResult<OnStatusBeforeAttemptEventArgs>
+		local result = Events.OnStatus:Invoke({
 			Target = target,
 			Source = source,
 			Status = status or statusID,
@@ -767,11 +794,10 @@ RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targ
 			StatusEvent = "BeforeAttempt",
 			StatusType = statusType,
 			PreventApply = preventApply,
-		}
-
-		Events.OnStatus:Invoke(data)
-
-		if data.PreventApply then
+			IsDisabling = isDisabling,
+			IsLoseControl = isLoseControl
+		})
+		if result.ResultCode ~= "Error" and result.Args.PreventApply == true then
 			NRD_StatusPreventApply(targetGUID, handle, 1)
 		end
 	end
@@ -787,6 +813,15 @@ local function OnStatusAttempt(targetGUID,statusID,sourceGUID)
 	
 	local statusType = _GetStatusType(statusID)
 
+	local isDisabling = false
+	local isLoseControl = false
+
+	local disablingData = _DisablingStatuses.Statuses[statusID]
+	if disablingData then
+		isDisabling = disablingData.IsDisabling == true
+		isLoseControl = disablingData.IsLoseControl == true
+	end
+
 	Events.OnStatus:Invoke({
 		Target = target,
 		Source = source,
@@ -795,7 +830,9 @@ local function OnStatusAttempt(targetGUID,statusID,sourceGUID)
 		Status = statusID,
 		StatusId = statusID,
 		StatusEvent = "Attempt",
-		StatusType = statusType
+		StatusType = statusType,
+		IsDisabling = isDisabling,
+		IsLoseControl = isLoseControl
 	})
 end
 
@@ -902,7 +939,6 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 		Events.SummonChanged:Invoke({Summon=target, Owner=owner, IsDying=false, IsItem=GameHelpers.Ext.ObjectIsItem(target)})
 	end
 
-
 	if Vars.LeaveActionData.Total > 0 then
 		local skill = Vars.LeaveActionData.Statuses[statusID]
 		if skill then
@@ -914,6 +950,15 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 		end
 	end
 
+	local isDisabling = false
+	local isLoseControl = false
+
+	local disablingData = _DisablingStatuses.Statuses[statusID]
+	if disablingData then
+		isDisabling = disablingData.IsDisabling == true
+		isLoseControl = disablingData.IsLoseControl == true
+	end
+
 	Events.OnStatus:Invoke({
 		Target = target,
 		Source = source,
@@ -922,7 +967,9 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 		SourceGUID = sourceGUID,
 		StatusId = statusID,
 		StatusEvent = "Applied",
-		StatusType = statusType
+		StatusType = statusType,
+		IsDisabling = isDisabling,
+		IsLoseControl = isLoseControl
 	})
 
 	if forceStatuses[statusID] and target and source then
@@ -955,14 +1002,25 @@ local function OnStatusRemoved(targetGUID,statusID,sourceGUID)
 		end
 	end
 	ClearStatusSource(targetGUID, statusID)
+	local isDisabling = false
+	local isLoseControl = false
+
+	local disablingData = _DisablingStatuses.Statuses[statusID]
+	if disablingData then
+		isDisabling = disablingData.IsDisabling == true
+		isLoseControl = disablingData.IsLoseControl == true
+	end
 	Events.OnStatus:Invoke({
 		Target = target,
 		Source = source,
 		TargetGUID = targetGUID,
 		SourceGUID = sourceGUID,
 		Status = statusID,
+		StatusId = statusID,
 		StatusEvent = "Removed",
-		StatusType = statusType
+		StatusType = statusType,
+		IsDisabling = isDisabling,
+		IsLoseControl = isLoseControl
 	})
 end
 
@@ -1040,7 +1098,7 @@ end
 
 ---@deprecated
 ---@param event StatusEventID BeforeAttempt, Attempt, Applied, Removed
----@param statusType StatusTypeID|StatusTypeID[]
+---@param statusType BaseStatusType|BaseStatusType[]
 ---@param callback StatusEventCallback
 function RegisterStatusTypeListener(event, statusType, callback)
 	if _type(statusType) == "table" then
@@ -1064,7 +1122,7 @@ end
 
 ---@deprecated
 ---@param event StatusEventID
----@param statusType StatusTypeID|StatusTypeID[]
+---@param statusType BaseStatusType|BaseStatusType[]
 ---@param callback StatusEventCallback
 ---@param removeAll boolean|nil
 function RemoveStatusTypeListener(event, statusType, callback, removeAll)

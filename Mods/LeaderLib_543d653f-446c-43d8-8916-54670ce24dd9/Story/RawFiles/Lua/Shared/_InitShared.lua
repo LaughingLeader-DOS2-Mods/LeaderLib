@@ -145,6 +145,7 @@ Vars = {
 		BeforeAttempt = "BeforeAttempt",
 		Attempt = "Attempt",
 		Applied = "Applied",
+		BeforeDelete = "BeforeDelete",
 		Removed = "Removed",
 	},
 }

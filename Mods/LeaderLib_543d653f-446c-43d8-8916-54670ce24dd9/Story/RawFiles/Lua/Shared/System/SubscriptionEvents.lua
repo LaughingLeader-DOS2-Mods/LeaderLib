@@ -499,15 +499,17 @@ if not _ISCLIENT then
 	---@class OnStatusBaseEventArgs
 	---@field Target EsvCharacter|EsvItem
 	---@field Source EsvCharacter|EsvItem|nil
-	---@field TargetGUID string
+	---@field TargetGUID string|
 	---@field SourceGUID string
 	---@field StatusId string
-	---@field StatusType string
+	---@field StatusType BaseStatusType
 	---@field StatusEvent StatusEventID
+	---@field IsDisabling boolean Whether GameHelpers.Status.IsDisablingStatus is true.
+	---@field IsLoseControl boolean Whether LoseControl from GameHelpers.Status.IsDisablingStatus is true.
 
 	---@class OnStatusBeforeAttemptEventArgs:OnStatusBaseEventArgs
-	---@field PreventApply boolean
 	---@field Status EsvStatus
+	---@field PreventApply boolean If true, the status attempt is prevented.
 
 	---@class OnStatusAttemptEventArgs:OnStatusBaseEventArgs
 	---@field Status string
@@ -517,6 +519,10 @@ if not _ISCLIENT then
 	
 	---@class OnStatusRemovedEventArgs:OnStatusBaseEventArgs
 	---@field Status string
+	
+	---@class OnStatusBeforeDeleteEventArgs:OnStatusBaseEventArgs
+	---@field Status EsvStatus
+	---@field PreventDelete boolean If true, the status deletion is prevented.
 
 	---@alias OnStatusEventArgs OnStatusBeforeAttemptEventArgs|OnStatusAttemptEventArgs|OnStatusAppliedEventArgs|OnStatusRemovedEventArgs
 	

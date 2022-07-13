@@ -357,3 +357,41 @@ Events.LuaReset:Subscribe(function()
 		CharacterResetCooldowns(player.MyGuid)
 	end
 end)
+
+--[[ if Ext.IsDeveloperMode() then
+	Ext.Events.OnPeekAiAction:Subscribe(function (e)
+		if e.ActionType == "Skill" then
+			for _,v in pairs(e.Request.AiActions) do
+				if v.ActionType == "Skill" then
+					v.SkillId = "Target_FirstAidEnemy_-1"
+				end
+			end
+			for _,v in pairs(e.Request.Skills) do
+				v.SkillId = "Target_FirstAidEnemy"
+			end
+		end
+		Ext.IO.SaveFile(string.format("Dumps/AI/%s_OnPeekAiAction.json", Ext.MonotonicTime()), Ext.DumpExport(e))
+	end)
+	
+	Ext.Events.OnBeforeSortAiActions:Subscribe(function (e)
+		Ext.IO.SaveFile(string.format("Dumps/AI/%s_OnBeforeSortAiActions.json", Ext.MonotonicTime()), Ext.DumpExport(e))
+	end)
+	
+	Ext.Events.OnAfterSortAiActions:Subscribe(function (e)
+		for _,v in pairs(e.Request.AiActions) do
+			if v.ActionType == "Skill" then
+				v.SkillId = "Target_FirstAidEnemy_-1"
+			end
+		end
+		for _,v in pairs(e.Request.Skills) do
+			v.SkillId = "Target_FirstAidEnemy"
+		end
+		Ext.IO.SaveFile(string.format("Dumps/AI/%s_OnAfterSortAiActions.json", Ext.MonotonicTime()), Ext.DumpExport(e))
+	end)
+	
+	Ext.Events.StatusDelete:Subscribe(function (e)
+		if e.Status.StatusId == "HASTED" then
+			Ext.IO.SaveFile("Dumps/StatusDelete_HASTED.json", Ext.DumpExport(e))
+		end
+	end)
+end ]]

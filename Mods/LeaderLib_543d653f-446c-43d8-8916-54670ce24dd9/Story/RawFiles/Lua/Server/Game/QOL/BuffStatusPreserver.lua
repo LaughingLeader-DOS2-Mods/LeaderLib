@@ -17,13 +17,25 @@ end
 BuffStatusPreserver.NextBuffStatus = {}
 
 BuffStatusPreserver.IgnoredStatusTypes = {
+	ACTIVE_DEFENSE = true,
+	BLIND = true,
+	CHARMED = true,
+	DECAYING_TOUCH = true,
+	DISARMED = true,
+	EXTRA_TURN = true,
+	FEAR = true,
+	GUARDIAN_ANGEL = true,
 	HEAL = true,
 	HEAL_SHARING = true,
 	HEAL_SHARING_CASTER = true,
 	HEALING = true,
+	INCAPACITATED = true,
 	INVISIBLE = true,
-	EXTRA_TURN = true,
-	GUARDIAN_ANGEL = true,
+	KNOCKED_DOWN = true,
+	MUTED = true,
+	PLAY_DEAD = true,
+	POLYMORPHED = true,
+	THROWN = true,
 }
 
 BuffStatusPreserver.IgnoredStatuses = {
@@ -37,6 +49,9 @@ BuffStatusPreserver.IgnoredStatuses = {
 }
 
 local function IgnoreStatus(id)
+	if Data.EngineStatus[id] then
+		return true
+	end
 	local ignored = BuffStatusPreserver.IgnoredStatuses
 	if ignored ~= nil then
 		if ignored == true or (type(ignored) == "function" and ignored(id))then

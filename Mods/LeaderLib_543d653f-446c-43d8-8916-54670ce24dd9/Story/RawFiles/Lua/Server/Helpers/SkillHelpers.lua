@@ -519,40 +519,6 @@ end
 
 --Mods.LeaderLib.GameHelpers.Skill.CreateZone(GameHelpers.Math.GetForwardPosition(me.MyGuid, 10.0), "Zone_LaserRay", me.MyGuid)
 
----@param skill StatEntrySkillData
----@param source UUID
----@param targetObject UUID
----@param sourcePosition number[]
----@param targetPosition number[]
----@param playCastEffect boolean|nil
----@param playTargetEffect boolean|nil
-local function PlayZoneSkillEffects(skill, source, targetObject, sourcePosition, targetPosition, playCastEffect, playTargetEffect)
-    if playCastEffect and not StringHelpers.IsNullOrEmpty(skill.CastEffect) then
-        local effects = StringHelpers.Split(skill.CastEffect, ";")
-        for _,effectEntry in pairs(effects) do
-            local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
-            local bone = effectEntry:gsub(".+:", "") or ""
-            if source and not StringHelpers.IsNullOrEmpty(bone) then
-                PlayEffect(source, effect, bone)
-            elseif sourcePosition then
-                PlayEffectAtPosition(effect, table.unpack(sourcePosition))
-            end
-        end
-    end
-    if playTargetEffect and not StringHelpers.IsNullOrWhitespace(skill.TargetEffect) then
-        local effects = StringHelpers.Split(skill.TargetEffect, ";")
-        for _,effectEntry in pairs(effects) do
-            local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
-            local bone = effectEntry:gsub(".+:", "") or ""
-            if targetObject and not StringHelpers.IsNullOrEmpty(bone) then
-                PlayEffect(targetObject, effect, bone)
-            elseif targetPosition then
-                PlayEffectAtPosition(effect, table.unpack(targetPosition))
-            end
-        end
-    end
-end
-
 ---@class LeaderLibZoneCreationProperties:EsvZoneAction
 ---@field PlayCastEffects boolean
 ---@field PlayTargetEffects boolean
@@ -566,6 +532,8 @@ local LeaderLibZoneCreationPropertiesNames = {
     PlayTargetEffects = "boolean",
     ApplySkillProperties = "boolean",
     SkillOverrides = "table",
+    CastEffectPosition = "table",
+    TargetEffectPosition = "table",
 }
 
 ---@param skillId string Zone or Cone type skill.
@@ -663,6 +631,10 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
 
     local playCastEffects, playTargetEffects, applySkillProperties = false,false,false
     local sourceId = GameHelpers.GetUUID(source)
+    ---@type number[]
+    local castEffectPosition = nil
+    ---@type number[]
+    local targetEffectPosition = nil
 
     if type(extraParams) == "table" then
         for k,v in pairs(extraParams) do
@@ -672,6 +644,10 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
                         playCastEffects = v
                     elseif k == "PlayTargetEffects" then
                         playCastEffects = v
+                    elseif k == "CastEffectPosition" then
+                        castEffectPosition = v
+                    elseif k == "TargetEffectPosition" then
+                        targetEffectPosition = v
                     elseif k == "ApplySkillProperties" and v == true then
                         applySkillProperties = true
                         if not Vars.ApplyZoneSkillProperties[skillId] then
@@ -701,7 +677,40 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
         end
     end
 
-    PlayZoneSkillEffects(skill, sourceId, GameHelpers.GetUUID(target), props.Position, props.Target, playCastEffects, playTargetEffects)
+    if playCastEffects and not StringHelpers.IsNullOrEmpty(skill.CastEffect) then
+        local effects = StringHelpers.Split(skill.CastEffect, ";")
+        for _,effectEntry in pairs(effects) do
+            local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
+            local bone = effectEntry:gsub(".+:", "") or ""
+            if source then
+                if castEffectPosition then
+                    EffectManager.PlayEffectAt(effect, castEffectPosition, {Rotation=source.Rotation})
+                else
+                    if StringHelpers.IsNullOrWhitespace(bone) then bone = nil end
+                    EffectManager.PlayEffect(effect, source, {Bone=bone, Rotation=source.Rotation})
+                end
+            elseif props.Position then
+                EffectManager.PlayEffectAt(effect, props.Position)
+            end
+        end
+    end
+    if playTargetEffects and not StringHelpers.IsNullOrWhitespace(skill.TargetEffect) then
+        local effects = StringHelpers.Split(skill.TargetEffect, ";")
+        for _,effectEntry in pairs(effects) do
+            local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
+            local bone = effectEntry:gsub(".+:", "") or ""
+            if target then
+                if targetEffectPosition then
+                    EffectManager.PlayEffectAt(effect, targetEffectPosition, {Rotation=source and source.Rotation})
+                else
+                    if StringHelpers.IsNullOrWhitespace(bone) then bone = nil end
+                    EffectManager.PlayEffect(effect, target, {Bone=bone, Rotation=source and source.Rotation})
+                end
+            elseif props.Target then
+                EffectManager.PlayEffectAt(effect, props.Target, {Rotation=source and source.Rotation})
+            end
+        end
+    end
 
     local dumpAction = false
     for k,v in pairs(props) do
@@ -721,8 +730,8 @@ local _USE_BEHAVIOR = Ext.Version() < 56
 
 ---Shoot a zone/cone skill at a target object or position.
 ---@param skillId string Zone or Cone type skill.
----@param source UUID|EsvCharacter|EsvItem
----@param target UUID|number[]|EsvCharacter|EsvItem
+---@param source ObjectParam
+---@param target ObjectParam|number[]
 ---@param extraParams LeaderLibZoneCreationProperties An optional table of properties to apply on top of the parsed skill properties.
 function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
     extraParams = type(extraParams) == "table" and extraParams or {}

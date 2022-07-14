@@ -1613,7 +1613,7 @@ function GameHelpers.Ext.CreateItemTable(item)
 	return itemTable
 end
 
-
+---@param obj ObjectParam
 function GameHelpers.Ext.ObjectIsStatItem(obj)
 	if _type(obj) == "userdata" then
 		local meta = getmetatable(obj)
@@ -1622,6 +1622,7 @@ function GameHelpers.Ext.ObjectIsStatItem(obj)
 	return false
 end
 
+---@param obj ObjectParam
 function GameHelpers.Ext.ObjectIsItem(obj)
 	local t = _type(obj)
 	if t == "userdata" then
@@ -1639,7 +1640,7 @@ function GameHelpers.Ext.ObjectIsItem(obj)
 	return false
 end
 
----@param obj EsvGameObject|EclGameObject|UUID
+---@param obj ObjectParam
 function GameHelpers.Ext.ObjectIsCharacter(obj)
 	local t = _type(obj)
 	if t == "userdata" then
@@ -1662,6 +1663,7 @@ function GameHelpers.Ext.ObjectIsCharacter(obj)
 	return false
 end
 
+---@param obj ObjectParam
 function GameHelpers.Ext.ObjectIsStatCharacter(obj)
 	if _type(obj) == "userdata" then
 		return getmetatable(obj) == Data.ExtenderClass.StatCharacter
@@ -1669,7 +1671,7 @@ function GameHelpers.Ext.ObjectIsStatCharacter(obj)
 	return false
 end
 
----@param obj EsvItem|EclItem|StatItem
+---@param obj ItemParam
 ---@return string
 function GameHelpers.Ext.GetItemStatName(obj)
 	local t = _type(obj)

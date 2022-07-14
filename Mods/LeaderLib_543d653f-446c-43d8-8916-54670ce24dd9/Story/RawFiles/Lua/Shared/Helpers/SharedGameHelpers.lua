@@ -66,11 +66,10 @@ end
 ---@param v userdata
 ---@return boolean
 local function IsHandle(v)
-	if _EXTVERSION >= 56 then
-		return _isValidHandle(v)
-	else
-		return v ~= nil and getmetatable(v) == nil
+	if _EXTVERSION >= 56 and _isValidHandle(v) then
+		return true
 	end
+	return type(v) == "userdata" and getmetatable(v) == nil
 end
 
 GameHelpers.IsValidHandle = IsHandle
@@ -84,7 +83,7 @@ local getFuncs = {
 
 local function TryGetObject(id)
 	local t = _type(id)
-	local isHandle = t == "userdata" and IsHandle(id) == true
+	local isHandle = IsHandle(id)
 	if _osirisIsCallable() and t == "string" then
 		if ObjectExists(id) == 0 then
 			return nil
@@ -119,7 +118,7 @@ local function TryGetObject(id)
 				return result
 			end
 		end
-	elseif t == "userdata" then
+	elseif t == "userdata" and not isHandle then
 		return id
 	end
 	return nil

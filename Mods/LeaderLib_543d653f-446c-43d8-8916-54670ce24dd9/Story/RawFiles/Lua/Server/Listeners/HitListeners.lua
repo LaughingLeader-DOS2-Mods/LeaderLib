@@ -97,23 +97,6 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 	end
 end
 
----@return EsvCharacter|EsvItem
-local function TryGetObject(data, property)
-	local b,result = xpcall(function()
-		local b2,result2 = xpcall(Ext.GetGameObject, debug.traceback, data[property])
-		if b2 then
-			return result2
-		else
-			fprint(LOGLEVEL.ERROR, "[LeaderLib] Error calling Ext.GetGameObject:\n%s", result2)
-		end
-	end, debug.traceback)
-	if b then
-		return result
-	else
-		fprint(LOGLEVEL.ERROR, "[LeaderLib] Error calling Ext.GetGameObject:\n%s", result)
-	end
-end
-
 ---@param hitStatus EsvStatusHit
 ---@param hitContext HitContext
 local function GetHitRequest(hitStatus, hitContext)
@@ -126,8 +109,11 @@ end
 ---@param hitStatus EsvStatusHit
 ---@param hitContext HitContext
 local function OnHit(hitStatus, hitContext)
-	local target = TryGetObject(hitStatus, "TargetHandle")
-	local source = TryGetObject(hitStatus, "StatusSourceHandle")
+	if not hitStatus then
+		return
+	end
+	local target = GameHelpers.TryGetObject(hitStatus.TargetHandle)
+	local source = GameHelpers.TryGetObject(hitStatus.StatusSourceHandle)
 
 	-- if hitContext.HitType ~= "Surface" and hitContext.HitType ~= "DoT" then
 	-- 	Ext.Dump({Context="StatusHitEnter", Damage=hitStatus.Hit.DamageList:ToTable(), TotalDamageDone=hitStatus.Hit.TotalDamageDone, HitType=hitContext.HitType})
@@ -137,28 +123,28 @@ local function OnHit(hitStatus, hitContext)
 		return
 	end
 
-	local targetId = GameHelpers.GetUUID(target, true)
-	local sourceId = GameHelpers.GetUUID(source, true)
+	local targetGUID = GameHelpers.GetUUID(target, true)
+	local sourceGUID = GameHelpers.GetUUID(source, true)
 
 	if source then
 		--This is set if ApplySkillProperties is true during GameHelpers.Skill.ShootZoneAt
 		---@see GameHelpers.Skill.ShootZoneAt
 		local applySkillProperties = Vars.ApplyZoneSkillProperties[hitStatus.SkillId]
-		if applySkillProperties and applySkillProperties[sourceId] then
-			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, targetId, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
-			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, sourceId, source.WorldPos, _SelfPropertyContext, GameHelpers.Ext.ObjectIsItem(source))
-			Timer.Restart(applySkillProperties[sourceId], 1)
+		if applySkillProperties and applySkillProperties[sourceGUID] then
+			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceGUID, targetGUID, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
+			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceGUID, sourceGUID, source.WorldPos, _SelfPropertyContext, GameHelpers.Ext.ObjectIsItem(source))
+			Timer.Restart(applySkillProperties[sourceGUID], 1)
 		end
 	end
 
 	---@type HitRequest
 	local hitRequest = GetHitRequest(hitStatus, hitContext)
 
-	---@type StatEntrySkillData
 	local skill = nil
 	if not StringHelpers.IsNullOrEmpty(hitStatus.SkillId) then
 		skill = Ext.GetStat(GetSkillEntryName(hitStatus.SkillId))
 	end
+	---@cast skill StatEntrySkillData
 
 	local hitType = GameHelpers.Hit.GetHitType(hitContext)
 	local damageSourceType = hitStatus.DamageSourceType
@@ -173,7 +159,7 @@ local function OnHit(hitStatus, hitContext)
 	--data:DumpToFile()
 
 	if skill and source then
-		OnSkillHit(skill.Name, target, source, hitRequest.TotalDamageDone, hitRequest, hitContext, hitStatus, data)
+		OnSkillHit(skill.Name, target, source, data.Damage, hitRequest, hitContext, hitStatus, data)
 	end
 
 	local isFromWeapon = GameHelpers.Hit.TypesAreFromWeapon(hitType, damageSourceType, weaponHandle, skill)
@@ -197,8 +183,11 @@ local function OnHit(hitStatus, hitContext)
 	Events.OnHit:Invoke({
 		Target=target,
 		Source=source,
+		TargetGUID = targetGUID,
+		SourceGUID = sourceGUID,
 		Data=data,
-		HitStatus=hitStatus
+		HitStatus=hitStatus,
+		HitContext=hitContext
 	})
 end
 

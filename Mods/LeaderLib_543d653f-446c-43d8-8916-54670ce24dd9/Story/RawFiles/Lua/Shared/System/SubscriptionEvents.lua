@@ -278,10 +278,13 @@ if not _ISCLIENT then
 	---@class OnHitEventArgs
 	---@field Target EsvCharacter|EsvItem
 	---@field Source EsvCharacter|EsvItem|nil
+	---@field TargetGUID string
+	---@field SourceGUID string|NULL_UUID
 	---@field Data HitData
 	---@field HitStatus EsvStatusHit
+	---@field HitContext EsvPendingHit
 	
-	---Called during StatusHitEnter, with a data wrapper for easier manipulation.  
+	---Called during StatusHitEnter, with a hit data wrapper for easier manipulation.  
 	---🔨**Server-Only**🔨
 	---@type LeaderLibSubscribableEvent<OnHitEventArgs>
 	Events.OnHit = Classes.SubscribableEvent:Create("OnHit", {
@@ -299,7 +302,7 @@ if not _ISCLIENT then
 	---@field Hit HitRequest
 	---@field HitType HitTypeValues
 	---@field NoHitRoll boolean
-	---@field SkillProperties StatProperty[]
+	---@field SkillProperties AnyStatProperty[]
 	---@field Target StatCharacter
 	---@field Weapon StatItem
 	

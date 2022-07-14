@@ -41,6 +41,8 @@ local NULL_UUID = {
 	["00000000-0000-0000-0000-000000000000"] = true
 }
 
+---@alias NULL_UUID "NULL_00000000-0000-0000-0000-000000000000"
+
 StringHelpers.NULL_UUID = "NULL_00000000-0000-0000-0000-000000000000"
 StringHelpers.UNSET_HANDLE = "ls::TranslatedStringRepository::s_HandleUnknown"
 

@@ -1698,7 +1698,7 @@ end
 ---@generic T:TooltipElement|TooltipElementType
 ---@param t `T`|`T`[] The tooltip element type, or an array of element types.
 ---@param fallback TooltipElement|nil If an element of the desired type isn't found, append and return this fallback element.
----@return T|nil elementOrFallback
+---@return T elementOrFallback
 function TooltipData:GetElement(t, fallback)
 	local isTable = type(t) == "table"
 	for i=1,#self.Data do
@@ -2170,8 +2170,19 @@ end)
 ---@class SurfaceDescription:TooltipLabelElement
 
 ---@class BoostSpec:TooltipElement
----@field Type string
 ---@field Value number
+
+---@class TooltipSkillPropertiesProperty
+---@field Label string
+---@field Warning string
+
+---@class TooltipSkillPropertiesResistance
+---@field Label string
+---@field Value number
+
+---@class SkillProperties:TooltipElement
+---@field Properties TooltipSkillPropertiesProperty[]
+---@field Resistances TooltipSkillPropertiesResistance[]
 
 ---@class ItemName:TooltipLabelElement
 ---@class ItemWeight:TooltipLabelElement

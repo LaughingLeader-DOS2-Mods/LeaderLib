@@ -51,8 +51,8 @@ if _ISCLIENT then
 	Ext.RegisterListener("SessionLoaded", function ()
 		local settings = SettingsManager.GetMod(ModuleUUID, false)
 		if settings then
-			settings.Global.Flags.LeaderLib_AutoUnlockInventoryInMultiplayer:AddListener(function(id, enabled, data, settingsData)
-				if enabled and (PartyInventory.Visible or _inventoryWasOpened) then
+			settings.Global.Flags.LeaderLib_AutoUnlockInventoryInMultiplayer:Subscribe(function(e)
+				if e.Value and (PartyInventory.Visible or _inventoryWasOpened) then
 					UnlockInventories(PartyInventory.Instance)
 				end
 			end)

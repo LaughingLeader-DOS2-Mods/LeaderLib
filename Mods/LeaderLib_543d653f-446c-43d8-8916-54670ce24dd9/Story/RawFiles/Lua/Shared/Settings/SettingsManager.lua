@@ -128,7 +128,7 @@ local function ParseSettings(tbl)
 	end
 end
 
----@param skipEventInvoking boolean|nil Skip invoking the ModSettingsLoaded event.
+---@param skipEventInvoking boolean|nil Skip invoking the ModSettingsLoaded and GlobalSettingsLoaded events.
 function LoadGlobalSettings(skipEventInvoking)
 	local b,result = xpcall(function()
 		SettingsManager.LoadConfigFiles()
@@ -151,11 +151,11 @@ function LoadGlobalSettings(skipEventInvoking)
 				v:ApplyToGame()
 			end
 			if skipEventInvoking ~= true then
-				InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], v)
+				Events.ModSettingsLoaded:Invoke({UUID=uuid, Settings=v})
 			end
 		end
 		if skipEventInvoking ~= true then
-			InvokeListenerCallbacks(Listeners.ModSettingsLoaded.All, GlobalSettings)
+			Events.GlobalSettingsLoaded:Invoke({Settings=GlobalSettings})
 		end
 		return result
 	end
@@ -360,9 +360,9 @@ else
 			--SyncStatOverrides(GameSettings)
 		end
 		for uuid,v in pairs(GlobalSettings.Mods) do
-			InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], v)
+			Events.ModSettingsLoaded:Invoke({UUID=uuid, Settings=v})
 		end
-		InvokeListenerCallbacks(Listeners.ModSettingsLoaded.All, GlobalSettings)
+		Events.GlobalSettingsLoaded:Invoke({Settings=GlobalSettings})
 	end)
 
 	Ext.RegisterNetListener("LeaderLib_SyncGlobalSettings", function(cmd, dataString)

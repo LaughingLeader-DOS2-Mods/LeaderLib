@@ -52,18 +52,24 @@ function FlagData:Create(flag, flagType, enabled, displayName, tooltip, isFromFi
     return this
 end
 
+---@param listener fun(e:ModSettingsChangedEventArgs|LeaderLibSubscribableEventArgs)
+function FlagData:Subscribe(listener)
+	local t = type(listener)
+	if t == "function" then
+		Events.ModSettingsChanged:Subscribe(listener, {MatchArgs={ID=self.ID}})
+	else
+		error(string.format("[LeaderLib:FlagData:Subscribe(%s)] The listener param must be a function or table of functions. Type(%s)", self.ID, t))
+	end
+end
+
+---@deprecated
 ---@param listener ModSettingsFlagDataChangedListener|ModSettingsFlagDataChangedListener[]
 function FlagData:AddListener(listener)
 	local t = type(listener)
 	if t == "function" then
-		if Listeners.ModSettingsChanged[self.ID] == nil then
-			Listeners.ModSettingsChanged[self.ID] = {}
-		end
-		table.insert(Listeners.ModSettingsChanged[self.ID], listener)
-	elseif t == "table" then
-		for i,v in pairs(listener) do
-			self:AddListener(v)
-		end
+		Events.ModSettingsChanged:Subscribe(function (e)
+			listener(e.ID, e.Value, e.Data, e.Settings)
+		end, {MatchArgs={ID=self.ID}})
 	else
 		error(string.format("[LeaderLib:FlagData:AddListener(%s)] The listener param must be a function or table of functions. Type(%s)", self.ID, t))
 	end

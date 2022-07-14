@@ -188,6 +188,48 @@ Events.GetTextPlaceholder = Classes.SubscribableEvent:Create("GetTextPlaceholder
 	GatherResults = true
 })
 
+---@class GlobalSettingsLoadedEventArgs
+---@field Settings GlobalSettings
+
+---Called when all global settings are loaded.  
+---🔨🔧**Server/Client**🔧🔨  
+---@type LeaderLibSubscribableEvent<GlobalSettingsLoadedEventArgs>
+Events.GlobalSettingsLoaded = Classes.SubscribableEvent:Create("GlobalSettingsLoaded", {
+	ArgsKeyOrder={"Settings"}
+})
+
+---@class ModSettingsLoadedEventArgs
+---@field UUID string The mod UUID
+---@field Settings ModSettings
+
+---Called when an individual mod's global settings are loaded.  
+---🔨🔧**Server/Client**🔧🔨  
+---@type LeaderLibSubscribableEvent<ModSettingsLoadedEventArgs>
+Events.ModSettingsLoaded = Classes.SubscribableEvent:Create("ModSettingsLoaded", {
+	ArgsKeyOrder={"Settings", "UUID"}
+})
+
+---@class BaseModSettingsChangedEventArgs
+---@field ID string
+---@field Settings SettingsData
+
+---@class ModSettingsFlagChangedEventArgs:BaseModSettingsChangedEventArgs
+---@field Data FlagData
+---@field Value boolean
+
+---@class ModSettingsVariableChangedEventArgs:BaseModSettingsChangedEventArgs
+---@field Data VariableData
+---@field Value integer
+
+---@alias ModSettingsChangedEventArgs ModSettingsFlagChangedEventArgs|ModSettingsVariableChangedEventArgs
+
+---Called when an entry's value in ModSettings changes.  
+---🔨🔧**Server/Client**🔧🔨  
+---@type LeaderLibSubscribableEvent<ModSettingsChangedEventArgs>
+Events.ModSettingsChanged = Classes.SubscribableEvent:Create("ModSettingsChanged", {
+	ArgsKeyOrder={"ID", "Value", "Data", "Settings"}
+})
+
 if not _ISCLIENT then
 	---@class GlobalFlagChangedEventArgs
 	---@field ID string The _FlagName value.

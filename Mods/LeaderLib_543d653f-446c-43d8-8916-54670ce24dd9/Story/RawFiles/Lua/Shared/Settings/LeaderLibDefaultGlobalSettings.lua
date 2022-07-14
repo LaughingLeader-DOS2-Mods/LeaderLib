@@ -89,24 +89,23 @@ end
 GlobalSettings.Mods[ModuleUUID] = settings
 
 if Ext.IsServer() then
-	settings.Global.Flags.LeaderLib_BuffStatusPreserverEnabled:AddListener(function(id, enabled, data, settingsData)
-		if not enabled then
+	settings.Global.Flags.LeaderLib_BuffStatusPreserverEnabled:Subscribe(function(e)
+		if not e.Value then
 			BuffStatusPreserver.Disable()
 		end
 	end)
-	settings.Global.Flags.LeaderLib_FriendlyFireEnabled:AddListener(function(id, enabled, data, settingsData)
-		local gs = Ext.GetGameState()
-		if gs == "Running" then
-			TagManager:TagAll(enabled)
+	settings.Global.Flags.LeaderLib_FriendlyFireEnabled:Subscribe(function(e)
+		if Ext.GetGameState() == "Running" then
+			TagManager:TagAll(e.Value)
 		end
 	end)
-	settings.Global.Variables.AutoCombatRange:AddListener(function(id, value, data, settingsData)
+	settings.Global.Variables.AutoCombatRange:Subscribe(function(e)
 		if settings.Global:FlagEquals("LeaderLib_PullPartyIntoCombat", true) then
 			Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
 		end
 	end)
-	settings.Global.Flags.LeaderLib_PullPartyIntoCombat:AddListener(function(id, enabled, data, settingsData)
-		if enabled then
+	settings.Global.Flags.LeaderLib_PullPartyIntoCombat:Subscribe(function(e)
+		if e.Value then
 			Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
 		else
 			Timer.Cancel("LeaderLib_PullPartyIntoCombat")
@@ -116,8 +115,8 @@ end
 
 --Making sure autosaves are enabled in the options if this flag is enabled
 if Ext.Version() >= 56 then
-	settings.Global.Flags.LeaderLib_AutosavingEnabled:AddListener(function(id, enabled, data, settingsData)
-		if enabled then
+	settings.Global.Flags.LeaderLib_AutosavingEnabled:Subscribe(function(e)
+		if e.Value then
 			local options = Ext.Utils.GetGlobalSwitches()
 			if options then
 				options.CanAutoSave = true

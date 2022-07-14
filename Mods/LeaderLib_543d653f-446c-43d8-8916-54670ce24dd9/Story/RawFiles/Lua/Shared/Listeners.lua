@@ -12,54 +12,48 @@ if not Listeners then
 end
 
 --Debug listeners
----@type table<string,fun(cmd:string, isClient:boolean, ...):void>
+---@type table<string,fun(cmd:string, isClient:boolean, ...)>
 Listeners.DebugCommand = {}
 
----Callbacks for when all global settings are loaded, or when an individual mod's settings are loaded.
-Listeners.ModSettingsLoaded = {All = {}}
+---@alias ModSettingsFlagDataChangedListener fun(id:string, enabled:boolean, data:FlagData, settings:SettingsData)
+---@alias ModSettingsVariableDataChangedListener fun(id:string, value:integer, data:VariableData, settings:SettingsData)
 
----@alias ModSettingsFlagDataChangedListener fun(id:string, enabled:boolean, data:FlagData, settings:SettingsData):void
----@alias ModSettingsVariableDataChangedListener fun(id:string, value:integer, data:VariableData, settings:SettingsData):void
-
----@type table<string, ModSettingsFlagDataChangedListener|ModSettingsVariableDataChangedListener>
-Listeners.ModSettingsChanged = {All = {}}
-
----@alias MessageBoxEventListener fun(event:string, isConfirmed:boolean, player:EsvCharacter|EclCharacter):void
+---@alias MessageBoxEventListener fun(event:string, isConfirmed:boolean, player:EsvCharacter|EclCharacter)
 ---@type table<string, MessageBoxEventListener>
 Listeners.MessageBoxEvent = {All = {}}
 
 if Ext.IsServer() then
-	---@alias OnPrepareHitCallback fun(target:string, source:string, damage:integer, handle:integer, data:HitPrepareData):void
-	---@alias OnHitCallback fun(target:string, source:string, damage:integer, handle:integer, skill:string|nil):void
-	---@alias OnSkillHitCallback fun(skill:string, source:string, state:SKILL_STATE, data:HitData|ProjectileHitData):void
+	---@alias OnPrepareHitCallback fun(target:string, source:string, damage:integer, handle:integer, data:HitPrepareData)
+	---@alias OnHitCallback fun(target:string, source:string, damage:integer, handle:integer, skill:string|nil)
+	---@alias OnSkillHitCallback fun(skill:string, source:string, state:SKILL_STATE, data:HitData|ProjectileHitData)
 
 	---@deprecated
 	---Fires when a skill hits, or a projectile from a skill hits.
 	---@type OnSkillHitCallback[]
 	Listeners.OnSkillHit = {}
 
-	---@type table<string, fun(questId:string, character:EsvCharacter):void>
+	---@type table<string, fun(questId:string, character:EsvCharacter)>
 	Listeners.QuestStarted = {All = {}}
-	---@type table<string, fun(questId:string, character:EsvCharacter):void>
+	---@type table<string, fun(questId:string, character:EsvCharacter)>
 	Listeners.QuestCompleted = {All = {}}
-	---@type table<string, fun(questId:string, stateId:string, character:EsvCharacter):void>
+	---@type table<string, fun(questId:string, stateId:string, character:EsvCharacter)>
 	Listeners.QuestStateChanged = {All = {}}
 else
 	---Client-side Mod Menu events
 	---Callbacks for when a mod's Mod Menu section is created in the options menu.
-	---@type fun(uuid:string, settings:ModSettings, ui:UIObject, mainMenu:MainMenuMC):void[]
+	---@type fun(uuid:string, settings:ModSettings, ui:UIObject, mainMenu:MainMenuMC)[]
 	Listeners.ModMenuSectionCreated = {}
 
-	---@type fun(ui:UIObject, player:EclCharacter, startIndex:integer, talentEnumReference:table<string,integer>):void[]
+	---@type fun(ui:UIObject, player:EclCharacter, startIndex:integer, talentEnumReference:table<string,integer>)[]
 	Listeners.OnTalentArrayUpdating = {}
 
-	---@alias InputEventCallback fun(eventName:string, pressed:boolean, id:integer, inputMap:table<integer,boolean>, controllerEnabled:boolean):void
+	---@alias InputEventCallback fun(eventName:string, pressed:boolean, id:integer, inputMap:table<integer,boolean>, controllerEnabled:boolean)
 	---@type InputEventCallback[]
 	Listeners.InputEvent = {}
 	---@type table<string, InputEventCallback>
 	Listeners.NamedInputEvent = {}
 
-	---@alias MouseInputEventCallback fun(event:InputMouseEvent, x:number, y:number):void
+	---@alias MouseInputEventCallback fun(event:InputMouseEvent, x:number, y:number)
 	---@type table<string, MouseInputEventCallback>
 	Listeners.MouseInputEvent = {}
 
@@ -90,12 +84,12 @@ Ext.Require("Shared/System/SubscriptionEvents.lua")
 ---@field Ticks integer
 
 ---Wrapper around Ext.Events.Tick that skips execution if resetting, or if the game isn't running.
----@type fun(e:GameTime):void[]
+---@type fun(e:GameTime)[]
 Listeners.Tick = {}
 
 local _startTickTimer = false
 
----@param callback fun(e:GameTime):void
+---@param callback fun(e:GameTime)
 ---@param runningOnly boolean|nil
 function RegisterTickListener(callback, runningOnly)
 	_startTickTimer = true
@@ -161,7 +155,7 @@ end
 ---endregion
 
 ---@class LeaderLibGlobals:table
----@field RegisterListener fun(event:LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[], callbackOrKey:function|string, callbackOrNil:function|nil):void
+---@field RegisterListener fun(event:LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[], callbackOrKey:function|string, callbackOrNil:function|nil)
 
 --- Registers a function to call when a specific Lua LeaderLib event fires.
 ---@param event LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[] Listener table name.
@@ -256,6 +250,28 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			Events.GetTextPlaceholder:Subscribe(function (e)
 				return callback(e.ID, e.Character, table.unpack(e.ExtraParams))
 			end, opts)
+			return
+		elseif event == "ModSettingsLoaded" then
+			if keyType == "string" and callbackOrKey ~= "All" then
+				Events.ModSettingsLoaded:Subscribe(function (e)
+					return callback(e.Settings)
+				end, {MatchArgs={UUID=callbackOrKey}})
+			else
+				Events.GlobalSettingsLoaded:Subscribe(function (e)
+					return callback(e.Settings)
+				end)
+			end
+			return
+		elseif event == "ModSettingsChanged" then
+			if keyType == "string" and callbackOrKey ~= "All" then
+				Events.ModSettingsChanged:Subscribe(function (e)
+					return callback(e:Unpack())
+				end, {MatchArgs={ID=callbackOrKey}})
+			else
+				Events.ModSettingsChanged:Subscribe(function (e)
+					return callback(e:Unpack())
+				end)
+			end
 			return
 		end
 		local subEvent = Events[event]

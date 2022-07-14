@@ -64,7 +64,7 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 		if canExport then
 			self.Flags[flag].CanExport = canExport
 		end
-		self:InvokeListenerCallbacks(flag, enabled, self.Flags[flag])
+		Events.ModSettingsChanged:Invoke({ID=flag, Value=enabled, Data=self.Flags[flag], Settings = self})
 	else
 		local existing = self.Flags[flag]
 		local changed = false
@@ -83,7 +83,7 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 			existing.IsFromFile = false
 		end
 		if changed then
-			self:InvokeListenerCallbacks(flag, enabled, existing)
+			Events.ModSettingsChanged:Invoke({ID=flag, Value=enabled, Data=existing, Settings = self})
 		end
 	end
 end
@@ -141,7 +141,7 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 		if canExport then
 			self.Variables[name].CanExport = canExport
 		end
-		self:InvokeListenerCallbacks(name, value, self.Variables[name])
+		Events.ModSettingsChanged:Invoke({ID=name, Value=value, Data=self.Variables[name], Settings = self})
 	else
 		local existing = self.Variables[name]
 		local changed = false
@@ -164,7 +164,7 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 			existing.IsFromFile = false
 		end
 		if changed then
-			self:InvokeListenerCallbacks(name, value, existing)
+			Events.ModSettingsChanged:Invoke({ID=name, Value=value, Data=existing, Settings = self})
 		end
 	end
 end
@@ -505,14 +505,6 @@ function SettingsData:SetMetatables()
 	setmetatable(self, SettingsData)
 end
 
----@param id string
----@param value any
----@param data FlagData|VariableData
-function SettingsData:InvokeListenerCallbacks(id, value, data)
-	InvokeListenerCallbacks(Listeners.ModSettingsChanged.All, id, value, data, self)
-	InvokeListenerCallbacks(Listeners.ModSettingsChanged[id], id, value, data, self)
-end
-
 ---@param source SettingsData
 function SettingsData:CopySettings(source)
 	if source.Flags then
@@ -543,7 +535,7 @@ function SettingsData:SetFlag(id, enabled)
 	local entry = self.Flags[id]
 	if entry ~= nil then
 		entry.Enabled = enabled
-		self:InvokeListenerCallbacks(id, enabled, entry)
+		Events.ModSettingsChanged:Invoke({ID=id, Value=enabled, Data=entry, Settings = self})
 		return true
 	end
 	return false
@@ -557,7 +549,7 @@ function SettingsData:SetVariable(id, value)
 		else
 			entry.Value = value
 		end
-		self:InvokeListenerCallbacks(id, value, entry)
+		Events.ModSettingsChanged:Invoke({ID=id, Value=value, Data=entry, Settings = self})
 		return true
 	end
 	return false

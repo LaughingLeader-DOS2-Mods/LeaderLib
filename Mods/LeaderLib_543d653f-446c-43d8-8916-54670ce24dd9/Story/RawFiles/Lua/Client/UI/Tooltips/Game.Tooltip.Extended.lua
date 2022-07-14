@@ -1942,7 +1942,7 @@ Game.Tooltip.Register = {
 		TooltipHooks:RegisterListener("Pyramid", statsId, callback)
 	end,
 
-	---@param callback fun(item:EclItem, tooltip:TooltipData)
+	---@param callback fun(item:EclItem, rune:StatEntryObject, slot:integer, tooltip:TooltipData)
 	---@param statsId string|nil Optional Rune StatsId to filter by.
 	Rune = function(callback, statsId)
 		TooltipHooks:RegisterListener("Rune", statsId, callback)

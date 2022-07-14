@@ -258,11 +258,11 @@ end
 ---@alias GameHelpers.Status.Remove.CanApplyCallback fun(target:string, source:string, statusId:string, targetIsItem:boolean):boolean
 
 ---Applies a status to a target, or targets around a position.
----@param target EsvGameObject|UUID|number|number[]|nil
+---@param target ObjectParam|number[]|nil Target object or a position, if a radius is provided.
 ---@param status string|string[]
 ---@param duration number|nil
 ---@param force boolean|nil
----@param source EsvGameObject|UUID|number|nil Optional source. Defaults to NULL_00000000-0000-0000-0000-000000000000.
+---@param source ObjectParam|nil Optional source. Defaults to NULL_00000000-0000-0000-0000-000000000000.
 ---@param radius number|nil
 ---@param canTargetItems boolean|nil
 ---@param canApplyCallback GameHelpers.Status.Remove.CanApplyCallback|nil An optional function to use when attempting to apply a status in a radius.

@@ -758,7 +758,7 @@ end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.BEFORESHOOT event.
 ---@param skill string|string[]
----@param callback fun(e:OnSkillStateAllEventArgs)
+---@param callback fun(e:OnSkillStateBeforeProjectileShootEventArgs)
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.

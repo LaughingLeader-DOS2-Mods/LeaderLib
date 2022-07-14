@@ -513,7 +513,7 @@ if not _ISCLIENT then
 	---@field Data HitData
 
 	---@class OnSkillStateBeforeProjectileShootEventArgs:OnSkillStateBaseEventArgs
-	---@field Data EsvShootProjectileRequest
+	---@field Data EsvShootProjectileHelper
 
 	---@class OnSkillStateProjectileShootEventArgs:OnSkillStateBaseEventArgs
 	---@field Data EsvProjectile

@@ -194,7 +194,7 @@ end
 if _EXTVERSION < 56 then
 	RegisterProtectedExtenderListener("StatusHitEnter", OnHit)
 else
-	Ext.Events.StatusHitEnter:Subscribe(function (event)
-		OnHit(event.Hit, event.Context)
+	Ext.Events.StatusHitEnter:Subscribe(function (e)
+		OnHit(e.Hit, e.Context)
 	end)
 end

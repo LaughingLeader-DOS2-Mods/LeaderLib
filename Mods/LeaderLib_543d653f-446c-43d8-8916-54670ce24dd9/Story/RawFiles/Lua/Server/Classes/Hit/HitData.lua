@@ -90,7 +90,7 @@ function HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill
     local this =
     {
 		Target = target.MyGuid,
-		Attacker = source and source.MyGuid or "",
+		Attacker = GameHelpers.GetUUID(source, true),
 		HitStatus = hitStatus,
 		HitContext = hitContext,
 		HitRequest = hitRequest,
@@ -199,7 +199,11 @@ function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamag
 	end
 	if self.HitContext and self.HitRequest then
 		if recalcLifeSteal and ObjectIsCharacter(self.Target) == 1 and ObjectIsCharacter(self.Attacker) == 1 then
-			GameHelpers.Hit.RecalculateLifeSteal(self.HitRequest, Ext.GetCharacter(self.Target).Stats, Ext.GetCharacter(self.Attacker).Stats, self.HitContext.HitType, setLifeStealFlags, allowArmorDamageTypesToLifeSteal)
+			local t1 = GameHelpers.GetCharacter(self.Target)
+			local t2 = GameHelpers.GetCharacter(self.Attacker)
+			if t1 and t2 then
+				GameHelpers.Hit.RecalculateLifeSteal(self.HitRequest, t1.Stats, t2.Stats, self.HitContext.HitType, setLifeStealFlags, allowArmorDamageTypesToLifeSteal)
+			end
 		end
 	end
 	self:UpdateHitRequest()

@@ -135,8 +135,19 @@ local defaultPersistentVars = {
 
 	---UserID to RootTemplate, to BookId
 	---@type table<integer,table<string, string>>
-	ReadBooks = {}
+	ReadBooks = {},
+
+	---@class LeaderLibPersistentVisualsEntry
+	---@field Resource string
+	---@field Options ExtenderClientVisualOptions|nil
+	---@field ExtraOptions LeaderLibClientVisualOptions|nil
+	---@field Persistence LeaderLibClientVisualPersistenceOptions|nil
+	---@field RestrictToVisual FixedString|nil If set, this visual will only be recreated if character.RootTemplate.VisualTemplate matches this value.
+
+	---@type table<UUID,LeaderLibPersistentVisualsEntry[]>
+	PersistentVisuals = {}
 }
+
 
 Ext.Require("BootstrapShared.lua")
 Ext.Require("Shared/UI/CombatLog.lua")

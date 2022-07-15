@@ -1,17 +1,13 @@
---- @class ExtenderMaterialVector4
---- @field IsColor boolean
---- @field Value number[]
-
 ---@class ExtenderClientVisualOptions
 ---@field Bone string
 ---@field AllowTPose boolean
 ---@field ResetScale boolean
 ---@field SyncAnimationWithParent boolean
----@field Color1 ExtenderMaterialVector4
----@field Color2 ExtenderMaterialVector4
----@field Color3 ExtenderMaterialVector4
----@field Color4 ExtenderMaterialVector4
----@field Color5 ExtenderMaterialVector4
+---@field Color1 MaterialVector4
+---@field Color2 MaterialVector4
+---@field Color3 MaterialVector4
+---@field Color4 MaterialVector4
+---@field Color5 MaterialVector4
 ---@field ExcludeFromBounds boolean
 ---@field KeepRot boolean
 ---@field KeepScale boolean
@@ -31,60 +27,64 @@
 ---@field AllowReceiveDecalWhenAnimated boolean
 
 ---@class LeaderLibClientVisualOptions
---- @field Matrix number[] Size 16 table of matrices.
---- @field Rotate number[] Size 9 table of matrices.
---- @field Scale number[] Size 3 Vector3-style table.
---- @field Translate number[] Size 3 Vector3-style table.
+---@field Matrix number[] Size 16 table of matrices.
+---@field Rotate number[] Size 9 table of matrices.
+---@field Scale number[] Size 3 Vector3-style table.
+---@field Translate number[] Size 3 Vector3-style table.
 
----@class EclLuaVisualClientMultiVisual
---- @field AttachedVisualComponents ObjectHandle[]
---- @field Effects ObjectHandle[]
---- @field ListenForTextKeysHandle ObjectHandle
---- @field ListeningOnTextKeys boolean
---- @field Position Vector3
---- @field TargetObjectHandle ObjectHandle
---- @field TextKeyEffects table<string, table>
---- @field Visuals table
---- @field WeaponAttachments table[]
---- @field WeaponBones string
---- @field AddVisual fun(self:EclLuaVisualClientMultiVisual, id:string, options:ExtenderClientVisualOptions|nil):table
---- @field Delete fun(self:EclLuaVisualClientMultiVisual)
---- @field ParseFromStats fun(self:EclLuaVisualClientMultiVisual, effect:string, weaponBones:string|nil)
---- @field AttachedVisuals ObjectHandle[]
-
----@type table<NETID,table<string, EclLuaVisualClientMultiVisual>>
+---@type table<NETID,table<string, integer>>
 local ActiveVisuals = {}
+
+---@param handleINT integer
+---@return EclLuaVisualClientMultiVisual
+local function _TryGetHandlerFromInt(handleINT)
+	if handleINT then
+		local handle = Ext.Utils.IntegerToHandle(handleINT)
+		if GameHelpers.IsValidHandle(handle) then
+			local handler = Ext.Visual.Get(handle)
+			if handler then
+				return handler
+			end
+		end
+	end
+	return nil
+end
 
 ---@param character EclCharacter
 ---@param visualResource string
+---@return EclLuaVisualClientMultiVisual
 function VisualManager.GetVisualHandler(character, visualResource)
 	local characterData = ActiveVisuals[character.NetID]
 	if characterData then
-		local handler = characterData[visualResource]
-		if handler then
+		local handler = _TryGetHandlerFromInt(characterData[visualResource])
+		if not handler then
+			characterData[visualResource] = nil
+			if not Common.TableHasAnyEntry(characterData) then
+				ActiveVisuals[character.NetID] = nil
+			end
+		else
 			return handler
 		end
 	end
 	return nil
 end
 
--- VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone", Weapon=true, UseLocalTransform=true}, {Rotate=Mods.LeaderLib.Game.Math.EulerToRotationMatrix({180,0,0})})
-
---df8b6237-d031-44d7-b729-a80eb074f3b3
---Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone"})
---Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone", Weapon=true,UseLocalTransform=true, InheritAnimations=true, SyncAnimationWithParent=true}, {Rotate=Mods.LeaderLib.Game.Math.EulerToRotationMatrix({90,0,0})})
---Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="Dummy_R_Hand", Weapon=true,UseLocalTransform=true, InheritAnimations=true, SyncAnimationWithParent=true}, {Rotate={[1]=-1,[5]=-1}, Translate={[2]=-1}})
---TestVisual=Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "6254c2b7-dd9e-4821-9aa4-830fa4c0bc50", {Bone="Dummy_R_Hand", UseLocalTransform=true}, {Scale={10,10,10}})
---Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "48491cef-a2de-4dec-9d65-9c6aea8a769e", {Bone="Dummy_R_Hand", Armor=true, UseLocalTransform=true})
-
 ---@param character EclCharacter
 ---@param visualResource string
 ---@param handler EclLuaVisualClientMultiVisual
 function VisualManager.StoreVisualHandler(character, visualResource, handler)
-	if  ActiveVisuals[character.NetID] == nil then
-		ActiveVisuals[character.NetID] = {}
+	if GameHelpers.IsValidHandle(handler.Handle) then
+		if  ActiveVisuals[character.NetID] == nil then
+			ActiveVisuals[character.NetID] = {}
+		end
+		local handleINT = Ext.Utils.HandleToInteger(handler.Handle)
+		Ext.Dump({
+			HandleINT = handleINT,
+			Handle = handler.Handle,
+			VisualResource = visualResource
+		})
+		ActiveVisuals[character.NetID][visualResource] = handleINT
 	end
-	ActiveVisuals[character.NetID][visualResource] = handler
 end
 
 ---@param character EclCharacter
@@ -95,26 +95,31 @@ function VisualManager.DeleteVisual(character, visualResource)
 	if handler then
 		handler:Delete()
 		ActiveVisuals[character.NetID][visualResource] = nil
+		if not Common.TableHasAnyEntry(ActiveVisuals[character.NetID]) then
+			ActiveVisuals[character.NetID] = nil
+		end
 		return true
 	end
 	return false
 end
 
----@param character EclCharacter
+---@param character CharacterParam
 ---@param visualResource string
 ---@param options ExtenderClientVisualOptions|nil
 ---@param positionOptions LeaderLibClientVisualOptions|nil
+---@return Visual
 function VisualManager.AttachVisual(character, visualResource, options, positionOptions)
 	options = options or {}
+	character = GameHelpers.GetCharacter(character)
+	if not character then
+		error("Character parameter is invalid")
+	end
 
 	VisualManager.DeleteVisual(character, visualResource)
-	---@diagnostic disable unknown-field
 	---@type EclLuaVisualClientMultiVisual
 	local handler = Ext.Visual.CreateOnCharacter(character.Translate, character, character)
 	VisualManager.StoreVisualHandler(character, visualResource, handler)
 	local addedVisual = handler:AddVisual(visualResource, options)
-
-	---@diagnostic enable
 
 	if addedVisual and positionOptions and type(positionOptions) == "table" then
 		local target = addedVisual.WorldTransform
@@ -158,9 +163,30 @@ function VisualManager.AttachVisual(character, visualResource, options, position
 		-- 	addedVisual.WorldTransform = target
 		-- end
 	end
-	GameHelpers.IO.SaveJsonFile("Dumps/NewVisual.json", Ext.DumpExport({CreateOnCharacterVisual=handler,AddedVisual=addedVisual}))
+	-- Ext.OnNextTick(function (e)
+	-- 	GameHelpers.IO.SaveJsonFile("Dumps/NewVisual.json", Ext.DumpExport({CreateOnCharacterVisual=handler,AddedVisual=addedVisual}))
+	-- 	print("Ext.Visual.Get(Handle)", Ext.Visual.Get(handler.Handle))
+	-- 	print("Ext.Visual.Get(addedVisual.Handle)", Ext.Visual.Get(addedVisual.Handle))
+	-- end)
 	return addedVisual
 end
+
+---@class LeaderLibRequestAttachVisualData
+---@field Target NETID
+---@field Resource string
+---@field Options ExtenderClientVisualOptions|nil
+---@field ExtraOptions LeaderLibClientVisualOptions|nil
+
+Ext.RegisterNetListener("LeaderLib_VisualManager_RequestAttachVisual", function (channel, payload, user)
+	local data = Common.JsonParse(payload, true)
+	if data then
+		---@cast data LeaderLibRequestAttachVisualData
+		local character = GameHelpers.GetCharacter(data.Target)
+		fassert(character ~= nil, "Failed to get character from data.Target(%s)", data.Target)
+
+		VisualManager.AttachVisual(character, data.Resource, data.Options, data.ExtraOptions)
+	end
+end)
 
 --local v = Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "48491cef-a2de-4dec-9d65-9c6aea8a769e", {Bone="Dummy_R_Hand", Armor=true, UseLocalTransform=true}); v.LocalTransform.Rotate[5] = 10
 --me.Visual.Attachments[5].Visual.LocalTransform.Scale[1] = 10
@@ -171,7 +197,8 @@ end
 Events.BeforeLuaReset:Subscribe(function ()
 	pcall(function ()
 		for netid,entries in pairs(ActiveVisuals) do
-			for resourceid,handler in pairs(entries) do
+			for resourceid,handleINT in pairs(entries) do
+				local handler = _TryGetHandlerFromInt(handleINT)
 				if handler then
 					handler:Delete()
 				end
@@ -268,3 +295,13 @@ Ext.RegisterNetListener("LeaderLib_EffectManager_PlayClientEffect", function (cm
 		VisualManager.CreateClientEffect(data.FX, data.Target, data.Params)
 	end
 end)
+
+
+-- VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone", Weapon=true, UseLocalTransform=true}, {Rotate=Mods.LeaderLib.Game.Math.EulerToRotationMatrix({180,0,0})})
+
+--df8b6237-d031-44d7-b729-a80eb074f3b3
+--Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone"})
+--Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone", Weapon=true,UseLocalTransform=true, InheritAnimations=true, SyncAnimationWithParent=true}, {Rotate=Mods.LeaderLib.Game.Math.EulerToRotationMatrix({90,0,0})})
+--Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="Dummy_R_Hand", Weapon=true,UseLocalTransform=true, InheritAnimations=true, SyncAnimationWithParent=true}, {Rotate={[1]=-1,[5]=-1}, Translate={[2]=-1}})
+--TestVisual=Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "6254c2b7-dd9e-4821-9aa4-830fa4c0bc50", {Bone="Dummy_R_Hand", UseLocalTransform=true}, {Scale={10,10,10}})
+--Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "48491cef-a2de-4dec-9d65-9c6aea8a769e", {Bone="Dummy_R_Hand", Armor=true, UseLocalTransform=true})

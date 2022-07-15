@@ -324,8 +324,15 @@ local function SerializeArgs(args)
 	for k,v in _pairs(args) do
 		local t = _type(v)
 		if t == "userdata" then
-			if v.NetID then
-				tbl[k] = {Type="Object", NetID=v.NetID, UUID=v.MyGuid}
+			if GameHelpers.IsValidHandle(v) then
+				tbl[k] = {Type="Object", HandleINT = Ext.Utils.HandleToInteger(v)}
+			else
+				if v.NetID or v.UUID then
+					tbl[k] = {Type="Object", NetID=v.NetID, UUID=v.MyGuid}
+					if v.Handle then
+						tbl[k].HandleINT = Ext.Utils.HandleToInteger(v.Handle)
+					end
+				end
 			end
 		elseif t == "table" then
 			tbl[k] = SerializeArgs(v)
@@ -464,9 +471,29 @@ local function DeserializeArgs(args)
 	for k,v in _pairs(args) do
 		if _type(v) == "table" then
 			if v.Type == "Object" then
-				tbl[k] = GameHelpers.TryGetObject(v.NetID)
-				if not tbl[k] then
+				local _getObjFunc = GameHelpers.TryGetObject
+				if k == "Item" then
+					_getObjFunc = GameHelpers.GetItem
+				elseif k == "Character" then
+					_getObjFunc = GameHelpers.GetCharacter
+				end
+				local obj = nil
+				if not obj and v.NetID then
+					obj = _getObjFunc(v.NetID)
+				end
+				if not obj and v.UUID then
+					obj = _getObjFunc(v.UUID)
+				end
+				if not obj and v.HandleINT then
+					local handle = Ext.Utils.IntegerToHandle(v.HandleINT)
+					if handle and Ext.Utils.IsValidHandle(handle) then
+						obj = _getObjFunc(handle)
+					end
+				end
+				if not obj then
 					tbl[k] = v.UUID
+				else
+					tbl[k] = obj
 				end
 			else
 				tbl[k] = DeserializeArgs(v)

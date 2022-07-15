@@ -355,14 +355,9 @@ function ModMenuManager.CommitChanges()
 			local settings = SettingsManager.GetMod(v.UUID, false)
 			if settings ~= nil then
 				if v.Entry.Type == "FlagData" then
-					settings.Global.Flags[v.Entry.ID].Enabled = v.Value
+					settings:SetFlag(v.Entry.ID, v.Value == true)
 				elseif v.Entry.Type == "VariableData" then
-					local varData = settings.Global.Variables[v.Entry.ID]
-					if type(varData.Value) == "table" and v.Value.Entries ~= nil then
-						varData.Value.Selected = v.Value
-					else
-						varData.Value = v.Value
-					end
+					settings:SetVariable(v.Entry.ID, v.Value)
 				end
 			end
 		end
@@ -397,15 +392,5 @@ function ModMenuManager.SetScrollPosition(ui)
 				scrollbar_mc.INTScrolledY(ModMenuManager.LastScrollPosition)
 			end
 		end
-	end
-end
-
-local function SyncControl(control, enabled)
-	if control.Type == "FlagData" then
-		local data = {ID=control.ID, FlagType=control.FlagType, Enabled=enabled, User=Client.Character.ID}
-		Ext.PostMessageToServer("LeaderLib_ModMenu_FlagChanged", Common.JsonStringify(data))
-	elseif control.Type == "VariableData" then
-		local data = {ID=control.ID, Value=control.Value, User=Client.Character.ID}
-		Ext.PostMessageToServer("LeaderLib_ModMenu_VariableChanged", Common.JsonStringify(data))
 	end
 end

@@ -185,7 +185,11 @@ local function OnOptionsClosed()
 	SetCurrentMenu(1)
 end
 
+local menuWasOpen = false
+
 local function OnSwitchMenu(ui, call, id)
+	menuWasOpen = true
+
 	--ui = GetOptionsGUI()
 	if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
@@ -298,7 +302,10 @@ Ext.RegisterListener("SessionLoaded", function()
 	end
 
 	local OnOpenMenu = function(ui, ...)
-		LoadGlobalSettings()
+		if not menuWasOpen then
+			LoadGlobalSettings()
+		end
+		menuWasOpen = false
 		SetCurrentMenu(1)
 	end
 

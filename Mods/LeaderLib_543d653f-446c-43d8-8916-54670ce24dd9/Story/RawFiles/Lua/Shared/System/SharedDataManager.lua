@@ -214,7 +214,7 @@ else
 			SharedData.RegionData.LevelType = LEVELTYPE.CHARACTER_CREATION
 		elseif IsGameLevel(region) == 1 then
 			SharedData.RegionData.LevelType = LEVELTYPE.GAME
-		elseif string.find(region, "Lobby") then
+		elseif string.find(region, "Lobby") or string.find(region, "Menu") then
 			SharedData.RegionData.LevelType = LEVELTYPE.LOBBY
 		else
 			SharedData.RegionData.LevelType = LEVELTYPE.EDITOR
@@ -266,6 +266,7 @@ else
 			State = SharedData.RegionData.State,
 			LevelType = SharedData.RegionData.LevelType
 		})
+		GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
 	end)
 
 	function GameHelpers.Data.SetGameMode(gameMode)

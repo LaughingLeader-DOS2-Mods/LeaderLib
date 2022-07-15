@@ -358,6 +358,15 @@ Events.LuaReset:Subscribe(function()
 	end
 end)
 
+-- Ext.Events.OnBeforeSortAiActions:Subscribe(function (e)
+-- 	for _,v in pairs(e.Request.AiActions) do
+-- 		if v.ActionType == "Skill" and string.find(v.SkillId, "Target_FirstAidEnemy") then
+-- 			v.FinalScore = 1000
+-- 			v.ActionFinalScore = 1000
+-- 		end
+-- 	end
+-- end)
+
 --[[ if Ext.IsDeveloperMode() then
 	Ext.Events.OnPeekAiAction:Subscribe(function (e)
 		if e.ActionType == "Skill" then
@@ -395,3 +404,32 @@ end)
 		end
 	end)
 end ]]
+
+
+--S_Player_Fane_02a77f1f-872b-49ca-91ab-32098c443beb
+--[[ local TARGET = "02a77f1f-872b-49ca-91ab-32098c443beb"
+local aboutToPickUpItem = {}
+
+Ext.RegisterOsirisListener("ProcProcessPickupOfItem", 3, "before", function (charGUID, itemGUID, requestID)
+	charGUID = GetUUID(charGUID)
+	if charGUID == TARGET then
+		return
+	end
+	itemGUID = GetUUID(itemGUID)
+	local blockResult = Osi.DB_CustomPickupItemResponse:Get(charGUID, itemGUID, nil)
+	if blockResult and blockResult[1] then
+		if blockResult[1][3] == 0 then
+			return
+		end
+	end
+	aboutToPickUpItem[itemGUID] = charGUID
+end)
+
+Ext.RegisterOsirisListener("ItemAddedToCharacter", 2, "after", function (itemGUID, charGUID)
+	charGUID = GetUUID(charGUID)
+	itemGUID = GetUUID(itemGUID)
+	if aboutToPickUpItem[itemGUID] == charGUID then
+		aboutToPickUpItem[itemGUID] = nil
+		ItemToInventory(itemGUID, TARGET, ItemGetAmount(itemGUID), 1, 1)
+	end
+end) ]]

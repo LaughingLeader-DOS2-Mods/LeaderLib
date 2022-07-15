@@ -184,13 +184,14 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
     props.AlwaysDamage = skill["Damage Multiplier"] > 0 and 1 or 0
 
     --Failsafes to prevent crashes from not having a source/caster
-    if not props.Caster then
-        --Target Dummy
-        props.Caster = "36069245-0e2d-44b1-9044-6797bd29bb15"
-    end
-    if not props.Source then
-        props.Source = "36069245-0e2d-44b1-9044-6797bd29bb15"
-    end
+    -- if not props.Caster then
+    --     --Target Dummy
+    --     --props.Caster = "36069245-0e2d-44b1-9044-6797bd29bb15"
+    --     props.Caster = StringHelpers.NULL_UUID
+    -- end
+    -- if not props.Source then
+    --     props.Source = StringHelpers.NULL_UUID
+    -- end
 
     if type(extraParams) == "table" then
         for k,v in pairs(extraParams) do
@@ -250,7 +251,10 @@ local function ProcessProjectileProps(props)
             elseif t == "string" then
                 local propType = projectileCreationProperties[k]
                 if propType == "GuidString" or propType == "Vector3/GuidString" then
-                    NRD_ProjectileSetGuidString(k, GameHelpers.GetUUID(v))
+                    local uuid = GameHelpers.GetUUID(v)
+                    if not StringHelpers.IsNullOrEmpty(uuid) then
+                        NRD_ProjectileSetGuidString(k, uuid)
+                    end
                 else
                     NRD_ProjectileSetString(k, v)
                 end
@@ -275,7 +279,7 @@ local function PlayProjectileSkillEffects(skill, props, playCastEffect, playTarg
         for _,effectEntry in pairs(effects) do
             local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
             local bone = effectEntry:gsub(".+:", "") or ""
-            if props.Caster and not StringHelpers.IsNullOrEmpty(bone) then
+            if props.Caster and props.Caster ~= StringHelpers.NULL_UUID and not StringHelpers.IsNullOrEmpty(bone) then
                 EffectManager.PlayEffect(effect, props.Caster, {Bone=bone})
             elseif props.SourcePosition then
                 EffectManager.PlayEffectAt(effect, props.SourcePosition)
@@ -287,7 +291,7 @@ local function PlayProjectileSkillEffects(skill, props, playCastEffect, playTarg
         for _,effectEntry in pairs(effects) do
             local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
             local bone = effectEntry:gsub(".+:", "") or ""
-            if props.Target and not StringHelpers.IsNullOrEmpty(bone) then
+            if props.Target and props.Target ~= StringHelpers.NULL_UUID and not StringHelpers.IsNullOrEmpty(bone) then
                 EffectManager.PlayEffect(effect, props.Target, {Bone=bone})
             elseif props.TargetPosition then
                 EffectManager.PlayEffectAt(effect, props.TargetPosition)

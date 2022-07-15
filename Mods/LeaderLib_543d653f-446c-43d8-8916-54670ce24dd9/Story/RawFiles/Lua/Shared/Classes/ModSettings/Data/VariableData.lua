@@ -67,7 +67,7 @@ function VariableData:Subscribe(listener)
 end
 
 ---@deprecated
----@param listener ModSettingsFlagDataChangedListener
+---@param listener ModSettingsVariableDataChangedListener
 function VariableData:AddListener(listener)
 	local t = type(listener)
 	if t == "function" then

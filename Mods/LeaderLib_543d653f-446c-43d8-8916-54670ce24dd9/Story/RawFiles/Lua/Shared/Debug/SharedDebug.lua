@@ -34,8 +34,36 @@ local _ISCLIENT = Ext.IsClient()
 	end
 end) ]]
 
-if _ISCLIENT then
-	Events.ClientCharacterChanged:Subscribe(function (e)
-		e:Dump()
-	end)
-end
+-- if _ISCLIENT then
+-- 	Events.ClientCharacterChanged:Subscribe(function (e)
+-- 		e:Dump()
+-- 	end)
+-- end
+
+--[[ Ext.Events.SessionLoaded:Subscribe(function (e)
+	if not _ISCLIENT then
+		local function SetWalkthrough(character, b)
+			character.WalkThrough = b
+			character.CanShootThrough = b
+			character.RootTemplate.CanShootThrough = b
+			character.RootTemplate.WalkThrough = b
+			GameHelpers.Net.Broadcast("LeaderLib_Debug_SetWalkthrough", {Target=character.NetID, Enabled=b})
+		end
+		StatusManager.Subscribe.Applied("SNEAKING", function (e)
+			SetWalkthrough(e.Target, true)
+		end)
+		StatusManager.Subscribe.Removed("SNEAKING", function (e)
+			SetWalkthrough(e.Target, false)
+		end)
+	else
+		Ext.RegisterNetListener("LeaderLib_Debug_SetWalkthrough", function (channel, payload, user)
+			local data = Common.JsonParse(payload)
+			local character = data and GameHelpers.GetCharacter(data.Target) or nil
+			if character then
+				character.WalkThrough = data.Enabled == true
+				character.CanShootThrough = data.Enabled == true
+				fprint(LOGLEVEL.ERROR, "[LeaderLib_Debug_SetWalkthrough] character.WalkThrough(%s)", character.WalkThrough)
+			end
+		end)
+	end
+end) ]]

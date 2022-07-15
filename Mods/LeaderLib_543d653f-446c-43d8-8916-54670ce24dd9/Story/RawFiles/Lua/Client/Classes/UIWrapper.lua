@@ -77,7 +77,7 @@ local function SetMeta(this)
 end
 
 ---@param id integer
----@param params LeaderLibUIWrapper
+---@param params LeaderLibUIWrapper|nil
 ---@return LeaderLibUIWrapper
 function UIWrapper:CreateFromType(id, params)
 	local this = {

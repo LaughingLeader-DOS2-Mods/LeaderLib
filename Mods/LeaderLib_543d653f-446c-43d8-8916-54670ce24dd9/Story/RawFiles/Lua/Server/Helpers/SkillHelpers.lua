@@ -240,6 +240,10 @@ local function ProcessProjectileProps(props)
     if not props.SourcePosition or not props.TargetPosition then
         error(string.format("[LeaderLib:ProcessProjectileProps] Invalid projectile properties. Skipping launch to avoid crashing!\n%s", Lib.inspect(props)), 2)
     end
+    --Needs to be set for this to deal damage
+    if props.CasterLevel == nil then
+        props.CasterLevel = GameHelpers.Character.GetHighestPlayerLevel()
+    end
     NRD_ProjectilePrepareLaunch()
     for k,v in pairs(props) do
         if projectileCreationProperties[k] then

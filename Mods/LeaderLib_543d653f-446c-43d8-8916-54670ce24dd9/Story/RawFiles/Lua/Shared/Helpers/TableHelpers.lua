@@ -65,8 +65,9 @@ local validTypes = {
 ---@param tbl table
 ---@param supportedExtraTypes table<string,boolean>|nil
 ---@param forJson boolean|nil If true, key types will be restricted to number/string.
+---@param sanitizeValue (fun(key:string, value:userdata|table|function, valueType:string):SerializableValue)|nil
 ---@return table<string|number|boolean,string|number|boolean|table>
-function TableHelpers.SanitizeTable(tbl, supportedExtraTypes, forJson)
+function TableHelpers.SanitizeTable(tbl, supportedExtraTypes, forJson, sanitizeValue)
 	local output = {}
 	local tableType = _type(tbl)
 	if tableType ~= "table" and tableType ~= "userdata" then
@@ -76,11 +77,17 @@ function TableHelpers.SanitizeTable(tbl, supportedExtraTypes, forJson)
 		local keyType = _type(k)
 		if (forJson and validKeyTypes[keyType]) or not (forJson and validTypes[keyType]) then
 			local t = _type(v)
-			if validTypes[t] or (supportedExtraTypes and supportedExtraTypes[t]) then
-				if t == "table" or t == "userdata" then
-					output[k] = TableHelpers.SanitizeTable(v, supportedExtraTypes, forJson)
-				else
-					output[k] = v
+			if sanitizeValue then
+				output[k] = sanitizeValue(k, v, t)
+			else
+				if t == "table" or (t == "userdata" and getmetatable(v) ~= nil) then
+					output[k] = TableHelpers.SanitizeTable(v, supportedExtraTypes, forJson, sanitizeValue)
+				elseif validTypes[t] or (supportedExtraTypes and supportedExtraTypes[t]) then
+					if sanitizeValue then
+						output[k] = sanitizeValue(k, v, t)
+					else
+						output[k] = v
+					end
 				end
 			end
 		end

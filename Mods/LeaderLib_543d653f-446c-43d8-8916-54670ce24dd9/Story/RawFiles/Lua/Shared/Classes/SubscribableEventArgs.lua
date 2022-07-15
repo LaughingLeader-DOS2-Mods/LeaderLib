@@ -2,24 +2,28 @@
 ---@field StopPropagation fun(self:LeaderLibSubscribableEventArgs) Stop the event from continuing on to other registered listeners.
 ---@field Dump fun(self:LeaderLibSubscribableEventArgs) Dumps the event's parameters to the console.
 
----@class LeaderLibRuntimeSubscribableEventArgs
+---@class LeaderLibRuntimeSubscribableEventArgsPrivateFields
+---@field Event string The Event ID
 ---@field Handled boolean
 ---@field KeyOrder string[]|nil When unpacking, this is the specific order to unpack values in.
 ---@field GetArg SubscribableEventGetArgFunction|nil
 ---@field Args table<string,any> The table of args used to create this instance.
+
+---@class LeaderLibRuntimeSubscribableEventArgs
+---@field _Private LeaderLibRuntimeSubscribableEventArgsPrivateFields
 local SubscribableEventArgs = {
 	Type = "SubscribableEventArgs"
 }
 
 function SubscribableEventArgs:StopPropagation()
-	self.Handled = true
+	self._Private.Handled = true
 end
 
 ---@param self LeaderLibRuntimeSubscribableEventArgs
 ---@param key string
 local function _TryGetArg(self, key)
-	if self.GetArg then
-		local b,value = pcall(self.GetArg, self, key, self.Args[key])
+	if self._Private.GetArg then
+		local b,value = pcall(self._Private.GetArg, self, key, self._Private.Args[key])
 		if b then
 			if value ~= nil then
 				return value
@@ -38,8 +42,9 @@ end
 ---@param getArg SubscribableEventGetArgFunction|nil
 ---@param customMeta SubscribableEventCustomMetatable|nil Automatically set if the args table had a metatable set.
 ---@return LeaderLibRuntimeSubscribableEventArgs
-function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta)
+function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta, eventID)
 	local _private = {
+		Event = eventID,
 		Handled = false,
 		--The table of args used to create this instance.
 		Args = args,
@@ -67,8 +72,11 @@ function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta
 
 	setmetatable(eventArgs, {
 		__index = function (_,k)
-			if _private[k] ~= nil then
-				return _private[k]
+			if k == "_Private" then
+				return _private
+				-- if _private[k] ~= nil then
+				-- 	return _private[k]
+				-- end
 			end
 			if getCustomMetaIndex then
 				local b,value = xpcall(getCustomMetaIndex, debug.traceback, eventArgs, k)
@@ -102,20 +110,20 @@ end
 ---@param keyOrder string[]|nil
 function SubscribableEventArgs:Unpack(keyOrder)
 	---@type string[]
-	local keyOrder = keyOrder or self.KeyOrder
+	local keyOrder = keyOrder or self._Private.KeyOrder
 	local temp = {}
 	local length = 0
 	if type(keyOrder) == "table" then
 		for i=1,#keyOrder do
 			length = length + 1
 			local key = keyOrder[i]
-			if self.Args[key] ~= nil then
+			if self._Private.Args[key] ~= nil then
 				temp[length] = _TryGetArg(self, key)
 			end
 		end
 	else
 		--Unpack unordered args as a fallback. Should work fine if the event only has one arg anyway.
-		for _,v in pairs(self.Args) do
+		for _,v in pairs(self._Private.Args) do
 			length = length + 1
 			temp[length] = v
 		end
@@ -127,11 +135,11 @@ end
 
 ---Debug function for dumping args to the console.
 function SubscribableEventArgs:Dump()
-	fprint(LOGLEVEL.TRACE, Lib.serpent.block(self.Args, {SimplifyUserdata = true}))
+	fprint(LOGLEVEL.TRACE, Lib.serpent.block({_Event=self._Private.Event, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, {SimplifyUserdata = true}))
 end
 
 function SubscribableEventArgs:DumpExport()
-	return Lib.serpent.block(self.Args, {SimplifyUserdata = true})
+	return Lib.serpent.block({_Event=self._Private.Event, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, {SimplifyUserdata = true})
 end
 
 Classes.SubscribableEventArgs = SubscribableEventArgs

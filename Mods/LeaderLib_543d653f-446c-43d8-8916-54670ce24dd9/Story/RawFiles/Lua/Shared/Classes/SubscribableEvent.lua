@@ -385,7 +385,7 @@ local function InvokeCallbacks(self, args, resultsTable, ...)
 		else
 			cur = cur.Next
 		end
-		if args.Handled then
+		if args._Private.Handled then
 			return _INVOKERESULT.Handled
 		end
 	end
@@ -404,7 +404,7 @@ local function _TryInvoke(self, args, skipAutoInvoke, ...)
 		setmetatable(args, nil)
 	end
 	local ts = Ext.MonotonicTime()
-	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg, metatable)
+	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg, metatable, self.ID)
 	---@type SubscribableEventInvokeResultCode
 	local invokeResult = _INVOKERESULT.Success
 	local results = {}

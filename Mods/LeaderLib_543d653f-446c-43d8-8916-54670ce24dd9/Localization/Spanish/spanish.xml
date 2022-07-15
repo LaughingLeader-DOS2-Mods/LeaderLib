@@ -7,8 +7,9 @@
 	<content contentuid="h01d5b8eagb39eg4b1egb63eg3f3369e7aaef">*Introduce yourself, then ask the man who he is.*</content>
 	<content contentuid="h024f32dbg7cebg45b8g8b4eg302439dce463">[OFF] Teleport to Dialog - Teleport your avatar to the dialog event when dialog gets redirected. [USER]</content>
 	<content contentuid="h031b0a74g0630g4f79ga05fg71c06e49015d">*Step away.*</content>
+	<content contentuid="h036618cegb603g483ag9646gd30eb8cbdb57">&lt;br&gt;&lt;font color=&apos;#44FF33&apos;&gt;(This book has been read)&lt;/font&gt;</content>
 	<content contentuid="h03e70da4g57d5g4cc6g9f3dg2af32a56a3e6">Take a look.</content>
-	<content contentuid="h0580f26cg207fg494cgbe80g9d468b0c4996">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
+	<content contentuid="h0580f26cg207fg494cgbe80g9d468b0c4996">&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;STOP!&lt;/font&gt;&lt;br&gt;A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod dependencies.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#DD3333&apos; size=&apos;24&apos;&gt;Mods will not work correctly!&lt;/font&gt;&lt;br&gt;To fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
 	<content contentuid="h058cca28gcf05g4254gae26g428887ad5cff">Try to reduce max item tooltip size by combining elements, such as &quot;On Hit&quot; actions.</content>
 	<content contentuid="h05e3a637g0755g4659g9aa9g99888bc32ed5">Undead Lizard</content>
 	<content contentuid="h07b0d455gbe0fg48a4gbe1eg3ae23e84b2eb">Confirm Preset Selection</content>
@@ -22,8 +23,9 @@
 	<content contentuid="h0b46c751g260fg4dfaga124ga7208595a493">Max</content>
 	<content contentuid="h0bcff2begcd22g4e86g9b9fgfdd3ce0b28de">Enable a 0.5 second delay for skill tooltips.</content>
 	<content contentuid="h0d0af957g4dc8g4ddagb0fag6c38340bb6de">Hello!</content>
+	<content contentuid="h102b274eg58b9g4199g91c1g2aef870786b8">Fade books (recipes, lore) that have already been read by this amount.&lt;br&gt;&lt;font color=&apos;#FF33FF&apos;&gt;Note: This setting isn&apos;t retroactive, so previous books read in the save may need to be read again, once.&lt;/font&gt;[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]</content>
 	<content contentuid="h109e781dg2032g4b77gacdagce8034c4e49e">Okay.</content>
-	<content contentuid="h1145733eg9ec6g4f50ga44bg313f8a4e1cb2">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
+	<content contentuid="h1145733eg9ec6g4f50ga44bg313f8a4e1cb2">&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;STOP!&lt;/font&gt;&lt;br&gt;A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod dependencies.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#DD3333&apos; size=&apos;24&apos;&gt;Mods will not work correctly!&lt;/font&gt;&lt;br&gt;To fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
 	<content contentuid="h12a0d291g8a48g4448g97adgf3dd1d053aa6">Me? Oh, I&apos;m nobody... Just an old bag of bones, keen on seeing the sights. I hear this cruise ship has a great buffet. *He snorts.*</content>
 	<content contentuid="h12d0bc64gdf1dg424egaf04g644417604184">sulfuric damage</content>
 	<content contentuid="h12ee330bga8a5g4b43gba26g78b5fad1727a">If enabled, two-handed weapons can backstab.&lt;br&gt;(Default: Disabled)</content>
@@ -35,6 +37,7 @@
 	<content contentuid="h14939ec7g5208g49d1ga484gd88c66bb67ba">&lt;font color=&apos;#00FA9A&apos;&gt;View Missing Mods&lt;/font&gt;</content>
 	<content contentuid="h14956412g44e4g4890ga268gd425729622f1">[ON] Balanced Experience for All Parties - Players in other parties will no longer be automatically leveled up to the highest player level. [GLOBAL]</content>
 	<content contentuid="h15486e80g477bg46c1gb79bg5dfca9626411">Characters that follow you with Chain All will no longer avoid surfaces.</content>
+	<content contentuid="h1558d5f5g98feg4a8fg9c53gcf2b276c9513">Fade skillbooks that have already been memorized by this amount.[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]</content>
 	<content contentuid="h1558f2c9g5436g481eg990agdc02ce050c8b">Log Settings</content>
 	<content contentuid="h15b88e5fg448eg4d13g9bffga608d21bc1da">Remove Surface Avoidance When Chained</content>
 	<content contentuid="h15c7dfedg0e00g4ed8g85d2g6bdd30204527">*The old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
@@ -64,6 +67,7 @@
 	<content contentuid="h21fd2959g743dg49e6g9922g02b39ce3c8b8">Pulls targets [1]m [2] ([3]% Chance).</content>
 	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
 	<content contentuid="h24533724ga73fg4d76gb62egc700a193eb89">Must you, really?</content>
+	<content contentuid="h248a3ef3g9ffcg4091gb6c5g10e584f9450e">Known Skillbooks</content>
 	<content contentuid="h24972fbcg741ag4ee0g8cadg41e13aa0ef53">LeaderLib</content>
 	<content contentuid="h24e93debgf7e1g4a6ag9841g5ecca2c911f5">Non-Player Action Point Settings</content>
 	<content contentuid="h25737285gb844g4142gad4cg1d5dc420fb0b">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
@@ -133,6 +137,7 @@
 	<content contentuid="h4c438f27gc833g4b46g8c3eg50716f12ae34">If &quot;Pull Party Into Combat&quot; is enabled, this is the minimum range party members must be from that combat to automatically join. Default: 30m range.</content>
 	<content contentuid="h4ceb8a44g8bf7g40b3g999egaca5cf0af044">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
 	<content contentuid="h4d75e3c0ge0c3g4078gb94dg8e1e054aecb6">*He yawns.* Anything else?</content>
+	<content contentuid="h4d9b6638g854eg41bagafa1ga4ab8efde9a2">If enabled, specific items will be less visible in the inventory, such as memorized skillsbooks being less opaque.</content>
 	<content contentuid="h4db25e4dgdbdag49cfg97f4g06c7f2284082">30 Minutes</content>
 	<content contentuid="h4db42cd2g9575g4c9ag8eb8ga362b3e2e2dc">&lt;b&gt;[Error] Missing Mod Dependencies&lt;/b&gt;</content>
 	<content contentuid="h4de9aea3ga486g4e1egbb56gef0bc6191f9c">Automatically Unlock Inventory</content>
@@ -168,6 +173,7 @@
 	<content contentuid="h5d6cebcagab5eg45ebgbaf0gb0b77cd0ac39">[ON] Friendly Fire - This setting is for mods that implement friendly fire in their skill targeting conditions, allowing skills to target non-enemy targets if enabled. [GLOBAL]</content>
 	<content contentuid="h5e7156dfg4eddg428fg8939gdadd6f2eb50f">[LeaderLib] Settings</content>
 	<content contentuid="h5eb45b65g72aeg4b6cga7eegd42b61850315">[Back]</content>
+	<content contentuid="h5f08e47agfdedg4f2fg95cbgdd98b93ab315">&lt;br&gt;Default: 30%&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;Fading is disabled at 100 (fully visible), while 0 makes the item completely invisible.&lt;/font&gt;</content>
 	<content contentuid="h5f603b9bg4c0fg4b80g9cfagfce9ed3b295b">Speaking of old junk, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
 	<content contentuid="h608a3fb1g869eg45b6g93f6g9ec6d52a02d8">Welcome [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]. Seems we&apos;re nearing the end of our journey together.</content>
 	<content contentuid="h60d869f2gcb5cg4b29gafa4g9d94ef2ae4f7">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
@@ -280,7 +286,7 @@
 	<content contentuid="h950f9baege3b1g428agbb4dgf70a45676c5a">Chain All</content>
 	<content contentuid="h951be36bg6ed7g49e4ga343gaa5c47a4c98e">*Lothar grunts, rubbing his lower back as he chews on something.* Once I saw this beautiful ship in the distance, I knew it was my chance to escape. I swam like a fish.</content>
 	<content contentuid="h95b9aa7bg9ca3g46ecga152gbed2951313b4">Sulfuric Resistance</content>
-	<content contentuid="h966d6fabgc29cg4602gad0dg0c50f9418e24">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
+	<content contentuid="h966d6fabgc29cg4602gad0dg0c50f9418e24">&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;STOP!&lt;/font&gt;&lt;br&gt;A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod dependencies.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#DD3333&apos; size=&apos;24&apos;&gt;Mods will not work correctly!&lt;/font&gt;&lt;br&gt;To fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
 	<content contentuid="h96c19068g066dg429bgb939g91ec46051b34">Clear the status whitelist, which is used to show statuses next to portraits when &lt;font color=&apos;#CCAA00&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideStatuses]&lt;/font&gt; is enabled.</content>
 	<content contentuid="h972f1d0cgbce6g4a8fg8ab4g02430e78b2b4">unknown damage</content>
 	<content contentuid="h975b62eagb7acg46c2gb917g0d5218e2e8ca">Always Expand Tooltips</content>
@@ -301,6 +307,7 @@
 	<content contentuid="h9cc2120agfe21g4721g8e33g6d1fb7621956">[ON] Unhealable Fix - If the &apos;Unhealable&apos; status is applied, the target will not be able to be healed by statuses (Regeneration, etc). [GLOBAL]</content>
 	<content contentuid="h9d00c99fgf7a1g4cb0gbfd9gb015d525148f">*Ask if he&apos;s still selling things.*</content>
 	<content contentuid="h9d070c75g8d3fg4737g9097g1ba448c6dcf9">On Hit:&lt;br&gt;Set [1].[3]</content>
+	<content contentuid="h9d2862d3g60c2g4c5ag93aagb4bf787c8b3a">Inventory Item Fading</content>
 	<content contentuid="h9e18d11cg5b3eg4af0g8e62g3fe7d28fb945">Enable a 0.5 second delay for generic tooltips (things like button tooltips).</content>
 	<content contentuid="h9ff30ae0ge39eg480bg82a3ge975aafed5fd">[LeaderLib_ModMenu_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17]</content>
 	<content contentuid="ha0c0e557g4b01g46a5ga70fge7793eda87b7">Recovery</content>
@@ -362,6 +369,7 @@
 	<content contentuid="hb9335219gb6b3g49ffg9291gd3bf78a2f84f">Pause Autosaving in Combat</content>
 	<content contentuid="hb955eb39g2068g4c7dga389gfabcaa42462d">Loading mod menu...</content>
 	<content contentuid="hb987d743g981dg43f6g9aa8g08109349d4e9">LeaderLib Successfully Loaded Global Settings</content>
+	<content contentuid="hb9beadd0gf1a7g4062ga566g6922501e4ac7">Books Read</content>
 	<content contentuid="hba3c2c4fge700g47bfg877dg00a16a26a454">If enabled, characters require the Backstab talent to be able to backstab with non-dagger equipment or skills.&lt;br&gt;(Default: Enabled)</content>
 	<content contentuid="hba8ffff9gf198g45ddg8ee7gf74d6497cd1d">Good riddance.</content>
 	<content contentuid="hbac8ae9dg2b22g415ega98fgd4216182c093">[Key:TUT_Tutorial_A:The Hold] (Tutorial)</content>
@@ -397,6 +405,7 @@
 	<content contentuid="hc9ad7f0cg9a5bg4617gb138gce551f82c341">Removes the status malus icon and extra spacing, caused by a typo in Larian&apos;s UI code, and organizes bonuses and maluses together, while also sorting them alphabetically.</content>
 	<content contentuid="hc9cc1024g797fg4770g8ffagf1b4041e4c48">&lt;font color=&apos;#9400D3&apos;&gt;Stealth Mastery&lt;/font&gt;</content>
 	<content contentuid="hca27994egc60eg495dg8146g7f81c970e265">&lt;font color=&apos;#80FFC3&apos; size=&apos;18&apos;&gt;Automatically levels up with the wearer.&lt;/font&gt;</content>
+	<content contentuid="hca50dcf9gea32g430bgafc9g48351de05c44">Enabled</content>
 	<content contentuid="hcb2933a4g9bf6g4b7ega556g974d319d1faf">Redirect to Character with Highest Persuasion</content>
 	<content contentuid="hcb33afd9g09cbg42e2ga180g1e4fa15cb804">Enabled</content>
 	<content contentuid="hcb9853aaga052g447dga36fgafeb4902bd4f">I didn&apos;t survive war to end up dead by the likes of you!</content>

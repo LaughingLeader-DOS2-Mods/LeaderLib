@@ -418,49 +418,84 @@ else
 		end
 	end)
 
+	---@type table<string, {BookType:string, TextID:string}>
+	local _isBookTemplate = {}
+
 	Ext.RegisterOsirisListener("CanUseItem", 3, "after", function (charGUID, itemGUID, requestID)
-		if CharacterIsPlayer(charGUID) == 1 and IsTagged(itemGUID, "BOOK") == 1 then
+		if CharacterIsPlayer(charGUID) == 1 then
 			local updatedData = false
 			local player = GameHelpers.GetCharacter(charGUID)
 			local item = GameHelpers.GetItem(itemGUID)
 			local userID = GameHelpers.GetUserID(player)
 			if item and item.RootTemplate then
 				local bookType = ""
-				local textID = nil
 				local template = GameHelpers.GetTemplate(item)
-				for _,v in pairs(item.RootTemplate.OnUsePeaceActions) do
-					if v.Type == "Book" and not StringHelpers.IsNullOrWhitespace(v.BookId) then
+				local textID = nil
+				local cachedBookData = _isBookTemplate[template]
+				if cachedBookData ~= nil then
+					if cachedBookData == false then
+						return
+					end
+					bookType = cachedBookData.BookType
+					textID = cachedBookData.TextID
+					if bookType ~= "Skillbook" then
 						if PersistentVars.ReadBooks[userID] == nil then
 							PersistentVars.ReadBooks[userID] = {}
 						end
-						textID = v.BookId
 						updatedData = PersistentVars.ReadBooks[userID][template] == nil
-						PersistentVars.ReadBooks[userID][template] = v.BookId
-						bookType = "Book"
-						break
-					elseif v.Type == "Recipe" and not StringHelpers.IsNullOrWhitespace(v.RecipeID) then
-						if PersistentVars.ReadBooks[userID] == nil then
-							PersistentVars.ReadBooks[userID] = {}
+						PersistentVars.ReadBooks[userID][template] = textID
+					end
+				elseif GameHelpers.Item.IsObject(item) then
+					local actions = item.RootTemplate.OnUsePeaceActions
+					local len = actions and #actions or 0
+					if len > 0 then
+						for i=1,len do
+							---@type RecipeActionData|SkillBookActionData|BookActionData
+							local v = actions[i]
+							
+							if v.Type == "Book" and not StringHelpers.IsNullOrWhitespace(v.BookId) then
+								if PersistentVars.ReadBooks[userID] == nil then
+									PersistentVars.ReadBooks[userID] = {}
+								end
+								textID = v.BookId
+								updatedData = PersistentVars.ReadBooks[userID][template] == nil
+								PersistentVars.ReadBooks[userID][template] = v.BookId
+								bookType = "Book"
+								break
+							elseif v.Type == "Recipe" and not StringHelpers.IsNullOrWhitespace(v.RecipeID) then
+								if PersistentVars.ReadBooks[userID] == nil then
+									PersistentVars.ReadBooks[userID] = {}
+								end
+								textID = v.RecipeID
+								updatedData = PersistentVars.ReadBooks[userID][template] == nil
+								PersistentVars.ReadBooks[userID][template] = v.RecipeID
+								bookType = "Recipe"
+								break
+							elseif v.Type == "SkillBook" and v.Consume == true and not StringHelpers.IsNullOrWhitespace(v.SkillID) then
+								textID = v.SkillID
+								bookType = "Skillbook"
+								break
+							end
 						end
-						textID = v.RecipeID
-						updatedData = PersistentVars.ReadBooks[userID][template] == nil
-						PersistentVars.ReadBooks[userID][template] = v.RecipeID
-						bookType = "Recipe"
-						break
-					elseif v.Type == "SkillBook" and v.Consume == true and not StringHelpers.IsNullOrWhitespace(v.SkillID) then
-						textID = v.SkillID
-						bookType = "Skillbook"
+					end
+					if textID == nil then
+						_isBookTemplate[template] = false
 					end
 				end
 				if textID then
+					--Skip needing to iterate again
+					if not cachedBookData then
+						_isBookTemplate[template] = {BookType=bookType, TextID = textID}
+					end
 					---@cast textID string
-					
 					Events.OnBookRead:Invoke({
 						Character = player,
 						Item = item,
 						Template = template,
 						ID = textID,
-						BookType = bookType
+						BookType = bookType,
+						ItemGUID = item.MyGuid,
+						CharacterGUID = player.MyGuid
 					})
 				end
 				if updatedData then

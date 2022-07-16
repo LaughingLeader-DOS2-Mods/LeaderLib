@@ -325,13 +325,11 @@ local function SerializeArgs(args)
 		local t = _type(v)
 		if t == "userdata" then
 			if GameHelpers.IsValidHandle(v) then
+				--TODO this is probably a server/client handle, so it won't work in the other context
 				tbl[k] = {Type="Object", HandleINT = Ext.Utils.HandleToInteger(v)}
 			else
 				if v.NetID or v.UUID then
 					tbl[k] = {Type="Object", NetID=v.NetID, UUID=v.MyGuid}
-					if v.Handle then
-						tbl[k].HandleINT = Ext.Utils.HandleToInteger(v.Handle)
-					end
 				end
 			end
 		elseif t == "table" then
@@ -483,12 +481,6 @@ local function DeserializeArgs(args)
 				end
 				if not obj and v.UUID then
 					obj = _getObjFunc(v.UUID)
-				end
-				if not obj and v.HandleINT then
-					local handle = Ext.Utils.IntegerToHandle(v.HandleINT)
-					if handle and Ext.Utils.IsValidHandle(handle) then
-						obj = _getObjFunc(handle)
-					end
 				end
 				if not obj then
 					tbl[k] = v.UUID

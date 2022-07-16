@@ -35,15 +35,15 @@ if _ISCLIENT then
 	local _inventoryWasOpened = false
 
 	PartyInventory:RegisterInvokeListener("setSortBtnTexts", function (self, ui, event, ...)
+		_inventoryWasOpened = true
 		if ShouldUnlockInventories() then
-			_inventoryWasOpened = true
 			UnlockInventories(ui)
 		end
 	end, "After", "Keyboard")
 
 	PartyInventory:RegisterInvokeListener("setPanelTitle", function (self, ui, event, ...)
+		_inventoryWasOpened = true
 		if ShouldUnlockInventories() then
-			_inventoryWasOpened = true
 			UnlockInventories(ui)
 		end
 	end, "After", "Controller")
@@ -68,7 +68,6 @@ if _ISCLIENT then
 	--#region Learned Skillbooks
 
 	if _EXTVERSION >= 56 then
-
 		---@return fun():{SlotMC:FlashMovieClip, Item:EclItem}
 		local function GetInventoryItems()
 			local entries = {}

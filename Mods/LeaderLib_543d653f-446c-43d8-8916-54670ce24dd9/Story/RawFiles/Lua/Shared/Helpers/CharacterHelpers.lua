@@ -93,7 +93,7 @@ function GameHelpers.Character.IsPlayerOrPartyMember(character)
 	end
 	if not _ISCLIENT and Ext.OsirisIsCallable() then
 		local GUID = GameHelpers.GetUUID(character)
-		return GUID and CharacterIsPartyMember(GUID) == 1
+		return not StringHelpers.IsNullOrEmpty(GUID) and CharacterIsPartyMember(GUID) == 1
 	end
 	return false
 end

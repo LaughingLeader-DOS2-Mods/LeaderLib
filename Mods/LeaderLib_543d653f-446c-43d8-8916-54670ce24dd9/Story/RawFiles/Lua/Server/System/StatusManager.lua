@@ -267,16 +267,16 @@ end
 
 ---If false is returned, the status will be blocked.
 ---@alias StatusManagerBeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):boolean
----@alias StatusManagerAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):void
----@alias StatusManagerAppliedCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):void
+---@alias StatusManagerAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID)
+---@alias StatusManagerAppliedCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID)
 ---Source is usually nil unless specifically tracked before the status is removed.
----@alias StatusManagerRemovedCallback fun(target:EsvCharacter|EsvItem, status:string, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID):void
+---@alias StatusManagerRemovedCallback fun(target:EsvCharacter|EsvItem, status:string, source:EsvCharacter|EsvItem|nil, statusType:string, statusEvent:StatusEventID)
 
 ---@param callback function
 local function CreateCallbackWrapper(callback)
 	---@param e OnStatusEventArgs
 	local callbackWrapper = function(e)
-		callback(e.Target, e.Status, e.Source, e.StatusType, e.StatusEvent)
+		callback(e.Target, e.Status or e.StatusId, e.Source, e.StatusType, e.StatusEvent)
 	end
 	return callbackWrapper
 end
@@ -292,20 +292,20 @@ function StatusManager.Register.BeforeAttempt(status, callback, ...)
 	elseif t == "string" then
 		local params = {...}
 
-		---@param target EsvGameObject
-		---@param status EsvStatus
-		---@param source EsvGameObject
-		local callbackWrapper = function(target, status, source, handle, statusType)
-			local b,result = _xpcall(callback, debug.traceback, target, status, source, statusType, Vars.StatusEvent.BeforeAttempt, table.unpack(params))
+		---@param e OnStatusBeforeAttemptEventArgs
+		local callbackWrapper = function(e)
+			local b,result = _xpcall(callback, debug.traceback, e.Target, e.Status or e.StatusId, e.Source, e.StatusType, e.StatusEvent)
 			if not b then
 				error(result, 2)
-			elseif result == false then
-				NRD_StatusPreventApply(target.MyGuid, handle, 1)
-			elseif result == true then
-				NRD_StatusPreventApply(target.MyGuid, handle, 0)
+			else
+				if result == true then
+					e.PreventApply = true
+				elseif result == true then
+					e.PreventApply = false
+				end
 			end
 		end
-		RegisterStatusListener(Vars.StatusEvent.BeforeAttempt, status, callbackWrapper)
+		_INTERNALREG.BeforeAttempt(status, callbackWrapper)
 	else
 		fprint(LOGLEVEL.ERROR, "[StatusManager.Register.BeforeAttempt] Invalid type for status param(%s) value (%s)", t, status)
 	end
@@ -320,7 +320,7 @@ function StatusManager.Register.Attempt(status, callback)
 			StatusManager.Register.Attempt(v, callback)
 		end
 	elseif t == "string" then
-		RegisterStatusListener("Attempt", status, CreateCallbackWrapper(callback))
+		_INTERNALREG.Attempt(status, CreateCallbackWrapper(callback))
 	else
 		fprint(LOGLEVEL.ERROR, "[StatusManager.Register.Attempt] Invalid type for status param(%s) value (%s)", t, status)
 	end
@@ -336,7 +336,7 @@ function StatusManager.Register.Applied(status, callback)
 			StatusManager.Register.Applied(v, callback)
 		end
 	elseif t == "string" then
-		RegisterStatusListener("Applied", status, CreateCallbackWrapper(callback))
+		_INTERNALREG.Applied(status, CreateCallbackWrapper(callback))
 	else
 		fprint(LOGLEVEL.ERROR, "[StatusManager.Register.Applied] Invalid type for status param(%s) value (%s)", t, status)
 	end
@@ -351,7 +351,7 @@ function StatusManager.Register.Removed(status, callback)
 			StatusManager.Register.Removed(v, callback)
 		end
 	elseif t == "string" then
-		RegisterStatusListener("Removed", status, CreateCallbackWrapper(callback))
+		_INTERNALREG.Removed(status, CreateCallbackWrapper(callback))
 	else
 		fprint(LOGLEVEL.ERROR, "[StatusManager.Register.Removed] Invalid type for status param(%s) value (%s)", t, status)
 	end
@@ -386,18 +386,20 @@ StatusManager.Register.Type = {
 				StatusManager.Register.Type.BeforeAttempt(v, callback)
 			end
 		elseif t == "string" then
-			---@param target EsvGameObject
-			---@param statusType EsvStatus
-			---@param source EsvGameObject
-			local callbackWrapper = function(target, statusType, source, handle, statusType)
-				local b,result = _xpcall(callback, debug.traceback, target, statusType, source, statusType, Vars.StatusEvent.BeforeAttempt)
+			---@param e OnStatusBeforeAttemptEventArgs
+			local callbackWrapper = function(e)
+				local b,result = _xpcall(callback, debug.traceback, e.Target, e.Status or e.StatusId, e.Source, e.StatusType, e.StatusEvent)
 				if not b then
 					error(result, 2)
-				elseif result then
-					NRD_StatusPreventApply(target.MyGuid, handle, 1)
+				else
+					if result == true then
+						e.PreventApply = true
+					elseif result == true then
+						e.PreventApply = false
+					end
 				end
 			end
-			RegisterStatusTypeListener(Vars.StatusEvent.BeforeAttempt, statusType, callbackWrapper)
+			_INTERNALREG.BeforeAttemptType(statusType, callbackWrapper)
 		else
 			fprint(LOGLEVEL.ERROR, "[StatusManager.Register.Type.BeforeAttempt] Invalid type for statusType param(%s) value (%s)", t, statusType)
 		end
@@ -412,7 +414,7 @@ StatusManager.Register.Type = {
 				StatusManager.Register.Type.Attempt(v, callback)
 			end
 		elseif t == "string" then
-			RegisterStatusTypeListener("Attempt", statusType, CreateCallbackWrapper(callback))
+			_INTERNALREG.Attempt(statusType, CreateCallbackWrapper(callback))
 		else
 			fprint(LOGLEVEL.ERROR, "[StatusManager.Register.Type.Attempt] Invalid type for statusType param(%s) value (%s)", t, statusType)
 		end
@@ -427,7 +429,7 @@ StatusManager.Register.Type = {
 				StatusManager.Register.Type.Applied(v, callback)
 			end
 		elseif t == "string" then
-			RegisterStatusTypeListener("Applied", statusType, CreateCallbackWrapper(callback))
+			_INTERNALREG.AppliedType(statusType, CreateCallbackWrapper(callback))
 		else
 			fprint(LOGLEVEL.ERROR, "[StatusManager.Register.Type.Applied] Invalid type for statusType param(%s) value (%s)", t, statusType)
 		end
@@ -442,7 +444,7 @@ StatusManager.Register.Type = {
 				StatusManager.Register.Type.Removed(v, callback)
 			end
 		elseif t == "string" then
-			RegisterStatusTypeListener("Removed", statusType, CreateCallbackWrapper(callback))
+			_INTERNALREG.RemovedType(statusType, CreateCallbackWrapper(callback))
 		else
 			fprint(LOGLEVEL.ERROR, "[StatusManager.Register.Type.Attempt] Invalid type for statusType param(%s) value (%s)", t, statusType)
 		end
@@ -559,7 +561,7 @@ end
 if Ext.Version() >= 56 then
 	---@class ExtenderBeforeStatusDeleteEventParams
 	---@field Status EsvStatus
-	---@field PreventAction fun(self:ExtenderBeforeStatusDeleteEventParams):void
+	---@field PreventAction fun(self:ExtenderBeforeStatusDeleteEventParams)
 
 	---@param e ExtenderBeforeStatusDeleteEventParams
 	local function OnBeforeStatusDelete(e)
@@ -1061,8 +1063,8 @@ setmetatable(_INTERNAL, {
 
 --#region Deprecated
 
----@alias BeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, handle:integer, statusType:string):void
----@alias StatusEventCallback fun(target:string, status:string, source:string|nil, statusType:string):void
+---@alias BeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, handle:integer, statusType:string)
+---@alias StatusEventCallback fun(target:string, status:string, source:string|nil, statusType:string)
 
 ---@deprecated
 ---@param event StatusEventID BeforeAttempt, Attempt, Applied, Removed

@@ -831,7 +831,7 @@ end
 local previousListeners = {}
 
 ---@class TooltipHooks
-TooltipHooks = {
+local _ttHooks = {
 	---@type TooltipRequest
 	NextRequest = nil,
 	ActiveType = "",
@@ -858,21 +858,38 @@ TooltipHooks = {
 	},
 }
 
-RequestProcessor.Tooltip = TooltipHooks
+TooltipHooks = {}
+
+local _ttHooksType = {}
+
+setmetatable(TooltipHooks, {
+	__index = function(_,k) 
+		return _ttHooks[k]
+	end,
+	__newindex = function(_,k,v)
+		local t = _ttHooksType[k] or type(_ttHooks[k])
+		_ttHooksType[k] = t
+		if t == "nil" or t ~= "function" then
+			_ttHooks[k] = v
+		end
+	end
+})
+
+RequestProcessor.Tooltip = _ttHooks
 
 if previousListeners.GlobalListeners then
 	for _,v in pairs(previousListeners.GlobalListeners) do
-		TooltipHooks.GlobalListeners[#TooltipHooks.GlobalListeners+1] = v
+		_ttHooks.GlobalListeners[#_ttHooks.GlobalListeners+1] = v
 	end
 end
 
 if previousListeners.TypeListeners then
 	for t,v in pairs(previousListeners.TypeListeners) do
-		if TooltipHooks.TypeListeners[t] == nil then
-			TooltipHooks.TypeListeners[t] = v
+		if _ttHooks.TypeListeners[t] == nil then
+			_ttHooks.TypeListeners[t] = v
 		else
 			for _,v2 in pairs(v) do
-				table.insert(TooltipHooks.TypeListeners[t], v2)
+				table.insert(_ttHooks.TypeListeners[t], v2)
 			end
 		end
 	end
@@ -880,11 +897,11 @@ end
 
 if previousListeners.ObjectListeners then
 	for t,v in pairs(previousListeners.ObjectListeners) do
-		if TooltipHooks.ObjectListeners[t] == nil then
-			TooltipHooks.ObjectListeners[t] = v
+		if _ttHooks.ObjectListeners[t] == nil then
+			_ttHooks.ObjectListeners[t] = v
 		else
 			for k,v2 in pairs(v) do
-				TooltipHooks.ObjectListeners[t][k] = v2
+				_ttHooks.ObjectListeners[t][k] = v2
 			end
 		end
 	end
@@ -946,7 +963,7 @@ local TooltipArrayNames = {
 }
 Game.Tooltip.TooltipArrayNames = TooltipArrayNames
 
-function TooltipHooks:RegisterControllerHooks()
+function _ttHooks:RegisterControllerHooks()
 	_RegisterUITypeInvokeListener(_UITYPE.equipmentPanel_c, "updateTooltip", function (ui, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.EquipmentPanel, ui, ...)
 	end)
@@ -1047,12 +1064,12 @@ function TooltipHooks:RegisterControllerHooks()
 	end)
 end
 
-function TooltipHooks:Init()
+function _ttHooks:Init()
 	if self.Initialized then
 		return
 	end
 
-	RequestProcessor:Init(TooltipHooks)
+	RequestProcessor:Init(_ttHooks)
 
 	_RegisterUINameInvokeListener("addFormattedTooltip", function (...)
 		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
@@ -1113,7 +1130,7 @@ function TooltipHooks:Init()
 	self.Initialized = true
 end
 
-function TooltipHooks:UpdateGenericTooltip(ui, method, keepUIinScreen)
+function _ttHooks:UpdateGenericTooltip(ui, method, keepUIinScreen)
 	if not self.GenericTooltipData then
 		return
 	end
@@ -1137,7 +1154,7 @@ local _GenericTooltipTypes = {
 
 ---@param ui UIObject
 ---@param method string
-function TooltipHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay, anchorEnum, backgroundType)
+function _ttHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay, anchorEnum, backgroundType)
 	---@type TooltipGenericRequest|TooltipPlayerPortraitRequest|TooltipWorldRequest
 	local req = self.NextRequest
 	if not req then
@@ -1202,7 +1219,7 @@ end
 ---@param ui UIObject
 ---@param item EclItem
 ---@return EclCharacter
-function TooltipHooks:GetCompareOwner(ui, item)
+function _ttHooks:GetCompareOwner(ui, item)
 	local owner = ui:GetPlayerHandle()
 
 	if owner ~= nil then
@@ -1274,7 +1291,7 @@ end
 --- @param item EclItem
 --- @param offHand boolean
 --- @return EclItem|nil
-function TooltipHooks:GetCompareItem(ui, item, offHand)
+function _ttHooks:GetCompareItem(ui, item, offHand)
 	local char = self:GetCompareOwner(ui, item)
 
 	if char == nil then
@@ -1338,7 +1355,7 @@ end
 
 ---@param arrayData TooltipArrayData
 ---@param ui UIObject
-function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
+function _ttHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	if self.NextRequest == nil then
 		if _DEBUG then
 			_PrintWarning(string.format("[Game.Tooltip] Got tooltip render request, but did not find original tooltip info! method(%s)", method))
@@ -1422,7 +1439,7 @@ end
 ---@param propertyName string
 ---@param req AnyTooltipRequest
 ---@param method string
-function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
+function _ttHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 	local tt = TableFromFlash(ui, propertyName)
 	local params = ParseTooltipArray(tt)
 	if params ~= nil then
@@ -1503,7 +1520,7 @@ end
 
 ---@param requestType string
 ---@param listener fun(req:TooltipRequest)
-function TooltipHooks:RegisterBeforeNotifyListener(requestType, listener)
+function _ttHooks:RegisterBeforeNotifyListener(requestType, listener)
 	if requestType == nil or requestType == "all" then
 		requestType = "All"
 	end
@@ -1518,7 +1535,7 @@ end
 
 ---@param request TooltipRequest
 ---@vararg string|boolean|number|EclGameObject
-function TooltipHooks:InvokeBeforeNotifyListeners(request, ...)
+function _ttHooks:InvokeBeforeNotifyListeners(request, ...)
 	local rTypeTable = self.BeforeNotifyListeners[request.Type]
 	if rTypeTable then
 		InvokeListenerTable(rTypeTable, request, ...)
@@ -1530,7 +1547,7 @@ end
 ---@param name string
 ---@param request TooltipRequest
 ---@param tooltip TooltipData
-function TooltipHooks:NotifyListeners(requestType, name, request, tooltip, ...)
+function _ttHooks:NotifyListeners(requestType, name, request, tooltip, ...)
 	local args = {...}
 	table.insert(args, tooltip)
 	self:NotifyAll(self.TypeListeners[requestType], table.unpack(args))
@@ -1541,7 +1558,7 @@ function TooltipHooks:NotifyListeners(requestType, name, request, tooltip, ...)
 	self:NotifyAll(self.GlobalListeners, request, tooltip, ...)
 end
 
-function TooltipHooks:NotifyAll(listeners, ...)
+function _ttHooks:NotifyAll(listeners, ...)
 	if not listeners then
 		return
 	end
@@ -1556,7 +1573,7 @@ end
 ---@param tooltipType string|nil
 ---@param tooltipID string|nil
 ---@param listener function
-function TooltipHooks:RegisterListener(tooltipType, tooltipID, listener)
+function _ttHooks:RegisterListener(tooltipType, tooltipID, listener)
 	if not self.Initialized then
 		self:Init()
 	end
@@ -1586,7 +1603,7 @@ end
 ---@param requestType string
 ---@param listener fun(req:TooltipRequest)
 ---@param state string
-function TooltipHooks:RegisterRequestListener(requestType, listener, state)
+function _ttHooks:RegisterRequestListener(requestType, listener, state)
 	if requestType == nil or requestType == "all" then
 		requestType = "All"
 	end
@@ -1605,7 +1622,7 @@ function TooltipHooks:RegisterRequestListener(requestType, listener, state)
 	table.insert(self.RequestListeners[requestType][state], listener)
 end
 
-function TooltipHooks:InvokeRequestListeners(request, state, ...)
+function _ttHooks:InvokeRequestListeners(request, state, ...)
 	local rTypeTable = self.RequestListeners[request.Type]
 	if rTypeTable then
 		InvokeListenerTable(rTypeTable[state], request, ...)
@@ -1912,93 +1929,93 @@ end
 Game.Tooltip.Register = {
 	---@param callback fun(request:AnyTooltipRequest, tooltip:TooltipData)
 	Global = function(callback)
-		TooltipHooks:RegisterListener(nil, nil, callback)
+		_ttHooks:RegisterListener(nil, nil, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, ability:StatsAbilityType|string, tooltip:TooltipData)
 	---@param ability StatsAbilityType|nil Optional ability to filter by.
 	Ability = function(callback, ability)
-		TooltipHooks:RegisterListener("Ability", ability, callback)
+		_ttHooks:RegisterListener("Ability", ability, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, statData:{ID:string}, tooltip:TooltipData)
 	---@param id string|nil Optional CustomStat ID to filter by.
 	CustomStat = function(callback, id)
-		TooltipHooks:RegisterListener("CustomStat", id, callback)
+		_ttHooks:RegisterListener("CustomStat", id, callback)
 	end,
 	
 	---@param callback fun(tooltip:TooltipData)
 	Generic = function(callback)
-		TooltipHooks:RegisterListener("Generic", nil, callback)
+		_ttHooks:RegisterListener("Generic", nil, callback)
 	end,
 
 	---@param callback fun(item:EclItem, tooltip:TooltipData)
 	---@param statsId string|nil Optional Rune StatsId to filter by.
 	Item = function(callback, statsId)
-		TooltipHooks:RegisterListener("Item", statsId, callback)
+		_ttHooks:RegisterListener("Item", statsId, callback)
 	end,
 
 	---Called when a tooltip is created when hovering over a player portrait.
 	---@param callback fun(character:EclCharacter|nil, tooltip:TooltipData)
 	PlayerPortrait = function(callback)
-		TooltipHooks:RegisterListener("PlayerPortrait", nil, callback)
+		_ttHooks:RegisterListener("PlayerPortrait", nil, callback)
 	end,
 
 	---@param callback fun(item:EclItem, tooltip:TooltipData)
 	---@param statsId string|nil Optional Rune StatsId to filter by.
 	Pyramid = function(callback, statsId)
-		TooltipHooks:RegisterListener("Pyramid", statsId, callback)
+		_ttHooks:RegisterListener("Pyramid", statsId, callback)
 	end,
 
 	---@param callback fun(item:EclItem, rune:StatEntryObject, slot:integer, tooltip:TooltipData)
 	---@param statsId string|nil Optional Rune StatsId to filter by.
 	Rune = function(callback, statsId)
-		TooltipHooks:RegisterListener("Rune", statsId, callback)
+		_ttHooks:RegisterListener("Rune", statsId, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, skill:string, tooltip:TooltipData)
 	---@param skillId string|nil Optional Skill ID to filter by.
 	Skill = function(callback, skillId)
-		TooltipHooks:RegisterListener("Skill", skillId, callback)
+		_ttHooks:RegisterListener("Skill", skillId, callback)
 	end,
 
 	---Register a callback for stat tooltips in the character sheet, such as attributes and resistances.
 	---@param callback fun(character:EclCharacter, stat:StatsCharacterStatGetterType|string, tooltip:TooltipData)
 	---@param id StatsCharacterStatGetterType|string|nil Optional Stat ID to filter by, such as "Damage".
 	Stat = function(callback, id)
-		TooltipHooks:RegisterListener("Stat", id, callback)
+		_ttHooks:RegisterListener("Stat", id, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, status:EclStatus, tooltip:TooltipData)
 	---@param statusId string|nil Optional Status ID to filter by.
 	Status = function(callback, statusId)
-		TooltipHooks:RegisterListener("Status", statusId, callback)
+		_ttHooks:RegisterListener("Status", statusId, callback)
 	end,
 
 	---Register a callback for when cloud and ground surface tooltip text is shown.
 	---@param callback fun(character:EclCharacter, surface:string, tooltip:TooltipData)
 	---@param surfaceId SurfaceType|nil Optional Surface ID to filter by.
 	Surface = function(callback, surfaceId)
-		TooltipHooks:RegisterListener("Surface", surfaceId, callback)
+		_ttHooks:RegisterListener("Surface", surfaceId, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, tag:string, tooltip:TooltipData)
 	---@param tag string|nil Optional Tag ID to filter by.
 	Tag = function(callback, tag)
-		TooltipHooks:RegisterListener("Tag", tag, callback)
+		_ttHooks:RegisterListener("Tag", tag, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, talent:StatsTalentType|string, tooltip:TooltipData)
 	---@param talentId StatsTalentType|nil Optional Talent ID to filter by.
 	Talent = function(callback, talentId)
-		TooltipHooks:RegisterListener("Talent", talentId, callback)
+		_ttHooks:RegisterListener("Talent", talentId, callback)
 	end,
 
 	---Called for both mouse-hovered items, and item names displayed when pressing "Show World Tooltips".
 	---@param callback fun(item:EclItem|nil, tooltip:TooltipData)
 	---@param statsId string|nil Optional item StatsId to filter by.
 	World = function(callback, statsId)
-		TooltipHooks:RegisterListener("World", statsId, callback)
+		_ttHooks:RegisterListener("World", statsId, callback)
 	end,
 }
 
@@ -2014,12 +2031,12 @@ function Game.Tooltip.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackO
 	if type(callbackOrNil) == "function" then
 		--assert(type(tooltipTypeOrCallback) == "string", "If the third parameter is a function, the first parameter must be a string (TooltipType).")
 		--assert(type(tooltipID) == "string", "If the third parameter is a function, the second parameter must be a string.")
-		TooltipHooks:RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
+		_ttHooks:RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
 	elseif type(idOrNil) == "function" then
 		assert(type(tooltipTypeOrCallback) == "string", "If the second parameter is a function, the first parameter must be a string (TooltipType).")
-		TooltipHooks:RegisterListener(tooltipTypeOrCallback, nil, idOrNil)
+		_ttHooks:RegisterListener(tooltipTypeOrCallback, nil, idOrNil)
 	elseif type(tooltipTypeOrCallback) == "function" then
-		TooltipHooks:RegisterListener(nil, nil, tooltipTypeOrCallback)
+		_ttHooks:RegisterListener(nil, nil, tooltipTypeOrCallback)
 	else
 		local t1 = type(tooltipTypeOrCallback)
 		local t2 = type(idOrNil)
@@ -2038,9 +2055,9 @@ function Game.Tooltip.RegisterRequestListener(typeOrCallback, callbackOrNil, sta
 	local t = type(typeOrCallback)
 	if t == "string" then
 		assert(type(callbackOrNil) == "function", "Second parameter must be a function.")
-		TooltipHooks:RegisterRequestListener(typeOrCallback, callbackOrNil, state)
+		_ttHooks:RegisterRequestListener(typeOrCallback, callbackOrNil, state)
 	elseif t == "function" then
-		TooltipHooks:RegisterRequestListener(nil, typeOrCallback, state)
+		_ttHooks:RegisterRequestListener(nil, typeOrCallback, state)
 	end
 end
 
@@ -2052,9 +2069,9 @@ function Game.Tooltip.RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil
 	local t = type(typeOrCallback)
 	if t == "string" then
 		assert(type(callbackOrNil) == "function", "Second parameter must be a function.")
-		TooltipHooks:RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil)
+		_ttHooks:RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil)
 	elseif t == "function" then
-		TooltipHooks:RegisterBeforeNotifyListener("All", typeOrCallback)
+		_ttHooks:RegisterBeforeNotifyListener("All", typeOrCallback)
 	end
 end
 
@@ -2062,7 +2079,7 @@ end
 ---@param t TooltipRequestType
 ---@return boolean
 function Game.Tooltip.RequestTypeEquals(t)
-	if TooltipHooks.ActiveType == t or (TooltipHooks.NextRequest and TooltipHooks.NextRequest.Type == t) then
+	if _ttHooks.ActiveType == t or (_ttHooks.NextRequest and _ttHooks.NextRequest.Type == t) then
 		return true
 	end
 	return false
@@ -2072,7 +2089,7 @@ end
 ---@param t TooltipRequestType
 ---@return boolean
 function Game.Tooltip.LastRequestTypeEquals(t)
-	if TooltipHooks.Last.Type == t or (TooltipHooks.NextRequest and TooltipHooks.NextRequest.Type == t) then
+	if _ttHooks.Last.Type == t or (_ttHooks.NextRequest and _ttHooks.NextRequest.Type == t) then
 		return true
 	end
 	return false
@@ -2082,11 +2099,11 @@ end
 ---@return AnyTooltipRequest request
 ---@return TooltipRequestType requestType
 function Game.Tooltip.GetCurrentOrLastRequest()
-	if TooltipHooks.NextRequest then
-		return TooltipHooks.NextRequest,TooltipHooks.ActiveType
+	if _ttHooks.NextRequest then
+		return _ttHooks.NextRequest,_ttHooks.ActiveType
 	end
-	if TooltipHooks.Last then
-		return TooltipHooks.Last.Request,TooltipHooks.Last.Type
+	if _ttHooks.Last then
+		return _ttHooks.Last.Request,_ttHooks.Last.Type
 	end
 	return nil,""
 end
@@ -2094,7 +2111,7 @@ end
 ---Returns true if a tooltip is currently open.
 ---@return boolean
 function Game.Tooltip.IsOpen()
-	return TooltipHooks.IsOpen
+	return _ttHooks.IsOpen
 end
 
 local function CaptureBuiltInUIs()
@@ -2110,8 +2127,8 @@ end
 local function EnableHooks()
 	RequestProcessor.ControllerEnabled = (_GetUIByPath("Public/Game/GUI/msgBox_c.swf") or _GetUIByType(_UITYPE.msgBox_c)) ~= nil
 
-	if TooltipHooks.InitializationRequested then
-		TooltipHooks:Init()
+	if _ttHooks.InitializationRequested then
+		_ttHooks:Init()
 	end
 
 	CaptureBuiltInUIs()
@@ -2124,7 +2141,7 @@ Ext.RegisterListener("GameStateChanged", function (from, to)
 end)
 
 Ext.RegisterListener("SessionLoaded", function()
-	TooltipHooks.SessionLoaded = true
+	_ttHooks.SessionLoaded = true
 	EnableHooks()
 end)
 

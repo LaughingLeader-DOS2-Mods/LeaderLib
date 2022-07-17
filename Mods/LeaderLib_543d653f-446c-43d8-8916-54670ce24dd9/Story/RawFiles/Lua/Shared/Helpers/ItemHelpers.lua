@@ -777,7 +777,7 @@ function GameHelpers.Item.GetOwner(item, returnNilUUID)
 	return nil
 end
 
----@param item StatItem|ItemParam
+---@param item ItemParam
 ---@param weaponType string|string[]
 ---@return boolean
 function GameHelpers.Item.IsWeaponType(item, weaponType)

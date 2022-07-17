@@ -336,11 +336,14 @@ local RequirementFunctions = {
 	end,
 }
 
----@param character EsvCharacter|EclCharacter
+---@param char EsvCharacter|EclCharacter
 ---@param statId string A skill or item stat.
 ---@return boolean
-function GameHelpers.Stats.CharacterHasRequirements(character, statId)
+function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 	local stat = Ext.GetStat(statId)
+	local character = GameHelpers.GetCharacter(char)
+	fassert(stat ~= nil, "Failed to get stat from %s", statId)
+	fassert(character ~= nil, "Failed to get character from %s", char)
 	local isInCombat = character:GetStatus("COMBAT") ~= nil
 	if stat and stat.Requirements then
 		for _,req in pairs(stat.Requirements) do
@@ -360,7 +363,7 @@ function GameHelpers.Stats.CharacterHasRequirements(character, statId)
 		end
 
 		if GameHelpers.Stats.IsStatType(statId, "SkillData") then
-			local items = {character.Stats.MainWeapon, character.Stats.OffHandWeapon}
+			local items = {GameHelpers.Character.GetEquippedWeapons(character)}
             if stat.Requirement == Data.SkillRequirement.MeleeWeapon then
                 if not GameHelpers.Item.IsWeaponType(items, meleeTypes) then
                     return false
@@ -370,7 +373,7 @@ function GameHelpers.Stats.CharacterHasRequirements(character, statId)
                     return false
                 end
             elseif stat.Requirement == Data.SkillRequirement.ShieldWeapon then
-                if character.Stats.OffHandWeapon == nil or character.Stats.OffHandWeapon.ItemType ~= "Shield" then
+                if items[2] == nil or items[2].Stats.ItemType ~= "Shield" then
                     return false
                 end
             elseif stat.Requirement == Data.SkillRequirement.StaffWeapon then
@@ -396,14 +399,15 @@ function GameHelpers.Stats.CharacterHasRequirements(character, statId)
 					return false
 				end
 			end
-			local apCost = stat.ActionPoints or 0
-			if apCost > 0 and isInCombat then
-				if character.Stats.CurrentAP < apCost then
+
+			if isInCombat then
+				local apCost = stat.ActionPoints or 0
+				if apCost > 0 and character.Stats.CurrentAP < apCost then
 					return false
 				end
 			end
 
-			--GM's don't have to deal with memorization requirements'
+			--GM's don't have to deal with memorization requirements
 			if GameHelpers.Character.IsGameMaster(character) or not GameHelpers.Character.IsPlayer(character) then
 				return true
 			end
@@ -422,6 +426,11 @@ function GameHelpers.Stats.CharacterHasRequirements(character, statId)
 						end
 					end
 				end
+			end
+		elseif isInCombat and (GameHelpers.Stats.IsStatType(statId, "Object") or GameHelpers.Stats.IsStatType(statId, "Potion")) then
+			local apCost = stat.UseAPCost or 0
+			if apCost > 0 and character.Stats.CurrentAP < apCost then
+				return false
 			end
 		end
 		

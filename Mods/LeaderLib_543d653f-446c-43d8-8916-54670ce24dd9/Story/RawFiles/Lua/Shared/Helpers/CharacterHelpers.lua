@@ -823,7 +823,7 @@ function GameHelpers.Character.GetEquippedWeapons(character)
 	local char = GameHelpers.GetCharacter(character)
     fassert(char ~= nil, "'%s' is not a valid character", character)
 	if _ISCLIENT then
-		return char:GetItemBySlot("Weapon"),char:GetItemBySlot("Shield")
+		return char:GetItemObjectBySlot("Weapon"),char:GetItemObjectBySlot("Shield")
 	else
 		if Ext.OsirisIsCallable() then
 			local mainhand,offhand = nil,nil

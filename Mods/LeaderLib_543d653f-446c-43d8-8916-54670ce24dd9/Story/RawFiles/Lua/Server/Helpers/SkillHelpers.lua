@@ -152,7 +152,7 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
             elseif sourceType == "item" and not GameHelpers.Item.IsObject(sourceObject) then
                 sourceLevel = sourceObject.Stats.Level
                 if string.find("TRAP", sourceObject.Stats.Name) then
-                    props.IsTrap = 1
+                    props.IsTrap = true
                     isFromItem = true
                 end
             end
@@ -174,14 +174,14 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
     local radius = math.max(skill.AreaRadius or 0, skill.ExplodeRadius or 0)
 
     props.SkillId = skill.Name
-    props.CanDeflect = skill.ProjectileType == "Arrow" and 1 or 0
+    props.CanDeflect = skill.ProjectileType == "Arrow"
     if not StringHelpers.IsNullOrEmpty(skill.CleanseStatuses) then
         props.CleanseStatuses = skill.CleanseStatuses
     end
     props.CasterLevel = sourceLevel
-    props.IsFromItem = isFromItem and 1 or 0
-    props.IgnoreObjects = 0
-    props.AlwaysDamage = skill["Damage Multiplier"] > 0 and 1 or 0
+    props.IsFromItem = isFromItem == true
+    props.IgnoreObjects = false
+    props.AlwaysDamage = skill["Damage Multiplier"] > 0
 
     --Failsafes to prevent crashes from not having a source/caster
     -- if not props.Caster then
@@ -252,6 +252,8 @@ local function ProcessProjectileProps(props)
                 NRD_ProjectileSetVector3(k, table.unpack(v))
             elseif t == "number" then
                 NRD_ProjectileSetInt(k, v)
+            elseif t == "boolean" then
+                NRD_ProjectileSetInt(k, v == true and 1 or 0)
             elseif t == "string" then
                 local propType = projectileCreationProperties[k]
                 if propType == "GuidString" or propType == "Vector3/GuidString" then
@@ -506,6 +508,11 @@ function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
             skill[k] = v
         end
     end
+    
+    if extraParams.CanDeflect == nil then
+        extraParams.CanDeflect = false
+    end
+
     local props = PrepareProjectileProps(target, skill, source, extraParams)
 
     --Making the source and target positions match

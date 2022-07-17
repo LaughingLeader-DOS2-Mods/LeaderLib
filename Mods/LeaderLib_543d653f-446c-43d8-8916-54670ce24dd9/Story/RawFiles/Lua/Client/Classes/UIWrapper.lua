@@ -147,7 +147,7 @@ function UIWrapper:CreateFromPath(path, params)
 end
 
 ---@alias UIWrapperEventContextType string|'"Keyboard"'|'"Controller"'|'"All"'
----@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, ui:UIObject, event:string, ...:SerializableValue):void
+---@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, ui:UIObject, event:string, ...:SerializableValue)
 
 function UIWrapper:InvokeCallbacks(callbackType, e, ui, event, eventType, args)
 	if not self.Callbacks[callbackType] then
@@ -219,8 +219,8 @@ end
 
 ---@param event string The ExternalInterface.call name.
 ---@param callback UIWrapperCallbackHandler
----@param eventType UICallbackEventType
----@param uiContext UIWrapperEventContextType
+---@param eventType UICallbackEventType|nil Defaults to "After"
+---@param uiContext UIWrapperEventContextType|nil
 function UIWrapper:RegisterCallListener(event, callback, eventType, uiContext)
 	if self.ID ~= -1 and uiContext ~= "Controller" then
 		if self.Callbacks.Call[event] == nil then
@@ -258,7 +258,7 @@ function UIWrapper:RegisterCallListener(event, callback, eventType, uiContext)
 	end
 end
 
----@return UIObject
+---@return UIObject|nil
 function UIWrapper:GetInstance()
 	if self.IsControllerSupported and Vars.ControllerEnabled then
 		if self.ControllerID ~= -1 then
@@ -287,12 +287,13 @@ function UIWrapper:GetInstance()
 	end
 end
 
----@return FlashMainTimeline
+---@return FlashMainTimeline|nil
 function UIWrapper:GetRoot()
 	local ui = self:GetInstance()
 	if ui then
 		return ui:GetRoot()
 	end
+	return nil
 end
 
 ---@param call string

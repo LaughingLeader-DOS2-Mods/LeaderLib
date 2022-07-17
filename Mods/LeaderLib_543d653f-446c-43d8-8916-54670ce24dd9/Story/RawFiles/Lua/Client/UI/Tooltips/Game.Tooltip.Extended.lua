@@ -1378,13 +1378,17 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 		if mainArray and mainArray[0] ~= nil then
 			local compareItem = self:GetCompareItem(ui, reqItem, false)
 			if compareItem ~= nil then
-				local lastObjectHandle = req.ObjectHandleDouble
-				local lastStatsId = req.StatsId
-				req.ObjectHandleDouble = _HandleToDouble(compareItem.Handle)
-				req.StatsId = compareItem.StatsId
-				self:OnRenderSubTooltip(ui, arrayData.CompareMain, req, method, ...)
-				req.ObjectHandleDouble = lastObjectHandle
-				req.StatsId = lastStatsId
+				if _IsValidHandle(compareItem.Handle) then
+					local lastObjectHandle = req.ObjectHandleDouble
+					local lastStatsId = req.StatsId
+					req.ObjectHandleDouble = _HandleToDouble(compareItem.Handle)
+					req.StatsId = compareItem.StatsId
+					self:OnRenderSubTooltip(ui, arrayData.CompareMain, req, method, ...)
+					req.ObjectHandleDouble = lastObjectHandle
+					req.StatsId = lastStatsId
+				elseif _DEBUG then
+					_PrintError("compareItem.Handle is nil?", _DumpExport(compareItem))
+				end
 			else
 				_PrintError("Tooltip compare render failed: Couldn't find item to compare", method, compareMain)
 			end
@@ -1393,13 +1397,17 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 		if compareArray and compareArray[0] ~= nil then
 			local compareItem = self:GetCompareItem(ui, reqItem, true)
 			if compareItem ~= nil then
-				local lastObjectHandle = req.ObjectHandleDouble
-				local lastStatsId = req.StatsId
-				req.ObjectHandleDouble = _HandleToDouble(compareItem.Handle)
-				req.StatsId = compareItem.StatsId
-				self:OnRenderSubTooltip(ui, arrayData.CompareOff, req, method, ...)		
-				req.ObjectHandleDouble = lastObjectHandle
-				req.StatsId = lastStatsId
+				if _IsValidHandle(compareItem.Handle) then
+					local lastObjectHandle = req.ObjectHandleDouble
+					local lastStatsId = req.StatsId
+					req.ObjectHandleDouble = _HandleToDouble(compareItem.Handle)
+					req.StatsId = compareItem.StatsId
+					self:OnRenderSubTooltip(ui, arrayData.CompareOff, req, method, ...)		
+					req.ObjectHandleDouble = lastObjectHandle
+					req.StatsId = lastStatsId
+				elseif _DEBUG then
+					_PrintError("compareItem.Handle is nil?", _DumpExport(compareItem))
+				end
 			else
 				_PrintError("Tooltip compare render failed: Couldn't find off-hand item to compare", method, compareOff)
 			end

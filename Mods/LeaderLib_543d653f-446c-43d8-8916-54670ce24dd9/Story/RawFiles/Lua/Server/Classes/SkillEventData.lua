@@ -1,6 +1,7 @@
 ---Data passed to callbacks for the various functions in SkillListeners.lua
 ---@class SkillEventData
 ---@field SourceItemGUID UUID|nil Possible item GUID that this skill is originating from, such as a scroll or grenade.
+---@field SkillData StatEntrySkillData
 local SkillEventData = {
 	Type = "SkillEventData",
 	Source = nil,
@@ -17,9 +18,7 @@ local SkillEventData = {
 		All = -1,
 		Objects = 0,
 		Positions = 1
-	},
-	---@type StatEntrySkillData
-	Stat = {}
+	}
 }
 SkillEventData.__index = SkillEventData
 
@@ -39,8 +38,11 @@ function SkillEventData:Create(skillSource, skill, skillType, skillAbility)
 		TargetPositions = {},
 		TotalTargetObjects = 0,
 		TotalTargetPositions = 0,
-		Stat = GameHelpers.Ext.CreateSkillTable(skill)
+		SkillData = GameHelpers.Ext.CreateSkillTable(skill)
 	}
+	---@deprecated
+	---Use SkillData instead.
+	this.Stat = this.SkillData
 	setmetatable(this, self)
     return this
 end

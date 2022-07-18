@@ -20,6 +20,7 @@ local _last = {
 
 local dirty = false
 local rebuildingTooltip = false
+local allowedHideTooltips = 0
 TooltipExpander.KeyboardKey = "SplitItemToggle"--Data.Input.SplitItemToggle
 TooltipExpander.ControllerKey = "ToggleMap"
 
@@ -121,9 +122,9 @@ local function OnHideTooltip(ui, call, ...)
 	end
 end
 
-Ext.RegisterUINameCall("hideTooltip", OnHideTooltip)
+Ext.RegisterUINameCall("hideTooltip", OnHideTooltip, "After")
 --playerInfo/summonInfo.as
-Ext.RegisterUINameCall("hidetooltip", OnHideTooltip)
+Ext.RegisterUINameCall("hidetooltip", OnHideTooltip, "After")
 
 local function _addFormattedTooltip(this, x, y, deferShow)
 	-- if this.tf then
@@ -331,6 +332,7 @@ local function RebuildTooltip(pressed)
 				if ui then
 					rebuildingTooltip = true
 					dirty = false
+					allowedHideTooltips = 1
 					ui:ExternalInterfaceCall("hideTooltip")
 					ui:ExternalInterfaceCall(TooltipExpander.CallData.LastCall, table.unpack(TooltipExpander.CallData.Args))
 					return
@@ -339,24 +341,20 @@ local function RebuildTooltip(pressed)
 		end
 	end
 	rebuildingTooltip = false
+	allowedHideTooltips = 0
 	return lastDirty ~= dirty
 end
 
--- Ext.Events.UICall:Subscribe(function (e)
--- 	if rebuildingTooltip then
--- 		if e.Function == "hideTooltip" then
--- 			hideTooltipCount = hideTooltipCount - 1
--- 			if hideTooltipCount < 0 then
--- 				e:PreventAction()
--- 			end
--- 		elseif e.Function == nextTooltipCall then
--- 			nextTooltipCount = nextTooltipCount - 1
--- 			if hideTooltipCount < 0 then
--- 				e:PreventAction()
--- 			end
--- 		end
--- 	end
--- end)
+Ext.Events.UICall:Subscribe(function (e)
+	if rebuildingTooltip and e.When == "Before" then
+		if e.Function == "hideTooltip" then
+			if allowedHideTooltips < 1 then
+				e:PreventAction()
+			end
+			allowedHideTooltips = allowedHideTooltips - 1
+		end
+	end
+end)
 
 function TooltipExpander.OnKeyPressed(pressed)
 	return RebuildTooltip(pressed)
@@ -512,4 +510,4 @@ Ext.RegisterUINameCall("hideTooltip", function (ui, call, ...)
 			tooltipCustomIcons = {}
 		end
 	end
-end)
+end, "After")

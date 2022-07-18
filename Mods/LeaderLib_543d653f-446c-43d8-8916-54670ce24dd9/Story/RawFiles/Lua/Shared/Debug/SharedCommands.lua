@@ -153,13 +153,16 @@ if _EXTVERSION >= 56 then
 	end)
 end
 
+--local mods = Ext.Mod.GetLoadOrder(); for i=1,#mods do local uuid = mods[i]; local info = Ext.Mod.GetMod(uuid).Info; Ext.Utils.Print(string.format("[%i] %s (%s) [%s]", i, info and info.Name or "???", mods[i], info and info.ModuleType or "")); end
+
 Ext.RegisterConsoleCommand("modorder", function(command)
-	fprint(LOGLEVEL.TRACE, "Mods [%s]", Ext.IsClient() and "CLIENT" or "SERVER")
-	PrintDebug("=============")
-	local mods = Ext.GetModLoadOrder()
+	fprint(LOGLEVEL.DEFAULT, "Mods [%s]", Ext.IsClient() and "CLIENT" or "SERVER")
+	Ext.Utils.Print("=============")
+	local mods = Ext.Mod.GetLoadOrder()
 	for i=1,#mods do
-		local info = Ext.GetModInfo(mods[i])
-		fprint(LOGLEVEL.TRACE, "[%i] %s (%s) [%s]", i, info and info.Name or "???", mods[i], info and info.ModuleType or "")
+		local mod = Ext.Mod.GetMod(mods[i])
+		local info = mod.Info
+		fprint(LOGLEVEL.DEFAULT, "[%i] %s (%s) [%s]", i, info and info.Name or "???", mods[i], info and info.ModuleType or "")
 	end
-	PrintDebug("=============")
+	Ext.Utils.Print("=============")
 end)

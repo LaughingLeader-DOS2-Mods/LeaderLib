@@ -12,16 +12,16 @@ if not TooltipExpander then
 	TooltipExpander = {}
 end
 
-local _LastTooltipData = {
-	NotExpanded = nil,
+local _last = {
+	DefaultTooltipData = nil,
 	---@type AnyTooltipRequest
-	LastRequest = nil
+	Request = nil
 }
 
 local dirty = false
 local rebuildingTooltip = false
-local keyboardKey = "SplitItemToggle"--Data.Input.SplitItemToggle
-local controllerKey = "ToggleMap"
+TooltipExpander.KeyboardKey = "SplitItemToggle"--Data.Input.SplitItemToggle
+TooltipExpander.ControllerKey = "ToggleMap"
 
 TooltipExpander.CallData = {
 	---@type integer
@@ -50,15 +50,17 @@ function TooltipExpander.IsExpanded()
 		return true
 	end
 	if not Vars.ControllerEnabled then
-		return Input.IsPressed(keyboardKey)
+		return Input.IsPressed(TooltipExpander.KeyboardKey)
 	else
-		return Input.IsPressed(controllerKey)
+		return Input.IsPressed(TooltipExpander.ControllerKey)
 	end
 end
 
 local function SaveTooltipData(ui, call, ...)
 	dirty = false
 	if not rebuildingTooltip then
+		_last.DefaultTooltipData = nil
+		_last.Request = nil
 		TooltipExpander.CallData.UI = ui:GetTypeId()
 		TooltipExpander.CallData.Args = {...}
 		TooltipExpander.CallData.LastCall = call
@@ -111,8 +113,8 @@ for i,v in pairs(controller_calls) do
 end
 
 local function OnHideTooltip(ui, call, ...)
-	_LastTooltipData.NotExpanded = nil
-	_LastTooltipData.LastRequest = nil
+	_last.DefaultTooltipData = nil
+	_last.Request = nil
 	dirty = false
 	if not rebuildingTooltip then
 		TooltipExpander.CallData = {}
@@ -180,7 +182,7 @@ function _TooltipHooks_RebuildTooltip(self, arrayData, ui, method, ...)
 	self.IsOpen = true
 	
 	---@type TooltipItemRequest
-	local req = _LastTooltipData.LastRequest.Main
+	local req = _last.Request.Main
 	self.ActiveType = req.Type
 	self.Last.Type = req.Type
 	self.Last.ArrayData = arrayData
@@ -190,9 +192,9 @@ function _TooltipHooks_RebuildTooltip(self, arrayData, ui, method, ...)
 	local compareOff = arrayData.CompareOff
 	local checkCompare = req.Type == "Item"
 
-	local mainTooltipData = TableHelpers.Clone(_LastTooltipData.NotExpanded.Main)
-	local compare1TooltipData = _LastTooltipData.NotExpanded.Compare1 and TableHelpers.Clone(_LastTooltipData.NotExpanded.Compare1)
-	local compare2TooltipData = _LastTooltipData.NotExpanded.Compare2 and TableHelpers.Clone(_LastTooltipData.NotExpanded.Compare2)
+	local mainTooltipData = TableHelpers.Clone(_last.DefaultTooltipData.Main)
+	local compare1TooltipData = _last.DefaultTooltipData.Compare1 and TableHelpers.Clone(_last.DefaultTooltipData.Compare1)
+	local compare2TooltipData = _last.DefaultTooltipData.Compare2 and TableHelpers.Clone(_last.DefaultTooltipData.Compare2)
 
 	local this = ui:GetRoot()
 	local uiType = ui:GetTypeId()
@@ -217,7 +219,7 @@ function _TooltipHooks_RebuildTooltip(self, arrayData, ui, method, ...)
 					TableToFlash(ui, compareMain, EncodeTooltipArray(compareTooltip.Data), this)
 					local compareTT = TableFromFlash(ui, compareMain, this)
 
-					local compareReq = _LastTooltipData.LastRequest.Compare1
+					local compareReq = _last.Request.Compare1
 					_TooltipHooks_RenderRebuiltSubTooltip(self, compareTT, compareTooltip, ui, compareMain, compareReq, method, ...)
 				elseif Vars.DebugMode then
 					Ext.PrintError("compareItem.Handle is nil?", Ext.DumpExport(compareItem))
@@ -234,7 +236,7 @@ function _TooltipHooks_RebuildTooltip(self, arrayData, ui, method, ...)
 					local compareTooltip = TooltipData:Create(compare2TooltipData, uiType, req.UIType)
 					TableToFlash(ui, compareOff, EncodeTooltipArray(compareTooltip.Data), this)
 					local compareTT = TableFromFlash(ui, compareOff, this)
-					local compareReq = _LastTooltipData.LastRequest.Compare2
+					local compareReq = _last.Request.Compare2
 					_TooltipHooks_RenderRebuiltSubTooltip(self, compareTT, compareTooltip, ui, compareOff, compareReq, method, ...)		
 				elseif Vars.DebugMode then
 					Ext.PrintError("compareItem.Handle is nil?", Ext.DumpExport(compareItem))
@@ -299,8 +301,7 @@ local function RebuildTooltip(pressed)
 						ui:ExternalInterfaceCall("keepUIinScreen", false)
 					end
 				end
-			elseif TooltipExpander.CallData.UI then
-				local ui = Ext.UI.GetByType(TooltipExpander.CallData.UI)
+			elseif _last.DefaultTooltipData ~= nil and _last.DefaultTooltipData.Main ~= nil then
 				local event = TooltipExpander.CallData.LastCall
 				local arrayData = Game.Tooltip.TooltipArrayNames.Default
 				local x,y = table.unpack(Game.Tooltip.TooltipHooks.Last.Position)
@@ -308,8 +309,16 @@ local function RebuildTooltip(pressed)
 				rebuildingTooltip = true
 				dirty = false
 
+				if _last.Request == nil or _last.Request.Main == nil then
+					_last.Request = {
+						Main = Game.Tooltip.TooltipHooks.Last.Request
+					}
+				else
+					Game.Tooltip.TooltipHooks.Last.UIType = _last.Request.Main.UIType
+				end
+
 				Game.Tooltip.TooltipHooks.Last.Event = event
-				Game.Tooltip.TooltipHooks.Last.UIType = _LastTooltipData.LastRequest.Main.UIType
+				
 				local ttUI = Ext.UI.GetByType(Data.UIType.tooltip)
 				local this = ttUI:GetRoot()
 				if _TooltipHooks_RebuildTooltip(Game.Tooltip.TooltipHooks, arrayData, ttUI, event) then
@@ -317,18 +326,15 @@ local function RebuildTooltip(pressed)
 					--_addFormattedTooltip(this, x, y, false)
 					this.showFormattedTooltipAfterPos(false)
 				end
-				
-				--[[ local ui = Ext.GetUIByType(TooltipExpander.CallData.UI)
+			elseif TooltipExpander.CallData.UI ~= nil then
+				local ui = Ext.GetUIByType(TooltipExpander.CallData.UI)
 				if ui then
 					rebuildingTooltip = true
 					dirty = false
-					hideTooltipCount = 1
-					nextTooltipCall = TooltipExpander.CallData.LastCall
-					nextTooltipCount = 1
 					ui:ExternalInterfaceCall("hideTooltip")
 					ui:ExternalInterfaceCall(TooltipExpander.CallData.LastCall, table.unpack(TooltipExpander.CallData.Args))
 					return
-				end ]]
+				end
 			end
 		end
 	end
@@ -352,19 +358,9 @@ end
 -- 	end
 -- end)
 
-function TooltipExpander.OnShiftKey(pressed)
-	--RebuildTooltip()
-end
-
-Input.RegisterListener(keyboardKey, function (eventName, pressed, id, inputMap, controllerEnabled)
+function TooltipExpander.OnKeyPressed(pressed)
 	return RebuildTooltip(pressed)
-end)
-
-Input.RegisterListener(controllerKey, function(eventName, pressed, id, inputMap, controllerEnabled)
-	if controllerEnabled then
-		RebuildTooltip()
-	end
-end)
+end
 
 local tooltipTypeToElement = {
 	Ability = "AbilityDescription",
@@ -460,23 +456,33 @@ Ext.Events.SessionLoaded:Subscribe(function()
 	end
 
 	Game.Tooltip.RegisterBeforeNotifyListener(function (request, ui, method, tooltip)
-		if not rebuildingTooltip and not TooltipExpander.IsExpanded() then
-			if _LastTooltipData.LastRequest == nil then
-				_LastTooltipData.LastRequest = {}
+		if _last.Request == nil then
+			_last.Request = {}
+		end
+		
+		if not rebuildingTooltip then
+			if not TooltipExpander.IsExpanded() then
+				if _last.DefaultTooltipData == nil then
+					_last.DefaultTooltipData = {}
+				end
+				local lastExpanded = _last.DefaultTooltipData
+				if not lastExpanded.Main then
+					lastExpanded.Main = TableHelpers.Clone(tooltip.Data)
+					_last.Request.Main = TableHelpers.Clone(request, true)
+				elseif not lastExpanded.Compare1 then
+					lastExpanded.Compare1 = TableHelpers.Clone(tooltip.Data)
+					_last.Request.Compare1 = TableHelpers.Clone(request, true)
+				elseif not lastExpanded.Compare2 then
+					lastExpanded.Compare2 = TableHelpers.Clone(tooltip.Data)
+					_last.Request.Compare2 = TableHelpers.Clone(request, true)
+				end
 			end
-			if _LastTooltipData.NotExpanded == nil then
-				_LastTooltipData.NotExpanded = {}
-			end
-			local lastExpanded = _LastTooltipData.NotExpanded
-			if not lastExpanded.Main then
-				lastExpanded.Main = TableHelpers.Clone(tooltip.Data)
-				_LastTooltipData.LastRequest.Main = TableHelpers.Clone(request, true)
-			elseif not lastExpanded.Compare1 then
-				lastExpanded.Compare1 = TableHelpers.Clone(tooltip.Data)
-				_LastTooltipData.LastRequest.Compare1 = TableHelpers.Clone(request, true)
-			elseif not lastExpanded.Compare2 then
-				lastExpanded.Compare2 = TableHelpers.Clone(tooltip.Data)
-				_LastTooltipData.LastRequest.Compare2 = TableHelpers.Clone(request, true)
+			if not _last.Request.Main then
+				_last.Request.Main = TableHelpers.Clone(request, true)
+			elseif not _last.Request.Compare1 then
+				_last.Request.Compare1 = TableHelpers.Clone(request, true)
+			elseif not _last.Request.Compare2 then
+				_last.Request.Compare2 = TableHelpers.Clone(request, true)
 			end
 		end
 	end)

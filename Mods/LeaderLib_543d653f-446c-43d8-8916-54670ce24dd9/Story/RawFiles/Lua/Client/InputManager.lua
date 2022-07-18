@@ -261,7 +261,12 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 			end
 		end
 		OnInputChanged(eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
+
 		local stopPropagation = false
+		if eventName == TooltipExpander.KeyboardKey then
+			stopPropagation = TooltipExpander.OnKeyPressed(evt.Press) == true
+		end
+
 		if InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled) then
 			stopPropagation = true
 		end
@@ -336,6 +341,13 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 		end
 		Input.Keys[eventName] = nextState
 		local id = Data.Input[eventName]
+
+		local stopPropagation = false
+
+		if eventName == TooltipExpander.KeyboardKey then
+			stopPropagation = TooltipExpander.OnKeyPressed(pressed) == true
+		end
+
 		OnInputChanged(eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
 		if type(id) == "table" then
 			for _,kid in pairs(id) do

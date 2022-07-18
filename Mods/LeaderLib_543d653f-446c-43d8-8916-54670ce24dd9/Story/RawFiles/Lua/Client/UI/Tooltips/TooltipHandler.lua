@@ -55,13 +55,6 @@ function TooltipHandler.OnGenericTooltip(tooltip)
 	end
 end
 
----@param tooltip TooltipData
-function TooltipHandler.OnAbilityTooltip(character, stat, tooltip)
-	if Vars.DebugMode then
-		PrintDebug(stat, Common.JsonStringify(tooltip.Data))
-	end
-end
-
 Ext.Require("Client/UI/Tooltips/Handlers/ItemTooltip.lua")
 Ext.Require("Client/UI/Tooltips/Handlers/SkillTooltip.lua")
 Ext.Require("Client/UI/Tooltips/Handlers/StatusTooltip.lua")

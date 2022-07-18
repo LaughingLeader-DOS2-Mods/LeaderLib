@@ -261,8 +261,13 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 			end
 		end
 		OnInputChanged(eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
-		InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
-		InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
+		local stopPropagation = false
+		if InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled) then
+			stopPropagation = true
+		end
+		if InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled) then
+			stopPropagation = true
+		end
 
 		if Ext.GetGameState() == "Running" then
 			if not UIExtensions.MouseEnabled and evt.Press and eventName == "FlashLeftMouse" or eventName == "FlashRightMouse" then
@@ -270,11 +275,12 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 			end
 		end
 		lastFiredEventFrom[eventName] = 0
+		return stopPropagation
 	end
 end
 
----@param evt InputEvent
-local function OnInputEvent(evt)
+Ext.Events.InputEvent:Subscribe(function (e)
+	local evt = e.Event
 	if evt.EventId == 285 then
 		Input.Shift = evt.Press
 	end
@@ -285,20 +291,26 @@ local function OnInputEvent(evt)
 	-- 		Ext.Dump(evt)
 	-- 	end
 	-- end
+	local stopPropagation = false
 	if eventName then
 		if type(eventName) == "table" then
 			for i=1,#eventName do
-				InvokeExtenderEventCallbacks(evt, eventName[i])
+				if InvokeExtenderEventCallbacks(evt, eventName[i]) then
+					stopPropagation = true
+				end
 			end
 		else
-			InvokeExtenderEventCallbacks(evt, eventName)
+			if InvokeExtenderEventCallbacks(evt, eventName) then
+				stopPropagation = true
+			end
 		end
 	elseif Vars.DebugMode then
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:OnInputEvent] No key registered for id (%s)", evt.EventId)
 	end
-end
-
-Ext.RegisterListener("InputEvent", OnInputEvent)
+	if stopPropagation then
+		e:StopPropagation()
+	end
+end, {Priority=1000})
 
 ---@param ui LeaderLibUIExtensions
 ---@param pressed boolean

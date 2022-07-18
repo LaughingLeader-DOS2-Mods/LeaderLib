@@ -344,16 +344,20 @@ end
 local invoke = xpcall
 local messageFunc = debug.traceback
 function InvokeListenerCallbacks(callbacks, ...)
+	local invokeResult = nil
 	local length = callbacks and #callbacks or 0
 	if length > 0 then
 		for i=1,length do
 			local callback = callbacks[i]
-			local b,err = invoke(callback, messageFunc, ...)
+			local b,result = invoke(callback, messageFunc, ...)
 			if not b then
-				Ext.PrintError(err)
+				Ext.PrintError(result)
+			elseif result ~= nil then
+				invokeResult = result
 			end
 		end
 	end
+	return invokeResult
 end
 
 --- Registers a function to call when a specific Lua LeaderLib event fires for specific mods.

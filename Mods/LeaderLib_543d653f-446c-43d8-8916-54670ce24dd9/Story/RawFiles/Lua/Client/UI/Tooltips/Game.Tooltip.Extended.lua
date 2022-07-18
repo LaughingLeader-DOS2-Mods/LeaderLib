@@ -445,13 +445,20 @@ Game.Tooltip.TooltipStatAttributes = TooltipStatAttributes
 --- @param ui UIObject
 --- @param name string MainTimeline property name to fetch
 --- @return table
-function TableFromFlash(ui, name)
+function TableFromFlash(ui, name, this)
 	local value
 	local idx = 0
 	local tbl = {}
 
+	local this = this or ui:GetRoot()
+	local arr = this[name]
+	if not arr then
+		_PrintError("No array with name", name, "in UI", ui.Path)
+		return tbl
+	end
+
 	repeat
-		value = ui:GetValue(name, nil, idx)
+		value = arr[idx]
 		idx = idx + 1
 		if value ~= nil then
 			table.insert(tbl, value)
@@ -464,9 +471,13 @@ end
 --- @param ui UIObject
 --- @param name string MainTimeline property name to write
 --- @param tbl table Table to convert to Flash
-function TableToFlash(ui, name, tbl)
-	for i=1,#tbl do
-		ui:SetValue(name, tbl[i], i-1)
+function TableToFlash(ui, name, tbl, this)
+	local this = this or ui:GetRoot()
+	local arr = this[name]
+	if arr ~= nil then
+		for i=1,#tbl do
+			arr[i-1] = tbl[i]
+		end
 	end
 end
 
@@ -858,6 +869,7 @@ local _ttHooks = {
 	},
 }
 
+---@type TooltipHooks
 TooltipHooks = {}
 
 local _ttHooksType = {}
@@ -1071,12 +1083,14 @@ function _ttHooks:Init()
 
 	RequestProcessor:Init(_ttHooks)
 
-	_RegisterUINameInvokeListener("addFormattedTooltip", function (...)
-		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
+	_RegisterUINameInvokeListener("addFormattedTooltip", function (ui, call, x, y, b, ...)
+		_ttHooks.Last.Position = {x,y}
+		self:OnRenderTooltip(TooltipArrayNames.Default, ui, call, x, y, b, ...)
 	end)
 
-	_RegisterUINameInvokeListener("addStatusTooltip", function (...)
-		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
+	_RegisterUINameInvokeListener("addStatusTooltip", function (ui, call, x, y, ...)
+		_ttHooks.Last.Position = {x,y}
+		self:OnRenderTooltip(TooltipArrayNames.Default, ui, call, x, y, ...)
 	end)
 
 	_RegisterUINameInvokeListener("displaySurfaceText", function (...)
@@ -1369,6 +1383,7 @@ function _ttHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	local req = self.NextRequest
 	self.ActiveType = req.Type
 	self.Last.Type = req.Type
+	self.Last.ArrayData = arrayData
 
 	local arrayId = arrayData.Main
 	local compareMain = arrayData.CompareMain
@@ -1435,74 +1450,79 @@ function _ttHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	self.NextRequest = nil
 end
 
+local function _RunNotifyListeners(self, req, ui, method, tooltip, ...)
+	self:InvokeBeforeNotifyListeners(req, ui, method, tooltip, ...)
+	if req.Type == "Stat" then
+		local stat = req.Stat or ""
+		self:NotifyListeners("Stat", stat, req, tooltip, req.Character, stat)
+	elseif req.Type == "CustomStat" then
+		if req.StatData ~= nil then
+			self:NotifyListeners("CustomStat", tostring(req.StatData), req, tooltip, req.Character, req.StatData)
+		else
+			self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, {ID=req.Stat})
+		end
+	elseif req.Type == "Skill" then
+		local skill = req.Skill or ""
+		self:NotifyListeners("Skill", skill, req, tooltip, req.Character, skill)
+	elseif req.Type == "Ability" then
+		local ability = req.Ability or ""
+		self:NotifyListeners("Ability", ability, req, tooltip, req.Character, ability)
+	elseif req.Type == "Talent" then
+		local talent = req.Talent or ""
+		self:NotifyListeners("Talent", talent, req, tooltip, req.Character, talent)
+	elseif req.Type == "Status" then
+		local status = req.Status
+		if not status then
+			_PrintError("[Game.Tooltip:OnRenderSubTooltip] Failed to fetch status for upcoming status tooltip:", _DumpExport(req))
+			--Try to preserve parameter order
+			status = {}
+		end
+		self:NotifyListeners("Status", req.StatusId, req, tooltip, req.Character, status)
+	elseif req.Type == "Item" then
+		self:NotifyListeners("Item", req.StatsId, req, tooltip, req.Item or {Type="nil"})
+	elseif req.Type == "Pyramid" then
+		self:NotifyListeners("Pyramid", req.StatsId, req, tooltip, req.Item or {Type="nil"})
+	elseif req.Type == "Rune" then
+		self:NotifyListeners("Rune", req.StatsId, req, tooltip, req.Item or {Type="nil"}, req.Rune or {}, req.Slot or -1)
+	elseif req.Type == "Tag" then
+		self:NotifyListeners("Tag", req.Category, req, tooltip, req.Tag)
+	elseif req.Type == "Surface" then
+		if req.Ground then
+			self:NotifyListeners("Surface", req.Ground, req, tooltip, req.Character, req.Ground)
+		end
+		if req.Cloud then
+			self:NotifyListeners("Surface", req.Cloud, req, tooltip, req.Character, req.Cloud)
+		end
+		if not req.Cloud and not req.Ground then
+			self:NotifyListeners("Surface", "Unknown", req, tooltip, req.Character, "Unknown")
+		end
+	elseif req.Type == "World" then
+		-- Manually invoked in RequestProcessor, so the text array can be updated
+		---@see GameTooltipRequestProcessorInternals#CreateWorldTooltipRequest
+	elseif req.Type == "PlayerPortrait" then
+		---@see TooltipHooks#OnRenderGenericTooltip
+	elseif req.Type == "Generic" then
+		---@see TooltipHooks#OnRenderGenericTooltip
+	else
+		_PrintError("Unknown tooltip type? ", req.Type)
+	end
+end
+
+TooltipHooks._RunNotifyListeners = _RunNotifyListeners
+
 ---@param ui UIObject
----@param propertyName string
+---@param arrayId string
 ---@param req AnyTooltipRequest
 ---@param method string
-function _ttHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
-	local tt = TableFromFlash(ui, propertyName)
+function _ttHooks:OnRenderSubTooltip(ui, arrayId, req, method, ...)
+	local tt = TableFromFlash(ui, arrayId)
 	local params = ParseTooltipArray(tt)
 	if params ~= nil then
 		local tooltip = TooltipData:Create(params, ui:GetTypeId(), req.UIType)
-		self:InvokeBeforeNotifyListeners(req, ui, method, tooltip, ...)
-		if req.Type == "Stat" then
-			local stat = req.Stat or ""
-			self:NotifyListeners("Stat", stat, req, tooltip, req.Character, stat)
-		elseif req.Type == "CustomStat" then
-			if req.StatData ~= nil then
-				self:NotifyListeners("CustomStat", tostring(req.StatData), req, tooltip, req.Character, req.StatData)
-			else
-				self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, {ID=req.Stat})
-			end
-		elseif req.Type == "Skill" then
-			local skill = req.Skill or ""
-			self:NotifyListeners("Skill", skill, req, tooltip, req.Character, skill)
-		elseif req.Type == "Ability" then
-			local ability = req.Ability or ""
-			self:NotifyListeners("Ability", ability, req, tooltip, req.Character, ability)
-		elseif req.Type == "Talent" then
-			local talent = req.Talent or ""
-			self:NotifyListeners("Talent", talent, req, tooltip, req.Character, talent)
-		elseif req.Type == "Status" then
-			local status = req.Status
-			if not status then
-				_PrintError("[Game.Tooltip:OnRenderSubTooltip] Failed to fetch status for upcoming status tooltip:", _DumpExport(req))
-				--Try to preserve parameter order
-				status = {}
-			end
-			self:NotifyListeners("Status", req.StatusId, req, tooltip, req.Character, status)
-		elseif req.Type == "Item" then
-			self:NotifyListeners("Item", req.StatsId, req, tooltip, req.Item or {Type="nil"})
-		elseif req.Type == "Pyramid" then
-			self:NotifyListeners("Pyramid", req.StatsId, req, tooltip, req.Item or {Type="nil"})
-		elseif req.Type == "Rune" then
-			self:NotifyListeners("Rune", req.StatsId, req, tooltip, req.Item or {Type="nil"}, req.Rune or {}, req.Slot or -1)
-		elseif req.Type == "Tag" then
-			self:NotifyListeners("Tag", req.Category, req, tooltip, req.Tag)
-		elseif req.Type == "Surface" then
-			if req.Ground then
-				self:NotifyListeners("Surface", req.Ground, req, tooltip, req.Character, req.Ground)
-			end
-			if req.Cloud then
-				self:NotifyListeners("Surface", req.Cloud, req, tooltip, req.Character, req.Cloud)
-			end
-			if not req.Cloud and not req.Ground then
-				self:NotifyListeners("Surface", "Unknown", req, tooltip, req.Character, "Unknown")
-			end
-		elseif req.Type == "World" then
-			-- Manually invoked in RequestProcessor, so the text array can be updated
-			---@see GameTooltipRequestProcessorInternals#CreateWorldTooltipRequest
-		elseif req.Type == "PlayerPortrait" then
-			---@see TooltipHooks#OnRenderGenericTooltip
-		elseif req.Type == "Generic" then
-			---@see TooltipHooks#OnRenderGenericTooltip
-		else
-			_PrintError("Unknown tooltip type? ", req.Type)
-		end
-
+		_RunNotifyListeners(self, req, ui, method, tooltip, ...)
 		local newTooltip = EncodeTooltipArray(tooltip.Data)
 		if newTooltip ~= nil then
-			ReplaceTooltipArray(ui, propertyName, newTooltip, tt)
+			ReplaceTooltipArray(ui, arrayId, newTooltip, tt)
 		end
 	end
 end
@@ -2064,7 +2084,7 @@ end
 ---@alias GameTooltipBeforeNotifyListener fun(request:AnyTooltipRequest, ui:UIObject, method:string, tooltip:TooltipData)
 
 ---@param typeOrCallback string|GameTooltipBeforeNotifyListener Request type or the callback to register.
----@param callbackOrNil GameTooltipBeforeNotifyListener The callback to register if the first parameter is a string.
+---@param callbackOrNil GameTooltipBeforeNotifyListener|nil The callback to register if the first parameter is a string.
 function Game.Tooltip.RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil)
 	local t = type(typeOrCallback)
 	if t == "string" then

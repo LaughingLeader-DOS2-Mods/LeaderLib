@@ -7,28 +7,26 @@ local _type = type
 ---@param orig table
 ---@param deep boolean|nil If true, metatables are copied as well.
 function TableHelpers.Clone(orig, deep)
-	if deep ~= true then
-		local t = _type(orig)
-		local copy = {}
-		if t == "table" then
-			for k, v in pairs(orig) do
-				if _type(v) == "table" then
-					copy[k] = TableHelpers.Clone(v, deep)
-				else
-					copy[k] = v
-				end
+	local t = _type(orig)
+	local copy = {}
+	if t == "table" then
+		for k, v in pairs(orig) do
+			if _type(v) == "table" then
+				copy[k] = TableHelpers.Clone(v, deep)
+			else
+				copy[k] = v
 			end
-		else -- number, string, boolean, etc
-			copy = orig
 		end
-		local meta = getmetatable(orig)
-		if meta then
-			setmetatable(copy, meta)
+		if deep then
+			local meta = getmetatable(orig)
+			if meta then
+				setmetatable(copy, meta)
+			end
 		end
-		return copy
-	else
-		return Common.DeepCopyTable(orig)
+	else -- number, string, boolean, etc
+		copy = orig
 	end
+	return copy
 end
 
 ---Returns an ordered iterator if the table is structured like that, otherwise returns a regular next iterator.

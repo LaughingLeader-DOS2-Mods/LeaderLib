@@ -21,24 +21,31 @@ settings.Global:AddLocalizedFlags({
 	"LeaderLib_AllTooltipsForItemsEnabled",
 	"LeaderLib_BuffStatusPreserverEnabled",
 	"LeaderLib_AutoIdentifyItemsEnabled",
+	"LeaderLib_PermanentSpiritVisionEnabled",
 })
 settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 --settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)
 settings.Global:AddLocalizedVariable("AutoCombatRange", "LeaderLib_Variables_AutoCombatRange", 30, 1, 30, 1)
+settings.Global:AddLocalizedVariable("CombatSightRangeMultiplier", "LeaderLib_Variables_CombatSightRangeMultiplier", 30, 1, 30, 1)
 
 settings.GetMenuOrder = function()
 	local order = {
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Features", "Features"),
 		Entries = {
-			"LeaderLib_AutoAddModMenuBooksDisabled",
-			"LeaderLib_AutoUnlockInventoryInMultiplayer",
 			"LeaderLib_FriendlyFireEnabled",
+			"LeaderLib_BuffStatusPreserverEnabled",
 			"LeaderLib_PullPartyIntoCombat",
 			"AutoCombatRange",
-			"LeaderLib_RemovePathInfluencesOnChainAll",
+			"CombatSightRangeMultiplier",
+		}},
+		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_QOL", "Quality-of-Life"),
+		Entries = {
+			"LeaderLib_AutoAddModMenuBooksDisabled",
+			"LeaderLib_AutoUnlockInventoryInMultiplayer",
 			"LeaderLib_AllTooltipsForItemsEnabled",
-			"LeaderLib_BuffStatusPreserverEnabled",
 			"LeaderLib_AutoIdentifyItemsEnabled",
+			"LeaderLib_PermanentSpiritVisionEnabled",
+			"LeaderLib_RemovePathInfluencesOnChainAll"
 		}},
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_DialogRedirection", "Dialog Redirection"),
 		Entries = {		

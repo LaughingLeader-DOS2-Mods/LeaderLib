@@ -81,14 +81,18 @@ function GameHelpers.Stats.GetRuneBoosts(item)
 	return boosts
 end
 
-function GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute)
-	---@type StatEntrySkillData
-	local stat = nil
-	local t = _type(statName)
-	if t == "string" then
-		stat = Ext.GetStat(statName)
-	elseif t == "userdata" then
-		stat = statName
+---@param statName string
+---@param attribute string
+---@param stat AnyStatProperty|nil
+function GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute, stat)
+	local stat = stat
+	if stat == nil then
+		local t = _type(statName)
+		if t == "string" then
+			stat = Ext.GetStat(statName)
+		elseif t == "userdata" then
+			stat = statName
+		end
 	end
 	if stat then
 		if stat[attribute] ~= nil then

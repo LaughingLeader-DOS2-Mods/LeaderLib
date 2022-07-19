@@ -142,6 +142,18 @@ Vars = {
 	},
 	---Table of base game stat fixes.
 	StatFixes = {},
+	Overrides = {
+		SPIRIT_VISION_PROPERTY = {
+			Action = "ToggleStatus",
+			Context = {"Self"},
+			Arg1 = 1.0,
+			Arg2 = -1,
+			Arg3 = "SPIRIT_VISION",
+			Arg4 = 1, -- Make permanent, i.e. it's re-applied when resurrected, and blocked from deletion
+			Arg5 = 10, -- Default duration
+			Type = "Extender",
+		}
+	},
 	Version = Ext.Version(),
 	StatusEvent = {
 		BeforeAttempt = "BeforeAttempt",

@@ -1,4 +1,4 @@
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 
 local skipCharacterStats = {
 	["StoryPlayer"] = true,
@@ -296,12 +296,12 @@ local function OverrideStats(data, statsLoadedState)
 		data = GameSettingsManager.Load()
 	end
 	if not data then
-		ferror("[LeaderLib:OverrideStats:%s] Failed to load game settings.", isClient and "CLIENT" or "SERVER")
+		ferror("[LeaderLib:OverrideStats:%s] Failed to load game settings.", _ISCLIENT and "CLIENT" or "SERVER")
 	end
 	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
 	if data.Settings.StarterTierSkillOverrides or data.Settings.LowerMemorizationRequirements then
 		local originalSkillTiers = {}
-		if not isClient then
+		if not _ISCLIENT then
 			originalSkillTiers = PersistentVars["OriginalSkillTiers"] or {}
 		end
 		local total = 0
@@ -310,7 +310,7 @@ local function OverrideStats(data, statsLoadedState)
 			local stat = Ext.GetStat(id)
 			local tier = stat.Tier
 			if data.Settings.StarterTierSkillOverrides == true then
-				if not isClient then
+				if not _ISCLIENT then
 					if originalSkillTiers[stat] ~= nil then
 						tier = originalSkillTiers[stat]
 					end
@@ -319,7 +319,7 @@ local function OverrideStats(data, statsLoadedState)
 					originalSkillTiers[id] = tier
 					total = total + 1
 					stat.Tier = "Starter"
-					if not isClient and not statsLoadedState then
+					if not _ISCLIENT and not statsLoadedState then
 						Ext.SyncStat(id, false)
 					else
 						Ext.StatSetAttribute(id, "Tier", "Starter")
@@ -342,7 +342,7 @@ local function OverrideStats(data, statsLoadedState)
 				end
 				if changed then
 					stat.MemorizationRequirements = memorizationReq
-					if not isClient and not statsLoadedState then
+					if not _ISCLIENT and not statsLoadedState then
 						Ext.SyncStat(id, false)
 					else
 						Ext.StatSetAttribute(id, "MemorizationRequirements", memorizationReq)
@@ -350,9 +350,35 @@ local function OverrideStats(data, statsLoadedState)
 				end
 			end
 		end
-		if not isClient then
+		if not _ISCLIENT then
 			---@private
 			PersistentVars["OriginalSkillTiers"] = originalSkillTiers
+		end
+	end
+
+	if Vars.Overrides.SPIRIT_VISION_PROPERTY ~= nil then
+		--LeaderLib_PermanentSpiritVisionEnabled
+		local spiritVision = Ext.GetStat("Shout_SpiritVision")
+		if spiritVision then
+			local toggleProp = Vars.Overrides.SPIRIT_VISION_PROPERTY
+			local properties = GameHelpers.Stats.GetSkillProperties(spiritVision)
+			local newProps = {toggleProp}
+			if properties and #properties > 0 then
+				for _,v in pairs(properties) do
+					if v.Type == "Status" and v.Action == "SPIRIT_VISION" then
+						toggleProp.Arg5 = v.Duration
+					end
+					if (v.Type ~= "Status" or v.Action ~= "SPIRIT_VISION") and v.Action ~= toggleProp.Action then
+						newProps[#newProps+1] = v
+					end
+				end
+			end
+			spiritVision.SkillProperties = newProps
+			if not _ISCLIENT and not statsLoadedState then
+				Ext.SyncStat("Shout_SpiritVision", false)
+			else
+				Ext.StatSetAttribute("Shout_SpiritVision", "SkillProperties", newProps)
+			end
 		end
 	end
 
@@ -365,7 +391,7 @@ local function OverrideStats(data, statsLoadedState)
 				if stat then
 					local changedStat = AdjustAP(stat, settings)
 					if changedStat then
-						if not isClient and not statsLoadedState then
+						if not _ISCLIENT and not statsLoadedState then
 							Ext.SyncStat(id, false)
 						else
 							Ext.StatSetAttribute(id, "APStart", stat.APStart)
@@ -401,7 +427,7 @@ local function OverrideStats(data, statsLoadedState)
 				local stat = Ext.GetStat(id)
 				local changedStat = AdjustAP(stat, settings)
 				if changedStat then
-					if not isClient and not statsLoadedState then
+					if not _ISCLIENT and not statsLoadedState then
 						Ext.SyncStat(id, false)
 					else
 						Ext.StatSetAttribute(id, "APStart", stat.APStart)
@@ -421,21 +447,21 @@ local function OverrideStats(data, statsLoadedState)
 		end
 	end
 
-	OverrideWings(not isClient and not statsLoadedState)
-	OverrideForce(not isClient and not statsLoadedState)
+	OverrideWings(not _ISCLIENT and not statsLoadedState)
+	OverrideForce(not _ISCLIENT and not statsLoadedState)
 
 	for statId,data in pairs(StatFixes) do
 		if not data.Mod or Ext.IsModLoaded(data.Mod) then
 			local stat = Ext.GetStat(statId)
 			if stat and data.CanChange(stat) then
 				for attribute,value in pairs(data.Changes) do
-					if not isClient and not statsLoadedState then
+					if not _ISCLIENT and not statsLoadedState then
 						stat[attribute] = value
 					else
 						Ext.StatSetAttribute(statId, attribute, value)
 					end
 				end
-				if not isClient and not statsLoadedState then
+				if not _ISCLIENT and not statsLoadedState then
 					Ext.SyncStat(statId, false)
 				end
 			end
@@ -445,8 +471,14 @@ local function OverrideStats(data, statsLoadedState)
 	_loadedStatuses = {}
 end
 
-Ext.RegisterListener("StatsLoaded", function()
+Ext.Events.StatsLoaded:Subscribe(function (e)
 	OverrideStats(nil, false)
+end, {Priority=0})
+
+Events.LuaReset:Subscribe(function (e)
+	if Vars.LeaderDebugMode then
+		OverrideStats(nil, true)
+	end
 end)
 
 function SyncStatOverrides(data)

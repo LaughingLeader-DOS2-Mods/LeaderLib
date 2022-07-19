@@ -182,6 +182,8 @@ end)
 GameHelpers.Skill.CreateSkillProperty("ToggleStatus", function (property)
 	local statusDisplayName = ""
 	local statusId = property.Arg3
+	local duration = property.Arg2
+	local turns = duration > 0 and Ext.Round(duration / 6.0) or duration
 	if not StringHelpers.IsNullOrWhitespace(statusId) then
 		if Data.EngineStatus[statusId] then
 			local engineStatusName = LocalizedText.Status[statusId]
@@ -193,15 +195,35 @@ GameHelpers.Skill.CreateSkillProperty("ToggleStatus", function (property)
 		end
 	end
 	if not StringHelpers.IsNullOrWhitespace(statusDisplayName) then
+		if statusId == "SPIRIT_VISION" then
+			local settings = SettingsManager.GetMod(ModuleUUID, false, false)
+			if settings.Global:FlagEquals("LeaderLib_PermanentSpiritVisionEnabled", false) then
+				local overrideProp = Vars.Overrides.SPIRIT_VISION_PROPERTY
+				if overrideProp and property.Arg1 == overrideProp.Arg1 and property.Arg2 == overrideProp.Arg2 and property.Arg4 == overrideProp.Arg4 then
+					turns = overrideProp.Arg5 > 0 and Ext.Round(overrideProp.Arg5 / 6.0) or overrideProp.Arg5
+					if turns > 0 then
+						return LocalizedText.Tooltip.ExtraPropertiesWithTurns:ReplacePlaceholders(statusDisplayName, "", "", turns)
+					else
+						return LocalizedText.Tooltip.ExtraPropertiesPermanent:ReplacePlaceholders(statusDisplayName, "", "")
+					end
+				end
+			end
+		end
 		if property.Arg2 > 0 then
-			return LocalizedText.SkillTooltip.ToggleStatusDuration:ReplacePlaceholders(statusDisplayName, Ext.Round(property.Arg2 / 6.0))
+			return LocalizedText.SkillTooltip.ToggleStatusDuration:ReplacePlaceholders(statusDisplayName, turns)
 		else
 			return LocalizedText.SkillTooltip.ToggleStatus:ReplacePlaceholders(statusDisplayName)
 		end
 	end
 end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
-	Ext.PrintError("Position", Ext.DumpExport(property.Context))
 	local statusId = property.Arg3
+	local duration = property.Arg2
+	if skill.Name == "Shout_SpiritVision" and statusId == "SPIRIT_VISION" then
+		local settings = SettingsManager.GetMod(ModuleUUID, false, false)
+		if settings.Global:FlagEquals("LeaderLib_PermanentSpiritVisionEnabled", false) then
+			return
+		end
+	end
 	if not StringHelpers.IsNullOrWhitespace(statusId) then
 		local targetRadius = false
 		local targetSelf = false
@@ -212,7 +234,6 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 				targetRadius = true
 			end
 		end
-		local duration = property.Arg2
 
 		local isPermanent = property.Arg4 > -1
 		local applyStatus = not isPermanent and GameHelpers.Status.Apply or function(target, id, duration, force, source) 
@@ -268,6 +289,26 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 end, function (property, attacker, target, position, isFromItem, skill, hit)
 	local statusId = property.Arg3
 	if not StringHelpers.IsNullOrWhitespace(statusId) then
+		local duration = property.Arg2
+
+		if skill.Name == "Shout_SpiritVision" and statusId == "SPIRIT_VISION" then
+			local settings = SettingsManager.GetMod(ModuleUUID, false, false)
+			if settings.Global:FlagEquals("LeaderLib_PermanentSpiritVisionEnabled", false) then
+				--Previous duration is stored in Arg5
+				duration = property.Arg5
+				local GUID = target.MyGuid
+				local timerName = string.format("LeaderLib_SetSpiritVision_%s", GUID)
+				Timer.Cancel(timerName)
+				Timer.StartOneshot(timerName, 20, function (e)
+					local target = GameHelpers.TryGetObject(GUID)
+					if target then
+						GameHelpers.Status.Apply(target, statusId, duration, true, target)
+					end
+				end)
+				return
+			end
+		end
+
 		local isPermanent = property.Arg4 > -1
 		local applyStatus = not isPermanent and GameHelpers.Status.Apply or function(target, id, duration, force, source) 
 			StatusManager.ApplyPermanentStatus(target, id, source) 
@@ -276,7 +317,6 @@ end, function (property, attacker, target, position, isFromItem, skill, hit)
 
 		local GUID = target.MyGuid
 		local timerName = string.format("LeaderLib_ToggleStatus_%s%s", statusId, GUID)
-		local duration = property.Arg2
 		Timer.Cancel(timerName)
 		Timer.StartOneshot(timerName, 20, function (e)
 			local target = GameHelpers.TryGetObject(GUID)

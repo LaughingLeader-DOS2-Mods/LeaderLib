@@ -374,9 +374,6 @@ local ShiftKeys = {
 }
 
 function Input.UpdateModifierKeys(ui, event, shiftKey, altKey, ctrlKey)
-	if Input.Shift ~= shiftKey then
-		TooltipExpander.OnShiftKey(shiftKey)
-	end
 	Input.Shift = shiftKey
 	Input.Alt = altKey
 	Input.Ctrl = ctrlKey

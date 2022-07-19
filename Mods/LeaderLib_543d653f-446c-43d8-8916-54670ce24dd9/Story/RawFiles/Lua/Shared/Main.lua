@@ -1,23 +1,23 @@
-Ext.RegisterListener("SessionLoading", function()
-	if Ext.IsServer() then
+if Ext.IsServer() then
+	Ext.Events.SessionLoading:Subscribe(function()
 		if PersistentVars["OriginalSkillTiers"] ~= nil then
 			Data.OriginalSkillTiers = PersistentVars["OriginalSkillTiers"]
 		end
-	end
-end)
+	end)
+end
 
-Ext.RegisterListener("SessionLoaded", function()
-	Vars.LeaderDebugMode = Ext.LoadFile("LeaderDebug") ~= nil
-	for _,stat in pairs(Ext.GetStatEntries("Object")) do
+Ext.Events.SessionLoaded:Subscribe(function()
+	Vars.LeaderDebugMode = GameHelpers.IO.LoadFile("LeaderDebug") ~= nil
+	for stat in GameHelpers.Stats.GetStats("Object") do
 		Data.ObjectStats[stat] = true
 	end
 	--Potions items work like object types in the EsvItem, where it doesn't have Stats set.
-	for _,stat in pairs(Ext.GetStatEntries("Potion")) do
-		if not StringHelpers.IsNullOrWhitespace(Ext.StatGetAttribute(stat, "RootTemplate")) then
+	for stat in GameHelpers.Stats.GetStats("Potion", true) do
+		if not StringHelpers.IsNullOrWhitespace(stat.RootTemplate) then
 			Data.ObjectStats[stat] = true
 		end
 	end
-end)
+end, {Priority=400})
 
 ---@param uuid string
 ---@return ModSettings

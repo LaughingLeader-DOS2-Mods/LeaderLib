@@ -174,6 +174,7 @@ function OnLuaReset()
 		SkipTutorial.Initialize()
 	end
 	IterateUsers("LeaderLib_StoreUserData")
+	Vars.LeaderDebugMode = Ext.LoadFile("LeaderDebug") ~= nil
 	Events.LuaReset:Invoke({Region=region})
 	GameHelpers.Net.Broadcast("LeaderLib_Client_SyncDebugVars", {PrintSettings=Vars.Print, CommandSettings = Vars.Commands})
 	Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled == true)

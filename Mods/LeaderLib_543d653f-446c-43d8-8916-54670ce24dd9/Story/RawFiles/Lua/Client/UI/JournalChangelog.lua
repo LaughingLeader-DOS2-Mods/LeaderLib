@@ -1,21 +1,45 @@
+local ts = Classes.TranslatedString
 local _journal = Classes.UIWrapper:CreateFromType(Data.UIType.journal, {IsControllerSupported = true, ControllerID = Data.UIType.journal_csp})
 
+---@class LeaderLibJournalChangelogEntry:{Title:string|TranslatedString, Description:string|TranslatedString, Tooltip:string|TranslatedString|nil, ID:integer}
+
+---@type LeaderLibJournalChangelogEntry[]
 local _entries = {}
 
+---@type table<integer, LeaderLibJournalChangelogEntry>
+local _IDToEntry = {}
+
+local Changelogs_Title = ts:CreateFromKey("LeaderLib_UI_Journal_Changelogs_Title", "Mod Changes")
+
 local lastId = 1000
+
+--local this = Ext.GetUIByType(22):GetRoot().journal_mc.tutorialContainer_mc; print(this.list, this.list.visible)
+
+local function TryEnableJournalOverride()
+	local journalOverride = Ext.IO.GetPathOverride("Public/Game/GUI/journal.swf")
+	if journalOverride == nil or journalOverride == "" then
+		Ext.IO.AddPathOverride("Public/Game/GUI/journal.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/journal.swf")
+	end
+end
+
+Ext.Events.SessionLoading:Subscribe(TryEnableJournalOverride, {Priority = 1})
 
 ---@class LeaderLibChangelog
 local Changelog = {}
 UI.Changelog = Changelog
 
----@param modName string
+---@param modName string|TranslatedString
 ---@param changelogText string|TranslatedString
-function Changelog:AddModEntry(modName, changelogText)
-	_entries[#_entries+1] = {
+---@param tooltip string|TranslatedString|nil
+function Changelog:AddModEntry(modName, changelogText, tooltip)
+	local entry = {
 		Title = modName,
 		Description = changelogText,
+		Tooltip = tooltip,
 		ID = lastId
 	}
+	_IDToEntry[lastId] = entry
+	_entries[#_entries+1] = entry
 	lastId = lastId + 1
 end
 
@@ -74,12 +98,40 @@ end
 
 local initializedEntries = false
 
+_journal:RegisterCallListener("tutorialUpdateDone", function (self, ui, event)
+	local this = ui:GetRoot()
+	if not this or not this.journal_mc then
+		return
+	end
+	this = this.journal_mc.tutorialList
+	local changelogTitle = string.upper(Changelogs_Title.Value)
+	local len = #this.content_array
+	for i=0,len-1 do
+		local group_mc = this.content_array[i]
+		if group_mc and group_mc.gName == changelogTitle then
+			for j=0,#group_mc.list.content_array-1 do
+				local tutorialentry_mc = group_mc.list.content_array[j]
+				if tutorialentry_mc then
+					local entry = _IDToEntry[tutorialentry_mc.id]
+					if entry then
+						local tooltip = GameHelpers.Tooltip.ReplacePlaceholders(entry.Tooltip)
+						if not StringHelpers.IsNullOrWhitespace(tooltip) then
+							tutorialentry_mc.tooltip = tooltip
+						end
+					end
+				end
+			end
+			break
+		end
+	end
+end, "After", "Keyboard")
+
 _journal:RegisterInvokeListener("updateTutorials", function (self, ui, event)
 	local this = ui:GetRoot()
 	if this and this.add_tutEntry then
 		--this.add_tutEntry[val1].toUpperCase(),this.add_tutEntry[val1 + 1],this.add_tutEntry[val1 + 2],this.add_tutEntry[val1 + 3]
 
-		local changelogTitle = GameHelpers.GetStringKeyText("LeaderLib_UI_Journal_Changelogs_Title", "Mod Changes")
+		local changelogTitle = Changelogs_Title.Value
 		local titleUpper = string.upper(changelogTitle)
 
 		local tutorialList = this.journal_mc.tutorialList
@@ -135,6 +187,11 @@ Events.BeforeLuaReset:Subscribe(function ()
 	tutorialIsDirty = true
 end)
 
---The tutorial text doesn't scroll unfortunately, so we have to limit the list of changes for now.
-Changelog:AddModEntry(Classes.TranslatedString:CreateFromKey("LeaderLib", "LeaderLib"), Classes.TranslatedString:CreateFromKey("LeaderLib_UI_Changelog", ""))
--- Changelog:AddModEntry(Classes.TranslatedString:CreateFromKey("LeaderLib", "LeaderLib"), "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu nibh aliquam, lacinia tellus sed, imperdiet elit. Mauris ultricies nunc at tortor tristique porttitor. Nam orci est, varius iaculis laoreet vel, ultricies in nisi. Pellentesque nec scelerisque nisi. Ut molestie sagittis tempor. Sed tincidunt purus sit amet magna accumsan, ut sollicitudin felis elementum. Mauris posuere malesuada mattis. Duis maximus non massa eu sodales. Pellentesque nibh felis, pellentesque in mauris pretium, vulputate malesuada nunc. Maecenas eget lacinia ex. Integer nec dui vel massa gravida elementum eget nec massa. Aenean tincidunt non est a scelerisque. Nam eu enim mi.\n\nMauris molestie commodo leo quis ultrices. Quisque elementum felis et neque vestibulum scelerisque. Cras sodales felis lorem, vel tempus justo porttitor quis. Suspendisse potenti. Phasellus nisi leo, cursus sed lorem sit amet, semper consequat orci. Aliquam sagittis pellentesque libero et interdum. Sed iaculis facilisis velit, quis hendrerit libero dapibus auctor.\n\n<font color='#FFCC11'>Phasellus mi metus, congue a tincidunt eget, viverra ut lectus. Cras elit quam, fringilla in dui sit amet, tristique faucibus mauris. Ut bibendum rutrum sem, efficitur malesuada nunc euismod quis. Morbi eros leo, commodo quis aliquet eget, pretium sit amet diam. Nullam posuere augue vel ligula gravida fermentum. Proin a consequat risus. Integer ac ligula condimentum, pretium est ac, feugiat lorem. Sed suscipit ut neque vel facilisis. Nullam lobortis lacinia lacus a mattis. Maecenas eget mi fermentum, aliquet odio at, feugiat risus. Integer finibus vitae tortor sed tristique. Pellentesque pellentesque venenatis velit, sit amet euismod dui eleifend eget. Donec malesuada ex nisi, sit amet imperdiet ex scelerisque at.\n\nNulla eget dui sed nulla tempus interdum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Duis a lobortis lacus. Morbi neque nulla, rutrum sit amet leo ac, rutrum efficitur magna. Nulla odio nisi, dignissim a justo rutrum, malesuada eleifend lectus. Fusce nec cursus augue. Morbi at sem iaculis, eleifend libero vel, posuere velit.</font>\n\nMauris non justo nec justo congue laoreet. Maecenas porttitor magna at libero rhoncus bibendum. Phasellus vel sem cursus, semper erat quis, aliquet metus. Aenean quis metus egestas, ultrices velit in, molestie tellus. Etiam nec purus nec quam varius luctus. Nulla quis suscipit tellus, maximus accumsan felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed viverra quis nisi sit amet luctus. Cras dapibus sodales mauris ut tristique. Aliquam orci purus, suscipit in porttitor nec, tincidunt eget lectus.")
+Changelog:AddModEntry(ts:CreateFromKey("LeaderLib", "LeaderLib"), ts:CreateFromKey("LeaderLib_UI_Changelog", ""), ts:Create("h95801399g4f88g408egba02gb4c42f9d27eb", "LeaderLib is a library mod used to provide common functionality to other mods, as well as providing quality-of-life features for players. Features include a centralized mod menu, autosaving with a customizable interval, dialog redirection, and more."))
+
+--[[ Ext.Events.SessionLoaded:Subscribe(function (e)
+	if Vars.LeaderDebugMode then
+		Changelog:AddModEntry("Test", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu nibh aliquam, lacinia tellus sed, imperdiet elit. Mauris ultricies nunc at tortor tristique porttitor. Nam orci est, varius iaculis laoreet vel, ultricies in nisi. Pellentesque nec scelerisque nisi. Ut molestie sagittis tempor. Sed tincidunt purus sit amet magna accumsan, ut sollicitudin felis elementum. Mauris posuere malesuada mattis. Duis maximus non massa eu sodales. Pellentesque nibh felis, pellentesque in mauris pretium, vulputate malesuada nunc. Maecenas eget lacinia ex. Integer nec dui vel massa gravida elementum eget nec massa. Aenean tincidunt non est a scelerisque. Nam eu enim mi.\n\nMauris molestie commodo leo quis ultrices. Quisque elementum felis et neque vestibulum scelerisque. Cras sodales felis lorem, vel tempus justo porttitor quis. Suspendisse potenti. Phasellus nisi leo, cursus sed lorem sit amet, semper consequat orci. Aliquam sagittis pellentesque libero et interdum. Sed iaculis facilisis velit, quis hendrerit libero dapibus auctor.\n\n<font color='#FFCC11'>Phasellus mi metus, congue a tincidunt eget, viverra ut lectus. Cras elit quam, fringilla in dui sit amet, tristique faucibus mauris. Ut bibendum rutrum sem, efficitur malesuada nunc euismod quis. Morbi eros leo, commodo quis aliquet eget, pretium sit amet diam. Nullam posuere augue vel ligula gravida fermentum. Proin a consequat risus. Integer ac ligula condimentum, pretium est ac, feugiat lorem. Sed suscipit ut neque vel facilisis. Nullam lobortis lacinia lacus a mattis. Maecenas eget mi fermentum, aliquet odio at, feugiat risus. Integer finibus vitae tortor sed tristique. Pellentesque pellentesque venenatis velit, sit amet euismod dui eleifend eget. Donec malesuada ex nisi, sit amet imperdiet ex scelerisque at.\n\nNulla eget dui sed nulla tempus interdum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Duis a lobortis lacus. Morbi neque nulla, rutrum sit amet leo ac, rutrum efficitur magna. Nulla odio nisi, dignissim a justo rutrum, malesuada eleifend lectus. Fusce nec cursus augue. Morbi at sem iaculis, eleifend libero vel, posuere velit.</font>\n\nMauris non justo nec justo congue laoreet. Maecenas porttitor magna at libero rhoncus bibendum. Phasellus vel sem cursus, semper erat quis, aliquet metus. Aenean quis metus egestas, ultrices velit in, molestie tellus. Etiam nec purus nec quam varius luctus. Nulla quis suscipit tellus, maximus accumsan felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed viverra quis nisi sit amet luctus. Cras dapibus sodales mauris ut tristique. Aliquam orci purus, suscipit in porttitor nec, tincidunt eget lectus.")
+		Changelog:AddModEntry("Test2", "Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>Line<br>End")
+	end
+end) ]]

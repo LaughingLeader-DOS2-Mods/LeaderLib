@@ -149,16 +149,23 @@ end
 ---@alias UIWrapperEventContextType string|'"Keyboard"'|'"Controller"'|'"All"'
 ---@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, ui:UIObject, event:string, ...:SerializableValue)
 
+---@param callbackType string
+---@param e EclLuaUICallEventParams
+---@param ui UIObject
+---@param event string
+---@param eventType UICallbackEventType
+---@param args table
 function UIWrapper:InvokeCallbacks(callbackType, e, ui, event, eventType, args)
 	if not self.Callbacks[callbackType] then
 		error(string.format("Invalid callback type %s", callbackType))
 	end
+	local typeId = ui:GetTypeId()
 	local callbacks = self.Callbacks[callbackType][event]
 	if callbacks then
 		local len = #callbacks
 		for i=1,len do
 			local callbackData = callbacks[i]
-			if CanInvokeCallback(callbackData, ui.Type, eventType) then
+			if CanInvokeCallback(callbackData, typeId, eventType) then
 				local result = {xpcall(callbackData.Callback, debug.traceback, self, ui, event, table.unpack(args))}
 				if result[1] then
 					local b,preventAction,stopPropagation = table.unpack(result)

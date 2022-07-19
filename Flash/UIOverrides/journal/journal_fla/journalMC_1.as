@@ -127,6 +127,7 @@ package journal_fla
 				group_mc.title_txt.autoSize = TextFieldAutoSize.LEFT;
 				group_mc.heightOverride = this.tutorialList.m_myInterlinie;
 				group_mc.gName = title;
+				group_mc.sortName = title;
 				group_mc.tooltip = tooltip;
 				group_mc.list.EL_SPACING = 0;
 				group_mc.list.TOP_SPACING = 0;
@@ -175,8 +176,8 @@ package journal_fla
 		
 		public function tutorialUpdateDone() : *
 		{
-			this.tutorialList.positionElements();
 			ExternalInterface.call("tutorialUpdateDone");
+			this.tutorialList.positionElements();
 		}
 		
 		public function clearTutorials() : *
@@ -1355,6 +1356,7 @@ package journal_fla
 			this.tutorialList = new scrollListGrouped("down2_id","up2_id","handle2_id","scrollBg2_id");
 			this.tutorialList.EL_SPACING = 0;
 			this.tutorialList.setGroupMC("TutCategory");
+			this.tutorialList.sortOn("sortName");
 			this.tutorialList.TOP_SPACING = this.cListTopSpacing;
 			this.tutorialList.setFrame(this.scrollPlaneLWidth,this.scrollPlaneHeight);
 			this.tutorialContainer_mc.addChild(this.tutorialList);

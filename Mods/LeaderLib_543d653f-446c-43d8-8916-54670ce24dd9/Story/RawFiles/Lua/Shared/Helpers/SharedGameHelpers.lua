@@ -901,3 +901,10 @@ function GameHelpers.SetScale(object, scale, persist)
 		end
 	end
 end
+
+---Converts an integer color to a hex code.
+---@param int integer
+---@return string
+function GameHelpers.IntegerColorToHex(int)
+	return string.format("#%06X", (0xFFFFFF & int))
+end

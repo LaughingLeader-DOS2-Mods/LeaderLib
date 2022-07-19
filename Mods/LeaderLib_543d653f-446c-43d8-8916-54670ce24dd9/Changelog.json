@@ -1,0 +1,72 @@
+{
+	"DisplayName": "[Key:LeaderLib:LeaderLib]",
+	"Description": "[Key:LeaderLib_Description:LeaderLib is a library mod used to provide common functionality to other mods, as well as providing quality-of-life features for players. Features include a centralized mod menu, autosaving with a customizable interval, dialog redirection, and more.]",
+	"Entries": [
+		{
+			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
+		},
+		{
+			"Version": "1.7.24.3",
+			"Changes": [
+				"Added several tweaks to the Info section of the journal:",
+				"  • The text can now scroll.",
+				"  • Mod Changes has been moved up to the top of the category sidebar.",
+				"  • Info categories are now sorted alphabetically.",
+				"  • Mod entries in Mod Changes may have description tooltips now.",
+				"  • The text area has been widened and adjusted slightly.",
+				"These journal changes will only work if the journal UI isn't already overwritten, otherwise LeaderLib's UI override will be skipped."
+			]
+		},
+		{
+			"Version": "1.7.24.2",
+			"Changes": [
+				"Fixed an issue with item tooltips if Improved Hotbars is enabled (may be fixed in Improved Hotbars as well)."
+			]
+		},
+		{
+			"Version": "1.7.24.1",
+			"Changes": [
+				"Fixed an issue preventing the Buff Status Preservation feature from working."
+			]
+		},
+		{
+			"Version": "1.7.24.0",
+			"Changes": [
+				"Added new options to allow fading out items in the inventory (read books, known skillbooks)."
+			]
+		},
+		{
+			"Version": "1.7.22.4",
+			"Changes": [
+				"Added an option to initially enable the combat log."
+			]
+		},
+		{
+			"Version": "1.7.22.3",
+			"Changes": [
+				"Fixed various tooltip-related issues in controller mode."
+			]
+		},
+		{
+			"Version": "1.7.22.2",
+			"Changes": [
+				"Fixed an issue preventing buff statuses from being preserved."
+			]
+		},
+		{
+			"Version": "1.7.22.1",
+			"Changes": [
+				"Fixed an issue where condensed item tooltips weren't displaying chances for \"On Hit\" bonuses.",
+				"Fix client-side settings being greyed out in multiplayer."
+			]
+		},
+		{
+			"Version": "1.7.22.0",
+			"Changes": [
+				"Added new tooltip options in the Gameplay menu.",
+				"Buff status preservation now only works on buffs applied by skills.",
+				"Fixed an error when checking item tooltips as a GM, when not possessing a character."
+			]
+		}
+	]
+}

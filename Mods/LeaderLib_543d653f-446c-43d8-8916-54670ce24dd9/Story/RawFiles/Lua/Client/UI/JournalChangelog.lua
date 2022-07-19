@@ -13,12 +13,15 @@ local Changelogs_Title = ts:CreateFromKey("LeaderLib_UI_Journal_Changelogs_Title
 
 local lastId = 1000
 
---local this = Ext.GetUIByType(22):GetRoot().journal_mc.tutorialContainer_mc; print(this.list, this.list.visible)
+--local this = Ext.GetUIByType(22):GetRoot().journal_mc.tutorialContainer_mc; print(this.title_txt.x)
+
+local _OVERRIDE_ENABLED = false
 
 local function TryEnableJournalOverride()
 	local journalOverride = Ext.IO.GetPathOverride("Public/Game/GUI/journal.swf")
 	if journalOverride == nil or journalOverride == "" then
 		Ext.IO.AddPathOverride("Public/Game/GUI/journal.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/journal.swf")
+		_OVERRIDE_ENABLED = true
 	end
 end
 
@@ -98,17 +101,28 @@ end
 
 local initializedEntries = false
 
-_journal:RegisterCallListener("tutorialUpdateDone", function (self, ui, event)
+local function OnUpdateDone(ui)
 	local this = ui:GetRoot()
 	if not this or not this.journal_mc then
 		return
 	end
-	this = this.journal_mc.tutorialList
+	local tutorialList = this.journal_mc.tutorialList
 	local changelogTitle = string.upper(Changelogs_Title.Value)
-	local len = #this.content_array
+	local len = #tutorialList.content_array
 	for i=0,len-1 do
-		local group_mc = this.content_array[i]
+		local group_mc = tutorialList.content_array[i]
 		if group_mc and group_mc.gName == changelogTitle then
+			group_mc.sortName = "1_MODCHANGES";
+			if group_mc.title_txt.htmlText == changelogTitle then
+				group_mc.title_txt.htmlText = string.format("====%s====", changelogTitle)
+			end
+			--public const tutDeselectColour:uint = 7346462; #70191E
+			--public const tutSelectColour:uint = 23424; #005B80
+			
+			-- group_mc.deselectColour = 0x70191E
+			-- group_mc.selectColour = 0x005B80
+			-- group_mc.setTextColor(group_mc.deselectColour)
+
 			for j=0,#group_mc.list.content_array-1 do
 				local tutorialentry_mc = group_mc.list.content_array[j]
 				if tutorialentry_mc then
@@ -124,7 +138,11 @@ _journal:RegisterCallListener("tutorialUpdateDone", function (self, ui, event)
 			break
 		end
 	end
-end, "After", "Keyboard")
+end
+
+_journal:RegisterCallListener("tutorialUpdateDone", function (self, ui, event)
+	OnUpdateDone(ui)
+end, "Before", "Keyboard")
 
 _journal:RegisterInvokeListener("updateTutorials", function (self, ui, event)
 	local this = ui:GetRoot()
@@ -179,6 +197,12 @@ _journal:RegisterInvokeListener("updateTutorials", function (self, ui, event)
 			end
 
 			initializedEntries = true
+
+			if not _OVERRIDE_ENABLED then
+				Ext.OnNextTick(function (e)
+					OnUpdateDone(_journal.Instance)
+				end)
+			end
 		end
 	end
 end, "After", "All")
@@ -187,7 +211,107 @@ Events.BeforeLuaReset:Subscribe(function ()
 	tutorialIsDirty = true
 end)
 
-Changelog:AddModEntry(ts:CreateFromKey("LeaderLib", "LeaderLib"), ts:CreateFromKey("LeaderLib_UI_Changelog", ""), ts:Create("h95801399g4f88g408egba02gb4c42f9d27eb", "LeaderLib is a library mod used to provide common functionality to other mods, as well as providing quality-of-life features for players. Features include a centralized mod menu, autosaving with a customizable interval, dialog redirection, and more."))
+local function TryFindConfig(info)
+	local filePath = string.format("Mods/%s/Changelog.json", info.Directory)
+	local file = Ext.IO.LoadFile(filePath, "data")
+	if not StringHelpers.IsNullOrWhitespace(file) then
+		return Common.JsonParse(file, true)
+	end
+	return nil
+end
+
+---@class LeaderLibChangelogConfigTextEntry
+---@field Text string
+
+---@class LeaderLibChangelogConfigChangeEntry
+---@field Version string
+---@field Changes string[]
+
+---@class LeaderLibChangelogConfigData
+---@field DisplayName string|nil
+---@field Description string|nil
+---@field Entries (LeaderLibChangelogConfigChangeEntry|LeaderLibChangelogConfigTextEntry)[]
+
+local function GetStringValue(str, character)
+	local result = str
+	if string.find(str, "[", 1, true) then
+		result = GameHelpers.Tooltip.ReplacePlaceholders(str, character)
+	elseif string.sub(str, 1, 1) == "h" then
+		result = GameHelpers.GetTranslatedString(str, str)
+	elseif string.find(str, "_", 1, true) then
+		result = GameHelpers.GetStringKeyText(str, str)
+	end
+	return result
+end
+
+---Load all Mods/ModName_UUID/Changelog.json files. Called automatically at SessionLoaded.
+function Changelog.LoadFiles()
+	local character = Client:GetCharacter()
+
+	---@type {Data:LeaderLibChangelogConfigData, UUID:string, Name:string, SortName:string}[]
+	local loadedData = {}
+	for i,uuid in pairs(Ext.Mod.GetLoadOrder()) do
+		if IgnoredMods[uuid] ~= true then
+			local mod = Ext.Mod.GetMod(uuid)
+			if mod ~= nil then
+				local b,result = xpcall(TryFindConfig, debug.traceback, mod.Info)
+				if not b then
+					Ext.PrintError(result)
+				elseif result ~= nil then
+					local name = mod.Info.Name
+					if result.DisplayName then
+						name = GetStringValue(result.DisplayName, character)
+					end
+					loadedData[#loadedData+1] = {Data=result, UUID=uuid, Name=name, SortName=string.lower(name)}
+				end
+			end
+		end
+	end
+	table.sort(loadedData, function (a, b)
+		return a.SortName < b.SortName
+	end)
+	for i=1,#loadedData do
+		local entry = loadedData[i]
+		local description = nil
+		local changelogText = ""
+		if entry.Data.Description then
+			description = GetStringValue(entry.Data.Description, character)
+			if StringHelpers.IsNullOrWhitespace(description) then
+				description = nil
+			end
+		end
+
+		if type(entry.Data.Entries) == "table" then
+			for j=1,#entry.Data.Entries do
+				local logEntry = entry.Data.Entries[j]
+				if logEntry.Text then
+					changelogText = string.format("%s%s<br>", changelogText, GetStringValue(logEntry.Text, character))
+				end
+				if logEntry.Version then
+					changelogText = string.format("%s<b><font size='24'>%s</font></b><br>", changelogText, GetStringValue(logEntry.Version, character))
+				end
+				if type(logEntry.Changes) == "table" then
+					for k=1,#logEntry.Changes do
+						local txt = GetStringValue(logEntry.Changes[k], character)
+						local bullet = "• "
+						if string.find(txt, "•") then
+							bullet = ""
+						end
+						changelogText = string.format("%s%s%s<br>", changelogText, bullet, txt)
+					end
+				end
+			end
+		end
+
+		if not StringHelpers.IsNullOrWhitespace(changelogText) then
+			Changelog:AddModEntry(entry.Name, changelogText, description)
+		end
+	end
+end
+
+Ext.Events.SessionLoaded:Subscribe(function ()
+	Changelog.LoadFiles()
+end)
 
 --[[ Ext.Events.SessionLoaded:Subscribe(function (e)
 	if Vars.LeaderDebugMode then

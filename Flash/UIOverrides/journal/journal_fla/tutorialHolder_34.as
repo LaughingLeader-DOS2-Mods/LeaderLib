@@ -5,6 +5,7 @@ package journal_fla
 	import flash.text.TextField;
 	import LS_Classes.scrollList;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
 
 	public dynamic class tutorialHolder_34 extends MovieClip
 	{
@@ -60,7 +61,12 @@ package journal_fla
 			this.base = parent as MovieClip;
 			this.showTutorialPopups_mc.visible = false;
 
-			this.title_txt.defaultTextFormat.size = 28;
+			var tf:TextFormat = this.title_txt.defaultTextFormat;
+			tf.size = 28;
+			this.title_txt.defaultTextFormat = tf;
+			this.title_txt.autoSize = TextFieldAutoSize.CENTER;
+			this.title_txt.x = 510;
+			this.title_txt.y = 80;
 
 			this.list = new scrollList("down2_id","up2_id","handle2_id","scrollBg2_id");
 			// this.list.mouseEnabled = false;
@@ -84,7 +90,7 @@ package journal_fla
 			this.removeChild(this.desc_txt);
 			this.text_mc = new MovieClip();
 			//this.text_mc.x = 186; //Center
-			this.desc_txt.width = 600;
+			this.desc_txt.width = 700;
 			this.desc_txt.x = 50;
 			this.desc_txt.y = 0;
 			this.desc_txt.autoSize = TextFieldAutoSize.CENTER;

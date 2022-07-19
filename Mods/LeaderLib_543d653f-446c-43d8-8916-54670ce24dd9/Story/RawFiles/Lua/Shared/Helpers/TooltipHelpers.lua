@@ -209,8 +209,8 @@ local function ReplacePlaceholders(str, character)
 	for v in string.gmatch(output, "%[ExtraData.-%]") do
 		local text = v:gsub("%[ExtraData:", ""):gsub("%]", "")
 		local key,fallback = table.unpack(StringHelpers.Split(text, ":"))
-		local value = Ext.ExtraData[key] or fallback or ""
-		if value ~= "" and _type(value) == "number" then
+		local value = GameHelpers.GetExtraData(key, fallback)
+		if _type(value) == "number" then
 			local trailingStr = ""
 			local startPos,endPos = string.find(output, v, 1, true)
 			if endPos then
@@ -230,9 +230,7 @@ local function ReplacePlaceholders(str, character)
 				end
 			end
 		end
-		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
-		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-		output = string.gsub(output, escapedReplace, value)
+		output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
 	end
 	for v in string.gmatch(output, "%[Stats:.-%]") do
 		local value = ""
@@ -251,8 +249,7 @@ local function ReplacePlaceholders(str, character)
 			value = ""
 		end
 		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
-		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-		output = string.gsub(output, escapedReplace, value)
+		output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
 	end
 	for v in string.gmatch(output, "%[SkillDamage:.-%]") do
 		local value = ""
@@ -264,8 +261,7 @@ local function ReplacePlaceholders(str, character)
 			if _type(value) == "number" then
 				value = string.format("%i", math.floor(value))
 			end
-			local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-			output = string.gsub(output, escapedReplace, value)
+			output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
 		end
 	end
 	for v in string.gmatch(output, "%[Skill:.-%]") do
@@ -315,8 +311,7 @@ local function ReplacePlaceholders(str, character)
 		elseif value == nil then
 			value = ""
 		end
-		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-		output = string.gsub(output, escapedReplace, value)
+		output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
 	end
 
 	output = GetTextParamValues(output, character)
@@ -336,8 +331,9 @@ local function ReplacePlaceholders(str, character)
 				translatedText = string.gsub(translatedText, "%%", "%%%%")
 				translatedText = ReplacePlaceholders(translatedText, character)
 			end
-			local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-			output = string.gsub(output, escapedReplace, translatedText)
+			output = string.gsub(output, StringHelpers.EscapeMagic(v), translatedText)
+		elseif fallback then
+			output = fallback
 		end
 	end
 	for v in string.gmatch(output, "%[Handle:.-%]") do
@@ -350,8 +346,8 @@ local function ReplacePlaceholders(str, character)
 		if translatedText == nil then 
 			translatedText = "" 
 		end
-		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-		output = string.gsub(output, escapedReplace, translatedText)
+		--local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+		output = string.gsub(output, StringHelpers.EscapeMagic(v), translatedText)
 	end
 	return output
 end

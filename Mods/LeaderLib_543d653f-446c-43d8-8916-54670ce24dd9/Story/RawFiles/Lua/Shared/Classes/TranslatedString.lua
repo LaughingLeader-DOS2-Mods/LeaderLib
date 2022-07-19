@@ -69,6 +69,22 @@ local _TSTRING_META = {
 	end
 }
 
+---@param target table
+---@return TranslatedString
+function TranslatedString:SetMeta(target)
+	_setmetatable(target, _TSTRING_META)
+	return target
+end
+
+---@param target table
+---@return boolean
+function TranslatedString:IsTranslatedString(target)
+	if type(target) == "table" and (target.Type == TranslatedString.Type or target.Key or target.Handle) then
+		return true
+	end
+	return false
+end
+
 ---@param handle string
 ---@param content string
 ---@param params TranslatedStringOptions|nil

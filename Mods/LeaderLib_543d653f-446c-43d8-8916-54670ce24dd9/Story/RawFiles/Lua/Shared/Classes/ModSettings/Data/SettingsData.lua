@@ -35,13 +35,7 @@ end
 
 --- Shortcut to get the string key text without handle.
 local function skey(key)
-	return Classes.TranslatedString:CreateFromKey(key)
-	-- local text = GameHelpers.GetStringKeyText(key)
-	-- if not StringHelpers.IsNullOrEmpty(text) then
-	-- 	return GameHelpers.Tooltip.ReplacePlaceholders(text)
-	-- else
-	-- 	return key
-	-- end
+	return Classes.TranslatedString:CreateFromKey(key, key, {AutoReplacePlaceholders=true})
 end
 
 ---@private
@@ -466,11 +460,11 @@ function SettingsData:SetMetatables()
 	else
 		for _,v in pairs(self.Flags) do
 			setmetatable(v, FlagData)
-			if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
-				setmetatable(v.DisplayName, Classes.TranslatedString)
+			if Classes.TranslatedString:IsTranslatedString(v.DisplayName) then
+				Classes.TranslatedString:SetMeta(v.DisplayName)
 			end
-			if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
-				setmetatable(v.Tooltip, Classes.TranslatedString)
+			if Classes.TranslatedString:IsTranslatedString(v.Tooltip) then
+				Classes.TranslatedString:SetMeta(v.Tooltip)
 			end
 		end
 	end
@@ -480,11 +474,11 @@ function SettingsData:SetMetatables()
 	else
 		for _,v in pairs(self.Variables) do
 			setmetatable(v, VariableData)
-			if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
-				setmetatable(v.DisplayName, Classes.TranslatedString)
+			if Classes.TranslatedString:IsTranslatedString(v.DisplayName) then
+				Classes.TranslatedString:SetMeta(v.DisplayName)
 			end
-			if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
-				setmetatable(v.Tooltip, Classes.TranslatedString)
+			if Classes.TranslatedString:IsTranslatedString(v.Tooltip) then
+				Classes.TranslatedString:SetMeta(v.Tooltip)
 			end
 		end
 	end
@@ -494,11 +488,11 @@ function SettingsData:SetMetatables()
 	else
 		for _,v in pairs(self.Buttons) do
 			setmetatable(v, ButtonData)
-			if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
-				setmetatable(v.DisplayName, Classes.TranslatedString)
+			if Classes.TranslatedString:IsTranslatedString(v.DisplayName) then
+				Classes.TranslatedString:SetMeta(v.DisplayName)
 			end
-			if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
-				setmetatable(v.Tooltip, Classes.TranslatedString)
+			if Classes.TranslatedString:IsTranslatedString(v.Tooltip) then
+				Classes.TranslatedString:SetMeta(v.Tooltip)
 			end
 		end
 	end

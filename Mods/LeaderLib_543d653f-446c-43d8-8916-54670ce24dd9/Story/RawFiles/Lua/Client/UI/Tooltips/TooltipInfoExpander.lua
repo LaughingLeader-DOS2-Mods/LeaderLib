@@ -20,7 +20,6 @@ local _last = {
 
 local dirty = false
 local rebuildingTooltip = false
-local allowedHideTooltips = 0
 TooltipExpander.KeyboardKey = "SplitItemToggle"--Data.Input.SplitItemToggle
 TooltipExpander.ControllerKey = "ToggleMap"
 
@@ -30,8 +29,7 @@ TooltipExpander.CallData = {
 	---@type table
 	Args = nil,
 	---@type string
-	LastCall = nil,
-	RebuildingTooltip = false,
+	LastCall = nil
 }
 
 ---Signals to the expander that pressing or releasing the expand key will cause the current visible tooltip to re-render.
@@ -332,7 +330,6 @@ local function RebuildTooltip(pressed)
 				if ui then
 					rebuildingTooltip = true
 					dirty = false
-					allowedHideTooltips = 1
 					ui:ExternalInterfaceCall("hideTooltip")
 					ui:ExternalInterfaceCall(TooltipExpander.CallData.LastCall, table.unpack(TooltipExpander.CallData.Args))
 					return
@@ -341,20 +338,16 @@ local function RebuildTooltip(pressed)
 		end
 	end
 	rebuildingTooltip = false
-	allowedHideTooltips = 0
 	return lastDirty ~= dirty
 end
 
-Ext.Events.UICall:Subscribe(function (e)
+--[[ Ext.Events.UICall:Subscribe(function (e)
 	if rebuildingTooltip and e.When == "Before" then
 		if e.Function == "hideTooltip" then
-			if allowedHideTooltips < 1 then
-				e:PreventAction()
-			end
-			allowedHideTooltips = allowedHideTooltips - 1
+			e:PreventAction()
 		end
 	end
-end)
+end) ]]
 
 function TooltipExpander.OnKeyPressed(pressed)
 	return RebuildTooltip(pressed)

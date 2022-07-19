@@ -47,10 +47,8 @@ if isClient then
 			if uuid then
 				Vars.LastContextTarget = uuid
 				Ext.PostMessageToServer("LeaderLib_SetLastContextTarget", uuid)
-				local data = {}
-				local existing = Ext.LoadFile("LeaderLib_UUIDHelper.json")
-				if existing then
-					data = Common.JsonParse(existing, true)
+				local data,b = GameHelpers.IO.LoadJsonFile("LeaderLib_UUIDHelper.json", {})
+				if b then
 					Ext.Print("Updated Osiris Data/LeaderLib_UUIDHelper.json")
 				else
 					Ext.Print("Created Osiris Data/LeaderLib_UUIDHelper.json")

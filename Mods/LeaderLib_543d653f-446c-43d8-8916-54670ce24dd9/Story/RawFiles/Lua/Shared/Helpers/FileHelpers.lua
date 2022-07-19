@@ -8,12 +8,18 @@ local _loadFile = _EXTVERSION < 56 and Ext.LoadFile or Ext.IO.LoadFile
 local _saveFile = _EXTVERSION < 56 and Ext.SaveFile or Ext.IO.SaveFile
 local _type = type
 
-function GameHelpers.IO.LoadJsonFile(filepath, fallback)
-	local file =_loadFile(filepath)
+---@param filepath string
+---@param fallback table
+---@param context nil|"user"|"data"
+function GameHelpers.IO.LoadJsonFile(filepath, fallback, context)
+	local file =_loadFile(filepath, context)
 	if file then
-		return Common.JsonParse(file)
+		local data = Common.JsonParse(file)
+		if data then
+			return data,true
+		end
 	end
-	return fallback
+	return fallback,false
 end
 
 function GameHelpers.IO.SaveJsonFile(filepath, data)
@@ -54,7 +60,7 @@ end
 
 ---Simple wrapper around Ext.LoadFile or Ext.IO.LoadFile, depending on the extender version.
 ---@param filepath string
----@param context string|nil
+---@param context nil|"user"|"data"
 ---@return string
 function GameHelpers.IO.LoadFile(filepath, context)
 	return _loadFile(filepath, context)

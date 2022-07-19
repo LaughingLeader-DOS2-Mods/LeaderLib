@@ -17,7 +17,7 @@ local function _CacheItemColor()
 		local info = Ext.GetModInfo(uuid)
 		if info ~= nil then
 			local filePath = string.format("Public/%s/Stats/Generated/Data/ItemColor.txt", info.Directory)
-			local text = Ext.LoadFile(filePath, "data")
+			local text = GameHelpers.IO.LoadFile(filePath, "data")
 			--local filePathWithoutSpaces = string.format("Mods/%s/CharacterCreation/ClassPresets/%s.lsx", info.Directory, StringHelpers.RemoveWhitespace(classType))
 			if text then
 				for line in StringHelpers.GetLines(text) do

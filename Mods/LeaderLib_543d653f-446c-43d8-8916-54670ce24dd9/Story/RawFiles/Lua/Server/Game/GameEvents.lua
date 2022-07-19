@@ -137,27 +137,24 @@ Ext.RegisterListener("GameStateChanged", function(from, to)
 end)
 
 local function DebugLoadPersistentVars()
-	local fileStr = Ext.LoadFile("LeaderLib_Debug_PersistentVars.json")
-	if fileStr ~= nil then
-		local varData = Common.JsonParse(fileStr)
-		if varData ~= nil then
-			if varData._PrintSettings then
-				for k,v in pairs(varData._PrintSettings) do
-					Vars.Print[k] = v
-				end
-				varData._PrintSettings = nil
+	local varData = GameHelpers.IO.LoadJsonFile("LeaderLib_Debug_PersistentVars.json")
+	if varData ~= nil then
+		if varData._PrintSettings then
+			for k,v in pairs(varData._PrintSettings) do
+				Vars.Print[k] = v
 			end
-			if varData._CommandSettings then
-				for k,v in pairs(varData._CommandSettings) do
-					Vars.Commands[k] = v
-				end
-				varData._CommandSettings = nil
+			varData._PrintSettings = nil
+		end
+		if varData._CommandSettings then
+			for k,v in pairs(varData._CommandSettings) do
+				Vars.Commands[k] = v
 			end
-			for name,data in pairs(varData) do
-				if Mods[name] ~= nil and Mods[name].PersistentVars ~= nil then
-					for k,v in pairs(data) do
-						Mods[name].PersistentVars[k] = v
-					end
+			varData._CommandSettings = nil
+		end
+		for name,data in pairs(varData) do
+			if Mods[name] ~= nil and Mods[name].PersistentVars ~= nil then
+				for k,v in pairs(data) do
+					Mods[name].PersistentVars[k] = v
 				end
 			end
 		end
@@ -174,7 +171,7 @@ function OnLuaReset()
 		SkipTutorial.Initialize()
 	end
 	IterateUsers("LeaderLib_StoreUserData")
-	Vars.LeaderDebugMode = Ext.LoadFile("LeaderDebug") ~= nil
+	Vars.LeaderDebugMode = GameHelpers.IO.LoadFile("LeaderDebug") ~= nil
 	Events.LuaReset:Invoke({Region=region})
 	GameHelpers.Net.Broadcast("LeaderLib_Client_SyncDebugVars", {PrintSettings=Vars.Print, CommandSettings = Vars.Commands})
 	Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled == true)

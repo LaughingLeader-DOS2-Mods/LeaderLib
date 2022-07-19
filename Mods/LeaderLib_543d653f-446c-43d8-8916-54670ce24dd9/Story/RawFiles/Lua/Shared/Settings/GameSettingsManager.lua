@@ -22,7 +22,7 @@ end
 ---@return LeaderLibGameSettingsWrapper
 function GameSettingsManager.Load(sync)
 	local b,result = xpcall(function()
-		return GameSettings:LoadString(Ext.LoadFile("LeaderLib_GameSettings.json"))
+		return GameSettings:LoadString(GameHelpers.IO.LoadFile("LeaderLib_GameSettings.json"))
 	end, debug.traceback)
 	if b and result then
 		if GameSettings.Settings ~= nil and GameSettings.Settings.Version ~= nil then

@@ -3,6 +3,22 @@ if CustomSkillProperties == nil then
 	CustomSkillProperties = {}
 end
 
+local function _EMPTY_FUNC() end
+
+--- @param id string
+--- @param getDesc fun(property:StatsPropertyExtender):string|nil
+--- @param onPos fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, position: vec3, areaRadius: number, isFromItem: boolean, skill: StatEntrySkillData|nil, hit: StatsHitDamageInfo|nil)
+--- @param onTarget fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, target: EsvCharacter|EsvItem, position: vec3, isFromItem: boolean, skill: StatEntrySkillData|nil, hit: StatsHitDamageInfo|nil)
+function GameHelpers.Skill.CreateSkillProperty(id, getDesc, onPos, onTarget)
+	local property = {
+		GetDescription = getDesc or _EMPTY_FUNC,
+		ExecuteOnPosition = onPos or _EMPTY_FUNC,
+		ExecuteOnTarget = onTarget or _EMPTY_FUNC,
+	}
+	CustomSkillProperties[id] = property
+	Ext.RegisterSkillProperty(id, property)
+end
+
 ---@param attacker EsvCharacter
 ---@param skill StatEntrySkillData
 local function ShouldUseTargetPositionForForce(attacker, skill)
@@ -22,14 +38,12 @@ local function ShouldUseTargetPositionForForce(attacker, skill)
 	return isRangedSkill
 end
 
----@type CustomSkillProperty
-CustomSkillProperties.SafeForce = {
-	GetDescription = function(prop)
-		local chance = prop.Arg1
-		local distance = GameHelpers.Math.Round(math.floor(prop.Arg2/6), 1)
+GameHelpers.Skill.CreateSkillProperty("SafeForce", function (property)
+	local chance = property.Arg1
+		local distance = GameHelpers.Math.Round(math.floor(property.Arg2/6), 1)
 		local useTargetForPosition = true
-		if not StringHelpers.IsNullOrWhitespace(prop.Arg3) then
-			useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true) ~= true
+		if not StringHelpers.IsNullOrWhitespace(property.Arg3) then
+			useTargetForPosition = StringHelpers.Equals(property.Arg3, "true", true, true) ~= true
 		end
 		
 		local fromText = useTargetForPosition and LocalizedText.SkillTooltip.FromTarget.Value or LocalizedText.SkillTooltip.FromSelf.Value
@@ -48,10 +62,9 @@ CustomSkillProperties.SafeForce = {
 				return LocalizedText.SkillTooltip.SafeForceRandom_Negative:ReplacePlaceholders(math.abs(distance), fromText, chance)
 			end
 		end
-	end,
-	ExecuteOnPosition = function(prop, attacker, position, areaRadius, isFromItem, skill, hit)
-		local chance = prop.Arg1
-		local distance = math.floor(prop.Arg2/6)
+end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
+	local chance = property.Arg1
+		local distance = math.floor(property.Arg2/6)
 		if chance >= 1.0 or Ext.Random(0,1) <= chance then
 			local x,y,z = table.unpack(position)
 			--local characters = Ext.GetCharactersAroundPosition(x,y,z, areaRadius)
@@ -63,8 +76,8 @@ CustomSkillProperties.SafeForce = {
 			end
 			local startPos = attacker.WorldPos
 			local useTargetForPosition = true
-			if not StringHelpers.IsNullOrWhitespace(prop.Arg3) then
-				useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true) ~= true
+			if not StringHelpers.IsNullOrWhitespace(property.Arg3) then
+				useTargetForPosition = StringHelpers.Equals(property.Arg3, "true", true, true) ~= true
 			end
 			for i,v in pairs(characters) do
 				local target = Ext.GetCharacter(v)
@@ -75,26 +88,24 @@ CustomSkillProperties.SafeForce = {
 				ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 			end
 		end
-	end,
-	ExecuteOnTarget = function(prop, attacker, target, position, isFromItem, skill, hit)
-		if attacker.MyGuid ~= target.MyGuid then
-			local chance = prop.Arg1
-			local distance = math.floor(prop.Arg2/6)
-			if chance >= 1.0 or Ext.Random(0,1) <= chance then
-				local startPos = attacker.WorldPos
-				local useTargetForPosition = true
-				if not StringHelpers.IsNullOrWhitespace(prop.Arg3) then
-					useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true) ~= true
-				end
-				if useTargetForPosition then
-					startPos = target.WorldPos
-				end
-				GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)
-				ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
+end, function (property, attacker, target, position, isFromItem, skill, hit)
+	if attacker.MyGuid ~= target.MyGuid then
+		local chance = property.Arg1
+		local distance = math.floor(property.Arg2/6)
+		if chance >= 1.0 or Ext.Random(0,1) <= chance then
+			local startPos = attacker.WorldPos
+			local useTargetForPosition = true
+			if not StringHelpers.IsNullOrWhitespace(property.Arg3) then
+				useTargetForPosition = StringHelpers.Equals(property.Arg3, "true", true, true) ~= true
 			end
+			if useTargetForPosition then
+				startPos = target.WorldPos
+			end
+			GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)
+			ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 		end
 	end
-}
+end)
 
 local tping = {}
 local function tpSelf(attacker, position, areaRadius)
@@ -128,11 +139,11 @@ end
 ---@param position number[]
 ---@param areaRadius number
 ---@param skill StatEntrySkillData
----@param prop StatPropertyExtender
-local function MoveToTarget(object, position, areaRadius, skill, prop)
+---@param property StatPropertyExtender
+local function MoveToTarget(object, position, areaRadius, skill, property)
 	local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(position, math.max(3, areaRadius))
-	PrintDebug("Context", Common.JsonStringify(prop.Context))
-	--if not Common.TableHasValue(prop.Context, "Target") then
+	PrintDebug("Context", Common.JsonStringify(property.Context))
+	--if not Common.TableHasValue(property.Context, "Target") then
 	if ObjectIsCharacter(object.MyGuid) == 1 then
 		if not PersistentVars.SkillPropertiesAction.MoveToTarget[object.MyGuid] then
 			PersistentVars.SkillPropertiesAction.MoveToTarget[object.MyGuid] = {
@@ -160,48 +171,126 @@ local function MoveToTarget(object, position, areaRadius, skill, prop)
 	end
 end
 
-CustomSkillProperties.MoveToTarget = {
-	GetDescription = function(prop)
-		return LocalizedText.SkillTooltip.MoveToTarget.Value
-	end,
-	ExecuteOnPosition = function(prop, attacker, position, areaRadius, isFromItem, skill, hit)
-		MoveToTarget(attacker, position, math.max(areaRadius, 3), skill, prop)
-	end,
-	ExecuteOnTarget = function(prop, attacker, target, position, isFromItem, skill, hit)
-		MoveToTarget(attacker, position, math.max(skill.AreaRadius or 3, 3), skill, prop)
+GameHelpers.Skill.CreateSkillProperty("MoveToTarget", function (property)
+	return LocalizedText.SkillTooltip.MoveToTarget.Value
+end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
+	MoveToTarget(attacker, position, math.max(areaRadius, 3), skill, property)
+end, function (property, attacker, target, position, isFromItem, skill, hit)
+	MoveToTarget(attacker, position, math.max(skill.AreaRadius or 3, 3), skill, property)
+end)
+
+GameHelpers.Skill.CreateSkillProperty("ToggleStatus", function (property)
+	local statusDisplayName = ""
+	local statusId = property.Arg3
+	if not StringHelpers.IsNullOrWhitespace(statusId) then
+		if Data.EngineStatus[statusId] then
+			local engineStatusName = LocalizedText.Status[statusId]
+			if engineStatusName then
+				statusDisplayName = engineStatusName.Value
+			end
+		elseif GameHelpers.Stats.Exists(statusId, "StatusData") then
+			statusDisplayName = GameHelpers.GetStringKeyText(Ext.Stats.GetAttribute(statusId, "DisplayName"), Ext.Stats.GetAttribute(statusId, "DisplayNameRef"))
+		end
 	end
-}
---[[ 
-local prop = {
-	Action = "LeaderLib_BoostStatus",
-	Arg1 = 1.0,
-	Arg2 = 12.0,
-	Arg3 = "",
-	Arg4 = -1,
-	Arg5 = -1,
-	Context = { "Target", "AoE" },
-	Type = "Extender"
-}
-]]
+	if not StringHelpers.IsNullOrWhitespace(statusDisplayName) then
+		if property.Arg2 > 0 then
+			return LocalizedText.SkillTooltip.ToggleStatusDuration:ReplacePlaceholders(statusDisplayName, Ext.Round(property.Arg2 / 6.0))
+		else
+			return LocalizedText.SkillTooltip.ToggleStatus:ReplacePlaceholders(statusDisplayName)
+		end
+	end
+end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
+	Ext.PrintError("Position", Ext.DumpExport(property.Context))
+	local statusId = property.Arg3
+	if not StringHelpers.IsNullOrWhitespace(statusId) then
+		local targetRadius = false
+		local targetSelf = false
+		for _,v in pairs(property.Context) do
+			if v == "Self" then
+				targetSelf = true
+			elseif v == "AoE" then
+				targetRadius = true
+			end
+		end
+		local duration = property.Arg2
 
--- Ext.GetStat("Shout_InspireStart").SkillProperties = {{ Action = "ENCOURAGED", Arg4 = -1, Arg5 = -1, Context = { "Target", "AoE" }, Duration = 18, StatsId = "", StatusChance = 1, SurfaceBoost = false, SurfaceBoosts = {}, Type = "Status" }, { Action = "LeaderLib_BoostStatus", Arg1 = 1.0, Arg2 = 12.0, Arg3 = "", Arg4 = -1, Arg5 = -1, Context = { "Self" }, Type = "Extender" }}; Ext.SyncStat("Shout_InspireStart", false)
+		local isPermanent = property.Arg4 > -1
+		local applyStatus = not isPermanent and GameHelpers.Status.Apply or function(target, id, duration, force, source) 
+			StatusManager.ApplyPermanentStatus(target, id, source) 
+		end
+		local removeStatus = not isPermanent and GameHelpers.Status.Remove or StatusManager.RemovePermanentStatus
 
--- CustomSkillProperties.LeaderLib_BoostStatus = {
--- 	GetDescription = function(prop)
--- 		return "Amplify STATUS by surrounding characters"
--- 	end,
--- 	-- ExecuteOnPosition = function(prop, attacker, position, areaRadius, isFromItem, skill, hit)
--- 	-- 	print("LeaderLib_BoostStatus", Lib.serpent.block(position))
--- 	-- end,
--- 	ExecuteOnTarget = function(prop, attacker, target, position, isFromItem, skill, hit)
--- 		--CustomSkillProperties.LeaderLib_BoostStatus.ExecuteOnPosition(prop, attacker, position, isFromItem, skill, hit)
--- 		print("LeaderLib_BoostStatus", target.DisplayName)
--- 	end
--- }
+		if targetSelf then
+			local GUID = attacker.MyGuid
+			local timerName = string.format("LeaderLib_ToggleStatus_%s%s", statusId, GUID)
+			Timer.Cancel(timerName)
+			Timer.StartOneshot(timerName, 20, function (e)
+				local target = GameHelpers.TryGetObject(GUID)
+				if target then
+					if target:GetStatus(statusId) then
+						removeStatus(target, statusId)
+					else
+						applyStatus(target, statusId, duration, true, attacker)
+					end
+				end
+			end)
+		end
+		if targetRadius then
+			local canTargetCharacters = skill.CanTargetCharacters
+			local canTargetItems = skill.CanTargetItems
+			local targetType = canTargetCharacters and "Character"
+			if canTargetCharacters and canTargetItems then
+				targetType = "All"
+			elseif canTargetCharacters then
+				targetType = "Character"
+			elseif canTargetItems then
+				targetType = "Item"
+			end
+			for target in GameHelpers.Grid.GetNearbyObjects(position, {Radius=areaRadius, Type=targetType}) do
+				if target.MyGuid ~= attacker.MyGuid then
+					local GUID = target.MyGuid
+					local timerName = string.format("LeaderLib_ToggleStatus_%s%s", statusId, GUID)
+					Timer.Cancel(timerName)
+					Timer.StartOneshot(timerName, 20, function (e)
+						local target = GameHelpers.TryGetObject(GUID)
+						if target then
+							if target:GetStatus(statusId) then
+								removeStatus(target, statusId)
+							else
+								applyStatus(target, statusId, duration, true, attacker)
+							end
+						end
+					end)
+				end
+			end
+		end
+	end
+end, function (property, attacker, target, position, isFromItem, skill, hit)
+	local statusId = property.Arg3
+	if not StringHelpers.IsNullOrWhitespace(statusId) then
+		local isPermanent = property.Arg4 > -1
+		local applyStatus = not isPermanent and GameHelpers.Status.Apply or function(target, id, duration, force, source) 
+			StatusManager.ApplyPermanentStatus(target, id, source) 
+		end
+		local removeStatus = not isPermanent and GameHelpers.Status.Remove or StatusManager.RemovePermanentStatus
 
-for k,v in pairs(CustomSkillProperties) do
-	Ext.RegisterSkillProperty(k, v)
-end
+		local GUID = target.MyGuid
+		local timerName = string.format("LeaderLib_ToggleStatus_%s%s", statusId, GUID)
+		local duration = property.Arg2
+		Timer.Cancel(timerName)
+		Timer.StartOneshot(timerName, 20, function (e)
+			local target = GameHelpers.TryGetObject(GUID)
+			if target then
+				if target:GetStatus(statusId) then
+					removeStatus(target, statusId)
+				else
+					applyStatus(target, statusId, duration, true, attacker)
+				end
+			end
+		end)
+	end
+end)
+
 
 if Ext.IsServer() then
 	Timer.Subscribe("LeaderLib_SkillProperties_MoveToTargetStart", function(e)

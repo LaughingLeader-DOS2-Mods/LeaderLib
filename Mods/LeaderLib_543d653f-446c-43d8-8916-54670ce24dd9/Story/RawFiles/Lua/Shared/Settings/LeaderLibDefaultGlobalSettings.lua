@@ -20,6 +20,7 @@ settings.Global:AddLocalizedFlags({
 	"LeaderLib_UnhealableFix_Enabled",
 	"LeaderLib_AllTooltipsForItemsEnabled",
 	"LeaderLib_BuffStatusPreserverEnabled",
+	"LeaderLib_AutoIdentifyItemsEnabled",
 })
 settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 --settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)
@@ -37,6 +38,7 @@ settings.GetMenuOrder = function()
 			"LeaderLib_RemovePathInfluencesOnChainAll",
 			"LeaderLib_AllTooltipsForItemsEnabled",
 			"LeaderLib_BuffStatusPreserverEnabled",
+			"LeaderLib_AutoIdentifyItemsEnabled",
 		}},
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_DialogRedirection", "Dialog Redirection"),
 		Entries = {		
@@ -109,6 +111,20 @@ if Ext.IsServer() then
 			Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
 		else
 			Timer.Cancel("LeaderLib_PullPartyIntoCombat")
+		end
+	end)
+	settings.Global.Flags.LeaderLib_AutoIdentifyItemsEnabled:Subscribe(function(e)
+		local switches = Ext.Utils.GetGlobalSwitches()
+		if switches then
+			switches.AutoIdentifyItems = e.Value == true
+		end
+		if e.Value then
+			fprint(LOGLEVEL.TRACE2, "[LeaderLib] Identifying the party's items...")
+			local total = 0
+			for player in GameHelpers.Character.GetPlayers() do
+				total = total + IdentifyAllItems(player)
+			end
+			fprint(LOGLEVEL.TRACE2, "[LeaderLib] Identified (%s) items.", total)
 		end
 	end)
 end

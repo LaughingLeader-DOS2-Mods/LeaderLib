@@ -134,12 +134,6 @@ Ext.RegisterOsirisListener("CharacterItemEvent", Data.OsirisEvents.CharacterItem
 	OnObjectEvent("CharacterItemEvent", event, StringHelpers.GetUUID(obj1), StringHelpers.GetUUID(obj2))
 end)
 
----@param item EsvItem
-RegisterProtectedExtenderListener("TreasureItemGenerated", function(item)
-	local statsId = GameHelpers.Item.GetItemStat(item)
-	Events.TreasureItemGenerated:Invoke({Item=item, StatsId=statsId, IsClone=false})
-end)
-
 ---Called from LeaderLib_21_GS_Statuses.txt
 ---@param uuid string
 function OnCharacterResurrected(uuid)

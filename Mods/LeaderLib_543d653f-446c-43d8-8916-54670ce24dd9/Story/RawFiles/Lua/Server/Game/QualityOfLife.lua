@@ -252,3 +252,40 @@ function LevelUpItemsWithTag(character, tag)
 		end
 	end
 end
+
+Ext.Events.TreasureItemGenerated:Subscribe(function (e)
+	if e.Item then
+		local statsId = GameHelpers.Item.GetItemStat(e.Item)
+		if e.Item.Stats then
+			local settings = SettingsManager.GetMod(ModuleUUID, false)
+			if settings and settings.Global:FlagEquals("LeaderLib_AutoIdentifyItemsEnabled", true) then
+				e.Item.Stats.IsIdentified = 1
+				if Vars.Print.Treasure then
+					fprint(LOGLEVEL.TRACE2, "[LeaderLib] Identified a new treasure item (%s).", statsId)
+				end
+			end
+		end
+		---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
+		local invokeResult = Events.TreasureItemGenerated:Invoke({Item=e.Item, StatsId=statsId, IsClone=false, ResultingItem = e.ResultingItem})
+		if invokeResult.ResultCode ~= "Error" then
+			e.ResultingItem = invokeResult.Args.ResultingItem
+		end
+	end
+end, {Priority=1})
+
+---@param object ObjectParam
+---@return integer totalIdentified
+function IdentifyAllItems(object)
+	local totalIdentified = 0
+	local object = GameHelpers.TryGetObject(object)
+	if object and GameHelpers.Ext.ObjectIsCharacter(object) and GameHelpers.Ext.ObjectIsItem(object) then
+		for _,uuid in object:GetInventoryItems() do
+			local item = Ext.GetItem(uuid)
+			if item and item.Stats and item.Stats.IsIdentified ~= 1 then
+				item.Stats.IsIdentified = 1
+				totalIdentified = totalIdentified + 1
+			end
+		end
+	end
+	return totalIdentified
+end

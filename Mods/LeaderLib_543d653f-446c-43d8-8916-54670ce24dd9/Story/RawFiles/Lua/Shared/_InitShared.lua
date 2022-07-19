@@ -121,6 +121,8 @@ Vars = {
 		CustomStats = false,
 		--UI listeners
 		UI = false,
+		--TreasureItemGenerated stuff
+		Treasure = false,
 		Input = false
 	},
 	ControllerEnabled = false,

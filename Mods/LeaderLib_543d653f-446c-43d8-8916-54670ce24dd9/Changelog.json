@@ -8,6 +8,7 @@
 		{
 			"Version": "1.7.24.3",
 			"Changes": [
+				"Added a \"Mod Settings\" (global) option to auto-identify items.",
 				"Added several tweaks to the Info section of the journal:",
 				"  • The text can now scroll.",
 				"  • Mod Changes has been moved up to the top of the category sidebar.",

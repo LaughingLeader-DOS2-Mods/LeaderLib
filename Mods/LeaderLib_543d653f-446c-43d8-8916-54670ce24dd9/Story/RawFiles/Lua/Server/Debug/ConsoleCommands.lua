@@ -213,7 +213,7 @@ Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyIt
 	else
 		identifyItems = true
 	end
-	if treasure == nil then
+	if treasure == nil or treasure == "" or treasure == "nil" then
 		treasure = "ArenaMode_ArmsTrader"
 	end
 	local host = CharacterGetHostCharacter()

@@ -246,6 +246,7 @@ if not _ISCLIENT then
 
 	---@class TreasureItemGeneratedEventArgs
 	---@field Item EsvItem
+	---@field ResultingItem EsvItem If set, this item will replace Item as the generated item.
 	---@field StatsId string
 	---@field IsClone boolean True if the item was generated via GameHelpers.Item.Clone.
 	---@field OriginalItem EsvItem|nil If IsClone is true, this is the item the clone was created from.

@@ -41,3 +41,5 @@ LeaderLib_AllTooltipsForItemsEnabled	World Tooltips for All Items	h6aac0af6g1e02
 LeaderLib_AllTooltipsForItemsEnabled_Description	If enabled, all items will have a "World Tooltip", showing the item's name when world tooltips are enabled (ALT by default for keyboard + mouse, or clicking the Right Stick for controllers).<br>Disabling this may require a save/load to get items to reset.	h7372bd33g991dg41c7ga8c2g9b42778c29f5
 LeaderLib_BuffStatusPreserverEnabled	Buff Status Preservation	h1d68f897g1430g4ed6gb61dg88018af310e8
 LeaderLib_BuffStatusPreserverEnabled_Description	If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like invisible and healing statuses. 	h9b4fce0fge5a9g4369gb3e8g1567058cc47c
+LeaderLib_AutoIdentifyItemsEnabled	Auto-Identify Items	he9ac6d86g4c67g4aa9g8435g637e6d761586
+LeaderLib_AutoIdentifyItemsEnabled_Description	If enabled, items will be automatically identified. 	h93eae8e8gf22eg41f6gbd5eg58c71893024a

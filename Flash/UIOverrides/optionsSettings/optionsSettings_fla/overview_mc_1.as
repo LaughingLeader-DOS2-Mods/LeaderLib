@@ -275,10 +275,14 @@ package optionsSettings_fla
 			}
 		}
 		
-		public function addMenuLabel(text:String) : *
+		public function addMenuLabel(text:String, tooltip:String="", fixedHeight:Number = -1) : *
 		{
 			var label_mc:MovieClip = new Label();
 			label_mc.x = this.elementX;
+			label_mc.tooltip = tooltip;
+			if(fixedHeight > -1) {
+				label_mc.mHeight = fixedHeight;
+			}
 			label_mc.label_txt.htmlText = text;
 			label_mc.name = "item" + this.list.length + "_mc";
 			//val2.mHeight = 40;

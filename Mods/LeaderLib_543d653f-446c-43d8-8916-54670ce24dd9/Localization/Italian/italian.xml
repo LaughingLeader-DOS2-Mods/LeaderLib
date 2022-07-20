@@ -25,6 +25,7 @@
 	<content contentuid="h0bcff2begcd22g4e86g9b9fgfdd3ce0b28de">Enable a 0.5 second delay for skill tooltips.</content>
 	<content contentuid="h0ccbce3cg90f3g4d42g9755gd9da999968bd">&lt;font color=&apos;#6EB09D&apos;&gt;Applied by [1]&lt;/font&gt;</content>
 	<content contentuid="h0d0af957g4dc8g4ddagb0fag6c38340bb6de">Hello!</content>
+	<content contentuid="h0ea94b9dg27e8g4cdbgba52g40be7f66dd18">These settings only affect you. In multiplayer, these settings can be set independently from the host.</content>
 	<content contentuid="h102b274eg58b9g4199g91c1g2aef870786b8">Fade books (recipes, lore) that have already been read by this amount.&lt;br&gt;&lt;font color=&apos;#FF33FF&apos;&gt;Note: This setting isn&apos;t retroactive, so previous books read in the save may need to be read again, once.&lt;/font&gt;[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]</content>
 	<content contentuid="h109e781dg2032g4b77gacdagce8034c4e49e">Okay.</content>
 	<content contentuid="h1145733eg9ec6g4f50ga44bg313f8a4e1cb2">&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;STOP!&lt;/font&gt;&lt;br&gt;A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod dependencies.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#DD3333&apos; size=&apos;24&apos;&gt;Mods will not work correctly!&lt;/font&gt;&lt;br&gt;To fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
@@ -137,6 +138,7 @@
 	<content contentuid="h46f32bf7gf965g4146ga6e1g4951c5d8c2fa">Clears surfaces in a [1]m range at the location of your target(s).</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d">Undead Human</content>
 	<content contentuid="h47d73bfcg16eag4504g83c0ge7b9c0048f13">*Ask to see the trader&apos;s goods.*</content>
+	<content contentuid="h4897d242gf62bg4dccg9c90g1470117392d8">If enabled, the health and armor bars will always show their values, instead of only on mouse hover.</content>
 	<content contentuid="h4afd5d2bg1af0g4cc3g9a53gdb6c327d2d04">Enable Dialog Redirection</content>
 	<content contentuid="h4b459589gc776g4a7fgb3abg2e219ea20844">Features</content>
 	<content contentuid="h4c438f27gc833g4b46g8c3eg50716f12ae34">If &quot;Pull Party Into Combat&quot; is enabled, this is the minimum radius party members must be from that combat to automatically join. Default: 30m</content>
@@ -213,6 +215,7 @@
 	<content contentuid="h6d855e34gd141g49f7ga52agc4a30cf700ba">Client-Side Settings</content>
 	<content contentuid="h6eabd548g4797g423agbe50g8a858704a8c1">Player Action Point Settings</content>
 	<content contentuid="h6ecb0ec0g918fg4b8ega11dgb6cf93d51c0b">Time Left: &lt;font color=&apos;#FF69B4&apos;&gt;[1]&lt;/font&gt;</content>
+	<content contentuid="h6ee46823ga451g4fafga7a7g7bb4e9853056">These settings affect all players. In multiplayer, only the host can adjust these options.</content>
 	<content contentuid="h6f21c7b6gea18g4846gbd07g048402159797">*He waits for you to speak.*</content>
 	<content contentuid="h6f8c74d8g77d3g469ega859g41d644a06c6a">LeaderLib Settings</content>
 	<content contentuid="h6feb8440ge26dg4b31gb9fag5d061db28708">If enabled, Novice/Adept/Master tiered skills will be set to Starter instead, allowing them show up in character creation.&lt;br&gt;&lt;font color=&apos;#FF9933&apos;&gt;Note that if you don&apos;t have the required ability levels for memorization, the skill won&apos;t show up (enable Lower Skill Memorization Requirements to avoid that).&lt;/font&gt;&lt;br&gt;(Default: Disabled)</content>
@@ -228,6 +231,7 @@
 	<content contentuid="h7322bed9g2ea5g4abeg9decga21994353d79">*He waits for you to speak.*</content>
 	<content contentuid="h73234319g4e6bg4967gb45cga511b60f0408">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Save Global Settings&lt;/font&gt;</content>
 	<content contentuid="h7372bd33g991dg41c7ga8c2g9b42778c29f5">If enabled, all items will have a &quot;World Tooltip&quot;, showing the item&apos;s name when world tooltips are enabled (ALT by default for keyboard + mouse, or clicking the Right Stick for controllers).&lt;br&gt;Disabling this may require a save/load to get items to reset.</content>
+	<content contentuid="h738ca5c9gbb24g47d6ga31eg570bc92bbbd0">Gameplay Host Settings</content>
 	<content contentuid="h75a91fefgc531g4bb1g82f2gec7122c62aff">Enabled</content>
 	<content contentuid="h75e24eb0g3639g41a3g9c88g7d228f91eb00">INFO</content>
 	<content contentuid="h76b098bdgb9f4g4ae8g8e5bg87f68b4599d9">Hey there, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! You made it off that wreck in one piece, eh? *He snorts.* </content>
@@ -303,6 +307,7 @@
 	<content contentuid="h98bf1217gf2bfg4d82g99b9g6747f36f9aab">&lt;font color=&apos;#FF0000&apos;&gt;Script Extender Missing!&lt;/font&gt;</content>
 	<content contentuid="h98d315c5g189cg431eg9862g7cea569a5e3b">Hmm?</content>
 	<content contentuid="h9904f967g424bg4099gb4f3ge3b46fe30a68">Try to reduce max status tooltip size by combining elements, such as immunities.</content>
+	<content contentuid="h99a64909g2efdg4246g97bfg5e78915ecb08">UI</content>
 	<content contentuid="h9a089091g504ag4446ga707g787ad2d73d89">Go to [1] ([2])</content>
 	<content contentuid="h9ade7360g8608g42f6g8e7cgff542d517949">&lt;font color=&apos;#BB77FF&apos; size=&apos;22&apos;&gt;Preset Selection&lt;/font&gt;&lt;br&gt;Toggle the the Preset Selection dropdown.</content>
 	<content contentuid="h9b4fce0fge5a9g4369gb3e8g1567058cc47c">If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like invisible and healing statuses. </content>
@@ -365,6 +370,8 @@
 	<content contentuid="hb2e82c9dg3175g429cga865g3c670288b3c6">Always display the &quot;Scales With x&quot; text that isn&apos;t visible if the weapon has an attribute requirement above 0.</content>
 	<content contentuid="hb48f1258g4031g4ab2g8d73gbb24956d5d74">I definitely activated these mods at one point! Why are they no longer active?</content>
 	<content contentuid="hb4a1f383gc0b5g449bgb28egc09586c81b68">If enabled, spells can critical hit without the Savage Sortilege talent.</content>
+	<content contentuid="hb4bdd70cgf027g47c9ga1dcgd18730345f39">Tooltips</content>
+	<content contentuid="hb4f59587g39f5g45f1g9295g56b66d8ec039">Always Show Bar Values</content>
 	<content contentuid="hb5265b58gcf15g40dfg8769gb5dcc430a99f">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="hb5f12e88g0069g4179gab3dg951865078bc7">On Basic Attack or Weapon Skill:</content>
 	<content contentuid="hb62538b3gfff2g4bb4g9b70g7463f658f4f7">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
@@ -404,6 +411,7 @@
 	<content contentuid="hc48478ceg4b78g4087g9dd6g27ba0e95a20b">[SAVE] Save Global Settings</content>
 	<content contentuid="hc51c7f81g8ab6g40b3ga78eg9561389dda7c">4 Hours</content>
 	<content contentuid="hc5f5cca4gb3f7g4950g9b0ag16300e7a3610">45 Minutes</content>
+	<content contentuid="hc69217f8g7df1g4947ga5b0g1cdd026854de">Set the base carry weight value.&lt;br&gt;Default: 0&lt;br&gt;Carry Weight Formula: [Special:CarryWeightFormula]</content>
 	<content contentuid="hc6932dc9g399cg48a5gb9cdg722cf1ac26ea">*You take a look at his wares.*</content>
 	<content contentuid="hc70db3e9ga1ecg465egb953g253f7e77db5d">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc768ad97g83deg41fdgb257g54443e202c5a">As a gesture of goodwill towards future trading, I&apos;ll give you this book for free.</content>
@@ -449,6 +457,7 @@
 	<content contentuid="hdca46b30gaf33g45e0g803cgf1ce00e284d2">Condense Item Tooltips</content>
 	<content contentuid="hdd673ac0g2ae1g423cg853eg5a7b8149cd13">*He spits out what is presumably seaweed.* So, what can I do for you today?</content>
 	<content contentuid="hde332a41gc59bg4fd8ga597g6fcb1ae6dc8f">If enabled, items will be automatically identified. </content>
+	<content contentuid="hdeecfa3egccebg4dd3g9086g4861b29a6435">Base Carry Weight</content>
 	<content contentuid="hdefd7688g4811g445ag94a4gbe304b43168b">I managed to sneak away before that nasty Kraken showed up. *He groans and rubs his shoulders.* Damn if I won&apos;t feel it tomorrow, though...</content>
 	<content contentuid="he037429fgcbf9g4a78gb1c2ge9613039ef62">Preset Menu (Locked - Check Back in 30 Seconds)</content>
 	<content contentuid="he0bf54a8g57fdg4dffg9287gf5c6aac24a35">Selecting preset...</content>

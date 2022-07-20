@@ -47,10 +47,6 @@ Ext.RegisterNetListener("LeaderLib_UpdateAllPermanentStatuses", function (channe
 	end
 end)
 
-local _EQUIPMENT_STATUS = {
-	SOURCE_MUTED = true
-}
-
 ---@param character EclCharacter
 ---@param status EclStatus
 ---@param tooltip TooltipData
@@ -90,10 +86,9 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 		if not sourceName and equipmentStatuses[status.StatusId] then
 			local itemSourceData = equipmentStatuses[status.StatusId]
 			if itemSourceData then
-				local displayName = GameHelpers.GetDisplayName(character)
 				local itemName = GameHelpers.GetDisplayName(itemSourceData.Item)
 				local rarityColor = Data.Colors.Rarity[itemSourceData.Item.Stats.ItemTypeReal] or Data.Colors.Common.White
-				sourceName = string.format("%s (<font color='%s'>%s</font>)", displayName, rarityColor, itemName)
+				sourceName = string.format("<font color='%s'>%s</font>", rarityColor, itemName)
 			end
 		end
 

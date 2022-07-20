@@ -3,7 +3,7 @@
 ---@field addMenuCheckbox fun(id:integer, label:string, enabled:boolean, state:integer, filterBool:boolean, tooltip:string)
 ---@field setMenuCheckbox fun(id:integer, enabled:boolean, state:integer)
 ---@field addMenuInfoLabel fun(id:integer, label:string, info:string)
----@field addMenuLabel fun(label:string)
+---@field addMenuLabel fun(label:string, tooltip:string|nil, fixedHeight:number|nil)
 ---@field addMenuSelectorEntry fun(id:integer, label:string)
 ---@field setMenuDropDownEnabled fun(id:integer, enabled:boolean)
 ---@field setMenuDropDownDisabledTooltip fun(id:integer, tooltip:string)

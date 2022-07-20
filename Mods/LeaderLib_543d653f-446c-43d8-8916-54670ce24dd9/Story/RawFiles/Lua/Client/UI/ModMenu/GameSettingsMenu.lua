@@ -175,17 +175,24 @@ local text = {
 	BackstabSettings_MeleeOnly_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_MeleeOnly_Description", "", _dst),
 	BackstabSettings_SpellsCanBackstab = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab", "", _ds),
 	BackstabSettings_SpellsCanBackstab_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab_Description", "", _dst),
-	Section_Client = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_Client", "", _ds),
+	Section_Client = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_Client", "Client-Side Settings", _ds),
+	Section_Client_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_Client_Description", "These settings only affect you. In multiplayer, these settings can be set independently from the host.", _dst),
 	Section_StatusHider = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_StatusHider", "Status Hiding", _ds),
 	Section_Tooltips_Delay = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_TooltipsDelay", "Tooltip Delays", _ds),
 	Section_InventoryFade = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_InventoryFade", "Inventory Item Fading"),
+	Section_UI = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_UI", "UI"),
+	Section_UI_Tooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_UI_Tooltips", "Tooltips"),
+	Section_Gameplay = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_Gameplay", "Gameplay Host Settings"),
+	Section_Gameplay_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_Gameplay_Description", "These settings affect all players. In multiplayer, only the host can adjust these options.", _dst),
 	Button_ClearWhitelist = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearWhitelist", "", _ds),
 	Button_ClearWhitelist_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearWhitelist_Description", "", _dst),
 	Button_ClearBlacklist = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearBlacklist", "", _ds),
 	Button_ClearBlacklist_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearBlacklist_Description", "", _dst),
 	Client = {
-		AlwaysDisplayWeaponScalingText_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText_Description", "", _dst),
 		AlwaysDisplayWeaponScalingText = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText", "", _ds),
+		AlwaysDisplayWeaponScalingText_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText_Description", "", _dst),
+		AlwaysShowBarText = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysShowBarText", "Always Show Bar Values", _ds),
+		AlwaysShowBarText_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysShowBarText_Description", "If enabled, the health and armor bars will always show their values, instead of only on mouse hover.", _dst),
 		DivineTalentsEnabled = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled", "", _ds),
 		HideStatuses = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses", "", _ds),
 		HideStatuses_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses_Description", "", _dst),
@@ -296,56 +303,21 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		local controlsEnabled = Client.IsHost == true
 		local backstabTalentSupported = Mods.CharacterExpansionLib ~= nil
 
-		mainMenu.addMenuLabel(text.MainTitle.Value)
+		local _lh = 20
 
-		mainMenu.addMenuCheckbox(AddControl(settings, "StarterTierSkillOverrides"), text.StarterTierOverrides.Value, controlsEnabled, settings.StarterTierSkillOverrides and 1 or 0, false, text.StarterTierOverrides_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings, "LowerMemorizationRequirements"), text.LowerMemorizationRequirements.Value, controlsEnabled, settings.LowerMemorizationRequirements and 1 or 0, false, text.LowerMemorizationRequirements_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings, "SpellsCanCritWithoutTalent"), text.SpellsCanCritWithoutTalent.Value, controlsEnabled, settings.SpellsCanCritWithoutTalent and 1 or 0, false, text.SpellsCanCritWithoutTalent_Description.Value)
+		mainMenu.addMenuLabel(text.MainTitle.Value, "", _lh)
+
+		mainMenu.addMenuLabel(text.Section_Client.Value, text.Section_Client_Description.Value)
 		
-		local apSliderMax = 30
-		
-		mainMenu.addMenuLabel(text.APSettings_Group_Player.Value)
-		--mainMenu.addMenuInfoLabel(GetNewID({Value=text.APSettings_Group_Player}), text.APSettings_Group_Player.Value, "TesT")
-		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.Player, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.Player.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Start"), text.APSettings_Start.Value, settings.APSettings.Player.Start, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Start_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.Player.Recovery, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Recovery_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Max"), text.APSettings_Max.Value, settings.APSettings.Player.Max, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Max_Description.Value)
-
-		mainMenu.addMenuLabel(text.APSettings_Group_NPC.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.NPC, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.NPC.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Start"), text.APSettings_Start.Value, settings.APSettings.NPC.Start, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Start_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.NPC.Recovery, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Recovery_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Max"), text.APSettings_Max.Value, settings.APSettings.NPC.Max, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Max_Description.Value)
-
-		mainMenu.addMenuLabel(text.Section_Backstab.Value)
-
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings, "AllowTwoHandedWeapons"), text.BackstabSettings_AllowTwoHandedWeapons.Value, controlsEnabled, settings.BackstabSettings.AllowTwoHandedWeapons and 1 or 0, false, text.BackstabSettings_AllowTwoHandedWeapons_Description.Value)
-		mainMenu.addMenuSlider(AddControl(settings.BackstabSettings, "MeleeSpellBackstabMaxDistance"), text.BackstabSettings_MeleeSpellBackstabMaxDistance.Value, settings.BackstabSettings.MeleeSpellBackstabMaxDistance, 0.1, 30.0, 0.1, not controlsEnabled, text.BackstabSettings_MeleeSpellBackstabMaxDistance_Description.Value)
-
-		mainMenu.addMenuLabel(text.BackstabSettings_Group_Player.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "Enabled", "BackstabSettings.Player.Enabled"), text.BackstabSetting_Enabled.Value, controlsEnabled, settings.BackstabSettings.Player.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
-		if backstabTalentSupported then
-			mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, controlsEnabled, settings.BackstabSettings.Player.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
-		end
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, controlsEnabled, settings.BackstabSettings.Player.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, controlsEnabled, settings.BackstabSettings.Player.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
-
-		mainMenu.addMenuLabel(text.BackstabSettings_Group_NPC.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "Enabled"), text.BackstabSetting_Enabled.Value, controlsEnabled, settings.BackstabSettings.NPC.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
-		if backstabTalentSupported then
-			mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, controlsEnabled, settings.BackstabSettings.NPC.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
-		end
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, controlsEnabled, settings.BackstabSettings.NPC.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, controlsEnabled, settings.BackstabSettings.NPC.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
-
-		mainMenu.addMenuLabel(text.Section_Client.Value)
+		mainMenu.addMenuLabel(text.Section_UI.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysShowBarText"), text.Client.AlwaysShowBarText.Value, true, settings.Client.AlwaysShowBarText and 1 or 0, false, text.Client.AlwaysShowBarText_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideChatLog"), text.Client.HideChatLog.Value, true, settings.Client.HideChatLog and 1 or 0, false, text.Client.HideChatLog_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "ToggleCombatLog"), text.Client.ToggleCombatLog.Value, true, settings.Client.ToggleCombatLog and 1 or 0, false, text.Client.ToggleCombatLog_Description.Value)
 		if Mods.CharacterExpansionLib then
 			mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled"), text.Client.DivineTalentsEnabled.Value, true, settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client.DivineTalentsEnabled_Description.Value)
 		end
-
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideChatLog"), text.Client.HideChatLog.Value, true, settings.Client.HideChatLog and 1 or 0, false, text.Client.HideChatLog_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "ToggleCombatLog"), text.Client.ToggleCombatLog.Value, true, settings.Client.ToggleCombatLog and 1 or 0, false, text.Client.ToggleCombatLog_Description.Value)
 		
+		mainMenu.addMenuLabel(text.Section_UI_Tooltips.Value, "", _lh)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideConsumableEffects", nil, true), text.Client.HideConsumableEffects.Value, true, settings.Client.HideConsumableEffects and 0 or 1, false, text.Client.HideConsumableEffects_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideStatusSource", nil, true), text.Client.HideStatusSource.Value, true, settings.Client.HideStatusSource and 0 or 1, false, text.Client.HideStatusSource_Description.Value)
 
@@ -356,27 +328,25 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseStatusTooltips"), text.Client.CondenseStatusTooltips.Value, true, settings.Client.CondenseStatusTooltips and 1 or 0, false, text.Client.CondenseStatusTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "FixStatusTooltips"), text.Client.FixStatusTooltips.Value, true, settings.Client.FixStatusTooltips and 1 or 0, false, text.Client.FixStatusTooltips_Description.Value)
 
-		mainMenu.addMenuLabel(text.Section_Tooltips_Delay.Value)
+		mainMenu.addMenuLabel(text.Section_Tooltips_Delay.Value, "", _lh)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "CharacterSheet"), text.Client.EnableTooltipDelay.CharacterSheet.Value, true, settings.Client.EnableTooltipDelay.CharacterSheet and 1 or 0, false, text.Client.EnableTooltipDelay.CharacterSheet_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Generic"), text.Client.EnableTooltipDelay.Generic.Value, true, settings.Client.EnableTooltipDelay.Generic and 1 or 0, false, text.Client.EnableTooltipDelay.Generic_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Item"), text.Client.EnableTooltipDelay.Item.Value, true, settings.Client.EnableTooltipDelay.Item and 1 or 0, false, text.Client.EnableTooltipDelay.Item_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Skill"), text.Client.EnableTooltipDelay.Skill.Value, true, settings.Client.EnableTooltipDelay.Skill and 1 or 0, false, text.Client.EnableTooltipDelay.Skill_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Status"), text.Client.EnableTooltipDelay.Status.Value, true, settings.Client.EnableTooltipDelay.Status and 1 or 0, false, text.Client.EnableTooltipDelay.Status_Description.Value)
 
-		if _EXTVERSION >= 56 then
-			local fadeMin = 1
-			local fadeMax = 100
-			local fadeStep = 1
-			local clamp = function(v) return GameHelpers.Math.Clamp(v, fadeMin, fadeMax) end
+		local fadeMin = 1
+		local fadeMax = 100
+		local fadeStep = 1
+		local clamp = function(v) return GameHelpers.Math.Clamp(v, fadeMin, fadeMax) end
 
-			mainMenu.addMenuLabel(text.Section_InventoryFade.Value)
-			mainMenu.addMenuCheckbox(AddControl(settings.Client.FadeInventoryItems, "Enabled"), text.Client.Fade.Enabled.Value, true, settings.Client.FadeInventoryItems.Enabled and 1 or 0, false, text.Client.Fade.Enabled_Description.Value)
+		mainMenu.addMenuLabel(text.Section_InventoryFade.Value, "", _lh)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client.FadeInventoryItems, "Enabled"), text.Client.Fade.Enabled.Value, true, settings.Client.FadeInventoryItems.Enabled and 1 or 0, false, text.Client.Fade.Enabled_Description.Value)
 
-			mainMenu.addMenuSlider(AddControl(settings.Client.FadeInventoryItems, "KnownSkillbooks"), text.Client.Fade.KnownSkillbooks.Value, clamp(settings.Client.FadeInventoryItems.KnownSkillbooks), fadeMin, fadeMax, fadeStep, false, text.Client.Fade.KnownSkillbooks_Description.Value)
-			mainMenu.addMenuSlider(AddControl(settings.Client.FadeInventoryItems, "ReadBooks"), text.Client.Fade.ReadBooks.Value, clamp(settings.Client.FadeInventoryItems.ReadBooks), fadeMin, fadeMax, fadeStep, false, text.Client.Fade.ReadBooks_Description.Value)
-		end
+		mainMenu.addMenuSlider(AddControl(settings.Client.FadeInventoryItems, "KnownSkillbooks"), text.Client.Fade.KnownSkillbooks.Value, clamp(settings.Client.FadeInventoryItems.KnownSkillbooks), fadeMin, fadeMax, fadeStep, false, text.Client.Fade.KnownSkillbooks_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.Client.FadeInventoryItems, "ReadBooks"), text.Client.Fade.ReadBooks.Value, clamp(settings.Client.FadeInventoryItems.ReadBooks), fadeMin, fadeMax, fadeStep, false, text.Client.Fade.ReadBooks_Description.Value)
 
-		mainMenu.addMenuLabel(text.Section_StatusHider.Value)
+		mainMenu.addMenuLabel(text.Section_StatusHider.Value, "", _lh)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "HideAll"), text.Client.HideStatuses.Value, true, settings.Client.StatusOptions.HideAll and 1 or 0, false, text.Client.HideStatuses_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "AffectHealthbar"), text.Client.StatusOptions_AffectHealthbar.Value, true, settings.Client.StatusOptions.AffectHealthbar and 1 or 0, false, text.Client.StatusOptions_AffectHealthbar_Description.Value)
 
@@ -388,6 +358,48 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 			GameSettings.Settings.Client.StatusOptions.Whitelist = {}
 			GameSettingsManager.Save()
 		end), text.Button_ClearWhitelist.Value, "", true, text.Button_ClearWhitelist_Description.Value)
+
+		mainMenu.addMenuLabel(text.Section_Gameplay.Value, text.Section_Gameplay_Description.Value)
+
+		mainMenu.addMenuCheckbox(AddControl(settings, "StarterTierSkillOverrides"), text.StarterTierOverrides.Value, controlsEnabled, settings.StarterTierSkillOverrides and 1 or 0, false, text.StarterTierOverrides_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings, "LowerMemorizationRequirements"), text.LowerMemorizationRequirements.Value, controlsEnabled, settings.LowerMemorizationRequirements and 1 or 0, false, text.LowerMemorizationRequirements_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings, "SpellsCanCritWithoutTalent"), text.SpellsCanCritWithoutTalent.Value, controlsEnabled, settings.SpellsCanCritWithoutTalent and 1 or 0, false, text.SpellsCanCritWithoutTalent_Description.Value)
+		
+		local apSliderMax = 30
+		
+		mainMenu.addMenuLabel(text.APSettings_Group_Player.Value, "", _lh)
+		--mainMenu.addMenuInfoLabel(GetNewID({Value=text.APSettings_Group_Player}), text.APSettings_Group_Player.Value, "TesT")
+		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.Player, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.Player.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Start"), text.APSettings_Start.Value, settings.APSettings.Player.Start, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Start_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.Player.Recovery, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Recovery_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Max"), text.APSettings_Max.Value, settings.APSettings.Player.Max, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Max_Description.Value)
+
+		mainMenu.addMenuLabel(text.APSettings_Group_NPC.Value, "", _lh)
+		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.NPC, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.NPC.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Start"), text.APSettings_Start.Value, settings.APSettings.NPC.Start, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Start_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.NPC.Recovery, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Recovery_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Max"), text.APSettings_Max.Value, settings.APSettings.NPC.Max, -1, apSliderMax, 1, not controlsEnabled, text.APSettings_Max_Description.Value)
+
+		mainMenu.addMenuLabel(text.Section_Backstab.Value, "", _lh)
+
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings, "AllowTwoHandedWeapons"), text.BackstabSettings_AllowTwoHandedWeapons.Value, controlsEnabled, settings.BackstabSettings.AllowTwoHandedWeapons and 1 or 0, false, text.BackstabSettings_AllowTwoHandedWeapons_Description.Value)
+		mainMenu.addMenuSlider(AddControl(settings.BackstabSettings, "MeleeSpellBackstabMaxDistance"), text.BackstabSettings_MeleeSpellBackstabMaxDistance.Value, settings.BackstabSettings.MeleeSpellBackstabMaxDistance, 0.1, 30.0, 0.1, not controlsEnabled, text.BackstabSettings_MeleeSpellBackstabMaxDistance_Description.Value)
+
+		mainMenu.addMenuLabel(text.BackstabSettings_Group_Player.Value, "", _lh)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "Enabled", "BackstabSettings.Player.Enabled"), text.BackstabSetting_Enabled.Value, controlsEnabled, settings.BackstabSettings.Player.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
+		if backstabTalentSupported then
+			mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, controlsEnabled, settings.BackstabSettings.Player.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
+		end
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, controlsEnabled, settings.BackstabSettings.Player.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, controlsEnabled, settings.BackstabSettings.Player.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
+
+		mainMenu.addMenuLabel(text.BackstabSettings_Group_NPC.Value, "", _lh)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "Enabled"), text.BackstabSetting_Enabled.Value, controlsEnabled, settings.BackstabSettings.NPC.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
+		if backstabTalentSupported then
+			mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, controlsEnabled, settings.BackstabSettings.NPC.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
+		end
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, controlsEnabled, settings.BackstabSettings.NPC.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, controlsEnabled, settings.BackstabSettings.NPC.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
 	end
 end
 

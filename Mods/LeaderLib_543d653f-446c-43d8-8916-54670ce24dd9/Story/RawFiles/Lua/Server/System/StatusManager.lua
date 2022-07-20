@@ -498,6 +498,7 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 
 		if statusIsActive then
 			GameHelpers.Status.Remove(target, status)
+			statusIsActive = false
 		end
 	else
 		if PersistentVars.ActivePermanentStatuses[GUID] == nil then
@@ -507,9 +508,11 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 		PersistentVars.ActivePermanentStatuses[GUID][status] = sourceId
 		if not statusIsActive then
 			--fassert(_type(status) == "string" and GameHelpers.Stats.Exists(status), "Status (%s) does not exist.", status)
-			GameHelpers.Status.Apply(target, status, -1.0, true, source or target)
+			GameHelpers.Status.Apply(target, status, -1.0, true, sourceId or target)
+			statusIsActive = true
 		end
 	end
+	return statusIsActive
 end
 
 ---Applies permanent status. The given status will be blocked from deletion.
@@ -518,14 +521,14 @@ end
 ---@param source CharacterParam|nil A source to use when applying the status, if any. Defaults to the target.
 ---@return boolean isActive Returns whether the permanent status is active or not.
 function StatusManager.ApplyPermanentStatus(target, status, source)
-	_INTERNAL.SetPermanentStatus(target, status, true, source)
+	return _INTERNAL.SetPermanentStatus(target, status, true, source)
 end
 
 ---Remove a registered permanent status for the given character.
 ---@param target CharacterParam
 ---@param status string
 function StatusManager.RemovePermanentStatus(target, status)
-	_INTERNAL.SetPermanentStatus(target, status, false)
+	return _INTERNAL.SetPermanentStatus(target, status, false)
 end
 
 ---Removed all registered permanent statuses for the given character.
@@ -555,7 +558,7 @@ end
 ---@param source CharacterParam|nil A source to use when applying the status, if any. Defaults to the target.
 ---@return boolean isActive Returns whether the permanent status is active or not.
 function StatusManager.TogglePermanentStatus(target, status, source)
-	_INTERNAL.SetPermanentStatus(target, status, not StatusManager.IsPermanentStatusActive(target, status), source)
+	return _INTERNAL.SetPermanentStatus(target, status, not StatusManager.IsPermanentStatusActive(target, status), source)
 end
 
 if Ext.Version() >= 56 then

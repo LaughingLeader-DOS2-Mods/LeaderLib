@@ -54,20 +54,21 @@ if Game == nil then
 	Game = {}
 end
 
-if Game.Tooltip == nil then
-	Game.Tooltip = {}
-end
+---@class ExtenderTooltipAPI
+local _TT = {}
+
+Game.Tooltip = _TT
 
 ---@type GameTooltipRequestProcessor
 local RequestProcessor = _Require("Client/UI/Tooltips/TooltipRequestProcessor.lua")
-Game.Tooltip.RequestProcessor = RequestProcessor
+_TT.RequestProcessor = RequestProcessor
 
 local game = Game
-_ENV = Game.Tooltip
+_ENV = _TT
 _ENV.Game = game
 ---@diagnostic disable deprecated
 if setfenv ~= nil then
-	setfenv(1, Game.Tooltip)
+	setfenv(1, _TT)
 end
 ---@diagnostic enable
 
@@ -75,7 +76,7 @@ end
 ---@field LastPlayer integer The NetID of the last player character.
 ---@field LastOverhead number The double handle of the overhead object.
 local ControllerVars = {}
-Game.Tooltip.ControllerVars = ControllerVars
+_TT.ControllerVars = ControllerVars
 
 local tooltipCustomIcons = {}
 
@@ -85,7 +86,7 @@ local tooltipCustomIcons = {}
 ---@param icon string
 ---@param w integer
 ---@param h integer
-function Game.Tooltip.AddCustomIconToTooltip(id, icon, w, h)
+function _TT.AddCustomIconToTooltip(id, icon, w, h)
 	local ui = _GetUIByType(_UITYPE.tooltip)
 	if ui then
 		ui:SetCustomIcon(id, icon, w, h)
@@ -245,7 +246,7 @@ TooltipItemTypes = {
 	ArmorSet = 131,
 }
 
-Game.Tooltip.TooltipItemTypes = TooltipItemTypes
+_TT.TooltipItemTypes = TooltipItemTypes
 
 local _Label = {"Label", "string"}
 local _Value = {"Value", "string"}
@@ -440,7 +441,7 @@ TooltipStatAttributes = {
 	[0x2D] = "Gain",
 }
 
-Game.Tooltip.TooltipStatAttributes = TooltipStatAttributes
+_TT.TooltipStatAttributes = TooltipStatAttributes
 
 --- @param ui UIObject
 --- @param name string MainTimeline property name to fetch
@@ -920,7 +921,7 @@ if previousListeners.ObjectListeners then
 end
 
 --Auto-completion
-Game.Tooltip.TooltipHooks = TooltipHooks
+_TT.TooltipHooks = TooltipHooks
 
 ---@class TooltipArrayData
 ---@field Main string
@@ -973,7 +974,7 @@ local TooltipArrayNames = {
 		}
 	}
 }
-Game.Tooltip.TooltipArrayNames = TooltipArrayNames
+_TT.TooltipArrayNames = TooltipArrayNames
 
 function _ttHooks:RegisterControllerHooks()
 	_RegisterUITypeInvokeListener(_UITYPE.equipmentPanel_c, "updateTooltip", function (ui, ...)
@@ -1658,7 +1659,9 @@ end
 ---@field UIType integer
 ---@field Instance UIObject
 ---@field Root FlashMainTimeline
-TooltipData = {}
+local TooltipData = {}
+
+_TT.TooltipData = TooltipData
 
 ---@class GenericTooltipData:TooltipData
 ---@field Data TooltipGenericRequest
@@ -1725,7 +1728,7 @@ local _CustomTooltipTypes = {
 	Description = true
 }
 
-Game.Tooltip.CustomTooltipTypes = _CustomTooltipTypes
+_TT.CustomTooltipTypes = _CustomTooltipTypes
 
 local function _IsTooltipElement(ele)
 	return type(ele) == "table" and (TooltipItemTypes[ele.Type] ~= nil or _CustomTooltipTypes[ele.Type])
@@ -1951,7 +1954,7 @@ function TooltipData:AppendElementBeforeType(ele, elementType)
 	return ele
 end
 
-Game.Tooltip.Register = {
+_TT.Register = {
 	---@param callback fun(request:AnyTooltipRequest, tooltip:TooltipData)
 	Global = function(callback)
 		_ttHooks:RegisterListener(nil, nil, callback)
@@ -2046,13 +2049,13 @@ Game.Tooltip.Register = {
 
 ---Register a function to call when a tooltip occurs.
 ---Examples:
----Game.Tooltip.RegisterListener("Skill", nil, myFunction) - Register a function for skill type tooltips.
----Game.Tooltip.RegisterListener("Status", "HASTED", myFunction) - Register a function for a HASTED status tooltip.
----Game.Tooltip.RegisterListener(myFunction) - Register a function for every kind of tooltip.
+---_TT.RegisterListener("Skill", nil, myFunction) - Register a function for skill type tooltips.
+---_TT.RegisterListener("Status", "HASTED", myFunction) - Register a function for a HASTED status tooltip.
+---_TT.RegisterListener(myFunction) - Register a function for every kind of tooltip.
 ---@param tooltipTypeOrCallback TooltipRequestType|function The tooltip type, such as "Skill".
 ---@param idOrNil string|function The tooltip ID, such as "Projectile_Fireball".
 ---@param callbackOrNil function If the first two parameters are set, this is the function to invoke.
-function Game.Tooltip.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
+function _TT.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
 	if type(callbackOrNil) == "function" then
 		--assert(type(tooltipTypeOrCallback) == "string", "If the third parameter is a function, the first parameter must be a string (TooltipType).")
 		--assert(type(tooltipID) == "string", "If the third parameter is a function, the second parameter must be a string.")
@@ -2066,7 +2069,7 @@ function Game.Tooltip.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackO
 		local t1 = type(tooltipTypeOrCallback)
 		local t2 = type(idOrNil)
 		local t3 = type(callbackOrNil)
-		_PrintError(string.format("[Game.Tooltip.RegisterListener] Invalid arguments - 1: [%s](%s), 2: [%s](%s), 3: [%s](%s)", tooltipTypeOrCallback, t1, idOrNil, t2, callbackOrNil, t3))
+		_PrintError(string.format("[_TT.RegisterListener] Invalid arguments - 1: [%s](%s), 2: [%s](%s), 3: [%s](%s)", tooltipTypeOrCallback, t1, idOrNil, t2, callbackOrNil, t3))
 	end
 end
 
@@ -2075,7 +2078,7 @@ end
 ---@param typeOrCallback string|GameTooltipRequestListener
 ---@param callbackOrNil GameTooltipRequestListener
 ---@param state string The function state, either "before" or "after".
-function Game.Tooltip.RegisterRequestListener(typeOrCallback, callbackOrNil, state)
+function _TT.RegisterRequestListener(typeOrCallback, callbackOrNil, state)
 	state = state or "after"
 	local t = type(typeOrCallback)
 	if t == "string" then
@@ -2090,7 +2093,7 @@ end
 
 ---@param typeOrCallback string|GameTooltipBeforeNotifyListener Request type or the callback to register.
 ---@param callbackOrNil GameTooltipBeforeNotifyListener|nil The callback to register if the first parameter is a string.
-function Game.Tooltip.RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil)
+function _TT.RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil)
 	local t = type(typeOrCallback)
 	if t == "string" then
 		assert(type(callbackOrNil) == "function", "Second parameter must be a function.")
@@ -2103,7 +2106,7 @@ end
 ---Check if the current tooltip request type matches the given type.
 ---@param t TooltipRequestType
 ---@return boolean
-function Game.Tooltip.RequestTypeEquals(t)
+function _TT.RequestTypeEquals(t)
 	if _ttHooks.ActiveType == t or (_ttHooks.NextRequest and _ttHooks.NextRequest.Type == t) then
 		return true
 	end
@@ -2113,7 +2116,7 @@ end
 ---Check if the last tooltip request type matches the given type.
 ---@param t TooltipRequestType
 ---@return boolean
-function Game.Tooltip.LastRequestTypeEquals(t)
+function _TT.LastRequestTypeEquals(t)
 	if _ttHooks.Last.Type == t or (_ttHooks.NextRequest and _ttHooks.NextRequest.Type == t) then
 		return true
 	end
@@ -2123,7 +2126,7 @@ end
 ---Get the current or last request table and type.
 ---@return AnyTooltipRequest request
 ---@return TooltipRequestType requestType
-function Game.Tooltip.GetCurrentOrLastRequest()
+function _TT.GetCurrentOrLastRequest()
 	if _ttHooks.NextRequest then
 		return _ttHooks.NextRequest,_ttHooks.ActiveType
 	end
@@ -2135,7 +2138,7 @@ end
 
 ---Returns true if a tooltip is currently open.
 ---@return boolean
-function Game.Tooltip.IsOpen()
+function _TT.IsOpen()
 	return _ttHooks.IsOpen
 end
 

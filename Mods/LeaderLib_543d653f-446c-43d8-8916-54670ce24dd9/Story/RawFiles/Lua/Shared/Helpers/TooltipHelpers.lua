@@ -12,13 +12,9 @@ local function GetTextParamValues(output, character)
 		local fullParam = v:gsub("%[Special:", ""):gsub("%]", "")
 		local props = StringHelpers.Split(fullParam, ":")
 		local param = ""
-		local skipUnpack = false
 		if props and #props >= 0 then
 			param = props[1]
 			table.remove(props, 1)
-			if #props == 0 then
-				skipUnpack = true
-			end
 		end
 		if character == nil then
 			character = Client:GetCharacter()
@@ -36,7 +32,7 @@ local function GetTextParamValues(output, character)
 				if invokeResult.Results then
 					for i=1,#invokeResult.Results do
 						local v = invokeResult.Results[i]
-						if type(v) == "string" then
+						if type(v) == "string" and not StringHelpers.IsNullOrWhitespace(v) then
 							value = v
 						end
 					end
@@ -50,8 +46,7 @@ local function GetTextParamValues(output, character)
 		elseif value == nil then
 			value = ""
 		end
-		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-		output = string.gsub(output, escapedReplace, value)
+		output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
 	end
 	return output
 end
@@ -199,8 +194,16 @@ local function ReplacePlaceholders(str, character)
 	if character ~= nil and _type(character) == "string" then
 		character = GameHelpers.GetCharacter(character)
 	end
-	if character == nil and Client then
-		character = Client:GetCharacter()
+	if character == nil then
+		if _ISCLIENT then
+			if Client then
+				character = Client:GetCharacter()
+			else
+				character = GameHelpers.Client.GetCharacter()
+			end
+		elseif Ext.Osiris.IsCallable() then
+			character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+		end
 	end
 	if _type(str) == "table" and str.Type == "TranslatedString" then
 		str = str.Value

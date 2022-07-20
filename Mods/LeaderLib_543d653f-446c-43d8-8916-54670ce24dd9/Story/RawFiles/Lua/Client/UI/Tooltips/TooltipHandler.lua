@@ -45,13 +45,10 @@ UI.RegisterItemTooltipTag = TooltipHandler.RegisterItemTooltipTag
 
 ---@param tooltip TooltipData
 function TooltipHandler.OnGenericTooltip(tooltip)
-	if tooltip.Data.UIType == Data.UIType.hotBar and string.find(tooltip.Data.Text, "Toggle Chat") then
-		tooltip:MarkDirty()
-		tooltip.Data.AllowDelay = false
-		--tooltip.Data.Text = tooltip.Data.Text .. "<br>This is appended text! Yahoo!"
-		if tooltip:IsExpanded() then
-			tooltip.Data.Text = "Toggle Chat<br>Global chat was disabled before release ;("
-		end
+	---@type GenericDescription
+	local desc = tooltip:GetDescriptionElement()
+	if desc then
+		desc.Label = GameHelpers.Tooltip.ReplacePlaceholders(desc.Label, Client:GetCharacter())
 	end
 end
 
@@ -73,7 +70,6 @@ local function RegisterTooltipHandlers()
 	end)
 	_r.Status(TooltipHandler.OnStatusTooltip)
 	_r.Stat(TooltipHandler.OnStatTooltip)
-	
 	--TODO Need an extender way to get a surface on the client
 	--[[ _r.Surface(function (character, surface, tooltip)
 		if Features.SurfaceDisplaySource then
@@ -84,11 +80,11 @@ local function RegisterTooltipHandlers()
 			description.Label = string.format("%s%s", description.Label or "", idText)
 		end
 	end) ]]
+	_r.Generic(TooltipHandler.OnGenericTooltip)
 
 	if Vars.DebugMode then
 		_r.Rune(TooltipHandler.OnRuneTooltip)
 		_r.CustomStat(TooltipHandler.OnCustomStatTooltip)
-		_r.Generic(TooltipHandler.OnGenericTooltip)
 		-- _r.Surface(function (character, surfaceType, tooltip)
 		-- 	local description = tooltip:GetDescriptionElement()
 		-- 	if description then

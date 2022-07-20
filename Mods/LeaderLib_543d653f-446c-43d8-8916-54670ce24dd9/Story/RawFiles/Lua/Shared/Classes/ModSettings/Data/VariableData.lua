@@ -1,12 +1,12 @@
 ---@class VariableData
+---@field Default string|integer|number|number[]
+---@field Value string|integer|number|number[]
+---@field Targets table|nil
+---@field DisplayName string|TranslatedString|nil
+---@field Tooltip string|TranslatedString|nil
 local VariableData = {
 	Type = "VariableData",
 	ID = "",
-	Value = "",
-	Default = "",
-	Targets = nil,
-	DisplayName = nil,
-	Tooltip = nil,
 	Min = 0,
 	Max = 999,
 	Interval = 1,

@@ -34,8 +34,8 @@ function SettingsData:Create(flags, variables, buttons)
 end
 
 --- Shortcut to get the string key text without handle.
-local function skey(key)
-	return Classes.TranslatedString:CreateFromKey(key, key, {AutoReplacePlaceholders=true})
+local function skey(key, autoReplace)
+	return Classes.TranslatedString:CreateFromKey(key, key, {AutoReplacePlaceholders=autoReplace ~= false})
 end
 
 ---@private
@@ -104,7 +104,7 @@ function SettingsData:AddLocalizedFlag(flag, flagType, enabled, key, tooltipKey,
 	end
 	key = key or flag
 	tooltipKey = tooltipKey or key.."_Description"
-	self:AddFlag(flag, flagType, enabled, skey(key), skey(tooltipKey), canExport, isFromFile)
+	self:AddFlag(flag, flagType, enabled, skey(key), skey(tooltipKey, false), canExport, isFromFile)
 end
 
 ---Same thing as AddFlags, but assumes each flag is its own DisplayName key.
@@ -176,7 +176,7 @@ function SettingsData:AddLocalizedVariable(name, key, value, min, max, interval,
 		isFromFile = false
 	end
 	tooltipKey = tooltipKey or key.."_Description"
-	self:AddVariable(name, value, skey(key), skey(tooltipKey), min, max, interval, canExport, isFromFile)
+	self:AddVariable(name, value, skey(key), skey(tooltipKey, false), min, max, interval, canExport, isFromFile)
 end
 
 ---@param id string
@@ -229,7 +229,7 @@ function SettingsData:AddLocalizedButton(id, key, callback, enabled, hostOnly, t
 		isFromFile = false
 	end
 	tooltipKey = tooltipKey or key.."_Description"
-	self:AddButton(id, callback, skey(key), skey(tooltipKey), enabled, hostOnly, isFromFile)
+	self:AddButton(id, callback, skey(key), skey(tooltipKey, false), enabled, hostOnly, isFromFile)
 end
 
 function SettingsData:UpdateFlags()

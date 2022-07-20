@@ -79,7 +79,8 @@ local function PrepareText(name, v, isCheckbox)
 		end
 	end
 	displayName = GameHelpers.Tooltip.ReplacePlaceholders(displayName)
-	tooltip = GameHelpers.Tooltip.ReplacePlaceholders(tooltip)
+	--Let the generic tooltip listener replace placeholders in the text
+	--tooltip = GameHelpers.Tooltip.ReplacePlaceholders(tooltip)
 	if displayName == "" then
 		displayName = name
 	end

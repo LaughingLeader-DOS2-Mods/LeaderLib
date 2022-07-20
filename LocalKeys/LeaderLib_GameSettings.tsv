@@ -19,45 +19,20 @@ LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab	Skills Can Backstab
 LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab_Description	If enabled, skills will be able to backstab depending on settings (melee only, minimum distance).<br>(Default: Disabled)	h809bc35bgaa71g493egaf0agc20c110d90cf
 LeaderLib_UI_GameSettings_BackstabSettings_TalentRequired	Require Backstab Talent	ha0fda551gb11fg4b9eg9ceag34948486896f
 LeaderLib_UI_GameSettings_BackstabSettings_TalentRequired_Description	If enabled, characters require the Backstab talent to be able to backstab with non-dagger equipment or skills.<br>(Default: Enabled)	hba3c2c4fge700g47bfg877dg00a16a26a454
-LeaderLib_UI_GameSettings_MainTitle	<font color='#4CBCFE' size='28'><u>LeaderLib Game Settings</u></font>	ha5cca930gc538g4846g86f4g0b5c9017c1e5
-LeaderLib_UI_GameSettings_MainTitle_Description	Various settings that alter how the game works.<br><font color='#FF9900'>These settings can only be changed in singleplayer, or by the host in multiplayer.</font><br><font color='#33FF00'>Settings are saved to:<br>Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/</font><font color='#22FF99'>LeaderLib_GameSettings.json</font>	hf1cb17f4g7402g499dg95e5g9552ea2c0fc6
-LeaderLib_UI_GameSettings_Section_AP_NPC	Non-Player Action Point Settings	h24e93debgf7e1g4a6ag9841g5ecca2c911f5
-LeaderLib_UI_GameSettings_Section_AP_Player	Player Action Point Settings	h6eabd548g4797g423agbe50g8a858704a8c1
-LeaderLib_UI_GameSettings_Section_BackstabSettings_General	General Backstab Settings	he93fef85gaa09g45c2g92d3ga71a001dfe49
-LeaderLib_UI_GameSettings_Section_BackstabSettings_NPC	Non-Player Backstab Settings	hf0e4a66bg853eg4cb3gb663g12ba6fbe412f
-LeaderLib_UI_GameSettings_Section_BackstabSettings_Player	Player Backstab Settings	h504a8593g083bg450fgb542gcf686bf36e5b
-LeaderLib_UI_GameSettings_Section_Client	Client-Side Settings	h6d855e34gd141g49f7ga52agc4a30cf700ba
-LeaderLib_UI_GameSettings_Section_StatusHider	Status Hiding	he5c047ebg44afg4995gadf0g3638b568e5cb
-LeaderLib_UI_GameSettings_StarterTierOverrides	Enable Skill Tier Overrides	he2e6e5cdg9372g4805g92b1ge2e4b7b1a0db
-LeaderLib_UI_GameSettings_StarterTierOverrides_Description	If enabled, Novice/Adept/Master tiered skills will be set to Starter instead, allowing them show up in character creation.<br><font color='#FF9933'>Note that if you don't have the required ability levels for memorization, the skill won't show up (enable Lower Skill Memorization Requirements to avoid that).</font><br>(Default: Disabled)	h6feb8440ge26dg4b31gb9fag5d061db28708
-LeaderLib_UI_GameSettings_SpellsCanCritWithoutTalent	Enable Spell Critical Hits	h16ec7750gfd5dg4cfaga64fg991869fa3dfb
-LeaderLib_UI_GameSettings_SpellsCanCritWithoutTalent_Description	If enabled, spells can critical hit without the Savage Sortilege talent.	hb4a1f383gc0b5g449bgb28egc09586c81b68
-LeaderLib_UI_GameSettings_LowerMemorizationRequirements	Lower Skill Memorization Requirements	hfda4adafgd642g477fgbbdbg268fe17118b4
-LeaderLib_UI_GameSettings_LowerMemorizationRequirements_Description	If enabled, skill memorization requirements will be lowered (such as Necromancy 4 to Necromancy 1).<br><font color='#FF9933'>Ideally enable this alongside Skill Tier Overrides, so more skills can be selected in character creation.</font><br>(Default: Disabled)	ha1c04ddag65a8g4deagbbe6g8c401710cad9
+LeaderLib_UI_GameSettings_Button_ClearBlacklist	Clear Blacklist	hfb5060fbgaee1g4ae6g8795g4a0f133edd2b
+LeaderLib_UI_GameSettings_Button_ClearBlacklist_Description	Clear the status blacklist, which is used to hide statuses next to portraits when <font color='#CCAA00'>[Key:LeaderLib_UI_GameSettings_Client_HideStatuses]</font> is disabled.	hedb1dff8g5ad9g429bgaea8g84ecec77dee1
+LeaderLib_UI_GameSettings_Button_ClearWhitelist	Clear Whitelist	h81c5d767gca44g446fg8d4bg56bdf03699a6
+LeaderLib_UI_GameSettings_Button_ClearWhitelist_Description	Clear the status whitelist, which is used to show statuses next to portraits when <font color='#CCAA00'>[Key:LeaderLib_UI_GameSettings_Client_HideStatuses]</font> is enabled.	h96c19068g066dg429bgb939g91ec46051b34
 LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText	Always Display Weapon Scaling Text	ha864ea68gc066g45e8gb0c2gc5ed058a82ff
 LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText_Description	Always display the "Scales With x" text that isn't visible if the weapon has an attribute requirement above 0.	hb2e82c9dg3175g429cga865g3c670288b3c6
-LeaderLib_UI_GameSettings_Client_HideStatuses	Hide All Statuses	hfe94fb21g03b4g46c3gbcaegf551c9b54dc8
-LeaderLib_UI_GameSettings_Client_HideStatuses_Description	If enabled, all statuses next to the party's portraits will be hidden.	h3e7215afg3389g4dc4gaa4bg1029c5cda75a
-LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar	Modify Healthbar Statuses	ha9720574ged59g4d81g92f3gcea93337121c
-LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar_Description	If enabled, status hiding settings will also apply to statuses under the healthbar when examining a character.	hc848f133g22fdg41c0g8205g8041758e7309
-LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled	Always Show Divine Talents	h085c69c2g47e1g4611g9c72g6f45ecb1768d
-LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled_Description	If enabled, the Divine Talents will always be visible in the player UI, regardless if the gift bag is enabled.	h0a56f2cfgf36fg4b73gba0cgc31271b3795f
 LeaderLib_UI_GameSettings_Client_AlwaysExpandTooltips	Always Expand Tooltips	h975b62eagb7acg46c2gb917g0d5218e2e8ca
 LeaderLib_UI_GameSettings_Client_AlwaysExpandTooltips_Description	If enabled, tooltips that support shift-key expansion will always be expanded.	h455f1349g6528g452bg8624g5d0674b01ac5
 LeaderLib_UI_GameSettings_Client_CondenseItemTooltips	Condense Item Tooltips	h7ba50818gb50ag4517g9f12g347bd0a9f990
 LeaderLib_UI_GameSettings_Client_CondenseItemTooltips_Description	Try to reduce max item tooltip size by combining elements, such as "On Hit" actions.	hb94497b0g7a5fg4bffgbf6cg21e932803aeb
 LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips	Condense Status Tooltips	h7ba50818gb50ag4517g9f12g347bd0a9f990
 LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips_Description	Try to reduce max status tooltip size by combining elements, such as immunities.	hb94497b0g7a5fg4bffgbf6cg21e932803aeb
-LeaderLib_UI_GameSettings_Client_FixStatusTooltips	Fix Status Tooltips	h1a19076fg0b33g4b5bg8081g5df8f7ec387f
-LeaderLib_UI_GameSettings_Client_FixStatusTooltips_Description	Removes the status malus icon and extra spacing, caused by a typo in Larian's UI code, and organizes bonuses and maluses together, while also sorting them alphabetically.	h528c0ba8g3156g43eega5a7g2947b92a7738
-LeaderLib_UI_GameSettings_Client_HideChatLog	Hide Chat Log	hbdb60e07g9f65g41bagbfabge9ad2347c44a
-LeaderLib_UI_GameSettings_Client_HideChatLog_Description	Aggressively prevent the chat log from being visible or toggleable.	h3952f84bge59bg44d1gb0d1g47a6a1a49f9e
-LeaderLib_UI_GameSettings_Client_ToggleCombatLog	Toggle Combat Log	h7b685627gd157g4fc2gaf20g37db378cedd8
-LeaderLib_UI_GameSettings_Client_ToggleCombatLog_Description	Make the combat log visible initially.	h9a147919g74feg42a0gb804g7fab3c413866
-LeaderLib_UI_GameSettings_Button_ClearWhitelist	Clear Whitelist	h81c5d767gca44g446fg8d4bg56bdf03699a6
-LeaderLib_UI_GameSettings_Button_ClearWhitelist_Description	Clear the status whitelist, which is used to show statuses next to portraits when <font color='#CCAA00'>[Key:LeaderLib_UI_GameSettings_Client_HideStatuses]</font> is enabled.	h96c19068g066dg429bgb939g91ec46051b34
-LeaderLib_UI_GameSettings_Button_ClearBlacklist	Clear Blacklist	hfb5060fbgaee1g4ae6g8795g4a0f133edd2b
-LeaderLib_UI_GameSettings_Button_ClearBlacklist_Description	Clear the status blacklist, which is used to hide statuses next to portraits when <font color='#CCAA00'>[Key:LeaderLib_UI_GameSettings_Client_HideStatuses]</font> is disabled.	hedb1dff8g5ad9g429bgaea8g84ecec77dee1
+LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled	Always Show Divine Talents	h085c69c2g47e1g4611g9c72g6f45ecb1768d
+LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled_Description	If enabled, the Divine Talents will always be visible in the player UI, regardless if the gift bag is enabled.	h0a56f2cfgf36fg4b73gba0cgc31271b3795f
 LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_CharacterSheet	Delay Character Sheet Tooltips	hd3756e2fg3f58g4aa3g9b0ag3b13322d3c7f
 LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_CharacterSheet_Description	Enable a 0.5 second delay for abilities, stats, and talents. May affect the examine window as well.	he54ab919g8a44g4044gb3c0gee6b0c4a7ba0
 LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Generic	Delay Generic Tooltips	h559857dbg6cf5g4c77ga307g0faf82adeb4b
@@ -68,12 +43,39 @@ LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Skill	Delay Skill Tooltips	h
 LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Skill_Description	Enable a 0.5 second delay for skill tooltips.	h6af89dc2gea95g4cd7g9254gf02dca7e8815
 LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Status	Delay Status Tooltips	hb69196d6g9f32g4109gbd54g0fc41249c1c5
 LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Status_Description	Enable a 0.5 second delay for status tooltips (statuses next to portraits, and the examine window).	h441789feg09a0g470bg9848g5236f7f55b02
-LeaderLib_UI_GameSettings_Section_TooltipsDelay	Tooltip Delays	h8272e7c1g0ee8g4c0dg93c9g30d89b0e772c
-LeaderLib_UI_GameSettings_Client_FadeInventory_Description	If enabled, specific items will be less visible in the inventory, such as memorized skillsbooks being less opaque.	h88afeeadg112bg40ebgbb14ge2e896cf89d2
-LeaderLib_UI_GameSettings_Client_FadeInventory_Enabled	Enabled	hb1f688f6g894cg4741g9824g119c52375ff1
 LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo	<br>Default: 30%<br><font color='#FF9900'>Fading is disabled at 100 (fully visible), while 0 makes the item completely invisible.</font>	h73bda5d2g86d7g46ffga06dgf1ee3a02b286
 LeaderLib_UI_GameSettings_Client_Fade_KnownSkillbooks	Known Skillbooks	hbcf2563ag4387g403aga09fg2051f199f49d
 LeaderLib_UI_GameSettings_Client_Fade_KnownSkillbooks_Description	Fade skillbooks that have already been memorized by this amount.[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]	h543cc3a6gc12bg4406g8a57gcfdfb2171236
 LeaderLib_UI_GameSettings_Client_Fade_ReadBooks	Books Read	h14d0a335g5ed0g4b98g8699g44038d096585
 LeaderLib_UI_GameSettings_Client_Fade_ReadBooks_Description	Fade books (recipes, lore) that have already been read by this amount.<br><font color='#FF33FF'>Note: This setting isn't retroactive, so previous books read in the save may need to be read again, once.</font>[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]	h4429fc7cg6b49g473aga3e0g161583f29a80
+LeaderLib_UI_GameSettings_Client_FadeInventory_Description	If enabled, specific items will be less visible in the inventory, such as memorized skillsbooks being less opaque.	h88afeeadg112bg40ebgbb14ge2e896cf89d2
+LeaderLib_UI_GameSettings_Client_FadeInventory_Enabled	Enabled	hb1f688f6g894cg4741g9824g119c52375ff1
+LeaderLib_UI_GameSettings_Client_FixStatusTooltips	Fix Status Tooltips	h1a19076fg0b33g4b5bg8081g5df8f7ec387f
+LeaderLib_UI_GameSettings_Client_FixStatusTooltips_Description	Removes the status malus icon and extra spacing, caused by a typo in Larian's UI code, and organizes bonuses and maluses together, while also sorting them alphabetically.	h528c0ba8g3156g43eega5a7g2947b92a7738
+LeaderLib_UI_GameSettings_Client_HideChatLog	Hide Chat Log	hbdb60e07g9f65g41bagbfabge9ad2347c44a
+LeaderLib_UI_GameSettings_Client_HideChatLog_Description	Aggressively prevent the chat log from being visible or toggleable.	h3952f84bge59bg44d1gb0d1g47a6a1a49f9e
+LeaderLib_UI_GameSettings_Client_HideConsumableEffects	Hide Consumable Effects	hfa94fa61g01f0g4b91g99d7g35888fbfd8e3
+LeaderLib_UI_GameSettings_Client_HideConsumableEffects_Description	If <font color='#33FF66'>Show Consumable Effects</font> is enabled in the global Mod Settings, enable this setting to hide these effects for yourself only.	hc91913dag9ffbg422cg8aceg3faf8005f30a
+LeaderLib_UI_GameSettings_Client_HideStatuses	Hide All Statuses	hfe94fb21g03b4g46c3gbcaegf551c9b54dc8
+LeaderLib_UI_GameSettings_Client_HideStatuses_Description	If enabled, all statuses next to the party's portraits will be hidden.	h3e7215afg3389g4dc4gaa4bg1029c5cda75a
+LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar	Modify Healthbar Statuses	ha9720574ged59g4d81g92f3gcea93337121c
+LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar_Description	If enabled, status hiding settings will also apply to statuses under the healthbar when examining a character.	hc848f133g22fdg41c0g8205g8041758e7309
+LeaderLib_UI_GameSettings_Client_ToggleCombatLog	Toggle Combat Log	h7b685627gd157g4fc2gaf20g37db378cedd8
+LeaderLib_UI_GameSettings_Client_ToggleCombatLog_Description	Make the combat log visible initially.	h9a147919g74feg42a0gb804g7fab3c413866
+LeaderLib_UI_GameSettings_LowerMemorizationRequirements	Lower Skill Memorization Requirements	hfda4adafgd642g477fgbbdbg268fe17118b4
+LeaderLib_UI_GameSettings_LowerMemorizationRequirements_Description	If enabled, skill memorization requirements will be lowered (such as Necromancy 4 to Necromancy 1).<br><font color='#FF9933'>Ideally enable this alongside Skill Tier Overrides, so more skills can be selected in character creation.</font><br>(Default: Disabled)	ha1c04ddag65a8g4deagbbe6g8c401710cad9
+LeaderLib_UI_GameSettings_MainTitle	<font color='#4CBCFE' size='28'><u>LeaderLib Game Settings</u></font>	ha5cca930gc538g4846g86f4g0b5c9017c1e5
+LeaderLib_UI_GameSettings_MainTitle_Description	Various settings that alter how the game works.<br><font color='#FF9900'>These settings can only be changed in singleplayer, or by the host in multiplayer.</font><br><font color='#33FF00'>Settings are saved to:<br>Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/</font><font color='#22FF99'>LeaderLib_GameSettings.json</font>	hf1cb17f4g7402g499dg95e5g9552ea2c0fc6
+LeaderLib_UI_GameSettings_Section_AP_NPC	Non-Player Action Point Settings	h24e93debgf7e1g4a6ag9841g5ecca2c911f5
+LeaderLib_UI_GameSettings_Section_AP_Player	Player Action Point Settings	h6eabd548g4797g423agbe50g8a858704a8c1
+LeaderLib_UI_GameSettings_Section_BackstabSettings_General	General Backstab Settings	he93fef85gaa09g45c2g92d3ga71a001dfe49
+LeaderLib_UI_GameSettings_Section_BackstabSettings_NPC	Non-Player Backstab Settings	hf0e4a66bg853eg4cb3gb663g12ba6fbe412f
+LeaderLib_UI_GameSettings_Section_BackstabSettings_Player	Player Backstab Settings	h504a8593g083bg450fgb542gcf686bf36e5b
+LeaderLib_UI_GameSettings_Section_Client	Client-Side Settings	h6d855e34gd141g49f7ga52agc4a30cf700ba
 LeaderLib_UI_GameSettings_Section_InventoryFade	Inventory Item Fading	h6b9d506cgf607g41bcg8038gacb403cd4ad5
+LeaderLib_UI_GameSettings_Section_StatusHider	Status Hiding	he5c047ebg44afg4995gadf0g3638b568e5cb
+LeaderLib_UI_GameSettings_Section_TooltipsDelay	Tooltip Delays	h8272e7c1g0ee8g4c0dg93c9g30d89b0e772c
+LeaderLib_UI_GameSettings_SpellsCanCritWithoutTalent	Enable Spell Critical Hits	h16ec7750gfd5dg4cfaga64fg991869fa3dfb
+LeaderLib_UI_GameSettings_SpellsCanCritWithoutTalent_Description	If enabled, spells can critical hit without the Savage Sortilege talent.	hb4a1f383gc0b5g449bgb28egc09586c81b68
+LeaderLib_UI_GameSettings_StarterTierOverrides	Enable Skill Tier Overrides	he2e6e5cdg9372g4805g92b1ge2e4b7b1a0db
+LeaderLib_UI_GameSettings_StarterTierOverrides_Description	If enabled, Novice/Adept/Master tiered skills will be set to Starter instead, allowing them show up in character creation.<br><font color='#FF9933'>Note that if you don't have the required ability levels for memorization, the skill won't show up (enable Lower Skill Memorization Requirements to avoid that).</font><br>(Default: Disabled)	h6feb8440ge26dg4b31gb9fag5d061db28708

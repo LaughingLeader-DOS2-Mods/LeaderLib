@@ -269,7 +269,7 @@ if Vars.DebugMode then
 			if entry then
 				if not _strnull(entry.Key) then
 					local content,handle = _getTranslatedStringKey(entry.Key)
-					if _strnull(handle) then
+					if _strnull(handle) and not kv[entry.Key] then
 						keys[#keys+1] = entry.Key
 						kv[entry.Key] = entry.Value
 					end

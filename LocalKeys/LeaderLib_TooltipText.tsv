@@ -20,3 +20,5 @@ LeaderLib_Tooltip_FromTarget	from target	hafb63d24gd9b3g47d2gbe4cg1ecb09f9c1c9
 LeaderLib_Tooltip_FromSelf	from self	h727273bcg948ag461agad93gef52b2419eca
 LeaderLib_Tooltip_ToggleGrouping	<font color='#00CCFF'>Keyboard Shortcut</font><br><font color='#44CCAA'>Press CTRL + Spacebar to chain/unchain party members. No skill required.</font><br>(Note: This is the '<font color='#FFAA11'>[Handle:h310a22a4g1ebag4b1cg89d6g5cebc301c5c5:Toggle Game Master Shroud]</font>' [Handle:h6867dea8g129fg4a85g9368g1cf6534df65f:Key]).	h33c3e0e2g18e3g4792g93bbg725c15acdef1
 LeaderLib_Tooltip_BookIsKnown	<br><font color='#44FF33'>(This book has been read)</font>	he3d0e5f5gcf4eg4714gaf60gb110b584439b
+LeaderLib_Tooltip_StatusSource	<font color='#6EB09D'>Applied by [1]</font>	h65dc8d02g53aeg461dg9851g28e564ec2546
+LeaderLib_Tooltip_ToggleStatus	Toggle [1]	hb3763d50gcda2g4d83g8752g6a6378c9f7b7

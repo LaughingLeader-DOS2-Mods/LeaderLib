@@ -22,6 +22,7 @@
 	<content contentuid="h0ab95fb3g7cfbg483dga66bg5daf233e945a">Loading presets...</content>
 	<content contentuid="h0b46c751g260fg4dfaga124ga7208595a493">Max</content>
 	<content contentuid="h0bcff2begcd22g4e86g9b9fgfdd3ce0b28de">Enable a 0.5 second delay for skill tooltips.</content>
+	<content contentuid="h0ccbce3cg90f3g4d42g9755gd9da999968bd">&lt;font color=&apos;#6EB09D&apos;&gt;Applied by [1]&lt;/font&gt;</content>
 	<content contentuid="h0d0af957g4dc8g4ddagb0fag6c38340bb6de">Hello!</content>
 	<content contentuid="h102b274eg58b9g4199g91c1g2aef870786b8">Fade books (recipes, lore) that have already been read by this amount.&lt;br&gt;&lt;font color=&apos;#FF33FF&apos;&gt;Note: This setting isn&apos;t retroactive, so previous books read in the save may need to be read again, once.&lt;/font&gt;[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]</content>
 	<content contentuid="h109e781dg2032g4b77gacdagce8034c4e49e">Okay.</content>
@@ -56,6 +57,7 @@
 	<content contentuid="h19d1b9dag302dg4655g86fdgad6fe369db15">Move to the target.</content>
 	<content contentuid="h1a6318dcgb094g4b3cg8492g6e26d8e3a11d">Mod Menu Settings</content>
 	<content contentuid="h1ae3aaa5gb444g4372g8b9ag231538f36a86">[LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96]</content>
+	<content contentuid="h1b1df860g4c70g46ccg9a4egb566babfcf09">Quality of Life</content>
 	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee">[LOAD] Load Global Settings - These are global extender mod settings LeaderLib manages.&lt;br&gt;Path: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GlobalSettings.json&lt;/b&gt;</content>
 	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc">Control Summon</content>
 	<content contentuid="h1d68f897g1430g4ed6gb61dg88018af310e8">Buff Status Preservation</content>
@@ -125,16 +127,18 @@
 	<content contentuid="h41a533b7g535bg4e76gbc7eg202d33a73740">Automatically Add Mod Books</content>
 	<content contentuid="h4252ff7cgb624g4b24gbf03g1772392f3988">Old Man Lothar</content>
 	<content contentuid="h43868aebg7281g40bfgbc1dgf6fe5a06512b">Autosave Interval</content>
+	<content contentuid="h43c8c461g3a16g46fdgae71ga5986e500941">If enabled, consumable items such as drinks, food, potions, and ingredients will show their effects without needing to consume it first.&lt;br&gt;The &lt;font color=&apos;#33FF66&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideConsumableEffects:Hide Consumable Effects]&lt;/font&gt; setting can be enabled in the Gameplay tab to still hide these effects for yourself, while allowing it globally here.&lt;br&gt;&lt;font color=&apos;#FFAA33&apos;&gt;Note: This works without any permanent stat overrides, so it&apos;s safe to enable/disable at will.&lt;/font&gt; </content>
 	<content contentuid="h455f1349g6528g452bg8624g5d0674b01ac5">If enabled, tooltips that support shift-key expansion will always be expanded.</content>
 	<content contentuid="h456c5c8bg7103g4b19g9185ge4cd6ddbab30">Show Status in Portrait UI</content>
 	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9">Hidden Backpack</content>
+	<content contentuid="h46a7fef9g9976g4abeg8f95g8fddb41639b9">If &lt;font color=&apos;#33FF66&apos;&gt;Show Consumable Effects&lt;/font&gt; is enabled in the global Mod Settings, enable this setting to hide these effects for yourself only.</content>
 	<content contentuid="h46c05d65g039dg4651gb24eg027244f86897">Undead Dwarf</content>
 	<content contentuid="h46f32bf7gf965g4146ga6e1g4951c5d8c2fa">Clears surfaces in a [1]m range at the location of your target(s).</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d">Undead Human</content>
 	<content contentuid="h47d73bfcg16eag4504g83c0ge7b9c0048f13">*Ask to see the trader&apos;s goods.*</content>
 	<content contentuid="h4afd5d2bg1af0g4cc3g9a53gdb6c327d2d04">Enable Dialog Redirection</content>
 	<content contentuid="h4b459589gc776g4a7fgb3abg2e219ea20844">Features</content>
-	<content contentuid="h4c438f27gc833g4b46g8c3eg50716f12ae34">If &quot;Pull Party Into Combat&quot; is enabled, this is the minimum range party members must be from that combat to automatically join. Default: 30m range.</content>
+	<content contentuid="h4c438f27gc833g4b46g8c3eg50716f12ae34">If &quot;Pull Party Into Combat&quot; is enabled, this is the minimum radius party members must be from that combat to automatically join. Default: 30m</content>
 	<content contentuid="h4ceb8a44g8bf7g40b3g999egaca5cf0af044">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
 	<content contentuid="h4d75e3c0ge0c3g4078gb94dg8e1e054aecb6">*He yawns.* Anything else?</content>
 	<content contentuid="h4d9b6638g854eg41bagafa1ga4ab8efde9a2">If enabled, specific items will be less visible in the inventory, such as memorized skillsbooks being less opaque.</content>
@@ -159,6 +163,7 @@
 	<content contentuid="h5671b6e0gf0c5g4a01g9513g36382bea3418">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
 	<content contentuid="h5674850agf1bcg4d18g9af6gadf188370101">Dialog will be redirected to the character with the highest persuasion amount, instead of only avatar characters.</content>
 	<content contentuid="h56b21dd3g7d43g4de8gbe58ge0e7ad8f84f1">[1] allows you to backstab enemies with weapons other than a dagger.&lt;br&gt;&lt;font size=&apos;16&apos; color=&apos;#00AAFF&apos;&gt;(LeaderLib)&lt;/font&gt;</content>
+	<content contentuid="h56ddb382g6923g44eegadb4ge259dcafb076">Auto-Identify Items</content>
 	<content contentuid="h580c1770g96ffg4452gab5fg997e448b1864">Settings updated.</content>
 	<content contentuid="h58262db3g3059g425cgb07age9b560e30cbf">Character is shapeshifted.</content>
 	<content contentuid="h58d6052fgd3bag4cd9gb6e0gfe94189dfdb6">*The old man yawns, barely giving an indication to your presence.*</content>
@@ -194,6 +199,7 @@
 	<content contentuid="h680a3621g57dag4544g8c63gb43e64633e24">[OFF] Autosave in Combat [GLOBAL]</content>
 	<content contentuid="h68300b5aga3a5g49c9g8e57gbdf5490fd4c1">The amount of action points gained when a character&apos;s turn starts.&lt;br&gt;(Default: 4)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
 	<content contentuid="h68ad69bfg9d72g4107g8285g691dd3abc27e">Add the Mod Menu Skill (Self)</content>
+	<content contentuid="h69172b21g1ce4g462dgad6cg308dabf6f0a0">Toggle [1]</content>
 	<content contentuid="h69293304g80a8g47b6gb564g793f098abfb4">Reset all global LeaderLib settings. EXPERIMENTAL!</content>
 	<content contentuid="h69590addg7840g4821gb632g52799233bb88">&lt;font color=&apos;#FF0000&apos;&gt;-[1] Attitude&lt;/font&gt;</content>
 	<content contentuid="h6a80ffafg59d9g4848g8d1ag9359a1435030">Enable Timed Autosaving</content>
@@ -260,6 +266,7 @@
 	<content contentuid="h8859d107g3e28g44dega723gc7434a93f206">Add the Mod Menu Skill (Party)</content>
 	<content contentuid="h898ea651g71ddg40f0g8a76g6296ffc9581f">[First]</content>
 	<content contentuid="h89b19292g87beg4312g9514g63c95313649f">*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3].</content>
+	<content contentuid="h8a959098gf62eg46e6gbd76g423808c8d7b9">Show Consumable Effects</content>
 	<content contentuid="h8b7d56a0g4114g4cf2ga2ceg50db94bad57f">Enable various debug features with LeaderLib. Not recommended.</content>
 	<content contentuid="h8b8cb81bgf46eg435fg9fadg283b2bec5c89">Let&apos;s part ways.</content>
 	<content contentuid="h8d476de1g8b91g4821g87f2gd6ff1151b722">Delay Status Tooltips</content>
@@ -340,6 +347,7 @@
 	<content contentuid="ha9284da0gd161g47d7g8c19g7ac10878ee5c">*He sets his fishing pole down for a moment and rummages through a bag,*</content>
 	<content contentuid="ha9720574ged59g4d81g92f3gcea93337121c">Modify Healthbar Statuses</content>
 	<content contentuid="hab87e202g3afcg45f6g9325gbfde5f0f015b">Speaking of, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
+	<content contentuid="habcdf022g54d1g414ega026g2d4099ca7103">Combat Sight Range Multiplier</content>
 	<content contentuid="hac0a7cb5g419ag4698g8b2cg0fc57a03a385">Enables friendly fire, which can allow skills or other mod mechanics to target allies.</content>
 	<content contentuid="hac41182fg734cg4f90gb787gff3f7dbdfd0e">Change to the opposite gender.&lt;br&gt;&lt;font color=&apos;#188ede&apos;&gt;Warning: Replaces custom appearance settings!&lt;/font&gt;</content>
 	<content contentuid="hadb765beg0816g46f8g9e9ege87c43b78bc3">20 Minutes</content>
@@ -439,6 +447,7 @@
 	<content contentuid="hdc816addgda80g4d5dg8d6dgccf0824c220a">Reset Settings</content>
 	<content contentuid="hdca46b30gaf33g45e0g803cgf1ce00e284d2">Condense Item Tooltips</content>
 	<content contentuid="hdd673ac0g2ae1g423cg853eg5a7b8149cd13">*He spits out what is presumably seaweed.* So, what can I do for you today?</content>
+	<content contentuid="hde332a41gc59bg4fd8ga597g6fcb1ae6dc8f">If enabled, items will be automatically identified. </content>
 	<content contentuid="hdefd7688g4811g445ag94a4gbe304b43168b">I managed to sneak away before that nasty Kraken showed up. *He groans and rubs his shoulders.* Damn if I won&apos;t feel it tomorrow, though...</content>
 	<content contentuid="he037429fgcbf9g4a78gb1c2ge9613039ef62">Preset Menu (Locked - Check Back in 30 Seconds)</content>
 	<content contentuid="he0bf54a8g57fdg4dffg9287gf5c6aac24a35">Selecting preset...</content>
@@ -475,8 +484,10 @@
 	<content contentuid="hf250f2d4gb046g4001gbd88g1872e3b857c7">Me? Oh, I&apos;m just a retired old man, looking to sell his wares. *He rubs his beard, glancing around on the boat.* Afraid I&apos;m not much of a soldier anymore, so trading is all I&apos;ve got.</content>
 	<content contentuid="hf2727fbcg6af7g4a95g9888g15dd8338e10c">*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3].</content>
 	<content contentuid="hf33cf707g6e5eg4674g9d88gc6a9431cdabc">That&apos;s enough of that...</content>
-	<content contentuid="hf37c444fg879fg4e62gb3d5g77086202f362">Pull Party Into Combat Range</content>
+	<content contentuid="hf37c444fg879fg4e62gb3d5g77086202f362">Pull Radius</content>
 	<content contentuid="hf3a71217gb65cg43bfg99bbg5c82a6f01901">Autosave interval updated.</content>
+	<content contentuid="hf437b717gbcecg4961ga518g3bbe1ef85d2e">Permanent [Key:Shout_SpiritVision_DisplayName:Spirit Vision]</content>
+	<content contentuid="hf5360b3eg3045g43abgb750gf94ecc4443d6">Hide Consumable Effects</content>
 	<content contentuid="hf545a1fbgccb8g481ega4adg32165aaa9288">[OFF] Redirect to Character with Highest Persuasion - Make the party member with the highest persuasion the redirection target. [GLOBAL]</content>
 	<content contentuid="hf585ea52gbdb4g4a21g82aag836415d7d0d6">*Request a copy of the &quot;Mod Menu&quot; book.*</content>
 	<content contentuid="hf638bc67g5cb6g4dcfg8663gce1951caad2b">[1] Penetration</content>
@@ -487,6 +498,7 @@
 	<content contentuid="hf81e591cgfafag442cg977dg1423751caade">If skill backstabbing is enabled, this is the maximum distance allowed between the attacker and target (meaning they must be within this distance).&lt;br&gt;(Default: 2.5m)</content>
 	<content contentuid="hf8c6e866g9949g4d30g9cf2g3a9ba53d2f28">Follow me.</content>
 	<content contentuid="hf94f7e90ge895g48bcg98e0g7350149e94de">Mod Menu</content>
+	<content contentuid="hf961867cg49a5g47fbg9f77g131c8ffdc434">If enabled, [Key:Shout_SpiritVision_DisplayName:Spirit Vision] will turn into a toggle, allowing you to enable or disable [Handle:h81ca2748g7469g47c9g8e5dg49ecc8d1e382:Spirit Vision] at will. </content>
 	<content contentuid="hfafdf1f4g1daeg4b29g98e8gb0bbf3e668e0">Condense Status Tooltips</content>
 	<content contentuid="hfb5060fbgaee1g4ae6g8795g4a0f133edd2b">Clear Blacklist</content>
 	<content contentuid="hfb5e41d2gbcc7g4ed4gb962g13f831ed95c8">I&apos;ll stay here.</content>
@@ -496,4 +508,5 @@
 	<content contentuid="hfe0169eagd031g41a8gbcd3g6b992d81fba5">[OFF] Status Logging [GLOBAL]</content>
 	<content contentuid="hfe94fb21g03b4g46c3gbcaegf551c9b54dc8">Hide All Statuses</content>
 	<content contentuid="hff1084efgf4efg450aga177g1311cbce0ebb">&lt;font color=&apos;#2EFE2E&apos;&gt;+[1] Attitude&lt;/font&gt;</content>
+	<content contentuid="hff88aebeg960eg4299g8303g395b4ebd8acd">This is a multiplier the game uses to determine if a character should exit combat, due to not seeing any enemies. Setting this value higher will keep you in combat, despite being far away.&lt;br&gt;Default: 2.5m&lt;br&gt;Formula: ((Value * Value) * character.Sight) * character.Sight</content>
 </contentList>

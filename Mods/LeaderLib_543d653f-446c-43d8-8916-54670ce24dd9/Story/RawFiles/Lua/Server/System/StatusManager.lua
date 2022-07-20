@@ -495,6 +495,7 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 				PersistentVars.ActivePermanentStatuses[GUID] = nil
 			end
 		end
+		GameHelpers.Net.Broadcast("LeaderLib_UpdatePermanentStatuses", {Target=GameHelpers.GetNetID(target), StatusId = status, Enabled = false})
 
 		if statusIsActive then
 			GameHelpers.Status.Remove(target, status)
@@ -504,11 +505,12 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 		if PersistentVars.ActivePermanentStatuses[GUID] == nil then
 			PersistentVars.ActivePermanentStatuses[GUID] = {}
 		end
-		local sourceId = source and GameHelpers.GetUUID(source) or false
+		local sourceId = source and GameHelpers.GetUUID(source) or GUID
 		PersistentVars.ActivePermanentStatuses[GUID][status] = sourceId
+		GameHelpers.Net.Broadcast("LeaderLib_UpdatePermanentStatuses", {Target=GameHelpers.GetNetID(target), StatusId = status, Enabled = true})
 		if not statusIsActive then
 			--fassert(_type(status) == "string" and GameHelpers.Stats.Exists(status), "Status (%s) does not exist.", status)
-			GameHelpers.Status.Apply(target, status, -1.0, true, sourceId or target)
+			GameHelpers.Status.Apply(target, status, -1.0, true, sourceId or GUID)
 			statusIsActive = true
 		end
 	end
@@ -548,6 +550,7 @@ function StatusManager.RemoveAllPermanentStatuses(target)
 				end
 			end
 			PersistentVars.ActivePermanentStatuses[GUID] = nil
+			GameHelpers.Net.Broadcast("LeaderLib_RemovePermanentStatuses", GameHelpers.GetNetID(target))
 		end
 	end
 end
@@ -646,8 +649,28 @@ function _INTERNAL.ReapplyPermanentStatuses()
 	end
 end
 
-RegisterListener("PersistentVarsLoaded", function ()
+Events.PersistentVarsLoaded:Subscribe(function ()
 	_INTERNAL.ReapplyPermanentStatuses()
+end)
+
+Events.SyncData:Subscribe(function (e)
+	local data = {}
+	local hasData = false
+	if PersistentVars.ActivePermanentStatuses then
+		for uuid,statuses in _pairs(PersistentVars.ActivePermanentStatuses) do
+			local target = _GetObject(uuid)
+			if target then
+				data[target.NetID] = {}
+				for id,source in _pairs(statuses) do
+					data[target.NetID][id] = true
+					hasData = true
+				end
+			end
+		end
+	end
+	if hasData then
+		GameHelpers.Net.PostToUser(e.UserID, "LeaderLib_UpdateAllPermanentStatuses", data)
+	end
 end)
 
 ---@param character EsvCharacter
@@ -660,6 +683,7 @@ function StatusManager.ReapplyPermanentStatusesForCharacter(character, refreshSt
 		for id,source in _pairs(permanentStatuses) do
 			if not GameHelpers.Status.IsActive(character, id) or (refreshStatBoosts and GameHelpers.Status.HasStatBoosts(id)) then
 				GameHelpers.Status.Apply(character, id, -1, true, source)
+				GameHelpers.Net.Broadcast("LeaderLib_UpdatePermanentStatuses", {Target=character.NetID, StatusId = id, Enabled = true})
 			end
 		end
 	end

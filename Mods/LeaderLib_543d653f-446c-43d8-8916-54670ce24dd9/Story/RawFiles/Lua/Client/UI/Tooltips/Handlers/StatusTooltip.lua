@@ -2,39 +2,116 @@ local function _AlphabeticalCaseInsensitiveLabelSort(a,b)
 	return string.lower(a.Label) < string.lower(b.Label)
 end
 
+---@type table<NETID, table<string, boolean>>
+local _PermanentStatuses = {}
+
+---@param netid NETID
+---@param status string
+---@param enabled boolean
+local function UpdatePermanentStatus(netid, status, enabled)
+	if _PermanentStatuses[netid] == nil then
+		_PermanentStatuses[netid] = {}
+	end
+	if enabled == true then
+		_PermanentStatuses[netid][status] = true
+	else
+		_PermanentStatuses[netid][status] = nil
+		if not Common.TableHasAnyEntry(_PermanentStatuses[netid]) then
+			_PermanentStatuses[netid] = nil
+		end
+	end
+end
+
+Ext.RegisterNetListener("LeaderLib_RemovePermanentStatuses", function (channel, payload, user)
+	local netid = tonumber(payload)
+	assert(type(netid) == "number", "data.Target is not a valid NetID")
+	_PermanentStatuses[netid] = nil
+end)
+
+Ext.RegisterNetListener("LeaderLib_UpdatePermanentStatuses", function (channel, payload, user)
+	local data = Common.JsonParse(payload, true)
+	if data then
+		assert(type(data.Target) == "number", "data.Target is not a valid NetID")
+		UpdatePermanentStatus(data.Target, data.StatusId, data.Enabled)
+	end
+end)
+
+Ext.RegisterNetListener("LeaderLib_UpdateAllPermanentStatuses", function (channel, payload, user)
+	local data = Common.JsonParse(payload, true)
+	if data then
+		for target,statuses in pairs(data) do
+			for id,b in pairs(statuses) do
+				UpdatePermanentStatus(target, id, b)
+			end
+		end
+	end
+end)
+
+local _EQUIPMENT_STATUS = {
+	SOURCE_MUTED = true
+}
+
 ---@param character EclCharacter
 ---@param status EclStatus
 ---@param tooltip TooltipData
 function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 	local statusType = GameHelpers.Status.GetStatusType(status.StatusId)
 	if Features.StatusDisplaySource then
+		local equipmentStatuses = GameHelpers.Character.GetEquipmentOnEquipStatuses(character, true)
+		local sourceName = nil
 		if GameHelpers.IsValidHandle(status.StatusSourceHandle) then
-			local equipmentStatuses = GameHelpers.Character.GetEquipmentOnEquipStatuses(character, true)
 			local source = GameHelpers.TryGetObject(status.StatusSourceHandle)
 			if source then
 				local displayName = GameHelpers.GetDisplayName(source)
-				local sourceName = displayName
+				sourceName = displayName
 				if source.MyGuid == character.MyGuid then
 					local itemSourceData = equipmentStatuses[status.StatusId]
 					if itemSourceData then
 						local itemName = GameHelpers.GetDisplayName(itemSourceData.Item)
 						local rarityColor = Data.Colors.Rarity[itemSourceData.Item.Stats.ItemTypeReal] or Data.Colors.Common.White
-						sourceName = string.format("%s (<font color='%s'>%s</font>)", displayName, rarityColor, itemName)
+						sourceName = string.format("<font color='%s'>%s</font>", rarityColor, itemName)
 					end
 				end
 
-				local description = tooltip:GetDescriptionElement({Type="StatusDescription", Label=""})
-				if not string.find(description.Label, displayName) then
-					if not StringHelpers.IsNullOrWhitespace(description.Label) then
-						description.Label = description.Label .. "<br>"
+				if sourceName == displayName then
+					if _PermanentStatuses[character.NetID] and _PermanentStatuses[character.NetID][status.StatusId] then
+						sourceName = string.format("%s (<font color='%s'>%s</font>)", displayName, Data.Colors.FormatStringColor.Gold, GameHelpers.GetTranslatedString("h4f8643fega7ebg4749g9e93gb66b65102545", "Permanent"))
 					end
-					description.Label = string.format("%s%s", description.Label or "", LocalizedText.Tooltip.StatusSource:ReplacePlaceholders(sourceName))
 				end
 			end
 		end
+
+		if not sourceName and _PermanentStatuses[character.NetID] and _PermanentStatuses[character.NetID][status.StatusId] then
+			local displayName = GameHelpers.GetDisplayName(character)
+			sourceName = string.format("%s (<font color='%s'>%s</font>)", displayName, Data.Colors.FormatStringColor.Gold, GameHelpers.GetTranslatedString("h4f8643fega7ebg4749g9e93gb66b65102545", "Permanent"))
+		end
+
+		if not sourceName and equipmentStatuses[status.StatusId] then
+			local itemSourceData = equipmentStatuses[status.StatusId]
+			if itemSourceData then
+				local displayName = GameHelpers.GetDisplayName(character)
+				local itemName = GameHelpers.GetDisplayName(itemSourceData.Item)
+				local rarityColor = Data.Colors.Rarity[itemSourceData.Item.Stats.ItemTypeReal] or Data.Colors.Common.White
+				sourceName = string.format("%s (<font color='%s'>%s</font>)", displayName, rarityColor, itemName)
+			end
+		end
+
+		if not StringHelpers.IsNullOrWhitespace(sourceName) then
+			local description = tooltip:GetDescriptionElement({Type="StatusDescription", Label=""})
+			if not StringHelpers.IsNullOrWhitespace(description.Label) then
+				description.Label = description.Label .. "<br>"
+			end
+			description.Label = string.format("%s%s", description.Label or "", LocalizedText.Tooltip.StatusSource:ReplacePlaceholders(sourceName))
+		end
 	end
-	if Vars.DebugMode then
-		local idText = string.format("<font color='%s'>ID: %s</font>", Data.Colors.Common.AztecGold, status.StatusId)
+	if Features.DisplayStatusDebugInfo then
+		local idText = ""
+		-- if status.StatusType ~= status.StatusId then
+		-- 	idText = string.format("<font color='%s'>%s</font><br><font color='%s' size='18'>%s</font>", Data.Colors.Common.AztecGold, status.StatusId, Data.Colors.Common.Bittersweet, status.StatusType)
+		-- else
+		-- 	idText = string.format("<font color='%s'>%s</font>", Data.Colors.Common.AztecGold, status.StatusId)
+		-- end
+		idText = string.format("<font color='%s' size='18'>(%s)</font><br><font color='%s'>%s</font>", Data.Colors.Common.Bittersweet, status.StatusType, Data.Colors.Common.AztecGold, status.StatusId)
 		local description = tooltip:GetDescriptionElement({Type="StatusDescription", Label=""})
 		if not StringHelpers.IsNullOrWhitespace(description.Label) then
 			description.Label = description.Label .. "<br>"

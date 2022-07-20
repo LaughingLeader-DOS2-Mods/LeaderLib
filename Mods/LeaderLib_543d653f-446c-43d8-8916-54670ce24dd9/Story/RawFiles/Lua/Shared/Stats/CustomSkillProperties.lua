@@ -237,7 +237,7 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 
 		local isPermanent = property.Arg4 > -1
 		local applyStatus = not isPermanent and GameHelpers.Status.Apply or function(target, id, duration, force, source) 
-			StatusManager.ApplyPermanentStatus(target, id, source) 
+			StatusManager.ApplyPermanentStatus(target, id, source)
 		end
 		local removeStatus = not isPermanent and GameHelpers.Status.Remove or StatusManager.RemovePermanentStatus
 
@@ -270,6 +270,7 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 			for target in GameHelpers.Grid.GetNearbyObjects(position, {Radius=areaRadius, Type=targetType}) do
 				if target.MyGuid ~= attacker.MyGuid then
 					local GUID = target.MyGuid
+					local SOURCE_GUID = attacker.MyGuid
 					local timerName = string.format("LeaderLib_ToggleStatus_%s%s", statusId, GUID)
 					Timer.Cancel(timerName)
 					Timer.StartOneshot(timerName, 20, function (e)
@@ -278,7 +279,7 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 							if target:GetStatus(statusId) then
 								removeStatus(target, statusId)
 							else
-								applyStatus(target, statusId, duration, true, attacker)
+								applyStatus(target, statusId, duration, true, SOURCE_GUID)
 							end
 						end
 					end)
@@ -315,6 +316,7 @@ end, function (property, attacker, target, position, isFromItem, skill, hit)
 		end
 		local removeStatus = not isPermanent and GameHelpers.Status.Remove or StatusManager.RemovePermanentStatus
 
+		local SOURCE_GUID = attacker.MyGuid
 		local GUID = target.MyGuid
 		local timerName = string.format("LeaderLib_ToggleStatus_%s%s", statusId, GUID)
 		Timer.Cancel(timerName)
@@ -324,7 +326,7 @@ end, function (property, attacker, target, position, isFromItem, skill, hit)
 				if target:GetStatus(statusId) then
 					removeStatus(target, statusId)
 				else
-					applyStatus(target, statusId, duration, true, attacker)
+					applyStatus(target, statusId, duration, true, SOURCE_GUID)
 				end
 			end
 		end)

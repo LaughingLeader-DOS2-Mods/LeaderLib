@@ -284,6 +284,8 @@ Features = {
 	StatusParamSkillDamage = false,
 	---Display the status source in status tooltips.
 	StatusDisplaySource = true,
+	---Display the status type and ID in status tooltips.
+	DisplayStatusDebugInfo = Ext.IsDeveloperMode(),
 	---Fixes various tooltip things like extra spaces and grammar issues.
 	TooltipGrammarHelper = false,
 	---Enables a workaround for requiring WINGS or PURE to make characters play the flying animation when moving around.

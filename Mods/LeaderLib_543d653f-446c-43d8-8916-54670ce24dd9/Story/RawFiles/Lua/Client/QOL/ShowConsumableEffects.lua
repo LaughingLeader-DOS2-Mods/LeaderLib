@@ -5,7 +5,8 @@ Ext.Events.SessionLoaded:Subscribe(function (e)
 	Game.Tooltip.RegisterRequestListener("Item", function (request, ui, uiType, event, id, ...)
 		if request.ObjectHandleDouble then
 			local settings = SettingsManager.GetMod(ModuleUUID)
-			if settings.Global:FlagEquals("LeaderLib_ShowConsumableEffectsEnabled", true) then
+			local gameSettings = GameSettingsManager.GetSettings()
+			if settings.Global:FlagEquals("LeaderLib_ShowConsumableEffectsEnabled", true) and not gameSettings.Client.HideConsumableEffects then
 				local item = GameHelpers.Client.TryGetItemFromDouble(request.ObjectHandleDouble)
 				if item and item.StatsFromName then
 					local statEntry = item.StatsFromName.StatsEntry

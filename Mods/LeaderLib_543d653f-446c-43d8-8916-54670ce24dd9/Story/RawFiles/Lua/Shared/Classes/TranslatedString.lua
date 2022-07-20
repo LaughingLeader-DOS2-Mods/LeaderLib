@@ -103,7 +103,9 @@ function TranslatedString:Create(handle, content, params)
 		end
 	end
 	_setmetatable(this, _TSTRING_META)
-	TranslatedString.Update(this)
+	if Vars.Initialized then
+		TranslatedString.Update(this)
+	end
 	_translatedStringUpdate[#_translatedStringUpdate+1] = this
 	return this
 end
@@ -174,7 +176,7 @@ function TranslatedString:Update()
 			end
 		end
 	end
-	if not _strnullspace(self.Value) and self.AutoReplacePlaceholders then
+	if not _strnullspace(self.Value) and self.AutoReplacePlaceholders and Vars.Initialized then
 		self.Value = _replaceplaceholders(self.Value)
 	end
 	return self.Value

@@ -1,4 +1,5 @@
 <contentList>
+	<content contentuid="h004a3fd7g7610g4c6dgb405g6d48d947e645">Show Status Source</content>
 	<content contentuid="h00b235c6gdd0bg494fg997cga2d204f060a8">Unknown</content>
 	<content contentuid="h00cfaa9cg1ba7g4699gb353g07d1570afea6">*He snorts.* Unfortunately, the thought of hanging around on that stuffy island, with all that death underneath, did not appeal to me. </content>
 	<content contentuid="h00d3459bg4562g42dbgbe1fg0eba1a0e9f6c">*You take a look at the trader&apos;s wares.*</content>
@@ -127,11 +128,11 @@
 	<content contentuid="h41a533b7g535bg4e76gbc7eg202d33a73740">Automatically Add Mod Books</content>
 	<content contentuid="h4252ff7cgb624g4b24gbf03g1772392f3988">Old Man Lothar</content>
 	<content contentuid="h43868aebg7281g40bfgbc1dgf6fe5a06512b">Autosave Interval</content>
-	<content contentuid="h43c8c461g3a16g46fdgae71ga5986e500941">If enabled, consumable items such as drinks, food, potions, and ingredients will show their effects without needing to consume it first.&lt;br&gt;The &lt;font color=&apos;#33FF66&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideConsumableEffects:Hide Consumable Effects]&lt;/font&gt; setting can be enabled in the Gameplay tab to still hide these effects for yourself, while allowing it globally here.&lt;br&gt;&lt;font color=&apos;#FFAA33&apos;&gt;Note: This works without any permanent stat overrides, so it&apos;s safe to enable/disable at will.&lt;/font&gt; </content>
+	<content contentuid="h43c8c461g3a16g46fdgae71ga5986e500941">If enabled, consumable items such as drinks, food, potions, and ingredients will show their effects without needing to consume it first.&lt;br&gt;The &lt;font color=&apos;#33FF66&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideConsumableEffects:Show Consumable Effects]&lt;/font&gt; setting can be disabled in the Gameplay tab to still hide these effects for yourself, while allowing it globally here.&lt;br&gt;&lt;font color=&apos;#FFAA33&apos;&gt;Note: This works without any permanent stat overrides, so it&apos;s safe to enable/disable at will.&lt;/font&gt; </content>
 	<content contentuid="h455f1349g6528g452bg8624g5d0674b01ac5">If enabled, tooltips that support shift-key expansion will always be expanded.</content>
 	<content contentuid="h456c5c8bg7103g4b19g9185ge4cd6ddbab30">Show Status in Portrait UI</content>
 	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9">Hidden Backpack</content>
-	<content contentuid="h46a7fef9g9976g4abeg8f95g8fddb41639b9">If &lt;font color=&apos;#33FF66&apos;&gt;Show Consumable Effects&lt;/font&gt; is enabled in the global Mod Settings, enable this setting to hide these effects for yourself only.</content>
+	<content contentuid="h46a7fef9g9976g4abeg8f95g8fddb41639b9">If &lt;font color=&apos;#33FF66&apos;&gt;Show Consumable Effects&lt;/font&gt; is enabled in the global Mod Settings, disable this setting to hide these effects for yourself only.</content>
 	<content contentuid="h46c05d65g039dg4651gb24eg027244f86897">Undead Dwarf</content>
 	<content contentuid="h46f32bf7gf965g4146ga6e1g4951c5d8c2fa">Clears surfaces in a [1]m range at the location of your target(s).</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d">Undead Human</content>
@@ -486,8 +487,9 @@
 	<content contentuid="hf33cf707g6e5eg4674g9d88gc6a9431cdabc">That&apos;s enough of that...</content>
 	<content contentuid="hf37c444fg879fg4e62gb3d5g77086202f362">Pull Radius</content>
 	<content contentuid="hf3a71217gb65cg43bfg99bbg5c82a6f01901">Autosave interval updated.</content>
+	<content contentuid="hf3dfc274ga5ceg4cc0g8b9ag3c4372b9b507">Show the source of a status, if any, in status tooltips.</content>
 	<content contentuid="hf437b717gbcecg4961ga518g3bbe1ef85d2e">Permanent [Key:Shout_SpiritVision_DisplayName:Spirit Vision]</content>
-	<content contentuid="hf5360b3eg3045g43abgb750gf94ecc4443d6">Hide Consumable Effects</content>
+	<content contentuid="hf5360b3eg3045g43abgb750gf94ecc4443d6">Show Consumable Effects</content>
 	<content contentuid="hf545a1fbgccb8g481ega4adg32165aaa9288">[OFF] Redirect to Character with Highest Persuasion - Make the party member with the highest persuasion the redirection target. [GLOBAL]</content>
 	<content contentuid="hf585ea52gbdb4g4a21g82aag836415d7d0d6">*Request a copy of the &quot;Mod Menu&quot; book.*</content>
 	<content contentuid="hf638bc67g5cb6g4dcfg8663gce1951caad2b">[1] Penetration</content>

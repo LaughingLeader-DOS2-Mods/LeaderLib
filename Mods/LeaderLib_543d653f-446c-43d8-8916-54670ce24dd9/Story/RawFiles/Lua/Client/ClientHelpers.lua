@@ -142,7 +142,7 @@ end
 ---@param func fun(handle:ObjectHandle):EclCharacter|EclItem
 local function ProcessDoubleHandle(double, func)
 	if not GameHelpers.Math.IsNaN(double) then
-		local handle = Ext.DoubleToHandle(double)
+		local handle = Ext.UI.DoubleToHandle(double)
 		if GameHelpers.IsValidHandle(handle) then
 			return func(handle)
 		end

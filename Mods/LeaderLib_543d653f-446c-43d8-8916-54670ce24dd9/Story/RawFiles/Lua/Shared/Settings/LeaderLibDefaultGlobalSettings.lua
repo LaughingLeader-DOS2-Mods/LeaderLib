@@ -22,11 +22,12 @@ settings.Global:AddLocalizedFlags({
 	"LeaderLib_BuffStatusPreserverEnabled",
 	"LeaderLib_AutoIdentifyItemsEnabled",
 	"LeaderLib_PermanentSpiritVisionEnabled",
+	"LeaderLib_ShowConsumableEffectsEnabled",
 })
 settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 --settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)
 settings.Global:AddLocalizedVariable("AutoCombatRange", "LeaderLib_Variables_AutoCombatRange", 30, 1, 30, 1)
-settings.Global:AddLocalizedVariable("CombatSightRangeMultiplier", "LeaderLib_Variables_CombatSightRangeMultiplier", 30, 1, 30, 1)
+settings.Global:AddLocalizedVariable("CombatSightRangeMultiplier", "LeaderLib_Variables_CombatSightRangeMultiplier", 2.5, 1, 30, 1)
 
 settings.GetMenuOrder = function()
 	local order = {
@@ -38,13 +39,14 @@ settings.GetMenuOrder = function()
 			"AutoCombatRange",
 			"CombatSightRangeMultiplier",
 		}},
-		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_QOL", "Quality-of-Life"),
+		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_QOL", "Quality of Life"),
 		Entries = {
 			"LeaderLib_AutoAddModMenuBooksDisabled",
 			"LeaderLib_AutoUnlockInventoryInMultiplayer",
 			"LeaderLib_AllTooltipsForItemsEnabled",
 			"LeaderLib_AutoIdentifyItemsEnabled",
 			"LeaderLib_PermanentSpiritVisionEnabled",
+			"LeaderLib_ShowConsumableEffectsEnabled",
 			"LeaderLib_RemovePathInfluencesOnChainAll"
 		}},
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_DialogRedirection", "Dialog Redirection"),
@@ -96,6 +98,18 @@ if Ext.IsDeveloperMode() then
 end
 
 GlobalSettings.Mods[ModuleUUID] = settings
+
+Ext.Events.SessionLoaded:Subscribe(function (e)
+	local sightRange = GameHelpers.GetExtraData("End Of Combat SightRange Multiplier", 2.5)
+	if sightRange ~= 2.5 then
+		settings.Global.Variables.CombatSightRangeMultiplier.Default = sightRange
+	end
+end)
+
+settings.Global.Variables.CombatSightRangeMultiplier:Subscribe(function (e)
+	Ext.ExtraData["End Of Combat SightRange Multiplier"] = e.Value
+	--Ext.ExtraData["Ally Joins Ally SightRange Multiplier"] = e.Value -- Unused?
+end)
 
 if Ext.IsServer() then
 	settings.Global.Flags.LeaderLib_BuffStatusPreserverEnabled:Subscribe(function(e)

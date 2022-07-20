@@ -727,7 +727,7 @@ end
 ---Returns true if the item can cast a skill, like a scroll.
 ---@param item ItemParam
 ---@return boolean
-function GameHelpers.Item.HasConsumeableSkillAction(item)
+function GameHelpers.Item.HasConsumableSkillAction(item)
     local item = GameHelpers.GetItem(item)
     if item then
         if GameHelpers.Item.IsObject(item) then

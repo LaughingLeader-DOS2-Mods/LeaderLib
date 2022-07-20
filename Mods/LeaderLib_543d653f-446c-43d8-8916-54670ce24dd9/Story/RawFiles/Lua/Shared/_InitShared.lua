@@ -282,6 +282,8 @@ Features = {
 	SpellsCanCrit = false,
 	---Fixes statuses not displaying skill damage correctly when using the Skill:SkillId:Damage param.
 	StatusParamSkillDamage = false,
+	---Display the status source in status tooltips.
+	StatusDisplaySource = true,
 	---Fixes various tooltip things like extra spaces and grammar issues.
 	TooltipGrammarHelper = false,
 	---Enables a workaround for requiring WINGS or PURE to make characters play the flying animation when moving around.

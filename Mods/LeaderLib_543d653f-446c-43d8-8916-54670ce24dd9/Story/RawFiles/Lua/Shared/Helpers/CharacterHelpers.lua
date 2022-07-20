@@ -815,6 +815,36 @@ function GameHelpers.Character.GetEquipment(character, asTable)
 	end
 end
 
+---@class _GameHelpers_Character_GetEquipmentOnEquipStatuses_Entry
+---@field Status string
+---@field Item EsvItem|EclItem
+
+---Get all the statuses applied by a character's equipment when equipped.
+---@param character CharacterParam
+---@param inDictionaryForm boolean|nil Return the results as a statusId,data table.
+---@return table<string, _GameHelpers_Character_GetEquipmentOnEquipStatuses_Entry>|_GameHelpers_Character_GetEquipmentOnEquipStatuses_Entry[]
+function GameHelpers.Character.GetEquipmentOnEquipStatuses(character, inDictionaryForm)
+	local char = GameHelpers.GetCharacter(character)
+    fassert(char ~= nil, "'%s' is not a valid character", character)
+	local entries = {}
+	for item in GameHelpers.Character.GetEquipment(character) do
+		---@type StatPropertyStatus[]
+		local props = Ext.Stats.GetAttribute(item.Stats.Name, "ExtraProperties")
+		if props and #props > 0 then
+			for _,v in pairs(props) do
+				if v.Type == "Status" and Common.TableHasValue(v.Context, "SelfOnEquip") then
+					if inDictionaryForm then
+						entries[v.Action] = {Status = v.Action, Item = item}
+					else
+						entries[#entries+1] = {Status = v.Action, Item = item}
+					end
+				end
+			end
+		end
+	end
+	return entries
+end
+
 ---Get a character's mainhand and offhand item.
 ---@param character CharacterParam
 ---@return EsvItem|EclItem|nil mainhand

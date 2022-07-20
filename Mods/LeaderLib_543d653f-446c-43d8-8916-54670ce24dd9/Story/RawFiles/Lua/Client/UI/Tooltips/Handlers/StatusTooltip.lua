@@ -7,6 +7,40 @@ end
 ---@param tooltip TooltipData
 function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 	local statusType = GameHelpers.Status.GetStatusType(status.StatusId)
+	if Features.StatusDisplaySource then
+		if GameHelpers.IsValidHandle(status.StatusSourceHandle) then
+			local equipmentStatuses = GameHelpers.Character.GetEquipmentOnEquipStatuses(character, true)
+			local source = GameHelpers.TryGetObject(status.StatusSourceHandle)
+			if source then
+				local displayName = GameHelpers.GetDisplayName(source)
+				local sourceName = displayName
+				if source.MyGuid == character.MyGuid then
+					local itemSourceData = equipmentStatuses[status.StatusId]
+					if itemSourceData then
+						local itemName = GameHelpers.GetDisplayName(itemSourceData.Item)
+						local rarityColor = Data.Colors.Rarity[itemSourceData.Item.Stats.ItemTypeReal] or Data.Colors.Common.White
+						sourceName = string.format("%s (<font color='%s'>%s</font>)", displayName, rarityColor, itemName)
+					end
+				end
+
+				local description = tooltip:GetDescriptionElement({Type="StatusDescription", Label=""})
+				if not string.find(description.Label, displayName) then
+					if not StringHelpers.IsNullOrWhitespace(description.Label) then
+						description.Label = description.Label .. "<br>"
+					end
+					description.Label = string.format("%s%s", description.Label or "", LocalizedText.Tooltip.StatusSource:ReplacePlaceholders(sourceName))
+				end
+			end
+		end
+	end
+	if Vars.DebugMode then
+		local idText = string.format("<font color='%s'>ID: %s</font>", Data.Colors.Common.AztecGold, status.StatusId)
+		local description = tooltip:GetDescriptionElement({Type="StatusDescription", Label=""})
+		if not StringHelpers.IsNullOrWhitespace(description.Label) then
+			description.Label = description.Label .. "<br>"
+		end
+		description.Label = string.format("%s%s", description.Label or "", idText)
+	end
 	if Features.ApplyBonusWeaponStatuses then
 		if not Data.EngineStatus[status.StatusId] and Data.StatusStatsIdTypes[statusType] then
 			local potion = Ext.StatGetAttribute(status.StatusId, "StatsId")

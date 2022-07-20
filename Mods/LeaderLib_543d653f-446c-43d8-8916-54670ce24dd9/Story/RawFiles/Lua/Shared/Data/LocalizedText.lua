@@ -397,7 +397,8 @@ LocalizedText.Tooltip = {
 	AbilityCurrentLevel = ts:Create("h8154ae8eg2b37g4f0fgb6b6gd7e27fed37a6", "Level [1]: [2]"),
 	AbilityNextLevel = ts:Create("he31d5820g9ddbg4e08gac83g1358e22e499b", "Next Level [1]: [2]"),
 	ImmunityTo = ts:Create("h0b55e55fg0b1dg4c92g899egca5204be3932", "Immunity to [1]<br>"),
-	BookIsKnown = ts:CreateFromKey("LeaderLib_Tooltip_BookIsKnown", "<br><font color='#44FF33'>(This book has been read)</font>")
+	BookIsKnown = ts:CreateFromKey("LeaderLib_Tooltip_BookIsKnown", "<br><font color='#44FF33'>(This book has been read)</font>"),
+	StatusSource = ts:CreateFromKey("LeaderLib_Tooltip_StatusSource", "<font color='#6EB09D'>Applied by [1]</font>")
 }
 
 LocalizedText.Input = {

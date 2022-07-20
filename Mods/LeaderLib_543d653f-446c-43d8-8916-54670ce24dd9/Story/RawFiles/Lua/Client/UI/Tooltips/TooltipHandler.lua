@@ -73,6 +73,17 @@ local function RegisterTooltipHandlers()
 	end)
 	_r.Status(TooltipHandler.OnStatusTooltip)
 	_r.Stat(TooltipHandler.OnStatTooltip)
+	
+	--TODO Need an extender way to get a surface on the client
+	--[[ _r.Surface(function (character, surface, tooltip)
+		if Features.SurfaceDisplaySource then
+			local description = tooltip:GetDescriptionElement({Type="SurfaceDescription", Label=""})
+			if not StringHelpers.IsNullOrWhitespace(description.Label) then
+				description.Label = description.Label .. "<br>"
+			end
+			description.Label = string.format("%s%s", description.Label or "", idText)
+		end
+	end) ]]
 
 	if Vars.DebugMode then
 		_r.Rune(TooltipHandler.OnRuneTooltip)

@@ -8,10 +8,15 @@ Timer = {
 }
 
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
+local type = type
+local _mt = Ext.Utils.MonotonicTime
 
 Timer.TimerData = {}
 Timer.TimerNameMap = {}
+
+---@type WaitForTickData[]
+local _waitForTick = {}
 
 if not _ISCLIENT then
 	setmetatable(Timer.TimerData, {
@@ -77,31 +82,31 @@ end
 
 ---@param timerName string
 ---@param delay integer
----@param flashCallback function|nil Optional flash callback to invoke for v55 client-side timers.
-local function _StartTimer(timerName, delay, flashCallback)
+local function _StartTimer(timerName, delay)
 	if not _ISCLIENT then
 		TimerCancel(timerName)
 		TimerLaunch(timerName, delay)
 	else
-		if _EXTVERSION >= 56 then
-			local resetTickTime = false
-			for i,v in pairs(Timer.WaitForTick) do
-				if v.ID == timerName then
-					v.TargetTime = Ext.MonotonicTime() + delay
+		local resetTickTime = false
+		local len = #_waitForTick
+		if len > 0 then
+			for i=1,len do
+				local v = _waitForTick[i]
+				if v and v.ID == timerName then
+					v.TargetTime = _mt() + delay
 					v.Delay = delay
 					resetTickTime = true
 				end
 			end
-			if not resetTickTime then
-				Timer.WaitForTick[#Timer.WaitForTick+1] = {
-					ID = timerName,
-					TargetTime = Ext.MonotonicTime() + delay,
-					Delay = delay
-				}
-			end
-		else
-			UIExtensions.StartTimer(timerName, delay, flashCallback)
 		end
+		if not resetTickTime then
+			_waitForTick[len+1] = {
+				ID = timerName,
+				TargetTime = _mt() + delay,
+				Delay = delay
+			}
+		end
+		--UIExtensions.StartTimer(timerName, delay, flashCallback)
 	end
 	return true
 end
@@ -119,14 +124,28 @@ function Timer.Start(timerName, delay, ...)
 end
 
 local _OneshotTimerIndexes = {}
+_INTERNAL._OneshotTimerIndexes = _OneshotTimerIndexes
 
-function _INTERNAL.ClearOneshotSubscriptions(timerName)
+function _INTERNAL.ClearOneshotSubscriptions(timerName, skipAlteringTickTable)
 	local indexes = _OneshotTimerIndexes[timerName]
 	if indexes then
 		for _,index in pairs(indexes) do
 			Events.TimerFinished:Unsubscribe(index)
 		end
 		_OneshotTimerIndexes[timerName] = nil
+		if _ISCLIENT and skipAlteringTickTable ~= true then
+			local len = #_waitForTick
+			if len > 0 then
+				local _nextWait = {}
+				for i=1,len do
+					local data = _waitForTick[i]
+					if data and data.ID ~= timerName then
+						_nextWait[#_nextWait+1] = data
+					end
+				end
+				_waitForTick = _nextWait
+			end
+		end
 	end
 end
 
@@ -144,7 +163,7 @@ function Timer.StartOneshot(timerName, delay, callback, stopPrevious)
 		return -1
 	end
 	if StringHelpers.IsNullOrEmpty(timerName) then
-		timerName = string.format("LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random(0,999999))
+		timerName = string.format("LeaderLib_%s%s", _mt(), Ext.Random(0,999999))
 	end
 	if stopPrevious then
 		Timer.Cancel(timerName)
@@ -156,7 +175,8 @@ function Timer.StartOneshot(timerName, delay, callback, stopPrevious)
 	if _OneshotTimerIndexes[timerName] == nil then
 		_OneshotTimerIndexes[timerName] = {}
 	end
-	table.insert(_OneshotTimerIndexes[timerName], index)
+	local tbl = _OneshotTimerIndexes[timerName]
+	tbl[#tbl+1] = index
 	_StartTimer(timerName, delay)
 	return index
 end
@@ -178,13 +198,6 @@ function Timer.Cancel(timerName, object)
 		TimerCancel(timerName)
 	else
 		UIExtensions.RemoveTimerCallback(timerName)
-		if _EXTVERSION >= 56 then
-			for i,v in pairs(Timer.WaitForTick) do
-				if v.ID == timerName then
-					table.remove(Timer.WaitForTick, i)
-				end
-			end
-		end
 	end
 	_INTERNAL.ClearData(timerName)
 end
@@ -262,7 +275,7 @@ function Timer.RegisterListener(name, callback)
 	end
 end
 
-local function OnTimerFinished(timerName)
+local function OnTimerFinished(timerName, skipAlteringTickTable)
 	if Timer.IgnoredTimers[timerName] then
 		return
 	end
@@ -275,6 +288,8 @@ local function OnTimerFinished(timerName)
 		timerName = realTimerName
 		Timer.TimerNameMap[timerName] = nil
 	end
+
+	local invoked = false
 
 	if type(data) == "table" then
 		for i=1,#data do
@@ -299,6 +314,7 @@ local function OnTimerFinished(timerName)
 			else
 				Events.TimerFinished:Invoke({ID=timerName, Data={entry}})
 			end
+			invoked = true
 		end
 	else
 		if StringHelpers.IsUUID(data) then
@@ -317,13 +333,18 @@ local function OnTimerFinished(timerName)
 		else
 			Events.TimerFinished:Invoke({ID=timerName, Data={data}})
 		end
+		invoked = true
+	end
+
+	if not invoked then
+		Events.TimerFinished:Invoke({ID=timerName, Data = {}})
 	end
 
 	if not _ISCLIENT then
 		TurnCounter.OnTimerFinished(timerName)
 	end
 
-	_INTERNAL.ClearOneshotSubscriptions(timerName)
+	_INTERNAL.ClearOneshotSubscriptions(timerName, skipAlteringTickTable)
 	_INTERNAL.ClearData(originalTimerName)
 end
 
@@ -447,36 +468,39 @@ if not _ISCLIENT then
 	Ext.RegisterOsirisListener("ProcObjectTimerFinished", 2, "after", OnProcObjectTimerFinished)
 end
 
-if _EXTVERSION >= 56 then
-	---@class ExtGameTime
-	---@field Time number
-	---@field DeltaTime number
-	---@field Ticks integer
+---@class ExtGameTime
+---@field Time number
+---@field DeltaTime number
+---@field Ticks integer
 
-	---@class WaitForTickData
-	---@field ID string
-	---@field TargetTime integer
-	---@field Delay integer
-	
-	---@private
-	---@type WaitForTickData[]
-	Timer.WaitForTick = {}
+---@class WaitForTickData
+---@field ID string
+---@field TargetTime integer
+---@field Delay integer
 
-	---@param tickData ExtGameTime
-	local function OnTick(tickData)
-		local length = #Timer.WaitForTick
+if _ISCLIENT then
+	---@param e LuaTickEventParams
+	local function OnTick(e)
+		local length = #_waitForTick
 		if length > 0 then
-			local time = Ext.MonotonicTime()
+			local time = _mt()
+			local _nextWait = {}
+			local idx = 1
 			for i=1,length do
-				local data = Timer.WaitForTick[i]
-				if data and data.TargetTime <= time then
-					table.remove(Timer.WaitForTick, i)
-					OnTimerFinished(data.ID)
+				local data = _waitForTick[i]
+				if data then
+					if data.TargetTime <= time then
+						OnTimerFinished(data.ID, true)
+					else
+						_nextWait[idx] = data
+						idx = idx + 1
+					end
 				end
 			end
+			_waitForTick = _nextWait
 		end
 	end
-	Ext.Events.Tick:Subscribe(function(e) OnTick(e.Time) end)
+	Ext.Events.Tick:Subscribe(OnTick, {Priority=1})
 end
 
 --Globals / old API support

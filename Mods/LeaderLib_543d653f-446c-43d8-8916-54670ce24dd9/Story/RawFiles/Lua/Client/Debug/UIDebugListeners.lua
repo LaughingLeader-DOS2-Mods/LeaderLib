@@ -17,7 +17,7 @@ local Init = function()
 
 	local function _print(str, ...)
 		if not UI.Debug.PrintAll then
-			fprint(LOGLEVEL.TRACE2, ...)
+			fprint(LOGLEVEL.TRACE, ...)
 		else
 			_logText = _logText .. "\n" .. _format(str, ...)
 			Timer.Cancel("LeaderLib_Debug_SaveUILog")

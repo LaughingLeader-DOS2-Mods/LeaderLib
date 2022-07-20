@@ -172,12 +172,12 @@ if Ext.IsServer() then
 			switches.AutoIdentifyItems = e.Value == true
 		end
 		if e.Value then
-			fprint(LOGLEVEL.TRACE2, "[LeaderLib] Identifying the party's items...")
+			fprint(LOGLEVEL.TRACE, "[LeaderLib] Identifying the party's items...")
 			local total = 0
 			for player in GameHelpers.Character.GetPlayers() do
 				total = total + IdentifyAllItems(player)
 			end
-			fprint(LOGLEVEL.TRACE2, "[LeaderLib] Identified (%s) items.", total)
+			fprint(LOGLEVEL.TRACE, "[LeaderLib] Identified (%s) items.", total)
 		end
 	end)
 end

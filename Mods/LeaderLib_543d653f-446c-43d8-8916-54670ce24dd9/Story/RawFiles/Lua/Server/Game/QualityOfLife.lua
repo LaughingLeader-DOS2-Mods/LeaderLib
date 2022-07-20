@@ -261,7 +261,7 @@ Ext.Events.TreasureItemGenerated:Subscribe(function (e)
 			if settings and settings.Global:FlagEquals("LeaderLib_AutoIdentifyItemsEnabled", true) then
 				e.Item.Stats.IsIdentified = 1
 				if Vars.Print.Treasure then
-					fprint(LOGLEVEL.TRACE2, "[LeaderLib] Identified a new treasure item (%s).", statsId)
+					fprint(LOGLEVEL.TRACE, "[LeaderLib] Identified a new treasure item (%s).", statsId)
 				end
 			end
 		end

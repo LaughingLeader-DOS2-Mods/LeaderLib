@@ -2,18 +2,19 @@
 
 local _EXTVERSION = Ext.Version()
 
----@class LOGLEVEL
+---@enum LOGLEVEL
 LOGLEVEL = {
 	--- Ext.Print
 	DEFAULT = 0,
-	--- print, will allow the message to show up when in input mode in the command window.
+	--- Ext.Print if in DeveloperMode
 	TRACE = 1,
 	--- Ext.PrintWarning
 	WARNING = 2,
 	--- Ext.PrintError
 	ERROR = 3,
-	--- Ext.Print if in DeveloperMode
-	TRACE2 = 4,
+	---@deprecated
+	---Use TRACE, since print defaulty uses Ext.Print in v56
+	TRACE2 = 1,
 }
 
 ---Prints a string formatted message with optional severity.
@@ -33,10 +34,6 @@ function fprint(severity, str, ...)
 		elseif severity == LOGLEVEL.WARNING then
 			Ext.PrintWarning(msg)
 		elseif severity == LOGLEVEL.TRACE then
-			if Vars.DebugMode then
-				print(msg)
-			end
-		elseif severity == LOGLEVEL.TRACE2 then
 			if Vars.DebugMode then
 				Ext.Print(msg)
 			end

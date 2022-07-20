@@ -135,7 +135,9 @@ function TranslatedString:CreateFromKey(key, fallback, params)
 		end
 	end
 	_setmetatable(this, _TSTRING_META)
-	TranslatedString.Update(this)
+	if Vars.Initialized then
+		TranslatedString.Update(this)
+	end
 	_translatedStringUpdate[#_translatedStringUpdate+1] = this
 	return this
 end

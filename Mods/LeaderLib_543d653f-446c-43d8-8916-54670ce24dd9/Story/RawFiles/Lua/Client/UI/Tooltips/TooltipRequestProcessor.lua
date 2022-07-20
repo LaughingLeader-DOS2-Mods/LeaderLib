@@ -719,11 +719,11 @@ function RequestProcessor.OnExamineTooltip(ui, event, typeIndex, id, ...)
 	end
 
 	RequestProcessor.Tooltip.NextRequest = request
-	RequestProcessor.Tooltip:InvokeRequestListeners(request, "before", ui, request.UIType, event, typeIndex, id, ...)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "Before", ui, request.UIType, event, typeIndex, id, ...)
 
 	RequestProcessor.Tooltip.Last.Event = event
 	RequestProcessor.Tooltip.Last.UIType = request.UIType
-	RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, request.UIType, event, typeIndex, id, ...)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, request.UIType, event, typeIndex, id, ...)
 end
 
 ---@param ui UIObject
@@ -805,17 +805,27 @@ function RequestProcessor.OnControllerExamineTooltip(ui, event, id, objectHandle
 	end
 
 	RequestProcessor.Tooltip.NextRequest = request
-	RequestProcessor.Tooltip:InvokeRequestListeners(request, "before", ui, request.UIType, event, id, objectHandle)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "Before", ui, request.UIType, event, id, objectHandle)
 	if object then
 		Game.Tooltip.ControllerVars.LastPlayer = request.ObjectHandleDouble
 	end
 
 	RequestProcessor.Tooltip.Last.Event = event
 	RequestProcessor.Tooltip.Last.UIType = request.UIType
-	RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, request.UIType, event, id, objectHandle)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, request.UIType, event, id, objectHandle)
 end
 
-function RequestProcessor.OnGenericTooltip(ui, event, text, x, y, width, height, side, allowDelay)
+---@param e EclLuaUICallEventParams
+---@param ui UIObject
+---@param event string
+---@param text string
+---@param x number
+---@param y number
+---@param width number
+---@param height number
+---@param side string
+---@param allowDelay boolean
+function RequestProcessor.OnGenericTooltip(e, ui, event, text, x, y, width, height, side, allowDelay)
 	if RequestProcessor.Tooltip.NextRequest == nil then
 		---@type TooltipGenericRequest
 		local request = _CreateRequest()
@@ -823,7 +833,9 @@ function RequestProcessor.OnGenericTooltip(ui, event, text, x, y, width, height,
 		request.Text = text
 		request.UIType = ui.Type
 
-		if x then
+		local hasExtraData = x ~= nil and side ~= nil
+
+		if hasExtraData then
 			request.X = x
 			request.Y = y
 			request.Width = width
@@ -833,11 +845,28 @@ function RequestProcessor.OnGenericTooltip(ui, event, text, x, y, width, height,
 		end
 
 		RequestProcessor.Tooltip.NextRequest = request
-		RequestProcessor.Tooltip:InvokeRequestListeners(request, "before", ui, request.UIType, event, text, x, y, width, height, side, allowDelay)
+		RequestProcessor.Tooltip:InvokeRequestListeners(request, "Before", ui, request.UIType, event, text, x, y, width, height, side, allowDelay)
 
 		RequestProcessor.Tooltip.Last.Event = event
 		RequestProcessor.Tooltip.Last.UIType = request.UIType
-		RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, request.UIType, event, text, x, y, width, height, side, allowDelay)
+		RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, request.UIType, event, text, x, y, width, height, side, allowDelay)
+
+		if request.Text then
+			e.Args[1] = request.Text
+		else
+			_PrintError(string.format("[RequestProcessor.OnGenericTooltip:%s] request.Text is nil? (%s) => (%s)\nRequest:\n%s", event, text, request.Text, Ext.DumpExport(request)))
+			e.Args[1] = ""
+			request.Text = ""
+		end
+
+		if hasExtraData then
+			e.Args[2] = request.X
+			e.Args[3] = request.Y
+			e.Args[4] = request.Width
+			e.Args[5] = request.Height
+			e.Args[6] = request.Side
+			e.Args[7] = request.AllowDelay
+		end
 	end
 end
 
@@ -969,7 +998,7 @@ local CallHandlers = {}
 local InvokeHandlers = {}
 
 ---@param event string
----@param callback fun(ui:UIObject, event:string, ...:any)
+---@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
 ---@param typeIds table<integer,boolean>|integer|nil
 local function _CallHandler(event, callback, typeIds)
 	if type(typeIds) == "number" then
@@ -983,7 +1012,7 @@ local function _CallHandler(event, callback, typeIds)
 end
 
 ---@param event string
----@param callback fun(ui:UIObject, event:string, ...:any)
+---@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
 ---@param typeIds table<integer,boolean>|integer|nil
 local function _InvokeHandler(event, callback, typeIds)
 	if type(typeIds) == "number" then
@@ -1002,28 +1031,25 @@ Ext.Events.UIInvoke:Subscribe(function (e)
 		if handler then
 			if handler.TypeIds then
 				if handler.TypeIds[e.UI.Type] == true then
-					handler.Callback(e.UI, e.Function, table.unpack(e.Args))
+					handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
 				end
 			else
-				handler.Callback(e.UI, e.Function, table.unpack(e.Args))
+				handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
 			end
 		end
 	end
 end, {Priority=1})
 
 Ext.Events.UICall:Subscribe(function (e)
-	if string.find(e.Function, "tooltip") then
-		print(e.Function, e.When)
-	end
 	if e.When == "Before" then
 		local handler = CallHandlers[e.Function]
 		if handler then
 			if handler.TypeIds then
 				if handler.TypeIds[e.UI.Type] == true then
-					handler.Callback(e.UI, e.Function, table.unpack(e.Args))
+					handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
 				end
 			else
-				handler.Callback(e.UI, e.Function, table.unpack(e.Args))
+				handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
 			end
 		end
 	end
@@ -1035,7 +1061,7 @@ local function RegisterControllerHandlers()
 		_CallHandler(v, RedirectControllerTooltip, _ccControllerTypeIds)
 	end
 	--Custom controller tooltip calls.
-	_CallHandler("SlotHover", function (ui, event, slotNum)
+	_CallHandler("SlotHover", function (e, ui, event, slotNum)
 		---@type {bottombar_mc:{slotsHolder_mc:{tooltipSlotType:integer, tooltipSlot:number}}}
 		local this = ui:GetRoot()
 		if this then
@@ -1082,37 +1108,37 @@ local function RegisterControllerHandlers()
 
 	_CallHandler("itemDollOver", OnControllerSlotOver, _UITYPE.equipmentPanel_c)
 
-	_CallHandler("runeSlotOver", function (ui, event, id, ...)
+	_CallHandler("runeSlotOver", function (e, ui, event, id, ...)
 		if id ~= -1 then
 			RequestProcessor.HandleCallback("Rune", ui, ui.Type, TooltipCalls.Rune, id, ...)
 		end
 	end, _UITYPE.craftPanel_c)
 
-	_CallHandler("setTooltipVisible", function (ui, event, id, ...)
+	_CallHandler("setTooltipVisible", function (e, ui, event, id, ...)
 		if id ~= -1 then
 			RequestProcessor.HandleCallback("Rune", ui, ui.Type, TooltipCalls.Rune, id, ...)
 		end
 	end, _UITYPE.craftPanel_c)
 
-	_CallHandler("setTooltipVisible", function (ui, event, visible, ...)
+	_CallHandler("setTooltipVisible", function (e, ui, event, visible, ...)
 		if visible == true then
 			RequestProcessor.HandleCallback("Item", ui, ui.Type, TooltipCalls.Item)
 		end
 	end, _UITYPE.partyInventory_c)
 
-	_CallHandler("overItem", function (ui, event, itemHandleDouble, ...)
+	_CallHandler("overItem", function (e, ui, event, itemHandleDouble, ...)
 		RequestProcessor.HandleCallback("Item", ui, ui.Type, TooltipCalls.Item, itemHandleDouble)
 	end, _UITYPE.trade_c)
 
-	_CallHandler("refreshTooltip", function (ui, event, itemHandleDouble, ...)
+	_CallHandler("refreshTooltip", function (e, ui, event, itemHandleDouble, ...)
 		RequestProcessor.HandleCallback("Item", ui, ui.Type, TooltipCalls.Item, itemHandleDouble)
 	end, _UITYPE.reward_c)
 
-	_CallHandler("selectedAttribute", function (ui, event, id, ...)
+	_CallHandler("selectedAttribute", function (e, ui, event, id, ...)
 		RequestProcessor.OnControllerExamineTooltip(ui, event, id)
 	end, _UITYPE.statsPanel_c)
 
-	_CallHandler("selectCustomStat", function (ui, event, id, ...)
+	_CallHandler("selectCustomStat", function (e, ui, event, id, ...)
 		RequestProcessor.OnControllerExamineTooltip(ui, event, id)
 	end, _UITYPE.statsPanel_c)
 
@@ -1132,7 +1158,7 @@ local function RegisterControllerHandlers()
 
 	for i=1,#selectEvents do
 		local v = selectEvents[i]
-		_CallHandler(v, function (ui, ...)
+		_CallHandler(v, function (e, ui, ...)
 			RequestProcessor.OnControllerExamineTooltip(ui, ...)
 		end, selectTypeIds)
 	end
@@ -1142,27 +1168,26 @@ end
 function RequestProcessor:Init(tooltip)
 	self.Tooltip = tooltip
 	for t,v in pairs(TooltipCalls) do
-		_CallHandler(v, function (ui, ...) RequestProcessor.HandleCallback(t, ui, ui.Type, ...) end)
+		_CallHandler(v, function (e, ui, ...) RequestProcessor.HandleCallback(t, ui, ui.Type, ...) end)
 	end
 	for t,v in pairs(TooltipInvokes) do
-		_InvokeHandler(v, function (ui, ...) RequestProcessor.HandleCallback(t, ui, ui.Type, ...) end)
+		_InvokeHandler(v, function (e, ui, ...) RequestProcessor.HandleCallback(t, ui, ui.Type, ...) end)
 	end
 
-	--Generic tooltips
-	Ext.RegisterUINameCall("showTooltip", function(ui, ...)
+	_CallHandler("showTooltip", function (e, ui, ...)
 		if ui.Type == _UITYPE.examine then
 			RequestProcessor.OnExamineTooltip(ui, ...)
 		else
-			RequestProcessor.OnGenericTooltip(ui, ...)
+			RequestProcessor.OnGenericTooltip(e, ui, ...)
 		end
-	end, "Before")
+	end)
 
 	if Vars.ControllerEnabled then
 		RegisterControllerHandlers()
 	end
 
 	-- Disabled for now since this function doesn't include any ID for the tag.
-	-- Ext.RegisterUICall(statsPanel, "selectTag", function(ui, method, emptyWorthlessTagTooltip)
+	-- Ext.RegisterUICall(statsPanel, "selectTag", function(e, ui, method, emptyWorthlessTagTooltip)
 	-- 	print(method, emptyWorthlessTagTooltip)
 	-- 	local main = ui:GetRoot()
 	-- 	local tags_mc = main.mainpanel_mc.stats_mc.tags_mc
@@ -1255,7 +1280,7 @@ local _equipmentPattern = "<font color=\"#ffffff\">%s</font><font size=\"15\"><b
 --Called before a world hover tooltip is shown. text may be "" if it's an item without health.
 --[enemyHealthBar(42)][invoke] setText("<font color="#ffffff">Barrel</font>", "Level 1", false)
 --TODO Figure out if there's an equivalent for controllers.
-Ext.RegisterUITypeInvokeListener(_UITYPE.enemyHealthBar, "setText", function(ui, event, text, levelText, shortenWidth)
+_InvokeHandler("setText", function(e, ui, event, text, levelText, shortenWidth)
 	local cursor = _GetPickingState()
 	if cursor and _IsValidHandle(cursor.HoverItem) then
 		local item = _GetItem(cursor.HoverItem)
@@ -1275,14 +1300,14 @@ Ext.RegisterUITypeInvokeListener(_UITYPE.enemyHealthBar, "setText", function(ui,
 			RequestProcessor.Tooltip.NextRequest = RequestProcessor.SetWorldHoverTooltipRequest(request, ui, _UITYPE.enemyHealthBar, event, text, levelText, shortenWidth, item, objectHandleDouble)
 		end
 	end
-end)
+end, {[_UITYPE.enemyHealthBar] = true})
 
 ---@return string
 local function _CreateWorldTooltipRequest(ui, event, text, x, y, isItem, item)
 	local uiType = ui.Type
 	---@type TooltipWorldRequest
 	local request = _CreateRequest()
-	RequestProcessor.Tooltip:InvokeRequestListeners(request, "before", ui, uiType, event, text, x, y, isItem, item)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "Before", ui, uiType, event, text, x, y, isItem, item)
 	local b,r = xpcall(RequestProcessor.SetWorldTooltipRequest, debug.traceback, request, ui, uiType, event, text, x, y, isItem, item)
 	if b then
 		request = r
@@ -1295,13 +1320,16 @@ local function _CreateWorldTooltipRequest(ui, event, text, x, y, isItem, item)
 	RequestProcessor.Tooltip.Last.UIType = uiType
 	RequestProcessor.Tooltip.Last.Request = request
 	
-	RequestProcessor.Tooltip:InvokeRequestListeners(request, "after", ui, uiType, event, text, x, y, isItem, item)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, uiType, event, text, x, y, isItem, item)
 	
 	local tooltipData = Game.Tooltip.TooltipData:Create({{
-		Type = "Description",
+		Type = "GenericDescription",
 		Label = text,
 		X = x,
 		Y = y,
+		AllowDelay = false,
+		AnchorEnum = 0,
+		BackgroundType = 0,
 	}}, uiType, uiType)
 	
 	RequestProcessor.Tooltip.ActiveType = request.Type
@@ -1313,7 +1341,7 @@ end
 
 _INTERNAL.CreateWorldTooltipRequest = _CreateWorldTooltipRequest
 
-Ext.RegisterUITypeInvokeListener(_UITYPE.worldTooltip, "updateTooltips", function(ui, event)
+Ext.RegisterUITypeInvokeListener(_UITYPE.worldTooltip, "updateTooltips", function(e, ui, event)
 	---@type {worldTooltip_array:table<integer,number|string|boolean>}
 	local this = ui:GetRoot()
 	if this then
@@ -1348,7 +1376,7 @@ Ext.RegisterUITypeInvokeListener(_UITYPE.worldTooltip, "updateTooltips", functio
 end)
 
 --Hack to clear the last tooltip being "World"
-Ext.RegisterUINameInvokeListener("removeTooltip", function(ui, ...)
+Ext.RegisterUINameInvokeListener("removeTooltip", function(e, ui, ...)
 	local lastRequest = RequestProcessor.Tooltip.Last.Request
 	if lastRequest and lastRequest.Type == "World" then
 		Game.Tooltip.TooltipHooks.Last.Request = nil

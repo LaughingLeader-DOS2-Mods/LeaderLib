@@ -863,10 +863,16 @@ local _ttHooks = {
 	TypeListeners = {},
 	ObjectListeners = {},
 	RequestListeners = {
-		All = {}
+		All = {
+			Before = {},
+			After = {},
+		}
 	},
 	BeforeNotifyListeners = {
-		All = {},
+		All = {
+			Before = {},
+			After = {},
+		},
 	},
 }
 
@@ -1077,6 +1083,42 @@ function _ttHooks:RegisterControllerHooks()
 	end)
 end
 
+---@type table<string, {Callback:function, TypeIds:table<integer,boolean>|nil, When:string|nil}>
+local CallHandlers = {}
+local InvokeHandlers = {}
+
+---@param event string
+---@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
+---@param typeIds table<integer,boolean>|integer|nil
+---@param when "Before"|"After"|nil
+local function _CallHandler(event, callback, typeIds, when)
+	if type(typeIds) == "number" then
+		local t = typeIds
+		typeIds = {[t] = true}
+	end
+	CallHandlers[event] = {
+		Callback = callback,
+		TypeIds = typeIds,
+		When = when
+	}
+end
+
+---@param event string
+---@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
+---@param typeIds table<integer,boolean>|integer|nil
+---@param when "Before"|"After"|nil
+local function _InvokeHandler(event, callback, typeIds, when)
+	if type(typeIds) == "number" then
+		local t = typeIds
+		typeIds = {[t] = true}
+	end
+	InvokeHandlers[event] = {
+		Callback = callback,
+		TypeIds = typeIds,
+		When = when
+	}
+end
+
 function _ttHooks:Init()
 	if self.Initialized then
 		return
@@ -1084,19 +1126,45 @@ function _ttHooks:Init()
 
 	RequestProcessor:Init(_ttHooks)
 
-	_RegisterUINameInvokeListener("addFormattedTooltip", function (ui, call, x, y, b, ...)
+	Ext.Events.UIInvoke:Subscribe(function (e)
+		local handler = InvokeHandlers[e.Function]
+		if handler and ((not handler.When and e.When == "After") or e.When == handler.When) then
+			if handler.TypeIds then
+				if handler.TypeIds[e.UI.Type] == true then
+					handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
+				end
+			else
+				handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
+			end
+		end
+	end, {Priority=2})
+	
+	Ext.Events.UICall:Subscribe(function (e)
+		local handler = CallHandlers[e.Function]
+		if handler and ((not handler.When and e.When == "After") or e.When == handler.When) then
+			if handler.TypeIds then
+				if handler.TypeIds[e.UI.Type] == true then
+					handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
+				end
+			else
+				handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
+			end
+		end
+	end, {Priority=2})
+
+	_InvokeHandler("addFormattedTooltip", function (e, ui, call, x, y, b, ...)
 		_ttHooks.Last.Position = {x,y}
 		self:OnRenderTooltip(TooltipArrayNames.Default, ui, call, x, y, b, ...)
 	end)
 
-	_RegisterUINameInvokeListener("addStatusTooltip", function (ui, call, x, y, ...)
+	_InvokeHandler("addStatusTooltip", function (e, ui, call, x, y, b, ...)
 		_ttHooks.Last.Position = {x,y}
-		self:OnRenderTooltip(TooltipArrayNames.Default, ui, call, x, y, ...)
+		self:OnRenderTooltip(TooltipArrayNames.Default, ui, call, x, y, b, ...)
 	end)
 
-	_RegisterUINameInvokeListener("displaySurfaceText", function (...)
+	_InvokeHandler("displaySurfaceText", function (e, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Surface, ...)
-	end, "After")
+	end)
 
 	--Disabled for now since character portrait tooltips get spammed
 	-- _RegisterUINameCall("showCharTooltip", function(ui, call, handle, x, y, width, height, side)
@@ -1112,9 +1180,9 @@ function _ttHooks:Init()
 	-- 	}
 	-- end, "Before")
 	
-	_RegisterUINameInvokeListener("addTooltip", function (ui, call, text, ...)
-		self:OnRenderGenericTooltip(ui, call, text, ...)
-	end)
+	_InvokeHandler("addTooltip", function (...)
+		self:OnRenderGenericTooltip(...)
+	end, "Before")
 
 	_RegisterUINameCall("hideTooltip", function (ui, call, ...)
 		self.IsOpen = false
@@ -1134,17 +1202,17 @@ function _ttHooks:Init()
 		end
 	end)
 
-	_RegisterUINameCall("keepUIinScreen", function (ui, method, keepUIinScreen)
-		if self.GenericTooltipData then
-			self:UpdateGenericTooltip(ui, method, keepUIinScreen)
-		end
-	end)
+	--No longer needed, since we can change the text in the call
+	-- _RegisterUINameCall("keepUIinScreen", function (ui, method, keepUIinScreen)
+	-- 	self:UpdateGenericTooltip(ui, method, keepUIinScreen)
+	-- end)
 
 	self:RegisterControllerHooks()
 
 	self.Initialized = true
 end
 
+---@deprecated
 function _ttHooks:UpdateGenericTooltip(ui, method, keepUIinScreen)
 	if not self.GenericTooltipData then
 		return
@@ -1167,9 +1235,10 @@ local _GenericTooltipTypes = {
 	PlayerPortrait = true,
 }
 
+---@param e EclLuaUICallEventParams
 ---@param ui UIObject
 ---@param method string
-function _ttHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay, anchorEnum, backgroundType)
+function _ttHooks:OnRenderGenericTooltip(e, ui, method, text, x, y, allowDelay, anchorEnum, backgroundType)
 	---@type TooltipGenericRequest|TooltipPlayerPortraitRequest|TooltipWorldRequest
 	local req = self.NextRequest
 	if not req then
@@ -1186,21 +1255,18 @@ function _ttHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay, anc
 	
 		self.IsOpen = true
 	
-		---@type TooltipGenericRequest
-		self.GenericTooltipData = {
-			Text = text,
-			X = x,
-			Y = y
-		}
 		req.AllowDelay = allowDelay
 		req.AnchorEnum = anchorEnum
 		req.BackgroundType = backgroundType
 	
 		local tooltipData = TooltipData:Create({{
-			Type = "Description",
+			Type = "GenericDescription",
 			Label = text,
 			X = x,
 			Y = y,
+			AllowDelay = req.AllowDelay,
+			AnchorEnum = req.AnchorEnum,
+			BackgroundType = req.BackgroundType,
 		}}, ui:GetTypeId(), req.UIType)
 
 		self.ActiveType = req.Type
@@ -1221,9 +1287,14 @@ function _ttHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay, anc
 	
 		local desc = tooltipData:GetDescriptionElement()
 		if desc then
-			self.GenericTooltipData.Text = desc.Label or ""
-			if desc.X then self.GenericTooltipData.X = desc.X end
-			if desc.Y then self.GenericTooltipData.Y = desc.Y end
+			e.Args[1] = desc.Label or ""
+			e.Args[2] = desc.X or req.X
+			e.Args[3] = desc.Y or req.Y
+			e.Args[4] = desc.AllowDelay or req.AllowDelay
+			e.Args[5] = desc.AnchorEnum or req.AnchorEnum
+			e.Args[6] = desc.BackgroundType or req.BackgroundType
+		else
+			e.Args[1] = ""
 		end
 	
 		self.Last.Request = self.NextRequest
@@ -1530,8 +1601,8 @@ end
 
 local function InvokeListenerTable(tbl, ...)
 	if tbl then
-		for _,v in pairs(tbl) do
-			local b,err = xpcall(v, debug.traceback, ...)
+		for i=1,#tbl do
+			local b,err = xpcall(tbl[i], debug.traceback, ...)
 			if not b then
 				_PrintError(err)
 			end
@@ -1625,6 +1696,9 @@ end
 ---@param listener fun(req:TooltipRequest)
 ---@param state string
 function _ttHooks:RegisterRequestListener(requestType, listener, state)
+	if type(listener) ~= "function" then
+		error(string.format("listener param must be a function (%s)", listener), 2)
+	end
 	if requestType == nil or requestType == "all" then
 		requestType = "All"
 	end
@@ -1695,7 +1769,8 @@ end
 
 local DescriptionElements = {
 	AbilityDescription = true,
-	Description = true, -- World/Generic Tooltips
+	GenericDescription = true, -- World/Generic Tooltips
+	Description = true,
 	ItemDescription = true,
 	SkillDescription = true,
 	StatsDescription = true,
@@ -1725,7 +1800,8 @@ function TooltipData:GetDescriptionElement(fallback)
 end
 
 local _CustomTooltipTypes = {
-	Description = true
+	Description = true,
+	GenericDescription = true,
 }
 
 _TT.CustomTooltipTypes = _CustomTooltipTypes
@@ -1849,7 +1925,7 @@ function TooltipData:AppendElement(ele)
 	if _IsTooltipElement(ele) then
 		self.Data[#self.Data+1] = ele
 	else
-		_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElement] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
+		_PrintError(string.format("[Game.Tooltip.TooltipData:AppendElement] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
 	end
 	return ele
 end
@@ -1863,7 +1939,7 @@ function TooltipData:AppendElements(tbl)
 		if _IsTooltipElement(ele) then
 			self.Data[#self.Data+1] = ele
 		else
-			_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElements] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
+			_PrintError(string.format("[Game.Tooltip.TooltipData:AppendElements] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
 		end
 	end
 end
@@ -1884,7 +1960,7 @@ function TooltipData:AppendElementAfter(ele, appendAfter)
 		end
 		self.Data[#self.Data+1] = ele
 	else
-		_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElementAfter] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
+		_PrintError(string.format("[Game.Tooltip.TooltipData:AppendElementAfter] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
 	end
 	return ele
 end
@@ -1905,7 +1981,7 @@ function TooltipData:AppendElementBefore(ele, appendBefore)
 		end
 		self.Data[#self.Data+1] = ele
 	else
-		_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElementBefore] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
+		_PrintError(string.format("[Game.Tooltip.TooltipData:AppendElementBefore] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
 	end
 	return ele
 end
@@ -1926,7 +2002,7 @@ function TooltipData:AppendElementAfterType(ele, elementType)
 		end
 		self.Data[#self.Data+1] = ele
 	else
-		_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElementAfterType] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
+		_PrintError(string.format("[Game.Tooltip.TooltipData:AppendElementAfterType] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
 	end
 
 	return ele
@@ -1948,7 +2024,7 @@ function TooltipData:AppendElementBeforeType(ele, elementType)
 		end
 		self.Data[#self.Data+1] = ele
 	else
-		_PrintError(string.format("[Game.Tooltip::TooltipData:AppendElementAfterType] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
+		_PrintError(string.format("[Game.Tooltip.TooltipData:AppendElementAfterType] Invalid tooltip element parameter: (%s)", _DumpExport(ele)))
 	end
 
 	return ele
@@ -2081,7 +2157,7 @@ end
 function _TT.RegisterRequestListener(typeOrCallback, callbackOrNil, state)
 	state = state or "after"
 	local t = type(typeOrCallback)
-	if t == "string" then
+	if t == "string" or typeOrCallback == nil then
 		assert(type(callbackOrNil) == "function", "Second parameter must be a function.")
 		_ttHooks:RegisterRequestListener(typeOrCallback, callbackOrNil, state)
 	elseif t == "function" then
@@ -2214,10 +2290,14 @@ end)
 ---@field Value string
 
 ---The tooltip element for Generic, PlayerPortrait, and World tooltips.  
----The Type is just `"Description"`.
+---The Type is just `"GenericDescription"`.
 ---@class GenericDescription:TooltipLabelElement
+---@field Type "GenericDescription"
 ---@field X number
 ---@field Y number
+---@field AllowDelay boolean|nil
+---@field AnchorEnum integer|nil
+---@field BackgroundType integer|nil
 
 ---The tooltip element for Surface tooltips.
 ---@class SurfaceDescription:TooltipLabelElement

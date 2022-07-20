@@ -202,8 +202,10 @@ local text = {
 		CondenseStatusTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips_Description", "Try to reduce max status tooltip size by combining elements, such as immunities.", _ds),
 		FixStatusTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FixStatusTooltips", "Fix Status Tooltips", _ds),
 		FixStatusTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_FixStatusTooltips_Description", "Removes the status malus icon and extra spacing, caused by a typo in Larian's UI code, and organizes bonuses and maluses together, while also sorting them alphabetically.", _ds),
-		HideConsumableEffects = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideConsumableEffects", "Hide Consumable Effects", _ds),
-		HideConsumableEffects_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideConsumableEffects_Description", "If <font color='#33FF66'>[Key:LeaderLib_ShowConsumableEffectsEnabled:Show Consumable Effects]</font> is enabled in the global Mod Settings, enable this setting to hide these effects for yourself only.", _ds),
+		HideConsumableEffects = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideConsumableEffects", "Show Consumable Effects", _ds),
+		HideConsumableEffects_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideConsumableEffects_Description", "If <font color='#33FF66'>[Key:LeaderLib_ShowConsumableEffectsEnabled:Show Consumable Effects]</font> is enabled in the global Mod Settings, disable this setting to hide these effects for yourself only.", _ds),
+		HideStatusSource = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatusSource", "Show Status Source", _ds),
+		HideStatusSource_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatusSource_Description", "Show the source of a status, if any, in status tooltips.", _ds),
 		EnableTooltipDelay = {
 			CharacterSheet = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_CharacterSheet", "Delay Character Sheet Tooltips", _ds),
 			CharacterSheet_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_CharacterSheet_Description", "Enable a 0.5 second delay for abilities, stats, and talents. May affect the examine window as well.", _ds),
@@ -341,7 +343,9 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideChatLog"), text.Client.HideChatLog.Value, true, settings.Client.HideChatLog and 1 or 0, false, text.Client.HideChatLog_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "ToggleCombatLog"), text.Client.ToggleCombatLog.Value, true, settings.Client.ToggleCombatLog and 1 or 0, false, text.Client.ToggleCombatLog_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideConsumableEffects"), text.Client.HideConsumableEffects.Value, true, settings.Client.HideConsumableEffects and 1 or 0, false, text.Client.HideConsumableEffects_Description.Value)
+		
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideConsumableEffects", nil, true), text.Client.HideConsumableEffects.Value, true, settings.Client.HideConsumableEffects and 0 or 1, false, text.Client.HideConsumableEffects_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideStatusSource", nil, true), text.Client.HideStatusSource.Value, true, settings.Client.HideStatusSource and 0 or 1, false, text.Client.HideStatusSource_Description.Value)
 
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client.AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client.AlwaysExpandTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client.AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client.AlwaysDisplayWeaponScalingText_Description.Value)

@@ -56,7 +56,8 @@ local _EQUIPMENT_STATUS = {
 ---@param tooltip TooltipData
 function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 	local statusType = GameHelpers.Status.GetStatusType(status.StatusId)
-	if Features.StatusDisplaySource then
+	local gameSettings = GameSettingsManager.GetSettings()
+	if Features.StatusDisplaySource and not gameSettings.Client.HideStatusSource then
 		local equipmentStatuses = GameHelpers.Character.GetEquipmentOnEquipStatuses(character, true)
 		local sourceName = nil
 		if GameHelpers.IsValidHandle(status.StatusSourceHandle) then
@@ -215,10 +216,8 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 		end
 	end
 
-	local settings = GameSettingsManager.GetSettings()
-
 	--Better tooltip sorting
-	if settings.Client.FixStatusTooltips then
+	if gameSettings.Client.FixStatusTooltips then
 		local maluses = tooltip:GetElements("StatusMalus")
 		local bonuses = tooltip:GetElements("StatusBonus")
 		tooltip:RemoveElements("StatusMalus")

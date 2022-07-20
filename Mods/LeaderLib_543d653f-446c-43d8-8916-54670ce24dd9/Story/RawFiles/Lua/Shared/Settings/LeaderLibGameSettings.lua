@@ -84,6 +84,7 @@ local DefaultSettings = {
 		HideChatLog = false,
 		ToggleCombatLog = false,
 		HideConsumableEffects = false,
+		HideStatusSource = false,
 		FadeInventoryItems = {
 			Enabled = false,
 			KnownSkillbooks = 30,

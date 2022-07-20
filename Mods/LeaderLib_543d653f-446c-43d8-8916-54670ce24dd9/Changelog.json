@@ -8,7 +8,12 @@
 		{
 			"Version": "1.7.24.3",
 			"Changes": [
-				"Added a \"Mod Settings\" (global) option to auto-identify items.",
+				"Added new Quality of Life options to the \"Mod Settings\" menu:",
+				"  • Auto-identify Items",
+				"  • Permanent Spirit Vision (lets you toggle it on/off)",
+				"  • Show Consumable Effects (Globally)",
+				"Added a \"Hide Consumable Effects\" option to the Client section of the Gameplay menu, allowing you to hide consumable effects, even if it's enabled globally.",
+				"Added a \"Hide Status Source\" option to the Client section of the Gameplay menu. Statuses now display their source object (character or item) in the tooltip, but this will hide that information once more.",
 				"Added several tweaks to the Info section of the journal:",
 				"  • The text can now scroll.",
 				"  • Mod Changes has been moved up to the top of the category sidebar.",

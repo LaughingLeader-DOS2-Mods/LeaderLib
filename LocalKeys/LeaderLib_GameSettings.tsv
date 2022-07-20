@@ -54,8 +54,10 @@ LeaderLib_UI_GameSettings_Client_FixStatusTooltips	Fix Status Tooltips	h1a19076f
 LeaderLib_UI_GameSettings_Client_FixStatusTooltips_Description	Removes the status malus icon and extra spacing, caused by a typo in Larian's UI code, and organizes bonuses and maluses together, while also sorting them alphabetically.	h528c0ba8g3156g43eega5a7g2947b92a7738
 LeaderLib_UI_GameSettings_Client_HideChatLog	Hide Chat Log	hbdb60e07g9f65g41bagbfabge9ad2347c44a
 LeaderLib_UI_GameSettings_Client_HideChatLog_Description	Aggressively prevent the chat log from being visible or toggleable.	h3952f84bge59bg44d1gb0d1g47a6a1a49f9e
-LeaderLib_UI_GameSettings_Client_HideConsumableEffects	Hide Consumable Effects	hfa94fa61g01f0g4b91g99d7g35888fbfd8e3
-LeaderLib_UI_GameSettings_Client_HideConsumableEffects_Description	If <font color='#33FF66'>Show Consumable Effects</font> is enabled in the global Mod Settings, enable this setting to hide these effects for yourself only.	hc91913dag9ffbg422cg8aceg3faf8005f30a
+LeaderLib_UI_GameSettings_Client_HideConsumableEffects	Show Consumable Effects	hfa94fa61g01f0g4b91g99d7g35888fbfd8e3
+LeaderLib_UI_GameSettings_Client_HideConsumableEffects_Description	If <font color='#33FF66'>Show Consumable Effects</font> is enabled in the global Mod Settings, disable this setting to hide these effects for yourself only.	hc91913dag9ffbg422cg8aceg3faf8005f30a
+LeaderLib_UI_GameSettings_Client_HideStatusSource	Show Status Source	h7cbe733dg51feg40e8gaeffgfe989bab122d
+LeaderLib_UI_GameSettings_Client_HideStatusSource_Description	Show the source of a status, if any, in status tooltips.	hbe30171eg7100g4d66gaaf6g63340f551866
 LeaderLib_UI_GameSettings_Client_HideStatuses	Hide All Statuses	hfe94fb21g03b4g46c3gbcaegf551c9b54dc8
 LeaderLib_UI_GameSettings_Client_HideStatuses_Description	If enabled, all statuses next to the party's portraits will be hidden.	h3e7215afg3389g4dc4gaa4bg1029c5cda75a
 LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar	Modify Healthbar Statuses	ha9720574ged59g4d81g92f3gcea93337121c

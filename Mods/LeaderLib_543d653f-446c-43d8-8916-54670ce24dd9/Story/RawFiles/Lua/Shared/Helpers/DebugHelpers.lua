@@ -1367,6 +1367,29 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 			if obj.NetID then
 				props.NetID = "number"
 			end
+		elseif GameHelpers.Ext.ObjectIsStatCharacter(obj) then
+			---@cast obj CDivinityStatsCharacter
+			props = {}
+			if obj.MyGuid then
+				props.MyGuid = "string"
+			end
+			if obj.Character then
+				props.DisplayName = function(_obj) return GameHelpers.GetDisplayName(_obj.Character) end
+			end
+			props.UserdataType = function(_obj) return Ext.Types.GetObjectType(_obj) end
+			if obj.NetID then
+				props.NetID = "number"
+			end
+		elseif GameHelpers.Ext.ObjectIsStatItem(obj) then
+			---@cast obj CDivinityStatsItem
+			props = {}
+			if obj.Name then
+				props.Name = "string"
+			end
+			if obj.DisplayName then
+				props.DisplayName = function(_obj) return GameHelpers.GetDisplayName(_obj.DisplayName) end
+			end
+			props.UserdataType = function(_obj) return Ext.Types.GetObjectType(_obj) end
 		elseif string.find(meta, "esv::Status") then
 			props = {
 				StatusId = "string",

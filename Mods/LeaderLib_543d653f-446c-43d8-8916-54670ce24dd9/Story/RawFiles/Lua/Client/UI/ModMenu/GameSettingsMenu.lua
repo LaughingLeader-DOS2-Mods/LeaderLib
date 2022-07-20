@@ -216,6 +216,8 @@ local text = {
 		HideStatusSource = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatusSource", "Show Status Source", _ds),
 		HideStatusSource_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatusSource_Description", "Show the source of a status, if any, in status tooltips.", _dst),
 		EnableTooltipDelay = {
+			GlobalDelay = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_GlobalTooltipDelay", "Delay", _ds),
+			GlobalDelay_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_GlobalTooltipDelay_Description", "Delay tooltip creation by this amount in milliseconds. This value will override the usual 500ms delay. Set to 0 to re-enable the regular delay created by the tooltip UI.<br>Default: 0<br>Recommended: 500", _dst),
 			CharacterSheet = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_CharacterSheet", "Delay Character Sheet Tooltips", _ds),
 			CharacterSheet_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_CharacterSheet_Description", "Enable a 0.5 second delay for abilities, stats, and talents. May affect the examine window as well.", _dst),
 			Generic = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Generic", "Delay Generic Tooltips", _ds),
@@ -329,6 +331,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "FixStatusTooltips"), text.Client.FixStatusTooltips.Value, true, settings.Client.FixStatusTooltips and 1 or 0, false, text.Client.FixStatusTooltips_Description.Value)
 
 		mainMenu.addMenuLabel(text.Section_Tooltips_Delay.Value, "", _lh)
+		mainMenu.addMenuSlider(AddControl(settings.Client.EnableTooltipDelay, "GlobalDelay"), text.Client.EnableTooltipDelay.GlobalDelay.Value, GameHelpers.Math.Clamp(settings.Client.EnableTooltipDelay.GlobalDelay, 0, 2000), 0, 2000, 5, false, text.Client.EnableTooltipDelay.GlobalDelay_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "CharacterSheet"), text.Client.EnableTooltipDelay.CharacterSheet.Value, true, settings.Client.EnableTooltipDelay.CharacterSheet and 1 or 0, false, text.Client.EnableTooltipDelay.CharacterSheet_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Generic"), text.Client.EnableTooltipDelay.Generic.Value, true, settings.Client.EnableTooltipDelay.Generic and 1 or 0, false, text.Client.EnableTooltipDelay.Generic_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.EnableTooltipDelay, "Item"), text.Client.EnableTooltipDelay.Item.Value, true, settings.Client.EnableTooltipDelay.Item and 1 or 0, false, text.Client.EnableTooltipDelay.Item_Description.Value)

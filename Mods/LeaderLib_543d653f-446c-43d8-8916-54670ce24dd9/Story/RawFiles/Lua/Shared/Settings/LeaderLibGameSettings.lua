@@ -75,6 +75,7 @@ local DefaultSettings = {
 		CondenseItemTooltips = false,
 		FixStatusTooltips = true,
 		EnableTooltipDelay = {
+			GlobalDelay = 0,
 			CharacterSheet = false,
 			Generic = false,
 			Item = false,

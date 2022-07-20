@@ -279,6 +279,13 @@ local function OnCancelChanges(ui, call)
 	OnOptionsClosed()
 end
 
+local function IsLeaderLibMenuActive()
+	if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID or OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
+		return true
+	end
+	return false
+end
+
 Ext.RegisterListener("SessionLoaded", function()
 	--Override here so the settings in the main menu works
 	Ext.AddPathOverride("Public/Game/GUI/optionsSettings.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings.swf")
@@ -310,7 +317,6 @@ Ext.RegisterListener("SessionLoaded", function()
 	end
 
 	if not Vars.ControllerEnabled then
-
 		local switchToModMenuFunc = function(ui, ...)
 			OptionsSettingsHooks.SwitchToModMenu = true
 			ui:ExternalInterfaceCall("switchMenu", 1)

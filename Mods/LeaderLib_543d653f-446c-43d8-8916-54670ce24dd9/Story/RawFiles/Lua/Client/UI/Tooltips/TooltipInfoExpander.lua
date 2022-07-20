@@ -479,7 +479,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 	end)
 
 	Game.Tooltip.Register.Global(function (request, tooltip, ...)
-		if Vars.DebugMode and Vars.LeaderDebugMode then
+		if Vars.DebugMode and UI.Debug.LogUI then
 			local text = "local tooltip = " .. Lib.serpent.dump({
 				_Type = request.Type,
 				Request = request,

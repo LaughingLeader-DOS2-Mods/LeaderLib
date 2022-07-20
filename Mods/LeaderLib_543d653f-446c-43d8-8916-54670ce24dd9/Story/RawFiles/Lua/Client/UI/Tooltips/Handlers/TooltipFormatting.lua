@@ -173,7 +173,8 @@ local _itemTypeTooltips = {
 local _itemTypeTooltipsUIs = {
 	[Data.UIType.partyInventory] = true,
 	[Data.UIType.partyInventory_c] = true,
-	[Data.UIType.containerInventory] = true,
+	[Data.UIType.containerInventory.Default] = true,
+	[Data.UIType.containerInventory.Pickpocket] = true,
 	[Data.UIType.containerInventoryGM] = true,
 	[Data.UIType.reward] = true,
 	[Data.UIType.reward_c] = true,
@@ -194,6 +195,16 @@ local function TrySetTooltipDelay(this, lastRequestType)
 	end
 	local tf = this.tf or this.formatTooltip
 	if tf then
+		if settings.Client.EnableTooltipDelay.GlobalDelay > 0 then
+			--Delay is handled using a UICall subscription
+			tf.allowDelay = false
+			if this.compareShowTimer then
+				this.compareShowTimer.delay = 0
+			end
+			return true
+		elseif this.compareShowTimer then
+			this.compareShowTimer.delay = 600
+		end
 		if settings.Client.EnableTooltipDelay.Item and _itemTypeTooltips[lastRequestType] then
 			tf.allowDelay = true
 		elseif settings.Client.EnableTooltipDelay.Skill and lastRequestType == "Skill" then

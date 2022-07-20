@@ -1,7 +1,6 @@
 local _initialized = false
 
 local _format = string.format
-if UI.Debug == nil then UI.Debug = {} end
 
 local Init = function()
 	if _initialized then
@@ -10,7 +9,6 @@ local Init = function()
 
 	local UIListenerWrapper = Classes.UIListenerWrapper
 
-	UI.Debug.PrintAll = false
 	local _logText = ""
 	local _logPrefix = Ext.MonotonicTime()
 	local _logName = _format("Logs/UI/%s_All.log", _logPrefix)

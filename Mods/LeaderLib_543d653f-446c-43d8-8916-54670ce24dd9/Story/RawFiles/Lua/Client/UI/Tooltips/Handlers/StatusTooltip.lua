@@ -55,7 +55,7 @@ local _EQUIPMENT_STATUS = {
 ---@param status EclStatus
 ---@param tooltip TooltipData
 function TooltipHandler.OnStatusTooltip(character, status, tooltip)
-	local statusType = GameHelpers.Status.GetStatusType(status.StatusId)
+	local statusType = status.StatusType or GameHelpers.Status.GetStatusType(status.StatusId)
 	local gameSettings = GameSettingsManager.GetSettings()
 	if Features.StatusDisplaySource and not gameSettings.Client.HideStatusSource then
 		local equipmentStatuses = GameHelpers.Character.GetEquipmentOnEquipStatuses(character, true)
@@ -112,7 +112,7 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 		-- else
 		-- 	idText = string.format("<font color='%s'>%s</font>", Data.Colors.Common.AztecGold, status.StatusId)
 		-- end
-		idText = string.format("<font color='%s' size='18'>(%s)</font><br><font color='%s'>%s</font>", Data.Colors.Common.Bittersweet, status.StatusType, Data.Colors.Common.AztecGold, status.StatusId)
+		idText = string.format("<font color='%s'>%s</font><br><font color='%s' size='18'>(%s)</font>", Data.Colors.Common.AztecGold, status.StatusId, Data.Colors.Common.Bittersweet, status.StatusType)
 		local description = tooltip:GetDescriptionElement({Type="StatusDescription", Label=""})
 		if not StringHelpers.IsNullOrWhitespace(description.Label) then
 			description.Label = description.Label .. "<br>"
@@ -235,7 +235,7 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 		--Place immunities at the bottom of the tooltips, but only sort/check them if there's more than 1 element
 		if len > 1 then
 			table.sort(immunityElements, _AlphabeticalCaseInsensitiveLabelSort)
-			if settings.Client.CondenseStatusTooltips then
+			if gameSettings.Client.CondenseStatusTooltips then
 				local immunitiesCombined = {Type="StatusImmunity", Label=""}
 				local preserveElements = {}
 				local immunities = {}

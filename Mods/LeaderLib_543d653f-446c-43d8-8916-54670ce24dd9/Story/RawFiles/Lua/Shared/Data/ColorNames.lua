@@ -1,3 +1,5 @@
+---@diagnostic disable
+
 Data.Colors.Common = {
 	["Abbey"] = "#4C4F56",
 	["AbsoluteZero"] = "#0048BA",

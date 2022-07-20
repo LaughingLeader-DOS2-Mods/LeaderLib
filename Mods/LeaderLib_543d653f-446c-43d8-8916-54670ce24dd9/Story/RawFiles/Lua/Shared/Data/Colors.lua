@@ -1,3 +1,5 @@
+---@diagnostic disable
+
 if Data.Colors == nil then
 	Data.Colors = {}
 end

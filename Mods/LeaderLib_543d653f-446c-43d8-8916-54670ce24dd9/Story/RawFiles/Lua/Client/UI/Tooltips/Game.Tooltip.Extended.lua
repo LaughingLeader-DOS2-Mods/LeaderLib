@@ -1630,11 +1630,12 @@ function _ttHooks:RegisterRequestListener(requestType, listener, state)
 	if self.RequestListeners[requestType] == nil then
 		self.RequestListeners[requestType] = {}
 	end
+
 	if state and type(state) == "string" then
 		state = string.lower(state)
-		state = state == "before" and "before" or "after"
+		state = state == "before" and "Before" or "After"
 	else
-		state = "after"
+		state = "After"
 	end
 	if self.RequestListeners[requestType][state] == nil then
 		self.RequestListeners[requestType][state] = {}
@@ -1704,8 +1705,9 @@ local DescriptionElements = {
 ---@alias AnyTooltipDescriptionElement AbilityDescription|GenericDescription|ItemDescription|SkillDescription|StatsDescription|StatusDescription|SurfaceDescription|TagDescription|TalentDescription
 
 ---Gets whichever element is the description.
+---@param fallback AnyTooltipDescriptionElement|nil If a description isn't found, add this element.
 ---@return AnyTooltipDescriptionElement
-function TooltipData:GetDescriptionElement()
+function TooltipData:GetDescriptionElement(fallback)
 	---@type {Type:TooltipElementType, Label:string|nil}
 	local elements = self.Data
 	for _,element in pairs(elements) do
@@ -1713,7 +1715,10 @@ function TooltipData:GetDescriptionElement()
 			return element
 		end
 	end
-	return nil
+	if fallback then
+		self:AppendElement(fallback)
+	end
+	return fallback
 end
 
 local _CustomTooltipTypes = {

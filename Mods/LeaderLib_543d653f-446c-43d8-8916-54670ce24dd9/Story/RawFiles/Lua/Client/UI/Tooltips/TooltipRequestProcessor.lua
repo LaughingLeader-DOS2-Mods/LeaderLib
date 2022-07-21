@@ -640,8 +640,14 @@ end
 Ext.RegisterUITypeInvokeListener(_UITYPE.contextMenu.Object, "open", _CaptureCursorObject)
 Ext.RegisterUITypeCall(_UITYPE.examine, "hideUI", _OnExamineWindowClosed)
 
-function RequestProcessor.OnExamineTooltip(ui, event, typeIndex, id, ...)
-	---@type EclCharacter|EclItem
+---@param e EclLuaUICallEventParams
+---@param ui UIObject
+---@param event string
+---@param typeIndex integer
+---@param id integer
+---@vararg any
+function RequestProcessor.OnExamineTooltip(e, ui, event, typeIndex, id, ...)
+	---@type EclCharacter|EclItem|nil
 	local object = nil
 
 	--GetPlayerHandle returns the examined character or item
@@ -730,7 +736,7 @@ end
 ---@param event string
 ---@param id string
 ---@param objectHandle number|nil
-function RequestProcessor.OnControllerExamineTooltip(ui, event, id, objectHandle)
+function RequestProcessor.OnControllerExamineTooltip(e, ui, event, id, objectHandle)
 	local request = RequestProcessor.CreateRequest()
 	local uiTypeId = ui.Type
 	request.UIType = uiTypeId
@@ -903,6 +909,7 @@ StringifyInternalTypes = true,
 IterateUserdata = false,
 AvoidRecursion = true}
 
+---@param e EclLuaUICallEventParams
 ---@param requestType string
 ---@param ui UIObject
 ---@param uiType integer
@@ -910,7 +917,7 @@ AvoidRecursion = true}
 ---@param idOrDoubleHandle any
 ---@param statOrWidth any
 ---@param ... any
-function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrDoubleHandle, statOrWidth, ...)
+function RequestProcessor.HandleCallback(e, requestType, ui, uiType, event, idOrDoubleHandle, statOrWidth, ...)
 	---@type {characterHandle:number|nil}
 	local this = ui:GetRoot()
 
@@ -981,13 +988,13 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrDou
 	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, uiType, event, id, statOrWidth, ...)
 end
 
-local function OnControllerSlotOver(ui, event, id, ...)
+local function OnControllerSlotOver(e, ui, event, id, ...)
 	if id ~= 0 then
 		RequestProcessor.HandleCallback("Item", ui, ui.Type, TooltipCalls.Item, id, ...)
 	end
 end
 
-local function RedirectControllerTooltip(tooltipType, ui, event, ...)
+local function RedirectControllerTooltip(e, tooltipType, ui, event, ...)
 	--Redirect to standard events, so the regular handlers work
 	local event = TooltipCalls[tooltipType] or event
 	RequestProcessor.HandleCallback(tooltipType, ui, ui.Type, event, ...)
@@ -1058,7 +1065,9 @@ end, {Priority=1})
 local function RegisterControllerHandlers()
 	local _ccControllerTypeIds = {[_UITYPE.characterCreation_c]=true}
 	for t,v in pairs(ControllerCharacterCreationCalls) do
-		_CallHandler(v, RedirectControllerTooltip, _ccControllerTypeIds)
+		_CallHandler(v, function (e, ...)
+			RedirectControllerTooltip(e, t, ...)
+		end, _ccControllerTypeIds)
 	end
 	--Custom controller tooltip calls.
 	_CallHandler("SlotHover", function (e, ui, event, slotNum)
@@ -1135,11 +1144,11 @@ local function RegisterControllerHandlers()
 	end, _UITYPE.reward_c)
 
 	_CallHandler("selectedAttribute", function (e, ui, event, id, ...)
-		RequestProcessor.OnControllerExamineTooltip(ui, event, id)
+		RequestProcessor.OnControllerExamineTooltip(e, ui, event, id)
 	end, _UITYPE.statsPanel_c)
 
 	_CallHandler("selectCustomStat", function (e, ui, event, id, ...)
-		RequestProcessor.OnControllerExamineTooltip(ui, event, id)
+		RequestProcessor.OnControllerExamineTooltip(e, ui, event, id)
 	end, _UITYPE.statsPanel_c)
 
 	local selectEvents = {
@@ -1159,7 +1168,7 @@ local function RegisterControllerHandlers()
 	for i=1,#selectEvents do
 		local v = selectEvents[i]
 		_CallHandler(v, function (e, ui, ...)
-			RequestProcessor.OnControllerExamineTooltip(ui, ...)
+			RequestProcessor.OnControllerExamineTooltip(e, ui, ...)
 		end, selectTypeIds)
 	end
 end
@@ -1168,15 +1177,15 @@ end
 function RequestProcessor:Init(tooltip)
 	self.Tooltip = tooltip
 	for t,v in pairs(TooltipCalls) do
-		_CallHandler(v, function (e, ui, ...) RequestProcessor.HandleCallback(t, ui, ui.Type, ...) end)
+		_CallHandler(v, function (e, ui, ...) RequestProcessor.HandleCallback(e, t, ui, ui.Type, ...) end)
 	end
 	for t,v in pairs(TooltipInvokes) do
-		_InvokeHandler(v, function (e, ui, ...) RequestProcessor.HandleCallback(t, ui, ui.Type, ...) end)
+		_InvokeHandler(v, function (e, ui, ...) RequestProcessor.HandleCallback(e, t, ui, ui.Type, ...) end)
 	end
 
 	_CallHandler("showTooltip", function (e, ui, ...)
 		if ui.Type == _UITYPE.examine then
-			RequestProcessor.OnExamineTooltip(ui, ...)
+			RequestProcessor.OnExamineTooltip(e, ui, ...)
 		else
 			RequestProcessor.OnGenericTooltip(e, ui, ...)
 		end
@@ -1341,7 +1350,7 @@ end
 
 _INTERNAL.CreateWorldTooltipRequest = _CreateWorldTooltipRequest
 
-Ext.RegisterUITypeInvokeListener(_UITYPE.worldTooltip, "updateTooltips", function(e, ui, event)
+_InvokeHandler("updateTooltips", function(e, ui, event)
 	---@type {worldTooltip_array:table<integer,number|string|boolean>}
 	local this = ui:GetRoot()
 	if this then
@@ -1373,10 +1382,10 @@ Ext.RegisterUITypeInvokeListener(_UITYPE.worldTooltip, "updateTooltips", functio
 			end
 		end
 	end
-end)
+end, {[_UITYPE.worldTooltip]=true})
 
 --Hack to clear the last tooltip being "World"
-Ext.RegisterUINameInvokeListener("removeTooltip", function(e, ui, ...)
+_InvokeHandler("removeTooltip", function(e, ui, ...)
 	local lastRequest = RequestProcessor.Tooltip.Last.Request
 	if lastRequest and lastRequest.Type == "World" then
 		Game.Tooltip.TooltipHooks.Last.Request = nil

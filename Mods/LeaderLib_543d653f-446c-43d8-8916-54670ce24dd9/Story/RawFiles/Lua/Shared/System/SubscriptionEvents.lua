@@ -256,7 +256,8 @@ if not _ISCLIENT then
 	---@see GameHelpers.Item#Clone
 	---@type LeaderLibSubscribableEvent<TreasureItemGeneratedEventArgs>
 	Events.TreasureItemGenerated = Classes.SubscribableEvent:Create("TreasureItemGenerated", {
-		ArgsKeyOrder={"Item", "StatsId", "IsClone", "OriginalItem"}
+		ArgsKeyOrder={"Item", "StatsId", "IsClone", "OriginalItem", "ResultingItem"},
+		GatherResults = true
 	})
 
 	---@class OnPrepareHitEventArgs

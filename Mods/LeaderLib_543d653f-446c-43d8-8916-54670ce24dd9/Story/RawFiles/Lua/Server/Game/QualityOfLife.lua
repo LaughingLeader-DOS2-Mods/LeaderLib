@@ -269,6 +269,14 @@ Ext.Events.TreasureItemGenerated:Subscribe(function (e)
 		local invokeResult = Events.TreasureItemGenerated:Invoke({Item=e.Item, StatsId=statsId, IsClone=false, ResultingItem = e.ResultingItem})
 		if invokeResult.ResultCode ~= "Error" then
 			e.ResultingItem = invokeResult.Args.ResultingItem
+			if invokeResult.Results then
+                for i=1,#invokeResult.Results do
+                    local replaceItem = invokeResult.Results[i]
+                    if replaceItem and GameHelpers.Ext.ObjectIsItem(replaceItem) then
+                        e.ResultingItem = replaceItem
+                    end
+                end
+            end
 		end
 	end
 end, {Priority=1})

@@ -102,7 +102,7 @@ function GameHelpers.Item.GetRootTemplatesForStat(statName)
 end
 
 ---@param template string The item root template.
----@param statType string The type of stat, ex. Weapon, Armor, Object.
+---@param statType string|nil The type of stat, ex. Weapon, Armor, Object.
 ---@return string[]
 function GameHelpers.Item.GetStatsForRootTemplate(template, statType)
     local matches = {}
@@ -310,7 +310,19 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
                     ItemLevelUpTo(newItem.MyGuid, properties.StatsLevel)
                 end
             end
-            Events.TreasureItemGenerated:Invoke({Item=newItem, StatsId=statName, IsClone=false, ResultingItem=newItem})
+            ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
+            local invokeResult = Events.TreasureItemGenerated:Invoke({Item=newItem, StatsId=statName, IsClone=false, ResultingItem=newItem})
+            if invokeResult.ResultCode ~= "Error" then
+                newItem = invokeResult.Args.ResultingItem
+                if invokeResult.Results then
+                    for i=1,#invokeResult.Results do
+                        local replaceItem = invokeResult.Results[i]
+                        if replaceItem and GameHelpers.Ext.ObjectIsItem(replaceItem) then
+                            newItem = replaceItem
+                        end
+                    end
+                end
+            end
             return newItem.MyGuid,newItem
         end
     end
@@ -342,7 +354,19 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     if item ~= nil then
         item = Ext.GetItem(item.Handle)
         local statsId = GameHelpers.Item.GetItemStat(item)
-        Events.TreasureItemGenerated:Invoke({Item=item, StatsId=statsId, IsClone=false, ResultingItem=item})
+        ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
+        local invokeResult = Events.TreasureItemGenerated:Invoke({Item=item, StatsId=statsId, IsClone=false, ResultingItem=item})
+        if invokeResult.ResultCode ~= "Error" then
+            item = invokeResult.Args.ResultingItem
+            if invokeResult.Results then
+                for i=1,#invokeResult.Results do
+                    local replaceItem = invokeResult.Results[i]
+                    if replaceItem and GameHelpers.Ext.ObjectIsItem(replaceItem) then
+                        item = replaceItem
+                    end
+                end
+            end
+        end
         return item
     else
         Ext.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Error constructing item when invoking Construct() - Returned item is nil for template %s.", template))
@@ -438,7 +462,19 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
         -- end
         if opts.InvokeEvent then
             local cloneStatsId = GameHelpers.Item.GetItemStat(clone)
-            Events.TreasureItemGenerated:Invoke({Item=clone, StatsId=cloneStatsId, IsClone=true, OriginalItem=item, ResultingItem=item})
+            ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
+            local invokeResult = Events.TreasureItemGenerated:Invoke({Item=clone, StatsId=cloneStatsId, IsClone=true, ResultingItem=clone})
+            if invokeResult.ResultCode ~= "Error" then
+                clone = invokeResult.Args.ResultingItem
+                if invokeResult.Results then
+                    for i=1,#invokeResult.Results do
+                        local replaceItem = invokeResult.Results[i]
+                        if replaceItem and GameHelpers.Ext.ObjectIsItem(replaceItem) then
+                            clone = replaceItem
+                        end
+                    end
+                end
+            end
         end
         return clone
     else

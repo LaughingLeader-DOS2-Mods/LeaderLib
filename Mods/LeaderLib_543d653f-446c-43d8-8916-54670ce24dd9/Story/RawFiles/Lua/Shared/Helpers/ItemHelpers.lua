@@ -313,14 +313,20 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
             ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
             local invokeResult = Events.TreasureItemGenerated:Invoke({Item=newItem, StatsId=statName, IsClone=false, ResultingItem=newItem})
             if invokeResult.ResultCode ~= "Error" then
-                newItem = invokeResult.Args.ResultingItem
+                local nextItem = invokeResult.Args.ResultingItem
                 if invokeResult.Results then
                     for i=1,#invokeResult.Results do
                         local replaceItem = invokeResult.Results[i]
                         if replaceItem and GameHelpers.Ext.ObjectIsItem(replaceItem) then
-                            newItem = replaceItem
+                            nextItem = replaceItem
                         end
                     end
+                end
+                if nextItem and nextItem.MyGuid ~= newItem.MyGuid then
+                    if Ext.OsirisIsCallable then
+                        ItemRemove(newItem.MyGuid)
+                    end
+                    newItem = nextItem
                 end
             end
             return newItem.MyGuid,newItem
@@ -357,14 +363,20 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
         ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
         local invokeResult = Events.TreasureItemGenerated:Invoke({Item=item, StatsId=statsId, IsClone=false, ResultingItem=item})
         if invokeResult.ResultCode ~= "Error" then
-            item = invokeResult.Args.ResultingItem
+            local nextItem = invokeResult.Args.ResultingItem
             if invokeResult.Results then
                 for i=1,#invokeResult.Results do
                     local replaceItem = invokeResult.Results[i]
                     if replaceItem and GameHelpers.Ext.ObjectIsItem(replaceItem) then
-                        item = replaceItem
+                        nextItem = replaceItem
                     end
                 end
+            end
+            if nextItem and nextItem.MyGuid ~= item.MyGuid then
+                if Ext.OsirisIsCallable then
+                    ItemRemove(item.MyGuid)
+                end
+                item = nextItem
             end
         end
         return item
@@ -465,14 +477,20 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
             ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
             local invokeResult = Events.TreasureItemGenerated:Invoke({Item=clone, StatsId=cloneStatsId, IsClone=true, ResultingItem=clone})
             if invokeResult.ResultCode ~= "Error" then
-                clone = invokeResult.Args.ResultingItem
+                local nextItem = invokeResult.Args.ResultingItem
                 if invokeResult.Results then
                     for i=1,#invokeResult.Results do
                         local replaceItem = invokeResult.Results[i]
                         if replaceItem and GameHelpers.Ext.ObjectIsItem(replaceItem) then
-                            clone = replaceItem
+                            nextItem = replaceItem
                         end
                     end
+                end
+                if nextItem and nextItem.MyGuid ~= clone.MyGuid then
+                    if Ext.OsirisIsCallable then
+                        ItemRemove(clone.MyGuid)
+                    end
+                    clone = nextItem
                 end
             end
         end

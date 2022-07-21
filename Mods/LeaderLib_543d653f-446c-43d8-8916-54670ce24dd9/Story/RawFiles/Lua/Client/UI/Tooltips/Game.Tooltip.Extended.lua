@@ -1180,8 +1180,9 @@ function _ttHooks:Init()
 	-- 	}
 	-- end, "Before")
 	
-	_InvokeHandler("addTooltip", function (...)
-		self:OnRenderGenericTooltip(...)
+	--public function addTooltip(text:String, widthOverride:Number = 0, heightOverride:Number = 18, allowDelay:Boolean = true, stickToMouse:Number = 0, bgType:uint = 0)
+	_InvokeHandler("addTooltip", function (e, ui, event, text, widthOverride, heightOverride, allowDelay, stickToMouse, bgType)
+		self:OnRenderGenericTooltip(e, ui, event, text, widthOverride, heightOverride, allowDelay, stickToMouse, bgType)
 	end, "Before")
 
 	_RegisterUINameCall("hideTooltip", function (ui, call, ...)
@@ -1238,7 +1239,7 @@ local _GenericTooltipTypes = {
 ---@param e EclLuaUICallEventParams
 ---@param ui UIObject
 ---@param method string
-function _ttHooks:OnRenderGenericTooltip(e, ui, method, text, x, y, allowDelay, anchorEnum, backgroundType)
+function _ttHooks:OnRenderGenericTooltip(e, ui, method, text, widthOverride, heightOverride, allowDelay, anchorEnum, backgroundType)
 	---@type TooltipGenericRequest|TooltipPlayerPortraitRequest|TooltipWorldRequest
 	local req = self.NextRequest
 	if not req then
@@ -1262,12 +1263,15 @@ function _ttHooks:OnRenderGenericTooltip(e, ui, method, text, x, y, allowDelay, 
 		local tooltipData = TooltipData:Create({{
 			Type = "GenericDescription",
 			Label = text,
-			X = x,
-			Y = y,
+			X = 0,
+			Y = 0,
+			Width = widthOverride,
+			Height = heightOverride,
 			AllowDelay = req.AllowDelay,
 			AnchorEnum = req.AnchorEnum,
 			BackgroundType = req.BackgroundType,
-		}}, ui:GetTypeId(), req.UIType)
+			OverrideSize = false,
+		}}, ui.Type, req.UIType)
 
 		self.ActiveType = req.Type
 		self.Last.Type = req.Type
@@ -1288,13 +1292,53 @@ function _ttHooks:OnRenderGenericTooltip(e, ui, method, text, x, y, allowDelay, 
 		local desc = tooltipData:GetDescriptionElement()
 		if desc then
 			e.Args[1] = desc.Label or ""
-			e.Args[2] = desc.X or req.X
-			e.Args[3] = desc.Y or req.Y
+			e.Args[2] = desc.Width or req.Width
+			e.Args[3] = desc.Height or req.Height
 			e.Args[4] = desc.AllowDelay or req.AllowDelay
 			e.Args[5] = desc.AnchorEnum or req.AnchorEnum
 			e.Args[6] = desc.BackgroundType or req.BackgroundType
+			if desc.OverrideSize then
+
+			end
 		else
+			desc = {}
 			e.Args[1] = ""
+		end
+
+		local this = ui:GetRoot()
+		if this then
+			local sizeChanged = false
+			local target = this.defaultTooltip
+			if target then
+				if desc.OverrideSize then
+					local w = desc.Width or req.Width
+					local h = desc.Height or req.Height
+					if w > 0 then
+						target.widthOverride = w
+						sizeChanged = true
+					end
+					if h > 0 then
+						target.heightOverride = h
+						sizeChanged = true
+					end
+				else
+					target.widthOverride = -1
+					target.heightOverride = -1
+				end
+			end
+			if sizeChanged then
+				local t = ui.Type
+				Ext.OnNextTick(function (e)
+					local ui = _GetUIByType(t)
+					if ui then
+						local this = ui:GetRoot()
+						if this and this.tf then
+							this.tf.widthOverride = -1
+							this.tf.heightOverride = -1
+						end
+					end
+				end)
+			end
 		end
 	
 		self.Last.Request = self.NextRequest
@@ -2295,6 +2339,9 @@ end)
 ---@field Type "GenericDescription"
 ---@field X number
 ---@field Y number
+---@field Width number
+---@field Height number
+---@field OverrideSize boolean|nil If true, the resulting tooltip will be adjusted by the Width/Height.
 ---@field AllowDelay boolean|nil
 ---@field AnchorEnum integer|nil
 ---@field BackgroundType integer|nil

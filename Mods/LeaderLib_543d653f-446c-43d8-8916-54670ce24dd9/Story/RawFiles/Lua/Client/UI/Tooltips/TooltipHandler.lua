@@ -45,10 +45,12 @@ UI.RegisterItemTooltipTag = TooltipHandler.RegisterItemTooltipTag
 
 ---@param tooltip TooltipData
 function TooltipHandler.OnGenericTooltip(tooltip)
-	---@type GenericDescription
-	local desc = tooltip:GetDescriptionElement()
-	if desc then
-		desc.Label = GameHelpers.Tooltip.ReplacePlaceholders(desc.Label, Client:GetCharacter())
+	if OptionsSettingsHooks.IsLeaderLibMenuActive() then
+		---@type GenericDescription
+		local desc = tooltip:GetDescriptionElement()
+		if desc then
+			desc.OverrideSize = true
+		end
 	end
 end
 
@@ -80,7 +82,7 @@ local function RegisterTooltipHandlers()
 			description.Label = string.format("%s%s", description.Label or "", idText)
 		end
 	end) ]]
-	--_r.Generic(TooltipHandler.OnGenericTooltip)
+	_r.Generic(TooltipHandler.OnGenericTooltip)
 	Game.Tooltip.RegisterRequestListener("Generic", function (request, ui, uiType, event, id, ...)
 		request.Text = GameHelpers.Tooltip.ReplacePlaceholders(request.Text, Client:GetCharacter())
 	end, "After")

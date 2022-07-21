@@ -310,7 +310,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
                     ItemLevelUpTo(newItem.MyGuid, properties.StatsLevel)
                 end
             end
-            Events.TreasureItemGenerated:Invoke({Item=newItem, StatsId=statName, IsClone=false})
+            Events.TreasureItemGenerated:Invoke({Item=newItem, StatsId=statName, IsClone=false, ResultingItem=newItem})
             return newItem.MyGuid,newItem
         end
     end
@@ -329,13 +329,6 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     ---@type ItemDefinition
     local props = constructor[1]
     props:ResetProgression()
-    -- if _type(template) == "String" then
-    --     props.RootTemplate = template
-    --     props.OriginalRootTemplate = template
-    --     props.GenerationStatsId = "WPN_Sword_1H"
-    --     props.StatsLevel = 1
-    --     props.GenerationLevel = 1
-    -- end
     if setProperties then
         for k,v in pairs(setProperties) do
             if itemConstructorProps[k] then
@@ -349,7 +342,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     if item ~= nil then
         item = Ext.GetItem(item.Handle)
         local statsId = GameHelpers.Item.GetItemStat(item)
-        Events.TreasureItemGenerated:Invoke({Item=item, StatsId=statsId, IsClone=false})
+        Events.TreasureItemGenerated:Invoke({Item=item, StatsId=statsId, IsClone=false, ResultingItem=item})
         return item
     else
         Ext.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Error constructing item when invoking Construct() - Returned item is nil for template %s.", template))
@@ -445,7 +438,7 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
         -- end
         if opts.InvokeEvent then
             local cloneStatsId = GameHelpers.Item.GetItemStat(clone)
-            Events.TreasureItemGenerated:Invoke({Item=clone, StatsId=cloneStatsId, IsClone=true, OriginalItem=item})
+            Events.TreasureItemGenerated:Invoke({Item=clone, StatsId=cloneStatsId, IsClone=true, OriginalItem=item, ResultingItem=item})
         end
         return clone
     else

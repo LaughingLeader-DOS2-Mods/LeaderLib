@@ -285,6 +285,7 @@ local function IsLeaderLibMenuActive()
 	end
 	return false
 end
+OptionsSettingsHooks.IsLeaderLibMenuActive = IsLeaderLibMenuActive
 
 Ext.RegisterListener("SessionLoaded", function()
 	--Override here so the settings in the main menu works

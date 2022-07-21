@@ -74,6 +74,10 @@ end
 ---@param e EclLuaUICallEventParams
 local function OnUICall(e)
 	if e.When == "Before" then
+		-- if e.Function == "showTooltip" and OptionsSettingsHooks.IsLeaderLibMenuActive() then
+		--- Doesn't work since tooltip.swf ignores these params
+		-- 	e.Args[4] = e.Args[4] + 400
+		-- end
 		if e.Function == "hideTooltip" then
 			Timer.Cancel("LeaderLib_ModMenu_DelayShowTooltip")
 			skipCreationDelay = false
@@ -107,13 +111,11 @@ local function OnUICall(e)
 					lastMouseY = my
 					e:PreventAction()
 					e:StopPropagation()
-					Ext.PrintError("LeaderLib_ModMenu_DelayShowTooltip", _DELAY)
 					Timer.Cancel("LeaderLib_ModMenu_DelayShowTooltip")
 					Timer.StartOneshot("LeaderLib_ModMenu_DelayShowTooltip", _DELAY, function (e)
 						local ui = Ext.UI.GetByType(uiType)
 						if ui then
 							skipCreationDelay = true
-							Ext.PrintError(call)
 							ui:ExternalInterfaceCall(call, table.unpack(args))
 						end
 					end)

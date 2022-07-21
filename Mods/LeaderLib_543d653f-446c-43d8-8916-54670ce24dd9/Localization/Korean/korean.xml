@@ -67,6 +67,7 @@
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c">Character is selling new items.</content>
 	<content contentuid="h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba">[1]&lt;br&gt;Created by [2]</content>
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
+	<content contentuid="h206db122gc6b7g4603g9b05g725b23103b1a">Delay tooltip creation by this amount in seconds. This value will override the usual 0.5 second delay.</content>
 	<content contentuid="h209bda66g55d1g48a9gbc1bg22a2a6e25941">Autosaving &lt;font color=&apos;#FF0000&apos;&gt;Disabled&lt;/font&gt; | Interval: &lt;font color=&apos;#00FFFF&apos;&gt;[1]&lt;/font&gt;</content>
 	<content contentuid="h21fd2959g743dg49e6g9922g02b39ce3c8b8">Pulls targets [1]m [2] ([3]% Chance).</content>
 	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
@@ -105,6 +106,7 @@
 	<content contentuid="h33c3e0e2g18e3g4792g93bbg725c15acdef1">&lt;font color=&apos;#00CCFF&apos;&gt;Keyboard Shortcut&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#44CCAA&apos;&gt;Press CTRL + Spacebar to chain/unchain party members. No skill required.&lt;/font&gt;&lt;br&gt;(Note: This is the &apos;&lt;font color=&apos;#FFAA11&apos;&gt;[Handle:h310a22a4g1ebag4b1cg89d6g5cebc301c5c5:Toggle Game Master Shroud]&lt;/font&gt;&apos; [Handle:h6867dea8g129fg4a85g9368g1cf6534df65f:Key]).</content>
 	<content contentuid="h3510e199g7d0cg404fga53bg052c534d94d1">&lt;font color=&apos;#3e81fc&apos; size=&apos;18&apos;&gt;LeaderLib&lt;/font&gt;&lt;br&gt;Open the mod menu to access registered settings menus.</content>
 	<content contentuid="h35914541gb69bg42f4gafa5gb90aeb1ec229">...</content>
+	<content contentuid="h3711b1fegc969g47b4g91aag34b11481f06e">Delay Override</content>
 	<content contentuid="h386d715bg3f70g4373g8d64g99fb5f1010e8">*Ask why Lothar left his &quot;vacation&quot; on Reaper&apos;s Eye.*</content>
 	<content contentuid="h393d684bg505dg41c4gbb5dg715a4b5bd153">Close</content>
 	<content contentuid="h3952f84bge59bg44d1gb0d1g47a6a1a49f9e">Aggressively prevent the chat log from being visible or toggleable.</content>
@@ -411,7 +413,7 @@
 	<content contentuid="hc48478ceg4b78g4087g9dd6g27ba0e95a20b">[SAVE] Save Global Settings</content>
 	<content contentuid="hc51c7f81g8ab6g40b3ga78eg9561389dda7c">4 Hours</content>
 	<content contentuid="hc5f5cca4gb3f7g4950g9b0ag16300e7a3610">45 Minutes</content>
-	<content contentuid="hc69217f8g7df1g4947ga5b0g1cdd026854de">Set the base carry weight value.&lt;br&gt;Default: 0&lt;br&gt;Carry Weight Formula: [Special:CarryWeightFormula]</content>
+	<content contentuid="hc69217f8g7df1g4947ga5b0g1cdd026854de">Set the base carry weight value.&lt;br&gt;Default: 0&lt;br&gt;Carry Weight Formula:[Special:CarryWeightFormula]</content>
 	<content contentuid="hc6932dc9g399cg48a5gb9cdg722cf1ac26ea">*You take a look at his wares.*</content>
 	<content contentuid="hc70db3e9ga1ecg465egb953g253f7e77db5d">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc768ad97g83deg41fdgb257g54443e202c5a">As a gesture of goodwill towards future trading, I&apos;ll give you this book for free.</content>

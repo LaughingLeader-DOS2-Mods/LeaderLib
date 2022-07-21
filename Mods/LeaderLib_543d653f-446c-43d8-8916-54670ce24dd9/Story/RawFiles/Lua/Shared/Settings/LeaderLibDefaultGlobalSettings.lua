@@ -102,17 +102,21 @@ end
 GlobalSettings.Mods[ModuleUUID] = settings
 
 --round(((1 (or 2.0 if Packmule talent) * Strength) * [ExtraData:CarryWeightPerStr:10000]) + CarryWeightBase)
-local _weightFormulaText = "round((Packmule:%s x Strength:%s) x CarryWeightPerStr:%s) + CarryWeightBase:<font color='#33DD33'>%s</font>) = <font color='#33FF33'>%s</font>"
+local _weightFormulaText = "<br>((%s x [Strength:%s]) x [CarryWeightPerStr:%s]) + [CarryWeightBase:<font color='#33DD33'>%s</font>]<br>[Handle:hccfc1bb7ga7feg41d1g8d2fg3c0c2972e723:Result]: <font color='#33FF33'>%s [Handle:hd47021f7g7867g4714ga91cg02ac22e9cfb3:MaxWeight]</font>"
 
 Events.GetTextPlaceholder:Subscribe(function (e)
 	--round(((1 (or 2.0 if Packmule talent) * Strength) * [ExtraData:CarryWeightPerStr:10000]) + CarryWeightBase)
-	local packMuleBonus = e.Character.TALENT_Carry and 2.0 or 1.0
+	local packMuleBonus = 1.0
+	local packMuleText = tostring(math.ceil(packMuleBonus))
+	if e.Character.TALENT_Carry then
+		packMuleBonus = 2.0
+		packMuleText = string.format("[%s:%i]", LocalizedText.TalentNames.Carry.Value, packMuleBonus)
+	end
 	local strength = e.Character.Strength
 	local weightPerStr = GameHelpers.GetExtraData("CarryWeightPerStr", 10000)
 	local carryWeightBase = GameHelpers.GetExtraData("CarryWeightBase", 0)
-	local result = Ext.Round(((packMuleBonus * strength) * weightPerStr) + carryWeightBase)
-	return _weightFormulaText:format(packMuleBonus, strength, weightPerStr, carryWeightBase, result)
-
+	local result = Ext.Round((((packMuleBonus * strength) * weightPerStr) + carryWeightBase) * 0.001)
+	e.Result = GameHelpers.Tooltip.ReplacePlaceholders(_weightFormulaText:format(packMuleText, strength, weightPerStr, carryWeightBase, result))
 end, {MatchArgs={ID="CarryWeightFormula"}})
 
 Ext.Events.SessionLoaded:Subscribe(function (e)

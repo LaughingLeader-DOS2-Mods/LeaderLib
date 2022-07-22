@@ -11,11 +11,12 @@ local _colorPattern = 'new itemcolor "(.+)","(.+)","(.*)","(.*)"'
 
 local function _CacheItemColor()
 	_cachedStatData.ItemColor = {}
-	local order = Ext.GetModLoadOrder()
+	local order = Ext.Mod.GetLoadOrder()
 	for i=1,#order do
 		local uuid = order[i]
-		local info = Ext.GetModInfo(uuid)
-		if info ~= nil then
+		local mod = Ext.Mod.GetMod(uuid)
+		if mod then
+			local info = mod.Info
 			local filePath = string.format("Public/%s/Stats/Generated/Data/ItemColor.txt", info.Directory)
 			local text = GameHelpers.IO.LoadFile(filePath, "data")
 			--local filePathWithoutSpaces = string.format("Mods/%s/CharacterCreation/ClassPresets/%s.lsx", info.Directory, StringHelpers.RemoveWhitespace(classType))
@@ -58,7 +59,7 @@ local function _GetCachedStatType(statType)
 		if statType == "ItemColor" then
 			return _CacheItemColor()
 		elseif _validStatTypes[statType] then
-			_cachedStatData[statType] = Ext.GetStatEntries(statType)
+			_cachedStatData[statType] = Ext.Stats.GetStats(statType)
 			local length = #_cachedStatData[statType]
 			for i=1,length do
 				local name = _cachedStatData[statType][i]
@@ -120,7 +121,7 @@ function GameHelpers.Stats.GetStats(statType, asStatsEntry)
 		return function ()
 			i = next(_cache, i)
 			if i then
-				return Ext.GetStat(_cache[i]),i
+				return Ext.Stats.Get(_cache[i]),i
 			end
 		end
 	end
@@ -201,7 +202,7 @@ function GameHelpers.Stats.Exists(id, statType)
 		local t = _statNameToType[id]
 		return t ~= nil
 	else
-		local b,stat = pcall(Ext.GetStat, id)
+		local b,stat = pcall(Ext.Stats.Get, id)
 		return b and stat ~= nil
 	end
 end

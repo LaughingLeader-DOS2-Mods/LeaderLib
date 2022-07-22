@@ -199,7 +199,7 @@ local function TrySetTooltipDelay(this, lastRequestType)
 			--Delay is handled using a UICall subscription
 			tf.allowDelay = false
 			if this.compareShowTimer then
-				this.compareShowTimer.delay = 0
+				this.compareShowTimer.delay = math.ceil(settings.Client.EnableTooltipDelay.GlobalDelay/2)
 			end
 			return true
 		elseif this.compareShowTimer then

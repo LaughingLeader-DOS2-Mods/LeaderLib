@@ -28,7 +28,7 @@ settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 --settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)
 settings.Global:AddLocalizedVariable("AutoCombatRange", "LeaderLib_Variables_AutoCombatRange", 30, 1, 30, 1)
 settings.Global:AddLocalizedVariable("CombatSightRangeMultiplier", "LeaderLib_Variables_CombatSightRangeMultiplier", 2.5, 1, 30, 1)
-settings.Global:AddLocalizedVariable("CarryWeightBase", "LeaderLib_Variables_CarryWeightBase", 0, 0, 200000, 1)
+settings.Global:AddLocalizedVariable("CarryWeightBase", "LeaderLib_Variables_CarryWeightBase", -1, -1, 200000, 1)
 
 settings.GetMenuOrder = function()
 	local order = {
@@ -142,9 +142,19 @@ settings.Global.Variables.CombatSightRangeMultiplier:Subscribe(function (e)
 	fprint(LOGLEVEL.TRACE, "[LeaderLib] Set 'End Of Combat SightRange Multiplier' to (%s)", e.Value)
 end)
 
+local hasSetBaseCarryweight = false
+
 settings.Global.Variables.CarryWeightBase:Subscribe(function (e)
-	Ext.ExtraData.CarryWeightBase = e.Value
-	fprint(LOGLEVEL.TRACE, "[LeaderLib] Set CarryWeightBase to (%s)", e.Value)
+	if e.Value > -1 then
+		if not hasSetBaseCarryweight then
+			hasSetBaseCarryweight = Ext.ExtraData.CarryWeightBase ~= e.Value
+		end
+		Ext.ExtraData.CarryWeightBase = e.Value
+		fprint(LOGLEVEL.TRACE, "[LeaderLib] Set CarryWeightBase to (%s)", e.Value)
+	elseif hasSetBaseCarryweight then
+		Ext.ExtraData.CarryWeightBase = 0
+		fprint(LOGLEVEL.TRACE, "[LeaderLib] Disabled CarryWeightBase override.")
+	end
 end)
 
 if Ext.IsServer() then

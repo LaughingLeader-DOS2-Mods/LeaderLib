@@ -6,12 +6,12 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
-			"Version": "1.7.24.3",
+			"Version": "1.7.25.0",
 			"Changes": [
 				"Added new Quality of Life options to the \"Mod Settings\" menu:",
 				"  • Auto-identify Items",
 				"  • Permanent Spirit Vision (lets you toggle it on/off)",
-				"  • Base Carry Weight (Set to -1 to disable overriding)",
+				"  • Base Carry Weight Overriding",
 				"  • Show Consumable Effects (Globally) - Allows displaying potion/food/drink/ingredient effects without consuming the item beforehand",
 				"Added new Quality of Life options to the \"Gameplay\" menu, in the Client section:",
 				"  • Added \"Show Consumable Effects\" (enabled by default), allowing you to hide consumable effects if the global setting 'Show Consumable Effects' is enabled. The global setting must be enabled for this option to have an effect.",

@@ -27,6 +27,8 @@ package journal_fla
 		public var scrollbarSize:Number = 401;
 		public var RListHeightDisc:Number = 10;
 
+		public var lastGroupId:Number = -1;
+
 		public function tutorialHolder_34()
 		{
 			super();
@@ -53,7 +55,15 @@ package journal_fla
 				this.list.mouseWheelEnabled = true;
 				this.list.positionElements()
 				this.list.selectMC(this.text_mc, true);
+				this.lastGroupId = group_mc.id;
 			}
+		}	
+
+		public function resetText() : *
+		{
+			this.title_txt.htmlText = "";
+			this.desc_txt.htmlText = "";
+			this.checkScrollBar();
 		}
 		
 		private function frame1() : *

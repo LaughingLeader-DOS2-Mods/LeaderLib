@@ -76,16 +76,16 @@ package journal_fla
 			addFrameScript(0,this.frame1);
 		}
 		
-		public function onSelectTut(param1:Event) : *
+		public function onSelectTut(e:Event) : *
 		{
 			this.tutorialContainer_mc.showSelected(this.tutorialList.getCurrentMovieClip());
 		}
 		
-		public function setBtnTooltip(param1:Number, param2:String) : *
+		public function setBtnTooltip(index:Number, tooltip:String) : *
 		{
-			if(param1 >= 0 && param1 < this.tooltipBtn_array.length)
+			if(index >= 0 && index < this.tooltipBtn_array.length)
 			{
-				this.tooltipBtn_array[param1].tooltip = param2;
+				this.tooltipBtn_array[index].tooltip = tooltip;
 			}
 		}
 		
@@ -214,26 +214,26 @@ package journal_fla
 			}
 		}
 		
-		public function selectTab(param1:uint) : *
+		public function selectTab(id:uint) : *
 		{
-			var val2:MovieClip = this.tabList.getElementByNumber("id",param1);
+			var val2:MovieClip = this.tabList.getElementByNumber("id",id);
 			this.selectClickedTab(val2);
 		}
 		
-		public function selectClickedTab(param1:MovieClip) : *
+		public function selectClickedTab(mc:MovieClip) : *
 		{
 			this.tabList.getCurrentMovieClip().setActive(false);
-			this.tabList.selectMC(param1);
-			param1.setActive(true);
+			this.tabList.selectMC(mc);
+			mc.setActive(true);
 			this.infoContainer_mc.visible = false;
-			if(this.tabList.getCurrentMovieClip() != param1)
+			if(this.tabList.getCurrentMovieClip() != mc)
 			{
 				this.dialogLogContainer_mc.visible = false;
 				this.infoList.clearElements();
 				this.infoContainer_mc.title_mc.visible = false;
 				this.openedDialog = null;
 			}
-			if(param1.funcId == 0)
+			if(mc.funcId == 0)
 			{
 				this.infoContainer_mc.visible = true;
 				this.journalContainer_mc.visible = true;
@@ -254,7 +254,7 @@ package journal_fla
 				this.paperTop_mc.visible = false;
 				this.onMapBtn_mc.visible = this.postponeBtn_mc.visible = this.showPostponed_mc.visible = false;
 			}
-			if(param1.funcId == 3)
+			if(mc.funcId == 3)
 			{
 				this.bg_mc.gotoAndStop(2);
 				this.mapName_txt.visible = true;
@@ -268,7 +268,7 @@ package journal_fla
 				this.map_mc.visible = false;
 				this.map_mc.mouseWheelEnabled = false;
 			}
-			if(param1.funcId == 4)
+			if(mc.funcId == 4)
 			{
 				this.infoContainer_mc.visible = true;
 				this.dialogLogContainer_mc.visible = true;
@@ -280,14 +280,23 @@ package journal_fla
 				this.dialogLogContainer_mc.visible = false;
 				this.dialogList.mouseWheelWhenOverEnabled = false;
 			}
-			if(param1.funcId == 7)
+			if(mc.funcId == 7)
 			{
 				this.tutorialContainer_mc.visible = true;
 				this.tutorialList.mouseWheelWhenOverEnabled = true;
 				this.currentList = this.tutorialList;
+				if(this.tutorialContainer_mc.lastGroupId && this.tutorialContainer_mc.lastGroupId >= 0)
+				{
+					var group_mc:MovieClip = this.tutorialList.getGroupElementByNumber("id", this.tutorialContainer_mc.lastGroupId);
+					if (group_mc != null)
+					{
+						this.tutorialContainer_mc.showSelected(group_mc);
+					}
+				}
 			}
 			else
 			{
+				this.tutorialContainer_mc.resetText();
 				this.tutorialContainer_mc.visible = false;
 				this.tutorialList.mouseWheelWhenOverEnabled = false;
 			}
@@ -295,7 +304,7 @@ package journal_fla
 			{
 				this.bg_mc.gotoAndStop(3);
 			}
-			else if(param1.funcId == 0)
+			else if(mc.funcId == 0)
 			{
 				this.bg_mc.gotoAndStop(1);
 				if(this.bg_mc.btnBG_mc)
@@ -308,7 +317,7 @@ package journal_fla
 				this.bg_mc.gotoAndStop(2);
 			}
 			ExternalInterface.call("PlaySound","UI_Game_Journal_Click");
-			ExternalInterface.call("selectClickedTab",param1.id);
+			ExternalInterface.call("selectClickedTab",mc.id);
 		}
 		
 		public function toggleDialog(param1:MovieClip, param2:Boolean = true) : *

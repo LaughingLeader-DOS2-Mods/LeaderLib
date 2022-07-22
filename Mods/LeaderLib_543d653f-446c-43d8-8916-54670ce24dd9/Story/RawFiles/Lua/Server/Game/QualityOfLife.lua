@@ -288,7 +288,7 @@ function IdentifyAllItems(object)
 	local totalIdentified = 0
 	local object = GameHelpers.TryGetObject(object)
 	if object and object.GetInventoryItems then
-		for _,uuid in object:GetInventoryItems() do
+		for _,uuid in pairs(object:GetInventoryItems()) do
 			local item = GameHelpers.GetItem(uuid)
 			if item and item.Stats and item.Stats.IsIdentified ~= 1 then
 				item.Stats.IsIdentified = 1

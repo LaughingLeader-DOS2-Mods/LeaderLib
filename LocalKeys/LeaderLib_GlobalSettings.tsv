@@ -48,7 +48,9 @@ LeaderLib_Variables_AutoCombatRange	Pull Radius	hf37c444fg879fg4e62gb3d5g7708620
 LeaderLib_Variables_AutoCombatRange_Description	If "Pull Party Into Combat" is enabled, this is the minimum radius party members must be from that combat to automatically join. Default: 30m	h4c438f27gc833g4b46g8c3eg50716f12ae34
 LeaderLib_Variables_AutosaveInterval	Autosave Interval	h43868aebg7281g40bfgbc1dgf6fe5a06512b
 LeaderLib_Variables_AutosaveInterval_Description	The time delay between autosaving, in minutes.	h2ecee3dfg9f7eg4c8dga10bg11b0d6347136
+LeaderLib_CarryWeightOverrideEnabled	Override Base Carry Weight	h8d98a9d8gf8e8g4e82g8131g175401085a08
+LeaderLib_CarryWeightOverrideEnabled_Description	Allow the Base Carry Weight value to override the game's regular value.	h7a21bffeg0c7ag441cga0dbg998b8b47141b
 LeaderLib_Variables_CarryWeightBase	Base Carry Weight	h77b887begd871g445eg97e0g33a6f7a3af73
-LeaderLib_Variables_CarryWeightBase_Description	Set the base carry weight value. If -1, this option will be disabled.<br>Default: 0<br>Carry Weight Formula:[Special:CarryWeightFormula]	hd0b1aecegfee4g4e1eg9dd9ge83d2ff268cb
+LeaderLib_Variables_CarryWeightBase_Description	Set the base carry weight value.<br>Default: 0<br>Carry Weight Formula:[Special:CarryWeightFormula]	hd0b1aecegfee4g4e1eg9dd9ge83d2ff268cb
 LeaderLib_Variables_CombatSightRangeMultiplier	Combat Sight Range Multiplier	hd59b40d6g8eb5g4288g92b0gdbf045f0dae5
 LeaderLib_Variables_CombatSightRangeMultiplier_Description	This is a multiplier the game uses to determine if a character should exit combat, due to not seeing any enemies. Setting this value higher will keep you in combat, despite being far away from any enemies.<br>Default: 2.5<br>Formula: ((Value * Value) * character.Sight) * character.Sight	hd512d483gb01ag40c6ga346g472274590bb5

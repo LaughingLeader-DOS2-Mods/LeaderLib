@@ -99,7 +99,7 @@
 	<content contentuid="h30327946g0ea7g4b53gada1g8fbaf61a8e84">*Ask if he&apos;s selling anything.*</content>
 	<content contentuid="h30855a9fga157g4ff1g83b7g7bb8fd640988">*Take your leave.*</content>
 	<content contentuid="h31a2f896g6e9fg47aegb876ga3d5ba3114b1">[Debug] Fix Dialog for Active LeaderLib Traders</content>
-	<content contentuid="h31fb9614g8d20g42adga8e9gd870c2c58e55">Tooltip Delays</content>
+	<content contentuid="h31fb9614g8d20g42adga8e9gd870c2c58e55">Tooltip Delaying</content>
 	<content contentuid="h3209c996gd9ebg4594ga886gddca741dafdd">Pulls targets [1]m [2].</content>
 	<content contentuid="h325b2402g6e5eg49c6ga8d2g96a4d25d01d4">&lt;font color=&apos;#FFA500&apos;&gt;Timer not started. Enable/Disable autosaving to restart the timer.&lt;/font&gt;</content>
 	<content contentuid="h336e652dg91dag48aag8040g9c8790fb145d">60 Minutes</content>
@@ -130,6 +130,7 @@
 	<content contentuid="h4120c4e5g4931g46dbgad0fga7a57514ac42">Rifle</content>
 	<content contentuid="h41a533b7g535bg4e76gbc7eg202d33a73740">Automatically Add Mod Books</content>
 	<content contentuid="h4252ff7cgb624g4b24gbf03g1772392f3988">Old Man Lothar</content>
+	<content contentuid="h436c5291g12cdg49b3gbaf5gc7d5a0ab4201">Allow the Base Carry Weight value to override the game&apos;s regular value.</content>
 	<content contentuid="h43868aebg7281g40bfgbc1dgf6fe5a06512b">Autosave Interval</content>
 	<content contentuid="h43c8c461g3a16g46fdgae71ga5986e500941">If enabled, consumable items such as drinks, food, potions, and ingredients will show their effects without needing to consume it first.&lt;br&gt;The &lt;font color=&apos;#33FF66&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideConsumableEffects:Show Consumable Effects]&lt;/font&gt; setting can be disabled in the Gameplay tab to still hide these effects for yourself, while allowing it globally here.&lt;br&gt;&lt;font color=&apos;#FFAA33&apos;&gt;Note: This works without any permanent stat overrides, so it&apos;s safe to enable/disable at will.&lt;/font&gt; </content>
 	<content contentuid="h455f1349g6528g452bg8624g5d0674b01ac5">If enabled, tooltips that support shift-key expansion will always be expanded.</content>
@@ -233,7 +234,7 @@
 	<content contentuid="h7322bed9g2ea5g4abeg9decga21994353d79">*He waits for you to speak.*</content>
 	<content contentuid="h73234319g4e6bg4967gb45cga511b60f0408">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Save Global Settings&lt;/font&gt;</content>
 	<content contentuid="h7372bd33g991dg41c7ga8c2g9b42778c29f5">If enabled, all items will have a &quot;World Tooltip&quot;, showing the item&apos;s name when world tooltips are enabled (ALT by default for keyboard + mouse, or clicking the Right Stick for controllers).&lt;br&gt;Disabling this may require a save/load to get items to reset.</content>
-	<content contentuid="h738ca5c9gbb24g47d6ga31eg570bc92bbbd0">Gameplay Host Settings</content>
+	<content contentuid="h738ca5c9gbb24g47d6ga31eg570bc92bbbd0">Host Settings</content>
 	<content contentuid="h75a91fefgc531g4bb1g82f2gec7122c62aff">Enabled</content>
 	<content contentuid="h75e24eb0g3639g41a3g9c88g7d228f91eb00">INFO</content>
 	<content contentuid="h76b098bdgb9f4g4ae8g8e5bg87f68b4599d9">Hey there, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! You made it off that wreck in one piece, eh? *He snorts.* </content>
@@ -257,6 +258,7 @@
 	<content contentuid="h80766295g4589g4681gb03cgf6c692463084">&lt;font color=&apos;#9A00FF&apos;&gt;[1] chaos damage&lt;/font&gt;</content>
 	<content contentuid="h808d2fe2ge0d2g4e78g94cag05b054d2b96b">[LeaderLib_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1]</content>
 	<content contentuid="h809bc35bgaa71g493egaf0agc20c110d90cf">If enabled, skills will be able to backstab depending on settings (melee only, minimum distance).&lt;br&gt;(Default: Disabled)</content>
+	<content contentuid="h810c9e32gefefg451cga58dgc6d44276ac7e">Override Base Carry Weight</content>
 	<content contentuid="h8154ae8eg2b37g4f0fgb6b6gd7e27fed37a6">Level [1]: [2]</content>
 	<content contentuid="h81a0d6b9g43adg4223gbcc9g0fceadeff883">*He coughs out some sea water.*  That she-beast of a sourceress nearly wiped me out with the others on the boat... *He trails off for a moment before returning his gaze back to you.*</content>
 	<content contentuid="h81c5d767gca44g446fg8d4bg56bdf03699a6">Clear Whitelist</content>
@@ -413,7 +415,7 @@
 	<content contentuid="hc48478ceg4b78g4087g9dd6g27ba0e95a20b">[SAVE] Save Global Settings</content>
 	<content contentuid="hc51c7f81g8ab6g40b3ga78eg9561389dda7c">4 Hours</content>
 	<content contentuid="hc5f5cca4gb3f7g4950g9b0ag16300e7a3610">45 Minutes</content>
-	<content contentuid="hc69217f8g7df1g4947ga5b0g1cdd026854de">Set the base carry weight value. If -1, this option will be disabled.&lt;br&gt;Default: 0&lt;br&gt;Carry Weight Formula:[Special:CarryWeightFormula]</content>
+	<content contentuid="hc69217f8g7df1g4947ga5b0g1cdd026854de">Set the base carry weight value.&lt;br&gt;Default: 0&lt;br&gt;Carry Weight Formula:[Special:CarryWeightFormula]</content>
 	<content contentuid="hc6932dc9g399cg48a5gb9cdg722cf1ac26ea">*You take a look at his wares.*</content>
 	<content contentuid="hc70db3e9ga1ecg465egb953g253f7e77db5d">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc768ad97g83deg41fdgb257g54443e202c5a">As a gesture of goodwill towards future trading, I&apos;ll give you this book for free.</content>

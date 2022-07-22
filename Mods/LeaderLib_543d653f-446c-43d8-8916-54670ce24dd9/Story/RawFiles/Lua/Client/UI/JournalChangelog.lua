@@ -46,22 +46,11 @@ function Changelog:AddModEntry(modName, changelogText, tooltip)
 	lastId = lastId + 1
 end
 
-local tutorialIsDirty = false
-
 _journal:RegisterInvokeListener("updateJournal", function (self, ui, event)
 	--Rename the TUTORIAL button to INFO
 
 	local this = ui:GetRoot()
 	if this and this.add_tutEntry then
-		if tutorialIsDirty then
-			tutorialIsDirty = false
-			local tutorialContainer_mc = this.journal_mc.tutorialContainer_mc
-			if not tutorialContainer_mc.visible then
-				tutorialContainer_mc.title_txt.htmlText = ""
-				tutorialContainer_mc.desc_txt.htmlText = ""
-			end
-		end
-
 		local tabTitle = string.upper(GameHelpers.GetStringKeyText("LeaderLib_UI_Journal_InfoButton_Title", "INFO"))
 		local tutorialTab = GameHelpers.GetTranslatedString("h7a7a3449g5a44g44a7g8132gcf3bb11fe0d5", "TUTORIALS")
 
@@ -214,7 +203,13 @@ _journal:RegisterInvokeListener("updateTutorials", function (self, ui, event)
 end, "After", "All")
 
 Events.BeforeLuaReset:Subscribe(function ()
-	tutorialIsDirty = true
+	if not Vars.ControllerEnabled then
+		local this = _journal.Root
+		if this then
+			this.journal_mc.tutorialContainer_mc.lastGroupId = -1
+			this.journal_mc.tutorialContainer_mc.resetText()
+		end
+	end
 end)
 
 local function TryFindConfig(info)
@@ -306,6 +301,7 @@ function Changelog.LoadFiles()
 						changelogText = string.format("%s%s%s<br>", changelogText, bullet, txt)
 					end
 				end
+				changelogText = changelogText .. "<br>"
 			end
 		end
 

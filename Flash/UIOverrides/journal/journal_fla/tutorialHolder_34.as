@@ -53,7 +53,7 @@ package journal_fla
 				this.desc_txt.htmlText = group_mc.descStr;
 				this.text_mc.heightOverride = this.desc_txt.textHeight;
 				this.list.mouseWheelEnabled = true;
-				this.list.positionElements()
+				this.list.positionElements();
 				this.list.selectMC(this.text_mc, true);
 				this.lastGroupId = group_mc.id;
 			}
@@ -63,7 +63,9 @@ package journal_fla
 		{
 			this.title_txt.htmlText = "";
 			this.desc_txt.htmlText = "";
-			this.list.checkScrollBar();
+			this.text_mc.heightOverride = 0;
+			this.list.mouseWheelEnabled = false;
+			this.list.positionElements();
 		}
 		
 		private function frame1() : *

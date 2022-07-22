@@ -139,9 +139,12 @@ function GameHelpers.Client.IsGameMaster(ui, this)
 end
 
 ---@param double number
----@param func fun(handle:ObjectHandle):EclCharacter|EclItem
+---@param func fun(handle:ComponentHandle):EclCharacter|EclItem
 local function ProcessDoubleHandle(double, func)
 	if not GameHelpers.Math.IsNaN(double) then
+		if double <= 0 then
+			return nil
+		end
 		local handle = Ext.UI.DoubleToHandle(double)
 		if GameHelpers.IsValidHandle(handle) then
 			return func(handle)
@@ -156,6 +159,9 @@ end
 ---@param double number
 ---@return EclCharacter
 function GameHelpers.Client.TryGetCharacterFromDouble(double)
+	if double == 0 then
+		return nil
+	end
 	local b,character = pcall(ProcessDoubleHandle, double, GameHelpers.GetCharacter)
 	if b then
 		return character
@@ -167,6 +173,9 @@ end
 ---@param double number
 ---@return EclItem
 function GameHelpers.Client.TryGetItemFromDouble(double)
+	if double == 0 then
+		return nil
+	end
 	local b,item = pcall(ProcessDoubleHandle, double, GameHelpers.GetItem)
 	if b then
 		return item

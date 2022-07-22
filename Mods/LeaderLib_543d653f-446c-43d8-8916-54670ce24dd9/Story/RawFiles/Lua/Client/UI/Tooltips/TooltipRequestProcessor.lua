@@ -99,6 +99,9 @@ end
 ---@param getObjectFunc function|nil
 ---@return EclCharacter|EclItem|nil
 local function _GetObjectFromDouble(doubleHandle, getObjectFunc)
+	if doubleHandle == 0 then
+		return nil
+	end
 	local b,result = pcall(__TryGetObjectFromDouble, doubleHandle, getObjectFunc)
 	if b then
 		return result

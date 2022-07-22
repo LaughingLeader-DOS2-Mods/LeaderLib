@@ -268,15 +268,16 @@ Ext.Events.TreasureItemGenerated:Subscribe(function (e)
 		---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
 		local invokeResult = Events.TreasureItemGenerated:Invoke({Item=e.Item, StatsId=statsId, IsClone=false, ResultingItem = e.ResultingItem})
 		if invokeResult.ResultCode ~= "Error" then
-			e.ResultingItem = invokeResult.Args.ResultingItem
-			if invokeResult.Results then
-                for i=1,#invokeResult.Results do
-                    local replaceItem = invokeResult.Results[i]
-                    if replaceItem and GameHelpers.Ext.ObjectIsItem(replaceItem) then
-                        e.ResultingItem = replaceItem
-                    end
-                end
-            end
+			--TODO null error with e.ResultingItem in __newindex
+			-- e.ResultingItem = invokeResult.Args.ResultingItem
+			-- if invokeResult.Results then
+            --     for i=1,#invokeResult.Results do
+            --         local replaceItem = invokeResult.Results[i]
+            --         if replaceItem and GameHelpers.Ext.ObjectIsItem(replaceItem) then
+            --             e.ResultingItem = replaceItem
+            --         end
+            --     end
+            -- end
 		end
 	end
 end, {Priority=1})
@@ -286,9 +287,9 @@ end, {Priority=1})
 function IdentifyAllItems(object)
 	local totalIdentified = 0
 	local object = GameHelpers.TryGetObject(object)
-	if object and GameHelpers.Ext.ObjectIsCharacter(object) and GameHelpers.Ext.ObjectIsItem(object) then
+	if object and object.GetInventoryItems then
 		for _,uuid in object:GetInventoryItems() do
-			local item = Ext.GetItem(uuid)
+			local item = GameHelpers.GetItem(uuid)
 			if item and item.Stats and item.Stats.IsIdentified ~= 1 then
 				item.Stats.IsIdentified = 1
 				totalIdentified = totalIdentified + 1

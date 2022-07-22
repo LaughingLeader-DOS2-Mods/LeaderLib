@@ -165,97 +165,101 @@ package optionsSettings_c_fla
 			this.setMenuDropDownEnabled(param1,param2);
 		}
 		
-		public function addMenuInfoLabel(param1:Number, param2:String, param3:String) : *
+		public function addMenuInfoLabel(id:Number, label:String, info:String, tooltip:String = "", fixedHeight:Number = -1) : *
 		{
-			var val4:MovieClip = this.getElementByID(param1);
-			if(!val4)
+			var label_info_mc:MovieClip = this.getElementByID(id);
+			if(!label_info_mc)
 			{
-				val4 = new LabelInfo();
-				val4.heightOverride = 104;
-				val4.id = param1;
-				val4.info_txt.autoSize = TextFieldAutoSize.LEFT;
-				this.list.addElement(val4,true,false);
+				label_info_mc = new LabelInfo();
+				label_info_mc.heightOverride = fixedHeight > -1 ? fixedHeight : 104;
+				label_info_mc.id = id;
+				label_info_mc.info_txt.autoSize = TextFieldAutoSize.LEFT;
+				this.list.addElement(label_info_mc,true,false);
 			}
-			if(val4)
+			if(label_info_mc)
 			{
-				val4.x = this.elementX;
-				val4.label_txt.htmlText = param2;
-				val4.info_txt.htmlText = param3;
-				val4.name = "item" + this.list.length + "_mc";
-				if(val4.label_txt.textWidth > this.minWidth)
+				label_info_mc.x = this.elementX;
+				label_info_mc.label_txt.htmlText = label;
+				label_info_mc.info_txt.htmlText = info;
+				label_info_mc.name = "item" + this.list.length + "_mc";
+				if(label_info_mc.label_txt.textWidth > this.minWidth)
 				{
-					if(this.maxWidth < val4.label_txt.textWidth)
+					if(this.maxWidth < label_info_mc.label_txt.textWidth)
 					{
-						this.maxWidth = val4.label_txt.textWidth;
+						this.maxWidth = label_info_mc.label_txt.textWidth;
 					}
 				}
 				else
 				{
 					this.maxWidth = this.minWidth;
 				}
-				ExternalInterface.call("controlAdded", "menuInfoLabel", val4.id, val4.list_pos, "list");
+				ExternalInterface.call("controlAdded", "menuInfoLabel", label_info_mc.id, label_info_mc.list_pos, "list");
 			}
 			this.resetBG();
 		}
 		
-		public function addMenuLabel(param1:String) : *
+		public function addMenuLabel(text:String, tooltip:String = "", fixedHeight:Number = -1) : *
 		{
-			var val2:MovieClip = new Label();
+			var label_mc:MovieClip = new Label();
 			if(this.list.size != 0)
 			{
-				val2.heightOverride = this.elementHeight * 2;
+				label_mc.heightOverride = this.elementHeight * 2;
 			}
 			else
 			{
-				val2.heightOverride = this.elementHeight;
-				val2.label_txt.y = 0;
+				label_mc.heightOverride = this.elementHeight;
+				label_mc.label_txt.y = 0;
 			}
-			val2.x = this.elementX;
-			val2.label_txt.htmlText = param1;
-			val2.name = "item" + this.list.length + "_mc";
-			if(val2.label_txt.textWidth > this.minWidth)
+			if(fixedHeight && fixedHeight > -1)
 			{
-				if(this.maxWidth < val2.label_txt.textWidth)
+				label_mc.heightOverride = fixedHeight;
+			}
+			label_mc.x = this.elementX;
+			label_mc.label_txt.htmlText = text;
+			label_mc.name = "item" + this.list.length + "_mc";
+			if(label_mc.label_txt.textWidth > this.minWidth)
+			{
+				if(this.maxWidth < label_mc.label_txt.textWidth)
 				{
-					this.maxWidth = val2.label_txt.textWidth;
+					this.maxWidth = label_mc.label_txt.textWidth;
 				}
 			}
 			else
 			{
 				this.maxWidth = this.minWidth;
 			}
-			this.list.addElement(val2,true,false);
+			this.list.addElement(label_mc,true,false);
 			this.resetBG();
-			ExternalInterface.call("controlAdded", "menuLabel", val2.name, val2.list_pos, "list", param1);
+			ExternalInterface.call("controlAdded", "menuLabel", label_mc.name, label_mc.list_pos, "list", text);
 		}
 		
-		public function addMenuSelector(param1:Number, param2:String, param3:String) : *
+		public function addMenuSelector(id:Number, label:String, tooltip:String, fixedHeight:Number = -1) : *
 		{
-			var val4:MovieClip = new SelectorMC();
-			this.list.addElement(val4);
-			val4.selList = new selector();
-			val4.cont_mc.addChild(val4.selList);
-			val4.selList.align = "right";
-			val4.selList.id = param1;
-			val4.selList.centeredElements = true;
-			val4.selList.TweenDuration = 0.01;
-			val4.heightOverride = this.elementHeight;
-			val4.x = this.elementX;
-			val4.left_mc.visible = false;
-			val4.right_mc.visible = false;
-			val4.label_txt.htmlText = param2;
-			val4.id = param1;
-			val4.name = "item" + this.list.length + "_mc";
-			val4.hl_mc.visible = false;
-			val4.biggestWidth = 0;
-			val4.isCheckBox = false;
-			val4.enabled = true;
-			this.setMenuDropDownTooltip(param1,param3,true);
-			if(val4.label_txt.textWidth > this.minWidth)
+			var selector_mc:MovieClip = new SelectorMC();
+			this.list.addElement(selector_mc);
+			selector_mc.selList = new selector();
+			selector_mc.cont_mc.addChild(selector_mc.selList);
+			selector_mc.selList.align = "right";
+			selector_mc.selList.id = id;
+			selector_mc.selList.centeredElements = true;
+			selector_mc.selList.TweenDuration = 0.01;
+			selector_mc.heightOverride = fixedHeight > -1 ? fixedHeight : this.elementHeight;
+			selector_mc.x = this.elementX;
+			selector_mc.left_mc.visible = false;
+			selector_mc.right_mc.visible = false;
+			selector_mc.label_txt.htmlText = label;
+			selector_mc.id = id;
+			selector_mc.name = "item" + this.list.length + "_mc";
+			selector_mc.hl_mc.visible = false;
+			selector_mc.biggestWidth = 0;
+			selector_mc.isCheckBox = false;
+			selector_mc.enabled = true;
+			this.setMenuDropDownTooltip(id,tooltip,true);
+			if(selector_mc.label_txt.textWidth > this.minWidth)
 			{
-				if(this.maxWidth < val4.label_txt.textWidth)
+				if(this.maxWidth < selector_mc.label_txt.textWidth)
 				{
-					this.maxWidth = val4.label_txt.textWidth;
+					this.maxWidth = selector_mc.label_txt.textWidth;
 				}
 			}
 			else
@@ -263,63 +267,63 @@ package optionsSettings_c_fla
 				this.maxWidth = this.minWidth;
 			}
 			this.resetBG();
-			ExternalInterface.call("controlAdded", "menuSelector", val4.id, val4.list_pos, "list", true);
+			ExternalInterface.call("controlAdded", "menuSelector", selector_mc.id, selector_mc.list_pos, "list", true);
 		}
 		
-		public function addMenuSelectorEntry(param1:Number, param2:String) : *
+		public function addMenuSelectorEntry(id:Number, text:String) : *
 		{
-			var val5:MovieClip = null;
-			var val3:Number = 300;
-			var val4:MovieClip = this.getElementByID(param1);
-			if(val4)
+			var select_element_mc:MovieClip = null;
+			var w:Number = 300;
+			var selector_mc:MovieClip = this.getElementByID(id);
+			if(selector_mc)
 			{
-				val5 = new SelectElementMC();
-				val5.label_txt.autoSize = TextFieldAutoSize.LEFT;
-				val5.label_txt.htmlText = param2;
-				if(val3 < val5.label_txt.textWidth)
+				select_element_mc = new SelectElementMC();
+				select_element_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
+				select_element_mc.label_txt.htmlText = text;
+				if(w < select_element_mc.label_txt.textWidth)
 				{
-					val5.label_txt.autoSize = TextFieldAutoSize.NONE;
-					val5.label_txt.width = val3;
+					select_element_mc.label_txt.autoSize = TextFieldAutoSize.NONE;
+					select_element_mc.label_txt.width = w;
 				}
-				val5.container = val4;
-				val5.label_txt.x = -Math.round(val5.label_txt.width * 0.5);
-				val4.AddElement(val5);
+				select_element_mc.container = selector_mc;
+				select_element_mc.label_txt.x = -Math.round(select_element_mc.label_txt.width * 0.5);
+				selector_mc.AddElement(select_element_mc);
 				this.resetBG();
-				ExternalInterface.call("controlAdded", "menuLabel", val4.id, val4.list_pos, "selList", param1);
+				ExternalInterface.call("controlAdded", "menuLabel", selector_mc.id, selector_mc.list_pos, "selList", id);
 			}
 		}
 		
-		public function selectMenuSelectorEntry(param1:Number, param2:Number) : *
+		public function selectMenuSelectorEntry(id:Number, entry_index:Number) : *
 		{
-			var val3:MovieClip = this.getElementByID(param1);
-			if(val3)
+			var selector_mc:MovieClip = this.getElementByID(id);
+			if(selector_mc)
 			{
-				val3.selList.select(param2);
+				selector_mc.selList.select(entry_index);
 			}
 		}
 		
-		public function onComboClose(param1:Event) : *
+		public function onComboClose(e:Event) : *
 		{
 			(root as MovieClip).selectedInfo_txt.visible = false;
 			this.setMainScrolling(true);
 		}
 		
-		public function onComboOpen(param1:Event) : *
+		public function onComboOpen(e:Event) : *
 		{
 			this.setMainScrolling(false);
 		}
 		
-		public function onComboScrolled(param1:Event) : *
+		public function onComboScrolled(e:Event) : *
 		{
 			(root as MovieClip).selectedInfo_txt.visible = false;
 		}
 		
-		public function clearMenuDropDownEntries(param1:Number) : *
+		public function clearMenuDropDownEntries(id:Number) : *
 		{
-			var val2:MovieClip = this.getElementByID(param1);
-			if(val2)
+			var selector_mc:MovieClip = this.getElementByID(id);
+			if(selector_mc)
 			{
-				val2.selList.clearElements();
+				selector_mc.selList.clearElements();
 			}
 		}
 		
@@ -456,7 +460,7 @@ package optionsSettings_c_fla
 			return Math.round(param1 * 100) / 100;
 		}
 		
-		public function addMenuSlider(id:Number, label:String, value:Number, min:Number, max:Number, interval:Number, disabled:Boolean, tooltip:String) : *
+		public function addMenuSlider(id:Number, label:String, value:Number, min:Number, max:Number, interval:Number, disabled:Boolean, tooltip:String, fixedHeight:Number = -1) : *
 		{
 			var val10:Number = NaN;
 			var slider_mc:MovieClip = new SliderComp();
@@ -464,7 +468,7 @@ package optionsSettings_c_fla
 			slider_mc.label_txt.htmlText = label;
 			slider_mc.id = id;
 			slider_mc.name = "item" + this.list.length + "_mc";
-			slider_mc.heightOverride = 104;
+			slider_mc.heightOverride = fixedHeight > -1 ? fixedHeight : 104;
 			slider_mc.tooltip = tooltip;
 			slider_mc.slider_mc.maximum = this.roundFloat(max);
 			slider_mc.slider_mc.minimum = this.roundFloat(min);
@@ -542,13 +546,13 @@ package optionsSettings_c_fla
 			return this.list.getElementByNumber("id",param1);
 		}
 		
-		public function addMenuButton(id:Number, displayName:String, enabled:Boolean, tooltip:String = "") : *
+		public function addMenuButton(id:Number, displayName:String, enabled:Boolean, tooltip:String = "", fixedHeight:Number = -1) : *
 		{
 			var button:MovieClip = this.list.getElementByNumber("id", id);
 			if (button == null)
 			{
 				button = new Menu_button();
-				button.heightOverride = this.elementHeight;
+				button.heightOverride = fixedHeight > -1 ? fixedHeight : this.elementHeight;
 				button.x = this.elementX;
 				button.label_txt.htmlText = displayName;
 				button.id = id;
@@ -588,20 +592,20 @@ package optionsSettings_c_fla
 			}
 		}
 		
-		public function setButtonEnabled(param1:Number, param2:Boolean) : *
+		public function setButtonEnabled(id:Number, b:Boolean) : *
 		{
-			var val3:MovieClip = this.getElementByID(param1);
-			if(val3)
+			var button_mc:MovieClip = this.getElementByID(id);
+			if(button_mc)
 			{
-				val3.disable_mc.visible = !param2;
-				val3.bg_mc.visible = param2;
+				button_mc.disable_mc.visible = !b;
+				button_mc.bg_mc.visible = b;
 			}
 		}
 		
-		public function moveCursor(param1:Boolean) : *
+		public function moveCursor(backwards:Boolean) : *
 		{
 			ExternalInterface.call("PlaySound","UI_Gen_CursorMove");
-			if(param1)
+			if(backwards)
 			{
 				this.list.previous();
 			}
@@ -612,17 +616,17 @@ package optionsSettings_c_fla
 			this.setListLoopable(false);
 		}
 		
-		public function setListLoopable(param1:Boolean) : *
+		public function setListLoopable(b:Boolean) : *
 		{
-			this.list.m_cyclic = param1;
+			this.list.m_cyclic = b;
 		}
 		
-		public function setCursorPosition(param1:Number) : *
+		public function setCursorPosition(id:Number) : *
 		{
-			var val2:MovieClip = this.getElementByID(param1);
-			if(val2)
+			var mc:MovieClip = this.getElementByID(id);
+			if(mc)
 			{
-				this.list.selectMC(val2);
+				this.list.selectMC(mc);
 			}
 		}
 		

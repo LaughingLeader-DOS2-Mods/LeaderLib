@@ -8,25 +8,24 @@ package
 	import flash.external.ExternalInterface;
 	
 	// LeaderLib Changes: Added tooltip support
-	public dynamic class Label extends MovieClip
+	public dynamic class LabelInfo extends MovieClip
 	{
+		public var info_txt:TextField;
 		public var label_txt:TextField;
 		public var mHeight:Number = 40;
+		//LeaderLib
+		public var formHL_mc:MovieClip;
 		public var tooltip:String = "";
 		
-		public function Label()
+		public function LabelInfo()
 		{
 			super();
 			addFrameScript(0,this.frame1);
 		}
 		
-		public function deselectElement(e:MouseEvent=null) : *
-		{
-		}
+		public function deselectElement(e:MouseEvent) : * { }
 		
-		public function selectElement(e:MouseEvent=null) : *
-		{
-		}
+		public function selectElement(e:MouseEvent) : * { }
 
 		public function onMouseOver(e:MouseEvent) : *
 		{
@@ -51,13 +50,17 @@ package
 		
 		public function frame1() : *
 		{
-			this.base = root as MovieClip;
+			this.formHL_mc = new MovieClip();
+			this.formHL_mc.width = 930;
+			this.formHL_mc.visible = false;
+			this.addChild(this.formHL_mc);
 			this.label_txt.filters = textEffect.createStrokeFilter(0,1.2,1,1.4,3);
-			//this.label_txt.height = 60;
-			this.label_txt.y = 0; // Normally 55.0
-			//this.height = this.label_txt.height;
-			this.label_txt.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-			this.label_txt.addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+			this.info_txt.y = 0; // 30 in .fla
+			this.label_txt.y = 0;  // 30 in .fla
+			this.info_txt.mouseEnabled = false;
+			this.label_txt.mouseEnabled = false;
+			this.formHL_mc.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
+			this.formHL_mc.addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
 		}
 	}
 }

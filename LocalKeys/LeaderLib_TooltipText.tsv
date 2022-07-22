@@ -1,7 +1,7 @@
 Key	Content	Handle
 LeaderLib_Tooltip_ResistancePenetrationBoost	[1] Penetration	hf638bc67g5cb6g4dcfg8663gce1951caad2b
 LeaderLib_Tooltip_ItemDescription_AutoLeveling	<font color='#80FFC3' size='18'>Automatically levels up with the wearer.</font>	hca27994egc60eg495dg8146g7f81c970e265
-LeaderLib_Tooltip_CreatedBy	[1]<br>Created by [2]	h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba
+LeaderLib_Tooltip_CreatedBy	[1]<br><font color='#33FF99'>Created by [2]</font>	h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba
 LeaderLib_Tooltip_Chance	([1]% Chance)	hb2ee903eg6063g4474gaa22gbe8568f3df87
 LeaderLib_Tooltip_BonusWeaponOnAttack	On Basic Attack or Weapon Skill:	h88b2276agaeafg4d22gb75dg53c357748d51
 LeaderLib_Tooltip_ExtraPropertiesClearSurfaces	Clears surfaces in a [1]m range at the location of your target(s).	h16278a77g90bbg4f23g80b1g4f326bed3d4a

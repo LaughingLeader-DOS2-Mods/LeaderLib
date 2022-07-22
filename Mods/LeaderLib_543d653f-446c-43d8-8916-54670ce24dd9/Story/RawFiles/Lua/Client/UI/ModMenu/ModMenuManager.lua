@@ -1,18 +1,18 @@
 ---@class MainMenuMC:FlashObject
----@field addOptionButton fun(label:string, callback:string, id:integer, isCurrent:boolean)
+---@field addOptionButton fun(label:string, callback:string, id:integer, isCurrent:boolean, fixedHeight:number|nil)
 ---@field addMenuCheckbox fun(id:integer, label:string, enabled:boolean, state:integer, filterBool:boolean, tooltip:string)
 ---@field setMenuCheckbox fun(id:integer, enabled:boolean, state:integer)
----@field addMenuInfoLabel fun(id:integer, label:string, info:string)
+---@field addMenuInfoLabel fun(id:integer, label:string, info:string, tooltip:string|nil, fixedHeight:number|nil)
 ---@field addMenuLabel fun(label:string, tooltip:string|nil, fixedHeight:number|nil)
 ---@field addMenuSelectorEntry fun(id:integer, label:string)
 ---@field setMenuDropDownEnabled fun(id:integer, enabled:boolean)
 ---@field setMenuDropDownDisabledTooltip fun(id:integer, tooltip:string)
----@field addMenuDropDown fun(id:integer, label:string, tooltip:string)
+---@field addMenuDropDown fun(id:integer, label:string, tooltip:string, fixedHeight:number|nil)
 ---@field addMenuDropDownEntry fun(id:integer, entryText:string)
 ---@field selectMenuDropDownEntry fun(id:integer, index:integer)
----@field addMenuSlider fun(id:integer, label:string, amount:integer, min:integer, max:integer, snapInterval:integer, hide:boolean, tooltip:string)
+---@field addMenuSlider fun(id:integer, label:string, amount:integer, min:integer, max:integer, snapInterval:integer, hide:boolean, tooltip:string, fixedHeight:number|nil)
 ---@field setMenuSlider fun(id:integer, amount:integer)
----@field addMenuButton fun(id:integer, label:string, soundUp:string, enabled:boolean, tooltip:string)
+---@field addMenuButton fun(id:integer, label:string, soundUp:string, enabled:boolean, tooltip:string, fixedHeight:number|nil)
 ---@field setButtonEnabled fun(id:integer, enabled:boolean)
 ---@field removeItems function
 ---@field resetMenuButtons fun(activeButtonId:integer)
@@ -39,7 +39,7 @@ ModMenuManager = {
 	LastScrollPosition = 0
 }
 
-local CreatedByText = Classes.TranslatedString:Create("h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba", "[1]<br>Created by [2]")
+local CreatedByText = Classes.TranslatedString:CreateFromKey("LeaderLib_Tooltip_CreatedBy", "[1]<br><font color='#33FF99'>Created by [2]</font>")
 
 ---@param name string
 ---@param v FlagData|VariableData
@@ -190,17 +190,11 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 			if not StringHelpers.IsNullOrEmpty(name) then
 				--mainMenu.addMenuInfoLabel(Ext.Random(500,600), section.DisplayName, "Info?")
 				if string.sub(name, 0) == "h" then
-					mainMenu.addMenuLabel(Ext.GetTranslatedString(name, name))
+					mainMenu.addMenuLabel(GameHelpers.GetTranslatedString(name, name))
 				else
 					local translatedName = GameHelpers.GetStringKeyText(name, name)
 					mainMenu.addMenuLabel(translatedName)
 				end
-				-- local label = mainMenu.list.content_array[#mainMenu.list.content_array-1]
-				-- if label ~= nil then
-				-- 	label.heightOverride = label.label_txt.height + 4
-				-- 	label.label_txt.y = 2
-				-- end
-				--mainMenu.totalHeight = mainMenu.totalHeight - 20
 			end
 			if section.Entries ~= nil then
 				for k=1,#section.Entries do
@@ -265,17 +259,25 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 		if modSettings.Global ~= nil then
 			if Ext.IsModLoaded(modSettings.UUID) and modSettings:HasEntries() then
 				local titleColor = not StringHelpers.IsNullOrEmpty(modSettings.TitleColor) and modSettings.TitleColor or "#369BFF"
-				local modInfo = Ext.GetModInfo(modSettings.UUID)
-				local modName = string.format("<font color='%s' size='24'>%s</font>", titleColor, modInfo.Name or modSettings.Name)
-				mainMenu.addMenuLabel(modName)
-				local label = mainMenu.list.content_array[#mainMenu.list.content_array-1]
-				if label ~= nil then
-					if modInfo ~= nil then
-						label.tooltip = CreatedByText:ReplacePlaceholders(string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modInfo.Version)), modInfo.Author)
+				local modName = string.format("<font color='%s' size='24'>%s</font>", titleColor, modSettings.Name)
+				local tooltip = ""
+
+				local mod = Ext.Mod.GetMod(modSettings.UUID)
+				if mod and mod.Info then
+					local name = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
+					modName = string.format("<font color='%s' size='24'>%s</font>", titleColor, name)
+					local desc = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayDescription, mod.Info.Description)
+					local version = StringHelpers.Join(".", mod.Info.ModVersion)
+					if not StringHelpers.IsNullOrWhitespace(desc) then
+						tooltip = string.format("%s<br>Description:<br>====<br><font size='18'>%s</font><br>====", CreatedByText:ReplacePlaceholders(string.format("%s v%s", modName, version), mod.Info.Author), desc)
 					else
-						label.tooltip = string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modSettings.Version))
+						tooltip = CreatedByText:ReplacePlaceholders(string.format("%s v%s", modName, version), mod.Info.Author)
 					end
+				else
+					tooltip = string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modSettings.Version))
 				end
+
+				mainMenu.addMenuLabel(modName, tooltip, 60)
 	
 				if modSettings.GetMenuOrder ~= nil then
 					local b,result = xpcall(modSettings.GetMenuOrder, debug.traceback)

@@ -239,7 +239,7 @@ function TranslatedString:Equals(val, caseInsensitive)
 	return _streq(self.Value, val, caseInsensitive)
 end
 
-Classes["TranslatedString"] = TranslatedString
+Classes.TranslatedString = TranslatedString
 --local TranslatedString = Classes["TranslatedString"]
 
 function UpdateTranslatedStrings()

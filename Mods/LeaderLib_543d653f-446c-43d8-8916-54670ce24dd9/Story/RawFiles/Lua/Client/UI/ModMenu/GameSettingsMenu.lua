@@ -269,16 +269,11 @@ function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listPro
 				elseif controlType == "menuLabel" then
 					if extraParam1 == text.MainTitle.Value then
 						element.tooltip = text.MainTitle_Description.Value
-						--element.heightOverride = element.height * 2
-						--element.label_txt.y = element.height / 2
-						--print("Set textFormat for", element.name, main.setTextFormat(listIndex, true, true, false, 36))
 					end
-					--print(id, controlType, element.height, element.y, list.EL_SPACING, list.TOP_SPACING, main.getElementHeight(listIndex))
 				else
 					element.enable = controlsEnabled
 					element.alpha = controlsEnabled and 1.0 or 0.3				
 				end
-				--print(id, controlType, element.height, element.y, list.EL_SPACING, list.TOP_SPACING, main.getElementHeight(id))
 			end
 		end
 	end

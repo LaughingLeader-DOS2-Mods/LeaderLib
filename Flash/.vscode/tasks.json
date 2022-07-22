@@ -6,6 +6,7 @@
 			"type": "shell",
 			"command": "python \"${workspaceFolder}\\UIOverrides\\build.py\"",
 			"problemMatcher": [],
+			"runOptions": {"instanceLimit": 1},
 			"presentation": {
 				"echo": true,
 				"reveal": "always",

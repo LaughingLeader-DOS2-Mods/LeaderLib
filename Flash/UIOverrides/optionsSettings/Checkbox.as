@@ -12,7 +12,7 @@ package
 		public var formHL_mc:MovieClip;
 		public var label_txt:TextField;
 		public var base:MovieClip;
-		public var mHeight:Number;
+		public var mHeight:Number = 30;
 		
 		public function Checkbox()
 		{
@@ -96,7 +96,6 @@ package
 		public function frame1() : *
 		{
 			this.base = root as MovieClip;
-			this.mHeight = 30;
 			addEventListener(MouseEvent.MOUSE_DOWN,this.onDown);
 			addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
 			addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);

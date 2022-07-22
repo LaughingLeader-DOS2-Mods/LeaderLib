@@ -15,8 +15,8 @@ package
 		public var max_txt:TextField;
 		public var min_txt:TextField;
 		public var slider_mc:SliderMC;
-		public var mHeight:Number;
 		public var base:MovieClip;
+		public var mHeight:Number = 30;
 		
 		public function SliderComp()
 		{
@@ -123,7 +123,6 @@ package
 			this.slider_mc.addEventListener(Event.CHANGE,this.onChange);
 			this.slider_mc.addEventListener("handleReleased",this.onHandleUp);
 			this.slider_mc.addEventListener("handlePressed",this.onHandleDown);
-			this.mHeight = 30;
 			this.base = root as MovieClip;
 			addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
 			addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);

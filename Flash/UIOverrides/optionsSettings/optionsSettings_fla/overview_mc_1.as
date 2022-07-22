@@ -86,7 +86,7 @@ package optionsSettings_fla
 			}
 		}
 
-		public function addOptionButton(label:String, actionID:String, buttonID:Number, isCurrent:Boolean, addToStart:Boolean = false, setDisabled:Boolean = false) : *
+		public function addOptionButton(label:String, actionID:String, buttonID:Number, isCurrent:Boolean, addToStart:Boolean = false, setDisabled:Boolean = false, fixedHeight:Number = -1) : *
 		{
 			var btn:MovieClip = this.menuBtnList.getElementByNumber("buttonID", buttonID);
 			if (btn == null)
@@ -99,6 +99,9 @@ package optionsSettings_fla
 					ExternalInterface.call(actionID,buttonID);
 				},null,isCurrent,-1,isCurrent);
 				btn.buttonID = buttonID;
+				if(fixedHeight > -1) {
+					btn.heightOverride = fixedHeight;
+				}
 				if(addToStart) {
 					this.menuBtnList.addElementToFront(btn, true);
 					btn.list_id = 0;
@@ -184,24 +187,23 @@ package optionsSettings_fla
 			ExternalInterface.call("requestCloseUI");
 		}
 		
-		public function setTitle(param1:String) : *
+		public function setTitle(text:String) : *
 		{
-			this.title_txt.htmlText = param1.toUpperCase();
+			this.title_txt.htmlText = text.toUpperCase();
 		}
 		
-		public function addMenuCheckbox(id:Number, label:String, enabled:Boolean, state:Number, filterBool:Boolean, tooltip:String) : *
+		public function addMenuCheckbox(id:Number, label:String, enabled:Boolean, state:Number, filterBool:Boolean, tooltip:String, fixedHeight:Number = -1) : *
 		{
 			var checkbox_mc:MovieClip = new Checkbox();
 			checkbox_mc.x = this.elementX;
 			checkbox_mc.label_txt.htmlText = label;
 			checkbox_mc.id = id;
 			checkbox_mc.name = "item" + this.list.length + "_mc";
-			checkbox_mc.mHeight = 30;
 			checkbox_mc.filterBool = filterBool;
 			checkbox_mc.stateID = state;
 			checkbox_mc.tooltip = tooltip;
 			checkbox_mc.bg_mc.gotoAndStop(state * 3 + 1);
-			this.totalHeight = this.totalHeight + (checkbox_mc.mHeight + this.elementHSpacing);
+			
 			if(checkbox_mc.label_txt.textWidth > this.minWidth)
 			{
 				if(this.maxWidth < checkbox_mc.label_txt.textWidth)
@@ -217,6 +219,12 @@ package optionsSettings_fla
 			if(enabled == false)
 			{
 				checkbox_mc.alpha = 0.3;
+			}
+			if(fixedHeight > -1) {
+				checkbox_mc.heightOverride = fixedHeight;
+				this.totalHeight = this.totalHeight + (fixedHeight + this.elementHSpacing);
+			} else {
+				this.totalHeight = this.totalHeight + (checkbox_mc.height + this.elementHSpacing);
 			}
 			this.list.addElement(checkbox_mc);
 			checkbox_mc.formHL_mc.alpha = 0;
@@ -242,7 +250,7 @@ package optionsSettings_fla
 			}
 		}
 		
-		public function addMenuInfoLabel(id:Number, displayName:String, infoText:String) : *
+		public function addMenuInfoLabel(id:Number, displayName:String, infoText:String, tooltip:String = "", fixedHeight:Number = -1) : *
 		{
 			var label_mc:MovieClip = this.getElementByID(id);
 			if(!label_mc)
@@ -254,10 +262,17 @@ package optionsSettings_fla
 			if(label_mc)
 			{
 				label_mc.x = this.elementX;
+				label_mc.tooltip = tooltip;
 				label_mc.label_txt.htmlText = displayName;
 				label_mc.info_txt.htmlText = infoText;
 				label_mc.name = "item" + this.list.length + "_mc";
-				this.totalHeight = this.totalHeight + (label_mc.mHeight + this.elementHSpacing);
+				if(fixedHeight > -1) {
+					label_mc.heightOverride = fixedHeight;
+					this.totalHeight = this.totalHeight + (fixedHeight + this.elementHSpacing);
+				} else {
+					this.totalHeight = this.totalHeight + (label_mc.height + this.elementHSpacing);
+				}
+				
 				if(label_mc.label_txt.textWidth > this.minWidth)
 				{
 					if(this.maxWidth < label_mc.label_txt.textWidth)
@@ -280,13 +295,14 @@ package optionsSettings_fla
 			var label_mc:MovieClip = new Label();
 			label_mc.x = this.elementX;
 			label_mc.tooltip = tooltip;
-			if(fixedHeight > -1) {
-				label_mc.mHeight = fixedHeight;
-			}
 			label_mc.label_txt.htmlText = text;
 			label_mc.name = "item" + this.list.length + "_mc";
-			//val2.mHeight = 40;
-			this.totalHeight = this.totalHeight + (label_mc.mHeight + this.elementHSpacing);
+			if(fixedHeight > -1) {
+				label_mc.heightOverride = fixedHeight;
+			} else {
+				label_mc.heightOverride = label_mc.label_txt.textHeight;
+			}
+			this.totalHeight = this.totalHeight + (label_mc.heightOverride + this.elementHSpacing);
 			if(label_mc.label_txt.textWidth > this.minWidth)
 			{
 				if(this.maxWidth < label_mc.label_txt.textWidth)
@@ -409,7 +425,7 @@ package optionsSettings_fla
 			}
 		}
 		
-		public function addMenuDropDown(id:Number, label:String, tooltip:String) : *
+		public function addMenuDropDown(id:Number, label:String, tooltip:String = "", fixedHeight:Number = -1) : *
 		{
 			var dropdown_mc:MovieClip = new DropDown();
 			dropdown_mc.combo_mc.bgTopSizeDiff = -20;
@@ -418,9 +434,8 @@ package optionsSettings_fla
 			dropdown_mc.label_txt.htmlText = label;
 			dropdown_mc.id = id;
 			dropdown_mc.name = "item" + this.list.length + "_mc";
-			dropdown_mc.mHeight = 30;
 			dropdown_mc.tooltip = tooltip;
-			this.totalHeight = this.totalHeight + (dropdown_mc.mHeight + this.elementHSpacing);
+			
 			dropdown_mc.combo_mc.addEventListener(Event.CLOSE,this.onComboClose);
 			dropdown_mc.combo_mc.addEventListener(Event.OPEN,this.onComboOpen);
 			dropdown_mc.combo_mc.addEventListener("Scrolled",this.onComboScrolled);
@@ -435,18 +450,24 @@ package optionsSettings_fla
 			{
 				this.maxWidth = this.minWidth;
 			}
+			if(fixedHeight > -1) {
+				dropdown_mc.heightOverride = fixedHeight;
+				this.totalHeight = this.totalHeight + (fixedHeight + this.elementHSpacing);
+			} else {
+				this.totalHeight = this.totalHeight + (dropdown_mc.height + this.elementHSpacing);
+			}
 			this.list.addElement(dropdown_mc);
 			dropdown_mc.formHL_mc.alpha = 0;
 			this.HLCounter = this.HLCounter + 1;
 			ExternalInterface.call("controlAdded", "dropdown", dropdown_mc.id, dropdown_mc.list_pos, "list");
 		}
 		
-		public function addMenuDropDownEntry(param1:Number, param2:String) : *
+		public function addMenuDropDownEntry(id:Number, label:String) : *
 		{
-			var val3:MovieClip = this.getElementByID(param1);
-			if(val3 && val3.combo_mc)
+			var mc:MovieClip = this.getElementByID(id);
+			if(mc && mc.combo_mc)
 			{
-				val3.combo_mc.addItem({"label":param2});
+				mc.combo_mc.addItem({"label":label});
 			}
 		}
 		
@@ -464,15 +485,14 @@ package optionsSettings_fla
 			return Math.round(param1 * 100) / 100;
 		}
 		
-		public function addMenuSlider(id:Number, label:String, value:Number, min:Number, max:Number, interval:Number, disabled:Boolean, tooltip:String) : *
+		public function addMenuSlider(id:Number, label:String, value:Number, min:Number, max:Number, interval:Number, disabled:Boolean, tooltip:String = "", fixedHeight:Number = -1) : *
 		{
-			var val10:Number = NaN;
+			var inc_amount:Number = NaN;
 			var slider_mc:MovieClip = new SliderComp();
 			slider_mc.x = this.elementX;
 			slider_mc.label_txt.htmlText = label;
 			slider_mc.id = id;
 			slider_mc.name = "item" + this.list.length + "_mc";
-			slider_mc.mHeight = 30;
 			slider_mc.tooltip = tooltip;
 			slider_mc.slider_mc.maximum = this.roundFloat(max);
 			slider_mc.slider_mc.minimum = this.roundFloat(min);
@@ -484,8 +504,8 @@ package optionsSettings_fla
 			slider_mc.max_txt.visible = !disabled;
 			if(interval != 0)
 			{
-				val10 = (max - min) / interval;
-				if(val10 <= 10)
+				inc_amount = (max - min) / interval;
+				if(inc_amount <= 10)
 				{
 					slider_mc.slider_mc.useNotches = true;
 				}
@@ -512,7 +532,12 @@ package optionsSettings_fla
 			slider_mc.min_txt.mouseEnabled = false;
 			slider_mc.max_txt.mouseEnabled = false;
 			slider_mc.slider_mc.bgToWidthDiff = -6;
-			this.totalHeight = this.totalHeight + (slider_mc.mHeight + this.elementHSpacing);
+			if(fixedHeight > -1) {
+				slider_mc.heightOverride = fixedHeight;
+				this.totalHeight = this.totalHeight + (fixedHeight + this.elementHSpacing);
+			} else {
+				this.totalHeight = this.totalHeight + (slider_mc.height + this.elementHSpacing);
+			}
 			if(slider_mc.label_txt.textWidth > this.minWidth)
 			{
 				if(this.maxWidth < slider_mc.label_txt.textWidth)
@@ -549,16 +574,20 @@ package optionsSettings_fla
 			return this.list.getElementByNumber("id",param1);
 		}
 		
-		public function addMenuButton(id:Number, label:String, clickSound:String, enabled:Boolean, tooltip:String) : *
+		public function addMenuButton(id:Number, label:String, clickSound:String, enabled:Boolean, tooltip:String = "", fixedHeight:Number = -1) : *
 		{
 			var button_mc:MovieClip = new Menu_button();
 			button_mc.x = this.elementX;
 			button_mc.label_txt.htmlText = label;
 			button_mc.id = id;
 			button_mc.name = "item" + this.list.length + "_mc";
-			button_mc.mHeight = 70;
 			button_mc.tooltip = tooltip;
-			this.totalHeight = this.totalHeight + (button_mc.mHeight + this.elementHSpacing);
+			if(fixedHeight > -1) {
+				button_mc.heightOverride = fixedHeight;
+				this.totalHeight = this.totalHeight + (button_mc.fixedHeight + this.elementHSpacing);
+			} else {
+				this.totalHeight = this.totalHeight + (button_mc.height + this.elementHSpacing);
+			}
 			if(button_mc.label_txt.textWidth > this.minWidth)
 			{
 				if(this.maxWidth < button_mc.label_txt.textWidth)
@@ -619,10 +648,10 @@ package optionsSettings_fla
 		
 		public function executeSelected() : *
 		{
-			var val1:MovieClip = this.list.getCurrentMovieClip();
-			if(val1)
+			var mc:MovieClip = this.list.getCurrentMovieClip();
+			if(mc)
 			{
-				val1.buttonPressed(null);
+				mc.buttonPressed(null);
 			}
 		}
 		
@@ -705,7 +734,7 @@ package optionsSettings_fla
 			this.topDist = 20;
 			this.list = new scrollList("down_id","up_id","handle_id","scrollBg_id");
 			this.list.m_forceDepthReorder = true;
-			this.list.TOP_SPACING = 20;
+			this.list.TOP_SPACING = 20; // LeaderLib Change from 20
 			this.list.EL_SPACING = 2;
 			this.list.setFrame(900,791);
 			this.list.m_scrollbar_mc.m_SCROLLSPEED = 40;

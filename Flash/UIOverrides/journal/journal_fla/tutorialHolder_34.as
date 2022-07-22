@@ -63,7 +63,7 @@ package journal_fla
 		{
 			this.title_txt.htmlText = "";
 			this.desc_txt.htmlText = "";
-			this.checkScrollBar();
+			this.list.checkScrollBar();
 		}
 		
 		private function frame1() : *

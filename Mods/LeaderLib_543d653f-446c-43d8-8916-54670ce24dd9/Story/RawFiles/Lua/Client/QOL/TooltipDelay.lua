@@ -88,6 +88,9 @@ local function OnUICall(e)
 			if canDelay then
 				if tooltipType == "Item" and e.Function == lastCall then
 					local this = e.UI:GetRoot()
+					if not this then
+						return
+					end
 					local mx = this.mouseX
 					local my = this.mouseY
 					if math.abs(lastMouseX - mx) + math.abs(lastMouseY - my) <= 30 then
@@ -101,6 +104,9 @@ local function OnUICall(e)
 				end
 				if not skipCreationDelay then
 					local this = e.UI:GetRoot()
+					if not this then
+						return
+					end
 					local mx = this.mouseX
 					local my = this.mouseY
 					local uiType = e.UI.Type
@@ -127,9 +133,8 @@ local function OnUICall(e)
 end
 
 Events.GameSettingsChanged:Subscribe(function (e)
-	_ENABLED = e.Settings.Client.EnableTooltipDelay.GlobalDelay > 0
 	_DELAY = e.Settings.Client.EnableTooltipDelay.GlobalDelay
-	fprint(LOGLEVEL.ERROR, "[TooltipDelay] Delay(%s) Enabled(%s)", _DELAY, _ENABLED)
+	_ENABLED = _DELAY > 0
 end)
 
 Ext.Events.SessionLoaded:Subscribe(function (e)

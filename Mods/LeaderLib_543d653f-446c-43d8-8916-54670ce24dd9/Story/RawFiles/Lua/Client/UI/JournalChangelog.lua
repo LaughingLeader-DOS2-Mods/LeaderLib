@@ -115,6 +115,12 @@ local function OnUpdateDone(ui)
 			group_mc.sortName = "1_MODCHANGES";
 			if group_mc.title_txt.htmlText == changelogTitle then
 				group_mc.title_txt.htmlText = string.format("====%s====", changelogTitle)
+				Ext.OnNextTick(function (e)
+					local this = _journal.Root
+					if this then
+						this.journal_mc.tutorialList.positionElements()
+					end
+				end)
 			end
 			--public const tutDeselectColour:uint = 7346462; #70191E
 			--public const tutSelectColour:uint = 23424; #005B80
@@ -198,11 +204,11 @@ _journal:RegisterInvokeListener("updateTutorials", function (self, ui, event)
 
 			initializedEntries = true
 
-			if not _OVERRIDE_ENABLED then
-				Ext.OnNextTick(function (e)
+			Ext.OnNextTick(function (e)
+				if not _OVERRIDE_ENABLED then
 					OnUpdateDone(_journal.Instance)
-				end)
-			end
+				end
+			end)
 		end
 	end
 end, "After", "All")

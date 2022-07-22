@@ -1,4 +1,4 @@
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 
 ---@type ModSettings
 local ModSettings = Classes.ModSettingsClasses.ModSettings
@@ -144,40 +144,49 @@ settings.Global.Variables.CombatSightRangeMultiplier:Subscribe(function (e)
 end)
 
 local hasSetBaseCarryweight = false
+local carryWeightAwaitingNextTick = false
 
 local function UpdateBaseCarryWeight(value)
-	local weightBase = value * 1000
+	local weightBase = Ext.Utils.Round(value * 1000)
 	if not hasSetBaseCarryweight then
 		hasSetBaseCarryweight = Ext.ExtraData.CarryWeightBase ~= weightBase
 	end
 	Ext.ExtraData.CarryWeightBase = weightBase
-	fprint(LOGLEVEL.TRACE, "[LeaderLib] Set CarryWeightBase to (%s)", weightBase)
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:%s] Set CarryWeightBase to (%s)", _ISCLIENT and "CLIENT" or "SERVER", weightBase)
 end
 
 settings.Global.Variables.CarryWeightBase:Subscribe(function (e)
-	Ext.OnNextTick(function (e)
-		local var = settings.Global.Variables.CarryWeightBase
-		if settings.Global:FlagEquals("LeaderLib_CarryWeightOverrideEnabled", true) then
-			UpdateBaseCarryWeight(var.Value)
-		elseif hasSetBaseCarryweight then
-			Ext.ExtraData.CarryWeightBase = var.Default or 0
-			fprint(LOGLEVEL.TRACE, "[LeaderLib] Disabled CarryWeightBase override.")
-			hasSetBaseCarryweight = false
-		end
-	end)
+	if not carryWeightAwaitingNextTick then
+		carryWeightAwaitingNextTick = true
+		Ext.OnNextTick(function (e)
+			local var = settings.Global.Variables.CarryWeightBase
+			if settings.Global:FlagEquals("LeaderLib_CarryWeightOverrideEnabled", true) then
+				UpdateBaseCarryWeight(var.Value)
+			elseif hasSetBaseCarryweight then
+				Ext.ExtraData.CarryWeightBase = var.Default or 0
+				fprint(LOGLEVEL.TRACE, "[LeaderLib:%s] Disabled CarryWeightBase override.", _ISCLIENT and "CLIENT" or "SERVER")
+				hasSetBaseCarryweight = false
+			end
+			carryWeightAwaitingNextTick = false
+		end)
+	end
 end)
 
 settings.Global.Flags.LeaderLib_CarryWeightOverrideEnabled:Subscribe(function (e)
-	if e.Value then
-		Ext.OnNextTick(function (e)
-			local value = settings.Global:GetVariable("CarryWeightBase", 0)
-			UpdateBaseCarryWeight(value)
-		end)
-	elseif hasSetBaseCarryweight then
-		local var = e.Settings.Variables.CarryWeightBase
-		Ext.ExtraData.CarryWeightBase = var and var.Default or 0
-		fprint(LOGLEVEL.TRACE, "[LeaderLib] Disabled CarryWeightBase override.")
-		hasSetBaseCarryweight = false
+	if not carryWeightAwaitingNextTick then
+		if e.Value then
+			carryWeightAwaitingNextTick = true
+			Ext.OnNextTick(function (e)
+				local value = settings.Global:GetVariable("CarryWeightBase", 0)
+				UpdateBaseCarryWeight(value)
+				carryWeightAwaitingNextTick = false
+			end)
+		elseif hasSetBaseCarryweight then
+			local var = e.Settings.Variables.CarryWeightBase
+			Ext.ExtraData.CarryWeightBase = var and var.Default or 0
+			hasSetBaseCarryweight = false
+		end
+		fprint(LOGLEVEL.TRACE, "[LeaderLib:%s] Disabled CarryWeightBase override.", _ISCLIENT and "CLIENT" or "SERVER")
 	end
 end)
 

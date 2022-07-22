@@ -262,7 +262,6 @@ package optionsSettings_fla
 			if(label_mc)
 			{
 				label_mc.x = this.elementX;
-				label_mc.tooltip = tooltip;
 				label_mc.label_txt.htmlText = displayName;
 				label_mc.info_txt.htmlText = infoText;
 				label_mc.name = "item" + this.list.length + "_mc";
@@ -284,23 +283,28 @@ package optionsSettings_fla
 				{
 					this.maxWidth = this.minWidth;
 				}
+				label_mc.tooltip = tooltip;
 				this.list.addElement(label_mc);
 				this.HLCounter = 0;
 				ExternalInterface.call("controlAdded", "menuInfoLabel", label_mc.id, label_mc.list_pos, "list");
 			}
 		}
 		
-		public function addMenuLabel(text:String, tooltip:String="", fixedHeight:Number = -1) : *
+		public function addMenuLabel(text:String, tooltip:String="", fixedHeight:Number = -1, topSpacing:Number = 10) : *
 		{
-			var label_mc:MovieClip = new Label();
+			var label_mc:Label = new Label();
 			label_mc.x = this.elementX;
-			label_mc.tooltip = tooltip;
 			label_mc.label_txt.htmlText = text;
 			label_mc.name = "item" + this.list.length + "_mc";
+			label_mc.label_txt.y = 0; // Normally 55.0
 			if(fixedHeight > -1) {
 				label_mc.heightOverride = fixedHeight;
 			} else {
 				label_mc.heightOverride = label_mc.label_txt.textHeight;
+			}
+			if(topSpacing && topSpacing != 0) {
+				label_mc.heightOverride = label_mc.heightOverride + topSpacing;
+				label_mc.label_txt.y = topSpacing;
 			}
 			this.totalHeight = this.totalHeight + (label_mc.heightOverride + this.elementHSpacing);
 			if(label_mc.label_txt.textWidth > this.minWidth)
@@ -314,6 +318,7 @@ package optionsSettings_fla
 			{
 				this.maxWidth = this.minWidth;
 			}
+			label_mc.tooltip = tooltip;
 			this.list.addElement(label_mc);
 			this.HLCounter = 0;
 			ExternalInterface.call("controlAdded", "menuLabel", label_mc.name, label_mc.list_pos, "list", text);
@@ -637,12 +642,12 @@ package optionsSettings_fla
 			}
 		}
 		
-		public function setCursorPosition(param1:Number) : *
+		public function setCursorPosition(id:Number) : *
 		{
-			var val2:MovieClip = this.getElementByID(param1);
-			if(val2)
+			var mc:MovieClip = this.getElementByID(id);
+			if(mc)
 			{
-				this.list.selectMC(val2);
+				this.list.selectMC(mc);
 			}
 		}
 		

@@ -198,21 +198,28 @@ package optionsSettings_c_fla
 			this.resetBG();
 		}
 		
-		public function addMenuLabel(text:String, tooltip:String = "", fixedHeight:Number = -1) : *
+		public function addMenuLabel(text:String, tooltip:String = "", fixedHeight:Number = -1, topSpacing:Number = 0) : *
 		{
-			var label_mc:MovieClip = new Label();
-			if(this.list.size != 0)
-			{
-				label_mc.heightOverride = this.elementHeight * 2;
-			}
-			else
-			{
-				label_mc.heightOverride = this.elementHeight;
-				label_mc.label_txt.y = 0;
-			}
+			var label_mc:Label = new Label();
 			if(fixedHeight && fixedHeight > -1)
 			{
 				label_mc.heightOverride = fixedHeight;
+			} 
+			else
+			{
+				if(this.list.size != 0)
+				{
+					label_mc.heightOverride = this.elementHeight * 2;
+				}
+				else
+				{
+					label_mc.heightOverride = this.elementHeight;
+					label_mc.label_txt.y = 0;
+				}
+			}
+			if(topSpacing) {
+				label_mc.heightOverride = label_mc.heightOverride + topSpacing;
+				label_mc.label_txt.y = label_mc.label_txt.y + topSpacing;
 			}
 			label_mc.x = this.elementX;
 			label_mc.label_txt.htmlText = text;
@@ -228,6 +235,7 @@ package optionsSettings_c_fla
 			{
 				this.maxWidth = this.minWidth;
 			}
+			label_mc.tooltip = tooltip;
 			this.list.addElement(label_mc,true,false);
 			this.resetBG();
 			ExternalInterface.call("controlAdded", "menuLabel", label_mc.name, label_mc.list_pos, "list", text);

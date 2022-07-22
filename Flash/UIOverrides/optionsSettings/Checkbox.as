@@ -61,7 +61,7 @@ package
 			this.bg_mc.gotoAndStop(this.stateID * 3 + 2);
 		}
 		
-		public function onMouseOver(param1:MouseEvent) : *
+		public function onMouseOver(e:MouseEvent) : *
 		{
 			if(this.enable)
 			{
@@ -73,10 +73,11 @@ package
 					this.tooltipYOffset = -4;
 					tooltipHelper.ShowTooltipForMC(this,root,"bottom",this.base.hasTooltip == false);
 				}
+				this.selectElement(e);
 			}
 		}
 		
-		public function onMouseOut(param1:MouseEvent) : *
+		public function onMouseOut(e:MouseEvent) : *
 		{
 			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
 			{
@@ -85,20 +86,27 @@ package
 			}
 			this.base.curTooltip = -1;
 			removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
+			if(this.enabled)
+			{
+				this.deselectElement(e);
+			}
 		}
 		
-		public function setState(param1:Number) : *
+		public function setState(state:Number) : *
 		{
-			this.stateID = param1;
+			this.stateID = state;
 			this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
 		}
 		
 		public function frame1() : *
 		{
 			this.base = root as MovieClip;
-			addEventListener(MouseEvent.MOUSE_DOWN,this.onDown);
-			addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-			addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+			this.bg_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onDown, false, 100);
+			this.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver, false, 100);
+			this.addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut, false, 100);
+			// this.graphics.beginFill(0xFF0000, 0.5);
+			// this.graphics.drawRect(0, 0, this.width, this.height);
+			// this.graphics.endFill();
 		}
 	}
 }

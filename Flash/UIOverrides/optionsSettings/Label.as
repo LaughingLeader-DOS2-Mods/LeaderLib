@@ -12,7 +12,43 @@ package
 	{
 		public var label_txt:TextField;
 		public var mHeight:Number = 40;
-		public var tooltip:String = "";
+		
+		private var _tooltip:String = "";
+		private var _addedEventListeners:Boolean = false;
+
+		public function set tooltip(v:String) : void
+		{
+			this._tooltip = v;
+			if (v != null && v != "")
+			{
+				this.mouseChildren = true;
+				this.mouseEnabled = true;
+				this.label_txt.mouseEnabled = true;
+				if(!this._addedEventListeners)
+				{
+					this.label_txt.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
+					this.label_txt.addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+					this._addedEventListeners = true;
+				}
+			}
+			else
+			{
+				if(this._addedEventListeners)
+				{
+					this.label_txt.removeEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
+					this.label_txt.removeEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+					this._addedEventListeners = false;
+				}
+				this.label_txt.mouseEnabled = false;
+				this.mouseChildren = false;
+				this.mouseEnabled = false;
+			}
+		}
+
+		public function get tooltip() : String
+		{
+			return this._tooltip;
+		}
 		
 		public function Label()
 		{
@@ -22,6 +58,7 @@ package
 		
 		public function deselectElement(e:MouseEvent=null) : *
 		{
+
 		}
 		
 		public function selectElement(e:MouseEvent=null) : *
@@ -30,7 +67,7 @@ package
 
 		public function onMouseOver(e:MouseEvent) : *
 		{
-			if(this.tooltip != null && this.tooltip != "")
+			if(this._tooltip != null && this._tooltip != "")
 			{
 				this.base.curTooltip = this.pos;
 				this.tooltipOverrideW = this.base.ElW;
@@ -43,7 +80,6 @@ package
 		{
 			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
 			{
-				ExternalInterface.call("hideTooltip");
 				this.base.hasTooltip = false;
 				this.base.curTooltip = -1;
 			}
@@ -53,11 +89,6 @@ package
 		{
 			this.base = root as MovieClip;
 			this.label_txt.filters = textEffect.createStrokeFilter(0,1.2,1,1.4,3);
-			//this.label_txt.height = 60;
-			this.label_txt.y = 0; // Normally 55.0
-			//this.height = this.label_txt.height;
-			this.label_txt.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-			this.label_txt.addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
 		}
 	}
 }

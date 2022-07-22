@@ -15,7 +15,19 @@ package
 		public var mHeight:Number = 40;
 		//LeaderLib
 		public var formHL_mc:MovieClip;
-		public var tooltip:String = "";
+		private var _tooltip:String = "";
+
+		public function set tooltip(v:String) : void
+		{
+			this._tooltip = v;
+			this.formHL_mc.mouseEnabled = this._tooltip != null && this._tooltip != "";
+			//this.mouseChildren = false;
+		}
+
+		public function get tooltip() : String
+		{
+			return this._tooltip;
+		}
 		
 		public function LabelInfo()
 		{
@@ -59,6 +71,7 @@ package
 			this.label_txt.y = 0;  // 30 in .fla
 			this.info_txt.mouseEnabled = false;
 			this.label_txt.mouseEnabled = false;
+			this.formHL_mc.mouseEnabled = this._tooltip != null && this._tooltip != "";
 			this.formHL_mc.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
 			this.formHL_mc.addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
 		}

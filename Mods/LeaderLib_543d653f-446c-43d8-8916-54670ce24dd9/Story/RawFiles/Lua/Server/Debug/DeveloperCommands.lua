@@ -1397,3 +1397,41 @@ Ext.RegisterConsoleCommand("additemtemplate", function(command, template, count)
 	local host = CharacterGetHostCharacter()
 	ItemTemplateAddTo(template, host, count, 1)
 end)
+
+Ext.RegisterConsoleCommand("dumpallcharacters", function (cmd, ...)
+	local function _getName(c) 
+		local name = GameHelpers.GetDisplayName(c)
+		return name ~= "" and name or c.RootTemplate.Name
+	end
+	local function _getStats(c) 
+		local s = {Stat=c.Stats.Name, Ancestors={}} 
+		local p = Ext.Stats.GetAttribute(c.Stats.Name, "Using")
+		local ancestorLevel = 1
+		while p ~= nil do 
+			s.Ancestors[#s.Ancestors+1] = {Index=ancestorLevel, Stat=p}
+			p = Ext.Stats.GetAttribute(p, "Using") 
+			ancestorLevel = ancestorLevel + 1
+		end
+		return s
+	end
+	local region = Ext.Entity.GetCurrentLevel().LevelDesc.LevelName;
+	local data = {} 
+	for _,v in pairs(Ext.Entity.GetAllCharacterGuids()) do 
+		local c = Ext.Entity.GetCharacter(v); 
+		if not c.Dead then 
+			data[#data+1] = {
+				UUID=c.MyGuid, 
+				Name=_getName(c),
+				Stats=_getStats(c),
+				RootTemplate = GameHelpers.GetTemplate(c),
+				Tags = TableHelpers.MakeUnique(c:GetTags(), true),
+				IsBoss = c.RootTemplate.CombatComponent.IsBoss,
+				Position = c.WorldPos,
+			}
+		end 
+	end
+	table.sort(data, function(a,b) return a.Name < b.Name end)
+	local filename = "Dumps/Characters_"..region..".json"
+	GameHelpers.IO.SaveFile(filename, Ext.DumpExport(data))
+	fprint(LOGLEVEL.DEFAULT, "Saved data to %s", filename)
+end)

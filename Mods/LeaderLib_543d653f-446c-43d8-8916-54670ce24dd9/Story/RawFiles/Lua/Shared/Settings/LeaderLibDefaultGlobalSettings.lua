@@ -23,12 +23,13 @@ settings.Global:AddLocalizedFlags({
 	"LeaderLib_AutoIdentifyItemsEnabled",
 	"LeaderLib_PermanentSpiritVisionEnabled",
 	"LeaderLib_ShowConsumableEffectsEnabled",
+	"LeaderLib_CarryWeightOverrideEnabled",
 })
 settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 --settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)
 settings.Global:AddLocalizedVariable("AutoCombatRange", "LeaderLib_Variables_AutoCombatRange", 30, 1, 30, 1)
 settings.Global:AddLocalizedVariable("CombatSightRangeMultiplier", "LeaderLib_Variables_CombatSightRangeMultiplier", 2.5, 1, 30, 1)
-settings.Global:AddLocalizedVariable("CarryWeightBase", "LeaderLib_Variables_CarryWeightBase", -1, -1, 200000, 1)
+settings.Global:AddLocalizedVariable("CarryWeightBase", "LeaderLib_Variables_CarryWeightBase", 0, 0, 1000, 10)
 
 settings.GetMenuOrder = function()
 	local order = {
@@ -45,6 +46,7 @@ settings.GetMenuOrder = function()
 			"LeaderLib_AutoAddModMenuBooksDisabled",
 			"LeaderLib_AutoUnlockInventoryInMultiplayer",
 			"LeaderLib_AutoIdentifyItemsEnabled",
+			"LeaderLib_CarryWeightOverrideEnabled",
 			"CarryWeightBase",
 			"LeaderLib_PermanentSpiritVisionEnabled",
 			"LeaderLib_ShowConsumableEffectsEnabled",
@@ -102,7 +104,7 @@ end
 GlobalSettings.Mods[ModuleUUID] = settings
 
 --round(((1 (or 2.0 if Packmule talent) * Strength) * [ExtraData:CarryWeightPerStr:10000]) + CarryWeightBase)
-local _weightFormulaText = "<br>((%s x [Strength:%s]) x [CarryWeightPerStr:%s]) + [CarryWeightBase:<font color='#33DD33'>%s</font>]<br>[Handle:hccfc1bb7ga7feg41d1g8d2fg3c0c2972e723:Result]: <font color='#33FF33'>%s [Handle:hd47021f7g7867g4714ga91cg02ac22e9cfb3:MaxWeight]</font>"
+local _weightFormulaText = "<br>((%s x [Strength:%s]) x [CarryWeightPerStr:%s]) + ([CarryWeightBase:<font color='#33DD33'>%s</font>] x 1000)<br>[Handle:hccfc1bb7ga7feg41d1g8d2fg3c0c2972e723:Result]: <font color='#33FF33'>%s [Handle:hd47021f7g7867g4714ga91cg02ac22e9cfb3:MaxWeight]</font>"
 
 Events.GetTextPlaceholder:Subscribe(function (e)
 	--round(((1 (or 2.0 if Packmule talent) * Strength) * [ExtraData:CarryWeightPerStr:10000]) + CarryWeightBase)
@@ -128,7 +130,6 @@ Ext.Events.SessionLoaded:Subscribe(function (e)
 	if carryWeightBase ~= 0 then
 		settings.Global.Variables.CarryWeightBase.Default = carryWeightBase
 	end
-
 end)
 
 Events.BeforeLuaReset:Subscribe(function (e)
@@ -144,16 +145,39 @@ end)
 
 local hasSetBaseCarryweight = false
 
+local function UpdateBaseCarryWeight(value)
+	local weightBase = value * 1000
+	if not hasSetBaseCarryweight then
+		hasSetBaseCarryweight = Ext.ExtraData.CarryWeightBase ~= weightBase
+	end
+	Ext.ExtraData.CarryWeightBase = weightBase
+	fprint(LOGLEVEL.TRACE, "[LeaderLib] Set CarryWeightBase to (%s)", weightBase)
+end
+
 settings.Global.Variables.CarryWeightBase:Subscribe(function (e)
-	if e.Value > -1 then
-		if not hasSetBaseCarryweight then
-			hasSetBaseCarryweight = Ext.ExtraData.CarryWeightBase ~= e.Value
+	Ext.OnNextTick(function (e)
+		local var = settings.Global.Variables.CarryWeightBase
+		if settings.Global:FlagEquals("LeaderLib_CarryWeightOverrideEnabled", true) then
+			UpdateBaseCarryWeight(var.Value)
+		elseif hasSetBaseCarryweight then
+			Ext.ExtraData.CarryWeightBase = var.Default or 0
+			fprint(LOGLEVEL.TRACE, "[LeaderLib] Disabled CarryWeightBase override.")
+			hasSetBaseCarryweight = false
 		end
-		Ext.ExtraData.CarryWeightBase = e.Value
-		fprint(LOGLEVEL.TRACE, "[LeaderLib] Set CarryWeightBase to (%s)", e.Value)
+	end)
+end)
+
+settings.Global.Flags.LeaderLib_CarryWeightOverrideEnabled:Subscribe(function (e)
+	if e.Value then
+		Ext.OnNextTick(function (e)
+			local value = settings.Global:GetVariable("CarryWeightBase", 0)
+			UpdateBaseCarryWeight(value)
+		end)
 	elseif hasSetBaseCarryweight then
-		Ext.ExtraData.CarryWeightBase = 0
+		local var = e.Settings.Variables.CarryWeightBase
+		Ext.ExtraData.CarryWeightBase = var and var.Default or 0
 		fprint(LOGLEVEL.TRACE, "[LeaderLib] Disabled CarryWeightBase override.")
+		hasSetBaseCarryweight = false
 	end
 end)
 

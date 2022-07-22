@@ -413,7 +413,7 @@
 	<content contentuid="hc48478ceg4b78g4087g9dd6g27ba0e95a20b">[SAVE] Save Global Settings</content>
 	<content contentuid="hc51c7f81g8ab6g40b3ga78eg9561389dda7c">4 Hours</content>
 	<content contentuid="hc5f5cca4gb3f7g4950g9b0ag16300e7a3610">45 Minutes</content>
-	<content contentuid="hc69217f8g7df1g4947ga5b0g1cdd026854de">Set the base carry weight value.&lt;br&gt;Default: 0&lt;br&gt;Carry Weight Formula:[Special:CarryWeightFormula]</content>
+	<content contentuid="hc69217f8g7df1g4947ga5b0g1cdd026854de">Set the base carry weight value. If -1, this option will be disabled.&lt;br&gt;Default: 0&lt;br&gt;Carry Weight Formula:[Special:CarryWeightFormula]</content>
 	<content contentuid="hc6932dc9g399cg48a5gb9cdg722cf1ac26ea">*You take a look at his wares.*</content>
 	<content contentuid="hc70db3e9ga1ecg465egb953g253f7e77db5d">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc768ad97g83deg41fdgb257g54443e202c5a">As a gesture of goodwill towards future trading, I&apos;ll give you this book for free.</content>
@@ -521,5 +521,5 @@
 	<content contentuid="hfe0169eagd031g41a8gbcd3g6b992d81fba5">[OFF] Status Logging [GLOBAL]</content>
 	<content contentuid="hfe94fb21g03b4g46c3gbcaegf551c9b54dc8">Hide All Statuses</content>
 	<content contentuid="hff1084efgf4efg450aga177g1311cbce0ebb">&lt;font color=&apos;#2EFE2E&apos;&gt;+[1] Attitude&lt;/font&gt;</content>
-	<content contentuid="hff88aebeg960eg4299g8303g395b4ebd8acd">This is a multiplier the game uses to determine if a character should exit combat, due to not seeing any enemies. Setting this value higher will keep you in combat, despite being far away.&lt;br&gt;Default: 2.5m&lt;br&gt;Formula: ((Value * Value) * character.Sight) * character.Sight</content>
+	<content contentuid="hff88aebeg960eg4299g8303g395b4ebd8acd">This is a multiplier the game uses to determine if a character should exit combat, due to not seeing any enemies. Setting this value higher will keep you in combat, despite being far away from any enemies.&lt;br&gt;Default: 2.5&lt;br&gt;Formula: ((Value * Value) * character.Sight) * character.Sight</content>
 </contentList>

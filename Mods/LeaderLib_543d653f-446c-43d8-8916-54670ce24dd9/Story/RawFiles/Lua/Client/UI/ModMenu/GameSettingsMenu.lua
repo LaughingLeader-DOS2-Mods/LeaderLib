@@ -300,13 +300,13 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		local controlsEnabled = Client.IsHost == true
 		local backstabTalentSupported = Mods.CharacterExpansionLib ~= nil
 
-		local _lh = 20
+		local _lh = 40
 
-		mainMenu.addMenuLabel(text.MainTitle.Value, "", _lh)
+		mainMenu.addMenuLabel(text.MainTitle.Value, "", 60, 30)
 
-		mainMenu.addMenuLabel(text.Section_Client.Value, text.Section_Client_Description.Value)
+		mainMenu.addMenuLabel(text.Section_Client.Value, text.Section_Client_Description.Value, _lh)
 		
-		mainMenu.addMenuLabel(text.Section_UI.Value)
+		mainMenu.addMenuLabel(text.Section_UI.Value, "", _lh)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysShowBarText"), text.Client.AlwaysShowBarText.Value, true, settings.Client.AlwaysShowBarText and 1 or 0, false, text.Client.AlwaysShowBarText_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideChatLog"), text.Client.HideChatLog.Value, true, settings.Client.HideChatLog and 1 or 0, false, text.Client.HideChatLog_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "ToggleCombatLog"), text.Client.ToggleCombatLog.Value, true, settings.Client.ToggleCombatLog and 1 or 0, false, text.Client.ToggleCombatLog_Description.Value)
@@ -357,7 +357,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 			GameSettingsManager.Save()
 		end), text.Button_ClearWhitelist.Value, "", true, text.Button_ClearWhitelist_Description.Value)
 
-		mainMenu.addMenuLabel(text.Section_Gameplay.Value, text.Section_Gameplay_Description.Value)
+		mainMenu.addMenuLabel(text.Section_Gameplay.Value, text.Section_Gameplay_Description.Value, _lh)
 
 		mainMenu.addMenuCheckbox(AddControl(settings, "StarterTierSkillOverrides"), text.StarterTierOverrides.Value, controlsEnabled, settings.StarterTierSkillOverrides and 1 or 0, false, text.StarterTierOverrides_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings, "LowerMemorizationRequirements"), text.LowerMemorizationRequirements.Value, controlsEnabled, settings.LowerMemorizationRequirements and 1 or 0, false, text.LowerMemorizationRequirements_Description.Value)

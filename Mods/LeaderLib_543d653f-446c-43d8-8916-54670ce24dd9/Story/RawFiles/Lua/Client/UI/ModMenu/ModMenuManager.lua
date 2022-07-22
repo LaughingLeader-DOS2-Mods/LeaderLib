@@ -3,7 +3,7 @@
 ---@field addMenuCheckbox fun(id:integer, label:string, enabled:boolean, state:integer, filterBool:boolean, tooltip:string)
 ---@field setMenuCheckbox fun(id:integer, enabled:boolean, state:integer)
 ---@field addMenuInfoLabel fun(id:integer, label:string, info:string, tooltip:string|nil, fixedHeight:number|nil)
----@field addMenuLabel fun(label:string, tooltip:string|nil, fixedHeight:number|nil)
+---@field addMenuLabel fun(label:string, tooltip:string|nil, fixedHeight:number|nil, topSpacing:number|nil)
 ---@field addMenuSelectorEntry fun(id:integer, label:string)
 ---@field setMenuDropDownEnabled fun(id:integer, enabled:boolean)
 ---@field setMenuDropDownDisabledTooltip fun(id:integer, tooltip:string)
@@ -187,13 +187,13 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 		for i=1,#order do
 			local section = order[i]
 			local name = section.DisplayName or section.Name
+			local topSpacing = i > 1 and 10 or 0
 			if not StringHelpers.IsNullOrEmpty(name) then
 				--mainMenu.addMenuInfoLabel(Ext.Random(500,600), section.DisplayName, "Info?")
 				if string.sub(name, 0) == "h" then
-					mainMenu.addMenuLabel(GameHelpers.GetTranslatedString(name, name))
+					mainMenu.addMenuLabel(GameHelpers.GetTranslatedString(name, name), "", 40, topSpacing)
 				else
-					local translatedName = GameHelpers.GetStringKeyText(name, name)
-					mainMenu.addMenuLabel(translatedName)
+					mainMenu.addMenuLabel(GameHelpers.GetStringKeyText(name, name), "", 40, topSpacing)
 				end
 			end
 			if section.Entries ~= nil then
@@ -255,7 +255,9 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 		return a.Name < b.Name
 	end)
 
+	local index = 0
 	for _,modSettings in pairs(settings) do
+		index = index + 1
 		if modSettings.Global ~= nil then
 			if Ext.IsModLoaded(modSettings.UUID) and modSettings:HasEntries() then
 				local titleColor = not StringHelpers.IsNullOrEmpty(modSettings.TitleColor) and modSettings.TitleColor or "#369BFF"
@@ -269,7 +271,7 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 					local desc = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayDescription, mod.Info.Description)
 					local version = StringHelpers.Join(".", mod.Info.ModVersion)
 					if not StringHelpers.IsNullOrWhitespace(desc) then
-						tooltip = string.format("%s<br>Description:<br>====<br><font size='18'>%s</font><br>====", CreatedByText:ReplacePlaceholders(string.format("%s v%s", modName, version), mod.Info.Author), desc)
+						tooltip = string.format("%s<br><br><font size='18'>%s</font>", CreatedByText:ReplacePlaceholders(string.format("%s v%s", modName, version), mod.Info.Author), desc)
 					else
 						tooltip = CreatedByText:ReplacePlaceholders(string.format("%s v%s", modName, version), mod.Info.Author)
 					end
@@ -277,7 +279,11 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 					tooltip = string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modSettings.Version))
 				end
 
-				mainMenu.addMenuLabel(modName, tooltip, 60)
+				if index > 1 then
+					mainMenu.addMenuLabel(modName, tooltip, 60, 30)
+				else
+					mainMenu.addMenuLabel(modName, tooltip, 60, 0)
+				end
 	
 				if modSettings.GetMenuOrder ~= nil then
 					local b,result = xpcall(modSettings.GetMenuOrder, debug.traceback)

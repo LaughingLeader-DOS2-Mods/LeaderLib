@@ -68,24 +68,23 @@ package
 				this.base.mainMenu_mc.setCursorPosition(this.id);
 				if(this.tooltip != null && this.tooltip != "")
 				{
-					this.base.curTooltip = this.pos;
+					this.base.curTooltip = this.name;
 					this.tooltipOverrideW = this.base.ElW;
 					this.tooltipYOffset = -4;
 					tooltipHelper.ShowTooltipForMC(this,root,"bottom",this.base.hasTooltip == false);
 				}
-				this.selectElement(e);
+				this.bg_mc.gotoAndStop(this.stateID * 3 + 2);
 			}
 		}
 		
 		public function onMouseOut(e:MouseEvent) : *
 		{
-			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
+			if(this.base.curTooltip == this.name && this.base.hasTooltip)
 			{
 				ExternalInterface.call("hideTooltip");
 				this.base.hasTooltip = false;
+				this.base.curTooltip = "";
 			}
-			this.base.curTooltip = -1;
-			removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
 			if(this.enabled)
 			{
 				this.deselectElement(e);
@@ -101,12 +100,15 @@ package
 		public function frame1() : *
 		{
 			this.base = root as MovieClip;
-			this.bg_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onDown, false, 100);
-			this.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver, false, 100);
-			this.addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut, false, 100);
-			// this.graphics.beginFill(0xFF0000, 0.5);
-			// this.graphics.drawRect(0, 0, this.width, this.height);
-			// this.graphics.endFill();
+			this.addEventListener(MouseEvent.MOUSE_DOWN,this.onDown);
+			this.addEventListener(MouseEvent.ROLL_OVER,this.onMouseOver);
+			this.addEventListener(MouseEvent.ROLL_OUT,this.onMouseOut);
+			//this.formHL_mc.x = this.bg_mc.x;
+			//this.formHL_mc.width = this.bg_mc.width + this.label_txt.textWidth;
+			//this.formHL_mc.height = this.bg_mc.height + 2;
+			//this.graphics.beginFill(0xFF0000, 0.5);
+			//this.graphics.drawRect(0, 0, this.width, this.height);
+			//this.graphics.endFill();
 		}
 	}
 }

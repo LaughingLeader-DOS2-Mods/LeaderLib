@@ -45,7 +45,7 @@ package
 			this.base.mainMenu_mc.setCursorPosition(this.id);
 			if(this.tooltip != null && this.tooltip != "")
 			{
-				this.base.curTooltip = this.pos;
+				this.base.curTooltip = this.name;
 				ExternalInterface.call("showItemTooltip",this.tooltip);
 				this.base.hasTooltip = true;
 			}
@@ -53,20 +53,20 @@ package
 		
 		public function onMouseOut(e:MouseEvent) : *
 		{
-			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
+			if(this.base.curTooltip == this.name && this.base.hasTooltip)
 			{
 				ExternalInterface.call("hideTooltip");
 				this.base.hasTooltip = false;
+				this.base.curTooltip = "";
 			}
-			this.base.curTooltip = -1;
 		}
 		
 		public function frame1() : *
 		{
 			this.selList.addEventListener(Event.CHANGE,this.onChange);
 			this.base = root as MovieClip;
-			addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-			addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+			addEventListener(MouseEvent.ROLL_OVER,this.onMouseOver);
+			addEventListener(MouseEvent.ROLL_OUT,this.onMouseOut);
 		}
 	}
 }

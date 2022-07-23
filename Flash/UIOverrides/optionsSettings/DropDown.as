@@ -47,7 +47,7 @@ package
 			this.base.mainMenu_mc.setCursorPosition(this.id);
 			if(this.tooltip != null && this.tooltip != "" && !this.combo_mc.m_isOpen)
 			{
-				this.base.curTooltip = this.pos;
+				this.base.curTooltip = this.name;
 				this.tooltipYOffset = -4;
 				this.tooltipOverrideW = this.base.ElW;
 				tooltipHelper.ShowTooltipForMC(this,root,"bottom",this.base.hasTooltip == false);
@@ -56,20 +56,20 @@ package
 		
 		public function onMouseOut(e:MouseEvent) : *
 		{
-			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
+			if(this.base.curTooltip == this.name && this.base.hasTooltip)
 			{
 				ExternalInterface.call("hideTooltip");
 				this.base.hasTooltip = false;
+				this.base.curTooltip = "";
 			}
-			this.base.curTooltip = -1;
 		}
 		
 		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 			//Changed to just combo_mc, so the whole row doesn't cause a tooltip
-			combo_mc.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-			combo_mc.addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+			combo_mc.addEventListener(MouseEvent.ROLL_OVER,this.onMouseOver);
+			combo_mc.addEventListener(MouseEvent.ROLL_OUT,this.onMouseOut);
 			//this.label_txt.y = 0; // 9
 			//this.combo_mc.y = 0; // 2
 			this.combo_mc.addEventListener(Event.CHANGE,this.onChange);

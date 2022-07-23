@@ -43,7 +43,7 @@ package
 		{
 			if(this.tooltip != null && this.tooltip != "")
 			{
-				this.base.curTooltip = this.pos;
+				this.base.curTooltip = this.name;
 				this.tooltipOverrideW = this.base.ElW;
 				this.tooltipYOffset = -4;
 				tooltipHelper.ShowTooltipForMC(this,root,"bottom",this.base.hasTooltip == false);
@@ -52,11 +52,11 @@ package
 		
 		public function onMouseOut(e:MouseEvent) : *
 		{
-			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
+			if(this.base.curTooltip == this.name && this.base.hasTooltip)
 			{
 				ExternalInterface.call("hideTooltip");
 				this.base.hasTooltip = false;
-				this.base.curTooltip = -1;
+				this.base.curTooltip = "";
 			}
 		}
 		
@@ -72,8 +72,8 @@ package
 			this.info_txt.mouseEnabled = false;
 			this.label_txt.mouseEnabled = false;
 			this.formHL_mc.mouseEnabled = this._tooltip != null && this._tooltip != "";
-			this.formHL_mc.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-			this.formHL_mc.addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+			this.formHL_mc.addEventListener(MouseEvent.ROLL_OVER,this.onMouseOver);
+			this.formHL_mc.addEventListener(MouseEvent.ROLL_OUT,this.onMouseOut);
 		}
 	}
 }

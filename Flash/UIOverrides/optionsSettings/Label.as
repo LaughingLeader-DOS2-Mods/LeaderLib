@@ -26,8 +26,8 @@ package
 				this.label_txt.mouseEnabled = true;
 				if(!this._addedEventListeners)
 				{
-					this.label_txt.addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-					this.label_txt.addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+					this.label_txt.addEventListener(MouseEvent.ROLL_OVER,this.onMouseOver);
+					this.label_txt.addEventListener(MouseEvent.ROLL_OUT,this.onMouseOut);
 					this._addedEventListeners = true;
 				}
 			}
@@ -35,8 +35,8 @@ package
 			{
 				if(this._addedEventListeners)
 				{
-					this.label_txt.removeEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-					this.label_txt.removeEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+					this.label_txt.removeEventListener(MouseEvent.ROLL_OVER,this.onMouseOver);
+					this.label_txt.removeEventListener(MouseEvent.ROLL_OUT,this.onMouseOut);
 					this._addedEventListeners = false;
 				}
 				this.label_txt.mouseEnabled = false;
@@ -69,7 +69,7 @@ package
 		{
 			if(this._tooltip != null && this._tooltip != "")
 			{
-				this.base.curTooltip = this.pos;
+				this.base.curTooltip = this.name;
 				//this.tooltipOverrideW = this.base.ElW;
 				this.tooltipXOffset = -350;
 				this.tooltipYOffset = -4;
@@ -79,10 +79,10 @@ package
 		
 		public function onMouseOut(e:MouseEvent) : *
 		{
-			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
+			if(this.base.curTooltip == this.name && this.base.hasTooltip)
 			{
 				this.base.hasTooltip = false;
-				this.base.curTooltip = -1;
+				this.base.curTooltip = "";
 			}
 		}
 		

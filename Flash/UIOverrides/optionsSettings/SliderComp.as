@@ -70,25 +70,25 @@ package
 			ExternalInterface.call("PlaySound","UI_Generic_Over");
 		}
 		
-		public function onMouseOver(param1:MouseEvent) : *
+		public function onMouseOver(e:MouseEvent) : *
 		{
 			this.base.mainMenu_mc.setCursorPosition(this.id);
 			if(this.tooltip != null && this.tooltip != "")
 			{
-				this.base.curTooltip = this.pos;
+				this.base.curTooltip = this.name;
 				this.tooltipOverrideW = this.base.ElW;
 				tooltipHelper.ShowTooltipForMC(this,root,"bottom",this.base.hasTooltip == false);
 			}
 		}
 		
-		public function onMouseOut(param1:MouseEvent) : *
+		public function onMouseOut(e:MouseEvent) : *
 		{
-			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
+			if(this.base.curTooltip == this.name && this.base.hasTooltip)
 			{
 				ExternalInterface.call("hideTooltip");
 				this.base.hasTooltip = false;
+				this.base.curTooltip = "";
 			}
-			this.base.curTooltip = -1;
 		}
 
 		public function handleEvent(eventName:String, isDown:Boolean) : Boolean
@@ -124,8 +124,8 @@ package
 			this.slider_mc.addEventListener("handleReleased",this.onHandleUp);
 			this.slider_mc.addEventListener("handlePressed",this.onHandleDown);
 			this.base = root as MovieClip;
-			addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-			addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+			addEventListener(MouseEvent.ROLL_OVER,this.onMouseOver);
+			addEventListener(MouseEvent.ROLL_OUT,this.onMouseOut);
 		}
 	}
 }

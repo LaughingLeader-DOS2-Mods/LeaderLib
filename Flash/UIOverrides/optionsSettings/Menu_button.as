@@ -70,7 +70,7 @@ package
 			this.base.mainMenu_mc.setCursorPosition(this.id);
 			if(this.tooltip != null && this.tooltip != "")
 			{
-				this.base.curTooltip = this.pos;
+				this.base.curTooltip = this.name;
 				this.tooltipYOffset = 10;
 				this.tooltipOverrideW = this.base.ElW;
 				tooltipHelper.ShowTooltipForMC(this,root,"bottom",this.base.hasTooltip == false);
@@ -79,12 +79,12 @@ package
 		
 		public function onMouseOut(e:MouseEvent) : *
 		{
-			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
+			if(this.base.curTooltip == this.name && this.base.hasTooltip)
 			{
 				ExternalInterface.call("hideTooltip");
 				this.base.hasTooltip = false;
+				this.base.curTooltip = "";
 			}
-			this.base.curTooltip = -1;
 		}
 		
 		public function frame1() : *

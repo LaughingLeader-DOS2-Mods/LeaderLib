@@ -438,7 +438,7 @@ package optionsSettings_fla
 		public function resetMenuButtons(activeButtonID:Number) : *
 		{
 			this.currentMenuID = activeButtonID;
-			this.addedModSettingsButton = false;
+			this.addedModSettingsButton = this.currentMenuID != MOD_MENU_ID;
 			this.mainMenu_mc.resetMenuButtons(activeButtonID);
 		}
 

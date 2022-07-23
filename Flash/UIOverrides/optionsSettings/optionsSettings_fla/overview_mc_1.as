@@ -114,19 +114,28 @@ package optionsSettings_fla
 			}
 			else
 			{
-				//btn.text_txt.htmlText = label.toUpperCase();
-				btn.initialize(label.toUpperCase(),function(arr:Array):*
+				btn.setText(label.toUpperCase());
+				btn.setActive(isCurrent);
+				btn.setEnabled(!isCurrent);
+				btn.bg_mc.gotoAndStop(1);
+				btn.activeBG_mc.gotoAndStop(1);
+				/*btn.initialize(label.toUpperCase(),function(arr:Array):*
 				{
 					ExternalInterface.call(actionID,buttonID);
-				},null,isCurrent,-1,isCurrent);
+				},null,isCurrent,-1,isCurrent);*/
 			}
 
-			if(btn && setDisabled)
+			if(btn)
 			{
-				btn.bg_mc.visible = true;
-				btn.activeBG_mc.visible = false;
-				btn.m_Active = false;
-				btn.setEnabled(false);
+				btn.m_AllowToggleActive = false;
+				if (setDisabled)
+				{
+					//btn.bg_mc.visible = true;
+					//btn.activeBG_mc.visible = false;
+					//btn.m_Active = false;
+					//btn.setEnabled(false);
+					btn.setActive(false);
+				}
 			}
 		}
 		
@@ -669,18 +678,19 @@ package optionsSettings_fla
 		
 		public function resetMenuButtons(activeButtonID:Number) : *
 		{
-			var i:uint = 0;
 			var btn:MovieClip = null;
-			var length:Number = this.menuBtnList.length;
+			var i:uint = 0;
+			var length:uint = this.menuBtnList.length;
 			if(length > 0)
 			{
 				i = 0;
 				while(i < length)
 				{
 					btn = this.menuBtnList.getAt(i);
-					if(btn && btn.buttonID != activeButtonID)
+					if(btn)
 					{
-						btn.setActive(false);
+						btn.setActive(btn.buttonID == activeButtonID);
+						btn.setEnabled(btn.buttonID != activeButtonID);
 					}
 					i++;
 				}
@@ -741,7 +751,9 @@ package optionsSettings_fla
 			this.list.m_forceDepthReorder = true;
 			this.list.TOP_SPACING = 20; // LeaderLib Change from 20
 			this.list.EL_SPACING = 2;
-			this.list.setFrame(900,791);
+			//this.list.setFrame(900,791);
+			this.list.setFrame(900,791 - 4);
+			this.listHolder_mc.y += 4; // 94 + 4
 			this.list.m_scrollbar_mc.m_SCROLLSPEED = 40;
 			this.list.m_scrollbar_mc.m_hideWhenDisabled = false;
 			this.list.m_scrollbar_mc.y = 16;

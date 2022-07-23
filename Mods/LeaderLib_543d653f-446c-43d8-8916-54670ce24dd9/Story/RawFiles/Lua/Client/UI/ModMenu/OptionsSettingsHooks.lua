@@ -9,8 +9,11 @@ To allow the Mod Settings button to work from the Controls view (everything is s
 This seems to be the easiest option since the engine does some weird thing to switch the GUI between both options GUI files.
 ]]
 
+local MOD_MENU_ID = 210
+local isOpening = false
+
 OptionsSettingsHooks = {
-	MOD_MENU_ID = 210,
+	MOD_MENU_ID = MOD_MENU_ID,
 	LastMenu = -1,
 	CurrentMenu = 1,
 	SwitchToModMenu = false
@@ -70,14 +73,14 @@ end
 Ext.RegisterNetListener("LeaderLib_ModMenu_RunParseUpdateArrayMethod", function(cmd,payload)
 	local ui = GetOptionsGUI()
 	if ui ~= nil then
-		ui:Invoke("parseUpdateArray")
+		ui:GetRoot().parseUpdateArray()
 	end
 end)
 
 local function SetCurrentMenu(id)
 	if OptionsSettingsHooks.CurrentMenu ~= id then
-		OptionsSettingsHooks.LastMenu = OptionsSettingsHooks.CurrentMenu
 		OptionsSettingsHooks.CurrentMenu = math.floor(id)
+		OptionsSettingsHooks.LastMenu = OptionsSettingsHooks.CurrentMenu
 		-- if Vars.DebugMode then
 		-- 	fprint(LOGLEVEL.WARNING, "[LeaderLib] Options menu changed: lastMenu(%s) currentMenu(%s)", lastMenu, currentMenu)
 		-- end
@@ -93,17 +96,17 @@ local function SwitchToModMenu(ui, ...)
 	end
 	---@type MainMenuMC
 	local mainMenu = main.mainMenu_mc
-	SetCurrentMenu(OptionsSettingsHooks.MOD_MENU_ID)
+	SetCurrentMenu(MOD_MENU_ID)
 	main.removeItems()
 	if not Vars.ControllerEnabled then
 		main.createApplyButton(false)
-		main.resetMenuButtons(OptionsSettingsHooks.MOD_MENU_ID)
+		main.resetMenuButtons(MOD_MENU_ID)
 
 		local buttonsArray = mainMenu.menuBtnList.content_array
 		for i=0,#buttonsArray do
 			local button = buttonsArray[i]
 			if button ~= nil then
-				if button.buttonID == OptionsSettingsHooks.MOD_MENU_ID then
+				if button.buttonID == MOD_MENU_ID then
 					button.setEnabled(false)
 				else
 					button.setEnabled(true)
@@ -136,19 +139,18 @@ local function CreateModMenuButton(ui, method, ...)
 		---@type MainMenuMC
 		local mainMenu = main.mainMenu_mc
 		if mainMenu then
-			mainMenu.addOptionButton(ModMenuTabButtonText.Value, "switchToModMenu", OptionsSettingsHooks.MOD_MENU_ID, OptionsSettingsHooks.SwitchToModMenu, true)
+			mainMenu.addOptionButton(ModMenuTabButtonText.Value, "switchToModMenu", MOD_MENU_ID, OptionsSettingsHooks.SwitchToModMenu, true)
 			if OptionsSettingsHooks.SwitchToModMenu then
 				--ui:ExternalInterfaceCall("switchMenu", MOD_MENU_ID)
 				main.clearAll()
-				for i=0,#main.baseUpdate_Array do
-					local val = main.baseUpdate_Array[i]
-					if val == true then
-						main.baseUpdate_Array[i] = false
-						break
-					end
-				end
+				-- for i=0,#main.baseUpdate_Array do
+				-- 	local val = main.baseUpdate_Array[i]
+				-- 	if val == true then
+				-- 		main.baseUpdate_Array[i] = false
+				-- 		break
+				-- 	end
+				-- end
 				SwitchToModMenu(ui)
-				--Ext.PostMessageToServer("LeaderLib_ModMenu_RequestOpen", tostring(Client.ID))
 			end
 		end
 	end
@@ -160,29 +162,22 @@ end
 local function CreateModMenuButton_Controller(ui, method, ...)
 	local main = ui:GetRoot()
 	if main ~= nil then
-		main.addMenuButton(OptionsSettingsHooks.MOD_MENU_ID, ModMenuTabButtonText.Value, true, ModMenuTabButtonTooltip.Value)
+		main.addMenuButton(MOD_MENU_ID, ModMenuTabButtonText.Value, true, ModMenuTabButtonTooltip.Value)
 		local arr = main.mainMenu_mc.btnList.content_array
 		for i=0,#arr do
 			local button = arr[i]
-			if button and button.id == OptionsSettingsHooks.MOD_MENU_ID then
+			if button and button.id == MOD_MENU_ID then
 				button.enable = false
 				break
 			end
 		end
 	else
-		ui:Invoke("addMenuButton", OptionsSettingsHooks.MOD_MENU_ID, ModMenuTabButtonText.Value, true, ModMenuTabButtonTooltip.Value)
+		ui:Invoke("addMenuButton", MOD_MENU_ID, ModMenuTabButtonText.Value, true, ModMenuTabButtonTooltip.Value)
 	end
 end
 
-Ext.RegisterNetListener("LeaderLib_ModMenu_CreateMenuButton", function(cmd, payload)
-	local ui = GetOptionsGUI()
-	if ui ~= nil then
-		CreateModMenuButton(ui)
-	end
-end)
-
 local function OnOptionsClosed()
-	SetCurrentMenu(1)
+	--SetCurrentMenu(1)
 end
 
 local menuWasOpen = false
@@ -191,7 +186,7 @@ local function OnSwitchMenu(ui, call, id)
 	menuWasOpen = true
 
 	--ui = GetOptionsGUI()
-	if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+	if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
 		ui:GetRoot().mainMenu_mc.removeApplyCopy()
 	elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
@@ -199,7 +194,7 @@ local function OnSwitchMenu(ui, call, id)
 	end
 	SetCurrentMenu(id)
 
-	if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+	if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 		SwitchToModMenu(ui)
 	elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
 		--GameSettingsMenu.AddSettings(ui, true)
@@ -207,9 +202,13 @@ local function OnSwitchMenu(ui, call, id)
 end
 
 local function OnUpdateArrayParsed(ui, call, arrayName)
+	Ext.PrintError("OnUpdateArrayParsed", arrayName)
 	if arrayName == "baseUpdate_Array" then
 		if OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
 			GameSettingsMenu.SetScrollPosition(ui)
+		end
+		if OptionsSettingsHooks.LastMenu == MOD_MENU_ID then
+			OptionsSettingsHooks.SwitchToModMenu = true
 		end
 		--Update the localized name
 		CreateModMenuButton(ui, call, arrayName)
@@ -225,7 +224,7 @@ local function OnUpdateArrayParsed(ui, call, arrayName)
 end
 
 local function OnAcceptChanges(ui)
-	if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+	if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
 		ModMenuManager.CommitChanges()
 	elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
@@ -245,7 +244,7 @@ local function SetApplyButtonClickable(ui, b)
 	end
 	local this = ui:GetRoot()
 	if this then
-		if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+		if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 			if this.setApplyButtonCopyVisible then
 				this.setApplyButtonCopyVisible(b)
 			end
@@ -258,7 +257,7 @@ end
 ModMenuManager.SetApplyButtonClickable = SetApplyButtonClickable
 
 local function OnApplyPressed(ui, call, ...)
-	if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+	if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
 		ModMenuManager.CommitChanges()
 		SetApplyButtonClickable(ui, false)
@@ -269,7 +268,7 @@ local function OnApplyPressed(ui, call, ...)
 end
 
 local function OnCancelChanges(ui, call)
-	if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+	if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
 		ModMenuManager.UndoChanges()
 	elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
@@ -280,12 +279,40 @@ local function OnCancelChanges(ui, call)
 end
 
 local function IsLeaderLibMenuActive()
-	if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID or OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
+	if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID or OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
 		return true
 	end
 	return false
 end
 OptionsSettingsHooks.IsLeaderLibMenuActive = IsLeaderLibMenuActive
+
+Ext.Events.UIInvoke:Subscribe(function (e)
+	if e.Function == "parseUpdateArray" and e.When == "Before" and isOpening then
+		Ext.PrintError(Data.UITypeToName[e.UI.Type], OptionsSettingsHooks.SwitchToModMenu, OptionsSettingsHooks.LastMenu, OptionsSettingsHooks.CurrentMenu, isOpening)
+		if Data.UITypeToName[e.UI.Type] == "optionsSettings" and (OptionsSettingsHooks.SwitchToModMenu 
+			or (OptionsSettingsHooks.LastMenu > 1 and OptionsSettingsHooks.CurrentMenu ~= OptionsSettingsHooks.LastMenu)) then
+			Ext.PrintWarning("BLOCKED")
+			e:PreventAction()
+			e:StopPropagation()
+			if OptionsSettingsHooks.LastMenu == MOD_MENU_ID then
+				isOpening = false
+				OptionsSettingsHooks.SwitchToModMenu = true
+				SwitchToModMenu(e.UI)
+			else
+				local uiType = e.UI.Type
+				local lastMenu = OptionsSettingsHooks.LastMenu
+				Ext.OnNextTick(function (e)
+					isOpening = false
+					local ui = Ext.UI.GetByType(uiType)
+					if ui then
+						SetCurrentMenu(lastMenu)
+						ui:ExternalInterfaceCall("switchMenu", lastMenu)
+					end
+				end)
+			end
+		end
+	end
+end)
 
 Ext.RegisterListener("SessionLoaded", function()
 	--Override here so the settings in the main menu works
@@ -294,7 +321,7 @@ Ext.RegisterListener("SessionLoaded", function()
 
 	local onMessageBoxButton = function(ui, call, id, device)
 		-- Are you sure you want to discard your changes?
-		if OptionsSettingsHooks.LastMenu == OptionsSettingsHooks.MOD_MENU_ID or OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+		if OptionsSettingsHooks.LastMenu == MOD_MENU_ID or OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 			if id == MessageBoxButtonID.CANCEL then
 
 			elseif id == MessageBoxButtonID.ACCEPT then
@@ -312,9 +339,10 @@ Ext.RegisterListener("SessionLoaded", function()
 	local OnOpenMenu = function(ui, ...)
 		if not menuWasOpen then
 			LoadGlobalSettings()
+			isOpening = true
 		end
 		menuWasOpen = false
-		SetCurrentMenu(1)
+		OptionsSettingsHooks.CurrentMenu = LarianMenuID.Graphics
 	end
 
 	if not Vars.ControllerEnabled then
@@ -330,12 +358,14 @@ Ext.RegisterListener("SessionLoaded", function()
 		---optionsInput.swf version.
 		---@param ui UIObject
 		Ext.RegisterUINameInvokeListener("addMenuButtons", function(ui, method, ...)
-			ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsInput.swf")
-			local main = ui:GetRoot()
-			if main ~= nil then
-				---@type MainMenuMC
-				local mainMenu = main.controlsMenu_mc
-				mainMenu.addMenuButton(ModMenuTabButtonText.Value, "switchToModMenuFromInput", OptionsSettingsHooks.MOD_MENU_ID, false)
+			local ui = Ext.UI.GetByPath("Public/Game/GUI/optionsInput.swf")
+			if ui then
+				local main = ui:GetRoot()
+				if main then
+					---@type MainMenuMC
+					local mainMenu = main.controlsMenu_mc
+					mainMenu.addMenuButton(ModMenuTabButtonText.Value, "switchToModMenuFromInput", MOD_MENU_ID, false)
+				end
 			end
 		end)
 	
@@ -344,11 +374,11 @@ Ext.RegisterListener("SessionLoaded", function()
 		Ext.RegisterUITypeCall(Data.UIType.optionsInput, "switchMenu", OnSwitchMenu)
 	else
 		Ext.RegisterUITypeCall(Data.UIType.mainMenu_c, "disabledButtonPressed", function(ui, call, id)
-			if id == OptionsSettingsHooks.MOD_MENU_ID then
+			if id == MOD_MENU_ID then
 				OptionsSettingsHooks.SwitchToModMenu = true
 				ui:ExternalInterfaceCall("buttonOver", 1)
 				ui:ExternalInterfaceCall("buttonPressed", 1)
-				SetCurrentMenu(OptionsSettingsHooks.MOD_MENU_ID)
+				SetCurrentMenu(MOD_MENU_ID)
 			end
 		end)
 		Ext.RegisterUITypeCall(Data.UIType.mainMenu_c, "buttonPressed", function(ui, call, id)
@@ -373,9 +403,13 @@ Ext.RegisterListener("SessionLoaded", function()
 		Ext.RegisterUINameInvokeListener("addingDone", function(invokedUI, method, id, label, tooltip, enabled)
 			if OptionsSettingsHooks.SwitchToModMenu then
 				OptionsSettingsHooks.SwitchToModMenu = false
-				UIExtensions.StartTimer("createModSettingsMenu", 10, function()
-					local ui = GetOptionsGUI() or invokedUI
-					SwitchToModMenu(ui)
+				local uiType = invokedUI.Type
+				Timer.Cancel("createModSettingsMenu")
+				Timer.StartOneshot("createModSettingsMenu", 10, function()
+					local ui = GetOptionsGUI() or Ext.UI.GetByType(uiType)
+					if ui then
+						SwitchToModMenu(ui)
+					end
 				end)
 			end
 		end)
@@ -404,7 +438,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	local OnCheckBox = function(ui, call, id, value)
 		local originalCall = getOriginalCall(call)
 		if originalCall then
-			if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+			if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 				ModMenuManager.OnCheckbox(id, value)
 				SetApplyButtonClickable(ui, true)
 			elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
@@ -422,7 +456,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	local OnComboBox = function(ui, call, id, value)
 		local originalCall = getOriginalCall(call)
 		if originalCall then
-			if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+			if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 				ModMenuManager.OnComboBox(id, value)
 				SetApplyButtonClickable(ui, true)
 			elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
@@ -440,7 +474,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	local OnSelector = function(ui, call, id, value)
 		local originalCall = getOriginalCall(call)
 		if originalCall then
-			if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+			if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 				ModMenuManager.OnSelector(id, value)
 				SetApplyButtonClickable(ui, true)
 			elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
@@ -458,7 +492,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	local OnSlider = function(ui, call, id, value)
 		local originalCall = getOriginalCall(call)
 		if originalCall then
-			if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+			if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 				ModMenuManager.OnSlider(id, value)
 				SetApplyButtonClickable(ui, true)
 			elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
@@ -477,7 +511,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	local OnButton = function(ui, call, id)
 		local originalCall = getOriginalCall(call)
 		if originalCall then
-			if OptionsSettingsHooks.CurrentMenu == OptionsSettingsHooks.MOD_MENU_ID then
+			if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 				ModMenuManager.OnButtonPressed(id)
 				SetApplyButtonClickable(ui, true)
 			elseif OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then

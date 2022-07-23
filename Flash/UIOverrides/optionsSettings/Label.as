@@ -70,9 +70,10 @@ package
 			if(this._tooltip != null && this._tooltip != "")
 			{
 				this.base.curTooltip = this.pos;
-				this.tooltipOverrideW = this.base.ElW;
+				//this.tooltipOverrideW = this.base.ElW;
+				this.tooltipXOffset = -350;
 				this.tooltipYOffset = -4;
-				tooltipHelper.ShowTooltipForMC(this,root,"bottom",this.base.hasTooltip == false);
+				tooltipHelper.ShowTooltipForMC(this,root,"right",this.base.hasTooltip == false);
 			}
 		}
 		

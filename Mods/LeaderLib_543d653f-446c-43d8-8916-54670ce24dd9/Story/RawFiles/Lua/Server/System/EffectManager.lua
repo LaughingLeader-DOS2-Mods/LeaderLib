@@ -9,7 +9,7 @@ local _INTERNAL = {}
 EffectManager._Internal = _INTERNAL
 
 ---@class EffectManagerEsvEffectParams
----@field BeamTarget ObjectHandle
+---@field BeamTarget ComponentHandle
 ---@field BeamTargetBone string
 ---@field BeamTargetPos number[]
 ---@field Bone string
@@ -23,7 +23,7 @@ EffectManager._Internal = _INTERNAL
 ---@field Position number[]
 ---@field Rotation number[]
 ---@field Scale number
----@field Target ObjectHandle
+---@field Target ComponentHandle
 
 local ObjectHandleEffectParams = {
 	BeamTarget = true,
@@ -33,7 +33,7 @@ local ObjectHandleEffectParams = {
 ---@class EffectManagerEsvEffect:EffectManagerEsvEffectParams
 ---@field NetID NETID
 ---@field Delete fun(self:EffectManagerEsvEffect)
----@field Component {Handle:ObjectHandle, TypeId:integer}
+---@field Component {Handle:ComponentHandle, TypeId:integer}
 
 ---@class LeaderLibObjectLoopEffectSaveData
 ---@field Effect string
@@ -42,8 +42,9 @@ local ObjectHandleEffectParams = {
 
 ---@param uuid string
 ---@param effect string
+---@param handle integer
 ---@param params EffectManagerEsvEffectParams
-function _INTERNAL.SaveObjectEffectData(uuid, effect, params)
+function _INTERNAL.SaveObjectEffectData(uuid, effect, handle, params)
 	if PersistentVars.ObjectLoopEffects[uuid] == nil then
 		PersistentVars.ObjectLoopEffects[uuid] = {}
 	end
@@ -57,7 +58,7 @@ function _INTERNAL.SaveObjectEffectData(uuid, effect, params)
 				savedParams[k] = v
 				hasParams = true
 			elseif ObjectHandleEffectParams[k] then
-				local obj = Ext.GetGameObject(v)
+				local obj = GameHelpers.TryGetObject(v)
 				if obj then
 					savedParams[k] = obj.MyGuid
 					hasParams = true
@@ -70,7 +71,8 @@ function _INTERNAL.SaveObjectEffectData(uuid, effect, params)
 	end
 	table.insert(PersistentVars.ObjectLoopEffects[uuid], {
 		Effect = effect,
-		Params = savedParams
+		Params = savedParams,
+		Handle = handle
 	})
 end
 
@@ -82,7 +84,7 @@ end
 
 ---@param target number[]
 ---@param effect string
----@param handle integer|ObjectHandle
+---@param handle integer
 ---@param params EffectManagerEsvEffectParams|nil
 function _INTERNAL.SaveWorldEffectData(target, effect, handle, params)
 	local region = SharedData.RegionData.Current
@@ -94,8 +96,7 @@ function _INTERNAL.SaveWorldEffectData(target, effect, handle, params)
 	local data = {
 		Effect = effect,
 		Position = target,
-		--TODO Save handle somehow
-		--Handle = handle
+		Handle = handle
 	}
 	if params then
 		data.Params = params
@@ -124,6 +125,10 @@ EffectManager.Register = {
 ---@field Effect EffectManagerEsvEffect|string
 ---@field Position number[]|nil
 
+---@param effect EsvEffect|string
+---@param handle integer
+---@param id string
+---@param pos number[]|nil
 ---@return EffectManagerPlayEffectResult
 local function CreateEffectResult(effect, handle, id, pos)
 	return {Effect = effect, Handle = handle, ID = id, Position = pos}
@@ -146,8 +151,9 @@ function _INTERNAL.PlayEffect(fx, object, params)
 	local t = type(fx)
 	assert(t == "string" or t == "table", "fx parameter must be a string or a table of strings.")
 	local params = _ValidateParams(params)
-	---@type EsvCharacter|EsvItem
 	local object = GameHelpers.TryGetObject(object)
+	---@cast object EsvCharacter|EsvItem
+
 	assert(type(object) == "userdata", "object parameter must be a UUID, NetID, or EsvCharacter/EsvItem.")
 	if t == "string" then
 		local handle = nil
@@ -159,7 +165,7 @@ function _INTERNAL.PlayEffect(fx, object, params)
 				effect.Loop = false
 				--TODO Ext.HandleToDouble is client-side
 				--handle = Ext.HandleToDouble(effect.Component.Handle)
-				handle = effect.Component.Handle
+				handle = Ext.Utils.HandleToInteger(effect.Component.Handle)
 				---@diagnostic enable
 				for k,v in pairs(params) do
 					if ObjectHandleEffectParams[k] then
@@ -172,7 +178,7 @@ function _INTERNAL.PlayEffect(fx, object, params)
 					end
 				end
 				if params.Loop then
-					InvokeListenerCallbacks(_INTERNAL.Callbacks.LoopEffectStarted, effect, object, handle, params.Bone or "")
+					InvokeListenerCallbacks(_INTERNAL.Callbacks.LoopEffectStarted, effect, object, effect.Component.Handle, params.Bone or "")
 				end
 				return CreateEffectResult(effect, handle, effect.EffectName)
 			else
@@ -207,7 +213,7 @@ function _INTERNAL.PlayEffect(fx, object, params)
 end
 
 ---@param fx string|string[] The effect resource name
----@param pos number[]|EsvGameObject
+---@param pos number[]|ObjectParam
 ---@param params EffectManagerEsvEffectParams|nil
 ---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]
 function _INTERNAL.PlayEffectAt(fx, pos, params)
@@ -246,7 +252,7 @@ function _INTERNAL.PlayEffectAt(fx, pos, params)
 						end
 					end
 					if params.Loop then
-						handle = effect.Component.Handle
+						handle = Ext.Utils.HandleToInteger(effect.Component.Handle)
 					end
 				end
 				return CreateEffectResult(effect, handle, effect.EffectName, {x,y,z})
@@ -292,17 +298,18 @@ end
 ---@param fx string|string[] The effect resource name
 ---@param object CharacterParam|ItemParam
 ---@param params EffectManagerEsvEffectParams|nil
+---@param skipSaving boolean|nil
 ---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]
-function EffectManager.PlayEffect(fx, object, params)
+function EffectManager.PlayEffect(fx, object, params, skipSaving)
 	local uuid = GameHelpers.GetUUID(object)
 	local result = _INTERNAL.PlayEffect(fx, object, params)
-	if result and params and params.Loop == true then
+	if result and params and params.Loop == true and not skipSaving then
 		if type(result) == "table" then
 			for i,v in pairs(result) do
-				_INTERNAL.SaveObjectEffectData(uuid, v.ID, params)
+				_INTERNAL.SaveObjectEffectData(uuid, v.ID, v.Handle, params)
 			end
 		else
-			_INTERNAL.SaveObjectEffectData(uuid, result.ID, params)
+			_INTERNAL.SaveObjectEffectData(uuid, result.ID, result.Handle, params)
 		end
 	end
 	return result
@@ -312,12 +319,13 @@ end
 ---Returns the EsvEffect if v56 or higher, otherwise it returns a handle.
 ---If fx is a table of effects, a table or EsvEffect or table of handles will be returned.
 ---@param fx string|string[] The effect resource name
----@param pos number[]|EsvGameObject
+---@param pos number[]|ObjectParam
 ---@param params EffectManagerEsvEffectParams|nil
+---@param skipSaving boolean|nil
 ---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]
-function EffectManager.PlayEffectAt(fx, pos, params)
+function EffectManager.PlayEffectAt(fx, pos, params, skipSaving)
 	local result = _INTERNAL.PlayEffectAt(fx, pos, params)
-	if result and params and params.Loop == true then
+	if result and params and params.Loop == true and not skipSaving then
 		if type(result) == "table" then
 			for i,v in pairs(result) do
 				_INTERNAL.SaveWorldEffectData(v.Position, v.ID, v.Handle, params)
@@ -343,7 +351,7 @@ function EffectManager.PlayClientEffect(fx, target, params, client)
 	end
 end
 
----@param handle integer|ObjectHandle
+---@param handle integer|ComponentHandle
 function _INTERNAL.StopEffect(handle)
 	local t = type(handle)
 	if t == "number" then
@@ -351,11 +359,14 @@ function _INTERNAL.StopEffect(handle)
 			StopLoopEffect(handle)
 			return true
 		elseif _EXTVERSION >= 56 then
-			--TODO Need some way to convert handles
-			-- handle = Ext.DoubleToHandle(handle)
-			-- if handle then
-			-- 	t = "userdata"
-			-- end
+			local fxHandle = Ext.Utils.IntegerToHandle(handle)
+			if fxHandle and Ext.Utils.IsValidHandle(fxHandle) then
+				local effect = Ext.Effect.GetEffect(fxHandle)
+				if effect then
+					effect:Delete()
+					return true
+				end
+			end
 		end
 	end
 	if t == "userdata" then
@@ -371,19 +382,38 @@ end
 ---@param handle integer
 function EffectManager.StopLoopEffectByHandle(handle)
 	_INTERNAL.StopEffect(handle)
+	local nextWorldLoopEffects = {}
+	local changed = false
 	for region,dataTable in pairs(PersistentVars.WorldLoopEffects) do
-		for i,v in pairs(dataTable) do
-			if v.Handle == handle then
-				table.remove(dataTable, i)
+		nextWorldLoopEffects[region] = {}
+		for i=1,#dataTable do
+			local v = dataTable[i]
+			if v.Handle ~= handle then
+				nextWorldLoopEffects[region][#nextWorldLoopEffects[region]+1] = v
+			else
+				changed = true
 			end
 		end
 	end
+	if changed then
+		PersistentVars.WorldLoopEffects = nextWorldLoopEffects
+	end
+
+	local nextObjectLoopEffects = {}
+	changed = false
 	for uuid,dataTable in pairs(PersistentVars.ObjectLoopEffects) do
-		for i,v in pairs(dataTable) do
-			if v.Handle == handle then
-				table.remove(dataTable, i)
+		nextObjectLoopEffects[uuid] = {}
+		for i=1,#dataTable do
+			local v = dataTable[i]
+			if v.Handle ~= handle then
+				nextObjectLoopEffects[uuid][#nextObjectLoopEffects[uuid]+1] = v
+			else
+				changed = true
 			end
 		end
+	end
+	if changed then
+		PersistentVars.ObjectLoopEffects = nextObjectLoopEffects
 	end
 end
 

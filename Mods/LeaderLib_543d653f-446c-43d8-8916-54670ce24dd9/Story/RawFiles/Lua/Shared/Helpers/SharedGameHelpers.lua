@@ -908,3 +908,71 @@ end
 function GameHelpers.IntegerColorToHex(int)
 	return string.format("#%06X", (0xFFFFFF & int))
 end
+
+---Get skill damage from registered Ext.Events.GetSkillDamage listeners, or Game.Math.GetSkillDamage.
+---@param skillId string The skill ID, i.e "Projectile_Fireball".
+---@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
+---@param skillParams StatEntrySkillData|nil A table of attributes to set on the skill table before calculating the damage.
+---@return StatsDamagePairList|nil
+function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams)
+	if not StringHelpers.IsNullOrWhitespace(skillId) then
+		local skill = GameHelpers.Ext.CreateSkillTable(skillId, nil, true)
+		if skill ~= nil then
+			if _type(skillParams) == "table" then
+				for k,v in pairs(skillParams) do
+					skill[k] = v
+				end
+			end
+			if character then
+				character = GameHelpers.GetCharacter(character)
+			end
+			if character == nil then
+				if _ISCLIENT then
+					character = Client:GetCharacter()
+				elseif Ext.OsirisIsCallable() then
+					character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+				end
+			end
+			if character ~= nil and character.Stats ~= nil then
+				local useDefaultSkillDamage = true
+				if Ext.Events.GetSkillDamage then
+					---@type {Attacker:StatCharacter, AttackerPosition:number[], DamageList:DamageList, DeathType:DeathType, IsFromItem:boolean, Level:integer, Skill:StatEntrySkillData, Stealthed:boolean, TargetPosition:number[]}
+					local evt = {
+						Skill = skill,
+						Attacker = character.Stats,
+						AttackerPosition = character.WorldPos,
+						TargetPosition = character.WorldPos,
+						DamageList = Ext.NewDamageList(),
+						DeathType = "None",
+						Stealthed = character.Stats.IsSneaking == true,
+						IsFromItem = false,
+						Level = character.Stats.Level,
+						Stopped = false
+					}
+					evt.StopPropagation = function (self)
+						evt.Stopped = true
+					end
+					Ext.Events.GetSkillDamage:Throw(evt)
+					if evt.DamageList then
+						local hasDamage = false
+						for _,v in pairs(evt.DamageList:ToTable()) do
+							if v.Amount > 0 then
+								hasDamage = true
+								break
+							end
+						end
+						if hasDamage then
+							return evt.DamageList
+						end
+					end
+				end
+
+				if useDefaultSkillDamage then
+					local damageList,deathType = Game.Math.GetSkillDamage(skill, character.Stats, false, false, character.WorldPos, character.WorldPos, character.Stats.Level, true, nil, nil)
+					return damageList
+				end
+			end
+		end
+	end
+	return nil
+end

@@ -82,7 +82,7 @@ local function OnUICall(e)
 			Timer.Cancel("LeaderLib_ModMenu_DelayShowTooltip")
 			skipCreationDelay = false
 			lastCall = ""
-		elseif _ENABLED and not skipCreationDelay then
+		elseif _ENABLED and not skipCreationDelay and e.Args[1] ~= nil then
 			local tooltipType = _TOOLTIP_REQUEST_CALLS[e.Function]
 			local canDelay = tooltipType and CanDelayTooltip(tooltipType)
 			if canDelay then

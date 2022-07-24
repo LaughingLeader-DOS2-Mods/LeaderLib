@@ -84,7 +84,9 @@ local function RegisterTooltipHandlers()
 	end) ]]
 	_r.Generic(TooltipHandler.OnGenericTooltip)
 	Game.Tooltip.RegisterRequestListener("Generic", function (request, ui, uiType, event, id, ...)
-		request.Text = GameHelpers.Tooltip.ReplacePlaceholders(request.Text, Client:GetCharacter())
+		if not StringHelpers.IsNullOrWhitespace(request.Text) then
+			request.Text = GameHelpers.Tooltip.ReplacePlaceholders(request.Text, Client:GetCharacter())
+		end
 	end, "After")
 
 	if Vars.DebugMode then

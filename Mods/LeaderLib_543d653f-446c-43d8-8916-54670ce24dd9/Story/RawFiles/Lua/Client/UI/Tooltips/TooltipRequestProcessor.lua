@@ -835,7 +835,7 @@ end
 ---@param side string
 ---@param allowDelay boolean
 function RequestProcessor.OnGenericTooltip(e, ui, event, text, x, y, width, height, side, allowDelay)
-	if RequestProcessor.Tooltip.NextRequest == nil then
+	if RequestProcessor.Tooltip.NextRequest == nil and text ~= nil then
 		---@type TooltipGenericRequest
 		local request = _CreateRequest()
 		request.Type = "Generic"
@@ -860,20 +860,25 @@ function RequestProcessor.OnGenericTooltip(e, ui, event, text, x, y, width, heig
 		RequestProcessor.Tooltip.Last.UIType = request.UIType
 		RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, request.UIType, event, text, x, y, width, height, side, allowDelay)
 
-		if request.Text then
+		if not StringHelpers.IsNullOrEmpty(request.Text) then
 			e.Args[1] = request.Text
 		else
-			_PrintError(string.format("[RequestProcessor.OnGenericTooltip:%s] request.Text is nil? (%s) => (%s)\nRequest:\n%s", event, text, request.Text, Ext.DumpExport(request)))
-			e.Args[1] = ""
-			request.Text = ""
+			_PrintError(string.format("[RequestProcessor.OnGenericTooltip:%s] request.Text is nil?\nRequest:\n%s\nArgs:\n%s", event, Ext.DumpExport(request), Ext.DumpExport(e.Args)))
+			RequestProcessor.Tooltip.NextRequest = nil
+			-- e.Args[1] = ""
+			-- request.Text = ""
+			return false
 		end
 
 		if hasExtraData then
-			e.Args[2] = request.X
-			e.Args[3] = request.Y
-			e.Args[4] = request.Width
-			e.Args[5] = request.Height
-			e.Args[6] = request.Side
+			e.Args[2] = request.X or x
+			e.Args[3] = request.Y or y
+			e.Args[4] = request.Width or width
+			e.Args[5] = request.Height or height
+			e.Args[6] = request.Side or side
+			if request.AllowDelay == nil then
+				request.AllowDelay = allowDelay == true
+			end
 			e.Args[7] = request.AllowDelay
 		end
 	end

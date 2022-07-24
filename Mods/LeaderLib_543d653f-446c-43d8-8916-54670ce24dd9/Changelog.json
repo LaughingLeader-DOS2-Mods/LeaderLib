@@ -8,6 +8,8 @@
 		{
 			"Version": "1.7.25.0",
 			"Changes": [
+				"Made the in-game Mod Menu no longer uncheck active mods that have been updated.",
+				"Made the Options menu restore the last tab opened, instead of always defaulting to the Graphics menu.",
 				"Added new Quality of Life options to the \"Mod Settings\" menu:",
 				"\t• Auto-identify Items",
 				"\t• Permanent Spirit Vision (lets you toggle it on/off)",

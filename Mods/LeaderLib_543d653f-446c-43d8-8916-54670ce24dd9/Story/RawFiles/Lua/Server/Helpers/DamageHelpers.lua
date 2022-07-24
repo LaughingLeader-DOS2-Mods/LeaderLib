@@ -220,8 +220,9 @@ local function GetSkillHitType(skill)
         return HitType.Melee
     end
     if skill.Requirement == SkillRequirement.RangedWeapon
+    or skill.Requirement == SkillRequirement.RifleWeapon
     or skill.Requirement == SkillRequirement.ArrowWeapon
-    or skill.Requirement == SkillRequirement.RifleWeapon then
+    then
         return HitType.Ranged
     end
     return hitType

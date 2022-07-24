@@ -72,6 +72,7 @@ Ext.Require("Client/QOL/StatusHider.lua")
 Ext.Require("Client/QOL/ShowConsumableEffects.lua")
 Ext.Require("Client/QOL/ShowBarText.lua")
 Ext.Require("Client/QOL/TooltipDelay.lua")
+Ext.Require("Client/QOL/ModMenuFixes.lua")
 if Ext.Version() < 56 or EnableGameTooltipOverride() then
 	Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 end

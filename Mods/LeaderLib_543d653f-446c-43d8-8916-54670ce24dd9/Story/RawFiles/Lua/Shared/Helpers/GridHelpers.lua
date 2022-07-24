@@ -137,16 +137,19 @@ if not _ISCLIENT then
 					else
 						source = targetObject
 					end
-					local skill = nil
+					local skillData = nil
 					if targetData.Skill then
-						skill = Ext.GetStat(targetData.Skill)
+						skillData = Ext.Stats.Get(targetData.Skill)
+						---@cast skillData StatEntrySkillData
 					end
 					Events.ForceMoveFinished:Invoke({
+						ID = targetData.ID or "",
 						Target = targetObject,
 						Source = source,
 						Distance = targetData.Distance,
 						StartingPosition = targetData.Start,
-						Skill = skill
+						Skill = targetData.Skill,
+						SkillData = skillData
 					})
 					if skill then
 						Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), targetData.Skill or "Skill")
@@ -160,7 +163,9 @@ if not _ISCLIENT then
 			elseif targetObject then
 				fprint(LOGLEVEL.WARNING, "[LeaderLib_OnForceMoveAction_Old] No force move data for target (%s). How did this happen?", targetObject.DisplayName)
 				Events.ForceMoveFinished:Invoke({
+					ID = "",
 					Target = targetObject,
+					Source = targetObject,
 					Distance = 0,
 					StartingPosition = targetObject.WorldPos
 				})
@@ -202,8 +207,9 @@ if not _ISCLIENT then
 	---@param skill string|nil
 	---@param startPos number[]|nil If set, this will be the starting position to push from. Defaults to the source's WorldPosition otherwise.
 	---@param beamEffect string|nil The beam effect to play with the NRD_CreateGameObjectMove action.
+	---@param id string|nil An optional ID to associate with this move action
 	---@return boolean success Returns true if the force move action has started.
-	function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill, startPos, beamEffect)
+	function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill, startPos, beamEffect, id)
 		---@type EsvCharacter|EsvItem
 		local sourceObject = GameHelpers.TryGetObject(source)
 		---@type EsvCharacter|EsvItem
@@ -232,6 +238,7 @@ if not _ISCLIENT then
 			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, beamEffect or "", sourceObject.MyGuid)
 			if handle then
 				PersistentVars.ForceMoveData[targetObject.MyGuid] = {
+					ID = id or "",
 					Position = {tx,ty,tz},
 					Start = TableHelpers.Clone(startPos),
 					Handle = handle,

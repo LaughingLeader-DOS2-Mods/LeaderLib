@@ -97,19 +97,10 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 	end
 end
 
----@param hitStatus EsvStatusHit
----@param hitContext HitContext
-local function GetHitRequest(hitStatus, hitContext)
-	if _EXTVERSION < 56 then
-		return hitContext.Hit or hitStatus.Hit
-	end
-	return hitStatus.Hit
-end
-
----@param hitStatus EsvStatusHit
----@param hitContext HitContext
-local function OnHit(hitStatus, hitContext)
-	if not hitStatus then
+Ext.Events.StatusHitEnter:Subscribe(function (e)
+	local hitStatus = e.Hit
+	local hitContext = e.Context
+	if not hitStatus or not hitContext then
 		return
 	end
 	local target = GameHelpers.TryGetObject(hitStatus.TargetHandle)
@@ -137,14 +128,18 @@ local function OnHit(hitStatus, hitContext)
 		end
 	end
 
-	---@type HitRequest
-	local hitRequest = GetHitRequest(hitStatus, hitContext)
+	local hitRequest = e.Hit.Hit
 
 	local skill = nil
 	if not StringHelpers.IsNullOrEmpty(hitStatus.SkillId) then
-		skill = Ext.GetStat(GetSkillEntryName(hitStatus.SkillId))
+		skill = Ext.Stats.Get(GetSkillEntryName(hitStatus.SkillId))
+		---@cast skill StatEntrySkillData
+		
+		if skill and skill.Name == "ProjectileStrike_EnemyRainOfArrows" then
+			Ext.PrintError("ProjectileStrike_EnemyRainOfArrows::HitReason", hitStatus.HitReason, Data.HitReason[hitStatus.HitReason])
+		end
 	end
-	---@cast skill StatEntrySkillData
+
 
 	local hitType = GameHelpers.Hit.GetHitType(hitContext)
 	local damageSourceType = hitStatus.DamageSourceType
@@ -189,12 +184,4 @@ local function OnHit(hitStatus, hitContext)
 		HitStatus=hitStatus,
 		HitContext=hitContext
 	})
-end
-
-if _EXTVERSION < 56 then
-	RegisterProtectedExtenderListener("StatusHitEnter", OnHit)
-else
-	Ext.Events.StatusHitEnter:Subscribe(function (e)
-		OnHit(e.Hit, e.Context)
-	end)
-end
+end)

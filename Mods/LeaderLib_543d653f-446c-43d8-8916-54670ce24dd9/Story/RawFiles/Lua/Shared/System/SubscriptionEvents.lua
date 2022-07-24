@@ -445,14 +445,15 @@ if not _ISCLIENT then
 	---@field Source EsvCharacter|EsvItem|nil
 	---@field Distance number
 	---@field StartingPosition number[]
-	---@field Skill StatEntrySkillData|nil
+	---@field SkillData StatEntrySkillData|nil
+	---@field Skill string|nil
 	
 	---Called when a GameHelpers.ForceMoveObject action ends.  
 	---🔨**Server-Only**🔨  
 	---@see LeaderLibGameHelpers#ForceMoveObject
 	---@type LeaderLibSubscribableEvent<ForceMoveFinishedEventArgs>
 	Events.ForceMoveFinished = Classes.SubscribableEvent:Create("ForceMoveFinished", {
-		ArgsKeyOrder={"Target", "Source", "Distance", "StartingPosition", "Skill"}
+		ArgsKeyOrder={"Target", "Source", "Distance", "StartingPosition", "SkillData"}
 	})
 
 	---@class PersistentVarsLoadedEventArgs

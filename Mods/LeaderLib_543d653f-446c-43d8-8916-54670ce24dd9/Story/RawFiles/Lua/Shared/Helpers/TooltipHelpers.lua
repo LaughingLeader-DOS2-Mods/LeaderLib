@@ -60,12 +60,12 @@ end
 function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 	if not StringHelpers.IsNullOrWhitespace(skillId) then
 		local skill = GameHelpers.Ext.CreateSkillTable(skillId, nil, true)
-		if _type(skillParams) == "table" then
-			for k,v in pairs(skillParams) do
-				skill[k] = v
-			end
-		end
 		if skill ~= nil then
+			if _type(skillParams) == "table" then
+				for k,v in pairs(skillParams) do
+					skill[k] = v
+				end
+			end
 			if character then
 				character = GameHelpers.GetCharacter(character)
 			end

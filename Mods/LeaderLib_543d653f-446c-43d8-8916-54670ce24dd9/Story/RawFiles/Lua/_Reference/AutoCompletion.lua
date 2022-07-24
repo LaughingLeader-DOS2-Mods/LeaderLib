@@ -22,4 +22,6 @@ end
 ---@alias RaceTag "DWARF"|"ELF"|"HUMAN"|"LIZARD"
 
 ---@alias StatCharacter CDivinityStatsCharacter
+---@alias DamageList StatsDamagePairList
+
 ---@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter):string

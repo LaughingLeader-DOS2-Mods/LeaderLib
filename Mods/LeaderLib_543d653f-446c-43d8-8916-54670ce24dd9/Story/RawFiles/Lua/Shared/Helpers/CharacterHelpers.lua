@@ -354,6 +354,24 @@ function GameHelpers.Character.IsDeadOrDying(character)
 	return false
 end
 
+---Returns the race of the character, if it's one of the base 4 player races.
+---@param character CharacterParam
+---@return RaceTag|nil
+function GameHelpers.Character.GetBaseRace(character)
+	character = GameHelpers.GetCharacter(character)
+	if character and character.HasTag then
+		for raceId,raceData in pairs(Vars.RaceData) do
+			if character:HasTag(raceData.Tag) 
+			or character:HasTag(raceData.BaseTag)
+			or string.find(character.RootTemplate.TemplateName, raceId)
+			or (character.PlayerCustomData and character.PlayerCustomData.Race == raceId) then
+				return raceId
+			end
+		end
+	end
+	return nil
+end
+
 ---Returns true if the character is one of the regular humanoid races.
 ---@param character CharacterParam
 ---@return boolean

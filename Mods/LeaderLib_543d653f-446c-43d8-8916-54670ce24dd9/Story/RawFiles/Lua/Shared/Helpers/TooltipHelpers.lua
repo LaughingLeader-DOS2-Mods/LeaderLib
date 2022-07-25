@@ -46,7 +46,7 @@ local function GetTextParamValues(output, character)
 		elseif value == nil then
 			value = ""
 		end
-		output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
+		output = string.gsub(output, StringHelpers.EscapeMagic(v), StringHelpers.EscapeMagic(value))
 	end
 	return output
 end
@@ -334,7 +334,7 @@ local function ReplacePlaceholders(str, character)
 				translatedText = string.gsub(translatedText, "%%", "%%%%")
 				translatedText = ReplacePlaceholders(translatedText, character)
 			end
-			output = string.gsub(output, StringHelpers.EscapeMagic(v), translatedText)
+			output = string.gsub(output, StringHelpers.EscapeMagic(v), StringHelpers.EscapeMagic(translatedText))
 		elseif fallback then
 			output = fallback
 		end
@@ -345,12 +345,12 @@ local function ReplacePlaceholders(str, character)
 		if props[2] == nil then
 			props[2] = ""
 		end
-		local translatedText = Ext.GetTranslatedString(props[1], props[2])
+		local translatedText = GameHelpers.GetTranslatedString(props[1], props[2])
 		if translatedText == nil then 
 			translatedText = "" 
 		end
 		--local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-		output = string.gsub(output, StringHelpers.EscapeMagic(v), translatedText)
+		output = string.gsub(output, StringHelpers.EscapeMagic(v), StringHelpers.EscapeMagic(translatedText))
 	end
 	return output
 end

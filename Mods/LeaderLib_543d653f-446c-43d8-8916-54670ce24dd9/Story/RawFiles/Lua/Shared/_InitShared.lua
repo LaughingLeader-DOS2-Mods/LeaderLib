@@ -93,6 +93,7 @@ if Timer == nil then
 end
 Vars = {
 	Initialized = false,
+	PersistentVarsLoaded = false,
 	PostLoadEnableLuaListeners = false,
 	JustReset = false,
 	LeaveActionData = {

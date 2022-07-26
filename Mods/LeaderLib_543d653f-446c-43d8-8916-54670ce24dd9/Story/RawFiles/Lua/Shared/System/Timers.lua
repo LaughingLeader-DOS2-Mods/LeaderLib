@@ -20,15 +20,35 @@ local _waitForTick = {}
 
 if not _ISCLIENT then
 	setmetatable(Timer.TimerData, {
-		__index = function (_,k) return PersistentVars.TimerData[k] end,
-		__newindex = function (_,timerName,v)
+		__index = function (_,k)
+			if not Vars.PersistentVarsLoaded then 
+				return nil
+			end
+			return PersistentVars.TimerData[k]
+		end,
+		__newindex = function (tbl,timerName,v)
+			if not Vars.PersistentVarsLoaded then 
+				rawset(tbl,timerName,v)
+				return
+			end
 			PersistentVars.TimerData[timerName] = v
 		end
 	})
 	setmetatable(Timer.TimerNameMap, {
-		__index = function (_,k) return PersistentVars.TimerNameMap[k] end,
-		__newindex = function (_,timerName,v)
-			PersistentVars.TimerNameMap[timerName] = v
+		__index = function (_,k) 
+			if not Vars.PersistentVarsLoaded then 
+				return nil
+			end
+			return PersistentVars.TimerNameMap[k]
+		end,
+		__newindex = function (tbl,timerName,v)
+			if not Vars.PersistentVarsLoaded then 
+				rawset(tbl,timerName,v)
+				return
+			end
+			if PersistentVars.TimerNameMap then
+				PersistentVars.TimerNameMap[timerName] = v
+			end
 		end
 	})
 else

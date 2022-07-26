@@ -155,7 +155,6 @@ Ext.Require("Shared/UI/MessageBox.lua")
 Ext.Require("Shared/UI/Overhead.lua")
 Ext.Require("Shared/System/TutorialManager.lua")
 
----@private
 ---@type LeaderLibPersistentVars
 PersistentVars = Common.CloneTable(defaultPersistentVars, true)
 
@@ -165,6 +164,7 @@ function LoadPersistentVars(skipCallback)
 	if not skipCallback then
 		Events.PersistentVarsLoaded:Invoke({})
 	end
+	Vars.PersistentVarsLoaded = true
 end
 
 function SetModIsActiveFlag(uuid, modid)

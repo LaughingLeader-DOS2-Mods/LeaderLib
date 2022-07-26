@@ -207,7 +207,9 @@ Events.BeforeLuaReset:Subscribe(function ()
 		local this = _journal.Root
 		if this then
 			this.journal_mc.tutorialContainer_mc.lastGroupId = -1
-			this.journal_mc.tutorialContainer_mc.resetText()
+			if this.journal_mc.tutorialContainer_mc.resetText then
+				this.journal_mc.tutorialContainer_mc.resetText()
+			end
 		end
 	end
 end)

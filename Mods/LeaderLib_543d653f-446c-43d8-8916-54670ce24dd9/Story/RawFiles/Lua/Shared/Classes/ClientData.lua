@@ -2,6 +2,7 @@
 ---@field Attribute integer
 ---@field Ability integer
 ---@field Civil integer
+---@field Talent integer
 ---@field SourceBase integer
 ---@field SourceCurrent integer
 ---@field SourceMax integer

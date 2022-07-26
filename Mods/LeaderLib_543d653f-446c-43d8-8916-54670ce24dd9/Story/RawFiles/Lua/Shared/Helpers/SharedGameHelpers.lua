@@ -976,3 +976,33 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams)
 	end
 	return nil
 end
+
+---@param guid GUID The mod GUID.
+---@param stripFont boolean|nil Strip all font tags.
+---@return string name
+function GameHelpers.GetModName(guid, stripFont)
+	local mod = Ext.Mod.GetMod(guid)
+	if mod and mod.Info then
+		local name = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
+		if stripFont then
+			name = StringHelpers.StripFont(name) or name
+		end
+		return name
+	end
+	return ""
+end
+
+---@param guid GUID The mod GUID.
+---@param stripFont boolean|nil Strip all font tags.
+---@return string description
+function GameHelpers.GetModDescription(guid, stripFont)
+	local mod = Ext.Mod.GetMod(guid)
+	if mod and mod.Info then
+		local desc = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetTranslatedStringValue(mod.Info.DisplayDescription, mod.Info.Description))
+		if stripFont then
+			desc = StringHelpers.StripFont(desc) or desc
+		end
+		return desc
+	end
+	return ""
+end

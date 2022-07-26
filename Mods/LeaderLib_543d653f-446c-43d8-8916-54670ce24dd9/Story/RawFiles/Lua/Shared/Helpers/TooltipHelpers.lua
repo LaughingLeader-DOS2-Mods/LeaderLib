@@ -334,7 +334,7 @@ local function ReplacePlaceholders(str, character)
 				translatedText = string.gsub(translatedText, "%%", "%%%%")
 				translatedText = ReplacePlaceholders(translatedText, character)
 			end
-			output = string.gsub(output, StringHelpers.EscapeMagic(v), StringHelpers.EscapeMagic(translatedText))
+			output = string.gsub(output, StringHelpers.EscapeMagic(v), translatedText)
 		elseif fallback then
 			output = fallback
 		end
@@ -350,7 +350,7 @@ local function ReplacePlaceholders(str, character)
 			translatedText = "" 
 		end
 		--local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-		output = string.gsub(output, StringHelpers.EscapeMagic(v), StringHelpers.EscapeMagic(translatedText))
+		output = string.gsub(output, StringHelpers.EscapeMagic(v), translatedText)
 	end
 	return output
 end

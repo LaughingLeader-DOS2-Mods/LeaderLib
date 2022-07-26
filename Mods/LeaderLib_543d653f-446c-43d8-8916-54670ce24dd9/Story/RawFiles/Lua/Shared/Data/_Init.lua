@@ -11,7 +11,7 @@ Data.ObjectStats = {}
 --Data.ObjectStats = {[""] = true}
 
 ---@type Enum
-Data.DamageTypeEnums = {
+Data.DamageTypes = {
 	None = 0,
 	Physical = 1,
 	Piercing = 2,
@@ -38,8 +38,9 @@ Data.DamageTypeEnums = {
 	[11] = "Shadow",
 }
 
-Classes.Enum:Create(Data.DamageTypeEnums)
-Data.DamageTypes = Data.DamageTypeEnums
+Classes.Enum:Create(Data.DamageTypes)
+---@deprecated
+Data.DamageTypeEnums = Data.DamageTypes
 
 Data.DamageTypeToResistance = {
 	Physical = "PhysicalResistance",
@@ -98,6 +99,7 @@ Data.EquipmentSlots = {
 }
 
 Classes.Enum:Create(Data.EquipmentSlots)
+---@deprecated
 Data.EquipmentSlotNames = Data.EquipmentSlots
 
 ---@type Enum
@@ -129,7 +131,7 @@ Classes.Enum:Create(Data.VisibleEquipmentSlots)
 
 --- Enums for every ability in the game.
 ---@type Enum
-Data.AbilityEnum = {
+Data.Ability = {
 	WarriorLore = 0,
 	RangerLore = 1,
 	RogueLore = 2,
@@ -173,11 +175,12 @@ Data.AbilityEnum = {
 	--Sentinel = 40,
 }
 
-Classes.Enum:Create(Data.AbilityEnum)
-Data.Ability = Data.AbilityEnum
+Classes.Enum:Create(Data.Ability)
+---@deprecated
+Data.AbilityEnum = Data.Ability
 
 ---@type Enum
-Data.AttributeEnum = {
+Data.Attribute = {
 	Strength = 0,
 	Finesse = 1,
 	Intelligence = 2,
@@ -191,11 +194,12 @@ Data.AttributeEnum = {
 	[4] ="Memory",
 	[5] ="Wits"
 }
-Classes.Enum:Create(Data.AttributeEnum)
-Data.Attribute = Data.AttributeEnum
+Classes.Enum:Create(Data.Attribute)
+---@deprecated
+Data.AttributeEnum = Data.Attribute
 
 ---@type Enum
-Data.TalentEnum = {
+Data.Talents = {
 	ItemMovement = 1,
 	ItemCreation = 2,
 	Flanking = 3,
@@ -326,8 +330,9 @@ Data.TalentEnum = {
 	MagicCycles = 128,
 }
 
-Classes.Enum:Create(Data.TalentEnum)
-Data.Talents = Data.TalentEnum
+Classes.Enum:Create(Data.Talents)
+---@deprecated
+Data.TalentEnum = Data.Talents
 
 Data.ItemRarity = {
 	Common = 0,

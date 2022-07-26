@@ -745,7 +745,7 @@ function GameHelpers.ParseResistancePenetrationTag(tag)
 		local strippedTag = string.gsub(tag, TAG_PREFIX, "")
 		local damageType = string.match(strippedTag, "%a+")
 		local amount = tonumber(string.match(strippedTag, "%d+"))
-		if damageType and amount and Data.DamageTypeEnums[damageType] then
+		if damageType and amount and Data.DamageTypes[damageType] then
 			return damageType,amount
 		end
 	end

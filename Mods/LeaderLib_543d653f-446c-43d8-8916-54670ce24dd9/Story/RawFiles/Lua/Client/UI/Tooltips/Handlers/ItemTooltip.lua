@@ -166,7 +166,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 			local requirementsMet = true
 			local hasCharacterStats = character ~= nil and character.Stats ~= nil
 			for i,v in pairs(item.Stats.Requirements) do
-				if Data.AttributeEnum[v.Requirement] ~= nil then
+				if Data.Attribute[v.Requirement] ~= nil then
 					attributeName = LocalizedText.AttributeNames[v.Requirement].Value
 					if type(v.Param) == "number" and v.Param > 0 then
 						attributeValue = v.Param

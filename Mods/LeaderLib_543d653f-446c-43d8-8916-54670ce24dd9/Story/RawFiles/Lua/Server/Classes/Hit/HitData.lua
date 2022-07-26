@@ -245,7 +245,7 @@ function HitData:RedirectDamage(target, multiplier, aggregate)
 	end
 	local reduceBy = math.max(0, 1.0 - multiplier)
 	if reduceBy == 0 then
-		for damageType,_ in pairs(Data.DamageTypeEnums) do
+		for _,damageType in Data.DamageTypes:Get() do
 			self.DamageList:Clear(damageType)
 		end
 	else
@@ -343,7 +343,7 @@ end
 
 ---Clears all damage, or damage from a specific type, from the damage list and recalculates totals / lifesteal.
 function HitData:ClearAllDamage()
-	for damageType,_ in pairs(Data.DamageTypeEnums) do
+	for _,damageType in Data.DamageTypes:Get() do
 		self.DamageList:Clear(damageType)
 	end
 	self:ApplyDamageList(true)

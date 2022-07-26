@@ -376,12 +376,12 @@ Ext.RegisterConsoleCommand("addskillset", function(command, name, addRequirement
 					if stat then
 						for _,req in pairs(stat.MemorizationRequirements) do
 							if req.Not == false then
-								if Data.AbilityEnum[req.Requirement] then
+								if Data.Ability[req.Requirement] then
 									local addAmount = req.Param - host.Stats[req.Requirement]
 									if addAmount > 0 then
 										CharacterAddAbility(host.MyGuid, req.Requirement, addAmount)
 									end
-								elseif Data.AttributeEnum[req.Requirement] then
+								elseif Data.Attribute[req.Requirement] then
 									local addAmount = req.Param - host.Stats[req.Requirement]
 									if addAmount > 0 then
 										CharacterAddAttribute(host.MyGuid, req.Requirement, addAmount)

@@ -334,7 +334,7 @@ local function OverrideStats(data, statsLoadedState)
 				local changed = false
 				if memorizationReq ~= nil then
 					for i,v in pairs(memorizationReq) do
-						if Data.AbilityEnum[v.Requirement] ~= nil and type(v.Param) == "number" and v.Param > 1 then
+						if Data.Ability[v.Requirement] ~= nil and type(v.Param) == "number" and v.Param > 1 then
 							v.Param = 1
 							changed = true
 						end

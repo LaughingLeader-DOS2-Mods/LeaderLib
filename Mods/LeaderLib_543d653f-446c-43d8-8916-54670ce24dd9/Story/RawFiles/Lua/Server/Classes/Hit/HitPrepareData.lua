@@ -117,7 +117,7 @@ local function CreateDamageMetaList(handle)
 		if k == "ToTable" then
 			return function ()
 				local newTable = {}
-				for num,damageType in pairs(Data.DamageTypeEnums) do
+				for _,damageType in Data.DamageTypes:Get() do
 					if NRD_HitGetDamage(handle, damageType) > 0 then
 						newTable[#newTable+1] = {
 							Amount = NRD_HitGetDamage(handle, damageType),
@@ -128,7 +128,7 @@ local function CreateDamageMetaList(handle)
 				return newTable
 			end
 		else
-			if Data.DamageTypeEnums[k] then
+			if Data.DamageTypes[k] then
 				return NRD_HitGetDamage(handle, k)
 			else
 				error(string.format("%s is not a valid damage type!", k), 2)
@@ -136,7 +136,7 @@ local function CreateDamageMetaList(handle)
 		end
 	end
 	meta.__newindex = function(tbl,k,value)
-		if Data.DamageTypeEnums[k] then
+		if Data.DamageTypes[k] then
 			if value == nil or value == 0 then
 				NRD_HitClearDamage(handle, k)
 			elseif type(value) == "number" then
@@ -152,7 +152,7 @@ local function CreateDamageMetaList(handle)
 	meta.__pairs = function (tbl)
 		local i = 0
 		local function iter(tbl)
-			local damageType = Data.DamageTypeEnums[i]
+			local damageType = Data.DamageTypes[i]
 			if damageType ~= nil then
 				i = i + 1
 				return damageType,NRD_HitGetDamage(handle, damageType) or 0

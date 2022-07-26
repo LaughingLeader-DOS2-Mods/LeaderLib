@@ -240,12 +240,12 @@ function GameHelpers.Skill.CanMemorize(char, skill)
         if memRequirements then
             for i,v in pairs(memRequirements) do
                 if v.Not == false and type(v.Param) == "number" and v.Param > 0 then
-                    if Data.AttributeEnum[v.Requirement] ~= nil then
+                    if Data.Attribute[v.Requirement] ~= nil then
                         local val = CharacterGetAttribute(char, v.Requirement)
                         if val < v.Param then
                             return false
                         end
-                    elseif Data.AbilityEnum[v.Requirement] ~= nil then
+                    elseif Data.Ability[v.Requirement] ~= nil then
                         local val = CharacterGetAbility(char, v.Requirement)
                         if val < v.Param then
                             return false

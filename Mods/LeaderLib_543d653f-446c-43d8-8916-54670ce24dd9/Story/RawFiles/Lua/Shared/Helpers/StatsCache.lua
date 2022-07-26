@@ -213,7 +213,7 @@ local _cachedSkillToSkillbook = {}
 local function _StatHasAbilityRequirement(stat)
 	if stat.Requirements then
 		for _,v in pairs(stat.Requirements) do
-			if Data.AbilityEnum[v.Requirement] then
+			if Data.Ability[v.Requirement] then
 				return true
 			end
 		end

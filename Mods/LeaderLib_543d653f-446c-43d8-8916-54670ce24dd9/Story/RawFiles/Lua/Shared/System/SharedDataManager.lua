@@ -1,10 +1,8 @@
-if GameHelpers.Data == nil then
-	GameHelpers.Data = {}
-end
+if GameHelpers.Data == nil then GameHelpers.Data = {} end
 
 local ClientCharacterData = Classes.ClientCharacterData
 
-local isClient = Ext.IsClient()
+local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
 
 ---@class LEVELTYPE
@@ -80,7 +78,7 @@ SetCurrentLevelData()
 Ext.RegisterListener("SessionLoading", SetCurrentLevelData)
 Ext.RegisterListener("SessionLoaded", SetCurrentLevelData)
 
-if isClient then
+if _ISCLIENT then
 	---@type ClientData
 	Client = Classes.ClientData:Create("")
 else
@@ -536,7 +534,7 @@ function GameHelpers.Data.GetPersistentVars(modTable, createIfMissing, ...)
 	return nil
 end
 
-if isClient then
+if _ISCLIENT then
 	local defaultEmptyCharacter = Classes.ClientCharacterData:Create()
 
 	local function GetClientCharacter(profile, netid)

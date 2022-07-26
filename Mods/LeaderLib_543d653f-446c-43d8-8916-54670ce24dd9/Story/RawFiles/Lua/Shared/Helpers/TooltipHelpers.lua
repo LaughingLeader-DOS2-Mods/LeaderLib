@@ -186,14 +186,12 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 end
 
 ---@param str string|TranslatedString
----@param character EclCharacter|EsvCharacter
+---@param character CharacterParam
 local function ReplacePlaceholders(str, character)
 	if not str then
 		return str
 	end
-	if character ~= nil and _type(character) == "string" then
-		character = GameHelpers.GetCharacter(character)
-	end
+	local character = GameHelpers.GetCharacter(character)
 	if character == nil then
 		if _ISCLIENT then
 			if Client then
@@ -357,7 +355,7 @@ end
 
 ---Replace placeholder text in strings, such as ExtraData, Skill, etc.
 ---@param str string|TranslatedString
----@param character EclCharacter|EsvCharacter|nil Optional character to use for the tooltip.
+---@param character CharacterParam|nil Optional character to use for the tooltip.
 ---@return string
 function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
 	local b,result = xpcall(ReplacePlaceholders, debug.traceback, str, character)

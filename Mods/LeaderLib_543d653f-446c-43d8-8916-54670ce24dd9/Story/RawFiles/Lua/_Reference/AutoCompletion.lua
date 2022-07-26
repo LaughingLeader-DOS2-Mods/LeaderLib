@@ -8,10 +8,27 @@ if not Mods then Mods = {} end
 if not Mods.LeaderLib 
 	then Mods.LeaderLib = {
 		Import = Import,
-		GameHelpers = GameHelpers,
+		--AttackManager = AttackManager,
+		Classes = Classes,
+		CombatLog = CombatLog,
 		Common = Common,
+		Data = Data,
+		EffectManager = EffectManager,
+		Events = Events,
+		GameHelpers = GameHelpers,
+		GameSettingsManager = GameSettingsManager,
+		Input = Input,
+		LocalizedText = LocalizedText,
+		SceneManager = SceneManager,
+		SettingsManager = SettingsManager,
+		SkillManager = SkillManager,
+		StatusManager = StatusManager,
 		StringHelpers = StringHelpers,
-		TableHelpers = TableHelpers
+		TableHelpers = TableHelpers,
+		Timer = Timer,
+		TurnCounter = TurnCounter,
+		UI = UI,
+		VisualManager = VisualManager,
 	}
 end
 

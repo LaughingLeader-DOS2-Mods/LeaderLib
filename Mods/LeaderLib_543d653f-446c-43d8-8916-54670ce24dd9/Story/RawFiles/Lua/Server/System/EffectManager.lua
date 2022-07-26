@@ -619,9 +619,17 @@ end
 
 Events.RegionChanged:Subscribe(function (e)
 	if e.State == REGIONSTATE.STARTED then
-		InvalidateLoopEffects(e.Region)
+		if Vars.PersistentVarsLoaded then
+			InvalidateLoopEffects(e.Region)
+		end
 	elseif e.State == REGIONSTATE.GAME then
-		EffectManager.RestoreEffects(e.Region)
+		if Vars.PersistentVarsLoaded then
+			EffectManager.RestoreEffects(e.Region)
+		else
+			Events.PersistentVarsLoaded:Subscribe(function (e)
+				EffectManager.RestoreEffects(SharedData.RegionData.Current)
+			end, {MatchArgs={ID=ModuleUUID}, Once=true})
+		end
 	elseif e.State == REGIONSTATE.ENDED then
 		EffectManager.DeleteLoopEffects(e.Region)
 	end

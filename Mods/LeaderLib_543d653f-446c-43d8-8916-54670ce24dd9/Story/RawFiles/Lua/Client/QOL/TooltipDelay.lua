@@ -16,6 +16,10 @@ local _TOOLTIP_REQUEST_CALLS = {
 	showTagTooltip = "Tag",
 	showTalentTooltip = "Talent",
 	showTooltip = "Generic",
+	--CharacterExpansionLib
+	showAbilityTooltipCustom = "Ability",
+	showTalentTooltipCustom = "Talent",
+	showStatTooltipCustom = "Stat",
 }
 
 local lastCall = ""

@@ -449,11 +449,22 @@ end
 ---@return UUID|NETID
 function GameHelpers.GetObjectID(object)
 	local t = _type(object)
-	if t == "userdata" and object.NetID then
-		if not _ISCLIENT then
-			return object.MyGuid
-		else
-			return object.NetID
+	if t == "userdata" then
+		if IsHandle(object) then
+			local obj = GameHelpers.TryGetObject(object)
+			if obj then
+				if not _ISCLIENT then
+					return obj.MyGuid
+				else
+					return obj.NetID
+				end
+			end
+		elseif object.NetID then
+			if not _ISCLIENT then
+				return object.MyGuid
+			else
+				return object.NetID
+			end
 		end
 	elseif t == "string" or t == "number" then
 		local obj = GameHelpers.TryGetObject(object)

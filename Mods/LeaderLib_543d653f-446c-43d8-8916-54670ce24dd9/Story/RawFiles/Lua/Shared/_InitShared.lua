@@ -1,5 +1,9 @@
+---A collection of functions designed to make common tasks easier.  
+---GameHelpers itself does not contain data.  
 ---@class LeaderLibGameHelpers
 GameHelpers = {}
+
+---Manager tables that handle state changes and include ways to register callbacks for specific events.  
 ---@class LeaderLibManagers
 Managers = {}
 

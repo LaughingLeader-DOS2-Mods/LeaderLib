@@ -19,6 +19,7 @@ if not Mods.LeaderLib
 		GameSettingsManager = GameSettingsManager,
 		Input = Input,
 		LocalizedText = LocalizedText,
+		Managers = Managers,
 		SceneManager = SceneManager,
 		SettingsManager = SettingsManager,
 		SkillManager = SkillManager,

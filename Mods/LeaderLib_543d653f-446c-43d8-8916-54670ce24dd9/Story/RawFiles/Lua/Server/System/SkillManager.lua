@@ -3,6 +3,8 @@ if SkillManager == nil then
 	SkillManager = {}
 end
 
+Managers.Skill = SkillManager
+
 ---A temporary table used to store data for a skill, including targets / skill information.
 ---@type table<string,SkillEventData>
 local skillEventDataTable = {}

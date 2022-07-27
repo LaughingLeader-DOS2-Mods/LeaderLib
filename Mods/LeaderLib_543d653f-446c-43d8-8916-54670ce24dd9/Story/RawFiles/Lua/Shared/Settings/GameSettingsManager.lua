@@ -1,7 +1,8 @@
 if GameSettingsManager == nil then
 	GameSettingsManager = {}
 end
-GameSettingsManager.__index = GameSettingsManager
+Managers.GameSettings = GameSettingsManager
+
 function GameSettingsManager.GetSettings()
 	if not GameSettings.Loaded then
 		GameSettingsManager.Load(false)

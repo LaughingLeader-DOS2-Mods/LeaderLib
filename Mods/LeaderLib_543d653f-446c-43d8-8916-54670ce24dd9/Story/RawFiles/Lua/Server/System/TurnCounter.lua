@@ -3,6 +3,8 @@ if TurnCounter == nil then
 	TurnCounter = {}
 end
 
+Managers.TurnCounter = TurnCounter
+
 TurnCounter.DefaultTimerSpeed = 6000
 TurnCounter.CombatMinDistance = 6.0
 

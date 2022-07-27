@@ -1,5 +1,7 @@
 ---@class LeaderLibGameHelpers
 GameHelpers = {}
+---@class LeaderLibManagers
+Managers = {}
 
 local function InitTable(name, target)
 	target = target or Mods.LeaderLib

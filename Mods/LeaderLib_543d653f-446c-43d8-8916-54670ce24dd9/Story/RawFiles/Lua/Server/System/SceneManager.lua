@@ -5,6 +5,8 @@ if SceneManager == nil then
 	SceneManager = {}
 end
 
+Managers.Scene = SceneManager
+
 ---@type SceneData[]
 SceneManager.Scenes = {}
 SceneManager.ActiveScene = {ID = "", State = ""}

@@ -4,6 +4,8 @@ if EffectManager == nil then
 	EffectManager = {}
 end
 
+Managers.FX = EffectManager
+
 local _INTERNAL = {}
 
 EffectManager._Internal = _INTERNAL

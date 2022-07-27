@@ -39,6 +39,8 @@ ModMenuManager = {
 	LastScrollPosition = 0
 }
 
+Managers.ModMenu = ModMenuManager
+
 local CreatedByText = Classes.TranslatedString:CreateFromKey("LeaderLib_Tooltip_CreatedBy", "[1]<br><font color='#33FF99'>Created by [2]</font>")
 
 ---@param name string

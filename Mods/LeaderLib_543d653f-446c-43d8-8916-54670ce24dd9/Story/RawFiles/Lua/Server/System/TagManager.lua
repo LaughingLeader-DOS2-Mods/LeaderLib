@@ -2,6 +2,8 @@ if TagManager == nil then
 	TagManager = {}
 end
 
+Managers.Tag = TagManager
+
 ---@private
 TagManager.Callbacks = {
 	TagObject = {}

@@ -18,6 +18,7 @@ local _IsValidHandle = GameHelpers.IsValidHandle
 if StatusManager == nil then
 	StatusManager = {}
 end
+Managers.Status = StatusManager
 
 ---Allow BeforeAttempt and Attempt events to invoke on dead characters. Only specific engine statuses can apply to corpses, so this is normally ignored.
 StatusManager.AllowDead = false

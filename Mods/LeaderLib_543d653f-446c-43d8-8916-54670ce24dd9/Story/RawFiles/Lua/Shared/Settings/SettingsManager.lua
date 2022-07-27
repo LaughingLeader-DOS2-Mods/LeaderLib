@@ -2,6 +2,8 @@ SettingsManager = {
 	LoadedInitially = false
 }
 
+Managers.Settings = SettingsManager
+
 local isClient = Ext.IsClient()
 
 local ModSettings = Classes.ModSettingsClasses.ModSettings

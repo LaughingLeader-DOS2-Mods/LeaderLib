@@ -4,6 +4,8 @@ local _EXTVERSION = Ext.Version()
 ---@class LeaderLibVisualManager
 VisualManager = {}
 
+Managers.Visual = VisualManager
+
 local _ObjToNetID = nil
 _ObjToNetID = function(key, value, t)
 	if t == "userdata" and value.NetID then

@@ -1,5 +1,7 @@
 Ext.Require("BootstrapShared.lua")
 
+Client = Classes.ClientData:Create("")
+
 if UI == nil then
 	---@class LeaderLibUIMain
 	UI = {}
@@ -63,6 +65,7 @@ end
 Ext.Require("Client/Classes/_Init.lua")
 Ext.Require("Client/Data/_Init.lua")
 Ext.Require("Client/ClientHelpers.lua")
+Ext.Require("Client/Helpers/CharacterCreationHelpers.lua")
 Ext.Require("Client/ClientNetMessages.lua")
 Ext.Require("Client/InputManager.lua")
 

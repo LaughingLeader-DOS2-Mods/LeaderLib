@@ -282,6 +282,24 @@ function StringHelpers.IsUUID(str)
 	return _match(str, _ISUUID_PATTERN) ~= nil
 end
 
+local _ISHANDLE_PATTERN = "h%x%x%x%x%x%x%x%xg%x%x%x%xg%x%x%x%xg%x%x%x%xg%x%x%x%x%x%x%x%x%x%x%x%x"
+
+---Checks if a string is a Translated String handle.
+---@param str string
+---@return boolean
+function StringHelpers.IsTranslatedStringHandle(str)
+	if _type(str) ~= "string" then
+		return false
+	end
+	if str == nil or str == "" then
+		return false
+	end
+	if str == StringHelpers.UNSET_HANDLE then
+		return true
+	end
+	return _match(str, _ISHANDLE_PATTERN) ~= nil
+end
+
 --- Split a version integer into separate values
 ---@param version integer
 ---@return integer,integer,integer,integer

@@ -20,7 +20,7 @@ end
 
 InitTable("Classes")
 InitTable("Common")
-InitTable({"_INTERNAL", "Audio", "Damage", "Ext", "Item", "Math", "Net", "Skill", "Status", "Tooltip", "UI", "Utils"}, GameHelpers)
+InitTable({"_INTERNAL", "Audio", "CC", "Damage", "Ext", "Item", "Math", "Net", "Skill", "Status", "Tooltip", "UI", "Utils"}, GameHelpers)
 
 local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()

@@ -10,6 +10,7 @@ if not Mods.LeaderLib
 		Import = Import,
 		--AttackManager = AttackManager,
 		Classes = Classes,
+		Client = Client,
 		CombatLog = CombatLog,
 		Common = Common,
 		Data = Data,

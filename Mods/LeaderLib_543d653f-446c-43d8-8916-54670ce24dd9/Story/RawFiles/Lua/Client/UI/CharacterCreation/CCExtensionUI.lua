@@ -16,6 +16,8 @@ UIExtensions.CC = CCExt
 
 local CharacterCreation = Classes.UIWrapper:CreateFromType(Data.UIType.characterCreation, {ControllerID = Data.UIType.characterCreation_c, IsControllerSupported = true})
 
+UIExtensions.CharacterCreation = CharacterCreation
+
 function CCExt.GetInstance(skipSetup)
 	local instance = Ext.GetUI(CCExt.ID) or Ext.GetBuiltinUI(CCExt.SwfPath)
 	if not instance and skipSetup ~= true then
@@ -322,3 +324,27 @@ Events.RegionChanged:Subscribe(function (e)
 		DestroyInstance()
 	end
 end)
+
+--CharacterCreation:RegisterInvokeListener("selectOption", function (self, ui, event, selectorId, optId)
+CharacterCreation:RegisterInvokeListener("setPanel", function (self, ui, event, panelId)
+	Timer.Cancel("LeaderLib_CC_CheckColors")
+	if panelId == 1 then
+		Timer.StartOneshot("LeaderLib_CC_CheckColors", 10, function (e)
+			--Workaround for the color names not updating if you change the skin color before the appearance panel is selected
+			local this = CharacterCreation.Root
+			if this then
+				local player = Client:GetCharacter()
+				if player and player.PlayerCustomData then
+					local skinColor = player.PlayerCustomData.SkinColor
+					if skinColor and skinColor > 0 then
+						GameHelpers.CC.SetColor("Skin", skinColor, "Value", true)
+					end
+					local hairColor = player.PlayerCustomData.HairColor
+					if hairColor and hairColor > 0 then
+						GameHelpers.CC.SetColor("Hair", hairColor, "Value", true)
+					end
+				end
+			end
+		end)
+	end
+end, "After", "All")

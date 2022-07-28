@@ -175,7 +175,7 @@ function ClientData:Create(profile, id, isHost)
 	if this.IsHost == nil then
 		this.IsHost = false
 	end
-	setmetatable(this, self)
+	setmetatable(this, ClientData)
     return this
 end
 

@@ -78,10 +78,7 @@ SetCurrentLevelData()
 Ext.RegisterListener("SessionLoading", SetCurrentLevelData)
 Ext.RegisterListener("SessionLoaded", SetCurrentLevelData)
 
-if _ISCLIENT then
-	---@type ClientData
-	Client = Classes.ClientData:Create("")
-else
+if not _ISCLIENT then
 	---@param id integer
 	---@param profile string
 	---@param uuid string

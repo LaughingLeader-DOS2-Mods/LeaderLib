@@ -519,3 +519,86 @@ function GameHelpers.Stats.GetDisplayName(id, statType)
 	end
 	return ""
 end
+
+---@alias RacePresetColorType "Hair"|"Skin"|"Cloth"
+---@alias _GameHelpers_Stats_GetRacePresetColorEntry {ID:integer, Value:integer, Index:integer, Name:string, Handle:string}
+
+---@class _GameHelpers_Stats_GetAllRacePresetColorsResults
+---@field Cloth table<string, _GameHelpers_Stats_GetRacePresetColorEntry>
+---@field Hair table<string, _GameHelpers_Stats_GetRacePresetColorEntry>
+---@field Skin table<string, _GameHelpers_Stats_GetRacePresetColorEntry>
+
+---Get colors for a race preset in dictionary format.  
+---@param raceName string
+---@param colorType RacePresetColorType|nil Defaults to Skin if not specified.
+---@return table<string, _GameHelpers_Stats_GetRacePresetColorEntry>
+function GameHelpers.Stats.GetRacePresetColors(raceName, colorType)
+	local colors = {}
+	local ccStats = Ext.Stats.GetCharacterCreation()
+	assert(ccStats ~= nil, "Ext.Stats.GetCharacterCreation() failed")
+	colorType = colorType or "Skin"
+	---@type CharacterCreationRaceDesc
+	local raceData = nil
+	for _,v in pairs(ccStats.RacePresets) do
+		if v.RaceName == raceName then
+			raceData = v
+			break
+		end
+	end
+	assert(raceData ~= nil, string.format("Failed to find race preset for name (%s)", raceName))
+	local targetColors = raceData.SkinColors
+	if colorType == "Cloth" then
+		targetColors = raceData.ClothColors
+	elseif colorType == "Hair" then
+		targetColors = raceData.HairColors
+	end
+	for i,v in pairs(targetColors) do
+		local colorName = GameHelpers.GetTranslatedStringValue(v.ColorName)
+		local handle = v.ColorName.Handle.Handle
+		local key = handle ~= StringHelpers.UNSET_HANDLE and handle or colorName
+		colors[key] = {ID = v.ID, Value = v.Value, Index = i-1, Name = colorName, Handle = handle}
+	end
+	return colors
+end
+
+---Get all colors for a race preset in dictionary format.  
+---@param raceName string
+---@return GameHelpers_Stats_GetAllRacePresetColorsResults
+function GameHelpers.Stats.GetAllRacePresetColors(raceName)
+	local colors = {
+		Hair = {},
+		Cloth = {},
+		Skin = {}
+	}
+	local ccStats = Ext.Stats.GetCharacterCreation()
+	assert(ccStats ~= nil, "Ext.Stats.GetCharacterCreation() failed")
+	colorType = colorType or "Skin"
+	---@type CharacterCreationRaceDesc
+	local raceData = nil
+	for _,v in pairs(ccStats.RacePresets) do
+		if v.RaceName == raceName then
+			raceData = v
+			break
+		end
+	end
+	assert(raceData ~= nil, string.format("Failed to find race preset for name (%s)", raceName))
+	for i,v in pairs(raceData.SkinColors) do
+		local colorName = GameHelpers.GetTranslatedStringValue(v.ColorName)
+		local handle = v.ColorName.Handle.Handle
+		local key = handle ~= StringHelpers.UNSET_HANDLE and handle or colorName
+		colors.Skin[key] = {ID = v.ID, Value = v.Value, Index = i-1, Handle = handle, Name = colorName}
+	end
+	for i,v in pairs(raceData.ClothColors) do
+		local colorName = GameHelpers.GetTranslatedStringValue(v.ColorName)
+		local handle = v.ColorName.Handle.Handle
+		local key = handle ~= StringHelpers.UNSET_HANDLE and handle or colorName
+		colors.Cloth[key] = {ID = v.ID, Value = v.Value, Index = i-1, Handle = handle, Name = colorName}
+	end
+	for i,v in pairs(raceData.HairColors) do
+		local colorName = GameHelpers.GetTranslatedStringValue(v.ColorName)
+		local handle = v.ColorName.Handle.Handle
+		local key = handle ~= StringHelpers.UNSET_HANDLE and handle or colorName
+		colors.Hair[key] = {ID = v.ID, Value = v.Value, Index = i-1, Handle = handle, Name = colorName}
+	end
+	return colors
+end

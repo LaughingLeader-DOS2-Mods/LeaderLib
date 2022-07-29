@@ -122,3 +122,22 @@ end
 Ext.Require("Shared/Debug/ConsoleWindowHelpers.lua")
 Ext.Require("Shared/Debug/SharedCommands.lua")
 Ext.Require("Shared/Patches/ModPatching.lua")
+
+if not Ext.IsClient() then
+	---@class CharacterDiedEventStateEnum
+	Vars.CharacterDiedState = {
+		StatusBeforeAttempt = 0,
+		StatusAttempt = 1,
+		BeforeDying = 2,
+		Dying = 3,
+		StatusApplied = 4,
+		Died = 5,
+		[0] = "StatusBeforeAttempt",
+		[1] = "StatusAttempt",
+		[2] = "BeforeDying",
+		[3] = "Dying",
+		[4] = "StatusApplied",
+		[5] = "Died",
+	}
+	Classes.Enum:Create(Vars.CharacterDiedState)
+end

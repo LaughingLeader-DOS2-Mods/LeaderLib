@@ -471,7 +471,7 @@ StatusManager.Register.Type = {
 	end
 }
 
----@param target CharacterParam
+---@param target ObjectParam
 ---@param status string
 function StatusManager.IsPermanentStatusActive(target, status)
 	local GUID = GameHelpers.GetUUID(target)
@@ -482,33 +482,43 @@ function StatusManager.IsPermanentStatusActive(target, status)
 	return false
 end
 
----@param target CharacterParam
+---@param target ObjectParam
 ---@param status string
 ---@param enabled boolean
----@param source CharacterParam|nil A source to use when applying the status, if any. Defaults to the target.
+---@param source ObjectParam|nil A source to use when applying the status, if any. Defaults to the target.
 function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 	local GUID = GameHelpers.GetUUID(target)
 	local statusIsActive = GameHelpers.Status.IsActive(target, status)
 	if not enabled then
+		local changed = false
 		if PersistentVars.ActivePermanentStatuses[GUID] then
+			changed = PersistentVars.ActivePermanentStatuses[GUID][status] ~= nil
 			PersistentVars.ActivePermanentStatuses[GUID][status] = nil
 			if Common.TableLength(PersistentVars.ActivePermanentStatuses[GUID], true) == 0 then
 				PersistentVars.ActivePermanentStatuses[GUID] = nil
+				changed = true
 			end
 		end
-		GameHelpers.Net.Broadcast("LeaderLib_UpdatePermanentStatuses", {Target=GameHelpers.GetNetID(target), StatusId = status, Enabled = false})
+		if changed then
+			GameHelpers.Net.Broadcast("LeaderLib_UpdatePermanentStatuses", {Target=GameHelpers.GetNetID(target), StatusId = status, Enabled = false})
+		end
 
 		if statusIsActive then
 			GameHelpers.Status.Remove(target, status)
 			statusIsActive = false
 		end
 	else
+		local changed = false
 		if PersistentVars.ActivePermanentStatuses[GUID] == nil then
 			PersistentVars.ActivePermanentStatuses[GUID] = {}
+			changed = true
 		end
+		changed = changed or PersistentVars.ActivePermanentStatuses[GUID][status] == nil
 		local sourceId = source and GameHelpers.GetUUID(source) or GUID
 		PersistentVars.ActivePermanentStatuses[GUID][status] = sourceId
-		GameHelpers.Net.Broadcast("LeaderLib_UpdatePermanentStatuses", {Target=GameHelpers.GetNetID(target), StatusId = status, Enabled = true})
+		if changed then
+			GameHelpers.Net.Broadcast("LeaderLib_UpdatePermanentStatuses", {Target=GameHelpers.GetNetID(target), StatusId = status, Enabled = true})
+		end
 		if not statusIsActive then
 			--fassert(_type(status) == "string" and GameHelpers.Stats.Exists(status), "Status (%s) does not exist.", status)
 			GameHelpers.Status.Apply(target, status, -1.0, true, sourceId or GUID)
@@ -519,23 +529,49 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 end
 
 ---Applies permanent status. The given status will be blocked from deletion.
----@param target CharacterParam
----@param status string
----@param source CharacterParam|nil A source to use when applying the status, if any. Defaults to the target.
+---@param target ObjectParam
+---@param status string|string[]
+---@param source ObjectParam|nil A source to use when applying the status, if any. Defaults to the target.
 ---@return boolean isActive Returns whether the permanent status is active or not.
 function StatusManager.ApplyPermanentStatus(target, status, source)
-	return _INTERNAL.SetPermanentStatus(target, status, true, source)
+	local t = _type(status)
+	if t == "table" then
+		local success = false
+		for i=1,#status do
+			if StatusManager.ApplyPermanentStatus(target, status[i]) then
+				success = true
+			end
+		end
+		return success
+	elseif t == "string" then
+		return _INTERNAL.SetPermanentStatus(target, status, true, source)
+	else
+		error(string.format("Invalid status param (%s) type(%s)", status, t), 2)
+	end
 end
 
 ---Remove a registered permanent status for the given character.
----@param target CharacterParam
----@param status string
+---@param target ObjectParam
+---@param status string|string[]
 function StatusManager.RemovePermanentStatus(target, status)
-	return _INTERNAL.SetPermanentStatus(target, status, false)
+	local t = _type(status)
+	if t == "table" then
+		local success = false
+		for i=1,#status do
+			if StatusManager.RemovePermanentStatus(target, status[i]) then
+				success = true
+			end
+		end
+		return success
+	elseif t == "string" then
+		return _INTERNAL.SetPermanentStatus(target, status, false)
+	else
+		error(string.format("Invalid status param (%s) type(%s)", status, t), 2)
+	end
 end
 
 ---Removed all registered permanent statuses for the given character.
----@param target CharacterParam
+---@param target ObjectParam
 function StatusManager.RemoveAllPermanentStatuses(target)
 	local GUID = GameHelpers.GetUUID(target)
 	if GUID and PersistentVars.ActivePermanentStatuses then
@@ -557,9 +593,9 @@ function StatusManager.RemoveAllPermanentStatuses(target)
 end
 
 ---Makes a permanent status active or not, depending on if it's active already. The given status will be blocked from deletion.
----@param target CharacterParam
+---@param target ObjectParam
 ---@param status string
----@param source CharacterParam|nil A source to use when applying the status, if any. Defaults to the target.
+---@param source ObjectParam|nil A source to use when applying the status, if any. Defaults to the target.
 ---@return boolean isActive Returns whether the permanent status is active or not.
 function StatusManager.TogglePermanentStatus(target, status, source)
 	return _INTERNAL.SetPermanentStatus(target, status, not StatusManager.IsPermanentStatusActive(target, status), source)
@@ -764,6 +800,18 @@ local function IgnoreDead(target, status)
 end
 
 RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targetGUID,statusID,handle,sourceGUID)
+	if statusID == "DYING" and ObjectIsCharacter(targetGUID) == 1 then
+		local target = GameHelpers.GetCharacter(targetGUID)
+		if target then
+			Events.CharacterDied:Invoke({
+				Character = target,
+				IsPlayer = GameHelpers.Character.IsPlayer(target),
+				State = "StatusBeforeAttempt",
+				StateIndex = Vars.CharacterDiedState.StatusBeforeAttempt,
+			})
+		end
+	end
+
 	if IgnoreDead(targetGUID, statusID) then
 		return
 	end
@@ -887,7 +935,20 @@ local function ParseStatusAttempt(targetGUID,statusID,sourceGUID)
 	end
 end
 
-RegisterProtectedOsirisListener("CharacterStatusAttempt", 3, "after", ParseStatusAttempt)
+RegisterProtectedOsirisListener("CharacterStatusAttempt", 3, "after", function (targetGUID, statusID, sourceGUID)
+	if statusID == "DYING" then
+		local target = GameHelpers.GetCharacter(targetGUID)
+		if target then
+			Events.CharacterDied:Invoke({
+				Character = target,
+				IsPlayer = GameHelpers.Character.IsPlayer(target),
+				State = "StatusAttempt",
+				StateIndex = Vars.CharacterDiedState.StatusAttempt,
+			})
+		end
+	end
+	ParseStatusAttempt(targetGUID, statusID, sourceGUID)
+end)
 RegisterProtectedOsirisListener("ItemStatusAttempt", 3, "after", ParseStatusAttempt)
 
 local function TrackStatusSource(target, status, source)
@@ -1069,7 +1130,20 @@ local function ParseStatusRemoved(target,status)
 	end
 end
 
-RegisterProtectedOsirisListener("CharacterStatusApplied", 3, "after", ParseStatusApplied)
+RegisterProtectedOsirisListener("CharacterStatusApplied", 3, "after", function (targetGUID, statusID, sourceGUID)
+	if statusID == "DYING" then
+		local target = GameHelpers.GetCharacter(targetGUID)
+		if target then
+			Events.CharacterDied:Invoke({
+				Character = target,
+				IsPlayer = GameHelpers.Character.IsPlayer(target),
+				State = "StatusApplied",
+				StateIndex = Vars.CharacterDiedState.StatusApplied,
+			})
+		end
+	end
+	ParseStatusApplied(targetGUID, statusID, sourceGUID)
+end)
 RegisterProtectedOsirisListener("ItemStatusChange", 3, "after", ParseStatusApplied)
 RegisterProtectedOsirisListener("CharacterStatusRemoved", 3, "before", ParseStatusRemoved)
 RegisterProtectedOsirisListener("ItemStatusRemoved", 3, "before", ParseStatusRemoved)

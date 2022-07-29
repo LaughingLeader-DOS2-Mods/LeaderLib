@@ -14,6 +14,8 @@ Ext.Require("Shared/Classes/SubscribableEventArgs.lua")
 ---@field Character EsvCharacter|EclCharacter
 ---@field IsPlayer boolean
 
+---Called when a character is resurrected.  
+---🔨🔧**Server/Client**🔧🔨 
 ---@type LeaderLibSubscribableEvent<CharacterResurrectedEventArgs>
 Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurrected", {
 	SyncInvoke=true,
@@ -729,6 +731,27 @@ if not _ISCLIENT then
 	---@type LeaderLibSubscribableEvent<SyncDataEventArgs>
 	Events.SyncData = Classes.SubscribableEvent:Create("SyncData", {
 		ArgsKeyOrder={"UserID", "Profile", "UUID", "IsHost"}
+	})
+
+	---@alias CharacterDiedEventStateID string
+	---|"StatusBeforeAttempt" # [0] - NRD_OnStatusAttempt with the DYING status
+	---|"StatusAttempt" # [1] - CharacterStatusAttempt/ItemStatusAttempt with the DYING status
+	---|"BeforeDying" # [2] - CharacterPrecogDying
+	---|"Dying" # [3] - CharacterDying
+	---|"StatusApplied" # [4] - CharacterStatusApplied/ItemStatusChange with the DYING status
+	---|"Died" # [5] - CharacterDied
+
+	---@class CharacterDiedEventArgs
+	---@field Character EsvCharacter|EclCharacter
+	---@field State CharacterDiedEventStateID
+	---@field StateIndex integer
+	---@field IsPlayer boolean
+
+	---Called when a character is dying, in several states of the event chain.  
+	---🔨**Server-Only**🔨 
+	---@type LeaderLibSubscribableEvent<CharacterDiedEventArgs>
+	Events.CharacterDied = Classes.SubscribableEvent:Create("CharacterDied", {
+		ArgsKeyOrder={"Character", "IsPlayer", "State", "StateIndex"}
 	})
 else
 	---@class ClientDataSyncedEventArgs

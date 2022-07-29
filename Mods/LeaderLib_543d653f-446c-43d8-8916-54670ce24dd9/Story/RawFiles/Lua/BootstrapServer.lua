@@ -60,12 +60,12 @@ end
 
 ---A parameter type that can be either item userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetItem.
 ---@see GameHelpers.GetItem
----@alias ItemParam EsvItem|EclItem|UUID|NETID|ObjectHandle
+---@alias ItemParam EsvItem|EclItem|UUID|NETID|ComponentHandle
 
 ---A parameter type that can be either character userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetCharacter.
 ---@see GameHelpers.GetCharacter
----@alias CharacterParam EsvCharacter|EclCharacter|UUID|NETID|ObjectHandle
----@alias ObjectParam EsvCharacter|EclCharacter|EsvItem|EclItem|UUID|NETID|ObjectHandle
+---@alias CharacterParam EsvCharacter|EclCharacter|UUID|NETID|ComponentHandle
+---@alias ObjectParam EsvCharacter|EclCharacter|EsvItem|EclItem|UUID|NETID|ComponentHandle
 ---@alias ServerObject EsvCharacter|EsvItem
 ---@alias ClientObject EclCharacter|EclItem
 

@@ -87,7 +87,7 @@ local function OnObjectDying(obj)
 	obj = StringHelpers.GetUUID(obj)
 	local isSummon = false
 	local owner = nil
-	local summon = ObjectExists(obj) == 1 and GameHelpers.TryGetObject(obj) or nil
+	local target = ObjectExists(obj) == 1 and GameHelpers.TryGetObject(obj) or nil
 	for ownerId,tbl in pairs(PersistentVars.Summons) do
 		for i,uuid in pairs(tbl) do
 			if uuid == obj then
@@ -101,12 +101,44 @@ local function OnObjectDying(obj)
 		end
 	end
 	if isSummon then
-		Events.SummonChanged:Invoke({Summon=summon or obj, Owner=owner, IsDying=true, IsItem=ObjectIsItem(obj) == 1})
+		Events.SummonChanged:Invoke({Summon=target or obj, Owner=owner, IsDying=true, IsItem=ObjectIsItem(obj) == 1})
+	end
+	if target and GameHelpers.Ext.ObjectIsCharacter(target) then
+		Events.CharacterDied:Invoke({
+			Character = target,
+			IsPlayer = GameHelpers.Character.IsPlayer(target),
+			State = "BeforeDying",
+			StateIndex = Vars.CharacterDiedState.BeforeDying,
+		})
 	end
 end
 
-Ext.RegisterOsirisListener("CharacterPrecogDying", Data.OsirisEvents.CharacterPrecogDying, "before", OnObjectDying)
-Ext.RegisterOsirisListener("ItemDestroying", Data.OsirisEvents.ItemDestroying, "before", OnObjectDying)
+Ext.Osiris.RegisterListener("CharacterPrecogDying", 1, "before", OnObjectDying)
+Ext.Osiris.RegisterListener("ItemDestroying", 1, "before", OnObjectDying)
+
+RegisterProtectedOsirisListener("CharacterDying", 1, "before", function (characterGUID)
+	local target = GameHelpers.GetCharacter(characterGUID)
+	if target then
+		Events.CharacterDied:Invoke({
+			Character = target,
+			IsPlayer = GameHelpers.Character.IsPlayer(target),
+			State = "Dying",
+			StateIndex = Vars.CharacterDiedState.Dying,
+		})
+	end
+end)
+
+RegisterProtectedOsirisListener("CharacterDied", 1, "before", function (characterGUID)
+	local target = GameHelpers.GetCharacter(characterGUID)
+	if target then
+		Events.CharacterDied:Invoke({
+			Character = target,
+			IsPlayer = GameHelpers.Character.IsPlayer(target),
+			State = "Died",
+			StateIndex = Vars.CharacterDiedState.Died,
+		})
+	end
+end)
 
 local function OnObjectEvent(eventType, event, obj1, obj2)
 	if obj1 then

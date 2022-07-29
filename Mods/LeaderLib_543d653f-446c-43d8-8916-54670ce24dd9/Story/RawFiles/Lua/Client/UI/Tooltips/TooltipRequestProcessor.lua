@@ -84,9 +84,6 @@ local ControllerCharacterCreationCalls = {
 ---@param getObjectFunc GameTooltipRequestProcessorInternals.GetObjectFunction|nil
 ---@return EclCharacter|EclItem|nil
 local function __TryGetObjectFromDouble(doubleHandle, getObjectFunc)
-	if _IsNaN(doubleHandle) then
-		return nil
-	end
 	local handle = _DoubleToHandle(doubleHandle)
 	if _IsValidHandle(handle) then
 		getObjectFunc = getObjectFunc or _GetGameObject
@@ -99,7 +96,7 @@ end
 ---@param getObjectFunc function|nil
 ---@return EclCharacter|EclItem|nil
 local function _GetObjectFromDouble(doubleHandle, getObjectFunc)
-	if doubleHandle == 0 then
+	if doubleHandle == nil or doubleHandle == 0 or _IsNaN(doubleHandle) then
 		return nil
 	end
 	local b,result = pcall(__TryGetObjectFromDouble, doubleHandle, getObjectFunc)

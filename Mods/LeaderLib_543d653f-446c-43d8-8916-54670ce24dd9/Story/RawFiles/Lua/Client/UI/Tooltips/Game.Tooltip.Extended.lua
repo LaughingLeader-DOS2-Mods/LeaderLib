@@ -1572,27 +1572,30 @@ local function _GetCurrentCharacter()
 	return _GetClientCharacter() or _C() or {}
 end
 
+local function _GetRequestCharacter(req)
+	return req.Character or _GetCurrentCharacter()
+end
+
 local function _RunNotifyListeners(self, req, ui, method, tooltip, ...)
-	local character = req.Character or _GetCurrentCharacter()
 	self:InvokeBeforeNotifyListeners(req, ui, method, tooltip, ...)
 	if req.Type == "Stat" then
 		local stat = req.Stat or ""
-		self:NotifyListeners("Stat", stat, req, tooltip, character, stat)
+		self:NotifyListeners("Stat", stat, req, tooltip, _GetRequestCharacter(req), stat)
 	elseif req.Type == "CustomStat" then
 		if req.StatData ~= nil then
-			self:NotifyListeners("CustomStat", tostring(req.StatData), req, tooltip, character, req.StatData)
+			self:NotifyListeners("CustomStat", tostring(req.StatData), req, tooltip, _GetRequestCharacter(req), req.StatData)
 		else
-			self:NotifyListeners("CustomStat", nil, req, tooltip, character, {ID=req.Stat})
+			self:NotifyListeners("CustomStat", nil, req, tooltip, _GetRequestCharacter(req), {ID=req.Stat})
 		end
 	elseif req.Type == "Skill" then
 		local skill = req.Skill or ""
-		self:NotifyListeners("Skill", skill, req, tooltip, character, skill)
+		self:NotifyListeners("Skill", skill, req, tooltip, _GetRequestCharacter(req), skill)
 	elseif req.Type == "Ability" then
 		local ability = req.Ability or ""
-		self:NotifyListeners("Ability", ability, req, tooltip, character, ability)
+		self:NotifyListeners("Ability", ability, req, tooltip, _GetRequestCharacter(req), ability)
 	elseif req.Type == "Talent" then
 		local talent = req.Talent or ""
-		self:NotifyListeners("Talent", talent, req, tooltip, character, talent)
+		self:NotifyListeners("Talent", talent, req, tooltip, _GetRequestCharacter(req), talent)
 	elseif req.Type == "Status" then
 		local status = req.Status
 		if not status then
@@ -1600,7 +1603,7 @@ local function _RunNotifyListeners(self, req, ui, method, tooltip, ...)
 			--Try to preserve parameter order
 			status = {}
 		end
-		self:NotifyListeners("Status", req.StatusId, req, tooltip, character, status)
+		self:NotifyListeners("Status", req.StatusId, req, tooltip, _GetRequestCharacter(req), status)
 	elseif req.Type == "Item" then
 		self:NotifyListeners("Item", req.StatsId, req, tooltip, req.Item or {Type="nil"})
 	elseif req.Type == "Pyramid" then
@@ -1611,13 +1614,13 @@ local function _RunNotifyListeners(self, req, ui, method, tooltip, ...)
 		self:NotifyListeners("Tag", req.Category, req, tooltip, req.Tag)
 	elseif req.Type == "Surface" then
 		if req.Ground then
-			self:NotifyListeners("Surface", req.Ground, req, tooltip, character, req.Ground)
+			self:NotifyListeners("Surface", req.Ground, req, tooltip, _GetRequestCharacter(req), req.Ground)
 		end
 		if req.Cloud then
-			self:NotifyListeners("Surface", req.Cloud, req, tooltip, character, req.Cloud)
+			self:NotifyListeners("Surface", req.Cloud, req, tooltip, _GetRequestCharacter(req), req.Cloud)
 		end
 		if not req.Cloud and not req.Ground then
-			self:NotifyListeners("Surface", "Unknown", req, tooltip, character, "Unknown")
+			self:NotifyListeners("Surface", "Unknown", req, tooltip, _GetRequestCharacter(req), "Unknown")
 		end
 	elseif req.Type == "World" then
 		-- Manually invoked in RequestProcessor, so the text array can be updated

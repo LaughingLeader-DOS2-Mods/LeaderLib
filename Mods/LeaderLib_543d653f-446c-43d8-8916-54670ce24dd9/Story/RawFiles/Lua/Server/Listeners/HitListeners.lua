@@ -84,7 +84,10 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 								Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, target, target.WorldPos, "Target", false, fromSkill)
 								--Basic attacks don't apply SELF statuses in ExtraProperties, but skills do
 								if fromSkill then
-									Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, source, source.WorldPos, "Self", false, fromSkill)
+									Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, source, source.WorldPos, _SelfPropertyContext, false, fromSkill)
+								else
+									--Basic attacks do apply Self:OnHit
+									Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, source, source.WorldPos, Data.PropertyContext.SelfOnHit, false, fromSkill)
 								end
 							else
 								GameHelpers.ApplyProperties(source, target, extraProps, nil, nil, fromSkill)

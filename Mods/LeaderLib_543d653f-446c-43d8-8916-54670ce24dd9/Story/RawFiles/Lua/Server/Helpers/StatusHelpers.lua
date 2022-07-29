@@ -18,7 +18,7 @@ function GameHelpers.Status.IsFromEnemy(status, target, source)
 end
 
 ---Set an active status' duration, or apply if if applyIfMissing is not false.
----@param obj string
+---@param obj ObjectParam
 ---@param statusId string
 ---@param duration number
 ---@param allInstances boolean|nil
@@ -26,52 +26,48 @@ end
 ---@param extendDuration boolean|nil If true, the current duration is added to the duration value set, instead of replacing it.
 ---@return boolean
 function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, applyIfMissing, extendDuration)
-	obj = GameHelpers.GetUUID(obj)
-	if StringHelpers.IsNullOrEmpty(obj) then
-		error("A valid UUID is required.")
+	local object = GameHelpers.TryGetObject(obj)
+	if not object then
+		fprint(LOGLEVEL.WARNING, "[GameHelpers.Status.SetDuration] Failed to get object from (%s)", obj)
+		return false
 	end
-	if HasActiveStatus(obj, statusId) == 0 then
+	if not GameHelpers.Status.IsActive(object, statusId) then
 		if applyIfMissing ~= false then
-			ApplyStatus(obj, statusId, duration, 0, obj)
+			GameHelpers.Status.Apply(object, statusId, duration, false, object)
 			return true
 		end
 		return false
-	else
-		if ObjectIsCharacter(obj) == 1 then
-			local character = Ext.GetCharacter(obj)
-			if character ~= nil then
-				local success = false
-				if allInstances == true then
-					for _,status in pairs(character:GetStatusObjects()) do
-						if status.StatusId == statusId then
-							if not extendDuration then
-								status.CurrentLifeTime = duration
-								status.LifeTime = duration
-							else
-								status.CurrentLifeTime = status.CurrentLifeTime + duration
-								status.LifeTime = status.LifeTime + duration
-							end
-							status.RequestClientSync = true
-							success = true
-						end
+	elseif object.GetStatusObjects then
+		local success = false
+		if allInstances == true then
+			for _,status in pairs(object:GetStatusObjects()) do
+				if status.StatusId == statusId then
+					if not extendDuration then
+						status.CurrentLifeTime = duration
+						status.LifeTime = duration
+					else
+						status.CurrentLifeTime = status.CurrentLifeTime + duration
+						status.LifeTime = status.LifeTime + duration
 					end
-				else
-					local status = character:GetStatus(statusId)
-					if status ~= nil then
-						if not extendDuration then
-							status.CurrentLifeTime = duration
-							status.LifeTime = duration
-						else
-							status.CurrentLifeTime = status.CurrentLifeTime + duration
-							status.LifeTime = status.LifeTime + duration
-						end
-						status.RequestClientSync = true
-						success = true
-					end
+					status.RequestClientSync = true
+					success = true
 				end
-				return success
+			end
+		else
+			local status = object:GetStatus(statusId)
+			if status ~= nil then
+				if not extendDuration then
+					status.CurrentLifeTime = duration
+					status.LifeTime = duration
+				else
+					status.CurrentLifeTime = status.CurrentLifeTime + duration
+					status.LifeTime = status.LifeTime + duration
+				end
+				status.RequestClientSync = true
+				success = true
 			end
 		end
+		return success
 	end
 	return false
 end
@@ -110,21 +106,24 @@ function GameHelpers.Status.ExtendTurns(obj, statusId, addTurns, allInstances, a
 end
 
 ---Applies statuses in order of the table supplied. Use this for tiered statuses (i.e. MYMOD_POWERLEVEL1, MYMOD_POWERLEVEL2).
----@param obj UUID|EsvCharacter|EsvItem
+---@param obj ObjectParam
 ---@param statusTable string[] An array of tiered statuses (must be ipairs-friendly via regular integer indexes).
 ---@param duration number The status duration. Defaults to -1.0 for a regular permanent status.
 ---@param force boolean|nil Whether to force the status to apply.
----@param source string|nil The source of the status. Defaults to the target object.
----@return integer,integer Returns the next tier / last tier.
-function GameHelpers.Status.ApplyTieredStatus(obj, statusTable, duration, force, source)
-	local obj = GameHelpers.GetUUID(obj)
+---@param source ObjectParam|nil The source of the status. Defaults to the target object.
+---@param makePermanent boolean|nil Make the resulting status permanent (block removal / restore on death).
+---@return integer nextTier
+---@return integer lastTier
+function GameHelpers.Status.ApplyTieredStatus(obj, statusTable, duration, force, source, makePermanent)
+	local object = GameHelpers.TryGetObject(obj)
+	local source = source or object
 	local maxTier = #statusTable
 	local maxStatus = statusTable[maxTier]
 	-- We're at the max tier, so skip the iteration
-	if HasActiveStatus(obj, maxStatus) == 1 then
+	if GameHelpers.Status.IsActive(object, maxStatus) then
 		-- Refreshing the status duration
 		if duration and duration > 0 then
-			GameHelpers.Status.SetDuration(obj, maxStatus, duration, true, false)
+			GameHelpers.Status.SetDuration(object, maxStatus, duration, true, false)
 		end
 		return maxTier,maxTier
 	end
@@ -133,7 +132,7 @@ function GameHelpers.Status.ApplyTieredStatus(obj, statusTable, duration, force,
 	local tier = 1
 	for i=1,maxTier do
 		local status = statusTable[i]
-		if HasActiveStatus(obj, status) == 1 then
+		if GameHelpers.Status.IsActive(object, status) then
 			lastTier = tier
 			tier = i+1
 			break
@@ -141,9 +140,15 @@ function GameHelpers.Status.ApplyTieredStatus(obj, statusTable, duration, force,
 	end
 	local status = statusTable[tier]
 	if status ~= nil then
-		--Convoluted way of making force default to 1 if not set, otherwise be 1 or 0 for true/false.
-		local doForce = force == true and 1 or force == false and 0 or 1
-		ApplyStatus(obj, status, duration and duration or -1.0, doForce, source or obj)
+		if force == nil then
+			force = true
+		end
+		if not makePermanent then
+			GameHelpers.Status.Apply(object, status, duration and duration or -1.0, force, source)
+		else
+			StatusManager.RemovePermanentStatus(object, statusTable)
+			StatusManager.ApplyPermanentStatus(object, status, source)
+		end
 	end
 	return tier,lastTier
 end

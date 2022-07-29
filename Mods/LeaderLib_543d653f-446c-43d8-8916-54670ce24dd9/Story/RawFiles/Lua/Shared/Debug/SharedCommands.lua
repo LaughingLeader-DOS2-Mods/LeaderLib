@@ -155,14 +155,33 @@ end
 
 --local mods = Ext.Mod.GetLoadOrder(); for i=1,#mods do local uuid = mods[i]; local info = Ext.Mod.GetMod(uuid).Info; Ext.Utils.Print(string.format("[%i] %s (%s) [%s]", i, info and info.Name or "???", mods[i], info and info.ModuleType or "")); end
 
-Ext.RegisterConsoleCommand("modorder", function(command)
-	fprint(LOGLEVEL.DEFAULT, "Mods [%s]", Ext.IsClient() and "CLIENT" or "SERVER")
-	Ext.Utils.Print("=============")
-	local mods = Ext.Mod.GetLoadOrder()
-	for i=1,#mods do
-		local mod = Ext.Mod.GetMod(mods[i])
-		local info = mod.Info
-		fprint(LOGLEVEL.DEFAULT, "[%i] %s (%s) [%s]", i, info and info.Name or "???", mods[i], info and info.ModuleType or "")
+Ext.RegisterConsoleCommand("modorder", function(command, doDump)
+	local order = Ext.Mod.GetLoadOrder()
+	local mods = {}
+	for i=1,#order do
+		local mod = Ext.Mod.GetMod(order[i])
+		mods[#mods+1] = mod
 	end
-	Ext.Utils.Print("=============")
+	if doDump then
+		local exportMods = {}
+		for i=1,#mods do
+			exportMods[tostring(i)] = mods[i]
+		end
+		GameHelpers.IO.SaveJsonFile("Dumps/ModOrder.json", Ext.Json.Stringify(exportMods, {
+			Beautify = false,
+			StringifyInternalTypes = true,
+			IterateUserdata = true,
+			AvoidRecursion = true
+		}))
+		Ext.Utils.Print("Saved mod order to 'Osiris Data/Dumps/ModOrder.json'")
+	else
+		fprint(LOGLEVEL.DEFAULT, "Mods [%s]", Ext.IsClient() and "CLIENT" or "SERVER")
+		Ext.Utils.Print("=============")
+		for i=1,#mods do
+			local mod = Ext.Mod.GetMod(mods[i])
+			local info = mod.Info
+			fprint(LOGLEVEL.DEFAULT, "[%i] %s (%s) [%s]", i, info and info.Name or "???", mods[i], info and info.ModuleType or "")
+		end
+		Ext.Utils.Print("=============")
+	end
 end)

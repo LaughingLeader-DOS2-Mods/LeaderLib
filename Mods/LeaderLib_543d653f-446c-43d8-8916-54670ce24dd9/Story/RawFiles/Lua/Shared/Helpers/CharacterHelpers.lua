@@ -187,11 +187,23 @@ end
 ---@param char1 CharacterParam
 ---@param char2 CharacterParam
 function GameHelpers.Character.IsEnemy(char1, char2)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
-		local a = GameHelpers.GetUUID(char1)
-		local b = GameHelpers.GetUUID(char2)
-		if not a or not b then return false end
-		return CharacterIsEnemy(a,b) == 1
+	if not _ISCLIENT then
+		if Ext.OsirisIsCallable() then
+			local a = GameHelpers.GetUUID(char1)
+			local b = GameHelpers.GetUUID(char2)
+			if not a or not b then return false end
+			local relation = CharacterGetRelationToCharacter(a,b)
+			return CharacterIsEnemy(a,b) == 1 or (relation and relation <= 0)
+		else
+			local alignment = Ext.Entity.GetAlignmentManager()
+			local a = GameHelpers.GetCharacter(char1)
+			local b = GameHelpers.GetCharacter(char2)
+			if alignment and a and b then
+				a = a.Handle
+				b = b.Handle
+				return alignment:IsPermanentEnemy(a,b) or alignment:IsTemporaryEnemy(a,b)
+			end
+		end
 	end
 	return false
 end

@@ -160,7 +160,8 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 		OnSkillHit(skill.Name, target, source, data.Damage, hitRequest, hitContext, hitStatus, data)
 	end
 
-	local isFromWeapon = GameHelpers.Hit.TypesAreFromWeapon(hitType, damageSourceType, weaponHandle, skill)
+	--local isFromWeapon = GameHelpers.Hit.TypesAreFromWeapon(hitType, damageSourceType, weaponHandle, skill)
+	local isFromWeapon = data:IsFromWeapon()
 
 	--fprint(LOGLEVEL.DEFAULT, "[OnHit] IsFromWeapon(%s) Data:IsFromWeapon(%s) Skill(%s) HitType(%s) DamageSourceType(%s) WeaponHandleSet(%s)", isFromWeapon, data:IsFromWeapon(), skill and skill.Name or "", hitType, damageSourceType, GameHelpers.IsValidHandle(weaponHandle))
 

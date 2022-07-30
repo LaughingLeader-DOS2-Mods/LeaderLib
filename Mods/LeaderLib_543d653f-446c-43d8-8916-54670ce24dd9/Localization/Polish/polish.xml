@@ -65,7 +65,7 @@
 	<content contentuid="h1d68f897g1430g4ed6gb61dg88018af310e8">Buff Status Preservation</content>
 	<content contentuid="h1da479e7gc4e2g4748g8234g754e97a4b680">Sulfuric</content>
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c">Character is selling new items.</content>
-	<content contentuid="h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba">[1]&lt;br&gt;Created by [2]</content>
+	<content contentuid="h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba">[1]&lt;br&gt;&lt;font color=&apos;#33FF99&apos;&gt;Created by [2]&lt;/font&gt;</content>
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
 	<content contentuid="h206db122gc6b7g4603g9b05g725b23103b1a">Delay tooltip creation by this amount in seconds. This value will override the usual 0.5 second delay.</content>
 	<content contentuid="h209bda66g55d1g48a9gbc1bg22a2a6e25941">Autosaving &lt;font color=&apos;#FF0000&apos;&gt;Disabled&lt;/font&gt; | Interval: &lt;font color=&apos;#00FFFF&apos;&gt;[1]&lt;/font&gt;</content>

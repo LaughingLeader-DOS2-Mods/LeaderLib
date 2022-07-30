@@ -433,3 +433,7 @@ Ext.RegisterOsirisListener("ItemAddedToCharacter", 2, "after", function (itemGUI
 		ItemToInventory(itemGUID, TARGET, ItemGetAmount(itemGUID), 1, 1)
 	end
 end) ]]
+
+--[[ Events.CharacterDied:Subscribe(function (e)
+	e:Dump()
+end) ]]

@@ -472,14 +472,31 @@ StatusManager.Register.Type = {
 }
 
 ---@param target ObjectParam
----@param status string
+---@param status string|string[]
+---@return boolean isActive
+---@return string|nil statusID
 function StatusManager.IsPermanentStatusActive(target, status)
 	local GUID = GameHelpers.GetUUID(target)
 	fassert(GUID ~= nil, "Target parameter type (%s) is invalid. An EsvCharacter, EsvItem, UUID, or NetID should be provided.", target)
 	if PersistentVars.ActivePermanentStatuses[GUID] then
-		return PersistentVars.ActivePermanentStatuses[GUID][status] ~= nil
+		local t = _type(status)
+		if t == "table" then
+			for i=1,#status do
+				if PersistentVars.ActivePermanentStatuses[GUID][status[i]] ~= nil then
+					return true,status[i]
+				end
+			end
+			return false
+		elseif t == "string" then
+			if PersistentVars.ActivePermanentStatuses[GUID][status] ~= nil then
+				return true,status
+			end
+		else
+			error(string.format("Invalid status param (%s) type(%s)", status, t), 2)
+		end
 	end
-	return false
+
+	return false,nil
 end
 
 ---@param target ObjectParam

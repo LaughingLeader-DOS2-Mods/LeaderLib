@@ -6,6 +6,12 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.25.1",
+			"Changes": [
+				"Fixed an issue where heal type statuses were being blocked."
+			]
+		},
+		{
 			"Version": "1.7.25.0",
 			"Changes": [
 				"Made the in-game Mod Menu no longer uncheck active mods that have been updated.",

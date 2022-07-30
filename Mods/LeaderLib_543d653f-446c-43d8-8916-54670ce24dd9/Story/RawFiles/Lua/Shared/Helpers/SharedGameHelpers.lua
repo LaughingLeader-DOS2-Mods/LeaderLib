@@ -563,7 +563,7 @@ function GameHelpers.ObjectIsDead(object)
 		if not GUID then
 			return false
 		end
-		if CharacterIsDead(GUID) == 1 or ItemIsDestroyed(GUID) == 1 then
+		if (ObjectIsCharacter(GUID) == 1 and CharacterIsDead(GUID) == 1) or (ObjectIsItem(GUID) == 1 and ItemIsDestroyed(GUID) == 1) then
 			return true
 		end
 		return false
@@ -571,17 +571,11 @@ function GameHelpers.ObjectIsDead(object)
 	local object = _tryGetObject(object)
 	if object then
 		if GameHelpers.Ext.ObjectIsCharacter(object) then
-			if _ISCLIENT then
-				return object.Stats.CurrentVitality == 0
-			else
-				return object.Dead
-			end
+			---@cast object EclCharacter|EsvCharacter
+			return object.Dead == true or object:GetStatus("DYING") ~= nil
 		elseif GameHelpers.Ext.ObjectIsItem(object) then
-			if _ISCLIENT then
-				return object.RootTemplate.Destroyed
-			else
-				return object.Destroyed
-			end
+			---@cast object EclItem|EsvItem
+			return object.Destroyed == true or (object.RootTemplate and object.RootTemplate.Destroyed == true)
 		end
 	end
 	return false

@@ -446,11 +446,11 @@ local defaultHitFlags = {
 }
 
 ---@class GameHelpers.Damage.BaseApplyDamageParams
----@field CriticalRoll CriticalRollFlag|nil Used when computating a character hit. Defaults to "Roll".
----@field HighGroundFlag HighGroundFlag|nil Used when computating a character hit. If not set, this will be determined using the height difference.
+---@field CriticalRoll StatsCriticalRoll|nil Used when computating a character hit. Defaults to "Roll".
+---@field HighGroundFlag StatsHighGroundBonus|nil Used when computating a character hit. If not set, this will be determined using the height difference.
 ---@field HitParams table<string,any>|nil Hit parameters to apply.
----@field MainWeapon StatItem|nil A weapon to use in place of the source's main weapon.
----@field OffhandWeapon StatItem|nil A weapon to use in place of the source's offhand weapon.
+---@field MainWeapon CDivinityStatsItem|nil A weapon to use in place of the source's main weapon.
+---@field OffhandWeapon CDivinityStatsItem|nil A weapon to use in place of the source's offhand weapon.
 ---@field HitType HitTypeValues|nil The hit type. Defaults to "Magic".
 ---@field StatusParams EsvStatusHit|nil Params to set on the hit status
 
@@ -479,7 +479,7 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     params = params or _defaultSkillParams
 
     local criticalRoll = params.CriticalRoll or "Roll"
-    ---@type HighGroundFlag
+    ---@type StatsHighGroundBonus
     local highGroundFlag = params.HighGroundFlag or nil
 
     ---@type EsvStatusHit
@@ -606,8 +606,8 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     end
 end
 
----@alias HitTypeValues string|'"Melee"'|'"Magic"'|'"Ranged"'|'"WeaponDamage"'|'"Surface"'|'"DoT"'|'"Reflected"'
----@alias DamageEnum string|'"BaseLevelDamage"'|'"AverageLevelDamge"'|'"MonsterWeaponDamage"'|'"SourceMaximumVitality"'|'"SourceMaximumPhysicalArmor"'|'"SourceMaximumMagicArmor"'|'"SourceCurrentVitality"'|'"SourceCurrentPhysicalArmor"'|'"SourceCurrentMagicArmor"'|'"SourceShieldPhysicalArmor"'|'"TargetMaximumVitality"'|'"TargetMaximumPhysicalArmor"'|'"TargetMaximumMagicArmor"'|'"TargetCurrentVitality"'|'"TargetCurrentPhysicalArmor"'|'"TargetCurrentMagicArmor"'
+---@alias HitTypeValues string|"Melee"|"Magic"|"Ranged"|"WeaponDamage"|"Surface"|"DoT"|"Reflected"
+---@alias DamageEnum string|"BaseLevelDamage"|"AverageLevelDamge"|"MonsterWeaponDamage"|"SourceMaximumVitality"|"SourceMaximumPhysicalArmor"|"SourceMaximumMagicArmor"|"SourceCurrentVitality"|"SourceCurrentPhysicalArmor"|"SourceCurrentMagicArmor"|"SourceShieldPhysicalArmor"|"TargetMaximumVitality"|"TargetMaximumPhysicalArmor"|"TargetMaximumMagicArmor"|"TargetCurrentVitality"|"TargetCurrentPhysicalArmor"|"TargetCurrentMagicArmor"
 
 ---@param source EsvCharacter
 ---@param target EsvCharacter|EclItem
@@ -670,6 +670,8 @@ end
 ---@field DamageRange number|nil
 ---@field DamageType string|nil
 ---@field DamageEnum DamageEnum|nil
+---@field DamageList StatsDamagePairList|nil Set to provide the direct damage to apply.
+---@field DeathType StatsDeathType|nil
 ---@field FixedAmount integer|nil Skip calculating damage, and just apply a fixed amount instead.
 
 ---@type GameHelpers.Damage.ApplyDamageParams
@@ -696,11 +698,11 @@ function GameHelpers.Damage.ApplyDamage(source, target, params)
     params = params or _defaultParams
 
     local criticalRoll = params.CriticalRoll or _defaultParams.CriticalRoll
-    ---@type HighGroundFlag
+    ---@type StatsHighGroundBonus
     local highGroundFlag = params.HighGroundFlag or nil
 
-    ---@type EsvStatusHit
     local status = Ext.PrepareStatus(target.MyGuid, "HIT", 0.0)
+    ---@cast status EsvStatusHit
 
     status.TargetHandle = target.Handle
     status.StatusSourceHandle = source.Handle
@@ -756,23 +758,28 @@ function GameHelpers.Damage.ApplyDamage(source, target, params)
     ---@type DamageList
     local damageList = nil
     ---@type DeathType
-    local deathType = "None"
+    local deathType = params.DeathType or "None"
 
-    if params.FixedAmount then
-        damageList = Ext.NewDamageList()
-        damageList:Add(status.Hit.DamageType, params.FixedAmount)
+    if params.DamageList then
+        damageList = Ext.Stats.NewDamageList()
+        damageList:CopyFrom(params.DamageList)
     else
-        if params.GetDamageFunction ~= nil then
-            local b,result,result2 = xpcall(params.GetDamageFunction, debug.traceback, source, target, params)
-    
-            if not b then
-                Ext.PrintError(result)
-            else
-                damageList = result
-                deathType = result2 or deathType or "None"
-            end
+        if params.FixedAmount then
+            damageList = Ext.Stats.NewDamageList()
+            damageList:Add(status.Hit.DamageType, params.FixedAmount)
         else
-            damageList,deathType = GetBasicDamage(source, target, params.DamageEnum, params.DamageType, params.DamageMultiplier, params.DamageRange)
+            if params.GetDamageFunction ~= nil then
+                local b,result,result2 = xpcall(params.GetDamageFunction, debug.traceback, source, target, params)
+        
+                if not b then
+                    Ext.PrintError(result)
+                else
+                    damageList = result
+                    deathType = result2 or deathType or "None"
+                end
+            else
+                damageList,deathType = GetBasicDamage(source, target, params.DamageEnum, params.DamageType, params.DamageMultiplier, params.DamageRange)
+            end
         end
     end
 

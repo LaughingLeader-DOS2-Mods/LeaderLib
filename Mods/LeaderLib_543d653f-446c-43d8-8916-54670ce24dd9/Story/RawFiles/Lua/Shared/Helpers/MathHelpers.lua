@@ -471,7 +471,7 @@ end
 
 ---@param sourcePos number[]|ObjectParam
 ---@param targetPos number[]|ObjectParam
----@return HighGroundFlag
+---@return StatsHighGroundBonus
 function GameHelpers.Math.GetHighGroundFlag(sourcePos, targetPos)
     local sourcePos = GameHelpers.Math.GetPosition(sourcePos)
     local targetPos = GameHelpers.Math.GetPosition(targetPos)

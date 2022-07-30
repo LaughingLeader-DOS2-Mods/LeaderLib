@@ -806,6 +806,7 @@ function GameHelpers.Damage.DivideDamage(damageList, divider)
 end
 
 ---@param obj CharacterParam|ItemParam
+---@return string
 function GameHelpers.GetDisplayName(obj)
 	local obj = _tryGetObject(obj)
 	if obj then

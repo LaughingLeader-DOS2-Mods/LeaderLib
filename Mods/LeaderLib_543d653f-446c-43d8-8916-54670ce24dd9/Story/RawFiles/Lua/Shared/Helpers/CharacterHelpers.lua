@@ -1045,7 +1045,7 @@ end
 ---Similar to GameHelpers.Math.GetHighGroundFlag, but takes into account whether the attacker or target has the MARKED status.
 ---@param attacker CharacterParam
 ---@param target CharacterParam
----@return HighGroundFlag
+---@return StatsHighGroundBonus
 function GameHelpers.Character.GetHighGroundFlag(attacker, target)
 	local attacker = GameHelpers.GetCharacter(attacker)
 	local target = GameHelpers.GetCharacter(target)

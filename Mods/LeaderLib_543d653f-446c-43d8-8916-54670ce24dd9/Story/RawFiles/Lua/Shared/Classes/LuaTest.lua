@@ -208,6 +208,13 @@ function LuaTest:AssertGotSignal(signalId)
 	self:Failure(string.format("Last successful signal (%s) does not match given signal (%s). WaitForSignal likely timed out.", self.SignalSuccess or "nil", signalId), 2)
 end
 
+function LuaTest:AssertNotGotSignal(signalId)
+	if self.SignalSuccess ~= signalId then
+		return true
+	end
+	self:Failure(string.format("Last successful signal (%s) does not match given signal (%s). WaitForSignal likely timed out.", self.SignalSuccess or "nil", signalId), 2)
+end
+
 function LuaTest:Complete(success, ...)
 	if self.Active then
 		fprint(LOGLEVEL.TRACE, "[LuaTest:%s] Test complete.", self.ID)

@@ -8,9 +8,9 @@ local _EXTVERSION = Ext.Version()
 ---@field Target string
 ---@field AttackerObject EsvCharacter|EsvItem
 ---@field Attacker string
----@field DamageList DamageList
----@field HitContext HitContext
----@field HitRequest HitRequest
+---@field DamageList StatsDamagePairList
+---@field HitContext EsvPendingHit
+---@field HitRequest StatsHitDamageInfo
 ---@field HitStatus EsvStatusHit
 ---@field SkillData StatEntrySkillData
 ---@field Success boolean True if the hit has a target, and the hit wasn't Dodged, Blocked, or Missed.
@@ -22,9 +22,9 @@ local HitData = {
 }
 
 local function CreateDamageMetaList(target, handle)
-	local damageList = Ext.NewDamageList()
+	local damageList = Ext.Stats.NewDamageList()
 	for _,damageType in Data.DamageTypes:Get() do
-		damageList:Add(damageList, NRD_HitStatusGetDamage(target, handle, damageType) or 0)
+		damageList:Add(damageType, NRD_HitStatusGetDamage(target, handle, damageType) or 0)
 	end
 	return damageList
 end
@@ -77,10 +77,10 @@ local function SetMeta(this)
 	})
 end
 
----@param target EsvGameObject
----@param source EsvGameObject
+---@param target ObjectParam
+---@param source ObjectParam
 ---@param hitStatus EsvStatusHit
----@param hitContext HitContext
+---@param hitContext EsvPendingHit
 ---@param hitRequest HitRequest
 ---@param skill StatEntrySkillData|nil
 ---@param params table|nil
@@ -235,6 +235,7 @@ end
 ---@param target UUID|EsvCharacter|EsvItem
 ---@param multiplier number Multiplier value to reduce damage by (0.01 - 1.0), i.e 0.15 would multiply damage by 0.85 and deal 0.15 of the original damage to the target.
 ---@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
+---@return StatsDamagePairList redirectedDamage
 function HitData:RedirectDamage(target, multiplier, aggregate)
 	if aggregate then
 		self.DamageList:AggregateSameTypeDamages()
@@ -253,21 +254,15 @@ function HitData:RedirectDamage(target, multiplier, aggregate)
 	end
 	self:ApplyDamageList(true)
 
-	local uuid = GameHelpers.GetUUID(target)
-	local handle = NRD_HitPrepare(uuid, self.Attacker)
-	if self.HitContext then
-		NRD_HitSetString(handle, "CriticalRoll", self.HitContext.CriticalRoll)
-		NRD_HitSetString(handle, "HitType", self.HitContext.HitType)
-	else
-		NRD_HitSetInt(handle, "CriticalRoll", 0)
-	end
-	NRD_HitSetInt(handle, "SimulateHit", 1)
-	NRD_HitSetInt(handle, "HitType", 6)
-	NRD_HitSetInt(handle, "NoHitRoll", 1)
-	for _,v in pairs(newDamage:ToTable()) do
-		NRD_HitAddDamage(handle, v.DamageType, v.Amount)
-	end
-	NRD_HitExecute(handle)
+	GameHelpers.Damage.ApplyDamage(self.AttackerObject, target, {
+		CriticalRoll = self.HitContext.CriticalRoll,
+		HitType = Data.HitType.Reflected,
+		SimulateHit = 1,
+		DamageList = newDamage,
+		DeathType = self.HitStatus.Hit.DeathType
+	})
+
+	return newDamage
 end
 
 local function DamageTypeEquals(damageType, compare, compareType, negate)

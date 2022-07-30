@@ -437,3 +437,11 @@ end) ]]
 --[[ Events.CharacterDied:Subscribe(function (e)
 	e:Dump()
 end) ]]
+
+--[[ Events.OnHeal:Subscribe(function (e)
+	e:Dump()
+end)
+
+Events.OnStatus:Subscribe(function (e)
+	e:Dump()
+end, {Priority=0, MatchArgs={StatusId="HEAL"}}) ]]

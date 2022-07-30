@@ -36,8 +36,8 @@ end)
 
 local function FireListenerEvents(uuid, stat, lastVal, nextVal, statType)
 	Events.CharacterBasePointsChanged:Invoke({
-		UUID = uuid,
 		Character = GameHelpers.GetCharacter(uuid),
+		CharacterGUID = uuid,
 		Stat = stat,
 		StatType = statType,
 		Last = lastVal,

@@ -489,12 +489,12 @@ else
 					---@cast textID string
 					Events.OnBookRead:Invoke({
 						Character = player,
+						CharacterGUID = player.MyGuid,
 						Item = item,
 						Template = template,
 						ID = textID,
 						BookType = bookType,
 						ItemGUID = item.MyGuid,
-						CharacterGUID = player.MyGuid
 					})
 				end
 				if updatedData then

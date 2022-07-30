@@ -106,6 +106,7 @@ local function OnObjectDying(obj)
 	if target and GameHelpers.Ext.ObjectIsCharacter(target) then
 		Events.CharacterDied:Invoke({
 			Character = target,
+			CharacterGUID = target.MyGuid,
 			IsPlayer = GameHelpers.Character.IsPlayer(target),
 			State = "BeforeDying",
 			StateIndex = Vars.CharacterDiedState.BeforeDying,
@@ -121,6 +122,7 @@ RegisterProtectedOsirisListener("CharacterDying", 1, "before", function (charact
 	if target then
 		Events.CharacterDied:Invoke({
 			Character = target,
+			CharacterGUID = target.MyGuid,
 			IsPlayer = GameHelpers.Character.IsPlayer(target),
 			State = "Dying",
 			StateIndex = Vars.CharacterDiedState.Dying,
@@ -133,6 +135,7 @@ RegisterProtectedOsirisListener("CharacterDied", 1, "before", function (characte
 	if target then
 		Events.CharacterDied:Invoke({
 			Character = target,
+			CharacterGUID = target.MyGuid,
 			IsPlayer = GameHelpers.Character.IsPlayer(target),
 			State = "Died",
 			StateIndex = Vars.CharacterDiedState.Died,
@@ -171,6 +174,6 @@ end)
 function OnCharacterResurrected(uuid)
 	local character = GameHelpers.GetCharacter(uuid)
 	if character then
-		Events.CharacterResurrected:Invoke({Character=character, IsPlayer = GameHelpers.Character.IsPlayer(character)})
+		Events.CharacterResurrected:Invoke({Character=character, CharacterGUID = character.MyGuid, IsPlayer = GameHelpers.Character.IsPlayer(character)})
 	end
 end

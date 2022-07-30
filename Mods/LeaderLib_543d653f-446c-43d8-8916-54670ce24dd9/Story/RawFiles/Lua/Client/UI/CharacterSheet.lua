@@ -15,7 +15,8 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusStat", function (ui, eve
 		local stat = Data.Attribute[id]
 		local character = GameHelpers.Client.GetCharacter()
 		if stat and character then
-			Events.CharacterSheetPointChanged:Invoke({Character = character, Stat = stat, StatType = "Attribute"})
+			---@cast character EclCharacter
+			Events.CharacterSheetPointChanged:Invoke({Character = character, CharacterGUID = GameHelpers.GetUUID(character) or Client.Character.UUID, Stat = stat, StatType = "Attribute"})
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_PointsChanged", "")
 		end
 	end
@@ -26,7 +27,7 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusAbility", function (ui, 
 		local stat = Data.Attribute[id]
 		local character = GameHelpers.Client.GetCharacter()
 		if stat and character then
-			Events.CharacterSheetPointChanged:Invoke({Character = character, Stat = stat, StatType = "Ability"})
+			Events.CharacterSheetPointChanged:Invoke({Character = character, CharacterGUID = GameHelpers.GetUUID(character) or Client.Character.UUID, Stat = stat, StatType = "Ability"})
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_PointsChanged", "")
 		end
 	end
@@ -37,7 +38,7 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusTalent", function (ui, e
 		local stat = Data.Attribute[id]
 		local character = GameHelpers.Client.GetCharacter()
 		if stat and character then
-			Events.CharacterSheetPointChanged:Invoke({Character = character, Stat = stat, StatType = "Attribute"})
+			Events.CharacterSheetPointChanged:Invoke({Character = character, CharacterGUID = GameHelpers.GetUUID(character) or Client.Character.UUID, Stat = stat, StatType = "Attribute"})
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_PointsChanged", "")
 		end
 	end
@@ -70,6 +71,6 @@ Ext.RegisterUITypeCall(Data.UIType.statusConsole, "GuardPressed", function(ui, c
 	local character = GameHelpers.Client.GetCharacter()
 	if character then
 		Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", tostring(character.NetID))
-		Events.TurnDelayed:Invoke({UUID = GameHelpers.GetUUID(character) or Client.Character.UUID, Character=character})
+		Events.TurnDelayed:Invoke({CharacterGUID = GameHelpers.GetUUID(character) or Client.Character.UUID, Character=character})
 	end
 end)

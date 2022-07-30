@@ -443,6 +443,7 @@ if not _ISCLIENT then
 			end
 			Events.CharacterLeveledUp:Invoke({
 				Character = character,
+				CharacterGUID = character.MyGuid,
 				Level = character.Stats.Level,
 				IsPlayer = isPlayer
 			})
@@ -565,30 +566,17 @@ if _ISCLIENT then
 	---@param currentCharacter ClientCharacterData
 	local function ActiveCharacterChanged(currentCharacter, last)
 		currentCharacter = currentCharacter or GetClientCharacter()
-		local data = {
-			UUID = currentCharacter.UUID,
-			UserID = currentCharacter.ID,
-			Profile = currentCharacter.Profile,
-			NetID = currentCharacter.NetID,
-			IsHost = currentCharacter.IsHost,
-			CharacterData = currentCharacter,
-		}
 		local netid = currentCharacter.NetID
 		local character = GameHelpers.GetCharacter(netid)
-		setmetatable(data, {
-			__index = function (_,k)
-				if k == "Character" then
-					if not character then
-						--Lifetime expired?
-						character = GameHelpers.GetCharacter(netid)
-					end
-					if character then
-						return character
-					end
-				end
-			end
+		Events.ClientCharacterChanged:Invoke({
+			Character = character,
+			CharacterGUID = currentCharacter.UUID,
+			CharacterData = currentCharacter,
+			IsHost = currentCharacter.IsHost,
+			NetID = netid,
+			Profile = currentCharacter.Profile,
+			UserID = currentCharacter.ID
 		})
-		Events.ClientCharacterChanged:Invoke(data)
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_SetRegionData", function(cmd, payload)

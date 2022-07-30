@@ -822,6 +822,7 @@ RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targ
 		if target then
 			Events.CharacterDied:Invoke({
 				Character = target,
+				CharacterGUID = target.MyGuid,
 				IsPlayer = GameHelpers.Character.IsPlayer(target),
 				State = "StatusBeforeAttempt",
 				StateIndex = Vars.CharacterDiedState.StatusBeforeAttempt,
@@ -958,6 +959,7 @@ RegisterProtectedOsirisListener("CharacterStatusAttempt", 3, "after", function (
 		if target then
 			Events.CharacterDied:Invoke({
 				Character = target,
+				CharacterGUID = target.MyGuid,
 				IsPlayer = GameHelpers.Character.IsPlayer(target),
 				State = "StatusAttempt",
 				StateIndex = Vars.CharacterDiedState.StatusAttempt,
@@ -1153,6 +1155,7 @@ RegisterProtectedOsirisListener("CharacterStatusApplied", 3, "after", function (
 		if target then
 			Events.CharacterDied:Invoke({
 				Character = target,
+				CharacterGUID = target.MyGuid,
 				IsPlayer = GameHelpers.Character.IsPlayer(target),
 				State = "StatusApplied",
 				StateIndex = Vars.CharacterDiedState.StatusApplied,

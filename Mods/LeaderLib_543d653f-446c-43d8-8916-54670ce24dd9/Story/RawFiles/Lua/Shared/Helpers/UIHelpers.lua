@@ -144,7 +144,7 @@ if not _ISCLIENT then
 	end
 
 	Ext.RegisterNetListener("LeaderLib_OnDelayTurnClicked", function(call, uuid, ...)
-		Events.TurnDelayed:Invoke({UUID = uuid, Character=GameHelpers.GetCharacter(uuid)})
+		Events.TurnDelayed:Invoke({CharacterGUID = uuid, Character=GameHelpers.GetCharacter(uuid)})
 	end)
 
 	---@param visible boolean

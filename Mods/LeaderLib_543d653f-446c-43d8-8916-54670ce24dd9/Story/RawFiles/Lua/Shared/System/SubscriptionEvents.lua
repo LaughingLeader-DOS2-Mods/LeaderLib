@@ -12,6 +12,7 @@ Ext.Require("Shared/Classes/SubscribableEventArgs.lua")
 
 ---@class CharacterResurrectedEventArgs
 ---@field Character EsvCharacter|EclCharacter
+---@field CharacterGUID GUID
 ---@field IsPlayer boolean
 
 ---Called when a character is resurrected.  
@@ -24,6 +25,7 @@ Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurre
 
 ---@class CharacterLeveledUpEventArgs
 ---@field Character EsvCharacter|EclCharacter
+---@field CharacterGUID GUID
 ---@field Level integer
 ---@field IsPlayer boolean
 
@@ -35,9 +37,9 @@ Events.CharacterLeveledUp = Classes.SubscribableEvent:Create("CharacterLeveledUp
 
 ---@class OnBookReadEventArgs
 ---@field Character EsvCharacter|EclCharacter
----@field CharacterGUID UUID
+---@field CharacterGUID GUID
 ---@field Item EsvItem|EclItem
----@field ItemGUID UUID
+---@field ItemGUID GUID
 ---@field Template string The root template GUID
 ---@field ID string The book ID or recipe ID
 ---@field BookType "Book"|"Recipe"|"Skillbook"
@@ -136,8 +138,8 @@ Events.ModSettingsSynced = Classes.SubscribableEvent:Create("ModSettingsSynced",
 Events.GameSettingsChanged = Classes.SubscribableEvent:Create("GameSettingsChanged")
 
 ---@class TurnDelayedEventArgs
----@field UUID UUID The character UUID.
 ---@field Character EsvCharacter|EclCharacter
+---@field CharacterGUID GUID The character MyGuid, for easier matching.
 
 ---Called when a character's turn is delayed in combat (clicking the "Shield" icon).  
 ---🔨🔧**Server/Client**🔧🔨  
@@ -483,8 +485,8 @@ if not _ISCLIENT then
 	})
 
 	---@class CharacterBasePointsChangedEventArgs
-	---@field UUID UUID
 	---@field Character EsvCharacter
+	---@field CharacterGUID GUID 
 	---@field Stat string
 	---@field StatType string
 	---@field Last integer
@@ -494,11 +496,12 @@ if not _ISCLIENT then
 	---🔨**Server-Only**🔨  
 	---@type LeaderLibSubscribableEvent<CharacterBasePointsChangedEventArgs>
 	Events.CharacterBasePointsChanged = Classes.SubscribableEvent:Create("CharacterBasePointsChanged", {
-		ArgsKeyOrder={"UUID", "Stat", "Last", "Current", "StatType"}
+		ArgsKeyOrder={"CharacterGUID", "Stat", "Last", "Current", "StatType"}
 	})
 
 	---@class OnSkillStateBaseEventArgs
 	---@field Character EsvCharacter
+	---@field CharacterGUID GUID
 	---@field State SKILL_STATE
 	---@field Skill string
 	---@field DataType LeaderLibSkillListenerDataType
@@ -540,12 +543,7 @@ if not _ISCLIENT then
 	---@see LeaderLibSkillManagerRegistration#All
 	---@type LeaderLibSubscribableEvent<OnSkillStateAllEventArgs>
 	Events.OnSkillState = Classes.SubscribableEvent:Create("OnSkillState", {
-		ArgsKeyOrder={"Skill", "Character", "State", "Data", "DataType"},
-		GetArg = function(self, paramId, param)
-			if paramId == "Character" then
-				return GameHelpers.GetUUID(param, true)
-			end
-		end
+		ArgsKeyOrder={"Skill", "CharacterGUID", "State", "Data", "DataType"}
 	})
 
 	---@class OnStatusBaseEventArgs
@@ -742,7 +740,8 @@ if not _ISCLIENT then
 	---|"Died" # [5] - CharacterDied
 
 	---@class CharacterDiedEventArgs
-	---@field Character EsvCharacter|EclCharacter
+	---@field Character EsvCharacter
+	---@field CharacterGUID GUID
 	---@field State CharacterDiedEventStateID
 	---@field StateIndex integer
 	---@field IsPlayer boolean
@@ -769,8 +768,8 @@ else
 
 	---@class ClientCharacterChangedEventArgs
 	---@field Character EclCharacter
+	---@field CharacterGUID GUID
 	---@field CharacterData ClientCharacterData
-	---@field UUID string
 	---@field UserID integer
 	---@field Profile string
 	---@field NetID integer
@@ -781,11 +780,12 @@ else
 	---@see LeaderLibAttackManager
 	---@type LeaderLibSubscribableEvent<ClientCharacterChangedEventArgs>
 	Events.ClientCharacterChanged = Classes.SubscribableEvent:Create("ClientCharacterChanged", {
-		ArgsKeyOrder={"UUID", "UserID", "Profile", "NetID", "IsHost"}
+		ArgsKeyOrder={"CharacterGUID", "UserID", "Profile", "NetID", "IsHost"}
 	})
 
 	---@class CharacterSheetPointChangedEventArgs
 	---@field Character EclCharacter
+	---@field CharacterGUID GUID
 	---@field Stat string
 	---@field StatType string
 	

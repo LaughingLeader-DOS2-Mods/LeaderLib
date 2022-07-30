@@ -220,14 +220,15 @@ function OnSkillPreparing(char, skillprototype)
 	--(not last or last ~= skill) prevents invoke spam for PCs, since the PrepareSkill fires constantly for them
 	if (_enabledSkills[skill] or _enabledSkills.All) and (not last or last ~= skill) then
 		local skillData = Ext.GetStat(skill)
-		local caster = GameHelpers.GetCharacter(char)
+		local character = GameHelpers.GetCharacter(char)
 		Events.OnSkillState:Invoke({
-			Character = caster,
+			Character = character,
+			CharacterGUID = character.MyGuid,
 			Skill = skill,
 			State = SKILL_STATE.PREPARE,
 			Data = skillData,
 			DataType = "StatEntrySkillData",
-			SourceItem = _GetSkillSourceItem(caster, skill),
+			SourceItem = _GetSkillSourceItem(character, skill),
 		})
 	end
 
@@ -243,6 +244,7 @@ function SkillManager.OnSkillPreparingCancel(char, skillprototype, skill, skipRe
 		local character = GameHelpers.GetCharacter(char)
 		Events.OnSkillState:Invoke({
 			Character = character,
+			CharacterGUID = character.MyGuid,
 			Skill = skill,
 			State = SKILL_STATE.CANCEL,
 			Data = skillData,
@@ -272,18 +274,19 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 	if (_enabledSkills[skill] or _enabledSkills.All) then
 		local data = GetCharacterSkillData(skill, uuid, true, skillType, skillAbility)
 		if data then
-			local caster = GameHelpers.GetCharacter(char)
+			local character = GameHelpers.GetCharacter(char)
 			--Quake doesn't fire any target events, but works like a shout
 			if skillType == "quake" then
-				data:AddTargetPosition(table.unpack(caster.WorldPos))
+				data:AddTargetPosition(table.unpack(character.WorldPos))
 			end
 			Events.OnSkillState:Invoke({
-				Character = caster,
+				Character = character,
+				CharacterGUID = character.MyGuid,
 				Skill = skill,
 				State = SKILL_STATE.USED,
 				Data = data,
 				DataType = data.Type,
-				SourceItem = _GetSkillSourceItem(caster, skill),
+				SourceItem = _GetSkillSourceItem(character, skill),
 			})
 		end
 	end
@@ -300,6 +303,7 @@ function OnSkillCast(char, skill, skilLType, skillAbility)
 			if character then
 				Events.OnSkillState:Invoke({
 					Character = character,
+					CharacterGUID = character.MyGuid,
 					Skill = skill,
 					State = SKILL_STATE.CAST,
 					Data = data,
@@ -351,6 +355,7 @@ function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, da
 	if not IgnoreHitTarget(target.MyGuid) and (_enabledSkills[skillId] or _enabledSkills.All) then
 		Events.OnSkillState:Invoke({
 			Character = source,
+			CharacterGUID = source.MyGuid,
 			Skill = skillId,
 			State = SKILL_STATE.HIT,
 			Data = data,
@@ -376,6 +381,7 @@ RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObje
 				local data = Classes.ProjectileHitData:Create(target, uuid, projectile, position, skill)
 				Events.OnSkillState:Invoke({
 					Character = object,
+					CharacterGUID = object.MyGuid,
 					Skill = skill,
 					State = SKILL_STATE.PROJECTILEHIT,
 					Data = data,
@@ -392,11 +398,12 @@ end)
 RegisterProtectedExtenderListener("BeforeShootProjectile", function (request)
 	local skill = GetSkillEntryName(request.SkillId)
 	if not StringHelpers.IsNullOrEmpty(skill) and request.Caster and (_enabledSkills[skill] or _enabledSkills.All) then
-		--request.Source could be a grenade, instead of the actual caster
+		--request.Source could be a grenade, instead of the actual character
 		local object = Ext.GetGameObject(request.Caster)
 		if object then
 			Events.OnSkillState:Invoke({
 				Character = object,
+				CharacterGUID = object.MyGuid,
 				Skill = skill,
 				State = SKILL_STATE.BEFORESHOOT,
 				Data = request,
@@ -416,6 +423,7 @@ RegisterProtectedExtenderListener("ShootProjectile", function (projectile)
 		if object then
 			Events.OnSkillState:Invoke({
 				Character = object,
+				CharacterGUID = object.MyGuid,
 				Skill = skill,
 				State = SKILL_STATE.SHOOTPROJECTILE,
 				Data = projectile,
@@ -445,6 +453,7 @@ RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "aft
 			end
 			Events.OnSkillState:Invoke({
 				Character = character,
+				CharacterGUID = character.MyGuid,
 				Skill = skill,
 				State = SKILL_STATE.LEARNED,
 				Data = learned,
@@ -470,6 +479,7 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 		if (_enabledSkills[skill] or _enabledSkills.All) then
 			Events.OnSkillState:Invoke({
 				Character = character,
+				CharacterGUID = character.MyGuid,
 				Skill = skill,
 				State = SKILL_STATE.MEMORIZED,
 				Data = learned,
@@ -495,6 +505,7 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 		if (_enabledSkills[skill] or _enabledSkills.All) then
 			Events.OnSkillState:Invoke({
 				Character = character,
+				CharacterGUID = character.MyGuid,
 				Skill = skill,
 				State = SKILL_STATE.UNMEMORIZED,
 				Data = learned,

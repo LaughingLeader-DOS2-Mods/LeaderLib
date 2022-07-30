@@ -14,22 +14,22 @@ local table = table
 local tostring = tostring
 local type = type
 
-local _EXTVERSION = Ext.Version()
-local _DEBUG = Ext.IsDeveloperMode()
+local _EXTVERSION = Ext.Utils.Version()
+local _DEBUG = Ext.Debug.IsDeveloperMode()
 
 local _UITYPE = Data.UIType
 
 local _ObjectIsItem = GameHelpers.Ext.ObjectIsItem
 
-local _GetItem = Ext.GetItem
-local _GetCharacter = Ext.GetCharacter
-local _GetGameState = Ext.GetGameState
+local _GetItem = Ext.Entity.GetItem
+local _GetCharacter = Ext.Entity.GetCharacter
+local _GetGameState = Ext.Client.GetGameState
 
-local _GetUIByType = Ext.GetUIByType
-local _GetUIByPath = Ext.GetBuiltinUI
+local _GetUIByType = Ext.UI.GetByType
+local _GetUIByPath = Ext.UI.GetByPath
 
-local _HandleToDouble = Ext.HandleToDouble
-local _DoubleToHandle = Ext.DoubleToHandle
+local _HandleToDouble = Ext.UI.HandleToDouble
+local _DoubleToHandle = Ext.UI.DoubleToHandle
 local _IsValidHandle = GameHelpers.IsValidHandle
 
 local _Stringify = Common.JsonStringify
@@ -40,11 +40,11 @@ local _RegisterRegisterUITypeCall = Ext.RegisterUITypeCall
 local _RegisterUINameCall = Ext.RegisterUINameCall
 local _RegisterUINameInvokeListener = Ext.RegisterUINameInvokeListener
 
-local _Require = Ext.Require
+local _Require = Ext.Utils.Include
 
-local _Print = Ext.Print
-local _PrintWarning = Ext.PrintWarning
-local _PrintError = Ext.PrintError
+local _Print = Ext.Utils.Print
+local _PrintWarning = Ext.Utils.PrintWarning
+local _PrintError = Ext.Utils.PrintError
 local _Dump = Ext.Dump
 local _DumpExport = Ext.DumpExport
 

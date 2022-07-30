@@ -9,29 +9,29 @@ local _HandleToDouble = Ext.HandleToDouble
 
 local _IsNaN = GameHelpers.Math.IsNaN
 
-local _GetUIByType = Ext.GetUIByType
-local _GetUIGetByPath = Ext.GetBuiltinUI
+local _GetUIByType = Ext.UI.GetByType
+local _GetUIGetByPath = Ext.UI.GetByPath
 local _ObjectIsItem = GameHelpers.Ext.ObjectIsItem
 local _ItemIsObject = GameHelpers.Item.IsObject
 
-local _GetStat = Ext.GetStat
-local _GetTranslatedString = Ext.GetTranslatedString
-local _GetTranslatedStringFromKey = Ext.GetTranslatedStringFromKey
+local _GetStat = Ext.Stats.GetStat
+local _GetTranslatedString = Ext.L10N.GetTranslatedString
+local _GetTranslatedStringFromKey = Ext.L10N.GetTranslatedStringFromKey
 
-local _GetAiGrid = Ext.GetAiGrid
-local _GetStatus = Ext.GetStatus
+local _GetAiGrid = Ext.Entity.GetAiGrid
+local _GetStatus = Ext.Entity.GetStatus
 local _GetGameObject = GameHelpers.TryGetObject
-local _GetCharacter = Ext.GetCharacter
-local _GetItem = Ext.GetItem
-local _GetPickingState = Ext.GetPickingState
+local _GetCharacter = Ext.Entity.GetCharacter
+local _GetItem = Ext.Entity.GetItem
+local _GetPickingState = Ext.UI.GetPickingState
 
-local _GetGameMode = Ext.GetGameMode
+local _GetGameMode = Ext.Utils.GetGameMode
 
-local _EnumIndexToLabel = Ext.EnumIndexToLabel
+local _EnumIndexToLabel = Ext.Stats.EnumIndexToLabel
 
-local _PrintWarning = Ext.PrintWarning
-local _PrintError = Ext.PrintError
-local _Print = Ext.Print
+local _PrintWarning = Ext.Utils.PrintWarning
+local _PrintError = Ext.Utils.PrintError
+local _Print = Ext.Utils.Print
 
 local _UITYPE = Data.UIType
 

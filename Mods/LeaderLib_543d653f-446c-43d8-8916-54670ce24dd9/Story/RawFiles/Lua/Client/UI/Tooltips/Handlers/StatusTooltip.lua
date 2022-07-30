@@ -107,7 +107,11 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 		-- else
 		-- 	idText = string.format("<font color='%s'>%s</font>", Data.Colors.Common.AztecGold, status.StatusId)
 		-- end
-		idText = string.format("<font color='%s'>%s</font><br><font color='%s' size='18'>[%s]</font>", Data.Colors.Common.AztecGold, status.StatusId, Data.Colors.Common.Bittersweet, status.StatusType)
+		if status.StatusType ~= status.StatusId then
+			idText = string.format("<font color='%s'>%s</font><br><font color='%s' size='18'>[%s]</font>", Data.Colors.Common.AztecGold, status.StatusId, Data.Colors.Common.Bittersweet, status.StatusType)
+		else
+			idText = string.format("<font color='%s'>%s</font>", Data.Colors.Common.AztecGold, status.StatusId)
+		end
 		local description = tooltip:GetDescriptionElement({Type="StatusDescription", Label=""})
 		if not StringHelpers.IsNullOrWhitespace(description.Label) then
 			description.Label = description.Label .. "<br>"

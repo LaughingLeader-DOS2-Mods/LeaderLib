@@ -12,6 +12,8 @@ local CCExt = {
 	IsHost = false,
 }
 
+local _ISCCLEVEL = false
+
 UIExtensions.CC = CCExt
 
 local CharacterCreation = Classes.UIWrapper:CreateFromType(Data.UIType.characterCreation, {ControllerID = Data.UIType.characterCreation_c, IsControllerSupported = true})
@@ -52,6 +54,7 @@ setmetatable(CCExt, {
 })
 
 local function DestroyInstance()
+	_ISCCLEVEL = false
 	local instance = CCExt.GetInstance(false)
 	if instance then
 		instance:Hide()
@@ -68,7 +71,7 @@ Events.LuaReset:Subscribe(function()
 end)
 
 local function GetCCVisibility()
-	if Vars.ControllerEnabled then
+	if not _ISCCLEVEL or Vars.ControllerEnabled then
 		return false
 	end
 	local cc = Ext.GetUIByType(Data.UIType.characterCreation)
@@ -314,11 +317,9 @@ end, "After")
 
 Events.RegionChanged:Subscribe(function (e)
 	if e.LevelType == LEVELTYPE.CHARACTER_CREATION then
+		_ISCCLEVEL = true
 		if e.State == REGIONSTATE.ENDED then
 			DestroyInstance()
-		elseif _EXTVERSION < 56 then
-			CCExt.SetupInstance(true)
-			UpdateVisibility()
 		end
 	elseif CCExt.Visible then
 		DestroyInstance()

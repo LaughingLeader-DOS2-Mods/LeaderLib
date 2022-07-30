@@ -14,7 +14,7 @@ local _GetUIGetByPath = Ext.UI.GetByPath
 local _ObjectIsItem = GameHelpers.Ext.ObjectIsItem
 local _ItemIsObject = GameHelpers.Item.IsObject
 
-local _GetStat = Ext.Stats.GetStat
+local _GetStat = Ext.Stats.Get
 local _GetTranslatedString = Ext.L10N.GetTranslatedString
 local _GetTranslatedStringFromKey = Ext.L10N.GetTranslatedStringFromKey
 

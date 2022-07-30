@@ -358,7 +358,7 @@ local function OverrideStats(data, statsLoadedState)
 
 	if Vars.Overrides.SPIRIT_VISION_PROPERTY ~= nil then
 		--LeaderLib_PermanentSpiritVisionEnabled
-		local spiritVision = Ext.GetStat("Shout_SpiritVision")
+		local spiritVision = Ext.Stats.Get("Shout_SpiritVision")
 		if spiritVision then
 			local toggleProp = Vars.Overrides.SPIRIT_VISION_PROPERTY
 			local properties = GameHelpers.Stats.GetSkillProperties(spiritVision)
@@ -375,9 +375,7 @@ local function OverrideStats(data, statsLoadedState)
 			end
 			spiritVision.SkillProperties = newProps
 			if not _ISCLIENT and not statsLoadedState then
-				Ext.SyncStat("Shout_SpiritVision", false)
-			else
-				Ext.StatSetAttribute("Shout_SpiritVision", "SkillProperties", newProps)
+				Ext.Stats.Sync("Shout_SpiritVision", false)
 			end
 		end
 	end

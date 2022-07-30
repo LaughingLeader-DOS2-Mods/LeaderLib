@@ -2165,3 +2165,32 @@ Data.PropertyContext = {
 	SelfOnHit = 0x08,
 	SelfOnEquip = 0x10,
 }
+
+Data.ModID = {
+	LeaderLib = "7e737d2f-31d2-4751-963f-be6ccc59cd0c",
+	DivinityOriginalSin2 = "1301db3d-1f54-4e98-9be5-5094030916e4", -- Main campaign mod
+	Shared = "2bd9bdbe-22ae-4aa2-9c93-205880fc6564",
+	Shared_DOS = "eedf7638-36ff-4f26-a50a-076b87d53ba0",
+	Arena = "a99afe76-e1b0-43a1-98c2-0fd1448c223b",
+	GameMaster = "00550ab2-ac92-410c-8d94-742f7629de0e",
+	GiftBag = {
+		AnimalEmpathy = "423fae51-61e3-469a-9c1f-8ad3fd349f02",
+		ArmorSets = "3da57b9d-8b41-46c7-a33c-afb31eea38a3",
+		Character_Creation_Pack = "b40e443e-badd-4727-82b3-f88a170c4db7",
+		CombatRandomiser = "f30953bb-10d3-4ba4-958c-0f38d4906195",
+		CraftersKit = "68a99fef-d125-4ed0-893f-bb6751e52c5e",
+		DivineTalents = "ca32a698-d63e-4d20-92a7-dd83cba7bc56",
+		EightActionPoints = "9b45f7e5-d4e2-4fc2-8ef7-3b8e90a5256c",
+		EndlessRunner = "ec27251d-acc0-4ab8-920e-dbc851e79bb4",
+		EnhancedSpiritVision = "8fe1719c-ef8f-4cb7-84bd-5a474ff7b6c1",
+		FortJoyMagicMirror = "2d42113c-681a-47b6-96a1-d90b3b1b07d3",
+		FromtheAshes = "af4b3f9c-c5cb-438d-91ae-08c5804c1983", -- AS_Resturrect
+		Hagglers = "f33ded5d-23ab-4f0c-b71e-1aff68eee2cd",
+		HerbGardens = "38608c30-1658-4f6a-8adf-e826a5295808",
+		ImprovedOrganisation = "f243c84f-9322-43ac-96b7-7504f990a8f0",
+		NineLives = "015de505-6e7f-460c-844c-395de6c2ce34",
+		PetPower = "d2507d43-efce-48b8-ba5e-5dd136c715a7",
+		SourceMeditation = "1273be96-6a1b-4da9-b377-249b98dc4b7e",
+		SourcerousSundries = "a945eefa-530c-4bca-a29c-a51450f8e181",
+	}
+}

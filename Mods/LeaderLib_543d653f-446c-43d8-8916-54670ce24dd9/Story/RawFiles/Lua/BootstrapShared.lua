@@ -121,7 +121,8 @@ if Ext.IsDeveloperMode() then
 end
 Ext.Require("Shared/Debug/ConsoleWindowHelpers.lua")
 Ext.Require("Shared/Debug/SharedCommands.lua")
-Ext.Require("Shared/Patches/ModPatching.lua")
+Ext.Require("Shared/Patches/CampaignPatches.lua")
+Ext.Require("Shared/Patches/ModPatches.lua")
 
 if not Ext.IsClient() then
 	---@class CharacterDiedEventStateEnum

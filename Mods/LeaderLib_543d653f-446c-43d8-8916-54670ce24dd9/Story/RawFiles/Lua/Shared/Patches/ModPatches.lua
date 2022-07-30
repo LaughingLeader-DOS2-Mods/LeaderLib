@@ -228,23 +228,6 @@ local Patches = {
 				end
 			end
 		end
-	},
-	--Origins Campaign
-	["1301db3d-1f54-4e98-9be5-5094030916e4"] = {
-		Patch = function (initialized, region)
-			if not _ISCLIENT then
-				if region == "FJ_FortJoy_Main" then
-					--[[ WARM Attempt Spam Fix
-						Fix for this corpse in an ArmorSets area in Fort Joy getting a "WARM" status influence, 
-						due to it "entering" the trigger before it died.
-						Trigger:"ccac77ee-d0b8-4d1f-b25c-dc53632a9a33"]]
-					if ObjectExists("702becec-f2c1-44b2-b7ab-c247f8da97ac") == 1 then
-						SetVarFixedString("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_RemoveStatusInfluence_ID", "WARM")
-						SetStoryEvent("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_Commands_RemoveStatusInfluence")
-					end
-				end
-			end
-		end
 	}
 }
 

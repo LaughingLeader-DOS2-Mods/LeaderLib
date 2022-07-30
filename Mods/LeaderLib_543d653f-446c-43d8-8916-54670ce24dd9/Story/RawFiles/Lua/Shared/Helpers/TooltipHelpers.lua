@@ -46,7 +46,7 @@ local function GetTextParamValues(output, character)
 		elseif value == nil then
 			value = ""
 		end
-		output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
+		output = string.gsub(output, StringHelpers.EscapeMagic(v), StringHelpers.EscapePercentages(value))
 	end
 	return output
 end

@@ -223,8 +223,15 @@ end
 local function _escape(s)
 	return _gsub(s, '[%^%$%(%)%%%.%[%]%*%+%-%?]','%%%1')
 end
-
 StringHelpers.EscapeMagic = _escape
+
+--- Escapes all percentages. This is necessary for replacement strings in string.gsub.
+--- @param s string
+--- @return string
+local function _escapePercentages(s)
+	return _gsub(s, "%%", "%%%%")
+end
+StringHelpers.EscapePercentages = _escapePercentages
 
 --- Similar to gsub, but escapes all magic characters in the pattern beforehand.
 --- @param s string

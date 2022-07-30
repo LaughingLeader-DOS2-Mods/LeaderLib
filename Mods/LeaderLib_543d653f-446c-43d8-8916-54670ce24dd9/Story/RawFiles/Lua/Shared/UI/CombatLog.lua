@@ -307,7 +307,7 @@ else
 
 	---Adds text to the combat filter for all players.
 	---@param text string
-	---@param onlyClient integer|UUID|EsvCharacter
+	---@param onlyClient CharacterParam|UserId|nil
 	function CombatLog.AddCombatText(text, onlyClient)
 		if not onlyClient then
 			GameHelpers.Net.Broadcast("LeaderLib_CombatLog_AddTextToFilter", {ID=CombatLog.Filters.Combat, Text=text})

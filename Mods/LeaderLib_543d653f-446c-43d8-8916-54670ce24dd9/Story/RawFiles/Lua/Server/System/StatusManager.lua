@@ -851,8 +851,8 @@ RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targ
 		local preventApply = false
 
 		--Make Unhealable block all heals
-		if target and statusType == "HEAL" or statusType == "HEALING" and status.HealAmount > 0
-		and target:GetStatus("UNHEALABLE")
+		if target and target:GetStatus("UNHEALABLE") 
+		and ((statusType == "HEAL" or statusType == "HEALING") and status.HealAmount > 0)
 		and SettingsManager.GetMod(ModuleUUID, false, false).Global:FlagEquals("LeaderLib_UnhealableFix_Enabled", true) then
 			NRD_StatusPreventApply(targetGUID, handle, 1)
 			preventApply = true

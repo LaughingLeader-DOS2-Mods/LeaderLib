@@ -40,7 +40,7 @@ local _RegisterRegisterUITypeCall = Ext.RegisterUITypeCall
 local _RegisterUINameCall = Ext.RegisterUINameCall
 local _RegisterUINameInvokeListener = Ext.RegisterUINameInvokeListener
 
-local _Require = Ext.Utils.Include
+local _Require = Ext.Require
 
 local _Print = Ext.Utils.Print
 local _PrintWarning = Ext.Utils.PrintWarning

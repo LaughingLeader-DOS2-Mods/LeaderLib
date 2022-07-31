@@ -199,7 +199,8 @@ end
 ---🔨**Server-Only**🔨  
 ---@param statName string
 ---@param creationProperties ItemDefinition|nil
----@return string,EsvItem
+---@return string|nil itemGUID
+---@return EsvItem|nil generatedItem
 function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
     if _ISCLIENT then
         error("[GameHelpers.Item.CreateItemByStat] is server-side only.", 2)
@@ -222,7 +223,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
     local itemGroup = nil
 
     if _type(statName) == "string" then
-        stat = Ext.GetStat(statName, level)
+        stat = Ext.Stats.Get(statName, level)
         statType = GameHelpers.Stats.GetStatType(statName)
     else
         stat = statName
@@ -643,11 +644,11 @@ end
 ---@param item ItemParam
 ---@return boolean
 function GameHelpers.Item.ItemIsEquipped(character, item)
-    local charUUID = StringHelpers.GetUUID(character)
+    local charUUID = GameHelpers.GetUUID(character)
     local itemObj = GameHelpers.GetItem(item)
     if charUUID and itemObj then
-        if Data.EquipmentSlots[GameHelpers.Item.GetSlot(itemObj)] then -- 13 is the Overhead slot, 14 is 'Sentinel'
-            local owner = GameHelpers.GetCharacter(itemObj.InUseByCharacterHandle)
+        if Ext.Utils.IsValidHandle(itemObj.OwnerHandle) and Data.EquipmentSlots[GameHelpers.Item.GetSlot(itemObj)] then -- 13 is the Overhead slot, 14 is 'Sentinel'
+            local owner = GameHelpers.GetCharacter(itemObj.OwnerHandle)
             return owner and owner.MyGuid == charUUID
         end
     end
@@ -655,13 +656,16 @@ function GameHelpers.Item.ItemIsEquipped(character, item)
 end
 
 ---@param item ItemParam
----@return boolean
+---@return boolean isEquipped
+---@return EsvCharacter|EclCharacter|nil character
 function GameHelpers.Item.ItemIsEquippedByCharacter(item)
     local itemObj = GameHelpers.GetItem(item)
     if itemObj then
-        local user = GameHelpers.GetCharacter(itemObj.InUseByCharacterHandle)
-        if user then
-            return true
+        if Ext.Utils.IsValidHandle(itemObj.OwnerHandle) then
+            local user = GameHelpers.GetCharacter(itemObj.OwnerHandle)
+            if user then
+                return true,user
+            end
         end
     end
     return false

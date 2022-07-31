@@ -492,11 +492,11 @@ end
 
 ---@param chance integer The roll must be below or equal to this number.
 ---@param bonusRolls integer|nil How many times to roll if the first roll is unsuccessful. Defaults to 0.
----@param minValue integer|nil Minimum value for the random range. Defaults to 1.
+---@param minValue integer|nil Minimum value for the random range. Defaults to 0.
 ---@param maxValue integer|nil Maximum value for the random range. Defaults to 100.
 ---@return boolean success
 function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)
-    minValue = minValue or 1
+    minValue = minValue or 0
     maxValue = maxValue or 100
     if chance < minValue then
         return false
@@ -506,14 +506,15 @@ function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)
     end
     bonusRolls = bonusRolls or 0
     --Increase random range to increase randomness (low ranges tend to give more successes)
-    if maxValue == 100 then
-        minValue = minValue * 100
+    if maxValue == 100 and minValue == 0 then
         maxValue = maxValue * 100
-        chance = chance * 100
+        if chance <= 100 then
+            chance = chance * 100
+        end
     end
     for i=bonusRolls+1,0,-1 do
         local roll = _ran(minValue, maxValue)
-        if roll > 0 and roll <= chance then
+        if roll > minValue and roll <= chance then
             return true
         end
     end

@@ -6,6 +6,12 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.25.2",
+			"Changes": [
+				"Fixed an issue where Spirit Vision no longer applied a status. Turns out this is an obscure extender bug, so a workaround was added until it can be fixed in the extender itself (the workaround makes the bug not occur)."
+			]
+		},
+		{
 			"Version": "1.7.25.1",
 			"Changes": [
 				"Fixed an issue where heal type statuses were being blocked."

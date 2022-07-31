@@ -371,6 +371,10 @@ local function OverrideStats(data, statsLoadedState)
 				end
 			end
 			spiritVision.SkillProperties = newProps
+			--Safeguard
+			if spiritVision.SkillProperties == nil or #spiritVision.SkillProperties == 0 then
+				spiritVision.SkillProperties = properties
+			end
 			spiritVision.Stealth = "Yes" -- Let the status be toggled on/off while in stealth
 			if shouldSync then
 				Ext.Stats.Sync("Shout_SpiritVision", false)

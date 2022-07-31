@@ -1,3 +1,5 @@
+local _ISCLIENT = Ext.IsClient()
+
 if CustomSkillProperties == nil then
 	---@type table<string,CustomSkillProperty>
 	CustomSkillProperties = {}
@@ -20,7 +22,6 @@ function GameHelpers.Skill.CreateSkillProperty(id, getDesc, onPos, onTarget)
 		ExecuteOnTarget = onTarget or _EMPTY_FUNC,
 	}
 	CustomSkillProperties[id] = property
-	Ext.RegisterSkillProperty(id, property)
 end
 
 ---@param attacker EsvCharacter
@@ -306,14 +307,8 @@ end, function (property, attacker, target, position, isFromItem, skill, hit)
 				--Previous duration is stored in Arg5
 				duration = property.Arg5 or 60
 				local GUID = target.MyGuid
-				local timerName = string.format("LeaderLib_SetSpiritVision_%s", GUID)
-				Timer.Cancel(timerName)
-				Timer.StartOneshot(timerName, 20, function (e)
-					local target = GameHelpers.TryGetObject(GUID)
-					if target then
-						GameHelpers.Status.Apply(target, statusId, duration, true, target)
-					end
-				end)
+				Timer.Cancel("LeaderLib_SetSpiritVision", GUID)
+				Timer.StartObjectTimer("LeaderLib_SetSpiritVision", GUID, 20, {Duration = duration})
 				return
 			end
 		end
@@ -343,8 +338,29 @@ end, function (property, attacker, target, position, isFromItem, skill, hit)
 	end
 end)
 
+if not _ISCLIENT then
+	Ext.Events.OnExecutePropertyDataOnTarget:Subscribe(function (e)
+		local prop = e.Property
+		local propType = CustomSkillProperties[prop.Action]
+		if propType ~= nil and propType.ExecuteOnTarget ~= nil then
+			propType.ExecuteOnTarget(e.Property, e.Attacker, e.Target, e.ImpactOrigin, e.IsFromItem, e.Skill, e.Hit)
+		end
+	end)
+	
+	Ext.Events.OnExecutePropertyDataOnPosition:Subscribe(function (e)
+		local prop = e.Property
+		local propType = CustomSkillProperties[prop.Action]
+		if propType ~= nil and propType.ExecuteOnPosition ~= nil then
+			propType.ExecuteOnPosition(e.Property, e.Attacker, e.Position, e.AreaRadius, e.IsFromItem, e.Skill, e.Hit)
+		end
+	end)
+	
+	Timer.Subscribe("LeaderLib_SetSpiritVision", function(e)
+		if e.Data.UUID then
+			GameHelpers.Status.Apply(e.Data.UUID, "SPIRIT_VISION", e.Data.Duration or 60, true, e.Data.UUID)
+		end
+	end)
 
-if Ext.IsServer() then
 	Timer.Subscribe("LeaderLib_SkillProperties_MoveToTargetStart", function(e)
 		local data = PersistentVars.SkillPropertiesAction.MoveToTarget[e.Data.UUID]
 		if data then
@@ -377,4 +393,14 @@ if Ext.IsServer() then
 			PersistentVars.SkillPropertiesAction.MoveToTarget = {}
 		end)
 	end
+else
+	Ext.Events.SkillGetPropertyDescription:Subscribe(function (e)
+		local propType = CustomSkillProperties[e.Property.Action]
+		if propType ~= nil and propType.GetDescription ~= nil then
+			local desc = propType.GetDescription(e.Property)
+			if desc ~= nil then
+				e.Description = desc
+			end
+		end
+	end)
 end

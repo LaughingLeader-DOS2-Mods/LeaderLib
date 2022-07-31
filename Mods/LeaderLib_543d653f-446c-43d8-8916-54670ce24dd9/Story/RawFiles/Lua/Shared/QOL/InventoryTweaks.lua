@@ -48,7 +48,7 @@ if _ISCLIENT then
 		end
 	end, "After", "Controller")
 
-	Ext.RegisterListener("SessionLoaded", function ()
+	Ext.Events.SessionLoaded:Subscribe(function ()
 		local settings = SettingsManager.GetMod(ModuleUUID, false)
 		if settings then
 			settings.Global.Flags.LeaderLib_AutoUnlockInventoryInMultiplayer:Subscribe(function(e)

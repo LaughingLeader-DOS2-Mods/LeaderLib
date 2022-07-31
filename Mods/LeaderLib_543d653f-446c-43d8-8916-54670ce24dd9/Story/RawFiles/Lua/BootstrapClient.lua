@@ -114,7 +114,7 @@ end
 
 Ext.RegisterNetListener("LeaderLib_SyncRanSeed", LeaderLib_SyncRanSeed)
 
-Ext.RegisterListener("SessionLoaded", function()
+Ext.Events.SessionLoaded:Subscribe(function()
 	if not SettingsManager.LoadedInitially then
 		LoadGlobalSettings()
 	end

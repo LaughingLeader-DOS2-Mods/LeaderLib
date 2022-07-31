@@ -337,7 +337,7 @@ else
 end
 
 if Vars.DebugMode then
-	Ext.RegisterListener("SessionLoaded", function()
+	Ext.Events.SessionLoaded:Subscribe(function()
 		AddConsoleVariable("combatlog", CombatLog)
 	end)
 end

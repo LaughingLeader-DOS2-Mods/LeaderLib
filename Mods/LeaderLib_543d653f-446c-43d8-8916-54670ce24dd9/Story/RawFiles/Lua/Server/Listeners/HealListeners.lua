@@ -115,6 +115,6 @@ function ParseHealingStatusToSkills()
 	end
 end
 
-Ext.RegisterListener("SessionLoaded", function()
+Ext.Events.SessionLoaded:Subscribe(function()
 	ParseHealingStatusToSkills()
 end)

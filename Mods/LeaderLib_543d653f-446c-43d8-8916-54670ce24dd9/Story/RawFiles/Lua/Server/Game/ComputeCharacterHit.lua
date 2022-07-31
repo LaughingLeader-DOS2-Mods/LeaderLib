@@ -659,7 +659,7 @@ else
     end)
 end
 
-Ext.RegisterListener("SessionLoaded", function()
+Ext.Events.SessionLoaded:Subscribe(function()
     -- Set to Game.Math.DoHit here, instead of immediately, in case a mod has overwritten it.
     HitOverrides.DoHitModified = Game.Math.DoHit
     -- True if the original function was changed

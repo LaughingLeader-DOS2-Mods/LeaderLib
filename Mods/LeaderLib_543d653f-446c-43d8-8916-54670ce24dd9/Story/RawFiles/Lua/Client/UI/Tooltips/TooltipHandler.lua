@@ -101,8 +101,4 @@ local function RegisterTooltipHandlers()
 	end
 end
 
-if Ext.Version() < 56 then
-	Ext.RegisterListener("SessionLoaded",RegisterTooltipHandlers)
-else
-	Ext.Events.SessionLoaded:Subscribe(RegisterTooltipHandlers, {Priority = 0})
-end
+Ext.Events.SessionLoaded:Subscribe(RegisterTooltipHandlers, {Priority = 0})

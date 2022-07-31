@@ -21,8 +21,4 @@ local function OnSessionLoaded()
 	end
 end
 
-if Ext.Version() >= 56 then
-	Ext.Events.SessionLoaded:Subscribe(OnSessionLoaded, {Priority=999})
-else
-	Ext.RegisterListener("SessionLoaded", OnSessionLoaded)
-end
+Ext.Events.SessionLoaded:Subscribe(OnSessionLoaded, {Priority=999})

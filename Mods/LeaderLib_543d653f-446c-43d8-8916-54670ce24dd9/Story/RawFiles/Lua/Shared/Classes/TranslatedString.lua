@@ -258,7 +258,7 @@ function UpdateTranslatedStrings()
 end
 
 if not Vars.IsEditorMode then
-	Ext.RegisterListener("SessionLoaded", UpdateTranslatedStrings)
+	Ext.Events.SessionLoaded:Subscribe(UpdateTranslatedStrings)
 else
 	Events.Initialized:Subscribe(UpdateTranslatedStrings)
 end

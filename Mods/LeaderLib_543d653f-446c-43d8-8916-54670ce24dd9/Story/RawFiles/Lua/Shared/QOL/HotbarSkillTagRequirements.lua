@@ -156,7 +156,7 @@ else
 		end
 	end)
 
-	Ext.RegisterListener("SessionLoaded", function()
+	Ext.Events.SessionLoaded:Subscribe(function()
 		for skill in GameHelpers.Stats.GetSkills(true) do
 			for _,prop in pairs(skill.Requirements) do
 				if prop.Requirement == "Tag" then

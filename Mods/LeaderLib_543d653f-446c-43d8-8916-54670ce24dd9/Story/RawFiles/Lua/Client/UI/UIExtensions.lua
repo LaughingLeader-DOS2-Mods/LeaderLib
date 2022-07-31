@@ -274,7 +274,7 @@ RegisterListener("ClientDataSynced", function(modData, sharedData)
 	end
 end)
 
--- Ext.RegisterListener("SessionLoaded", function()
+-- Ext.Events.SessionLoaded:Subscribe(function()
 -- 	--SetupInstance()
 -- 	-- Ext.RegisterUINameInvokeListener("onEventUp", function(ui, ...)
 -- 	-- 	print(Common.JsonStringify({...}))
@@ -540,7 +540,7 @@ end
 
 local registeredControllerListeners = false
 
-Ext.RegisterListener("SessionLoaded", function()
+Ext.Events.SessionLoaded:Subscribe(function()
 	Vars.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
 
 	UIExtensions.SetupInstance()

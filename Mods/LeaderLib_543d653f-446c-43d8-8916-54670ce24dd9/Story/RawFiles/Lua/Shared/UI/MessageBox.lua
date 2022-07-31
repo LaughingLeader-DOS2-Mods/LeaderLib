@@ -76,7 +76,7 @@ if isClient then
 		end
 	end
 
-	Ext.RegisterListener("SessionLoaded", function()
+	Ext.Events.SessionLoaded:Subscribe(function()
 		---@class MessageBoxWrapper:LeaderLibUIWrapper
 		MessageBox.UI = Classes.UIWrapper:CreateFromType(Data.UIType.msgBox, {ControllerID = Data.UIType.msgBox_c, IsControllerSupported = true})
 		MessageBox.UI:RegisterCallListener("ButtonPressed", MessageBoxButtonPressed, "After", "All")

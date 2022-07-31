@@ -100,7 +100,7 @@ function _DisablingStatuses.UpdateStatuses()
 	_DisablingStatuses.Initialized = true
 end
 
-Ext.RegisterListener("SessionLoaded", function()
+Ext.Events.SessionLoaded:Subscribe(function()
 	_DisablingStatuses.UpdateStatuses()
 end)
 

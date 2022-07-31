@@ -356,7 +356,7 @@ Ext.Events.UIInvoke:Subscribe(function (e)
 	end
 end)
 
-Ext.RegisterListener("SessionLoaded", function()
+Ext.Events.SessionLoaded:Subscribe(function()
 	--Override here so the settings in the main menu works
 	Ext.AddPathOverride("Public/Game/GUI/optionsSettings.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings.swf")
 	Ext.AddPathOverride("Public/Game/GUI/optionsSettings_c.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings_c.swf")

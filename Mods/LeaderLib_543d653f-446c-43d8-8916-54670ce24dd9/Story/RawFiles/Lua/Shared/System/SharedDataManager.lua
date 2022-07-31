@@ -51,32 +51,18 @@ SharedData = {
 }
 
 local function SetCurrentLevelData()
-	if _EXTVERSION >= 56 then
-		local level = Ext.Entity.GetCurrentLevel()
-		if level then
-			local levelName = level.LevelDesc.LevelName
-			SharedData.RegionData.Current = levelName
-			SharedData.RegionData.LevelType = GameHelpers.GetLevelType(levelName)
-			-- if levelName == "SYS_Character_Creation_A"
-			-- or levelName == "SYS_GM_Waitingspot_A"
-			-- then
-			-- 	SharedData.RegionData.LevelType = LEVELTYPE.CHARACTER_CREATION
-			-- elseif levelName == "ARENA_Menu"
-			-- or levelName == "DOS2_MENUArenaA"
-			-- or levelName == "GM_SYS_Lobby"
-			-- or levelName == "GM_SYS_MenuLevel_A" then
-			-- 	SharedData.RegionData.LevelType = LEVELTYPE.LOBBY
-			-- else
-			-- 	SharedData.RegionData.LevelType = LEVELTYPE.GAME
-			-- end
-		end
+	local level = Ext.Entity.GetCurrentLevel()
+	if level then
+		local levelName = level.LevelDesc.LevelName
+		SharedData.RegionData.Current = levelName
+		SharedData.RegionData.LevelType = GameHelpers.GetLevelType(levelName)
 	end
 end
 
 SetCurrentLevelData()
 
-Ext.RegisterListener("SessionLoading", SetCurrentLevelData)
-Ext.RegisterListener("SessionLoaded", SetCurrentLevelData)
+Ext.Events.SessionLoading:Subscribe(SetCurrentLevelData)
+Ext.Events.SessionLoaded:Subscribe(SetCurrentLevelData)
 
 if not _ISCLIENT then
 	---@param id integer
@@ -722,11 +708,6 @@ if _ISCLIENT then
 			end
 		end
 	end)
-	
-	-- Ext.RegisterListener("SessionLoaded", function()
-	-- 	--Ext.RegisterUINameCall("charSel", OnCharacterSelected)
-	-- 	--Ext.RegisterUINameCall("selectCharacter", OnCharacterSelected)
-	-- end)
 
 	Ext.RegisterListener("UIObjectCreated", function(ui)
 		if ui:GetTypeId() == Data.UIType.trade or ui:GetTypeId() == Data.UIType.trade_c then

@@ -662,7 +662,7 @@ LocalizedText.Surfaces = {
 	WebPurified = ts:Create("h758c25fcgc899g4016g8967g1812cf70e353", "Web"),
 }
 
-Ext.RegisterListener("SessionLoaded", function ()
+Ext.Events.SessionLoaded:Subscribe(function ()
 	LocalizedText.DamageTypeNameAlphabeticalOrder = {}
 	local nameToDamageType = {}
 	local sortedNames = {}

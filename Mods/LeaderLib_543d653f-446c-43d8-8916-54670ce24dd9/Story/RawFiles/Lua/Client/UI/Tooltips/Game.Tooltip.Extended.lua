@@ -2299,7 +2299,7 @@ Ext.RegisterListener("GameStateChanged", function (from, to)
 	end
 end)
 
-Ext.RegisterListener("SessionLoaded", function()
+Ext.Events.SessionLoaded:Subscribe(function()
 	_ttHooks.SessionLoaded = true
 	EnableHooks()
 end)

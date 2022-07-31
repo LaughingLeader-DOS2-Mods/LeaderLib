@@ -237,7 +237,7 @@ local function RegisterControllerTooltipEvents()
 	end
 end
 
-Ext.RegisterListener("SessionLoaded", function()
+Ext.Events.SessionLoaded:Subscribe(function()
 	if Vars.ControllerEnabled then
 		RegisterControllerTooltipEvents()
 	end

@@ -147,7 +147,7 @@ elseif Ext.IsDeveloperMode() and not _ISCLIENT then
 		end
 	end)
 
-	Ext.RegisterListener("SessionLoaded", function ()
+	Ext.Events.SessionLoaded:Subscribe(function ()
 		_clamp = GameHelpers.Math.Clamp
 	end)
 end

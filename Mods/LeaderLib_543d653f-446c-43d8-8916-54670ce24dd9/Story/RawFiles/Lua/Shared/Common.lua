@@ -349,7 +349,7 @@ end
 ---@return table
 function Common.ShuffleTable(tbl)
 	for i = #tbl, 2, -1 do
-		local j = Ext.Random(i)
+		local j = Ext.Utils.Random(1, i)
 		tbl[i], tbl[j] = tbl[j], tbl[i]
 	end
 	return tbl

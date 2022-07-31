@@ -335,6 +335,7 @@ Classes.Enum:Create(Data.Talents)
 Data.TalentEnum = Data.Talents
 
 Data.ItemRarity = {
+	Sentinel = -1,
 	Common = 0,
 	Unique = 1,
 	Uncommon = 2,
@@ -342,6 +343,7 @@ Data.ItemRarity = {
 	Epic = 4,
 	Legendary = 5,
 	Divine = 6,
+	[-1] = "Sentinel",
 	[0] = "Common",
 	[1] = "Unique",
 	[2] = "Uncommon",
@@ -351,7 +353,7 @@ Data.ItemRarity = {
 	[6] = "Divine",
 }
 
-Classes.Enum:Create(Data.ItemRarity)
+Classes.Enum:Create(Data.ItemRarity, nil, nil, 0)
 
 ---@class SKILL_STATE
 SKILL_STATE = {

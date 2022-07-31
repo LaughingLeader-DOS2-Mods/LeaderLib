@@ -3,6 +3,10 @@ if CustomSkillProperties == nil then
 	CustomSkillProperties = {}
 end
 
+if GameHelpers.Skill == nil then
+	GameHelpers.Skill = {}
+end
+
 local function _EMPTY_FUNC() end
 
 --- @param id string
@@ -218,9 +222,12 @@ GameHelpers.Skill.CreateSkillProperty("ToggleStatus", function (property)
 end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 	local statusId = property.Arg3
 	local duration = property.Arg2
+	local isPermanent = property.Arg4 > -1
 	if skill.Name == "Shout_SpiritVision" and statusId == "SPIRIT_VISION" then
 		local settings = SettingsManager.GetMod(ModuleUUID, false, false)
 		if settings.Global:FlagEquals("LeaderLib_PermanentSpiritVisionEnabled", false) then
+			-- isPermanent = false
+			-- duration = 60
 			return
 		end
 	end
@@ -235,7 +242,6 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 			end
 		end
 
-		local isPermanent = property.Arg4 > -1
 		local applyStatus = not isPermanent and GameHelpers.Status.Apply or function(target, id, duration, force, source) 
 			StatusManager.ApplyPermanentStatus(target, id, source)
 		end
@@ -244,11 +250,12 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 		if targetSelf then
 			local GUID = attacker.MyGuid
 			local timerName = string.format("LeaderLib_ToggleStatus_%s%s", statusId, GUID)
+			local shouldRemove = attacker:GetStatus(statusId)
 			Timer.Cancel(timerName)
 			Timer.StartOneshot(timerName, 20, function (e)
 				local target = GameHelpers.TryGetObject(GUID)
 				if target then
-					if target:GetStatus(statusId) then
+					if shouldRemove then
 						removeStatus(target, statusId)
 					else
 						applyStatus(target, statusId, duration, true, attacker)
@@ -269,6 +276,7 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 			end
 			for target in GameHelpers.Grid.GetNearbyObjects(position, {Radius=areaRadius, Type=targetType}) do
 				if target.MyGuid ~= attacker.MyGuid then
+					local shouldRemove = target:GetStatus(statusId)
 					local GUID = target.MyGuid
 					local SOURCE_GUID = attacker.MyGuid
 					local timerName = string.format("LeaderLib_ToggleStatus_%s%s", statusId, GUID)
@@ -276,7 +284,7 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 					Timer.StartOneshot(timerName, 20, function (e)
 						local target = GameHelpers.TryGetObject(GUID)
 						if target then
-							if target:GetStatus(statusId) then
+							if shouldRemove then
 								removeStatus(target, statusId)
 							else
 								applyStatus(target, statusId, duration, true, SOURCE_GUID)
@@ -296,7 +304,7 @@ end, function (property, attacker, target, position, isFromItem, skill, hit)
 			local settings = SettingsManager.GetMod(ModuleUUID, false, false)
 			if settings.Global:FlagEquals("LeaderLib_PermanentSpiritVisionEnabled", false) then
 				--Previous duration is stored in Arg5
-				duration = property.Arg5
+				duration = property.Arg5 or 60
 				local GUID = target.MyGuid
 				local timerName = string.format("LeaderLib_SetSpiritVision_%s", GUID)
 				Timer.Cancel(timerName)
@@ -316,6 +324,8 @@ end, function (property, attacker, target, position, isFromItem, skill, hit)
 		end
 		local removeStatus = not isPermanent and GameHelpers.Status.Remove or StatusManager.RemovePermanentStatus
 
+		local shouldRemove = target:GetStatus(statusId)
+
 		local SOURCE_GUID = attacker.MyGuid
 		local GUID = target.MyGuid
 		local timerName = string.format("LeaderLib_ToggleStatus_%s%s", statusId, GUID)
@@ -323,7 +333,7 @@ end, function (property, attacker, target, position, isFromItem, skill, hit)
 		Timer.StartOneshot(timerName, 20, function (e)
 			local target = GameHelpers.TryGetObject(GUID)
 			if target then
-				if target:GetStatus(statusId) then
+				if shouldRemove then
 					removeStatus(target, statusId)
 				else
 					applyStatus(target, statusId, duration, true, SOURCE_GUID)

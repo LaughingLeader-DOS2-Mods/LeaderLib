@@ -17,7 +17,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 			Data.ObjectStats[stat] = true
 		end
 	end
-end, {Priority=400})
+end, {Priority=9999})
 
 ---@param uuid string
 ---@return ModSettings

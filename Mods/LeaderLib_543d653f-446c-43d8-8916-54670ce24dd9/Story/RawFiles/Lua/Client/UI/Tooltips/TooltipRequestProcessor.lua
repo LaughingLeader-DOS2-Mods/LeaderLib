@@ -26,6 +26,7 @@ local _GetItem = Ext.Entity.GetItem
 local _GetPickingState = Ext.UI.GetPickingState
 
 local _GetGameMode = Ext.Utils.GetGameMode
+local _MonotonicTime = Ext.Utils.MonotonicTime
 
 local _EnumIndexToLabel = Ext.Stats.EnumIndexToLabel
 
@@ -1052,8 +1053,22 @@ Ext.Events.UIInvoke:Subscribe(function (e)
 	end
 end, {Priority=1})
 
+local _lastShowStatusTooltip = -1
+
 Ext.Events.UICall:Subscribe(function (e)
 	if e.When == "Before" then
+		if e.Function == "showStatusTooltip" then
+			--Fix for ticking statuses causing the last element in a tooltip array to be duplicated, if a new value was added in a tooltip listener
+			if _lastShowStatusTooltip >= 0 then
+				if Ext.MonotonicTime() - _lastShowStatusTooltip <= 33 then
+					e:StopPropagation()
+					e:PreventAction() -- The necessary part
+					_lastShowStatusTooltip = _MonotonicTime()
+					return
+				end
+			end
+			_lastShowStatusTooltip = _MonotonicTime()
+		end
 		local handler = CallHandlers[e.Function]
 		if handler then
 			if handler.TypeIds then

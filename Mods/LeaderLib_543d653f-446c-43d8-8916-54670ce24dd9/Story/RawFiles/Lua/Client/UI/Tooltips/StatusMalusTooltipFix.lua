@@ -32,9 +32,55 @@ local function FixMalusGroup(ui)
 				local groups_array = this.tf.tooltip_mc.list.content_array
 				local len = #groups_array-1
 				local needsResort = false
+
+				--FIX duplicate last element
+				--Not sure why this is happening, since there's no duplicate in the tooltip_array. This seems to get added by the UI, when a status is ticking, and the extender adds a new tooltip element.
+				local lastGroupID = -1
+				local lastGroupElementCount = -1
+				local lastGroup = nil
+
 				for i=0,len do
 					local group = groups_array[i]
 					if group then
+						--[[ print(group.groupID, lastGroupID)
+						if group.groupID == lastGroupID then
+							local compareTo = nil
+							local glen = math.max(#group.list.content_array, lastGroupElementCount)
+							for j=0,glen-1 do
+								local obj1 = group.list.content_array[j]
+								local obj2 = lastGroup.list.content_array[j]
+								if obj1 and obj1.label_txt then
+									compareTo = obj1
+									print("1", obj1.label_txt and obj1.label_txt.htmlText or obj1.name)
+								else
+									obj1 = compareTo
+								end
+								if obj2 then
+									print("2", obj2.label_txt and obj2.label_txt.htmlText or obj2.name)
+								end
+								if obj1 and obj2 and obj1.label_txt and obj2.label_txt then
+									if obj1.label_txt.htmlText == obj2.label_txt.htmlText
+									and obj1.value_txt.htmlText == obj2.value_txt.htmlText
+									then
+										Ext.PrintError("DUPLICATE?")
+										group.visible = false
+										group.heightOverride = 0
+										for l=0,#group.list.content_array-1 do
+											group.list.content_array[l].heightOverride = false
+										end
+										needsResort = true
+										break
+									end
+								end
+							end
+						end ]]
+						-- print(i, group.iconId, group.groupID)
+						-- for j=0,#group.list.content_array-1 do
+						-- 	local obj = group.list.content_array[j]
+						-- 	if obj then
+						-- 		print("*", j, obj.label_txt and obj.label_txt.htmlText or obj.name)
+						-- 	end
+						-- end
 						--ArmorSets icon
 						if group.iconId == 18.0 then
 							local b,height = IsStatusMalupGroup(group)
@@ -51,6 +97,9 @@ local function FixMalusGroup(ui)
 								--fprint(LOGLEVEL.DEFAULT, "[TooltipGroup] iconId(%s) orderId(%s) needsSubSection(%s)", group.iconId, group.orderId, group.needsSubSection)
 							end
 						end
+						lastGroupID = group.groupID
+						lastGroupElementCount = #group.list.content_array
+						lastGroup = group
 					end
 				end
 				if needsResort and this.tf.tooltip_mc.repositionElements then

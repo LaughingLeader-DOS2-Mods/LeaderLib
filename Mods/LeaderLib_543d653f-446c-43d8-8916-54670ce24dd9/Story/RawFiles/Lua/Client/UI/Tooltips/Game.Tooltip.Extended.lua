@@ -474,6 +474,7 @@ end
 --- @param ui UIObject
 --- @param name string MainTimeline property name to write
 --- @param tbl table Table to convert to Flash
+--- @param this FlashMainTimeline|nil
 function TableToFlash(ui, name, tbl, this)
 	local this = this or ui:GetRoot()
 	local arr = this[name]
@@ -489,11 +490,12 @@ end
 --- @param tooltipArray table Tooltip array
 --- @param originalTooltipArray table Unmodified tooltip array
 function ReplaceTooltipArray(ui, propertyName, tooltipArray, originalTooltipArray)
-	TableToFlash(ui, propertyName, tooltipArray)
+	local this = ui:GetRoot()
+	TableToFlash(ui, propertyName, tooltipArray, this)
 	if #tooltipArray < #originalTooltipArray then
 		-- Pad out the tooltip array with dummy values
 		for i=#tooltipArray,#originalTooltipArray do
-			ui:SetValue(propertyName, TooltipItemTypes.IsQuestItem, i)
+			this[propertyName][i] = TooltipItemTypes.IsQuestItem
 		end
 	end
 end
@@ -1700,7 +1702,6 @@ function _ttHooks:NotifyListeners(requestType, name, request, tooltip, ...)
 	if name ~= nil and self.ObjectListeners[requestType] ~= nil then
 		self:NotifyAll(self.ObjectListeners[requestType][name], table.unpack(args))
 	end
-
 	self:NotifyAll(self.GlobalListeners, request, tooltip, ...)
 end
 

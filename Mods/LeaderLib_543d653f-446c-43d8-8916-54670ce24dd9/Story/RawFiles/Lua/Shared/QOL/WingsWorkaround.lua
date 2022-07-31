@@ -77,7 +77,7 @@ function OverrideWings(shouldSync)
 			end
 		end
 		for entryType,attribute in pairs(wingsProps) do
-			for i,statName in pairs(Ext.GetStatEntries(entryType)) do
+			for i,statName in pairs(Ext.Stats.GetStats(entryType)) do
 				local props = GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute)
 				if props ~= nil then
 					-- Swaps WINGS for LEADERLIB_WINGS
@@ -87,7 +87,7 @@ function OverrideWings(shouldSync)
 						local stat = Ext.Stats.Get(statName)
 						if stat then
 							stat[attribute] = props
-							Ext.SyncStat(statName, false)
+							Ext.Stats.Sync(statName, false)
 						end
 					end
 				end

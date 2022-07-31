@@ -50,7 +50,7 @@ function ModifyPathInfluenceForAllPlayers(revert)
 				else
 					stat.PathInfluence = defaultPathInfluence
 				end
-				Ext.SyncStat(statname, true)
+				Ext.Stats.Sync(statname, true)
 			end
 		end
 	end
@@ -64,7 +64,7 @@ function ModifyPathInfluenceForAllPlayers(revert)
 				else
 					stat.PathInfluence = defaultUndeadPathInfluence
 				end
-				Ext.SyncStat(statname, true)
+				Ext.Stats.Sync(statname, true)
 			end
 		end
 	end
@@ -91,7 +91,7 @@ function ModifyPathInfluenceForPlayer(uuid, revert)
 				stat.PathInfluence = defaultPathInfluence
 			end
 		end
-		Ext.SyncStat(player.Stats.Name, true)
+		Ext.Stats.Sync(player.Stats.Name, true)
 	end
 end
 

@@ -222,12 +222,12 @@ local forceStatuses = {
 	"LEADERLIB_FORCE_PUSH20",
 }
 
-local function OverrideForce(syncMode)
+local function OverrideForce(shouldSync)
 	for i,statId in pairs(forceStatuses) do
 		local stat = Ext.Stats.Get(statId)
 		if stat then
 			stat.LeaveAction = ""
-			if syncMode then
+			if shouldSync then
 				Ext.Stats.Sync(statId, false)
 			end
 		end
@@ -258,7 +258,7 @@ local function OverrideForce(syncMode)
 				end
 				if hasForce then
 					stat.SkillProperties = props
-					if syncMode then
+					if shouldSync then
 						Ext.Stats.Sync(stat.Name, false)
 					end
 				end
@@ -400,7 +400,7 @@ local function OverrideStats(data, statsLoadedState)
 		-- 	Recovery = Ext.StatGetAttribute("_Base", "APRecovery"),
 		-- }
 		local settings = data.Settings.APSettings.NPC
-		for _,id in pairs(Ext.GetStatEntries("Character")) do
+		for _,id in pairs(Ext.Stats.GetStats("Character")) do
 			local stat = Ext.Stats.Get(id)
 			local skip = skipCharacterStats[id] == true or playerStats[id] ~= nil
 			if not skip then
@@ -425,7 +425,7 @@ local function OverrideStats(data, statsLoadedState)
 		end
 	end
 
-	for _,v in pairs(Ext.GetStatEntries("StatusData")) do
+	for _,v in pairs(Ext.Stats.GetStats("StatusData")) do
 		_loadedStatuses[v] = true
 		local statusType = Ext.Stats.GetAttribute(v, "StatusType")
 		if statusType then

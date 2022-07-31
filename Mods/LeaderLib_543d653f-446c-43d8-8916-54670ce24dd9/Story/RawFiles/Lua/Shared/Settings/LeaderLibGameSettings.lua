@@ -280,7 +280,7 @@ function LeaderLibGameSettings:ApplyAPChanges()
 			baseStat.APMaximum = stats.APMaximum
 			baseStat.APRecovery = stats.APRecovery
 			if Ext.IsServer() then
-				Ext.SyncStat(baseStat.Name, false)
+				Ext.Stats.Sync(baseStat.Name, false)
 			end
 		end
 	end

@@ -108,12 +108,12 @@ function GameHelpers.Item.GetStatsForRootTemplate(template, statType)
     local matches = {}
     local stats = {}
     if statType then
-        stats = Ext.GetStatEntries(statType)
+        stats = Ext.Stats.GetStats(statType)
     end
     local isEquipment = statType == "Weapon" or statType == "Armor" or statType == "Shield"
     if isEquipment or not statType then
         local matchedgroups = {}
-        for _,itemgroupName in pairs(Ext.GetStatEntries("ItemGroup")) do
+        for _,itemgroupName in pairs(Ext.Stats.GetStats("ItemGroup")) do
             local itemGroup = Ext.GetItemGroup(itemgroupName)
             if itemGroup then
                 for _,lgroup in pairs(itemGroup.LevelGroups) do

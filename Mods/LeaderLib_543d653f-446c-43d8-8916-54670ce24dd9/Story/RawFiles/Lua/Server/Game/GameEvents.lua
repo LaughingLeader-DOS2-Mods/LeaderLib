@@ -12,7 +12,7 @@ end
 -- so other mods can change the projectiles used.
 local function OverrideLeaveActionStatuses()
 	if #Vars.LeaveActionData.Prefixes > 0 then
-		for i,stat in pairs(Ext.GetStatEntries("StatusData")) do
+		for i,stat in pairs(Ext.Stats.GetStats("StatusData")) do
 			if CanOverrideLeaveActionStatus(stat) then
 				local leaveActionSkill = Ext.StatGetAttribute(stat, "LeaveAction")
 				if StringHelpers.IsNullOrWhitespace(leaveActionSkill) then
@@ -31,7 +31,7 @@ local function OverrideLeaveActionStatuses()
 					Osi.DB_LeaderLib_LeaveAction_StatusToSkill(stat, leaveActionSkill)
 					local statObj = Ext.Stats.Get(stat)
 					statObj.LeaveAction = ""
-					Ext.SyncStat(stat, false)
+					Ext.Stats.Sync(stat, false)
 				end
 			end
 		end

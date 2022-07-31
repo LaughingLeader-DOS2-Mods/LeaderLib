@@ -260,10 +260,10 @@ local function processTreasure(treasure, props, host, generateAmount)
 	local tbl = Ext.GetTreasureTable(treasure)
 	if tbl then
 		local stats = {
-			Armor = Ext.GetStatEntries("Armor"),
-			Weapon = Ext.GetStatEntries("Weapon"),
-			Shield = Ext.GetStatEntries("Shield"),
-			Object = Ext.GetStatEntries("Object")
+			Armor = Ext.Stats.GetStats("Armor"),
+			Weapon = Ext.Stats.GetStats("Weapon"),
+			Shield = Ext.Stats.GetStats("Shield"),
+			Object = Ext.Stats.GetStats("Object")
 		}
 
 		for _,sub in pairs(tbl.SubTables) do
@@ -546,7 +546,7 @@ local modifierTypes = {
 
 Ext.RegisterConsoleCommand("printdeltamods", function(cmd, attributeFilter, filterValue, filter2, filter2Value)
 	---@type DeltaMod[]
-	local deltamods = Ext.GetStatEntries("DeltaMod")
+	local deltamods = Ext.Stats.GetStats("DeltaMod")
 	for _,v in pairs(deltamods) do
 		local deltamod = Ext.GetDeltaMod(v.Name, v.ModifierType)
 		local canPrint = false

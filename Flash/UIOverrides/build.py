@@ -28,9 +28,10 @@ DOS2DE_PUBLIC = DOS2.joinpath("DefEd/Data/Public/")
 OUTPUT = DOS2DE_PUBLIC.joinpath("LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/")
 
 targets = [
+    #"tooltip",
     "optionsSettings",
-    # "optionsSettings_c",
-    # "journal",
+    "optionsSettings_c",
+    "journal",
 ]
 
 package_pattern = re.compile("package ([^\s]+)", re.IGNORECASE | re.MULTILINE)

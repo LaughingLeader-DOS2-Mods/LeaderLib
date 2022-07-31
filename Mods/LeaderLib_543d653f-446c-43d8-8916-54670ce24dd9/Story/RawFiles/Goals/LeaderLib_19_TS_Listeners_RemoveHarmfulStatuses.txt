@@ -25,6 +25,8 @@ PROC
 Proc_Arena_Win_TeleportOut()
 AND
 DB_Arena_PlayerParticipants(_,_,_Player,_)
+AND
+ObjectExists((CHARACTERGUID)_Player, 1)
 THEN
 LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
 

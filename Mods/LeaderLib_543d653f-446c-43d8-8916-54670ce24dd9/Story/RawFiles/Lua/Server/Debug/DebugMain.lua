@@ -277,7 +277,7 @@ function LeaderLog(logType, ...)
 end
 
 function Debug_TestSkillScaleMath(level)
-	local stat = Ext.GetStat("Damage_Burning")
+	local stat = Ext.Stats.Get("Damage_Burning")
 	local dmgFromBase = stat.DamageFromBase * 0.01
 	local damage = GameHelpers.Math.GetAverageLevelDamage(math.tointeger(level))
 	local damageAdjusted = damage * dmgFromBase
@@ -445,3 +445,39 @@ end)
 Events.OnStatus:Subscribe(function (e)
 	e:Dump()
 end, {Priority=0, MatchArgs={StatusId="HEAL"}}) ]]
+
+--[[ local arrowSkills = {
+	"Projectile_FireArrow",
+	"Projectile_ExplosionArrow",
+	"Projectile_FreezingArrow",
+	"Projectile_WaterArrow",
+	"Projectile_CursedFireArrow",
+	"Projectile_BlessedWaterArrow",
+	"Projectile_SlowDownArrow",
+	"Projectile_StunningArrow",
+	"Projectile_SteamCloudArrow",
+	"Projectile_SmokescreenArrow",
+	"Projectile_StaticCloudArrow",
+	"Projectile_SilverArrow",
+	"Projectile_BleedingArrow",
+	"Projectile_KnockedOutArrow",
+	"Projectile_PoisonedCloudArrow",
+	"Projectile_CharmingArrow",
+	"Projectile_PoisonArrow",
+	"Projectile_DebuffAllArrow",
+}
+
+SkillManager.Register.BeforeProjectileShoot(arrowSkills, function (e)
+    if e.Character:GetStatus("HASTED") then
+		local lastSkill = e.Data.SkillId
+		local _,_,level = string.find(e.Data.SkillId, "_(%-?%d+)$")
+		if level then
+			e.Data.SkillId = "Projectile_SmokescreenArrow" .. "_" .. level
+		else
+			e.Data.SkillId = "Projectile_SmokescreenArrow"
+		end
+		local newDamage = GameHelpers.Damage.GetSkillDamage("Projectile_SmokescreenArrow", e.Character)
+		e.Data.DamageList:CopyFrom(newDamage)
+		fprint(LOGLEVEL.DEFAULT, "[Test] Replaced projectile skill (%s) => (%s)", lastSkill, e.Data.SkillId)
+    end
+end) ]]

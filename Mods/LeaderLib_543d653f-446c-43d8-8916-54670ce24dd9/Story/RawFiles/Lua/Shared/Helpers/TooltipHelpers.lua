@@ -46,7 +46,7 @@ local function GetTextParamValues(output, character)
 		elseif value == nil then
 			value = ""
 		end
-		output = string.gsub(output, StringHelpers.EscapeMagic(v), StringHelpers.EscapePercentages(value))
+		output = StringHelpers.Replace(output, v, value)
 	end
 	return output
 end
@@ -231,7 +231,7 @@ local function ReplacePlaceholders(str, character)
 				end
 			end
 		end
-		output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
+		output = StringHelpers.Replace(output, v, value)
 	end
 	for v in string.gmatch(output, "%[Stats:.-%]") do
 		local value = ""
@@ -240,7 +240,7 @@ local function ReplacePlaceholders(str, character)
 		local stat = props[1]
 		local property = props[2]
 		if stat ~= nil and property ~= nil then
-			value = Ext.StatGetAttribute(stat, property)
+			value = Ext.Stats.GetAttribute(stat, property)
 		end
 		if value ~= nil and value ~= "" then
 			if _type(value) == "number" then
@@ -250,7 +250,7 @@ local function ReplacePlaceholders(str, character)
 			value = ""
 		end
 		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
-		output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
+		output = StringHelpers.Replace(output, v, value)
 	end
 	for v in string.gmatch(output, "%[SkillDamage:.-%]") do
 		local value = ""
@@ -262,7 +262,7 @@ local function ReplacePlaceholders(str, character)
 			if _type(value) == "number" then
 				value = string.format("%i", math.floor(value))
 			end
-			output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
+			output = StringHelpers.Replace(output, v, value)
 		end
 	end
 	for v in string.gmatch(output, "%[Skill:.-%]") do
@@ -312,7 +312,7 @@ local function ReplacePlaceholders(str, character)
 		elseif value == nil then
 			value = ""
 		end
-		output = string.gsub(output, StringHelpers.EscapeMagic(v), value)
+		output = StringHelpers.Replace(output, v, value)
 	end
 
 	output = GetTextParamValues(output, character)
@@ -329,10 +329,9 @@ local function ReplacePlaceholders(str, character)
 			if translatedText == nil then 
 				translatedText = "" 
 			else
-				translatedText = string.gsub(translatedText, "%%", "%%%%")
 				translatedText = ReplacePlaceholders(translatedText, character)
 			end
-			output = string.gsub(output, StringHelpers.EscapeMagic(v), translatedText)
+			output = StringHelpers.Replace(output, v, translatedText)
 		elseif fallback then
 			output = fallback
 		end
@@ -346,9 +345,10 @@ local function ReplacePlaceholders(str, character)
 		local translatedText = GameHelpers.GetTranslatedString(props[1], props[2])
 		if translatedText == nil then 
 			translatedText = "" 
+		else
+			translatedText = ReplacePlaceholders(translatedText, character)
 		end
-		--local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-		output = string.gsub(output, StringHelpers.EscapeMagic(v), translatedText)
+		output = StringHelpers.Replace(output, v, translatedText)
 	end
 	return output
 end

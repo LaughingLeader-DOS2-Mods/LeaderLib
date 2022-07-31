@@ -233,14 +233,18 @@ local function _escapePercentages(s)
 end
 StringHelpers.EscapePercentages = _escapePercentages
 
+local function _regexEscape(str)
+	return str:gsub("[%(%)%.%%%+%-%*%?%[%^%$%]]", "%%%1")
+end
+
 --- Similar to gsub, but escapes all magic characters in the pattern beforehand.
 --- @param s string
 --- @param pattern string
---- @param repl string|table|function
+--- @param repl string
 --- @param n integer|nil
 --- @return string
 function StringHelpers.Replace(s, pattern, repl, n)
-	return _gsub(s, _escape(pattern), repl, n)
+	return _gsub(s, _regexEscape(pattern), repl:gsub("%%", "%%%%"), n)
 end
 
 local _cachedParsedGUID = {}

@@ -132,7 +132,7 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 							local text = ""
 							if v.Type == "Status" then
 								if v.StatusChance > 0 and GameHelpers.Stats.Exists(v.Action, "StatusData") then
-									local stat = Ext.GetStat(v.Action)
+									local stat = Ext.Stats.Get(v.Action)
 									local statusDisplayName = GameHelpers.GetStringKeyText(stat.DisplayName, stat.DisplayNameRef)
 									local chanceText = ""
 									if v.StatusChance < 1 then

@@ -70,7 +70,7 @@ function GameHelpers.Item.GetItemLevel(item)
             if levelOverride > -1 then
                 return levelOverride
             else
-                return Ext.GetStat(item.StatsId)["Act part"] or 1
+                return Ext.Stats.Get(item.StatsId)["Act part"] or 1
             end
         end
     end
@@ -81,7 +81,7 @@ end
 ---@return string[]
 function GameHelpers.Item.GetRootTemplatesForStat(statName)
     local matches = {}
-    local stat = Ext.GetStat(statName)
+    local stat = Ext.Stats.Get(statName)
     if stat then
         if GameHelpers.Item.IsObject(statName) then
             return stat.RootTemplate

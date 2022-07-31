@@ -87,7 +87,7 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
 
     --Workaround for PhysicalResistance in StatCharacter being double what it actually is
     if _EXTVERSION <= 55 and damageType == "Physical" then
-        local stat = Ext.GetStat(character.Name)
+        local stat = Ext.Stats.Get(character.Name)
         if stat then
             res = stat.PhysicalResistance
         else

@@ -80,7 +80,7 @@ TooltipHandler.Settings.DamageNameFixing = DamageNameFixing
 local _skillDamagePattern = "(.+):Damage$"
 
 local function GetSkillDamageTypes(id, description)
-	local skill = Ext.GetStat(id)
+	local skill = Ext.Stats.Get(id)
 	local damageTypes = {
 		[skill.DamageType] = true
 	}

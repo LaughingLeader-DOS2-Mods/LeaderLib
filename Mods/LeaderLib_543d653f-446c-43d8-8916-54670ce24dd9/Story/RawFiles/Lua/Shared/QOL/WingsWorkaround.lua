@@ -30,11 +30,11 @@ local wingsVisualProps = {
 local function PropertiesHasWingsVisual(props)
 	for i,v in pairs(props) do
 		if v.Type == "Status" and v.Action ~= "WINGS" then
-			local stat = Ext.GetStat(v.Action)
+			local stat = Ext.Stats.Get(v.Action)
 			if stat ~= nil then
 				if stat.Items ~= nil then
 					---@type StatItem
-					local itemStat = Ext.GetStat(stat.Items)
+					local itemStat = Ext.Stats.Get(stat.Items)
 					if itemStat ~= nil and itemStat.Slot == "Wings" then
 						return true
 					end
@@ -62,23 +62,17 @@ local wingsProps = {
 	Shield = "ExtraProperties",
 }
 
-function OverrideWings(isServer)
+function OverrideWings(shouldSync)
 	if Features.WingsWorkaround == true then
-		if isServer == true then
-			for statName,data in pairs(wingsOverride) do
-				---@type StatEntryStatusData
-				local stat = Ext.GetStat(statName)
-				if stat ~= nil then
-					for attribute,v in pairs(data) do
-						stat[attribute] = v
-					end
-					Ext.SyncStat(statName, false)
-				end
-			end
-		else
-			for statName,data in pairs(wingsOverride) do
+		for statName,data in pairs(wingsOverride) do
+			---@type StatEntryStatusData
+			local stat = Ext.Stats.Get(statName)
+			if stat ~= nil then
 				for attribute,v in pairs(data) do
-					Ext.StatSetAttribute(statName, attribute, v)
+					stat[attribute] = v
+				end
+				if shouldSync then
+					Ext.Stats.Sync(statName, false)
 				end
 			end
 		end
@@ -90,15 +84,10 @@ function OverrideWings(isServer)
 					local wingsPropIndex = PropertiesHasWings(props)
 					if wingsPropIndex ~= false and not PropertiesHasWingsVisual(props) then
 						props[wingsPropIndex].Action = "LEADERLIB_WINGS"
-						if isServer == true then
-							--@type StatPropertyStatus[]
-							local stat = Ext.GetStat(statName)
-							if stat then
-								stat[attribute] = props
-								Ext.SyncStat(statName, false)
-							end
-						else
-							Ext.StatSetAttribute(statName, attribute, props)
+						local stat = Ext.Stats.Get(statName)
+						if stat then
+							stat[attribute] = props
+							Ext.SyncStat(statName, false)
 						end
 					end
 				end

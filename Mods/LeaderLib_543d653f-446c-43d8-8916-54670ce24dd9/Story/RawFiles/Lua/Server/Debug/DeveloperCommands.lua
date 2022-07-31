@@ -231,9 +231,9 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	local changedSkillAttributes = {}
 	
 	Ext.RegisterConsoleCommand("flurrytest", function(cmd, skill, attribute, value)
-		local stat = Ext.GetStat("Target_DualWieldingAttack")
+		local stat = Ext.Stats.Get("Target_DualWieldingAttack")
 		if stat ~= nil then
-			local newSkill = Ext.GetStat("Projectile_Test_FlurryDamage") or Ext.CreateStat("Projectile_Test_FlurryDamage", "SkillData", "_Projectile_LeaderLib_LeaveAction_DamageBase")
+			local newSkill = Ext.Stats.Get("Projectile_Test_FlurryDamage") or Ext.CreateStat("Projectile_Test_FlurryDamage", "SkillData", "_Projectile_LeaderLib_LeaveAction_DamageBase")
 			newSkill.SkillProperties = {
 			{
 			Type = "Custom",
@@ -267,7 +267,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			stat.Requirement = "MeleeWeapon"
 			Ext.SyncStat("Target_DualWieldingAttack", false)
 		end
-		local stat = Ext.GetStat("Projectile_EnemyThrowingKnife")
+		local stat = Ext.Stats.Get("Projectile_EnemyThrowingKnife")
 		if stat ~= nil then
 			stat.Requirement = "MeleeWeapon"
 			Ext.SyncStat("Projectile_EnemyThrowingKnife", false)
@@ -279,7 +279,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	
 	Ext.RegisterConsoleCommand("lleditskill", function(cmd, skill, attribute, value)
 		PrintDebug(attribute, value)
-		local stat = Ext.GetStat(skill)
+		local stat = Ext.Stats.Get(skill)
 		if stat ~= nil then
 			local curVal = stat[attribute]
 			local attType = type(curVal)
@@ -540,7 +540,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	}
 	
 	Ext.RegisterConsoleCommand("llprintskill", function(cmd, skill, printEmpty)
-		local stat = Ext.GetStat(skill)
+		local stat = Ext.Stats.Get(skill)
 		if stat ~= nil then
 			local skillProps = {}
 			for att,attType in pairs(skillAttributes) do
@@ -1094,7 +1094,7 @@ end)
 --local pa,b1,ma,b2 = 0,0,0,0; for i,v in pairs(Ext.GetItem(CharacterGetEquippedItem(CharacterGetHostCharacter(), "Breast")).Stats.DynamicStats) do pa=pa+v.ArmorValue;b1=b1 + v.ArmorBoost *0.01;ma=ma+v.MagicArmorValue;b2=b2 + v.MagicArmorBoost *0.01; end print("Physical Armor:", pa * (1 + b1));print("Magic Armor:", ma * (1 + b2))
 --Public\WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f\Stats\Generated\Data\Data.txt
 --for _,uuid in ipairs(Ext.GetModLoadOrder()) do local info = Ext.GetModInfo(uuid); if info.Name ~= "Shared" then print(info.Name); print(Ext.LoadFile(string.format("Public/%s/Stats/Generated/Data/Data.txt", info.Directory), "data")); end end
---local totalBad = 0; for _,v in pairs(Ext.GetStatEntries("Weapon")) do if string.sub(v, 1, 1) ~= "_" and not string.find(v, "Status_") and not string.find(v, "Damage_") then local stat = Ext.GetStat(v); if stat.AttackAPCost ~= 4 then print(v, stat.AttackAPCost); totalBad = totalBad + 1; end end end;print("Total bad:", totalBad)
+--local totalBad = 0; for _,v in pairs(Ext.GetStatEntries("Weapon")) do if string.sub(v, 1, 1) ~= "_" and not string.find(v, "Status_") and not string.find(v, "Damage_") then local stat = Ext.Stats.Get(v); if stat.AttackAPCost ~= 4 then print(v, stat.AttackAPCost); totalBad = totalBad + 1; end end end;print("Total bad:", totalBad)
 
 Ext.RegisterConsoleCommand("setcustomstat", function(cmd, id, amount)
 	amount = amount or "1"
@@ -1105,7 +1105,7 @@ Ext.RegisterConsoleCommand("setcustomstat", function(cmd, id, amount)
 end)
 
 Ext.RegisterConsoleCommand("testchaoswand", function(cmd)
-	local stat = Ext.GetStat("WPN_Wand_Chaos") or Ext.CreateStat("WPN_Wand_Chaos", "Weapon", "WPN_Wand_Air")
+	local stat = Ext.Stats.Get("WPN_Wand_Chaos") or Ext.CreateStat("WPN_Wand_Chaos", "Weapon", "WPN_Wand_Air")
 	stat["Damage Type"] = "Chaos"
 	stat.ObjectCategory = "WandChaos"
 	stat.Projectile = "6770f065-df9b-4a0b-a6cb-bfa5e5c28c0e"
@@ -1236,7 +1236,7 @@ Ext.RegisterConsoleCommand("createitemtest", function()
 				-- 	local data = Ext.GetDeltaMod(v, "Armor")
 				-- 	if data then
 					-- 		for _,boostData in pairs(data.Boosts) do
-						-- 			local boost = Ext.GetStat(boostData.Boost, 10)
+						-- 			local boost = Ext.Stats.Get(boostData.Boost, 10)
 						-- 			if boost then
 							-- 				for k,typeName in pairs(StatEntryArmor) do
 								-- 					print(k)
@@ -1332,7 +1332,7 @@ local function AddItemStat(stat, params)
 		end
 	end
 	if GameHelpers.Stats.Exists(stat) then
-		local statObj = Ext.GetStat(stat)
+		local statObj = Ext.Stats.Get(stat)
 		if statObj.Unique == 1 then
 			params.HasGeneratedStats = nil
 			params.ItemType = "Unique"

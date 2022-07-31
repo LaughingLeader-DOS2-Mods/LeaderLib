@@ -3,7 +3,7 @@
 ---@param item EsvItem
 ---@param equipped boolean
 local function OnEquipmentChanged(self, char, item, equipped)
-	local stat = Ext.GetStat(item.Stats.Name)
+	local stat = Ext.Stats.Get(item.Stats.Name)
 	local armorType = stat.ArmorType
 	local slot = GameHelpers.Item.GetEquippedSlot(char.MyGuid, item.MyGuid) or item.Stats.Slot
 	if not equipped then

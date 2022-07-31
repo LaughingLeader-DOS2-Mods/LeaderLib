@@ -32,7 +32,7 @@ if not _ISCLIENT then
 					end
 					local skill = nil
 					if targetData.Skill then
-						skill = Ext.GetStat(targetData.Skill)
+						skill = Ext.Stats.Get(targetData.Skill)
 					end
 					if targetData.EndAnimation and not StringHelpers.IsNullOrWhitespace(targetData.EndAnimation) then
 						CharacterSetAnimationOverride(targetObject.MyGuid, "")

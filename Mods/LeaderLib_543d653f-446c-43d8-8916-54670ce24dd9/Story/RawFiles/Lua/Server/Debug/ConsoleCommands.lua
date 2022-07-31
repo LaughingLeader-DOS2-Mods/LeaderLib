@@ -246,7 +246,7 @@ end)
 local function findStatByObjectCategory(name, stats)
 	for statType,entries in pairs(stats) do
 		for _,v in pairs(entries) do
-			local stat = Ext.GetStat(v)
+			local stat = Ext.Stats.Get(v)
 			if stat and stat.ObjectCategory == name then
 				return stat
 			end
@@ -372,7 +372,7 @@ Ext.RegisterConsoleCommand("addskillset", function(command, name, addRequirement
 		Timer.StartOneshot("", 250, function ()
 			for _,v in pairs(skillset.Skills) do
 				if addRequirements then
-					local stat = Ext.GetStat(v)
+					local stat = Ext.Stats.Get(v)
 					if stat then
 						for _,req in pairs(stat.MemorizationRequirements) do
 							if req.Not == false then

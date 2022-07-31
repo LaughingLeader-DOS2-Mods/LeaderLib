@@ -4,7 +4,7 @@
 function TooltipHandler.OnStatTooltip(character, stat, tooltip)
 	--fprint(LOGLEVEL.DEFAULT, "[OnStatTooltip:%s]\n%s", stat, Lib.serpent.block(tooltip.Data))
 	if stat == "APRecovery" then
-		local stat = Ext.GetStat(character.Stats.Name)
+		local stat = Ext.Stats.Get(character.Stats.Name)
 		for i,element in ipairs(tooltip:GetElements("StatsAPBase")) do
 			if i == 1 then
 				element.Label = LocalizedText.Tooltip.StatBase:ReplacePlaceholders(stat.APMaximum)

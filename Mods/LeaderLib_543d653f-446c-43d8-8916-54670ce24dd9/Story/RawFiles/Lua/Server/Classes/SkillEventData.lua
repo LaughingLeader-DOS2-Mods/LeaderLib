@@ -170,7 +170,7 @@ function SkillEventData:LoadFromSave(tbl)
 	end
 	if not StringHelpers.IsNullOrWhitespace(tbl.Skill) then
 		self.Skill = tbl.Skill
-		local stat = Ext.GetStat(self.Skill)
+		local stat = Ext.Stats.Get(self.Skill)
 		if stat then
 			self.Ability = stat.Ability
 			self.SkillType = stat.SkillType

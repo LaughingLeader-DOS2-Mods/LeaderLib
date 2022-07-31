@@ -251,7 +251,7 @@ function LeaderLibGameSettings:ApplyAPChanges()
 		local character = Ext.GetCharacter(v)
 		if character then
 			local stats = {}
-			local baseStat = Ext.GetStat(character.Stats.Name)
+			local baseStat = Ext.Stats.Get(character.Stats.Name)
 			if settings.Enabled then
 				if settings.Start > 0 then
 					stats.APStart = settings.Start

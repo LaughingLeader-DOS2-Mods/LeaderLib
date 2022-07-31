@@ -610,7 +610,7 @@ end
 ---@param asMeters boolean|nil If true, the range is returned as meters (WeaponRange/100).
 ---@return number
 function GameHelpers.Character.GetWeaponRange(character, asMeters)
-	local range = Ext.GetStat("NoWeapon").WeaponRange
+	local range = Ext.Stats.Get("NoWeapon").WeaponRange
 	character = GameHelpers.GetCharacter(character)
 	if character then
 		if _ISCLIENT then
@@ -690,7 +690,7 @@ function GameHelpers.Character.IsDisabled(character, checkForLoseControl, checkF
 				end
 			end
 			if Data.EngineStatus[status.StatusId] ~= true then
-				local stat = Ext.GetStat(status.StatusId)
+				local stat = Ext.Stats.Get(status.StatusId)
 				if stat and stat.LoseControl == "Yes" then
 					if GameHelpers.Status.IsFromEnemy(status, character) then
 						return true

@@ -1436,7 +1436,7 @@ function _ttHooks:GetCompareItem(ui, item, offHand)
 	if item.Stats == nil then
 		local statsId = item.StatsId
 		if statsId ~= "" and statsId ~= nil and not RequestProcessor.Utils.ItemRarity[statsId] then
-			local stat = Ext.GetStat(statsId)
+			local stat = Ext.Stats.Get(statsId)
 			if stat then
 				statSlot = stat.ItemSlot
 			end

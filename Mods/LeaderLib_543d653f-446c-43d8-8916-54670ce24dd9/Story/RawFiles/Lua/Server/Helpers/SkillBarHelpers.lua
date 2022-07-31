@@ -234,7 +234,7 @@ SwapSkill = GameHelpers.Skill.Swap
 ---@param skill string
 ---@return boolean
 function GameHelpers.Skill.CanMemorize(char, skill)
-    local stat = Ext.GetStat(skill)
+    local stat = Ext.Stats.Get(skill)
     if stat then
         local memRequirements = stat.MemorizationRequirements
         if memRequirements then

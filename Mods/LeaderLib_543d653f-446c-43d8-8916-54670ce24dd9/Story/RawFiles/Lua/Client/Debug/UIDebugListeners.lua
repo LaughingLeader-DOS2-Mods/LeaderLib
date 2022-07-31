@@ -331,7 +331,7 @@ local Init = function()
 	-- 		if entry then
 	-- 			print(i, entry)
 	-- 			if type(entry) == "string" then
-	-- 				local stat = Ext.GetStat(entry)
+	-- 				local stat = Ext.Stats.Get(entry)
 	-- 				if stat then
 	-- 					this.skillsUpdateList[i] = "Projectile_Fireball"
 	-- 				end

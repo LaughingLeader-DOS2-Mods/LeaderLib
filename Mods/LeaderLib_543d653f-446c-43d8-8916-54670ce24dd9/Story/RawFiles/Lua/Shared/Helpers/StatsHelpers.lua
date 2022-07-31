@@ -89,7 +89,7 @@ function GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute, st
 	if stat == nil then
 		local t = _type(statName)
 		if t == "string" then
-			stat = Ext.GetStat(statName)
+			stat = Ext.Stats.Get(statName)
 		elseif t == "userdata" then
 			stat = statName
 		end
@@ -344,7 +344,7 @@ local RequirementFunctions = {
 ---@param statId string A skill or item stat.
 ---@return boolean
 function GameHelpers.Stats.CharacterHasRequirements(char, statId)
-	local stat = Ext.GetStat(statId)
+	local stat = Ext.Stats.Get(statId)
 	local character = GameHelpers.GetCharacter(char)
 	fassert(stat ~= nil, "Failed to get stat from %s", statId)
 	fassert(character ~= nil, "Failed to get character from %s", char)
@@ -514,7 +514,7 @@ function GameHelpers.Stats.GetDisplayName(id, statType)
 		id = id.StatusId
 	end
 	if not StringHelpers.IsNullOrEmpty(id) and GameHelpers.Stats.Exists(id, statType) then
-		local stat = Ext.GetStat(id)
+		local stat = Ext.Stats.Get(id)
 		return GameHelpers.GetStringKeyText(stat.DisplayName, stat.DisplayNameRef)
 	end
 	return ""

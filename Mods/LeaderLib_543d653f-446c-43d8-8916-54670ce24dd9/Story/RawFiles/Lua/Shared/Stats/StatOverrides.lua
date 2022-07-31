@@ -224,11 +224,11 @@ local forceStatuses = {
 
 local function OverrideForce(syncMode)
 	for i,statId in pairs(forceStatuses) do
-		local stat = Ext.GetStat(statId)
+		local stat = Ext.Stats.Get(statId)
 		if stat then
 			stat.LeaveAction = ""
 			if syncMode then
-				Ext.SyncStat(statId, false)
+				Ext.Stats.Sync(statId, false)
 			end
 		end
 	end
@@ -259,7 +259,7 @@ local function OverrideForce(syncMode)
 				if hasForce then
 					stat.SkillProperties = props
 					if syncMode then
-						Ext.SyncStat(stat.Name, false)
+						Ext.Stats.Sync(stat.Name, false)
 					end
 				end
 			end
@@ -290,6 +290,7 @@ end
 ---@param data LeaderLibGameSettingsWrapper|nil
 ---@param statsLoadedState boolean|nil
 local function OverrideStats(data, statsLoadedState)
+	local shouldSync = not _ISCLIENT and not statsLoadedState
 	--fprint(LOGLEVEL.TRACE, "[LeaderLib:SyncStatOverrides:%s] Syncing stat overrides from GameSettings.", isClient and "CLIENT" or "SERVER")
 	if data == nil then
 		---@type LeaderLibGameSettingsWrapper
@@ -307,7 +308,7 @@ local function OverrideStats(data, statsLoadedState)
 		local total = 0
 		--Ext.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
 		for id in GameHelpers.Stats.GetSkills() do
-			local stat = Ext.GetStat(id)
+			local stat = Ext.Stats.Get(id)
 			local tier = stat.Tier
 			if data.Settings.StarterTierSkillOverrides == true then
 				if not _ISCLIENT then
@@ -319,10 +320,8 @@ local function OverrideStats(data, statsLoadedState)
 					originalSkillTiers[id] = tier
 					total = total + 1
 					stat.Tier = "Starter"
-					if not _ISCLIENT and not statsLoadedState then
-						Ext.SyncStat(id, false)
-					else
-						Ext.StatSetAttribute(id, "Tier", "Starter")
+					if shouldSync then
+						Ext.Stats.Sync(id, false)
 					end
 				end
 			else
@@ -330,7 +329,7 @@ local function OverrideStats(data, statsLoadedState)
 			end
 			if data.Settings.LowerMemorizationRequirements == true then
 				---@type StatRequirement[]
-				local memorizationReq = Ext.StatGetAttribute(id, "MemorizationRequirements")
+				local memorizationReq = stat.MemorizationRequirements
 				local changed = false
 				if memorizationReq ~= nil then
 					for i,v in pairs(memorizationReq) do
@@ -342,10 +341,8 @@ local function OverrideStats(data, statsLoadedState)
 				end
 				if changed then
 					stat.MemorizationRequirements = memorizationReq
-					if not _ISCLIENT and not statsLoadedState then
-						Ext.SyncStat(id, false)
-					else
-						Ext.StatSetAttribute(id, "MemorizationRequirements", memorizationReq)
+					if shouldSync then
+						Ext.Stats.Sync(id, false)
 					end
 				end
 			end
@@ -374,7 +371,8 @@ local function OverrideStats(data, statsLoadedState)
 				end
 			end
 			spiritVision.SkillProperties = newProps
-			if not _ISCLIENT and not statsLoadedState then
+			spiritVision.Stealth = "Yes" -- Let the status be toggled on/off while in stealth
+			if shouldSync then
 				Ext.Stats.Sync("Shout_SpiritVision", false)
 			end
 		end
@@ -385,17 +383,11 @@ local function OverrideStats(data, statsLoadedState)
 		for id,b in pairs(playerStats) do
 			if b == true or (type(b) == "string" and Ext.IsModLoaded(b)) then
 				---@type StatEntryCharacter
-				local stat = Ext.GetStat(id)
+				local stat = Ext.Stats.Get(id)
 				if stat then
 					local changedStat = AdjustAP(stat, settings)
-					if changedStat then
-						if not _ISCLIENT and not statsLoadedState then
-							Ext.SyncStat(id, false)
-						else
-							Ext.StatSetAttribute(id, "APStart", stat.APStart)
-							Ext.StatSetAttribute(id, "APRecovery", stat.APRecovery)
-							Ext.StatSetAttribute(id, "APRecovery", stat.APMaximum)
-						end
+					if changedStat and shouldSync then
+						Ext.Stats.Sync(id, false)
 					end
 				end
 			end
@@ -409,9 +401,10 @@ local function OverrideStats(data, statsLoadedState)
 		-- }
 		local settings = data.Settings.APSettings.NPC
 		for _,id in pairs(Ext.GetStatEntries("Character")) do
+			local stat = Ext.Stats.Get(id)
 			local skip = skipCharacterStats[id] == true or playerStats[id] ~= nil
 			if not skip then
-				local max = Ext.StatGetAttribute(id, "APMaximum")
+				local max = stat.APMaximum
 				--local start = Ext.StatGetAttribute(id, "APStart")
 				--local recovery = Ext.StatGetAttribute(id, "APRecovery")
 				--This stat is overriding a base AP value, so skip since it could be a totem or boss etc
@@ -422,15 +415,10 @@ local function OverrideStats(data, statsLoadedState)
 				end
 			end
 			if not skip then
-				local stat = Ext.GetStat(id)
 				local changedStat = AdjustAP(stat, settings)
 				if changedStat then
-					if not _ISCLIENT and not statsLoadedState then
-						Ext.SyncStat(id, false)
-					else
-						Ext.StatSetAttribute(id, "APStart", stat.APStart)
-						Ext.StatSetAttribute(id, "APRecovery", stat.APRecovery)
-						Ext.StatSetAttribute(id, "APRecovery", stat.APMaximum)
+					if shouldSync then
+						Ext.Stats.Sync(id, false)
 					end
 				end
 			end
@@ -439,28 +427,24 @@ local function OverrideStats(data, statsLoadedState)
 
 	for _,v in pairs(Ext.GetStatEntries("StatusData")) do
 		_loadedStatuses[v] = true
-		local statusType = Ext.StatGetAttribute(v, "StatusType")
+		local statusType = Ext.Stats.GetAttribute(v, "StatusType")
 		if statusType then
 			Data.StatusToType[v] = statusType
 		end
 	end
 
-	OverrideWings(not _ISCLIENT and not statsLoadedState)
-	OverrideForce(not _ISCLIENT and not statsLoadedState)
+	OverrideWings(shouldSync)
+	OverrideForce(shouldSync)
 
 	for statId,data in pairs(StatFixes) do
 		if not data.Mod or Ext.IsModLoaded(data.Mod) then
-			local stat = Ext.GetStat(statId)
+			local stat = Ext.Stats.Get(statId)
 			if stat and data.CanChange(stat) then
 				for attribute,value in pairs(data.Changes) do
-					if not _ISCLIENT and not statsLoadedState then
-						stat[attribute] = value
-					else
-						Ext.StatSetAttribute(statId, attribute, value)
-					end
+					stat[attribute] = value
 				end
-				if not _ISCLIENT and not statsLoadedState then
-					Ext.SyncStat(statId, false)
+				if shouldSync then
+					Ext.Stats.Sync(statId, false)
 				end
 			end
 		end
@@ -470,15 +454,9 @@ local function OverrideStats(data, statsLoadedState)
 end
 
 Ext.Events.StatsLoaded:Subscribe(function (e)
-	OverrideStats(nil, false)
+	OverrideStats(nil, true)
 end, {Priority=0})
 
-Events.LuaReset:Subscribe(function (e)
-	if Vars.LeaderDebugMode then
-		OverrideStats(nil, true)
-	end
-end)
-
 function SyncStatOverrides(data)
-	OverrideStats(data)
+	OverrideStats(data, false)
 end

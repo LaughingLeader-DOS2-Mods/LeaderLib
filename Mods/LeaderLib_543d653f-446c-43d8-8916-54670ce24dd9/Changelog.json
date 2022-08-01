@@ -8,8 +8,8 @@
 		{
 			"Version": "1.7.25.3",
 			"Changes": [
-				"Fixed an issue where 'Scaled With' text wasn't shown in item tooltips.",
-				"Added a workaround for a game/extender bug, where the last tooltip element in a status tooltip was being duplicated, if a status with a duration is active outside of combat."
+				"Fixed an issue where the 'Scales With' text wasn't being shown in weapon tooltips.",
+				"Added a workaround for an obscure game/extender bug, where the last tooltip element in a status tooltip was being duplicated, if a status with a duration is active outside of combat, and a mod adds a toolip element."
 			]
 		},
 		{

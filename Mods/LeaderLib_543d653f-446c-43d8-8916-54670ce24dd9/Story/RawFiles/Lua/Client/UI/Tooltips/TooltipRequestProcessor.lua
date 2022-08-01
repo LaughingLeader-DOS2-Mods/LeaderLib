@@ -1057,7 +1057,8 @@ local _lastShowStatusTooltip = -1
 
 Ext.Events.UICall:Subscribe(function (e)
 	if e.When == "Before" then
-		if e.Function == "showStatusTooltip" and e.UI.Type == Data.UIType.playerInfo then
+		local typeID = e.UI.Type
+		if e.Function == "showStatusTooltip" and typeID == 38 then -- Data.UIType.playerInfo
 			--Fix for ticking statuses causing the last element in a tooltip array to be duplicated, if a new value was added in a tooltip listener
 			if _lastShowStatusTooltip >= 0 then
 				if _MonotonicTime() - _lastShowStatusTooltip <= 33 then
@@ -1072,7 +1073,7 @@ Ext.Events.UICall:Subscribe(function (e)
 		local handler = CallHandlers[e.Function]
 		if handler then
 			if handler.TypeIds then
-				if handler.TypeIds[e.UI.Type] == true then
+				if handler.TypeIds[typeID] == true then
 					handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
 				end
 			else

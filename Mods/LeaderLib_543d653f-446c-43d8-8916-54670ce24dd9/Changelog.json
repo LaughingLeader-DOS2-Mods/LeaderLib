@@ -6,6 +6,13 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.25.3",
+			"Changes": [
+				"Fixed an issue where 'Scaled With' text wasn't shown in item tooltips.",
+				"Added a workaround for a game/extender bug, where the last tooltip element in a status tooltip was being duplicated, if a status with a duration is active outside of combat."
+			]
+		},
+		{
 			"Version": "1.7.25.2",
 			"Changes": [
 				"Fixed an issue where Spirit Vision no longer applied a status. Turns out this is an obscure extender bug, so a workaround was added until it can be fixed in the extender itself (the workaround makes the bug not occur)."

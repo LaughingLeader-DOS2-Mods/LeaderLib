@@ -600,8 +600,11 @@ if not _ISCLIENT then
 			end
 		end,
 		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
-			if matchArgsType == "table" and type(opts.MatchArgs.Status) == "string" then
-				local status = opts.MatchArgs.Status
+			if matchArgsType == "table" and type(opts.MatchArgs.StatusId) == "string" then
+				local status = opts.MatchArgs.StatusId
+				if Vars.DebugMode and not Data.EngineStatus[status] and not GameHelpers.Stats.Exists(status, "StatusData") then
+					error(string.format("Status (%s) does not exist", status), 2)
+				end
 				local statusEvent = opts.MatchArgs.StatusEvent
 				local statusEventType = type(statusEvent)
 				if statusEventType == "string" then

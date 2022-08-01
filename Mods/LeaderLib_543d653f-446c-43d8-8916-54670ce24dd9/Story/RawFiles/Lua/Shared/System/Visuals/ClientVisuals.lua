@@ -240,6 +240,9 @@ Ext.RegisterConsoleCommand("lltestvisual", function (cmd, t)
 	end
 end)
 
+---@param fx string|string[]
+---@param target ObjectParam
+---@param params {Target:ObjectParam, WeaponBones:string}|nil
 function VisualManager.CreateClientEffect(fx, target, params)
 	params = params or {}
 	local ft = type(fx)

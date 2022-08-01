@@ -346,10 +346,13 @@ end
 ---@param client CharacterParam|integer|nil A specific client to play the effect for. Leave nil to broadcast it to all clients.
 ---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]
 function EffectManager.PlayClientEffect(fx, target, params, client)
+	if params then
+		params = TableHelpers.SanitizeTable(params, nil, true)
+	end
 	if not client then
-		GameHelpers.Net.Broadcast("LeaderLib_EffectManager_PlayClientEffect", {Target = target, FX = fx, Params = params})
+		GameHelpers.Net.Broadcast("LeaderLib_EffectManager_PlayClientEffect", {Target = GameHelpers.GetNetID(target), FX = fx, Params = params})
 	else
-		GameHelpers.Net.PostToUser(client, "LeaderLib_EffectManager_PlayClientEffect", {Target = target, FX = fx, Params = params})
+		GameHelpers.Net.PostToUser(client, "LeaderLib_EffectManager_PlayClientEffect", {Target = GameHelpers.GetNetID(target), FX = fx, Params = params})
 	end
 end
 

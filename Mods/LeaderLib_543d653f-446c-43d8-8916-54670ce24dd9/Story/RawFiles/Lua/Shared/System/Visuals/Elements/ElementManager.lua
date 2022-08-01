@@ -69,13 +69,13 @@ function ElementManager.OnEquipmentChanged(char,item,equipped)
 	if char == nil or item == nil then
 		return false
 	end
-	if item.ItemType == "Armor" and char.RootTemplate ~= nil then
+	if item.Stats and item.Stats.ItemType == "Armor" and char.RootTemplate ~= nil then
 		local visual = char.RootTemplate.VisualTemplate
 		if not StringHelpers.IsNullOrEmpty(visual) then
 			local data = ElementManager.Data[visual]
 			if data ~= nil and data.OnEquipmentChanged ~= nil then
 				-- Hidden Helmet
-				if equipped and (item.Stats ~= nil and item.Stats.Slot == ElementManager.Slot.Helmet) and ObjectGetFlag(char.MyGuid, "LeaderLib_HelmetHidden") == 1 then
+				if equipped and (item.Stats.ItemSlot == ElementManager.Slot.Helmet) and ObjectGetFlag(char.MyGuid, "LeaderLib_HelmetHidden") == 1 then
 					equipped = false
 				end
 				local b,result = xpcall(data.OnEquipmentChanged, debug.traceback, data, char, item, equipped)

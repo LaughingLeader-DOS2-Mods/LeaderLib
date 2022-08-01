@@ -13,6 +13,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		return
 	end
 	if item ~= nil then
+		local settings = GameSettingsManager.GetSettings().Client
 		local isRead = false
 		TooltipHandler.LastItem = item
 		local character = Client:GetCharacter()
@@ -143,10 +144,8 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		if TooltipHandler.HasTagTooltipData then
 			TooltipHandler.AddTooltipTags(item, tooltip)
 		end
-		if (Features.TooltipGrammarHelper or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText)
-		and not GameHelpers.Item.IsObject(item)
-		and item.Stats.Requirements ~= nil
-		and #item.Stats.Requirements > 0
+		if (Features.TooltipGrammarHelper or settings.AlwaysDisplayWeaponScalingText)
+		and item.Stats and item.Stats.Requirements ~= nil and #item.Stats.Requirements > 0
 		then
 			local hasScalesWithText = false
 			local requiresPointsHigherThanZero = false
@@ -197,7 +196,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
 				end
 				--Also show the 'Scales With' text for weapons.
-				if item.ItemType == "Weapon" and (not requiresPointsHigherThanZero or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText) then
+				if item.Stats.ItemType == "Weapon" and (not requiresPointsHigherThanZero or settings.AlwaysDisplayWeaponScalingText) then
 					local element = {
 						Type = "ItemRequirement",
 						Label = LocalizedText.Tooltip.ScalesWith:ReplacePlaceholders(attributeName),
@@ -227,8 +226,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 			--tooltip:GetElement("SkillAlreadyLearned", {Type="SkillAlreadyLearned", Label = LocalizedText.Tooltip.BookIsKnown.Value})
 			element.Label = element.Label .. "<br>" .. LocalizedText.Tooltip.BookIsKnown.Value
 		end
-		local settings = GameSettingsManager.GetSettings()
-		if settings.Client.CondenseItemTooltips then
+		if settings.CondenseItemTooltips then
 			local elements = tooltip:GetElements("ExtraProperties")
 			if #elements > 1 then
 				for i,v in pairs(elements) do

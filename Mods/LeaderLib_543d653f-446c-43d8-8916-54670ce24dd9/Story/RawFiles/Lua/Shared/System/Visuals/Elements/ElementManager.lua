@@ -4,8 +4,21 @@ Ext.Require("Shared/System/Visuals/Elements/Classes/VisualResourceData.lua")
 Ext.Require("Shared/System/Visuals/Elements/Classes/VisualElementData.lua")
 
 ---@class LeaderLibVisualElementManager
-local ElementManager = {}
+local ElementManager = {
+	---@type table<string, VisualElementData>
+	Data = {}
+}
 
+ElementManager.Register = {
+	---@param visualSet string
+	---@param data VisualElementData
+	Visuals = function(visualSet, data)
+		ElementManager.Data[visualSet] = data
+		data.VisualSet = visualSet
+	end
+}
+
+---@enum ElementManagerVisualSlot
 ElementManager.VisualSlot = {
 	Helmet = 1,
 	Head = 2,
@@ -19,6 +32,7 @@ ElementManager.VisualSlot = {
 }
 Classes.Enum:Create(ElementManager.VisualSlot)
 
+---@enum ElementManagerItemSlot
 ElementManager.Slot = {
 	Helmet = "Helmet",
 	Breast = "Breast",
@@ -36,6 +50,7 @@ ElementManager.Slot = {
 	Overhead = "Overhead",
 }
 
+---@enum ElementManagerArmorType
 ElementManager.ArmorType = {
 	None = "None",
 	Cloth = "Cloth",
@@ -44,16 +59,6 @@ ElementManager.ArmorType = {
 	Plate = "Plate",
 	Robe = "Robe",
 }
----@alias ArmorType string|'"None"'|'"Cloth"'|'"Leather"'|'"Mail"'|'"Plate"'|'"Robe"'
-
-if ElementManager.Register == nil then
-	ElementManager.Register = {}
-end
-
-if ElementManager.Data == nil then
-	---@type table<string, VisualElementData>
-	ElementManager.Data = {}
-end
 
 ---@param visualSet string
 ---@param data VisualElementData
@@ -91,21 +96,21 @@ RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)
 	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
 		return
 	end
-	ElementManager.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), true)
+	ElementManager.OnEquipmentChanged(GameHelpers.GetCharacter(char), GameHelpers.GetItem(item), true)
 end)
 
 RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char)
 	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
 		return
 	else
-		ElementManager.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
+		ElementManager.OnEquipmentChanged(GameHelpers.GetCharacter(char), GameHelpers.GetItem(item), false)
 	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_OnHelmetToggled", function(cmd, payload)
 	local data = Common.JsonParse(payload)
 	if data ~= nil and data.NetID ~= nil then
-		local char = Ext.GetCharacter(data.NetID)
+		local char = GameHelpers.GetCharacter(data.NetID)
 		if char ~= nil then
 			if data.State == 1 then
 				ObjectClearFlag(char.MyGuid, "LeaderLib_HelmetHidden", 0)
@@ -115,7 +120,7 @@ Ext.RegisterNetListener("LeaderLib_OnHelmetToggled", function(cmd, payload)
 			local item = nil
 			local helmet = CharacterGetEquippedItem(char.MyGuid, "Helmet")
 			if not StringHelpers.IsNullOrEmpty(helmet) then
-				item = Ext.GetItem(helmet)
+				item = GameHelpers.GetItem(helmet)
 			end
 			if item ~= nil then
 				if data.State == 1 then

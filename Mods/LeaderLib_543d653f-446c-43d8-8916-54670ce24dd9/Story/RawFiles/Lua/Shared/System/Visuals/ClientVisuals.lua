@@ -299,7 +299,6 @@ Ext.RegisterNetListener("LeaderLib_EffectManager_PlayClientEffect", function (cm
 	end
 end)
 
-
 -- VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone", Weapon=true, UseLocalTransform=true}, {Rotate=Mods.LeaderLib.Game.Math.EulerToRotationMatrix({180,0,0})})
 
 --df8b6237-d031-44d7-b729-a80eb074f3b3

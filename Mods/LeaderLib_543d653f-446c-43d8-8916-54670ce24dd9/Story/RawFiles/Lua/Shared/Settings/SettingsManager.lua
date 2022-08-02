@@ -202,14 +202,14 @@ if not isClient then
 		end
 		local data = {
 			GlobalSettings = ExportGlobalSettings(true),
-			Features = Features,
-			GameSettings = GameSettings
+			Features = Features
 		}
 		if type(id) == "number" then
 			GameHelpers.Net.PostToUser(id, "LeaderLib_SyncAllSettings", Common.JsonStringify(data))
 		else
 			GameHelpers.Net.Broadcast("LeaderLib_SyncAllSettings", Common.JsonStringify(data))
 		end
+		GameSettingsManager.Sync(id)
 		if skipSyncStatOverrides ~= true then
 			SyncStatOverrides(GameSettings)
 		end
@@ -356,11 +356,11 @@ else
 		if data.GlobalSettings ~= nil then 
 			LoadGlobalSettingsOnClient(data.GlobalSettings)
 		end
-		if data.GameSettings ~= nil then
+		--[[ if data.GameSettings ~= nil then
 			GameSettings = data.GameSettings
 			setmetatable(GameSettings, Classes.LeaderLibGameSettings)
 			--SyncStatOverrides(GameSettings)
-		end
+		end ]]
 		for uuid,v in pairs(GlobalSettings.Mods) do
 			Events.ModSettingsLoaded:Invoke({UUID=uuid, Settings=v})
 		end

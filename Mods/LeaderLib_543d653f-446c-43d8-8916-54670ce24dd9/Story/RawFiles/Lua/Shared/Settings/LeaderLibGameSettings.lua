@@ -292,7 +292,7 @@ Classes.LeaderLibGameSettings = LeaderLibGameSettings
 GameSettings = LeaderLibGameSettings:Create()
 
 Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
-	--fprint(LOGLEVEL.TRACE, "[LeaderLib_SyncGameSettings:%s] Loading settings.", Ext.IsClient() and "CLIENT" or "SERVER")
+	--fprint(LOGLEVEL.TRACE, "[LeaderLib_SyncGameSettings:%s] Loading settings.", _ISCLIENT and "CLIENT" or "SERVER")
 	if _ISCLIENT then
 		local clientSettings = {}
 		if GameSettings and GameSettings.Settings and GameSettings.Settings.Client then
@@ -302,7 +302,7 @@ Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
 		if not GameSettings.Settings.Client then
 			GameSettings.Settings.Client = {}
 		end
-		TableHelpers.AddOrUpdate(GameSettings.Settings.Client, clientSettings)
+		TableHelpers.AddOrUpdate(GameSettings.Settings.Client, clientSettings, false, true)
 	else
 		GameSettings:LoadString(payload)
 	end
@@ -310,7 +310,7 @@ Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
 	GameSettings.Loaded = true
 
 	if _ISCLIENT then
-		if not Client.IsHost then
+		if Client.IsHost then
 			GameSettingsManager.Save()
 		end
 		SyncStatOverrides(GameSettings)

@@ -358,6 +358,14 @@ Events.LuaReset:Subscribe(function()
 	end
 end)
 
+--[[ Ext.Events.OnPeekAiAction:Subscribe(function (e)
+	local character = Ext.Entity.GetCharacter(e.CharacterHandle)
+	if character and character.Stats.Name == "AMC_Stats_WarTower" then
+		Ext.IO.SaveFile(string.format("Dumps/AI/AMC_Stats_WarTower_%s_OnAfterSortAiActions.json", Ext.MonotonicTime()), Ext.DumpExport(e.Request))
+	end
+end)
+Ext.Events.OnAfterSortAiActions:Subscribe(function (e) local character = Ext.Entity.GetCharacter(e.CharacterHandle) if character and character.Stats.Name == "AMC_Stats_WarTower" then Ext.IO.SaveFile(string.format("Dumps/AI/AMC_Stats_WarTower_%s_OnAfterSortAiActions.json", Ext.MonotonicTime()), Ext.DumpExport(e.Request)) end end) ]]
+
 -- Ext.Events.OnBeforeSortAiActions:Subscribe(function (e)
 -- 	for _,v in pairs(e.Request.AiActions) do
 -- 		if v.ActionType == "Skill" and string.find(v.SkillId, "Target_FirstAidEnemy") then

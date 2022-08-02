@@ -50,6 +50,12 @@ SharedData = {
 	GameMode = GAMEMODE.CAMPAIGN
 }
 
+---Get the total amount of users.
+---@return integer
+function GameHelpers.Data.GetTotalUsers()
+	return Common.TableLength(UserIds, true)
+end
+
 local function SetCurrentLevelData()
 	local level = Ext.Entity.GetCurrentLevel()
 	if level then

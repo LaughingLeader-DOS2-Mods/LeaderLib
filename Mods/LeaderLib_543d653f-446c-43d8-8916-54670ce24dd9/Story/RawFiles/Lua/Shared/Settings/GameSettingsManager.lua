@@ -61,7 +61,7 @@ end
 
 SaveGameSettings = GameSettingsManager.Save
 
-function GameSettingsManager.Sync(id)
+function GameSettingsManager.Sync(id, excludeUser)
 	if not GameSettings.Loaded then
 		GameSettingsManager.Load(false)
 	end
@@ -69,7 +69,7 @@ function GameSettingsManager.Sync(id)
 		if id ~= nil then
 			GameHelpers.Net.PostToUser(id, "LeaderLib_SyncGameSettings", GameSettings:ToString(true))
 		else
-			GameHelpers.Net.Broadcast("LeaderLib_SyncGameSettings", GameSettings:ToString(true))
+			GameHelpers.Net.Broadcast("LeaderLib_SyncGameSettings", GameSettings:ToString(true), excludeUser)
 		end
 	else
 		fprint(LOGLEVEL.WARNING, "[GameSettingsManager.Sync] Syncing with the host from the client-side is unsupported.")
@@ -77,10 +77,17 @@ function GameSettingsManager.Sync(id)
 end
 
 if not _ISCLIENT then
-	Ext.RegisterNetListener("LeaderLib_GameSettingsChanged", function(call, gameSettingsStr)
+	Ext.RegisterNetListener("LeaderLib_GameSettingsChanged", function(call, gameSettingsStr, user)
 		GameSettings:LoadString(gameSettingsStr)
 		self.Apply(true)
 		Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings})
+		--Resync to clients, but exclude the host that just sent us data
+		if GameHelpers.Data.GetTotalUsers() > 1 then
+			if user then
+				user = GameHelpers.GetUUID(GetCurrentCharacter(user))
+			end
+			GameSettingsManager.Sync(nil, user)
+		end
 	end)
 end
 

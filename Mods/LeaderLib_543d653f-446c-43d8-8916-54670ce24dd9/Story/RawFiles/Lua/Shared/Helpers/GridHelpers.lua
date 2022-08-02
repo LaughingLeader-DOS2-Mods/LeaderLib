@@ -709,7 +709,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 	local _distances = {}
 
 	if opts.Type == "All" or opts.Type == "Item" then
-		local entries = Ext.GetAllItems(SharedData.RegionData.Current)
+		local entries = Ext.Entity.GetAllItemGuids(SharedData.RegionData.Current)
 		local len = #entries
 		for i=1,len do
 			local v = entries[i]
@@ -735,7 +735,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 		end
 	end
 	if opts.Type == "All" or opts.Type == "Character" then
-		local entries = Ext.GetAllCharacters(SharedData.RegionData.Current)
+		local entries = Ext.Entity.GetAllCharacterGuids(SharedData.RegionData.Current)
 		local len = #entries
 		for i=1,len do
 			local v = entries[i]
@@ -743,7 +743,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 			_distances[v] = dist
 			if v ~= GUID and dist <= opts.Radius then
 				local obj = GameHelpers.GetCharacter(v)
-				if obj and (opts.AllowDead or not GameHelpers.ObjectIsDead(obj) and opts.AllowOffStage or not obj.OffStage) then
+				if obj and (opts.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (opts.AllowOffStage or not obj.OffStage) then
 					if opts.Relation and sourceIsCharacter then
 						if opts.Relation.Ally and CharacterIsAlly(GUID, v) == 1 then
 							objects[#objects+1] = obj

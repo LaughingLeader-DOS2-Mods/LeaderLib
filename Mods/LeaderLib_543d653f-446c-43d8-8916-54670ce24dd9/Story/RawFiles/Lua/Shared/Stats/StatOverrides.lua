@@ -294,7 +294,7 @@ local function OverrideStats(data, statsLoadedState)
 	--fprint(LOGLEVEL.TRACE, "[LeaderLib:SyncStatOverrides:%s] Syncing stat overrides from GameSettings.", isClient and "CLIENT" or "SERVER")
 	if data == nil then
 		---@type LeaderLibGameSettingsWrapper
-		data = GameSettingsManager.Load()
+		data = GameSettingsManager.Load(false)
 	end
 	if not data then
 		ferror("[LeaderLib:OverrideStats:%s] Failed to load game settings.", _ISCLIENT and "CLIENT" or "SERVER")

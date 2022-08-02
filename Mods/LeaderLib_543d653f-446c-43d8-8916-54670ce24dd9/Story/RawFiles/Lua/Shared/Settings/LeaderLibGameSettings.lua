@@ -97,6 +97,8 @@ local DefaultSettings = {
 	Version = Ext.GetModInfo(ModuleUUID).Version
 }
 
+local _ISCLIENT = Ext.IsClient()
+
 local function cloneTable(orig)
 	local orig_type = type(orig)
 	local copy
@@ -233,68 +235,49 @@ function LeaderLibGameSettings:LoadString(str)
 end
 
 function LeaderLibGameSettings:ApplyAPChanges()
-	local characters = {}
-
-	if Ext.IsServer() then
-		for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
-			characters[#characters+1] = StringHelpers.GetUUID(v[1])
-		end
-	else
-		for mc in StatusHider.PlayerInfo:GetCharacterMovieClips(true) do
-			characters[#characters+1] = Ext.DoubleToHandle(mc.characterHandle)
-		end
-	end
-
 	local settings = self.Settings.APSettings.Player
 
-	for _,v in pairs(characters) do
-		local character = Ext.GetCharacter(v)
-		if character then
-			local stats = {}
-			local baseStat = Ext.Stats.Get(character.Stats.Name)
-			if settings.Enabled then
-				if settings.Start > 0 then
-					stats.APStart = settings.Start
-				else
-					stats.APStart = baseStat.APStart
-				end
-				if settings.Max > 0 then
-					stats.APMaximum = settings.Max
-				else
-					stats.APMaximum = baseStat.APMaximum
-				end
-				if settings.Recovery > 0 then
-					stats.APRecovery = settings.Recovery
-				else
-					stats.APRecovery = baseStat.APRecovery
-				end
+	for player in GameHelpers.Character.GetPlayers() do
+		local stats = {}
+		local baseStat = Ext.Stats.Get(player.Stats.Name)
+		if settings.Enabled then
+			if settings.Start > 0 then
+				stats.APStart = settings.Start
 			else
 				stats.APStart = baseStat.APStart
+			end
+			if settings.Max > 0 then
+				stats.APMaximum = settings.Max
+			else
 				stats.APMaximum = baseStat.APMaximum
+			end
+			if settings.Recovery > 0 then
+				stats.APRecovery = settings.Recovery
+			else
 				stats.APRecovery = baseStat.APRecovery
 			end
-			character.Stats.DynamicStats[1].APMaximum = stats.APMaximum
-			character.Stats.DynamicStats[1].APRecovery = stats.APRecovery
-			character.Stats.DynamicStats[1].APStart = stats.APStart
-			baseStat.APStart = stats.APStart
-			baseStat.APMaximum = stats.APMaximum
-			baseStat.APRecovery = stats.APRecovery
-			if Ext.IsServer() then
-				Ext.Stats.Sync(baseStat.Name, false)
-			end
+		else
+			stats.APStart = baseStat.APStart
+			stats.APMaximum = baseStat.APMaximum
+			stats.APRecovery = baseStat.APRecovery
+		end
+		player.Stats.DynamicStats[1].APMaximum = stats.APMaximum
+		player.Stats.DynamicStats[1].APRecovery = stats.APRecovery
+		player.Stats.DynamicStats[1].APStart = stats.APStart
+		baseStat.APStart = stats.APStart
+		baseStat.APMaximum = stats.APMaximum
+		baseStat.APRecovery = stats.APRecovery
+		if not _ISCLIENT then
+			Ext.Stats.Sync(baseStat.Name, false)
 		end
 	end
-end
-
-function LeaderLibGameSettings:Sync(userId)
-
 end
 
 function LeaderLibGameSettings:Apply()
 	if self.Settings.BackstabSettings.Player.Enabled or self.Settings.BackstabSettings.NPC.Enabled then
 		EnableFeature("BackstabCalculation")
 	end
-	if Ext.IsClient() then
+	if _ISCLIENT then
 		StatusHider.RefreshStatusVisibility()
 		if Mods.CharacterExpansionLib then
 			Mods.CharacterExpansionLib.SheetManager.Talents.ToggleDivineTalents(self.Settings.Client.DivineTalentsEnabled)
@@ -306,25 +289,18 @@ end
 Classes.LeaderLibGameSettings = LeaderLibGameSettings
 GameSettings = LeaderLibGameSettings:Create()
 
-local _ISCLIENT = Ext.IsClient()
-
 Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
 	--fprint(LOGLEVEL.TRACE, "[LeaderLib_SyncGameSettings:%s] Loading settings.", Ext.IsClient() and "CLIENT" or "SERVER")
 	if _ISCLIENT then
 		local clientSettings = {}
 		if GameSettings and GameSettings.Settings and GameSettings.Settings.Client then
-			for k,v in pairs(GameSettings.Settings.Client) do
-				clientSettings[k] = v
-			end
+			clientSettings = TableHelpers.Clone(GameSettings.Settings.Client)
 		end
 		GameSettings:LoadString(payload)
 		if not GameSettings.Settings.Client then
-			GameSettings.Settings.Client = clientSettings
-		else
-			for k,v in pairs(clientSettings) do
-				GameSettings.Settings.Client[k] = v
-			end
+			GameSettings.Settings.Client = {}
 		end
+		TableHelpers.AddOrUpdate(GameSettings.Settings.Client, clientSettings)
 	else
 		GameSettings:LoadString(payload)
 	end

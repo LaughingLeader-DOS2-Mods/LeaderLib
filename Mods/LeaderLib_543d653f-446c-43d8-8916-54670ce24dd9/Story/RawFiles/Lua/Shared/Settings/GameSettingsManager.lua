@@ -72,7 +72,7 @@ function GameSettingsManager.Sync(id)
 			GameHelpers.Net.Broadcast("LeaderLib_SyncGameSettings", GameSettings:ToString())
 		end
 	else
-		Ext.PostMessageToServer("LeaderLib_SyncGameSettings", GameSettings:ToString())
+		fprint(LOGLEVEL.WARNING, "[GameSettingsManager.Sync] Syncing with the host from the client-side is unsupported.")
 	end
 end
 

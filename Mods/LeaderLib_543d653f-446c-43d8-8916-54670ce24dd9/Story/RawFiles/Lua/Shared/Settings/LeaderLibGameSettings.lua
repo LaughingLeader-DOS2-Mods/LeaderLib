@@ -123,12 +123,14 @@ local LeaderLibGameSettings = {
 LeaderLibGameSettings.__index = LeaderLibGameSettings
 
 ---Seralizes GameSettings to string, which only includes the Settings table.
+---@param forSync boolean|nil
 ---@return string
-function LeaderLibGameSettings:ToString()
-	local copy = {
-		Settings = self.Settings
-	}
-    return Common.JsonStringify(copy)
+function LeaderLibGameSettings:ToString(forSync)
+	local settings = TableHelpers.Clone(self.Settings)
+	if forSync then 
+		settings.Client = nil
+	end
+    return Common.JsonStringify({Settings=settings})
 end
 
 ---@return LeaderLibGameSettingsWrapper

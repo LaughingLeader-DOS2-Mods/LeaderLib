@@ -49,7 +49,7 @@ function GameSettingsManager.Save()
 	if GameSettings ~= nil then
 		local b,err = xpcall(function()
 			GameSettings:Apply()
-			Ext.SaveFile("LeaderLib_GameSettings.json", GameSettings:ToString())
+			Ext.SaveFile("LeaderLib_GameSettings.json", GameSettings:ToString(false))
 		end, debug.traceback)
 		if not b then
 			Ext.PrintError(err)
@@ -67,9 +67,9 @@ function GameSettingsManager.Sync(id)
 	end
 	if not _ISCLIENT then
 		if id ~= nil then
-			GameHelpers.Net.PostToUser(id, "LeaderLib_SyncGameSettings", GameSettings:ToString())
+			GameHelpers.Net.PostToUser(id, "LeaderLib_SyncGameSettings", GameSettings:ToString(true))
 		else
-			GameHelpers.Net.Broadcast("LeaderLib_SyncGameSettings", GameSettings:ToString())
+			GameHelpers.Net.Broadcast("LeaderLib_SyncGameSettings", GameSettings:ToString(true))
 		end
 	else
 		fprint(LOGLEVEL.WARNING, "[GameSettingsManager.Sync] Syncing with the host from the client-side is unsupported.")

@@ -463,7 +463,7 @@ function GameSettingsMenu.CommitChanges()
 	GameSettingsManager.Save()
 	GameSettings:Apply()
 	if Client.IsHost then
-		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", GameSettings:ToString())
+		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", GameSettings:ToString(true))
 	end
 	Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings})
 	--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))

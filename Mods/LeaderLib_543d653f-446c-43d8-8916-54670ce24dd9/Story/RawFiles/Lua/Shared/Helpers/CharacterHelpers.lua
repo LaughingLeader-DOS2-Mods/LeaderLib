@@ -497,6 +497,20 @@ function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 	end
 end
 
+---@return EsvCharacter|EclCharacter host
+function GameHelpers.Character.GetHost()
+	if not _ISCLIENT then
+		return GameHelpers.GetCharacter(CharacterGetHostCharacter())
+	else
+		for _,v in pairs(SharedData.CharacterData) do
+			if v.IsHost then
+				return v:GetCharacter()
+			end
+		end
+	end
+	return nil
+end
+
 ---@param includeSummons boolean|nil
 ---@return integer
 function GameHelpers.Character.GetPartySize(includeSummons)

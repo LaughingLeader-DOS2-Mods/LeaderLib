@@ -260,3 +260,23 @@ function GameHelpers.DB.TryUnpack(tbl, index)
 	end
 	return false
 end
+
+---Get an iterator for a database, which returns the unpacked table for each entry.
+---@param name string The database name.
+---@param arity integer|nil The number of parameters for this DB, or nil to try and auto-detect it.
+---@return fun():...:SerializableValue
+function GameHelpers.DB.GetAllEntries(name, arity)
+	local db = GameHelpers.DB.Get(name, arity)
+	if db then
+		local i = 0
+		local count = #db
+		return function ()
+			i = i + 1
+			if i <= count then
+				return table.unpack(db[i])
+			end
+		end
+	else
+		return function () end
+	end
+end

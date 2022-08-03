@@ -3,10 +3,11 @@ local _DEBUG = Ext.Debug.IsDeveloperMode()
 local _DoubleToHandle = Ext.UI.DoubleToHandle
 local _Dump = Ext.Dump
 local _DumpExport = Ext.DumpExport
-local _EXTVERSION = Ext.Utils.Version()
 local _GetCharacter = Ext.Entity.GetCharacter
 local _GetGameState = Ext.Client.GetGameState
 local _GetItem = Ext.Entity.GetItem
+local _GetObjectType = Ext.Types.GetObjectType
+local _GetStat = Ext.Stats.Get
 local _GetUIByPath = Ext.UI.GetByPath
 local _GetUIByType = Ext.UI.GetByType
 local _HandleToDouble = Ext.UI.HandleToDouble
@@ -17,7 +18,6 @@ local _Require = Ext.Require
 local assert = assert
 local debug = debug
 local pairs = pairs
-local pcall = pcall
 local setmetatable = setmetatable
 local string = string
 local table = table
@@ -28,7 +28,6 @@ local xpcall = xpcall
 local _GetClientCharacter = function() return GameHelpers.Client.GetCharacter or _C() end
 local _IsNaN = GameHelpers.Math.IsNaN
 local _IsValidHandle = GameHelpers.IsValidHandle
-local _ObjectIsItem = GameHelpers.Ext.ObjectIsItem
 local _Stringify = Common.JsonStringify
 local _UITYPE = Data.UIType
 
@@ -1390,18 +1389,6 @@ function _ttHooks:GetCompareOwner(ui, item)
 	return nil
 end
 
-local function _TryGetItem(uuid)
-	local b,item = _ObjectIsItem(uuid)
-	if b and item then
-		return item
-	end
-	local b,result = pcall(_GetItem, uuid)
-	if b then
-		return result
-	end
-	return nil
-end
-
 --- @param ui UIObject
 --- @param item EclItem
 --- @param offHand boolean
@@ -1419,9 +1406,9 @@ function _ttHooks:GetCompareItem(ui, item, offHand)
 	if item.Stats == nil then
 		local statsId = item.StatsId
 		if statsId ~= "" and statsId ~= nil and not RequestProcessor.Utils.ItemRarity[statsId] then
-			local stat = Ext.Stats.Get(statsId)
+			local stat = _GetStat(statsId)
 			if stat then
-				statSlot = stat.ItemSlot
+				statSlot = stat.Slot
 			end
 		end
 	else
@@ -1433,38 +1420,20 @@ function _ttHooks:GetCompareItem(ui, item, offHand)
 		return nil
 	end
 
-	if _EXTVERSION >= 56 then
-		if statSlot == "Weapon" then
-			if offHand then
-				return char:GetItemObjectBySlot("Shield")
-			else
-				return char:GetItemObjectBySlot("Weapon")
-			end
-		elseif statSlot == "Ring" or statSlot == "Ring2" then
-			if offHand then
-				return char:GetItemObjectBySlot("Ring2")
-			else
-				return char:GetItemObjectBySlot("Ring")
-			end
+	if statSlot == "Weapon" then
+		if offHand then
+			return char:GetItemObjectBySlot("Shield")
 		else
-			return char:GetItemObjectBySlot(statSlot)
+			return char:GetItemObjectBySlot("Weapon")
+		end
+	elseif statSlot == "Ring" or statSlot == "Ring2" then
+		if offHand then
+			return char:GetItemObjectBySlot("Ring2")
+		else
+			return char:GetItemObjectBySlot("Ring")
 		end
 	else
-		if statSlot == "Weapon" then
-			if offHand then
-				return _TryGetItem(char:GetItemBySlot("Shield"))
-			else
-				return _TryGetItem(char:GetItemBySlot("Weapon"))
-			end
-		elseif statSlot == "Ring" or statSlot == "Ring2" then
-			if offHand then
-				return _TryGetItem(char:GetItemBySlot("Ring2"))
-			else
-				return _TryGetItem(char:GetItemBySlot("Ring"))
-			end
-		else
-			return _TryGetItem(char:GetItemBySlot(statSlot))
-		end
+		return char:GetItemObjectBySlot(statSlot)
 	end
 end
 

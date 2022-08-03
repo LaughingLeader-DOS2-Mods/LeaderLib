@@ -1,56 +1,36 @@
 local Ext = Ext
-local Mods = Mods
+local _DEBUG = Ext.Debug.IsDeveloperMode()
+local _DoubleToHandle = Ext.UI.DoubleToHandle
+local _Dump = Ext.Dump
+local _DumpExport = Ext.DumpExport
+local _EXTVERSION = Ext.Utils.Version()
+local _GetCharacter = Ext.Entity.GetCharacter
+local _GetGameState = Ext.Client.GetGameState
+local _GetItem = Ext.Entity.GetItem
+local _GetUIByPath = Ext.UI.GetByPath
+local _GetUIByType = Ext.UI.GetByType
+local _HandleToDouble = Ext.UI.HandleToDouble
+local _Print = Ext.Utils.Print
+local _PrintError = Ext.Utils.PrintError
+local _PrintWarning = Ext.Utils.PrintWarning
+local _Require = Ext.Require
 local assert = assert
 local debug = debug
-local ipairs = ipairs
-local math = math
 local pairs = pairs
 local pcall = pcall
-local xpcall = xpcall
-local print = print
 local setmetatable = setmetatable
 local string = string
 local table = table
 local tostring = tostring
 local type = type
+local xpcall = xpcall
 
-local _EXTVERSION = Ext.Utils.Version()
-local _DEBUG = Ext.Debug.IsDeveloperMode()
-
-local _UITYPE = Data.UIType
-
-local _ObjectIsItem = GameHelpers.Ext.ObjectIsItem
-
-local _GetItem = Ext.Entity.GetItem
-local _GetCharacter = Ext.Entity.GetCharacter
-local _GetGameState = Ext.Client.GetGameState
-
-local _GetUIByType = Ext.UI.GetByType
-local _GetUIByPath = Ext.UI.GetByPath
-
-local _HandleToDouble = Ext.UI.HandleToDouble
-local _DoubleToHandle = Ext.UI.DoubleToHandle
-local _IsValidHandle = GameHelpers.IsValidHandle
-
-local _Stringify = Common.JsonStringify
+local _GetClientCharacter = function() return GameHelpers.Client.GetCharacter or _C() end
 local _IsNaN = GameHelpers.Math.IsNaN
-
-local _RegisterUITypeInvokeListener = Ext.RegisterUITypeInvokeListener
-local _RegisterRegisterUITypeCall = Ext.RegisterUITypeCall
-local _RegisterUINameCall = Ext.RegisterUINameCall
-local _RegisterUINameInvokeListener = Ext.RegisterUINameInvokeListener
-
-local _Require = Ext.Require
-
-local _Print = Ext.Utils.Print
-local _PrintWarning = Ext.Utils.PrintWarning
-local _PrintError = Ext.Utils.PrintError
-local _Dump = Ext.Dump
-local _DumpExport = Ext.DumpExport
-
-local _ItemIsObject = GameHelpers.Item.IsObject
-local _GetClientCharacter = GameHelpers.Client.GetCharacter
-local _C = _C
+local _IsValidHandle = GameHelpers.IsValidHandle
+local _ObjectIsItem = GameHelpers.Ext.ObjectIsItem
+local _Stringify = Common.JsonStringify
+local _UITYPE = Data.UIType
 
 if Game == nil then
 	Game = {}
@@ -986,38 +966,125 @@ local TooltipArrayNames = {
 }
 _TT.TooltipArrayNames = TooltipArrayNames
 
+---@type table<string, {Callback:function, TypeIds:table<integer,boolean>|nil, When:string|nil}>
+local CallHandlers = {}
+local InvokeHandlers = {}
+
+---@param event string|string[]
+---@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
+---@param typeIds table<integer,boolean>|integer|nil
+---@param when "Before"|"After"|nil
+local function _CallHandler(event, callback, typeIds, when)
+	if type(typeIds) == "number" then
+		local t = typeIds
+		typeIds = {[t] = true}
+	end
+	if type(event) == "table" then
+		for i=1,#event do
+			_CallHandler(event[i], callback, typeIds, when)
+		end
+	else
+		CallHandlers[event] = {
+			Callback = callback,
+			TypeIds = typeIds,
+			When = when
+		}
+	end
+end
+
+---@param event string|string[]
+---@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
+---@param typeIds table<integer,boolean>|integer|nil
+---@param when "Before"|"After"|nil
+local function _InvokeHandler(event, callback, typeIds, when)
+	if type(typeIds) == "number" then
+		local t = typeIds
+		typeIds = {[t] = true}
+	end
+	if type(event) == "table" then
+		for i=1,#event do
+			_CallHandler(event[i], callback, typeIds, when)
+		end
+	else
+		InvokeHandlers[event] = {
+			Callback = callback,
+			TypeIds = typeIds,
+			When = when
+		}
+	end
+end
+
+---@param id integer
+---@return {Main:string, CompareMain:string|nil, CompareOff:string|nil}|nil
+local _UITypeToArray = function(id)
+	if id == _UITYPE.craftPanel_c then
+		return TooltipArrayNames.Console.CraftPanel
+	elseif id == _UITYPE.equipmentPanel_c then
+		return TooltipArrayNames.Console.EquipmentPanel
+	elseif id == _UITYPE.bottomBar_c then
+		return TooltipArrayNames.Console.BottomBar
+	elseif id == _UITYPE.containerInventory.Default or id == _UITYPE.containerInventory.Pickpocket then
+		return TooltipArrayNames.Console.ContainerInventory
+	elseif id == _UITYPE.statsPanel_c then
+		return TooltipArrayNames.Console.StatsPanel
+	elseif id == _UITYPE.examine_c then
+		return TooltipArrayNames.Console.Examine
+	elseif id == _UITYPE.partyInventory_c then
+		return TooltipArrayNames.Console.PartyInventory
+	elseif id == _UITYPE.reward_c then
+		return TooltipArrayNames.Console.Reward
+	elseif id == _UITYPE.characterCreation_c then
+		return TooltipArrayNames.Console.CharacterCreation
+	elseif id == _UITYPE.trade_c then
+		return TooltipArrayNames.Console.Trade
+	end
+	return nil
+end
+
+local _ControllerTooltipInvokes = {
+	[_UITYPE.equipmentPanel_c] = {"updateTooltip", "updateEquipTooltip"},
+	[_UITYPE.craftPanel_c] = "updateTooltip",
+	[_UITYPE.containerInventory.Default] = "updateTooltip",
+	[_UITYPE.containerInventory.Pickpocket] = "updateTooltip",
+	[_UITYPE.examine_c] = "showFormattedTooltip",
+	[_UITYPE.statsPanel_c] = "showTooltip",
+	[_UITYPE.bottomBar_c] = "updateTooltip",
+	[_UITYPE.partyInventory_c] = "updateTooltip",
+	[_UITYPE.reward_c] = "updateTooltipData",
+	[_UITYPE.characterCreation_c] = "showTooltip",
+	[_UITYPE.characterCreation_c] = "showTooltip",
+}
+
 function _ttHooks:RegisterControllerHooks()
-	_RegisterUITypeInvokeListener(_UITYPE.equipmentPanel_c, "updateTooltip", function (ui, ...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.EquipmentPanel, ui, ...)
-	end)
-	_RegisterUITypeInvokeListener(_UITYPE.equipmentPanel_c, "updateEquipTooltip", function (ui, ...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.EquipmentPanel, ui, ...)
-	end)
+	local function _RenderControllerTooltip(e, ui, event, ...)
+		local arrayNames = _UITypeToArray(ui.Type)
+		if arrayNames then
+			self:OnRenderTooltip(arrayNames, ui, event, ...)
+		end
+	end
 
-	_RegisterUITypeInvokeListener(_UITYPE.craftPanel_c, "updateTooltip", function (ui, ...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.CraftPanel, ui, ...)
-	end)
+	for typeId,event in pairs(_ControllerTooltipInvokes) do
+		_InvokeHandler(event, _RenderControllerTooltip, typeId)
+	end
 
-	_RegisterUITypeInvokeListener(_UITYPE.containerInventory.Default, "updateTooltip", function (ui, ...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.ContainerInventory, ui, ...)
-	end)
+	-- This allows examine_c to have a character reference
+	_InvokeHandler("updateOHs", function (e, ui, event, ...)
+		if RequestProcessor.ControllerEnabled then
+			---@type {selectionInfo_array:FlashArray<number>}
+			local main = ui:GetRoot()
+			if main then
+				for i=0,#main.selectionInfo_array,21 do
+					local id = main.selectionInfo_array[i]
+					if id and not _IsNaN(id) then
+						ControllerVars.LastOverhead = id
+						break
+					end
+				end
+			end
+		end
+	end, _UITYPE.overhead)
 
-	_RegisterUITypeInvokeListener(_UITYPE.containerInventory.Pickpocket, "updateTooltip", function (ui, ...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.ContainerInventory, ui, ...)
-	end)
-
-	_RegisterUITypeInvokeListener(_UITYPE.statsPanel_c, "showTooltip", function (ui, ...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.StatsPanel, ui, ...)
-	end)
-
-	_RegisterUITypeInvokeListener(_UITYPE.examine_c, "showFormattedTooltip", function (ui, ...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.Examine, ui, ...)
-	end)
-	
-	_RegisterUITypeInvokeListener(_UITYPE.bottomBar_c, "updateTooltip", function (...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.BottomBar, ...)
-	end)
-	_RegisterUITypeInvokeListener(_UITYPE.bottomBar_c, "setPlayerHandle", function (ui, method, doubleHandle)
+	_InvokeHandler("setPlayerHandle", function (e, ui, event, doubleHandle)
 		if doubleHandle ~= nil and doubleHandle ~= 0 then
 			local handle = _DoubleToHandle(doubleHandle)
 			if _IsValidHandle(handle) then
@@ -1027,7 +1094,8 @@ function _ttHooks:RegisterControllerHooks()
 				end
 			end
 		end
-	end)
+	end, _UITYPE.bottomBar_c)
+
 	---@param self TooltipHooks
 	---@return EclCharacter
 	self.GetLastPlayer = function(self)
@@ -1051,76 +1119,8 @@ function _ttHooks:RegisterControllerHooks()
 				end
 			end
 		end
+		return nil
 	end
-
-	_RegisterUITypeInvokeListener(_UITYPE.partyInventory_c, "updateTooltip", function (...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.PartyInventory, ...)
-	end)
-
-	_RegisterUITypeInvokeListener(_UITYPE.reward_c, "updateTooltipData", function (ui, method, ...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.Reward, ui, method, ...)
-	end)
-
-	_RegisterUITypeInvokeListener(_UITYPE.characterCreation_c, "showTooltip", function(...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.CharacterCreation, ...)
-	end)
-
-	_RegisterUITypeInvokeListener(_UITYPE.trade_c, "updateTooltip", function(...)
-		self:OnRenderTooltip(TooltipArrayNames.Console.Trade, ...)
-	end)
-
-	-- This allows examine_c to have a character reference
-	_RegisterUITypeInvokeListener(_UITYPE.overhead, "updateOHs", function (ui, method, ...)
-		if RequestProcessor.ControllerEnabled then
-			---@type {selectionInfo_array:FlashArray<number>}
-			local main = ui:GetRoot()
-			if main then
-				for i=0,#main.selectionInfo_array,21 do
-					local id = main.selectionInfo_array[i]
-					if id and not _IsNaN(id) then
-						ControllerVars.LastOverhead = id
-						break
-					end
-				end
-			end
-		end
-	end)
-end
-
----@type table<string, {Callback:function, TypeIds:table<integer,boolean>|nil, When:string|nil}>
-local CallHandlers = {}
-local InvokeHandlers = {}
-
----@param event string
----@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
----@param typeIds table<integer,boolean>|integer|nil
----@param when "Before"|"After"|nil
-local function _CallHandler(event, callback, typeIds, when)
-	if type(typeIds) == "number" then
-		local t = typeIds
-		typeIds = {[t] = true}
-	end
-	CallHandlers[event] = {
-		Callback = callback,
-		TypeIds = typeIds,
-		When = when
-	}
-end
-
----@param event string
----@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
----@param typeIds table<integer,boolean>|integer|nil
----@param when "Before"|"After"|nil
-local function _InvokeHandler(event, callback, typeIds, when)
-	if type(typeIds) == "number" then
-		local t = typeIds
-		typeIds = {[t] = true}
-	end
-	InvokeHandlers[event] = {
-		Callback = callback,
-		TypeIds = typeIds,
-		When = when
-	}
 end
 
 function _ttHooks:Init()
@@ -1169,27 +1169,13 @@ function _ttHooks:Init()
 	_InvokeHandler("displaySurfaceText", function (e, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Surface, ...)
 	end)
-
-	--Disabled for now since character portrait tooltips get spammed
-	-- _RegisterUINameCall("showCharTooltip", function(ui, call, handle, x, y, width, height, side)
-	-- 	self.NextRequest = {
-	-- 		Type = "Generic",
-	-- 		IsCharacterTooltip = true,
-	--		Handle = handle,
-	-- 		X = x,
-	-- 		Y = y,
-	-- 		Width = width,
-	-- 		Height = height,
-	-- 		Side = side
-	-- 	}
-	-- end, "Before")
 	
 	--public function addTooltip(text:String, widthOverride:Number = 0, heightOverride:Number = 18, allowDelay:Boolean = true, stickToMouse:Number = 0, bgType:uint = 0)
 	_InvokeHandler("addTooltip", function (e, ui, event, text, widthOverride, heightOverride, allowDelay, stickToMouse, bgType)
 		self:OnRenderGenericTooltip(e, ui, event, text, widthOverride, heightOverride, allowDelay, stickToMouse, bgType)
 	end, "Before")
 
-	_RegisterUINameCall("hideTooltip", function (ui, call, ...)
+	_CallHandler("hideTooltip", function (e, ui, event, ...)
 		self.IsOpen = false
 		self.ActiveType = ""
 		if self.NextRequest and self.NextRequest.Type == "Generic" then
@@ -1206,11 +1192,6 @@ function _ttHooks:Init()
 			end
 		end
 	end)
-
-	--No longer needed, since we can change the text in the call
-	-- _RegisterUINameCall("keepUIinScreen", function (ui, method, keepUIinScreen)
-	-- 	self:UpdateGenericTooltip(ui, method, keepUIinScreen)
-	-- end)
 
 	self:RegisterControllerHooks()
 
@@ -1571,7 +1552,7 @@ function _ttHooks:OnRenderTooltip(arrayData, ui, method, ...)
 end
 
 local function _GetCurrentCharacter()
-	return _GetClientCharacter() or _C() or {}
+	return _GetClientCharacter() or {}
 end
 
 local function _GetRequestCharacter(req)
@@ -2293,30 +2274,32 @@ local function EnableHooks()
 	CaptureBuiltInUIs()
 end
 
-Ext.RegisterListener("GameStateChanged", function (from, to)
-	if to == "Menu" then
+local _highPriority = {Priority = 999}
+
+Ext.Events.GameStateChanged:Subscribe(function (e)
+	if e.ToState == "Menu" then
 		EnableHooks()
 	end
-end)
+end, _highPriority)
 
-Ext.Events.SessionLoaded:Subscribe(function()
+Ext.Events.SessionLoaded:Subscribe(function (e)
 	_ttHooks.SessionLoaded = true
 	EnableHooks()
-end)
+end, _highPriority)
 
-Ext.RegisterListener("UIObjectCreated", function(ui)
+Ext.Events.UIObjectCreated:Subscribe(function (e)
+	---@type UIObject
+	local ui = e.UI
 	ui:CaptureExternalInterfaceCalls()
 	-- Has the 'no flash player' warning if the root is nil
 	if ui:GetRoot() ~= nil then
 		ui:CaptureInvokes()
 	elseif _GetGameState() == "Running" then
-		Ext.PostMessageToServer("LeaderLib_DeferUICapture", tostring(Mods.LeaderLib.Client.ID))
+		Ext.OnNextTick(function (e)
+			CaptureBuiltInUIs()
+		end)
 	end
-end)
-
-Ext.RegisterNetListener("LeaderLib_CaptureActiveUIs", function()
-	CaptureBuiltInUIs()
-end)
+end, _highPriority)
 
 --#region Annotations
 

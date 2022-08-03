@@ -707,3 +707,27 @@ Ext.RegisterConsoleCommand("printrunes", function(command, equipmentSlot)
 		fprint(LOGLEVEL.WARNING, "No item in slot (%s)", equipmentSlot)
 	end
 end)
+
+Ext.RegisterConsoleCommand("cctest", function(cmd, disable)
+	local player = GameHelpers.Character.GetHost()
+	local username = GetUserName(player.ReservedUserID)
+	local profile = GetUserProfileID(player.ReservedUserID)
+	for dummy in GameHelpers.DB.GetAllEntries("DB_CharacterCreationDummy", 1) do
+		local assigned = Osi.DB_AssignedDummyForUser:Get(nil,dummy)
+		if disable then
+			Osi.PROC_RemoveCCDummy(dummy)
+		else
+			if assigned == nil or #assigned == 0 then
+				Osi.ProcAssignDummyToUser(dummy, username)
+			end
+		end
+	end
+	if disable then
+		Ext.PrintError("Removing")
+		Osi.ProcRemovePreviousSelectedCharacter(profile)
+		Osi.ProcRemovePreviousDummy(profile)
+		Timer.StartOneshot("", 250, function (e)
+			Osi.PROC_Shared_CharacterCreationStarted()
+		end)
+	end
+end)

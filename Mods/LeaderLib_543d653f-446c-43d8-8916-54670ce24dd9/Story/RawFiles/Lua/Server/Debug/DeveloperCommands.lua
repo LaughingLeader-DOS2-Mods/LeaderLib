@@ -454,7 +454,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	["GrowOnSurface"] = "SurfaceCollisionFlags",
 	["GrowTimeout"] = "ConstantInt",
 	["SkillBoost"] = "FixedString",
-	["SkillAttributeFlags"] = "AttributeFlags",
+	--["SkillAttributeFlags"] = "AttributeFlags",
 	["SkillProperties"] = "Properties",
 	["CleanseStatuses"] = "FixedString",
 	["AoEConditions"] = "Conditions",

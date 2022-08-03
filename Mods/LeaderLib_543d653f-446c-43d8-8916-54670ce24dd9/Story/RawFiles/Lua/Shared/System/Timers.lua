@@ -100,12 +100,36 @@ function _INTERNAL.ClearObjectData(timerName, object)
 	end
 end
 
+local _TimerLaunch = function (id, delay)
+	if Ext.OsirisIsCallable() then
+		TimerLaunch(id, delay)
+	elseif Ext.Server.GetGameState() == "Running" then
+		Ext.OnNextTick(function (e)
+			if Ext.OsirisIsCallable() then
+				TimerLaunch(id, delay)
+			end
+		end)
+	end
+end
+
+local _TimerCancel = function (id)
+	if Ext.OsirisIsCallable() then
+		TimerCancel(id)
+	elseif Ext.Server.GetGameState() == "Running" then
+		Ext.OnNextTick(function (e)
+			if Ext.OsirisIsCallable() then
+				TimerCancel(id)
+			end
+		end)
+	end
+end
+
 ---@param timerName string
 ---@param delay integer
 local function _StartTimer(timerName, delay)
 	if not _ISCLIENT then
-		TimerCancel(timerName)
-		TimerLaunch(timerName, delay)
+		_TimerCancel(timerName)
+		_TimerLaunch(timerName, delay)
 	else
 		local resetTickTime = false
 		local len = #_waitForTick
@@ -212,10 +236,10 @@ function Timer.Cancel(timerName, object)
 			if uuid then
 				local uniqueTimerName = string.format("%s%s", timerName, uuid)
 				_INTERNAL.ClearData(uniqueTimerName)
-				TimerCancel(uniqueTimerName)
+				_TimerCancel(uniqueTimerName)
 			end
 		end
-		TimerCancel(timerName)
+		_TimerCancel(timerName)
 	else
 		UIExtensions.RemoveTimerCallback(timerName)
 	end

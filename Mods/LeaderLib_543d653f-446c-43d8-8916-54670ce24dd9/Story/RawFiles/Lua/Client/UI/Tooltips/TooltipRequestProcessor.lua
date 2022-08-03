@@ -1,39 +1,27 @@
-local _EXTVERSION = Ext.Version()
-local _DEBUG = Ext.IsDeveloperMode()
-
-local _type = type
-
-local _IsValidHandle = GameHelpers.IsValidHandle
-local _DoubleToHandle = Ext.DoubleToHandle
-local _HandleToDouble = Ext.HandleToDouble
-
-local _IsNaN = GameHelpers.Math.IsNaN
-
-local _GetUIByType = Ext.UI.GetByType
-local _GetUIGetByPath = Ext.UI.GetByPath
-local _ObjectIsItem = GameHelpers.Ext.ObjectIsItem
-local _ItemIsObject = GameHelpers.Item.IsObject
-
+local _DEBUG = Ext.Debug.IsDeveloperMode()
+local _DoubleToHandle = Ext.UI.DoubleToHandle
+local _EnumIndexToLabel = Ext.Stats.EnumIndexToLabel
+local _GetAiGrid = Ext.Entity.GetAiGrid
+local _GetCharacter = Ext.Entity.GetCharacter
+local _GetGameMode = Ext.Utils.GetGameMode
+local _GetGameObject = Ext.Entity.GetGameObject
+local _GetItem = Ext.Entity.GetItem
+local _GetObjectType = Ext.Types.GetObjectType
+local _GetPickingState = Ext.UI.GetPickingState
 local _GetStat = Ext.Stats.Get
+local _GetStatus = Ext.Entity.GetStatus
 local _GetTranslatedString = Ext.L10N.GetTranslatedString
 local _GetTranslatedStringFromKey = Ext.L10N.GetTranslatedStringFromKey
-
-local _GetAiGrid = Ext.Entity.GetAiGrid
-local _GetStatus = Ext.Entity.GetStatus
-local _GetGameObject = GameHelpers.TryGetObject
-local _GetCharacter = Ext.Entity.GetCharacter
-local _GetItem = Ext.Entity.GetItem
-local _GetPickingState = Ext.UI.GetPickingState
-
-local _GetGameMode = Ext.Utils.GetGameMode
+local _GetUIByType = Ext.UI.GetByType
+local _GetUIGetByPath = Ext.UI.GetByPath
+local _HandleToDouble = Ext.UI.HandleToDouble
 local _MonotonicTime = Ext.Utils.MonotonicTime
-
-local _EnumIndexToLabel = Ext.Stats.EnumIndexToLabel
-
-local _PrintWarning = Ext.Utils.PrintWarning
 local _PrintError = Ext.Utils.PrintError
-local _Print = Ext.Utils.Print
+local _PrintWarning = Ext.Utils.PrintWarning
 
+local _IsNaN = GameHelpers.Math.IsNaN
+local _IsValidHandle = GameHelpers.IsValidHandle
+local _ObjectIsItem = function(obj) return _GetObjectType(obj) == "ecl::Item" end
 local _UITYPE = Data.UIType
 
 ---@class GameTooltipRequestProcessor
@@ -602,11 +590,9 @@ RequestProcessor.CallbackHandler[TooltipInvokes.Surface] = function(request, ui,
 	local cursor = _GetPickingState()
 	if cursor and cursor.WalkablePosition then
 		request.Position = cursor.WalkablePosition
-		if _EXTVERSION >= 56 then
-			local grid = _GetAiGrid()
-			if grid then
-				surfaces = _GetSurfaces(cursor.WalkablePosition[1], cursor.WalkablePosition[3], grid)
-			end
+		local grid = _GetAiGrid()
+		if grid then
+			surfaces = _GetSurfaces(cursor.WalkablePosition[1], cursor.WalkablePosition[3], grid)
 		end
 	end
 	if surfaces then
@@ -1293,14 +1279,12 @@ local _SlotNames = {
 
 ---@param item EclItem
 local function _GetItemSlotName(item)
-	if not _ItemIsObject(item) and item.StatsId ~= "" and item.StatsId ~= nil and not _itemRarity[item.StatsId] then
-		---@type StatEntryWeapon
-		local stat = _GetStat(item.StatsId)
-		if stat then
-			local tsData = _SlotNames[stat.Slot]
-			if tsData then
-				return _GetTranslatedString(tsData[1], tsData[2])
-			end
+	if item.StatsFromName.ModifierListIndex < 3 then
+		---@type StatEntryArmor|StatEntryShield|StatEntryWeapon
+		local stat = item.StatsFromName.StatsEntry
+		local tsData = _SlotNames[stat.Slot]
+		if tsData then
+			return _GetTranslatedString(tsData[1], tsData[2])
 		end
 	end
 end
@@ -1330,7 +1314,7 @@ _InvokeHandler("setText", function(e, ui, event, text, levelText, shortenWidth)
 			RequestProcessor.Tooltip.NextRequest = RequestProcessor.SetWorldHoverTooltipRequest(request, ui, _UITYPE.enemyHealthBar, event, text, levelText, shortenWidth, item, objectHandleDouble)
 		end
 	end
-end, {[_UITYPE.enemyHealthBar] = true})
+end, _UITYPE.enemyHealthBar)
 
 ---@return string
 local function _CreateWorldTooltipRequest(ui, event, text, x, y, isItem, item)
@@ -1403,7 +1387,7 @@ _InvokeHandler("updateTooltips", function(e, ui, event)
 			end
 		end
 	end
-end, {[_UITYPE.worldTooltip]=true})
+end, _UITYPE.worldTooltip)
 
 --Hack to clear the last tooltip being "World"
 _InvokeHandler("removeTooltip", function(e, ui, ...)

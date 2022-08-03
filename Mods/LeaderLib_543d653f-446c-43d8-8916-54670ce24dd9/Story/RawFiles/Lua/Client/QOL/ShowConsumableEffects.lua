@@ -11,7 +11,7 @@ Ext.Events.SessionLoaded:Subscribe(function (e)
 				if item and item.StatsFromName then
 					local statEntry = item.StatsFromName.StatsEntry
 					local itemType = item.StatsFromName.ModifierListIndex
-					-- 3 = Potion, 4 = Object
+					-- 0 is Weapon, 1 is Armor, 2 is Shield, 3 is Potion, 4 is Object
 					if itemType == 3 and statEntry.UnknownBeforeConsume == "Yes" then
 						changedStats[statEntry.Name] = true
 						hasStatChanges = true

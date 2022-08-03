@@ -862,15 +862,12 @@ local _ttHooks = {
 ---@type TooltipHooks
 TooltipHooks = {}
 
-local _ttHooksType = {}
-
 setmetatable(TooltipHooks, {
-	__index = function(_,k) 
+	__index = function(_,k)
 		return _ttHooks[k]
 	end,
 	__newindex = function(_,k,v)
-		local t = _ttHooksType[k] or type(_ttHooks[k])
-		_ttHooksType[k] = t
+		local t = type(_ttHooks[k])
 		if t == "nil" or t ~= "function" then
 			_ttHooks[k] = v
 		end
@@ -1403,16 +1400,10 @@ function _ttHooks:GetCompareItem(ui, item, offHand)
 
 	local statSlot = nil
 
-	if item.Stats == nil then
-		local statsId = item.StatsId
-		if statsId ~= "" and statsId ~= nil and not RequestProcessor.Utils.ItemRarity[statsId] then
-			local stat = _GetStat(statsId)
-			if stat then
-				statSlot = stat.Slot
-			end
-		end
-	else
+	if item.Stats and item.Stats.ItemSlot then
 		statSlot = item.Stats.ItemSlot
+	elseif item.StatsFromName.ModifierListIndex < 3 then -- 0 is Weapon, 1 is Armor, 2 is Shield, 3 is Potion, 4 is Object
+		statSlot = item.StatsFromName.StatsEntry.Slot
 	end
 
 	if statSlot == nil then

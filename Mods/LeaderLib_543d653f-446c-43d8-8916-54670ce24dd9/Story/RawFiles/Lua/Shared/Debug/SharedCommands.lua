@@ -54,8 +54,9 @@ if _EXTVERSION >= 56 then
 			end
 		end,
 		character = function (dumpType, synced, filename)
-			local fileName = string.format("Dumps/%s_%s.json", filename or "Character", isClient and "Client" or "Server")
-			Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Client:GetCharacter() or Ext.GetCharacter(CharacterGetHostCharacter())))
+			local character = isClient and Client:GetCharacter() or Ext.Entity.GetCharacter(CharacterGetHostCharacter())
+			local fileName = string.format("Dumps/%s_%s_%s.json", filename or "Character", GameHelpers.GetDisplayName(character), isClient and "Client" or "Server")
+			Ext.IO.SaveFile(fileName, Ext.DumpExport(character))
 			Ext.Print("[dump:character] Saved character data to", fileName)
 			SendDumpCommand(dumpType, synced, filename)
 		end,

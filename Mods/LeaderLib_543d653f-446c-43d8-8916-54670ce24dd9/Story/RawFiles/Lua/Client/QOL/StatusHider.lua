@@ -108,7 +108,7 @@ function PlayerInfo:GetCharacterMovieClips(ignoreSummons)
 		return NoResult
 	end
 	local characters = {}
-	for i=0,#this.player_array do
+	for i=0,#this.player_array-1 do
 		local player_mc = this.player_array[i]
 		if player_mc then
 			characters[#characters+1] = player_mc

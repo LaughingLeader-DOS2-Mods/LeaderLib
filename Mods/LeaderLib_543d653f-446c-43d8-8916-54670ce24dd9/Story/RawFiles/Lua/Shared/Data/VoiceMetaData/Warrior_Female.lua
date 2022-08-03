@@ -1,7 +1,8 @@
 ---@diagnostic disable
-local _a = Ext.AddVoiceMetaData
+local _a = Ext.Stats.AddVoiceMetaData
 
-return function(uuid)
+---@param uuid GUID
+GameHelpers.VoiceMetaData.Register.WarriorFemale = function(uuid)
 _a(uuid, "h003e5db6g7b77g4e5ega069g7e552686f934", "Localization/English/Soundbanks/v3fa5bdbac232430ea8bab8577ac6e131_h003e5db6g7b77g4e5ega069g7e552686f934.wem", 3.890104)
 _a(uuid, "h004bc87fgf858g4c07gab8eg4ab2c3c0324b", "Localization/English/Soundbanks/v3fa5bdbac232430ea8bab8577ac6e131_h004bc87fgf858g4c07gab8eg4ab2c3c0324b.wem", 3.194271)
 _a(uuid, "h004c02feg5663g4d50g926dg6db453408c68", "Localization/English/Soundbanks/v3fa5bdbac232430ea8bab8577ac6e131_h004c02feg5663g4d50g926dg6db453408c68.wem", 4.089063)

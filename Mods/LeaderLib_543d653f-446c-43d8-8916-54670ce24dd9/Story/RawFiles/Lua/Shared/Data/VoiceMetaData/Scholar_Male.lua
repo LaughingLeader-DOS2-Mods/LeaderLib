@@ -1,8 +1,12 @@
 ---@diagnostic disable
-local _a = Ext.AddVoiceMetaData
+local _a = Ext.Stats.AddVoiceMetaData
 
-return function(uuid)
-_a(uuid, "h0002c88eg09a6g4f51g9976g8d7091681e05", "Localization/English/Soundbanks/v41a0698578514c298a78398ccb313f39_h0002c88eg09a6g4f51g9976g8d7091681e05.wem", 0.875)
+---@param uuid GUID
+GameHelpers.VoiceMetaData.Register.ScholarMale = function(uuid)
+--FIX registering a line wipes out all other registered lines in v56-v57
+--[[ _a(uuid, "h0002c88eg09a6g4f51g9976g8d7091681e05", "Localization/English/Soundbanks/v41a0698578514c298a78398ccb313f39_h0002c88eg09a6g4f51g9976g8d7091681e05.wem", 0.875)
+_a(uuid, "h8b9b59e1ge00eg4d0bgb328gb18a298a9381", "Localization/English/Soundbanks/v41a0698578514c298a78398ccb313f39_h8b9b59e1ge00eg4d0bgb328gb18a298a9381.wem", 5.617188)
+if true then return end ]]
 _a(uuid, "h003e5db6g7b77g4e5ega069g7e552686f934", "Localization/English/Soundbanks/v41a0698578514c298a78398ccb313f39_h003e5db6g7b77g4e5ega069g7e552686f934.wem", 4.965104)
 _a(uuid, "h004bc87fgf858g4c07gab8eg4ab2c3c0324b", "Localization/English/Soundbanks/v41a0698578514c298a78398ccb313f39_h004bc87fgf858g4c07gab8eg4ab2c3c0324b.wem", 3.75625)
 _a(uuid, "h004c02feg5663g4d50g926dg6db453408c68", "Localization/English/Soundbanks/v41a0698578514c298a78398ccb313f39_h004c02feg5663g4d50g926dg6db453408c68.wem", 5.448958)

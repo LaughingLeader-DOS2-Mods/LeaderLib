@@ -54,3 +54,5 @@ LeaderLib_Variables_CarryWeightBase	Base Carry Weight	h77b887begd871g445eg97e0g3
 LeaderLib_Variables_CarryWeightBase_Description	Set the base carry weight value.<br>Default: 0<br>Carry Weight Formula:[Special:CarryWeightFormula]	hd0b1aecegfee4g4e1eg9dd9ge83d2ff268cb
 LeaderLib_Variables_CombatSightRangeMultiplier	Combat Sight Range Multiplier	hd59b40d6g8eb5g4288g92b0gdbf045f0dae5
 LeaderLib_Variables_CombatSightRangeMultiplier_Description	This is a multiplier the game uses to determine if a character should exit combat, due to not seeing any enemies. Setting this value higher will keep you in combat, despite being far away from any enemies.<br>Default: 2.5<br>Formula: ((Value * Value) * character.Sight) * character.Sight	hd512d483gb01ag40c6ga346g472274590bb5
+LeaderLib_ReloadStatChangesConfig	Reload Stat Changes Config	h121e346bgaf5dg42cagbf3bg45de27a5a667
+LeaderLib_ReloadStatChangesConfig_Description	Reload and re-apply the stat changes configuration file, located at:<br>Documents\Larian Studios\Divinity Original Sin 2 Definitive Edition\Osiris Data\LeaderLib_StatChanges.json	h8e0d18aagbc5cg4cafgb59fga2e92638c099

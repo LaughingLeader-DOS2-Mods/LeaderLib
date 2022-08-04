@@ -142,6 +142,7 @@
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d">Undead Human</content>
 	<content contentuid="h47d73bfcg16eag4504g83c0ge7b9c0048f13">*Ask to see the trader&apos;s goods.*</content>
 	<content contentuid="h4897d242gf62bg4dccg9c90g1470117392d8">If enabled, the health and armor bars will always show their values, instead of only on mouse hover.</content>
+	<content contentuid="h49be577dge6e7g4e41gb5aag5d1c414eb532">Reload Stat Changes Config</content>
 	<content contentuid="h4afd5d2bg1af0g4cc3g9a53gdb6c327d2d04">Enable Dialog Redirection</content>
 	<content contentuid="h4b459589gc776g4a7fgb3abg2e219ea20844">Features</content>
 	<content contentuid="h4c438f27gc833g4b46g8c3eg50716f12ae34">If &quot;Pull Party Into Combat&quot; is enabled, this is the minimum radius party members must be from that combat to automatically join. Default: 30m</content>
@@ -422,6 +423,7 @@
 	<content contentuid="hc789b3e9g19dfg4670g9df6g1e2b18cb59ae">Enable redirecting automatically started dialog to characters that match your preferences, such as an avatar or character with the highest persuasion.</content>
 	<content contentuid="hc78dbfbbg99e3g4b81gbb3fg8068e2d4ecda">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc848f133g22fdg41c0g8205g8041758e7309">If enabled, status hiding settings will also apply to statuses under the healthbar when examining a character.</content>
+	<content contentuid="hc85837f3ge9cag453fgabb8g5008520008f3">Reload and re-apply the stat changes configuration file, located at:&lt;br&gt;Documents\Larian Studios\Divinity Original Sin 2 Definitive Edition\Osiris Data\LeaderLib_StatChanges.json</content>
 	<content contentuid="hc9377dd3g70d6g4d84g8c8fg812246a61029">Hide Status from Portrait UI</content>
 	<content contentuid="hc9ad7f0cg9a5bg4617gb138gce551f82c341">Removes the status malus icon and extra spacing, caused by a typo in Larian&apos;s UI code, and organizes bonuses and maluses together, while also sorting them alphabetically.</content>
 	<content contentuid="hc9cc1024g797fg4770g8ffagf1b4041e4c48">&lt;font color=&apos;#9400D3&apos;&gt;Stealth Mastery&lt;/font&gt;</content>

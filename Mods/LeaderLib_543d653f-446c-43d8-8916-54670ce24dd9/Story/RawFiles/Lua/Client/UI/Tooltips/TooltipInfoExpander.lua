@@ -490,6 +490,14 @@ Ext.Events.SessionLoaded:Subscribe(function()
 			GameHelpers.IO.SaveFile(string.format("Dumps/Tooltips/%s_%sTooltip.lua", Ext.MonotonicTime(), request.Type), text)
 		end
 		TooltipExpander.AppendHelpText(request, tooltip)
+		--[[ local desc = tooltip:GetDescriptionElement()
+		if desc then
+			if request.Type == "PlayerPortrait" then
+				desc.Label = desc.Label .. "\nTEST"
+			else
+				desc.Label = desc.Label .. "<br><font color='#FF0000' size=20>TEST</font>"
+			end
+		end ]]
 	end)
 end)
 

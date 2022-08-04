@@ -45,6 +45,7 @@ local NULL_UUID = {
 
 StringHelpers.NULL_UUID = "NULL_00000000-0000-0000-0000-000000000000"
 StringHelpers.UNSET_HANDLE = "ls::TranslatedStringRepository::s_HandleUnknown"
+StringHelpers.ILLEGAL_FILE_CHARACTERS = "[<>:\"/\\|?%*]"
 
 ---Checks if a string is null or empty.
 ---@param str string|nil

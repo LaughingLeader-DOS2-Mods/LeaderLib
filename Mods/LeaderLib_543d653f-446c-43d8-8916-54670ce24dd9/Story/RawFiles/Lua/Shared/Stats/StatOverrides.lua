@@ -289,7 +289,7 @@ end
 
 ---@param data LeaderLibGameSettingsWrapper|nil
 ---@param statsLoadedState boolean|nil
-local function OverrideStats(data, statsLoadedState)
+local function _OverrideStats(data, statsLoadedState)
 	local shouldSync = not _ISCLIENT and not statsLoadedState
 	--fprint(LOGLEVEL.TRACE, "[LeaderLib:SyncStatOverrides:%s] Syncing stat overrides from GameSettings.", isClient and "CLIENT" or "SERVER")
 	if data == nil then
@@ -458,9 +458,11 @@ local function OverrideStats(data, statsLoadedState)
 end
 
 Ext.Events.StatsLoaded:Subscribe(function (e)
-	OverrideStats(nil, true)
+	_OverrideStats(nil, true)
 end, {Priority=0})
 
 function SyncStatOverrides(data)
-	OverrideStats(data, false)
+	_OverrideStats(data, false)
+	--Run here so users connecting to a host will get the host's stat changes
+	QOL.StatChangesConfig:Run()
 end

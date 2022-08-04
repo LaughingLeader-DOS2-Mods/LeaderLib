@@ -21,6 +21,7 @@ if not Mods.LeaderLib
 		Input = Input,
 		LocalizedText = LocalizedText,
 		Managers = Managers,
+		QOL = QOL,
 		SceneManager = SceneManager,
 		SettingsManager = SettingsManager,
 		SkillManager = SkillManager,

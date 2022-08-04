@@ -30,6 +30,13 @@ settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 settings.Global:AddLocalizedVariable("AutoCombatRange", "LeaderLib_Variables_AutoCombatRange", 30, 1, 30, 1)
 settings.Global:AddLocalizedVariable("CombatSightRangeMultiplier", "LeaderLib_Variables_CombatSightRangeMultiplier", 2.5, 1, 30, 1)
 settings.Global:AddLocalizedVariable("CarryWeightBase", "LeaderLib_Variables_CarryWeightBase", 0, 0, 1000, 10)
+settings.Global:AddLocalizedButton("LeaderLib_ReloadStatChangesConfig", "LeaderLib_ReloadStatChangesConfig", function (entry, modUUID, character)
+	if _ISCLIENT then
+		Ext.Net.PostMessageToServer("LeaderLib_StatChangesConfig_Run", "")
+	else
+		QOL.StatChangesConfig:Run()
+	end
+end, true, true)
 
 settings.GetMenuOrder = function()
 	local order = {

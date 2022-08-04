@@ -9,7 +9,7 @@ local _saveFile = _EXTVERSION < 56 and Ext.SaveFile or Ext.IO.SaveFile
 local _type = type
 
 ---@param filepath string
----@param fallback table
+---@param fallback table|nil
 ---@param context nil|"user"|"data"
 function GameHelpers.IO.LoadJsonFile(filepath, fallback, context)
 	local file =_loadFile(filepath, context)

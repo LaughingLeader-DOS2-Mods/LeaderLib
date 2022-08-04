@@ -3,6 +3,9 @@
 ---@class LeaderLibGameHelpers
 GameHelpers = {}
 
+---@class LeaderLibQualityOfLifeTweaks
+QOL = {}
+
 ---Manager tables that handle state changes and include ways to register callbacks for specific events.  
 ---@class LeaderLibManagers
 Managers = {}

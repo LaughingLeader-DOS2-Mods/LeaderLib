@@ -15,7 +15,7 @@ local self = GameSettingsManager
 
 function GameSettingsManager.Apply(sync)
 	if not _ISCLIENT and sync then
-		SyncStatOverrides(GameSettings, true)
+		SyncStatOverrides(GameSettings)
 	end
 	GameSettings:Apply()
 end

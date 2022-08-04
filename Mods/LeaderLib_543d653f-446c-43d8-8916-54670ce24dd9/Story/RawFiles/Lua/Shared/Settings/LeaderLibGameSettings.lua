@@ -316,5 +316,5 @@ Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
 		SyncStatOverrides(GameSettings)
 	end
 
-	Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings})
+	Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings, FromSync=true})
 end)

@@ -80,7 +80,7 @@ if not _ISCLIENT then
 	Ext.RegisterNetListener("LeaderLib_GameSettingsChanged", function(call, gameSettingsStr, user)
 		GameSettings:LoadString(gameSettingsStr)
 		self.Apply(true)
-		Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings})
+		Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings, FromSync=true})
 		--Resync to clients, but exclude the host that just sent us data
 		if GameHelpers.Data.GetTotalUsers() > 1 then
 			if user then

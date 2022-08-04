@@ -131,6 +131,7 @@ Events.ModSettingsSynced = Classes.SubscribableEvent:Create("ModSettingsSynced",
 
 ---@class GameSettingsChangedEventArgs
 ---@field Settings LeaderLibGameSettings
+---@field FromSync boolean True if settings were loaded from a sync carried out by the server.
 
 ---Called when GameSettings changes are applied in the options menu.  
 ---🔨🔧**Server/Client**🔧🔨  
@@ -196,6 +197,7 @@ Events.GetTextPlaceholder = Classes.SubscribableEvent:Create("GetTextPlaceholder
 
 ---@class GlobalSettingsLoadedEventArgs
 ---@field Settings GlobalSettings
+---@field FromSync boolean True if settings were loaded from a sync carried out by the server.
 
 ---Called when all global settings are loaded.  
 ---🔨🔧**Server/Client**🔧🔨  

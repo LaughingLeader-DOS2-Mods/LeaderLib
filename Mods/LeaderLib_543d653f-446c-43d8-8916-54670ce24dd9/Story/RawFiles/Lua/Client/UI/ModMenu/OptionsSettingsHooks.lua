@@ -38,6 +38,8 @@ local LarianMenuID = {
 	Controls = 4,
 }
 
+OptionsSettingsHooks.LarianMenuID = LarianMenuID
+
 if Vars.ControllerEnabled then
 	LarianMenuID = {
 		Graphics = 1,
@@ -64,16 +66,21 @@ local ModMenuTabButtonTooltip = Classes.TranslatedString:Create("hc5012999g3c27g
 ---@return UIObject
 local function GetOptionsGUI()
 	if not Vars.ControllerEnabled then
-		return Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+		return Ext.UI.GetByPath("Public/Game/GUI/optionsSettings.swf")
 	else
-		return Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings_c.swf")
+		return Ext.UI.GetByPath("Public/Game/GUI/optionsSettings_c.swf")
 	end
 end
+
+OptionsSettingsHooks.GetOptionsGUI = GetOptionsGUI
 
 Ext.RegisterNetListener("LeaderLib_ModMenu_RunParseUpdateArrayMethod", function(cmd,payload)
 	local ui = GetOptionsGUI()
 	if ui ~= nil then
-		ui:GetRoot().parseUpdateArray()
+		local this = ui:GetRoot()
+		if this then
+			this.parseUpdateArray()
+		end
 	end
 end)
 
@@ -137,10 +144,8 @@ local function CreateModMenuButton(ui, method, ...)
 		---@type MainMenuMC
 		local mainMenu = main.mainMenu_mc
 		if mainMenu then
-			local buttonsArray = mainMenu.menuBtnList.content_array
 			mainMenu.addOptionButton(ModMenuTabButtonText.Value, "switchToModMenu", MOD_MENU_ID, OptionsSettingsHooks.SwitchToModMenu, true)
 			if OptionsSettingsHooks.SwitchToModMenu then
-				--ui:ExternalInterfaceCall("switchMenu", MOD_MENU_ID)
 				main.clearAll()
 				for i=0,#main.baseUpdate_Array do
 					local val = main.baseUpdate_Array[i]
@@ -217,8 +222,6 @@ local function OnParseBaseUpdateArray(ui, call)
 		i = i + 1
 		if t == 0 then
 			local buttonID = this.baseUpdate_Array[i]
-			local label = this.baseUpdate_Array[i+1]
-			local isCurrent = this.baseUpdate_Array[i+2]
 			this.baseUpdate_Array[i+2] = buttonID == OptionsSettingsHooks.CurrentMenu and not OptionsSettingsHooks.SwitchToModMenu
 			i = i + 3
 		elseif t == 1 then
@@ -263,11 +266,10 @@ end
 
 local function SetApplyButtonClickable(ui, b)
 	if ui == nil then
-		if not Vars.ControllerEnabled then
-			ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
-		else
-			ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings_c.swf")
-		end
+		ui = GetOptionsGUI()
+	end
+	if not ui then
+		return
 	end
 	local this = ui:GetRoot()
 	if this then
@@ -312,6 +314,10 @@ local function IsLeaderLibMenuActive()
 	return false
 end
 OptionsSettingsHooks.IsLeaderLibMenuActive = IsLeaderLibMenuActive
+
+function OptionsSettingsHooks.IsGameplayMenuActive()
+	return OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay
+end
 
 local switchingToMenu = -1
 local blockNext = 0
@@ -358,8 +364,8 @@ end)
 
 Ext.Events.SessionLoaded:Subscribe(function()
 	--Override here so the settings in the main menu works
-	Ext.AddPathOverride("Public/Game/GUI/optionsSettings.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings.swf")
-	Ext.AddPathOverride("Public/Game/GUI/optionsSettings_c.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings_c.swf")
+	Ext.IO.AddPathOverride("Public/Game/GUI/optionsSettings.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings.swf")
+	Ext.IO.AddPathOverride("Public/Game/GUI/optionsSettings_c.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings_c.swf")
 
 	local onMessageBoxButton = function(ui, call, id, device)
 		-- Are you sure you want to discard your changes?
@@ -603,5 +609,27 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		Ext.RegisterUITypeCall(uiType, "llselectorID", OnSelector)
 		Ext.RegisterUITypeCall(uiType, "llcheckBoxID", OnCheckBox)
 		Ext.RegisterUITypeCall(uiType, "llcomboBoxID", OnComboBox)
+	end
+end)
+
+--Mods.LeaderLib.Events.GameSettingsChanged:Invoke({Settings=Mods.LeaderLib.GameSettingsManager.GetSettings(), FromSync=true})
+
+Events.GameSettingsChanged:Subscribe(function (e)
+	if e.FromSync and OptionsSettingsHooks.IsGameplayMenuActive() then
+		local ui = OptionsSettingsHooks.GetOptionsGUI()
+		if ui then
+			ui:ExternalInterfaceCall("switchMenu", LarianMenuID.Gameplay)
+		end
+	end
+end)
+
+--Mods.LeaderLib.Events.GlobalSettingsLoaded:Invoke({Settings=Mods.LeaderLib.GlobalSettings, FromSync=true})
+
+Events.GlobalSettingsLoaded:Subscribe(function (e)
+	if e.FromSync and OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
+		local ui = OptionsSettingsHooks.GetOptionsGUI()
+		if ui then
+			SwitchToModMenu(ui)
+		end
 	end
 end)

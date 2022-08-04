@@ -12,9 +12,6 @@ GameSettingsMenu = {
 	LastID = 2000,
 	LastScrollPosition = 0
 }
-GameSettingsMenu.__index = GameSettingsMenu
-
-local _EXTVERSION = Ext.Version()
 
 ---@return GameSettingsEntryData
 local function CreateEntryData(parentTable, tableKey, initialValue, name)
@@ -465,7 +462,7 @@ function GameSettingsMenu.CommitChanges()
 	if Client.IsHost then
 		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", GameSettings:ToString(true))
 	end
-	Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings})
+	Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings, FromSync=false})
 	--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
 end
 

@@ -157,7 +157,7 @@ function LoadGlobalSettings(skipEventInvoking)
 			end
 		end
 		if skipEventInvoking ~= true then
-			Events.GlobalSettingsLoaded:Invoke({Settings=GlobalSettings})
+			Events.GlobalSettingsLoaded:Invoke({Settings=GlobalSettings, FromSync=false})
 		end
 		return result
 	end
@@ -364,7 +364,7 @@ else
 		for uuid,v in pairs(GlobalSettings.Mods) do
 			Events.ModSettingsLoaded:Invoke({UUID=uuid, Settings=v})
 		end
-		Events.GlobalSettingsLoaded:Invoke({Settings=GlobalSettings})
+		Events.GlobalSettingsLoaded:Invoke({Settings=GlobalSettings, FromSync=true})
 	end)
 
 	Ext.RegisterNetListener("LeaderLib_SyncGlobalSettings", function(cmd, dataString)

@@ -21,6 +21,7 @@ local _PrintWarning = Ext.Utils.PrintWarning
 
 local _IsNaN = GameHelpers.Math.IsNaN
 local _IsValidHandle = GameHelpers.IsValidHandle
+local _IsNullOrEmpty = StringHelpers.IsNullOrEmpty
 local _ObjectIsItem = function(obj) return _GetObjectType(obj) == "ecl::Item" end
 local _UITYPE = Data.UIType
 
@@ -844,7 +845,7 @@ function RequestProcessor.OnGenericTooltip(e, ui, event, text, x, y, width, heig
 		RequestProcessor.Tooltip.Last.UIType = request.UIType
 		RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, request.UIType, event, text, x, y, width, height, side, allowDelay)
 
-		if not StringHelpers.IsNullOrEmpty(request.Text) then
+		if not _IsNullOrEmpty(request.Text) then
 			e.Args[1] = request.Text
 		else
 			_PrintError(string.format("[RequestProcessor.OnGenericTooltip:%s] request.Text is nil?\nRequest:\n%s\nArgs:\n%s", event, Ext.DumpExport(request), Ext.DumpExport(e.Args)))
@@ -1279,14 +1280,25 @@ local _SlotNames = {
 
 ---@param item EclItem
 local function _GetItemSlotName(item)
-	if item.StatsFromName.ModifierListIndex < 3 then
-		---@type StatEntryArmor|StatEntryShield|StatEntryWeapon
-		local stat = item.StatsFromName.StatsEntry
-		local tsData = _SlotNames[stat.Slot]
-		if tsData then
-			return _GetTranslatedString(tsData[1], tsData[2])
+	if item.StatsFromName then
+		if item.StatsFromName.ModifierListIndex < 3 then
+			---@type StatEntryArmor|StatEntryShield|StatEntryWeapon
+			local stat = item.StatsFromName.StatsEntry
+			local tsData = _SlotNames[stat.Slot]
+			if tsData then
+				return _GetTranslatedString(tsData[1], tsData[2])
+			end
+		end
+	elseif not _IsNullOrEmpty(item.StatsId) and not _itemRarity[item.StatsId] then
+		local stat = _GetStat(item.StatsId)
+		if stat and stat.Slot then
+			local tsData = _SlotNames[stat.Slot]
+			if tsData then
+				return _GetTranslatedString(tsData[1], tsData[2])
+			end
 		end
 	end
+	return nil
 end
 
 local _equipmentPattern = "<font color=\"#ffffff\">%s</font><font size=\"15\"><br>%s</font>"

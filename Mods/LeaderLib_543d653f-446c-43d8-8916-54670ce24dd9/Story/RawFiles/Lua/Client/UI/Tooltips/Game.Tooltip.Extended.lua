@@ -971,9 +971,12 @@ local InvokeHandlers = {}
 ---@param typeIds table<integer,boolean>|integer|nil
 ---@param when "Before"|"After"|nil
 local function _CallHandler(event, callback, typeIds, when)
-	if type(typeIds) == "number" then
+	local idType = type(typeIds)
+	if idType == "number" then
 		local t = typeIds
 		typeIds = {[t] = true}
+	elseif idType ~= "nil" and idType ~= "table" then
+		_PrintError("[Game.Tooltip._CallHandler] Bad typeID(%s) type(%s)", typeIds, idType)
 	end
 	if type(event) == "table" then
 		for i=1,#event do
@@ -993,9 +996,12 @@ end
 ---@param typeIds table<integer,boolean>|integer|nil
 ---@param when "Before"|"After"|nil
 local function _InvokeHandler(event, callback, typeIds, when)
-	if type(typeIds) == "number" then
+	local idType = type(typeIds)
+	if idType == "number" then
 		local t = typeIds
 		typeIds = {[t] = true}
+	elseif idType ~= "nil" and idType ~= "table" then
+		_PrintError("[Game.Tooltip._InvokeHandler] Bad typeID(%s) type(%s)", typeIds, idType)
 	end
 	if type(event) == "table" then
 		for i=1,#event do
@@ -1169,7 +1175,7 @@ function _ttHooks:Init()
 	--public function addTooltip(text:String, widthOverride:Number = 0, heightOverride:Number = 18, allowDelay:Boolean = true, stickToMouse:Number = 0, bgType:uint = 0)
 	_InvokeHandler("addTooltip", function (e, ui, event, text, widthOverride, heightOverride, allowDelay, stickToMouse, bgType)
 		self:OnRenderGenericTooltip(e, ui, event, text, widthOverride, heightOverride, allowDelay, stickToMouse, bgType)
-	end, "Before")
+	end, nil, "Before")
 
 	_CallHandler("hideTooltip", function (e, ui, event, ...)
 		self.IsOpen = false
@@ -1194,28 +1200,19 @@ function _ttHooks:Init()
 	self.Initialized = true
 end
 
----@deprecated
-function _ttHooks:UpdateGenericTooltip(ui, method, keepUIinScreen)
-	if not self.GenericTooltipData then
-		return
-	end
-	local this = ui:GetRoot()
-	if this and this.tf then
-		if self.GenericTooltipData.Text == "" or self.GenericTooltipData.Text == nil then
-			this.INTRemoveTooltip()
-		else
-			this.tf.shortDesc = self.GenericTooltipData.Text
-			this.tf.setText(self.GenericTooltipData.Text,self.GenericTooltipData.BackgroundType or 0)
-		end
-	end
-	self.GenericTooltipData = nil
-end
-
 local _GenericTooltipTypes = {
 	Generic = true,
 	WorldHover = true,
 	PlayerPortrait = true,
 }
+
+local function _GetCurrentCharacter()
+	return _GetClientCharacter() or {}
+end
+
+local function _GetRequestCharacter(req)
+	return req.Character or _GetCurrentCharacter()
+end
 
 ---@param e EclLuaUICallEventParams
 ---@param ui UIObject
@@ -1265,7 +1262,8 @@ function _ttHooks:OnRenderGenericTooltip(e, ui, method, text, widthOverride, hei
 				self:NotifyListeners("World", nil, req, tooltipData, nil)
 			end
 		elseif req.Type == "PlayerPortrait" then
-			self:NotifyListeners("PlayerPortrait", nil, req, tooltipData, req.Character)
+			local character = _GetRequestCharacter(req)
+			self:NotifyListeners("PlayerPortrait", nil, req, tooltipData, character)
 		else
 			self:NotifyListeners("Generic", nil, req, tooltipData)
 		end
@@ -1286,9 +1284,10 @@ function _ttHooks:OnRenderGenericTooltip(e, ui, method, text, widthOverride, hei
 			e.Args[1] = ""
 		end
 
+		local sizeChanged = false
+
 		local this = ui:GetRoot()
 		if this then
-			local sizeChanged = false
 			local target = this.defaultTooltip
 			if target then
 				if desc.OverrideSize then
@@ -1307,20 +1306,31 @@ function _ttHooks:OnRenderGenericTooltip(e, ui, method, text, widthOverride, hei
 					target.heightOverride = -1
 				end
 			end
-			if sizeChanged then
-				local t = ui.Type
-				Ext.OnNextTick(function (e)
-					local ui = _GetUIByType(t)
-					if ui then
-						local this = ui:GetRoot()
-						if this and this.tf then
-							this.tf.widthOverride = -1
-							this.tf.heightOverride = -1
-						end
-					end
-				end)
-			end
 		end
+
+		local requestedText = e.Args[1] or ""
+		local textChanged = requestedText ~= "" and requestedText ~= text
+		local finalText = text:gsub("<bp>","<img src=\'Icon_BulletPoint\'>"):gsub("<line>","<img src=\'Icon_Line\'>"):gsub("<shortLine>","<img src=\'Icon_Line\' width=\'85%\'>")
+		local bgType = e.Args[6] or 0
+		local t = ui.Type
+		--TODO PlayerPortrait tooltips get continually set with addTooltip invokes, despite no more calls happening, possibly due to ticking statuses (they display in the text)
+		Ext.OnNextTick(function (e)
+			local ui = _GetUIByType(t)
+			if ui then
+				local this = ui:GetRoot()
+				if this and this.tf then
+					local tt = this.tf
+					if sizeChanged then
+						tt.widthOverride = -1
+						tt.heightOverride = -1
+					end
+					if textChanged and tt.setText then
+						tt.shortDesc = finalText
+						tt.setText(finalText, bgType)
+					end
+				end
+			end
+		end)
 	
 		self.Last.Request = self.NextRequest
 		self.NextRequest = nil
@@ -1402,7 +1412,7 @@ function _ttHooks:GetCompareItem(ui, item, offHand)
 
 	if item.Stats and item.Stats.ItemSlot then
 		statSlot = item.Stats.ItemSlot
-	elseif item.StatsFromName.ModifierListIndex < 3 then -- 0 is Weapon, 1 is Armor, 2 is Shield, 3 is Potion, 4 is Object
+	elseif item.StatsFromName and item.StatsFromName.ModifierListIndex < 3 then -- 0 is Weapon, 1 is Armor, 2 is Shield, 3 is Potion, 4 is Object
 		statSlot = item.StatsFromName.StatsEntry.Slot
 	end
 
@@ -1509,14 +1519,6 @@ function _ttHooks:OnRenderTooltip(arrayData, ui, method, ...)
 
 	self.Last.Request = self.NextRequest
 	self.NextRequest = nil
-end
-
-local function _GetCurrentCharacter()
-	return _GetClientCharacter() or {}
-end
-
-local function _GetRequestCharacter(req)
-	return req.Character or _GetCurrentCharacter()
 end
 
 local function _RunNotifyListeners(self, req, ui, method, tooltip, ...)
@@ -1732,9 +1734,6 @@ end
 local TooltipData = {}
 
 _TT.TooltipData = TooltipData
-
----@class GenericTooltipData:TooltipData
----@field Data TooltipGenericRequest
 
 ---@param data TooltipElement[]
 ---@param tooltipUIType integer

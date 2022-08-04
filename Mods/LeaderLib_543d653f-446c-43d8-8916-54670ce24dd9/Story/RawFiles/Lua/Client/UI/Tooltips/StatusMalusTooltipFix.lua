@@ -85,9 +85,11 @@ local function FixMalusGroup(ui)
 						if group.iconId == 18.0 then
 							local b,height = IsStatusMalupGroup(group)
 							if b then
-								for j=0,#group.list.content_array-1 do
-									--The actionscript code checks if this variable via if(!heightOverride), so setting it to false should work to disable it.
-									group.list.content_array[j].heightOverride = false
+								if group.list then
+									for j=0,#group.list.content_array-1 do
+										--The actionscript code checks if this variable via if(!heightOverride), so setting it to false should work to disable it.
+										group.list.content_array[j].heightOverride = false
+									end
 								end
 								group.heightOverride = height
 								group.needsSubSection = false
@@ -97,9 +99,9 @@ local function FixMalusGroup(ui)
 								--fprint(LOGLEVEL.DEFAULT, "[TooltipGroup] iconId(%s) orderId(%s) needsSubSection(%s)", group.iconId, group.orderId, group.needsSubSection)
 							end
 						end
-						lastGroupID = group.groupID
+						--[[ lastGroupID = group.groupID
 						lastGroupElementCount = #group.list.content_array
-						lastGroup = group
+						lastGroup = group ]]
 					end
 				end
 				if needsResort and this.tf.tooltip_mc.repositionElements then

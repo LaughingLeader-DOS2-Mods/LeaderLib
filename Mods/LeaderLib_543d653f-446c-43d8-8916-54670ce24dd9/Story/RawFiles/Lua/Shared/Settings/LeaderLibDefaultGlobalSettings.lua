@@ -87,6 +87,7 @@ settings.GetMenuOrder = function()
 			DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Buttons", "Actions"),
 			Entries = {
 				"LeaderLib_Button_Reset",
+				"LeaderLib_ReloadStatChangesConfig",
 		}})
 	end
 	return order

@@ -6,6 +6,15 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.26.0",
+			"Changes": [
+				"Fixed an issue where client gameplay settings were being reset to the host's settings in multiplayer.",
+				"Fixed an issue where mods registering status listeners for engine statuses wasn't working correctly.",
+				"Made the Mod Settings and Gameplay settings refresh if host settings are synced in multiplayer, if the menu is already open.",
+				"Added a new feature: If LeaderLib_StatChanges.json exists in the 'Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data', this file will be loaded and will apply stat changes automatically."
+			]
+		},
+		{
 			"Version": "1.7.25.3",
 			"Changes": [
 				"Fixed an issue where the 'Scales With' text wasn't being shown in weapon tooltips.",

@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+from telnetlib import theNULL
 from typing import Dict,List
 import re
 import subprocess
@@ -26,12 +27,13 @@ SOURCE_FILES = Path(os.environ["DOS2DE_EXTRACTED_PATH"]).joinpath("Public/Game/G
 DOS2 = Path(os.environ["DOS2_PATH"])
 DOS2DE_PUBLIC = DOS2.joinpath("DefEd/Data/Public/")
 OUTPUT = DOS2DE_PUBLIC.joinpath("LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/")
+TOOLTIP_OUTPUT = DOS2DE_PUBLIC.joinpath("Game/GUI/")
 
 targets = [
-    #"tooltip",
+    # "tooltip",
     "optionsSettings",
-    "optionsSettings_c",
-    "journal",
+    # "optionsSettings_c",
+    # "journal",
 ]
 
 package_pattern = re.compile("package ([^\s]+)", re.IGNORECASE | re.MULTILINE)
@@ -48,7 +50,11 @@ class CompileData:
         self.ID = id
         self.SourceFolder = script_dir.joinpath(id)
         self.InputFile = SOURCE_FILES.joinpath(id).with_suffix(".swf")
-        self.OutputFile = OUTPUT.joinpath(id).with_suffix(".swf")
+        if id == "tooltip":
+            self.OutputFile = TOOLTIP_OUTPUT.joinpath(id).with_suffix(".swf")
+        else:
+            self.OutputFile = OUTPUT.joinpath(id).with_suffix(".swf")
+            
         self.OutputFile.parent.mkdir(parents=True, exist_ok=True)
         self.Scripts:Dict[str,str] = {}
         self.find_scripts()

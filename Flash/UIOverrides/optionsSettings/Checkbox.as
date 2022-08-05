@@ -106,9 +106,9 @@ package
 			//this.formHL_mc.x = this.bg_mc.x;
 			//this.formHL_mc.width = this.bg_mc.width + this.label_txt.textWidth;
 			//this.formHL_mc.height = this.bg_mc.height + 2;
-			//this.graphics.beginFill(0xFF0000, 0.5);
-			//this.graphics.drawRect(0, 0, this.width, this.height);
-			//this.graphics.endFill();
+			// this.graphics.beginFill(0xFF0000, 0.5);
+			// this.graphics.drawRect(0, 0, this.width, this.height);
+			// this.graphics.endFill();
 		}
 	}
 }

@@ -90,6 +90,9 @@ package
 		{
 			this.base = root as MovieClip;
 			this.label_txt.filters = textEffect.createStrokeFilter(0,1.2,1,1.4,3);
+			// this.graphics.beginFill(0xFFCC00, 0.5);
+			// this.graphics.drawRect(0, 0, this.width, this.height);
+			// this.graphics.endFill();
 		}
 	}
 }

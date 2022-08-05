@@ -12,6 +12,7 @@ package optionsSettings_fla
 	import flash.geom.Point;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.geom.Rectangle;
 	
 	//LeaderLib Changes: Added controlAdded calls whenever a control is created.
 	public dynamic class overview_mc_1 extends MovieClip
@@ -315,7 +316,8 @@ package optionsSettings_fla
 				label_mc.heightOverride = label_mc.heightOverride + topSpacing;
 				label_mc.label_txt.y = topSpacing;
 			}
-			this.totalHeight = this.totalHeight + (label_mc.heightOverride + this.elementHSpacing);
+			var labelHeight:Number = (label_mc.heightOverride + this.elementHSpacing);
+			this.totalHeight += labelHeight;
 			if(label_mc.label_txt.textWidth > this.minWidth)
 			{
 				if(this.maxWidth < label_mc.label_txt.textWidth)
@@ -327,6 +329,7 @@ package optionsSettings_fla
 			{
 				this.maxWidth = this.minWidth;
 			}
+			label_mc.scrollRect = new Rectangle(0,0,label_mc.width, labelHeight);
 			label_mc.tooltip = tooltip;
 			this.list.addElement(label_mc);
 			this.HLCounter = 0;

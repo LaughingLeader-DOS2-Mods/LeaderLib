@@ -124,11 +124,13 @@ end
 
 Ext.Events.ModuleLoadStarted:Subscribe(function(e)
 	--- So we can initialize the settings file in the main menu.
-	GameSettingsManager.Load()
+	GameSettingsManager.Load(false)
 end)
 
 Ext.Events.SessionLoaded:Subscribe(function (e)
-	if _ISCLIENT then
+	if not GameSettings.Loaded then
+		GameSettingsManager.Load(false)
+	elseif _ISCLIENT then
 		GameSettingsManager.LoadClientSettings()
 	end
 end, {Priority=9999})

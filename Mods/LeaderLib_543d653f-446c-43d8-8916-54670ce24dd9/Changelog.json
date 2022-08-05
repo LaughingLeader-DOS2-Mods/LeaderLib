@@ -6,6 +6,14 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.26.1",
+			"Changes": [
+				"Fixed an issue where Client Gameplay settings were being reset to default values (the actual problem being they weren't loaded once initially).",
+				"Fixed an issue where text with a tooltip in the options menu may have prevented clicking on a checkbox/element below.",
+				"Fixed an issue where labels in the options menu, that have tooltips, wouldn't hide the tooltip when the mouse stops hovering over them."
+			]
+		},
+		{
 			"Version": "1.7.26.0",
 			"Changes": [
 				"Fixed an issue where client gameplay settings were being reset to the host's settings in multiplayer.",

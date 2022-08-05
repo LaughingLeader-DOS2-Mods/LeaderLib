@@ -81,6 +81,7 @@ package
 		{
 			if(this.base.curTooltip == this.name && this.base.hasTooltip)
 			{
+				ExternalInterface.call("hideTooltip");
 				this.base.hasTooltip = false;
 				this.base.curTooltip = "";
 			}

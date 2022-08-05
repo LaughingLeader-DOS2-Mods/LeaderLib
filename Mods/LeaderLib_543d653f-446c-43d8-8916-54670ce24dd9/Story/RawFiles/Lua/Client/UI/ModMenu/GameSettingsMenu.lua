@@ -280,7 +280,10 @@ end
 function GameSettingsMenu.AddSettings(ui, addToArray)
 	GameSettingsMenu.Controls = {}
 	GameSettingsMenu.LastID = 600
-	local settings = GameSettings.Settings
+	local settings,b = GameSettingsManager.GetSettings()
+	if not b then
+		GameSettingsManager.LoadClientSettings()
+	end
 	local main = ui:GetRoot()
 	if main ~= nil then
 		---@type MainMenuMC

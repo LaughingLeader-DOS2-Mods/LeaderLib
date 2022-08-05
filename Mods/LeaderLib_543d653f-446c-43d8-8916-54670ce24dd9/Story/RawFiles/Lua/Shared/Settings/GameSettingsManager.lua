@@ -3,11 +3,15 @@ if GameSettingsManager == nil then
 end
 Managers.GameSettings = GameSettingsManager
 
+---@return LeaderLibGameSettings gameSettings
+---@return boolean justLoaded
 function GameSettingsManager.GetSettings()
+	local justLoaded = false
 	if not GameSettings.Loaded then
 		GameSettingsManager.Load(false)
+		justLoaded = true
 	end
-	return GameSettings.Settings
+	return GameSettings.Settings,justLoaded
 end
 
 local _ISCLIENT = Ext.IsClient()
@@ -15,7 +19,7 @@ local self = GameSettingsManager
 
 function GameSettingsManager.Apply(sync)
 	if not _ISCLIENT and sync then
-		SyncStatOverrides(GameSettings)
+		SyncStatOverrides(GameSettings.Settings)
 	end
 	GameSettings:Apply()
 end
@@ -40,6 +44,27 @@ function GameSettingsManager.Load(sync)
 	end
 	GameSettings.Loaded = true
 	self.Apply(sync)
+	return GameSettings
+end
+
+---@return LeaderLibGameSettingsWrapper
+function GameSettingsManager.LoadClientSettings()
+	if _ISCLIENT then
+		local b,result = xpcall(function()
+			local tbl = Common.JsonParse(GameHelpers.IO.LoadFile("LeaderLib_GameSettings.json"))
+			if tbl ~= nil then
+				if tbl.Settings ~= nil and type(tbl.Settings) == "table" and type(tbl.Settings.Client) == "table" then
+					return tbl.Settings.Client
+				end
+			end
+			return nil
+		end, debug.traceback)
+		if b and result then
+			TableHelpers.AddOrUpdate(GameSettings.Settings.Client, result, false, true)
+			GameSettings:ApplyClient()
+			GameSettings.Loaded = true
+		end
+	end
 	return GameSettings
 end
 
@@ -91,13 +116,19 @@ if not _ISCLIENT then
 	end)
 end
 
-Ext.RegisterListener("GameStateChanged", function(from, to)
-	fprint(LOGLEVEL.TRACE, "[GameStateChanged:%s] (%s) => (%s)", _ISCLIENT and "CLIENT" or "SERVER", from, to)
-end)
+if Vars.DebugMode then
+	Ext.Events.GameStateChanged:Subscribe(function(e)
+		fprint(LOGLEVEL.TRACE, "[GameStateChanged:%s] (%s) => (%s)", _ISCLIENT and "CLIENT" or "SERVER", e.FromState, e.ToState)
+	end)
+end
 
---Ext.RegisterListener("ModuleLoadStarted", LoadSettings)
-
-Ext.RegisterListener("ModuleLoadStarted", function()
+Ext.Events.ModuleLoadStarted:Subscribe(function(e)
 	--- So we can initialize the settings file in the main menu.
 	GameSettingsManager.Load()
 end)
+
+Ext.Events.SessionLoaded:Subscribe(function (e)
+	if _ISCLIENT then
+		GameSettingsManager.LoadClientSettings()
+	end
+end, {Priority=9999})

@@ -211,8 +211,9 @@ end
 
 ---Converts a string to a table and applies its properties.
 ---@param str string
+---@param skipApply boolean|nil
 ---@return boolean
-function LeaderLibGameSettings:LoadString(str)
+function LeaderLibGameSettings:LoadString(str, skipApply)
 	local b,result = xpcall(function()
 		local tbl = Common.JsonParse(str)
 		if tbl ~= nil then
@@ -228,7 +229,9 @@ function LeaderLibGameSettings:LoadString(str)
 		return true
 	end, debug.traceback)
 	if b then
-		self:Apply()
+		if not skipApply then
+			self:Apply()
+		end
 		return result
 	else
 		Ext.PrintError("[LeaderLibGameSettings:CreateFromString] Error parsing string as table:\n" .. tostring(result))
@@ -275,16 +278,20 @@ function LeaderLibGameSettings:ApplyAPChanges()
 	end
 end
 
-function LeaderLibGameSettings:Apply()
-	if self.Settings.BackstabSettings.Player.Enabled or self.Settings.BackstabSettings.NPC.Enabled then
-		EnableFeature("BackstabCalculation")
-	end
+function LeaderLibGameSettings:ApplyClient()
 	if _ISCLIENT then
 		StatusHider.RefreshStatusVisibility()
 		if Mods.CharacterExpansionLib then
 			Mods.CharacterExpansionLib.SheetManager.Talents.ToggleDivineTalents(self.Settings.Client.DivineTalentsEnabled)
 		end
 	end
+end
+
+function LeaderLibGameSettings:Apply()
+	if self.Settings.BackstabSettings.Player.Enabled or self.Settings.BackstabSettings.NPC.Enabled then
+		EnableFeature("BackstabCalculation")
+	end
+	self:ApplyClient()
 	self:ApplyAPChanges()
 end
 
@@ -294,27 +301,21 @@ GameSettings = LeaderLibGameSettings:Create()
 Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
 	--fprint(LOGLEVEL.TRACE, "[LeaderLib_SyncGameSettings:%s] Loading settings.", _ISCLIENT and "CLIENT" or "SERVER")
 	if _ISCLIENT then
+		if not GameSettings.Loaded then
+			--Load client settings initially
+			GameSettingsManager.LoadClientSettings()
+		end
 		local clientSettings = {}
 		if GameSettings and GameSettings.Settings and GameSettings.Settings.Client then
 			clientSettings = TableHelpers.Clone(GameSettings.Settings.Client)
 		end
-		GameSettings:LoadString(payload)
-		if not GameSettings.Settings.Client then
-			GameSettings.Settings.Client = {}
-		end
+		GameSettings:LoadString(payload, true)
 		TableHelpers.AddOrUpdate(GameSettings.Settings.Client, clientSettings, false, true)
 	else
 		GameSettings:LoadString(payload)
 	end
-	GameSettings:Apply()
-	GameSettings.Loaded = true
 
-	if _ISCLIENT then
-		if Client.IsHost then
-			GameSettingsManager.Save()
-		end
-		SyncStatOverrides(GameSettings)
-	end
+	GameSettingsManager.Apply(false)
 
 	Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings, FromSync=true})
 end)

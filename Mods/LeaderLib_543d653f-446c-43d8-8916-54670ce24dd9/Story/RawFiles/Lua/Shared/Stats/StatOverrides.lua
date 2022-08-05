@@ -287,20 +287,19 @@ local function AdjustAP(stat, settings)
 	return changedStat
 end
 
----@param data LeaderLibGameSettingsWrapper|nil
+---@param gameSettings LeaderLibGameSettings|nil
 ---@param statsLoadedState boolean|nil
-local function _OverrideStats(data, statsLoadedState)
+local function _OverrideStats(gameSettings, statsLoadedState)
 	local shouldSync = not _ISCLIENT and not statsLoadedState
 	--fprint(LOGLEVEL.TRACE, "[LeaderLib:SyncStatOverrides:%s] Syncing stat overrides from GameSettings.", isClient and "CLIENT" or "SERVER")
-	if data == nil then
-		---@type LeaderLibGameSettingsWrapper
-		data = GameSettingsManager.Load(false)
+	if gameSettings == nil then
+		gameSettings = GameSettingsManager.GetSettings()
 	end
-	if not data then
+	if not gameSettings then
 		ferror("[LeaderLib:OverrideStats:%s] Failed to load game settings.", _ISCLIENT and "CLIENT" or "SERVER")
 	end
 	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
-	if data.Settings.StarterTierSkillOverrides or data.Settings.LowerMemorizationRequirements then
+	if gameSettings.StarterTierSkillOverrides or gameSettings.LowerMemorizationRequirements then
 		local originalSkillTiers = {}
 		if not _ISCLIENT then
 			originalSkillTiers = PersistentVars["OriginalSkillTiers"] or {}
@@ -310,7 +309,7 @@ local function _OverrideStats(data, statsLoadedState)
 		for id in GameHelpers.Stats.GetSkills() do
 			local stat = Ext.Stats.Get(id)
 			local tier = stat.Tier
-			if data.Settings.StarterTierSkillOverrides == true then
+			if gameSettings.StarterTierSkillOverrides == true then
 				if not _ISCLIENT then
 					if originalSkillTiers[stat] ~= nil then
 						tier = originalSkillTiers[stat]
@@ -327,7 +326,7 @@ local function _OverrideStats(data, statsLoadedState)
 			else
 				originalSkillTiers[id] = tier
 			end
-			if data.Settings.LowerMemorizationRequirements == true then
+			if gameSettings.LowerMemorizationRequirements == true then
 				---@type StatRequirement[]
 				local memorizationReq = stat.MemorizationRequirements
 				local changed = false
@@ -382,8 +381,8 @@ local function _OverrideStats(data, statsLoadedState)
 		end
 	end
 
-	if data.Settings.APSettings.Player.Enabled then
-		local settings = data.Settings.APSettings.Player
+	if gameSettings.APSettings.Player.Enabled then
+		local settings = gameSettings.APSettings.Player
 		for id,b in pairs(playerStats) do
 			if b == true or (type(b) == "string" and Ext.IsModLoaded(b)) then
 				---@type StatEntryCharacter
@@ -397,13 +396,13 @@ local function _OverrideStats(data, statsLoadedState)
 			end
 		end
 	end
-	if data.Settings.APSettings.NPC.Enabled then
+	if gameSettings.APSettings.NPC.Enabled then
 		-- local base = {
 		-- 	Max = Ext.StatGetAttribute("_Base", "APMaximum"),
 		-- 	Start = Ext.StatGetAttribute("_Base", "APStart"),
 		-- 	Recovery = Ext.StatGetAttribute("_Base", "APRecovery"),
 		-- }
-		local settings = data.Settings.APSettings.NPC
+		local settings = gameSettings.APSettings.NPC
 		for _,id in pairs(Ext.Stats.GetStats("Character")) do
 			local stat = Ext.Stats.Get(id)
 			local skip = skipCharacterStats[id] == true or playerStats[id] ~= nil
@@ -461,8 +460,9 @@ Ext.Events.StatsLoaded:Subscribe(function (e)
 	_OverrideStats(nil, true)
 end, {Priority=0})
 
-function SyncStatOverrides(data)
-	_OverrideStats(data, false)
+---@param gameSettings LeaderLibGameSettings|nil
+function SyncStatOverrides(gameSettings)
+	_OverrideStats(gameSettings, false)
 	--Run here so users connecting to a host will get the host's stat changes
 	QOL.StatChangesConfig:Run()
 end

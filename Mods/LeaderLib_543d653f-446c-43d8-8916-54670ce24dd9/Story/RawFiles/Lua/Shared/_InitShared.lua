@@ -206,7 +206,7 @@ function RegisterLeaveActionPrefix(prefix)
 end
 
 ---@type LeaderLibGameSettingsWrapper
-GameSettings = {Settings = {}}
+GameSettings = {Settings = {}, Loaded = false}
 
 ---@class GlobalSettings
 GlobalSettings = {

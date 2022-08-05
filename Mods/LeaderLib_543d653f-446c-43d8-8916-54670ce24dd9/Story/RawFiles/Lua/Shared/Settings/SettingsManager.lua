@@ -211,7 +211,7 @@ if not isClient then
 		end
 		GameSettingsManager.Sync(id)
 		if skipSyncStatOverrides ~= true then
-			SyncStatOverrides(GameSettings)
+			SyncStatOverrides(GameSettings.Settings)
 		end
 	end
 	
@@ -356,11 +356,6 @@ else
 		if data.GlobalSettings ~= nil then 
 			LoadGlobalSettingsOnClient(data.GlobalSettings)
 		end
-		--[[ if data.GameSettings ~= nil then
-			GameSettings = data.GameSettings
-			setmetatable(GameSettings, Classes.LeaderLibGameSettings)
-			--SyncStatOverrides(GameSettings)
-		end ]]
 		for uuid,v in pairs(GlobalSettings.Mods) do
 			Events.ModSettingsLoaded:Invoke({UUID=uuid, Settings=v})
 		end

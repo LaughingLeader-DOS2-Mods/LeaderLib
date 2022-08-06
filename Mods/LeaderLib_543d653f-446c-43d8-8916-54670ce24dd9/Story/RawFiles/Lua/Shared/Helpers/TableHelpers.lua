@@ -104,11 +104,12 @@ function TableHelpers.AddOrUpdate(target, addFrom, skipExisting, deep)
 		return target
 	end
 	for k,v in pairs(addFrom) do
-		if target[k] == nil then
+		local existingValue = target[k]
+		if existingValue == nil then
 			target[k] = v
 		else
-			if deep and (_type(v) == "table" and _type(target[k]) == "table") then
-				TableHelpers.AddOrUpdate(target[k], v, skipExisting)
+			if deep and (_type(v) == "table" and _type(existingValue) == "table") then
+				TableHelpers.AddOrUpdate(existingValue, v, skipExisting)
 			elseif skipExisting ~= true then
 				target[k] = v
 			end
@@ -125,11 +126,12 @@ function TableHelpers.CopyExistingKeys(target, addFrom)
 		return target
 	end
 	for k,v in pairs(target) do
-		if addFrom[k] ~= nil then
+		local newValue = addFrom[k]
+		if newValue ~= nil then
 			if _type(v) == "table" then
-				TableHelpers.AddOrUpdate(v, addFrom[k])
+				TableHelpers.AddOrUpdate(v, newValue, false, true)
 			else
-				target[k] = addFrom[k]
+				target[k] = newValue
 			end
 		end
 	end

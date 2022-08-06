@@ -102,15 +102,27 @@ if not _ISCLIENT then
 			end
 		end
 	end
+	
+	Ext.Osiris.RegisterListener("ObjectTransformed", 2, "after", function (guid, template)
+		if ObjectExists(guid) == 1 then
+			local object = GameHelpers.TryGetObject(guid)
+			if object then
+				VisualManager.RebuildPersistentVisuals(object)
+			end
+		end
+	end)
+
+	local _VISUAL_REFRESH_STATUSES = {"BOOST", "SNEAKING", "UNSHEATHED"}
 
 	Ext.Events.SessionLoaded:Subscribe(function (e)
-		StatusManager.Subscribe.RemovedType("POLYMORPHED", function (e)
+		
+		StatusManager.Subscribe.Applied(_VISUAL_REFRESH_STATUSES, function (e)
 			if e.Target then
 				VisualManager.RebuildPersistentVisuals(e.Target)
 			end
 		end, 1000)
 
-		StatusManager.Subscribe.AppliedType("POLYMORPHED", function (e)
+		StatusManager.Subscribe.Removed(_VISUAL_REFRESH_STATUSES, function (e)
 			if e.Target then
 				VisualManager.RebuildPersistentVisuals(e.Target)
 			end

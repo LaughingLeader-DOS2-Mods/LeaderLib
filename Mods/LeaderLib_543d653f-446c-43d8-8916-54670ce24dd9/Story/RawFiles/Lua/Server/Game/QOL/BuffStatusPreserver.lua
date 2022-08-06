@@ -67,10 +67,10 @@ function BuffStatusPreserver.PreserveStatus(character, status, skipCheck)
 	if skipCheck or (not IgnoreStatus(status.StatusId)
 	and status.CurrentLifeTime > 0
 	and GameHelpers.Status.IsBeneficial(status.StatusId, true, BuffStatusPreserver.IgnoredStatusTypes)) then
-		if not PersistentVars.BuffStatuses[character.MyGuid] then
-			PersistentVars.BuffStatuses[character.MyGuid] = {}
+		if not _PV.BuffStatuses[character.MyGuid] then
+			_PV.BuffStatuses[character.MyGuid] = {}
 		end
-		local savedStatusData = PersistentVars.BuffStatuses[character.MyGuid]
+		local savedStatusData = _PV.BuffStatuses[character.MyGuid]
 		savedStatusData[status.StatusId] = math.ceil(status.LifeTime) -- Set it to the max duration
 		status.CurrentLifeTime = -1.0
 		status.LifeTime = -1.0
@@ -90,8 +90,8 @@ function BuffStatusPreserver.ClearSavedStatus(character, statusId)
 		end
 	else
 		local GUID = GameHelpers.GetUUID(character)
-		if GUID and PersistentVars.BuffStatuses[GUID] then
-			PersistentVars.BuffStatuses[GUID][statusId] = nil
+		if GUID and _PV.BuffStatuses[GUID] then
+			_PV.BuffStatuses[GUID][statusId] = nil
 		end
 	end
 end
@@ -127,7 +127,7 @@ end
 ---@param combatId integer
 function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
 	local GUID = GameHelpers.GetUUID(obj)
-	local data = PersistentVars.BuffStatuses[GUID]
+	local data = _PV.BuffStatuses[GUID]
 	if data then
 		local character = GameHelpers.GetCharacter(GUID)
 		if character then
@@ -144,7 +144,7 @@ function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
 				end
 			end
 		end
-		PersistentVars.BuffStatuses[GUID] = nil
+		_PV.BuffStatuses[GUID] = nil
 	end
 	BuffStatusPreserver.NextBuffStatus[GUID] = nil
 end
@@ -215,12 +215,12 @@ RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targ
 end)
 
 function BuffStatusPreserver.Disable()
-	if PersistentVars.BuffStatuses then
-		for GUID,data in pairs(PersistentVars.BuffStatuses) do
+	if _PV.BuffStatuses then
+		for GUID,data in pairs(_PV.BuffStatuses) do
 			if GameHelpers.ObjectExists(GUID) then
 				BuffStatusPreserver.OnEnteredCombat(GUID, 0)
 			else
-				PersistentVars.BuffStatuses[GUID] = nil
+				_PV.BuffStatuses[GUID] = nil
 			end
 		end
 	end
@@ -271,7 +271,7 @@ if Vars.DebugMode then
 			self:Wait(3000)
 			local duration = GameHelpers.Status.GetDuration(host, "FORTIFIED")
 			self:AssertEquals(duration == -1, true, string.format("Failed to make FORTIFIED permanent (%s)", duration))
-			local intendedDuration = PersistentVars.BuffStatuses[host].FORTIFIED
+			local intendedDuration = _PV.BuffStatuses[host].FORTIFIED
 			self:Wait(250)
 			SetFaction(enemy, "PVP_1")
 			self:Wait(250)

@@ -399,19 +399,19 @@ else
 	---@param id integer|nil
 	local function SyncReadBooks(id)
 		if id then
-			local data = PersistentVars.ReadBooks[id]
+			local data = _PV.ReadBooks[id]
 			if data then
 				GameHelpers.Net.PostToUser(id, "LeaderLib_SyncReadBooks", data)
 			end
 		else
-			for userID,data in pairs(PersistentVars.ReadBooks) do
+			for userID,data in pairs(_PV.ReadBooks) do
 				GameHelpers.Net.PostToUser(userID, "LeaderLib_SyncReadBooks", data)
 			end
 		end
 	end
 
 	Events.SyncData:Subscribe(function (e)
-		local data = PersistentVars.ReadBooks[e.UserID]
+		local data = _PV.ReadBooks[e.UserID]
 		if data then
 			GameHelpers.Net.PostToUser(e.UserID, "LeaderLib_SyncReadBooks", data)
 		end
@@ -438,11 +438,11 @@ else
 					bookType = cachedBookData.BookType
 					textID = cachedBookData.TextID
 					if bookType ~= "Skillbook" then
-						if PersistentVars.ReadBooks[userID] == nil then
-							PersistentVars.ReadBooks[userID] = {}
+						if _PV.ReadBooks[userID] == nil then
+							_PV.ReadBooks[userID] = {}
 						end
-						updatedData = PersistentVars.ReadBooks[userID][template] == nil
-						PersistentVars.ReadBooks[userID][template] = textID
+						updatedData = _PV.ReadBooks[userID][template] == nil
+						_PV.ReadBooks[userID][template] = textID
 					end
 				elseif GameHelpers.Item.IsObject(item) then
 					local actions = item.RootTemplate.OnUsePeaceActions
@@ -453,21 +453,21 @@ else
 							local v = actions[i]
 							
 							if v.Type == "Book" and not StringHelpers.IsNullOrWhitespace(v.BookId) then
-								if PersistentVars.ReadBooks[userID] == nil then
-									PersistentVars.ReadBooks[userID] = {}
+								if _PV.ReadBooks[userID] == nil then
+									_PV.ReadBooks[userID] = {}
 								end
 								textID = v.BookId
-								updatedData = PersistentVars.ReadBooks[userID][template] == nil
-								PersistentVars.ReadBooks[userID][template] = v.BookId
+								updatedData = _PV.ReadBooks[userID][template] == nil
+								_PV.ReadBooks[userID][template] = v.BookId
 								bookType = "Book"
 								break
 							elseif v.Type == "Recipe" and not StringHelpers.IsNullOrWhitespace(v.RecipeID) then
-								if PersistentVars.ReadBooks[userID] == nil then
-									PersistentVars.ReadBooks[userID] = {}
+								if _PV.ReadBooks[userID] == nil then
+									_PV.ReadBooks[userID] = {}
 								end
 								textID = v.RecipeID
-								updatedData = PersistentVars.ReadBooks[userID][template] == nil
-								PersistentVars.ReadBooks[userID][template] = v.RecipeID
+								updatedData = _PV.ReadBooks[userID][template] == nil
+								_PV.ReadBooks[userID][template] = v.RecipeID
 								bookType = "Recipe"
 								break
 							elseif v.Type == "SkillBook" and v.Consume == true and not StringHelpers.IsNullOrWhitespace(v.SkillID) then

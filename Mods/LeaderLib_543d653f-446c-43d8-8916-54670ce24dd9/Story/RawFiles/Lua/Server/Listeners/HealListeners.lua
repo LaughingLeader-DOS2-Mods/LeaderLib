@@ -58,7 +58,7 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 			-- end
 		end
 		local skills = Vars.HealingStatusToSkills[statusId]
-		local lastUsedSkill = PersistentVars.LastUsedHealingSkill[source.MyGuid]
+		local lastUsedSkill = _PV.LastUsedHealingSkill[source.MyGuid]
 		if skills and skills[lastUsedSkill] == true then
 			skill = lastUsedSkill
 			Timer.StartObjectTimer("LeaderLib_ClearLastUsedHealingSkill", source.MyGuid, 500)
@@ -77,7 +77,7 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 end)
 
 Timer.Subscribe("LeaderLib_ClearLastUsedHealingSkill", function(e)
-	PersistentVars.LastUsedHealingSkill[e.Data.UUID] = nil
+	_PV.LastUsedHealingSkill[e.Data.UUID] = nil
 end)
 
 ---@alias OnHealCallback fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem, heal:EsvStatusHeal, originalAmount:integer, handle:integer, skill:string|nil, healingSourceStatus:EsvStatusHealing|nil):void

@@ -101,26 +101,26 @@ function SceneManager.AddToQueue(group, sceneId, stateId, param, param2, param3,
 end
 
 function SceneManager.Save()
-	PersistentVars.SceneData.Queue = SceneManager.Queue
-	PersistentVars.SceneData.ActiveScene = SceneManager.ActiveScene
+	_PV.SceneData.Queue = SceneManager.Queue
+	_PV.SceneData.ActiveScene = SceneManager.ActiveScene
 end
 
 function SceneManager.Load()
 	if Vars.DebugMode then
-		PersistentVars.SceneData.Queue = SceneManager.Queue
-		PersistentVars.SceneData.ActiveScene = SceneManager.ActiveScene
+		_PV.SceneData.Queue = SceneManager.Queue
+		_PV.SceneData.ActiveScene = SceneManager.ActiveScene
 	else
-		if PersistentVars.SceneData then
-			if PersistentVars.SceneData.Queue then
-				for k,v in pairs(PersistentVars.SceneData.Queue) do
+		if _PV.SceneData then
+			if _PV.SceneData.Queue then
+				for k,v in pairs(_PV.SceneData.Queue) do
 					if v ~= nil then
 						SceneManager.Queue[k] = v
 					end
 				end
 			end
-			if PersistentVars.SceneData.ActiveScene and PersistentVars.SceneData.ActiveScene.ID then
-				SceneManager.ActiveScene.ID = PersistentVars.SceneData.ActiveScene.ID
-				SceneManager.ActiveScene.State = PersistentVars.SceneData.ActiveScene.State or ""
+			if _PV.SceneData.ActiveScene and _PV.SceneData.ActiveScene.ID then
+				SceneManager.ActiveScene.ID = _PV.SceneData.ActiveScene.ID
+				SceneManager.ActiveScene.State = _PV.SceneData.ActiveScene.State or ""
 			end
 		end
 		if not SceneManager.IsActive and SceneManager.ActiveScene.ID ~= "" then

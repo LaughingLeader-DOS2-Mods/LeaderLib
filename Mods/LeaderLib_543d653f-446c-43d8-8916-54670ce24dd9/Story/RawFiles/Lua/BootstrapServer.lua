@@ -155,11 +155,23 @@ Ext.Require("Shared/UI/MessageBox.lua")
 Ext.Require("Shared/UI/Overhead.lua")
 Ext.Require("Shared/System/TutorialManager.lua")
 
----@type LeaderLibPersistentVars
-PersistentVars = Common.CloneTable(defaultPersistentVars, true)
+local function _SetPersistentVars(v)
+	PersistentVars = v
+end
+_SetPersistentVars(Common.CloneTable(defaultPersistentVars, true))
+
+---@return LeaderLibPersistentVars
+local function _GetPersistentVars(tbl)
+	return PersistentVars
+end
+
+_PV = _GetPersistentVars()
+
+---Sneaky way to set PersistentVars in a way that doesn't override the type, since these vars are isolated to LeaderLib
 
 function LoadPersistentVars(skipCallback)
-	PersistentVars = GameHelpers.PersistentVars.Update(defaultPersistentVars, PersistentVars)
+	_SetPersistentVars(GameHelpers.PersistentVars.Update(defaultPersistentVars, PersistentVars))
+	_PV = _GetPersistentVars(_G)
 	SkillManager.LoadSaveData()
 	if not skipCallback then
 		Events.PersistentVarsLoaded:Invoke({})

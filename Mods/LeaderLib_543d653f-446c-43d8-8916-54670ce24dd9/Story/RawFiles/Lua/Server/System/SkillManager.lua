@@ -104,7 +104,7 @@ local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, sk
 		skillDataHolder[uuid] = data
 	end
 	if data then
-		PersistentVars.SkillData[uuid] = data:Serialize()
+		_PV.SkillData[uuid] = data:Serialize()
 	end
 	return data
 end
@@ -123,8 +123,8 @@ local function RemoveCharacterSkillData(uuid, skill)
 			end
 		end
 	end
-	PersistentVars.IsPreparingSkill[uuid] = nil
-	PersistentVars.SkillData[uuid] = nil
+	_PV.IsPreparingSkill[uuid] = nil
+	_PV.SkillData[uuid] = nil
 end
 
 function StoreSkillEventData(char, skill, skillType, skillAbility, ...)
@@ -212,7 +212,7 @@ end
 function OnSkillPreparing(char, skillprototype)
 	char = StringHelpers.GetUUID(char)
 	local skill = GetSkillEntryName(skillprototype)
-	local last = PersistentVars.IsPreparingSkill[char]
+	local last = _PV.IsPreparingSkill[char]
 	if last and last ~= skill then
 		SkillManager.OnSkillPreparingCancel(char, "", last, true)
 	end
@@ -234,7 +234,7 @@ function OnSkillPreparing(char, skillprototype)
 
 	-- Clear previous data for this character in case SkillCast never fired (interrupted)
 	RemoveCharacterSkillData(char)
-	PersistentVars.IsPreparingSkill[char] = skill
+	_PV.IsPreparingSkill[char] = skill
 end
 
 function SkillManager.OnSkillPreparingCancel(char, skillprototype, skill, skipRemoval)
@@ -267,7 +267,7 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 	end
 	local uuid = StringHelpers.GetUUID(char)
 	if GameHelpers.Stats.IsHealingSkill(skill) then
-		PersistentVars.LastUsedHealingSkill[uuid] = skill
+		_PV.LastUsedHealingSkill[uuid] = skill
 		Timer.StartObjectTimer("LeaderLib_ClearLastUsedHealingSkill", uuid, 3000)
 	end
 	
@@ -570,8 +570,8 @@ function SkillManager.RemoveCharacterSkillData(uuid, skill)
 			end
 		end
 	end
-	PersistentVars.IsPreparingSkill[uuid] = nil
-	PersistentVars.SkillData[uuid] = nil
+	_PV.IsPreparingSkill[uuid] = nil
+	_PV.SkillData[uuid] = nil
 end
 
 --- Gets the base skill from a skill.
@@ -594,8 +594,8 @@ function SkillManager.GetBaseSkill(skill, match)
 end
 
 function SkillManager.LoadSaveData()
-	if PersistentVars.SkillData then
-		for uuid,tbl in pairs(PersistentVars.SkillData) do
+	if _PV.SkillData then
+		for uuid,tbl in pairs(_PV.SkillData) do
 			if ObjectExists(uuid) == 1 and not StringHelpers.IsNullOrWhitespace(tbl.Skill) and NRD_StatExists(tbl.Skill) then
 				local data = Classes.SkillEventData:Create(uuid, "", "", "")
 				data:LoadFromSave(tbl)
@@ -604,14 +604,14 @@ function SkillManager.LoadSaveData()
 				end
 				skillEventDataTable[data.Skill][uuid] = data
 			else
-				PersistentVars.SkillData[uuid] = nil
+				_PV.SkillData[uuid] = nil
 			end
 		end
 	end
 end
 
 function SkillManager.CheckPreparingState(uuid)
-	local last = PersistentVars.IsPreparingSkill[uuid]
+	local last = _PV.IsPreparingSkill[uuid]
 	if last then
 		local action = NRD_CharacterGetCurrentAction(uuid) or ""
 		local skill = StringHelpers.GetSkillEntryName(NRD_ActionStateGetString(uuid, "SkillId") or "")

@@ -122,7 +122,7 @@ RegisterProtectedOsirisListener("CharacterStartAttackPosition", 5, "after", func
 	attacker = GameHelpers.GetCharacter(attacker)
 	if attacker then
 		local target = {x,y,z}
-		PersistentVars.StartAttackPosition[attacker.MyGuid] = target
+		_PV.StartAttackPosition[attacker.MyGuid] = target
 		Events.OnBasicAttackStart:Invoke({
 			Attacker = attacker,
 			Target = target,
@@ -197,8 +197,8 @@ end
 --- @param damageList DamageList
 RegisterProtectedExtenderListener("GroundHit", function(attacker, target, damageList)
 	--Also fires when a projectile hits the ground (exploding projectiles too!), so we need this table entry
-	if attacker and PersistentVars.StartAttackPosition[attacker.MyGuid] then
-		PersistentVars.StartAttackPosition[attacker.MyGuid] = nil
+	if attacker and _PV.StartAttackPosition[attacker.MyGuid] then
+		_PV.StartAttackPosition[attacker.MyGuid] = nil
 		local data = {Type="DamageList", DamageList = damageList}
 		Events.OnWeaponHit:Invoke({
 			Attacker = attacker,

@@ -442,7 +442,7 @@ function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 				if player then
 					players[#players+1] = player
 					if includeSummons == true then
-						local summons = PersistentVars.Summons[player.MyGuid]
+						local summons = _PV.Summons[player.MyGuid]
 						if summons then
 							for i,v in pairs(summons) do
 								if ObjectIsCharacter(v) == 1 then
@@ -523,7 +523,7 @@ function GameHelpers.Character.GetPartySize(includeSummons)
 				count = count + 1
 			end
 			if includeSummons == true then
-				local summons = PersistentVars.Summons[player.MyGuid]
+				local summons = _PV.Summons[player.MyGuid]
 				if summons then
 					for i,v in pairs(summons) do
 						if ObjectIsCharacter(v) == 1 then
@@ -566,7 +566,7 @@ function GameHelpers.Character.GetSummons(owner, getItems, asTable, ignoreObject
 			matchId = owner
 		end
 		local _osirisEnabled = Ext.OsirisIsCallable()
-		for ownerId,tbl in pairs(PersistentVars.Summons) do
+		for ownerId,tbl in pairs(_PV.Summons) do
 			if not matchId or ownerId == matchId then
 				local len = #tbl
 				for i=1,len do

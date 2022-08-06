@@ -35,7 +35,7 @@ TurnCounter._Internal = _INTERNAL
 ---@field Data table Optional data to store in PersistentVars, such as a UUID.
 
 function _INTERNAL.CleanupData(uniqueId)
-	PersistentVars.TurnCounterData[uniqueId] = nil
+	_PV.TurnCounterData[uniqueId] = nil
 	Timer.Cancel(uniqueId)
 end
 
@@ -77,7 +77,7 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, par
 		end
 	end
 	tbl.Region = SharedData.RegionData.Current
-	PersistentVars.TurnCounterData[uniqueId] = tbl
+	_PV.TurnCounterData[uniqueId] = tbl
 	if not GameHelpers.IsActiveCombat(combat) and tbl.CombatOnly ~= true then
 		local speed = tbl.OutOfCombatSpeed or TurnCounter.DefaultTimerSpeed
 		Timer.Start(uniqueId, speed)
@@ -88,7 +88,7 @@ end
 ---@param id string Identifier for this countdown.
 ---@param combatOrTarget integer|CharacterParam|number[]|nil If specified, only turn counters with this specific combat ID, target, or position will be cleared.
 function TurnCounter.ClearTurnCounter(id, combatOrTarget)
-	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+	for uniqueId,data in pairs(_PV.TurnCounterData) do
 		if data.ID == id then
 			if combatOrTarget ~= nil then
 				local t = type(combatOrTarget)
@@ -178,21 +178,21 @@ end
 function TurnCounter.IsActive(id, target)
 	if target then
 		if type(target) == "table" then
-			for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+			for uniqueId,data in pairs(_PV.TurnCounterData) do
 				if GameHelpers.Math.PositionsEqual(data.Position, target) then
 					return true
 				end
 			end
 		else
 			local GUID = GameHelpers.GetUUID(target)
-			for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+			for uniqueId,data in pairs(_PV.TurnCounterData) do
 				if data.Target == GUID then
 					return true
 				end
 			end
 		end
 	else
-		for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+		for uniqueId,data in pairs(_PV.TurnCounterData) do
 			if data.ID == id then
 				return true
 			end
@@ -232,10 +232,10 @@ end
 function TurnCounter.ListenForTurnEnding(obj, id)
 	local GUID = GameHelpers.GetUUID(obj)
 	if GUID then
-		if PersistentVars.WaitForTurnEnding[GUID] == nil then
-			PersistentVars.WaitForTurnEnding[GUID] = {}
+		if _PV.WaitForTurnEnding[GUID] == nil then
+			_PV.WaitForTurnEnding[GUID] = {}
 		end
-		PersistentVars.WaitForTurnEnding[GUID][id] = true
+		_PV.WaitForTurnEnding[GUID][id] = true
 	end
 end
 
@@ -244,8 +244,8 @@ function _INTERNAL.InvokeTurnEndedListeners(obj)
 	local GUID = GameHelpers.GetUUID(obj)
 	local object = GameHelpers.TryGetObject(GUID)
 	if GUID and object then
-		if PersistentVars.WaitForTurnEnding[GUID] then
-			for id,b in pairs(PersistentVars.WaitForTurnEnding[GUID]) do
+		if _PV.WaitForTurnEnding[GUID] then
+			for id,b in pairs(_PV.WaitForTurnEnding[GUID]) do
 				if b then
 					Events.OnTurnEnded:Invoke({
 						ID = id,
@@ -253,7 +253,7 @@ function _INTERNAL.InvokeTurnEndedListeners(obj)
 					})
 				end
 			end
-			PersistentVars.WaitForTurnEnding[obj] = nil
+			_PV.WaitForTurnEnding[obj] = nil
 		else
 			Events.OnTurnEnded:Invoke({
 				Object = object
@@ -299,7 +299,7 @@ function _INTERNAL.OnTurnEnded(uuid)
 	_INTERNAL.InvokeTurnEndedListeners(uuid)
 	local id = GameHelpers.Combat.GetID(uuid)
 	if id then
-		for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+		for uniqueId,data in pairs(_PV.TurnCounterData) do
 			if data.Combat == id and (not data.Target or data.Target == uuid) then
 				_INTERNAL.TickTurn(data, uniqueId)
 			end
@@ -310,7 +310,7 @@ end
 function _INTERNAL.OnTurnSkipped(uuid)
 	local id = CombatGetIDForCharacter(uuid)
 	if id then
-		for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+		for uniqueId,data in pairs(_PV.TurnCounterData) do
 			if data.Combat == id and data.CountSkipDisabled then
 				justSkippedTurn[uuid] = true
 			end
@@ -319,7 +319,7 @@ function _INTERNAL.OnTurnSkipped(uuid)
 end
 
 function TurnCounter.OnTimerFinished(uniqueId)
-	local data = PersistentVars.TurnCounterData[uniqueId]
+	local data = _PV.TurnCounterData[uniqueId]
 	if data then
 		if not _INTERNAL.TickTurn(data, uniqueId) then
 			if not GameHelpers.IsActiveCombat(data.Combat) and not data.CombatOnly then
@@ -363,13 +363,13 @@ end
 
 function _INTERNAL.OnCombatStarted(id)
 	local characters = GameHelpers.GetCombatCharacters(id)
-	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+	for uniqueId,data in pairs(_PV.TurnCounterData) do
 		SetCombatForEntry(id, uniqueId, data, characters)
 	end
 end
 
 function _INTERNAL.OnCombatEnded(id)
-	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+	for uniqueId,data in pairs(_PV.TurnCounterData) do
 		if data.Combat == id then
 			data.Combat = nil
 			if not data.CombatOnly then
@@ -384,7 +384,7 @@ function _INTERNAL.OnLeftCombat(uuid, id)
 end
 
 function _INTERNAL.OnCharacterDied(uuid)
-	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+	for uniqueId,data in pairs(_PV.TurnCounterData) do
 		if data.Target == uuid and data.ClearOnDeath then
 			_INTERNAL.CleanupData(uniqueId)
 		end
@@ -428,7 +428,7 @@ end
 Events.Initialized:Subscribe(function (e)
 	local region = e.Region
 	--Cleanup turn counters that shouldn't exist
-	for uniqueId,data in pairs(PersistentVars.TurnCounterData) do
+	for uniqueId,data in pairs(_PV.TurnCounterData) do
 		CheckDataForDeletion(uniqueId, data, region)
 	end
 end)

@@ -24,14 +24,14 @@ if not _ISCLIENT then
 			if not Vars.PersistentVarsLoaded then 
 				return nil
 			end
-			return PersistentVars.TimerData[k]
+			return _PV.TimerData[k]
 		end,
 		__newindex = function (tbl,timerName,v)
 			if not Vars.PersistentVarsLoaded then 
 				rawset(tbl,timerName,v)
 				return
 			end
-			PersistentVars.TimerData[timerName] = v
+			_PV.TimerData[timerName] = v
 		end
 	})
 	setmetatable(Timer.TimerNameMap, {
@@ -39,15 +39,15 @@ if not _ISCLIENT then
 			if not Vars.PersistentVarsLoaded then 
 				return nil
 			end
-			return PersistentVars.TimerNameMap[k]
+			return _PV.TimerNameMap[k]
 		end,
 		__newindex = function (tbl,timerName,v)
 			if not Vars.PersistentVarsLoaded then 
 				rawset(tbl,timerName,v)
 				return
 			end
-			if PersistentVars.TimerNameMap then
-				PersistentVars.TimerNameMap[timerName] = v
+			if _PV.TimerNameMap then
+				_PV.TimerNameMap[timerName] = v
 			end
 		end
 	})

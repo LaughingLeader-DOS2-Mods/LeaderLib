@@ -88,7 +88,7 @@ local function OnObjectDying(obj)
 	local isSummon = false
 	local owner = nil
 	local target = ObjectExists(obj) == 1 and GameHelpers.TryGetObject(obj) or nil
-	for ownerId,tbl in pairs(PersistentVars.Summons) do
+	for ownerId,tbl in pairs(_PV.Summons) do
 		for i,uuid in pairs(tbl) do
 			if uuid == obj then
 				owner = GameHelpers.TryGetObject(ownerId)
@@ -97,7 +97,7 @@ local function OnObjectDying(obj)
 			end
 		end
 		if #tbl == 0 then
-			PersistentVars.Summons[ownerId] = nil
+			_PV.Summons[ownerId] = nil
 		end
 	end
 	if isSummon then

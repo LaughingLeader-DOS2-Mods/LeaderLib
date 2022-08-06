@@ -47,8 +47,8 @@ local ObjectHandleEffectParams = {
 ---@param handle integer
 ---@param params EffectManagerEsvEffectParams
 function _INTERNAL.SaveObjectEffectData(uuid, effect, handle, params)
-	if PersistentVars.ObjectLoopEffects[uuid] == nil then
-		PersistentVars.ObjectLoopEffects[uuid] = {}
+	if _PV.ObjectLoopEffects[uuid] == nil then
+		_PV.ObjectLoopEffects[uuid] = {}
 	end
 	local savedParams = nil
 	if type(params) == "table" then
@@ -71,7 +71,7 @@ function _INTERNAL.SaveObjectEffectData(uuid, effect, handle, params)
 			savedParams = nil
 		end
 	end
-	table.insert(PersistentVars.ObjectLoopEffects[uuid], {
+	table.insert(_PV.ObjectLoopEffects[uuid], {
 		Effect = effect,
 		Params = savedParams,
 		Handle = handle
@@ -91,8 +91,8 @@ end
 function _INTERNAL.SaveWorldEffectData(target, effect, handle, params)
 	local region = SharedData.RegionData.Current
 
-	if PersistentVars.WorldLoopEffects[region] == nil then
-		PersistentVars.WorldLoopEffects[region] = {}
+	if _PV.WorldLoopEffects[region] == nil then
+		_PV.WorldLoopEffects[region] = {}
 	end
 
 	local data = {
@@ -104,7 +104,7 @@ function _INTERNAL.SaveWorldEffectData(target, effect, handle, params)
 		data.Params = params
 	end
 
-	table.insert(PersistentVars.WorldLoopEffects[region], data)
+	table.insert(_PV.WorldLoopEffects[region], data)
 end
 
 ---@private
@@ -389,7 +389,7 @@ function EffectManager.StopLoopEffectByHandle(handle)
 	_INTERNAL.StopEffect(handle)
 	local nextWorldLoopEffects = {}
 	local changed = false
-	for region,dataTable in pairs(PersistentVars.WorldLoopEffects) do
+	for region,dataTable in pairs(_PV.WorldLoopEffects) do
 		nextWorldLoopEffects[region] = {}
 		for i=1,#dataTable do
 			local v = dataTable[i]
@@ -401,12 +401,12 @@ function EffectManager.StopLoopEffectByHandle(handle)
 		end
 	end
 	if changed then
-		PersistentVars.WorldLoopEffects = nextWorldLoopEffects
+		_PV.WorldLoopEffects = nextWorldLoopEffects
 	end
 
 	local nextObjectLoopEffects = {}
 	changed = false
-	for uuid,dataTable in pairs(PersistentVars.ObjectLoopEffects) do
+	for uuid,dataTable in pairs(_PV.ObjectLoopEffects) do
 		nextObjectLoopEffects[uuid] = {}
 		for i=1,#dataTable do
 			local v = dataTable[i]
@@ -418,7 +418,7 @@ function EffectManager.StopLoopEffectByHandle(handle)
 		end
 	end
 	if changed then
-		PersistentVars.ObjectLoopEffects = nextObjectLoopEffects
+		_PV.ObjectLoopEffects = nextObjectLoopEffects
 	end
 end
 
@@ -520,7 +520,7 @@ function EffectManager.StopEffectsByNameForObject(effect, target)
 			end
 		end
 
-		local dataTable = PersistentVars.ObjectLoopEffects[uuid]
+		local dataTable = _PV.ObjectLoopEffects[uuid]
 		if dataTable then
 			for i,v in pairs(dataTable) do
 				if v.Effect == effect then
@@ -528,7 +528,7 @@ function EffectManager.StopEffectsByNameForObject(effect, target)
 				end
 			end
 			if #dataTable == 0 then
-				PersistentVars.ObjectLoopEffects[uuid] = nil
+				_PV.ObjectLoopEffects[uuid] = nil
 			end
 		end
 	end
@@ -554,7 +554,7 @@ function EffectManager.StopEffectsByNameForPosition(effect, target, distanceThre
 			success = true
 		end
 
-		for region,dataTable in pairs(PersistentVars.WorldLoopEffects) do
+		for region,dataTable in pairs(_PV.WorldLoopEffects) do
 			for i,v in pairs(dataTable) do
 				if v.Effect == effect then
 					if GameHelpers.Math.GetDistance(v.Position, target) <= distanceThreshold then
@@ -564,7 +564,7 @@ function EffectManager.StopEffectsByNameForPosition(effect, target, distanceThre
 				end
 			end
 			if #dataTable == 0 then
-				PersistentVars.WorldLoopEffects[region] = nil
+				_PV.WorldLoopEffects[region] = nil
 			end
 		end
 	end
@@ -572,7 +572,7 @@ function EffectManager.StopEffectsByNameForPosition(effect, target, distanceThre
 end
 
 local function InvalidateLoopEffects(region)
-	local worldEffects = PersistentVars.WorldLoopEffects[region]
+	local worldEffects = _PV.WorldLoopEffects[region]
 	if worldEffects then
 		for i,v in pairs(worldEffects) do
 			v.Handle = nil
@@ -581,7 +581,7 @@ local function InvalidateLoopEffects(region)
 end
 
 function EffectManager.RestoreEffects(region)
-	local worldEffects = PersistentVars.WorldLoopEffects[region]
+	local worldEffects = _PV.WorldLoopEffects[region]
 	if worldEffects then
 		for i,v in pairs(worldEffects) do
 			if v.Handle and v.Handle ~= -1 then
@@ -595,7 +595,7 @@ function EffectManager.RestoreEffects(region)
 		end
 	end
 
-	for uuid,dataTable in pairs(PersistentVars.ObjectLoopEffects) do
+	for uuid,dataTable in pairs(_PV.ObjectLoopEffects) do
 		if ObjectExists(uuid) == 1 and #dataTable > 0 then
 			for i,v in pairs(dataTable) do
 				StopLoopEffect(v.Handle)
@@ -605,19 +605,19 @@ function EffectManager.RestoreEffects(region)
 				end
 			end
 			if #dataTable == 0 then
-				PersistentVars.ObjectLoopEffects[uuid] = nil
+				_PV.ObjectLoopEffects[uuid] = nil
 			end
 		else
-			PersistentVars.ObjectLoopEffects[uuid] = nil
+			_PV.ObjectLoopEffects[uuid] = nil
 		end
 	end
 end
 
 function EffectManager.DeleteLoopEffects(region)
-	PersistentVars.WorldLoopEffects[region] = nil
-	for uuid,dataTable in pairs(PersistentVars.ObjectLoopEffects) do
+	_PV.WorldLoopEffects[region] = nil
+	for uuid,dataTable in pairs(_PV.ObjectLoopEffects) do
 		if ObjectExists(uuid) == 0 or ObjectIsGlobal(uuid) == 0 then
-			PersistentVars.ObjectLoopEffects[uuid] = nil
+			_PV.ObjectLoopEffects[uuid] = nil
 		end
 	end
 end

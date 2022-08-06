@@ -17,13 +17,13 @@ if not _ISCLIENT then
 		local target = e.Data.UUID
 		if target ~= nil then
 			local targetObject = e.Data.Object
-			local targetData = PersistentVars.ForceMoveData[target]
+			local targetData = _PV.ForceMoveData[target]
 			if targetData ~= nil and targetData.Position then
 				Ext.Print("ForceMoveData", Ext.DumpExport(targetData))
 				print(GameHelpers.Math.GetDistance(target, targetData.Position))
 				if GameHelpers.Math.GetDistance(target, targetData.Position) <= 1 then
 					pcall(NRD_GameActionDestroy,targetData.Handle)
-					PersistentVars.ForceMoveData[target] = nil
+					_PV.ForceMoveData[target] = nil
 					local source = targetData.Source
 					if source then
 						source = Ext.GetGameObject(targetData.Source)
@@ -135,7 +135,7 @@ if not _ISCLIENT then
 		end
 		Timer.Cancel("LeaderLib_OnForceMoveAction", targetObject)
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
-		PersistentVars.ForceMoveData[targetObject.MyGuid] = nil
+		_PV.ForceMoveData[targetObject.MyGuid] = nil
 		--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distMult)
 		local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(targetObject, sourceObject, distMult < 0)
 		local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionalVector, distMult)
@@ -143,7 +143,7 @@ if not _ISCLIENT then
 		if tx and tz then
 			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, opts.BeamEffect or "", sourceObject.MyGuid)
 			if handle then
-				PersistentVars.ForceMoveData[targetObject.MyGuid] = {
+				_PV.ForceMoveData[targetObject.MyGuid] = {
 					ID = opts.ID or "",
 					Position = {tx,ty,tz},
 					Start = TableHelpers.Clone(startPos),
@@ -180,14 +180,14 @@ if not _ISCLIENT then
 
 		Timer.Cancel("LeaderLib_OnForceMoveAction", targetObject)
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
-		PersistentVars.ForceMoveData[targetObject.MyGuid] = nil
+		_PV.ForceMoveData[targetObject.MyGuid] = nil
 
 		local dist = GameHelpers.Math.GetDistance(targetObject, position)
 		local x,y,z = table.unpack(targetObject.WorldPos)
 		local tx,ty,tz = table.unpack(position)
 		local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, opts.BeamEffect or "", sourceObject.MyGuid)
 		if handle ~= nil then
-			PersistentVars.ForceMoveData[targetObject.MyGuid] = {
+			_PV.ForceMoveData[targetObject.MyGuid] = {
 				Position = {tx,ty,tz},
 				Start = {x,y,z},
 				Handle = handle,
@@ -215,7 +215,7 @@ if not _ISCLIENT then
 		if not uuid then
 			return false
 		end
-		for i,v in pairs(PersistentVars.KnockupData.ObjectData) do
+		for i,v in pairs(_PV.KnockupData.ObjectData) do
 			if v.GUID == uuid then
 				return true
 			end
@@ -245,11 +245,11 @@ if not _ISCLIENT then
 
 		Timer.Cancel("LeaderLib_OnForceMoveAction", tobj)
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", tobj)
-		PersistentVars.ForceMoveData[tobj.MyGuid] = nil
+		_PV.ForceMoveData[tobj.MyGuid] = nil
 
-		for i,v in pairs(PersistentVars.KnockupData.ObjectData) do
+		for i,v in pairs(_PV.KnockupData.ObjectData) do
 			if v.GUID == tobj.MyGuid then
-				table.remove(PersistentVars.KnockupData.ObjectData, i)
+				table.remove(_PV.KnockupData.ObjectData, i)
 			end
 		end
 
@@ -278,7 +278,7 @@ if not _ISCLIENT then
 			PlayAnimation(tobj.MyGuid, "knockdown_fall", eventId)
 		end
 		GameHelpers.Status.Apply(tobj, "LEADERLIB_IN_AIR", 30.0, true, sobj)
-		PersistentVars.KnockupData.ObjectData[#PersistentVars.KnockupData.ObjectData+1] = {
+		_PV.KnockupData.ObjectData[#_PV.KnockupData.ObjectData+1] = {
 			ID = opts.ID or "",
 			GUID = tobj.MyGuid,
 			Falling = false,
@@ -290,12 +290,12 @@ if not _ISCLIENT then
 			EndAnimation = opts.EndAnimation,
 			Gravity = opts.Gravity or _GRAVITY,
 		}
-		PersistentVars.KnockupData.Active = true
+		_PV.KnockupData.Active = true
 	end
 
 	if _EXTVERSION >= 56 then
 		local function _OnTick(e)
-			local knockupData = PersistentVars.KnockupData
+			local knockupData = _PV.KnockupData
 			if Ext.GetGameState() == "Running" and knockupData and knockupData.Active then
 				local len = #knockupData.ObjectData
 				local positionSync = {}

@@ -302,7 +302,7 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 	if gameSettings.StarterTierSkillOverrides or gameSettings.LowerMemorizationRequirements then
 		local originalSkillTiers = {}
 		if not _ISCLIENT then
-			originalSkillTiers = PersistentVars["OriginalSkillTiers"] or {}
+			originalSkillTiers = _PV["OriginalSkillTiers"] or {}
 		end
 		local total = 0
 		--Ext.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
@@ -348,7 +348,7 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 		end
 		if not _ISCLIENT then
 			---@private
-			PersistentVars["OriginalSkillTiers"] = originalSkillTiers
+			_PV["OriginalSkillTiers"] = originalSkillTiers
 		end
 	end
 

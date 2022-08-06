@@ -53,18 +53,18 @@ local function InvokeOnInitializedCallbacks(region)
 		SceneManager.Load()
 	end
 
-	if PersistentVars.ScaleOverride then
-		for uuid,scale in pairs(PersistentVars.ScaleOverride) do
+	if _PV.ScaleOverride then
+		for uuid,scale in pairs(_PV.ScaleOverride) do
 			if ObjectExists(uuid) == 1 then
 				GameHelpers.SetScale(uuid, scale, false)
 			end
 		end
 	end
 
-	if PersistentVars.Summons then
-		for uuid,tbl in pairs(PersistentVars.Summons) do
+	if _PV.Summons then
+		for uuid,tbl in pairs(_PV.Summons) do
 			if ObjectExists(uuid) == 0 then
-				PersistentVars.Summons[uuid] = nil
+				_PV.Summons[uuid] = nil
 			else
 				for i,v in pairs(tbl) do
 					if ObjectExists(v) == 0 then
@@ -72,7 +72,7 @@ local function InvokeOnInitializedCallbacks(region)
 					end
 				end
 				if #tbl == 0 then
-					PersistentVars.Summons[uuid] = nil
+					_PV.Summons[uuid] = nil
 				end
 			end
 		end

@@ -1,7 +1,7 @@
 if Ext.IsServer() then
 	Ext.Events.SessionLoading:Subscribe(function()
-		if PersistentVars["OriginalSkillTiers"] ~= nil then
-			Data.OriginalSkillTiers = PersistentVars["OriginalSkillTiers"]
+		if _PV["OriginalSkillTiers"] ~= nil then
+			Data.OriginalSkillTiers = _PV["OriginalSkillTiers"]
 		end
 	end)
 end

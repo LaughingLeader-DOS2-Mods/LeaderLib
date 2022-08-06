@@ -36,18 +36,18 @@ function GameHelpers.TrackBonusWeaponPropertiesApplied(uuid, skill)
 	This is to prevent infinite loops from an exploded skill procing GameHelpers.ApplyBonusWeaponStatuses
 	]]
 	if skill then
-		if type(PersistentVars.JustAppliedBonusWeaponStatuses[uuid]) ~= "table" then
-			PersistentVars.JustAppliedBonusWeaponStatuses[uuid] = {}
+		if type(_PV.JustAppliedBonusWeaponStatuses[uuid]) ~= "table" then
+			_PV.JustAppliedBonusWeaponStatuses[uuid] = {}
 		end
-		PersistentVars.JustAppliedBonusWeaponStatuses[uuid][skill] = true
-	elseif not PersistentVars.JustAppliedBonusWeaponStatuses[uuid] then
-		PersistentVars.JustAppliedBonusWeaponStatuses[uuid] = true
+		_PV.JustAppliedBonusWeaponStatuses[uuid][skill] = true
+	elseif not _PV.JustAppliedBonusWeaponStatuses[uuid] then
+		_PV.JustAppliedBonusWeaponStatuses[uuid] = true
 	end
 	Timer.StartObjectTimer("LeaderLib_ClearJustAppliedBonusWeaponStatuses", uuid, 400)
 end
 
 Timer.Subscribe("LeaderLib_ClearJustAppliedBonusWeaponStatuses", function(e)
-	PersistentVars.JustAppliedBonusWeaponStatuses[e.Data.UUID] = nil
+	_PV.JustAppliedBonusWeaponStatuses[e.Data.UUID] = nil
 end)
 
 local _cachedBonusWeapon = {}
@@ -64,7 +64,7 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 		source = GameHelpers.TryGetObject(source)
 	end
 	if target and source and source.GetStatuses then
-		local justApplied = PersistentVars.JustAppliedBonusWeaponStatuses[source.MyGuid]
+		local justApplied = _PV.JustAppliedBonusWeaponStatuses[source.MyGuid]
 		if justApplied == true 
 		or (fromSkill and type(justApplied) == "table" and justApplied[fromSkill] == true) then
 			return false

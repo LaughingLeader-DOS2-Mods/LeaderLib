@@ -902,7 +902,7 @@ function GameHelpers.SetScale(object, scale, persist)
 		if not _ISCLIENT then
 			GameHelpers.SyncScale(object)
 			if persist == true then
-				PersistentVars.ScaleOverride[object.MyGuid] = scale
+				_PV.ScaleOverride[object.MyGuid] = scale
 			end
 		end
 	end

@@ -370,6 +370,7 @@ Importer = {
 		ImportUnsafe = true,
 		Import = true,
 		CustomSkillProperties = true,
+		_PV = true,
 	},
 	GetIndexer = function(originalGetIndex, additionalTable)
 		local getIndex = function(tbl, k)

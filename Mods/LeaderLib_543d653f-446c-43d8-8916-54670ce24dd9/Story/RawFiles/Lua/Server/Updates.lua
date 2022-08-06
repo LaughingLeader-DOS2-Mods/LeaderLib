@@ -17,8 +17,8 @@ RegisterModListener("Loaded", ModuleUUID, function(lastVersion, nextVersion)
 	end
 	if lastVersion < 387252230 then
 		--Object timer data wasn't being cleared, so clear all the data
-		PersistentVars.TimerData = {}
-		PersistentVars.TimerNameMap = {}
+		_PV.TimerData = {}
+		_PV.TimerNameMap = {}
 	end
 end)
 

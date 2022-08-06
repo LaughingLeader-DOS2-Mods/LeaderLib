@@ -478,17 +478,17 @@ StatusManager.Register.Type = {
 function StatusManager.IsPermanentStatusActive(target, status)
 	local GUID = GameHelpers.GetUUID(target)
 	fassert(GUID ~= nil, "Target parameter type (%s) is invalid. An EsvCharacter, EsvItem, UUID, or NetID should be provided.", target)
-	if PersistentVars.ActivePermanentStatuses[GUID] then
+	if _PV.ActivePermanentStatuses[GUID] then
 		local t = _type(status)
 		if t == "table" then
 			for i=1,#status do
-				if PersistentVars.ActivePermanentStatuses[GUID][status[i]] ~= nil then
+				if _PV.ActivePermanentStatuses[GUID][status[i]] ~= nil then
 					return true,status[i]
 				end
 			end
 			return false
 		elseif t == "string" then
-			if PersistentVars.ActivePermanentStatuses[GUID][status] ~= nil then
+			if _PV.ActivePermanentStatuses[GUID][status] ~= nil then
 				return true,status
 			end
 		else
@@ -508,11 +508,11 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 	local statusIsActive = GameHelpers.Status.IsActive(target, status)
 	if not enabled then
 		local changed = false
-		if PersistentVars.ActivePermanentStatuses[GUID] then
-			changed = PersistentVars.ActivePermanentStatuses[GUID][status] ~= nil
-			PersistentVars.ActivePermanentStatuses[GUID][status] = nil
-			if Common.TableLength(PersistentVars.ActivePermanentStatuses[GUID], true) == 0 then
-				PersistentVars.ActivePermanentStatuses[GUID] = nil
+		if _PV.ActivePermanentStatuses[GUID] then
+			changed = _PV.ActivePermanentStatuses[GUID][status] ~= nil
+			_PV.ActivePermanentStatuses[GUID][status] = nil
+			if Common.TableLength(_PV.ActivePermanentStatuses[GUID], true) == 0 then
+				_PV.ActivePermanentStatuses[GUID] = nil
 				changed = true
 			end
 		end
@@ -526,13 +526,13 @@ function _INTERNAL.SetPermanentStatus(target, status, enabled, source)
 		end
 	else
 		local changed = false
-		if PersistentVars.ActivePermanentStatuses[GUID] == nil then
-			PersistentVars.ActivePermanentStatuses[GUID] = {}
+		if _PV.ActivePermanentStatuses[GUID] == nil then
+			_PV.ActivePermanentStatuses[GUID] = {}
 			changed = true
 		end
-		changed = changed or PersistentVars.ActivePermanentStatuses[GUID][status] == nil
+		changed = changed or _PV.ActivePermanentStatuses[GUID][status] == nil
 		local sourceId = source and GameHelpers.GetUUID(source) or GUID
-		PersistentVars.ActivePermanentStatuses[GUID][status] = sourceId
+		_PV.ActivePermanentStatuses[GUID][status] = sourceId
 		if changed then
 			GameHelpers.Net.Broadcast("LeaderLib_UpdatePermanentStatuses", {Target=GameHelpers.GetNetID(target), StatusId = status, Enabled = true})
 		end
@@ -591,8 +591,8 @@ end
 ---@param target ObjectParam
 function StatusManager.RemoveAllPermanentStatuses(target)
 	local GUID = GameHelpers.GetUUID(target)
-	if GUID and PersistentVars.ActivePermanentStatuses then
-		local statuses = PersistentVars.ActivePermanentStatuses[GUID]
+	if GUID and _PV.ActivePermanentStatuses then
+		local statuses = _PV.ActivePermanentStatuses[GUID]
 		if statuses then
 			target = GameHelpers.GetCharacter(target)
 			if target then
@@ -603,7 +603,7 @@ function StatusManager.RemoveAllPermanentStatuses(target)
 					end
 				end
 			end
-			PersistentVars.ActivePermanentStatuses[GUID] = nil
+			_PV.ActivePermanentStatuses[GUID] = nil
 			GameHelpers.Net.Broadcast("LeaderLib_RemovePermanentStatuses", GameHelpers.GetNetID(target))
 		end
 	end
@@ -689,8 +689,8 @@ Events.RegionChanged:Subscribe(function (e)
 end)
 
 function _INTERNAL.ReapplyPermanentStatuses()
-	if PersistentVars.ActivePermanentStatuses then
-		for uuid,statuses in _pairs(PersistentVars.ActivePermanentStatuses) do
+	if _PV.ActivePermanentStatuses then
+		for uuid,statuses in _pairs(_PV.ActivePermanentStatuses) do
 			local target = _GetObject(uuid)
 			if target then
 				for id,source in _pairs(statuses) do
@@ -710,8 +710,8 @@ end)
 Events.SyncData:Subscribe(function (e)
 	local data = {}
 	local hasData = false
-	if PersistentVars.ActivePermanentStatuses then
-		for uuid,statuses in _pairs(PersistentVars.ActivePermanentStatuses) do
+	if _PV.ActivePermanentStatuses then
+		for uuid,statuses in _pairs(_PV.ActivePermanentStatuses) do
 			local target = _GetObject(uuid)
 			if target then
 				data[target.NetID] = {}
@@ -732,7 +732,7 @@ end)
 function StatusManager.ReapplyPermanentStatusesForCharacter(character, refreshStatBoosts)
 	character = GameHelpers.GetCharacter(character)
 	assert(character ~= nil, "An EsvCharacter, NetID, or UUID is required")
-	local permanentStatuses = PersistentVars.ActivePermanentStatuses[character.MyGuid]
+	local permanentStatuses = _PV.ActivePermanentStatuses[character.MyGuid]
 	if permanentStatuses then
 		for id,source in _pairs(permanentStatuses) do
 			if not GameHelpers.Status.IsActive(character, id) or (refreshStatBoosts and GameHelpers.Status.HasStatBoosts(id)) then
@@ -744,7 +744,7 @@ function StatusManager.ReapplyPermanentStatusesForCharacter(character, refreshSt
 end
 
 Events.CharacterLeveledUp:Subscribe(function(e)
-	if PersistentVars.ActivePermanentStatuses[e.Character.MyGuid] ~= nil then
+	if _PV.ActivePermanentStatuses[e.Character.MyGuid] ~= nil then
 		Timer.StartObjectTimer("LeaderLib_StatusManager_ReapplyPermanentStatuses", e.Character, 1000, {RefreshBoosts=true})
 	end
 end)
@@ -973,21 +973,21 @@ end)
 RegisterProtectedOsirisListener("ItemStatusAttempt", 3, "after", ParseStatusAttempt)
 
 local function TrackStatusSource(target, status, source)
-	if PersistentVars.StatusSource[status] == nil then
-		PersistentVars.StatusSource[status] = {}
+	if _PV.StatusSource[status] == nil then
+		_PV.StatusSource[status] = {}
 	end
-	PersistentVars.StatusSource[status][target] = source
+	_PV.StatusSource[status][target] = source
 end
 
 local function GetStatusSource(target, status)
-	if PersistentVars.StatusSource[status] ~= nil then
-		return PersistentVars.StatusSource[status][target]
+	if _PV.StatusSource[status] ~= nil then
+		return _PV.StatusSource[status][target]
 	end
 	return nil
 end
 
 local function ClearStatusSource(target, status, source)
-	if PersistentVars.StatusSource[status] ~= nil then
+	if _PV.StatusSource[status] ~= nil then
 		local canRemove = true
 		local obj = _GetObject(target)
 		if obj then
@@ -1000,9 +1000,9 @@ local function ClearStatusSource(target, status, source)
 			end
 		end
 		if canRemove then
-			PersistentVars.StatusSource[status][target] = nil
-			if not Common.TableHasEntry(PersistentVars.StatusSource[status]) then
-				PersistentVars.StatusSource[status] = nil
+			_PV.StatusSource[status][target] = nil
+			if not Common.TableHasEntry(_PV.StatusSource[status]) then
+				_PV.StatusSource[status] = nil
 			end
 		end
 	end
@@ -1051,10 +1051,10 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 			owner = _GetObject(target.OwnerHandle)
 		end
 		if owner then
-			if not PersistentVars.Summons[owner.MyGuid] then
-				PersistentVars.Summons[owner.MyGuid] = {}
+			if not _PV.Summons[owner.MyGuid] then
+				_PV.Summons[owner.MyGuid] = {}
 			end
-			table.insert(PersistentVars.Summons[owner.MyGuid], target.MyGuid)
+			table.insert(_PV.Summons[owner.MyGuid], target.MyGuid)
 		end
 		Events.SummonChanged:Invoke({Summon=target, Owner=owner, IsDying=false, IsItem=GameHelpers.Ext.ObjectIsItem(target)})
 	end

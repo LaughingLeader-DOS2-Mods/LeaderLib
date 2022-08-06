@@ -46,10 +46,10 @@ if not _ISCLIENT then
 			Resource = visualResource
 		}
 		if persistence and Common.TableHasAnyEntry(persistence) then
-			if PersistentVars.PersistentVisuals[character.MyGuid] == nil then
-				PersistentVars.PersistentVisuals[character.MyGuid] = {}
+			if _PV.PersistentVisuals[character.MyGuid] == nil then
+				_PV.PersistentVisuals[character.MyGuid] = {}
 			end
-			PersistentVars.PersistentVisuals[character.MyGuid][#PersistentVars.PersistentVisuals[character.MyGuid]+1] = {
+			_PV.PersistentVisuals[character.MyGuid][#_PV.PersistentVisuals[character.MyGuid]+1] = {
 				Resource = visualResource,
 				Options = opts,
 				ExtraOptions = extraOptions,
@@ -93,7 +93,7 @@ if not _ISCLIENT then
 	---🔨**Server-Only**🔨  
 	---@param character EsvCharacter
 	function VisualManager.RebuildPersistentVisuals(character)
-		local visuals = PersistentVars.PersistentVisuals[character.MyGuid]
+		local visuals = _PV.PersistentVisuals[character.MyGuid]
 		if visuals then
 			for _,v in pairs(visuals) do
 				if CanCreateVisual(character, v) then
@@ -115,7 +115,7 @@ if not _ISCLIENT then
 	local _VISUAL_REFRESH_STATUSES = {"BOOST", "SNEAKING", "UNSHEATHED"}
 
 	Ext.Events.SessionLoaded:Subscribe(function (e)
-		
+
 		StatusManager.Subscribe.Applied(_VISUAL_REFRESH_STATUSES, function (e)
 			if e.Target then
 				VisualManager.RebuildPersistentVisuals(e.Target)

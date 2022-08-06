@@ -126,11 +126,11 @@ if not _ISCLIENT then
 		local target = e.Data.UUID
 		if target ~= nil then
 			local targetObject = e.Data.Object
-			local targetData = PersistentVars.ForceMoveData[target]
+			local targetData = _PV.ForceMoveData[target]
 			if targetData ~= nil and targetData.Position then
 				if GameHelpers.Math.GetDistance(target, targetData.Position) <= 1 then
 					pcall(NRD_GameActionDestroy,targetData.Handle)
-					PersistentVars.ForceMoveData[target] = nil
+					_PV.ForceMoveData[target] = nil
 					local source = targetData.Source
 					if source then
 						source = Ext.GetGameObject(targetData.Source)
@@ -228,7 +228,7 @@ if not _ISCLIENT then
 
 		Timer.Cancel("LeaderLib_OnForceMoveAction", targetObject)
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
-		PersistentVars.ForceMoveData[targetObject.MyGuid] = nil
+		_PV.ForceMoveData[targetObject.MyGuid] = nil
 
 		--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distMult)
 		local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(targetObject, sourceObject, distanceMultiplier < 0)
@@ -237,7 +237,7 @@ if not _ISCLIENT then
 		if tx and tz then
 			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, beamEffect or "", sourceObject.MyGuid)
 			if handle then
-				PersistentVars.ForceMoveData[targetObject.MyGuid] = {
+				_PV.ForceMoveData[targetObject.MyGuid] = {
 					ID = id or "",
 					Position = {tx,ty,tz},
 					Start = TableHelpers.Clone(startPos),
@@ -271,13 +271,13 @@ if not _ISCLIENT then
 
 		Timer.Cancel("LeaderLib_OnForceMoveAction", targetObject)
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
-		PersistentVars.ForceMoveData[targetObject.MyGuid] = nil
+		_PV.ForceMoveData[targetObject.MyGuid] = nil
 		
 		local x,y,z = table.unpack(targetObject.WorldPos)
 		local tx,ty,tz = table.unpack(position)
 		local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, beamEffect or "", sourceObject.MyGuid)
 		if handle ~= nil then
-			PersistentVars.ForceMoveData[targetObject.MyGuid] = {
+			_PV.ForceMoveData[targetObject.MyGuid] = {
 				Position = {tx,ty,tz},
 				Start = {x,y,z},
 				Handle = handle,

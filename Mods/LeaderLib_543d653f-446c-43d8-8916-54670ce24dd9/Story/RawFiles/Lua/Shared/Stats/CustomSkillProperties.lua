@@ -150,8 +150,8 @@ local function MoveToTarget(object, position, areaRadius, skill, property)
 	PrintDebug("Context", Common.JsonStringify(property.Context))
 	--if not Common.TableHasValue(property.Context, "Target") then
 	if ObjectIsCharacter(object.MyGuid) == 1 then
-		if not PersistentVars.SkillPropertiesAction.MoveToTarget[object.MyGuid] then
-			PersistentVars.SkillPropertiesAction.MoveToTarget[object.MyGuid] = {
+		if not _PV.SkillPropertiesAction.MoveToTarget[object.MyGuid] then
+			_PV.SkillPropertiesAction.MoveToTarget[object.MyGuid] = {
 				AP = object.Stats.CurrentAP,
 				Pos = {x,y,z}
 			}
@@ -171,7 +171,7 @@ local function MoveToTarget(object, position, areaRadius, skill, property)
 			--Osi.ProcCharacterMoveToPosition(object.MyGuid, x, y, z, 1, "LeaderLib_SkillProperties_MoveToTargetDone")
 		end
 	else
-		PersistentVars.SkillPropertiesAction.MoveToTarget[object.MyGuid] = -1
+		_PV.SkillPropertiesAction.MoveToTarget[object.MyGuid] = -1
 		ItemMoveToPosition(object.MyGuid, x, y, z, 12.0, 24.0, "LeaderLib_SkillProperties_MoveToTargetDone", 0)
 	end
 end
@@ -362,7 +362,7 @@ if not _ISCLIENT then
 	end)
 
 	Timer.Subscribe("LeaderLib_SkillProperties_MoveToTargetStart", function(e)
-		local data = PersistentVars.SkillPropertiesAction.MoveToTarget[e.Data.UUID]
+		local data = _PV.SkillPropertiesAction.MoveToTarget[e.Data.UUID]
 		if data then
 			local x,y,z = table.unpack(data.Pos)
 			Osi.ProcCharacterMoveToPosition(e.Data.UUID, x, y, z, 1, "LeaderLib_SkillProperties_MoveToTargetDone")
@@ -372,7 +372,7 @@ if not _ISCLIENT then
 	function SkillPropertiesActionDone(action, uuid)
 		if action == "MoveToTarget" then
 			RemoveStatus(uuid, "LEADERLIB_COMBAT_MOVE")
-			local data = PersistentVars.SkillPropertiesAction.MoveToTarget[uuid]
+			local data = _PV.SkillPropertiesAction.MoveToTarget[uuid]
 			if data then
 				local restoreAP = data.AP
 				if data.AP and data.AP > 0 then
@@ -384,13 +384,13 @@ if not _ISCLIENT then
 					end
 				end
 			end
-			PersistentVars.SkillPropertiesAction.MoveToTarget[uuid] = nil
+			_PV.SkillPropertiesAction.MoveToTarget[uuid] = nil
 		end
 	end
 
 	if Vars.DebugMode then
 		Events.BeforeLuaReset:Subscribe(function()
-			PersistentVars.SkillPropertiesAction.MoveToTarget = {}
+			_PV.SkillPropertiesAction.MoveToTarget = {}
 		end)
 	end
 else

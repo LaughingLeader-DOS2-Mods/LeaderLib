@@ -1,3 +1,4 @@
+---@meta
 ---@diagnostic disable
 
 --This file is never actually loaded, and is used to make EmmyLua work better.
@@ -5,35 +6,34 @@
 if not Mods then Mods = {} end
 
 ---@class LeaderLibModTable
-if not Mods.LeaderLib 
-	then Mods.LeaderLib = {
-		Import = Import,
-		--AttackManager = AttackManager,
-		Classes = Classes,
-		Client = Client,
-		CombatLog = CombatLog,
-		Common = Common,
-		Data = Data,
-		EffectManager = EffectManager,
-		Events = Events,
-		GameHelpers = GameHelpers,
-		GameSettingsManager = GameSettingsManager,
-		Input = Input,
-		LocalizedText = LocalizedText,
-		Managers = Managers,
-		QOL = QOL,
-		SceneManager = SceneManager,
-		SettingsManager = SettingsManager,
-		SkillManager = SkillManager,
-		StatusManager = StatusManager,
-		StringHelpers = StringHelpers,
-		TableHelpers = TableHelpers,
-		Timer = Timer,
-		TurnCounter = TurnCounter,
-		UI = UI,
-		VisualManager = VisualManager,
-	}
-end
+---@field PersistentVars LeaderLibPersistentVars
+Mods.LeaderLib = {
+	Import = Import,
+	--AttackManager = AttackManager,
+	Classes = Classes,
+	Client = Client,
+	CombatLog = CombatLog,
+	Common = Common,
+	Data = Data,
+	EffectManager = EffectManager,
+	Events = Events,
+	GameHelpers = GameHelpers,
+	GameSettingsManager = GameSettingsManager,
+	Input = Input,
+	LocalizedText = LocalizedText,
+	Managers = Managers,
+	QOL = QOL,
+	SceneManager = SceneManager,
+	SettingsManager = SettingsManager,
+	SkillManager = SkillManager,
+	StatusManager = StatusManager,
+	StringHelpers = StringHelpers,
+	TableHelpers = TableHelpers,
+	Timer = Timer,
+	TurnCounter = TurnCounter,
+	UI = UI,
+	VisualManager = VisualManager
+}
 
 ---@alias DamageType "None"|"Physical"|"Piercing"|"Corrosive"|"Magic"|"Chaos"|"Fire"|"Air"|"Water"|"Earth"|"Poison"|"Shadow"
 ---@alias DeathType "Sulfur"|"FrozenShatter"|"Surrender"|"Lifetime"|"KnockedDown"|"Piercing"|"Physical"|"Sentinel"|"DoT"|"Explode"|"Arrow"|"None"|"Acid"|"PetrifiedShatter"|"Hang"|"Incinerate"|"Electrocution"

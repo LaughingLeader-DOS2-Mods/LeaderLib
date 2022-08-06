@@ -48,6 +48,89 @@ local Patches = {
 				--Mods.WeaponExpansion.Uniques.Harvest.ProgressionData[11].Value = "Target_BlackShroud"
 				--TradeGenerationStarted("680d2702-721c-412d-b083-4f5e816b945a")
 
+				--Fix this function may call a debug call when the unarmed hit properties don't line up. We're just cleaning up the messages / ignoring whatever DeathType is.
+				local UnarmedHitMatchProperties = {
+					DamageType = 0,
+					DamagedMagicArmor = 0,
+					Equipment = 0,
+					--DeathType = 0,
+					Bleeding = 0,
+					DamagedPhysicalArmor = 0,
+					PropagatedFromOwner = 0,
+					-- NoWeapon doesn't set HitWithWeapon until after preparation
+					HitWithWeapon = 0,
+					Surface = 0,
+					NoEvents = 0,
+					Hit = 0,
+					Poisoned = 0,
+					--CounterAttack = 0,
+					--ProcWindWalker = 1,
+					NoDamageOnOwner = 0,
+					Burning = 0,
+					--DamagedVitality = 0,
+					--LifeSteal = 0,
+					--ArmorAbsorption = 0,
+					--AttackDirection = 0,
+					Missed = 0,
+					--CriticalHit = 0,
+					--Backstab = 0,
+					Reflection = 0,
+					DoT = 0,
+					Dodged = 0,
+					--DontCreateBloodSurface = 0,
+					FromSetHP = 0,
+					FromShacklesOfPain = 0,
+					Blocked = 0,
+				}
+			
+				local function IsUnarmedHit(handle)
+					for prop,val in pairs(UnarmedHitMatchProperties) do
+						if NRD_HitGetInt(handle, prop) ~= val then
+							return false
+						end
+					end
+					return true
+				end
+			
+				local lizardHits = {}
+
+				Mods.WeaponExpansion.UnarmedHelpers.ScaleUnarmedHitDamage = function (attacker, target, damage, handle)
+					if damage > 0 and IsUnarmedHit(handle) then
+						local character = GameHelpers.GetCharacter(attacker)
+						local isLizard = character:HasTag("LIZARD")
+						local isCombinedHit = isLizard and NRD_HitGetInt(handle, "ProcWindWalker") == 0
+						local weapon,unarmedMasteryBoost,unarmedMasteryRank,highestAttribute,hasUnarmedWeapon = Mods.WeaponExpansion.UnarmedHelpers.GetUnarmedWeapon(character.Stats, true)
+				
+						if isCombinedHit then
+							lizardHits[attacker] = nil
+						elseif isLizard then
+							if lizardHits[attacker] == nil then
+								lizardHits[attacker] = 0
+							end
+							lizardHits[attacker] = lizardHits[attacker] + 1
+						end
+				
+						local isSecondHit = lizardHits[attacker] == 2
+						local damageList = Mods.WeaponExpansion.UnarmedHelpers.CalculateWeaponDamage(character.Stats, weapon, false, highestAttribute, isLizard, isSecondHit)
+				
+						if isCombinedHit then
+							local offhandDamage = Mods.WeaponExpansion.UnarmedHelpers.CalculateWeaponDamage(character.Stats, weapon, false, highestAttribute, isLizard, true)
+							damageList:Merge(offhandDamage)
+						end
+						NRD_HitClearAllDamage(handle)
+						--NRD_HitStatusClearAllDamage(target, handle)
+						local damages = damageList:ToTable()
+						local totalDamage = 0
+						for i,damage in pairs(damages) do
+							NRD_HitAddDamage(handle, damage.DamageType, damage.Amount)
+							totalDamage = totalDamage + damage.Amount
+						end
+						if lizardHits[attacker] == 2 then
+							lizardHits[attacker] = nil
+						end
+					end
+				end
+
 				--Fix this flag not being cleared
 				ObjectClearFlag("680d2702-721c-412d-b083-4f5e816b945a", "LLWEAPONEX_VendingMachine_OrderMenuDisabled", 0)
 

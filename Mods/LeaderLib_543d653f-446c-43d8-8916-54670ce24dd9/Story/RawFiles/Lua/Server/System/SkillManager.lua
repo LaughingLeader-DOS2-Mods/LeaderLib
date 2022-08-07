@@ -366,75 +366,77 @@ function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, da
 	InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skillId, SKILL_STATE.HIT, data)
 end
 
----@param projectile EsvProjectile
----@param hitObject EsvGameObject
----@param position number[]
-RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObject, position)
-	if not StringHelpers.IsNullOrEmpty(projectile.SkillId) then
+Ext.Events.ProjectileHit:Subscribe(function (e)
+	if Ext.Utils.IsValidHandle(e.Projectile.CasterHandle) then
+		local projectile = e.Projectile
 		local skill = GetSkillEntryName(projectile.SkillId)
-		if projectile.CasterHandle ~= nil and (_enabledSkills[skill] or _enabledSkills.All) then
-			local object = Ext.GetGameObject(projectile.CasterHandle)
-			if object then
-				local uuid = object.MyGuid
-				local target = hitObject ~= nil and hitObject.MyGuid or ""
+		if not StringHelpers.IsNullOrEmpty(projectile.SkillId) and (_enabledSkills[skill] or _enabledSkills.All) then
+			local caster = GameHelpers.TryGetObject(projectile.CasterHandle)
+			if caster then
+				local uuid = caster.MyGuid
+				local target = e.HitObject and e.HitObject.MyGuid or ""
 				---@type ProjectileHitData
-				local data = Classes.ProjectileHitData:Create(target, uuid, projectile, position, skill)
+				local data = Classes.ProjectileHitData:Create(target, uuid, projectile, e.Position, skill)
 				Events.OnSkillState:Invoke({
-					Character = object,
-					CharacterGUID = object.MyGuid,
+					Character = caster,
+					CharacterGUID = caster.MyGuid,
 					Skill = skill,
 					State = SKILL_STATE.PROJECTILEHIT,
 					Data = data,
 					DataType = data.Type,
-					SourceItem = _GetSkillSourceItem(object, skill)
+					SourceItem = _GetSkillSourceItem(caster, skill)
 				})
 				InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.PROJECTILEHIT, data, data.Type)
 			end
 		end
 	end
-end)
+end, {Priority=0})
 
----@param request EsvShootProjectileRequest
-RegisterProtectedExtenderListener("BeforeShootProjectile", function (request)
-	local skill = GetSkillEntryName(request.SkillId)
-	if not StringHelpers.IsNullOrEmpty(skill) and request.Caster and (_enabledSkills[skill] or _enabledSkills.All) then
-		--request.Source could be a grenade, instead of the actual character
-		local object = Ext.GetGameObject(request.Caster)
-		if object then
-			Events.OnSkillState:Invoke({
-				Character = object,
-				CharacterGUID = object.MyGuid,
-				Skill = skill,
-				State = SKILL_STATE.BEFORESHOOT,
-				Data = request,
-				DataType = "EsvShootProjectileRequest",
-				SourceItem = _GetSkillSourceItem(object, skill)
-			})
-			InvokeListenerCallbacks(Listeners.OnSkillHit, object.MyGuid, skill, SKILL_STATE.BEFORESHOOT, request, "EsvShootProjectileRequest")
+Ext.Events.BeforeShootProjectile:Subscribe(function (e)
+	if Ext.Utils.IsValidHandle(e.Projectile.Caster) then
+		local projectile = e.Projectile
+		local skill = GetSkillEntryName(projectile.SkillId)
+		if not StringHelpers.IsNullOrEmpty(skill) and (_enabledSkills[skill] or _enabledSkills.All) then
+			--request.Source could be a grenade, instead of the actual character
+			local caster =  GameHelpers.TryGetObject(projectile.Caster)
+			if caster then
+				Events.OnSkillState:Invoke({
+					Character = caster,
+					CharacterGUID = caster.MyGuid,
+					Skill = skill,
+					State = SKILL_STATE.BEFORESHOOT,
+					Data = projectile,
+					DataType = "EsvShootProjectileRequest",
+					SourceItem = _GetSkillSourceItem(caster, skill)
+				})
+				InvokeListenerCallbacks(Listeners.OnSkillHit, caster.MyGuid, skill, SKILL_STATE.BEFORESHOOT, projectile, "EsvShootProjectileRequest")
+			end
 		end
 	end
-end)
+end, {Priority=0})
 
----@param projectile EsvProjectile
-RegisterProtectedExtenderListener("ShootProjectile", function (projectile)
-	local skill = GetSkillEntryName(projectile.SkillId)
-	if not StringHelpers.IsNullOrEmpty(skill) and projectile.CasterHandle and (_enabledSkills[skill] or _enabledSkills.All) then
-		local object = Ext.GetGameObject(projectile.CasterHandle)
-		if object then
-			Events.OnSkillState:Invoke({
-				Character = object,
-				CharacterGUID = object.MyGuid,
-				Skill = skill,
-				State = SKILL_STATE.SHOOTPROJECTILE,
-				Data = projectile,
-				DataType = "EsvProjectile",
-				SourceItem = _GetSkillSourceItem(object, skill)
-			})
-			
-			InvokeListenerCallbacks(Listeners.OnSkillHit, object.MyGuid, skill, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile")
+Ext.Events.ShootProjectile:Subscribe(function(e)
+	if Ext.Utils.IsValidHandle(e.Projectile.CasterHandle) then
+		local projectile = e.Projectile
+		local skill = GetSkillEntryName(projectile.SkillId)
+		if not StringHelpers.IsNullOrEmpty(skill) and (_enabledSkills[skill] or _enabledSkills.All) then
+			local caster = GameHelpers.TryGetObject(projectile.CasterHandle)
+			if caster then
+				Events.OnSkillState:Invoke({
+					Character = caster,
+					CharacterGUID = caster.MyGuid,
+					Skill = skill,
+					State = SKILL_STATE.SHOOTPROJECTILE,
+					Data = projectile,
+					DataType = "EsvProjectile",
+					SourceItem = _GetSkillSourceItem(caster, skill)
+				})
+				
+				InvokeListenerCallbacks(Listeners.OnSkillHit, caster.MyGuid, skill, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile")
+			end
 		end
 	end
-end)
+end, {Priority=0})
 
 RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "after", function(uuid, skill, learned)
 	if ObjectExists(uuid) == 0 then

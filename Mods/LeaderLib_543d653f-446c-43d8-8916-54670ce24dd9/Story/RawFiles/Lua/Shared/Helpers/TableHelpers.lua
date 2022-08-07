@@ -109,7 +109,7 @@ function TableHelpers.AddOrUpdate(target, addFrom, skipExisting, deep)
 			target[k] = v
 		else
 			if deep and (_type(v) == "table" and _type(existingValue) == "table") then
-				TableHelpers.AddOrUpdate(existingValue, v, skipExisting)
+				TableHelpers.AddOrUpdate(existingValue, v, skipExisting, deep)
 			elseif skipExisting ~= true then
 				target[k] = v
 			end

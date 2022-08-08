@@ -821,7 +821,7 @@ function RequestProcessor.OnGMStatusTooltip(e, ui, event, id, ...)
 	object = _GetObjectFromHandle(ui:GetPlayerHandle())
 
 	if not object then
-		object = _GetClientCharacter()
+		object = _GetGMTargetCharacter() or _GetClientCharacter()
 	end
 
 	local request = _CreateRequest()

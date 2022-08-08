@@ -158,7 +158,7 @@ end)
 ---@alias TestingSystemGetDescriptionCallback fun(id, ...:string):string
 ---@alias TestingSystemGetTestsCallback fun(id:string, ...:string):LuaTest[]
 
----@type table<string, {Description:string|TestingSystemGetDescriptionCallback, Tests:LuaTest[]|TestingSystemGetTestsCallback}>
+---@type table<string, {ID:string, Description:string|TestingSystemGetDescriptionCallback, Tests:LuaTest[]|TestingSystemGetTestsCallback}>
 local _consoleCommandTests = {}
 
 ---@param id string
@@ -170,17 +170,21 @@ function Testing.RegisterConsoleCommandTest(id, test, description)
 	if t == "table" then
 		if test.Type == "LuaTest" then
 			id = id or test.ID
-			_consoleCommandTests[id] = {Description=desc, Tests={test}}
+			_consoleCommandTests[string.lower(id)] = {ID=id, Description=desc, Tests={test}}
 		elseif test[1] then
-			_consoleCommandTests[id] = {Description=desc, Tests=test}
+			_consoleCommandTests[string.lower(id)] = {ID=id, Description=desc, Tests=test}
 		end
 	elseif t == "function" then
-		_consoleCommandTests[id] = {Description=desc, Tests=test}
+		_consoleCommandTests[string.lower(id)] = {ID=id, Description=desc, Tests=test}
 	end
 end
 
 Ext.RegisterConsoleCommand("test", function (cmd, id, ...)
-	if id == "help" then
+	local cmdId = nil
+	if id then
+		cmdId = string.lower(id)
+	end
+	if not cmdId or cmdId == "help" then
 		Ext.Print("[test] Available tests:")
 		Ext.Print("==========")
 		for id,data in pairs(_consoleCommandTests) do
@@ -195,17 +199,17 @@ Ext.RegisterConsoleCommand("test", function (cmd, id, ...)
 		Ext.Print("!test id subid")
 		Ext.Print("(subid optional, depending on the above)")
 	else
-		local data = _consoleCommandTests[id]
+		local data = _consoleCommandTests[cmdId]
 		if data then
 			if type(data.Tests) == "function" then
-				local tests = data.Tests(id, ...)
+				local tests = data.Tests(cmdId, ...)
 				if type(tests) == "table" then
-					Testing.RunTests(tests, id)
+					Testing.RunTests(tests, cmdId)
 				else
 					fprint(LOGLEVEL.ERROR, "[test] Failed to get table from Tests function for test id (%s)", id)
 				end
 			else
-				Testing.RunTests(data.Tests, id)
+				Testing.RunTests(data.Tests, data.ID)
 			end
 		end
 	end

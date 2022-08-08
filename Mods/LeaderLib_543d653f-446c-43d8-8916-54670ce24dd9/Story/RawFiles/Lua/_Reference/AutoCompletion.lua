@@ -29,6 +29,7 @@ Mods.LeaderLib = {
 	StatusManager = StatusManager,
 	StringHelpers = StringHelpers,
 	TableHelpers = TableHelpers,
+	Testing = Testing,
 	Timer = Timer,
 	TurnCounter = TurnCounter,
 	UI = UI,
@@ -47,5 +48,6 @@ Mods.LeaderLib = {
 
 ---@alias StatCharacter CDivinityStatsCharacter
 ---@alias DamageList StatsDamagePairList
+---@alias ObjectHandle ComponentHandle
 
 ---@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter):string

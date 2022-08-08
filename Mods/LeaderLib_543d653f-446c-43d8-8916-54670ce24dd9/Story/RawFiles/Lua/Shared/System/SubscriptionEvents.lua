@@ -478,6 +478,8 @@ if not _ISCLIENT then
 	---@field Event string
 	---@field EventType ObjectEventEventType
 	---@field Objects ObjectParam[]
+	---@field ObjectGUID1 GUID
+	---@field ObjectGUID2 GUID|nil
 	
 	---Called when a StoryEvent, CharacterItemEvent, or CharacterCharacterEvent occurs.  
 	---🔨**Server-Only**🔨  

@@ -66,17 +66,15 @@ end
 	---@param status EclStatus
 	---@param tooltip TooltipData
 	Game.Tooltip.RegisterListener("Status", nil, function (character, status, tooltip)
-		if status.StatusId == "THICK_OF_THE_FIGHT" or status.StatusId == "HASTED" or status.StatusId == "SPIRIT_VISION" then
-			-- local boost = status.StatsMultiplier
-			local boost = 1.5
-			if boost > 1 then
-				boost = Ext.Utils.Round((boost - 1) * 100)
-				local element = {
-					Type = "StatusBonus",
-					Label = string.format("Boosted +%i%%", boost),
-				}
-				tooltip:AppendElementAfterType(element, "StatusBonus")
-			end
+		-- local boost = status.StatsMultiplier
+		local boost = 1.5
+		if boost > 1 then
+			boost = Ext.Utils.Round((boost - 1) * 100)
+			local element = {
+				Type = "StatusBonus",
+				Label = string.format("Boosted +%i%%", boost),
+			}
+			tooltip:AppendElementAfterType(element, "StatusBonus")
 		end
 	end)
 end) ]]

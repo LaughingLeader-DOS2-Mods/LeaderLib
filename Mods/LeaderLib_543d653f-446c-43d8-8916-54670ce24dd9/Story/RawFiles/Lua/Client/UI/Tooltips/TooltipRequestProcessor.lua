@@ -650,6 +650,7 @@ function RequestProcessor.OnExamineTooltip(e, ui, event, typeIndex, id, ...)
 	end
 
 	local request = _CreateRequest()
+	request.UIType = ui.Type
 
 	if object then
 		request.ObjectHandleDouble = _HandleToDouble(object.Handle)
@@ -697,7 +698,6 @@ function RequestProcessor.OnExamineTooltip(e, ui, event, typeIndex, id, ...)
 		--Generic type
 		request.Type = "Generic"
 		request.Text = text
-		request.UIType = ui.Type
 		if x then
 			request.X = x
 			request.Y = y
@@ -713,11 +713,11 @@ function RequestProcessor.OnExamineTooltip(e, ui, event, typeIndex, id, ...)
 	end
 
 	RequestProcessor.Tooltip.NextRequest = request
-	RequestProcessor.Tooltip:InvokeRequestListeners(request, "Before", ui, request.UIType, event, typeIndex, id, ...)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "Before", ui, ui.Type, event, typeIndex, id, ...)
 
 	RequestProcessor.Tooltip.Last.Event = event
 	RequestProcessor.Tooltip.Last.UIType = request.UIType
-	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, request.UIType, event, typeIndex, id, ...)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, ui.Type, event, typeIndex, id, ...)
 end
 
 ---@param ui UIObject
@@ -799,14 +799,57 @@ function RequestProcessor.OnControllerExamineTooltip(e, ui, event, id, objectHan
 	end
 
 	RequestProcessor.Tooltip.NextRequest = request
-	RequestProcessor.Tooltip:InvokeRequestListeners(request, "Before", ui, request.UIType, event, id, objectHandle)
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "Before", ui, uiTypeId, event, id, objectHandle)
 	if object then
 		Game.Tooltip.ControllerVars.LastPlayer = request.ObjectHandleDouble
 	end
 
 	RequestProcessor.Tooltip.Last.Event = event
-	RequestProcessor.Tooltip.Last.UIType = request.UIType
-	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, request.UIType, event, id, objectHandle)
+	RequestProcessor.Tooltip.Last.UIType = uiTypeId
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, uiTypeId, event, id, objectHandle)
+end
+
+---@param e EclLuaUICallEventParams
+---@param ui UIObject
+---@param event string
+---@param id number
+---@vararg any
+function RequestProcessor.OnGMStatusTooltip(e, ui, event, id, ...)
+	---@type EclCharacter|EclItem|nil
+	local object = nil
+
+	object = _GetObjectFromHandle(ui:GetPlayerHandle())
+
+	if not object then
+		object = _GetClientCharacter()
+	end
+
+	local request = _CreateRequest()
+
+	if object then
+		request.ObjectHandleDouble = _HandleToDouble(object.Handle)
+	end
+
+	request.Type = "Status"
+	if not _IsNaN(id) then
+		local statusHandle = _DoubleToHandle(id)
+		if _IsValidHandle(statusHandle) then
+			request.StatusHandleDouble = id
+			if object then
+				local status = _GetStatus(object.Handle, statusHandle)
+				if status then
+					request.StatusId = status.StatusId
+				end
+			end
+		end
+	end
+
+	RequestProcessor.Tooltip.NextRequest = request
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "Before", ui, ui.Type, event, id, ...)
+
+	RequestProcessor.Tooltip.Last.Event = event
+	RequestProcessor.Tooltip.Last.UIType = ui.Type
+	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, ui.Type, event, id, ...)
 end
 
 ---@param e EclLuaUICallEventParams
@@ -1051,7 +1094,6 @@ Ext.Events.UICall:Subscribe(function (e)
 				if _MonotonicTime() - _lastShowStatusTooltip <= 33 then
 					e:StopPropagation()
 					e:PreventAction() -- The necessary part
-					_lastShowStatusTooltip = _MonotonicTime()
 					return
 				end
 			end
@@ -1194,6 +1236,8 @@ function RequestProcessor:Init(tooltip)
 	_CallHandler("showTooltip", function (e, ui, ...)
 		if ui.Type == _UITYPE.examine then
 			RequestProcessor.OnExamineTooltip(e, ui, ...)
+		elseif ui.Type == _UITYPE.statusPanel then -- GM
+			RequestProcessor.OnGMStatusTooltip(e, ui, ...)
 		else
 			RequestProcessor.OnGenericTooltip(e, ui, ...)
 		end

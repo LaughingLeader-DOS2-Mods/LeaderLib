@@ -85,9 +85,6 @@ local function TryGetObject(id)
 	local t = _type(id)
 	local isHandle = IsHandle(id)
 	if _osirisIsCallable() and t == "string" then
-		if ObjectExists(id) == 0 then
-			return nil
-		end
 		if ObjectIsCharacter(id) == 1 then
 			local b,obj = _pcall(_getCharacter, id)
 			if b and obj then
@@ -125,7 +122,7 @@ local function TryGetObject(id)
 end
 
 ---Tries to get a game object if the target exists, otherwise returns nil.
----@param id ObjectParam|ObjectHandle
+---@param id ObjectParam|ComponentHandle
 ---@param returnOriginal boolean|nil Return the original value if failed. Defaults to false, so nil is returned.
 ---@return EsvCharacter|EclCharacter|EsvItem|EclItem
 local function _tryGetObject(id, returnOriginal)

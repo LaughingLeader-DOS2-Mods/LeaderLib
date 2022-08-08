@@ -6,6 +6,13 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.26.2",
+			"Changes": [
+				"Fixed an issue where status tooltips may have stopped showing on hover, if the tooltip request was getting spammed (statuses with durations).",
+				"Added support for status panel status tooltips in GM mode."
+			]
+		},
+		{
 			"Version": "1.7.26.1",
 			"Changes": [
 				"Fixed an issue where Client Gameplay settings were being reset to default values (the actual problem being they weren't loaded once initially).",

@@ -182,10 +182,6 @@ local function CanChangeSkillTier(stat, tier)
 	return false
 end
 
--- Adds more alignment entities
-if Ext.Version() < 56 then
-	Ext.AddPathOverride("Mods/DivinityOrigins_1301db3d-1f54-4e98-9be5-5094030916e4/Story/Alignments/Alignment.lsx", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OriginsAlignments.lsx")
-end
 Ext.AddPathOverride("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Stats/Generated/Data/LeaderLib_Skills_Force.txt", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Stats/Overrides/LeaderLib_Skills_SafeForce.txt")
 
 ---Modifies a stat if it differs from the desired value.

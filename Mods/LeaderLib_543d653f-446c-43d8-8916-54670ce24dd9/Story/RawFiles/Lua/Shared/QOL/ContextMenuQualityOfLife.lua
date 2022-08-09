@@ -161,7 +161,7 @@ if isClient then
 				local cursor = Ext.GetPickingState()
 				if cursor then
 					if cursor.HoverCharacter then
-						characterTargetHandle = Ext.HandleToDouble(cursor.HoverCharacter)
+						characterTargetHandle = cursor.HoverCharacter
 					end
 					entries = {
 						TryProcessHoverObject("LLCM_CopyInfo1", cursor.HoverItem, "Item", e.ContextMenu, "Save Cursor Item to File"),
@@ -205,15 +205,28 @@ if isClient then
 					end
 				end, "Save All Cursor Info to File", true, true, false, true)
 			end
-			-- if characterTargetHandle then
-			-- 	e.ContextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(cm, ui, id, actionID, handle)
-			-- 		local target = GameHelpers.TryGetObject(Ext.DoubleToHandle(handle))
-			-- 		if target then
-			-- 			local source = Client:GetCharacter().WorldPos
-			-- 			fprint(LOGLEVEL.DEFAULT, "[HighGroundFlag] Result(%s) me.Y(%s) target.Y(%s) heightDiff(%s) HighGroundThreshold(%s)", GameHelpers.Math.GetHighGroundFlag(source, target.WorldPos), source[2], target.WorldPos[2], source[2] - target.WorldPos[2], Ext.ExtraData.HighGroundThreshold)
-			-- 		end
-			-- 	end, "Print HighGroundFlag", true, true, false, true, characterTargetHandle)
-			-- end
+			if characterTargetHandle then
+				--[[ e.ContextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(cm, ui, id, actionID, handle)
+					local target = GameHelpers.TryGetObject(Ext.DoubleToHandle(handle))
+					if target then
+						local source = Client:GetCharacter().WorldPos
+						fprint(LOGLEVEL.DEFAULT, "[HighGroundFlag] Result(%s) me.Y(%s) target.Y(%s) heightDiff(%s) HighGroundThreshold(%s)", GameHelpers.Math.GetHighGroundFlag(source, target.WorldPos), source[2], target.WorldPos[2], source[2] - target.WorldPos[2], Ext.ExtraData.HighGroundThreshold)
+					end
+				end, "Print HighGroundFlag", true, true, false, true, characterTargetHandle) ]]
+				local targetID =  GameHelpers.TryGetObject(characterTargetHandle).NetID
+				local sourceID = Client:GetCharacter().NetID
+				if targetID ~= sourceID then
+					e.ContextMenu:AddBuiltinEntry("LLCM_MakeHostile", function(cm, ui, id, actionID, handle)
+						Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_MakeHostile", Common.JsonStringify({Target=targetID, Source=sourceID}))
+					end, "Make Hostile", true, true, false, true, characterTargetHandle)
+					e.ContextMenu:AddBuiltinEntry("LLCM_StartCombat", function(cm, ui, id, actionID, handle)
+						Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_StartCombat", Common.JsonStringify({Target=targetID, Source=sourceID}))
+					end, "Enter Combat", true, true, false, true, characterTargetHandle)
+				end
+				e.ContextMenu:AddBuiltinEntry("LLCM_EndCombat", function(cm, ui, id, actionID, handle)
+					Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_EndCombat", Common.JsonStringify({Target=targetID, Source=sourceID}))
+				end, "End Combat", true, true, false, true, characterTargetHandle)
+			end
 		end
 	end)
 
@@ -248,6 +261,52 @@ else
 					data.Temporary = object.Temporary
 				end
 				GameHelpers.Net.PostToUser(userid, "LeaderLib_ContextMenu_SetUUID", data)
+			end
+		end
+	end)
+
+	Ext.RegisterNetListener("LeaderLib_ContextMenu_MakeHostile", function(cmd, payload, userid)
+		local data = Common.JsonParse(payload)
+		if data then
+			local target = GameHelpers.GetCharacter(data.Target)
+			local player = GameHelpers.GetCharacter(data.Source)
+			if target and player then
+				local alignment = Ext.Entity.GetAlignmentManager()
+				alignment:SetTemporaryEnemy(player.Handle, target.Handle, true)
+			end
+		end
+	end)
+
+	Ext.RegisterNetListener("LeaderLib_ContextMenu_StartCombat", function(cmd, payload, userid)
+		local data = Common.JsonParse(payload)
+		if data then
+			local target = GameHelpers.GetCharacter(data.Target)
+			local player = GameHelpers.GetCharacter(data.Source)
+			if target and player then
+				SetCanJoinCombat(target.MyGuid, 1)
+				SetCanFight(target.MyGuid, 1)
+				SetCanJoinCombat(player.MyGuid, 1)
+				SetCanFight(player.MyGuid, 1)
+				EnterCombat(player.MyGuid, target.MyGuid)
+				fprint(LOGLEVEL.DEFAULT, "[LeaderLib_ContextMenu_StartCombat] EnterCombat(\"%s\", \"%s\")", player.MyGuid, target.MyGuid)
+			end
+		end
+	end)
+
+	Ext.RegisterNetListener("LeaderLib_ContextMenu_EndCombat", function(cmd, payload, userid)
+		local data = Common.JsonParse(payload)
+		if data then
+			local target = GameHelpers.GetCharacter(data.Target)
+			local player = GameHelpers.GetCharacter(data.Source)
+			if target and player then
+				if CharacterIsInCombat(target.MyGuid) == 1 then
+					GameHelpers.Status.Apply(target, "INVISIBLE", 12.0, 0, target)
+					TeleportTo(target.MyGuid, target.MyGuid, "", 0, 1, 1)
+				end
+				if player.MyGuid ~= target.MyGuid and CharacterIsInCombat(player.MyGuid) == 1 then
+					GameHelpers.Status.Apply(player, "INVISIBLE", 12.0, 0, player)
+					TeleportTo(player.MyGuid, player.MyGuid, "", 0, 1, 1)
+				end
 			end
 		end
 	end)

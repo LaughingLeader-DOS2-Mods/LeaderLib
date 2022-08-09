@@ -28,7 +28,7 @@ settings.Global:AddLocalizedFlags({
 settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 --settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)
 settings.Global:AddLocalizedVariable("AutoCombatRange", "LeaderLib_Variables_AutoCombatRange", 30, 1, 30, 1)
-settings.Global:AddLocalizedVariable("CombatSightRangeMultiplier", "LeaderLib_Variables_CombatSightRangeMultiplier", 2.5, 1, 30, 1)
+settings.Global:AddLocalizedVariable("CombatSightRangeMultiplier", "LeaderLib_Variables_CombatSightRangeMultiplier", 2.5, 1, 30, 0.5)
 settings.Global:AddLocalizedVariable("CarryWeightBase", "LeaderLib_Variables_CarryWeightBase", 0, 0, 1000, 10)
 settings.Global:AddLocalizedButton("LeaderLib_ReloadStatChangesConfig", "LeaderLib_ReloadStatChangesConfig", function (entry, modUUID, character)
 	if _ISCLIENT then
@@ -148,7 +148,7 @@ end)
 settings.Global.Variables.CombatSightRangeMultiplier:Subscribe(function (e)
 	Ext.ExtraData["End Of Combat SightRange Multiplier"] = e.Value
 	--Ext.ExtraData["Ally Joins Ally SightRange Multiplier"] = e.Value -- Unused?
-	fprint(LOGLEVEL.TRACE, "[LeaderLib] Set 'End Of Combat SightRange Multiplier' to (%s)", e.Value)
+	fprint(LOGLEVEL.TRACE, "[LeaderLib] Set 'End Of Combat SightRange Multiplier' to (%s) [%s]", e.Value, _ISCLIENT and "CLIENT" or "SERVER")
 end)
 
 local hasSetBaseCarryweight = false

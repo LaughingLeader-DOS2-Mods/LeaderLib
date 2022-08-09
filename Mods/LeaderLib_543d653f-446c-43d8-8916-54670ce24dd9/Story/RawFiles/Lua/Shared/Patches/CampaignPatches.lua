@@ -88,7 +88,7 @@ if not _ISCLIENT then
 	end
 	
 	Events.RegionChanged:Subscribe(function(e)
-		if Ext.Mod.IsModLoaded(Data.ModID.DivinityOriginalSin2) then
+		if Ext.Mod.IsModLoaded(Data.ModID.DivinityOriginalSin2) and not Ext.Mod.IsModLoaded(Data.ModID.UnofficialPatch) then
 			if e.LevelType == LEVELTYPE.GAME and e.State == REGIONSTATE.GAME then
 				Timer.StartOneshot("LeaderLib_RunOriginFixes", 1000, function()
 					_RunPatches(e.Region)

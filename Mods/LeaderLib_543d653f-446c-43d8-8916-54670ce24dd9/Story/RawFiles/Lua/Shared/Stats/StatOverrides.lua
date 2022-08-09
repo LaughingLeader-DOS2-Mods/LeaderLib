@@ -435,15 +435,17 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 	OverrideWings(shouldSync)
 	OverrideForce(shouldSync)
 
-	for statId,data in pairs(StatFixes) do
-		if not data.Mod or Ext.IsModLoaded(data.Mod) then
-			local stat = Ext.Stats.Get(statId)
-			if stat and data.CanChange(stat) then
-				for attribute,value in pairs(data.Changes) do
-					stat[attribute] = value
-				end
-				if shouldSync then
-					Ext.Stats.Sync(statId, false)
+	if not Ext.Mod.IsModLoaded(Data.ModID.UnofficialPatch) then
+		for statId,data in pairs(StatFixes) do
+			if not data.Mod or Ext.IsModLoaded(data.Mod) then
+				local stat = Ext.Stats.Get(statId)
+				if stat and data.CanChange(stat) then
+					for attribute,value in pairs(data.Changes) do
+						stat[attribute] = value
+					end
+					if shouldSync then
+						Ext.Stats.Sync(statId, false)
+					end
 				end
 			end
 		end

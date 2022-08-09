@@ -85,6 +85,9 @@ local function TryGetObject(id)
 	local t = _type(id)
 	local isHandle = IsHandle(id)
 	if _osirisIsCallable() and t == "string" then
+		if StringHelpers.IsNullOrEmpty(id) then
+			return nil
+		end
 		if ObjectIsCharacter(id) == 1 then
 			local b,obj = _pcall(_getCharacter, id)
 			if b and obj then
@@ -95,6 +98,8 @@ local function TryGetObject(id)
 			if b and obj then
 				return obj
 			end
+		elseif StringHelpers.IsUUID(id) and ObjectExists(id) == 0 then
+			return nil
 		else
 			local b,obj = _pcall(_getGameObject, id)
 			if b and obj then

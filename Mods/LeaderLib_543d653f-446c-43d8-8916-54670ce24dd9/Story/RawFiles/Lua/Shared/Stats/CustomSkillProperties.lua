@@ -1,9 +1,13 @@
 local _ISCLIENT = Ext.IsClient()
 
-if CustomSkillProperties == nil then
-	---@type table<string,CustomSkillProperty>
-	CustomSkillProperties = {}
-end
+---@class LeaderLibCustomSkillPropertyData
+---@field GetDescription (fun(property:StatsPropertyExtender):string)|nil
+---@field ExecuteOnPosition (fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, position: vec3, areaRadius: number, isFromItem: boolean, skill: StatsSkillPrototype, hit: StatsHitDamageInfo|nil, skillId:string))|nil
+---@field ExecuteOnTarget (fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, target: EsvCharacter|EsvItem, position: vec3, isFromItem: boolean, skill: StatsSkillPrototype, hit: StatsHitDamageInfo|nil, skillId:string))|nil
+---@field OnlyWithSkill boolean
+
+---@type table<string,LeaderLibCustomSkillPropertyData>
+CustomSkillProperties = {}
 
 if GameHelpers.Skill == nil then
 	GameHelpers.Skill = {}
@@ -13,13 +17,15 @@ local function _EMPTY_FUNC() end
 
 --- @param id string
 --- @param getDesc fun(property:StatsPropertyExtender):string|nil
---- @param onPos fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, position: vec3, areaRadius: number, isFromItem: boolean, skill: StatEntrySkillData|nil, hit: StatsHitDamageInfo|nil)
---- @param onTarget fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, target: EsvCharacter|EsvItem, position: vec3, isFromItem: boolean, skill: StatEntrySkillData|nil, hit: StatsHitDamageInfo|nil)
-function GameHelpers.Skill.CreateSkillProperty(id, getDesc, onPos, onTarget)
+--- @param onPos fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, position: vec3, areaRadius: number, isFromItem: boolean, skill: StatsSkillPrototype, hit: StatsHitDamageInfo|nil, skillId:string)
+--- @param onTarget fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, target: EsvCharacter|EsvItem, position: vec3, isFromItem: boolean, skill: StatsSkillPrototype, hit: StatsHitDamageInfo|nil, skillId:string)
+--- @param allowWhenSkillIsNil boolean|nil Invoke the related callbacks even if the skill prototype is nil.
+function GameHelpers.Skill.CreateSkillProperty(id, getDesc, onPos, onTarget, allowWhenSkillIsNil)
 	local property = {
 		GetDescription = getDesc or _EMPTY_FUNC,
 		ExecuteOnPosition = onPos or _EMPTY_FUNC,
 		ExecuteOnTarget = onTarget or _EMPTY_FUNC,
+		OnlyWithSkill = allowWhenSkillIsNil ~= true
 	}
 	CustomSkillProperties[id] = property
 end
@@ -67,7 +73,7 @@ GameHelpers.Skill.CreateSkillProperty("SafeForce", function (property)
 				return LocalizedText.SkillTooltip.SafeForceRandom_Negative:ReplacePlaceholders(math.abs(distance), fromText, chance)
 			end
 		end
-end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
+end, function (property, attacker, position, areaRadius, isFromItem, skill, hit, skillId)
 	local chance = property.Arg1
 		local distance = math.floor(property.Arg2/6)
 		if chance >= 1.0 or Ext.Random(0,1) <= chance then
@@ -89,11 +95,11 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 				if useTargetForPosition then
 					startPos = target.WorldPos
 				end
-				GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)
+				GameHelpers.ForceMoveObject(attacker, target, distance, skillId, startPos)
 				ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 			end
 		end
-end, function (property, attacker, target, position, isFromItem, skill, hit)
+end, function (property, attacker, target, position, isFromItem, skill, hit, skillId)
 	if attacker.MyGuid ~= target.MyGuid then
 		local chance = property.Arg1
 		local distance = math.floor(property.Arg2/6)
@@ -106,7 +112,7 @@ end, function (property, attacker, target, position, isFromItem, skill, hit)
 			if useTargetForPosition then
 				startPos = target.WorldPos
 			end
-			GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)
+			GameHelpers.ForceMoveObject(attacker, target, distance, skillId, startPos)
 			ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 		end
 	end
@@ -181,7 +187,7 @@ GameHelpers.Skill.CreateSkillProperty("MoveToTarget", function (property)
 end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 	MoveToTarget(attacker, position, math.max(areaRadius, 3), skill, property)
 end, function (property, attacker, target, position, isFromItem, skill, hit)
-	MoveToTarget(attacker, position, math.max(skill.AreaRadius or 3, 3), skill, property)
+	MoveToTarget(attacker, position, math.max(skill.StatsObject.AreaRadius or 3, 3), skill, property)
 end)
 
 GameHelpers.Skill.CreateSkillProperty("ToggleStatus", function (property)
@@ -220,11 +226,11 @@ GameHelpers.Skill.CreateSkillProperty("ToggleStatus", function (property)
 			return LocalizedText.SkillTooltip.ToggleStatus:ReplacePlaceholders(statusDisplayName)
 		end
 	end
-end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
+end, function (property, attacker, position, areaRadius, isFromItem, skill, hit, skillId)
 	local statusId = property.Arg3
 	local duration = property.Arg2
 	local isPermanent = property.Arg4 > -1
-	if skill.Name == "Shout_SpiritVision" and statusId == "SPIRIT_VISION" then
+	if skillId == "Shout_SpiritVision" and statusId == "SPIRIT_VISION" then
 		local settings = SettingsManager.GetMod(ModuleUUID, false, false)
 		if settings.Global:FlagEquals("LeaderLib_PermanentSpiritVisionEnabled", false) then
 			-- isPermanent = false
@@ -265,8 +271,8 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 			end)
 		end
 		if targetRadius then
-			local canTargetCharacters = skill.CanTargetCharacters
-			local canTargetItems = skill.CanTargetItems
+			local canTargetCharacters = skill.StatsObject.CanTargetCharacters
+			local canTargetItems = skill.StatsObject.CanTargetItems
 			local targetType = canTargetCharacters and "Character"
 			if canTargetCharacters and canTargetItems then
 				targetType = "All"
@@ -296,12 +302,12 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit)
 			end
 		end
 	end
-end, function (property, attacker, target, position, isFromItem, skill, hit)
+end, function (property, attacker, target, position, isFromItem, skill, hit, skillId)
 	local statusId = property.Arg3
 	if not StringHelpers.IsNullOrWhitespace(statusId) then
 		local duration = property.Arg2
 
-		if skill.Name == "Shout_SpiritVision" and statusId == "SPIRIT_VISION" then
+		if skillId == "Shout_SpiritVision" and statusId == "SPIRIT_VISION" then
 			local settings = SettingsManager.GetMod(ModuleUUID, false, false)
 			if settings.Global:FlagEquals("LeaderLib_PermanentSpiritVisionEnabled", false) then
 				--Previous duration is stored in Arg5
@@ -342,16 +348,18 @@ if not _ISCLIENT then
 	Ext.Events.OnExecutePropertyDataOnTarget:Subscribe(function (e)
 		local prop = e.Property
 		local propType = CustomSkillProperties[prop.Action]
-		if propType ~= nil and propType.ExecuteOnTarget ~= nil then
-			propType.ExecuteOnTarget(e.Property, e.Attacker, e.Target, e.ImpactOrigin, e.IsFromItem, e.Skill, e.Hit)
+		if propType ~= nil and propType.ExecuteOnTarget ~= nil and (e.Skill ~= nil or not propType.OnlyWithSkill) then
+			--GameHelpers.IO.SaveJsonFile("Dumps/OnExecutePropertyDataOnTarget.json", Ext.DumpExport(e))
+			propType.ExecuteOnTarget(e.Property, e.Attacker, e.Target, e.ImpactOrigin, e.IsFromItem, e.Skill, e.Hit, e.Skill and e.Skill.StatsObject.Name or nil)
 		end
 	end)
 	
 	Ext.Events.OnExecutePropertyDataOnPosition:Subscribe(function (e)
 		local prop = e.Property
 		local propType = CustomSkillProperties[prop.Action]
-		if propType ~= nil and propType.ExecuteOnPosition ~= nil then
-			propType.ExecuteOnPosition(e.Property, e.Attacker, e.Position, e.AreaRadius, e.IsFromItem, e.Skill, e.Hit)
+		if propType ~= nil and propType.ExecuteOnPosition ~= nil and (e.Skill ~= nil or not propType.OnlyWithSkill) then
+			--GameHelpers.IO.SaveJsonFile("Dumps/OnExecutePropertyDataOnPosition.json", Ext.DumpExport(e))
+			propType.ExecuteOnPosition(e.Property, e.Attacker, e.Position, e.AreaRadius, e.IsFromItem, e.Skill, e.Hit, e.Skill and e.Skill.StatsObject.Name or nil)
 		end
 	end)
 	

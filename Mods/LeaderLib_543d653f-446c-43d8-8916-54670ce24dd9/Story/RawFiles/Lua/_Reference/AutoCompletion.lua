@@ -33,7 +33,8 @@ Mods.LeaderLib = {
 	Timer = Timer,
 	TurnCounter = TurnCounter,
 	UI = UI,
-	VisualManager = VisualManager
+	Vars = Vars,
+	VisualManager = VisualManager,
 }
 
 ---@alias DamageType "None"|"Physical"|"Piercing"|"Corrosive"|"Magic"|"Chaos"|"Fire"|"Air"|"Water"|"Earth"|"Poison"|"Shadow"

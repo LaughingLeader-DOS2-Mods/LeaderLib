@@ -242,38 +242,40 @@ end
 function LeaderLibGameSettings:ApplyAPChanges()
 	local settings = self.Settings.APSettings.Player
 
-	for player in GameHelpers.Character.GetPlayers() do
-		local stats = {}
-		local baseStat = Ext.Stats.Get(player.Stats.Name)
-		if settings.Enabled then
-			if settings.Start > 0 then
-				stats.APStart = settings.Start
+	if Ext.GetGameState() == "Running" or SharedData.RegionData.Current ~= "" then
+		for player in GameHelpers.Character.GetPlayers() do
+			local stats = {}
+			local baseStat = Ext.Stats.Get(player.Stats.Name)
+			if settings.Enabled then
+				if settings.Start > 0 then
+					stats.APStart = settings.Start
+				else
+					stats.APStart = baseStat.APStart
+				end
+				if settings.Max > 0 then
+					stats.APMaximum = settings.Max
+				else
+					stats.APMaximum = baseStat.APMaximum
+				end
+				if settings.Recovery > 0 then
+					stats.APRecovery = settings.Recovery
+				else
+					stats.APRecovery = baseStat.APRecovery
+				end
 			else
 				stats.APStart = baseStat.APStart
-			end
-			if settings.Max > 0 then
-				stats.APMaximum = settings.Max
-			else
 				stats.APMaximum = baseStat.APMaximum
-			end
-			if settings.Recovery > 0 then
-				stats.APRecovery = settings.Recovery
-			else
 				stats.APRecovery = baseStat.APRecovery
 			end
-		else
-			stats.APStart = baseStat.APStart
-			stats.APMaximum = baseStat.APMaximum
-			stats.APRecovery = baseStat.APRecovery
-		end
-		player.Stats.DynamicStats[1].APMaximum = stats.APMaximum
-		player.Stats.DynamicStats[1].APRecovery = stats.APRecovery
-		player.Stats.DynamicStats[1].APStart = stats.APStart
-		baseStat.APStart = stats.APStart
-		baseStat.APMaximum = stats.APMaximum
-		baseStat.APRecovery = stats.APRecovery
-		if not _ISCLIENT then
-			Ext.Stats.Sync(baseStat.Name, false)
+			player.Stats.DynamicStats[1].APMaximum = stats.APMaximum
+			player.Stats.DynamicStats[1].APRecovery = stats.APRecovery
+			player.Stats.DynamicStats[1].APStart = stats.APStart
+			baseStat.APStart = stats.APStart
+			baseStat.APMaximum = stats.APMaximum
+			baseStat.APRecovery = stats.APRecovery
+			if not _ISCLIENT then
+				Ext.Stats.Sync(baseStat.Name, false)
+			end
 		end
 	end
 end

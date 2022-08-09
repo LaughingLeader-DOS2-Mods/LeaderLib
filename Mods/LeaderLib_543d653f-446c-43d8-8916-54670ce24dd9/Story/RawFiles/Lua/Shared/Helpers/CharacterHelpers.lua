@@ -458,7 +458,7 @@ function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 			end
 		else
 			local isCC = SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
-			for _,v in pairs(Ext.GetAllCharacters()) do
+			for _,v in pairs(Ext.Entity.GetAllCharacterGuids(SharedData.RegionData.Current)) do
 				local character = GameHelpers.GetCharacter(v)
 				if character and character.IsPlayer and not isCC or (isCC and character.CharacterControl) then
 					players[#players+1] = character

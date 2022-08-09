@@ -75,6 +75,25 @@ local function CanDelayTooltip(requestType)
 	return false
 end
 
+local function SafeGetArgs(tbl, call)
+	local args = {}
+	for i,v in pairs(tbl) do
+		if v == nil then
+			args[i] = ""
+			if i == 6 then
+				args[i] = "right"
+			end
+			-- if Vars.LeaderDebugMode then
+			-- 	fprint(LOGLEVEL.ERROR, "[LeaderLib:TooltipDelay:%s] Arg at position[%s] is nil", call, i)
+			-- 	Ext.Utils.PrintError(Ext.DumpExport(tbl))
+			-- end
+		else
+			args[i] = v
+		end
+	end
+	return args
+end
+
 ---@param e EclLuaUICallEventParams
 local function OnUICall(e)
 	if e.When == "Before" then
@@ -116,7 +135,7 @@ local function OnUICall(e)
 					local uiType = e.UI.Type
 					local call = e.Function
 					lastCall = call
-					local args = {table.unpack(e.Args)}
+					local args = SafeGetArgs(e.Args, call)
 					lastMouseX = mx
 					lastMouseY = my
 					e:PreventAction()

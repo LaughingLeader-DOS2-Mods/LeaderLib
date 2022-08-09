@@ -1,3 +1,5 @@
+local _EXTVERSION = Ext.Utils.Version()
+
 ---@class LeaderLibInputManager
 Input = {
 	Keys = {},
@@ -208,36 +210,7 @@ local function OnInputChanged(eventName, pressed, id, keys, controllerEnabled)
 		if not Client.Character.IsGameMaster and eventName == "ToggleGMShroud" and not pressed then
 			UI.ToggleChainGroup()
 		end
-		-- if Vars.DebugMode then
-		-- 	if eventName == "UICopy" and pressed then
-		-- 		Ext.GetUIByType(Data.UIType.GMMetadataBox):ExternalInterfaceCall("copy", "Test test")
-		-- 	end
-		-- end
 	end
-	-- if controllerEnabled then
-	-- 	--Area Interact input workaround
-	-- 	local ui = Ext.GetUIByType(Data.UIType.areaInteract_c)
-	-- 	if ui then
-	-- 		local this = ui:GetRoot()
-	-- 		local areaInteractEventId = -1
-	-- 		for i=0,#this.events-1 do
-	-- 			local name = this.events[i]
-	-- 			print(i,name)
-	-- 			if name == eventName then
-	-- 				areaInteractEventId = i
-	-- 				break
-	-- 			end
-	-- 		end
-	-- 		if areaInteractEventId ~= -1 then
-	-- 			print("OnInputChanged(areaInteract_c fix)", eventName, areaInteractEventId, id)
-	-- 			if pressed then
-	-- 				this.onEventDown(areaInteractEventId)
-	-- 			else
-	-- 				this.onEventUp(areaInteractEventId)
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
 end
 
 --Workaround to prevent key event listeners firing more than once for the same state from a separate extender/flash event
@@ -263,7 +236,7 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 		OnInputChanged(eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 
 		local stopPropagation = false
-		if eventName == TooltipExpander.KeyboardKey then
+		if _EXTVERSION < 57 and eventName == TooltipExpander.KeyboardKey then
 			stopPropagation = TooltipExpander.OnKeyPressed(evt.Press) == true
 		end
 
@@ -344,7 +317,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 
 		local stopPropagation = false
 
-		if eventName == TooltipExpander.KeyboardKey then
+		if _EXTVERSION < 57 and eventName == TooltipExpander.KeyboardKey then
 			stopPropagation = TooltipExpander.OnKeyPressed(pressed) == true
 		end
 
@@ -446,3 +419,19 @@ end)
 -- 		end
 -- 	end)
 -- end
+
+if _EXTVERSION >= 57 then
+	Ext.Events.RawInput:Subscribe(function (e)
+		if e.Input.DeviceId == "Key" then
+			local pressed = e.Input.State == "Pressed"
+			if e.Input.InputId == "lshift" or e.Input.InputId == "rshift" then
+				Input.Shift = pressed
+				TooltipExpander.OnKeyPressed(pressed)
+			elseif e.Input.InputId == "lctrl" or e.Input.InputId == "rctrl" then
+				Input.Ctrl = pressed
+			elseif e.Input.InputId == "lalt" or e.Input.InputId == "ralt" then
+				Input.Alt = pressed
+			end
+		end
+	end)
+end

@@ -111,18 +111,20 @@ end
 Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
 
 function GameHelpers.Skill.GetSkillSlots(char, skill, makeLocal)
-    char = GameHelpers.GetUUID(char)
 	local slots = {}
-	for i=0,144,1 do
-        local slot = NRD_SkillBarGetSkill(char, i)
-		if slot ~= nil and slot == skill then
-			if makeLocal == true then
+    local character = GameHelpers.GetCharacter(char)
+    if not character or not GameHelpers.Character.IsPlayer(character) or not character.PlayerData then
+        return slots
+    end
+    for i,v in pairs(character.PlayerData.SkillBar) do
+        if v.SkillOrStatId == skill then
+            if makeLocal == true then
 				slots[#slots+1] = i%29
 			else
 				slots[#slots+1] = i
 			end
-		end
-	end
+        end
+    end
 	return slots
 end
 
@@ -135,45 +137,46 @@ GetSkillSlots = GameHelpers.Skill.GetSkillSlots
 ---@param removeTargetSkill boolean Optional, removes the swapped skill from the character.
 ---@param resetCooldowns boolean Optional, defaults to true.
 function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTargetSkill, resetCooldowns)
-    char = GameHelpers.GetUUID(char)
-    if not char then
+    local character = GameHelpers.GetCharacter(char)
+    if not character then
         return false
     end
-    local cd = nil
-    if CharacterHasSkill(char, targetSkill) == 1 then
-        cd = NRD_SkillGetCooldown(char, targetSkill)
-    end
-    if CharacterIsPlayer(char) == 0 then
-        if removeTargetSkill ~= nil and removeTargetSkill ~= false then
-            CharacterRemoveSkill(char, targetSkill)
-        end
-        CharacterAddSkill(char, replacementSkill, 0)
-        return false
-    end
-    local slots = GetSkillSlots(char, targetSkill)
-    if #slots > 0 then
-        if CharacterHasSkill(char, replacementSkill) == 0 then
-            CharacterAddSkill(char, replacementSkill, 0)
-        end
-        local newSlot = NRD_SkillBarFindSkill(char, replacementSkill)
-        if newSlot ~= nil then
-            NRD_SkillBarClear(char, newSlot)
-        end
+    ---@cast character EsvCharacter
+    local GUID = character.MyGuid
 
-        for i,slot in pairs(slots) do
-            NRD_SkillBarSetSkill(char, slot, replacementSkill)
+    local cd = nil
+    local existingSkill = character.SkillManager.Skills[targetSkill]
+    if existingSkill then
+        cd = existingSkill.ActiveCooldown
+    end
+    if not GameHelpers.Character.IsPlayer(character) then
+        if removeTargetSkill ~= nil and removeTargetSkill ~= false then
+            CharacterRemoveSkill(GUID, targetSkill)
         end
-    else
-        CharacterAddSkill(char, replacementSkill, 0)
+        CharacterAddSkill(GUID, replacementSkill, 0)
+        return false
+    end
+    CharacterAddSkill(GUID, replacementSkill, 0)
+    for i,v in pairs(character.PlayerData.SkillBar) do
+        if v.SkillOrStatId == targetSkill then
+            v.SkillOrStatId = replacementSkill
+        elseif v.SkillOrStatId == replacementSkill then
+            v.SkillOrStatId = ""
+            v.Type = "None"
+        end
     end
     if removeTargetSkill ~= false then
-        CharacterRemoveSkill(char, targetSkill)
+        CharacterRemoveSkill(GUID, targetSkill)
     end
-    if resetCooldowns ~= false then
-        NRD_SkillSetCooldown(char, replacementSkill, 0.0)
-    elseif cd ~= nil then
-        NRD_SkillSetCooldown(char, replacementSkill, cd)
+    local addedSkillData = character.SkillManager.Skills[replacementSkill]
+    if addedSkillData then
+        if resetCooldowns ~= false then
+            addedSkillData.ActiveCooldown = 0
+        elseif cd ~= nil then
+            addedSkillData.ActiveCooldown = cd
+        end
     end
+    GameHelpers.UI.RefreshSkillBar(character)
 end
 
 ---Set a skill cooldown if the character has the skill.

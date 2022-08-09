@@ -213,19 +213,26 @@ if isClient then
 						fprint(LOGLEVEL.DEFAULT, "[HighGroundFlag] Result(%s) me.Y(%s) target.Y(%s) heightDiff(%s) HighGroundThreshold(%s)", GameHelpers.Math.GetHighGroundFlag(source, target.WorldPos), source[2], target.WorldPos[2], source[2] - target.WorldPos[2], Ext.ExtraData.HighGroundThreshold)
 					end
 				end, "Print HighGroundFlag", true, true, false, true, characterTargetHandle) ]]
-				local targetID =  GameHelpers.TryGetObject(characterTargetHandle).NetID
-				local sourceID = Client:GetCharacter().NetID
+				local target = GameHelpers.GetCharacter(characterTargetHandle)
+				local targetID =  target.NetID
+				local player = Client:GetCharacter()
+				local sourceID = player and player.NetID
+				local isInCombat = target:GetStatus("COMBAT") or player:GetStatus("COMBAT")
 				if targetID ~= sourceID then
 					e.ContextMenu:AddBuiltinEntry("LLCM_MakeHostile", function(cm, ui, id, actionID, handle)
 						Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_MakeHostile", Common.JsonStringify({Target=targetID, Source=sourceID}))
 					end, "Make Hostile", true, true, false, true, characterTargetHandle)
-					e.ContextMenu:AddBuiltinEntry("LLCM_StartCombat", function(cm, ui, id, actionID, handle)
-						Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_StartCombat", Common.JsonStringify({Target=targetID, Source=sourceID}))
-					end, "Enter Combat", true, true, false, true, characterTargetHandle)
+					if not isInCombat then
+						e.ContextMenu:AddBuiltinEntry("LLCM_StartCombat", function(cm, ui, id, actionID, handle)
+							Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_StartCombat", Common.JsonStringify({Target=targetID, Source=sourceID}))
+						end, "Enter Combat", true, true, false, true, characterTargetHandle)
+					end
 				end
-				e.ContextMenu:AddBuiltinEntry("LLCM_EndCombat", function(cm, ui, id, actionID, handle)
-					Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_EndCombat", Common.JsonStringify({Target=targetID, Source=sourceID}))
-				end, "End Combat", true, true, false, true, characterTargetHandle)
+				if isInCombat then
+					e.ContextMenu:AddBuiltinEntry("LLCM_EndCombat", function(cm, ui, id, actionID, handle)
+						Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_EndCombat", Common.JsonStringify({Target=targetID, Source=sourceID}))
+					end, "End Combat", true, true, false, true, characterTargetHandle)
+				end
 			end
 		end
 	end)

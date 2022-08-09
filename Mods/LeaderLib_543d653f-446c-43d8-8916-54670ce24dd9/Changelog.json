@@ -6,6 +6,17 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.26.3",
+			"Changes": [
+				"Fixed an issue where talent tooltips could potentially crash when delayed.",
+				"API Changes:",
+				"\t• SKILLSTATE.LEARNED events now fire when a skill is unmemorized and is removed (unlearned)",
+				"\t• The base leave action projectile skills now have some default forking conditions",
+				"\t• Fetching an object by GUID is now skipped if that GUID is a null GUID value (avoids some extender warning text).",
+				"\t• Added new developer commands when right clicking characters: Make Hostile, Enter Combat, Exit Combat."
+			]
+		},
+		{
 			"Version": "1.7.26.2",
 			"Changes": [
 				"Fixed an issue where status tooltips may have stopped showing on hover, if the tooltip request was getting spammed (statuses with durations).",

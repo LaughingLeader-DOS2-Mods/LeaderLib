@@ -230,6 +230,9 @@ function TranslatedString:ReplacePlaceholders(...)
 			end
 		end
 	end
+	if self.AutoReplacePlaceholders then
+		return GameHelpers.Tooltip.ReplacePlaceholders(str)
+	end
 	return str
 end
 

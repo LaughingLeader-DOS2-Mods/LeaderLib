@@ -889,6 +889,38 @@ function GameHelpers.Character.GetEquipmentOnEquipStatuses(character, inDictiona
 	return entries
 end
 
+---Check if equipped items have a skill, or table of skills, or dictionary of skills.
+---@param character CharacterParam
+---@param skills string|string[]|table<string,boolean>
+---@return boolean
+function GameHelpers.Character.EquipmentHasSkill(character, skills)
+	local char = GameHelpers.GetCharacter(character)
+    fassert(char ~= nil, "'%s' is not a valid character", character)
+	local skillsDict = skills
+	local t = type(skills)
+	if t == "string" then
+		---@cast skills string
+		skillsDict = {[skills] = true}
+	elseif t == "table" then
+		---@cast skills table
+		if #skills then
+			skillsDict = {}
+			for _,v in pairs(skills) do
+				skillsDict[v] = true
+			end
+		end
+	end
+	---@cast skillsDict table<string,boolean>
+	for item in GameHelpers.Character.GetEquipment(character) do
+		for id,b in pairs(GameHelpers.Item.GetEquippedSkills(item)) do
+			if skillsDict[id] then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 ---Get a character's mainhand and offhand item.
 ---@param character CharacterParam
 ---@return EsvItem|EclItem|nil mainhand

@@ -927,6 +927,29 @@ function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableO
     return skills,itemParams
 end
 
+---Get all the skills that an item grants when equipped in a dictionary-format table.
+---@param item ItemParam
+---@return table<string,boolean> skills
+function GameHelpers.Item.GetEquippedSkills(item)
+	local skills = {}
+    item = GameHelpers.GetItem(item)
+    if item and item.Stats then
+        if not StringHelpers.IsNullOrEmpty(item.Stats.Skills) then
+            for _,v in pairs(StringHelpers.Split(item.Stats.Skills, ";")) do
+                skills[v] = true
+            end
+        end
+        for _,v in pairs(item.Stats.DynamicStats) do
+            if not StringHelpers.IsNullOrEmpty(v.Skills) then
+                for _,v in pairs(StringHelpers.Split(v.Skills, ";")) do
+                    skills[v] = true
+                end
+            end
+        end
+    end
+    return skills
+end
+
 ---@param item ItemParam
 ---@return string
 function GameHelpers.Item.GetItemStat(item)

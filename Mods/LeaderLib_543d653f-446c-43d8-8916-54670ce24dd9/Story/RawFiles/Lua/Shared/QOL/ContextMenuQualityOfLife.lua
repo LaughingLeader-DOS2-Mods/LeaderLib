@@ -79,6 +79,9 @@ if isClient then
 					if serverData.Boss then
 						existingEntry.Boss = true
 					end
+					if serverData.Faction then
+						existingEntry.Faction = serverData.Faction
+					end
 				end
 
 				existingEntry.RootTemplateName = obj.RootTemplate.Name
@@ -121,11 +124,10 @@ if isClient then
 						hoverType = "Item"
 					end
 				end
-				if StringHelpers.IsNullOrEmpty(target.MyGuid) then
-					Ext.PostMessageToServer("LeaderLib_ContextMenu_RequestUUID", Common.JsonStringify({NetID=target.NetID, Type=hoverType}))
-				else
+				if not StringHelpers.IsNullOrEmpty(target.MyGuid) then
 					NETID_TO_UUID[hoverType][target.NetID] = target.MyGuid
 				end
+				Ext.PostMessageToServer("LeaderLib_ContextMenu_RequestUUID", Common.JsonStringify({NetID=target.NetID, Type=hoverType}))
 				contextMenu:AddBuiltinEntry(id, function(contextMenu, ui, id, actionID, netid)
 					SaveInfoToFile(netid, hoverType)
 				end, displayName, true, true, false, true, target.NetID)
@@ -246,6 +248,7 @@ if isClient then
 				Template = data.Template,
 				Temporary = data.Temporary,
 				Boss = data.Boss,
+				Faction = data.Faction,
 			}
 		end
 	end)
@@ -261,11 +264,12 @@ else
 					UUID = object.MyGuid,
 					Type = data.Type,
 					Rotation={GetRotation(object.MyGuid)},
-					Template = StringHelpers.GetUUID(GetTemplate(object.MyGuid))
+					Template = StringHelpers.GetUUID(GetTemplate(object.MyGuid)),
 				}
 				if ObjectIsCharacter(object.MyGuid) == 1 then
 					data.Boss = IsBoss(object.MyGuid) == 1 and true or false
 					data.Temporary = object.Temporary
+					data.Faction = GetFaction(object.MyGuid)
 				end
 				GameHelpers.Net.PostToUser(userid, "LeaderLib_ContextMenu_SetUUID", data)
 			end

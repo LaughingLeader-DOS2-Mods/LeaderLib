@@ -51,3 +51,5 @@ Mods.LeaderLib = {
 ---@alias ObjectHandle ComponentHandle
 
 ---@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter):string
+
+---@alias OriginsCampaignRegion "TUT_Tutorial_A"|"FJ_FortJoy_Main"|"LV_HoE_Main"|"RC_Main"|"CoS_Main"|"ARX_Main"|"ARX_Endgame"

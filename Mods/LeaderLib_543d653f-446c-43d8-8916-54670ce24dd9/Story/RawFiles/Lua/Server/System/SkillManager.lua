@@ -505,6 +505,7 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
 		end
 		if (_enabledSkills[skill] or _enabledSkills.All) then
+			local sourceItem = _GetSkillSourceItem(character, skill)
 			Events.OnSkillState:Invoke({
 				Character = character,
 				CharacterGUID = character.MyGuid,
@@ -512,8 +513,19 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 				State = SKILL_STATE.UNMEMORIZED,
 				Data = learned,
 				DataType = "boolean",
-				SourceItem = _GetSkillSourceItem(character, skill)
+				SourceItem = sourceItem
 			})
+			if not learned then
+				Events.OnSkillState:Invoke({
+					Character = character,
+					CharacterGUID = character.MyGuid,
+					Skill = skill,
+					State = SKILL_STATE.LEARNED,
+					Data = learned,
+					DataType = "boolean",
+					SourceItem = sourceItem
+				})
+			end
 		end
 	end
 end)

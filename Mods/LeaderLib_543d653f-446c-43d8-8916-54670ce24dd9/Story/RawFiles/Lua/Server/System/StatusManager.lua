@@ -862,20 +862,24 @@ RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targ
 
 		if target and source then 
 			local canRedirect = redirectStatusId[statusID] or redirectStatusType[statusType]
-			if canRedirect and source.Summon and _IsValidHandle(source.OwnerHandle) then
-				if ObjectIsItem(sourceGUID) == 1 then
-					--Set the source of statuses summoned items apply to their caster owner character.
-					status.StatusSourceHandle = source.OwnerHandle
-					source = _GetObject(source.OwnerHandle)
-					sourceGUID = GameHelpers.GetUUID(source)
+			if canRedirect and source.Summon and _IsValidHandle(source.OwnerHandle) and GameHelpers.Ext.ObjectIsItem(source) then
+				--Set the source of statuses summoned items apply to their caster owner character.
+				local owner =  _GetObject(source.OwnerHandle)
+				if owner then
+					status.StatusSourceHandle = owner.Handle
+					source = owner
+					sourceGUID = owner.MyGuid
 				end
 			elseif source:HasTag("LeaderLib_Dummy") then
 				--Redirect the source of statuses applied by dummies to their owners
 				local owner = GetVarObject(sourceGUID, "LeaderLib_Dummy_Owner")
 				if not StringHelpers.IsNullOrEmpty(owner) and ObjectExists(owner) == 1 then
-					NRD_StatusSetGuidString(targetGUID, handle, "StatusSourceHandle", owner)
-					source = _GetObject(owner)
-					sourceGUID = GameHelpers.GetUUID(owner)
+					owner = _GetObject(owner)
+					if owner then
+						status.StatusSourceHandle = owner.Handle
+						source = owner
+						sourceGUID = owner.MyGuid
+					end
 				end
 			end
 		end

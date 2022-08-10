@@ -141,8 +141,8 @@ Ext.Events.SessionLoaded:Subscribe(function (e)
 end)
 
 Events.BeforeLuaReset:Subscribe(function (e)
-	Ext.ExtraData["End Of Combat SightRange Multiplier"] = settings.Global.Variables.CombatSightRangeMultiplier.Default
-	Ext.ExtraData.CarryWeightBase = settings.Global.Variables.CarryWeightBase.Default
+	Ext.ExtraData["End Of Combat SightRange Multiplier"] = 2.5
+	Ext.ExtraData.CarryWeightBase = 0
 end)
 
 settings.Global.Variables.CombatSightRangeMultiplier:Subscribe(function (e)
@@ -222,10 +222,10 @@ if Ext.IsServer() then
 		end
 	end)
 	settings.Global.Flags.LeaderLib_AutoIdentifyItemsEnabled:Subscribe(function(e)
-		local switches = Ext.Utils.GetGlobalSwitches()
-		if switches then
-			switches.AutoIdentifyItems = e.Value == true
-		end
+		-- local switches = Ext.Utils.GetGlobalSwitches()
+		-- if switches then
+		-- 	switches.AutoIdentifyItems = e.Value == true
+		-- end
 		if e.Value then
 			fprint(LOGLEVEL.TRACE, "[LeaderLib] Identifying the party's items...")
 			local total = 0
@@ -238,13 +238,11 @@ if Ext.IsServer() then
 end
 
 --Making sure autosaves are enabled in the options if this flag is enabled
-if Ext.Version() >= 56 then
-	settings.Global.Flags.LeaderLib_AutosavingEnabled:Subscribe(function(e)
-		if e.Value then
-			local options = Ext.Utils.GetGlobalSwitches()
-			if options then
-				options.CanAutoSave = true
-			end
+settings.Global.Flags.LeaderLib_AutosavingEnabled:Subscribe(function(e)
+	if e.Value then
+		local options = Ext.Utils.GetGlobalSwitches()
+		if options then
+			options.CanAutoSave = true
 		end
-	end)
-end
+	end
+end)

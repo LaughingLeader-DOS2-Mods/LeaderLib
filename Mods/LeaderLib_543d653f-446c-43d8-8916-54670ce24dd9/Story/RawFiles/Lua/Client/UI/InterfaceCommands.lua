@@ -32,7 +32,7 @@ local testSelectionArray = {
 ---@param displayTime number The duration the text is visible for.
 ---@param isItem boolean
 function UI.StatusText(target, text, displayTime, isItem)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/overhead.swf")
+	local ui = Ext.UI.GetByPath("Public/Game/GUI/overhead.swf")
 	if ui then
 		local handle = nil
 		if isItem == true then
@@ -104,7 +104,7 @@ local specialMessageBoxOpen = false
 
 --Experimental
 function UI.DisplayMessageBox(text, title, popupType)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/msgBox.swf")
+	local ui = Ext.UI.GetByPath("Public/Game/GUI/msgBox.swf")
 	if ui then
 		ui:Hide()
 		if popupType <= 1 then
@@ -249,15 +249,12 @@ Ext.RegisterNetListener("LeaderLib_AddTextToCombatLog", function(call, dataStr)
 		local filter = data.Filter or 0
 		local text = data.Text or ""
 		if text ~= nil then
-			if not Vars.ControllerEnabled then
-				local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
-				if ui then
-					ui:Invoke("addTextToTab", filter, text)
-				end
-			else
-				local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog_c.swf")
-				if ui then
-					ui:Invoke("addTextEntry", text, false)
+			local this = CombatLog.Root
+			if this then
+				if not Vars.ControllerEnabled then
+					this.addTextToTab(filter, text)
+				else
+					this.addTextEntry(text, false)
 				end
 			end
 		end
@@ -265,16 +262,12 @@ Ext.RegisterNetListener("LeaderLib_AddTextToCombatLog", function(call, dataStr)
 end)
 
 Ext.RegisterNetListener("LeaderLib_ClearCombatLog", function(call, filterStr)
-	if not Vars.ControllerEnabled then
-		local filter = tonumber(filterStr)
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
-		if ui then
-			ui:Invoke("clearFilter", math.tointeger(filter))
-		end
-	else
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog_c.swf")
-		if ui then
-			ui:Invoke("clearAll")
+	local this = CombatLog.Root
+	if this then
+		if not Vars.ControllerEnabled then
+			this.clearFilter(Ext.Round(tonumber(filterStr)))
+		else
+			this.clearAll()
 		end
 	end
 end)
@@ -282,16 +275,22 @@ end)
 Ext.RegisterNetListener("LeaderLib_UpdateStatusTurns", function(call, dataStr)
 	local data = Common.JsonParse(dataStr)
 	if data.IsPlayer then
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/playerInfo.swf")
+		local ui = Ext.UI.GetByPath("Public/Game/GUI/playerInfo.swf")
 		if ui then
-			--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
-			ui:Invoke("setStatus", false, Ext.HandleToDouble(data.ObjectHandle), Ext.HandleToDouble(data.StatusHandle), -1, data.Turns, data.Cooldown or 0.0, data.Tooltip or "")
+			local this = ui:GetRoot()
+			if this then
+				--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
+				this.setStatus(false, Ext.HandleToDouble(data.ObjectHandle), Ext.HandleToDouble(data.StatusHandle), -1, data.Turns, data.Cooldown or 0.0, data.Tooltip or "")
+			end
 		end
 	elseif data.IsEnemy then
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/enemyHealthBar.swf")
+		local ui = Ext.UI.GetByPath("Public/Game/GUI/enemyHealthBar.swf")
 		if ui then
-			--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
-			ui:Invoke("setStatus", false, Ext.HandleToDouble(data.Params.ObjectHandle), Ext.HandleToDouble(data.StatusHandle), -1, data.Turns, data.Cooldown or 0.0, data.Tooltip or "")
+			local this = ui:GetRoot()
+			if this then
+				--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
+				this.setStatus(false, Ext.HandleToDouble(data.Params.ObjectHandle), Ext.HandleToDouble(data.StatusHandle), -1, data.Turns, data.Cooldown or 0.0, data.Tooltip or "")
+			end
 		end
 	end
 end)

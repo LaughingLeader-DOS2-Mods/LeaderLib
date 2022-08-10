@@ -34,10 +34,3 @@ function UI.IsInArray(ui, arrayName, id, start, offset)
 	end
 	return false
 end
-
-local function AddToCombatLog(text)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
-	if ui ~= nil then
-		ui:Invoke("addTextToTab", 0, text)
-	end
-end

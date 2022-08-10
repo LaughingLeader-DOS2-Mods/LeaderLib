@@ -177,10 +177,8 @@ function OnLuaReset()
 	Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled == true)
 end
 
-if Ext.Version() >= 56 then
-	Ext.Events.ResetCompleted:Subscribe(function ()
-		if Ext.OsirisIsCallable() and GlobalGetFlag("LeaderLib_ResettingLua") == 0 then
-			OnLuaReset()
-		end
-	end)
-end
+Ext.Events.ResetCompleted:Subscribe(function ()
+	if Ext.OsirisIsCallable() and GlobalGetFlag("LeaderLib_ResettingLua") == 0 then
+		OnLuaReset()
+	end
+end)

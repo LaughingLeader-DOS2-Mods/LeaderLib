@@ -638,7 +638,6 @@ package
 			// this.screenScaleHelper.tabEnabled = false;
 			// this.screenScaleHelper.tabChildren = false;
 
-			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
 			this.contextMenuMC.addEventListener(MouseEvent.MOUSE_OVER, this.onContextMenuMouseOver, false);
 			this.contextMenuMC.addEventListener(MouseEvent.ROLL_OUT, this.onContextMenuMouseOut, false);
 			

@@ -6,6 +6,17 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.26.4",
+			"Changes": [
+				"Fixed an issue preventing combat if 'Auto-Identify Items' was enabled. Turns out the game property 'AutoIdentifyItems' actually prevents combat? Really weird.",
+				"Made the combat sight range setting slider increment by 0.5, so it's possible to reset it to default (2.5).",
+				"API Changes:",
+				"\t• Added GameHelpers.Character.EquipmentHasSkill and GameHelpers.Item.GetEquippedSkills.",
+				"\t• Classes.UIWrappers now has a Register subtable, with function that pass the event object.",
+				"\t• Added Features.FixTooltipEmptySkillProperties, for automatically removing empty skill property text from skill tooltips."
+			]
+		},
+		{
 			"Version": "1.7.26.3",
 			"Changes": [
 				"Fixed an issue where talent tooltips could potentially crash when delayed.",

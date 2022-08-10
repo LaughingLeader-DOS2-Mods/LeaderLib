@@ -46,7 +46,7 @@ function Changelog:AddModEntry(modName, changelogText, tooltip)
 	lastId = lastId + 1
 end
 
-_journal:RegisterInvokeListener("updateJournal", function (self, ui, event)
+_journal:RegisterInvokeListener("updateJournal", function (self, e, ui, event)
 	--Rename the TUTORIAL button to INFO
 
 	local this = ui:GetRoot()
@@ -135,11 +135,11 @@ local function OnUpdateDone(ui)
 	end
 end
 
-_journal:RegisterCallListener("tutorialUpdateDone", function (self, ui, event)
+_journal:RegisterCallListener("tutorialUpdateDone", function (self, e, ui, event)
 	OnUpdateDone(ui)
 end, "Before", "Keyboard")
 
-_journal:RegisterInvokeListener("updateTutorials", function (self, ui, event)
+_journal:RegisterInvokeListener("updateTutorials", function (self, e, ui, event)
 	local this = ui:GetRoot()
 	if this and this.add_tutEntry then
 		--this.add_tutEntry[val1].toUpperCase(),this.add_tutEntry[val1 + 1],this.add_tutEntry[val1 + 2],this.add_tutEntry[val1 + 3]

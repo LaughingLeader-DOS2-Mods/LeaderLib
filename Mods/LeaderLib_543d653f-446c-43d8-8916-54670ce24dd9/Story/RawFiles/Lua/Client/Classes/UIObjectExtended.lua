@@ -5,11 +5,11 @@ local _EXTVERSION = Ext.Version()
 ---@field Layer integer
 ---@field SwfPath string
 ---@field DefaultUIFlags integer|nil
----@field SetPosition fun(self:UIObjectExtended):void
+---@field SetPosition fun(self:UIObjectExtended)
 ---@field ShouldBeVisible fun(self:UIObjectExtended):boolean
----@field OnVisibilityChanged fun(self:UIObjectExtended, lastVisible:boolean, nextVisible:boolean):void
----@field OnInitialized fun(self:UIObjectExtended, instance:UIObject):void
----@field OnTick fun(self:UIObjectExtended, e:GameTime):void
+---@field OnVisibilityChanged fun(self:UIObjectExtended, lastVisible:boolean, nextVisible:boolean)
+---@field OnInitialized fun(self:UIObjectExtended, instance:UIObject)
+---@field OnTick fun(self:UIObjectExtended, e:GameTime)
 
 ---@class UIObjectExtended:UIObjectExtendedSettings
 ---@field Instance UIObject

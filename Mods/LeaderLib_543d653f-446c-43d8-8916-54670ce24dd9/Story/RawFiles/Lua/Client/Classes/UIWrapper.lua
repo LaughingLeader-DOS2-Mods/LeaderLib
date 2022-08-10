@@ -1,3 +1,15 @@
+local _PrintError = Ext.Utils.PrintError
+local xpcall = xpcall
+local _debugtraceback = debug.traceback
+
+---@type LeaderLibUIWrapper[]
+local _uiVisibilityArray = {}
+
+---@type table<integer,LeaderLibUIWrapper[]>
+local _uiTypeWrappers = {}
+---@type table<string,LeaderLibUIWrapper[]>
+local _uiPathWrappers = {}
+
 ---@alias UIListenerContext string|"Before"|"After"
 
 ---@class UIWrapperCallbackEntry
@@ -21,14 +33,12 @@ local UIWrapper = {
 		---@type table<string, UIWrapperCallbackEntry[]>
 		Invoke = {},
 		---@type table<string, UIWrapperCallbackEntry[]>
-		Call = {}
-	}
+		Call = {},
+		---@type fun(self:LeaderLibUIWrapper, visible:boolean)[]
+		Visibility = {},
+	},
+	LastVisible = false
 }
-
-local _EXTVERSION = Ext.Version()
-
----@type table<integer,LeaderLibUIWrapper[]>
-local _uiWrappers = {}
 
 ---@return LeaderLibUIWrapper
 local function CreateWrapper(...)
@@ -63,12 +73,7 @@ local function SetMeta(this)
 			elseif k == "Visible" then
 				local ui = UIWrapper.GetInstance(this)
 				if ui then
-					if _EXTVERSION >= 56 then
-						---@diagnostic disable-next-line undefined-field
-						return Common.TableHasValue(ui.Flags, "OF_Visible")
-					else
-						return true
-					end
+					return Common.TableHasValue(ui.Flags, "OF_Visible")
 				end
 				return false
 			end
@@ -76,66 +81,67 @@ local function SetMeta(this)
 	})
 end
 
+local function _NewWrapper(params)
+	local this = {
+		Name = "",
+		ID = -1,
+		Path = "",
+		ControllerID = -1,
+		ControllerPath = "",
+		IsControllerSupported = false,
+		Callbacks = {
+			---@type table<string, UIWrapperCallbackEntry[]>
+			Invoke = {},
+			---@type table<string, UIWrapperCallbackEntry[]>
+			Call = {},
+			---@type fun(self:LeaderLibUIWrapper, visible:boolean)[]
+			Visibility = {},
+		},
+		_EnabledVisibilityListener = false,
+		LastVisible = false,
+	}
+	if params then
+		for k,v in pairs(params) do
+			this[k] = v
+		end
+	end
+	return this
+end
+
+local function _AppendWrapper(baseTable, id, this)
+	if baseTable[id] == nil then
+		baseTable[id] = {}
+	end
+	local wrappers = baseTable[id]
+	wrappers[#wrappers+1] = this
+end
+
 ---@param id integer
 ---@param params LeaderLibUIWrapper|nil
 ---@return LeaderLibUIWrapper
 function UIWrapper:CreateFromType(id, params)
-	local this = {
-		ID = id,
-		Name = Data.UITypeToName[id] or "",
-		Path = "",
-		Callbacks = {
-			Invoke = {},
-			Call = {}
-		}
-	}
-	if params then
-		for k,v in pairs(params) do
-			this[k] = v
-		end
-	end
+	local this = _NewWrapper(params)
+	this.ID = id
 	SetMeta(this)
-	local ui = Ext.GetUIByType(id) or Ext.GetUIByType(this.ControllerID)
+	local ui = UIWrapper.GetInstance(this)
 	if ui then
 		ui:CaptureExternalInterfaceCalls()
 		ui:CaptureInvokes()
 	end
-	if _uiWrappers[id] == nil then
-		_uiWrappers[id] = {}
-	end
+	_AppendWrapper(_uiTypeWrappers, id, this)
 	if this.ControllerID and this.ControllerID > -1 then
-		if _uiWrappers[this.ControllerID] == nil then
-			_uiWrappers[this.ControllerID] = {}
-		end
-		table.insert(_uiWrappers[this.ControllerID], this)
+		_AppendWrapper(_uiTypeWrappers, this.ControllerID, this)
 	end
-	table.insert(_uiWrappers[id], this)
 	return this
 end
 
-local function CanInvokeCallback(data, uiType, eventType)
-	return data.Type == uiType and data.Context == eventType
-end
-
 ---@param path string
----@param params LeaderLibUIWrapper
+---@param params LeaderLibUIWrapper|nil
 ---@return LeaderLibUIWrapper
 function UIWrapper:CreateFromPath(path, params)
-	local this = {
-		ID = -1,
-		Name = "",
-		Path = path,
-		Callbacks = {
-			Invoke = {},
-			Call = {}
-		}
-	}
-	if params then
-		for k,v in pairs(params) do
-			this[k] = v
-		end
-	end
-	local ui = Ext.GetBuiltinUI(path)
+	local this = _NewWrapper(params)
+	this.Path = path
+	local ui = UIWrapper.GetInstance(this)
 	if ui then
 		this.ID = ui:GetTypeId()
 		this.Name = Data.UITypeToName[this.ID]
@@ -143,30 +149,41 @@ function UIWrapper:CreateFromPath(path, params)
 		ui:CaptureInvokes()
 	end
 	SetMeta(this)
+	_AppendWrapper(_uiPathWrappers, path, this)
+	if not StringHelpers.IsNullOrEmpty(this.ControllerPath) then
+		_AppendWrapper(_uiPathWrappers, this.ControllerPath, this)
+	end
 	return this
 end
 
----@alias UIWrapperEventContextType string|'"Keyboard"'|'"Controller"'|'"All"'
----@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, ui:UIObject, event:string, ...:SerializableValue)
+local function CanInvokeCallback(data, eventType)
+	if data.UIContext then
+		local controllerEnabled = Vars.ControllerEnabled
+		if data.UIContext == "Keyboard" and controllerEnabled then
+			return false
+		elseif data.UIContext == "Controller" and not controllerEnabled then
+			return false
+		end
+	end
+	return data.Context == eventType
+end
+
+---@alias UIWrapperEventContextType string|"Keyboard"|"Controller"|"All"
+---@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:SerializableValue)
 
 ---@param callbackType string
 ---@param e EclLuaUICallEventParams
----@param ui UIObject
----@param event string
----@param eventType UICallbackEventType
----@param args table
-function UIWrapper:InvokeCallbacks(callbackType, e, ui, event, eventType, args)
+function UIWrapper:InvokeCallbacks(callbackType, e)
 	if not self.Callbacks[callbackType] then
 		error(string.format("Invalid callback type %s", callbackType))
 	end
-	local typeId = ui:GetTypeId()
-	local callbacks = self.Callbacks[callbackType][event]
+	local callbacks = self.Callbacks[callbackType][e.Function]
 	if callbacks then
 		local len = #callbacks
 		for i=1,len do
 			local callbackData = callbacks[i]
-			if CanInvokeCallback(callbackData, typeId, eventType) then
-				local result = {xpcall(callbackData.Callback, debug.traceback, self, ui, event, table.unpack(args))}
+			if CanInvokeCallback(callbackData, e.When) then
+				local result = {xpcall(callbackData.Callback, debug.traceback, self, e, e.UI, e.Function, table.unpack(e.Args))}
 				if result[1] then
 					local b,preventAction,stopPropagation = table.unpack(result)
 					if preventAction then
@@ -176,7 +193,7 @@ function UIWrapper:InvokeCallbacks(callbackType, e, ui, event, eventType, args)
 						e:StopPropagation()
 					end
 				else
-					Ext.PrintError(result[2])
+					_PrintError(result[2])
 				end
 			end
 		end
@@ -188,40 +205,14 @@ end
 ---@param eventType UICallbackEventType|nil
 ---@param uiContext UIWrapperEventContextType|nil
 function UIWrapper:RegisterInvokeListener(event, callback, eventType, uiContext)
-	if self.ID ~= -1 and uiContext ~= "Controller" then
-		if self.Callbacks.Invoke[event] == nil then
-			self.Callbacks.Invoke[event] = {}
-		end
-		table.insert(self.Callbacks.Invoke[event], {
-			Callback = callback,
-			Type = self.ID,
-			Context = eventType or "After"
-		})
-		-- Ext.RegisterUITypeInvokeListener(self.ID, event, function(...)
-		-- 	local b,err = xpcall(callback, debug.traceback, self, ...)
-		-- 	if not b then
-		-- 		fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):InvokeListener] Error:%s", self.ID, err)
-		-- 		error(err, 2)
-		-- 	end
-		-- end, eventType)
+	if self.Callbacks.Invoke[event] == nil then
+		self.Callbacks.Invoke[event] = {}
 	end
-	if self.ControllerID ~= -1 and (uiContext == "Controller" or uiContext == "All") then
-		if self.Callbacks.Invoke[event] == nil then
-			self.Callbacks.Invoke[event] = {}
-		end
-		table.insert(self.Callbacks.Invoke[event], {
-			Callback = callback,
-			Type = self.ControllerID,
-			Context = eventType or "After"
-		})
-		-- Ext.RegisterUITypeInvokeListener(self.ControllerID, event, function(...)
-		-- 	local b,err = xpcall(callback, debug.traceback, self, ...)
-		-- 	if not b then
-		-- 		fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):InvokeListener] Error:%s", self.ControllerID, err)
-		-- 		error(err, 2)
-		-- 	end
-		-- end, eventType)
-	end
+	table.insert(self.Callbacks.Invoke[event], {
+		Callback = callback,
+		Context = eventType or "After",
+		UIContext = uiContext,
+	})
 end
 
 ---@param event string The ExternalInterface.call name.
@@ -229,65 +220,55 @@ end
 ---@param eventType UICallbackEventType|nil Defaults to "After"
 ---@param uiContext UIWrapperEventContextType|nil
 function UIWrapper:RegisterCallListener(event, callback, eventType, uiContext)
-	if self.ID ~= -1 and uiContext ~= "Controller" then
-		if self.Callbacks.Call[event] == nil then
-			self.Callbacks.Call[event] = {}
-		end
-		table.insert(self.Callbacks.Call[event], {
-			Callback = callback,
-			Type = self.ID,
-			Context = eventType or "After"
-		})
-		-- Ext.RegisterUITypeCall(self.ID, event, function(...)
-		-- 	local b,err = xpcall(callback, debug.traceback, self, ...)
-		-- 	if not b then
-		-- 		fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):CallListener] Error:%s", self.ID, err)
-		-- 		error(err, 2)
-		-- 	end
-		-- end, eventType)
+	if self.Callbacks.Call[event] == nil then
+		self.Callbacks.Call[event] = {}
 	end
-	if self.ControllerID ~= -1 and (uiContext == "Controller" or uiContext == "All") then
-		if self.Callbacks.Call[event] == nil then
-			self.Callbacks.Call[event] = {}
-		end
-		table.insert(self.Callbacks.Call[event], {
-			Callback = callback,
-			Type = self.ControllerID,
-			Context = eventType or "After"
-		})
-		-- Ext.RegisterUITypeCall(self.ControllerID, event, function(...)
-		-- 	local b,err = xpcall(callback, debug.traceback, self, ...)
-		-- 	if not b then
-		-- 		fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):CallListener] Error:%s", self.ControllerID, err)
-		-- 		error(err, 2)
-		-- 	end
-		-- end, eventType)
+	table.insert(self.Callbacks.Call[event], {
+		Callback = callback,
+		Context = eventType or "After",
+		UIContext = uiContext,
+	})
+end
+
+---Call a function when the visibility of this UI changes. This also enabled visibility checks via a ticker listener.
+---@param callback fun(self:LeaderLibUIWrapper, visible:boolean)
+function UIWrapper:RegisterVisibilityChangedListener(callback)
+	self.Callbacks.Visibility[#self.Callbacks.Visibility+1] = callback
+	if not self._EnabledVisibilityListener then
+		self._EnabledVisibilityListener = true
+		_uiVisibilityArray[#_uiVisibilityArray+1] = self
 	end
 end
 
 ---@return UIObject|nil
 function UIWrapper:GetInstance()
-	if self.IsControllerSupported and Vars.ControllerEnabled then
-		if self.ControllerID ~= -1 then
-			self.Name = Data.UITypeToName[self.ControllerID]
-			return Ext.GetUIByType(self.ControllerID)
-		elseif not StringHelpers.IsNullOrWhitespace(self.ControllerPath) then
-			local ui = Ext.GetBuiltinUI(self.ControllerPath)
+	if not Vars.ControllerEnabled then
+		if not StringHelpers.IsNullOrEmpty(self.Path) then
+			local ui = Ext.UI.GetByPath(self.Path)
 			if ui then
-				self.ControllerID = ui:GetTypeId()
-				self.Name = Data.UITypeToName[self.ControllerID]
+				self.Name = Data.UITypeToName[ui.Type]
+				return ui
+			end
+		end
+		if self.ID > -1 then
+			local ui = Ext.UI.GetByType(self.ID)
+			if ui then
+				self.Name = Data.UITypeToName[ui.Type]
 				return ui
 			end
 		end
 	else
-		if self.ID ~= -1 then
-			--self.Name = Data.UITypeToName[self.ID]
-			return Ext.GetUIByType(self.ID)
-		elseif not StringHelpers.IsNullOrWhitespace(self.Path) then
-			local ui = Ext.GetBuiltinUI(self.Path)
+		if not StringHelpers.IsNullOrEmpty(self.ControllerPath) then
+			local ui = Ext.UI.GetByPath(self.ControllerPath)
 			if ui then
-				self.ID = ui:GetTypeId()
-				self.Name = Data.UITypeToName[self.ID]
+				self.Name = Data.UITypeToName[ui.Type]
+				return ui
+			end
+		end
+		if self.ControllerID > -1 then
+			local ui = Ext.UI.GetByType(self.ControllerID)
+			if ui then
+				self.Name = Data.UITypeToName[ui.Type]
 				return ui
 			end
 		end
@@ -321,7 +302,7 @@ function UIWrapper:Invoke(method, ...)
 		if func then
 			local b,err = xpcall(func, debug.traceback, ...)
 			if not b then
-				Ext.PrintError(err)
+				_PrintError(err)
 			end
 		else
 			fprint(LOGLEVEL.ERROR, "[UIWrapper:%s] Flash method (%s) does not exist!", self.Name, method)
@@ -329,28 +310,80 @@ function UIWrapper:Invoke(method, ...)
 	end
 end
 
-if _EXTVERSION >= 56 then
-	---@diagnostic disable-next-line undefined-field
-	Ext.Events.UIInvoke:Subscribe(function (e)
-		local wrappers = _uiWrappers[e.UI.Type]
-		if wrappers then
-			local len = #wrappers
-			for i=1,len do
-				wrappers[i]:InvokeCallbacks("Invoke", e, e.UI, e.Function, e.When, e.Args)
-			end
-		end
-	end)
+local _sfind = string.find
 
-	---@diagnostic disable-next-line undefined-field
-	Ext.Events.UICall:Subscribe(function (e)
-		local wrappers = _uiWrappers[e.UI.Type]
-		if wrappers then
-			local len = #wrappers
-			for i=1,len do
-				wrappers[i]:InvokeCallbacks("Call", e, e.UI, e.Function, e.When, e.Args)
-			end
-		end
-	end)
+local _cachedShortPath = {}
+local function _GetUIPath(path)
+	local _,_,shortPath = _sfind(path, "(Public/.+)")
+	if shortPath then
+		_cachedShortPath[path] = shortPath
+	end
+	return shortPath
 end
 
+
+Ext.Events.UIInvoke:Subscribe(function (e)
+	local wrappers = _uiTypeWrappers[e.UI.Type]
+	if wrappers then
+		local len = #wrappers
+		for i=1,len do
+			wrappers[i]:InvokeCallbacks("Invoke", e)
+		end
+	end
+	local path = _cachedShortPath[e.UI.Path] or _GetUIPath(e.UI.Path)
+	local wrappers = _uiPathWrappers[path]
+	if wrappers then
+		local len = #wrappers
+		for i=1,len do
+			wrappers[i]:InvokeCallbacks("Invoke", e)
+		end
+	end
+end)
+
+Ext.Events.UICall:Subscribe(function (e)
+	local wrappers = _uiTypeWrappers[e.UI.Type]
+	if wrappers then
+		local len = #wrappers
+		for i=1,len do
+			wrappers[i]:InvokeCallbacks("Call", e)
+		end
+	end
+	local path = _cachedShortPath[e.UI.Path] or _GetUIPath(e.UI.Path)
+	local wrappers = _uiPathWrappers[path]
+	if wrappers then
+		local len = #wrappers
+		for i=1,len do
+			wrappers[i]:InvokeCallbacks("Call", e)
+		end
+	end
+end)
+
+Ext.Events.Tick:Subscribe(function (e)
+	local length = #_uiVisibilityArray
+	for i=1,length do
+		local wrapper = _uiVisibilityArray[i]
+		local visible = wrapper.Visible
+		if visible ~= wrapper.LastVisible then
+			print(wrapper.Path, visible, wrapper.LastVisible)
+			local callbacks = wrapper.Callbacks.Visibility
+			if callbacks then
+				local len = #callbacks
+				for j=1,len do
+					local b,err = xpcall(callbacks[j], _debugtraceback, wrapper, visible)
+					if not b then
+						_PrintError(err)
+					end
+				end
+			end
+			wrapper.LastVisible = visible
+		end
+	end
+end)
+
 Classes.UIWrapper = UIWrapper
+
+Ext.Events.UIObjectCreated:Subscribe(function (e)
+	if not StringHelpers.IsNullOrEmpty(e.UI.Path) then
+		_GetUIPath(e.UI.Path)
+	end
+end)

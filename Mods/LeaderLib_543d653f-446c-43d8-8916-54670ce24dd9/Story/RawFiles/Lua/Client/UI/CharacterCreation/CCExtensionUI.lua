@@ -327,7 +327,7 @@ Events.RegionChanged:Subscribe(function (e)
 end)
 
 --CharacterCreation:RegisterInvokeListener("selectOption", function (self, ui, event, selectorId, optId)
-CharacterCreation:RegisterInvokeListener("setPanel", function (self, ui, event, panelId)
+CharacterCreation:RegisterInvokeListener("setPanel", function (self, e, ui, event, panelId)
 	Timer.Cancel("LeaderLib_CC_CheckColors")
 	if panelId == 1 then
 		Timer.StartOneshot("LeaderLib_CC_CheckColors", 10, function (e)

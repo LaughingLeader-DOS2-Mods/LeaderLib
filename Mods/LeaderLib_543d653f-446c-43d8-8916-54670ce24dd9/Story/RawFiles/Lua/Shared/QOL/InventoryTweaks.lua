@@ -34,14 +34,14 @@ if _ISCLIENT then
 
 	local _inventoryWasOpened = false
 
-	PartyInventory:RegisterInvokeListener("setSortBtnTexts", function (self, ui, event, ...)
+	PartyInventory:RegisterInvokeListener("setSortBtnTexts", function (self, e, ui, event, ...)
 		_inventoryWasOpened = true
 		if ShouldUnlockInventories() then
 			UnlockInventories(ui)
 		end
 	end, "After", "Keyboard")
 
-	PartyInventory:RegisterInvokeListener("setPanelTitle", function (self, ui, event, ...)
+	PartyInventory:RegisterInvokeListener("setPanelTitle", function (self, e, ui, event, ...)
 		_inventoryWasOpened = true
 		if ShouldUnlockInventories() then
 			UnlockInventories(ui)
@@ -299,21 +299,21 @@ if _ISCLIENT then
 		Events.GameSettingsChanged:Subscribe(UpdateInventoryFade)
 		Events.LuaReset:Subscribe(UpdateInventoryFade)
 		
-		PartyInventory:RegisterInvokeListener("updateItems", function (self, ui, event, ...)
+		PartyInventory:RegisterInvokeListener("updateItems", function (self, e, ui, event, ...)
 			local settings = GameSettingsManager.GetSettings()
 			if settings.Client.FadeInventoryItems.Enabled then
 				Timer.StartOneshot("LeaderLib_PartyInventory_AdjustItems", 1, function() AdjustSlots(GetInventoryItems, SLOT_SETTINGS.Inventory) end)
 			end
 		end, "After", "Keyboard")
 		
-		ContainerInventory:RegisterInvokeListener("updateItems", function (self, ui, event, ...)
+		ContainerInventory:RegisterInvokeListener("updateItems", function (self, e, ui, event, ...)
 			local settings = GameSettingsManager.GetSettings()
 			if settings.Client.FadeInventoryItems.Enabled then
 				Timer.StartOneshot("LeaderLib_ContainerInventory_AdjustItems", 1, function() AdjustSlots(GetContainerItems, SLOT_SETTINGS.Container) end)
 			end
 		end, "After", "Keyboard")
 
-		Trade:RegisterInvokeListener("updateItems", function (self, ui, event, ...)
+		Trade:RegisterInvokeListener("updateItems", function (self, e, ui, event, ...)
 			local settings = GameSettingsManager.GetSettings()
 			if settings.Client.FadeInventoryItems.Enabled then
 				Timer.StartOneshot("LeaderLib_ContainerInventory_AdjustItems", 1, function() AdjustSlots(GetTradeItems, SLOT_SETTINGS.Trade) end)

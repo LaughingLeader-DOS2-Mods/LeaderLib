@@ -66,7 +66,7 @@ if isClient then
 		}
 	}
 
-	local function MessageBoxButtonPressed(wrapper, ui, call, buttonId, currentDeviceId)
+	local function MessageBoxButtonPressed(wrapper, e, ui, call, buttonId, currentDeviceId)
 		local this = ui:GetRoot()
 		for id,data in pairs(ButtonConfirmations) do
 			if data.IsActive(this) then

@@ -420,16 +420,42 @@ end)
 -- 	end)
 -- end
 
+--[[
+{
+        "ActionPrevented" : false,
+        "CanPreventAction" : false,
+        "Input" :
+        {
+                "Input" :
+                {
+                        "DeviceId" : "Mouse",
+                        "InputId" : "motion_yneg"
+                },
+                "Value" :
+                {
+                        "State" : "Released",
+                        "Value" : 0.0,
+                        "Value2" : 0.0
+                }
+        },
+        "Name" : "RawInput",
+        "PreventAction" : "function: 00007FFC848DCBB0",
+        "StopPropagation" : "function: 00007FFC848DCB80",
+        "Stopped" : false
+}
+]]
 if _EXTVERSION >= 57 then
 	Ext.Events.RawInput:Subscribe(function (e)
-		if e.Input.DeviceId == "Key" then
-			local pressed = e.Input.State == "Pressed"
-			if e.Input.InputId == "lshift" or e.Input.InputId == "rshift" then
+		local device = e.Input.Input
+		local value = e.Input.Value
+		if device.DeviceId == "Key" then
+			local pressed = value.State == "Pressed"
+			if device.InputId == "lshift" or device.InputId == "rshift" then
 				Input.Shift = pressed
 				TooltipExpander.OnKeyPressed(pressed)
-			elseif e.Input.InputId == "lctrl" or e.Input.InputId == "rctrl" then
+			elseif device.InputId == "lctrl" or device.InputId == "rctrl" then
 				Input.Ctrl = pressed
-			elseif e.Input.InputId == "lalt" or e.Input.InputId == "ralt" then
+			elseif device.InputId == "lalt" or device.InputId == "ralt" then
 				Input.Alt = pressed
 			end
 		end

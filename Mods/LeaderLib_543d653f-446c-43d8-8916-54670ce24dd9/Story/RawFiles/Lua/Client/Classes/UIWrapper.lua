@@ -123,6 +123,8 @@ function _REGISTER.Visibility(self, callback)
 	end
 end
 
+UIWrapper.Register = _REGISTER
+
 local function SetMeta(this)
 	local _private = {
 		Register = {
@@ -284,8 +286,6 @@ function UIWrapper:InvokeCallbacks(callbackType, e)
 		end
 	end
 end
-
-UIWrapper.Register = _REGISTER
 
 ---@deprecated
 ---@param event string The method name.

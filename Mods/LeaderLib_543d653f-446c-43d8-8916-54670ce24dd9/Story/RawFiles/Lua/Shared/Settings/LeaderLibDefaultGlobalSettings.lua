@@ -222,10 +222,6 @@ if Ext.IsServer() then
 		end
 	end)
 	settings.Global.Flags.LeaderLib_AutoIdentifyItemsEnabled:Subscribe(function(e)
-		-- local switches = Ext.Utils.GetGlobalSwitches()
-		-- if switches then
-		-- 	switches.AutoIdentifyItems = e.Value == true
-		-- end
 		if e.Value then
 			fprint(LOGLEVEL.TRACE, "[LeaderLib] Identifying the party's items...")
 			local total = 0

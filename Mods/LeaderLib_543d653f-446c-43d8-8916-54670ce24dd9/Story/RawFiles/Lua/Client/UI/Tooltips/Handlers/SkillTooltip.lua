@@ -193,6 +193,25 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 			element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
 		end
 	end
+
+	if Features.FixTooltipEmptySkillProperties then
+		local emptyExtraProperties = StringHelpers.Trim(LocalizedText.Tooltip.ExtraPropertiesPermanent:ReplacePlaceholders("", "", ""))
+		local skillPropsElements = tooltip:GetElement("SkillProperties")
+		if skillPropsElements then
+			local replaceProperties = {}
+			local shouldReplace = false
+			for i,element in pairs(skillPropsElements.Properties) do
+				if not StringHelpers.IsNullOrWhitespace(element.Label) and not StringHelpers.IsNullOrWhitespace(StringHelpers.Replace(element.Label, emptyExtraProperties, "")) then
+					replaceProperties[#replaceProperties+1] = element
+				else
+					shouldReplace = true
+				end
+			end
+			if shouldReplace then
+				skillPropsElements.Properties = replaceProperties
+			end
+		end
+	end
 end
 
 --- @param skill StatEntrySkillData

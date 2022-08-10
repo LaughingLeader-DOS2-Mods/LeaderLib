@@ -14,6 +14,7 @@ if GameHelpers.Skill == nil then
 end
 
 local function _EMPTY_FUNC() end
+local function _EMPTY_DESC() return "" end
 
 --- @param id string
 --- @param getDesc fun(property:StatsPropertyExtender):string|nil
@@ -22,7 +23,7 @@ local function _EMPTY_FUNC() end
 --- @param allowWhenSkillIsNil boolean|nil Invoke the related callbacks even if the skill prototype is nil.
 function GameHelpers.Skill.CreateSkillProperty(id, getDesc, onPos, onTarget, allowWhenSkillIsNil)
 	local property = {
-		GetDescription = getDesc or _EMPTY_FUNC,
+		GetDescription = getDesc or _EMPTY_DESC,
 		ExecuteOnPosition = onPos or _EMPTY_FUNC,
 		ExecuteOnTarget = onTarget or _EMPTY_FUNC,
 		OnlyWithSkill = allowWhenSkillIsNil ~= true
@@ -406,7 +407,7 @@ else
 		local propType = CustomSkillProperties[e.Property.Action]
 		if propType ~= nil and propType.GetDescription ~= nil then
 			local desc = propType.GetDescription(e.Property)
-			if desc ~= nil then
+			if not StringHelpers.IsNullOrWhitespace(desc) then
 				e.Description = desc
 			end
 		end

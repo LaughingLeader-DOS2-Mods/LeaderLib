@@ -286,6 +286,8 @@ Features = {
 	FixRifleWeaponRequirement = false,
 	---Fixed tag requirements for skills being ignored by skills granted by items. Also fixes tag changes not updating the hotbar.
 	FixSkillTagRequirements = false,
+	---Remove empty SkillProperty.Properties elements from skill tooltips.
+	FixTooltipEmptySkillProperties = false,
 	---Formats tag element tooltips after they've been added to flash, allowing html font colors and more.
 	FormatTagElementTooltips = false,
 	---Condenses item tooltips by simplifying the ExtraProperties text.

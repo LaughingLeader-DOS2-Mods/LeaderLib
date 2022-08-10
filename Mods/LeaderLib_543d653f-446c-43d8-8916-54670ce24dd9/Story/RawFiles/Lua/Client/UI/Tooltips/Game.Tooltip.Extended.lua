@@ -583,7 +583,8 @@ function ParseTooltipArray(tt)
 		index = index + 1
 
 		if TooltipItemIds[id] == nil then
-			_PrintError("Encountered unknown tooltip item type: ", id)
+			Ext.Dump(tt)
+			_PrintError("Encountered unknown tooltip item type: ", index, id)
 			return elements
 		end
 

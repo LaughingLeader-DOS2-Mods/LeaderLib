@@ -271,18 +271,13 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 	end
 end
 
----@param status EsvStatus
----@param statusSource StatCharacter
----@param target StatCharacter
----@param param1 string
----@param param2 string
----@param param3 string
-local function StatusGetDescriptionParam(status, statusSource, target, param1, param2, param3)
+Ext.Events.StatusGetDescriptionParam:Subscribe(function (e)
+	local param1,param2,param3 = table.unpack(e.Params[1])
 	if Features.StatusParamSkillDamage then
 		if param1 == "Skill" and param2 ~= nil then
 			if param3 == "Damage" then
 				local success,result = xpcall(function()
-					local skillSource = statusSource or target
+					local skillSource = e.StatusSource or e.Owner
 					local damageSkillProps = GameHelpers.Ext.CreateSkillTable(param2, nil, true)
 					local damageRange = Game.Math.GetSkillDamageRange(skillSource, damageSkillProps, nil, nil)
 					if damageRange ~= nil then
@@ -302,9 +297,9 @@ local function StatusGetDescriptionParam(status, statusSource, target, param1, p
 						end
 						if totalDamageTypes > 0 then
 							if totalDamageTypes > 1 then
-								return StringHelpers.Join(", ", damageTexts)
+								e.Description = StringHelpers.Join(", ", damageTexts)
 							else
-								return damageTexts[1]
+								e.Description = damageTexts[1]
 							end
 						end
 					end
@@ -312,10 +307,10 @@ local function StatusGetDescriptionParam(status, statusSource, target, param1, p
 				if not success then
 					Ext.PrintError(result)
 				else
-					return result
+					e.Description = result
 				end
 			elseif param3 == "ExplodeRadius" then
-				return tostring(Ext.StatGetAttribute(param2, param3))
+				e.Description = tostring(Ext.StatGetAttribute(param2, param3))
 			end
 		end
 	end
@@ -324,19 +319,17 @@ local function StatusGetDescriptionParam(status, statusSource, target, param1, p
 			local value = Ext.ExtraData[param2]
 			if value ~= nil then
 				if value == math.floor(value) then
-					return string.format("%i", math.floor(value))
+					e.Description = string.format("%i", math.floor(value))
 				else
 					if value <= 1.0 and value >= 0.0 then
 						-- Percentage display
 						value = value * 100
-						return string.format("%i", math.floor(value))
+						e.Description = string.format("%i", math.floor(value))
 					else
-						return tostring(value)
+						e.Description = tostring(value)
 					end
 				end
 			end
 		end
 	end
-end
-
-Ext.RegisterListener("StatusGetDescriptionParam", StatusGetDescriptionParam)
+end)

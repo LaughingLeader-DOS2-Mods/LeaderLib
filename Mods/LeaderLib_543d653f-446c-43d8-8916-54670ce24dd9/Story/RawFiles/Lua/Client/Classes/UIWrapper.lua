@@ -163,6 +163,8 @@ local function SetMeta(this)
 		__newindex = function (tbl,k,v)
 			if _private[k] ~= nil then
 				return
+			else
+				rawset(tbl, k, v)
 			end
 		end
 	})

@@ -1,5 +1,6 @@
 local _PrintError = Ext.Utils.PrintError
 local xpcall = xpcall
+local type = type
 local _debugtraceback = debug.traceback
 
 ---@type LeaderLibUIWrapper[]
@@ -57,11 +58,87 @@ setmetatable(UIWrapper, {
 	__call = CreateWrapper
 })
 
+
+---@class LeaderLibUIWrapperRegistration
+local _REGISTER = {}
+
+---@param self LeaderLibUIWrapper
+---@param event string|string[] The method name.
+---@param callback UIWrapperCallbackHandler
+---@param eventType UICallbackEventType|nil
+---@param uiContext UIWrapperEventContextType|nil
+---@return LeaderLibUIWrapperRegistration
+function _REGISTER.Invoke(self, event, callback, eventType, uiContext)
+	if type(event) == "table" then
+		for _,v in pairs(event) do
+			_REGISTER.Invoke(self, v, callback, eventType, uiContext)
+		end
+	else
+		if self.Callbacks.Invoke[event] == nil then
+			self.Callbacks.Invoke[event] = {}
+		end
+		table.insert(self.Callbacks.Invoke[event], {
+			Callback = callback,
+			Context = eventType or "After",
+			UIContext = uiContext,
+		})
+	---@diagnostic disable-next-line missing-return
+	end
+end
+
+---@param self LeaderLibUIWrapper
+---@param event string|string[] The ExternalInterface.call name.
+---@param callback UIWrapperCallbackHandler
+---@param eventType UICallbackEventType|nil Defaults to "After"
+---@param uiContext UIWrapperEventContextType|nil
+---@return LeaderLibUIWrapperRegistration
+function _REGISTER.Call(self, event, callback, eventType, uiContext)
+	if type(event) == "table" then
+		for _,v in pairs(event) do
+			_REGISTER.Invoke(self, v, callback, eventType, uiContext)
+		end
+	else
+		if self.Callbacks.Call[event] == nil then
+			self.Callbacks.Call[event] = {}
+		end
+		table.insert(self.Callbacks.Call[event], {
+			Callback = callback,
+			Context = eventType or "After",
+			UIContext = uiContext,
+		})
+	---@diagnostic disable-next-line missing-return
+	end
+end
+
+---Call a function when the visibility of this UI changes. This also enabled visibility checks via a ticker listener.
+---@param self LeaderLibUIWrapper
+---@param callback fun(self:LeaderLibUIWrapper, visible:boolean)
+---@return LeaderLibUIWrapperRegistration
+function _REGISTER.Visibility(self, callback)
+	self.Callbacks.Visibility[#self.Callbacks.Visibility+1] = callback
+	if not self._EnabledVisibilityListener then
+		self._EnabledVisibilityListener = true
+		_uiVisibilityArray[#_uiVisibilityArray+1] = self
+	---@diagnostic disable-next-line missing-return
+	end
+end
+
 local function SetMeta(this)
+	local _private = {
+		Register = {
+			__self = this
+		}
+	}
+	for k,v in pairs(_REGISTER) do
+		_private.Register[k] = function(reg, ...)
+			v(this, ...)
+			return _private.Register
+		end
+	end
 	setmetatable(this, {
 		__index = function(tbl,k)
-			if UIWrapper[k] then
-				return UIWrapper[k]
+			if _private[k] ~= nil then
+				return _private[k]
 			end
 			if k == "Instance" then
 				return UIWrapper.GetInstance(this)
@@ -76,6 +153,14 @@ local function SetMeta(this)
 					return Common.TableHasValue(ui.Flags, "OF_Visible")
 				end
 				return false
+			end
+			if UIWrapper[k] then
+				return UIWrapper[k]
+			end
+		end,
+		__newindex = function (tbl,k,v)
+			if _private[k] ~= nil then
+				return
 			end
 		end
 	})
@@ -200,44 +285,28 @@ function UIWrapper:InvokeCallbacks(callbackType, e)
 	end
 end
 
+UIWrapper.Register = _REGISTER
+
+---@deprecated
 ---@param event string The method name.
 ---@param callback UIWrapperCallbackHandler
 ---@param eventType UICallbackEventType|nil
 ---@param uiContext UIWrapperEventContextType|nil
 function UIWrapper:RegisterInvokeListener(event, callback, eventType, uiContext)
-	if self.Callbacks.Invoke[event] == nil then
-		self.Callbacks.Invoke[event] = {}
-	end
-	table.insert(self.Callbacks.Invoke[event], {
-		Callback = callback,
-		Context = eventType or "After",
-		UIContext = uiContext,
-	})
+	_REGISTER.Invoke(self, event, function (self, e, ui, event, ...)
+		callback(self, ui, event, ...)
+	end)
 end
 
+---@deprecated
 ---@param event string The ExternalInterface.call name.
 ---@param callback UIWrapperCallbackHandler
 ---@param eventType UICallbackEventType|nil Defaults to "After"
 ---@param uiContext UIWrapperEventContextType|nil
 function UIWrapper:RegisterCallListener(event, callback, eventType, uiContext)
-	if self.Callbacks.Call[event] == nil then
-		self.Callbacks.Call[event] = {}
-	end
-	table.insert(self.Callbacks.Call[event], {
-		Callback = callback,
-		Context = eventType or "After",
-		UIContext = uiContext,
-	})
-end
-
----Call a function when the visibility of this UI changes. This also enabled visibility checks via a ticker listener.
----@param callback fun(self:LeaderLibUIWrapper, visible:boolean)
-function UIWrapper:RegisterVisibilityChangedListener(callback)
-	self.Callbacks.Visibility[#self.Callbacks.Visibility+1] = callback
-	if not self._EnabledVisibilityListener then
-		self._EnabledVisibilityListener = true
-		_uiVisibilityArray[#_uiVisibilityArray+1] = self
-	end
+	_REGISTER.Call(self, event, function (self, e, ui, event, ...)
+		callback(self, ui, event, ...)
+	end)
 end
 
 ---@return UIObject|nil

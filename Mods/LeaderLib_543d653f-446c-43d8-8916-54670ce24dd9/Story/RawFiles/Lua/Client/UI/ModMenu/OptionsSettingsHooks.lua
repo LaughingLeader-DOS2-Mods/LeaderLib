@@ -63,7 +63,7 @@ local LarianButtonID = {
 
 local GameMenu = Classes.UIWrapper:CreateFromType(Data.UIType.gameMenu, {ControllerID=Data.UIType.gameMenu_c, IsControllerSupported=true})
 
-GameMenu:RegisterCallListener("openMenu", function (self, e, ui, event, ...)
+GameMenu.Register:Call("openMenu", function (self, e, ui, event, ...)
 	if not menuWasOpen then
 		LoadGlobalSettings()
 	end
@@ -75,11 +75,9 @@ end, "After", "All")
 local OptionsUI = Classes.UIWrapper:CreateFromPath("Public/Game/GUI/optionsSettings.swf", {ControllerPath="Public/Game/GUI/optionsSettings_c.swf", IsControllerSupported=true})
 local OptionsInputUI = Classes.UIWrapper:CreateFromPath("Public/Game/GUI/optionsInput.swf")
 
-OptionsUI:RegisterVisibilityChangedListener(function (self, visible)
+OptionsUI.Register:Visibility(function (self, visible)
 	if visible then
 		menuWasOpen = true
-		local ui = self.Instance
-		Ext.PrintError(self.Path, ui and ui.Path or "")
 	end
 end)
 
@@ -217,7 +215,6 @@ local function OnSwitchMenu(e, ui, event, id)
 end
 
 local function OnParseBaseUpdateArray(ui, call)
-	Ext.PrintError(call, OptionsSettingsHooks.CurrentMenu, OptionsSettingsHooks.SwitchToModMenu)
 	if OptionsSettingsHooks.CurrentMenu == -1 then
 		return
 	end
@@ -352,9 +349,9 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end
 	
-	OptionsUI:RegisterCallListener("applyPressed", OnApplyPressed, "After", "All")
-	OptionsUI:RegisterCallListener("applyModMenuChanges", OnApplyPressed, "After", "All")
-	OptionsUI:RegisterCallListener("requestCloseUI", function (self, e, ui, event, ...)
+	OptionsUI.Register:Call("applyPressed", OnApplyPressed, "After", "All")
+	OptionsUI.Register:Call("applyModMenuChanges", OnApplyPressed, "After", "All")
+	OptionsUI.Register:Call("requestCloseUI", function (self, e, ui, event, ...)
 		if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 			ModMenuManager.SaveScroll(ui)
 			ModMenuManager.UndoChanges()
@@ -374,21 +371,20 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end
 	
-	OptionsUI:RegisterCallListener("acceptPressed", function (self, e, ui, event)
+	OptionsUI.Register:Call("acceptPressed", function (self, e, ui, event)
 		OnAcceptChanges(ui)
 	end, "After", "All")
 	
-	OptionsUI:RegisterCallListener("commitModMenuChanges", function (self, e, ui, event)
+	OptionsUI.Register:Call("commitModMenuChanges", function (self, e, ui, event)
 		OnAcceptChanges(ui)
 		ui:ExternalInterfaceCall("requestCloseUI")
 	end, "After", "All")
 
-	OptionsInputUI:RegisterCallListener("switchMenu", function (self, e, ui, event, ...)
+	OptionsInputUI.Register:Call("switchMenu", function (self, e, ui, event, ...)
 		OnSwitchMenu(e, ui, event, ...)
 	end, "After", "Keyboard")
 
-	OptionsInputUI:RegisterInvokeListener("addMenuButtons", function (self, e, ui, event, ...)
-		Ext.PrintError("addMenuButtons")
+	OptionsInputUI.Register:Invoke("addMenuButtons", function (self, e, ui, event, ...)
 		local this = ui:GetRoot()
 		if this then
 			---@type MainMenuMC
@@ -397,11 +393,11 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end, "After", "Keyboard")
 	
-	OptionsUI:RegisterCallListener("switchMenu", function (self, e, ui, event, ...)
+	OptionsUI.Register:Call("switchMenu", function (self, e, ui, event, ...)
 		OnSwitchMenu(e, ui, event, ...)
 	end, "After", "All")
 	
-	OptionsUI:RegisterCallListener("llcomboBoxID", function (self, e, ui, event, id, value)
+	OptionsUI.Register:Call("llcomboBoxID", function (self, e, ui, event, id, value)
 		local originalCall = getOriginalCall(event)
 		if originalCall then
 			if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
@@ -419,7 +415,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end, "After", "All")
 	
-	OptionsUI:RegisterCallListener("llcheckBoxID", function (self, e, ui, event, id, value)
+	OptionsUI.Register:Call("llcheckBoxID", function (self, e, ui, event, id, value)
 		local originalCall = getOriginalCall(event)
 		if originalCall then
 			if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
@@ -437,7 +433,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end, "After", "All")
 	
-	OptionsUI:RegisterCallListener("llselectorID", function (self, e, ui, event, id, value)
+	OptionsUI.Register:Call("llselectorID", function (self, e, ui, event, id, value)
 		local originalCall = getOriginalCall(event)
 		if originalCall then
 			if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
@@ -455,7 +451,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end, "After", "All")
 	
-	OptionsUI:RegisterCallListener("llmenuSliderID", function (self, e, ui, event, id, value)
+	OptionsUI.Register:Call("llmenuSliderID", function (self, e, ui, event, id, value)
 		local originalCall = getOriginalCall(event)
 		if originalCall then
 			if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
@@ -473,7 +469,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end, "After", "All")
 	
-	OptionsUI:RegisterCallListener("llbuttonPressed", function (self, e, ui, event, id)
+	OptionsUI.Register:Call("llbuttonPressed", function (self, e, ui, event, id)
 		local originalCall = getOriginalCall(event)
 		if originalCall then
 			if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
@@ -491,13 +487,13 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end, "After", "All")
 	
-	OptionsUI:RegisterCallListener("controlAdded", function (self, e, ui, event, controlType, id, listIndex, listProperty, ...)
+	OptionsUI.Register:Call("controlAdded", function (self, e, ui, event, controlType, id, listIndex, listProperty, ...)
 		if OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
 			GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty, ...)
 		end
 	end, "After", "All")
 	
-	OptionsUI:RegisterCallListener("arrayParsed", function (self, e, ui, event, arrayName)
+	OptionsUI.Register:Call("arrayParsed", function (self, e, ui, event, arrayName)
 		if arrayName == "baseUpdate_Array" then
 			if OptionsSettingsHooks.CurrentMenu == LarianMenuID.Gameplay then
 				GameSettingsMenu.SetScrollPosition(ui)
@@ -518,7 +514,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end, "After", "All")
 	
-	OptionsUI:RegisterCallListener("addMenuButton", function (self, e, ui, event, id, label, tooltip, enabled)
+	OptionsUI.Register:Call("addMenuButton", function (self, e, ui, event, id, label, tooltip, enabled)
 		local gameButtonText = GameHelpers.GetTranslatedString("h12fb7af4ga5abg47f4g9120ga63d33b2b71d", "Game")
 		if id == 4 and label == gameButtonText then
 			Ext.OnNextTick(function (e)
@@ -527,7 +523,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end, "After", "Controller")
 	
-	OptionsUI:RegisterCallListener("addingDone", function (self, e, ui, event, arrayName)
+	OptionsUI.Register:Call("addingDone", function (self, e, ui, event, arrayName)
 		if OptionsSettingsHooks.SwitchToModMenu then
 			OptionsSettingsHooks.SwitchToModMenu = false
 			Ext.OnNextTick(function (e)

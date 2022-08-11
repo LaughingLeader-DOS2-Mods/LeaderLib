@@ -91,10 +91,10 @@ function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
 end
 
 ---@param source UUID|EsvCharacter
----@param distanceMult number
----@param x number
----@param y number
----@param z number
+---@param distanceMult number|nil
+---@param x number|nil
+---@param y number|nil
+---@param z number|nil
 ---@param forwardVector number[]|nil
 ---@return number[] position
 function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMult, x,y,z, forwardVector)

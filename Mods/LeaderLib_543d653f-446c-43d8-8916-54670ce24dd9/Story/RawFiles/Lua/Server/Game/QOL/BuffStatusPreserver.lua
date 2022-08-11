@@ -227,7 +227,7 @@ function BuffStatusPreserver.Disable()
 end
 
 if Vars.DebugMode then
-	local buffTest = Classes.LuaTest.Create("buffstatuspreserver", {
+	local buffTest = Classes.LuaTest:Create("buffstatuspreserver", {
 		--[[ ---@param self LuaTest
 		function(self)
 			--Apply Foritiied out of combat and check that the duration is permanent

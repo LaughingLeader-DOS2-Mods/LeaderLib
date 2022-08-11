@@ -1,6 +1,7 @@
 ---@diagnostic disable lowercase-global
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
+local _DEBUG = Ext.Debug.IsDeveloperMode()
 
 ---@enum LOGLEVEL
 LOGLEVEL = {
@@ -108,6 +109,10 @@ Ext.Require("Shared/Stats/CustomSkillProperties.lua")
 Ext.Require("Shared/Stats/StatOverrides.lua")
 Ext.Require("Shared/System/FeaturesHandler.lua")
 Ext.Require("Shared/System/Visuals/VisualManager.lua")
+if _DEBUG then
+	Ext.Require("Shared/System/Testing/TestingSystem.lua")
+	Ext.Require("Shared/System/Testing/TestingHelpers.lua")
+end
 
 Ext.Require("Shared/Helpers/UtilityHelpers.lua")
 
@@ -116,8 +121,7 @@ Ext.Require("Shared/QOL/WorldTooltips.lua")
 Ext.Require("Shared/QOL/ContextMenuQualityOfLife.lua")
 Ext.Require("Shared/QOL/HotbarSkillTagRequirements.lua")
 Ext.Require("Shared/QOL/StatChangesConfig.lua")
-if Ext.IsDeveloperMode() then
-	Ext.Require("Shared/Debug/TestingSystem.lua")
+if _DEBUG then
 	Ext.Require("Shared/SharedDebug.lua")
 end
 Ext.Require("Shared/Debug/ConsoleWindowHelpers.lua")

@@ -15,6 +15,7 @@
 ---@field Thread thread
 ---@field Tasks LuaTestTaskCallback[]
 ---@field CurrentTaskIndex integer
+---@overload fun(id:string, tasks:LuaTestTaskCallback|LuaTestTaskCallback[], params:LuaTestParams|nil):LuaTest
 local LuaTest = {
 	Type = "LuaTest",
 	ThrowErrors = true,
@@ -31,13 +32,13 @@ setmetatable(LuaTest, {
 local _NilThread = {}
 
 ---@param id string
----@param tasks LuaTestTaskCallback[]
+---@param tasks LuaTestTaskCallback|LuaTestTaskCallback[]
 ---@param params LuaTestParams|nil
 ---@return LuaTest
-function LuaTest.Create(id, tasks, params)
+function LuaTest:Create(id, tasks, params)
 	local inst = {
 		ID = id or "",
-		Tasks = tasks or {},
+		Tasks = {},
 		Thread = _NilThread,
 		CurrentTaskIndex = 1,
 		Params = {},
@@ -48,6 +49,12 @@ function LuaTest.Create(id, tasks, params)
 		Errors = {},
 		Failed = false,
 	}
+	local tt = type(tasks)
+	if tt == "function" then
+		inst.Tasks[1] = tasks
+	elseif tt == "table" then
+		inst.Tasks = tasks
+	end
 	if type(params) == "table" then
 		for k,v in pairs(params) do
 			inst[k] = v

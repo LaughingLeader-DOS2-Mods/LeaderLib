@@ -2,6 +2,7 @@ local _EXTVERSION = Ext.Version()
 local _ISCLIENT = Ext.IsClient()
 
 if Testing == nil then
+	---@class LeaderLibTestingSystem
 	Testing = {}
 end
 
@@ -12,7 +13,7 @@ Testing.Active = false
 ---@param params LuaTestParams|nil
 ---@return LuaTest
 function Testing.CreateTest(id, operations, params)
-	return Classes.LuaTest.Create(id, operations, params)
+	return Classes.LuaTest:Create(id, operations, params)
 end
 
 function Testing.WriteResults(uuid, results)
@@ -84,11 +85,6 @@ function Testing.RunTests(tbl, testingName)
 		end
 	
 		Testing.Active = true
-
-		if _EXTVERSION < 56 and _ISCLIENT then
-			TimerCancel("LeaderLib_v55_Tick")
-			TimerLaunch("LeaderLib_v55_Tick", 30)
-		end
 	else
 		Ext.Dump(tests)
 		Ext.PrintError("[TestingSystem] Tests is an invalid table. Should be an array of LuaTest tables.")
@@ -106,12 +102,19 @@ function Testing.Stop()
 		Testing.WriteResults(_runningTest.UUID, _runningTest.Results)
 		_runningTest = {}
 	end
-	if not _ISCLIENT then
-		TimerCancel("LeaderLib_v55_Tick")
-	end
 end
 
-RegisterTickListener(function(e)
+--Dispose/cleanup tests before lua gets reset, so test characters don't stick around
+Events.BeforeLuaReset:Subscribe(function (e)
+	if Testing.Active then
+		if _runningTest.Current then
+			_runningTest.Current:Dispose()
+		end
+		Testing.Stop()
+	end
+end, {Priority=999})
+
+Ext.Events.Tick:Subscribe(function (e)
 	if Testing.Active then
 		local test = _runningTest.Current
 		if test then
@@ -131,7 +134,7 @@ RegisterTickListener(function(e)
 						Message = not StringHelpers.IsNullOrEmpty(test.SuccessMessage) and test.SuccessMessage or nil
 					}
 				end
-				_runningTest.Current:Dispose()
+				test:Dispose()
 				_runningTest.Index = _runningTest.Index + 1
 				_runningTest.Current = _runningTest.Tests[_runningTest.Index]
 				if _runningTest.Current then

@@ -2171,6 +2171,7 @@ Data.PropertyContext = {
 Data.ModID = {
 	LeaderLib = "7e737d2f-31d2-4751-963f-be6ccc59cd0c",
 	UnofficialPatch = "d15a346b-b332-4397-9b3f-f1e6045ff1c7",
+	TrainingDummy = "40efe511-7489-455e-a9c8-ad7495b8c9f2",
 	DivinityOriginalSin2 = "1301db3d-1f54-4e98-9be5-5094030916e4", -- Main campaign mod
 	Shared = "2bd9bdbe-22ae-4aa2-9c93-205880fc6564",
 	Shared_DOS = "eedf7638-36ff-4f26-a50a-076b87d53ba0",

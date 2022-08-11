@@ -180,8 +180,7 @@ Ext.RegisterConsoleCommand("modorder", function(command, doDump)
 		fprint(LOGLEVEL.DEFAULT, "Mods [%s]", Ext.IsClient() and "CLIENT" or "SERVER")
 		Ext.Utils.Print("=============")
 		for i=1,#mods do
-			local mod = Ext.Mod.GetMod(mods[i])
-			local info = mod.Info
+			local info = mods[i].Info
 			fprint(LOGLEVEL.DEFAULT, "[%i] %s (%s) [%s]", i, info and info.Name or "???", mods[i], info and info.ModuleType or "")
 		end
 		Ext.Utils.Print("=============")

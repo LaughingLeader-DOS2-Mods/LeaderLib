@@ -527,13 +527,15 @@ end
 function GameHelpers.Stats.GetModInfo(id, asDisplayName)
 	local stat = Ext.Stats.Get(id)
 	if stat then
-		local mod = Ext.Mod.GetMod(stat.ModId)
-		if mod then
-			if asDisplayName then
-				local name = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
-				return name
+		if not StringHelpers.IsNullOrEmpty(stat.ModId) then
+			local mod = Ext.Mod.GetMod(stat.ModId)
+			if mod then
+				if asDisplayName then
+					local name = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
+					return name
+				end
+				return mod
 			end
-			return mod
 		end
 	end
 	return nil

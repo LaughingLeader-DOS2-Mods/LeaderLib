@@ -518,9 +518,9 @@ Ext.Events.SessionLoaded:Subscribe(function()
 					if params[2] then
 						stat = params[2]
 					end
-				elseif request.Item == "Skill" then
-					if params[2] then
-						stat = params[2].StatsId
+				elseif request.Type == "Item" then
+					if params[1] then
+						stat = params[1].StatsId
 					end
 				end
 				if stat ~= nil and modName == nil then
@@ -530,11 +530,13 @@ Ext.Events.SessionLoaded:Subscribe(function()
 					if not Vars.DebugMode and (modName == "Shared" or modName == "Shared_DOS") then
 						modName = "Divinity: Original Sin 2"
 					end
-					local description = tooltip:GetDescriptionElement({Type="SkillDescription", Label=""})
-					if not StringHelpers.IsNullOrWhitespace(description.Label) then
-						description.Label = description.Label .. "<br>"
+					local description = tooltip:GetDescriptionElement()
+					if description then
+						if not StringHelpers.IsNullOrWhitespace(description.Label) then
+							description.Label = description.Label .. "<br>"
+						end
+						description.Label = string.format("%s<font color='#33AAFF' size='18'>%s</font>", description.Label or "", modName)
 					end
-					description.Label = string.format("%s<font color='#33AAFF' size='18'>%s</font>", description.Label or "", modName)
 				end
 			end
 		end

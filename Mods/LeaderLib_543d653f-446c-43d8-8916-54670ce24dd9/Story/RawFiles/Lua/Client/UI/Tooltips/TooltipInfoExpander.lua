@@ -6,6 +6,8 @@ Mods should check tooltip.IsExpanded() when determining which text to write,
 and call tooltip.MarkDirty() when the current tooltip can be changed when the key is pressed or released.
 ]]
 
+local _EXTVERSION = Ext.Utils.Version()
+
 if not TooltipExpander then
 	---@see TooltipExpander#MarkDirty
 	---@see TooltipExpander#IsExpanded
@@ -482,16 +484,59 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end)
 
+	local _ShowModInTooltipType = {
+		Skill = true,
+		Status = true,
+		Item = true
+	}
+
 	Game.Tooltip.Register.Global(function (request, tooltip, ...)
+		local params = {...}
 		if Vars.DebugMode and UI.Debug.LogUI then
 			local text = "local tooltip = " .. Lib.serpent.dump({
 				_Type = request.Type,
 				Request = request,
 				Tooltip = tooltip,
-				Params = {...},
+				Params = params,
 			}, {SimplifyUserdata=true})
 			GameHelpers.IO.SaveFile("Dumps/LastTooltip.lua", text)
 			GameHelpers.IO.SaveFile(string.format("Dumps/Tooltips/%s_%sTooltip.lua", Ext.MonotonicTime(), request.Type), text)
+		end
+		if _EXTVERSION >= 57 and _ShowModInTooltipType[request.Type] then
+			local gameSettings = GameSettingsManager.GetSettings().Client
+			if gameSettings.ShowModInTooltips then
+				local stat = nil
+				local modName = nil
+				if request.Type == "Status" then
+					if params[2] then
+						stat = params[2].StatusId
+						if Data.EngineStatus[stat] then
+							modName = "Shared"
+						end
+					end
+				elseif request.Type == "Skill" then
+					if params[2] then
+						stat = params[2]
+					end
+				elseif request.Item == "Skill" then
+					if params[2] then
+						stat = params[2].StatsId
+					end
+				end
+				if stat ~= nil and modName == nil then
+					modName = GameHelpers.Stats.GetModInfo(stat, true)
+				end
+				if not StringHelpers.IsNullOrWhitespace(modName) then
+					if not Vars.DebugMode and (modName == "Shared" or modName == "Shared_DOS") then
+						modName = "Divinity: Original Sin 2"
+					end
+					local description = tooltip:GetDescriptionElement({Type="SkillDescription", Label=""})
+					if not StringHelpers.IsNullOrWhitespace(description.Label) then
+						description.Label = description.Label .. "<br>"
+					end
+					description.Label = string.format("%s<font color='#33AAFF' size='18'>%s</font>", description.Label or "", modName)
+				end
+			end
 		end
 		TooltipExpander.AppendHelpText(request, tooltip)
 		--[[ local desc = tooltip:GetDescriptionElement()

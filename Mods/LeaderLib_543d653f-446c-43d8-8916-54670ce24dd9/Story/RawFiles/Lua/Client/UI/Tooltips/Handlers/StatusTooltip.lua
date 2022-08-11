@@ -1,3 +1,5 @@
+local _EXTVERSION = Ext.Utils.Version()
+
 local function _AlphabeticalCaseInsensitiveLabelSort(a,b)
 	return string.lower(a.Label) < string.lower(b.Label)
 end

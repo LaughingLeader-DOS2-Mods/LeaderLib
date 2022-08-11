@@ -520,6 +520,25 @@ function GameHelpers.Stats.GetDisplayName(id, statType)
 	return ""
 end
 
+---Returns which mod a stat originates from.
+---@param id string The stat ID
+---@param asDisplayName boolean|nil Return the mod's display name.
+---@return Module|string|nil
+function GameHelpers.Stats.GetModInfo(id, asDisplayName)
+	local stat = Ext.Stats.Get(id)
+	if stat then
+		local mod = Ext.Mod.GetMod(stat.ModId)
+		if mod then
+			if asDisplayName then
+				local name = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
+				return name
+			end
+			return mod
+		end
+	end
+	return nil
+end
+
 ---@alias RacePresetColorType "Hair"|"Skin"|"Cloth"
 ---@alias _GameHelpers_Stats_GetRacePresetColorEntry {ID:integer, Value:integer, Index:integer, Name:string, Handle:string}
 

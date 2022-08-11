@@ -58,6 +58,31 @@ local DefaultSettings = {
 		}
 	},
 	Client = {
+		AlwaysDisplayWeaponScalingText = true,
+		AlwaysExpandTooltips = false,
+		AlwaysShowBarText = false,
+		CondenseItemTooltips = false,
+		CondenseStatusTooltips = false,
+		DivineTalentsEnabled = false,
+		FixStatusTooltips = true,
+		HideChatLog = false,
+		HideConsumableEffects = false,
+		HideStatusSource = false,
+		ShowModInTooltips = true,
+		ToggleCombatLog = false,
+		EnableTooltipDelay = {
+			GlobalDelay = 0,
+			CharacterSheet = false,
+			Generic = false,
+			Item = false,
+			Skill = false,
+			Status = false,
+		},
+		FadeInventoryItems = {
+			Enabled = false,
+			KnownSkillbooks = 30,
+			ReadBooks = 30
+		},
 		StatusOptions = {
 			HideAll = false,
 			---A list of statuses to hide if HideAll is false.
@@ -68,30 +93,6 @@ local DefaultSettings = {
 			Whitelist = {},
 			AffectHealthbar = false,
 		},
-		AlwaysDisplayWeaponScalingText = true,
-		DivineTalentsEnabled = false,
-		AlwaysExpandTooltips = false,
-		CondenseStatusTooltips = false,
-		CondenseItemTooltips = false,
-		FixStatusTooltips = true,
-		EnableTooltipDelay = {
-			GlobalDelay = 0,
-			CharacterSheet = false,
-			Generic = false,
-			Item = false,
-			Skill = false,
-			Status = false,
-		},
-		HideChatLog = false,
-		ToggleCombatLog = false,
-		HideConsumableEffects = false,
-		HideStatusSource = false,
-		AlwaysShowBarText = false,
-		FadeInventoryItems = {
-			Enabled = false,
-			KnownSkillbooks = 30,
-			ReadBooks = 30
-		}
 	},
 	EnableDeveloperTests = false,
 	Version = Ext.GetModInfo(ModuleUUID).Version

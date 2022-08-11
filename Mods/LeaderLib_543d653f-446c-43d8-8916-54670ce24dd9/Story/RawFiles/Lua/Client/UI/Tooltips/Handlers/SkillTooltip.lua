@@ -1,3 +1,4 @@
+local _EXTVERSION = Ext.Utils.Version()
 
 local FarOutManFixSkillTypes = {
 	Cone = "Range",

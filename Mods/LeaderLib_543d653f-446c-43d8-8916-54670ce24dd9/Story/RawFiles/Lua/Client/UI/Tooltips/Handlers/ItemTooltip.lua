@@ -6,6 +6,17 @@ local function _AlphabeticalCaseInsensitiveLabelSort(a,b)
 	return string.lower(a.Label) < string.lower(b.Label)
 end
 
+local function _GetStatusAPCostBoost(id)
+	local status = Ext.Stats.Get(id)
+	if status then
+		local potion = Ext.Stats.Get(status.StatsId)
+		if potion then
+			return potion.APCostBoost
+		end
+	end
+	return nil
+end
+
 ---@param item EclItem
 ---@param tooltip TooltipData
 function TooltipHandler.OnItemTooltip(item, tooltip)
@@ -13,7 +24,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		return
 	end
 	if item ~= nil then
-		local settings = GameSettingsManager.GetSettings().Client
+		local gameSettings = GameSettingsManager.GetSettings().Client
 		local isRead = false
 		TooltipHandler.LastItem = item
 		local character = Client:GetCharacter()
@@ -25,12 +36,9 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					if ap > 0 then
 						for i,status in pairs(character:GetStatuses()) do
 							if not Data.EngineStatus[status] then
-								local potion = Ext.StatGetAttribute(status, "StatsId")
-								if potion ~= nil and potion ~= "" then
-									local apCostBoost = Ext.StatGetAttribute(potion, "APCostBoost")
-									if apCostBoost ~= nil and apCostBoost ~= 0 then
-										ap = math.max(0, ap + apCostBoost)
-									end
+								local apCostBoost = _GetStatusAPCostBoost(status)
+								if apCostBoost ~= nil and apCostBoost ~= 0 then
+									ap = math.max(0, ap + apCostBoost)
 								end
 							end
 						end
@@ -144,7 +152,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		if TooltipHandler.HasTagTooltipData then
 			TooltipHandler.AddTooltipTags(item, tooltip)
 		end
-		if (Features.TooltipGrammarHelper or settings.AlwaysDisplayWeaponScalingText)
+		if (Features.TooltipGrammarHelper or gameSettings.AlwaysDisplayWeaponScalingText)
 		and item.Stats and item.Stats.Requirements ~= nil and #item.Stats.Requirements > 0
 		then
 			local hasScalesWithText = false
@@ -196,7 +204,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
 				end
 				--Also show the 'Scales With' text for weapons.
-				if item.Stats.ItemType == "Weapon" and (not requiresPointsHigherThanZero or settings.AlwaysDisplayWeaponScalingText) then
+				if item.Stats.ItemType == "Weapon" and (not requiresPointsHigherThanZero or gameSettings.AlwaysDisplayWeaponScalingText) then
 					local element = {
 						Type = "ItemRequirement",
 						Label = LocalizedText.Tooltip.ScalesWith:ReplacePlaceholders(attributeName),
@@ -226,7 +234,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 			--tooltip:GetElement("SkillAlreadyLearned", {Type="SkillAlreadyLearned", Label = LocalizedText.Tooltip.BookIsKnown.Value})
 			element.Label = element.Label .. "<br>" .. LocalizedText.Tooltip.BookIsKnown.Value
 		end
-		if settings.CondenseItemTooltips then
+		if gameSettings.CondenseItemTooltips then
 			local elements = tooltip:GetElements("ExtraProperties")
 			if #elements > 1 then
 				for i,v in pairs(elements) do

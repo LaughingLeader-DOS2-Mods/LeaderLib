@@ -502,6 +502,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 			GameHelpers.IO.SaveFile("Dumps/LastTooltip.lua", text)
 			GameHelpers.IO.SaveFile(string.format("Dumps/Tooltips/%s_%sTooltip.lua", Ext.MonotonicTime(), request.Type), text)
 		end
+		--ModId fixed in v57
 		if _EXTVERSION >= 57 and _ShowModInTooltipType[request.Type] then
 			local gameSettings = GameSettingsManager.GetSettings().Client
 			if gameSettings.ShowModInTooltips then

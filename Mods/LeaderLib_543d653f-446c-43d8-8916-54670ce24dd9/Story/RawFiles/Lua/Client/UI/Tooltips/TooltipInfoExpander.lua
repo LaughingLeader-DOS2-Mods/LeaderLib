@@ -130,6 +130,14 @@ Ext.RegisterUINameCall("hideTooltip", OnHideTooltip, "After")
 --playerInfo/summonInfo.as
 Ext.RegisterUINameCall("hidetooltip", OnHideTooltip, "After")
 
+Ext.RegisterUITypeInvokeListener(Data.UIType.tooltip, "addFormattedTooltip", function(ui)
+	--Thanks to Pip for this
+	local gameSettings = GameSettingsManager.GetSettings().Client
+    if gameSettings.KeepTooltipInScreen then
+        ui:ExternalInterfaceCall("keepUIinScreen", true)
+    end
+end)
+
 local function _addFormattedTooltip(this, x, y, deferShow)
 	-- if this.tf then
 	-- 	this.INTRemoveTooltip()

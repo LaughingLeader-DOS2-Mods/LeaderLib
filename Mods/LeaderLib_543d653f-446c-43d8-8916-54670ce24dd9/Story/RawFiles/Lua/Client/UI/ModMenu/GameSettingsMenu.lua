@@ -212,6 +212,10 @@ local text = {
 		HideConsumableEffects_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideConsumableEffects_Description", "If <font color='#33FF66'>[Key:LeaderLib_ShowConsumableEffectsEnabled:Show Consumable Effects]</font> is enabled in the global Mod Settings, disable this setting to hide these effects for yourself only.", _dst),
 		HideStatusSource = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatusSource", "Show Status Source", _ds),
 		HideStatusSource_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatusSource_Description", "Show the source of a status, if any, in status tooltips.", _dst),
+		KeepTooltipInScreen = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_KeepTooltipInScreen", "Keep Tooltip in Screen", _ds),
+		KeepTooltipInScreen_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_KeepTooltipInScreen_Description", "If enabled, tooltips will be forced to stay on the screen, instead of clipping out of bounds.", _dst),
+		ShowModInTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_ShowModInTooltips", "Show Mod Source", _ds),
+		ShowModInTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_ShowModInTooltips_Description", "Show the mod a status, item, or skill originates from in tooltips.", _dst),
 		EnableTooltipDelay = {
 			GlobalDelay = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_GlobalTooltipDelay", "Delay Override", _ds),
 			GlobalDelay_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_GlobalTooltipDelay_Description", "Delay tooltip creation by this amount in milliseconds. This value will override the usual 500ms delay. Set to 0 to re-enable the regular delay created by the tooltip UI.<br>Default: 0<br>Recommended: 500", _dst),
@@ -317,6 +321,9 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuLabel(text.Section_UI_Tooltips.Value, "", _lh)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideConsumableEffects", nil, true), text.Client.HideConsumableEffects.Value, true, settings.Client.HideConsumableEffects and 0 or 1, false, text.Client.HideConsumableEffects_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideStatusSource", nil, true), text.Client.HideStatusSource.Value, true, settings.Client.HideStatusSource and 0 or 1, false, text.Client.HideStatusSource_Description.Value)
+		if Ext.Utils.Version() >= 57 then
+			mainMenu.addMenuCheckbox(AddControl(settings.Client, "ShowModInTooltips"), text.Client.ShowModInTooltips.Value, true, settings.Client.ShowModInTooltips and 1 or 0, false, text.Client.ShowModInTooltips_Description.Value)
+		end
 
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client.AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client.AlwaysExpandTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client.AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client.AlwaysDisplayWeaponScalingText_Description.Value)
@@ -324,6 +331,8 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseItemTooltips"), text.Client.CondenseItemTooltips.Value, true, settings.Client.CondenseItemTooltips and 1 or 0, false, text.Client.CondenseItemTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "CondenseStatusTooltips"), text.Client.CondenseStatusTooltips.Value, true, settings.Client.CondenseStatusTooltips and 1 or 0, false, text.Client.CondenseStatusTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "FixStatusTooltips"), text.Client.FixStatusTooltips.Value, true, settings.Client.FixStatusTooltips and 1 or 0, false, text.Client.FixStatusTooltips_Description.Value)
+
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "KeepTooltipInScreen"), text.Client.KeepTooltipInScreen.Value, true, settings.Client.KeepTooltipInScreen and 1 or 0, false, text.Client.KeepTooltipInScreen_Description.Value)
 
 		mainMenu.addMenuLabel(text.Section_Tooltips_Delay.Value, "", _lh)
 		mainMenu.addMenuSlider(AddControl(settings.Client.EnableTooltipDelay, "GlobalDelay"), text.Client.EnableTooltipDelay.GlobalDelay.Value, GameHelpers.Math.Clamp(settings.Client.EnableTooltipDelay.GlobalDelay, 0, 2000), 0, 2000, 5, false, text.Client.EnableTooltipDelay.GlobalDelay_Description.Value)

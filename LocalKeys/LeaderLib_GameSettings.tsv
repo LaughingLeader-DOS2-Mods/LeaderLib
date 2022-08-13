@@ -62,12 +62,16 @@ LeaderLib_UI_GameSettings_Client_HideConsumableEffects	Show Consumable Effects	h
 LeaderLib_UI_GameSettings_Client_HideConsumableEffects_Description	If <font color='#33FF66'>Show Consumable Effects</font> is enabled in the global Mod Settings, disable this setting to hide these effects for yourself only.	hc91913dag9ffbg422cg8aceg3faf8005f30a
 LeaderLib_UI_GameSettings_Client_HideStatusSource	Show Status Source	h7cbe733dg51feg40e8gaeffgfe989bab122d
 LeaderLib_UI_GameSettings_Client_HideStatusSource_Description	Show the source of a status, if any, in status tooltips.	hbe30171eg7100g4d66gaaf6g63340f551866
+LeaderLib_UI_GameSettings_Client_ShowModInTooltips	Show Mod Source	hfc4c51acg42f9g4b0bg83e4gf32dac446ca7
+LeaderLib_UI_GameSettings_Client_ShowModInTooltips_Description	Show the mod a status, item, or skill originates from in tooltips.	h60310776g7df6g4091ga41eg4b61cb848dc6
 LeaderLib_UI_GameSettings_Client_HideStatuses	Hide All Statuses	hfe94fb21g03b4g46c3gbcaegf551c9b54dc8
 LeaderLib_UI_GameSettings_Client_HideStatuses_Description	If enabled, all statuses next to the party's portraits will be hidden.	h3e7215afg3389g4dc4gaa4bg1029c5cda75a
 LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar	Modify Healthbar Statuses	ha9720574ged59g4d81g92f3gcea93337121c
 LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar_Description	If enabled, status hiding settings will also apply to statuses under the healthbar when examining a character.	hc848f133g22fdg41c0g8205g8041758e7309
 LeaderLib_UI_GameSettings_Client_ToggleCombatLog	Toggle Combat Log	h7b685627gd157g4fc2gaf20g37db378cedd8
 LeaderLib_UI_GameSettings_Client_ToggleCombatLog_Description	Make the combat log visible initially.	h9a147919g74feg42a0gb804g7fab3c413866
+LeaderLib_UI_GameSettings_Client_KeepTooltipInScreen	Keep Tooltip in Screen	had8d6d84gb7d2g418egb942g3d4215d32915
+LeaderLib_UI_GameSettings_Client_KeepTooltipInScreen_Description	If enabled, tooltips will be forced to stay on the screen, instead of clipping out of bounds.	h26cc6078g59a6g4944ga3eaga11784f59c58
 LeaderLib_UI_GameSettings_LowerMemorizationRequirements	Lower Skill Memorization Requirements	hfda4adafgd642g477fgbbdbg268fe17118b4
 LeaderLib_UI_GameSettings_LowerMemorizationRequirements_Description	If enabled, skill memorization requirements will be lowered (such as Necromancy 4 to Necromancy 1).<br><font color='#FF9933'>Ideally enable this alongside Skill Tier Overrides, so more skills can be selected in character creation.</font><br>(Default: Disabled)	ha1c04ddag65a8g4deagbbe6g8c401710cad9
 LeaderLib_UI_GameSettings_MainTitle	<font color='#4CBCFE' size='28'><u>LeaderLib Game Settings</u></font>	ha5cca930gc538g4846g86f4g0b5c9017c1e5

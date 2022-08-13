@@ -68,6 +68,7 @@ local DefaultSettings = {
 		HideChatLog = false,
 		HideConsumableEffects = false,
 		HideStatusSource = false,
+		KeepTooltipInScreen = true,
 		ShowModInTooltips = true,
 		ToggleCombatLog = false,
 		EnableTooltipDelay = {

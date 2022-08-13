@@ -607,7 +607,7 @@ if not _ISCLIENT then
 			if matchArgsType == "table" and type(opts.MatchArgs.StatusId) == "string" then
 				local status = opts.MatchArgs.StatusId
 				if Vars.DebugMode and not Data.EngineStatus[status] and not GameHelpers.Stats.Exists(status, "StatusData") then
-					error(string.format("Status (%s) does not exist", status), 2)
+					fprint(LOGLEVEL.ERROR, string.format("Status (%s) does not exist", status), 2)
 				end
 				local statusEvent = opts.MatchArgs.StatusEvent
 				local statusEventType = type(statusEvent)
@@ -739,7 +739,7 @@ if not _ISCLIENT then
 	})
 
 	---@alias CharacterDiedEventStateID string
-	---|"StatusBeforeAttempt" # [0] - NRD_OnStatusAttempt with the DYING status
+	---|"StatusBeforeAttempt" # [0] - NRD_OnStatusAttempt/Ext.Events.BeforeStatusApply with the DYING status
 	---|"StatusAttempt" # [1] - CharacterStatusAttempt/ItemStatusAttempt with the DYING status
 	---|"BeforeDying" # [2] - CharacterPrecogDying
 	---|"Dying" # [3] - CharacterDying

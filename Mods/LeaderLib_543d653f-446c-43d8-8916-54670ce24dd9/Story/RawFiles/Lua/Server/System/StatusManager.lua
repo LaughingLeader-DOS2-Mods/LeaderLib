@@ -816,51 +816,54 @@ local function IgnoreDead(target, status)
 	return false
 end
 
-RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targetGUID,statusID,handle,sourceGUID)
-	if statusID == "DYING" and ObjectIsCharacter(targetGUID) == 1 then
-		local target = GameHelpers.GetCharacter(targetGUID)
-		if target then
-			Events.CharacterDied:Invoke({
-				Character = target,
-				CharacterGUID = target.MyGuid,
-				IsPlayer = GameHelpers.Character.IsPlayer(target),
-				State = "StatusBeforeAttempt",
-				StateIndex = Vars.CharacterDiedState.StatusBeforeAttempt,
-			})
-		end
+Ext.Events.BeforeStatusApply:Subscribe(function (e)
+	local target = _GetObject(e.Status.TargetHandle)
+	if not target then return end
+	local source = _GetObject(e.Status.StatusSourceHandle)
+
+	local targetGUID = target.MyGuid
+	local sourceGUID = source and source.MyGuid or StringHelpers.NULL_UUID
+
+	local isCharacter = GameHelpers.Ext.ObjectIsCharacter(target)
+	local isItem = not isCharacter and GameHelpers.Ext.ObjectIsItem(target)
+
+	local status = e.Status
+	local statusID = status.StatusId
+
+	if statusID == "DYING" and isCharacter then
+		Events.CharacterDied:Invoke({
+			Character = target,
+			CharacterGUID = targetGUID,
+			IsPlayer = GameHelpers.Character.IsPlayer(target),
+			State = "StatusBeforeAttempt",
+			StateIndex = Vars.CharacterDiedState.StatusBeforeAttempt,
+		})
 	end
 
-	if IgnoreDead(targetGUID, statusID) then
+	if IgnoreDead(target, statusID) then
 		return
 	end
-	local statusType = _GetStatusType(statusID)
-	if ObjectIsItem(targetGUID) == 1 and (statusID == "MADNESS" or statusType == "DAMAGE_ON_MOVE") then
-		NRD_StatusPreventApply(targetGUID, handle, 1)
+	local statusType = status.StatusType
+	if isItem and (statusID == "MADNESS" or statusType == "DAMAGE_ON_MOVE") then
+		e.PreventStatusApply = true
+		e:StopPropagation()
 		return
 	end
 
 	if not IgnoreStatus(statusID, "BeforeAttempt") then
-		local target = _GetObject(targetGUID)
-		local source = _GetObject(sourceGUID)
-
-		local status = _GetStatus(targetGUID, handle)
-		if status == nil then
-			return
-		end
-
 		local preventApply = false
 
 		local settings = SettingsManager.GetMod(ModuleUUID, false, false)
 
 		--Make Unhealable block all heals
-		if target and target:GetStatus("UNHEALABLE")
+		if target:GetStatus("UNHEALABLE")
 		and ((statusType == "HEAL" or statusType == "HEALING") and status.HealAmount > 0)
 		and settings.Global:FlagEquals("LeaderLib_UnhealableFix_Enabled", true) then
-			NRD_StatusPreventApply(targetGUID, handle, 1)
+			e.PreventStatusApply = true
 			preventApply = true
 		end
 
-		if target and source then 
+		if source then
 			local canRedirect = redirectStatusId[statusID] or redirectStatusType[statusType]
 			if canRedirect and source.Summon and _IsValidHandle(source.OwnerHandle) and GameHelpers.Ext.ObjectIsItem(source) then
 				--Set the source of statuses summoned items apply to their caster owner character.
@@ -907,11 +910,11 @@ RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targ
 			IsDisabling = isDisabling,
 			IsLoseControl = isLoseControl
 		})
-		if result.ResultCode ~= "Error" and result.Args.PreventApply == true then
-			NRD_StatusPreventApply(targetGUID, handle, 1)
+		if result.ResultCode ~= "Error" and result.Args.PreventApply ~= nil then
+			e.PreventStatusApply = result.Args.PreventApply == true
 		end
 	end
-end)
+end, {Priority=200})
 
 local function OnStatusAttempt(targetGUID,statusID,sourceGUID)
 	local target = _GetObject(targetGUID)

@@ -1045,14 +1045,8 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 	if not target then
 		return
 	end
-	
-	local status = target:GetStatus(statusID)
-	if not status then
-		return
-	end
-	local statusType = _GetStatusType(statusID)
 
-	if status == "SUMMONING" and target then
+	if statusID == "SUMMONING" and target then
 		local owner = nil
 		if _IsValidHandle(target.OwnerHandle) then
 			owner = _GetObject(target.OwnerHandle)
@@ -1065,6 +1059,12 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 		end
 		Events.SummonChanged:Invoke({Summon=target, Owner=owner, IsDying=false, IsItem=GameHelpers.Ext.ObjectIsItem(target)})
 	end
+	
+	local status = target:GetStatus(statusID)
+	if not status then
+		return
+	end
+	local statusType = _GetStatusType(statusID)
 
 	if Vars.LeaveActionData.Total > 0 then
 		local skill = Vars.LeaveActionData.Statuses[statusID]

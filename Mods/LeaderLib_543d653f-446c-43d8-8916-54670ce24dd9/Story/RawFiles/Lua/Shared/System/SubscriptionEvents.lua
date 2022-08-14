@@ -871,6 +871,8 @@ else
 	---@field UI UIObject The ui for the context menu (contextMenu.swf).
 	---@field Root FlashMainTimeline Equivalent to ui:GetRoot()
 	---@field ButtonArray FlashArray<FlashMovieClip> The raw root.buttonArr flash array.
+	---@field X number The cursor's x position.
+	---@field Y number The cursor's y position.
 	
 	---Called when the regular context menu is opening.  
 	---Add entries via e.ContextMenu:AddBuiltinEntry  

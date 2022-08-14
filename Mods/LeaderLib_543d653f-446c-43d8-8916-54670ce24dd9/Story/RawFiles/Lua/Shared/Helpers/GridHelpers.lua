@@ -525,10 +525,10 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 				end
 				if not _ISCLIENT then
 					if cell.GroundSurface then
-						data.Ground = Ext.GetSurface(cell.GroundSurface)
+						data.Ground = Ext.Entity.GetSurface(cell.GroundSurface)
 					end
 					if cell.CloudSurface then
-						data.Cloud = Ext.GetSurface(cell.CloudSurface)
+						data.Cloud = Ext.Entity.GetSurface(cell.CloudSurface)
 					end
 				else
 					if cell.Flags then
@@ -568,7 +568,7 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 							if not _ISCLIENT then
 								if cell.GroundSurface then
 									local surfaceData = {
-										Surface = Ext.GetSurface(cell.GroundSurface),
+										Surface = Ext.Entity.GetSurface(cell.GroundSurface),
 										Position = {tx,cell.Height,tz}
 									}
 									data.Ground[#data.Ground+1] = surfaceData
@@ -579,7 +579,7 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 								end
 								if cell.CloudSurface then
 									local cloudData = {
-										Surface = Ext.GetSurface(cell.CloudSurface),
+										Surface = Ext.Entity.GetSurface(cell.CloudSurface),
 										Position = {tx,cell.Height,tz}
 									}
 									data.Cloud[#data.Cloud+1] = cloudData

@@ -375,8 +375,8 @@ end
 function ContextMenu:OnShowStatusTooltip(ui, event, characterDouble, statusDouble, x, y, width, height, side)
 	if self.ContextStatus == nil or not self.Visible then
 		if characterDouble and statusDouble then
-			local characterHandle = Ext.DoubleToHandle(characterDouble)
-			local statusHandle = Ext.DoubleToHandle(statusDouble)
+			local characterHandle = Ext.UI.DoubleToHandle(characterDouble)
+			local statusHandle = Ext.UI.DoubleToHandle(statusDouble)
 			if characterHandle and statusHandle then
 				local status = Ext.GetStatus(characterHandle, statusHandle)
 				if status then
@@ -391,7 +391,7 @@ end
 function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDouble)
 	if typeIndex == 7 and (self.ContextStatus == nil or not self.Visible) then
 		local characterHandle = ui:GetPlayerHandle()
-		local statusHandle = Ext.DoubleToHandle(statusDouble)
+		local statusHandle = Ext.UI.DoubleToHandle(statusDouble)
 		if characterHandle and statusHandle then
 			local status = Ext.GetStatus(characterHandle, statusHandle)
 			if status then
@@ -466,9 +466,12 @@ end
 function ContextMenu:OnBuiltinMenuUpdating(ui, event)
 	local targetObject = nil
 	if ContextMenu.LastObjectDouble ~= nil then
-		local handle = Ext.DoubleToHandle(ContextMenu.LastObjectDouble)
+		local handle = Ext.UI.DoubleToHandle(ContextMenu.LastObjectDouble)
 		targetObject = GameHelpers.TryGetObject(handle)
 	end
+
+	local x,y = UIExtensions.GetMousePosition()
+
 	local this = ui:GetRoot()
 	local buttonArr = this.buttonArr
 	local buttons = {}
@@ -525,17 +528,26 @@ function ContextMenu:OnBuiltinMenuUpdating(ui, event)
 		buttons[#buttons+1] = entry
 		--ContextMenu:AddEntry()
 	end
+
 	Events.OnBuiltinContextMenuOpening:Invoke({
 		ContextMenu = self,
 		UI = ui,
 		Root = this,
 		ButtonArray = buttonArr,
 		Entries = buttons,
-		Target = targetObject
+		Target = targetObject,
+		X = x,
+		Y = y,
 	})
 
+	for action,actionId in GetOrderedContextMenuActions() do
+		if action.AutomaticallyAddToBuiltin and action:GetCanOpen(self, x, y) then
+			self:AddBuiltinEntry(action.ID, action.Callback, action:GetDisplayName(), action.Visible, action.UseClickSound, action.Disabled, action.IsLegal, action.Handle)
+		end
+	end
+
 	local i = length
-	for _,v in pairs(builtinEntries) do
+	for _,v in ipairs(builtinEntries) do
 		buttonArr[i] = v.ID
 		buttonArr[i+1] = v.ID
 		buttonArr[i+2] = v.ClickSound
@@ -551,25 +563,31 @@ end
 
 ---@private
 function ContextMenu:OnBuiltinMenuClicked(ui, event, id, actionID, handleAlwaysZero)
+	local action = nil
 	local entry = GENERATED_ID_TO_ENTRY[id]
+	local handle = handleAlwaysZero
 	if entry then
-		local action = self.DefaultActionCallbacks[actionID] or (entry and entry.Callback)
-		if action then
-			local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, entry.Handle, entry)
-			if not b then
-				Ext.PrintError(err)
-			end
-		else
-			fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
-		end
-		Events.OnContextMenuEntryClicked:Invoke({
-			ContextMenu = self,	
-			UI = ui,
-			ID = id,
-			ActionID = actionID,
-			Handle = entry.Handle
-		})
+		action = entry.Callback
+		handle = entry.Handle
 	end
+	if not action then
+		action = self.DefaultActionCallbacks[actionID]
+	end
+	if action then
+		local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, handle, entry)
+		if not b then
+			Ext.Utils.PrintError(err)
+		end
+	elseif entry and Vars.DebugMode then
+		fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
+	end
+	Events.OnContextMenuEntryClicked:Invoke({
+		ContextMenu = self,	
+		UI = ui,
+		ID = id,
+		ActionID = actionID,
+		Handle = handle
+	})
 end
 
 ---@private
@@ -737,7 +755,7 @@ function ContextMenu:MoveAndRebuild(x,y)
 		end
 
 		if self.ContextStatus.CallingUI then
-			local caller = Ext.GetUIByType(self.ContextStatus.CallingUI)
+			local caller = Ext.UI.GetByType(self.ContextStatus.CallingUI)
 			if caller then
 				caller:ExternalInterfaceCall("hideTooltip")
 			end
@@ -782,7 +800,7 @@ function ContextMenu:Open()
 		end
 		self.IsOpening = true
 		if self.ContextStatus then
-			Ext.GetUIByType(self.ContextStatus.CallingUI):ExternalInterfaceCall("hideTooltip")
+			Ext.UI.GetByType(self.ContextStatus.CallingUI):ExternalInterfaceCall("hideTooltip")
 		end
 		if x+contextMenu.width > main.screenWidth then
 			x = x - contextMenu.width - paddingX
@@ -824,7 +842,7 @@ local function GetExamineCursorStatus(x,y)
 	if not x then
 		x,y = UIExtensions.GetMousePosition()
 	end
-	local ui = Ext.GetUIByType(Data.UIType.examine) or Ext.GetUIByType(Data.UIType.examine_c)
+	local ui = Ext.UI.GetByType(Data.UIType.examine) or Ext.UI.GetByType(Data.UIType.examine_c)
 	if not ui then
 		return nil
 	end
@@ -843,7 +861,7 @@ local function GetExamineCursorStatus(x,y)
 		-- 	print(status.x, status.y, status.width, status.height)
 		-- end
 		if status and PosIsWithinBounds(status.mouseX, status.mouseY, status.width, status.height) then
-			return Ext.DoubleToHandle(status.id), ui:GetPlayerHandle(), ui:GetTypeId()
+			return Ext.UI.DoubleToHandle(status.id), ui:GetPlayerHandle(), ui:GetTypeId()
 		end
 	end
 	return nil
@@ -853,7 +871,7 @@ local function GetPlayerInfoCursorStatus(x,y)
 	if not x then
 		x,y = UIExtensions.GetMousePosition()
 	end
-	local ui = Ext.GetUIByType(Data.UIType.playerInfo) or Ext.GetUIByType(Data.UIType.playerInfo_c)
+	local ui = Ext.UI.GetByType(Data.UIType.playerInfo) or Ext.UI.GetByType(Data.UIType.playerInfo_c)
 	if not ui then
 		return nil
 	end
@@ -869,7 +887,7 @@ local function GetPlayerInfoCursorStatus(x,y)
 			for s=0,#player_mc.status_array do
 				local status = player_mc.status_array[s]
 				if status and status.hitTestPoint(x, y, false) then
-					return Ext.DoubleToHandle(status.id), Ext.DoubleToHandle(status.owner), ui:GetTypeId()
+					return Ext.UI.DoubleToHandle(status.id), Ext.UI.DoubleToHandle(status.owner), ui:GetTypeId()
 				end
 			end
 			if player_mc.summonList then
@@ -880,7 +898,7 @@ local function GetPlayerInfoCursorStatus(x,y)
 						for k=0,#summon_mc.status_array do
 							local status = summon_mc.status_array[k]
 							if status and status.hitTestPoint(x, y, false) then
-								return Ext.DoubleToHandle(status.id), Ext.DoubleToHandle(status.owner), ui:GetTypeId()
+								return Ext.UI.DoubleToHandle(status.id), Ext.UI.DoubleToHandle(status.owner), ui:GetTypeId()
 							end
 						end
 					end

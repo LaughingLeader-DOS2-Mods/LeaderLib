@@ -13,6 +13,7 @@
 ---@field Handle any
 ---@field StayOpen boolean
 ---@field Children ContextMenuActionSettings[]
+---@field AutomaticallyAddToBuiltin boolean If true, this action will be added to the builtin context menu, if conditions are met. Note that the builtin menu does not support icons or nested actions.
 
 ---@class ContextMenuAction:ContextMenuActionSettings
 ---@field Handle any A specific value that will be passed along to the callback on click.
@@ -23,13 +24,8 @@ local ContextMenuAction = {
 	Disabled = false,
 	StayOpen = false,
 	IsLegal = true,
+	AutomaticallyAddToBuiltin = false,
 }
-
-local function GetIndex(tbl, k)
-	return ContextMenuAction[k]
-end
-
-ContextMenuAction.__index = GetIndex
 
 ---@param params ContextMenuActionSettings
 function ContextMenuAction:Create(params)
@@ -56,7 +52,11 @@ function ContextMenuAction:Create(params)
 			this.StayOpen = true
 		end
 	end
-	setmetatable(this, ContextMenuAction)
+	setmetatable(this, {
+		__index = function (_,k)
+			return ContextMenuAction[k]
+		end
+	})
 
 	assert(not StringHelpers.IsNullOrEmpty(this.ID), "ID must be a valid string.")
 

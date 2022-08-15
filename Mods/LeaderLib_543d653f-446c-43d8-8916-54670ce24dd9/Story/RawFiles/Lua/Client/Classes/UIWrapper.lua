@@ -435,7 +435,6 @@ Ext.Events.Tick:Subscribe(function (e)
 		local wrapper = _uiVisibilityArray[i]
 		local visible = wrapper.Visible
 		if visible ~= wrapper.LastVisible then
-			print(wrapper.Path, visible, wrapper.LastVisible)
 			local callbacks = wrapper.Callbacks.Visibility
 			if callbacks then
 				local len = #callbacks

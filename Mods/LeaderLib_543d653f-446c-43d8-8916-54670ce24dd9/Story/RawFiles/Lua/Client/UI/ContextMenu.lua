@@ -53,7 +53,28 @@ local ContextMenu = {
 	Icons = {}
 }
 
-local BuiltinContextMenu = Classes.UIWrapper:CreateFromPath("Public/Game/GUI/contextMenu.swf", {ControllerPath="Public/Game/GUI/contextMenu_c.swf", IsControllerSupported=true})
+local function _IsBuiltinContextMenuVisible()
+	if not Vars.ControllerEnabled then
+		local cm1 = Ext.UI.GetByType(Data.UIType.contextMenu.Default)
+		local cm2 = Ext.UI.GetByType(Data.UIType.contextMenu.Object)
+		if cm1 and Common.TableHasEntry(cm1.Flags, "OF_Visible") then
+			return true
+		end
+		if cm2 and Common.TableHasEntry(cm2.Flags, "OF_Visible") then
+			return true
+		end
+	end
+	return false
+end
+
+local function _OnBuiltinMenuVisible(ui)
+	if ContextMenu.Visible then
+		ContextMenu:Close()
+	end
+end
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.contextMenu.Default, "updateButtons", _OnBuiltinMenuVisible)
+Ext.RegisterUITypeInvokeListener(Data.UIType.contextMenu.Object, "updateButtons", _OnBuiltinMenuVisible)
 
 local self = ContextMenu
 
@@ -285,7 +306,7 @@ local function GetShouldOpen(contextMenu, x, y)
 end
 
 function ContextMenu:OnRightClick()
-	if BuiltinContextMenu.Visible then
+	if _IsBuiltinContextMenuVisible() then
 		if self.Visible then
 			self:Close()
 		end
@@ -809,6 +830,15 @@ function ContextMenu:Open()
 		self.IsOpening = true
 		if self.ContextStatus then
 			Ext.UI.GetByType(self.ContextStatus.CallingUI):ExternalInterfaceCall("hideTooltip")
+		else
+			instance:ExternalInterfaceCall("hideTooltip")
+			local textDisplay = Ext.UI.GetByType(Data.UIType.textDisplay)
+			if textDisplay then
+				local textDisplayRoot = textDisplay:GetRoot()
+				if textDisplayRoot and textDisplayRoot.clearTooltipText then
+					textDisplayRoot.clearTooltipText()
+				end
+			end
 		end
 		if x+contextMenu.width > main.screenWidth then
 			x = x - contextMenu.width - paddingX

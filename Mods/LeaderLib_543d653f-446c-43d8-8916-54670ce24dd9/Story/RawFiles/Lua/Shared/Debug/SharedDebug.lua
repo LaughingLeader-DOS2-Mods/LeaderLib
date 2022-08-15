@@ -150,13 +150,7 @@ else
 							fprint(LOGLEVEL.DEFAULT, "[TransformTotems] Transforming from (%s) to (%s)[%s] Stats(%s)", GameHelpers.GetTemplate(summon), template.Name, template.Id, template.Stats)
 							summon:TransformTemplate(template)
 							local level = math.max(summon.Stats.Level, host.Stats.Level)
-							local flags = {}
-							for _,v in pairs(summon.Flags) do
-								if v ~= "HasOwner" then
-									flags[#flags+1] = v
-								end
-							end
-							summon.Flags = flags
+							summon.HasOwner = false
 							GameHelpers.Character.SetStats(summon, template.Stats)
 							GameHelpers.Character.SetEquipment(summon, template.Equipment)
 							GameHelpers.Status.Apply(summon, "LEADERLIB_VISUALS_RESET", 0)
@@ -167,18 +161,8 @@ else
 							end)
 							Timer.StartOneshot("", 700, function (e)
 								local summon = GameHelpers.GetCharacter(summonGUID)
-								local flags = {}
-								for _,v in pairs(summon.Flags) do
-									if v ~= "HasOwner" then
-										flags[#flags+1] = v
-									else
-										return
-									end
-								end
-								flags[#flags+1] = "HasOwner"
-								summon.Flags = flags
+								summon.HasOwner = true
 							end)
-							--CharacterTransform(summon.MyGuid, template.Id, 0, 1, 1, 1, 1, 0, 0)
 						end
 					end
 				end

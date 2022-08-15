@@ -409,7 +409,7 @@
 	<content contentuid="hbde09b0bg3c2eg423cga548g96e2590e887c">The maximum amount of action points.&lt;br&gt;(Default: 6)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
 	<content contentuid="hbe5db354g0434g4e02g8af6g16dee986c19a">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
 	<content contentuid="hbe7c777fg3946g4d49g9271g4684744cb15b">[LeaderLib_ModMenu_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f]</content>
-	<content contentuid="hbed70da2g8eb0g4facg9e47g87729f089604">Enable backstab settings for this group.&lt;br&gt;(Default: Disabled)</content>
+	<content contentuid="hbed70da2g8eb0g4facg9e47g87729f089604">Enable backstab settings for this group, allowing non-dagger weapons to backstab, depending on settings.&lt;br&gt;(Default: Disabled)</content>
 	<content contentuid="hc0d30be7g8e7fg4406gb6f7gcb831c680e03">&lt;b&gt;*Current*&lt;/b&gt;</content>
 	<content contentuid="hc108b43dgeae9g4469g8ea4gcaf87e524454">*Introduce yourself, then ask who you&apos;re talking to.*</content>
 	<content contentuid="hc173b9dag053dg4dbfga960g100fb29ae494">Chain All Party Members</content>
@@ -477,7 +477,7 @@
 	<content contentuid="he31d5820g9ddbg4e08gac83g1358e22e499b">Next Level [1]: [2]</content>
 	<content contentuid="he3778d9cg674dg44f0ga583g8801ec96d403">Enable a 0.5 second delay for abilities, stats, and talents. May affect the examine window as well.</content>
 	<content contentuid="he39c524ag19e1g49b8gb60bga1e4bbf30084">In multiplayer, your inventory will be unlocked after an initial delay.</content>
-	<content contentuid="he4354422gdcc8g4681gb4c4g7b22456af08c">If enabled, only melee weapons or skills can backstab. Melee skills will use the Skill Minimum Distance setting.&lt;br&gt;(Default: Enabled)</content>
+	<content contentuid="he4354422gdcc8g4681gb4c4g7b22456af08c">If enabled, only melee weapons or skills can backstab. Melee skills will use the [Key:LeaderLib_UI_GameSettings_BackstabSettings_MeleeSpellBackstabMaxDistance] setting.&lt;br&gt;(Default: Enabled)</content>
 	<content contentuid="he4b98edeg7025g4ad9gbb87gcce230263029">Hrmph...</content>
 	<content contentuid="he59d7821g2c4dg4deag8341g27215713bf5e">*Introduce yourself, then ask the man who he is.*</content>
 	<content contentuid="he5a918ecg8f34g4ddbg9af6g98e9f4575d91">Me? Oh, I&apos;m just a retired old man, looking to get some fishing done. *He rubs his beard, glancing at the broken-down scenery.* Afraid I don&apos;t have any fight left in me anywho.</content>

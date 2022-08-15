@@ -71,3 +71,118 @@ end) ]]
 -- Events.OnBookRead:Subscribe(function (e)
 -- 	Ext.Print(_ISCLIENT and "CLIENT" or "SERVER", e:DumpExport())
 -- end)
+
+--[[ if _ISCLIENT then
+	local lastCursorPos = {}
+	local function HasTotem()
+		for summon in GameHelpers.Character.GetSummons(Client:GetCharacter(), false) do
+			print(summon, summon:HasTag("TOTEM"))
+			if summon:HasTag("TOTEM") then
+				return true
+			end
+		end
+		return false
+	end
+	Ext.Events.SessionLoaded:Subscribe(function (e)
+		local totemAction = Classes.ContextMenuAction:Create({
+			ID = "LeaderLib_Debug_TransformTotems",
+			AutomaticallyAddToBuiltin = true,
+			DisplayName = "Transform Totems",
+			ShouldOpen = function (cm, x, y)
+				local cursor = Ext.UI.GetPickingState()
+				if cursor and cursor.WalkablePosition then
+					local x,y,z = table.unpack(cursor.WalkablePosition)
+					local surfaces = GameHelpers.Grid.GetSurfaces(x, z)
+					if surfaces.Ground then
+						lastCursorPos = {x,y,z}
+						return Client:GetCharacter():HasTag("LeaderLib_HasTotem")
+					end
+				end
+				return false
+			end,
+			Callback = function ()
+				local x,y,z = table.unpack(lastCursorPos)
+				if x and z then
+					Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_Debug_TransformTotems", Common.JsonStringify({X=x,Z=z}))
+				end
+				lastCursorPos = {}
+			end
+		})
+		UI.ContextMenu.Register.Action(totemAction)
+	end)
+else
+	Events.SummonChanged:Subscribe(function (e)
+		if e.Summon:HasTag("TOTEM") then
+			if not e.IsDying then
+				CharacterSetSummonLifetime(e.Summon.MyGuid, 99999)
+				SetTag(e.Owner.MyGuid, "LeaderLib_HasTotem")
+			else
+				local ownerGUID = e.Owner.MyGuid
+				local timerName = string.format("LeaderLib_Debug_CheckForTotems", ownerGUID)
+				Timer.StartOneshot(timerName, 500, function (e)
+					local hasTotem = false
+					for summon in GameHelpers.Character.GetSummons(ownerGUID, false) do
+						if summon:HasTag("TOTEM") then
+							hasTotem = true
+							break
+						end
+					end
+					if not hasTotem then
+						ClearTag(ownerGUID, "LeaderLib_HasTotem")
+					end
+				end)
+			end
+		end
+	end)
+	Ext.RegisterNetListener("LeaderLib_ContextMenu_Debug_TransformTotems", function (channel, payload, user)
+		local data = Common.JsonParse(payload)
+		if data.X and data.Z then
+			local flags = Ext.Entity.GetAiGrid():GetAiFlags(data.X, data.Z)
+			local surface = GameHelpers.Grid.GetSurfaceFromAiFlags(flags)
+			local surfaceTemplate = Ext.Surface.GetTemplate(surface)
+			if surfaceTemplate and not StringHelpers.IsNullOrEmpty(surfaceTemplate.Summon) then
+				local template = Ext.Template.GetRootTemplate(surfaceTemplate.Summon)
+				if template then
+					local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+					for summon in GameHelpers.Character.GetSummons(host, false) do
+						if summon:HasTag("TOTEM") and GameHelpers.GetTemplate(summon) ~= template.Id then
+							---@cast summon EsvCharacter
+							fprint(LOGLEVEL.DEFAULT, "[TransformTotems] Transforming from (%s) to (%s)[%s] Stats(%s)", GameHelpers.GetTemplate(summon), template.Name, template.Id, template.Stats)
+							summon:TransformTemplate(template)
+							local level = math.max(summon.Stats.Level, host.Stats.Level)
+							local flags = {}
+							for _,v in pairs(summon.Flags) do
+								if v ~= "HasOwner" then
+									flags[#flags+1] = v
+								end
+							end
+							summon.Flags = flags
+							GameHelpers.Character.SetStats(summon, template.Stats)
+							GameHelpers.Character.SetEquipment(summon, template.Equipment)
+							GameHelpers.Status.Apply(summon, "LEADERLIB_VISUALS_RESET", 0)
+							local summonGUID = summon.MyGuid
+							Timer.StartOneshot("", 250, function (e)
+								local summon = GameHelpers.GetCharacter(summonGUID)
+								GameHelpers.Character.SetLevel(summon, level, true)
+							end)
+							Timer.StartOneshot("", 700, function (e)
+								local summon = GameHelpers.GetCharacter(summonGUID)
+								local flags = {}
+								for _,v in pairs(summon.Flags) do
+									if v ~= "HasOwner" then
+										flags[#flags+1] = v
+									else
+										return
+									end
+								end
+								flags[#flags+1] = "HasOwner"
+								summon.Flags = flags
+							end)
+							--CharacterTransform(summon.MyGuid, template.Id, 0, 1, 1, 1, 1, 0, 0)
+						end
+					end
+				end
+			end
+		end
+	end)
+end ]]

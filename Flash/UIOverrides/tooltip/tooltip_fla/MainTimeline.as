@@ -161,12 +161,12 @@ package tooltip_fla
 		{
 			if(!this.isStatusTT)
 			{
-				var i:uint = 0;
+				/* var i:uint = 0;
 				while (i < this.tooltip_array.length)
 				{
 					trace(i, this.tooltip_array[i]);
 					i++;
-				}
+				} */
 				this.addFormattedTooltip(param1,param2,false);
 				this.isStatusTT = true;
 			}
@@ -175,6 +175,7 @@ package tooltip_fla
 		
 		public function addTooltip(text:String, widthOverride:Number = 0, heightOverride:Number = 18, allowDelay:Boolean = true, stickToMouse:Number = 0, bgType:uint = 0) : *
 		{
+			//trace("[addTooltip]", text);
 			if(text == "")
 			{
 				return;

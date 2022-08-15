@@ -256,7 +256,7 @@ else
 	Ext.RegisterNetListener("LeaderLib_ContextMenu_RequestUUID", function(cmd, payload, userid)
 		local data = Common.JsonParse(payload)
 		if data then
-			local object = GameHelpers.TryGetObject(data.NetID)
+			local object = data.Type == "Item" and GameHelpers.GetItem(data.NetID) or GameHelpers.GetCharacter(data.NetID)
 			if object then
 				Vars.LastContextTarget = object.MyGuid
 				local data = {

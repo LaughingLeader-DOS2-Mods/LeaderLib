@@ -28,6 +28,18 @@ local Init = function()
 	---@param ui UIObject
 	local function OnUIListener(self, eventType, ui, event, ...)
 		if self.Enabled and (Vars.DebugMode and (Vars.Print.UI or UI.Debug.PrintAll)) and not self.Ignored[event] then
+			local name = self.Name
+			if StringHelpers.IsNullOrEmpty(name) then
+				local _,_,fname = string.find(ui.Path, ".-Public/.+/GUI/(.+).swf")
+				if fname then
+					name = fname
+				else
+					name = ui.AnchorObjectName
+				end
+				if StringHelpers.IsNullOrEmpty(name) then
+					name = ui.Path
+				end
+			end
 			if event == "addTooltip" then
 				local txt = table.unpack({...})
 				if string.find(txt, "Experience:", 1, true) then
@@ -37,9 +49,9 @@ local Init = function()
 			-- 	return
 			end
 			if self.PrintParams then
-				_print("[%s(%s)][%s] %s(%s) [%s]", self.Name, ui:GetTypeId(), eventType, event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
+				_print("[%s(%s)][%s] %s(%s) [%s]", name, ui.Type, eventType, event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
 			else
-				_print("[%s(%s)][%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
+				_print("[%s(%s)][%s] %s [%s]", name, ui.Type, eventType, event, Ext.MonotonicTime())
 			end
 
 			if self.CustomCallback[event] then
@@ -95,9 +107,20 @@ local Init = function()
 			-- 	return
 			-- end
 		end
-		local t = ui:GetTypeId()
+		local t = ui.Type
 		if UI.Debug.PrintAll then
 			local name = Data.UITypeToName[t]
+			if StringHelpers.IsNullOrEmpty(name) then
+				local _,_,fname = string.find(ui.Path, ".-Public/.+/GUI/(.+).swf")
+				if fname then
+					name = fname
+				else
+					name = ui.AnchorObjectName
+				end
+				if StringHelpers.IsNullOrEmpty(name) then
+					name = ui.Path
+				end
+			end
 			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "call", event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
 		else
 			local listener = UIListenerWrapper._TypeListeners[t]
@@ -121,9 +144,20 @@ local Init = function()
 			-- 	return
 			-- end
 		end
-		local t = ui:GetTypeId()
+		local t = ui.Type
 		if UI.Debug.PrintAll then
 			local name = Data.UITypeToName[t]
+			if StringHelpers.IsNullOrEmpty(name) then
+				local _,_,fname = string.find(ui.Path, ".-Public/.+/GUI/(.+).swf")
+				if fname then
+					name = fname
+				else
+					name = ui.AnchorObjectName
+				end
+				if StringHelpers.IsNullOrEmpty(name) then
+					name = ui.Path
+				end
+			end
 			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "invoke", event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
 		else
 			local listener = UIListenerWrapper._TypeListeners[t]

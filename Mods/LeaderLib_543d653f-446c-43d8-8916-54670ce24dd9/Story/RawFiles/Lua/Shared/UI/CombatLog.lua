@@ -17,14 +17,16 @@ setmetatable(CombatLog, {
 					return ui:GetRoot()
 				end
 			elseif k == "PrintFilters" then
-				local ui = CombatLog.GetInstance()
-				if ui then
-					local this = ui:GetRoot()
-					if this then
-						local arr = this.log_mc.filterList.content_array
-						for i=0,#arr-1 do
-							local mc = arr[i]
-							fprint(LOGLEVEL.TRACE, "log_mc.filterList.content_array[%s] = id(%s) tooltip(%s)", i, mc.id, mc.tooltip)
+				if not Vars.ControllerEnabled then
+					local ui = CombatLog.GetInstance()
+					if ui then
+						local this = ui:GetRoot()
+						if this then
+							local arr = this.log_mc.filterList.content_array
+							for i=0,#arr-1 do
+								local mc = arr[i]
+								fprint(LOGLEVEL.TRACE, "log_mc.filterList.content_array[%s] = id(%s) tooltip(%s)", i, mc.id, mc.tooltip)
+							end
 						end
 					end
 				end
@@ -72,6 +74,9 @@ if _ISCLIENT then
 
 	---@private
 	function CombatLog.UpdateIndexes()
+		if Vars.ControllerEnabled then
+			return
+		end
 		local this = self.Root
 		if not this then 
 			return
@@ -109,6 +114,9 @@ if _ISCLIENT then
 	---@param enabled boolean|nil If true/false, the filter is enabled or disabled. Enabled by default if not set.
 	---@param frame integer|nil
 	function CombatLog.AddFilter(id, tooltip, enabled, frame)
+		if Vars.ControllerEnabled then
+			return
+		end
 		local this = self.Root
 		if not this then 
 			return false
@@ -156,6 +164,9 @@ if _ISCLIENT then
 
 	---@param id string
 	function CombatLog.RemoveFilter(id)
+		if Vars.ControllerEnabled then
+			return
+		end
 		local filter = self.Filters[id]
 		if filter then
 			local this = self.Root

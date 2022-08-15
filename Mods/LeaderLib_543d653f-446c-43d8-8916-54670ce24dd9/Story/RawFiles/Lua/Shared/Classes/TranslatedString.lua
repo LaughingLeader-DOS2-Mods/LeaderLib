@@ -178,7 +178,7 @@ function TranslatedString:Update()
 			end
 		end
 	end
-	if not _strnullspace(self.Value) and self.AutoReplacePlaceholders and Vars.Initialized then
+	if not _strnullspace(self.Value) and self.AutoReplacePlaceholders then
 		self.Value = _replaceplaceholders(self.Value)
 	end
 	return self.Value
@@ -260,11 +260,7 @@ function UpdateTranslatedStrings()
 	end
 end
 
-if not Vars.IsEditorMode then
-	Ext.Events.SessionLoaded:Subscribe(UpdateTranslatedStrings)
-else
-	Events.Initialized:Subscribe(UpdateTranslatedStrings)
-end
+Events.Initialized:Subscribe(UpdateTranslatedStrings)
 
 if Vars.DebugMode then
 	Ext.RegisterConsoleCommand("leaderlib_ts_missingkeys", function ()

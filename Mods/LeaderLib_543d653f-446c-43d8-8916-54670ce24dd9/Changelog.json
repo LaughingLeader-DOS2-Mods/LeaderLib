@@ -6,6 +6,20 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.26.5",
+			"Changes": [
+				"Fixed the !modorder console window command.",
+				"Added 'Keep Tooltip in Screen' to the gameplay client tooltip options. This option will prevent the tooltip from going off the screen (thanks to Pip for the suggestion).",
+				"API Changes:",
+				"\t• Fixed Events.SummonChanged not firing.",
+				"\t• Added GameHelpers.Character.SetEquipment, GameHelpers.Character.SetStats.",
+				"\t• Classes.ContextMenuAction can now open in the regular context menu if 'AutomaticallyAddToBuiltin' is set.",
+				"v57 (Upcoming) Changes:",
+				"\t• Added 'Show Mod Source' to gameplay client tooltip options, allowing item/status/skill tooltips to show the mod it comes from.",
+				"\t• Fixed an issue with RawInput. The shift key specifically is now checked, to expand/contract tooltips (before we could only look for supported keybindings)."
+			]
+		},
+		{
 			"Version": "1.7.26.4",
 			"Changes": [
 				"Fixed an issue preventing combat if 'Auto-Identify Items' was enabled. Turns out the game property 'AutoIdentifyItems' actually prevents combat? Really weird.",

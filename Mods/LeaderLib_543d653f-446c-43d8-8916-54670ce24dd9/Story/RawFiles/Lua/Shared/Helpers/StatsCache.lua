@@ -36,6 +36,7 @@ end
 local _validStatTypes = {
 	Armor = true,
 	DeltaMod = true,
+	Character = true,
 	Object = true,
 	Potion = true,
 	Shield = true,
@@ -202,7 +203,7 @@ function GameHelpers.Stats.Exists(id, statType)
 		local t = _statNameToType[id]
 		return t ~= nil
 	else
-		local b,stat = pcall(Ext.Stats.Get, id)
+		local b,stat = pcall(Ext.Stats.Get, id, nil, false)
 		return b and stat ~= nil
 	end
 end

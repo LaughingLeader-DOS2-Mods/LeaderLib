@@ -18,6 +18,7 @@
 	<content contentuid="h0817cecega5f8g4910g875fg07c2da1ba106">Delay Skill Tooltips</content>
 	<content contentuid="h085c69c2g47e1g4611g9c72g6f45ecb1768d">Always Show Divine Talents</content>
 	<content contentuid="h08bb8216g9d40g49f9g91d4g8a77ecb090d2">Swap between the undead and non-undead equivalent of your current race.</content>
+	<content contentuid="h0a498022g9474g4aacg9c4cged02cdca22a2">Show the mod a status, item, or skill originates from in tooltips.</content>
 	<content contentuid="h0a56f2cfgf36fg4b73gba0cgc31271b3795f">If enabled, the Divine Talents will always be visible in the player UI, regardless if the gift bag is enabled.</content>
 	<content contentuid="h0a77a6c9g8b1ag49cdgaf0eg45c159b82b32">No rifle equipped</content>
 	<content contentuid="h0ab95fb3g7cfbg483dga66bg5daf233e945a">Loading presets...</content>
@@ -62,6 +63,7 @@
 	<content contentuid="h1b1df860g4c70g46ccg9a4egb566babfcf09">Quality of Life</content>
 	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee">[LOAD] Load Global Settings - These are global extender mod settings LeaderLib manages.&lt;br&gt;Path: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GlobalSettings.json&lt;/b&gt;</content>
 	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc">Control Summon</content>
+	<content contentuid="h1cdc775bgcae3g45b6g944bg0fb21db194a9">Keep Tooltip in Screen</content>
 	<content contentuid="h1d68f897g1430g4ed6gb61dg88018af310e8">Buff Status Preservation</content>
 	<content contentuid="h1da479e7gc4e2g4748g8234g754e97a4b680">Sulfuric</content>
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c">Character is selling new items.</content>
@@ -244,6 +246,7 @@
 	<content contentuid="h7942ef1ag44d9g49f0gab10ge07e419c1d32">[OFF] Combat Vacuum - Automatically pull party members within 30m into combat. [GLOBAL]</content>
 	<content contentuid="h7996a812g5908g4aa5g9e39g929c85d71ba0">Enable a 0.5 second delay for item tooltips (includes the hotbar).</content>
 	<content contentuid="h79b1fb29g8d95g4bcdg9af6g32e2593b0475">Melee Skill Maximum Distance</content>
+	<content contentuid="h79ed17e8gc593g4adbg9648gb16c5f3a8636">If enabled, tooltips will be forced to stay on the screen, instead of clipping out of bounds.</content>
 	<content contentuid="h7a4ddc58g1cbeg4e40gaba2g0b2bf5dedd98">[OFF] Debug Logging [GLOBAL]</content>
 	<content contentuid="h7a60181dg1be6g4e43g99c5g91289ea59f8f">Exiting...</content>
 	<content contentuid="h7b3bd7e6g9a34g4959gad11g241f6d8d33c1">Release [1] for Less Info</content>
@@ -371,6 +374,7 @@
 	<content contentuid="hb035f182gb3bdg47a6ga8a7gde53b557f804">Make the combat log visible initially.</content>
 	<content contentuid="hb09fdd2dg134cg4361g8b7dg9a2b23a1ec41">Open Menu</content>
 	<content contentuid="hb1db6515g4bf7g4c7eg8eabga55f4a93beda">Fix Status Tooltips</content>
+	<content contentuid="hb26dd55bg0da3g4199g8732g420d25becc27">Show Mod Source</content>
 	<content contentuid="hb2822093gaf6ag417dgab70g447f0b730fb4">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
 	<content contentuid="hb2e82c9dg3175g429cga865g3c670288b3c6">Always display the &quot;Scales With x&quot; text that isn&apos;t visible if the weapon has an attribute requirement above 0.</content>
 	<content contentuid="hb48f1258g4031g4ab2g8d73gbb24956d5d74">I definitely activated these mods at one point! Why are they no longer active?</content>

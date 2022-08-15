@@ -56,7 +56,7 @@ local CreatedByText = Classes.TranslatedString:CreateFromKey("LeaderLib_Tooltip_
 ---@param v FlagData|VariableData
 ---@param isCheckbox boolean
 ---@return string,string
-local function PrepareText(name, v, isCheckbox)
+local function PrepareText(name, v, isCheckbox, entryType)
 	local displayName = name
 	local tooltip = ""
 	if v ~= nil then
@@ -98,6 +98,16 @@ local function PrepareText(name, v, isCheckbox)
 	if Vars.ControllerEnabled and isCheckbox == true then
 		displayName = string.gsub(displayName, "Enable ", ""):gsub("Disable ", "")
 	end
+	if Vars.ControllerEnabled then
+		--Toolsips in controller mode display at the bottom of the UI always
+		tooltip = GameHelpers.Tooltip.ReplacePlaceholders(tooltip)
+		if entryType == "ButtonData" then
+			tooltip = string.format("%s<br>%s", displayName, tooltip)
+			if string.len(displayName) >= 20 then
+				displayName = string.sub(displayName, 1, 20) .. "..."
+			end
+		end
+	end
 	if Vars.DebugMode and v.Type == "FlagData" then
 		tooltip = string.format("%s<br><font color='#44AAFF'>(Flag: <font color='#FFAA33'>%s</font>)</font>", tooltip, v.ID)
 	end
@@ -134,7 +144,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 			else
 				state = v.Enabled and 1 or 0
 			end
-			local displayName, tooltip = PrepareText(name, v)
+			local displayName, tooltip = PrepareText(name, v, true, v.Type)
 			mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
 			AddControl(v, modUUID, v.Enabled)
 		elseif v.Type == "VariableData" then
@@ -143,7 +153,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 				local interval = v.Interval or 1
 				local min = v.Min or 0
 				local max = v.Max or 999
-				local displayName, tooltip = PrepareText(name, v)
+				local displayName, tooltip = PrepareText(name, v, false, v.Type)
 				local controlsEnabled = v.ClientSide or Client.IsHost == true
 				mainMenu.addMenuSlider(ModMenuManager.LastID, displayName, v.Value, min, max, interval, not controlsEnabled, tooltip)
 				AddControl(v, modUUID, v.Value)
@@ -156,16 +166,16 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 			elseif varType == "boolean" then
 				local enableControl = v.ClientSide or Client.IsHost == true
 				local state = v.Value == true and 1 or 0
-				local displayName, tooltip = PrepareText(name, v, true)
+				local displayName, tooltip = PrepareText(name, v, true, v.Type)
 				mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
 				AddControl(v, modUUID, v.Value)
 			elseif varType == "table" then
 				if v.Value.Entries ~= nil and type(v.Value.Entries) == "table" then
-					local displayName, tooltip = PrepareText(name, v)
+					local displayName, tooltip = PrepareText(name, v, false, v.Type)
 					mainMenu.addMenuDropDown(ModMenuManager.LastID, displayName, tooltip)
 					AddControl(v, modUUID, v.Value.Selected)
 					for _,entry in pairs(v.Value.Entries) do
-						local entryName,_ = PrepareText(entry)
+						local entryName,_ = PrepareText(entry, nil, false, v.Type)
 						mainMenu.addMenuDropDownEntry(ModMenuManager.LastID, entryName)
 						ModMenuManager.LastID = ModMenuManager.LastID + 1
 					end
@@ -173,7 +183,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 			end
 		elseif v.Type == "ButtonData" then
 			local enableControl = v.Enabled and (v.ClientSide or Client.IsHost == true or not v.HostOnly)
-			local displayName, tooltip = PrepareText(name, v)
+			local displayName, tooltip = PrepareText(name, v, false, v.Type)
 			local soundUp = v.SoundUp or ""
 			if not Vars.ControllerEnabled then
 				mainMenu.addMenuButton(ModMenuManager.LastID, displayName, soundUp, enableControl, tooltip)

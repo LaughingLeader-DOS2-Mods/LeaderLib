@@ -10,6 +10,11 @@
 			"Changes": [
 				"Fixed the !modorder console window command.",
 				"Added 'Keep Tooltip in Screen' to the gameplay client tooltip options. This option will prevent the tooltip from going off the screen (thanks to Pip for the suggestion).",
+				"Fix options/mod settings UI issues in controller mode:",
+				"\t• Fixed an issue where the 'Mod Settings' menu button was missing from the UI.",
+				"\t• Fixed label font size and positioning.",
+				"\t• Buttons display names are now capped, and their name is displayed in the tooltip, due to the button width itself being limited.",
+				"\t• Fixed additional buttons in the Gameplay menu (missing name/tooltip).",
 				"API Changes:",
 				"\t• Fixed Events.SummonChanged not firing.",
 				"\t• Added GameHelpers.Character.SetEquipment, GameHelpers.Character.SetStats.",

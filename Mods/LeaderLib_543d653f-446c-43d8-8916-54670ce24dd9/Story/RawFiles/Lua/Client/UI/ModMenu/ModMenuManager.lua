@@ -41,6 +41,15 @@ ModMenuManager = {
 
 Managers.ModMenu = ModMenuManager
 
+local function _GetTitleFontSize()
+	if not Vars.ControllerEnabled then
+		return 24
+	else
+		--Default font size is 28 in controller mode
+		return 32
+	end
+end
+
 local CreatedByText = Classes.TranslatedString:CreateFromKey("LeaderLib_Tooltip_CreatedBy", "[1]<br><font color='#33FF99'>Created by [2]</font>")
 
 ---@param name string
@@ -191,11 +200,18 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 			local name = section.DisplayName or section.Name
 			local topSpacing = i > 1 and 10 or 0
 			if not StringHelpers.IsNullOrEmpty(name) then
-				--mainMenu.addMenuInfoLabel(Ext.Random(500,600), section.DisplayName, "Info?")
 				if string.sub(name, 0) == "h" then
-					mainMenu.addMenuLabel(GameHelpers.GetTranslatedString(name, name), "", 40, topSpacing)
+					name = GameHelpers.GetTranslatedString(name, "")
 				else
-					mainMenu.addMenuLabel(GameHelpers.GetStringKeyText(name, name), "", 40, topSpacing)
+					name = GameHelpers.GetStringKeyText(name, "")
+				end
+				--mainMenu.addMenuInfoLabel(Ext.Random(500,600), section.DisplayName, "Info?")
+				if not StringHelpers.IsNullOrEmpty(name) then
+					if string.sub(name, 0) == "h" then
+						mainMenu.addMenuLabel(name, "", 40, topSpacing)
+					else
+						mainMenu.addMenuLabel(name, "", 40, topSpacing)
+					end
 				end
 			end
 			if section.Entries ~= nil then
@@ -263,13 +279,13 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 		if modSettings.Global ~= nil then
 			if Ext.IsModLoaded(modSettings.UUID) and modSettings:HasEntries() then
 				local titleColor = not StringHelpers.IsNullOrEmpty(modSettings.TitleColor) and modSettings.TitleColor or "#369BFF"
-				local modName = string.format("<font color='%s' size='24'>%s</font>", titleColor, modSettings.Name)
+				local modName = string.format("<font color='%s' size='%i'>%s</font>", titleColor, _GetTitleFontSize(), modSettings.Name)
 				local tooltip = ""
 
 				local mod = Ext.Mod.GetMod(modSettings.UUID)
 				if mod and mod.Info then
 					local name = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
-					modName = string.format("<font color='%s' size='24'>%s</font>", titleColor, name)
+					modName = string.format("<font color='%s' size='%i'>%s</font>", titleColor, _GetTitleFontSize(), name)
 					local desc = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayDescription, mod.Info.Description)
 					local version = StringHelpers.Join(".", mod.Info.ModVersion)
 					if not StringHelpers.IsNullOrWhitespace(desc) then

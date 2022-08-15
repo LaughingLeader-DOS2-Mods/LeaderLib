@@ -32,7 +32,7 @@ TOOLTIP_OUTPUT = DOS2DE_PUBLIC.joinpath("Game/GUI/")
 targets = [
     # "tooltip",
     "optionsSettings",
-    # "optionsSettings_c",
+    "optionsSettings_c",
     # "journal",
 ]
 

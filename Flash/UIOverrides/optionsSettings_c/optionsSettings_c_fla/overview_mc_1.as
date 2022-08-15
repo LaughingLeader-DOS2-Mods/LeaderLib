@@ -201,29 +201,22 @@ package optionsSettings_c_fla
 		public function addMenuLabel(text:String, tooltip:String = "", fixedHeight:Number = -1, topSpacing:Number = 0) : *
 		{
 			var label_mc:Label = new Label();
-			if(fixedHeight && fixedHeight > -1)
-			{
-				label_mc.heightOverride = fixedHeight;
-			} 
-			else
-			{
-				if(this.list.size != 0)
-				{
-					label_mc.heightOverride = this.elementHeight * 2;
-				}
-				else
-				{
-					label_mc.heightOverride = this.elementHeight;
-					label_mc.label_txt.y = 0;
-				}
-			}
-			if(topSpacing) {
-				label_mc.heightOverride = label_mc.heightOverride + topSpacing;
-				label_mc.label_txt.y = label_mc.label_txt.y + topSpacing;
-			}
+			label_mc.label_txt.y = 0;
 			label_mc.x = this.elementX;
 			label_mc.label_txt.htmlText = text;
+			label_mc.tooltip = tooltip;
 			label_mc.name = "item" + this.list.length + "_mc";
+
+			if(fixedHeight && fixedHeight > -1) {
+				label_mc.heightOverride = fixedHeight;
+			} else {
+				label_mc.heightOverride = label_mc.label_txt.textHeight;
+			}
+			if(topSpacing && topSpacing != 0) {
+				label_mc.heightOverride = label_mc.heightOverride + topSpacing;
+				label_mc.label_txt.y = topSpacing;
+			}
+
 			if(label_mc.label_txt.textWidth > this.minWidth)
 			{
 				if(this.maxWidth < label_mc.label_txt.textWidth)
@@ -235,7 +228,9 @@ package optionsSettings_c_fla
 			{
 				this.maxWidth = this.minWidth;
 			}
-			label_mc.tooltip = tooltip;
+
+			label_mc.scrollRect = new Rectangle(0,0,label_mc.width, label_mc.heightOverride);
+			
 			this.list.addElement(label_mc,true,false);
 			this.resetBG();
 			ExternalInterface.call("controlAdded", "menuLabel", label_mc.name, label_mc.list_pos, "list", text);
@@ -373,16 +368,16 @@ package optionsSettings_c_fla
 			}
 		}
 		
-		public function ddShowTooltip(param1:MovieClip) : *
+		public function ddShowTooltip(mc:MovieClip) : *
 		{
-			if(param1.enabled && param1.enabledTooltip)
+			if(mc.enabled && mc.enabledTooltip)
 			{
-				this.tooltip_txt.htmlText = param1.enabledTooltip;
+				this.tooltip_txt.htmlText = mc.enabledTooltip;
 				this.tooltip_txt.textColor = 16777215;
 			}
-			if(!param1.enabled && param1.disabledTooltip)
+			if(!mc.enabled && mc.disabledTooltip)
 			{
-				this.tooltip_txt.htmlText = param1.disabledTooltip;
+				this.tooltip_txt.htmlText = mc.disabledTooltip;
 				this.tooltip_txt.textColor = 16646144;
 			}
 			this.checkInfoScrolling();
@@ -560,12 +555,12 @@ package optionsSettings_c_fla
 			if (button == null)
 			{
 				button = new Menu_button();
-				button.heightOverride = fixedHeight > -1 ? fixedHeight : this.elementHeight;
+				button.heightOverride = fixedHeight && fixedHeight > -1 ? fixedHeight : this.elementHeight;
 				button.x = this.elementX;
 				button.label_txt.htmlText = displayName;
 				button.id = id;
 				button.name = "item" + this.list.length + "_mc";
-				if (tooltip != "") {
+				if (tooltip && tooltip != "") {
 					button.enabledTooltip = tooltip;
 					button.onOver = this.ddShowTooltip;
 					button.onOut = this.ddHideTooltip;
@@ -590,7 +585,7 @@ package optionsSettings_c_fla
 			else
 			{
 				button.label_txt.htmlText = displayName;
-				if (tooltip != "") {
+				if (tooltip && tooltip != "") {
 					button.enabledTooltip = tooltip;
 					button.onOver = this.ddShowTooltip;
 					button.onOut = this.ddHideTooltip;

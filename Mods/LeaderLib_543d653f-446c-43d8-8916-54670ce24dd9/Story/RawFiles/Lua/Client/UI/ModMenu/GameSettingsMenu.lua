@@ -136,7 +136,7 @@ local ts = Classes.TranslatedString
 
 local _ds = {AutoReplacePlaceholders=true}
 --Don't replace placeholders in tooltips - Let the generic listener do that
-local _dst = {AutoReplacePlaceholders=false}
+local _dst = {AutoReplacePlaceholders=Vars.ControllerEnabled}
 
 local text = {
 	MainTitle = ts:CreateFromKey("LeaderLib_UI_GameSettings_MainTitle", "", _ds),
@@ -280,6 +280,14 @@ function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listPro
 	end
 end
 
+local function _AddMenuButton(this, id, displayName, soundUp, enableControl, tooltip)
+	if not Vars.ControllerEnabled then
+		this.addMenuButton(id, displayName, soundUp, enableControl, tooltip)
+	else
+		this.addMenuButton(id, displayName, enableControl, tooltip)
+	end
+end
+
 ---@param ui UIObject
 function GameSettingsMenu.AddSettings(ui, addToArray)
 	GameSettingsMenu.Controls = {}
@@ -357,11 +365,11 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "HideAll"), text.Client.HideStatuses.Value, true, settings.Client.StatusOptions.HideAll and 1 or 0, false, text.Client.HideStatuses_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "AffectHealthbar"), text.Client.StatusOptions_AffectHealthbar.Value, true, settings.Client.StatusOptions.AffectHealthbar and 1 or 0, false, text.Client.StatusOptions_AffectHealthbar_Description.Value)
 
-		mainMenu.addMenuButton(AddButton("ClearBlacklist", function()
+		_AddMenuButton(mainMenu, AddButton("ClearBlacklist", function()
 			GameSettings.Settings.Client.StatusOptions.Blacklist = {}
 			GameSettingsManager.Save()
 		end), text.Button_ClearBlacklist.Value, "", true, text.Button_ClearBlacklist_Description.Value)
-		mainMenu.addMenuButton(AddButton("ClearWhitelist", function()
+		_AddMenuButton(mainMenu, AddButton("ClearWhitelist", function()
 			GameSettings.Settings.Client.StatusOptions.Whitelist = {}
 			GameSettingsManager.Save()
 		end), text.Button_ClearWhitelist.Value, "", true, text.Button_ClearWhitelist_Description.Value)

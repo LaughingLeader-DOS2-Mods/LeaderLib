@@ -133,7 +133,7 @@ function PlayerInfo:GetCharacterMovieClips(ignoreSummons)
 	end
 end
 
----@param ownerHandleMatch number
+---@param ownerHandleMatch number|nil
 ---@return FlashObject
 function PlayerInfo:GetSummonMovieClips(ownerHandleMatch)
 	local this = self:Get()

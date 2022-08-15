@@ -465,6 +465,52 @@ local SurfaceFlags = {
 	-- IrreplaceableCloud = 0x800000000000000,
 }
 
+---@param flags integer
+---@return string|nil
+function GameHelpers.Grid.GetSurfaceFromAiFlags(flags)
+	local groundType = nil
+	for k,f in pairs(SurfaceFlags.Ground.Type) do
+		if (flags & f) ~= 0 then
+			groundType = k
+		end
+	end
+	if groundType then
+		local groundSurface = groundType
+		for k,f in pairs(SurfaceFlags.Ground.Modifier) do
+			if (flags & f) ~= 0 then
+				groundSurface = groundSurface .. k
+			end
+		end
+		for k,f in pairs(SurfaceFlags.Ground.State) do
+			if (flags & f) ~= 0 then
+				groundSurface = groundSurface .. k
+			end
+		end
+		return groundSurface
+	end
+	local cloudType = nil
+	for k,f in pairs(SurfaceFlags.Cloud.Type) do
+		if (flags & f) ~= 0 then
+			cloudType = k
+		end
+	end
+	if cloudType then
+		local cloudSurface = cloudType
+		for k,f in pairs(SurfaceFlags.Cloud.Modifier) do
+			if (flags & f) ~= 0 then
+				cloudSurface = cloudSurface .. k
+			end
+		end
+		for k,f in pairs(SurfaceFlags.Cloud.State) do
+			if (flags & f) ~= 0 then
+				cloudSurface = cloudSurface .. k
+			end
+		end
+		return cloudSurface
+	end
+	return nil
+end
+
 local function SetSurfaceFromFlags(flags, data)
 	for k,f in pairs(SurfaceFlags.Ground.Type) do
 		if (flags & f) ~= 0 then

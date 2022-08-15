@@ -476,7 +476,7 @@ function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 		end
 	else
 		for mc in StatusHider.PlayerInfo:GetCharacterMovieClips(not includeSummons) do
-			local character = GameHelpers.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
+			local character = GameHelpers.GetCharacter(Ext.UI.DoubleToHandle(mc.characterHandle))
 			if character then
 				players[#players+1] = character
 			end
@@ -549,59 +549,108 @@ end
 
 ---Gets all the active summons of a character.
 ---@param owner CharacterParam
----@param getItems boolean|nil If on the server, item summons can be fetched as well.
+---@param includeItems boolean|nil If on the server, item summons can be fetched as well.
 ---@param asTable boolean|nil Return the result as a table, instead of an iterator.
 ---@param ignoreObjects table<NETID|UUID, boolean>|nil Specific MyGuid or NetID values to ignore.
----@return GameHelpers_Character_GetSummonsResultType[]|fun():GameHelpers_Character_GetSummonsResultType summons
-function GameHelpers.Character.GetSummons(owner, getItems, asTable, ignoreObjects)
+---@return fun():GameHelpers_Character_GetSummonsResultType|GameHelpers_Character_GetSummonsResultType[] summons
+function GameHelpers.Character.GetSummons(owner, includeItems, asTable, ignoreObjects)
+	owner = GameHelpers.GetCharacter(owner)
+
 	local summons = {}
 	local ignore = ignoreObjects or {}
-
-	local matchId = nil
-
+	
 	if not _ISCLIENT then
-		if _type(owner) == "userdata" then
-			matchId = owner.MyGuid
-		elseif _type(owner) == "string" then
-			matchId = owner
-		end
-		local _osirisEnabled = Ext.OsirisIsCallable()
-		for ownerId,tbl in pairs(_PV.Summons) do
-			if not matchId or ownerId == matchId then
-				local len = #tbl
-				for i=1,len do
-					local obj = tbl[i]
-					if not ignore[obj] then
-						local exists = false
-						if _osirisEnabled then
-							exists = ObjectExists(obj) == 1	
-						else
-							exists = GameHelpers.ObjectExists(obj)
-						end
-						if exists then
-							if getItems == true or GameHelpers.Ext.ObjectIsCharacter(obj) then
-								local summon = GameHelpers.TryGetObject(obj)
-								if summon and not ignore[summon.NetID] then
-									summons[#summons+1] = summon
-								end
-							end
-						else
-							table.remove(tbl, i)
-						end
+		local ownerGUID = GameHelpers.GetUUID(owner)
+		local activeSummonsData = _PV.Summons[ownerGUID]
+		if activeSummonsData then
+			local len = #activeSummonsData
+			for i=1,len do
+				local summonGUID = activeSummonsData[i]
+				if not ignore[summonGUID] and GameHelpers.ObjectExists(summonGUID) then
+					local summon = GameHelpers.TryGetObject(summonGUID)
+					if summon and (includeItems == true or GameHelpers.Ext.ObjectIsCharacter(summon)) then
+						summons[#summons+1] = summon
+					end
+				end
+			end
+		else
+			for _,handle in pairs(owner.SummonHandles) do
+				if Ext.Utils.IsValidHandle(handle) then
+					local summon = GameHelpers.TryGetObject(handle)
+					if summon and ignore[summon.MyGuid] and (includeItems == true or GameHelpers.Ext.ObjectIsCharacter(summon)) then
+						summons[#summons+1] = summon
 					end
 				end
 			end
 		end
 	else
-		if _type(owner) == "userdata" then
-			matchId = Ext.HandleToDouble(owner.Handle)
-		else
-			matchId = owner
+		---@cast owner EclCharacter
+		---@type number
+		local ownerHandle = owner
+		if _type(owner) == "userdata" and owner.Handle then
+			ownerHandle = Ext.UI.HandleToDouble(owner.Handle)
 		end
-		for mc in StatusHider.PlayerInfo:GetSummonMovieClips(matchId) do
-			local character = GameHelpers.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
-			if character and not ignore[character.NetID] then
-				summons[#summons+1] = character
+		--Only summons who are attached to the portrait
+		for mc in StatusHider.PlayerInfo:GetSummonMovieClips(ownerHandle) do
+			local summon = GameHelpers.GetCharacter(Ext.UI.DoubleToHandle(mc.characterHandle))
+			if summon and not ignore[summon.NetID] then
+				---@cast summon EclCharacter
+				if summon and not ignore[summon.NetID] and summon.Summon then
+					summons[#summons+1] = summon
+				end
+			end
+		end
+	end
+
+	if asTable then
+		return summons
+	else
+		local i = 0
+		local count = #summons
+		return function ()
+			i = i + 1
+			if i <= count then
+				return summons[i]
+			end
+		end
+	end
+end
+
+---Gets all the active summons.
+---@param includeItems boolean|nil If on the server, item summons can be fetched as well.
+---@param asTable boolean|nil Return the result as a table, instead of an iterator.
+---@param ignoreObjects table<NETID|UUID, boolean>|nil Specific MyGuid or NetID values to ignore.
+---@return GameHelpers_Character_GetSummonsResultType[]|fun():GameHelpers_Character_GetSummonsResultType summons
+function GameHelpers.Character.GetAllSummons(includeItems, asTable, ignoreObjects)
+	local summons = {}
+	local ignore = ignoreObjects or {}
+	
+	if not _ISCLIENT then
+		-- for _,guid in pairs(Ext.Entity.GetAllCharacterGuids()) do
+		-- 	if not ignore[guid] then
+		-- 		local summon = GameHelpers.GetCharacter(guid)
+		-- 		if summon and summon.Summon and (includeItems == true or GameHelpers.Ext.ObjectIsCharacter(summon)) then
+		-- 			summons[#summons+1] = summon
+		-- 		end
+		-- 	end
+		-- end
+		for ownerGUID,activeSummonsData in pairs(_PV.Summons) do
+			local len = #activeSummonsData
+			for i=1,len do
+				local summonGUID = activeSummonsData[i]
+				if not ignore[summonGUID] and GameHelpers.ObjectExists(summonGUID) then
+					local summon = GameHelpers.TryGetObject(summonGUID)
+					if summon and (includeItems == true or GameHelpers.Ext.ObjectIsCharacter(summon)) then
+						summons[#summons+1] = summon
+					end
+				end
+			end
+		end
+	else
+		for mc in StatusHider.PlayerInfo:GetSummonMovieClips() do
+			local summon = GameHelpers.GetCharacter(Ext.UI.DoubleToHandle(mc.characterHandle))
+			if summon and not ignore[summon.NetID] and summon.Summon then
+				summons[#summons+1] = summon
 			end
 		end
 	end
@@ -1118,4 +1167,69 @@ function GameHelpers.Character.GetHighGroundFlag(attacker, target)
         highGroundFlag = "EvenGround"
     end
 	return highGroundFlag
+end
+
+---Change a character's stats via CharacterSetStats in behavior scripting.
+---@param character CharacterParam
+---@param statID string
+function GameHelpers.Character.SetStats(character, statID)
+	if not _ISCLIENT and Ext.Osiris.IsCallable() and not StringHelpers.IsNullOrWhitespace(statID) then
+		local characterGUID = GameHelpers.GetUUID(character)
+		if characterGUID then
+			assert(GameHelpers.Stats.Exists(statID), string.format("Character Stat '%s' does not exist.", statID))
+			SetVarFixedString(characterGUID, "LeaderLib_CharacterSetStats_ID", statID)
+			SetStoryEvent(characterGUID, "LeaderLib_Commands_CharacterSetStats")
+			return true
+		end
+	end
+	return false
+end
+
+---Change a character's equipment via an equipment stat.
+---@param character CharacterParam
+---@param equipmentStatID string
+---@param deleteExisting boolean|nil Delete existing equipment.
+---@param rarity ItemDataRarity|nil
+function GameHelpers.Character.SetEquipment(character, equipmentStatID, deleteExisting, rarity)
+	if not _ISCLIENT and Ext.Osiris.IsCallable() and not StringHelpers.IsNullOrWhitespace(equipmentStatID) then
+		character = GameHelpers.GetCharacter(character)
+		if character then
+			assert(GameHelpers.Stats.Exists(equipmentStatID, "EquipmentSet"), string.format("Equipment Stat '%s' does not exist.", equipmentStatID))
+			local equipment = Ext.Stats.EquipmentSet.GetLegacy(equipmentStatID)
+			local equipmentStats = {}
+			for _,group in pairs(equipment.Groups) do
+				for _,entry in pairs(group.Equipment) do
+					local statType = GameHelpers.Stats.GetStatType(entry)
+					if statType == "Armor" or statType == "Weapon" or statType == "Shield" then
+						equipmentStats[#equipmentStats+1] = entry
+					end
+				end
+			end
+			rarity = rarity or "Common"
+			local success = false
+			for _,id in pairs(equipmentStats) do
+				local itemGUID,item = GameHelpers.Item.CreateItemByStat(id, {
+					StatsLevel=character.Stats.Level,
+					ItemType=rarity,
+					GenerationItemType=rarity,
+					GMFolding = false,
+					IsIdentified = true,
+					GenerationStatsId = id,
+				})
+				if item then
+					local slot = item.Stats.ItemSlot
+					if deleteExisting then
+						local existingItem = GameHelpers.Item.GetItemInSlot(character, slot)
+						if existingItem then
+							ItemRemove(existingItem.MyGuid)
+						end
+					end
+					NRD_CharacterEquipItem(character.MyGuid, itemGUID, slot, 0, 0, 1, 1)
+					success = true
+				end
+			end
+			return success
+		end
+	end
+	return false
 end

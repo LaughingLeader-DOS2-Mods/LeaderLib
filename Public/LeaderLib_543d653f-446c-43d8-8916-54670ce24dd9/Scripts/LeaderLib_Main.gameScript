@@ -798,6 +798,19 @@ THEN
 	RemoveStatusInfluence(_Char, _Status, 999999)
 ENDIF
 
+EVENT LeaderLib_Commands_CharacterSetStats
+VARS
+	CHARACTER:_Char
+	FIXEDSTRING:_StatName
+ON
+	OnCharacterEvent(_Char, "LeaderLib_Commands_CharacterSetStats")
+ACTIONS
+IF "c1"
+	GetVar(_StatName, _Char, "LeaderLib_CharacterSetStats_ID")
+THEN
+	CharacterSetStats(_Char, _StatName, 0, 0, 1)
+ENDIF
+
 // EVENT LeaderLib_CrashFix_Madness
 // VARS
 // 	ITEM:_Item

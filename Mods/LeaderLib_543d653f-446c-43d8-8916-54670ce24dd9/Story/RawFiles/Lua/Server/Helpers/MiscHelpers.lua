@@ -318,6 +318,12 @@ function GameHelpers.GetDialogInstance(dialog, ...)
 	return nil
 end
 
+Timer.Subscribe("LeaderLib_SetExperienceToZero", function (e)
+	if e.Data.Object and e.Data.Object.Stats then
+		e.Data.Object.Stats.Experience = 0
+	end
+end)
+
 ---@param object ObjectParam
 ---@param level integer
 function GameHelpers.SetExperienceLevel(object, level)
@@ -335,9 +341,7 @@ function GameHelpers.SetExperienceLevel(object, level)
 					if xpNeeded then
 						if xpNeeded == 0 then
 							object.Stats.Experience = 1
-							Timer.StartOneshot("", 250, function()
-								object.Stats.Experience = 0
-							end)
+							Timer.StartObjectTimer("LeaderLib_SetExperienceToZero", object, 250)
 						else
 							object.Stats.Experience = xpNeeded
 						end
@@ -354,9 +358,7 @@ function GameHelpers.SetExperienceLevel(object, level)
 				if xpNeeded then
 					if xpNeeded == 0 then
 						object.Stats.Experience = 1
-						Timer.StartOneshot("", 250, function()
-							object.Stats.Experience = 0
-						end)
+						Timer.StartObjectTimer("LeaderLib_SetExperienceToZero", object, 250)
 					else
 						object.Stats.Experience = xpNeeded
 					end

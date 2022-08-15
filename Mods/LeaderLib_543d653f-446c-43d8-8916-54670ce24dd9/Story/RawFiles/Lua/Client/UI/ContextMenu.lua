@@ -53,6 +53,8 @@ local ContextMenu = {
 	Icons = {}
 }
 
+local BuiltinContextMenu = Classes.UIWrapper:CreateFromPath("Public/Game/GUI/contextMenu.swf", {ControllerPath="Public/Game/GUI/contextMenu_c.swf", IsControllerSupported=true})
+
 local self = ContextMenu
 
 ---@type BuiltinContextMenuEntry[]
@@ -283,6 +285,12 @@ local function GetShouldOpen(contextMenu, x, y)
 end
 
 function ContextMenu:OnRightClick()
+	if BuiltinContextMenu.Visible then
+		if self.Visible then
+			self:Close()
+		end
+		return
+	end
 	local settings = GameSettings.Settings.Client.StatusOptions
 	--fprint(LOGLEVEL.DEFAULT, "[ContextMenu:OnRightClick] IsOpening(%s) Visible(%s) pressed(%s)", self.IsOpening, self.Visible, pressed)
 	if not self.IsOpening then

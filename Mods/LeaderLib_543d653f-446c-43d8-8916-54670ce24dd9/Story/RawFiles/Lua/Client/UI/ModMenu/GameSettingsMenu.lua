@@ -309,8 +309,9 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 			mainMenu = mainMenuArrayAccess
 		end
 
+		local client = Client:GetCharacter()
 		local controlsEnabled = Client.IsHost == true
-		local backstabTalentSupported = Mods.CharacterExpansionLib ~= nil
+		local backstabTalentSupported = Mods.CharacterExpansionLib ~= nil or (client and (client.Stats.TALENT_Backstab or client.Stats.TALENT_RogueLoreDaggerBackStab))
 
 		local _lh = 40
 

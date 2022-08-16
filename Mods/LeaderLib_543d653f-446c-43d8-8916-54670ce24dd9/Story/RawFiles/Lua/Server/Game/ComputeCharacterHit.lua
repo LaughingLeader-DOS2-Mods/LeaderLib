@@ -320,7 +320,7 @@ function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRol
         critChance = critChance * Ext.ExtraData.TalentViolentMagicCriticalChancePercent * 0.01
         critChance = math.max(critChance, 1)
     else
-        if GameHelpers.Hit.HasFlag(hit, "Backstab") then
+        if hit.Backstab then
             return true
         end
 
@@ -363,7 +363,7 @@ end
 function HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier, criticalMultiplier)
     local mainWeapon = attacker.MainWeapon
     if mainWeapon ~= nil then
-        GameHelpers.Hit.SetFlag(hit, "CriticalHit", true)
+        hit.CriticalHit = true
         damageMultiplier = damageMultiplier + (HitOverrides.GetCriticalHitMultiplier(mainWeapon, attacker, criticalMultiplier) - 1.0)
     end
     return damageMultiplier
@@ -391,8 +391,9 @@ function HitOverrides.ComputeOverridesEnabled()
     return Features.BackstabCalculation == true
     or Features.SpellsCanCrit == true
     or GameSettings.Settings.SpellsCanCritWithoutTalent == true
+    or (GameSettings.Settings.BackstabSettings.Player.Enabled or GameSettings.Settings.BackstabSettings.NPC.Enabled)
     or Features.ResistancePenetration == true
-    or Events.ComputeCharacterHit.First ~= nil
+    or Events.ComputeCharacterHit.First ~= nil -- Any mod is subscribed to LeaderLib's ComputeCharacterHit event
 end
 
 --- @param hit HitRequest
@@ -507,11 +508,11 @@ end
 --- @param hitType HitTypeValues HitType enumeration
 --- @param noHitRoll boolean
 --- @param forceReduceDurability boolean
---- @param hit HitRequest
+--- @param hit StatsHitDamageInfo
 --- @param alwaysBackstab boolean
---- @param highGroundFlag HighGroundFlag HighGround enumeration
---- @param criticalRoll CriticalRollFlag CriticalRoll enumeration
---- @return HitRequest hit
+--- @param highGroundFlag StatsHighGroundBonus HighGround enumeration
+--- @param criticalRoll StatsCriticalRoll CriticalRoll enumeration
+--- @return StatsHitDamageInfo hit
 local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     local damageMultiplier = 1.0
 	local criticalMultiplier = 0.0
@@ -528,7 +529,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 
     --Fix: Temp fix for infinite reflection damage via Shackles of Pain + Retribution. This flag isn't being set or something in v56.
     if hitType == "Reflected" then
-        GameHelpers.Hit.SetFlag(hit, "Reflection", true)
+        hit.Reflection = true
     end
 
     if attacker == nil then
@@ -543,7 +544,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     if hitType == "Magic" and HitOverrides.BackstabSpellMechanicsEnabled(attacker) then
         local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
         if alwaysBackstab or (canBackstab and (skipPositionCheck or Game.Math.CanBackstab(target, attacker))) then
-            GameHelpers.Hit.SetFlag(hit, "Backstab", true)
+            hit.Backstab = true
         end
     end
 
@@ -556,23 +557,23 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 
     local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     if alwaysBackstab or (canBackstab and (skipPositionCheck or Game.Math.CanBackstab(target, attacker))) then
-        GameHelpers.Hit.SetFlag(hit, "Backstab", true)
+        hit.Backstab = true
     end
 
     if hitType == "Melee" then
         if Game.Math.IsInFlankingPosition(target, attacker) then
-            GameHelpers.Hit.SetFlag(hit, "Flanking", true)
+           hit.Flanking = true
         end
 
         -- Apply Sadist talent
         if attacker.TALENT_Sadist then
-            if GameHelpers.Hit.HasFlag(hit, "Poisoned") then
+            if hit.Poisoned then
                 table.insert(statusBonusDmgTypes, "Poison")
             end
-            if GameHelpers.Hit.HasFlag(hit, "Burning") then
+            if hit.Burning then
                 table.insert(statusBonusDmgTypes, "Fire")
             end
-            if GameHelpers.Hit.HasFlag(hit, "Bleeding") then
+            if hit.Bleeding then
                 table.insert(statusBonusDmgTypes, "Physical")
             end
         end
@@ -587,22 +588,21 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         local hitRoll = math.random(0, 99)
         if hitRoll >= hitChance then
             if target.TALENT_RangerLoreEvasionBonus and hitRoll < hitChance + 10 then
-                GameHelpers.Hit.SetFlag(hit, "Dodged", true)
+                hit.Dodged = true
             else
-                GameHelpers.Hit.SetFlag(hit, "Missed", true)
+                hit.Missed = true
             end
             hitBlocked = true
         else
             local blockChance = target.BlockChance
-            if not GameHelpers.Hit.HasFlag(hit, "Backstab") and blockChance > 0 and math.random(0, 99) < blockChance then
-                GameHelpers.Hit.SetFlag(hit, "Blocked", true)
+            if not hit.Backstab and blockChance > 0 and math.random(0, 99) < blockChance then
+                hit.Blocked = true
                 hitBlocked = true
             end
         end
     end
 
-    if weapon ~= nil and weapon.Name ~= "DefaultWeapon" and hitType ~= "Magic" and forceReduceDurability
-    and not GameHelpers.Hit.HasFlag(hit, {"Missed", "Dodged"}) then
+    if weapon ~= nil and weapon.Name ~= "DefaultWeapon" and hitType ~= "Magic" and forceReduceDurability and not (hit.Missed or hit.Dodged) then
         Game.Math.ConditionalDamageItemDurability(attacker, weapon)
     end
 
@@ -656,7 +656,7 @@ else
             --Ext.IO.SaveFile(string.format("Dumps/CCH_Hit_%s_%s.json", event.HitType, Ext.MonotonicTime()), Ext.DumpExport(event.Hit))
             --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})
         end
-    end)
+    end, {Priority=101})
 end
 
 Ext.Events.SessionLoaded:Subscribe(function()

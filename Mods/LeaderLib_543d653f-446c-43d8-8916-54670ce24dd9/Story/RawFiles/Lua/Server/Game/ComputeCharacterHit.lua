@@ -249,10 +249,14 @@ local function GetCanBackstabFinalResult(canBackstab, target, attacker, weapon, 
     return canBackstab,skipPositionCheck
 end
 
+local function _BackstabTalentEnabled(attacker)
+    return (Mods.CharacterExpansionLib ~= nil or attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab)
+end
+
 --- This parses the GameSettings options for backstab settings, allowing both players and NPCs to backstab with other weapons if the condition is right.
 --- Lets the Backstab talent work. Also lets ranged weapons backstab if the game settings option MeleeOnly is disabled.
---- @param attacker StatCharacter
---- @param weapon StatItem
+--- @param attacker CDivinityStatsCharacter
+--- @param weapon CDivinityStatsItem
 --- @param hitType string
 --- @param target StatCharacter
 function HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
@@ -273,9 +277,11 @@ function HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType,
         else
             settings = GameSettings.Settings.BackstabSettings.NPC
         end
+
+        local backstabTalentRequired = settings.TalentRequired and _BackstabTalentEnabled(attacker)
     
         if settings.Enabled then
-            if not settings.TalentRequired or (settings.TalentRequired and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab)) then
+            if not backstabTalentRequired or (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab) then
                 if weapon ~= nil then
                     if not settings.MeleeOnly or (settings.MeleeOnly and not Game.Math.IsRangedWeapon(weapon) and HitOverrides.CanBackstabWithTwoHandedWeapon(weapon)) then
                         canBackstab = true

@@ -22,13 +22,13 @@ local DefaultSettings = {
 		MeleeSpellBackstabMaxDistance = 2.5,
 		Player = {
 			Enabled = false,
-			TalentRequired = true,
+			TalentRequired = false,
 			MeleeOnly = true,
 			SpellsCanBackstab = false,
 		},
 		NPC = {
 			Enabled = false,
-			TalentRequired = true,
+			TalentRequired = false,
 			MeleeOnly = true,
 			SpellsCanBackstab = false,
 		},

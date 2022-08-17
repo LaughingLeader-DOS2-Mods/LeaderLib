@@ -85,22 +85,6 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
         res = character[resName] or 0
     end
 
-    --Workaround for PhysicalResistance in StatCharacter being double what it actually is
-    if _EXTVERSION <= 55 and damageType == "Physical" then
-        local stat = Ext.Stats.Get(character.Name)
-        if stat then
-            res = stat.PhysicalResistance
-        else
-            res = 0
-        end
-        for i=2,#character.DynamicStats do
-            local v = character.DynamicStats[i]
-            if v and v.PhysicalResistance then
-                res = res + v.PhysicalResistance
-            end
-        end
-    end
-
 	if res > 0 and resistancePenetration ~= nil and resistancePenetration > 0 then
 		res = math.max(res - resistancePenetration, 0)
 	end
@@ -479,37 +463,40 @@ local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, targe
     end
 end
 
---- @param hitRequest HitRequest
+--- @param hitRequest StatsHitDamageInfo
 --- @param damageList DamageList
 --- @param statusBonusDmgTypes table
 --- @param hitType HitTypeValues HitType enumeration
 --- @param target StatCharacter
 --- @param attacker StatCharacter
---- @param damageMultiplier number
-function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
-    damageMultiplier = damageMultiplier or 1.0
-    if _EXTVERSION < 56 then
-        hitRequest.DamageMultiplier = damageMultiplier
-        --We're basically calling Game.Math.DoHit here, but it may be a modified version from a mod.
-        HitOverrides.DoHitModified(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
-    else
-        --TODO Waiting for a v56 Game.Math update for hit.DamageMultiplier
-        DoHitUpdated(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+--- @param ctxOrNumber number|{DamageMultiplier:number}
+function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, ctxOrNumber)
+    --TODO Refactor things to use ctx.DamageMultiplier?
+    local damageMultiplier = 1.0
+    local t = type(damageMultiplier)
+    if t == "table" then
+        --Mods expecting the newer table arg
+        damageMultiplier = ctxOrNumber.DamageMultiplier or 1.0
+    elseif t == "number" then
+        ---@cast ctxOrNumber number
+        damageMultiplier = ctxOrNumber
     end
+    DoHitUpdated(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     Events.DoHit:Invoke({
         Hit = hitRequest,
         DamageList = damageList,
         StatusBonusDamageTypes = statusBonusDmgTypes,
         HitType = hitType,
         Target = target,
-        Attacker = attacker
+        Attacker = attacker,
+        DamageMultiplier = damageMultiplier
     })
 	return hitRequest
 end
 
 --- @param target StatCharacter
 --- @param attacker StatCharacter
---- @param weapon StatItem
+--- @param weapon CDivinityStatsItem
 --- @param preDamageList DamageList
 --- @param hitType HitTypeValues HitType enumeration
 --- @param noHitRoll boolean
@@ -525,11 +512,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     local statusBonusDmgTypes = {}
 
 	local damageList = Ext.NewDamageList()
-    if _EXTVERSION >= 56 then
-	    damageList:CopyFrom(preDamageList)
-    else
-        damageList:Merge(preDamageList)
-    end
+    damageList:CopyFrom(preDamageList)
     local statusBonusDmgTypes = {}
     local hitBlocked = false
 
@@ -566,7 +549,8 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         hit.Backstab = true
     end
 
-    if hitType == "Melee" then
+    --Oversight fix - Many melee skills have data "UseCharacterStats" "No", so the hitType ends up being "WeaponDamage".
+    if hitType == "Melee" or (hitType == "WeaponDamage" and not Game.Math.IsRangedWeapon(weapon)) then
         if Game.Math.IsInFlankingPosition(target, attacker) then
            hit.Flanking = true
         end
@@ -591,7 +575,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 
     if not noHitRoll then
         local hitChance = Game.Math.CalculateHitChance(attacker, target)
-        local hitRoll = math.random(0, 99)
+        local hitRoll = Ext.Utils.Random(0, 99)
         if hitRoll >= hitChance then
             if target.TALENT_RangerLoreEvasionBonus and hitRoll < hitChance + 10 then
                 hit.Dodged = true
@@ -601,7 +585,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
             hitBlocked = true
         else
             local blockChance = target.BlockChance
-            if not hit.Backstab and blockChance > 0 and math.random(0, 99) < blockChance then
+            if not hit.Backstab and blockChance > 0 and Ext.Utils.Random(0, 99) < blockChance then
                 hit.Blocked = true
                 hitBlocked = true
             end
@@ -652,18 +636,14 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
     end
 end
 
-if _EXTVERSION < 56 then
-    Ext.RegisterListener("ComputeCharacterHit", HitOverrides.ComputeCharacterHit)
-else
-    Ext.Events.ComputeCharacterHit:Subscribe(function(event)
-        local hit = HitOverrides.ComputeCharacterHit(event.Target, event.Attacker, event.Weapon, event.DamageList, event.HitType, event.NoHitRoll, event.ForceReduceDurability, event.Hit, event.AlwaysBackstab, event.HighGround, event.CriticalRoll)
-        if hit then
-            event.Handled = true
-            --Ext.IO.SaveFile(string.format("Dumps/CCH_Hit_%s_%s.json", event.HitType, Ext.MonotonicTime()), Ext.DumpExport(event.Hit))
-            --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})
-        end
-    end, {Priority=101})
-end
+Ext.Events.ComputeCharacterHit:Subscribe(function(event)
+    local hit = HitOverrides.ComputeCharacterHit(event.Target, event.Attacker, event.Weapon, event.DamageList, event.HitType, event.NoHitRoll, event.ForceReduceDurability, event.Hit, event.AlwaysBackstab, event.HighGround, event.CriticalRoll)
+    if hit then
+        event.Handled = true
+        --Ext.IO.SaveFile(string.format("Dumps/CCH_Hit_%s_%s.json", event.HitType, Ext.MonotonicTime()), Ext.DumpExport(event.Hit))
+        --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})
+    end
+end, {Priority=101})
 
 Ext.Events.SessionLoaded:Subscribe(function()
     -- Set to Game.Math.DoHit here, instead of immediately, in case a mod has overwritten it.

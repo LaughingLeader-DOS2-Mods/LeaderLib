@@ -854,7 +854,17 @@ DB_LeaderLib_Talents(_Talent)
 AND
 CharacterHasTalent(_CopyFrom, _Talent, 1)
 THEN
+// [BEGIN_NO_OSITOOLS]
 CharacterAddTalent(_CopyTo, _Talent);
+// [END_NO_OSITOOLS]
+/* [OSITOOLS_ONLY]
+NRD_CharacterSetPermanentBoostTalent(_CopyTo, _Talent, 1);
+
+PROC
+LeaderLib_Helper_CopyTalents((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+THEN
+CharacterAddAttribute(_CopyTo, "Dummy", 0);
+*/
 
 IF
 CharacterCharacterEvent((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyAllStats")

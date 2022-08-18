@@ -508,6 +508,7 @@ if not _ISCLIENT then
 	---@field CharacterGUID GUID
 	---@field State SKILL_STATE
 	---@field Skill string
+	---@field Ability SkillAbility
 	---@field DataType LeaderLibSkillListenerDataType
 	---@field SourceItem EsvItem|nil
 
@@ -547,7 +548,15 @@ if not _ISCLIENT then
 	---@see LeaderLibSkillManagerRegistration#All
 	---@type LeaderLibSubscribableEvent<OnSkillStateAllEventArgs>
 	Events.OnSkillState = Classes.SubscribableEvent:Create("OnSkillState", {
-		ArgsKeyOrder={"Skill", "CharacterGUID", "State", "Data", "DataType"}
+		ArgsKeyOrder={"Skill", "CharacterGUID", "State", "Data", "DataType"},
+		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
+			if matchArgsType == "table" then
+				--Listeners for skill abilities, but no skills in particular
+				if not matchArgs.Skill and matchArgs.Ability then
+					SkillManager.EnableForAllSkills(true)
+				end
+			end
+		end
 	})
 
 	---@class OnStatusBaseEventArgs

@@ -623,3 +623,14 @@ function GameHelpers.Stats.GetAllRacePresetColors(raceName)
 	end
 	return colors
 end
+
+---Safe way to get a skill's ability.
+---@param id string
+---@return SkillAbility
+function GameHelpers.Stats.GetSkillAbility(id)
+	local stat = Ext.Stats.Get(id, nil, false)
+	if stat then
+		return stat.Ability
+	end
+	return ""
+end

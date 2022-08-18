@@ -219,7 +219,7 @@ function OnSkillPreparing(char, skillprototype)
 
 	--(not last or last ~= skill) prevents invoke spam for PCs, since the PrepareSkill fires constantly for them
 	if (_enabledSkills[skill] or _enabledSkills.All) and (not last or last ~= skill) then
-		local skillData = Ext.Stats.Get(skill)
+		local skillData = Ext.Stats.Get(skill) or {Ability=""}
 		local character = GameHelpers.GetCharacter(char)
 		Events.OnSkillState:Invoke({
 			Character = character,
@@ -229,6 +229,7 @@ function OnSkillPreparing(char, skillprototype)
 			Data = skillData,
 			DataType = "StatEntrySkillData",
 			SourceItem = _GetSkillSourceItem(character, skill),
+			Ability = skillData.Ability
 		})
 	end
 
@@ -239,7 +240,7 @@ end
 
 function SkillManager.OnSkillPreparingCancel(char, skillprototype, skill, skipRemoval)
 	skill = skill or StringHelpers.GetSkillEntryName(skillprototype)
-	local skillData = Ext.Stats.Get(skill)
+	local skillData = Ext.Stats.Get(skill) or {Ability=""}
 	if (_enabledSkills[skill] or _enabledSkills.All) then
 		local character = GameHelpers.GetCharacter(char)
 		Events.OnSkillState:Invoke({
@@ -249,7 +250,8 @@ function SkillManager.OnSkillPreparingCancel(char, skillprototype, skill, skipRe
 			State = SKILL_STATE.CANCEL,
 			Data = skillData,
 			DataType = "StatEntrySkillData",
-			SourceItem = _GetSkillSourceItem(character, skill)
+			SourceItem = _GetSkillSourceItem(character, skill),
+			Ability = skillData.Ability
 		})
 	end
 
@@ -287,6 +289,7 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 				Data = data,
 				DataType = data.Type,
 				SourceItem = _GetSkillSourceItem(character, skill),
+				Ability = data.SkillData.Ability
 			})
 		end
 	end
@@ -308,14 +311,15 @@ function OnSkillCast(char, skill, skilLType, skillAbility)
 					State = SKILL_STATE.CAST,
 					Data = data,
 					DataType = data.Type,
-					SourceItem = _GetSkillSourceItem(character, skill)
+					SourceItem = _GetSkillSourceItem(character, skill),
+					Ability = data.SkillData.Ability
 				})
 			end
 			data:Clear()
 		end
 	end
 	RemoveCharacterSkillData(uuid, skill)
-	Timer.StartObjectTimer("LeaderLib_SkillManager_RemoveLastUsedSkillItem", uuid, 5000, {Skill = skill})
+	Timer.StartObjectTimer("LeaderLib_SkillManager_RemoveLastUsedSkillItem", uuid, 5000, {Skill=skill})
 end
 
 Timer.Subscribe("LeaderLib_SkillManager_RemoveLastUsedSkillItem", function (e)
@@ -360,7 +364,8 @@ function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, da
 			State = SKILL_STATE.HIT,
 			Data = data,
 			DataType = data.Type,
-			SourceItem = _GetSkillSourceItem(source, skillId)
+			SourceItem = _GetSkillSourceItem(source, skillId),
+			Ability = data.SkillData.Ability
 		})
 	end
 	InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skillId, SKILL_STATE.HIT, data)
@@ -384,7 +389,8 @@ Ext.Events.ProjectileHit:Subscribe(function (e)
 					State = SKILL_STATE.PROJECTILEHIT,
 					Data = data,
 					DataType = data.Type,
-					SourceItem = _GetSkillSourceItem(caster, skill)
+					SourceItem = _GetSkillSourceItem(caster, skill),
+					Ability = GameHelpers.Stats.GetSkillAbility(skill)
 				})
 				InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.PROJECTILEHIT, data, data.Type)
 			end
@@ -407,7 +413,8 @@ Ext.Events.BeforeShootProjectile:Subscribe(function (e)
 					State = SKILL_STATE.BEFORESHOOT,
 					Data = projectile,
 					DataType = "EsvShootProjectileRequest",
-					SourceItem = _GetSkillSourceItem(caster, skill)
+					SourceItem = _GetSkillSourceItem(caster, skill),
+					Ability = GameHelpers.Stats.GetSkillAbility(skill)
 				})
 				InvokeListenerCallbacks(Listeners.OnSkillHit, caster.MyGuid, skill, SKILL_STATE.BEFORESHOOT, projectile, "EsvShootProjectileRequest")
 			end
@@ -429,7 +436,8 @@ Ext.Events.ShootProjectile:Subscribe(function(e)
 					State = SKILL_STATE.SHOOTPROJECTILE,
 					Data = projectile,
 					DataType = "EsvProjectile",
-					SourceItem = _GetSkillSourceItem(caster, skill)
+					SourceItem = _GetSkillSourceItem(caster, skill),
+					Ability = GameHelpers.Stats.GetSkillAbility(skill)
 				})
 				
 				InvokeListenerCallbacks(Listeners.OnSkillHit, caster.MyGuid, skill, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile")
@@ -460,7 +468,8 @@ RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "aft
 				State = SKILL_STATE.LEARNED,
 				Data = learned,
 				DataType = "boolean",
-				SourceItem = sourceItem
+				SourceItem = sourceItem,
+				Ability = GameHelpers.Stats.GetSkillAbility(skill)
 			})
 		end
 	end
@@ -486,7 +495,8 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 				State = SKILL_STATE.MEMORIZED,
 				Data = learned,
 				DataType = "boolean",
-				SourceItem = _GetSkillSourceItem(character, skill)
+				SourceItem = _GetSkillSourceItem(character, skill),
+				Ability = GameHelpers.Stats.GetSkillAbility(skill)
 			})
 		end
 	end
@@ -505,6 +515,7 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
 		end
 		if (_enabledSkills[skill] or _enabledSkills.All) then
+			local ability = GameHelpers.Stats.GetSkillAbility(skill)
 			local sourceItem = _GetSkillSourceItem(character, skill)
 			Events.OnSkillState:Invoke({
 				Character = character,
@@ -513,7 +524,8 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 				State = SKILL_STATE.UNMEMORIZED,
 				Data = learned,
 				DataType = "boolean",
-				SourceItem = sourceItem
+				SourceItem = sourceItem,
+				Ability = ability
 			})
 			if not learned then
 				Events.OnSkillState:Invoke({
@@ -523,7 +535,8 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 					State = SKILL_STATE.LEARNED,
 					Data = learned,
 					DataType = "boolean",
-					SourceItem = sourceItem
+					SourceItem = sourceItem,
+					Ability = ability
 				})
 			end
 		end

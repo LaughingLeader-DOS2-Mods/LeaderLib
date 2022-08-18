@@ -65,6 +65,7 @@ Data.DamageTypeToResistanceWithExtras = {
 
 setmetatable(Data.DamageTypeToResistanceWithExtras, {__index = Data.DamageTypeToResistance})
 
+---@type Enum
 Data.EquipmentSlots = {
 	Helmet = 0,
 	Breast = 1,

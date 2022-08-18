@@ -1233,3 +1233,27 @@ function GameHelpers.Character.SetEquipment(character, equipmentStatID, deleteEx
 	end
 	return false
 end
+
+---Clone a character's equipment to another character.
+---@param from CharacterParam
+---@param to CharacterParam
+---@return boolean success
+function GameHelpers.Character.CloneEquipment(from, to)
+	if not _ISCLIENT then
+		local source = GameHelpers.GetCharacter(from)
+		local target = GameHelpers.GetCharacter(to)
+		if source and target then
+			---@cast source EsvCharacter
+			---@cast target EsvCharacter
+			for item in GameHelpers.Character.GetEquipment(source) do
+				local clone = GameHelpers.Item.Clone(item, nil, {CopyTags=true, InvokeEvent=false})
+				if clone then
+					local slot = GameHelpers.Item.GetSlot(item, true)
+					NRD_CharacterEquipItem(target.MyGuid, clone.MyGuid, slot, 0, 0, 1, 1)
+				end
+			end
+			return true
+		end
+	end
+	return false
+end

@@ -209,6 +209,29 @@ if _EXTVERSION >= 56 then
 	end)
 end
 
+---@param skill string
+---@param character EsvCharacter
+---@param state SKILL_STATE
+---@param data any
+---@param dataType string
+local function _CreateSkillEventTable(skill, character, state, data, dataType)
+	local skillData = Ext.Stats.Get(skill, nil, false)
+	if not skillData then
+		skillData = {Ability = "", SkillType = ""}
+	end
+	return {
+		Character = character,
+		CharacterGUID = character.MyGuid,
+		Skill = skill,
+		State = state,
+		Data = data,
+		DataType = dataType,
+		SourceItem = _GetSkillSourceItem(character, skill),
+		Ability = skillData.Ability,
+		SkillType = skillData.SkillType,
+	}
+end
+
 function OnSkillPreparing(char, skillprototype)
 	char = StringHelpers.GetUUID(char)
 	local skill = GetSkillEntryName(skillprototype)
@@ -221,16 +244,8 @@ function OnSkillPreparing(char, skillprototype)
 	if (_enabledSkills[skill] or _enabledSkills.All) and (not last or last ~= skill) then
 		local skillData = Ext.Stats.Get(skill) or {Ability=""}
 		local character = GameHelpers.GetCharacter(char)
-		Events.OnSkillState:Invoke({
-			Character = character,
-			CharacterGUID = character.MyGuid,
-			Skill = skill,
-			State = SKILL_STATE.PREPARE,
-			Data = skillData,
-			DataType = "StatEntrySkillData",
-			SourceItem = _GetSkillSourceItem(character, skill),
-			Ability = skillData.Ability
-		})
+		_CreateSkillEventTable(skill, character, SKILL_STATE.PREPARE, skillData, "StatEntrySkillData")
+		Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.PREPARE, skillData, "StatEntrySkillData"))
 	end
 
 	-- Clear previous data for this character in case SkillCast never fired (interrupted)
@@ -243,16 +258,7 @@ function SkillManager.OnSkillPreparingCancel(char, skillprototype, skill, skipRe
 	local skillData = Ext.Stats.Get(skill) or {Ability=""}
 	if (_enabledSkills[skill] or _enabledSkills.All) then
 		local character = GameHelpers.GetCharacter(char)
-		Events.OnSkillState:Invoke({
-			Character = character,
-			CharacterGUID = character.MyGuid,
-			Skill = skill,
-			State = SKILL_STATE.CANCEL,
-			Data = skillData,
-			DataType = "StatEntrySkillData",
-			SourceItem = _GetSkillSourceItem(character, skill),
-			Ability = skillData.Ability
-		})
+		Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.CANCEL, skillData, "StatEntrySkillData"))
 	end
 
 	_lastUsedSkillItems[char] = nil
@@ -277,20 +283,13 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 		local data = GetCharacterSkillData(skill, uuid, true, skillType, skillAbility)
 		if data then
 			local character = GameHelpers.GetCharacter(char)
-			--Quake doesn't fire any target events, but works like a shout
-			if skillType == "quake" then
-				data:AddTargetPosition(table.unpack(character.WorldPos))
+			if character then
+				--Quake doesn't fire any target events, but works like a shout
+				if skillType == "quake" then
+					data:AddTargetPosition(table.unpack(character.WorldPos))
+				end
+				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.USED, data, data.Type))
 			end
-			Events.OnSkillState:Invoke({
-				Character = character,
-				CharacterGUID = character.MyGuid,
-				Skill = skill,
-				State = SKILL_STATE.USED,
-				Data = data,
-				DataType = data.Type,
-				SourceItem = _GetSkillSourceItem(character, skill),
-				Ability = data.SkillData.Ability
-			})
 		end
 	end
 end
@@ -304,16 +303,7 @@ function OnSkillCast(char, skill, skilLType, skillAbility)
 		if data ~= nil then
 			local character = GameHelpers.GetCharacter(char)
 			if character then
-				Events.OnSkillState:Invoke({
-					Character = character,
-					CharacterGUID = character.MyGuid,
-					Skill = skill,
-					State = SKILL_STATE.CAST,
-					Data = data,
-					DataType = data.Type,
-					SourceItem = _GetSkillSourceItem(character, skill),
-					Ability = data.SkillData.Ability
-				})
+				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.CAST, data, data.Type))
 			end
 			data:Clear()
 		end
@@ -357,18 +347,9 @@ end
 --- @param data HitData|ProjectileHitData
 function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, data)
 	if not IgnoreHitTarget(target.MyGuid) and (_enabledSkills[skillId] or _enabledSkills.All) then
-		Events.OnSkillState:Invoke({
-			Character = source,
-			CharacterGUID = source.MyGuid,
-			Skill = skillId,
-			State = SKILL_STATE.HIT,
-			Data = data,
-			DataType = data.Type,
-			SourceItem = _GetSkillSourceItem(source, skillId),
-			Ability = data.SkillData.Ability
-		})
+		Events.OnSkillState:Invoke(_CreateSkillEventTable(skillId, source, SKILL_STATE.HIT, data, data.Type))
+		InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skillId, SKILL_STATE.HIT, data)
 	end
-	InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skillId, SKILL_STATE.HIT, data)
 end
 
 Ext.Events.ProjectileHit:Subscribe(function (e)
@@ -382,16 +363,7 @@ Ext.Events.ProjectileHit:Subscribe(function (e)
 				local target = e.HitObject and e.HitObject.MyGuid or ""
 				---@type ProjectileHitData
 				local data = Classes.ProjectileHitData:Create(target, uuid, projectile, e.Position, skill)
-				Events.OnSkillState:Invoke({
-					Character = caster,
-					CharacterGUID = caster.MyGuid,
-					Skill = skill,
-					State = SKILL_STATE.PROJECTILEHIT,
-					Data = data,
-					DataType = data.Type,
-					SourceItem = _GetSkillSourceItem(caster, skill),
-					Ability = GameHelpers.Stats.GetSkillAbility(skill)
-				})
+				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, caster, SKILL_STATE.PROJECTILEHIT, data, data.Type))
 				InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.PROJECTILEHIT, data, data.Type)
 			end
 		end
@@ -406,17 +378,7 @@ Ext.Events.BeforeShootProjectile:Subscribe(function (e)
 			--request.Source could be a grenade, instead of the actual character
 			local caster =  GameHelpers.TryGetObject(projectile.Caster)
 			if caster then
-				Events.OnSkillState:Invoke({
-					Character = caster,
-					CharacterGUID = caster.MyGuid,
-					Skill = skill,
-					State = SKILL_STATE.BEFORESHOOT,
-					Data = projectile,
-					DataType = "EsvShootProjectileRequest",
-					SourceItem = _GetSkillSourceItem(caster, skill),
-					Ability = GameHelpers.Stats.GetSkillAbility(skill)
-				})
-				InvokeListenerCallbacks(Listeners.OnSkillHit, caster.MyGuid, skill, SKILL_STATE.BEFORESHOOT, projectile, "EsvShootProjectileRequest")
+				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, caster, SKILL_STATE.BEFORESHOOT, projectile, "EsvShootProjectileRequest"))
 			end
 		end
 	end
@@ -429,18 +391,7 @@ Ext.Events.ShootProjectile:Subscribe(function(e)
 		if not StringHelpers.IsNullOrEmpty(skill) and (_enabledSkills[skill] or _enabledSkills.All) then
 			local caster = GameHelpers.TryGetObject(projectile.CasterHandle)
 			if caster then
-				Events.OnSkillState:Invoke({
-					Character = caster,
-					CharacterGUID = caster.MyGuid,
-					Skill = skill,
-					State = SKILL_STATE.SHOOTPROJECTILE,
-					Data = projectile,
-					DataType = "EsvProjectile",
-					SourceItem = _GetSkillSourceItem(caster, skill),
-					Ability = GameHelpers.Stats.GetSkillAbility(skill)
-				})
-				
-				InvokeListenerCallbacks(Listeners.OnSkillHit, caster.MyGuid, skill, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile")
+				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, caster, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile"))
 			end
 		end
 	end
@@ -461,16 +412,7 @@ RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "aft
 				Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", character)
 				_lastUsedSkillItems[uuid] = nil
 			end
-			Events.OnSkillState:Invoke({
-				Character = character,
-				CharacterGUID = character.MyGuid,
-				Skill = skill,
-				State = SKILL_STATE.LEARNED,
-				Data = learned,
-				DataType = "boolean",
-				SourceItem = sourceItem,
-				Ability = GameHelpers.Stats.GetSkillAbility(skill)
-			})
+			Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.LEARNED, learned, "boolean"))
 		end
 	end
 end)
@@ -488,16 +430,7 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
 		end
 		if (_enabledSkills[skill] or _enabledSkills.All) then
-			Events.OnSkillState:Invoke({
-				Character = character,
-				CharacterGUID = character.MyGuid,
-				Skill = skill,
-				State = SKILL_STATE.MEMORIZED,
-				Data = learned,
-				DataType = "boolean",
-				SourceItem = _GetSkillSourceItem(character, skill),
-				Ability = GameHelpers.Stats.GetSkillAbility(skill)
-			})
+			Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.MEMORIZED, learned, "boolean"))
 		end
 	end
 end)
@@ -515,29 +448,9 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
 		end
 		if (_enabledSkills[skill] or _enabledSkills.All) then
-			local ability = GameHelpers.Stats.GetSkillAbility(skill)
-			local sourceItem = _GetSkillSourceItem(character, skill)
-			Events.OnSkillState:Invoke({
-				Character = character,
-				CharacterGUID = character.MyGuid,
-				Skill = skill,
-				State = SKILL_STATE.UNMEMORIZED,
-				Data = learned,
-				DataType = "boolean",
-				SourceItem = sourceItem,
-				Ability = ability
-			})
+			Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.UNMEMORIZED, learned, "boolean"))
 			if not learned then
-				Events.OnSkillState:Invoke({
-					Character = character,
-					CharacterGUID = character.MyGuid,
-					Skill = skill,
-					State = SKILL_STATE.LEARNED,
-					Data = learned,
-					DataType = "boolean",
-					SourceItem = sourceItem,
-					Ability = ability
-				})
+				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.LEARNED, learned, "boolean"))
 			end
 		end
 	end

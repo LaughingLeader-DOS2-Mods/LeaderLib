@@ -589,7 +589,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
             props.Position = sourceObject.WorldPos
 
             if GameHelpers.Ext.ObjectIsCharacter(sourceObject) then
-                props.DamageList = Ext.NewDamageList()
+                props.DamageList = Ext.Stats.NewDamageList()
 
                 local useDefaultSkillDamage = true
                 if _EXTVERSION >= 56 then
@@ -598,7 +598,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
                         Attacker = sourceObject.Stats,
                         AttackerPosition = props.Position,
                         TargetPosition = props.Target,
-                        DamageList = Ext.NewDamageList(),
+                        DamageList = Ext.Stats.NewDamageList(),
                         DeathType = "Physical",
                         Stealthed = sourceObject.Stats.IsSneaking == true,
                         IsFromItem = false,

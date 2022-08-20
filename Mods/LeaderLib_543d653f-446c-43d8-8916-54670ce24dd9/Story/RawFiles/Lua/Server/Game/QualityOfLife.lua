@@ -72,7 +72,7 @@ function ModifyPathInfluenceForAllPlayers(revert)
 end
 
 function ModifyPathInfluenceForPlayer(uuid, revert)
-	local player = Ext.GetCharacter(uuid)
+	local player = GameHelpers.GetCharacter(uuid)
 	local stat = Ext.Stats.Get(player.Stats.Name)
 	if stat ~= nil then
 		if player.Stats.TALENT_Zombie then

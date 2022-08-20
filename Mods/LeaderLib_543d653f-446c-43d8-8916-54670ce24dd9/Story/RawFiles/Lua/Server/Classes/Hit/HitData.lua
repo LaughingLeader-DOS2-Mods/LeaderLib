@@ -240,7 +240,7 @@ function HitData:RedirectDamage(target, multiplier, aggregate)
 	if aggregate then
 		self.DamageList:AggregateSameTypeDamages()
 	end
-	local newDamage = Ext.NewDamageList()
+	local newDamage = Ext.Stats.NewDamageList()
 	for _,v in pairs(self.DamageList:ToTable()) do
 		newDamage:Add(v.DamageType, Ext.Round(v.Amount * multiplier))
 	end
@@ -297,7 +297,7 @@ function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate, percen
 	percentage = percentage or 1
 	mathRoundFunction = mathRoundFunction or Ext.Round
 	local damages = self.DamageList:ToTable()
-	local damageList = Ext.NewDamageList()
+	local damageList = Ext.Stats.NewDamageList()
 	local t = type(damageType)
 	for k,v in pairs(damages) do
 		local dType = v.DamageType

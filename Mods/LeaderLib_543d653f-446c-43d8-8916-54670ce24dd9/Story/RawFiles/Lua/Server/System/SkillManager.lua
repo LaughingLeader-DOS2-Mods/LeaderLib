@@ -423,7 +423,7 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 	end
 	uuid = StringHelpers.GetUUID(uuid)
 	local learned = false
-	local character = Ext.GetCharacter(uuid)
+	local character = GameHelpers.GetCharacter(uuid)
 	if character then
 		local skillInfo = character:GetSkillInfo(skill)
 		if skillInfo then
@@ -441,7 +441,7 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 	end
 	uuid = StringHelpers.GetUUID(uuid)
 	local learned = false
-	local character = Ext.GetCharacter(uuid)
+	local character = GameHelpers.GetCharacter(uuid)
 	if character then
 		local skillInfo = character:GetSkillInfo(skill)
 		if skillInfo then
@@ -565,7 +565,7 @@ end
 Ext.RegisterNetListener("LeaderLib_Input_OnActionCancel", function(cmd, payload)
 	if not StringHelpers.IsNullOrEmpty(payload) then
 		local netid = tonumber(payload)
-		local character = Ext.GetCharacter(netid)
+		local character = GameHelpers.GetCharacter(netid)
 		if character then
 			local action = NRD_CharacterGetCurrentAction(character.MyGuid) or ""
 			if action == "PrepareSkill" then
@@ -581,7 +581,7 @@ end)
 --When the active skill on hotBar or bottomBar_c is cleared
 Ext.RegisterNetListener("LeaderLib_OnActiveSkillCleared", function(cmd, id)
 	if not StringHelpers.IsNullOrWhitespace(id) then
-		local character = Ext.GetCharacter(tonumber(id))
+		local character = GameHelpers.GetCharacter(tonumber(id))
 		if character then
 			Timer.StartOneshot("Timers_LeaderLib_OnActiveSkillCleared", 50, function()
 				SkillManager.CheckPreparingState(character.MyGuid)

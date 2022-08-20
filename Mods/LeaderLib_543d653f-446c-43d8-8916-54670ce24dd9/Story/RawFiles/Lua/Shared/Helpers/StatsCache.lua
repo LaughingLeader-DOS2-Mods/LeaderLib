@@ -177,7 +177,7 @@ function GameHelpers.Stats.IsStatType(id, statType)
 	return false
 end
 
---local item = Ext.GetItem(66419); print(Mods.LeaderLib.GameHelpers.Stats.IsStatType(item.StatsId))
+--local item = GameHelpers.GetItem(66419); print(Mods.LeaderLib.GameHelpers.Stats.IsStatType(item.StatsId))
 
 --- Returns an ItemColor stat's colors.
 --- @param name string The ID of the ItemColor.

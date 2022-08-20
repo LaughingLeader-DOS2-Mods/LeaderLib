@@ -224,7 +224,7 @@ end
 function GameHelpers.Client.ClearSlot(slotData)
 	slotData.Type = "None"
 	slotData.SkillOrStatId = ""
-	slotData.ItemHandle = Ext.DoubleToHandle(0)
+	slotData.ItemHandle = Ext.UI.DoubleToHandle(0)
 end
 
 ---@param locked boolean|nil Defaults to false.
@@ -236,7 +236,7 @@ function GameHelpers.Client.SetInventoryLocked(locked)
 		local ui = Ext.GetBuiltinUI(not Vars.ControllerEnabled and Data.UIType.partyInventory or Data.UIType.partyInventory_c)
 		if ui then
 			for player in GameHelpers.Character.GetPlayers() do
-				ui:ExternalInterfaceCall("lockInventory", Ext.HandleToDouble(player.Handle), locked)
+				ui:ExternalInterfaceCall("lockInventory", Ext.UI.HandleToDouble(player.Handle), locked)
 			end
 		end
 	end

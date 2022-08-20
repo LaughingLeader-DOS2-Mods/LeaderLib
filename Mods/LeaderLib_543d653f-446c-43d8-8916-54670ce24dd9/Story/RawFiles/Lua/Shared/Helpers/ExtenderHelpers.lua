@@ -1570,9 +1570,9 @@ local function copyValuesFromRef(target, source, refTable, objId)
 				local obj = source
 				if obj == nil then
 					if meta == "esv::item" or meta == "ecl::item" then
-						obj = Ext.GetItem(objId)
+						obj = GameHelpers.GetItem(objId)
 					elseif meta == "CDivinityStats_Item" then
-						obj = Ext.GetItem(objId).Stats
+						obj = GameHelpers.GetItem(objId).Stats
 					end
 				end
 				if obj ~= nil then

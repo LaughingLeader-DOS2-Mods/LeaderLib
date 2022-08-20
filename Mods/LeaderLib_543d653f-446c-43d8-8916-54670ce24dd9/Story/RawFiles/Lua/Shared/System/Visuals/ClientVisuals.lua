@@ -188,7 +188,7 @@ Ext.RegisterNetListener("LeaderLib_VisualManager_RequestAttachVisual", function 
 	end
 end)
 
---local v = Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "48491cef-a2de-4dec-9d65-9c6aea8a769e", {Bone="Dummy_R_Hand", Armor=true, UseLocalTransform=true}); v.LocalTransform.Rotate[5] = 10
+--local v = Mods.LeaderLib.VisualManager.AttachVisual(GameHelpers.GetCharacter(me.NetID), "48491cef-a2de-4dec-9d65-9c6aea8a769e", {Bone="Dummy_R_Hand", Armor=true, UseLocalTransform=true}); v.LocalTransform.Rotate[5] = 10
 --me.Visual.Attachments[5].Visual.LocalTransform.Scale[1] = 10
 --me.Visual.Attachments[5].Visual.WorldTransform.Scale[1] = 10
 --me.Visual.Attachments[5].UseLocalTransform = true
@@ -299,11 +299,11 @@ Ext.RegisterNetListener("LeaderLib_EffectManager_PlayClientEffect", function (cm
 	end
 end)
 
--- VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone", Weapon=true, UseLocalTransform=true}, {Rotate=Mods.LeaderLib.Game.Math.EulerToRotationMatrix({180,0,0})})
+-- VisualManager.AttachVisual(GameHelpers.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone", Weapon=true, UseLocalTransform=true}, {Rotate=Mods.LeaderLib.Game.Math.EulerToRotationMatrix({180,0,0})})
 
 --df8b6237-d031-44d7-b729-a80eb074f3b3
---Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone"})
---Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone", Weapon=true,UseLocalTransform=true, InheritAnimations=true, SyncAnimationWithParent=true}, {Rotate=Mods.LeaderLib.Game.Math.EulerToRotationMatrix({90,0,0})})
---Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="Dummy_R_Hand", Weapon=true,UseLocalTransform=true, InheritAnimations=true, SyncAnimationWithParent=true}, {Rotate={[1]=-1,[5]=-1}, Translate={[2]=-1}})
---TestVisual=Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "6254c2b7-dd9e-4821-9aa4-830fa4c0bc50", {Bone="Dummy_R_Hand", UseLocalTransform=true}, {Scale={10,10,10}})
---Mods.LeaderLib.VisualManager.AttachVisual(Ext.GetCharacter(me.NetID), "48491cef-a2de-4dec-9d65-9c6aea8a769e", {Bone="Dummy_R_Hand", Armor=true, UseLocalTransform=true})
+--Mods.LeaderLib.VisualManager.AttachVisual(GameHelpers.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone"})
+--Mods.LeaderLib.VisualManager.AttachVisual(GameHelpers.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="LowerArm_R_Twist_Bone", Weapon=true,UseLocalTransform=true, InheritAnimations=true, SyncAnimationWithParent=true}, {Rotate=Mods.LeaderLib.Game.Math.EulerToRotationMatrix({90,0,0})})
+--Mods.LeaderLib.VisualManager.AttachVisual(GameHelpers.GetCharacter(me.NetID), "df8b6237-d031-44d7-b729-a80eb074f3b3", {Bone="Dummy_R_Hand", Weapon=true,UseLocalTransform=true, InheritAnimations=true, SyncAnimationWithParent=true}, {Rotate={[1]=-1,[5]=-1}, Translate={[2]=-1}})
+--TestVisual=Mods.LeaderLib.VisualManager.AttachVisual(GameHelpers.GetCharacter(me.NetID), "6254c2b7-dd9e-4821-9aa4-830fa4c0bc50", {Bone="Dummy_R_Hand", UseLocalTransform=true}, {Scale={10,10,10}})
+--Mods.LeaderLib.VisualManager.AttachVisual(GameHelpers.GetCharacter(me.NetID), "48491cef-a2de-4dec-9d65-9c6aea8a769e", {Bone="Dummy_R_Hand", Armor=true, UseLocalTransform=true})

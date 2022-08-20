@@ -32,7 +32,7 @@ function Overhead.AddDamage(target, amount, damageType)
 	else
 		local object = GameHelpers.TryGetObject(target)
 		if object then
-			local charID = Ext.HandleToDouble(object.Handle)
+			local charID = Ext.UI.HandleToDouble(object.Handle)
 			damageType = damageType or "None"
 			local text = GameHelpers.GetDamageText(damageType, amount, true)
 			local root = Overhead.UI:GetRoot()

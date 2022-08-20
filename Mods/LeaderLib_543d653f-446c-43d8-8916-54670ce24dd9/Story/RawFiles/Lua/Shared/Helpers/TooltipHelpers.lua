@@ -51,7 +51,7 @@ local function GetTextParamValues(output, character)
 	return output
 end
 
---Ext.Dump(GameHelpers.Tooltip.GetSkillDamageText("Target_LLWEAPONEX_Steal", Ext.GetCharacter(me.MyGuid)))
+--Ext.Dump(GameHelpers.Tooltip.GetSkillDamageText("Target_LLWEAPONEX_Steal", GameHelpers.GetCharacter(me.MyGuid)))
 
 ---@param skillId string The skill ID, i.e "Projectile_Fireball".
 ---@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
@@ -128,7 +128,7 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 								Attacker = character.Stats,
 								AttackerPosition = character.WorldPos,
 								TargetPosition = character.WorldPos,
-								DamageList = Ext.NewDamageList(),
+								DamageList = Ext.Stats.NewDamageList(),
 								DeathType = "None",
 								Stealthed = character.Stats.IsSneaking == true,
 								IsFromItem = false,

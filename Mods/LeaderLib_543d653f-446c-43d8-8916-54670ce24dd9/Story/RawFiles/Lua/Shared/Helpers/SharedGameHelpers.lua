@@ -1,27 +1,15 @@
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 local _type = type
 local _pcall = pcall
 
-local _getGameObject = Ext.GetGameObject
-local _getCharacter = Ext.GetCharacter
-local _getItem = Ext.GetItem
-local _getTrigger = Ext.GetTrigger
-local _isValidHandle = nil
-local _osirisIsCallable = Ext.OsirisIsCallable
-local _round = Ext.Round
-
-if _EXTVERSION >= 56 then
-	_getGameObject = Ext.Entity.GetGameObject
-	_getCharacter = Ext.Entity.GetCharacter
-	_getItem = Ext.Entity.GetItem
-	_getTrigger = Ext.Entity.GetTrigger
-	_isValidHandle = Ext.Utils.IsValidHandle
-	if not _ISCLIENT then
-		_osirisIsCallable = Ext.Osiris.IsCallable
-	end
-	_round = Ext.Utils.Round
-end
+local _getGameObject = Ext.Entity.GetGameObject
+local _getCharacter = Ext.Entity.GetCharacter
+local _getItem = Ext.Entity.GetItem
+local _getTrigger = Ext.Entity.GetTrigger
+local _isValidHandle = Ext.Utils.IsValidHandle
+local _osirisIsCallable = not _ISCLIENT and Ext.Osiris.IsCallable or function() return false end
+local _round = Ext.Utils.Round
 
 ---@param pickpocketSkill integer
 ---@return number
@@ -482,7 +470,7 @@ function GameHelpers.GetObjectID(object)
 end
 
 ---Tries to get an Esv/EclCharacter from whatever the value is.
----@param object CharacterParam|StatCharacter|ObjectHandle|userdata
+---@param object CharacterParam|StatCharacter|ComponentHandle
 ---@return EsvCharacter|EclCharacter
 function GameHelpers.GetCharacter(object)
 	local t = _type(object)
@@ -508,7 +496,7 @@ function GameHelpers.GetCharacter(object)
 end
 
 ---Tries to get an Esv/EclItem from whatever the value is.
----@param object EsvGameObject|EclGameObject|string|number
+---@param object ItemParam|CDivinityStatsItem|ComponentHandle
 ---@return EsvItem|EclItem
 function GameHelpers.GetItem(object)
 	local t = _type(object)
@@ -525,7 +513,7 @@ function GameHelpers.GetItem(object)
 end
 
 ---Checks if a character or item exists.
----@param object EsvGameObject|EclGameObject|string|number
+---@param object ObjectParam
 ---@return boolean
 function GameHelpers.ObjectExists(object)
 	local t = _type(object)
@@ -758,7 +746,7 @@ function GameHelpers.ParseResistancePenetrationTag(tag)
 	end
 end
 
---local amt = 3; local dl = Ext.NewDamageList(); dl:Add("Fire", 4); dl:Add("Water", 3); local ndl = Mods.LeaderLib.GameHelpers.Damage.DivideDamage(dl, amt); local pdl = {}; for _,v in pairs(ndl) do table.insert(pdl, v:ToTable()) end; Ext.Dump(pdl)
+--local amt = 3; local dl = Ext.Stats.NewDamageList(); dl:Add("Fire", 4); dl:Add("Water", 3); local ndl = Mods.LeaderLib.GameHelpers.Damage.DivideDamage(dl, amt); local pdl = {}; for _,v in pairs(ndl) do table.insert(pdl, v:ToTable()) end; Ext.Dump(pdl)
 
 ---@param damageList DamageList
 ---@param divider integer
@@ -782,7 +770,7 @@ function GameHelpers.Damage.DivideDamage(damageList, divider)
         local remainingDamage = totalDamage
         for i=1,divider do
             if remainingDamage > 0 then
-				local newDamageList = Ext.NewDamageList()
+				local newDamageList = Ext.Stats.NewDamageList()
 				for damageType,amount in pairs(damagePerType) do
 					local addDamage = math.min(totalDamagePerType[damageType], amount)
 					if addDamage > 0 then
@@ -950,7 +938,7 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams)
 						Attacker = character.Stats,
 						AttackerPosition = character.WorldPos,
 						TargetPosition = character.WorldPos,
-						DamageList = Ext.NewDamageList(),
+						DamageList = Ext.Stats.NewDamageList(),
 						DeathType = "None",
 						Stealthed = character.Stats.IsSneaking == true,
 						IsFromItem = false,

@@ -123,7 +123,7 @@ else
 		if ObjectIsCharacter(character) == 1
 		and CharacterIsControlled(character) == 1
 		and Features.FixSkillTagRequirements then
-			local item = Ext.GetItem(item)
+			local item = GameHelpers.GetItem(item)
 			if item and not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) then
 				local tags = StringHelpers.Split(item.Stats.Tags, ";")
 				for i,tag in pairs(tags) do
@@ -143,7 +143,7 @@ else
 		if ObjectIsCharacter(character) == 1
 		and CharacterIsControlled(character) == 1
 		and Features.FixSkillTagRequirements then
-			local item = Ext.GetItem(item)
+			local item = GameHelpers.GetItem(item)
 			if item and not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) then
 				local tags = StringHelpers.Split(item.Stats.Tags, ";")
 				for i,tag in pairs(tags) do

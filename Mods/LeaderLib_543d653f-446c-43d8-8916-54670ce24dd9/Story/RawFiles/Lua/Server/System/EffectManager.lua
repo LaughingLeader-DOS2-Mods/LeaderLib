@@ -166,7 +166,7 @@ function _INTERNAL.PlayEffect(fx, object, params)
 			if b and effect then
 				effect.Loop = false
 				--TODO Ext.HandleToDouble is client-side
-				--handle = Ext.HandleToDouble(effect.Component.Handle)
+				--handle = Ext.UI.HandleToDouble(effect.Component.Handle)
 				handle = Ext.Utils.HandleToInteger(effect.Component.Handle)
 				---@diagnostic enable
 				for k,v in pairs(params) do

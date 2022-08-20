@@ -36,15 +36,15 @@ function UI.StatusText(target, text, displayTime, isItem)
 	if ui then
 		local handle = nil
 		if isItem == true then
-			handle = Ext.GetItem(target).Handle
+			handle = GameHelpers.GetItem(target).Handle
 		elseif isItem == false then
-			handle = Ext.GetCharacter(target).Handle
+			handle = GameHelpers.GetCharacter(target).Handle
 		else
-			local object = Ext.GetCharacter(target)
+			local object = GameHelpers.GetCharacter(target)
 			if object ~= nil then
 				handle = object.Handle
 			else
-				object = Ext.GetItem(target)
+				object = GameHelpers.GetItem(target)
 				if object ~= nil then
 					handle = object.Handle
 				end
@@ -52,14 +52,15 @@ function UI.StatusText(target, text, displayTime, isItem)
 		end
 
 		if handle ~= nil then
-			ui:Invoke("clearObsoleteOHTs")
-			ui:Invoke("clearAll")
-			ui:Invoke("cleanupDeleteRequests")
-			local doubleHandle = Ext.HandleToDouble(handle)
-			ui:SetValue("addOH_array", 0, 0)
-			ui:SetValue("addOH_array", doubleHandle, 1)
-			ui:SetValue("addOH_array", text, 2)
-			ui:SetValue("addOH_array", displayTime, 3)
+			local doubleHandle = Ext.UI.HandleToDouble(handle)
+			local this = ui:GetRoot()
+			this.clearObsoleteOHTs()
+			this.clearAll()
+			this.cleanupDeleteRequests()
+			this.addOH_array[0] = 0
+			this.addOH_array[1] = doubleHandle
+			this.addOH_array[2] = text
+			this.addOH_array[3] = displayTime
 
 			-- [0] = [3.4431383083963e-282]
 			-- [1] = ["Sir Lora"]
@@ -84,9 +85,9 @@ function UI.StatusText(target, text, displayTime, isItem)
 			-- [20] = [true]
 			testSelectionArray[0] = doubleHandle
 			for i,v in pairs(testSelectionArray) do
-				ui:SetValue("selectionInfo_array", v, i)
+				this.selectionInfo_array[i] = v
 			end
-			ui:Invoke("updateOHs")
+			this.updateOHs()
 			--print("UI.StatusText", target, text, displayTime, isItem)
 			--ui:Invoke("addOverhead", doubleHandle, text, displayTime)
 		end
@@ -145,7 +146,7 @@ Ext.RegisterNetListener("LeaderLib_AutoSortPlayerInventory", function(call, uuid
 	if not Vars.ControllerEnabled then
 		local ui = Ext.GetUIByType(Data.UIType.partyInventory)
 		if ui then
-			ui:ExternalInterfaceCall("autosort", Ext.HandleToDouble(Ext.GetCharacter(uuid).Handle), false)
+			ui:ExternalInterfaceCall("autosort", Ext.UI.HandleToDouble(GameHelpers.GetCharacter(uuid).Handle), false)
 		end
 	end
 end)
@@ -280,7 +281,7 @@ Ext.RegisterNetListener("LeaderLib_UpdateStatusTurns", function(call, dataStr)
 			local this = ui:GetRoot()
 			if this then
 				--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
-				this.setStatus(false, Ext.HandleToDouble(data.ObjectHandle), Ext.HandleToDouble(data.StatusHandle), -1, data.Turns, data.Cooldown or 0.0, data.Tooltip or "")
+				this.setStatus(false, Ext.UI.HandleToDouble(data.ObjectHandle), Ext.UI.HandleToDouble(data.StatusHandle), -1, data.Turns, data.Cooldown or 0.0, data.Tooltip or "")
 			end
 		end
 	elseif data.IsEnemy then
@@ -289,7 +290,7 @@ Ext.RegisterNetListener("LeaderLib_UpdateStatusTurns", function(call, dataStr)
 			local this = ui:GetRoot()
 			if this then
 				--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
-				this.setStatus(false, Ext.HandleToDouble(data.Params.ObjectHandle), Ext.HandleToDouble(data.StatusHandle), -1, data.Turns, data.Cooldown or 0.0, data.Tooltip or "")
+				this.setStatus(false, Ext.UI.HandleToDouble(data.Params.ObjectHandle), Ext.UI.HandleToDouble(data.StatusHandle), -1, data.Turns, data.Cooldown or 0.0, data.Tooltip or "")
 			end
 		end
 	end

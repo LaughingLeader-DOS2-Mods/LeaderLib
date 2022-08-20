@@ -6,7 +6,7 @@ Ext.RegisterNetListener("LeaderLib_ToggleChainGroup", function(cmd, payload)
 	---@field TotalUnchained integer
 	local data = Common.JsonParse(payload)
 	if data then
-		local leader = Ext.GetCharacter(data.Leader)
+		local leader = GameHelpers.GetCharacter(data.Leader)
 		if leader then
 			if data.TotalChained > data.TotalUnchained then
 				Osi.LeaderLib_LifeHacks_ChainToggle(leader.MyGuid, CharacterGetReservedUserID(leader.MyGuid), 0)

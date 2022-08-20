@@ -46,7 +46,7 @@ local function GetPlayerStatusMovieClips(character, matchStatus)
 	if ui ~= nil then
 		local root = ui:GetRoot()
 		if root ~= nil then
-			local playerHandle = Ext.HandleToDouble(character.Handle)
+			local playerHandle = Ext.UI.HandleToDouble(character.Handle)
 			local player_mc = nil --root.getPlayerOrSummonByHandle(playerHandle)
 			for i=0,#root.player_array,1 do
 				local mc = root.player_array[i]
@@ -61,7 +61,7 @@ local function GetPlayerStatusMovieClips(character, matchStatus)
 				for i=0,#player_mc.status_array,1 do
 					local status_mc = player_mc.status_array[i]
 					if status_mc ~= nil then
-						local handle = Ext.DoubleToHandle(status_mc.id)
+						local handle = Ext.UI.DoubleToHandle(status_mc.id)
 						if handle ~= nil then
 							local statusObj = Ext.GetStatus(character.NetID, handle) or {}
 							--print(string.format("[%i] id(%s) name(%s) iconId(%s) tooltip(%s) handle(%s) StatusId(%s)", i, status_mc.id, status_mc.name, status_mc.iconId, status_mc.tooltip, handle, statusObj.StatusId))
@@ -94,7 +94,7 @@ end
 local function RefreshStatusTurns(data)
 	if data.UUID ~= nil and data.Status ~= nil then
 		---@type EclCharacter
-		local character = Ext.GetCharacter(data.UUID)
+		local character = GameHelpers.GetCharacter(data.UUID)
 		if character ~= nil then
 			local statusData = GetPlayerStatusMovieClips(character, data.Status)
 			for i,v in pairs(statusData) do
@@ -152,7 +152,7 @@ Ext.RegisterNetListener("LeaderLib_SetArmorOption", function(call, dataStr)
 end)
 
 Ext.RegisterNetListener("LeaderLib_UI_RefreshAll", function(cmd, uuid)
-	local host = Ext.GetCharacter(uuid)
+	local host = GameHelpers.GetCharacter(uuid)
 	Ext.UISetDirty(host, 0xffffffffffff)
 end)
 
@@ -242,7 +242,7 @@ function UI.ToggleChainGroup()
 				local player_mc = this.player_array[i]
 				if player_mc then
 					local groupId = player_mc.groupId
-					local character = Ext.GetCharacter(Ext.DoubleToHandle(player_mc.characterHandle))
+					local character = GameHelpers.GetCharacter(Ext.UI.DoubleToHandle(player_mc.characterHandle))
 					if character then
 						characters[#characters+1] = {
 							Group = groupId,

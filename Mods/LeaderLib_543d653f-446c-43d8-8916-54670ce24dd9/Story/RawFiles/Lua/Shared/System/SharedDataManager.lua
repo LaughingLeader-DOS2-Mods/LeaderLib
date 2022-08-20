@@ -85,7 +85,7 @@ if not _ISCLIENT then
 	end
 
 	local function GetNetID(uuid)
-		local character = Ext.GetCharacter(uuid)
+		local character = GameHelpers.GetCharacter(uuid)
 		if character then
 			return character.NetID
 		end
@@ -121,7 +121,7 @@ if not _ISCLIENT then
 			else
 				local host = CharacterGetHostCharacter()
 				if SharedData.GameMode == GAMEMODE.GAMEMASTER then
-					local gm = Ext.GetCharacter(host)
+					local gm = GameHelpers.GetCharacter(host)
 					if gm then
 						UserIds[gm.ReservedUserID] = true
 					end
@@ -325,7 +325,7 @@ if not _ISCLIENT then
 		end
 		uuid = StringHelpers.GetUUID(uuid or GetCurrentCharacter(id))
 		if not StringHelpers.IsNullOrEmpty(uuid) then
-			local character = Ext.GetCharacter(uuid)
+			local character = GameHelpers.GetCharacter(uuid)
 			if character then
 				local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
 				---@type ClientCharacterData
@@ -475,7 +475,7 @@ if not _ISCLIENT then
 			local netid = data.NetID
 			local id = -1
 			if netid ~= nil then
-				local character = Ext.GetCharacter(netid)
+				local character = GameHelpers.GetCharacter(netid)
 				if character then
 					if profile ~= nil and SharedData.CharacterData[profile] ~= nil then
 						local charData = SharedData.CharacterData[profile]
@@ -659,10 +659,10 @@ if _ISCLIENT then
 		if not doubleHandle or doubleHandle == 0 then
 			return
 		end
-		local handle = Ext.DoubleToHandle(doubleHandle)
+		local handle = Ext.UI.DoubleToHandle(doubleHandle)
 		if handle ~= nil then
 			---@type EclCharacter
-			local character = Ext.GetCharacter(handle)
+			local character = GameHelpers.GetCharacter(handle)
 			if character ~= nil and not character:HasTag("SUMMON") then
 				local uuid = ""
 				local currentCharacter = GetClientCharacter()

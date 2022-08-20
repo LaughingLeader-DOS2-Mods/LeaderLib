@@ -134,7 +134,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	Ext.RegisterConsoleCommand("combatlog", function(command, text)
 		local host = CharacterGetHostCharacter()
 		if text == nil then
-			local name = Ext.GetCharacter(host).DisplayName
+			local name = GameHelpers.GetCharacter(host).DisplayName
 			text = "<font color='#CCFF00'>Test</font> did <font color='#FF0000'>TONS</font> of damage to " .. name
 		end
 		GameHelpers.UI.CombatLog(text, 0)
@@ -192,7 +192,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			source = CharacterGetHostCharacter()
 		end
 		if target == nil then
-			for i,v in pairs(Ext.GetCharacter(source):GetNearbyCharacters(12.0)) do
+			for i,v in pairs(GameHelpers.GetCharacter(source):GetNearbyCharacters(12.0)) do
 				if CharacterCanSee(v, source) == 1 and GetDistanceTo(v, source) >= 3.0 then
 					target = v
 					break
@@ -667,7 +667,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	---@param uuid string An item's GUIDSTRING/ITEMGUID.
 	local function PrintItemStats(uuid)
 		---@type EsvItem
-		local item = Ext.GetItem(uuid)
+		local item = GameHelpers.GetItem(uuid)
 		if item ~= nil and item.Stats ~= nil then
 			Ext.Print("Item:", uuid, item.Stats.Name)
 			Ext.Print("Boost Stats:")
@@ -688,7 +688,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	Ext.RegisterConsoleCommand("printitemstats", function(command, slot)
 		local target = CharacterGetHostCharacter()
 		---@type EsvCharacter
-		local characterObject = Ext.GetCharacter(target)
+		local characterObject = GameHelpers.GetCharacter(target)
 		if slot == nil then
 			for i,item in pairs(characterObject:GetInventoryItems()) do
 				PrintItemStats(item)
@@ -709,8 +709,8 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	end)
 	
 	Ext.RegisterConsoleCommand("permaboosttest", function(cmd)
-		local host = Ext.GetCharacter(CharacterGetHostCharacter())
-		local weapon = Ext.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
+		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+		local weapon = GameHelpers.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
 		NRD_ItemSetPermanentBoostInt(weapon.MyGuid, "StrengthBoost", Ext.Random(1,30))
 		
 		PrintDebug(weapon.Stats.StrengthBoost, NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
@@ -760,7 +760,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	Ext.RegisterConsoleCommand("levelup", function(command, amount)
 		amount = amount or "1"
 		amount = tonumber(amount)
-		local host = Ext.GetCharacter(CharacterGetHostCharacter())
+		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 		local nextLevel = math.min(Ext.ExtraData.LevelCap, host.Stats.Level + amount)
 		if amount > 0 then
 			CharacterLevelUpTo(host.MyGuid, nextLevel)
@@ -773,7 +773,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	Ext.RegisterConsoleCommand("setlevel", function(command, level)
 		level = level or "1"
 		level = tonumber(level)
-		local host = Ext.GetCharacter(CharacterGetHostCharacter())
+		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 		GameHelpers.Character.SetLevel(host, level)
 		Osi.CharacterLeveledUp(host.MyGuid)
 	end)
@@ -811,12 +811,12 @@ end
 Ext.RegisterConsoleCommand("removetemporycharacters", function(command, radius)
 	if radius then
 		local radius = tonumber(radius) or 24.0
-		local host = Ext.GetCharacter(CharacterGetHostCharacter())
+		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 		for i,v in pairs(host:GetNearbyCharacters(radius)) do
 			if IsTagged(v, "LeaderLib_TemporaryCharacter") == 1 then
 				RemoveTempChar(v)
 			else
-				local char = Ext.GetCharacter(v)
+				local char = GameHelpers.GetCharacter(v)
 				if char and char.Temporary then
 					RemoveTempChar(v)
 				end
@@ -827,7 +827,7 @@ Ext.RegisterConsoleCommand("removetemporycharacters", function(command, radius)
 			if IsTagged(v, "LeaderLib_TemporaryCharacter") == 1 then
 				RemoveTempChar(v)
 			else
-				local char = Ext.GetCharacter(v)
+				local char = GameHelpers.GetCharacter(v)
 				if char and char.Temporary then
 					RemoveTempChar(v)
 				end
@@ -875,7 +875,7 @@ end
 
 Ext.RegisterConsoleCommand("ap", function(command, amountStr)
 	local host = CharacterGetHostCharacter()
-	local amount = Ext.GetCharacter(host).Stats.APMaximum
+	local amount = GameHelpers.GetCharacter(host).Stats.APMaximum
 	if amountStr ~= nil then
 		amount = math.tointeger(tonumber(amountStr))
 	end
@@ -890,7 +890,7 @@ Ext.RegisterConsoleCommand("animation", function(command, name)
 end)
 
 Ext.RegisterConsoleCommand("lldebug_surfacetransform", function(command, amountStr)
-	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 	local x,y,z = table.unpack(host.WorldPos)
 	
 	-- TransformSurfaceAtPosition(x, y, z, "Bloodify", "Ground", 6.0, 6.0, host)
@@ -914,7 +914,7 @@ Ext.RegisterConsoleCommand("lldebug_surfacetransform", function(command, amountS
 	-- end
 	
 	-- Timer.StartOneshot("Timers_Test_Freeze", 1500, function()
-		-- 	local host = Ext.GetCharacter(host)
+		-- 	local host = GameHelpers.GetCharacter(host)
 		-- 	--GameHelpers.Surface.Transform(host.WorldPos, "Freeze", 0, 6.0, host.Handle, "Water", 1.0)
 		
 		-- 	local surf = Ext.CreateSurfaceAction("TransformSurfaceAction")
@@ -931,7 +931,7 @@ Ext.RegisterConsoleCommand("lldebug_surfacetransform", function(command, amountS
 end)
 
 Ext.RegisterConsoleCommand("lldebug_tornadotest", function(command)
-	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 	local x,y,z = table.unpack(host.WorldPos)
 	local tx,ty,tz = table.unpack(GameHelpers.Math.ExtendPositionWithForwardDirection(host, 10.0, x, y, z))
 	local handle = NRD_CreateTornado(host.MyGuid, "Tornado_EnemyAir", x, y, z, tx, ty, tz)
@@ -941,7 +941,7 @@ Ext.RegisterConsoleCommand("lldebug_tornadotest", function(command)
 end)
 
 Ext.RegisterConsoleCommand("lldebug_keepAlive", function(command)
-	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 	ApplyStatus(host.MyGuid, "HASTED", -1.0, 1, host.MyGuid)
 	Timer.StartOneshot(nil, 250, function()
 		local status = host:GetStatus("HASTED")
@@ -1090,8 +1090,8 @@ Ext.RegisterConsoleCommand("help", function(command, text)
 	end
 end)
 
---for i,v in pairs(Ext.GetItem(CharacterGetEquippedItem(CharacterGetHostCharacter(), "Breast")).Stats.DynamicStats) do print(i,v.ObjectInstanceName) end
---local pa,b1,ma,b2 = 0,0,0,0; for i,v in pairs(Ext.GetItem(CharacterGetEquippedItem(CharacterGetHostCharacter(), "Breast")).Stats.DynamicStats) do pa=pa+v.ArmorValue;b1=b1 + v.ArmorBoost *0.01;ma=ma+v.MagicArmorValue;b2=b2 + v.MagicArmorBoost *0.01; end print("Physical Armor:", pa * (1 + b1));print("Magic Armor:", ma * (1 + b2))
+--for i,v in pairs(GameHelpers.GetItem(CharacterGetEquippedItem(CharacterGetHostCharacter(), "Breast")).Stats.DynamicStats) do print(i,v.ObjectInstanceName) end
+--local pa,b1,ma,b2 = 0,0,0,0; for i,v in pairs(GameHelpers.GetItem(CharacterGetEquippedItem(CharacterGetHostCharacter(), "Breast")).Stats.DynamicStats) do pa=pa+v.ArmorValue;b1=b1 + v.ArmorBoost *0.01;ma=ma+v.MagicArmorValue;b2=b2 + v.MagicArmorBoost *0.01; end print("Physical Armor:", pa * (1 + b1));print("Magic Armor:", ma * (1 + b2))
 --Public\WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f\Stats\Generated\Data\Data.txt
 --for _,uuid in ipairs(Ext.GetModLoadOrder()) do local info = Ext.GetModInfo(uuid); if info.Name ~= "Shared" then print(info.Name); print(Ext.LoadFile(string.format("Public/%s/Stats/Generated/Data/Data.txt", info.Directory), "data")); end end
 --local totalBad = 0; for _,v in pairs(Ext.Stats.GetStats("Weapon")) do if string.sub(v, 1, 1) ~= "_" and not string.find(v, "Status_") and not string.find(v, "Damage_") then local stat = Ext.Stats.Get(v); if stat.AttackAPCost ~= 4 then print(v, stat.AttackAPCost); totalBad = totalBad + 1; end end end;print("Total bad:", totalBad)

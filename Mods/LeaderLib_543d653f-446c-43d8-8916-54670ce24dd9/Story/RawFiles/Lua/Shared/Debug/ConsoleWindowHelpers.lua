@@ -84,10 +84,10 @@ if not _ISCLIENT then
 	local me = {}
 	setmetatable(me, {
 		__call = function()
-			return Ext.GetCharacter(CharacterGetHostCharacter())
+			return GameHelpers.GetCharacter(CharacterGetHostCharacter())
 		end,
 		__index = function(tbl,k)
-			local char = Ext.GetCharacter(CharacterGetHostCharacter())
+			local char = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 			if k == "Print" then
 				return Lib.inspect(char)
 			end
@@ -106,7 +106,7 @@ if not _ISCLIENT then
 			end
 		end,
 		__newindex = function(tbl,k,v)
-			local char = Ext.GetCharacter(CharacterGetHostCharacter())
+			local char = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 			if char then
 				char[k] = v
 			end
@@ -147,7 +147,7 @@ if not _ISCLIENT then
 					fprint(LOGLEVEL.DEFAULT, "party.RemoveStatus(\"%s\", \"%s\") from %s", v, status, GameHelpers.Character.GetDisplayName(v))
 					RemoveStatus(v, status)
 				else
-					local statuses = Ext.GetCharacter(v):GetStatuses()
+					local statuses = GameHelpers.GetCharacter(v):GetStatuses()
 					fprint(LOGLEVEL.DEFAULT, "party.RemoveStatus(\"%s\", \"%s\") from %s", v, StringHelpers.Join(",", statuses), GameHelpers.Character.GetDisplayName(v))
 					for _,id in pairs(statuses) do
 						RemoveStatus(v, id)
@@ -245,7 +245,7 @@ if not _ISCLIENT then
 					local text = {}
 					local printProps = props and type(props) == "table"
 					for _,v in pairs(data) do
-						local c = Ext.GetCharacter(v)
+						local c = GameHelpers.GetCharacter(v)
 						local entry = {}
 						if printProps then
 							for _,propertyName in pairs(props) do
@@ -298,9 +298,9 @@ if not _ISCLIENT then
 					if ObjectExists(uuid) == 0 then
 						error(string.format("UUID '%s' does not exist!", uuid))
 					end
-					return Ext.GetCharacter(uuid)
+					return GameHelpers.GetCharacter(uuid)
 				elseif t == "number" then
-					return Ext.GetCharacter(uuid)
+					return GameHelpers.GetCharacter(uuid)
 				end
 				return nil
 			end,

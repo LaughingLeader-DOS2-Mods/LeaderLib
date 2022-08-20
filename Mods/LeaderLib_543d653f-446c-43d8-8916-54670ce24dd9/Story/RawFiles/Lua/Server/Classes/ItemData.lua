@@ -8,7 +8,7 @@ local ItemData = {
 }
 
 local customAccessors = {
-	NetID = function(tbl) local item = Ext.GetItem(tbl.UUID); return item and item.NetID or nil end,
+	NetID = function(tbl) local item = GameHelpers.GetItem(tbl.UUID); return item and item.NetID or nil end,
 	Region = function(tbl) return GetRegion(tbl.UUID) end
 }
 
@@ -61,7 +61,7 @@ end
 ---@return EsvItem|nil
 function ItemData:GetItem()
 	if self:Exists() then
-		return Ext.GetItem(self.UUID)
+		return GameHelpers.GetItem(self.UUID)
 	end
 	return nil
 end
@@ -268,7 +268,7 @@ function ItemData:RegisterProcBlockUseOfItemListener(callback)
 		character = StringHelpers.GetUUID(character)
 		item = StringHelpers.GetUUID(item)
 		if item == self.UUID then
-			local b,result = xpcall(callback, self, Ext.GetCharacter(character), Ext.GetItem(item))
+			local b,result = xpcall(callback, self, GameHelpers.GetCharacter(character), GameHelpers.GetItem(item))
 			if not b then
 				fprint(LOGLEVEL.ERROR, "[ItemData:ProcBlockUseOfItem] Error invoking callback:\n%s", result)
 			elseif result ~= nil then

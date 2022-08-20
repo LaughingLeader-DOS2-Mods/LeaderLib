@@ -63,7 +63,7 @@ if not _ISCLIENT then
 	---@param client string Client character UUID.
 	function GameHelpers.UI.RefreshSkillBarCooldowns(client)
 		if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
-			local character = Ext.GetCharacter(client)
+			local character = GameHelpers.GetCharacter(client)
 			local data = {NetID = GameHelpers.GetNetID(client), Slots = {}}
 			for i=0,144,1 do
 				local skill = NRD_SkillBarGetSkill(client, i)
@@ -156,7 +156,7 @@ if not _ISCLIENT then
 	end
 
 	Ext.RegisterNetListener("LeaderLib_UI_Server_RefreshPlayerInfo", function(cmd, netid)
-		local character = Ext.GetCharacter(tonumber(netid))
+		local character = GameHelpers.GetCharacter(tonumber(netid))
 		if character and not character.Dead and not character.OffStage then
 			local timerName = string.format("LeaderLib_Recalc_%s", character.MyGuid)
 			Timer.StartOneshot(timerName, 10, function()

@@ -13,7 +13,7 @@ function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosi
     if ObjectIsCharacter(source) == 1 then
         level = CharacterGetLevel(source)
     else
-        level = Ext.GetItem(source).Stats.Level
+        level = GameHelpers.GetItem(source).Stats.Level
     end
     NRD_ProjectileSetInt("CasterLevel", level)
 
@@ -89,7 +89,7 @@ function GameHelpers.ExplodeProjectile(source, target, skill, skillLevel, noForc
             if ObjectIsCharacter(source) == 1 then
                 level = CharacterGetLevel(source)
             else
-                local item = Ext.GetItem(source)
+                local item = GameHelpers.GetItem(source)
                 if item ~= nil and item.Stats ~= nil then
                     level = item.Stats.Level
                 end

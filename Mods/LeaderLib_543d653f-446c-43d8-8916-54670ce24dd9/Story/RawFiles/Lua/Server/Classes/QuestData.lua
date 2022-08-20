@@ -61,7 +61,7 @@ end
 function QuestStateData:Activate(uuid)
 	if self.Flags.Update ~= nil and self.Flags.Update ~= "" and ObjectGetFlag(uuid, self.Flags.Update) == 0 then
 		if Vars.DebugMode then
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:QuestStateData] Activating quest state (%s:%s) on (%s)[%s]", self.ID, self.Flags.Update, Ext.GetCharacter(uuid).DisplayName, uuid)
+			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:QuestStateData] Activating quest state (%s:%s) on (%s)[%s]", self.ID, self.Flags.Update, GameHelpers.GetCharacter(uuid).DisplayName, uuid)
 		end
 		ObjectSetFlag(uuid, self.Flags.Update, 0)
 	end
@@ -236,7 +236,7 @@ function QuestData:Activate(uuid, state)
 	local addedFlags = {}
 	if ObjectGetFlag(uuid, self.Flags.Add) == 0 then
 		if Vars.DebugMode then
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:QuestData] Activating quest (%s:%s) on (%s)[%s]", self.ID, self.Flags.Add, Ext.GetCharacter(uuid).DisplayName, uuid)
+			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:QuestData] Activating quest (%s:%s) on (%s)[%s]", self.ID, self.Flags.Add, GameHelpers.GetCharacter(uuid).DisplayName, uuid)
 		end
 		ObjectSetFlag(uuid, self.Flags.Add, 0)
 		addedFlags[#addedFlags+1] = self.Flags.Add

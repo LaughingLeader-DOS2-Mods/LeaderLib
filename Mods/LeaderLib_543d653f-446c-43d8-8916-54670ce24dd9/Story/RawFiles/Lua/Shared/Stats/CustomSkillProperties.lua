@@ -92,7 +92,7 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit,
 				useTargetForPosition = StringHelpers.Equals(property.Arg3, "true", true, true) ~= true
 			end
 			for i,v in pairs(characters) do
-				local target = Ext.GetCharacter(v)
+				local target = GameHelpers.GetCharacter(v)
 				if useTargetForPosition then
 					startPos = target.WorldPos
 				end
@@ -385,7 +385,7 @@ if not _ISCLIENT then
 			if data then
 				local restoreAP = data.AP
 				if data.AP and data.AP > 0 then
-					local character = Ext.GetCharacter(uuid)
+					local character = GameHelpers.GetCharacter(uuid)
 					--character.Floating = false
 					if character.Stats.CurrentAP ~= data.AP then
 						character.Stats.CurrentAP = data.AP

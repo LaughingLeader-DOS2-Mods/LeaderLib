@@ -437,7 +437,7 @@ local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, targe
     HitOverrides.ApplyDamageCharacterBonuses(target, attacker, damageList)
     damageList:AggregateSameTypeDamages()
 
-    hit.DamageList:CopyFrom(Ext.NewDamageList())
+    hit.DamageList:CopyFrom(Ext.Stats.NewDamageList())
 
     for i,damageType in pairs(statusBonusDmgTypes) do
         damageList.Add(damageType, math.ceil(totalDamage * 0.1))
@@ -511,7 +511,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 	local criticalMultiplier = 0.0
     local statusBonusDmgTypes = {}
 
-	local damageList = Ext.NewDamageList()
+	local damageList = Ext.Stats.NewDamageList()
     damageList:CopyFrom(preDamageList)
     local statusBonusDmgTypes = {}
     local hitBlocked = false

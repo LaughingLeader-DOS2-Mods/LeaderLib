@@ -148,12 +148,12 @@ local Patches = {
 						local backpackGUID = CreateItemTemplateAtPosition("98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
 						Timer.StartOneshot("", 50, function ()
 							fprint(LOGLEVEL.TRACE, "[WeaponExpansion:GenerateTradeTreasure] Generating treasure table (%s) for (%s)", treasure, object.DisplayName, uuid)
-							local backpack = Ext.GetItem(backpackGUID)
+							local backpack = GameHelpers.GetItem(backpackGUID)
 							if backpack then
 								GenerateTreasure(backpackGUID, treasure, object.Stats.Level, uuid)
 								ContainerIdentifyAll(backpackGUID)
 								for i,v in pairs(backpack:GetInventoryItems()) do
-									local tItem = Ext.GetItem(v)
+									local tItem = GameHelpers.GetItem(v)
 									if tItem ~= nil then
 										tItem.UnsoldGenerated = true -- Trade treasure flag
 										ItemToInventory(v, uuid, tItem.Amount, 0, 0)
@@ -204,7 +204,7 @@ local Patches = {
 					local slot = Data.EquipmentSlots[GameHelpers.Item.GetSlot(item)]
 					local owner = nil
 					if slot and item.OwnerHandle ~= nil then
-						local char = Ext.GetCharacter(item.OwnerHandle)
+						local char = GameHelpers.GetCharacter(item.OwnerHandle)
 						if char ~= nil then
 							owner = char.NetID
 						end
@@ -250,7 +250,7 @@ local Patches = {
 							end
 						end
 						if hasSkills then
-							local item = Ext.GetItem(v.UUID)
+							local item = GameHelpers.GetItem(v.UUID)
 							if item then
 								item.Stats.DynamicStats[2].Skills = ""
 								local syncData = {

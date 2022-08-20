@@ -229,7 +229,6 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
         stat = statName
         statType = GameHelpers.Stats.GetStatType(stat.Name)
     end
-
     if stat and stat.Unique == 1 then
         targetRarity = "Unique"
     elseif properties then
@@ -302,7 +301,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
 
         local newItem = constructor:Construct()
         if newItem then
-            newItem = Ext.GetItem(newItem.Handle)
+            newItem = GameHelpers.GetItem(newItem.Handle)
             if not hasGeneratedStats then
                 if properties.IsIdentified then
                     NRD_ItemSetIdentified(newItem.MyGuid, 1)
@@ -359,7 +358,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     end
     local item = constructor:Construct()
     if item ~= nil then
-        item = Ext.GetItem(item.Handle)
+        item = GameHelpers.GetItem(item.Handle)
         local statsId = GameHelpers.Item.GetItemStat(item)
         ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
         local invokeResult = Events.TreasureItemGenerated:Invoke({Item=item, StatsId=statsId, IsClone=false, ResultingItem=item})
@@ -463,7 +462,7 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
     --constructor[1] = props
     local clone = constructor:Construct()
     if clone then
-        clone = Ext.GetItem(clone.Handle)
+        clone = GameHelpers.GetItem(clone.Handle)
         if opts.CopyTags then
             for _,v in pairs(item:GetTags()) do
                 SetTag(clone.MyGuid, v)
@@ -709,7 +708,7 @@ function GameHelpers.Item.FindTaggedItems(character, tag, asEsvItem)
     character = GameHelpers.GetCharacter(character)
     if character then
         for i,v in pairs(character:GetInventoryItems()) do
-            local item = Ext.GetItem(v)
+            local item = GameHelpers.GetItem(v)
             if GameHelpers.ItemHasTag(item, tag) then
                 if asEsvItem then
                     items[#items+1] = item

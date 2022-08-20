@@ -411,7 +411,7 @@ local Init = function()
 	roll.Enabled = true
 	roll.CustomCallback["updateRolls"] = function(self, ui, call, b)
 		local this = ui:GetRoot()
-		this.ownerCharacter = Ext.HandleToDouble(Client:GetCharacter().Handle)
+		this.ownerCharacter = Ext.UI.HandleToDouble(Client:GetCharacter().Handle)
 		this.isGM = Client.Character.IsGameMaster
 		this.Initialize()
 	end

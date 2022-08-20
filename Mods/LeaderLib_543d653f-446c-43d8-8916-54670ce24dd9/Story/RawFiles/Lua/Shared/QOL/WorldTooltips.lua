@@ -27,7 +27,7 @@ if Ext.IsClient() then
 			local ids = Common.JsonParse(payload)
 			if ids then
 				for i=1,#ids do
-					local item = Ext.GetItem(ids[i])
+					local item = GameHelpers.GetItem(ids[i])
 					if item and item.RootTemplate then
 						if item.RootTemplate.Tooltip ~= WorldTooltips.TooltipMode then
 							item.RootTemplate.Tooltip = WorldTooltips.TooltipMode
@@ -53,7 +53,7 @@ else
 			if SettingsManager.GetMod(ModuleUUID).Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true) then
 				local time = Ext.MonotonicTime()
 				for _,uuid in pairs(Ext.GetAllItems()) do
-					local item = Ext.GetItem(uuid)
+					local item = GameHelpers.GetItem(uuid)
 					if item and ShouldHaveTooltip(item) then
 						item.RootTemplate.Tooltip = WorldTooltips.TooltipMode
 					end

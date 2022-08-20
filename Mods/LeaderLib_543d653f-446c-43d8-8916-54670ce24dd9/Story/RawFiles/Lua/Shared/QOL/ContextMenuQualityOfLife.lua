@@ -209,7 +209,7 @@ if isClient then
 			end
 			if characterTargetHandle then
 				--[[ e.ContextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(cm, ui, id, actionID, handle)
-					local target = GameHelpers.TryGetObject(Ext.DoubleToHandle(handle))
+					local target = GameHelpers.TryGetObject(Ext.UI.DoubleToHandle(handle))
 					if target then
 						local source = Client:GetCharacter().WorldPos
 						fprint(LOGLEVEL.DEFAULT, "[HighGroundFlag] Result(%s) me.Y(%s) target.Y(%s) heightDiff(%s) HighGroundThreshold(%s)", GameHelpers.Math.GetHighGroundFlag(source, target.WorldPos), source[2], target.WorldPos[2], source[2] - target.WorldPos[2], Ext.ExtraData.HighGroundThreshold)

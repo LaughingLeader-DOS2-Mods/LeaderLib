@@ -38,7 +38,7 @@ if not isClient then
 	Ext.RegisterNetListener("LeaderLib_MessageBoxEvent", function(cmd, payload)
 		local data = Common.JsonParse(payload)
 		if data then
-			MessageBox:FireEvent(data.ID, data.IsConfirmed, Ext.GetCharacter(data.NetID))
+			MessageBox:FireEvent(data.ID, data.IsConfirmed, GameHelpers.GetCharacter(data.NetID))
 		end
 	end)
 end

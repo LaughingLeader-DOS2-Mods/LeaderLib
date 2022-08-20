@@ -9,7 +9,7 @@ end)
 
 Ext.RegisterConsoleCommand("pos2", function()
 	---@type StatCharacter
-	local character = Ext.GetCharacter(CharacterGetHostCharacter()).Stats
+	local character = GameHelpers.GetCharacter(CharacterGetHostCharacter()).Stats
 	fprint("Position:", Common.JsonStringify(character.Position))
 	fprint("Rotation:", Common.JsonStringify(character.Rotation))
 end)
@@ -32,14 +32,14 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelfParam
 	if radius < 0 then
 		characters = Ext.GetAllCharacters()
 	else
-		characters = Ext.GetCharacter(host):GetNearbyCharacters(radius)
+		characters = GameHelpers.GetCharacter(host):GetNearbyCharacters(radius)
 	end
 	for i,uuid in pairs(characters) do
 		if skipSelf and uuid == host then
 			--Skip
 		else
 			---@type EsvCharacter
-			local character = Ext.GetCharacter(uuid)
+			local character = GameHelpers.GetCharacter(uuid)
 			---@type StatCharacter
 			local characterStats = character.Stats
 	
@@ -72,7 +72,7 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelfParam
 		end
 		for i,uuid in pairs(items) do
 			---@type EsvItem
-			local item = Ext.GetItem(uuid)
+			local item = GameHelpers.GetItem(uuid)
 			print("ITEM")
 			print("===============")
 			print("UUID:", uuid)
@@ -198,7 +198,7 @@ Ext.RegisterConsoleCommand("clearinventory", function(command)
 	--local backpack = CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
 	for player in GameHelpers.Character.GetPlayers(false) do
 		for i,v in pairs(player:GetInventoryItems()) do
-			local item = Ext.GetItem(v)
+			local item = GameHelpers.GetItem(v)
 			if Data.EquipmentSlots[item.Slot] and not item.StoryItem then
 				ItemRemove(v)
 			end
@@ -359,7 +359,7 @@ Ext.RegisterConsoleCommand("addskill", function(command, skill)
 end)
 
 Ext.RegisterConsoleCommand("addskillset", function(command, name, addRequirements)
-	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 	local skillset = Ext.GetSkillSet(name)
 	addRequirements = addRequirements == "true" or addRequirements == "1"
 	if skillset then
@@ -408,7 +408,7 @@ end)
 
 Ext.RegisterConsoleCommand("removeunmemorizedskills", function(cmd)
 	local host = CharacterGetHostCharacter()
-	local char = Ext.GetCharacter(host)
+	local char = GameHelpers.GetCharacter(host)
 	removedSkills[host] = {}
 	for i,skill in pairs(char:GetSkills()) do
 		local slot = NRD_SkillBarFindSkill(host, skill)
@@ -437,14 +437,14 @@ end)
 Ext.RegisterConsoleCommand("printalldeltamods", function(command, ...)
 	local host = CharacterGetHostCharacter()
 	---@type EsvCharacter
-	local character = Ext.GetCharacter(host)
+	local character = GameHelpers.GetCharacter(host)
 	for i,slot in Data.EquipmentSlots:Get() do
 		---@type StatItem
 		--local item = character.Stats:GetItemBySlot(slot)
 		local itemUUID = CharacterGetEquippedItem(host, slot)
 		if itemUUID ~= nil then
 			---@type EsvItem
-			local item = Ext.GetItem(itemUUID)
+			local item = GameHelpers.GetItem(itemUUID)
 			if item ~= nil then
 				PrintDebug(slot, itemUUID)
 				PrintDebug("Stat:", item.StatsId)
@@ -513,8 +513,8 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
 end)
 
 Ext.RegisterConsoleCommand("printitemboosts", function(cmd)
-	local host = Ext.GetCharacter(CharacterGetHostCharacter())
-	local weapon = Ext.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
+	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+	local weapon = GameHelpers.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
 	PrintDebug(weapon.MyGuid, weapon.StatsId)
 	PrintDebug(weapon.Stats.Boosts)
 	for i,v in pairs(weapon:GetGeneratedBoosts()) do
@@ -600,7 +600,7 @@ local PlayerCustomDataAttributes = {
 
 Ext.RegisterConsoleCommand("printpdata", function(cmd, target)
 	target = target or CharacterGetHostCharacter()
-	local character = Ext.GetCharacter(target)
+	local character = GameHelpers.GetCharacter(target)
 	if character ~= nil and character.PlayerCustomData ~= nil then
 		local pdata = character.PlayerCustomData
 			PrintDebug(string.format("[%s] %s", target, character.DisplayName))
@@ -665,9 +665,9 @@ Ext.RegisterConsoleCommand("clonedeltamodtest", function(command, amount)
 	properties.GenerationItemType = "Rare"
 	properties.HasModifiedSkills = true
 	properties.Skills = "Projectile_Fireball"
-	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 	local weapon = CharacterGetEquippedWeapon(host.MyGuid)
-	weapon = not StringHelpers.IsNullOrEmpty(weapon) and Ext.GetItem(weapon) or "3dd01bc4-65e7-4468-9854-b19bc980b3f8"
+	weapon = not StringHelpers.IsNullOrEmpty(weapon) and GameHelpers.GetItem(weapon) or "3dd01bc4-65e7-4468-9854-b19bc980b3f8"
 	-- local item = GameHelpers.Item.Clone(weapon, properties)
 	-- if item ~= nil then
 	-- 	ItemToInventory(item.MyGuid, host.MyGuid, 1, 1, 0)
@@ -691,7 +691,7 @@ end)
 
 Ext.RegisterConsoleCommand("printrunes", function(command, equipmentSlot)
 	equipmentSlot = equipmentSlot or "Weapon"
-	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 	local item = host:GetItemBySlot(equipmentSlot)
 	if item then
 		local boosts = GameHelpers.Stats.GetRuneBoosts(item.Stats)

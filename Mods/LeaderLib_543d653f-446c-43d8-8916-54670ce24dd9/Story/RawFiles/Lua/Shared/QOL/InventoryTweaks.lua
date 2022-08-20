@@ -20,7 +20,7 @@ if _ISCLIENT then
 			return
 		end
 		for player in GameHelpers.Character.GetPlayers(false) do
-			ui:ExternalInterfaceCall("lockInventory", Ext.HandleToDouble(player.Handle), false)
+			ui:ExternalInterfaceCall("lockInventory", Ext.UI.HandleToDouble(player.Handle), false)
 		end
 	end
 
@@ -341,7 +341,7 @@ if _ISCLIENT then
 		if Trade.Visible then
 			local slot = Trade.Root.trade_mc.currentHLList
 			Ext.PrintError("startDragging", slot, doubleHandle)
-			local handle = Ext.DoubleToHandle(doubleHandle)
+			local handle = Ext.UI.DoubleToHandle(doubleHandle)
 			local playerId = Client:GetCharacter().UserID
 			Ext.UI.GetDragDrop():StartDraggingObject(playerId, handle)
 			--Trade:ExternalInterfaceCall("startDragging", slot, doubleHandle)

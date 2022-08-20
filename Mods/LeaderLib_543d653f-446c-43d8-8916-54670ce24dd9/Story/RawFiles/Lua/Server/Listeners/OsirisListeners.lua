@@ -1,5 +1,5 @@
 local function SendMissingExtenderMessage(uuid)
-	local character = Ext.GetCharacter(uuid)
+	local character = GameHelpers.GetCharacter(uuid)
 	if character and character.UserID ~= character.ReservedUserID and character.IsPlayer and CharacterIsControlled(uuid) == 1 then
 		return Ext.PlayerHasExtender(uuid)
 	end
@@ -42,7 +42,7 @@ end)
 -- Ext.RegisterOsirisListener("CharacterAddToCharacterCreation", 3, "after", function(uuid, respec, success)
 -- 	if success == 1 then
 -- 		Timer.StartOneshot("", 1, function()
--- 			Ext.PostMessageToClient(uuid, "LeaderLib_CCStarted", Ext.GetCharacter(uuid).NetID)
+-- 			Ext.PostMessageToClient(uuid, "LeaderLib_CCStarted", GameHelpers.GetCharacter(uuid).NetID)
 -- 		end)
 -- 	end
 -- end)

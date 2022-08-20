@@ -294,7 +294,7 @@ end
 
 function Debug_Iterator_PrintCharacter(uuid)
 	---@type EsvCharacter
-	local character = Ext.GetCharacter(uuid)
+	local character = GameHelpers.GetCharacter(uuid)
 	---@type StatCharacter
 	local characterStats = character.Stats
 	
@@ -331,7 +331,7 @@ function Debug_Iterator_PrintDeltamod(item, deltamod, isGenerated)
 	PrintDebug("DELTAMOD")
 	PrintDebug("===============")
 	PrintDebug("Item:", item)
-	PrintDebug("Item Stat:", Ext.GetItem(item).Stats.Name)
+	PrintDebug("Item Stat:", GameHelpers.GetItem(item).Stats.Name)
 	PrintDebug("Name:", deltamod)
 	PrintDebug("ModifierType:", modifierType)
 	PrintDebug("IsGenerated:", isGenerated)

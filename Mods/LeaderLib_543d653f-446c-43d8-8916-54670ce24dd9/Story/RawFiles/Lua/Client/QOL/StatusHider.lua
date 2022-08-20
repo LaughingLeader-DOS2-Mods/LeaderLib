@@ -280,7 +280,7 @@ local function RequestHealthbarRefresh()
 	end
 	local ui = Ext.GetUIByType(Data.UIType.enemyHealthBar)
 	if ui then
-		local character = Ext.GetCharacter(_DoubleToHandle(lastHealthbarOwnerDouble))
+		local character = GameHelpers.GetCharacter(_DoubleToHandle(lastHealthbarOwnerDouble))
 		if character then
 			Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", tostring(character.NetID))
 		end

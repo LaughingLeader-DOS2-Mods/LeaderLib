@@ -15,13 +15,13 @@ RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)
 	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
 		return
 	end
-	VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), true)
+	VisualManager.Events.OnEquipmentChanged(GameHelpers.GetCharacter(char), GameHelpers.GetItem(item), true)
 end)
 
 RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char)
 	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
 		return
 	else
-		VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
+		VisualManager.Events.OnEquipmentChanged(GameHelpers.GetCharacter(char), GameHelpers.GetItem(item), false)
 	end
 end)

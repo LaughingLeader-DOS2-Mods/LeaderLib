@@ -64,7 +64,7 @@ end
 ---@return EsvCharacter|nil
 function CharacterData:GetCharacter()
 	if self:Exists() then
-		return Ext.GetCharacter(self.UUID)
+		return GameHelpers.GetCharacter(self.UUID)
 	end
 	return nil
 end

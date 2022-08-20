@@ -737,7 +737,7 @@ end
 ---@return boolean
 function GameHelpers.Character.IsDisabled(character, checkForLoseControl, checkForZeroMovement)
 	if _type(character) == "string" then
-		character = Ext.GetCharacter(character)
+		character = GameHelpers.GetCharacter(character)
 	end
 	if character == nil then
 		return false
@@ -1025,7 +1025,7 @@ function GameHelpers.Character.GetTaggedItems(character, tag, asTable)
     character = GameHelpers.GetCharacter(character)
     if character then
         for i,v in pairs(character:GetInventoryItems()) do
-            local item = Ext.GetItem(v)
+            local item = GameHelpers.GetItem(v)
             if item and GameHelpers.ItemHasTag(item, tag) then
                 items[#items+1] = item
             end

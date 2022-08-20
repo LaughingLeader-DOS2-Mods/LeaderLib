@@ -31,7 +31,7 @@ function TooltipHandler.OnTooltipAligned(ui, event, b)
 		if canGetTooltipItem then
 			local cursorData = Ext.GetPickingState()
 			if cursorData and cursorData.HoverItem then
-				local item = Ext.GetItem(cursorData.HoverItem)
+				local item = GameHelpers.GetItem(cursorData.HoverItem)
 				if item then
 					local textResult = InvokeWorldTooltipCallbacks(ui, text, main.tf.x, main.tf.y, true, item)
 					if textResult ~= text then
@@ -67,8 +67,8 @@ function TooltipHandler.OnWorldTooltipUpdated(ui, event)
 				--local sortHelper = main.worldTooltip_array[i+4]
 				local isItem = main.worldTooltip_array[i+5]
 				if isItem then
-					local handle = Ext.DoubleToHandle(doubleHandle)
-					local item = Ext.GetItem(handle)
+					local handle = Ext.UI.DoubleToHandle(doubleHandle)
+					local item = GameHelpers.GetItem(handle)
 					if item then
 						local textResult = InvokeWorldTooltipCallbacks(ui, text, x, y, true, item)
 						if textResult ~= text then

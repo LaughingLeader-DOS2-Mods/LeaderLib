@@ -75,7 +75,7 @@ else
 		for _,attachment in pairs(GameHelpers.Visual.GetAttachedWeaponEffectVisuals(target, true)) do
 			local changeAlpha,currentAmount = HasAlphaFactorMaterial(attachment.Visual)
 			if changeAlpha then
-				local doubleHandle = Ext.HandleToDouble(attachment.Visual.Handle)
+				local doubleHandle = Ext.UI.HandleToDouble(attachment.Visual.Handle)
 				if not enabled then
 					if currentAmount > 0 and currentAmount < 1 then
 						SaveLastAlphaFactorAmount(target.NetID, doubleHandle, currentAmount)

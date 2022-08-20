@@ -240,10 +240,10 @@ GameHelpers.GetSkillHitType = GetSkillHitType
 ---@param alwaysHit boolean|nil
 function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle, noRandomization, forceCrit, alwaysHit)
     if type(attacker) == "string" then
-        attacker = Ext.GetCharacter(attacker).Stats
+        attacker = GameHelpers.GetCharacter(attacker).Stats
     end
     if type(target) == "string" then
-        target = Ext.GetCharacter(target).Stats
+        target = GameHelpers.GetCharacter(target).Stats
     end
 
     local skillData = GameHelpers.Ext.CreateSkillTable(skill, nil, true)
@@ -353,7 +353,7 @@ local function GetSkillDamageWithTarget(skill, attacker, target, isFromItem, ste
         end
     end
 
-    local damageList = Ext.NewDamageList()
+    local damageList = Ext.Stats.NewDamageList()
 
     if damageMultiplier <= 0 then
         return
@@ -627,7 +627,7 @@ local function GetBasicDamage(source, target, damageEnum, damageType, damageMult
     local randomMultiplier = 1.0 + (Ext.Random(0, damageRange) - damageRange/2) * 0.01
     local baseDamage = Game.Math.CalculateBaseDamage(damageEnum, source.Stats, target.Stats, source.Stats.Level)
 
-    local damageList = Ext.NewDamageList()
+    local damageList = Ext.Stats.NewDamageList()
 
     local attrDamageScale = 0
     if damageEnum == "BaseLevelDamage" or damageEnum == "AverageLevelDamge" or damageEnum == "MonsterWeaponDamage" then

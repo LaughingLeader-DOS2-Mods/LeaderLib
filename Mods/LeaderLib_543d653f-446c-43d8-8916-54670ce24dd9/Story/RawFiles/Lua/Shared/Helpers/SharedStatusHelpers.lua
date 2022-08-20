@@ -479,7 +479,7 @@ end
 ---@return boolean
 function GameHelpers.Status.CharacterLostControl(character, onlyFromEnemy)
 	if _type(character) == "string" then
-		character = Ext.GetCharacter(character)
+		character = GameHelpers.GetCharacter(character)
 	end
 	if character == nil then
 		return false

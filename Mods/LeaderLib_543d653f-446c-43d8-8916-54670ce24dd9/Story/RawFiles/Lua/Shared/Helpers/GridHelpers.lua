@@ -6,7 +6,7 @@ local _EXTVERSION = Ext.Version()
 local _ISCLIENT = Ext.IsClient()
 local _type = type
 
----@type fun():AiGrid
+---@type fun():EocAiGrid
 local _getGrid = function() end
 
 if _EXTVERSION >= 56 then
@@ -19,10 +19,10 @@ end
 
 ---@param x number
 ---@param z number
----@param grid AiGrid|nil
+---@param grid EocAiGrid|nil
 ---@return boolean
 function GameHelpers.Grid.IsValidPosition(x, z, grid)
-	---@type AiGrid
+	---@type EocAiGrid
 	grid = grid or _getGrid()
 	if grid then
 		--print("GameHelpers.Grid.IsValidPosition",x,z,grid:GetAiFlags(x, z), grid:GetAiFlags(x, z)&1==1)
@@ -133,13 +133,13 @@ if not _ISCLIENT then
 					_PV.ForceMoveData[target] = nil
 					local source = targetData.Source
 					if source then
-						source = Ext.GetGameObject(targetData.Source)
+						source = GameHelpers.TryGetObject(targetData.Source)
 					else
 						source = targetObject
 					end
 					local skillData = nil
 					if targetData.Skill then
-						skillData = Ext.Stats.Get(targetData.Skill)
+						skillData = Ext.Stats.Get(targetData.Skill, nil, false)
 						---@cast skillData StatEntrySkillData
 					end
 					Events.ForceMoveFinished:Invoke({
@@ -151,8 +151,8 @@ if not _ISCLIENT then
 						Skill = targetData.Skill,
 						SkillData = skillData
 					})
-					if skill then
-						Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), targetData.Skill or "Skill")
+					if skillData then
+						Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), skillData.Name)
 					else
 						--LeaderLib_Force_OnLanded((GUIDSTRING)_Target, (GUIDSTRING)_Source, (STRING)_Event)
 						Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), "Lua")
@@ -261,7 +261,7 @@ if not _ISCLIENT then
 	---@param position number[]
 	---@param skill string|nil
 	---@param beamEffect string|nil The beam effect to play with the NRD_CreateGameObjectMove action.
-	---@return number,number|nil
+	---@return boolean success
 	function GameHelpers.ForceMoveObjectToPosition(source, target, position, skill, beamEffect)
 		local sourceObject = GameHelpers.TryGetObject(source)
 		local targetObject = GameHelpers.TryGetObject(target)
@@ -287,7 +287,9 @@ if not _ISCLIENT then
 				Distance = GameHelpers.Math.GetDistance(targetObject.WorldPos, position)
 			}
 			Timer.StartObjectTimer("LeaderLib_OnForceMoveAction_Old", targetObject.MyGuid, 250)
+			return true
 		end
+		return false
 	end
 end
 
@@ -296,7 +298,7 @@ end
 ---@param z number
 ---@return number
 function GameHelpers.Grid.GetY(x,z,grid)
-	---@type AiGrid
+	---@type EocAiGrid
 	local grid = grid or _getGrid()
 	if grid then
 		local info = grid:GetCellInfo(x,z)
@@ -550,12 +552,12 @@ end
 
 ---@param x number
 ---@param z number
----@param grid AiGrid|nil
+---@param grid EocAiGrid|nil
 ---@param maxRadius number|nil
 ---@param pointsInCircle number|nil The precision when checking in a radius. Defaults to 9.
 ---@return LeaderLibCellSurfaceData|LeaderLibSurfaceRadiusData
 function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
-	---@type AiGrid
+	---@type EocAiGrid
 	grid = grid or _getGrid()
 	if grid then
 		if _type(maxRadius) ~= "number" or maxRadius <= 0 then

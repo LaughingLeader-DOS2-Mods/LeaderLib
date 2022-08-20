@@ -79,7 +79,7 @@ function Debug_TraceCharacter(character)
 		return
 	end
 	if type(character) == "string" then
-		character = Ext.GetCharacter(character)
+		character = GameHelpers.GetCharacter(character)
 	end
 
 	local characterObject = nil

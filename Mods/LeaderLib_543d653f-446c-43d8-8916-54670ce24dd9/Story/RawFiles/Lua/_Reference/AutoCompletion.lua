@@ -46,8 +46,6 @@ Mods.LeaderLib = {
 ---@alias StatStatusType "ACTIVE_DEFENSE"|"BLIND"|"CHALLENGE"|"CHARMED"|"CONSUME"|"DAMAGE_ON_MOVE"|"DAMAGE"|"DEACTIVATED"|"DECAYING_TOUCH"|"DEMONIC_BARGAIN"|"DISARMED"|"EFFECT"|"EXTRA_TURN"|"FEAR"|"FLOATING"|"GUARDIAN_ANGEL"|"HEAL_SHARING_CASTER"|"HEAL_SHARING"|"HEAL"|"HEALING"|"INCAPACITATED"|"INVISIBLE"|"KNOCKED_DOWN"|"MUTED"|"PLAY_DEAD"|"POLYMORPHED"|"SPARK"|"STANCE"|"THROWN"
 
 ---@alias RaceTag "DWARF"|"ELF"|"HUMAN"|"LIZARD"
----@alias SkillAbility "None"|"Warrior"|"Ranger"|"Rogue"|"Source"|"Fire"|"Water"|"Air"|"Earth"|"Death"|"Summoning"|"Polymorph"
----@alias SkillElement SkillAbility
 
 ---@alias StatCharacter CDivinityStatsCharacter
 ---@alias DamageList StatsDamagePairList

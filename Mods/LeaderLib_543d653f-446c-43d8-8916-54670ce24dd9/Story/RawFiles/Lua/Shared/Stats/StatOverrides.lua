@@ -228,7 +228,7 @@ local function OverrideForce(shouldSync)
 			end
 		end
 	end
-	if Vars.DebugMode and Ext.GetGameState() == "Running" then
+	--[[ if Vars.DebugMode and Ext.GetGameState() == "Running" then
 		for stat in GameHelpers.Stats.GetSkills(true) do
 			---@type StatProperty[]
 			local props = GameHelpers.Stats.GetSkillProperties(stat)
@@ -260,7 +260,7 @@ local function OverrideForce(shouldSync)
 				end
 			end
 		end
-	end
+	end ]]
 end
 
 local function AdjustAP(stat, settings)

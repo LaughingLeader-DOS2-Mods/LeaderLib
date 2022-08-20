@@ -1226,6 +1226,7 @@ Data.HitReason = {
 
 Classes.Enum:Create(Data.HitReason)
 
+---@enum GameDifficulty
 Data.Difficulty = {
 	[0] = "Story",
 	[1] = "Explorer",

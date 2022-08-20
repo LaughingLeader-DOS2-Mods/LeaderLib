@@ -3,7 +3,7 @@ if GameHelpers.Data == nil then GameHelpers.Data = {} end
 local ClientCharacterData = Classes.ClientCharacterData
 
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 ---@class LEVELTYPE
 LEVELTYPE = {

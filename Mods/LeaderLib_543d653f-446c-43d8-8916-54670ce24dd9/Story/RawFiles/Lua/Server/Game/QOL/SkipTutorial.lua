@@ -9,7 +9,7 @@ SkipTutorial = {
 	}
 }
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 local initialized = false
 

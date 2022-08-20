@@ -1,4 +1,4 @@
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 local _type = type
 local _pairs = pairs
@@ -618,7 +618,7 @@ function StatusManager.TogglePermanentStatus(target, status, source)
 	return _INTERNAL.SetPermanentStatus(target, status, not StatusManager.IsPermanentStatusActive(target, status), source)
 end
 
-if Ext.Version() >= 56 then
+if Ext.Utils.Version() >= 56 then
 	---@class ExtenderBeforeStatusDeleteEventParams
 	---@field Status EsvStatus
 	---@field PreventAction fun(self:ExtenderBeforeStatusDeleteEventParams)

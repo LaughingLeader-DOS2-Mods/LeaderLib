@@ -2,7 +2,7 @@ if GameHelpers.IO == nil then
 	GameHelpers.IO = {}
 end
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 local _loadFile = _EXTVERSION < 56 and Ext.LoadFile or Ext.IO.LoadFile
 local _saveFile = _EXTVERSION < 56 and Ext.SaveFile or Ext.IO.SaveFile

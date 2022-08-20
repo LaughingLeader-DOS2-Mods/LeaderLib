@@ -455,7 +455,7 @@ function GameHelpers.Stats.GetRangedMappedValue(value, maxEnumCount)
 	return (100 * value - 100) / (maxEnumCount - 2)
 end
 
-local _getEnumIndex = Ext.Version() >= 56 and Ext.Stats.EnumLabelToIndex or Ext.EnumLabelToIndex
+local _getEnumIndex = Ext.Utils.Version() >= 56 and Ext.Stats.EnumLabelToIndex or Ext.EnumLabelToIndex
 
 ---Get the scaled 
 ---@param value number The Penalty PreciseQualifier amount, such as -4 in Stats_Flesh_Sacrifice.

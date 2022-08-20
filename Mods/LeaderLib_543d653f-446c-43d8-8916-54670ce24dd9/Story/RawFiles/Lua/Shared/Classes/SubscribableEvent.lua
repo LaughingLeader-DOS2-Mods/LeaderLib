@@ -4,7 +4,7 @@ We don't have C++ event objects backing these, so they're more of a fancy way to
 ]]
 
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 local _type = type
 local _pairs = pairs
 local _pcall = pcall
@@ -89,7 +89,7 @@ function SubscribableEvent:Create(id, opts)
 			end
 		end
 	end
-	if o.Benchmark and not Ext.IsDeveloperMode() then
+	if o.Benchmark and not Ext.Debug.IsDeveloperMode() then
 		o.Benchmark = false
 	end
 	setmetatable(o, {

@@ -2,7 +2,7 @@ if GameHelpers.Damage == nil then
 	GameHelpers.Damage = {}
 end
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 ---Reduce damage by a percentage (ex. 0.5)
 ---@param target string

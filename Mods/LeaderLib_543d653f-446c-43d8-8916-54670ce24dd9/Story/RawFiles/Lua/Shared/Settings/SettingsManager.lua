@@ -12,7 +12,7 @@ function SettingsManager.AddSettings(modSettings)
 	if GlobalSettings == nil then
 		GlobalSettings = {
 			Mods = {},
-			Version = Ext.GetModInfo(ModuleUUID).Version,
+			Version = StringHelpers.Join(".", Ext.Mod.GetMod(ModuleUUID).Info.ModVersion),
 		}
 	end
 	if GlobalSettings.Mods == nil then
@@ -261,9 +261,11 @@ if not isClient then
 	function GlobalSettings_GetAndStoreModVersion(uuid)
 		local mod_settings = SettingsManager.GetMod(uuid, true)
 		if mod_settings ~= nil then
-			local modinfo = Ext.GetModInfo(uuid)
-			if modinfo ~= nil then
-				mod_settings.Version = modinfo.Version
+			local mod = Ext.Mod.GetMod(uuid)
+			if mod ~= nil then
+				local major,minor,revision,build = table.unpack(mod.Info.ModVersion)
+				local versionInt = (major << 28) + (minor << 24) + (revision << 16) + (build)
+				mod_settings.Version = versionInt
 			end
 		end
 	end

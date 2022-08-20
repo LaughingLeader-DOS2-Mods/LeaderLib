@@ -4,7 +4,7 @@ if GameHelpers.Item == nil then
 end
 
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 local _type = type
 
 local itemConstructorProps = {

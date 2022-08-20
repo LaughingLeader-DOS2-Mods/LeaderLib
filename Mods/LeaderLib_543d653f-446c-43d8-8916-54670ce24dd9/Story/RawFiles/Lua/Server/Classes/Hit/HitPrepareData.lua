@@ -104,7 +104,7 @@ local ChaosDamageTypes = {
 	Poison = 10,
 }
 
-local canUseRawFunctions = Ext.Version() >= 55
+local canUseRawFunctions = Ext.Utils.Version() >= 55
 
 HitPrepareData.__call = function(_, ...)
 	return HitPrepareData:Create(...)

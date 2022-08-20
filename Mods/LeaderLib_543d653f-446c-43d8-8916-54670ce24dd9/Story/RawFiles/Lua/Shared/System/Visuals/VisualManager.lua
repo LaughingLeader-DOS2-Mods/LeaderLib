@@ -1,5 +1,5 @@
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 ---@class LeaderLibVisualManager
 VisualManager = {}

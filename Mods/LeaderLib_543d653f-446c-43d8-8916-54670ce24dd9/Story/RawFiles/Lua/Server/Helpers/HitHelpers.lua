@@ -2,7 +2,7 @@ if not GameHelpers.Hit then
 	GameHelpers.Hit = {}
 end
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.
 ---Pass in an object if this is a status.

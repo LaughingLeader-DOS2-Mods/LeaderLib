@@ -2,7 +2,7 @@ if DebugHelpers == nil then
 	DebugHelpers = {}
 end
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 local _ISCLIENT = Ext.IsClient()
 local _type = type
 
@@ -828,7 +828,7 @@ userDataProps.CharacterDynamicStat = {
 	StepsType = "integer",
 }
 
-if Ext.Version() < 56 then
+if Ext.Utils.Version() < 56 then
 	userDataProps.CDivinityStats_Character.Accuracy = nil
 	userDataProps.CharacterDynamicStat.Accuracy = nil
 end

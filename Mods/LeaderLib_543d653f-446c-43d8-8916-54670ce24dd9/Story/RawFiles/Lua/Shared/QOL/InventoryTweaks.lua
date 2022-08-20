@@ -1,4 +1,4 @@
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 local _ISCLIENT = Ext.IsClient()
 
 local pairs = pairs

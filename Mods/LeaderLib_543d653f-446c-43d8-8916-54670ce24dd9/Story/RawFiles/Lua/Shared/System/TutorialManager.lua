@@ -1,6 +1,6 @@
 local isClient = Ext.IsClient()
 
-if isClient and Ext.Version() >= 56 then
+if isClient and Ext.Utils.Version() >= 56 then
 	TutorialBox = Classes.UIWrapper:CreateFromType(Data.UIType.tutorialBox, {ControllerID=Data.UIType.tutorialBox_c, IsControllerSupported=true})
 
 	---@param category string

@@ -76,7 +76,7 @@ Ext.Require("Client/QOL/ShowConsumableEffects.lua")
 Ext.Require("Client/QOL/ShowBarText.lua")
 Ext.Require("Client/QOL/TooltipDelay.lua")
 Ext.Require("Client/QOL/ModMenuFixes.lua")
-if Ext.Version() < 56 or EnableGameTooltipOverride() then
+if Ext.Utils.Version() < 56 or EnableGameTooltipOverride() then
 	Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 end
 Ext.Require("Client/UI/CharacterSheet.lua")
@@ -91,7 +91,7 @@ Ext.Require("Client/UI/UIExtensions.lua")
 Ext.Require("Client/UI/InterfaceCommands.lua")
 Ext.Require("Client/UI/ContextMenu.lua")
 Ext.Require("Client/UI/CharacterCreation/CCExtensionUI.lua")
-if Ext.Version() >= 56 then
+if Ext.Utils.Version() >= 56 then
 	Ext.Require("Client/UI/CharacterCreation/PresetExtension.lua")
 	Ext.Require("Client/QOL/ChatLogHider.lua")
 	Ext.Require("Shared/QOL/ExtenderVisualSupport.lua")
@@ -103,7 +103,7 @@ Ext.Require("Shared/UI/CombatLog.lua")
 Ext.Require("Shared/UI/MessageBox.lua")
 Ext.Require("Shared/UI/Overhead.lua")
 Ext.Require("Shared/System/TutorialManager.lua")
-if Ext.IsDeveloperMode() then
+if Ext.Debug.IsDeveloperMode() then
 	Ext.Require("Shared/Debug/SharedDebug.lua")
 end
 

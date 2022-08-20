@@ -3,7 +3,7 @@ if GameHelpers.Ext == nil then
 end
 
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 local _type = type
 
 local characterStatAttributes = {

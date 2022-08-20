@@ -96,7 +96,7 @@ local DefaultSettings = {
 		},
 	},
 	EnableDeveloperTests = false,
-	Version = Ext.GetModInfo(ModuleUUID).Version
+	Version = GameHelpers.GetModVersion(ModuleUUID, true)
 }
 
 local _ISCLIENT = Ext.IsClient()

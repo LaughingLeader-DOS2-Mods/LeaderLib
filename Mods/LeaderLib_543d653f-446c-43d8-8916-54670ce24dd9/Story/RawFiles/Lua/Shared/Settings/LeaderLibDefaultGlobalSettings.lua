@@ -93,7 +93,7 @@ settings.GetMenuOrder = function()
 	return order
 end
 
-if Ext.IsDeveloperMode() then
+if Ext.Debug.IsDeveloperMode() then
 	settings.Global:AddLocalizedButton("LeaderLib_Button_Reset", "LeaderLib_UI_Button_Reset", function(button, uuid, character)
 		for i,v in pairs(settings.Global.Flags) do
 			v.Enabled = v.Default

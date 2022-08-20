@@ -15,7 +15,7 @@ local Patches = {
 			end
 			if _ISCLIENT then
 				---@diagnostic disable undefined-field
-				if Ext.Version() < 56 then
+				if Ext.Utils.Version() < 56 then
 					Ext._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
 				else
 					Ext._Internal._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
@@ -316,7 +316,7 @@ local Patches = {
 
 local function PatchMods(initialized)
 	for uuid,data in pairs(Patches) do
-		if Ext.Mod.IsModLoaded(uuid) and (not data.Version or Ext.GetModInfo(uuid).Version <= data.Version) then
+		if Ext.Mod.IsModLoaded(uuid) and (not data.Version or GameHelpers.GetModVersion(uuid, true) <= data.Version) then
 			data.Patch(initialized)
 		end
 	end

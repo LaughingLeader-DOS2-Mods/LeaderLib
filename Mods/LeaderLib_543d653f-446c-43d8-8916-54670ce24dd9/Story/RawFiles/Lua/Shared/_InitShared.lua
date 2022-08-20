@@ -26,7 +26,7 @@ InitTable("Common")
 InitTable({"_INTERNAL", "Audio", "CC", "Damage", "Ext", "Item", "Math", "Net", "Skill", "Status", "Tooltip", "UI", "Utils"}, GameHelpers)
 
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 local _getTranslatedStringKeyFunction = Ext.L10N.GetTranslatedStringFromKey
 local _getTranslatedStringFunction = Ext.L10N.GetTranslatedString
 
@@ -124,7 +124,7 @@ Vars = {
 		CooldownsDisabled = false,
 		Teleporting = false,
 	},
-	DebugMode = Ext.IsDeveloperMode() == true,
+	DebugMode = Ext.Debug.IsDeveloperMode() == true,
 	LeaderDebugMode = false,
 	---The last GUID of a context menu object, in developer mode.
 	---@type UUID|nil
@@ -170,7 +170,7 @@ Vars = {
 			Type = "Extender",
 		}
 	},
-	Version = Ext.Version(),
+	Version = Ext.Utils.Version(),
 	StatusEvent = {
 		BeforeAttempt = "BeforeAttempt",
 		Attempt = "Attempt",
@@ -212,7 +212,7 @@ GameSettings = {Settings = {}, Loaded = false}
 GlobalSettings = {
 	---@type table<string, ModSettings>
 	Mods = {},
-	Version = Ext.GetModInfo(ModuleUUID).Version,
+	Version = GameHelpers.GetModVersion(ModuleUUID, true),
 }
 
 IgnoredMods = {
@@ -242,9 +242,9 @@ IgnoredMods = {
 	["3da57b9d-8b41-46c7-a33c-afb31eea38a3"] = true,--Armor Sets
 }
 
----@alias DoHitCallback fun(hit:HitRequest, damageList:DamageList, statusBonusDmgTypes:DamageList, hitType:string, target:StatCharacter, attacker:StatCharacter):HitRequest
+---@alias DoHitCallback fun(hit:StatsHitDamageInfo, damageList:DamageList, statusBonusDmgTypes:DamageList, hitType:string, target:StatCharacter, attacker:StatCharacter):StatsHitDamageInfo
 
----@alias ApplyDamageCharacterBonusesCallback fun(character:StatCharacter, attacker:StatCharacter, damageList:DamageList, preModifiedDamageList:DamageItem[], resistancePenetration:table<string,integer>)
+---@alias ApplyDamageCharacterBonusesCallback fun(character:StatCharacter, attacker:StatCharacter, damageList:DamageList, preModifiedDamageList:StatsDamagePairList[], resistancePenetration:table<string,integer>)
 
 Ext.Require("Shared/Listeners.lua")
 
@@ -303,7 +303,7 @@ Features = {
 	---Display the status source in status tooltips.
 	StatusDisplaySource = true,
 	---Display the status type and ID in status tooltips.
-	DisplayStatusDebugInfo = Ext.IsDeveloperMode(),
+	DisplayStatusDebugInfo = Ext.Debug.IsDeveloperMode(),
 	---Fixes various tooltip things like extra spaces and grammar issues.
 	TooltipGrammarHelper = false,
 	---Enables a workaround for requiring WINGS or PURE to make characters play the flying animation when moving around.
@@ -424,109 +424,11 @@ end
 ---DEPRECATED
 ---Makes LeaderLib's globals accessible using metamethod magic. Pass it a mod table, such as Mods.MyModTable.
 ---This is the same as the regular Import now.
+---@deprecated
 ---@param targetModTable table
 function ImportUnsafe(targetModTable)
 	Import(targetModTable)
 end
-
---[[
---Old import stuff.
-
---Data/table imports.
-local imports = {
-	All = {
-		"LOGLEVEL",
-		"StringHelpers",
-		"GameHelpers",
-		"TableHelpers",
-		"Common",
-		"SharedData",
-		"LocalizedText",
-		"LEVELTYPE",
-		"Classes",
-		"Data",
-		"Timer",
-	},
-	Server = {
-		"SKILL_STATE",
-	},
-	Client = {
-		"UI",
-		"Client"
-	}
-}
-
----[DEPRECATED]
----Imports specific 'safe' LeaderLib globals to the target table.
----@param targetModTable table
----@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
-local function ImportOld(targetModTable, skipExistingCheck)
-	SetupMetaTables(targetModTable)
-	local modName = Ext.GetModInfo(targetModTable.ModuleUUID)
-	if modName then
-		modName = modName.Name
-	else
-		modName = targetModTable.ModuleUUID
-	end
-	for _,k in pairs(imports.All) do
-		if skipExistingCheck == true or not targetModTable[k] then
-			targetModTable[k] = Mods.LeaderLib[k]
-		elseif Vars.DebugMode and not Vars.ConsoleWindowVariables[k] then
-			fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, modName)
-		end
-	end
-	-- Automatically importing global functions
-	for k,v in pairs(Mods.LeaderLib) do
-		if ignoreImports[k] ~= true and type(v) == "function" then
-			if skipExistingCheck == true or not targetModTable[k] then
-				targetModTable[k] = v
-			elseif Vars.DebugMode and not Vars.ConsoleWindowVariables[k] then
-				fprint(LOGLEVEL.WARNING, "Global function (%s) already exists in mod table for mod (%s)", k, modName)
-			end
-		end
-	end
-	if Ext.IsServer() then
-		for _,k in pairs(imports.Server) do
-			if skipExistingCheck == true or not targetModTable[k] then
-				targetModTable[k] = Mods.LeaderLib[k]
-			elseif Vars.DebugMode and not Vars.ConsoleWindowVariables[k] then
-				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, modName)
-			end
-		end
-	else
-		for _,k in pairs(imports.Client) do
-			if skipExistingCheck == true or not targetModTable[k] then
-				targetModTable[k] = Mods.LeaderLib[k]
-			elseif Vars.DebugMode and not Vars.ConsoleWindowVariables[k] then
-				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, modName)
-			end
-		end
-	end
-end
-
----[DEPRECATED]
----Imports all of LeaderLib's globals to the target table, excluding PersistentVars and some truly unsafe tables.
----@param targetModTable table
----@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
-local function ImportUnsafeOld(targetModTable, skipExistingCheck)
-	SetupMetaTables(targetModTable)
-	local modName = Ext.GetModInfo(targetModTable.ModuleUUID)
-	if modName then
-		modName = modName.Name
-	else
-		modName = targetModTable.ModuleUUID
-	end
-	for k,v in pairs(Mods.LeaderLib) do
-		if ignoreImports[k] ~= true then
-			if skipExistingCheck == true or not targetModTable[k] then
-				targetModTable[k] = v
-			elseif Vars.DebugMode and not Vars.ConsoleWindowVariables[k] then
-				fprint(LOGLEVEL.WARNING, "[LeaderLib:ImportUnsafe] Global key (%s) already exists in mod table for mod (%s)", k, modName)
-			end
-		end
-	end
-end
-]]
 
 --Outdated editor version
 if Ext.GameVersion() == "v3.6.51.9303" then

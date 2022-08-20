@@ -1002,3 +1002,20 @@ function GameHelpers.GetModDescription(guid, stripFont)
 	end
 	return ""
 end
+
+---@param guid GUID The mod GUID.
+---@param asSingleInteger boolean|nil Return the combined version integer.
+---@return string description
+function GameHelpers.GetModVersion(guid, asSingleInteger)
+	local mod = Ext.Mod.GetMod(guid)
+	if mod and mod.Info then
+		if asSingleInteger then
+			local major,minor,revision,build = table.unpack(mod.Info.ModVersion)
+			local versionInt = (major << 28) + (minor << 24) + (revision << 16) + (build)
+			return versionInt
+		else
+			return table.unpack(mod.Info.ModVersion)
+		end
+	end
+	return -1
+end

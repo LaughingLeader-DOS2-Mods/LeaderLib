@@ -1,4 +1,4 @@
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 local isClient = Ext.IsClient()
 
 if _EXTVERSION >= 56 then

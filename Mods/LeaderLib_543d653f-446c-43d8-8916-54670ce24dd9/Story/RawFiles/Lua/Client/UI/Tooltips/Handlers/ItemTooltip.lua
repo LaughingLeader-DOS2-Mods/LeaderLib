@@ -1,6 +1,6 @@
 local appendRequirementsAfterTypes = {ItemRequirement=true, ItemLevel=true, APCostBoost=true}
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 local function _AlphabeticalCaseInsensitiveLabelSort(a,b)
 	return string.lower(a.Label) < string.lower(b.Label)

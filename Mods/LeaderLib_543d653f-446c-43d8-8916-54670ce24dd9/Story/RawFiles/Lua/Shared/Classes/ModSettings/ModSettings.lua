@@ -43,10 +43,12 @@ function ModSettings:Create(uuid, globalSettings)
 		LoadedExternally = false,
 		GetMenuOrder = nil,
 	}
-	local info = Ext.GetModInfo(uuid)
-	if info ~= nil then
-		this.Name = info.Name
-		this.Version = info.Version
+	local mod = Ext.Mod.GetMod(uuid)
+	if mod ~= nil then
+		this.Name = mod.Info.Name
+		local major,minor,revision,build = table.unpack(mod.Info.ModVersion)
+		local versionInt = (major << 28) + (minor << 24) + (revision << 16) + (build)
+		this.Version = versionInt
 	end
 	setmetatable(this, self)
     return this

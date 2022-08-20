@@ -1,4 +1,4 @@
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 local _ISCLIENT = Ext.IsClient()
 
 if Testing == nil then

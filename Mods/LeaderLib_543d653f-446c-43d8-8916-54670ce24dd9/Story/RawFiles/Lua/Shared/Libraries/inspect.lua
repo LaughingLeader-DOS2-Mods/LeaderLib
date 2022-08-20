@@ -107,7 +107,7 @@ local inspect ={
 	return ta < tb
   end
 
-  local canUseRawFunctions = Ext.Version() >= 55
+  local canUseRawFunctions = Ext.Utils.Version() >= 55
   
   -- For implementation reasons, the behavior of rawlen & # is "undefined" when
   -- tables aren't pure sequences. So we implement our own # operator.

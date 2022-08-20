@@ -1,4 +1,4 @@
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 ---Data passed to hit callbacks, such as the various functions in SkillListeners.lua
 ---@class HitData
@@ -29,7 +29,7 @@ local function CreateDamageMetaList(target, handle)
 	return damageList
 end
 
-local canUseRawFunctions = Ext.Version() >= 55
+local canUseRawFunctions = Ext.Utils.Version() >= 55
 local readOnlyProperties = {
 	Handle = true,
 	Target = true,

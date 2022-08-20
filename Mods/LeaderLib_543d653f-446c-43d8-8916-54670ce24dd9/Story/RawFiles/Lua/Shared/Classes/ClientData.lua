@@ -8,7 +8,7 @@
 ---@field SourceMax integer
 
 local isClient = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 ---@class ClientCharacterData
 ---@field Points ClientCharacterPointsData

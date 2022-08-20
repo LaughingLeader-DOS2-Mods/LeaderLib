@@ -4,7 +4,7 @@
 
 ---@alias LeaderLibClientListenerEvent string|"CharacterSheetPointChanged" | "InputEvent" | "ModMenuSectionCreated" | "MouseInputEvent" | "NamedInputEvent" | "OnContextMenuEntryClicked" | "OnContextMenuOpening" | "OnTalentArrayUpdating" | "OnTooltipPositioned" | "OnWorldTooltip" | "ShouldOpenContextMenu" | "UICreated"
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 local _ISCLIENT = Ext.IsClient()
 
 if not Listeners then
@@ -114,7 +114,7 @@ end
 
 if _EXTVERSION >= 56 then
 	Ext.Events.Tick:Subscribe(OnTick)
-elseif Ext.IsDeveloperMode() and not _ISCLIENT then
+elseif Ext.Debug.IsDeveloperMode() and not _ISCLIENT then
 	local _minTime = 0.1 -- 10 FPS
 	local _maxTime = 0.016 -- 30 FPS
 	local _monoTime = Ext.MonotonicTime

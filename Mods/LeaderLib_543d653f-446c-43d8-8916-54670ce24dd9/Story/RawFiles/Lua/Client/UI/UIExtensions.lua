@@ -34,7 +34,7 @@ UIExtensions = {
 	Visible = false
 }
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 setmetatable(UIExtensions, {
 	__index = function(tbl,k)
@@ -206,7 +206,7 @@ function UIExtensions.SetupInstance(skipCheck)
 		if not UIExtensions.Initialized then
 			local main = instance:GetRoot()
 			if main then
-				main.autoPosition = Ext.Version() < 56
+				main.autoPosition = Ext.Utils.Version() < 56
 				main.clearElements()
 				main.controllerEnabled = Vars.ControllerEnabled
 				main.isInCharacterCreation = SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION

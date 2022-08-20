@@ -133,4 +133,5 @@ Ext.Events.SessionLoaded:Subscribe(function (e)
 	elseif _ISCLIENT then
 		GameSettingsManager.LoadClientSettings()
 	end
+	GlobalSettings.Version = StringHelpers.Join(".", Ext.Mod.GetMod(ModuleUUID).Info.ModVersion)
 end, {Priority=9999})

@@ -1,6 +1,6 @@
 if Common == nil then Common = {} end
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 function Common.InitSeed()
 	local rnd = Ext.Random(9999)

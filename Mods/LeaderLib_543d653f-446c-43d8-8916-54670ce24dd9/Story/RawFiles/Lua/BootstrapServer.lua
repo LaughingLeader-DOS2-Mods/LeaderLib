@@ -3,7 +3,7 @@ local function CanInvokeListener(anyLevelType)
 end
 
 local _OsirisEventSubscribe = Ext.RegisterOsirisListener
-if Ext.Version() >= 56 then
+if Ext.Utils.Version() >= 56 then
 	_OsirisEventSubscribe = Ext.Osiris.RegisterListener
 end
 
@@ -220,7 +220,7 @@ Ext.Require("Server/Listeners/_Init.lua")
 Ext.Require("Server/ModMenu/ModMenuServerCommands.lua")
 Ext.Require("Server/Versioning.lua")
 Ext.Require("Server/Debug/ConsoleCommands.lua")
-if Ext.IsDeveloperMode() then
+if Ext.Debug.IsDeveloperMode() then
 	Ext.Require("Server/Debug/DebugMain.lua")
 	Ext.Require("Server/Debug/DeveloperCommands.lua")
 	if coroutine then
@@ -230,7 +230,7 @@ if Ext.IsDeveloperMode() then
 end
 Ext.Require("Server/Game/QOL/BuffStatusPreserver.lua")
 Ext.Require("Server/Game/QOL/SkipTutorial.lua")
-if Ext.Version() >= 56 then
+if Ext.Utils.Version() >= 56 then
 	Ext.Require("Shared/QOL/ExtenderVisualSupport.lua")
 	Ext.Require("Shared/QOL/InventoryTweaks.lua")
 end

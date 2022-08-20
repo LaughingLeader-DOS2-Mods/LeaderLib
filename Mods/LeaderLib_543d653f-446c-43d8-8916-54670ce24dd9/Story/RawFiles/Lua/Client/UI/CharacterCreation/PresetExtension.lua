@@ -64,14 +64,15 @@ function PresetExt.BuildModAssociation(findModForPreset, presets)
 	local order = Ext.Mod.GetLoadOrder()
 	for i=1,#order do
 		local uuid = order[i]
-		local info = Ext.GetModInfo(uuid)
-		if info ~= nil then
+		local mod = Ext.Mod.GetMod(uuid)
+		if mod then
+			local info = mod.Info
 			for classType,index in pairs(findModForPreset) do
 				local filePath = string.format("Mods/%s/CharacterCreation/ClassPresets/%s.lsx", info.Directory, classType)
 				--local filePathWithoutSpaces = string.format("Mods/%s/CharacterCreation/ClassPresets/%s.lsx", info.Directory, StringHelpers.RemoveWhitespace(classType))
 				if Ext.IO.LoadFile(filePath, "data") then
 					presets[index].Mod = info.Name
-					presets[index].ModUUID = info.UUID
+					presets[index].ModUUID = uuid
 					if info.Name == "Shared" then
 						presets[index].Mod = "Divinity: Original Sin 2"
 					end
@@ -132,9 +133,9 @@ function PresetExt.CreatePresetDropdown()
 		end
 		if cachedPresetToMod[v.ClassType] then
 			entry.ModUUID = cachedPresetToMod[v.ClassType]
-			local info = Ext.GetModInfo(entry.ModUUID)
-			if info then
-				entry.Mod = info.Name
+			local mod = Ext.Mod.GetMod(entry.ModUUID)
+			if mod then
+				entry.Mod = mod.Info.Name
 			end
 		elseif entry.Tooltip ~= "" then
 			--FIXME Most mods don't follow ClassType -> Filename conventions, or localize their text with proper handles.

@@ -1,7 +1,7 @@
 if GameHelpers == nil then GameHelpers = {} end
 if GameHelpers.Skill == nil then GameHelpers.Skill = {} end
 
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 local function TrySetValue(target, k, v)
     if k == "DamageList" then
@@ -741,7 +741,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
     Ext.ExecuteSurfaceAction(action)
 end
 
-local _USE_BEHAVIOR = Ext.Version() < 56
+local _USE_BEHAVIOR = Ext.Utils.Version() < 56
 
 ---Shoot a zone/cone skill at a target object or position.
 ---@param skillId string Zone or Cone type skill.

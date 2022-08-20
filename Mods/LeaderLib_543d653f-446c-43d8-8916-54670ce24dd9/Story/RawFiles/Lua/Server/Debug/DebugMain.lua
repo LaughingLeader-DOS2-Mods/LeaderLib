@@ -375,7 +375,7 @@ Ext.Events.OnAfterSortAiActions:Subscribe(function (e) local character = Ext.Ent
 -- 	end
 -- end)
 
---[[ if Ext.IsDeveloperMode() then
+--[[ if Ext.Debug.IsDeveloperMode() then
 	Ext.Events.OnPeekAiAction:Subscribe(function (e)
 		if e.ActionType == "Skill" then
 			for _,v in pairs(e.Request.AiActions) do

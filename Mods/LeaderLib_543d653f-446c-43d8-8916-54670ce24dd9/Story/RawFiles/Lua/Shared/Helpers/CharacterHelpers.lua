@@ -4,7 +4,7 @@ end
 
 local _type = type
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
+local _EXTVERSION = Ext.Utils.Version()
 
 ---@param character CharacterParam
 ---@return boolean

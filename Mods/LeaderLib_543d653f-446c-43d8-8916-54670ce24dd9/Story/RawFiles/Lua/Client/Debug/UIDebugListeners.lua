@@ -95,7 +95,7 @@ local Init = function()
 	}
 
 	local lastTimeSinceIgnored = {}
-	local version = Ext.Version()
+	local version = Ext.Utils.Version()
 
 	---@param ui UIObject
 	Ext.RegisterListener("UICall", function(ui, event, arg1, ...)

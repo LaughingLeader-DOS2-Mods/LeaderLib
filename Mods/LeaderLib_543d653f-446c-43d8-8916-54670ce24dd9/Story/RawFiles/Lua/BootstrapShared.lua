@@ -155,3 +155,5 @@ if not Ext.IsClient() then
 	}
 	Classes.Enum:Create(Vars.CharacterDiedState)
 end
+
+GlobalSettings.Version = GameHelpers.GetModVersion(ModuleUUID, true)

@@ -212,7 +212,7 @@ GameSettings = {Settings = {}, Loaded = false}
 GlobalSettings = {
 	---@type table<string, ModSettings>
 	Mods = {},
-	Version = GameHelpers.GetModVersion(ModuleUUID, true),
+	Version = -1,
 }
 
 IgnoredMods = {

@@ -164,8 +164,8 @@ end
 local function _LoadLeaderLib()
 	-- LeaderLib
 	local mod = Ext.Mod.GetMod(ModuleUUID)
-	local major,minor,revision,build = table.unpack(mod.Info.ModVersion)
-	local versionInt = (major << 28) + (minor << 24) + (revision << 16) + (build)
+	local versionInt = GameHelpers.GetModVersion(ModuleUUID, true)
+	local major,minor,revision,build = ParseVersion(versionInt)
 	Osi.LeaderLib_Mods_OnModLoaded(ModuleUUID, "LeaderLib", mod.Info.Name, mod.Info.Author, versionInt, major, minor, revision, build)
 end
 
@@ -178,8 +178,8 @@ function LoadMods()
 		if IgnoredMods[uuid] ~= true then
 			local mod = Ext.Mod.GetMod(uuid)
 			local info = mod.Info
-			local major,minor,revision,build = table.unpack(info.ModVersion)
-			local versionInt = (major << 28) + (minor << 24) + (revision << 16) + (build)
+			local versionInt = GameHelpers.GetModVersion(ModuleUUID, true)
+			local major,minor,revision,build = ParseVersion(versionInt)
 			--local modid = string.gsub(mod.Name, "%s+", ""):gsub("%p+", ""):gsub("%c+", ""):gsub("%%+", ""):gsub("&+", "")
 			local modName = info.Name or ""
 			local modid = string.match(info.Directory, "(.*)_") or modName .. uuid

@@ -46,9 +46,7 @@ function ModSettings:Create(uuid, globalSettings)
 	local mod = Ext.Mod.GetMod(uuid)
 	if mod ~= nil then
 		this.Name = mod.Info.Name
-		local major,minor,revision,build = table.unpack(mod.Info.ModVersion)
-		local versionInt = (major << 28) + (minor << 24) + (revision << 16) + (build)
-		this.Version = versionInt
+		this.Version = GameHelpers.GetModVersion(ModuleUUID, true)
 	end
 	setmetatable(this, self)
     return this

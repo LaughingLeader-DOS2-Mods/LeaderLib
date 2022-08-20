@@ -1007,7 +1007,7 @@ end
 ---@param asSingleInteger boolean|nil Return the combined version integer.
 ---@return string description
 function GameHelpers.GetModVersion(guid, asSingleInteger)
-	local mod = Ext.Mod.GetMod(guid)
+	--[[ local mod = Ext.Mod.GetMod(guid)
 	if mod and mod.Info then
 		if asSingleInteger then
 			local major,minor,revision,build = table.unpack(mod.Info.ModVersion)
@@ -1016,6 +1016,11 @@ function GameHelpers.GetModVersion(guid, asSingleInteger)
 		else
 			return table.unpack(mod.Info.ModVersion)
 		end
+	end ]]
+	--Ext.Mod.GetMod().Info.ModVersion needs a fix in v57
+	local info = Ext.Mod.GetModInfo(guid)
+	if info then
+		return info.Version
 	end
 	return -1
 end

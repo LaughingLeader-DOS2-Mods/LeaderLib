@@ -263,9 +263,7 @@ if not isClient then
 		if mod_settings ~= nil then
 			local mod = Ext.Mod.GetMod(uuid)
 			if mod ~= nil then
-				local major,minor,revision,build = table.unpack(mod.Info.ModVersion)
-				local versionInt = (major << 28) + (minor << 24) + (revision << 16) + (build)
-				mod_settings.Version = versionInt
+				mod_settings.Version = GameHelpers.GetModVersion(ModuleUUID, true)
 			end
 		end
 	end

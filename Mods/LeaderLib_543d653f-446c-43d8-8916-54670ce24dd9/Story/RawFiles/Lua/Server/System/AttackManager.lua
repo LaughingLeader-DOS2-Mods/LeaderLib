@@ -192,20 +192,17 @@ function AttackManager.InvokeOnHit(isFromHit, attacker, target, data, skill)
 	end
 end
 
---- @param attacker EsvGameObject
---- @param target number[]
---- @param damageList DamageList
-RegisterProtectedExtenderListener("GroundHit", function(attacker, target, damageList)
+Ext.Events.GroundHit:Subscribe(function (e)
 	--Also fires when a projectile hits the ground (exploding projectiles too!), so we need this table entry
-	if attacker and _PV.StartAttackPosition[attacker.MyGuid] then
-		_PV.StartAttackPosition[attacker.MyGuid] = nil
-		local data = {Type="DamageList", DamageList = damageList}
+	if e.Caster and _PV.StartAttackPosition[e.Caster.MyGuid] then
+		_PV.StartAttackPosition[e.Caster.MyGuid] = nil
+		local data = {Type="DamageList", DamageList = e.DamageList}
 		Events.OnWeaponHit:Invoke({
-			Attacker = attacker,
-			Target = target,
+			Attacker = e.Caster,
+			Target = e.Position,
 			TargetIsObject = false,
 			Data = data
 		})
-		_INTERNAL.InvokeWeaponEvents(attacker, target, false, data, nil)
+		_INTERNAL.InvokeWeaponEvents(e.Caster, e.Position, false, data, nil)
 	end
 end)

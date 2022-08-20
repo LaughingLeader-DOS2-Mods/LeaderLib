@@ -97,9 +97,8 @@ local Init = function()
 	local lastTimeSinceIgnored = {}
 	local version = Ext.Utils.Version()
 
-	---@param ui UIObject
-	Ext.RegisterListener("UICall", function(ui, event, arg1, ...)
-		if defaultIgnored[event] then
+	Ext.Events.UICall:Subscribe(function (e)
+		if defaultIgnored[e.Function] then
 			return
 			-- local lastTime = lastTimeSinceIgnored[event] or 0
 			-- if Ext.MonotonicTime() - lastTime <= 1000 then
@@ -107,6 +106,9 @@ local Init = function()
 			-- 	return
 			-- end
 		end
+		local ui = e.UI
+		local event = e.Function
+		local args = e.Args
 		local t = ui.Type
 		if UI.Debug.PrintAll then
 			local name = Data.UITypeToName[t]
@@ -121,22 +123,17 @@ local Init = function()
 					name = ui.Path
 				end
 			end
-			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "call", event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
+			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "call", event, StringHelpers.DebugJoin(", ", args), Ext.MonotonicTime())
 		else
 			local listener = UIListenerWrapper._TypeListeners[t]
 			if listener then
-				if version < 56 then
-					OnUIListener(listener, "call", ui, event, arg1, ...)
-				else
-					--arg1 is "When" now.
-					OnUIListener(listener, "call", ui, event, ...)
-				end
+				OnUIListener(listener, "call", ui, event, table.unpack(args))
 			end
 		end
 	end)
 
-	Ext.RegisterListener("UIInvoke", function(ui, event, arg1, ...)
-		if defaultIgnored[event] then
+	Ext.Events.UIInvoke:Subscribe(function(e)
+		if defaultIgnored[e.Function] then
 			return
 			-- local lastTime = lastTimeSinceIgnored[event] or 0
 			-- if Ext.MonotonicTime() - lastTime < 1000 then
@@ -144,6 +141,9 @@ local Init = function()
 			-- 	return
 			-- end
 		end
+		local ui = e.UI
+		local event = e.Function
+		local args = e.Args
 		local t = ui.Type
 		if UI.Debug.PrintAll then
 			local name = Data.UITypeToName[t]
@@ -158,26 +158,21 @@ local Init = function()
 					name = ui.Path
 				end
 			end
-			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "invoke", event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
+			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "invoke", event, StringHelpers.DebugJoin(", ", args), Ext.MonotonicTime())
 		else
 			local listener = UIListenerWrapper._TypeListeners[t]
 			if listener then
-				if version < 56 then
-					OnUIListener(listener, "method", ui, event, arg1, ...)
-				else
-					--arg1 is "When" now.
-					OnUIListener(listener, "method", ui, event, ...)
-				end
+				OnUIListener(listener, "method", ui, event, table.unpack(args))
 			end
 		end
 	end)
 
-	---@param ui UIObject
-	Ext.RegisterListener("UIObjectCreated", function(ui)
+	Ext.Events.UIObjectCreated:Subscribe(function(e)
+		local ui = e.UI
 		for path,data in pairs(UIListenerWrapper._DeferredRegistrations) do
 			local ui2 = Ext.GetBuiltinUI(path)
-			if ui2 and (ui2:GetTypeId() == ui:GetTypeId() or ui == ui2) then
-				data.ID = ui2:GetTypeId()
+			if ui2 and (ui2.Type == ui.Type or ui == ui2) then
+				data.ID = ui2.Type
 				UIListenerWrapper._DeferredRegistrations[path] = nil
 				if data.Initialized then
 					local this = ui2:GetRoot()

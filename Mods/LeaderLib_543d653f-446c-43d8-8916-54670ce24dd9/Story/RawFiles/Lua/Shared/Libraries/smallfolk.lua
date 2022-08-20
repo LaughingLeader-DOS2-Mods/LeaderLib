@@ -2,8 +2,8 @@
 local M = {}
 local expect_object, dump_object
 local error, tostring, pairs, type, floor, huge, concat = error, tostring, pairs, type, math.floor, math.huge, table.concat
-local printError = Ext.PrintError
-local devMode = Ext.IsDeveloperMode
+local printError = Ext.Utils.PrintError
+local devMode = Ext.Debug.IsDeveloperMode
 local dump_type = {}
 
 function dump_type:string(nmemo, memo, acc)

@@ -40,9 +40,8 @@ function UI.RegisterListener(event, callback, ...)
 	RegisterListener(event, callback, ...)
 end
 
----@param ui UIObject
-Ext.RegisterListener("UIObjectCreated", function(ui)
-	if ui:GetTypeId() == Data.UIType.msgBox_c then
+Ext.Events.UIObjectCreated:Subscribe(function(e)
+	if e.UI.Type == Data.UIType.msgBox_c then
 		if not Vars.ControllerEnabled then
 			Vars.ControllerEnabled = true
 		end

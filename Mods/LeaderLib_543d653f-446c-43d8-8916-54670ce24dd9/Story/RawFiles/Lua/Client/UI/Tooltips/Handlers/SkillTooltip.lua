@@ -215,15 +215,11 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 	end
 end
 
---- @param skill StatEntrySkillData
---- @param character StatCharacter
---- @param isFromItem boolean
---- @param param1 string
---- @param param2 string
-local function SkillGetDescriptionParam(skill, character, isFromItem, param1, param2)
+Ext.Events.SkillGetDescriptionParam:Subscribe(function(e)
 	if Features.ReplaceTooltipPlaceholders then
+		local param1,param2 = table.unpack(e.Params)
 		if param1 == "ExtraData" then
-			local value = Ext.ExtraData[param2]
+			local value = GameHelpers.GetExtraData(param2, nil)
 			if value ~= nil then
 				if value == math.floor(value) then
 					return string.format("%i", math.floor(value))
@@ -239,6 +235,4 @@ local function SkillGetDescriptionParam(skill, character, isFromItem, param1, pa
 			end
 		end
 	end
-end
-
-Ext.RegisterListener("SkillGetDescriptionParam", SkillGetDescriptionParam)
+end)

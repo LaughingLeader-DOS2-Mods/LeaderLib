@@ -228,8 +228,8 @@ end
 
 RegisterTickListener(OnTick, true)
 
-Ext.RegisterListener("GameStateChanged", function (from, to)
-	if to == "Disconnect" or to == "Menu" then
+Ext.Events.GameStateChanged:Subscribe(function (e)
+	if e.ToState == "Disconnect" or e.ToState == "Menu" then
 		local length = #_registeredUIArray
 		for i=1,length do
 			local ui = _registeredUIArray[i]

@@ -322,5 +322,5 @@ local function PatchMods(initialized)
 	end
 end
 
-Ext.RegisterListener("StatsLoaded", function() PatchMods(false) end)
-Events.Initialized:Subscribe(function(e) PatchMods(true, e.Region) end, {Priority=999})
+Ext.Events.StatsLoaded:Subscribe(function(e) PatchMods(false) end)
+Events.Initialized:Subscribe(function(e) PatchMods(true) end, {Priority=999})

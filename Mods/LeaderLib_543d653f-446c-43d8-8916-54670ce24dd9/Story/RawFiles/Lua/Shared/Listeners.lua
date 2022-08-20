@@ -72,8 +72,8 @@ end
 
 local _state = Ext.GetGameState()
 
-Ext.RegisterListener("GameStateChanged", function (from, to)
-	_state = to
+Ext.Events.GameStateChanged:Subscribe(function (e)
+	_state = e.ToState
 end)
 
 Ext.Require("Shared/System/SubscriptionEvents.lua")

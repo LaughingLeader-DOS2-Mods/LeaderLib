@@ -254,8 +254,8 @@ UI.RegisterUICreatedListener({Data.UIType.characterCreation, Data.UIType.charact
 	end
 end)
 
-Ext.RegisterListener("GameStateChanged", function (from, to)
-	if to == "Menu" then
+Ext.Events.GameStateChanged:Subscribe(function (e)
+	if e.ToState == "Menu" then
 		DestroyInstance()
 	end
 end)

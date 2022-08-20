@@ -1,6 +1,5 @@
----@param callingUI UIObject
-Ext.RegisterListener("UIObjectCreated", function (callingUI)
-	local t,name,path = UI.TryFindUIByType(callingUI, callingUI:GetTypeId())
+Ext.Events.UIObjectCreated:Subscribe(function(e)
+	local t,name,path = UI.TryFindUIByType(e.UI, e.UI.Type)
 	if t then
 		local ui = path and Ext.GetBuiltinUI(path) or Ext.GetUIByType(t)
 		if ui then

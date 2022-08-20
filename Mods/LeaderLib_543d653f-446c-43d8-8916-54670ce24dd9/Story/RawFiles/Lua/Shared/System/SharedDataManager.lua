@@ -455,13 +455,13 @@ if not _ISCLIENT then
 	-- Ext.RegisterOsirisListener("CharacterOverrideMaxSourcePoints", 2, "after", OnPointsChanged)
 	-- Ext.RegisterOsirisListener("CharacterRemoveMaxSourcePointsOverride", 2, "after", OnPointsChanged)
 
-	Ext.RegisterListener("GameStateChanged", function(from, to)
-		if syncOnGameState and _validSyncStates[to] then
+	Ext.Events.GameStateChanged:Subscribe(function (e)
+		if syncOnGameState and _validSyncStates[e.ToState] then
 			syncOnGameState = false
 			GameHelpers.Data.SyncSharedData(syncSettingsNext)
 			syncSettingsNext = false
 		else
-			if to == "Running" and from ~= "Paused" and from ~= "GameMasterPause" then
+			if e.ToState == "Running" and e.FromState ~= "Paused" and e.FromState ~= "GameMasterPause" then
 				IterateUsers("LeaderLib_StoreUserData")
 				GameHelpers.Data.StartSyncTimer()
 			end
@@ -715,8 +715,8 @@ if _ISCLIENT then
 		end
 	end)
 
-	Ext.RegisterListener("UIObjectCreated", function(ui)
-		if ui:GetTypeId() == Data.UIType.trade or ui:GetTypeId() == Data.UIType.trade_c then
+	Ext.Events.UIObjectCreated:Subscribe(function(e)
+		if e.UI.Type == Data.UIType.trade or e.UI.Type == Data.UIType.trade_c then
 			local currentCharacter = GetClientCharacter()
 			if currentCharacter ~= nil then
 				lastCharacterOutsideTrade = currentCharacter.UUID

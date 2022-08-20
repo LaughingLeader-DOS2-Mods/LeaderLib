@@ -130,8 +130,8 @@ Events.RegionChanged:Subscribe(function (e)
 	end
 end)
 
-Ext.RegisterListener("GameStateChanged", function(from, to)
-	if to == "Running" and from == "Sync" then
+Ext.Events.GameStateChanged:Subscribe(function (e)
+	if e.ToState == "Running" and e.FromState == "Sync" then
 		SettingsManager.SyncAllSettings(nil, true)
 	end
 end)

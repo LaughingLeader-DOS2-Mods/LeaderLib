@@ -101,11 +101,11 @@ function _INTERNAL.ClearObjectData(timerName, object)
 end
 
 local _TimerLaunch = function (id, delay)
-	if Ext.OsirisIsCallable() then
+	if _OSIRIS() then
 		TimerLaunch(id, delay)
 	elseif Ext.Server.GetGameState() == "Running" then
 		Ext.OnNextTick(function (e)
-			if Ext.OsirisIsCallable() then
+			if _OSIRIS() then
 				TimerLaunch(id, delay)
 			end
 		end)
@@ -113,11 +113,11 @@ local _TimerLaunch = function (id, delay)
 end
 
 local _TimerCancel = function (id)
-	if Ext.OsirisIsCallable() then
+	if _OSIRIS() then
 		TimerCancel(id)
 	elseif Ext.Server.GetGameState() == "Running" then
 		Ext.OnNextTick(function (e)
-			if Ext.OsirisIsCallable() then
+			if _OSIRIS() then
 				TimerCancel(id)
 			end
 		end)

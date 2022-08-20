@@ -464,7 +464,7 @@ function GameSettingsMenu.OnButtonPressed(id)
 	if controlData and controlData.Callback then
 		local b,err = xpcall(controlData.Callback, debug.traceback)
 		if not b then
-			Ext.PrintError(err)
+			Ext.Utils.PrintError(err)
 		end
 		return true
 	end
@@ -475,7 +475,7 @@ function GameSettingsMenu.CommitChanges()
 	for i,v in pairs(GameSettingsMenu.Controls) do
 		if v.Data ~= nil and v.Value ~= v.Last then
 			v.Data[v.Key] = v.Value
-			--Ext.Print(string.format("[LeaderLib:GameSettingsMenu.CommitChanges] Set %s to %s Data(%s) EqualsLast(%s)", v.Name, v.Value, v.Data, v.Value ~= v.Last))
+			--Ext.Utils.Print(string.format("[LeaderLib:GameSettingsMenu.CommitChanges] Set %s to %s Data(%s) EqualsLast(%s)", v.Name, v.Value, v.Data, v.Value ~= v.Last))
 		end
 	end
 	GameSettingsManager.Save()
@@ -492,7 +492,7 @@ function GameSettingsMenu.UndoChanges()
 		for i,v in pairs(GameSettingsMenu.Controls) do
 			if v.Value ~= v.Last then
 				v.Value = v.Last
-				Ext.Print(string.format("[LeaderLib:GameSettingsMenu.UndoChanges] Reverted %s back to %s", v.Key, v.Value))
+				Ext.Utils.Print(string.format("[LeaderLib:GameSettingsMenu.UndoChanges] Reverted %s back to %s", v.Key, v.Value))
 			end
 		end
 	end

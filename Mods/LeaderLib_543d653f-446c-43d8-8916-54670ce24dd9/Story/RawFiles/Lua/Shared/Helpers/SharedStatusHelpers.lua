@@ -59,7 +59,7 @@ GameHelpers.Status.Data = {
 function GameHelpers.Status.GetStatusType(statusId)
 	local statusType = _statusIdToStatusType[statusId]
 	if statusType == nil then
-		if not _ISCLIENT and Ext.OsirisIsCallable() then
+		if not _ISCLIENT and _OSIRIS() then
 			if NRD_StatExists(statusId) then
 				statusType = GetStatusType(statusId)
 			end
@@ -384,7 +384,7 @@ function GameHelpers.Status.IsActive(object, statusId, checkAll)
 			end
 			return totalActive >= total
 		elseif t == "string" then
-			if Ext.OsirisIsCallable() then
+			if _OSIRIS() then
 				return HasActiveStatus(uuid, statusId) == 1
 			else
 				local target = GameHelpers.TryGetObject(uuid)

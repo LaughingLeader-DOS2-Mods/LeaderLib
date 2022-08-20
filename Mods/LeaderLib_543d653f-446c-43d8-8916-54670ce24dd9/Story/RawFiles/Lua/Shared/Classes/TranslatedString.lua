@@ -11,21 +11,12 @@ local _floor = math.floor
 local _format = string.format
 local _gsub = string.gsub
 
-local _getTranslatedStringKey = Ext.GetTranslatedStringFromKey
-local _getTranslatedString = Ext.GetTranslatedString
+local _getTranslatedStringKey = Ext.L10N.GetTranslatedStringFromKey
+local _getTranslatedString = Ext.L10N.GetTranslatedString
 
-local _printError = Ext.PrintError
-local _printWarning = Ext.PrintWarning
-local _print = Ext.Print
-
-if _EXTVERSION >= 56 then
-	_getTranslatedStringKey = Ext.L10N.GetTranslatedStringFromKey
-	_getTranslatedString = Ext.L10N.GetTranslatedString
-	_printError = Ext.Utils.PrintError
-	_printWarning = Ext.Utils.PrintWarning
-	_print = Ext.Utils.Print
-end
-
+local _printError = Ext.Utils.PrintError
+local _printWarning = Ext.Utils.PrintWarning
+local _print = Ext.Utils.Print
 
 local _strnull = StringHelpers.IsNullOrEmpty
 local _strnullspace = StringHelpers.IsNullOrWhitespace

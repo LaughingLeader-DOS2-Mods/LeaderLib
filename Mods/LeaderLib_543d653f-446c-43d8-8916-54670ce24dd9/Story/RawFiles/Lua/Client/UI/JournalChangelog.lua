@@ -259,7 +259,7 @@ function Changelog.LoadFiles()
 			if mod ~= nil then
 				local b,result = xpcall(TryFindConfig, debug.traceback, mod.Info)
 				if not b then
-					Ext.PrintError(result)
+					Ext.Utils.PrintError(result)
 				elseif result ~= nil then
 					local name = mod.Info.Name
 					if result.DisplayName then

@@ -29,7 +29,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		end)
 		PrintDebug("[LeaderLib:listenskill] Registered listener function for skill ", skill)
 		else
-			Ext.PrintWarning("[LeaderLib:listenskill] Please provide a valid skill ID to listen for!")
+			Ext.Utils.PrintWarning("[LeaderLib:listenskill] Please provide a valid skill ID to listen for!")
 		end
 	end)
 	
@@ -43,14 +43,14 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			if data.PersistentVars ~= nil then
 				local b,err = xpcall(Common.JsonStringify, debug.traceback, data.PersistentVars)
 				if not b then
-					Ext.PrintError("Error stringifying PersistentVars for", name)
+					Ext.Utils.PrintError("Error stringifying PersistentVars for", name)
 					local checkTable = nil
 					checkTable = function(tbl)
 						for k,v in pairs(tbl) do
 							if type(k) == "userdata" or type(v) == "userdata" then
-								Ext.PrintError(k,v)
+								Ext.Utils.PrintError(k,v)
 							elseif type(v) == "table" then
-								Ext.PrintError(k)
+								Ext.Utils.PrintError(k)
 								checkTable(v)
 							end
 						end
@@ -644,19 +644,19 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	
 	local function PrintDynamicStats(dynamicStats)
 		for i,v in pairs(dynamicStats) do
-			Ext.Print("["..tostring(i) .. "]")
+			Ext.Utils.Print("["..tostring(i) .. "]")
 			if v ~= nil and v.DamageFromBase > 0 then
 				for i,attribute in pairs(dynamicStatsVars) do
 					local val = v[attribute]
 					if val ~= nil then
-						Ext.Print(string.format("  [%s] = (%s)", attribute, val))
+						Ext.Utils.Print(string.format("  [%s] = (%s)", attribute, val))
 					end
 				end
 				if v.StatsType ~= "Weapon" then
 					for i,attribute in pairs(armorBoostProps) do
 						local val = v[attribute]
 						if val ~= nil then
-							Ext.Print(string.format("  [%s] = (%s)", attribute, val))
+							Ext.Utils.Print(string.format("  [%s] = (%s)", attribute, val))
 						end
 					end
 				end
@@ -669,14 +669,14 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		---@type EsvItem
 		local item = GameHelpers.GetItem(uuid)
 		if item ~= nil and item.Stats ~= nil then
-			Ext.Print("Item:", uuid, item.Stats.Name)
-			Ext.Print("Boost Stats:")
-			Ext.Print("------")
+			Ext.Utils.Print("Item:", uuid, item.Stats.Name)
+			Ext.Utils.Print("Boost Stats:")
+			Ext.Utils.Print("------")
 			---@type StatItemDynamic[]
 			local stats = item.Stats.DynamicStats
 			PrintDynamicStats(item.Stats.DynamicStats)
-			Ext.Print("------")
-			Ext.Print("")
+			Ext.Utils.Print("------")
+			Ext.Utils.Print("")
 		end
 	end
 	
@@ -698,7 +698,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 			if item ~= nil then
 				PrintItemStats(item)
 			else
-				Ext.PrintError("[LeaderLib:printitemstats] Item as slot", slot, "does not exist!")
+				Ext.Utils.PrintError("[LeaderLib:printitemstats] Item as slot", slot, "does not exist!")
 			end
 		end
 	end)
@@ -823,7 +823,7 @@ Ext.RegisterConsoleCommand("removetemporycharacters", function(command, radius)
 			end
 		end
 	else
-		for i,v in pairs(Ext.GetAllCharacters(SharedData.RegionData.Current)) do
+		for i,v in pairs(Ext.Entity.GetAllCharacterGuids(SharedData.RegionData.Current)) do
 			if IsTagged(v, "LeaderLib_TemporaryCharacter") == 1 then
 				RemoveTempChar(v)
 			else
@@ -1089,12 +1089,6 @@ Ext.RegisterConsoleCommand("help", function(command, text)
 		end
 	end
 end)
-
---for i,v in pairs(GameHelpers.GetItem(CharacterGetEquippedItem(CharacterGetHostCharacter(), "Breast")).Stats.DynamicStats) do print(i,v.ObjectInstanceName) end
---local pa,b1,ma,b2 = 0,0,0,0; for i,v in pairs(GameHelpers.GetItem(CharacterGetEquippedItem(CharacterGetHostCharacter(), "Breast")).Stats.DynamicStats) do pa=pa+v.ArmorValue;b1=b1 + v.ArmorBoost *0.01;ma=ma+v.MagicArmorValue;b2=b2 + v.MagicArmorBoost *0.01; end print("Physical Armor:", pa * (1 + b1));print("Magic Armor:", ma * (1 + b2))
---Public\WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f\Stats\Generated\Data\Data.txt
---for _,uuid in ipairs(Ext.GetModLoadOrder()) do local info = Ext.GetModInfo(uuid); if info.Name ~= "Shared" then print(info.Name); print(Ext.LoadFile(string.format("Public/%s/Stats/Generated/Data/Data.txt", info.Directory), "data")); end end
---local totalBad = 0; for _,v in pairs(Ext.Stats.GetStats("Weapon")) do if string.sub(v, 1, 1) ~= "_" and not string.find(v, "Status_") and not string.find(v, "Damage_") then local stat = Ext.Stats.Get(v); if stat.AttackAPCost ~= 4 then print(v, stat.AttackAPCost); totalBad = totalBad + 1; end end end;print("Total bad:", totalBad)
 
 Ext.RegisterConsoleCommand("setcustomstat", function(cmd, id, amount)
 	amount = amount or "1"

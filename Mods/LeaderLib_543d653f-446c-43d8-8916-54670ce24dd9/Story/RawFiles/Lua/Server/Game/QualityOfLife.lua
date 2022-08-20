@@ -33,12 +33,12 @@ local player_stats_undead = {
 	["ElfUndeadMaleHero"] = true,
 	["LizardUndeadFemaleHero"] = true,
 	["LizardUndeadMaleHero"] = true,
-	["Player_Fane"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_Fane"] = Ext.Mod.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
 }
 
 function ModifyPathInfluenceForAllPlayers(revert)
 	for statname,b in pairs(player_stats) do
-		if b == true or (type(b) == "string" and Ext.IsModLoaded(b)) then
+		if b == true or (type(b) == "string" and Ext.Mod.IsModLoaded(b)) then
 			---@type StatEntryCharacter
 			local stat = Ext.Stats.Get(statname)
 			if stat ~= nil then
@@ -223,7 +223,7 @@ end
 
 function Autosaving_Internal_UpdateDialogVarMenuSelectedOption(inst, dialogVar, handle, fallback)
 	inst = tonumber(inst)
-	DialogSetVariableStringForInstance(inst, dialogVar, string.format("%s %s", Ext.GetTranslatedString(handle, fallback), CurrentSuffix.Value))
+	DialogSetVariableStringForInstance(inst, dialogVar, string.format("%s %s", Ext.L10N.GetTranslatedString(handle, fallback), CurrentSuffix.Value))
 end
 
 Timer.Subscribe("LeaderLib_UnlockCharacterInventories", function (e)

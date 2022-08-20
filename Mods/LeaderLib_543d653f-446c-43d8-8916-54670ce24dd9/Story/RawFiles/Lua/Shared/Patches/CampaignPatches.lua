@@ -48,7 +48,7 @@ if not _ISCLIENT then
 					end
 					if fixed then
 						_ranPatch.FortJoyEternalFightingFix = true
-						Ext.PrintWarning("[LeaderLib:OriginFixes] Fixed the eternal, spammy battle of the gods.")
+						Ext.Utils.PrintWarning("[LeaderLib:OriginFixes] Fixed the eternal, spammy battle of the gods.")
 					end
 				end
 			end

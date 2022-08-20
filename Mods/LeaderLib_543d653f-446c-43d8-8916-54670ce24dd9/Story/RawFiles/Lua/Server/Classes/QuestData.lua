@@ -98,7 +98,7 @@ local function CreateRegistrationWrapper(this)
 			RegisterListener("QuestStarted", this.ID, function (id, character)
 				local b,err = xpcall(callback, debug.traceback, this, character)
 				if not b then
-					Ext.PrintError(err)
+					Ext.Utils.PrintError(err)
 				end
 			end)
 		end,
@@ -106,7 +106,7 @@ local function CreateRegistrationWrapper(this)
 			RegisterListener("QuestStateChanged", this.ID, function (id, character)
 				local b,err = xpcall(callback, debug.traceback, this, character)
 				if not b then
-					Ext.PrintError(err)
+					Ext.Utils.PrintError(err)
 				end
 			end)
 		end,
@@ -115,7 +115,7 @@ local function CreateRegistrationWrapper(this)
 				local state = this:GetState(stateId)
 				local b,err = xpcall(callback, debug.traceback, state or stateId, character)
 				if not b then
-					Ext.PrintError(err)
+					Ext.Utils.PrintError(err)
 				end
 			end)
 		end,
@@ -148,7 +148,7 @@ function QuestData:Create(id, params)
 		__tostring = _idToString
 	})
 	_questRegistration[#_questRegistration+1] = this
-	-- if Ext.OsirisIsCallable() and Ext.GetGameState() == "Running" then
+	-- if _OSIRIS() and Ext.GetGameState() == "Running" then
 	-- end
     return this
 end
@@ -344,7 +344,7 @@ end)
 
 if Vars.DebugMode then
 	RegisterListener("QuestStarted", "TUT_ShipMurder", function (id, character)
-		Ext.PrintError("[QuestStarted:TUT_ShipMurder] THERE'S BEEN A MURDER!", character.DisplayName)
+		Ext.Utils.PrintError("[QuestStarted:TUT_ShipMurder] THERE'S BEEN A MURDER!", character.DisplayName)
 	end)
 
 	RegisterListener("QuestStarted", function (id, character)

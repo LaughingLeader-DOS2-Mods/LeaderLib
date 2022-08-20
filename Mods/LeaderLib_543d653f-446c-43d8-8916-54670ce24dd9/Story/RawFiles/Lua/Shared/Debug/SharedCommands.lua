@@ -24,9 +24,9 @@ if _EXTVERSION >= 56 then
 			if not isClient then
 				if Ext.Effect then
 					Ext.IO.SaveFile("Dumps/Effects.json", Ext.DumpExport(Ext.Effect.GetAllEffectHandles()))
-					Ext.Print("[dump:effect] Saved effects to Dumps/Effects.json")
+					Ext.Utils.Print("[dump:effect] Saved effects to Dumps/Effects.json")
 				else
-					Ext.PrintWarning("[dump:effect] Ext.Effect is nil!")
+					Ext.Utils.PrintWarning("[dump:effect] Ext.Effect is nil!")
 				end
 			else
 				SendDumpCommand(...)
@@ -37,9 +37,9 @@ if _EXTVERSION >= 56 then
 				local wiz = Ext.UI.GetCharacterCreationWizard()
 				if wiz then
 					Ext.IO.SaveFile("Dumps/CC_Wizard.json", Ext.DumpExport(wiz))
-					Ext.Print("[dump:cc] Saved data to Dumps/CC_Wizard.json")
+					Ext.Utils.Print("[dump:cc] Saved data to Dumps/CC_Wizard.json")
 				else
-					Ext.PrintWarning("[dump:cc] No character creation wizard is available.")
+					Ext.Utils.PrintWarning("[dump:cc] No character creation wizard is available.")
 				end
 			else
 				SendDumpCommand(...)
@@ -48,7 +48,7 @@ if _EXTVERSION >= 56 then
 		visual = function (...)
 			if isClient then
 				Ext.IO.SaveFile("Dumps/Visual.json", Ext.DumpExport(Client:GetCharacter().Visual))
-				Ext.Print("[dump:visual] Saved visual data to Dumps/Visual.json")
+				Ext.Utils.Print("[dump:visual] Saved visual data to Dumps/Visual.json")
 			else
 				SendDumpCommand(...)
 			end
@@ -58,7 +58,7 @@ if _EXTVERSION >= 56 then
 			local name = GameHelpers.GetDisplayName(character):gsub(StringHelpers.ILLEGAL_FILE_CHARACTERS, "")
 			local fileName = string.format("Dumps/%s_%s_%s.json", filename or "Character", name, isClient and "Client" or "Server")
 			Ext.IO.SaveFile(fileName, Ext.DumpExport(character))
-			Ext.Print("[dump:character] Saved character data to", fileName)
+			Ext.Utils.Print("[dump:character] Saved character data to", fileName)
 			SendDumpCommand(dumpType, synced, filename)
 		end,
 		uiext = function (dumpType, synced, filename)
@@ -72,7 +72,7 @@ if _EXTVERSION >= 56 then
 					for i,v in pairs(callbacks) do
 						local b,err = xpcall(v, debug.traceback, dumpType, isClient, data)
 						if not b then
-							Ext.PrintError(err)
+							Ext.Utils.PrintError(err)
 						end
 					end
 				end
@@ -95,7 +95,7 @@ if _EXTVERSION >= 56 then
 			if _EXTVERSION >= 56 then
 				local fileName = string.format("Dumps/ModManager_%s.json", isClient and "Client" or "Server")
 				Ext.IO.SaveFile(fileName, Ext.DumpExport(isClient and Ext.Client.GetModManager() or Ext.Server.GetModManager()))
-				Ext.Print("[dump:modmanager] Saved mod manager data to",fileName)
+				Ext.Utils.Print("[dump:modmanager] Saved mod manager data to",fileName)
 				if not synced then
 					SendDumpCommand(dumpType, true, ...)
 				end

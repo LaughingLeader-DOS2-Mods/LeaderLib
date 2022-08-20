@@ -118,7 +118,7 @@ end
 local function SwitchToModMenu(ui, ...)
 	local main = ui:GetRoot()
 	if not main then
-		Ext.PrintError("[LeaderLib:SwitchToModMenu] Error getting root from ui.")
+		Ext.Utils.PrintError("[LeaderLib:SwitchToModMenu] Error getting root from ui.")
 		return
 	end
 	---@type MainMenuMC

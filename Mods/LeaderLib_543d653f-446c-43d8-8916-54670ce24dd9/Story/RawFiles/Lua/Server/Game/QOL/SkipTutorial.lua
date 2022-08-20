@@ -40,7 +40,7 @@ function SkipTutorial.Initialize()
 	if initialized then
 		return
 	end
-	Ext.Print("[LeaderLib] Initializing Skip Tutorial options.")
+	Ext.Utils.Print("[LeaderLib] Initializing Skip Tutorial options.")
 	initialized = true
 	local runSkipTutorialSetup = false
 	local skipTutorialControlEnabled = false
@@ -133,7 +133,7 @@ function SkipTutorial.Initialize()
 		end
 
 		Timer.StartOneshot("LeaderLib_SkipTutorial_CreateAutoSave", 5000, function ()
-			if Ext.OsirisIsCallable() then
+			if _OSIRIS() then
 				AutoSave()
 			end
 		end)
@@ -152,7 +152,7 @@ function SkipTutorial.Initialize()
 			StartTrigger = "34d67d87-441c-427d-97bb-4cc506b42fe0",
 			---@param settings LeaderLibGameSettings
 			Setup = function(settings)
-				Ext.Print("[LeaderLib:SkipTutorial] Running Fort Joy setup.")
+				Ext.Utils.Print("[LeaderLib:SkipTutorial] Running Fort Joy setup.")
 
 				--Thanks to Lady C's Skip Tutorial mod
 				SetOnStage(ID.ShapeshifterMask, 1)
@@ -229,12 +229,12 @@ function SkipTutorial.Initialize()
 				end)
 
 				if Vars.DebugMode then
-					Ext.PrintWarning("Checking for Sir Lora bug...")
+					Ext.Utils.PrintWarning("Checking for Sir Lora bug...")
 					--TRIGGERGUID_S_FTJ_DLC_SquirrelWizard_SpawnPoint_2fd623f7-34f5-470d-bce3-3aa60ce50c3b
 					if ObjectExists("2fd623f7-34f5-470d-bce3-3aa60ce50c3b") == 0 then
-						Ext.PrintError("Sir Lora spawnpoint trigger '2fd623f7-34f5-470d-bce3-3aa60ce50c3b' does not exist. He'll be teleported to the player")
+						Ext.Utils.PrintError("Sir Lora spawnpoint trigger '2fd623f7-34f5-470d-bce3-3aa60ce50c3b' does not exist. He'll be teleported to the player")
 					else
-						Ext.Print("Sir Lora spawnpoint trigger '2fd623f7-34f5-470d-bce3-3aa60ce50c3b' exists!")
+						Ext.Utils.Print("Sir Lora spawnpoint trigger '2fd623f7-34f5-470d-bce3-3aa60ce50c3b' exists!")
 					end
 				end
 
@@ -343,7 +343,7 @@ function SkipTutorial.Initialize()
 					runSkipTutorialSetup = GameSettings.Settings.SkipTutorial.Enabled
 					GameHelpers.Net.PostMessageToHost("LeaderLib_EnableSkipTutorialUI", SharedData.RegionData.Current)
 				else
-					Ext.Print("[LeaderLib] The tutorial is already being bypassed. Skipping Skip Tutorial setup.")
+					Ext.Utils.Print("[LeaderLib] The tutorial is already being bypassed. Skipping Skip Tutorial setup.")
 				end
 			else
 				if runSkipTutorialSetup and e.Region == GameSettings.Settings.SkipTutorial.Destination then
@@ -355,7 +355,7 @@ function SkipTutorial.Initialize()
 					if data and data.Setup then
 						local b,err = xpcall(data.Setup, debug.traceback, settings)
 						if not b then
-							Ext.PrintError(err)
+							Ext.Utils.PrintError(err)
 						end
 					end
 					runSkipTutorialSetup = false

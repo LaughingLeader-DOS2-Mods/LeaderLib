@@ -185,14 +185,14 @@ local function TryFindConfig(info)
 end
 
 function SettingsManager.LoadConfigFiles()
-	local order = Ext.GetModLoadOrder()
+	local order = Ext.Mod.GetLoadOrder()
 	for i,uuid in pairs(order) do
 		if IgnoredMods[uuid] ~= true then
-			local info = Ext.GetModInfo(uuid)
+			local info = Ext.Mod.GetMod(uuid).Info
 			if info ~= nil then
 				local b,result = xpcall(TryFindConfig, debug.traceback, info)
 				if not b then
-					Ext.PrintError(result)
+					Ext.Utils.PrintError(result)
 				elseif not StringHelpers.IsNullOrEmpty(result) then
 					LoadModSettingsConfig(uuid, result)
 				end

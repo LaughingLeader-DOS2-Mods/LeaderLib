@@ -30,7 +30,7 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelfParam
 	local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
 	local characters = nil
 	if radius < 0 then
-		characters = Ext.GetAllCharacters()
+		characters = Ext.Entity.GetAllCharacterGuids()
 	else
 		characters = GameHelpers.GetCharacter(host):GetNearbyCharacters(radius)
 	end
@@ -608,7 +608,7 @@ Ext.RegisterConsoleCommand("printpdata", function(cmd, target)
 			PrintDebug(string.format("[%s] %s", v, pdata[v]))
 		end
 	else
-		Ext.PrintError(target, "has no PlayerCustomData!")
+		Ext.Utils.PrintError(target, "has no PlayerCustomData!")
 	end
 end)
 
@@ -723,7 +723,7 @@ Ext.RegisterConsoleCommand("cctest", function(cmd, disable)
 		end
 	end
 	if disable then
-		Ext.PrintError("Removing")
+		Ext.Utils.PrintError("Removing")
 		Osi.ProcRemovePreviousSelectedCharacter(profile)
 		Osi.ProcRemovePreviousDummy(profile)
 		Timer.StartOneshot("", 250, function (e)

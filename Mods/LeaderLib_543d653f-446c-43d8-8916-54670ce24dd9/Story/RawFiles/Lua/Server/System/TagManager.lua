@@ -41,7 +41,7 @@ TagManager.Register.TagObject(function(object, isInCombat, isCharacter, ...)
 			ClearTag(object.MyGuid, "IMMORTAL")
 		end
 	else
-		if Ext.OsirisIsCallable() then
+		if _OSIRIS() then
 			if ItemIsDestructible(object.MyGuid) == 0 then
 				SetTag(object.MyGuid, "IMMORTAL")
 			else
@@ -60,7 +60,7 @@ function TagManager:TagObject(object, isInCombat, ...)
 		local isCharacter = GameHelpers.Ext.ObjectIsCharacter(object)
 		if isInCombat == nil then
 			if isCharacter then
-				if Ext.OsirisIsCallable() and CharacterIsInCombat(object.MyGuid) == 1 then
+				if _OSIRIS() and CharacterIsInCombat(object.MyGuid) == 1 then
 					isInCombat = true
 				else
 					if object:GetStatus("COMBAT") then
@@ -76,7 +76,7 @@ end
 ---@param ... any Optional parameters to pass to listeners.
 function TagManager:TagAll(...)
 	if not StringHelpers.IsNullOrEmpty(SharedData.RegionData.Current) then
-		for i,v in pairs(Ext.GetAllCharacters(SharedData.RegionData.Current)) do
+		for i,v in pairs(Ext.Entity.GetAllCharacterGuids(SharedData.RegionData.Current)) do
 			TagManager:TagObject(v, nil, ...)
 		end
 	end

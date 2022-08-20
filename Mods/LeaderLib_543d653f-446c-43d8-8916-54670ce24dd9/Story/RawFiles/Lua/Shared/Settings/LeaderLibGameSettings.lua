@@ -202,7 +202,7 @@ function LeaderLibGameSettings:LoadTable(tbl)
 		end
 		return true
 	end, function(err)
-		Ext.PrintError("[LeaderLibGameSettings:LoadTable] Error parsing table:\n" .. tostring(err))
+		Ext.Utils.PrintError("[LeaderLibGameSettings:LoadTable] Error parsing table:\n" .. tostring(err))
 	end, self, tbl)
 	if b then
 		self:Apply()
@@ -236,7 +236,7 @@ function LeaderLibGameSettings:LoadString(str, skipApply)
 		end
 		return result
 	else
-		Ext.PrintError("[LeaderLibGameSettings:CreateFromString] Error parsing string as table:\n" .. tostring(result))
+		Ext.Utils.PrintError("[LeaderLibGameSettings:CreateFromString] Error parsing string as table:\n" .. tostring(result))
 	end
 	return false
 end

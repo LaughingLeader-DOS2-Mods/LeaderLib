@@ -81,7 +81,7 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit,
 			local x,y,z = table.unpack(position)
 			--local characters = Ext.GetCharactersAroundPosition(x,y,z, areaRadius)
 			local characters = {}
-			for i,v in pairs(Ext.GetAllCharacters()) do
+			for i,v in pairs(Ext.Entity.GetAllCharacterGuids()) do
 				if v ~= attacker.MyGuid and GetDistanceToPosition(v, x,y,z) <= areaRadius then
 					characters[#characters+1] = v
 				end

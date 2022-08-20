@@ -63,8 +63,8 @@ local function SortDatabase(name, arity, sortColumn)
 		return db
 	end, debug.traceback)
 	if not b then
-		Ext.PrintError("[LeaderLib:GameHelpers.DB.SortDatabase] Error sorting database:", name)
-		Ext.PrintError(result)
+		Ext.Utils.PrintError("[LeaderLib:GameHelpers.DB.SortDatabase] Error sorting database:", name)
+		Ext.Utils.PrintError(result)
 	else
 		if result ~= nil then
 			Osi[name]:Delete(GetArity(arity))
@@ -98,8 +98,8 @@ function SortDictionary(id)
 		return true
 	end, debug.traceback)
 	if not b then
-		Ext.PrintError("[LeaderLib:SortDictionary] Error sorting dictionary:", id)
-		Ext.PrintError(result)
+		Ext.Utils.PrintError("[LeaderLib:SortDictionary] Error sorting dictionary:", id)
+		Ext.Utils.PrintError(result)
 	end
 end
 
@@ -239,8 +239,8 @@ function GameHelpers.DB.Get(name, arity, index, unpack)
 		return db
 	end, debug.traceback)
 	if not b then
-		Ext.PrintError("[LeaderLib:GameHelpers.DB.Get] Error getting database:", name)
-		Ext.PrintError(result)
+		Ext.Utils.PrintError("[LeaderLib:GameHelpers.DB.Get] Error getting database:", name)
+		Ext.Utils.PrintError(result)
 		return nil
 	end
 	if unpack and type(result) == "table" then

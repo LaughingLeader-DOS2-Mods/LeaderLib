@@ -27,8 +27,8 @@ InitTable({"_INTERNAL", "Audio", "CC", "Damage", "Ext", "Item", "Math", "Net", "
 
 local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Version()
-local _getTranslatedStringKeyFunction = _EXTVERSION < 56 and Ext.GetTranslatedStringFromKey or Ext.L10N.GetTranslatedStringFromKey
-local _getTranslatedStringFunction = _EXTVERSION < 56 and Ext.GetTranslatedString or Ext.L10N.GetTranslatedString
+local _getTranslatedStringKeyFunction = Ext.L10N.GetTranslatedStringFromKey
+local _getTranslatedStringFunction = Ext.L10N.GetTranslatedString
 
 local _stringKeyText = {}
 
@@ -190,12 +190,12 @@ function PrintDebug(...)
 	if Vars.DebugMode and Vars.LeaderDebugMode then
 		--local lineNum = debug.getinfo(1).currentline
 		--local lineInfo = string.format("[%s:%s]", currentFileName(), debug.getinfo(1).currentline)
-		Ext.Print(...)
+		Ext.Utils.Print(...)
 	end
 end
 
 function PrintLog(str, ...)
-	Ext.Print(string.format(str, ...))
+	Ext.Utils.Print(string.format(str, ...))
 	print(string.format(str, ...))
 end
 

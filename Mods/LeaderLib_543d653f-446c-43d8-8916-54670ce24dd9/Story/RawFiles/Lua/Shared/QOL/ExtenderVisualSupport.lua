@@ -52,7 +52,7 @@ else
 		if b then
 			return hasAlpha,currentAmount
 		else
-			Ext.PrintError(hasAlpha)
+			Ext.Utils.PrintError(hasAlpha)
 		end
 		return false,1
 	end

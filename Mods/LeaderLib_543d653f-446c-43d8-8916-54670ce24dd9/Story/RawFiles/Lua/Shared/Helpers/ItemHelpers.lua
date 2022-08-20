@@ -381,7 +381,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
         end
         return item
     else
-        Ext.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Error constructing item when invoking Construct() - Returned item is nil for template %s.", template))
+        Ext.Utils.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Error constructing item when invoking Construct() - Returned item is nil for template %s.", template))
     end
     return nil
 end
@@ -569,7 +569,7 @@ if not _ISCLIENT then
     ---@param slot ItemSlot
     ---@return boolean
     function GameHelpers.Item.EquipInSlot(character, item, slot)
-        if Ext.OsirisIsCallable() then
+        if _OSIRIS() then
             local char = GameHelpers.GetUUID(character)
             local itemGUID = GameHelpers.GetUUID(item)
             if ObjectExists(itemGUID) == 1 and ObjectExists(char) == 1 then
@@ -802,19 +802,19 @@ function GameHelpers.Item.GetOwner(item, returnNilUUID)
 	local item = GameHelpers.GetItem(item)
 	if item then
 		if item.OwnerHandle ~= nil then
-			local object = Ext.GetGameObject(item.OwnerHandle)
+			local object = GameHelpers.TryGetObject(item.OwnerHandle)
 			if object ~= nil then
 				return object.MyGuid
 			end
 		end
-		if Ext.OsirisIsCallable() then
+		if _OSIRIS() then
 			local inventory = StringHelpers.GetUUID(GetInventoryOwner(item.MyGuid))
 			if not StringHelpers.IsNullOrEmpty(inventory) then
 				return inventory
 			end
 		else
 			if item.InventoryHandle then
-				local object = Ext.GetGameObject(item.InventoryHandle)
+				local object = GameHelpers.TryGetObject(item.InventoryHandle)
 				if object ~= nil then
 					return object.MyGuid
 				end

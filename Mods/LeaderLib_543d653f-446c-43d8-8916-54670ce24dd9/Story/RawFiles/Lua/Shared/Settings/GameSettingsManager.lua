@@ -37,8 +37,8 @@ function GameSettingsManager.Load(sync)
 			end
 		end
 	else
-		Ext.Print("[LeaderLib] Generating and saving LeaderLib_GameSettings.json")
-		--Ext.PrintError("[LeaderLib:GameSettingsManager.Load]", result)
+		Ext.Utils.Print("[LeaderLib] Generating and saving LeaderLib_GameSettings.json")
+		--Ext.Utils.PrintError("[LeaderLib:GameSettingsManager.Load]", result)
 		GameSettings = Classes.LeaderLibGameSettings:Create()
 		self.Save()
 	end
@@ -77,10 +77,10 @@ function GameSettingsManager.Save()
 			Ext.SaveFile("LeaderLib_GameSettings.json", GameSettings:ToString(false))
 		end, debug.traceback)
 		if not b then
-			Ext.PrintError(err)
+			Ext.Utils.PrintError(err)
 		end
 	elseif Vars.DebugMode then
-		Ext.PrintWarning("[LeaderLib:GameSettingsManager:GameSettingsManager.Save] GameSettings is nil?")
+		Ext.Utils.PrintWarning("[LeaderLib:GameSettingsManager:GameSettingsManager.Save] GameSettings is nil?")
 	end
 end
 

@@ -23,7 +23,7 @@ function Testing.WriteResults(uuid, results)
 		--GameHelpers.IO.SaveFile(fileName, StringHelpers.Join("\n", results, false, function(k,v) return Lib.serpent.block(v) end))
 		local text = string.format("Test = \"%s\"\n", uuid)
 		GameHelpers.IO.SaveFile(fileName, text .. "Results = " .. Lib.serpent.block(results))
-		Ext.Print("Saved test results to", fileName)
+		Ext.Utils.Print("Saved test results to", fileName)
 	end
 	Testing.Active = false
 end
@@ -87,7 +87,7 @@ function Testing.RunTests(tbl, testingName)
 		Testing.Active = true
 	else
 		Ext.Dump(tests)
-		Ext.PrintError("[TestingSystem] Tests is an invalid table. Should be an array of LuaTest tables.")
+		Ext.Utils.PrintError("[TestingSystem] Tests is an invalid table. Should be an array of LuaTest tables.")
 	end
 end
 
@@ -188,8 +188,8 @@ Ext.RegisterConsoleCommand("test", function (cmd, id, ...)
 		cmdId = string.lower(id)
 	end
 	if not cmdId or cmdId == "help" then
-		Ext.Print("[test] Available tests:")
-		Ext.Print("==========")
+		Ext.Utils.Print("[test] Available tests:")
+		Ext.Utils.Print("==========")
 		for id,data in pairs(_consoleCommandTests) do
 			if type(data.Description) == "function" then
 				fprint(LOGLEVEL.DEFAULT, "\"%s\": %s", id, data.Description(id, ...))
@@ -197,10 +197,10 @@ Ext.RegisterConsoleCommand("test", function (cmd, id, ...)
 				fprint(LOGLEVEL.DEFAULT, "\"%s\": %s", id, data.Description)
 			end
 		end
-		Ext.Print("==========")
-		Ext.Print("Run a test with the command:")
-		Ext.Print("!test id subid")
-		Ext.Print("(subid optional, depending on the above)")
+		Ext.Utils.Print("==========")
+		Ext.Utils.Print("Run a test with the command:")
+		Ext.Utils.Print("!test id subid")
+		Ext.Utils.Print("(subid optional, depending on the above)")
 	else
 		local data = _consoleCommandTests[cmdId]
 		if data then

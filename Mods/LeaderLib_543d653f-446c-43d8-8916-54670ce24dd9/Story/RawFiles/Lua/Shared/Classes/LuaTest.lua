@@ -127,7 +127,7 @@ end
 local function RunTask(self)
 	local b,err = xpcall(coroutine.resume, debug.traceback, self.Thread, self, table.unpack(self.Params))
 	if not b then
-		Ext.PrintError(err)
+		Ext.Utils.PrintError(err)
 		self.Failed = true
 		self.Errors[#self.Errors+1] = err
 	end
@@ -143,7 +143,7 @@ function LuaTest:Resume()
 			RunTask(self)
 			return true
 		else
-			Ext.PrintError("coroutine is currently occupied with a different thread.")
+			Ext.Utils.PrintError("coroutine is currently occupied with a different thread.")
 		end
 	end
 	return false
@@ -175,7 +175,7 @@ function LuaTest:Failure(msg, level)
 	if self.ThrowErrors then
 		error(self.ErrorMessage, (level or 1) + 1)
 	else
-		Ext.PrintError(self.ErrorMessage)
+		Ext.Utils.PrintError(self.ErrorMessage)
 	end
 end
 
@@ -263,7 +263,7 @@ function LuaTest:Run()
 					self.Thread = coroutine.create(function (...)
 						local b,err = xpcall(task, debug.traceback, ...)
 						if not b then
-							Ext.PrintError(err)
+							Ext.Utils.PrintError(err)
 							self.Failed = true
 							self.Errors[#self.Errors+1] = StringHelpers.Split(StringHelpers.Replace(err, "\t", ""), "\n")
 						end

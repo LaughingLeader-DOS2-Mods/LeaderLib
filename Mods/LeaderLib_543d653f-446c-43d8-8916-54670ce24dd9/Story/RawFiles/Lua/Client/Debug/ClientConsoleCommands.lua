@@ -8,7 +8,7 @@ end)
 
 AddConsoleVariable("UIExt", UIExtensions)
 
--- local flagFound = false; local flags = {"GLO_PathOfBlood_MurderedInnocent", "GLO_PathOfBlood_DisrespectedSoul", "GLO_StoleItem"}; for i,db in pairs(Osi.DB_IsPlayer:Get(nil)) do local player = GameHelpers.GetCharacter(db[1]); for _,flag in pairs(flags) do if ObjectGetFlag(player.MyGuid, flag) == 1 then Ext.Print(string.format("Player (%s) has flag (%s)", player.DisplayName, flag)); flagFound = true; end; end; end; if not flagFound then Ext.Print("No Path of Blood flags set on players.") end
+-- local flagFound = false; local flags = {"GLO_PathOfBlood_MurderedInnocent", "GLO_PathOfBlood_DisrespectedSoul", "GLO_StoleItem"}; for i,db in pairs(Osi.DB_IsPlayer:Get(nil)) do local player = GameHelpers.GetCharacter(db[1]); for _,flag in pairs(flags) do if ObjectGetFlag(player.MyGuid, flag) == 1 then Ext.Utils.Print(string.format("Player (%s) has flag (%s)", player.DisplayName, flag)); flagFound = true; end; end; end; if not flagFound then Ext.Utils.Print("No Path of Blood flags set on players.") end
 
 -- local flagFound = false; 
 -- local flags = {"GLO_PathOfBlood_MurderedInnocent", "GLO_PathOfBlood_DisrespectedSoul", "GLO_StoleItem"}; 
@@ -16,13 +16,13 @@ AddConsoleVariable("UIExt", UIExtensions)
 --     local player = GameHelpers.GetCharacter(db[1])
 --     for _,flag in pairs(flags) do 
 --         if ObjectGetFlag(player.MyGuid, flag) == 1 then 
---             Ext.Print(string.format("Player (%s) has flag (%s)", player.DisplayName, flag))
+--             Ext.Utils.Print(string.format("Player (%s) has flag (%s)", player.DisplayName, flag))
 --             flagFound = true
 --         end
 --     end
 -- end 
 -- if not flagFound then 
---     Ext.Print("No Path of Blood flags set on players.") 
+--     Ext.Utils.Print("No Path of Blood flags set on players.") 
 -- end
 
 if Vars.DebugMode then
@@ -49,7 +49,7 @@ if Vars.DebugMode then
 
 	Input.RegisterMouseListener(UIExtensions.MouseEvent.Clicked, function(event, pressed, id, keys, controllerEnabled)
 		if Vars.Commands.Teleporting then
-			local state = Ext.GetPickingState()
+			local state = Ext.UI.GetPickingState()
 			if state and state.WalkablePosition then
 				Ext.PostMessageToServer("LeaderLib_TeleportToPosition", Common.JsonStringify({
 					Target = GameHelpers.GetNetID(Client:GetCharacter()),

@@ -55,7 +55,7 @@ if Vars.DebugMode then
 						end
 						local b,result = pcall(v, obj, table.unpack(params))
 						if not b then
-							Ext.PrintError(result)
+							Ext.Utils.PrintError(result)
 						else
 							return result
 						end
@@ -239,7 +239,7 @@ if not _ISCLIENT then
 	if Vars.DebugMode then
 		local character = {}
 		function character.GetAll(props, includeDefault, exportToFileName)
-			local data = Ext.GetAllCharacters()
+			local data = Ext.Entity.GetAllCharacterGuids()
 			setmetatable(data, {
 				__tostring = function()
 					local text = {}
@@ -258,7 +258,7 @@ if not _ISCLIENT then
 									if type(value) == "function" then
 										local b,result = xpcall(value, debug.traceback, c)
 										if not b then
-											Ext.PrintError(result)
+											Ext.Utils.PrintError(result)
 										else
 											if string.find(propertyName, "Statuses") then
 												propertyName = "Statuses"
@@ -305,7 +305,7 @@ if not _ISCLIENT then
 				return nil
 			end,
 			__index = function(tbl,k)
-				Ext.PrintWarning("Call character() with a uuid first.")
+				Ext.Utils.PrintWarning("Call character() with a uuid first.")
 				return character
 			end
 		})

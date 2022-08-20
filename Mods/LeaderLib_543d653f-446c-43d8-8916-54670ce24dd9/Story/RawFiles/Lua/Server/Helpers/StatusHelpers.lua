@@ -9,8 +9,8 @@ Ext.NewQuery(GameHelpers.Status.HasStatusType, "LeaderLib_Ext_QRY_HasStatusType"
 ---@param source EsvCharacter|nil
 ---@return boolean
 function GameHelpers.Status.IsFromEnemy(status, target, source)
-	target = target or Ext.GetGameObject(status.TargetHandle)
-	source = source or (status.StatusSourceHandle ~= nil and Ext.GetGameObject(status.StatusSourceHandle) or nil)
+	target = target or GameHelpers.TryGetObject(status.TargetHandle)
+	source = source or (status.StatusSourceHandle ~= nil and GameHelpers.TryGetObject(status.StatusSourceHandle) or nil)
 	if target ~= nil and source ~= nil then
 		return GameHelpers.Character.IsEnemy(target, source)
 	end

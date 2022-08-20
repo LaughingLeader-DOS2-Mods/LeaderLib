@@ -212,7 +212,7 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
     if type(extraParams.ParamsParsed) == "function" then
         local b,err = xpcall(extraParams.ParamsParsed, debug.traceback, props, sourceObject, targetObject)
         if not b then
-            Ext.PrintError(err)
+            Ext.Utils.PrintError(err)
         end
     end
 
@@ -634,7 +634,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
                         end
                         props.DeathType = deathType or "Physical"
                     else
-                        Ext.PrintError(damageList)
+                        Ext.Utils.PrintError(damageList)
                     end
                 end
             end
@@ -731,7 +731,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
     for k,v in pairs(props) do
         local b,err = xpcall(TrySetValue, debug.traceback, action, k, v)
         if not b then
-            Ext.PrintError(err)
+            Ext.Utils.PrintError(err)
             dumpAction = true
         end
     end

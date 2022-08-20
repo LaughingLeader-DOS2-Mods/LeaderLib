@@ -12,7 +12,7 @@ CharacterData.__index = function(tbl, k)
 	end
 	local uuid = rawget(tbl, "UUID")
 	if uuid then
-		if k == "Region" and Ext.OsirisIsCallable() then
+		if k == "Region" and _OSIRIS() then
 			return GetRegion(uuid)
 		end
 		local char = GameHelpers.GetCharacter(uuid)
@@ -118,7 +118,7 @@ end
 ---@param flag string
 ---@return boolean
 function CharacterData:HasFlag(flag)
-	if Ext.OsirisIsCallable() then
+	if _OSIRIS() then
 		return GameHelpers.Character.HasFlag(self.UUID, flag)
 	end
 	return false

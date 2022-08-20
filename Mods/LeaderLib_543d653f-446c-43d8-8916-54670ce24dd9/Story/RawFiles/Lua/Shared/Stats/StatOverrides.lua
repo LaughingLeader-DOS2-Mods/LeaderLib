@@ -294,14 +294,14 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 	if not gameSettings then
 		ferror("[LeaderLib:OverrideStats:%s] Failed to load game settings.", _ISCLIENT and "CLIENT" or "SERVER")
 	end
-	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
+	--Ext.Mod.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
 	if gameSettings.StarterTierSkillOverrides or gameSettings.LowerMemorizationRequirements then
 		local originalSkillTiers = {}
 		if not _ISCLIENT then
 			originalSkillTiers = _PV["OriginalSkillTiers"] or {}
 		end
 		local total = 0
-		--Ext.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
+		--Ext.Utils.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
 		for id in GameHelpers.Stats.GetSkills() do
 			local stat = Ext.Stats.Get(id)
 			local tier = stat.Tier
@@ -380,7 +380,7 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 	if gameSettings.APSettings.Player.Enabled then
 		local settings = gameSettings.APSettings.Player
 		for id,b in pairs(playerStats) do
-			if b == true or (type(b) == "string" and Ext.IsModLoaded(b)) then
+			if b == true or (type(b) == "string" and Ext.Mod.IsModLoaded(b)) then
 				---@type StatEntryCharacter
 				local stat = Ext.Stats.Get(id)
 				if stat then
@@ -437,7 +437,7 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 
 	if not Ext.Mod.IsModLoaded(Data.ModID.UnofficialPatch) then
 		for statId,data in pairs(StatFixes) do
-			if not data.Mod or Ext.IsModLoaded(data.Mod) then
+			if not data.Mod or Ext.Mod.IsModLoaded(data.Mod) then
 				local stat = Ext.Stats.Get(statId)
 				if stat and data.CanChange(stat) then
 					for attribute,value in pairs(data.Changes) do

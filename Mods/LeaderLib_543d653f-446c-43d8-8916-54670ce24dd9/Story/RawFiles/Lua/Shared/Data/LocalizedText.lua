@@ -466,7 +466,7 @@ local function GetDamageText(damageType, damageValue, omitDamageName)
 			end
 		end
 	else
-		Ext.PrintError("No damage name/color entry for type " .. tostring(damageType))
+		Ext.Utils.PrintError("No damage name/color entry for type " .. tostring(damageType))
 	end
 	return ""
 end
@@ -488,7 +488,7 @@ local function GetAbilityName(ability)
 	if entry ~= nil then
 		return entry.Value
 	else
-		Ext.PrintError("[GameHelpers.GetAbilityName] No ability name for ["..tostring(ability).."]")
+		Ext.Utils.PrintError("[GameHelpers.GetAbilityName] No ability name for ["..tostring(ability).."]")
 	end
 	return nil
 end
@@ -557,7 +557,7 @@ function GameHelpers.GetResistanceText(resistance, amount)
 			return string.format("<font color='%s'>%s</font>", entry.Color, entry.Text.Value)
 		end
 	else
-		Ext.PrintError("No damage name/color entry for resistance " .. tostring(resistance))
+		Ext.Utils.PrintError("No damage name/color entry for resistance " .. tostring(resistance))
 	end
 	return ""
 end
@@ -572,7 +572,7 @@ function GameHelpers.GetResistanceNameFromDamageType(damageType)
 		if entry ~= nil then
 			return entry.Text.Value
 		else
-			Ext.PrintError("No name/color entry for resistance/damagetype",resistance,damageType)
+			Ext.Utils.PrintError("No name/color entry for resistance/damagetype",resistance,damageType)
 		end
 	end
 	return ""

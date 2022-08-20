@@ -121,7 +121,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 				end
 			end
 		else
-			Ext.PrintError("[LeaderLib] Failed to get equipment for", equipment, self.ClassType, self.Equipment, self.Equipment_Undead, self.IsPreview)
+			Ext.Utils.PrintError("[LeaderLib] Failed to get equipment for", equipment, self.ClassType, self.Equipment, self.Equipment_Undead, self.IsPreview)
 		end
 	end
 end
@@ -156,21 +156,21 @@ end
 ---@param checkMemorizationRequirements boolean|nil
 ---@param skipIfExists boolean If an item already exists on the target character, skip creating another one.
 function PresetData:ApplyToCharacter(char, targetRarity, skipSlots, checkMemorizationRequirements, skipIfExists)
-	--print("Applying",self.ClassType,"to",char, Ext.IsServer(), Ext.OsirisIsCallable())
+	--print("Applying",self.ClassType,"to",char, Ext.IsServer(), _OSIRIS())
 	if Ext.IsServer() then
 		local status,err = xpcall(function()
 			self:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipIfExists)
 		end, debug.traceback)
 		if not status then
-			Ext.PrintError("[LeaderLib] Error applying preset equipment",self.ClassType,"to character",char)
-			Ext.PrintError(err)
+			Ext.Utils.PrintError("[LeaderLib] Error applying preset equipment",self.ClassType,"to character",char)
+			Ext.Utils.PrintError(err)
 		end
 		local status,err = xpcall(function()
 			self:AddSkillsToCharacter(char, checkMemorizationRequirements)
 		end, debug.traceback)
 		if not status then
-			Ext.PrintError("[LeaderLib] Error applying preset skills",self.ClassType,"to character",char)
-			Ext.PrintError(err)
+			Ext.Utils.PrintError("[LeaderLib] Error applying preset skills",self.ClassType,"to character",char)
+			Ext.Utils.PrintError(err)
 		end
 	end
 end

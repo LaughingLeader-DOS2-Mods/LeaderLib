@@ -40,7 +40,7 @@ end
 
 ---@private
 function SettingsData:CanExecuteOsiris()
-	return not isClient and Ext.OsirisIsCallable()
+	return not isClient and _OSIRIS()
 end
 
 ---@alias LeaderLibGlobalSettingsFlagType string|"Global"|"User"|"Character"|"Object"
@@ -330,12 +330,12 @@ function SettingsData:ApplyVariables(uuid, callback)
 						--print("Osi.LeaderLib_GlobalSettings_SetIntegerVariable", uuid, name, intVal)
 						Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, name, intVal)
 					else
-						Ext.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Error converting variable",name,"to integer.")
+						Ext.Utils.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Error converting variable",name,"to integer.")
 					end
 				end
 			end
 		elseif data == nil then
-			Ext.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Variable",name,"is nil.")
+			Ext.Utils.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Variable",name,"is nil.")
 		end
 	end
 end

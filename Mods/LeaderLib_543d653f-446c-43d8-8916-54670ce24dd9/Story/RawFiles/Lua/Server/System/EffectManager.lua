@@ -185,11 +185,11 @@ function _INTERNAL.PlayEffect(fx, object, params)
 				return CreateEffectResult(effect, handle, effect.EffectName)
 			else
 				if not b then
-					Ext.PrintError(effect)
+					Ext.Utils.PrintError(effect)
 				end
 				fprint(LOGLEVEL.ERROR, "[EffectManager.PlayEffect] Failed to create effect (%s) with params:\n%s", fx, Lib.serpent.block(params))
 			end
-		elseif Ext.OsirisIsCallable() then
+		elseif _OSIRIS() then
 			if params then
 				if params.BeamTarget ~= nil then
 					local beamTarget = GameHelpers.GetUUID(params.BeamTarget)
@@ -260,11 +260,11 @@ function _INTERNAL.PlayEffectAt(fx, pos, params)
 				return CreateEffectResult(effect, handle, effect.EffectName, {x,y,z})
 			else
 				if not b then
-					Ext.PrintError(effect)
+					Ext.Utils.PrintError(effect)
 				end
 				fprint(LOGLEVEL.ERROR, "[EffectManager.PlayEffectAt] Failed to create effect (%s) with params:\n%s", fx, Lib.serpent.block(params))
 			end
-		elseif Ext.OsirisIsCallable() then
+		elseif _OSIRIS() then
 			local handle = nil
 			if params then
 				if params.Loop then
@@ -360,7 +360,7 @@ end
 function _INTERNAL.StopEffect(handle)
 	local t = type(handle)
 	if t == "number" then
-		if Ext.OsirisIsCallable() then
+		if _OSIRIS() then
 			StopLoopEffect(handle)
 			return true
 		elseif _EXTVERSION >= 56 then
@@ -424,7 +424,7 @@ end
 
 local function _TargetsMatch(effect, uuid, uuidType)
 	if effect.Target ~= nil then
-		local obj = Ext.GetGameObject(effect.Target)
+		local obj = GameHelpers.TryGetObject(effect.Target)
 		if obj then
 			if uuidType == "string" then
 				return uuid == obj.MyGuid
@@ -508,7 +508,7 @@ function EffectManager.StopEffectsByNameForObject(effect, target)
 	else
 		local uuid = GameHelpers.GetUUID(target)
 		fassert(uuid ~= nil, "Failed to get UUID for target parameter %s", target)
-		if Ext.OsirisIsCallable() then
+		if _OSIRIS() then
 			if uuid then
 				CharacterStopAllEffectsWithName(uuid, effect)
 				success = true

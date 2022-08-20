@@ -93,7 +93,7 @@ function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 					result = str
 				end
 			else
-				Ext.PrintError(str)
+				Ext.Utils.PrintError(str)
 			end
 		else
 			result = v
@@ -133,7 +133,7 @@ function StringHelpers.DebugJoin(delimiter, list, uniqueOnly, getStringFunction)
 			if b then
 				result = str
 			else
-				Ext.PrintError(str)
+				Ext.Utils.PrintError(str)
 			end
 		else
 			result = v

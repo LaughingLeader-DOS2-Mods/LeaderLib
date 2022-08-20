@@ -101,7 +101,7 @@ function CombatVacuum.UpdateArenaFlags(maxDist, enabled)
 		end
 	end
 	if clearAllArenaFlags then
-		for _,v in pairs(Ext.GetAllCharacters(SharedData.RegionData.Current)) do
+		for _,v in pairs(Ext.Entity.GetAllCharacterGuids(SharedData.RegionData.Current)) do
 			ClearArenaFlag(v, true)
 		end
 	end

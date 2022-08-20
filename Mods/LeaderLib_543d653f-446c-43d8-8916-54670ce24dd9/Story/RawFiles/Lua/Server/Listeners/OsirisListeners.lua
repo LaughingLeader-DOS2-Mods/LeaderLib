@@ -61,7 +61,7 @@ local function OnLog(logType, ...)
 		local msg = StringHelpers.Join("", params)
 		Osi.LeaderLog_Internal_RunString(logType, msg)
 		if Vars.DebugMode then
-			Ext.Print(string.format("[LeaderLib:Log(%s)] %s", logType, msg))
+			Ext.Utils.Print(string.format("[LeaderLib:Log(%s)] %s", logType, msg))
 		end
 	end
 end

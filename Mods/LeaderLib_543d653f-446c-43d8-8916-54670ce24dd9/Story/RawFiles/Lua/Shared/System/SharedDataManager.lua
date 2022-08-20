@@ -153,7 +153,7 @@ if not _ISCLIENT then
 				uuid = StringHelpers.GetUUID(GetCurrentCharacter(client))
 				id = client
 			else
-				Ext.PrintError("[LeaderLib:GameHelpers.Data.SyncSharedData] Error syncing data: client is an incorrect type:", clientType, client)
+				Ext.Utils.PrintError("[LeaderLib:GameHelpers.Data.SyncSharedData] Error syncing data: client is an incorrect type:", clientType, client)
 			end
 			if profile ~= ignoreProfile then
 				local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
@@ -651,7 +651,7 @@ if _ISCLIENT then
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreData", function(cmd, payload, ...)
 		local b,err = xpcall(StoreData, debug.traceback, cmd, payload)
 		if not b then
-			Ext.PrintError(err)
+			Ext.Utils.PrintError(err)
 		end
 	end)
 

@@ -176,7 +176,7 @@ else
 		if t == "number" then
 			ui = Ext.GetUIByType(id)
 		elseif t == "string" then
-			ui = Ext.GetBuiltinUI(id) or Ext.GetUI(id)
+			ui = Ext.GetBuiltinUI(id) or Ext.UI.GetByName(id)
 		end
 		if ui then
 			ui:Invoke(method, ...)
@@ -193,7 +193,7 @@ else
 		if t == "number" then
 			ui = Ext.GetUIByType(id)
 		elseif t == "string" then
-			ui = Ext.GetBuiltinUI(id) or Ext.GetUI(id)
+			ui = Ext.GetBuiltinUI(id) or Ext.UI.GetByName(id)
 		end
 		if ui then
 			return ui:GetRoot()

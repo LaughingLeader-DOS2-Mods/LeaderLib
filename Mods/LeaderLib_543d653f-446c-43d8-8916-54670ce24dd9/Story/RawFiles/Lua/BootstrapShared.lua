@@ -2,6 +2,14 @@
 
 local _EXTVERSION = Ext.Utils.Version()
 local _DEBUG = Ext.Debug.IsDeveloperMode()
+local _ISCLIENT = Ext.IsClient()
+
+function _OSIRIS()
+	if not _ISCLIENT then
+		return Ext.Osiris.IsCallable()
+	end
+	return false
+end
 
 ---@enum LOGLEVEL
 LOGLEVEL = {
@@ -24,25 +32,25 @@ LOGLEVEL = {
 function fprint(severity, str, ...)
 	if type(severity) == "string" then
 		if string.find(severity, "%s", 1, true) then
-			Ext.Print(string.format(severity, str, ...))
+			Ext.Utils.Print(string.format(severity, str, ...))
 		else
-			Ext.Print(severity, str, ...)
+			Ext.Utils.Print(severity, str, ...)
 		end
 	elseif type(str) == "string" then
 		local msg = string.format(str, ...)
 		if severity == LOGLEVEL.ERROR then
-			Ext.PrintError(msg)
+			Ext.Utils.PrintError(msg)
 		elseif severity == LOGLEVEL.WARNING then
-			Ext.PrintWarning(msg)
+			Ext.Utils.PrintWarning(msg)
 		elseif severity == LOGLEVEL.TRACE then
 			if Vars.DebugMode then
-				Ext.Print(msg)
+				Ext.Utils.Print(msg)
 			end
 		else
-			Ext.Print(msg)
+			Ext.Utils.Print(msg)
 		end
 	else
-		Ext.Print(severity,str,...)
+		Ext.Utils.Print(severity,str,...)
 	end
 end
 

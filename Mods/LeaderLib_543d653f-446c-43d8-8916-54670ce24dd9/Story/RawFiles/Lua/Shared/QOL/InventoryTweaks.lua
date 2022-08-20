@@ -97,7 +97,7 @@ if _ISCLIENT then
 				end
 			end, debug.traceback)
 			if not b and Vars.DebugMode then
-				Ext.PrintError(err)
+				Ext.Utils.PrintError(err)
 			end
 
 			local i = 0
@@ -133,7 +133,7 @@ if _ISCLIENT then
 				end
 			end, debug.traceback)
 			if not b and Vars.DebugMode then
-				Ext.PrintError(err)
+				Ext.Utils.PrintError(err)
 			end
 
 			local i = 0
@@ -169,7 +169,7 @@ if _ISCLIENT then
 				end
 			end, debug.traceback)
 			if not b and Vars.DebugMode then
-				Ext.PrintError(err)
+				Ext.Utils.PrintError(err)
 			end
 
 			local i = 0
@@ -340,7 +340,7 @@ if _ISCLIENT then
 	ContainerInventory.Register:Call("startDragging", function (self, ui, event, doubleHandle)
 		if Trade.Visible then
 			local slot = Trade.Root.trade_mc.currentHLList
-			Ext.PrintError("startDragging", slot, doubleHandle)
+			Ext.Utils.PrintError("startDragging", slot, doubleHandle)
 			local handle = Ext.UI.DoubleToHandle(doubleHandle)
 			local playerId = Client:GetCharacter().UserID
 			Ext.UI.GetDragDrop():StartDraggingObject(playerId, handle)
@@ -351,7 +351,7 @@ if _ISCLIENT then
 	--Allow opening containers in the trade UI
 	Trade.Register:Call("itemRightClick", function (self, ui, event, doubleHandle)
 		_lastRightClickItemDoubleHandle = doubleHandle
-		Ext.PrintError("itemRightClick", _lastRightClickItemDoubleHandle, UI.ContextMenu.IsOpening, UI.ContextMenu.Visible)
+		Ext.Utils.PrintError("itemRightClick", _lastRightClickItemDoubleHandle, UI.ContextMenu.IsOpening, UI.ContextMenu.Visible)
 		if not UI.ContextMenu.Visible then
 			UI.ContextMenu:OnRightClick()
 		end
@@ -359,7 +359,7 @@ if _ISCLIENT then
 
 	Events.ShouldOpenContextMenu:Subscribe(function (e)
 		if not GameHelpers.Math.IsNaN(_lastRightClickItemDoubleHandle) then
-			Ext.PrintError(e.X, e.Y)
+			Ext.Utils.PrintError(e.X, e.Y)
 			e.ShouldOpen = true
 		end
 	end)

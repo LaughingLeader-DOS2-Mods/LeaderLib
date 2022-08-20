@@ -23,7 +23,7 @@ local function RunAction(self, ...)
 	if self.Action then
 		local b,err = xpcall(self.Action, debug.traceback, self, ...)
 		if not b then
-			Ext.PrintError(err)
+			Ext.Utils.PrintError(err)
 		end
 	end
 	if self.Parent then

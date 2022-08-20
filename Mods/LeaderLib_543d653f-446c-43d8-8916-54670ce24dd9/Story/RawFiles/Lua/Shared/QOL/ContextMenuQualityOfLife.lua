@@ -12,7 +12,7 @@ if isClient then
 
 	local function ClearCombatLog()
 		CombatLog.Clear()
-		Ext.Print("[LeaderLib] Cleared the combat log.")
+		Ext.Utils.Print("[LeaderLib] Cleared the combat log.")
 	end
 
 	local openTarget = ""
@@ -49,9 +49,9 @@ if isClient then
 				Ext.PostMessageToServer("LeaderLib_SetLastContextTarget", uuid)
 				local data,b = GameHelpers.IO.LoadJsonFile("LeaderLib_UUIDHelper.json", {})
 				if b then
-					Ext.Print("Updated Osiris Data/LeaderLib_UUIDHelper.json")
+					Ext.Utils.Print("Updated Osiris Data/LeaderLib_UUIDHelper.json")
 				else
-					Ext.Print("Created Osiris Data/LeaderLib_UUIDHelper.json")
+					Ext.Utils.Print("Created Osiris Data/LeaderLib_UUIDHelper.json")
 				end
 				--local name_uuid = string.format("%s_%s", obj.RootTemplate.Name, uuid)
 				local existingEntry = nil
@@ -160,7 +160,7 @@ if isClient then
 			local entries = {}
 			local characterTargetHandle = nil
 			if not Vars.IsEditorMode then
-				local cursor = Ext.GetPickingState()
+				local cursor = Ext.UI.GetPickingState()
 				if cursor then
 					if cursor.HoverCharacter then
 						characterTargetHandle = cursor.HoverCharacter

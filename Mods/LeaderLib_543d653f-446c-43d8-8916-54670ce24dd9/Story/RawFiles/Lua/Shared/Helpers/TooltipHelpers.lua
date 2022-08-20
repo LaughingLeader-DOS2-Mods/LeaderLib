@@ -72,7 +72,7 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 			if character == nil then
 				if _ISCLIENT then
 					character = Client:GetCharacter()
-				elseif Ext.OsirisIsCallable() then
+				elseif _OSIRIS() then
 					character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 				end
 			end
@@ -362,8 +362,8 @@ function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
 	if b then
 		return result
 	else
-		Ext.PrintError("[LeaderLib:GameHelpers.Tooltip.ReplacePlaceholders] Error replacing placeholders:")
-		Ext.PrintError(result)
+		Ext.Utils.PrintError("[LeaderLib:GameHelpers.Tooltip.ReplacePlaceholders] Error replacing placeholders:")
+		Ext.Utils.PrintError(result)
 		return str
 	end
 end

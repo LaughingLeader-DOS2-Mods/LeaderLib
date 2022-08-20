@@ -83,7 +83,7 @@ local function OnInitialized(region, isRunning)
 	Vars.Initialized = true
 	GameHelpers.Data.SetGameMode()
 	region = region or SharedData.RegionData.Current
-	if region == nil and Ext.OsirisIsCallable() then
+	if region == nil and _OSIRIS() then
 		local db = Osi.DB_CurrentLevel:Get(nil)
 		if db ~= nil then
 			region = db[1][1] or ""
@@ -93,7 +93,7 @@ local function OnInitialized(region, isRunning)
 	if not Vars.InitializedLeaveActionWorkarounds then
 		local status,err = xpcall(OverrideLeaveActionStatuses, debug.traceback)
 		if not status then
-			Ext.PrintError(err)
+			Ext.Utils.PrintError(err)
 		else
 			Vars.InitializedLeaveActionWorkarounds = true
 		end
@@ -178,7 +178,7 @@ function OnLuaReset()
 end
 
 Ext.Events.ResetCompleted:Subscribe(function ()
-	if Ext.OsirisIsCallable() and GlobalGetFlag("LeaderLib_ResettingLua") == 0 then
+	if _OSIRIS() and GlobalGetFlag("LeaderLib_ResettingLua") == 0 then
 		OnLuaReset()
 	end
 end)

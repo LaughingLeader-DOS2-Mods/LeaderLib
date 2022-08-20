@@ -17,7 +17,7 @@ function GameHelpers.Character.IsPlayer(character)
 		return false
 	end
 	if not _ISCLIENT then
-		if not Ext.OsirisIsCallable() then
+		if not _OSIRIS() then
 			if t == "string" or t == "number" then
 				character = GameHelpers.GetCharacter(character)
 			end
@@ -91,7 +91,7 @@ function GameHelpers.Character.IsPlayerOrPartyMember(character)
 	if GameHelpers.Character.IsPlayer(character) then
 		return true
 	end
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(character)
 		return not StringHelpers.IsNullOrEmpty(GUID) and CharacterIsPartyMember(GUID) == 1
 	end
@@ -100,7 +100,7 @@ end
 
 ---@param character CharacterParam
 function GameHelpers.Character.IsOrigin(character)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(character)
 		if not GUID then return false end
 		return GameHelpers.DB.HasUUID("DB_Origins", GUID)
@@ -115,7 +115,7 @@ end
 
 ---@param character CharacterParam
 function GameHelpers.Character.IsInCharacterCreation(character)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(character)
 		if not GUID then return false end
 		if GameHelpers.DB.HasUUID("DB_Illusionist", GUID, 2, 1) then
@@ -158,7 +158,7 @@ end
 
 ---@param character CharacterParam
 function GameHelpers.Character.IsAllyOfParty(character)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _OSIRIS() then
 		character = GameHelpers.GetUUID(character)
 		if not character or ObjectIsCharacter(character) == 0 then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
@@ -172,7 +172,7 @@ end
 
 ---@param character CharacterParam
 function GameHelpers.Character.IsEnemyOfParty(character)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(character)
 		if not GUID then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
@@ -188,7 +188,7 @@ end
 ---@param char2 CharacterParam
 function GameHelpers.Character.IsEnemy(char1, char2)
 	if not _ISCLIENT then
-		if Ext.OsirisIsCallable() then
+		if _OSIRIS() then
 			local a = GameHelpers.GetUUID(char1)
 			local b = GameHelpers.GetUUID(char2)
 			if not a or not b then return false end
@@ -210,7 +210,7 @@ end
 
 ---@param character CharacterParam
 function GameHelpers.Character.IsNeutralToParty(character)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(character)
 		if not GUID then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
@@ -224,7 +224,7 @@ end
 
 ---@param character CharacterParam
 function GameHelpers.Character.IsInCombat(character)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(character)
 		if not GUID then return false end
 		if CharacterIsInCombat(GUID) == 1 then
@@ -260,9 +260,9 @@ function GameHelpers.Character.HasSkill(character, skill)
 			end
 		end
 	else
-		if not _ISCLIENT and Ext.OsirisIsCallable() then
+		if not _ISCLIENT and _OSIRIS() then
 			if t == "string" then
-				if Ext.OsirisIsCallable() then
+				if _OSIRIS() then
 					return CharacterHasSkill(character.MyGuid, skill) == 1
 				else
 					for _,v in pairs(character:GetSkills()) do
@@ -272,7 +272,7 @@ function GameHelpers.Character.HasSkill(character, skill)
 					end
 				end
 			elseif t == "table" then
-				if Ext.OsirisIsCallable() then
+				if _OSIRIS() then
 					for i=1,#skill do
 						if CharacterHasSkill(character.MyGuid, skill[i]) == 1 then
 							return true
@@ -307,7 +307,7 @@ function GameHelpers.Character.GetTotalEnemiesInRange(target,radius)
 		end
 		local pos = character.WorldPos
 		local totalEnemies = 0
-		for _,v in pairs(Ext.GetAllCharacters(SharedData.RegionData.Current)) do
+		for _,v in pairs(Ext.Entity.GetAllCharacterGuids(SharedData.RegionData.Current)) do
 			if GameHelpers.Math.GetDistance(v, pos) <= radius 
 			and not GameHelpers.ObjectIsDead(v) and GameHelpers.Character.IsEnemy(character, v) then
 				totalEnemies = totalEnemies + 1
@@ -419,7 +419,7 @@ function GameHelpers.Character.GetDisplayName(character)
 		if StringHelpers.IsNullOrWhitespace(name) or string.find(name, "|", 1, true) then
 			if not _ISCLIENT then
 				local handle,ref = CharacterGetDisplayName(character.MyGuid)
-				return Ext.GetTranslatedString(handle, not StringHelpers.IsNullOrWhitespace(name) and name or ref)
+				return Ext.L10N.GetTranslatedString(handle, not StringHelpers.IsNullOrWhitespace(name) and name or ref)
 			else
 				return name
 			end
@@ -436,7 +436,7 @@ end
 function GameHelpers.Character.GetPlayers(includeSummons, asTable)
 	local players = {}
 	if not _ISCLIENT then
-		if SharedData.RegionData.LevelType == LEVELTYPE.GAME and Ext.OsirisIsCallable() then
+		if SharedData.RegionData.LevelType == LEVELTYPE.GAME and _OSIRIS() then
 			for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
 				local player = GameHelpers.GetCharacter(db[1])
 				if player then
@@ -716,7 +716,7 @@ end
 
 ---@param character CharacterParam
 function GameHelpers.Character.IsUnsheathed(character)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _OSIRIS() then
 		character = GameHelpers.GetUUID(character)
 		if not character then return false end
 		return HasActiveStatus(character, "UNSHEATHED") == 1 or CharacterIsInFightMode(character) == 1
@@ -980,7 +980,7 @@ function GameHelpers.Character.GetEquippedWeapons(character)
 	if _ISCLIENT then
 		return char:GetItemObjectBySlot("Weapon"),char:GetItemObjectBySlot("Shield")
 	else
-		if Ext.OsirisIsCallable() then
+		if _OSIRIS() then
 			local mainhand,offhand = nil,nil
 			local mainhandId,offhandId = CharacterGetEquippedItem(char.MyGuid, "Weapon"), CharacterGetEquippedItem(char.MyGuid, "Shield")
 			if not StringHelpers.IsNullOrEmpty(mainhandId) then
@@ -1059,7 +1059,7 @@ end
 ---@param flag string|string[]
 ---@return boolean
 function GameHelpers.Character.HasFlag(character, flag)
-	if not _ISCLIENT and Ext.OsirisIsCallable() then
+	if not _ISCLIENT and _OSIRIS() then
 		local uuid = GameHelpers.GetUUID(character)
 		if uuid then
 			local t = _type(flag)

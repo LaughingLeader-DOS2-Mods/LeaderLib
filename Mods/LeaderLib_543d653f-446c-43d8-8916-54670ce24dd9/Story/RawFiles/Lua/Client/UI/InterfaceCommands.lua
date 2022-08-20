@@ -173,7 +173,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 				return true
 			end, debug.traceback)
 			if not status then
-				Ext.PrintError(err)
+				Ext.Utils.PrintError(err)
 			end
 		end
 	else
@@ -197,7 +197,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 				return true
 			end, debug.traceback)
 			if not status then
-				Ext.PrintError(err)
+				Ext.Utils.PrintError(err)
 			end
 		end
 	end

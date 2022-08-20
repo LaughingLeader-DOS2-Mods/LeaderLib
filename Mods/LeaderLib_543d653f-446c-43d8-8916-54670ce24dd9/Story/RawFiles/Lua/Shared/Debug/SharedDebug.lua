@@ -69,7 +69,7 @@ end) ]]
 end) ]]
 
 -- Events.OnBookRead:Subscribe(function (e)
--- 	Ext.Print(_ISCLIENT and "CLIENT" or "SERVER", e:DumpExport())
+-- 	Ext.Utils.Print(_ISCLIENT and "CLIENT" or "SERVER", e:DumpExport())
 -- end)
 
 --[[ if _ISCLIENT then

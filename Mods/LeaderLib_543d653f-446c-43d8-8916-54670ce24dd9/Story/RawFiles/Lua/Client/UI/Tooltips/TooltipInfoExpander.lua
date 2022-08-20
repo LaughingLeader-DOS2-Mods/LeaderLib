@@ -235,10 +235,10 @@ function _TooltipHooks_RebuildTooltip(self, arrayData, ui, method, ...)
 					local compareReq = _last.Request.Compare1
 					_TooltipHooks_RenderRebuiltSubTooltip(self, compareTT, compareTooltip, ui, compareMain, compareReq, method, ...)
 				elseif Vars.DebugMode then
-					Ext.PrintError("compareItem.Handle is nil?", Ext.DumpExport(compareItem))
+					Ext.Utils.PrintError("compareItem.Handle is nil?", Ext.DumpExport(compareItem))
 				end
 			else
-				Ext.PrintError("Tooltip compare render failed: Couldn't find item to compare", method, compareMain)
+				Ext.Utils.PrintError("Tooltip compare render failed: Couldn't find item to compare", method, compareMain)
 			end
 		end
 
@@ -252,10 +252,10 @@ function _TooltipHooks_RebuildTooltip(self, arrayData, ui, method, ...)
 					local compareReq = _last.Request.Compare2
 					_TooltipHooks_RenderRebuiltSubTooltip(self, compareTT, compareTooltip, ui, compareOff, compareReq, method, ...)		
 				elseif Vars.DebugMode then
-					Ext.PrintError("compareItem.Handle is nil?", Ext.DumpExport(compareItem))
+					Ext.Utils.PrintError("compareItem.Handle is nil?", Ext.DumpExport(compareItem))
 				end
 			else
-				Ext.PrintError("Tooltip compare render failed: Couldn't find off-hand item to compare", method, compareOff)
+				Ext.Utils.PrintError("Tooltip compare render failed: Couldn't find off-hand item to compare", method, compareOff)
 			end
 		end
 	end
@@ -303,7 +303,7 @@ local function RebuildTooltip(pressed)
 					if this.tf.setText then
 						this.tf.setText(tooltip.Data.Text,tooltip.Data.BackgroundType or 0)
 					else
-						Ext.PrintError(this.tf.name)
+						Ext.Utils.PrintError(this.tf.name)
 					end
 
 					this.checkTooltipBoundaries(this.getTooltipWidth(),this.getTooltipHeight(), tooltip.Data.X + this.frameSpacing, tooltip.Data.Y + this.frameSpacing)

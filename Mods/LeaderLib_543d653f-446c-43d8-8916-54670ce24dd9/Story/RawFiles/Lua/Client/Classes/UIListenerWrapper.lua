@@ -57,7 +57,7 @@ function UIListenerWrapper:Create(id, params)
 			if this.Initialized then
 				local b,err = xpcall(this.Initialized, debug.traceback, ui)
 				if not b then
-					Ext.PrintError(err)
+					Ext.Utils.PrintError(err)
 				end
 			end
 		end
@@ -70,7 +70,7 @@ function UIListenerWrapper:Create(id, params)
 					if ui then
 						local b,err = xpcall(this.Initialized, debug.traceback, ui)
 						if not b then
-							Ext.PrintError(err)
+							Ext.Utils.PrintError(err)
 						end
 					end
 				end
@@ -83,7 +83,7 @@ function UIListenerWrapper:Create(id, params)
 				if ui then
 					local b,err = xpcall(this.Initialized, debug.traceback, ui)
 					if not b then
-						Ext.PrintError(err)
+						Ext.Utils.PrintError(err)
 					end
 				end
 			end

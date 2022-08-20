@@ -183,7 +183,7 @@ local Init = function()
 					local this = ui2:GetRoot()
 					local b,err = xpcall(this.Initialized, debug.traceback, ui)
 					if not b then
-						Ext.PrintError(err)
+						Ext.Utils.PrintError(err)
 					end
 				end
 			end
@@ -284,10 +284,10 @@ local Init = function()
 		local arr = ui:GetRoot().customStats_array
 		if arr then
 			local length = #arr
-			Ext.Print("customStats_array", length)
+			Ext.Utils.Print("customStats_array", length)
 			if length > 0 then
 				for i=0,length do
-				Ext.Print(i, arr[i])
+				Ext.Utils.Print(i, arr[i])
 				end
 			end
 		end
@@ -315,7 +315,7 @@ local Init = function()
 	-- 			end
 	-- 		end
 	-- 	end
-	-- 	Ext.Print(method,Lib.serpent.block(buttons))
+	-- 	Ext.Utils.Print(method,Lib.serpent.block(buttons))
 	-- end
 
 	--local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, enabledParam)
@@ -327,9 +327,9 @@ local Init = function()
 		for i=0,#array-1 do
 			local entry = array[i]
 			if entry then
-				Ext.Print(i, entry)
+				Ext.Utils.Print(i, entry)
 			else
-				Ext.Print(i, "nil")
+				Ext.Utils.Print(i, "nil")
 			end
 		end
 	end
@@ -341,9 +341,9 @@ local Init = function()
 		for i=0,#array do
 			local entry = array[i]
 			if entry then
-				Ext.Print(i, entry)
+				Ext.Utils.Print(i, entry)
 			else
-				Ext.Print(i, "nil")
+				Ext.Utils.Print(i, "nil")
 			end
 		end
 	end
@@ -380,13 +380,13 @@ local Init = function()
 	local GMPanelHUD = UIListenerWrapper:Create(Data.UIType.GMPanelHUD,{
 		---@param ui UIObject
 		Initialized = function(ui)
-			Ext.PrintError("GMPANELHUD")
+			Ext.Utils.PrintError("GMPANELHUD")
 			local this = ui:GetRoot()
 			if this then
 				local printArr = function(name, arr)
-					Ext.Print(name, #arr)
+					Ext.Utils.Print(name, #arr)
 					for i=0,#arr-1 do
-						Ext.Print(name, i, arr[i].id)
+						Ext.Utils.Print(name, i, arr[i].id)
 					end
 				end
 				local arr = this.GMBar_mc.slotList.content_array
@@ -401,7 +401,7 @@ local Init = function()
 	local roll = UIListenerWrapper:Create(Data.UIType.roll, {
 		---@param ui UIObject
 		Initialized = function(ui)
-			Ext.PrintError("roll")
+			Ext.Utils.PrintError("roll")
 			local this = ui:GetRoot()
 			if this then
 				this.setIsGM(Client.Character.IsGameMaster)

@@ -21,7 +21,7 @@ local CharacterCreation = Classes.UIWrapper:CreateFromType(Data.UIType.character
 UIExtensions.CharacterCreation = CharacterCreation
 
 function CCExt.GetInstance(skipSetup)
-	local instance = Ext.GetUI(CCExt.ID) or Ext.GetBuiltinUI(CCExt.SwfPath)
+	local instance = Ext.UI.GetByName(CCExt.ID) or Ext.GetBuiltinUI(CCExt.SwfPath)
 	if not instance and skipSetup ~= true then
 		instance = CCExt.SetupInstance()
 	end
@@ -190,10 +190,10 @@ function CCExt.SetupInstance(force)
 	end
 	local visible = force or GetCCVisibility()
 	if visible then
-		local instance = Ext.GetUI(CCExt.ID) or Ext.GetBuiltinUI(CCExt.SwfPath)
+		local instance = Ext.UI.GetByName(CCExt.ID) or Ext.GetBuiltinUI(CCExt.SwfPath)
 		if not instance then
 			CCExt.Initialized = false
-			instance = Ext.CreateUI(CCExt.ID, CCExt.SwfPath, CCExt.Layer)
+			instance = Ext.UI.Create(CCExt.ID, CCExt.SwfPath, CCExt.Layer)
 		end
 		if instance then
 			instance:Show()
@@ -213,7 +213,7 @@ function CCExt.SetupInstance(force)
 			end
 			return instance
 		else
-			Ext.PrintError("[LeaderLib] Failed to create UI:", UIExtensions.SwfPath)
+			Ext.Utils.PrintError("[LeaderLib] Failed to create UI:", UIExtensions.SwfPath)
 		end
 	end
 end

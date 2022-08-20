@@ -368,7 +368,7 @@ function Common.InitializeTableFromSource(target, source)
 			end
 		end
 	else
-		Ext.PrintError("[LeaderLib:Common.InitializeTableFromSource] Source table is nil!")
+		Ext.Utils.PrintError("[LeaderLib:Common.InitializeTableFromSource] Source table is nil!")
 	end
 	return target
 end
@@ -415,7 +415,7 @@ function Common.JsonParse(str, safeguardErrors)
 		if b then
 			tbl = result
 		else
-			Ext.PrintError(result)
+			Ext.Utils.PrintError(result)
 		end
 	else
 		tbl = _jsonParse(str)
@@ -436,7 +436,7 @@ end
 function Common.JsonStringify(tbl)
 	local b,result = xpcall(_jsonStringify, debug.traceback, tbl)
 	if not b then
-		Ext.PrintError(result)
+		Ext.Utils.PrintError(result)
 		Ext.Dump(tbl)
 		return ""
 	end

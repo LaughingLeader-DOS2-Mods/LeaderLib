@@ -307,7 +307,7 @@ Ext.Events.StatusGetDescriptionParam:Subscribe(function (e)
 					end
 				end, debug.traceback)
 				if not success then
-					Ext.PrintError(result)
+					Ext.Utils.PrintError(result)
 				else
 					e.Description = result
 				end

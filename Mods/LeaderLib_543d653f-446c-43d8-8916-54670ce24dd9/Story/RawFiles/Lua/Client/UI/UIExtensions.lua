@@ -98,7 +98,7 @@ local function OnTimerComplete(ui, call, timerCallbackName)
 		for i,v in pairs(callbacks) do
 			local b,result = xpcall(v, debug.traceback, timerCallbackName, true)
 			if not b then
-				Ext.PrintError(result)
+				Ext.Utils.PrintError(result)
 			end
 		end
 	end
@@ -113,7 +113,7 @@ local function OnTimerTick(ui, call, timerCallbackName)
 		for i,v in pairs(callbacks) do
 			local b,result = xpcall(v, debug.traceback, timerCallbackName, false)
 			if not b then
-				Ext.PrintError(result)
+				Ext.Utils.PrintError(result)
 			end
 		end
 	end
@@ -124,8 +124,8 @@ local function OnControl(ui, call, controlType, id, ...)
 	if callback and type(callback) == "function" then
 		local b,err = xpcall(callback, debug.traceback, ui, controlType, id, ...)
 		if not b then
-			Ext.Print(string.format("[LeaderLib] Error invoking UI control callback for id (%s):", id))
-			Ext.Print(err)
+			Ext.Utils.Print(string.format("[LeaderLib] Error invoking UI control callback for id (%s):", id))
+			Ext.Utils.Print(err)
 		end
 	end
 end
@@ -181,11 +181,11 @@ local defaultUIFlags = Data.DefaultUIFlags
 
 function UIExtensions.SetupInstance(skipCheck)
 	-- if Ext.GetGameState() == "Menu" then
-	-- 	Ext.PrintError("[UIExtensions.SetupInstance] Game not ready yet.")
+	-- 	Ext.Utils.PrintError("[UIExtensions.SetupInstance] Game not ready yet.")
 	-- end
 	local instance = nil
 	if not skipCheck then
-		instance = Ext.GetUI(UIExtensions.ID) or Ext.GetBuiltinUI(UIExtensions.SwfPath)
+		instance = Ext.UI.GetByName(UIExtensions.ID) or Ext.GetBuiltinUI(UIExtensions.SwfPath)
 	end
 	if not instance then
 		if Vars.ControllerEnabled then
@@ -193,9 +193,9 @@ function UIExtensions.SetupInstance(skipCheck)
 			UIExtensions.Layer = 7
 		end
 		if Vars.DebugMode and not Vars.ControllerEnabled then
-			instance = Ext.CreateUI(UIExtensions.ID, UIExtensions.SwfPath, UIExtensions.Layer, defaultUIFlags)
+			instance = Ext.UI.Create(UIExtensions.ID, UIExtensions.SwfPath, UIExtensions.Layer, defaultUIFlags)
 		else
-			instance = Ext.CreateUI(UIExtensions.ID, UIExtensions.SwfPath, UIExtensions.Layer)
+			instance = Ext.UI.Create(UIExtensions.ID, UIExtensions.SwfPath, UIExtensions.Layer)
 		end
 		UIExtensions.RegisteredListeners = false
 		UIExtensions.Visible = true
@@ -219,7 +219,7 @@ function UIExtensions.SetupInstance(skipCheck)
 				main.enableKeyboardListeners()
 				UIExtensions.Initialized = true
 			else
-				Ext.PrintError("[LeaderLib] Failed to GetRoot of UI:", UIExtensions.SwfPath)
+				Ext.Utils.PrintError("[LeaderLib] Failed to GetRoot of UI:", UIExtensions.SwfPath)
 			end
 		end
 		if not UIExtensions.RegisteredListeners then
@@ -238,7 +238,7 @@ function UIExtensions.SetupInstance(skipCheck)
 			Ext.RegisterUICall(instance, "LeaderLib_UIExtensions_OnEventResize", OnResolution)
 			Ext.RegisterUICall(instance, "LeaderLib_UIAssert", function (ui, call, msg)
 				if Vars.DebugMode then
-					Ext.PrintWarning(msg)
+					Ext.Utils.PrintWarning(msg)
 				end
 			end)
 			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_OnControl", OnControl)
@@ -254,12 +254,12 @@ function UIExtensions.SetupInstance(skipCheck)
 			UIExtensions.RegisteredListeners = true
 		end
 	else
-		Ext.PrintError("[LeaderLib] Failed to create UI:", UIExtensions.SwfPath)
+		Ext.Utils.PrintError("[LeaderLib] Failed to create UI:", UIExtensions.SwfPath)
 	end
 end
 
 function UIExtensions.GetInstance(skipSetup)
-	local instance = Ext.GetUI(UIExtensions.ID) or Ext.GetBuiltinUI(UIExtensions.SwfPath)
+	local instance = Ext.UI.GetByName(UIExtensions.ID) or Ext.GetBuiltinUI(UIExtensions.SwfPath)
 	if not instance and not skipSetup then
 		instance = UIExtensions.SetupInstance(true)
 	end
@@ -306,7 +306,7 @@ function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBo
 		local index = main.addCheckbox(id, label, tooltip, state or 0, x or 0, y or 0, filterBool, enabled)
 		return id,index
 	else
-		Ext.PrintError("[LeaderLib:UIExtensions.AddCheckbox] Failed to get root of UIObject", UIExtensions.SwfPath)
+		Ext.Utils.PrintError("[LeaderLib:UIExtensions.AddCheckbox] Failed to get root of UIObject", UIExtensions.SwfPath)
 	end
 end
 
@@ -342,7 +342,7 @@ function UIExtensions.AddDropdown(onChange, x, y, text, entries)
 		end
 		local index = main.dropdowns_mc.add(id, x, y, dropdownText, topLabelText, tooltipText)
 		local dropdown_mc = main.dropdowns_mc.entries[index];
-		Ext.PrintError(index, dropdown_mc)
+		Ext.Utils.PrintError(index, dropdown_mc)
 		if dropdown_mc and type(entries) == "table" then
 			for i=1,#entries do
 				local entry = entries[i]
@@ -351,7 +351,7 @@ function UIExtensions.AddDropdown(onChange, x, y, text, entries)
 		end
 		return dropdown_mc,id,index
 	else
-		Ext.PrintError("[LeaderLib:UIExtensions.AddCheckbox] Failed to get root of UIObject", UIExtensions.SwfPath)
+		Ext.Utils.PrintError("[LeaderLib:UIExtensions.AddCheckbox] Failed to get root of UIObject", UIExtensions.SwfPath)
 	end
 end
 

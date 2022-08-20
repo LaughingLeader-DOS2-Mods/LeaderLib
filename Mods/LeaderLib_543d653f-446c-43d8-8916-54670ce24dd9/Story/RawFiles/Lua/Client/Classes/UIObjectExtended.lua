@@ -95,7 +95,7 @@ end
 ---@param skipCreation boolean|nil
 ---@param setVisibility boolean|nil
 function UIObjectExtended:GetInstance(skipCreation, setVisibility)
-	local instance = Ext.GetUI(self.ID) or Ext.GetBuiltinUI(self.SwfPath)
+	local instance = Ext.UI.GetByName(self.ID) or Ext.GetBuiltinUI(self.SwfPath)
 	if not instance and skipCreation ~= true then
 		instance = self:Initialize(setVisibility)
 	end
@@ -177,9 +177,9 @@ end
 ---@param setVisibility boolean|nil
 ---@private
 function UIObjectExtended:Initialize(setVisibility)
-	local instance = Ext.GetUI(self.ID) or Ext.GetBuiltinUI(self.SwfPath)
+	local instance = Ext.UI.GetByName(self.ID) or Ext.GetBuiltinUI(self.SwfPath)
 	if not instance then
-		instance = Ext.CreateUI(self.ID, self.SwfPath, self.Layer, self.DefaultUIFlags)
+		instance = Ext.UI.Create(self.ID, self.SwfPath, self.Layer, self.DefaultUIFlags)
 		self:Hide(instance)
 
 		if self.OnInitialized then

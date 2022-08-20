@@ -418,7 +418,7 @@ local function _TryInvoke(self, args, skipAutoInvoke, ...)
 		if self.CanSync then
 			local b,result = _xpcall(self.CanSync, _traceback, self, args, ...)
 			if not b then
-				Ext.PrintError(result)
+				Ext.Utils.PrintError(result)
 			else
 				canSync = result == true
 			end

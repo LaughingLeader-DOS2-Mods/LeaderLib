@@ -81,7 +81,7 @@ local function GetTagTooltipText(tag, data, tooltipType)
 			if b then
 				tagName = result
 			else
-				Ext.PrintError(result)
+				Ext.Utils.PrintError(result)
 			end
 		end
 	end
@@ -98,7 +98,7 @@ local function GetTagTooltipText(tag, data, tooltipType)
 			if b then
 				tagDesc = result
 			else
-				Ext.PrintError(result)
+				Ext.Utils.PrintError(result)
 			end
 		end
 	end
@@ -135,8 +135,8 @@ local function FormatTagText(content_array, group, isControllerMode)
 				return true
 			end, debug.traceback)
 			if not b then
-				Ext.PrintError("[LeaderLib:FormatTagText] Error:")
-				Ext.PrintError(result)
+				Ext.Utils.PrintError("[LeaderLib:FormatTagText] Error:")
+				Ext.Utils.PrintError(result)
 			end
 		end
 	end
@@ -235,7 +235,7 @@ function TooltipHandler.OnTooltipPositioned(ui, ...)
 
 		local b,err = xpcall(TrySetTooltipDelay, debug.traceback, root, lastRequestType)
 		if not b then
-			Ext.PrintError(err)
+			Ext.Utils.PrintError(err)
 		end
 
 		if lastRequestType == "Item" and (TooltipHandler.HasTagTooltipData or #Listeners.OnTooltipPositioned > 0) then

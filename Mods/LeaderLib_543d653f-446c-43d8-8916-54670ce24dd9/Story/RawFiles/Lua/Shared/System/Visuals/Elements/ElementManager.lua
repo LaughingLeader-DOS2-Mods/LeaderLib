@@ -85,7 +85,7 @@ function ElementManager.OnEquipmentChanged(char,item,equipped)
 				end
 				local b,result = xpcall(data.OnEquipmentChanged, debug.traceback, data, char, item, equipped)
 				if not b then
-					Ext.PrintError(result)
+					Ext.Utils.PrintError(result)
 				end
 			end
 		end

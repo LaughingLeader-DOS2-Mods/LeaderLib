@@ -241,7 +241,7 @@ Ext.Require("Server/Updates.lua")
 ---@param handle string
 ---@param fallback string
 function SetCustomNameWithLocalization(char,handle,fallback)
-	local name,_ = Ext.GetTranslatedString(handle, fallback)
+	local name,_ = Ext.L10N.GetTranslatedString(handle, fallback)
 	CharacterSetCustomName(char, name)
 end
 

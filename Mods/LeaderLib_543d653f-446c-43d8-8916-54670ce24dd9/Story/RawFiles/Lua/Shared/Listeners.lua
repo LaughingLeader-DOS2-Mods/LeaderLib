@@ -182,7 +182,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			Events.OnHit:Subscribe(function (e)
 				local b,err = xpcall(callback, debug.traceback, GameHelpers.GetUUID(e.Target), GameHelpers.GetUUID(e.Source), e.Data.Damage, e.Data.Handle, e.Data.Skill, e.HitStatus, e.Data.HitContext, e.Data)
 				if not b then
-					Ext.PrintError(err)
+					Ext.Utils.PrintError(err)
 				end
 			end)
 			return
@@ -190,7 +190,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			Events.OnHit:Subscribe(function (e)
 				local b,err = xpcall(callback, debug.traceback, e.Target, e.Source, e.Data, e.HitStatus)
 				if not b then
-					Ext.PrintError(err)
+					Ext.Utils.PrintError(err)
 				end
 			end)
 			return
@@ -199,7 +199,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 				Events.OnTurnCounter:Subscribe(function (e)
 					local b,err = xpcall(callback, debug.traceback, e.ID, e.Turn, e.LastTurn, e.Finished, e.Data)
 					if not b then
-						Ext.PrintError(err)
+						Ext.Utils.PrintError(err)
 					end
 				end, {MatchArgs={id=callbackOrKey}})
 			elseif keyType == "table" then
@@ -216,7 +216,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			Events.OnTurnEnded:Subscribe(function (e)
 				local b,err = xpcall(callback, debug.traceback, GameHelpers.GetUUID(e.Object), e.ID)
 				if not b then
-					Ext.PrintError(err)
+					Ext.Utils.PrintError(err)
 				end
 			end, opts)
 			return
@@ -227,7 +227,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 				Events.UICreated:Subscribe(function(e)
 					local b,err = xpcall(callback, debug.traceback, e:Unpack())
 					if not b then
-						Ext.PrintError(err)
+						Ext.Utils.PrintError(err)
 					end
 				end)
 			end
@@ -279,7 +279,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			subEvent:Subscribe(function(e)
 				local b,err = xpcall(callbackOrKey, debug.traceback, e:Unpack())
 				if not b then
-					Ext.PrintError(err)
+					Ext.Utils.PrintError(err)
 				end
 			end)
 			return
@@ -298,7 +298,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 				end
 				table.insert(listenerTable[callbackOrKey], callbackOrNil)
 			else
-				Ext.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) with sub-key (%s) requires a function as the third parameter. Context: %s", event, callbackOrKey, Ext.IsServer() and "SERVER" or "CLIENT"))
+				Ext.Utils.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) with sub-key (%s) requires a function as the third parameter. Context: %s", event, callbackOrKey, Ext.IsServer() and "SERVER" or "CLIENT"))
 			end
 		else
 			if listenerTable.All ~= nil then
@@ -308,7 +308,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			end
 		end
 	else
-		Ext.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) is not a valid LeaderLib listener event! Context: %s", event, Ext.IsServer() and "SERVER" or "CLIENT"))
+		Ext.Utils.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) is not a valid LeaderLib listener event! Context: %s", event, Ext.IsServer() and "SERVER" or "CLIENT"))
 	end
 end
 
@@ -351,7 +351,7 @@ function InvokeListenerCallbacks(callbacks, ...)
 			local callback = callbacks[i]
 			local b,result = invoke(callback, messageFunc, ...)
 			if not b then
-				Ext.PrintError(result)
+				Ext.Utils.PrintError(result)
 			elseif result ~= nil then
 				invokeResult = result
 			end
@@ -369,6 +369,6 @@ function RegisterModListener(event, uuid, callback)
 	if ModListeners[event] ~= nil then
 		ModListeners[event][uuid] = callback
 	else
-		Ext.PrintError("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
+		Ext.Utils.PrintError("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
 	end
 end

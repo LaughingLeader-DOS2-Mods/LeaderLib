@@ -25,7 +25,7 @@ local _ran = Ext.Random
 function GameHelpers.Math.GetPosition(obj, unpackResult, fallback)
     local t = _type(obj)
     local pos = nil
-    if t == "string" and Ext.OsirisIsCallable() then
+    if t == "string" and _OSIRIS() then
         local x,y,z = GetPosition(obj)
         if x then
             pos = {x,y,z}

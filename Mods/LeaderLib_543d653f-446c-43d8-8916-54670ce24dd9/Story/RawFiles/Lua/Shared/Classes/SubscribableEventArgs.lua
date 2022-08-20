@@ -83,7 +83,7 @@ function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta
 				if b and value ~= nil then
 					return value
 				elseif not b then
-					Ext.PrintError(value)
+					Ext.Utils.PrintError(value)
 				end
 			end
 			return SubscribableEventArgs[k]
@@ -92,7 +92,7 @@ function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta
 			if customMeta and customMeta.__newindex then
 				local b,value = xpcall(customMeta.__newindex, debug.traceback, self, k, v)
 				if not b then
-					Ext.PrintError(value)
+					Ext.Utils.PrintError(value)
 				else
 					return
 				end

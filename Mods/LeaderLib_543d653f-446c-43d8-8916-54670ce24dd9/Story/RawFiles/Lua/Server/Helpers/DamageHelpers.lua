@@ -559,7 +559,7 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
         local b,result,result2 = xpcall(params.GetDamageFunction, debug.traceback, skillData, source.Stats, false, false, pos, targetPos, level, false, params.MainWeapon, params.OffhandWeapon)
 
         if not b then
-            Ext.PrintError(result)
+            Ext.Utils.PrintError(result)
         else
             damageList = result
             deathType = result2
@@ -772,7 +772,7 @@ function GameHelpers.Damage.ApplyDamage(source, target, params)
                 local b,result,result2 = xpcall(params.GetDamageFunction, debug.traceback, source, target, params)
         
                 if not b then
-                    Ext.PrintError(result)
+                    Ext.Utils.PrintError(result)
                 else
                     damageList = result
                     deathType = result2 or deathType or "None"
@@ -868,7 +868,7 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
         local b,result,result2 = xpcall(getDamageFunction, debug.traceback, skillData, source.Stats, false, false, pos, targetPos, level, false, mainWeapon, offhandWeapon)
 
         if not b then
-            Ext.PrintError(result)
+            Ext.Utils.PrintError(result)
         else
             damageList = result
             deathType = result2

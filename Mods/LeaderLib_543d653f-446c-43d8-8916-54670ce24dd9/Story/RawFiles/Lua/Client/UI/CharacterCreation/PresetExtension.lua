@@ -61,7 +61,7 @@ end)
 
 function PresetExt.BuildModAssociation(findModForPreset, presets)
 	local remaining = Common.TableLength(findModForPreset, true)
-	local order = Ext.GetModLoadOrder()
+	local order = Ext.Mod.GetLoadOrder()
 	for i=1,#order do
 		local uuid = order[i]
 		local info = Ext.GetModInfo(uuid)

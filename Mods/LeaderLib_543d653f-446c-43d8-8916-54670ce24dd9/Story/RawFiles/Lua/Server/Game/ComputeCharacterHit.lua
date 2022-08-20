@@ -250,7 +250,7 @@ function HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType,
     end
 
     -- Enemy Upgrade Overhaul - Backstabber Upgrade
-    if Ext.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and weapon ~= nil and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab) then
+    if Ext.Mod.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and weapon ~= nil and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab) then
         canBackstab = true
     end
 

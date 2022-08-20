@@ -139,7 +139,7 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 		---@cast skill StatEntrySkillData
 		
 		if skill and skill.Name == "ProjectileStrike_EnemyRainOfArrows" then
-			Ext.PrintError("ProjectileStrike_EnemyRainOfArrows::HitReason", hitStatus.HitReason, Data.HitReason[hitStatus.HitReason])
+			Ext.Utils.PrintError("ProjectileStrike_EnemyRainOfArrows::HitReason", hitStatus.HitReason, Data.HitReason[hitStatus.HitReason])
 		end
 	end
 

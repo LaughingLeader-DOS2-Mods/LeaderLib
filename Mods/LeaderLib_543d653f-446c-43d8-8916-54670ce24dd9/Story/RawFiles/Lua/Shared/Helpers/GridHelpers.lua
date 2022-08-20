@@ -181,7 +181,7 @@ if not _ISCLIENT then
 	---@return boolean canBeForceMoved
 	function GameHelpers.CanForceMove(target)
 		local t = _type(target)
-		if t == "string" and Ext.OsirisIsCallable() then
+		if t == "string" and _OSIRIS() then
 			if CharacterIsDead(target) == 1 then
 				return false
 			end
@@ -770,7 +770,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 						if opts.Relation and opts.Relation.CanAdd then
 							local b,result = xpcall(opts.Relation.CanAdd, debug.traceback, obj, source)
 							if not b then
-								Ext.PrintError(result)
+								Ext.Utils.PrintError(result)
 							elseif result == true then
 								objects[#objects+1] = obj
 							end
@@ -802,7 +802,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 						elseif opts.Relation.CanAdd then
 							local b,result = xpcall(opts.Relation.CanAdd, debug.traceback, obj, source)
 							if not b then
-								Ext.PrintError(result)
+								Ext.Utils.PrintError(result)
 							elseif result == true then
 								objects[#objects+1] = obj
 							end

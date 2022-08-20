@@ -269,7 +269,7 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 	ModMenuManager.LastID = 0
 	ModMenuManager.Controls = {}
 
-	local title = Ext.GetTranslatedString("h12905237ga2afg43fcg8fc4g6a993789ecba", "Mod Settings")
+	local title = Ext.L10N.GetTranslatedString("h12905237ga2afg43fcg8fc4g6a993789ecba", "Mod Settings")
 	mainMenu.setTitle(title)
 
 	---@type ModSettings[]
@@ -287,7 +287,7 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 	for _,modSettings in pairs(settings) do
 		index = index + 1
 		if modSettings.Global ~= nil then
-			if Ext.IsModLoaded(modSettings.UUID) and modSettings:HasEntries() then
+			if Ext.Mod.IsModLoaded(modSettings.UUID) and modSettings:HasEntries() then
 				local titleColor = not StringHelpers.IsNullOrEmpty(modSettings.TitleColor) and modSettings.TitleColor or "#369BFF"
 				local modName = string.format("<font color='%s' size='%i'>%s</font>", titleColor, _GetTitleFontSize(), modSettings.Name)
 				local tooltip = ""
@@ -316,7 +316,7 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 				if modSettings.GetMenuOrder ~= nil then
 					local b,result = xpcall(modSettings.GetMenuOrder, debug.traceback)
 					if not b then
-						Ext.PrintError(result)
+						Ext.Utils.PrintError(result)
 					end
 					ParseModSettings(ui, mainMenu, modSettings, result)
 				else
@@ -329,7 +329,7 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 						local callback = Listeners.ModMenuSectionCreated[i]
 						local b,err = xpcall(callback, debug.traceback, modSettings.UUID, modSettings, ui, mainMenu)
 						if not b then
-							Ext.PrintError("Error calling function for 'ModMenuSectionCreated':\n", err)
+							Ext.Utils.PrintError("Error calling function for 'ModMenuSectionCreated':\n", err)
 						end
 					end
 				end

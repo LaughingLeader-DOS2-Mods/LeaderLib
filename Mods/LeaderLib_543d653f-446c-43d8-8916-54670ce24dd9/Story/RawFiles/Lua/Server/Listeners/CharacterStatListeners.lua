@@ -98,14 +98,14 @@ end
 function CharacterSheet_SignalPartyValueChanges()
 	local b,err = xpcall(SignalPartyValueChanges, debug.traceback)
 	if not b then
-		Ext.PrintError("Error signaling party attribute changes:\n", err)
+		Ext.Utils.PrintError("Error signaling party attribute changes:\n", err)
 	end
 end
 
 function CharacterSheet_StorePartyValues()
 	local b,err = xpcall(StorePartyValues, debug.traceback)
 	if not b then
-		Ext.PrintError("Error storing party sheet values:\n", err)
+		Ext.Utils.PrintError("Error storing party sheet values:\n", err)
 	end
 end
 

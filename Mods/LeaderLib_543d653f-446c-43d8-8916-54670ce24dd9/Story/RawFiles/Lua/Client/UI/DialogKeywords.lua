@@ -44,7 +44,7 @@ function DialogEx.FindKeywords(ui, event, text)
 			end
 		end
 	end
-	Ext.Print(event, Common.JsonStringify(keywordPositions))
+	Ext.Utils.Print(event, Common.JsonStringify(keywordPositions))
 end
 
 function DialogEx.OnSetPosition(ui, event, side1, side2, side3)
@@ -90,7 +90,7 @@ end)
 
 function DialogEx.OnMouseMoved(event, x, y)
 	if DialogEx.Active and Vars.LeaderDebugMode then
-		Ext.Print(event, x, y)
+		Ext.Utils.Print(event, x, y)
 	end
 end
 

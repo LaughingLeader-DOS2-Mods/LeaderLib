@@ -63,7 +63,7 @@ local function GetPlayerStatusMovieClips(character, matchStatus)
 					if status_mc ~= nil then
 						local handle = Ext.UI.DoubleToHandle(status_mc.id)
 						if handle ~= nil then
-							local statusObj = Ext.GetStatus(character.NetID, handle) or {}
+							local statusObj = Ext.Entity.GetStatus(character.NetID, handle) or {}
 							--print(string.format("[%i] id(%s) name(%s) iconId(%s) tooltip(%s) handle(%s) StatusId(%s)", i, status_mc.id, status_mc.name, status_mc.iconId, status_mc.tooltip, handle, statusObj.StatusId))
 							if statusObj ~= nil then
 								if matchStatus == nil then
@@ -125,7 +125,7 @@ Ext.RegisterNetListener("LeaderLib_UI_RefreshStatusTurns", function(call, payloa
 	if data then
 		local b,err = xpcall(RefreshStatusTurns, debug.traceback, data)
 		if not b then
-			Ext.PrintError(err)
+			Ext.Utils.PrintError(err)
 		end
 	end
 end)

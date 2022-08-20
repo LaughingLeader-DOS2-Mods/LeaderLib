@@ -98,7 +98,7 @@ if not _ISCLIENT then
 				end
 			end
 			if rulesUpdated then
-				Ext.Print("[LeaderLib.GameHelpers.Surface.UpdateRules] Updating surface action rules.")
+				Ext.Utils.Print("[LeaderLib.GameHelpers.Surface.UpdateRules] Updating surface action rules.")
 				Ext.UpdateSurfaceTransformRules(rules)
 			end
 		end

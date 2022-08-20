@@ -203,7 +203,7 @@ function UI.TryFindUIByType(ui, tryFindId)
 		end
 	end
 	for k,v in pairs(customUIs) do
-		local customUI = Ext.GetUI(k)
+		local customUI = Ext.UI.GetByName(k)
 		if customUI then
 			local customID = customUI:GetTypeId()
 			if customID == id or customID == ui then

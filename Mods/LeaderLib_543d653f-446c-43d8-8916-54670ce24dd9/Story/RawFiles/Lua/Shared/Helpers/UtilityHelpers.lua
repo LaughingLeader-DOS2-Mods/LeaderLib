@@ -19,14 +19,14 @@ if not _ISCLIENT then
 			local targetObject = e.Data.Object
 			local targetData = _PV.ForceMoveData[target]
 			if targetData ~= nil and targetData.Position then
-				Ext.Print("ForceMoveData", Ext.DumpExport(targetData))
+				Ext.Utils.Print("ForceMoveData", Ext.DumpExport(targetData))
 				print(GameHelpers.Math.GetDistance(target, targetData.Position))
 				if GameHelpers.Math.GetDistance(target, targetData.Position) <= 1 then
 					pcall(NRD_GameActionDestroy,targetData.Handle)
 					_PV.ForceMoveData[target] = nil
 					local source = targetData.Source
 					if source then
-						source = Ext.GetGameObject(targetData.Source)
+						source = GameHelpers.TryGetObject(targetData.Source)
 					else
 						source = targetObject
 					end
@@ -77,7 +77,7 @@ if not _ISCLIENT then
 	---@return boolean canBeForceMoved
 	function GameHelpers.CanForceMove(target)
 		local t = _type(target)
-		if t == "string" and Ext.OsirisIsCallable() then
+		if t == "string" and _OSIRIS() then
 			if CharacterIsDead(target) == 1 then
 				return false
 			end
@@ -304,7 +304,7 @@ if not _ISCLIENT then
 				for i=1,len do
 					local data = knockupData.ObjectData[i]
 					---@type EsvCharacter|EsvItem
-					local obj = Ext.GetGameObject(data.GUID)
+					local obj = GameHelpers.TryGetObject(data.GUID)
 					if not obj then
 						table.remove(knockupData.ObjectData, i)
 					end

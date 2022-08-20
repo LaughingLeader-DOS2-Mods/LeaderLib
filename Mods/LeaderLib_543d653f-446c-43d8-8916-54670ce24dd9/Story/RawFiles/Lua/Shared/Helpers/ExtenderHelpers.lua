@@ -1580,7 +1580,7 @@ local function copyValuesFromRef(target, source, refTable, objId)
 					if b then
 						return result
 					else
-						Ext.PrintError(result)
+						Ext.Utils.PrintError(result)
 					end
 				end
 			end
@@ -1650,7 +1650,7 @@ function GameHelpers.Ext.ObjectIsCharacter(obj)
 		if obj == StringHelpers.NULL_UUID then
 			return false
 		end
-		if not _ISCLIENT and Ext.OsirisIsCallable() then
+		if not _ISCLIENT and _OSIRIS() then
 			return ObjectIsCharacter(obj) == 1
 		end
 	end

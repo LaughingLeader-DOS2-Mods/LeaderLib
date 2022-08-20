@@ -1261,7 +1261,7 @@ userDataProps["eoc::ProjectileTemplate"] = {
 }
 
 userDataProps["CRPGStats_Object"] = function(stat)
-	if Ext.OsirisIsCallable() then
+	if _OSIRIS() then
 		local statType = NRD_StatGetType(stat.Name)
 		local attributeNames = statType and Data.StatAttributes[statType] or nil
 		if attributeNames then
@@ -1326,7 +1326,7 @@ function DebugHelpers.TraceUserData(obj, printNil)
 			if b then
 				return result
 			else
-				Ext.PrintError(result)
+				Ext.Utils.PrintError(result)
 				return "nil"
 			end
 		else
@@ -1409,7 +1409,7 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 			if b then
 				return result
 			else
-				Ext.PrintError(result)
+				Ext.Utils.PrintError(result)
 				return "nil"
 			end
 		else

@@ -24,7 +24,7 @@ end
 
 RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, source, amount, handle)
 	---@type EsvStatusHeal
-	local healStatus = Ext.GetStatus(target, handle)
+	local healStatus = Ext.Entity.GetStatus(target, handle)
 
 	local target = GameHelpers.TryGetObject(target)
 	local source = GameHelpers.TryGetObject(source)
@@ -35,7 +35,7 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 		if healStatus.StatusId == "POST_PHYS_CONTROL" or healStatus.StatusId == "POST_MAGIC_CONTROL" then
 			source = target
 		elseif healStatus.StatusSourceHandle then
-			source = Ext.GetGameObject(healStatus.StatusSourceHandle)
+			source = GameHelpers.TryGetObject(healStatus.StatusSourceHandle)
 		end
 	end
 

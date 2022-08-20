@@ -142,7 +142,7 @@ function TurnCounter.Subscribe(id, callback)
 			Events.OnTurnCounter:Subscribe(callback, {MatchArgs={ID=id}})
 		end
 	else
-		Ext.PrintWarning("[TurnCounter.Subscribe] Registering a generic turn counter listener since id is nil. Consider using \"All\" instead.")
+		Ext.Utils.PrintWarning("[TurnCounter.Subscribe] Registering a generic turn counter listener since id is nil. Consider using \"All\" instead.")
 		Events.OnTurnCounter:Subscribe(callback)
 	end
 end
@@ -166,7 +166,7 @@ function TurnCounter.RegisterListener(id, callback)
 			RegisterListener("OnNamedTurnCounter", id, callback)
 		end
 	else
-		Ext.PrintWarning("[TurnCounter.RegisterListener] Registering a generic turn counter listener since id is nil. Consider using \"All\" instead.")
+		Ext.Utils.PrintWarning("[TurnCounter.RegisterListener] Registering a generic turn counter listener since id is nil. Consider using \"All\" instead.")
 		RegisterListener("OnTurnCounter", callback)
 	end
 end

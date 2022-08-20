@@ -43,7 +43,7 @@ function VisualResourceData:SetVisualOnCharacter(char)
 end
 
 if Ext.GameVersion() == editorVersion then
-	Ext.PrintWarning("[LeaderLib:VisualResourceData:SetVisualOnCharacter] CharacterSetVisualElement isn't availble in the editor's game version (v3.6.51.9303).")
+	Ext.Utils.PrintWarning("[LeaderLib:VisualResourceData:SetVisualOnCharacter] CharacterSetVisualElement isn't availble in the editor's game version (v3.6.51.9303).")
 	VisualResourceData.SetVisualOnCharacter = function() end
 end
 

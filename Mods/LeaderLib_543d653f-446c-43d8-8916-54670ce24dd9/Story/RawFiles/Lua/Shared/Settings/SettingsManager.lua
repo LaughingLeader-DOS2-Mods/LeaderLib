@@ -70,7 +70,7 @@ local function ParseModData(uuid, tbl)
 	local modSettings = SettingsManager.GetMod(uuid, true, false)
 	local isOldModSettings = tbl.globalflags ~= nil or tbl.integers ~= nil
 
-	if not Ext.IsModLoaded(uuid) and modSettings ~= nil then
+	if not Ext.Mod.IsModLoaded(uuid) and modSettings ~= nil then
 		modSettings.Name = tbl.Name or ""
 	end
 
@@ -101,7 +101,7 @@ local function ParseModData(uuid, tbl)
 			for varname,v in pairs(integers) do
 				local intnum = math.tointeger(v)
 				modSettings.Global:AddVariable(varname, intnum, nil, nil, nil, nil, nil, true, true)
-				if not isClient and Ext.OsirisIsCallable() then
+				if not isClient and _OSIRIS() then
 					Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, intnum)
 				end
 			end
@@ -121,8 +121,8 @@ local function ParseSettings(tbl)
 						return true
 					end, debug.traceback)
 					if not status then
-						Ext.PrintError("[LeaderLib:ParseSettings] Error parsing mod settings:")
-						Ext.PrintError(err)
+						Ext.Utils.PrintError("[LeaderLib:ParseSettings] Error parsing mod settings:")
+						Ext.Utils.PrintError(err)
 					end
 				end
 			end
@@ -142,12 +142,12 @@ function LoadGlobalSettings(skipEventInvoking)
 	end, debug.traceback)
 	if not b then
 		SettingsManager.LoadedInitially = false
-		Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
-		Ext.PrintError(result)
+		Ext.Utils.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
+		Ext.Utils.PrintError(result)
 		return false
 	else
 		SettingsManager.LoadedInitially = true
-		local callOsiris = Ext.OsirisIsCallable()
+		local callOsiris = _OSIRIS()
 		for uuid,v in pairs(GlobalSettings.Mods) do
 			if callOsiris then
 				v:ApplyToGame()
@@ -176,8 +176,8 @@ function SaveGlobalSettings()
 		return true
 	end, debug.traceback)
 	if not b then
-		Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
-		Ext.PrintError(err)
+		Ext.Utils.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
+		Ext.Utils.PrintError(err)
 	elseif not isClient then
 		if syncTimerIndex then
 			Events.TimerFinished:Unsubscribe(syncTimerIndex)
@@ -198,7 +198,7 @@ if not isClient then
 		if id then
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with user (%s).", id)
 		elseif Vars.DebugMode then
-			Ext.Print("[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with clients.")
+			Ext.Utils.Print("[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with clients.")
 		end
 		local data = {
 			GlobalSettings = ExportGlobalSettings(true),
@@ -344,7 +344,7 @@ else
 				Events.ModSettingsSynced:Invoke({UUID=uuid, Settings=target})
 			end
 		else
-			Ext.PrintError("[LeaderLib:CLIENT] GlobalSettings is nil.")
+			Ext.Utils.PrintError("[LeaderLib:CLIENT] GlobalSettings is nil.")
 			GlobalSettings = settings
 		end
 		SetGlobalSettingsMetatables()

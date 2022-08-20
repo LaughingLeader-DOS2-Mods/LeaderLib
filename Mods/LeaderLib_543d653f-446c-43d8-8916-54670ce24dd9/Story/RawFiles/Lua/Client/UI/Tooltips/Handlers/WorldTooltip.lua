@@ -29,7 +29,7 @@ function TooltipHandler.OnTooltipAligned(ui, event, b)
 		local text = main.tf.shortDesc
 		local param2 = main.tf.newBG_mc.visible and 1 or 0
 		if canGetTooltipItem then
-			local cursorData = Ext.GetPickingState()
+			local cursorData = Ext.UI.GetPickingState()
 			if cursorData and cursorData.HoverItem then
 				local item = GameHelpers.GetItem(cursorData.HoverItem)
 				if item then

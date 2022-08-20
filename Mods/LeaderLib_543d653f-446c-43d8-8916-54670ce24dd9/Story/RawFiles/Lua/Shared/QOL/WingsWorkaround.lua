@@ -99,7 +99,7 @@ end
 if Ext.IsServer() then
 	Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
 		if Features.WingsWorkaround == true and IsGameLevel(region) == 1 and GlobalGetFlag("LeaderLib_SetupWingsWorkaroundForRegion") == 0 then
-			for i,uuid in pairs(Ext.GetAllCharacters(region)) do
+			for i,uuid in pairs(Ext.Entity.GetAllCharacterGuids(region)) do
 				if HasActiveStatus(uuid, "WINGS") == 1 then
 					local turns = GetStatusTurns(uuid, "WINGS")
 					ApplyStatus(uuid, "LEADERLIB_WINGS", math.max(-1.0, turns * 6.0), 0, uuid)
@@ -114,7 +114,7 @@ if Ext.IsServer() then
 
 	RegisterListener("Loaded", function()
 		RegisterStatusListener("Applied", "LEADERLIB_WINGS", function(target, statusId, source, statusType)
-			local obj = Ext.GetGameObject(target)
+			local obj = GameHelpers.TryGetObject(target)
 			---@type EsvStatusFloating
 			local wingsStatus = obj:GetStatus("WINGS")
 			if wingsStatus then

@@ -62,7 +62,7 @@ local function FixMalusGroup(ui)
 									if obj1.label_txt.htmlText == obj2.label_txt.htmlText
 									and obj1.value_txt.htmlText == obj2.value_txt.htmlText
 									then
-										Ext.PrintError("DUPLICATE?")
+										Ext.Utils.PrintError("DUPLICATE?")
 										group.visible = false
 										group.heightOverride = 0
 										for l=0,#group.list.content_array-1 do
@@ -119,7 +119,7 @@ Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function (ui, .
 		if settings.Client.FixStatusTooltips then
 			local b,err = xpcall(FixMalusGroup, debug.traceback, ui)
 			if not b then
-				Ext.PrintError(err)
+				Ext.Utils.PrintError(err)
 			end
 		end
 		nextTooltipIsStatus = false

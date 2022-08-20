@@ -184,7 +184,7 @@ end
 
 ---@param uuid ObjectParam
 function GameHelpers.IsInCombat(uuid)
-	if Ext.OsirisIsCallable() then
+	if _OSIRIS() then
 		local uuid = GameHelpers.GetUUID(uuid)
 		if not uuid then
 			return false

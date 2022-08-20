@@ -215,7 +215,7 @@ function ContextMenu:OnEntryClicked(ui, event, index, actionID, handle, isBuiltI
 	if action then
 		b,result = xpcall(action, debug.traceback, self, ui, index, actionID, handle)
 		if not b then
-			Ext.PrintError(result)
+			Ext.Utils.PrintError(result)
 		end
 	elseif not stayOpen then
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
@@ -407,7 +407,7 @@ function ContextMenu:OnShowStatusTooltip(ui, event, characterDouble, statusDoubl
 			local characterHandle = Ext.UI.DoubleToHandle(characterDouble)
 			local statusHandle = Ext.UI.DoubleToHandle(statusDouble)
 			if characterHandle and statusHandle then
-				local status = Ext.GetStatus(characterHandle, statusHandle)
+				local status = Ext.Entity.GetStatus(characterHandle, statusHandle)
 				if status then
 					self:SetContextStatus(status, ui:GetTypeId())
 				end
@@ -422,7 +422,7 @@ function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDoub
 		local characterHandle = ui:GetPlayerHandle()
 		local statusHandle = Ext.UI.DoubleToHandle(statusDouble)
 		if characterHandle and statusHandle then
-			local status = Ext.GetStatus(characterHandle, statusHandle)
+			local status = Ext.Entity.GetStatus(characterHandle, statusHandle)
 			if status then
 				self:SetContextStatus(status, ui:GetTypeId())
 			end
@@ -954,7 +954,7 @@ function ContextMenu:GetCursorStatus(x,y)
 		statusHandle,ownerHandle,uiType = GetPlayerInfoCursorStatus(x,y)
 	end
 	if statusHandle then
-		local status = Ext.GetStatus(ownerHandle, statusHandle)
+		local status = Ext.Entity.GetStatus(ownerHandle, statusHandle)
 		if status then
 			return status,uiType
 		end

@@ -94,8 +94,8 @@ function SkillEventData:ForEach(func, mode)
 		for i,v in pairs(self.TargetObjects) do
 			local b,err = xpcall(func, debug.traceback, v, "string", self)
 			if not b then
-				Ext.PrintError("[LeaderLib:SkillEventData:ForEach] Error:")
-				Ext.PrintError(err)
+				Ext.Utils.PrintError("[LeaderLib:SkillEventData:ForEach] Error:")
+				Ext.Utils.PrintError(err)
 			end
 		end
 	end
@@ -104,8 +104,8 @@ function SkillEventData:ForEach(func, mode)
 		for i,v in pairs(self.TargetPositions) do
 			local b,err = xpcall(func, debug.traceback, v, "table", self)
 			if not b then
-				Ext.PrintError("[LeaderLib:SkillEventData:ForEach] Error:")
-				Ext.PrintError(err)
+				Ext.Utils.PrintError("[LeaderLib:SkillEventData:ForEach] Error:")
+				Ext.Utils.PrintError(err)
 			end
 		end
 	end

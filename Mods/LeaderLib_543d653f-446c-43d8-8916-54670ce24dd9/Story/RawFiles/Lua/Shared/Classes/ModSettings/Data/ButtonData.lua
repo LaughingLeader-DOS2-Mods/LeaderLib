@@ -51,7 +51,7 @@ local function TryInvokeFunctions(callback, ...)
 	if t == "function" then
 		local b,result = xpcall(callback, debug.traceback, ...)
 		if not b then
-			Ext.PrintError(result)
+			Ext.Utils.PrintError(result)
 		end
 	elseif t == "table" then
 		for _,c2 in pairs(callback) do

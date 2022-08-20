@@ -5,7 +5,7 @@ local Patches = {
 	["c60718c3-ba22-4702-9c5d-5ad92b41ba5f"] = {
 		Version = 153288705,
 		Patch = function (initialized, region)
-			Ext.PrintWarning("[LeaderLib] Patching Weapon Expansion version [153288706]")
+			Ext.Utils.PrintWarning("[LeaderLib] Patching Weapon Expansion version [153288706]")
 
 			--Fix Patches an event name conflict that prevented Soul Harvest's bonus from applying.
 			Ext.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript")
@@ -165,7 +165,7 @@ local Patches = {
 								end
 								ItemRemove(backpackGUID)
 							else
-								Ext.PrintError("[WeaponExpansion:GenerateTradeTreasure] Failed to create backpack from root template 'LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830'")
+								Ext.Utils.PrintError("[WeaponExpansion:GenerateTradeTreasure] Failed to create backpack from root template 'LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830'")
 								CharacterGiveReward(uuid, treasure, 1)
 							end
 						end)
@@ -316,7 +316,7 @@ local Patches = {
 
 local function PatchMods(initialized)
 	for uuid,data in pairs(Patches) do
-		if Ext.IsModLoaded(uuid) and (not data.Version or Ext.GetModInfo(uuid).Version <= data.Version) then
+		if Ext.Mod.IsModLoaded(uuid) and (not data.Version or Ext.GetModInfo(uuid).Version <= data.Version) then
 			data.Patch(initialized)
 		end
 	end

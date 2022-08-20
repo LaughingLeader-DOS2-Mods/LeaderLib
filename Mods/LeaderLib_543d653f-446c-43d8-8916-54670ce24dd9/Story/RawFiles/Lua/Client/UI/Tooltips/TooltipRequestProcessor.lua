@@ -93,7 +93,7 @@ local function _GetObjectFromDouble(doubleHandle, getObjectFunc)
 	if b then
 		return result
 	elseif _DEBUG then
-		Ext.PrintError(result)
+		Ext.Utils.PrintError(result)
 	end
 	return nil
 end
@@ -110,8 +110,8 @@ local function _GetObjectFromHandle(handle, getObjectFunc)
 		if b then
 			return result
 		elseif _DEBUG then
-			Ext.PrintError(result)
-			Ext.PrintError("_GetObjectFromHandle", handle)
+			Ext.Utils.PrintError(result)
+			Ext.Utils.PrintError("_GetObjectFromHandle", handle)
 		end
 	end
 	return nil

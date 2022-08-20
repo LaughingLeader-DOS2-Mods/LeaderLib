@@ -24,7 +24,7 @@ local function GetOsirisCombatCharacters(id, filter, filterReference, asTable)
 					if t == "function" then
 						local b,result = xpcall(filter, debug.traceback, uuid)
 						if not b then
-							Ext.PrintError(result)
+							Ext.Utils.PrintError(result)
 						elseif result == true then
 							objects[#objects+1] = character
 						end
@@ -87,7 +87,7 @@ end
 ---@param asTable boolean|nil Return results as a table, instead of an iterator function.
 ---@return fun():EsvCharacter|EsvCharacter[]
 function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)
-	if Ext.OsirisIsCallable() then
+	if _OSIRIS() then
 		return GetOsirisCombatCharacters(id, filter, filterReference, asTable)
 	end
 	local combat = Ext.GetCombat(id)
@@ -101,13 +101,13 @@ function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)
 					if t == "function" then
 						local b,result = xpcall(filter, debug.traceback, v.Character, v.CombatId, v.TeamId, v.Initiative, v.StillInCombat)
 						if not b then
-							Ext.PrintError(result)
+							Ext.Utils.PrintError(result)
 						elseif result == true then
 							objects[#objects+1] = v.Character
 						end
 					elseif t == "string" then
 						--TODO Replace osiris queries
-						if refuuid and Ext.OsirisIsCallable() then
+						if refuuid and _OSIRIS() then
 							if filter == "Player" and v.Character.IsPlayer then
 								objects[#objects+1] = v.Character
 							elseif filter == "Ally" and CharacterIsAlly(refuuid, v.Character.MyGuid) == 1 then
@@ -162,7 +162,7 @@ end
 ---@param obj ObjectParam
 ---@return integer
 function GameHelpers.Combat.GetID(obj)
-	if Ext.OsirisIsCallable() then
+	if _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(obj)
 		if GUID then
 			--TODO replace with obj.RootTempate.CombatComponent index, if that's made available

@@ -592,10 +592,9 @@ function GameHelpers.ObjectHasFlag(obj, flag)
 	return false
 end
 
----Get an object's root template UUID.
 ---@param obj ObjectParam
 ---@return string
-function GameHelpers.GetTemplate(obj)
+local function _GetTemplateID(obj)
 	if not _ISCLIENT and _osirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(obj)
 		if uuid then
@@ -604,21 +603,26 @@ function GameHelpers.GetTemplate(obj)
 	end
 	local object = _tryGetObject(obj)
 	if object and object.RootTemplate then
-		if _EXTVERSION < 56 then
-			if object.RootTemplate.TemplateName ~= "" then
-				return object.RootTemplate.TemplateName
-			else
-				return object.RootTemplate.Id
-			end
+		if object.RootTemplate.RootTemplate ~= "" then
+			return object.RootTemplate.RootTemplate
 		else
-			if object.RootTemplate.RootTemplate ~= "" then
-				return object.RootTemplate.RootTemplate
-			else
-				return object.RootTemplate.Id
-			end
+			return object.RootTemplate.Id
 		end
 	end
 	return nil
+end
+
+---@overload fun(obj:ObjectParam):GUID|nil
+---Get an object's root template UUID.
+---@param obj ObjectParam
+---@param asGameObjectTemplate boolean Returns a GameObjectTemplate if true.
+---@return GameObjectTemplate|nil
+function GameHelpers.GetTemplate(obj, asGameObjectTemplate)
+	local templateId = _GetTemplateID(obj)
+	if templateId and asGameObjectTemplate then
+		return Ext.Template.GetRootTemplate(templateId)
+	end
+	return templateId
 end
 
 local _cachedLevels = {}

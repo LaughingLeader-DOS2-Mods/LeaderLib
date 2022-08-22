@@ -874,16 +874,16 @@ Data.ArmorType = {
 }
 
 Data.ActionSkills = {
-	ActionAttackGround = true,
-	ActionSkillDisarm = true,
-	ActionSkillEndTurn = true,
-	ActionSkillFlee = true,
-	ActionSkillGuard = true,
-	ActionSkillIdentify = true,
-	ActionSkillLockpick = true,
-	ActionSkillRepair = true,
-	ActionSkillSheathe = true,
-	ActionSkillSneak = true,
+	ActionAttackGround = "Action_AttackGround",
+	ActionSkillDisarm = "Action_Disarm",
+	ActionSkillEndTurn = "Action_EndOfTurn",
+	ActionSkillFlee = "Action_Flee",
+	ActionSkillGuard = "Action_Guard",
+	ActionSkillIdentify = "Action_Identify",
+	ActionSkillLockpick = "Action_LockPick",
+	ActionSkillRepair = "Action_Repair",
+	ActionSkillSheathe = "Action_Sheath",
+	ActionSkillSneak = "Action_Sneak",
 }
 
 if Ext.IsServer() then

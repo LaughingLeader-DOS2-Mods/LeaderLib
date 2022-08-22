@@ -359,9 +359,18 @@ end
 
 GameHelpers.Skill.IsAction = GameHelpers.Stats.IsAction
 
+---@alias CharacterHasRequirementsFailureReason string
+---| "Combat" # Character not in combat
+---| "AP" # Not enough ActionPoints (CurrentAP)
+---| "SP" # Not enough Source Points (MPStart)
+---| "SkillRequirement" # The required weapon type isn't equipped.
+---| "Requirements" # One of the Requirements conditions failed (Tag, Ability/Attribute, etc)
+---| "MemorizationRequirements" # One of the MemorizationRequirements conditions failed (Tag, Ability/Attribute, etc)
+
 ---@param char EsvCharacter|EclCharacter
 ---@param statId string A skill or item stat.
----@return boolean
+---@return boolean hasRequirements
+---@return CharacterHasRequirementsFailureReason|nil requirementsFailedReason # The initial reason the requirements aren't met.
 function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 	if GameHelpers.Stats.IsAction(statId) then
 		return true
@@ -375,14 +384,14 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 		for _,req in pairs(stat.Requirements) do
 			if req.Requirement == "Combat" then
 				if isInCombat == req.Not then
-					return false
+					return false,"Combat"
 				end
 			else
 				local callback = RequirementFunctions[req.Requirement]
 				if callback then
 					local result = callback(character, req.Requirement, req.Param, req.Not)
 					if result == false then
-						return false
+						return false,"Requirements"
 					end
 				end
 			end
@@ -392,44 +401,44 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 			local items = {GameHelpers.Character.GetEquippedWeapons(character)}
             if stat.Requirement == Data.SkillRequirement.MeleeWeapon then
                 if not GameHelpers.Item.IsWeaponType(items, meleeTypes) then
-                    return false
+                    return false,"SkillRequirement"
                 end
             elseif stat.Requirement == Data.SkillRequirement.DaggerWeapon then
                 if not GameHelpers.Item.IsWeaponType(items, "Dagger") then
-                    return false
+                    return false,"SkillRequirement"
                 end
             elseif stat.Requirement == Data.SkillRequirement.ShieldWeapon then
                 if items[2] == nil or items[2].Stats.ItemType ~= "Shield" then
-                    return false
+                    return false,"SkillRequirement"
                 end
             elseif stat.Requirement == Data.SkillRequirement.StaffWeapon then
                 if not GameHelpers.Item.IsWeaponType(items, "Staff") then
-                    return false
+                    return false,"SkillRequirement"
                 end
             elseif stat.Requirement == Data.SkillRequirement.RangedWeapon then
                 if not GameHelpers.Item.IsWeaponType(items, rangeTypes) then
-                    return false
+                    return false,"SkillRequirement"
                 end
             elseif stat.Requirement == Data.SkillRequirement.ArrowWeapon then
                 if not GameHelpers.Item.IsWeaponType(items, "Arrow") then
-                    return false
+                    return false,"SkillRequirement"
                 end
             elseif stat.Requirement == Data.SkillRequirement.RifleWeapon then
                 if not GameHelpers.Item.IsWeaponType(items, "Rifle") then
-                    return false
+                    return false,"SkillRequirement"
                 end
             end
 			local sourceCost = stat["Magic Cost"] or 0
 			if sourceCost > 0 then
 				if character.Stats.MPStart < sourceCost then
-					return false
+					return false,"SP"
 				end
 			end
 
 			if isInCombat then
 				local apCost = stat.ActionPoints or 0
 				if apCost > 0 and character.Stats.CurrentAP < apCost then
-					return false
+					return false,"AP"
 				end
 			end
 
@@ -441,14 +450,14 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 			for _,req in pairs(stat.MemorizationRequirements) do
 				if req.Requirement == "Combat" then
 					if isInCombat == req.Not then
-						return false
+						return false,"Combat"
 					end
 				else
 					local callback = RequirementFunctions[req.Requirement]
 					if callback then
 						local result = callback(character, req.Requirement, req.Param, req.Not)
 						if result == false then
-							return false
+							return false,"MemorizationRequirements"
 						end
 					end
 				end
@@ -456,7 +465,7 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 		elseif isInCombat and (GameHelpers.Stats.IsStatType(statId, "Object") or GameHelpers.Stats.IsStatType(statId, "Potion")) then
 			local apCost = stat.UseAPCost or 0
 			if apCost > 0 and character.Stats.CurrentAP < apCost then
-				return false
+				return false,"AP"
 			end
 		end
 		

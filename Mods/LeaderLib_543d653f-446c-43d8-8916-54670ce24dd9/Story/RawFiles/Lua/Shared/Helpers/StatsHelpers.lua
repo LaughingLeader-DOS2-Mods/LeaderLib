@@ -344,6 +344,9 @@ local RequirementFunctions = {
 ---@param statId string A skill or item stat.
 ---@return boolean
 function GameHelpers.Stats.CharacterHasRequirements(char, statId)
+	if Data.ActionSkills[statId] then
+		return true
+	end
 	local stat = Ext.Stats.Get(statId)
 	local character = GameHelpers.GetCharacter(char)
 	fassert(stat ~= nil, "Failed to get stat from %s", statId)

@@ -125,7 +125,7 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 		end
 	end
 
-	local isAction = GameHelpers.Skill.IsAction(skill)
+	local isAction = GameHelpers.Stats.IsAction(skill)
 
 	if not isAction then
 		if Features.FixRifleWeaponRequirement then

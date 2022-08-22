@@ -340,11 +340,30 @@ local RequirementFunctions = {
 	end,
 }
 
+---Returns true if the string is an action "skill" (not actually a skill), such as sneaking or unsheathing.
+---@param skill string
+---@return boolean
+function GameHelpers.Stats.IsAction(skill)
+    local t = type(skill)
+    if t == "table" then
+        for _,v in pairs(skill) do
+            if Data.ActionSkills[skill] then
+                return true
+            end
+        end
+    elseif t == "string" then
+        return Data.ActionSkills[skill]
+    end
+    return false
+end
+
+GameHelpers.Skill.IsAction = GameHelpers.Stats.IsAction
+
 ---@param char EsvCharacter|EclCharacter
 ---@param statId string A skill or item stat.
 ---@return boolean
 function GameHelpers.Stats.CharacterHasRequirements(char, statId)
-	if Data.ActionSkills[statId] then
+	if GameHelpers.Stats.IsAction(statId) then
 		return true
 	end
 	local stat = Ext.Stats.Get(statId)
@@ -528,6 +547,9 @@ end
 ---@param asDisplayName boolean|nil Return the mod's display name.
 ---@return Module|string|nil
 function GameHelpers.Stats.GetModInfo(id, asDisplayName)
+	if GameHelpers.Stats.IsAction(id) then
+		return "Shared"
+	end
 	local stat = Ext.Stats.Get(id)
 	if stat then
 		if not StringHelpers.IsNullOrEmpty(stat.ModId) then

@@ -417,7 +417,7 @@ if not _ISCLIENT then
 		end
 	end)
 
-	Ext.RegisterOsirisListener("ObjectTurnStarted", 2, "after", function(char, combatid)
+	Ext.Osiris.RegisterListener("ObjectTurnStarted", 2, "after", function(char, combatid)
 		if CharacterIsControlled(char) == 1 then
 			local id = CharacterGetReservedUserID(char)
 			if id ~= nil then

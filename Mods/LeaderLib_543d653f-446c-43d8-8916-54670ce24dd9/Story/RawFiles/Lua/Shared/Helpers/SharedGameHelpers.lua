@@ -1028,3 +1028,25 @@ function GameHelpers.GetModVersion(guid, asSingleInteger)
 	end
 	return -1
 end
+
+---@param obj ObjectParam
+---@return boolean
+function GameHelpers.IsInCombat(obj)
+	if _OSIRIS() then
+		local uuid = GameHelpers.GetUUID(obj)
+		if not uuid then
+			return false
+		end
+		if ObjectIsCharacter(uuid) == 1 and CharacterIsInCombat(uuid) == 1 then
+			return true
+		else
+			local db = Osi.DB_CombatObjects:Get(uuid, nil)
+			if db ~= nil and #db > 0 then
+				return true
+			end
+		end
+	else
+		return GameHelpers.Status.IsActive(obj, "COMBAT")
+	end
+	return false
+end

@@ -82,6 +82,28 @@ DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation
 DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Mental_Loop", "stillmental", 1);
 DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Sneaking_Loop", "stillsneaking", 1);
 
+PROC
+LeaderLib_Dialog_ClearStatusGroup((STRING)_Group)
+AND
+DB_LeaderLib_Dialog_StatusFlags(_Group, _Flag, _Status, _Duration)
+THEN
+NOT DB_LeaderLib_Dialog_StatusFlags(_Group, _Flag, _Status, _Duration);
+
+PROC
+LeaderLib_Dialog_ClearAnimationGroup((STRING)_Group)
+AND
+DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Looped)
+THEN
+NOT DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Looped);
+
+PROC
+LeaderLib_Dialog_InitSettings()
+THEN
+LeaderLib_Dialog_InitRedirectionBlacklist();
+
+PROC
+LeaderLib_Dialog_InitRedirectionBlacklist()
+THEN
 //Blacklist specific Origin dialogs for redirection
 LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_RedPrinceAssassin");
 LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("RC_DW_IfanKid");
@@ -94,6 +116,26 @@ LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_Fane_Date");
 LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("TUT_LowerDeck_OriginIfan");
 LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("TUT_LowerDeck_OriginIfan_DeadMagister");
 LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_ShakedownEvent");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_Hub_HenchmenRecruiter");
+//Don't redirect god-related dialog
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_SW_HoEStatue_001");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_SW_HoEStatue_002");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_SW_HoEStatue_003");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_SW_HoE_UndeadGod");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_SW_HoE_Rhalic");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_SW_HoE_Lohse");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_SW_HoE_ZorlStissa");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_SW_HoE_TirCendelius");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_SW_HoE_Duna");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_HoE_DeadGod");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_HoE_God_Amadia");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_HoE_God_Duna");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_HoE_God_Lohse");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_HoE_God_Rhalic");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_HoE_God_TirCendelius");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_HoE_God_Vrogir");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_HoE_God_Xantezza");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("LV_HoE_God_ZorlStissa");
 
 //Specific dialogs started with origins in mind
 LeaderLib_DialogOverride_Register_BlacklistRedirection("ARX_HorrorSleep_Sunset_RedPrincess_SexScene",CHARACTERGUID_S_GLO_RedPrincess_050fbbf9-3fc9-40cd-9cbb-43b4b3754a5e,ITEMGUID_S_HorrorSleep_Sunset_StartSeduction_Sunset_CameraHelper_2bd6c4ed-a39c-4038-919a-e74fe7902daa,CHARACTERGUID_S_Player_RedPrince_a26a1efb-cdc8-4cf3-a7b2-b2f9544add6f);
@@ -111,20 +153,6 @@ LeaderLib_DialogOverride_Register_BlacklistRedirection("FTJ_LohseSaheilaEventEnd
 LeaderLib_DialogOverride_Register_BlacklistRedirection("FTJ_SW_CheckpointSourcerer_Brahmos", CHARACTERGUID_S_GLO_Brahmos_d4064352-33f9-49df-b208-09fd822d2270,CHARACTERGUID_S_Player_RedPrince_a26a1efb-cdc8-4cf3-a7b2-b2f9544add6f);
 LeaderLib_DialogOverride_Register_BlacklistRedirection("Lohse2",CHARACTERGUID_S_Player_Lohse_bb932b13-8ebf-4ab4-aac0-83e6924e4295,CHARACTERGUID_S_Player_Ifan_ad9a3327-4456-42a7-9bf4-7ad60cc9e54f);
 LeaderLib_DialogOverride_Register_BlacklistRedirection("RC_ARX_LizardNoble",S_RC_ARX_LizardNoble_003d31c6-e2bf-4850-a15d-389727593e42, CHARACTERGUID_S_Player_RedPrince_a26a1efb-cdc8-4cf3-a7b2-b2f9544add6f);
-
-PROC
-LeaderLib_Dialog_ClearStatusGroup((STRING)_Group)
-AND
-DB_LeaderLib_Dialog_StatusFlags(_Group, _Flag, _Status, _Duration)
-THEN
-NOT DB_LeaderLib_Dialog_StatusFlags(_Group, _Flag, _Status, _Duration);
-
-PROC
-LeaderLib_Dialog_ClearAnimationGroup((STRING)_Group)
-AND
-DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Looped)
-THEN
-NOT DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Looped);
 //END_REGION
 
 //REGION UPDATES
@@ -133,7 +161,6 @@ LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (S
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 12, 0)
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating surface settings from version [",_PastVersion,"].");
 SysClear("DB_LeaderLib_Dialog_DialogFiles", 1);
 LeaderLib_Dialog_InitSettings();
 LeaderLib_Dialog_Internal_RemovePlayersFromDialog();
@@ -155,8 +182,14 @@ LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (S
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 5, 5, 0)
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating surface settings from version [",_PastVersion,"].");
 LeaderLib_Dialog_InitSettings();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 7, 26, 6)
+THEN
+LeaderLib_Dialog_InitRedirectionBlacklist();
 //END_REGION
 
 //REGION NAME_VARS

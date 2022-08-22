@@ -536,9 +536,9 @@ NOT DB_LeaderLib_DialogOverride_RedirectionTarget(_Target);
 QRY
 LeaderLib_DialogOverride_QRY_CanRedirect((STRING)_Dialog)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog,_,_)
-AND
 NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog,_,_)
 AND
 NOT LeaderLib_ModMenu_QRY_IsRegistered(_Dialog)
 AND

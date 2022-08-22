@@ -125,7 +125,9 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 		end
 	end
 
-	if Data.ActionSkills[skill] ~= true then
+	local isAction = GameHelpers.Skill.IsAction(skill)
+
+	if not isAction then
 		if Features.FixRifleWeaponRequirement then
 			local requirement = Ext.StatGetAttribute(skill, "Requirement")
 			if requirement == "RifleWeapon" then
@@ -179,7 +181,7 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 	end
 
 	for i,element in pairs(tooltip:GetElements("SkillDescription")) do
-		if Data.ActionSkills[skill] ~= true then
+		if not isAction then
 			FixDamageNames(skill, element)
 		end
 		if Features.TooltipGrammarHelper == true then

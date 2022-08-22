@@ -33,7 +33,7 @@ if Vars.IsClient then
 			local skillId = arr[i+2]
 			if not StringHelpers.IsNullOrEmpty(skillId) 
 			and string.find(skillId, "_") 
-			and Data.ActionSkills[skillId] ~= true then
+			and not GameHelpers.Skill.IsAction(skillId) then
 				--IsEnabled
 				if arr[i+3] == true then
 					---@type StatEntrySkillData

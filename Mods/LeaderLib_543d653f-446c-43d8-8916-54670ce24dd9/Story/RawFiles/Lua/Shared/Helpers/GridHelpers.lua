@@ -233,7 +233,9 @@ if not _ISCLIENT then
 		--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distMult)
 		local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(targetObject, sourceObject, distanceMultiplier < 0)
 		local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionalVector, distMult)
-	
+
+		--NRD_CreateGameObjectMove(me.MyGuid, me.WorldPos[1] + 2, me.WorldPos[2], me.WorldPos[3] + 2, "", me.MyGuid); Mods.LeaderLib.Timer.StartOneshot("", 50, function() Ext.IO.SaveFile("Dumps/ActionMachine.json", Ext.DumpExport(Ext.Entity.GetCurrentLevel().GameActionManager)) end);
+		--local x,y,z = table.unpack(me.WorldPos); NRD_CreateRain(me.MyGuid, "Rain_Water", x, y, z)
 		if tx and tz then
 			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, beamEffect or "", sourceObject.MyGuid)
 			if handle then

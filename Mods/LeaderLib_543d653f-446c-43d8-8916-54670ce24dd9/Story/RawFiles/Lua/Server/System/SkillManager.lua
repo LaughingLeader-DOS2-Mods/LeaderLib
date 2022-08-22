@@ -622,7 +622,7 @@ function _REGISTER.All(skill, callback, onlySkillState, priority, once)
 	if t == "table" then
 		local indexes = {}
 		for _,v in pairs(skill) do
-			if not Data.ActionSkills[v] then
+			if not GameHelpers.Skill.IsAction(v) then
 				local index = _REGISTER.All(v, callback, onlySkillState, priority, once)
 				if index then
 					indexes[#indexes+1] = index
@@ -633,7 +633,7 @@ function _REGISTER.All(skill, callback, onlySkillState, priority, once)
 		end
 		return indexes
 	elseif t == "string" then
-		if Data.ActionSkills[skill] then
+		if GameHelpers.Skill.IsAction(skill) then
 			fprint(LOGLEVEL.WARNING, "[SkillManager.Register.All] Skill (%s) is a hotbar action, and not an actual skill. Skipping.", skill)
 			return nil
 		end

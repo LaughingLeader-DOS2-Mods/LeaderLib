@@ -404,8 +404,8 @@ if not _ISCLIENT then
 	---@field Target EsvCharacter
 	---@field Source EsvCharacter|EsvItem|nil
 	---@field Heal EsvStatusHeal
-	---@field OriginalAmount integer
-	---@field Handle integer
+	---@field OriginalAmount integer The amount before LeaderLib's OnHeal listeners were invoked. 
+	---@field Handle integer The healing handle in NRD_OnHeal
 	---@field Skill string|nil
 	---@field HealingSourceStatus EsvStatusHealing|nil
 	

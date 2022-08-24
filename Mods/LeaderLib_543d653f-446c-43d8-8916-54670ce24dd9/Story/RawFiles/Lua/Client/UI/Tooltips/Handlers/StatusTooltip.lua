@@ -102,7 +102,7 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 			description.Label = string.format("%s%s", description.Label or "", LocalizedText.Tooltip.StatusSource:ReplacePlaceholders(sourceName))
 		end
 	end
-	if Features.DisplayStatusDebugInfo then
+	if Features.DisplayDebugInfoInTooltips then
 		local idText = ""
 		-- if status.StatusType ~= status.StatusId then
 		-- 	idText = string.format("<font color='%s'>%s</font><br><font color='%s' size='18'>%s</font>", Data.Colors.Common.AztecGold, status.StatusId, Data.Colors.Common.Bittersweet, status.StatusType)

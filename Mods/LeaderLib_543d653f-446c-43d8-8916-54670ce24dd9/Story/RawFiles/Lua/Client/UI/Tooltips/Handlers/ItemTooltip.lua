@@ -261,5 +261,14 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				end
 			end
 		end
+
+		if Features.DisplayDebugInfoInTooltips then
+			local description = tooltip:GetDescriptionElement({Type="ItemDescription", Label=""})
+			local idText = string.format("<font color='%s'>%s</font>", Data.Colors.Common.AztecGold, item.StatsFromName.Name)
+			if description.Label ~= "" then
+				description.Label = description.Label .. "<br>"
+			end
+			description.Label = string.format("%s%s", description.Label, idText)
+		end
 	end
 end

@@ -133,6 +133,7 @@ end)
 
 --- @param attacker EsvCharacter|EsvItem
 --- @param target EsvCharacter|EsvItem|number[]
+--- @param targetIsObject boolean
 --- @param data HitData|DamageList
 --- @param skill StatEntrySkillData|nil
 function _INTERNAL.InvokeWeaponEvents(attacker, target, targetIsObject, data, skill)
@@ -142,7 +143,9 @@ function _INTERNAL.InvokeWeaponEvents(attacker, target, targetIsObject, data, sk
 			Events.OnWeaponTagHit:Invoke({
 				Tag = tag,
 				Attacker = attacker,
+				AttackerGUID = attacker.MyGuid,
 				Target = target,
+				TargetGUID = targetIsObject and target.MyGuid or "",
 				TargetIsObject = targetIsObject,
 				Data = data,
 				Skill = skill and skill.Name or nil,

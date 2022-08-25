@@ -249,14 +249,16 @@ function _INTERNAL.InvokeTurnEndedListeners(obj)
 				if b then
 					Events.OnTurnEnded:Invoke({
 						ID = id,
-						Object = object
+						Object = object,
+						ObjectGUID = object.MyGuid
 					})
 				end
 			end
 			_PV.WaitForTurnEnding[obj] = nil
 		else
 			Events.OnTurnEnded:Invoke({
-				Object = object
+				Object = object,
+				ObjectGUID = object.MyGuid
 			})
 		end
 	end

@@ -179,3 +179,106 @@ function OnCharacterResurrected(uuid)
 		Events.CharacterResurrected:Invoke({Character=character, CharacterGUID = character.MyGuid, IsPlayer = GameHelpers.Character.IsPlayer(character)})
 	end
 end
+
+Ext.Osiris.RegisterListener("CharacterUsedItem", 2, "before", function (characterGUID, itemGUID)
+	characterGUID = StringHelpers.GetUUID(characterGUID)
+	itemGUID = StringHelpers.GetUUID(itemGUID)
+	local character = GameHelpers.GetCharacter(characterGUID)
+	local item = GameHelpers.GetItem(itemGUID)
+	Events.CharacterUsedItem:Invoke({
+		Character = character,
+		CharacterGUID = characterGUID,
+		Item = item,
+		ItemGUID = itemGUID,
+		Template = item and GameHelpers.GetTemplate(item) or "",
+		Success = true,
+	})
+end)
+
+Ext.Osiris.RegisterListener("CharacterUsedItemFailed", 2, "before", function (characterGUID, itemGUID)
+	characterGUID = StringHelpers.GetUUID(characterGUID)
+	itemGUID = StringHelpers.GetUUID(itemGUID)
+	local character = GameHelpers.GetCharacter(characterGUID)
+	local item = GameHelpers.GetItem(itemGUID)
+	Events.CharacterUsedItem:Invoke({
+		Character = character,
+		CharacterGUID = characterGUID,
+		Item = item,
+		ItemGUID = itemGUID,
+		Template = item and GameHelpers.GetTemplate(item) or "",
+		Success = false,
+	})
+end)
+
+local _RuneAccessorySlot = {
+	Amulet = true,
+	Ring = true,
+	Ring2 = true,
+	Belt = true,
+}
+
+---@param item EsvItem
+---@param runeStat StatEntryObject
+local function _GetRuneBoost(item, runeStat)
+	local activeBoostStat = ""
+	local activeBoostStatAttribute = ""
+	if item.Stats.ItemType == "Weapon" then
+		activeBoostStatAttribute = "RuneEffectWeapon"
+	elseif item.Stats.ItemType == "Armor" then
+		if _RuneAccessorySlot[item.Stats.ItemSlot] then
+			activeBoostStatAttribute = "RuneEffectAmulet"
+		else
+			activeBoostStatAttribute = "RuneEffectUpperbody"
+		end
+	end
+	if runeStat then
+		activeBoostStat = runeStat[activeBoostStatAttribute] or ""
+	end
+
+	return not StringHelpers.IsNullOrWhitespace(activeBoostStat) and Ext.Stats.Get(activeBoostStat, nil, false), activeBoostStat, activeBoostStatAttribute
+end
+
+Ext.Osiris.RegisterListener("RuneInserted", 4, "before", function (characterGUID, itemGUID, runeTemplate, slot)
+	characterGUID = StringHelpers.GetUUID(characterGUID)
+	itemGUID = StringHelpers.GetUUID(itemGUID)
+	runeTemplate = StringHelpers.GetUUID(runeTemplate)
+	local character = GameHelpers.GetCharacter(characterGUID)
+	local item = GameHelpers.GetItem(itemGUID)
+	local template = Ext.Template.GetRootTemplate(runeTemplate)
+	local runeStat = Ext.Stats.Get(template.Stats, nil, false)
+	local boostStat,boostStatName,boostStatAttribute = _GetRuneBoost(item, runeStat)
+	Events.RuneChanged:Invoke({
+		Character = character,
+		CharacterGUID = characterGUID,
+		Item = item,
+		ItemGUID = itemGUID,
+		RuneTemplate = runeTemplate,
+		RuneSlot = slot,
+		Inserted = true,
+		BoostStat = boostStat,
+		BoostStatID = boostStatName,
+		BoostStatAttribute = boostStatAttribute,
+	})
+end)
+
+Ext.Osiris.RegisterListener("RuneRemoved", 4, "after", function (characterGUID, itemGUID, runeGUID, slot)
+	characterGUID = StringHelpers.GetUUID(characterGUID)
+	itemGUID = StringHelpers.GetUUID(itemGUID)
+	runeGUID = StringHelpers.GetUUID(runeGUID)
+	local character = GameHelpers.GetCharacter(characterGUID)
+	local item = GameHelpers.GetItem(itemGUID)
+	local rune = GameHelpers.GetItem(runeGUID)
+	local boostStat,boostStatName,boostStatAttribute = _GetRuneBoost(item, rune.StatsFromName.StatsEntry)
+	Events.RuneChanged:Invoke({
+		Character = character,
+		CharacterGUID = characterGUID,
+		Item = item,
+		ItemGUID = itemGUID,
+		RuneTemplate = rune and GameHelpers.GetTemplate(rune) or "",
+		RuneSlot = slot,
+		Inserted = false,
+		BoostStat = boostStat,
+		BoostStatID = boostStatName,
+		BoostStatAttribute = boostStatAttribute,
+	})
+end)

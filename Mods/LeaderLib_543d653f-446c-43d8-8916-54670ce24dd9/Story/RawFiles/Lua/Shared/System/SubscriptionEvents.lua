@@ -304,17 +304,17 @@ if not _ISCLIENT then
 	---@class ComputeCharacterHitEventArgs
 	---@field AlwaysBackstab boolean
 	---@field Attacker StatCharacter
-	---@field CriticalRoll CriticalRollFlag
+	---@field CriticalRoll StatsCriticalRoll
 	---@field DamageList DamageList
 	---@field ForceReduceDurability boolean
 	---@field Handled boolean
-	---@field HighGround HighGroundFlag
-	---@field Hit HitRequest
+	---@field HighGround StatsHighGroundBonus
+	---@field Hit StatsHitDamageInfo
 	---@field HitType HitTypeValues
 	---@field NoHitRoll boolean
 	---@field SkillProperties AnyStatProperty[]
 	---@field Target StatCharacter
-	---@field Weapon StatItem
+	---@field Weapon CDivinityStatsItem
 	
 	---Hit listeners/callbacks, for mod compatibility.  
 	---Called from HitOverrides.ComputeCharacterHit at the end of the function, if certain features are enabled or listeners are registered.  
@@ -436,6 +436,7 @@ if not _ISCLIENT then
 	---@class OnTurnEndedEventArgs
 	---@field ID string A turn counter ID tracking this character, if any.
 	---@field Object ObjectParam
+	---@field ObjectGUID GUID
 	
 	---Called when an object's turn ends in combat, or they leave combat.  
 	---If a TurnCounter is associated with this object, that ID is specified.  
@@ -688,7 +689,9 @@ if not _ISCLIENT then
 
 	---@class OnWeaponHitEventArgs
 	---@field Target EsvCharacter|EsvItem|number[]
+	---@field TargetGUID GUID
 	---@field Attacker EsvCharacter|EsvItem|nil
+	---@field AttackerGUID GUID
 	---@field Data HitData|BasicAttackPositionDamageData
 	---@field TargetIsObject boolean
 	---@field Skill string|nil Separate from SkillData, so it can be used more easily with MatchArgs.
@@ -766,6 +769,37 @@ if not _ISCLIENT then
 	Events.CharacterDied = Classes.SubscribableEvent:Create("CharacterDied", {
 		ArgsKeyOrder={"Character", "IsPlayer", "State", "StateIndex"}
 	})
+
+	---@class CharacterUsedItemEventArgs
+	---@field Character EsvCharacter
+	---@field CharacterGUID GUID
+	---@field Item EsvItem
+	---@field ItemGUID GUID
+	---@field Template GUID
+	---@field Success boolean Can be false if this is raised by a CharacterUsedItemFailed event.
+
+	---Called when a character uses an item.  
+	---🔨**Server-Only**🔨 
+	---@type LeaderLibSubscribableEvent<CharacterUsedItemEventArgs>
+	Events.CharacterUsedItem = Classes.SubscribableEvent:Create("CharacterUsedItem")
+
+	---@class RuneChangedEventArgs
+	---@field Item EsvItem
+	---@field ItemGUID GUID
+	---@field Character EsvCharacter
+	---@field CharacterGUID GUID
+	---@field RuneSlot integer
+	---@field Inserted boolean
+	---@field Rune EsvItem|nil Only set if the rune was removed, otherwise the rune object does not exist.
+	---@field RuneTemplate GUID The rune object stat root template.
+	---@field BoostStat StatEntryWeapon|StatEntryArmor The active rune boost stat for this item
+    ---@field BoostStatID string The active rune boost stat name for this item
+    ---@field BoostStatAttribute "RuneEffectWeapon"|"RuneEffectAmulet"|"RuneEffectUpperbody"
+	
+	---Called when a rune is inserted or removed from an item.  
+	---🔨**Server-Only**🔨  
+	---@type LeaderLibSubscribableEvent<RuneChangedEventArgs>
+	Events.RuneChanged = Classes.SubscribableEvent:Create("RuneChanged")
 else
 	---@class ClientDataSyncedEventArgs
 	---@field Data SharedData

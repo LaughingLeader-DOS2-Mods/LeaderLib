@@ -609,6 +609,72 @@ if not _ISCLIENT then
         end
     end
 
+    ---@class GameHelpers.Item.GetRunes.RuneEntry
+    ---@field RuneSlot integer The rune slot, starting at 0
+    ---@field Stat StatEntryObject The rune object stat
+    ---@field StatID string The rune object stat name
+    ---@field Template GameObjectTemplate The object stat's root template
+    ---@field TemplateGUID GUID The object stat's root template GUID
+    ---@field BoostStat StatEntryWeapon|StatEntryArmor The active rune boost stat for this item
+    ---@field BoostStatID string The active rune boost stat name for this item
+    ---@field BoostStatAttribute "RuneEffectWeapon"|"RuneEffectAmulet"|"RuneEffectUpperbody"
+
+    local _RuneAccessorySlot = {
+        Amulet = true,
+        Ring = true,
+        Ring2 = true,
+        Belt = true,
+    }
+
+    ---Get inserted runes for an item.  
+    ---🔨**Server-Only**🔨  
+    ---@param item EsvItem
+    ---@return {[1]:GameHelpers.Item.GetRunes.RuneEntry|nil,[2]:GameHelpers.Item.GetRunes.RuneEntry|nil,[3]:GameHelpers.Item.GetRunes.RuneEntry|nil} insertedRunes
+    function GameHelpers.Item.GetRunes(item)
+        if not item or not item.Stats then
+            return {}
+        end
+        local runes = {}
+        local runeSlot = 0
+        local itemType = item.Stats.ItemType
+        for i=2,4 do
+            runeSlot = runeSlot + 1
+            local entry = item.Stats.DynamicStats[i]
+            if entry and not StringHelpers.IsNullOrEmpty(entry.BoostName) then
+                local runeStat = Ext.Stats.Get(entry.BoostName, nil, false)
+                if runeStat then
+                    local template = Ext.Template.GetRootTemplate(runeStat.RootTemplate)
+                    local activeBoostStat = ""
+                    local activeBoostStatAttribute = ""
+                    if itemType == "Weapon" then
+                        activeBoostStat = runeStat.RuneEffectWeapon
+                        activeBoostStatAttribute = "RuneEffectWeapon"
+                    elseif itemType == "Armor" then
+                        if _RuneAccessorySlot[item.Stats.ItemSlot] then
+                            activeBoostStat = runeStat.RuneEffectAmulet
+                            activeBoostStatAttribute = "RuneEffectAmulet"
+                        else
+                            activeBoostStat = runeStat.RuneEffectUpperbody
+                            activeBoostStatAttribute = "RuneEffectUpperbody"
+                        end
+                    end
+
+                    runes[runeSlot] = {
+                        RuneSlot=runeSlot-1,
+                        Stat=runeStat,
+                        StatID=runeStat.Name,
+                        Template=template,
+                        TemplateGUID=runeStat.RootTemplate,
+                        BoostStat = not StringHelpers.IsNullOrWhitespace(activeBoostStat) and Ext.Stats.Get(activeBoostStat, nil, false),
+                        BoostStatID = activeBoostStat,
+                        BoostStatAttribute = activeBoostStatAttribute,
+                    }
+                end
+            end
+        end
+        return runes
+    end
+
     ---Removes an item in a slot, if one exists.
     ---🔨**Server-Only**🔨  
     ---@param character CharacterParam
@@ -797,7 +863,7 @@ end
 
 ---@param item ItemParam
 ---@param returnNilUUID boolean|nil
----@return UUID
+---@return GUID
 function GameHelpers.Item.GetOwner(item, returnNilUUID)
 	local item = GameHelpers.GetItem(item)
 	if item then

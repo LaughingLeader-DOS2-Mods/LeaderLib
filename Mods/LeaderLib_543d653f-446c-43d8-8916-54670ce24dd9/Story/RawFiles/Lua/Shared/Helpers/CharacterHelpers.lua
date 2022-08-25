@@ -811,8 +811,8 @@ function GameHelpers.Character.IsInSurface(character, matchNames, maxRadius, con
 end
 
 ---Equips an item to its stats Slot using NRD_CharacterEquipItem, and moves any existing item in that slot to the character's inventory.
----@param character EsvCharacter|UUID
----@param item EclItem|UUID
+---@param character CharacterParam
+---@param item ItemParam
 ---@return boolean
 function GameHelpers.Character.EquipItem(character, item)
 	if not _ISCLIENT then

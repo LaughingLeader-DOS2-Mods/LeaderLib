@@ -76,7 +76,7 @@ if not _ISCLIENT then
 		local characters = {}
 		for i=1,totalCharacters do
 			local pos = GameHelpers.Grid.GetValidPositionInRadius(startingPos, 6.0)
-			local character = TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], params.UserTemplate or GameHelpers.GetTemplate(host), 0)
+			local character = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], params.UserTemplate or GameHelpers.GetTemplate(host), 0))
 			NRD_CharacterSetPermanentBoostInt(character, "Accuracy", 200)
 			CharacterSetCustomName(character, "Test User1")
 			SetupCharacter(character, host.MyGuid, params.EquipmentSet)
@@ -90,7 +90,7 @@ if not _ISCLIENT then
 		local dummies = {}
 		for i=1,totalDummies do
 			local pos = {GameHelpers.Grid.GetValidPositionInRadius(startingPos, 6.0)}
-			local dummy = TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], params.DummyTemplate or _GetDummyTemplate(), 0)
+			local dummy = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], params.DummyTemplate or _GetDummyTemplate(), 0))
 			NRD_CharacterSetPermanentBoostInt(dummy, "Dodge", -100)
 
 			PlayEffect(dummy, "RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_01", "")

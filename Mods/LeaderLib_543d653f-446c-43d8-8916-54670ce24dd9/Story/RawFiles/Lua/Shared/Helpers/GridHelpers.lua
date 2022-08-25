@@ -824,7 +824,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 		end
 	end
 
-	if opts.Sort ~= "None" then
+	if opts.Sort and opts.Sort ~= "None" then
 		if opts.Sort == "Random" then
 			objects = Common.ShuffleTable(objects)
 		elseif opts.Sort == "Distance" then

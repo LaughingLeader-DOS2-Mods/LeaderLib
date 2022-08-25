@@ -1819,7 +1819,6 @@ local function _ElementTypeMatch(e,t,isTable)
 	return false
 end
 
----@overload fun(self:TooltipData, t:TooltipElementType, fallback:TooltipElement|nil)
 ---@generic T:TooltipElement|TooltipElementType
 ---@param t `T`|`T`[] The tooltip element type, or an array of element types.
 ---@param fallback TooltipElement|nil If an element of the desired type isn't found, append and return this fallback element.

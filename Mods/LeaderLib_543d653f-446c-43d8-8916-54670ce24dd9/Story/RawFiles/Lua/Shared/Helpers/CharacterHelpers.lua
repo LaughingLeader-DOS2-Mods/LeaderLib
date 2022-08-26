@@ -368,20 +368,33 @@ end
 
 ---Returns the race of the character, if it's one of the base 4 player races.
 ---@param character CharacterParam
----@return RaceTag|nil
+---@return BaseRace|nil
 function GameHelpers.Character.GetBaseRace(character)
 	character = GameHelpers.GetCharacter(character)
 	if character and character.HasTag then
+		local rootTemplate = GameHelpers.GetTemplate(character, true)
 		for raceId,raceData in pairs(Vars.RaceData) do
-			if character:HasTag(raceData.Tag) 
-			or character:HasTag(raceData.BaseTag)
-			or string.find(character.RootTemplate.TemplateName, raceId)
-			or (character.PlayerCustomData and character.PlayerCustomData.Race == raceId) then
+			if character:HasTag(raceData.Tag) or character:HasTag(raceData.BaseTag)
+			or (character.PlayerCustomData and character.PlayerCustomData.Race == raceId)
+			or string.find(rootTemplate.Name, raceId)
+			then
 				return raceId
 			end
 		end
 	end
 	return nil
+end
+
+---Get the character's race, if any.  
+---@param character CharacterParam
+---@return BaseRace|string
+function GameHelpers.Character.GetRace(character)
+	character = GameHelpers.GetCharacter(character)
+	assert(GameHelpers.Ext.ObjectIsCharacter(character), "target parameter must be a character UUID, NetID, or Esv/EclCharacter")
+	if character.PlayerCustomData and not StringHelpers.IsNullOrWhitespace(character.PlayerCustomData.Race) then
+		return character.PlayerCustomData.Race
+	end
+	return GameHelpers.Character.GetBaseRace(character) or "None"
 end
 
 ---Returns true if the character is one of the regular humanoid races.
@@ -1019,15 +1032,18 @@ end
 ---@param character CharacterParam
 ---@param tag string|string[]
 ---@param asTable boolean|nil
+---@param equippedOnly boolean|nil Only return equipped items.
 ---@return fun():EsvItem|EsvItem[] items
-function GameHelpers.Character.GetTaggedItems(character, tag, asTable)
+function GameHelpers.Character.GetTaggedItems(character, tag, asTable, equippedOnly)
     local items = {}
     character = GameHelpers.GetCharacter(character)
     if character then
         for i,v in pairs(character:GetInventoryItems()) do
             local item = GameHelpers.GetItem(v)
             if item and GameHelpers.ItemHasTag(item, tag) then
-                items[#items+1] = item
+				if not equippedOnly or GameHelpers.Item.ItemIsEquipped(character, item) then
+                	items[#items+1] = item
+				end
             end
         end
     end
@@ -1107,7 +1123,7 @@ end
 ---@param character CharacterParam
 ---@return boolean
 function GameHelpers.Character.IsFemale(character)
-	character = GameHelpers.TryGetObject(character)
+	character = GameHelpers.GetCharacter(character)
 	assert(GameHelpers.Ext.ObjectIsCharacter(character), "target parameter must be a character UUID, NetID, or Esv/EclCharacter")
 	if character:HasTag("FEMALE") then
 		return true
@@ -1117,6 +1133,23 @@ function GameHelpers.Character.IsFemale(character)
 		return true
 	end
 	return false
+end
+
+---Get the character's gender, if any.  
+---@param character CharacterParam
+---@return "Male"|"Female"|"None"
+function GameHelpers.Character.GetGender(character)
+	character = GameHelpers.GetCharacter(character)
+	assert(GameHelpers.Ext.ObjectIsCharacter(character), "target parameter must be a character UUID, NetID, or Esv/EclCharacter")
+	if character:HasTag("FEMALE") then
+		return "Female"
+	elseif character:HasTag("MALE") then
+		return "Male"
+	end
+	if GameHelpers.Character.IsPlayer(character) and character.PlayerCustomData then
+		return character.PlayerCustomData.IsMale and "Male" or "Female"
+	end
+	return "None"
 end
 
 ---Returns true if the character has a status with IsInvulnerable set.

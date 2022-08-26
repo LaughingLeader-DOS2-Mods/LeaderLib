@@ -138,6 +138,7 @@ local defaultPersistentVars = {
 	ReadBooks = {},
 
 	---@class LeaderLibPersistentVisualsEntry
+	---@field ID string
 	---@field Resource string
 	---@field Options ExtenderClientVisualOptions|nil
 	---@field ExtraOptions LeaderLibClientVisualOptions|nil

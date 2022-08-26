@@ -800,6 +800,27 @@ if not _ISCLIENT then
 	---🔨**Server-Only**🔨  
 	---@type LeaderLibSubscribableEvent<RuneChangedEventArgs>
 	Events.RuneChanged = Classes.SubscribableEvent:Create("RuneChanged")
+
+	---@alias RebuildVisualsEventCause "Loaded"|"Transformed"|"Unsheathed"|"Sheathed"
+	---@alias RebuildVisualsEventCauseIndex integer
+	---|0 # "Loaded"
+	---|2 # "Transformed"
+	---|3 # "Unsheathed"
+	---|4 # "Sheathed"
+
+	---@class RebuildVisualsEventArgs
+	---@field Character EsvCharacter
+	---@field CharacterGUID GUID
+	---@field CharacterVisual FixedString The character's model visual resource GUID.
+	---@field Cause RebuildVisualsEventCause
+	---@field CauseIndex RebuildVisualsEventCauseIndex
+	---@field Race string|BaseRace|"None"
+	---@field Gender "Male"|"Female"|"None"
+	
+	---Called when a character should have visuals rebuilt (polymorphed/transformed, game started, specific statuses like UNSHEATHED).  
+	---🔨**Server-Only**🔨  
+	---@type LeaderLibSubscribableEvent<RebuildVisualsEventArgs>
+	Events.RebuildVisuals = Classes.SubscribableEvent:Create("RebuildVisuals")
 else
 	---@class ClientDataSyncedEventArgs
 	---@field Data SharedData

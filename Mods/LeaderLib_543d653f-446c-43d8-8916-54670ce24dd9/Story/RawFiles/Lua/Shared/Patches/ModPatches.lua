@@ -294,13 +294,10 @@ local Patches = {
 						changes.Boosts["DamageType"] = changes.Boosts["Damage Type"]
 						changes.Boosts["Damage Type"] = nil
 					end
-					local slot = Data.EquipmentSlots[GameHelpers.Item.GetSlot(item)]
-					local owner = nil
-					if slot and item.OwnerHandle ~= nil then
-						local char = GameHelpers.GetCharacter(item.OwnerHandle)
-						if char ~= nil then
-							owner = char.NetID
-						end
+					local slot = GameHelpers.Item.GetSlot(item, true)
+					local owner = GameHelpers.Item.GetOwner(item)
+					if owner then
+						owner = owner.NetID
 					end
 					if item ~= nil and item.NetID ~= nil then
 						--Fix for CleavePercentage not being correctly translated from the stat attribute (20 = 0.2)
@@ -350,8 +347,8 @@ local Patches = {
 									ID = item.StatsId,
 									UUID = item.MyGuid,
 									NetID = item.NetID,
-									Slot = Data.EquipmentSlots[GameHelpers.Item.GetSlot(item)],
-									Owner = GameHelpers.IsValidHandle(item.OwnerHandle) and GameHelpers.GetNetID(GameHelpers.GetCharacter(item.OwnerHandle)) or nil,
+									Slot = GameHelpers.Item.GetSlot(item, true),
+									Owner = GameHelpers.GetNetID(GameHelpers.Item.GetOwner(item)) or nil,
 									Changes = {
 										Boosts = {
 											Skills = "",

@@ -174,7 +174,9 @@ function OnLuaReset()
 	Vars.LeaderDebugMode = GameHelpers.IO.LoadFile("LeaderDebug") ~= nil
 	Events.LuaReset:Invoke({Region=region})
 	GameHelpers.Net.Broadcast("LeaderLib_Client_SyncDebugVars", {PrintSettings=Vars.Print, CommandSettings = Vars.Commands})
-	Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled == true)
+	if Debug then
+		Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled == true)
+	end
 end
 
 Ext.Events.ResetCompleted:Subscribe(function ()

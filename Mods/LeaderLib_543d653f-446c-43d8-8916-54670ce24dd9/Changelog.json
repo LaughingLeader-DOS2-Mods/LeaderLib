@@ -9,13 +9,14 @@
 			"Version": "1.7.26.6",
 			"Changes": [
 				"Fixed the 'Require Backstab Talent' option preventing backstab settings, even if you have no way to get this talent or disable the option.",
-				"Default 'Require Backstab Talent' option to unchecked.",
+				"\t• The 'Require Backstab Talent' option is now unchecked by default.",
 				"Fixed GameHelpers.Item.IsEquipped returning false if the item has no owner, but is equipped.",
+				"Fixed an issue in Weapon Expansion where certain uniques weren't swapping.",
 				"Skipped redirecting dialog if it's from a 'God' in certain story scenarios.",
 				"Skipped checking skill requirements for actions.",
-				"Added Events.CharacterUsedItem, Events.RuneChanged, and GameHelpers.Item.GetRunes.",
-				"Added Events.RebuildVisuals, GameHelpers.Character.GetRace, and GameHelpers.Character.GetGender.",
-				"Fixed an issue in Weapon Expansion where certain uniques weren't swapping."
+				"API Changes:",
+				"\t• Added Events.CharacterUsedItem, Events.RuneChanged, and GameHelpers.Item.GetRunes.",
+				"\t• Added Events.RebuildVisuals, GameHelpers.Character.GetRace, and GameHelpers.Character.GetGender."
 			]
 		},
 		{

@@ -903,8 +903,11 @@ function GameHelpers.Character.GetEquipment(character, asTable)
 	local itemCount = math.min(#items, 14)
     for i=1,itemCount do
 		local item = GameHelpers.GetItem(items[i])
-		if item and Data.EquipmentSlots[GameHelpers.Item.GetSlot(item)] then
-			equipment[#equipment+1] = item
+		if item then
+			local slot = GameHelpers.Item.GetSlot(item)
+			if Data.EquipmentSlots[slot] then
+				equipment[#equipment+1] = item
+			end
 		end
 	end
 	if not asTable then

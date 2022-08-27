@@ -518,14 +518,27 @@ end
 ---@param slot ItemSlot
 ---@return EsvItem|EclItem|nil
 function GameHelpers.Item.GetItemInSlot(character, slot)
-    local char = GameHelpers.GetCharacter(character)
-    fassert(char ~= nil, "'%s' is not a valid character", character)
+    character = GameHelpers.GetCharacter(character)
+    fassert(character ~= nil, "'%s' is not a valid character", character)
     local slotIndex = Data.EquipmentSlots[slot]
     fassert(slotIndex ~= nil, "'%s' is not a valid slot name", slot)
-    for item in GameHelpers.Character.GetEquipment(char) do
-        if GameHelpers.Item.GetSlot(item) == slotIndex then
-            return item
+    if not _ISCLIENT then
+        ---@cast char EsvCharacter
+        if _OSIRIS() then
+            local itemGUID = CharacterGetEquippedItem(character.MyGuid, slot)
+            if not StringHelpers.IsNullOrEmpty(itemGUID) then
+                return GameHelpers.GetItem(itemGUID)
+            end
+        else
+            for item in GameHelpers.Character.GetEquipment(character) do
+                if GameHelpers.Item.GetSlot(item) == slotIndex then
+                    return item
+                end
+            end
         end
+    else
+        ---@cast char EclCharacter
+        return character:GetItemObjectBySlot(slot)
     end
     return nil
 end
@@ -709,12 +722,30 @@ end
 ---@param item ItemParam
 ---@return boolean
 function GameHelpers.Item.ItemIsEquipped(character, item)
-    local charUUID = GameHelpers.GetUUID(character)
-    local itemObj = GameHelpers.GetItem(item)
-    if charUUID and itemObj then
-        if Ext.Utils.IsValidHandle(itemObj.OwnerHandle) and Data.EquipmentSlots[GameHelpers.Item.GetSlot(itemObj)] then -- 13 is the Overhead slot, 14 is 'Sentinel'
-            local owner = GameHelpers.GetCharacter(itemObj.OwnerHandle)
-            return owner and owner.MyGuid == charUUID
+    character = GameHelpers.GetUUID(character)
+    item = GameHelpers.GetItem(item)
+    if character and item then
+        --[[ if Ext.Utils.IsValidHandle(item.OwnerHandle) then
+            local owner = GameHelpers.GetCharacter(item.OwnerHandle)
+            local slot = GameHelpers.Item.GetSlot(item, true)
+            if Data.EquipmentSlots[slot] and owner.MyGuid == charGUID then
+                return true
+            end
+        end ]]
+        --Sometimes the item can have no owner set, despite being equipped, so check the character's currently equipped items instead of the item's owner / current slot
+        local statSlot = item.Stats and item.Stats.ItemSlot or nil
+        if statSlot then
+            local equippedItem = GameHelpers.Item.GetItemInSlot(character, statSlot)
+            if equippedItem and equippedItem.MyGuid == item.MyGuid then
+                return true
+            end
+            --Check offhand
+            if statSlot == "Weapon" then
+                local equippedItem = GameHelpers.Item.GetItemInSlot(character, "Shield")
+                if equippedItem and equippedItem.MyGuid == item.MyGuid then
+                    return true
+                end
+            end
         end
     end
     return false
@@ -862,28 +893,21 @@ function GameHelpers.Item.HasConsumableSkillAction(item)
 end
 
 ---@param item ItemParam
----@param returnNilUUID boolean|nil
----@return GUID
+---@param returnNilUUID boolean|nil Return a null GUID instead of nil, if no owner is found.
+---@return EsvCharacter|EsvItem|EclCharacter|EclItem|nil
 function GameHelpers.Item.GetOwner(item, returnNilUUID)
 	local item = GameHelpers.GetItem(item)
 	if item then
-		if item.OwnerHandle ~= nil then
+		if Ext.Utils.IsValidHandle(item.OwnerHandle) then
 			local object = GameHelpers.TryGetObject(item.OwnerHandle)
-			if object ~= nil then
-				return object.MyGuid
+			if object then
+				return object
 			end
 		end
-		if _OSIRIS() then
-			local inventory = StringHelpers.GetUUID(GetInventoryOwner(item.MyGuid))
-			if not StringHelpers.IsNullOrEmpty(inventory) then
-				return inventory
-			end
-		else
-			if item.InventoryHandle then
-				local object = GameHelpers.TryGetObject(item.InventoryHandle)
-				if object ~= nil then
-					return object.MyGuid
-				end
+		if Ext.Utils.IsValidHandle(item.ParentInventoryHandle) then
+			local object = GameHelpers.TryGetObject(item.ParentInventoryHandle)
+			if object then
+				return object
 			end
 		end
 	end
@@ -935,22 +959,19 @@ end
 ---@param asName boolean|nil Return the slot as a name, such as "Weapon".
 ---@return integer|ItemSlot slotIndexOrName
 function GameHelpers.Item.GetSlot(item, asName)
+    local slot = -1
     local item = GameHelpers.GetItem(item)
     if item then
         if not _ISCLIENT then
-            if asName then
-                return Data.EquipmentSlots[item.Slot] or item.Slot
-            end
-            return item.Slot
-        elseif _EXTVERSION >= 56 then
-            --EclItem doesn't have a Slot property in v55
-            if asName then
-                return Data.EquipmentSlots[item.CurrentSlot] or item.CurrentSlot
-            end
-            return item.CurrentSlot
+            slot = item.Slot
+        elseif item.CurrentSlot then
+           slot = item.CurrentSlot
+        end
+        if asName and Data.EquipmentSlots[slot] then
+            return Data.EquipmentSlots[slot]
         end
     end
-    return -1
+    return slot
 end
 
 ---@param item ItemParam

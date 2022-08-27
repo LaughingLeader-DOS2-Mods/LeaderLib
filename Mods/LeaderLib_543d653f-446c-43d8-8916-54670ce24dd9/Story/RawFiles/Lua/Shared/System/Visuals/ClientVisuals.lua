@@ -32,23 +32,8 @@
 ---@field Scale number[] Size 3 Vector3-style table.
 ---@field Translate number[] Size 3 Vector3-style table.
 
----@type table<NETID,table<string, integer>>
+---@type table<NETID,table<string, ComponentHandle>>
 local ActiveVisuals = {}
-
----@param handleINT integer
----@return EclLuaVisualClientMultiVisual
-local function _TryGetHandlerFromInt(handleINT)
-	if handleINT then
-		local handle = Ext.Utils.IntegerToHandle(handleINT)
-		if GameHelpers.IsValidHandle(handle) then
-			local handler = Ext.Visual.Get(handle)
-			if handler then
-				return handler
-			end
-		end
-	end
-	return nil
-end
 
 ---@param character EclCharacter
 ---@param visualResource string
@@ -56,14 +41,17 @@ end
 function VisualManager.GetVisualHandler(character, visualResource)
 	local characterData = ActiveVisuals[character.NetID]
 	if characterData then
-		local handler = _TryGetHandlerFromInt(characterData[visualResource])
-		if not handler then
-			characterData[visualResource] = nil
-			if not Common.TableHasAnyEntry(characterData) then
-				ActiveVisuals[character.NetID] = nil
+		local handle = characterData[visualResource]
+		if handle then
+			local handler = Ext.Visual.Get(handle)
+			if not handler then
+				characterData[visualResource] = nil
+				if not Common.TableHasAnyEntry(characterData) then
+					ActiveVisuals[character.NetID] = nil
+				end
+			else
+				return handler
 			end
-		else
-			return handler
 		end
 	end
 	return nil
@@ -74,27 +62,21 @@ end
 ---@param handler EclLuaVisualClientMultiVisual
 function VisualManager.StoreVisualHandler(character, visualResource, handler)
 	if GameHelpers.IsValidHandle(handler.Handle) then
-		if  ActiveVisuals[character.NetID] == nil then
+		if ActiveVisuals[character.NetID] == nil then
 			ActiveVisuals[character.NetID] = {}
 		end
-		local handleINT = Ext.Utils.HandleToInteger(handler.Handle)
-		Ext.Dump({
-			HandleINT = handleINT,
-			Handle = handler.Handle,
-			VisualResource = visualResource
-		})
-		ActiveVisuals[character.NetID][visualResource] = handleINT
+		ActiveVisuals[character.NetID][visualResource] = handler.Handle
 	end
 end
 
 ---@param character EclCharacter
----@param visualResource string
+---@param visualResourceOrID string
 ---@return boolean
-function VisualManager.DeleteVisual(character, visualResource)
-	local handler = VisualManager.GetVisualHandler(character, visualResource)
+function VisualManager.DeleteVisual(character, visualResourceOrID)
+	local handler = VisualManager.GetVisualHandler(character, visualResourceOrID)
 	if handler then
 		handler:Delete()
-		ActiveVisuals[character.NetID][visualResource] = nil
+		ActiveVisuals[character.NetID][visualResourceOrID] = nil
 		if not Common.TableHasAnyEntry(ActiveVisuals[character.NetID]) then
 			ActiveVisuals[character.NetID] = nil
 		end
@@ -106,51 +88,56 @@ end
 ---@param character CharacterParam
 ---@param visualResource string
 ---@param options ExtenderClientVisualOptions|nil
----@param positionOptions LeaderLibClientVisualOptions|nil
+---@param extraOptions LeaderLibClientVisualOptions|nil
+---@param id string|nil
 ---@return Visual
-function VisualManager.AttachVisual(character, visualResource, options, positionOptions)
+function VisualManager.AttachVisual(character, visualResource, options, extraOptions, id)
 	options = options or {}
 	character = GameHelpers.GetCharacter(character)
 	if not character then
 		error("Character parameter is invalid")
 	end
 
-	VisualManager.DeleteVisual(character, visualResource)
+	if not id then
+		id = visualResource
+	end
+	VisualManager.DeleteVisual(character, id)
+
 	---@type EclLuaVisualClientMultiVisual
 	local handler = Ext.Visual.CreateOnCharacter(character.Translate, character, character)
-	VisualManager.StoreVisualHandler(character, visualResource, handler)
+	VisualManager.StoreVisualHandler(character, id, handler)
 	local addedVisual = handler:AddVisual(visualResource, options)
 
-	if addedVisual and positionOptions and type(positionOptions) == "table" then
+	if addedVisual and extraOptions and type(extraOptions) == "table" then
 		local target = addedVisual.WorldTransform
 		if options.UseLocalTransform then
 			target = addedVisual.LocalTransform
 		end
-		if positionOptions.Matrix then
+		if extraOptions.Matrix then
 			local mat = target.Matrix
-			for i,v in pairs(positionOptions.Matrix) do
+			for i,v in pairs(extraOptions.Matrix) do
 				mat[i] = v
 			end
 			target.Matrix = mat
 		end
-		if positionOptions.Rotate then
-			positionOptions.Rotate = GameHelpers.Math.EulerToRotationMatrix(positionOptions.Rotate)
+		if extraOptions.Rotate then
+			extraOptions.Rotate = GameHelpers.Math.EulerToRotationMatrix(extraOptions.Rotate)
 			local rot = target.Rotate
-			for i,v in pairs(positionOptions.Rotate) do
+			for i,v in pairs(extraOptions.Rotate) do
 				rot[i] = v
 			end
 			target.Rotate = rot
 		end
-		if positionOptions.Scale then
+		if extraOptions.Scale then
 			local scale = target.Scale
-			for i,v in pairs(positionOptions.Scale) do
+			for i,v in pairs(extraOptions.Scale) do
 				scale[i] = v
 			end
 			target.Scale = scale
 		end
-		if positionOptions.Translate then
+		if extraOptions.Translate then
 			local tran = target.Translate
-			for i,v in pairs(positionOptions.Translate) do
+			for i,v in pairs(extraOptions.Translate) do
 				tran[i] = v
 			end
 			target.Translate = tran
@@ -183,8 +170,35 @@ Ext.RegisterNetListener("LeaderLib_VisualManager_RequestAttachVisual", function 
 		---@cast data LeaderLibRequestAttachVisualData
 		local character = GameHelpers.GetCharacter(data.Target)
 		fassert(character ~= nil, "Failed to get character from data.Target(%s)", data.Target)
+		local t = type(data.Resource)
+		fassert(t == "string" or t == "table", "data.Resource is not a valid type (%s)[%s]", data.Target, t)
 
-		VisualManager.AttachVisual(character, data.Resource, data.Options, data.ExtraOptions)
+		if t == "string" then
+			VisualManager.AttachVisual(character, data.Resource, data.Options, data.ExtraOptions, data.ID)
+		elseif t == "table" then
+			for _,v in pairs(data.Resource) do
+				VisualManager.AttachVisual(character, v, data.Options, data.ExtraOptions, data.ID)
+			end
+		end
+	end
+end)
+
+Ext.RegisterNetListener("LeaderLib_VisualManager_RequestDeleteVisual", function (channel, payload, user)
+	local data = Common.JsonParse(payload, true)
+	if data then
+		---@cast data LeaderLibRequestAttachVisualData
+		local character = GameHelpers.GetCharacter(data.Target)
+		fassert(character ~= nil, "Failed to get character from data.Target(%s)", data.Target)
+		local t = type(data.Resource)
+		fassert(t == "string" or t == "table", "data.Resource is not a valid type (%s)[%s]", data.Resource, t)
+
+		if t == "string" then
+			VisualManager.DeleteVisual(character, data.Resource)
+		elseif t == "table" then
+			for _,v in pairs(data.Resource) do
+				VisualManager.DeleteVisual(character, v)
+			end
+		end
 	end
 end)
 

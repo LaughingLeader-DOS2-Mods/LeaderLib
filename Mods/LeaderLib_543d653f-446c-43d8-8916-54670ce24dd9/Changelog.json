@@ -11,6 +11,7 @@
 				"Fixed the 'Require Backstab Talent' option preventing backstab settings, even if you have no way to get this talent or disable the option.",
 				"\t• The 'Require Backstab Talent' option is now unchecked by default.",
 				"Fixed GameHelpers.Item.IsEquipped returning false if the item has no owner, but is equipped.",
+				"Fixed the Sadist talent not applying to certain skills (game bug / oversight) if LeaderLib's hit computation is enabled (backstab settings enable this, as well as mods that use the resistance penetration feature, or 'Enable Spell Critical Hits' in Gameplay Settings).",
 				"Fixed an issue in Weapon Expansion where certain uniques weren't swapping.",
 				"Skipped redirecting dialog if it's from a 'God' in certain story scenarios.",
 				"Skipped checking skill requirements for actions.",

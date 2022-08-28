@@ -64,7 +64,7 @@ local Patches = {
 						uuid = uniqueData:GetUUID(char)
 						if uuid == nil then
 							local owner = GameHelpers.Item.GetOwner(uniqueData.UUID)
-							if owner and (owner.MyGuid == char or owner.MyGuid == _NPC.UniqueHoldingChest or owner.MyGuid == _NPC.VendingMachine) then
+							if not owner or (owner.MyGuid == char or owner.MyGuid == _NPC.UniqueHoldingChest or owner.MyGuid == _NPC.VendingMachine) then
 								uuid = uniqueData.UUID
 							end
 						end

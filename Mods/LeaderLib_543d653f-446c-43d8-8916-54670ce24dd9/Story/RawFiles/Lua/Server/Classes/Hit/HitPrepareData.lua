@@ -104,8 +104,6 @@ local ChaosDamageTypes = {
 	Poison = 10,
 }
 
-local canUseRawFunctions = Ext.Utils.Version() >= 55
-
 HitPrepareData.__call = function(_, ...)
 	return HitPrepareData:Create(...)
 end
@@ -217,9 +215,7 @@ local function SetMeta(data)
 					return
 				end
 			end
-			if canUseRawFunctions then 
-				rawset(tbl, k, v)
-			end
+			rawset(tbl, k, v)
 		end
 	}
 	setmetatable(data, meta)
@@ -260,14 +256,37 @@ function HitPrepareData:Succeeded()
 	return self.Blocked == false and self.Missed == false and self.Dodged == false
 end
 
----Returns true if the hit isn't blocked, dodged, or missed.
----@return boolean
+---Cleats all damage from the hit.
 function HitPrepareData:ClearAllDamage()
 	NRD_HitClearAllDamage(self.Handle)
 	if self.Cached then
 		self.DamageList = {}
 	end
 	self.TotalDamageDone = 0
+end
+
+---Adds damage.
+---@param damageType string
+---@param amount number
+---@param skipRecalculate boolean|nil If true, self:Recalculate is skipped.
+function HitPrepareData:AddDamage(damageType, amount, skipRecalculate)
+	NRD_HitAddDamage(self.Handle, damageType, amount)
+	if skipRecalculate ~= true then
+		self:Recalculate()
+	end
+end
+
+---Multiplies all damage by a value.
+---@param multiplier number Value to multiply every damage type by.
+---@param skipRecalculate boolean|nil If true, self:Recalculate is skipped.
+function HitPrepareData:MultiplyDamage(multiplier, skipRecalculate)
+	for damageType,amount in pairs(self.DamageList) do
+		NRD_HitClearDamage(self.Handle, damageType)
+		NRD_HitAddDamage(self.Handle, damageType, Ext.Utils.Round(amount * multiplier))
+	end
+	if skipRecalculate ~= true then
+		self:Recalculate()
+	end
 end
 
 ---Recalculates total damage done and updates all related variables.

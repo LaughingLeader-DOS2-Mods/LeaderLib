@@ -2205,3 +2205,22 @@ Data.ModID = {
 		SourcerousSundries = "a945eefa-530c-4bca-a29c-a51450f8e181",
 	}
 }
+
+Data.HeroBaseSkeletonToRace = {
+	---Dwarves_Hero_Female_Base_2e8d3ef9-33ec-4496-b0df-06ae85f26a62
+	["2e8d3ef9-33ec-4496-b0df-06ae85f26a62"] = "Dwarf",
+	---Dwarves_Hero_Male_Base_b8ddbc75-415f-4894-afc2-2256e11b723d
+	["b8ddbc75-415f-4894-afc2-2256e11b723d"] = "Dwarf",
+	---Elves_Hero_Female_Base_466d39b0-519d-4e00-809b-2da4ee3dbfc4
+	["466d39b0-519d-4e00-809b-2da4ee3dbfc4"] = "Elf",
+	---Elves_Hero_Male_Base_6439c71c-87f4-4c02-80c2-0f9537954f9d
+	["6439c71c-87f4-4c02-80c2-0f9537954f9d"] = "Elf",
+	---Humans_Hero_Female_Base_a19b45f9-1f2e-43f0-952e-3e3bcc9a88a4
+	["a19b45f9-1f2e-43f0-952e-3e3bcc9a88a4"] = "Human",
+	---Humans_Hero_Male_Base_ab01c22a-cce0-483b-84e6-2d331b6c2982
+	["ab01c22a-cce0-483b-84e6-2d331b6c2982"] = "Human",
+	---Lizards_Hero_Female_Base_80e8c237-da16-4fae-9252-ccbc774571a9
+	["80e8c237-da16-4fae-9252-ccbc774571a9"] = "Lizard",
+	---Lizards_Hero_Male_Base_d656291b-81f3-445e-84df-4e32cfc18d46
+	["d656291b-81f3-445e-84df-4e32cfc18d46"] = "Lizard",
+}

@@ -170,17 +170,26 @@ end
 
 ---Randomly reorders an array and returns a new copy.
 ---@param tbl any[]
+---@param inPlace boolean|nil Modify the original table, instead of making a copy.
 ---@return any[]
-function TableHelpers.ShuffleTable(tbl)
-	local newTable = {}
-	for i = 1, #tbl do
-	  newTable[i] = tbl[i]
+function TableHelpers.ShuffleTable(tbl, inPlace)
+	if not inPlace then
+		local newTable = {}
+		for i = 1, #tbl do
+		  newTable[i] = tbl[i]
+		end
+		for i = #newTable, 2, -1 do
+		  local j = Ext.Utils.Random(1, i)
+		  newTable[i], newTable[j] = newTable[j], newTable[i]
+		end
+		return newTable
+	else
+		for i = #tbl, 2, -1 do
+			local j = Ext.Utils.Random(1, i)
+			tbl[i], tbl[j] = tbl[j], tbl[i]
+		end
+		return tbl
 	end
-	for i = #newTable, 2, -1 do
-	  local j = Ext.Random(i)
-	  newTable[i], newTable[j] = newTable[j], newTable[i]
-	end
-	return newTable
 end
 
 ---Try to unpack a table and return the entries.

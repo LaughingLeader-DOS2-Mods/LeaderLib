@@ -366,17 +366,25 @@ function GameHelpers.Character.IsDeadOrDying(character)
 	return false
 end
 
----Returns the race of the character, if it's one of the base 4 player races.
+---Returns the base visual race of the character, if it's one of the base 4 player races.  
+---This works by first checking the character's visual resource, to see if it's a base hero skeleton.  
+---Then it checks GameHelpers.Character.GetRace, before finally looking at the root template name, if nothing is found.  
+---Use GameHelpers.Character.GetRace if you want to just find whatever the race is.  
 ---@param character CharacterParam
 ---@return BaseRace|nil
 function GameHelpers.Character.GetBaseRace(character)
 	character = GameHelpers.GetCharacter(character)
-	if character and character.HasTag then
+	if character then
+		local visualRace = Data.HeroBaseSkeletonToRace[character.RootTemplate.VisualTemplate]
+		if visualRace then
+			return visualRace
+		end
+		--Fallback
 		local rootTemplate = GameHelpers.GetTemplate(character, true)
 		for raceId,raceData in pairs(Vars.RaceData) do
 			if character:HasTag(raceData.Tag) or character:HasTag(raceData.BaseTag)
 			or (character.PlayerCustomData and character.PlayerCustomData.Race == raceId)
-			or string.find(rootTemplate.Name, raceId)
+			or (rootTemplate and string.find(rootTemplate.Name, raceId))
 			then
 				return raceId
 			end

@@ -39,7 +39,10 @@ end
 ---@param startDistance number|nil
 ---@param reverse boolean|nil Start from the smallest distance possible instead.
 ---@param distIncrement number|nil The number to progressively add when finding valid positions.
----@return number,number,number
+---@return number x
+---@return number y
+---@return number z
+---@return boolean success
 function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
 	distIncrement = distIncrement or 0.1
 	startDistance = startDistance or 12.0
@@ -54,7 +57,7 @@ function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, s
 				local z = (directionVector[3] * currentTravelDist) + startPos[3]
 				if GameHelpers.Grid.IsValidPosition(x, z, grid) then
 					local y = grid:GetCellInfo(x,z).Height
-					return x,y,z
+					return x,y,z,true
 				end
 				if reverse ~= true then
 					currentTravelDist = currentTravelDist - distIncrement
@@ -65,14 +68,19 @@ function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, s
 		end
 	end
 	if startPos then
-		return table.unpack(startPos)
+		local x,y,z = table.unpack(startPos)
+		return x,y,z,false
 	end
+	return 0,0,0,false
 end
 
 ---@param startPos number[]
 ---@param maxRadius number|nil
 ---@param pointsInCircle number|nil
----@return number,number,number|nil
+---@return number x
+---@return number y
+---@return number z
+---@return boolean success
 function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsInCircle)
 	maxRadius = maxRadius or 30.0
 	-- Convert to meters
@@ -95,7 +103,7 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 		end
 		if GameHelpers.Grid.IsValidPosition(startPos[1], startPos[3], grid) then
 			local y = grid:GetHeight(startPos[1],startPos[3]) or startPos[2]
-			return startPos[1], y, startPos[3]
+			return startPos[1], y, startPos[3],true
 		elseif maxRadius > 0 then
 			local radius = 1.0
 			local slice = 2 * math.pi / pointsInCircle
@@ -106,7 +114,7 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 					local z = math.floor((startPos[3] + radius * math.sin(angle))+0.5)
 					if GameHelpers.Grid.IsValidPosition(x, z, grid) then
 						local y = grid:GetCellInfo(x,z).Height
-						return x,y,z
+						return x,y,z,true
 					end
 				end
 				radius = radius + 1.0
@@ -114,8 +122,10 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 		end
 	end
 	if startPos then
-		return table.unpack(startPos)
+		local x,y,z = table.unpack(startPos)
+		return x,y,z,false
 	end
+	return 0,0,0,false
 end
 
 if not _ISCLIENT then

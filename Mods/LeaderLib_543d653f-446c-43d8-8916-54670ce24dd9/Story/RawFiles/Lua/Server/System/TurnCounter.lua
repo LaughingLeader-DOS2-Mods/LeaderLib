@@ -398,7 +398,7 @@ local _GetUUID = StringHelpers.GetUUID
 RegisterProtectedOsirisListener("CombatStarted", 1, "after", _INTERNAL.OnCombatStarted)
 RegisterProtectedOsirisListener("CombatEnded", 1, "after", _INTERNAL.OnCombatEnded)
 RegisterProtectedOsirisListener("ObjectTurnEnded", 1, "after", function(uuid) _INTERNAL.OnTurnEnded(_GetUUID(uuid)) end)
-RegisterProtectedOsirisListener("CharacterGuarded", 1, "after", function(uuid) _INTERNAL.OnTurnSkipped(_GetUUID(uuid)) end)
+RegisterProtectedOsirisListener("CharacterGuarded", 1, "before", function(uuid) _INTERNAL.OnTurnSkipped(_GetUUID(uuid)) end)
 RegisterProtectedOsirisListener("ObjectLeftCombat", 2, "after", function(uuid, id) _INTERNAL.OnLeftCombat(_GetUUID(uuid), id) end)
 RegisterProtectedOsirisListener("CharacterDied", 1, "after", function(uuid) _INTERNAL.OnCharacterDied(_GetUUID(uuid)) end)
 

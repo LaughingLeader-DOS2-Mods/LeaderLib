@@ -17,7 +17,9 @@ local function OnPrepareHit(target, source, damage, handle)
 
 	Events.OnPrepareHit:Invoke({
 		Target=GameHelpers.TryGetObject(target),
+		TargetGUID=target,
 		Source = GameHelpers.TryGetObject(source),
+		SourceGUID=source,
 		Damage=damage,
 		Handle=handle,
 		Data=data

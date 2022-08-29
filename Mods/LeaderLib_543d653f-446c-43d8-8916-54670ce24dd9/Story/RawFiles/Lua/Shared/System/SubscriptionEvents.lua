@@ -268,7 +268,9 @@ if not _ISCLIENT then
 
 	---@class OnPrepareHitEventArgs
 	---@field Target EsvCharacter|EsvItem
+	---@field TargetGUID GUID
 	---@field Source EsvCharacter|EsvItem|nil
+	---@field SourceGUID GUID|NULL_UUID
 	---@field Damage integer
 	---@field Handle integer
 	---@field Data HitPrepareData
@@ -277,12 +279,7 @@ if not _ISCLIENT then
 	---🔨**Server-Only**🔨
 	---@type LeaderLibSubscribableEvent<OnPrepareHitEventArgs>
 	Events.OnPrepareHit = Classes.SubscribableEvent:Create("OnPrepareHit", {
-		ArgsKeyOrder={"Target", "Source", "Damage", "Handle", "Data"},
-		GetArg = function(self, paramId, param)
-			if paramId == "Target" or paramId == "Source" then
-				return GameHelpers.GetUUID(param, true)
-			end
-		end
+		ArgsKeyOrder={"TargetGUID", "SourceGUID", "Damage", "Handle", "Data"}
 	})
 
 	---@class OnHitEventArgs

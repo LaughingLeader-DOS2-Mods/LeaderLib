@@ -6,6 +6,16 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.26.7",
+			"Changes": [
+				"Fixed the '[Key:LeaderLib_AllTooltipsForItemsEnabled:World Tooltips for All Items]' option not working.",
+				"API Changes:",
+				"\t• Added GameHelpers.Item.IsDestructible.",
+				"\t• GameHelpers.Character.GetBaseRace now uses the visual resource first to determine the character's race.",
+				"\t• GameHelpers.Damage.ApplySkillDamage can now invoke skill hit listeners."
+			]
+		},
+		{
 			"Version": "1.7.26.6",
 			"Changes": [
 				"Fixed the 'Require Backstab Talent' option preventing backstab settings, even if you have no way to get this talent or disable the option.",

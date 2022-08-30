@@ -47,7 +47,7 @@ else
 		else
 			local level = Ext.Entity.GetCurrentLevel()
 			if level then
-				return level.EntityManager.ItemConversionHelpers.RegisteredItems[level.LevelDesc.LevelName]
+				return level.EntityManager.ItemConversionHelpers.RegisteredItems[level.LevelDesc.LevelName] or items
 			end
 		end
 		return items
@@ -94,7 +94,7 @@ else
 
 	Ext.Osiris.RegisterListener("ItemEnteredRegion", Data.OsirisEvents.ItemEnteredRegion, "after", function(uuid, region)
 		--Sync state safety
-		if Ext.GetGameState() == "Running" and WorldTooltips:IsEnabled() then
+		if _ValidUpdateStates[Ext.GetGameState()] and WorldTooltips:IsEnabled() then
 			WorldTooltips:OnItemEnteredWorld(GameHelpers.GetItem(uuid))
 		end
 	end)

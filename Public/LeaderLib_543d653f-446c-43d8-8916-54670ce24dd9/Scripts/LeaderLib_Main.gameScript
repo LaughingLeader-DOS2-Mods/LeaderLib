@@ -802,13 +802,14 @@ EVENT LeaderLib_Commands_CharacterSetStats
 VARS
 	CHARACTER:_Char
 	FIXEDSTRING:_StatName
+	FLOAT:_HP
 ON
 	OnCharacterEvent(_Char, "LeaderLib_Commands_CharacterSetStats")
 ACTIONS
 IF "c1"
 	GetVar(_StatName, _Char, "LeaderLib_CharacterSetStats_ID")
 THEN
-	CharacterSetStats(_Char, _StatName, 0, 0, 1)
+	CharacterSetStats(_Char, _StatName, 0, 0, 1, _HP)
 ENDIF
 
 // EVENT LeaderLib_CrashFix_Madness

@@ -12,7 +12,7 @@ local _EXTVERSION = Ext.Utils.Version()
 ---@field HitContext EsvPendingHit
 ---@field HitRequest StatsHitDamageInfo
 ---@field HitStatus EsvStatusHit
----@field SkillData StatEntrySkillData
+---@field SkillData StatEntrySkillData|nil
 ---@field Success boolean True if the hit has a target, and the hit wasn't Dodged, Blocked, or Missed.
 local HitData = {
 	Type = "HitData",
@@ -81,7 +81,7 @@ end
 ---@param source ObjectParam
 ---@param hitStatus EsvStatusHit
 ---@param hitContext EsvPendingHit
----@param hitRequest HitRequest
+---@param hitRequest StatsHitDamageInfo
 ---@param skill StatEntrySkillData|nil
 ---@param params table|nil
 ---@return HitData
@@ -140,18 +140,8 @@ local function CopyDamageList(target, source)
 	end
 end
 
----Updates HitStatus.Hit and HitContext.Hit to HitRequest, so property changes are applied.
-function HitData:UpdateHitRequest()
-	if self.HitRequest then
-		--No longer needed in v56 since Hit is a reference type now.
-		if _EXTVERSION < 56 then
-			self.HitStatus.Hit = self.HitRequest
-			if self.HitContext and self.HitContext.Hit then
-				self.HitContext.Hit = self.HitRequest
-			end
-		end
-	end
-end
+---@deprecated
+function HitData:UpdateHitRequest() end
 
 ---Applies any DamageList changes to the actual hit.
 ---@param recalculate boolean|nil If true, lifesteal is recalculated.
@@ -169,8 +159,6 @@ function HitData:ApplyDamageList(recalculate)
 	end
 	if recalculate then
 		self:Recalculate(true, true)
-	else
-		self:UpdateHitRequest()
 	end
 end
 
@@ -206,7 +194,6 @@ function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamag
 			end
 		end
 	end
-	self:UpdateHitRequest()
 end
 
 ---Adds damage.
@@ -350,14 +337,12 @@ function HitData:SetLifeSteal(amount)
 	if self.HitRequest then
 		self.HitRequest.LifeSteal = amount
 	end
-	self:UpdateHitRequest()
 end
 
 ---@param flag HitFlagID|HitFlagID[]
 ---@param value boolean
 function HitData:SetHitFlag(flag, value)
 	GameHelpers.Hit.SetFlag(self.HitRequest, flag, value)
-	self:UpdateHitRequest()
 end
 
 ---@param flag HitFlagID|HitFlagID[]
@@ -370,15 +355,14 @@ function HitData:HasHitFlag(flag, value)
 end
 
 function HitData:IsFromWeapon()
-	if self.HitType then
-		return GameHelpers.Hit.TypesAreFromWeapon(self.HitType, self.DamageSourceType, self.WeaponHandle, self.SkillData)
-	end
 	return GameHelpers.Hit.IsFromWeapon(self.HitContext, self.SkillData, self.HitStatus)
 end
 
 ---Returns true if the hit isn't from a surface, DoT, status tick, etc.
+---@return boolean
 function HitData:IsDirect()
-	return GameHelpers.Hit.IsDirect(self.HitContext.HitType)
+	local hitType = self.HitContext and self.HitContext.HitType or nil
+	return hitType and GameHelpers.Hit.IsDirect(hitType)
 end
 
 ---Saves the hit to Osiris Data/Dumps/Hits/Time_HitType.lua

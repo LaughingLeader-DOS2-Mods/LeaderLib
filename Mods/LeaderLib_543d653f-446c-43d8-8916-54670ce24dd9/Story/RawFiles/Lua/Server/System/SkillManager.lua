@@ -341,8 +341,8 @@ end
 --- @param target EsvCharacter|EsvItem
 --- @param source EsvCharacter|EsvItem
 --- @param damage integer
---- @param hit HitRequest
---- @param context HitContext
+--- @param hit StatsHitDamageInfo
+--- @param context EsvPendingHit
 --- @param hitStatus EsvStatusHit
 --- @param data HitData|ProjectileHitData
 function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, data)

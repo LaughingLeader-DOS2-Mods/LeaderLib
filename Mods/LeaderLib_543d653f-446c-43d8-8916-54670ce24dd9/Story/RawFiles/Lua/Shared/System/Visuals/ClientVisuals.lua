@@ -289,15 +289,7 @@ function VisualManager.CreateClientEffect(fx, target, params)
 		end
 		if handler then
 			handler:ParseFromStats(fx, params.WeaponBones or nil)
-			GameHelpers.IO.SaveFile("Dumps/ClientMultiVisual.json", Ext.DumpExport(handler))
-			-- for i,v in pairs(handler.Effects) do
-			-- 	local effect = Ext.Visual.Get(v)
-			-- 	print(effect, v)
-			-- end
-			-- GameHelpers.IO.SaveFile("Dumps/ClientMultiVisual_Effect.json", Ext.DumpExport(Ext.Types.GetObjectType(handler.Effects)))
-			-- for _,v in pairs(handler.Effects) do
-			-- 	v.
-			-- end
+			--GameHelpers.IO.SaveFile("Dumps/ClientMultiVisual.json", Ext.DumpExport(handler))
 		end
 	elseif ft == "table" then
 		for _,v in pairs(fx) do

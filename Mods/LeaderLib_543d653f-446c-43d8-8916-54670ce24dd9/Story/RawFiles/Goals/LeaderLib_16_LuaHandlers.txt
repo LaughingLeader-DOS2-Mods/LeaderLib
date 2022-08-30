@@ -124,11 +124,6 @@ AND
 GetUUID(_Object, _UUID)
 THEN
 NRD_ModCall("LeaderLib", "SkillPropertiesActionDone", "MoveToTarget", _UUID);
-
-IF
-GlobalFlagSet("LeaderLib_AllTooltipsForItemsEnabled")
-THEN
-NRD_ModCall("LeaderLib", "UpdateWorldTooltips");
 */
 //END_REGION
 EXITSECTION

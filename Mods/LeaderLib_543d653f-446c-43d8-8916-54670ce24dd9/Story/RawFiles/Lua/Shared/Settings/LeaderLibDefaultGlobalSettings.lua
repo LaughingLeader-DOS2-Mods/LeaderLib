@@ -231,6 +231,12 @@ if Ext.IsServer() then
 			fprint(LOGLEVEL.TRACE, "[LeaderLib] Identified (%s) items.", total)
 		end
 	end)
+	settings.Global.Flags.LeaderLib_AllTooltipsForItemsEnabled:Subscribe(function(e)
+		Timer.Cancel("Timers_LeaderLib_WorldTooltips_UpdateItems")
+		if e.Value then
+			QOL.WorldTooltips:StartTimer(true)
+		end
+	end)
 end
 
 --Making sure autosaves are enabled in the options if this flag is enabled

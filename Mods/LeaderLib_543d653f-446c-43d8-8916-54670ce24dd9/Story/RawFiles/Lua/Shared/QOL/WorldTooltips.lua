@@ -1,110 +1,122 @@
+local _EXTVERSION = Ext.Utils.Version()
+
 local WorldTooltips = {
 	TooltipMode = 2, -- World and Hover
 	UpdateDelay = 2000
 }
+QOL.WorldTooltips = WorldTooltips
+
+function WorldTooltips:IsEnabled()
+	return GameHelpers.IsLevelType(LEVELTYPE.GAME) and SettingsManager.GetMod(ModuleUUID).Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true)
+end
 
 if Ext.IsClient() then
-	--Unused since setting RootTemplate.Tooltip on the server makes the client update as well.
-	if Vars.DebugMode then
-		function WorldTooltips.OnUpdate(ui, event, removeNotUpdated)
-			-- if Input.IsPressed(Data.Input.ShowWorldTooltips) then
-			-- 	--local player = Client:GetCharacter()
-			-- 	local this = ui:GetRoot()
-			-- 	local arr = this.worldTooltip_array
-			-- 	for i=0,#arr-1 do
-			-- 		PrintDebug("worldTooltip_array", i, arr[i])
-			-- 	end
-			-- 	arr = this.repos_array
-			-- 	for i=0,#arr-1 do
-			-- 		PrintDebug("repos_array", i, arr[i])
-			-- 	end
-			-- end
-		end
-		
-		--Ext.RegisterUITypeInvokeListener(Data.UIType.worldTooltip, "updateTooltips", WorldTooltips.OnUpdate)
-	
-		function WorldTooltips.UpdateItems(cmd, payload)
-			local ids = Common.JsonParse(payload)
-			if ids then
-				for i=1,#ids do
-					local item = GameHelpers.GetItem(ids[i])
-					if item and item.RootTemplate then
-						if item.RootTemplate.Tooltip ~= WorldTooltips.TooltipMode then
-							item.RootTemplate.Tooltip = WorldTooltips.TooltipMode
-						end
-					end
+	function WorldTooltips:UpdateItems(cmd, payload)
+		local ids = Common.JsonParse(payload)
+		if ids then
+			for i=1,#ids do
+				local item = GameHelpers.GetItem(ids[i])
+				if item and item.RootTemplate then
+					item.RootTemplate.Tooltip = WorldTooltips.TooltipMode
 				end
 			end
 		end
-		Ext.RegisterNetListener("LeaderLib_WorldTooltips_UpdateClient", WorldTooltips.UpdateItems)
 	end
+	Ext.RegisterNetListener("LeaderLib_WorldTooltips_UpdateClient", function(...) WorldTooltips:UpdateItems(...) end)
 else
 	---@param item EsvItem
-	local function ShouldHaveTooltip(item)
-		if item.RootTemplate and item.RootTemplate.Tooltip ~= WorldTooltips.TooltipMode and not StringHelpers.IsNullOrWhitespace(item.DisplayName) then
+	---@param force boolean|nil Skip the Tooltip ~= 2 check to update the client.
+	local function _ShouldHaveTooltip(item, force)
+		if item.RootTemplate and (item.RootTemplate.Tooltip ~= WorldTooltips.TooltipMode or force) and not StringHelpers.IsNullOrWhitespace(GameHelpers.GetDisplayName(item)) then
 			return true
 		end
 		return false
 	end
 
-	function WorldTooltips.UpdateWorldItems()
-		--Don't try and modify items during Sync/etc
-		if Ext.GetGameState() == "Running" then
-			if SettingsManager.GetMod(ModuleUUID).Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true) then
-				local time = Ext.MonotonicTime()
-				for _,uuid in pairs(Ext.GetAllItems()) do
-					local item = GameHelpers.GetItem(uuid)
-					if item and ShouldHaveTooltip(item) then
-						item.RootTemplate.Tooltip = WorldTooltips.TooltipMode
-					end
-				end
-				if Vars.LeaderDebugMode then
-					fprint(LOGLEVEL.DEFAULT, "[LeaderLib:WorldTooltips.UpdateWorldItems] World tooltip updating took (%s) ms.", Ext.MonotonicTime()-time)
+	---@return EsvItem[]
+	local function _GetAllItems()
+		local items = {}
+		if _EXTVERSION < 57 then
+			for i,v in pairs(Ext.Entity.GetAllItemGuids()) do
+				local item = GameHelpers.GetItem(v)
+				if item then
+					items[#items+1] = item
 				end
 			end
+			return items
+		else
+			local level = Ext.Entity.GetCurrentLevel()
+			if level then
+				return level.EntityManager.ItemConversionHelpers.RegisteredItems[level.LevelDesc.LevelName]
+			end
 		end
+		return items
 	end
 
-	function WorldTooltips.OnGameStarted(region, editorMode)
-		Timer.StartOneshot("Timers_LeaderLib_WorldTooltips_UpdateItems", WorldTooltips.UpdateDelay, WorldTooltips.UpdateWorldItems)
-	end
+	local _ValidUpdateStates = {
+		Running = true,
+		Paused = true,
+		GameMasterPause = true,
+	}
 
-	function UpdateWorldTooltips()
-		Timer.StartOneshot("Timers_LeaderLib_WorldTooltips_UpdateItems", WorldTooltips.UpdateDelay, WorldTooltips.UpdateWorldItems)
+	---@param forceResync boolean|nil Force the client to update.
+	function WorldTooltips.UpdateWorldItems(forceResync)
+		Timer.Cancel("Timers_LeaderLib_WorldTooltips_UpdateItems")
+
+		--Don't try and modify items during Sync/etc
+		if _ValidUpdateStates[Ext.GetGameState()] and WorldTooltips:IsEnabled() then
+			local time = Ext.Utils.MonotonicTime()
+			local updateDataLen = 0
+			local updateData = {}
+			if not forceResync then
+				forceResync = Vars.LeaderDebugMode
+			end
+			for _,item in pairs(_GetAllItems()) do
+				if _ShouldHaveTooltip(item, forceResync) then
+					updateDataLen = updateDataLen + 1
+					updateData[updateDataLen] = item.NetID
+					item.RootTemplate.Tooltip = WorldTooltips.TooltipMode
+				end
+				if item.MyGuid == "01adffd4-26f1-4aaa-a450-25b38804f5e2" then
+					Ext.PrintError("Vase.RootTemplate.Tooltip:", item.RootTemplate.Tooltip)
+				end
+			end
+			if updateDataLen > 0 then
+				if Vars.LeaderDebugMode then
+					fprint(LOGLEVEL.DEFAULT, "[LeaderLib:WorldTooltips.UpdateWorldItems] World tooltip updating took (%s) ms.", Ext.Utils.MonotonicTime()-time)
+				end
+				GameHelpers.Net.Broadcast("LeaderLib_WorldTooltips_UpdateClient", updateData)
+			end
+		end
 	end
 
 	---@param item EsvItem
-	function WorldTooltips.OnItemEnteredWorld(item, region)
-		if item and ShouldHaveTooltip(item) then
-			--print("SERVER", item.DisplayName, item.RootTemplate.Tooltip)
+	function WorldTooltips:OnItemEnteredWorld(item)
+		if item and item.CurrentLevel ~= "" and _ShouldHaveTooltip(item) then
 			item.RootTemplate.Tooltip = WorldTooltips.TooltipMode
+			GameHelpers.Net.Broadcast("LeaderLib_WorldTooltips_UpdateClient", {item.NetID})
 		end
 	end
 
-	Ext.RegisterOsirisListener("ItemEnteredRegion", Data.OsirisEvents.ItemEnteredRegion, "after", function(uuid, region)
+	Ext.Osiris.RegisterListener("ItemEnteredRegion", Data.OsirisEvents.ItemEnteredRegion, "after", function(uuid, region)
 		--Sync state safety
-		if Ext.GetGameState() == "Running" 
-		and SharedData.RegionData.State == REGIONSTATE.GAME
-		and SettingsManager.GetMod(ModuleUUID).Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true)
-		then
-			local item = GameHelpers.GetItem(uuid)
-			if item and not StringHelpers.IsNullOrEmpty(item.CurrentLevel) then
-				WorldTooltips.OnItemEnteredWorld(item, region)
-			end
+		if Ext.GetGameState() == "Running" and WorldTooltips:IsEnabled() then
+			WorldTooltips:OnItemEnteredWorld(GameHelpers.GetItem(uuid))
 		end
 	end)
 
-	Ext.RegisterOsirisListener("GameStarted", Data.OsirisEvents.GameStarted, "after", WorldTooltips.OnGameStarted)
-	if Vars.DebugMode then
-		Events.LuaReset:Subscribe(function(e)
-			WorldTooltips.UpdateWorldItems()
+	---@param forceResync boolean|nil
+	---@param delayOverride integer|nil
+	function WorldTooltips:StartTimer(forceResync, delayOverride)
+		Timer.Cancel("Timers_LeaderLib_WorldTooltips_UpdateItems")
+		Timer.StartOneshot("Timers_LeaderLib_WorldTooltips_UpdateItems", delayOverride or WorldTooltips.UpdateDelay, function (e)
+			WorldTooltips.UpdateWorldItems(forceResync == true)
 		end)
 	end
-end
 
-Ext.RegisterConsoleCommand("llwtipper", function(cmd, param, val)
-	if param == "mode" then
-		WorldTooltips.TooltipMode = tonumber(val or "2") or 2
-		WorldTooltips.UpdateWorldItems()
-	end
-end)
+	Events.RegionChanged:Subscribe(function (e)
+		if e.LevelType == LEVELTYPE.GAME then
+			WorldTooltips:StartTimer()
+		end
+	end)
+end

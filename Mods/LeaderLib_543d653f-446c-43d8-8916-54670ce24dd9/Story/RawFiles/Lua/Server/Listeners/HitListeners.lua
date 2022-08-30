@@ -139,12 +139,7 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 	if not StringHelpers.IsNullOrEmpty(hitStatus.SkillId) then
 		skill = Ext.Stats.Get(GetSkillEntryName(hitStatus.SkillId))
 		---@cast skill StatEntrySkillData
-		
-		if skill and skill.Name == "ProjectileStrike_EnemyRainOfArrows" then
-			Ext.Utils.PrintError("ProjectileStrike_EnemyRainOfArrows::HitReason", hitStatus.HitReason, Data.HitReason[hitStatus.HitReason])
-		end
 	end
-
 
 	local hitType = GameHelpers.Hit.GetHitType(hitContext)
 	local damageSourceType = hitStatus.DamageSourceType

@@ -87,6 +87,7 @@ if isClient then
 				existingEntry.RootTemplateName = obj.RootTemplate.Name
 				existingEntry.Tags = StringHelpers.Join(";", obj:GetTags())
 				if GameHelpers.Ext.ObjectIsItem(obj) then 
+					---@cast obj EclItem
 					if not GameHelpers.Item.IsObject(obj) then
 						existingEntry.StatsId = obj.StatsId or obj.Stats.Name
 					end
@@ -94,6 +95,7 @@ if isClient then
 					if serverData then
 						existingEntry.Rotation = serverData.Rotation
 					end
+					existingEntry.Tooltip = obj.RootTemplate.Tooltip
 				end
 				Ext.SaveFile("LeaderLib_UUIDHelper.json", Common.JsonStringify(data))
 			end

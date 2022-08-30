@@ -68,17 +68,11 @@ else
 			local time = Ext.Utils.MonotonicTime()
 			local updateDataLen = 0
 			local updateData = {}
-			if not forceResync then
-				forceResync = Vars.LeaderDebugMode
-			end
 			for _,item in pairs(_GetAllItems()) do
 				if _ShouldHaveTooltip(item, forceResync) then
 					updateDataLen = updateDataLen + 1
 					updateData[updateDataLen] = item.NetID
 					item.RootTemplate.Tooltip = WorldTooltips.TooltipMode
-				end
-				if item.MyGuid == "01adffd4-26f1-4aaa-a450-25b38804f5e2" then
-					Ext.PrintError("Vase.RootTemplate.Tooltip:", item.RootTemplate.Tooltip)
 				end
 			end
 			if updateDataLen > 0 then

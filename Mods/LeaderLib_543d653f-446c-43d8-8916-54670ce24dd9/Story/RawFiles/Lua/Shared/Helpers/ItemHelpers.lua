@@ -871,6 +871,28 @@ function GameHelpers.Item.IsObject(item)
 	return false
 end
 
+---Returns true if the item can be destroyed (not already destroyed, not a story item, not indestructible).
+---@param item ItemParam
+---@return boolean
+function GameHelpers.Item.IsDestructible(item)
+	local item = GameHelpers.GetItem(item)
+    if item then
+        if GameHelpers.ObjectIsDead(item) then
+            return false
+        end
+        local stat = item.StatsFromName
+        --Indestructible chests etc
+        if stat and stat.StatsEntry and stat.StatsEntry.Vitality <= -1 then
+            return false
+        end
+        if item.StoryItem or item.Invulnerable or item.Invulnerable2 or (not _ISCLIENT and item.Destroy) then
+            return false
+        end
+        return true
+    end
+    return false
+end
+
 ---Returns true if the item can cast a skill, like a scroll.
 ---@param item ItemParam
 ---@return boolean

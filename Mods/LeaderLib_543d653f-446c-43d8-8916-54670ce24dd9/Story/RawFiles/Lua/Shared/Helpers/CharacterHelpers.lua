@@ -1114,11 +1114,13 @@ end
 ---@param allowItems boolean|nil If true, this will return true if target is an item.
 ---@return boolean
 function GameHelpers.Character.CanAttackTarget(target, attacker, allowItems)
-	target = GameHelpers.TryGetObject(target)
+	local target = GameHelpers.TryGetObject(target)
 	if GameHelpers.Ext.ObjectIsItem(target) then
-		return allowItems == true
+		---@cast target EsvItem|EclItem
+		return allowItems == true and not GameHelpers.Item.IsDestructible(target)
 	end
 	assert(GameHelpers.Ext.ObjectIsCharacter(target), "target parameter must be a UUID, NetID, or Esv/EclCharacter")
+	---@cast target EsvCharacter|EclCharacter
 	if target:HasTag("LeaderLib_FriendlyFireEnabled") then
 		return true
 	end

@@ -459,7 +459,6 @@ local defaultHitFlags = {
 ---@field ApplySkillProperties boolean|nil
 ---@field SkillDataParamModifiers StatEntrySkillData|nil
 ---@field DivideDamageTargets integer|nil If the skill has DivideDamage set, divide the damage between this many targets. Defaults to 1.
----@field InvokeSkillHitListeners boolean|nil If true, SkillManager.Hit listeners will be invoked.
 
 ---@type GameHelpers.Damage.ApplySkillDamageParams
 local _defaultSkillParams = {
@@ -604,7 +603,7 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
             hit.Hit.DeathType = deathType
         end
 
-        if params.InvokeSkillHitListeners then
+        --[[ if params.InvokeSkillHitListeners then
             --TODO Figure out something for EsvPendingHit and HitData, check if StatusHitEnter fires anyway
             ---@type EsvPendingHit
             local context = {
@@ -625,10 +624,10 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
                 WeaponStats = source.Stats.MainWeapon,
             }
             local hitData = Classes.HitData:Create(target, source, hit, context, hit.Hit, skillData)
+            hitData.IsFromApplySkillDamage = true
             OnSkillHit(skill, target, source, hit.Hit.TotalDamageDone, hit.Hit, context, hit, hitData)
-
-            Ext.ApplyStatus(hit)
-        end
+        end ]]
+        Ext.ApplyStatus(hit)
     end
 end
 

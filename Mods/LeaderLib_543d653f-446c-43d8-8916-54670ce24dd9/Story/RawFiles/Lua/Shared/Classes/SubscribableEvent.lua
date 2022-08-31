@@ -48,7 +48,7 @@ end
 ---Example: SubscribableEvent<CharacterResurrectedEventArgs>
 ---@see SubscribableEventArgs
 ---@see LeaderLibSubscriptionEvents
----@class LeaderLibSubscribableEvent<T>:{ (Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T|(fun(e:T):boolean), CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:T|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil):SubscribableEventInvokeResult) }
+---@class LeaderLibSubscribableEvent<T>:{ (Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T|(fun(e:T):boolean), CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:T|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil, getArgForMatch:(fun(self:T, argKey:string, matchedValue:any):any)|nil):SubscribableEventInvokeResult) }
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string
@@ -386,16 +386,17 @@ end
 ---@param self LeaderLibSubscribableEvent
 ---@param args table|nil
 ---@param skipAutoInvoke boolean|nil
+---@param getArgForMatch LeaderLibSubscribableEventArgsGetArgForMatchCallback|nil
 ---@vararg any
 ---@return SubscribableEventInvokeResult result
-local function _TryInvoke(self, args, skipAutoInvoke, ...)
+local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 	args = args or {}
 	local metatable = getmetatable(args)
 	if metatable then
 		setmetatable(args, nil)
 	end
 	local ts = Ext.MonotonicTime()
-	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg, metatable, self.ID)
+	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg, metatable, self.ID, getArgForMatch)
 	---@type SubscribableEventInvokeResultCode
 	local invokeResult = _INVOKERESULT.Success
 	local results = {}
@@ -445,10 +446,11 @@ end
 
 ---@param args table|nil
 ---@param skipAutoInvoke boolean|nil
+---@param getArgForMatch LeaderLibSubscribableEventArgsGetArgForMatchCallback|nil
 ---@return SubscribableEventInvokeResult result
-function SubscribableEvent:Invoke(args, skipAutoInvoke, ...)
+function SubscribableEvent:Invoke(args, skipAutoInvoke, getArgForMatch)
 	self._EnterCount = self._EnterCount + 1
-	local b,result = _pcall(_TryInvoke, self, args, skipAutoInvoke, ...)
+	local b,result = _pcall(_TryInvoke, self, args, skipAutoInvoke, getArgForMatch)
 	self._EnterCount = self._EnterCount - 1
 	_ProcessRemoveNext(self)
 	if b then

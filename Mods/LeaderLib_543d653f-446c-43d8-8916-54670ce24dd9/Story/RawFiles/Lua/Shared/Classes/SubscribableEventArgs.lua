@@ -1,5 +1,7 @@
 local type = type
 
+---@alias LeaderLibSubscribableEventArgsGetArgForMatchCallback (fun(self:LeaderLibSubscribableEvent, argKey:string, matchedValue:any):any)
+
 ---@class LeaderLibSubscribableEventArgs
 ---@field StopPropagation fun(self:LeaderLibSubscribableEventArgs) Stop the event from continuing on to other registered listeners.
 ---@field Dump fun(self:LeaderLibSubscribableEventArgs) Dumps the event's parameters to the console.
@@ -10,6 +12,7 @@ local type = type
 ---@field Handled boolean
 ---@field KeyOrder string[]|nil When unpacking, this is the specific order to unpack values in.
 ---@field GetArg SubscribableEventGetArgFunction|nil
+---@field GetArgForMatch LeaderLibSubscribableEventArgsGetArgForMatchCallback|nil
 ---@field Args table<string,any> The table of args used to create this instance.
 
 ---@class LeaderLibRuntimeSubscribableEventArgs
@@ -44,16 +47,19 @@ end
 ---@param unpackedKeyOrder string[]|nil
 ---@param getArg SubscribableEventGetArgFunction|nil
 ---@param customMeta SubscribableEventCustomMetatable|nil Automatically set if the args table had a metatable set.
+---@param eventID string|nil
+---@param getArgForMatch LeaderLibSubscribableEventArgsGetArgForMatchCallback|nil
 ---@return LeaderLibRuntimeSubscribableEventArgs
-function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta, eventID)
+function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta, eventID, getArgForMatch)
 	local _private = {
-		LLEventID = eventID,
+		LLEventID = eventID or "",
 		Handled = false,
 		--The table of args used to create this instance.
 		Args = args or {},
 		--When unpacking, this is the specific order to unpack values in.
 		KeyOrder = unpackedKeyOrder,
-		GetArg = getArg
+		GetArg = getArg,
+		GetArgForMatch = getArgForMatch
 	}
 	local eventArgs = {}
 	if type(args) == "table" then
@@ -112,13 +118,13 @@ end
 ---@param argKey string
 ---@param matchValue any
 function SubscribableEventArgs:ValueMatchesArg(argKey, matchValue)
-	local value = self[argKey]
-	if type(value) == "function" then
-		local actualValue = value(self, argKey, matchValue)
-		return actualValue == matchValue
-	else
-		return value == matchValue
+	if self._Private.GetArgForMatch then
+		local argValue = self._Private.GetArgForMatch(self, argKey, matchValue)
+		if argValue ~= nil then
+			return argValue == matchValue
+		end
 	end
+	return self[argKey] == matchValue
 end
 
 ---Unpack the event args to separate values, using a specific key order.

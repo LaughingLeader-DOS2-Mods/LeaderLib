@@ -111,10 +111,6 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 	local target = GameHelpers.TryGetObject(hitStatus.TargetHandle)
 	local source = GameHelpers.TryGetObject(hitStatus.StatusSourceHandle)
 
-	-- if hitContext.HitType ~= "Surface" and hitContext.HitType ~= "DoT" then
-	-- 	Ext.Dump({Context="StatusHitEnter", Damage=hitStatus.Hit.DamageList:ToTable(), TotalDamageDone=hitStatus.Hit.TotalDamageDone, HitType=hitContext.HitType})
-	-- end
-
 	if not target then
 		return
 	end
@@ -151,16 +147,11 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 		WeaponHandle = weaponHandle
 	})
 
-	--data:DumpToFile()
-
 	if skill and source then
 		OnSkillHit(skill.Name, target, source, data.Damage, hitRequest, hitContext, hitStatus, data)
 	end
-
-	--local isFromWeapon = GameHelpers.Hit.TypesAreFromWeapon(hitType, damageSourceType, weaponHandle, skill)
+	
 	local isFromWeapon = data:IsFromWeapon()
-
-	--fprint(LOGLEVEL.DEFAULT, "[OnHit] IsFromWeapon(%s) Data:IsFromWeapon(%s) Skill(%s) HitType(%s) DamageSourceType(%s) WeaponHandleSet(%s)", isFromWeapon, data:IsFromWeapon(), skill and skill.Name or "", hitType, damageSourceType, GameHelpers.IsValidHandle(weaponHandle))
 
 	if isFromWeapon then
 		AttackManager.InvokeOnHit(true, source, target, data, skill)

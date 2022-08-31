@@ -8,11 +8,10 @@
 		{
 			"Version": "1.7.26.8",
 			"Changes": [
-				"Fixed a typo that caused GameHelpers.Damage.ApplySkillDamage to not apply the hit status.",
+				"Fixed a typo that caused GameHelpers.Damage.ApplySkillDamage to not apply the hit status. This may have affected mods using this function/LeaderLib to apply skill damage in scripts.",
+				"Added a safeguard when getting [Stat:Attribute] params, to avoid errors if the stat does not exist.",
 				"API Changes:",
-				"\t• Added GameHelpers.Item.IsDestructible.",
-				"\t• GameHelpers.Character.GetBaseRace now uses the visual resource first to determine the character's race.",
-				"\t• GameHelpers.Damage.ApplySkillDamage can now invoke skill hit listeners."
+				"\t• Added GameHelpers.Utils.SetPosition."
 			]
 		},
 		{

@@ -177,3 +177,28 @@ function GameHelpers.Combat.GetID(obj)
 	end
 	return -1
 end
+
+---Returns true if it's the object's active turn in combat.
+---@param obj ObjectParam
+---@return boolean
+function GameHelpers.Combat.IsActiveTurn(obj)
+	local object = GameHelpers.TryGetObject(obj)
+	if object and object.InCombat and not GameHelpers.ObjectIsDead(object) then
+		---@cast object EsvCharacter|EsvItem
+		local combatID = GameHelpers.Combat.GetID(object)
+		if combatID > -1 then
+			local turnManager = Ext.Combat.GetTurnManager()
+			local combat = turnManager.Combats[combatID]
+			if combat then
+				local turnOrder = combat:GetCurrentTurnOrder()
+				if turnOrder then
+					local activeTeam = turnOrder[1]
+					if activeTeam and (activeTeam.Character.MyGuid == object.MyGuid or activeTeam.Item.MyGuid == object.MyGuid) then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
+end

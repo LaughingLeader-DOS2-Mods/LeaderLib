@@ -418,7 +418,7 @@ if _ISCLIENT then
 				object = GameHelpers.GetCharacter(data.NetID)
 			end
 			if object then
-				GameHelpers.Utils.SetRotation(object, data.Pos)
+				GameHelpers.Utils.SetPosition(object, data.Pos)
 			end
 		end
 	end)

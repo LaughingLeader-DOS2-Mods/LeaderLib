@@ -237,16 +237,20 @@ local function ReplacePlaceholders(str, character)
 		local value = ""
 		local statFetcher = v:gsub("%[Stats:", ""):gsub("%]", "")
 		local props = StringHelpers.Split(statFetcher, ":")
-		local stat = props[1]
+		local id = props[1]
 		local property = props[2]
-		if stat ~= nil and property ~= nil then
-			value = Ext.Stats.GetAttribute(stat, property)
+		if not StringHelpers.IsNullOrWhitespace(id) and not not StringHelpers.IsNullOrWhitespace(property) then
+			local stat = Ext.Stats.Get(id, nil, false)
+			if stat then
+				value = stat[property]
+			end
 		end
 		if value ~= nil and value ~= "" then
 			if _type(value) == "number" then
 				value = string.format("%i", math.floor(value))
 			end
-		elseif value == nil then
+		else
+			fprint(LOGLEVEL.WARNING, "[LeaderLib:GameHelpers.Tooltip.ReplacePlaceholders] Stat(%s) or stat attribute (%s) not found.", id, property)
 			value = ""
 		end
 		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.

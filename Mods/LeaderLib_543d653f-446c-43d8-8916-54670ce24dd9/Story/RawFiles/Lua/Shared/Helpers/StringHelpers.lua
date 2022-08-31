@@ -245,7 +245,10 @@ end
 --- @param n integer|nil
 --- @return string
 function StringHelpers.Replace(s, pattern, repl, n)
-	return _gsub(s, _regexEscape(pattern), repl:gsub("%%", "%%%%"), n)
+	if not repl then
+		return s
+	end
+	return _gsub(s, _regexEscape(pattern), _gsub(repl, "%%", "%%%%"), n)
 end
 
 local _cachedParsedGUID = {}

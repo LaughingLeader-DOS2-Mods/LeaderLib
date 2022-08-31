@@ -75,13 +75,26 @@ function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, s
 end
 
 ---@param startPos number[]
+---@param directionVector number[]
+---@param startDistance number|nil
+---@param reverse boolean|nil Start from the smallest distance possible instead.
+---@param distIncrement number|nil The number to progressively add when finding valid positions.
+---@return vec3 position
+---@return boolean success
+function GameHelpers.Grid.GetValidPositionTableAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
+	local x,y,z,success = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
+	return {x,y,z},success
+end
+
+---@param startPos number[]
 ---@param maxRadius number|nil
 ---@param pointsInCircle number|nil
+---@param reverse boolean|nil Start from the largest distance possible instead.
 ---@return number x
 ---@return number y
 ---@return number z
 ---@return boolean success
-function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsInCircle)
+function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsInCircle, reverse)
 	maxRadius = maxRadius or 30.0
 	-- Convert to meters
 	if maxRadius > 1000 then
@@ -105,19 +118,36 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 			local y = grid:GetHeight(startPos[1],startPos[3]) or startPos[2]
 			return startPos[1], y, startPos[3],true
 		elseif maxRadius > 0 then
-			local radius = 1.0
-			local slice = 2 * math.pi / pointsInCircle
-			while radius <= maxRadius do
-				for i=0,pointsInCircle do
-					local angle = slice * i
-					local x = math.floor((startPos[1] + radius * math.cos(angle))+0.5)
-					local z = math.floor((startPos[3] + radius * math.sin(angle))+0.5)
-					if GameHelpers.Grid.IsValidPosition(x, z, grid) then
-						local y = grid:GetCellInfo(x,z).Height
-						return x,y,z,true
+			if reverse then
+				local radius = maxRadius
+				local slice = 2 * math.pi / pointsInCircle
+				while radius > 1.0 do
+					for i=0,pointsInCircle do
+						local angle = slice * i
+						local x = math.floor((startPos[1] + radius * math.cos(angle))+0.5)
+						local z = math.floor((startPos[3] + radius * math.sin(angle))+0.5)
+						if GameHelpers.Grid.IsValidPosition(x, z, grid) then
+							local y = grid:GetCellInfo(x,z).Height
+							return x,y,z,true
+						end
 					end
+					radius = radius - 1.0
 				end
-				radius = radius + 1.0
+			else
+				local radius = 1.0
+				local slice = 2 * math.pi / pointsInCircle
+				while radius <= maxRadius do
+					for i=0,pointsInCircle do
+						local angle = slice * i
+						local x = math.floor((startPos[1] + radius * math.cos(angle))+0.5)
+						local z = math.floor((startPos[3] + radius * math.sin(angle))+0.5)
+						if GameHelpers.Grid.IsValidPosition(x, z, grid) then
+							local y = grid:GetCellInfo(x,z).Height
+							return x,y,z,true
+						end
+					end
+					radius = radius + 1.0
+				end
 			end
 		end
 	end
@@ -126,6 +156,17 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 		return x,y,z,false
 	end
 	return 0,0,0,false
+end
+
+---@param startPos number[]
+---@param maxRadius number|nil
+---@param pointsInCircle number|nil
+---@param reverse boolean|nil Start from the largest distance possible instead.
+---@return vec3 position
+---@return boolean success
+function GameHelpers.Grid.GetValidPositionTableInRadius(startPos, maxRadius, pointsInCircle, reverse)
+	local x,y,z,success = GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsInCircle, reverse)
+	return {x,y,z},success
 end
 
 if not _ISCLIENT then
@@ -786,7 +827,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 							elseif result == true then
 								objects[#objects+1] = obj
 							end
-						else
+						elseif GameHelpers.Character.CanAttackTarget(GUID, v, true) then
 							objects[#objects+1] = obj
 						end
 					end
@@ -807,7 +848,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 					if opts.Relation and sourceIsCharacter then
 						if opts.Relation.Ally and CharacterIsAlly(GUID, v) == 1 then
 							objects[#objects+1] = obj
-						elseif opts.Relation.Enemy and GameHelpers.Character.CanAttackTarget(GUID, v, true) then
+						elseif opts.Relation.Enemy and GameHelpers.Character.CanAttackTarget(GUID, v) then
 							objects[#objects+1] = obj
 						elseif opts.Relation.Neutral and CharacterIsNeutral(GUID, v) == 1 then
 							objects[#objects+1] = obj

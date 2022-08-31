@@ -382,3 +382,59 @@ else
 		end
 	end)
 end
+
+---@param obj ObjectParam
+---@param pos vec3
+function GameHelpers.Utils.SetPosition(obj, pos)
+	local object = GameHelpers.TryGetObject(obj)
+	if object and object.Translate then
+		object.Translate = pos
+		if not _ISCLIENT then
+			GameHelpers.Net.Broadcast("LeaderLib_GameHelpers_Utils_SetPosition", {NetID=object.NetID,Pos=pos,IsItem=GameHelpers.Ext.ObjectIsItem(object)})
+		end
+	end
+end
+
+---@param obj ObjectParam
+---@param rot mat3
+function GameHelpers.Utils.SetRotation(obj, rot)
+	local object = GameHelpers.TryGetObject(obj)
+	if object and object.Rotation then
+		object.Rotation = rot
+		if not _ISCLIENT then
+			GameHelpers.Net.Broadcast("LeaderLib_GameHelpers_Utils_SetRotation", {NetID=object.NetID,Rot=rot,IsItem=GameHelpers.Ext.ObjectIsItem(object)})
+		end
+	end
+end
+
+if _ISCLIENT then
+	Ext.RegisterNetListener("LeaderLib_GameHelpers_Utils_SetPosition", function (channel, payload, user)
+		local data = Common.JsonParse(payload)
+		if data then
+			local object = nil
+			if data.IsItem then
+				object = GameHelpers.GetItem(data.NetID)
+			else
+				object = GameHelpers.GetCharacter(data.NetID)
+			end
+			if object then
+				GameHelpers.Utils.SetRotation(object, data.Pos)
+			end
+		end
+	end)
+	
+	Ext.RegisterNetListener("LeaderLib_GameHelpers_Utils_SetRotation", function (channel, payload, user)
+		local data = Common.JsonParse(payload)
+		if data then
+			local object = nil
+			if data.IsItem then
+				object = GameHelpers.GetItem(data.NetID)
+			else
+				object = GameHelpers.GetCharacter(data.NetID)
+			end
+			if object then
+				GameHelpers.Utils.SetRotation(object, data.Rot)
+			end
+		end
+	end)
+end

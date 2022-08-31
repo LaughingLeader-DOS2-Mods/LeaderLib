@@ -1,9 +1,12 @@
+local type = type
+
 ---@class LeaderLibSubscribableEventArgs
 ---@field StopPropagation fun(self:LeaderLibSubscribableEventArgs) Stop the event from continuing on to other registered listeners.
 ---@field Dump fun(self:LeaderLibSubscribableEventArgs) Dumps the event's parameters to the console.
+---@field DumpExport fun(self:LeaderLibSubscribableEventArgs):string Converts the event's parameters to a string.
 
 ---@class LeaderLibRuntimeSubscribableEventArgsPrivateFields
----@field Event string The Event ID
+---@field LLEventID string The Event ID
 ---@field Handled boolean
 ---@field KeyOrder string[]|nil When unpacking, this is the specific order to unpack values in.
 ---@field GetArg SubscribableEventGetArgFunction|nil
@@ -44,10 +47,10 @@ end
 ---@return LeaderLibRuntimeSubscribableEventArgs
 function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta, eventID)
 	local _private = {
-		Event = eventID,
+		LLEventID = eventID,
 		Handled = false,
 		--The table of args used to create this instance.
-		Args = args,
+		Args = args or {},
 		--When unpacking, this is the specific order to unpack values in.
 		KeyOrder = unpackedKeyOrder,
 		GetArg = getArg
@@ -74,9 +77,10 @@ function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta
 		__index = function (_,k)
 			if k == "_Private" then
 				return _private
-				-- if _private[k] ~= nil then
-				-- 	return _private[k]
-				-- end
+			elseif k == "Handled" then
+				return _private.Handled
+			elseif k == "LLEventID" then
+				return _private.EventID
 			end
 			if getCustomMetaIndex then
 				local b,value = xpcall(getCustomMetaIndex, debug.traceback, eventArgs, k)
@@ -103,6 +107,18 @@ function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta
 		end
 	})
 	return eventArgs
+end
+
+---@param argKey string
+---@param matchValue any
+function SubscribableEventArgs:ValueMatchesArg(argKey, matchValue)
+	local value = self[argKey]
+	if type(value) == "function" then
+		local actualValue = value(self, argKey, matchValue)
+		return actualValue == matchValue
+	else
+		return value == matchValue
+	end
 end
 
 ---Unpack the event args to separate values, using a specific key order.
@@ -135,11 +151,12 @@ end
 
 ---Debug function for dumping args to the console.
 function SubscribableEventArgs:Dump()
-	fprint(LOGLEVEL.TRACE, Lib.serpent.block({_Event=self._Private.Event, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, {SimplifyUserdata = true}))
+	fprint(LOGLEVEL.TRACE, Lib.serpent.block({_Event=self._Private.LLEventID, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, {SimplifyUserdata = true}))
 end
 
+---@return string
 function SubscribableEventArgs:DumpExport()
-	return Lib.serpent.block({_Event=self._Private.Event, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, {SimplifyUserdata = true})
+	return Lib.serpent.block({_Event=self._Private.LLEventID, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, {SimplifyUserdata = true})
 end
 
 Classes.SubscribableEventArgs = SubscribableEventArgs

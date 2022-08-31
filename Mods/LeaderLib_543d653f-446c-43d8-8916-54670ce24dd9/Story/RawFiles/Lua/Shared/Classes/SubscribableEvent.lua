@@ -158,15 +158,6 @@ local function DoSubscribe(self, sub)
 	sub.Prev = last
 end
 
-local function _TablesMatch(t1,t2)
-	for k,v in _pairs(t1) do
-		if t2[k] ~= v then
-			return false
-		end
-	end
-	return true
-end
-
 ---@param callback function
 ---@param opts EventSubscriptionOptions|nil
 ---@return integer
@@ -203,14 +194,16 @@ function SubscribableEvent:Subscribe(callback, opts)
 		end
 		if count == 1 then
 			_matchArray = nil
+			---@param args LeaderLibRuntimeSubscribableEventArgs
 			sub.IsMatch = function(args)
-				return args[firstID] == firstEntry
+				return args:ValueMatchesArg(firstID, firstEntry) == true
 			end
 		elseif count > 1 then
+			---@param args LeaderLibRuntimeSubscribableEventArgs
 			sub.IsMatch = function(args)
 				for i=1,count do
 					local m = _matchArray[i]
-					if args[m.Key] ~= m.Value then
+					if not args:ValueMatchesArg(m.Key, m.Value) then
 						return false
 					end
 				end

@@ -185,7 +185,7 @@ local function s(t, opts)
 			return tag..globerr(t, level)
 		elseif ttype == 'function' then
 			seen[t] = insref or spath
-			if opts.nocode then return tag.."function() --[[..skipped..]] end"..comment(t, level) end
+			if opts.nocode then return tag.."function(...) end"..comment(t, level) end
 			local ok, res = pcall(string.dump, t)
 			local func = ok and "((loadstring or load)("..safestr(res)..",'@serialized'))"..comment(t, level)
 			return tag..(func or globerr(t, level))
@@ -251,9 +251,9 @@ return {
 	serialize = s,
 	load = deserialize,
 	--dump = function(a, opts) return s(a, merge({name = '_', compact = true, sparse = true}, opts)) end,
-	dump = function(a, opts) return s(a, merge({compact = false, sparse = false, indent = '\t', comment = false, SimplifyUserdata = true}, opts)) end,
-	line = function(a, opts) return s(a, merge({sortkeys = true, comment = false, SimplifyUserdata = true}, opts)) end,
-	block = function(a, opts) return s(a, merge({indent = '\t', sortkeys = true, comment = false, SimplifyUserdata = true}, opts)) end,
+	dump = function(a, opts) return s(a, merge({compact = false, sparse = false, indent = '\t', comment = false, SimplifyUserdata = true, nocode = true}, opts)) end,
+	line = function(a, opts) return s(a, merge({sortkeys = true, comment = false, SimplifyUserdata = true, nocode = true}, opts)) end,
+	block = function(a, opts) return s(a, merge({indent = '\t', sortkeys = true, comment = false, SimplifyUserdata = true, nocode = true}, opts)) end,
 	raw = function(a, opts) return s(a, merge({}, opts)) end,
 }
 								

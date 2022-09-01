@@ -174,6 +174,8 @@ function GameHelpers.Combat.GetID(obj)
 				end
 			end
 		end
+	else
+		--TODO Get from EocCombatComponent once that's made available
 	end
 	return -1
 end

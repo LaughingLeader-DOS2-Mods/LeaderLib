@@ -191,12 +191,13 @@ function GameHelpers.CharacterUsersMatch(char1, char2)
 	end
 end
 
----@param statItem StatItem
+---@param statItem CDivinityStatsItem
 ---@param tag string|string[]
 function GameHelpers.StatItemHasTag(statItem, tag)
 	local t = _type(tag)
 	if t == "string" then
-		if StringHelpers.DelimitedStringContains(statItem.Tags, ";", tag) then
+		local stat = Ext.Stats.Get(statItem.Name, nil, false)
+		if stat and StringHelpers.DelimitedStringContains(stat.Tags, ";", tag) then
 			return true
 		end
 		if statItem.DynamicStats then
@@ -219,17 +220,6 @@ function GameHelpers.StatItemHasTag(statItem, tag)
 	return false
 end
 
----@param item EsvItem|EclItem
----@param tag string|string[]
----@param statItem StatItem|nil
-function GameHelpers.ItemHasStatsTag(item, tag, statItem)
-	if statItem or not GameHelpers.Item.IsObject(item) then
-		statItem = statItem or item.Stats
-		return GameHelpers.StatItemHasTag(statItem, tag)
-	end
-	return false
-end
-
 ---@param item EsvItem|EclItem|UUID
 ---@param tag string|string[]
 function GameHelpers.ItemHasTag(item, tag)
@@ -241,24 +231,18 @@ function GameHelpers.ItemHasTag(item, tag)
 			end
 		end
 	elseif t == "string" then
-		if _type(item) == "string" then
-			item = GameHelpers.GetItem(item)
-		end
-		if _type(item) == "table" then
-			if item.HasTag and item.HasTag(item, tag) == true then
-				return true
+		if _type(item) ~= "table" then
+			if GameHelpers.Ext.ObjectIsStatItem(item) then
+				---@cast item -string,-EclItem,-EsvItem,+CDivinityStatsItem
+				return GameHelpers.StatItemHasTag(item, tag)
+			else
+				item = GameHelpers.GetItem(item)
+				if item then
+					return item:HasTag(tag) or (item.Stats and GameHelpers.StatItemHasTag(item.Stats, tag))
+				end
 			end
-		elseif GameHelpers.Ext.ObjectIsItem(item) then
-			if item:HasTag(tag) then
-				return true
-			end
-			if GameHelpers.ItemHasStatsTag(item, tag) then
-				return true
-			end
-		elseif GameHelpers.Ext.ObjectIsStatItem(item) then
-			if GameHelpers.ItemHasStatsTag(item, tag) then
-				return true
-			end
+		elseif item.HasTag and item:HasTag(tag) == true then
+			return true
 		end
 	end
 	return false

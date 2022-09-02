@@ -4,6 +4,7 @@ end
 
 local _EXTVERSION = Ext.Utils.Version()
 
+---@deprecated
 ---Reduce damage by a percentage (ex. 0.5)
 ---@param target string
 ---@param attacker string
@@ -55,6 +56,7 @@ end
 
 Ext.NewCall(ReduceDamage_Call, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 
+---@deprecated
 ---Increase damage by a percentage (0.5 = 50%). This increases damage for all damage types in the hit.
 ---@param target string The target object.
 ---@param attacker string The attacking character.
@@ -101,6 +103,7 @@ GameHelpers.Damage.IncreaseDamage = IncreaseDamage
 -- Legacy
 GameHelpers.IncreaseDamage = IncreaseDamage
 
+---@deprecated
 ---Redirect damage to another target.
 ---@param target string
 ---@param defender string
@@ -300,8 +303,9 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
     
 end
 
+---@deprecated
 ---Applies hit request flags to a hit status.
----@param hit HitRequest
+---@param hit StatsHitDamageInfo
 ---@param target string|StatCharacter
 ---@param handle integer
 function GameHelpers.Damage.ApplyHitRequestFlags(hit, target, handle)
@@ -333,8 +337,8 @@ end
 ---@param targetPos number[]
 ---@param level integer
 ---@param noRandomization boolean
----@param mainWeapon StatItem  Optional mainhand weapon to use in place of the attacker's.
----@param offHandWeapon StatItem   Optional offhand weapon to use in place of the attacker's.
+---@param mainWeapon CDivinityStatsEquipmentAttributesWeapon  Optional mainhand weapon to use in place of the attacker's.
+---@param offHandWeapon CDivinityStatsEquipmentAttributesWeapon   Optional offhand weapon to use in place of the attacker's.
 ---@return DamageList damageList
 ---@return DeathType deathType
 local function GetSkillDamageWithTarget(skill, attacker, target, isFromItem, stealthed, attackerPos, targetPos, level, noRandomization, mainWeapon, offHandWeapon)
@@ -839,8 +843,8 @@ end
 ---@param target ObjectParam
 ---@param skill string
 ---@param hitParams table<string,any>|nil
----@param mainWeapon StatItem|nil
----@param offhandWeapon StatItem|nil
+---@param mainWeapon CDivinityStatsEquipmentAttributesWeapon|nil
+---@param offhandWeapon CDivinityStatsEquipmentAttributesWeapon|nil
 ---@param applySkillProperties boolean|nil
 ---@param getDamageFunction function|nil
 ---@param skillDataParamModifiers StatEntrySkillData|nil

@@ -374,6 +374,43 @@ function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 	return tags
 end
 
+---Check if an object has a tag, or table of tags.
+---@param object ObjectParam The character or item to get tags from.
+---@param tags string|string[] Either a single tag, or an array of tags.
+---@param requireAll boolean|nil If true, and tags is a table, all tags must be found.
+---@param checkEquipmentTags boolean|nil If object is a character, included equipped items when checking for tags.
+---@param cachedTags table<string,boolean>|nil If GameHelpers.GetAllTags has already been used, you can pass the dictionary table here to skip retrieving all tags again.
+---@return boolean
+function GameHelpers.ObjectHasTag(object, tags, requireAll, checkEquipmentTags, cachedTags)
+	local object = GameHelpers.TryGetObject(object)
+	if not object then
+		return false
+	end
+	local _TAGS = cachedTags or GameHelpers.GetAllTags(object, true, checkEquipmentTags)
+	local t = _type(tags)
+	if t == "string" then
+		if _TAGS[tags] then
+			return true
+		end
+	elseif t == "table" then
+		if requireAll then
+			for i,v in pairs(tags) do
+				if not _TAGS[v] then
+					return false
+				end
+			end
+			return true
+		else
+			for i,v in pairs(tags) do
+				if _TAGS[v] then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
 local function _GetMyGuid(obj)
 	return obj.MyGuid
 end

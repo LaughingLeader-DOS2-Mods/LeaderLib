@@ -530,14 +530,34 @@ Ext.Events.SessionLoaded:Subscribe(function()
 				elseif request.Type == "Item" then
 					if params[1] then
 						stat = params[1].StatsId
+						if StringHelpers.IsNullOrEmpty(stat) then
+							local item = request.Item
+							if item and item.CurrentTemplate then
+								local _,_,modFolder = string.find(item.CurrentTemplate.FileName, ".-Data/Mods/(.-)/")
+								if not StringHelpers.IsNullOrEmpty(modFolder) then
+									for _,modGUID in pairs(Ext.Mod.GetLoadOrder()) do
+										local mod = Ext.Mod.GetMod(modGUID)
+										if mod and mod.Info.Directory == modFolder then
+											modName = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
+											break
+										end
+									end
+								end
+							end
+						end
 					end
 				end
-				if stat ~= nil and modName == nil then
-					modName = GameHelpers.Stats.GetModInfo(stat, true)
+				if not StringHelpers.IsNullOrEmpty(stat) then
+					if modName == nil then
+						modName = GameHelpers.Stats.GetModInfo(stat, true)
+					end
 				end
+
 				if not StringHelpers.IsNullOrWhitespace(modName) then
 					if not Vars.DebugMode and (modName == "Shared" or modName == "Shared_DOS") then
-						modName = "Divinity: Original Sin 2"
+						modName = "Divinity: Original Sin 2 (Base)"
+					elseif modName == "Divinity: Original Sin 2" then
+						modName = "Divinity: Original Sin 2 (Campaign)"
 					end
 					local description = tooltip:GetDescriptionElement()
 					if description then

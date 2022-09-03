@@ -222,13 +222,15 @@ local _RuneAccessorySlot = {
 local function _GetRuneBoost(item, runeStat)
 	local activeBoostStat = ""
 	local activeBoostStatAttribute = ""
-	if item.Stats.ItemType == "Weapon" then
-		activeBoostStatAttribute = "RuneEffectWeapon"
-	elseif item.Stats.ItemType == "Armor" then
-		if _RuneAccessorySlot[item.Stats.ItemSlot] then
-			activeBoostStatAttribute = "RuneEffectAmulet"
-		else
-			activeBoostStatAttribute = "RuneEffectUpperbody"
+	if item.Stats then
+		if item.Stats.ItemType == "Weapon" then
+			activeBoostStatAttribute = "RuneEffectWeapon"
+		elseif item.Stats.ItemType == "Armor" then
+			if _RuneAccessorySlot[item.Stats.ItemSlot] then
+				activeBoostStatAttribute = "RuneEffectAmulet"
+			else
+				activeBoostStatAttribute = "RuneEffectUpperbody"
+			end
 		end
 	end
 	if runeStat then
@@ -268,7 +270,8 @@ Ext.Osiris.RegisterListener("RuneRemoved", 4, "after", function (characterGUID, 
 	local character = GameHelpers.GetCharacter(characterGUID)
 	local item = GameHelpers.GetItem(itemGUID)
 	local rune = GameHelpers.GetItem(runeGUID)
-	local boostStat,boostStatName,boostStatAttribute = _GetRuneBoost(item, rune.StatsFromName.StatsEntry)
+	local runeStatEntry = rune.StatsFromName and rune.StatsFromName.StatsEntry or nil
+	local boostStat,boostStatName,boostStatAttribute = _GetRuneBoost(item, runeStatEntry)
 	Events.RuneChanged:Invoke({
 		Character = character,
 		CharacterGUID = characterGUID,

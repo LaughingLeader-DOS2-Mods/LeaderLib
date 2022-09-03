@@ -920,12 +920,19 @@ end
 function GameHelpers.Item.GetOwner(item, returnNilUUID)
 	local item = GameHelpers.GetItem(item)
 	if item then
+        if _ISCLIENT then
+            return item:GetOwnerCharacter()
+        end
+        ---@cast item EsvItem
+
 		if Ext.Utils.IsValidHandle(item.OwnerHandle) then
 			local object = GameHelpers.TryGetObject(item.OwnerHandle)
 			if object then
 				return object
 			end
 		end
+        
+        --InventoryParentHandle on the client?
 		if Ext.Utils.IsValidHandle(item.ParentInventoryHandle) then
 			local object = GameHelpers.TryGetObject(item.ParentInventoryHandle)
 			if object then

@@ -248,27 +248,32 @@ function GameHelpers.ItemHasTag(item, tag)
 	return false
 end
 
+---@overload fun(item:EsvItem|EclItem):string[]
 ---@param item EsvItem|EclItem
 ---@param inDictionaryFormat boolean|nil
----@param skipStats boolean|nil
+---@param skipStats boolean|nil Skip checking the stat Tags attribute.
 ---@return string[]
 function GameHelpers.GetItemTags(item, inDictionaryFormat, skipStats)
 	local tags = {}
 	for _,v in pairs(item:GetTags()) do
 		tags[v] = true
 	end
-	if not skipStats and not GameHelpers.Item.IsObject(item) then
-		if not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) then
-			for _,v in pairs(StringHelpers.Split(item.Stats.Tags, ";")) do
+	if not skipStats and item.Stats and item.StatsFromName.StatsEntry then
+		local tagsStr = item.StatsFromName.StatsEntry.Tags
+		if not StringHelpers.IsNullOrWhitespace(tagsStr) then
+			for _,v in pairs(StringHelpers.Split(tagsStr, ";")) do
 				tags[v] = true
 			end
 		end
 		for _,v in pairs(item.Stats.DynamicStats) do
 			if not StringHelpers.IsNullOrWhitespace(v.ObjectInstanceName) then
-				local tagsText = Ext.StatGetAttribute(v.ObjectInstanceName, "Tags")
-				if not StringHelpers.IsNullOrWhitespace(tagsText) then
-					for _,v in pairs(StringHelpers.Split(tagsText, ";")) do
-						tags[v] = true
+				local dynamicStat = Ext.Stats.Get(v.ObjectInstanceName, nil, false)
+				if dynamicStat then
+					local tagsText = dynamicStat.Tags
+					if not StringHelpers.IsNullOrWhitespace(tagsText) then
+						for _,v in pairs(StringHelpers.Split(tagsText, ";")) do
+							tags[v] = true
+						end
 					end
 				end
 			end
@@ -306,11 +311,12 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	return false
 end
 
+---@overload fun(object:ObjectParam):string[]
 ---Gather all tags for an object and store them in a table.
 ---@param object ObjectParam The character or item to get tags from.
 ---@param inDictionaryFormat boolean|nil If true, tags will be set as tbl[tag] = true, for easier checking.
 ---@param addEquipmentTags boolean|nil If the object is a character, all tags found on equipped items will be added to the table.
----@return table<string,boolean>|string[]
+---@return table<string,boolean>
 function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 	local tags = {}
 	local t = _type(object)
@@ -323,6 +329,7 @@ function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 			end
 		end
 		if GameHelpers.Ext.ObjectIsItem(object) and not GameHelpers.Item.IsObject(object) then
+			---@cast object EsvItem|EclItem
 			for tag,b in pairs(GameHelpers.GetItemTags(object, true, false)) do
 				if inDictionaryFormat then
 					tags[tag] = true
@@ -333,28 +340,16 @@ function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 		end
 	end
 	if addEquipmentTags and GameHelpers.Ext.ObjectIsCharacter(object) then
+		---@cast object EsvCharacter|EclCharacter
 		local items = {}
 		for _,slot in Data.VisibleEquipmentSlots:Get() do
 			if _ISCLIENT then
-				local uuid = object:GetItemBySlot(slot)
-				if not StringHelpers.IsNullOrEmpty(uuid) then
-					local item = _getItem(uuid)
-					if item then
-						items[#items+1] = item
-					end
+				local item = object:GetItemObjectBySlot(slot)
+				if item then
+					items[#items+1] = item
 				end
 			else
-				if _osirisIsCallable() then
-					local uuid = CharacterGetEquippedItem(object.MyGuid, slot)
-					if not StringHelpers.IsNullOrEmpty(uuid) then
-						local item = _getItem(uuid)
-						if item then
-							items[#items+1] = item
-						end
-					end
-				else
-					items = GameHelpers.Character.GetEquipment(object, true)
-				end
+				items = GameHelpers.Character.GetEquipment(object, true)
 			end
 		end
 		for i=1,#items do

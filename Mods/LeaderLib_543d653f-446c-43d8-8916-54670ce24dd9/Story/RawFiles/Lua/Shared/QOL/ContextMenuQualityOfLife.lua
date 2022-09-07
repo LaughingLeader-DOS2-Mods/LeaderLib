@@ -225,17 +225,17 @@ if isClient then
 				if targetID ~= sourceID then
 					e.ContextMenu:AddBuiltinEntry("LLCM_MakeHostile", function(cm, ui, id, actionID, handle)
 						Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_MakeHostile", Common.JsonStringify({Target=targetID, Source=sourceID}))
-					end, "Make Hostile", true, true, false, true, characterTargetHandle)
-					if not isInCombat then
+					end, "[Dev] Make Hostile", true, true, false, true, characterTargetHandle)
+					if not isInCombat and GameHelpers.Character.CanEnterCombat(target) then
 						e.ContextMenu:AddBuiltinEntry("LLCM_StartCombat", function(cm, ui, id, actionID, handle)
 							Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_StartCombat", Common.JsonStringify({Target=targetID, Source=sourceID}))
-						end, "Enter Combat", true, true, false, true, characterTargetHandle)
+						end, "[Dev] Enter Combat", true, true, false, true, characterTargetHandle)
 					end
 				end
 				if isInCombat then
 					e.ContextMenu:AddBuiltinEntry("LLCM_EndCombat", function(cm, ui, id, actionID, handle)
 						Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_EndCombat", Common.JsonStringify({Target=targetID, Source=sourceID}))
-					end, "End Combat", true, true, false, true, characterTargetHandle)
+					end, "[Dev] End Combat", true, true, false, true, characterTargetHandle)
 				end
 			end
 		end

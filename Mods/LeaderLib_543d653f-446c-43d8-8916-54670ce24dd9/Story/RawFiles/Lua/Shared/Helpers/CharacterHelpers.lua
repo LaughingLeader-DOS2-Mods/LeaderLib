@@ -223,6 +223,7 @@ function GameHelpers.Character.IsNeutralToParty(character)
 end
 
 ---@param character CharacterParam
+---@return boolean isInCombat
 function GameHelpers.Character.IsInCombat(character)
 	if not _ISCLIENT and _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(character)
@@ -235,6 +236,17 @@ function GameHelpers.Character.IsInCombat(character)
 	else
 		character = GameHelpers.GetCharacter(character)
 		return character and character:GetStatus("COMBAT") ~= nil
+	end
+	return false
+end
+
+---Checks if the character is alive, on stage, and if CanFight and CanJoinCombat are true.
+---@param character CharacterParam
+---@return boolean combatEnabled
+function GameHelpers.Character.CanEnterCombat(character)
+	character = GameHelpers.GetCharacter(character)
+	if character and character.CurrentTemplate and character.CurrentTemplate.CombatTemplate then
+		return not character.Dead and not character.OffStage and character.CurrentTemplate.CombatTemplate.CanFight and character.CurrentTemplate.CombatTemplate.CanJoinCombat
 	end
 	return false
 end
@@ -898,10 +910,11 @@ function GameHelpers.Character.EquipItem(character, item)
 	return false
 end
 
+---@overload fun(character:CharacterParam):fun():EsvItem|EclItem
 ---Get a table of the character's equipment.
 ---@param character CharacterParam
 ---@param asTable boolean|nil Return the results as a table, instead of an iterator.
----@return EsvItem[]|EclItem[]|fun():EsvItem|EclItem
+---@return EsvItem[]|EclItem[]
 function GameHelpers.Character.GetEquipment(character, asTable)
 	local char = GameHelpers.GetCharacter(character)
     fassert(char ~= nil, "'%s' is not a valid character", character)

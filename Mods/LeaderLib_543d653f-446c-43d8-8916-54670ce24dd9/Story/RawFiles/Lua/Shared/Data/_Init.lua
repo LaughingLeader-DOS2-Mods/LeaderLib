@@ -65,6 +65,18 @@ Data.DamageTypeToResistanceWithExtras = {
 
 setmetatable(Data.DamageTypeToResistanceWithExtras, {__index = Data.DamageTypeToResistance})
 
+Data.DamageTypeToArmorType = {
+	Air = "CurrentMagicArmor",
+	Earth ="CurrentMagicArmor",
+	Fire = "CurrentMagicArmor",
+	Magic = "CurrentMagicArmor",
+	Poison = "CurrentMagicArmor",
+	Water = "CurrentMagicArmor",
+	Corrosive = "CurrentArmor",
+	Physical = "CurrentArmor",
+	Sulfuric = "CurrentArmor", -- TODO Does this affect armor?
+}
+
 ---@type Enum
 Data.EquipmentSlots = {
 	Helmet = 0,

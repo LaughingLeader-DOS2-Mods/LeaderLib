@@ -125,6 +125,9 @@ Vars = {
 		Teleporting = false,
 	},
 	DebugMode = Ext.Debug.IsDeveloperMode() == true,
+	DebugSettings = {
+		DisplayExtraContextMenuOptions = false,
+	},
 	LeaderDebugMode = false,
 	---The last GUID of a context menu object, in developer mode.
 	---@type UUID|nil

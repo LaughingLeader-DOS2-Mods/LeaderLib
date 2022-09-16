@@ -168,9 +168,9 @@ if isClient then
 						characterTargetHandle = cursor.HoverCharacter
 					end
 					entries = {
-						TryProcessHoverObject("LLCM_CopyInfo1", cursor.HoverItem, "Item", e.ContextMenu, "Save Cursor Item to File"),
-						TryProcessHoverObject("LLCM_CopyInfo2", cursor.HoverCharacter, "Character", e.ContextMenu, "Save Cursor Character to File"),
-						TryProcessHoverObject("LLCM_CopyInfo3", cursor.HoverCharacter2, "Character", e.ContextMenu, "Save Cursor Character (2) to File"),
+						TryProcessHoverObject("LLCM_CopyInfo1", cursor.HoverItem, "Item", e.ContextMenu, "[Dev] Save Cursor Item to File"),
+						TryProcessHoverObject("LLCM_CopyInfo2", cursor.HoverCharacter, "Character", e.ContextMenu, "[Dev] Save Cursor Character to File"),
+						TryProcessHoverObject("LLCM_CopyInfo3", cursor.HoverCharacter2, "Character", e.ContextMenu, "[Dev] Save Cursor Character (2) to File"),
 					}
 					for i=1,#entries-1 do
 						if entries[i] == nil then
@@ -178,7 +178,7 @@ if isClient then
 						end
 					end
 					if cursor.HoverEntity and (cursor.HoverItem ~= cursor.HoverEntity and cursor.HoverCharacter ~= cursor.HoverEntity) then
-						local result = TryProcessHoverObject("LLCM_CopyInfo4", cursor.HoverEntity, nil, e.ContextMenu, "Save Cursor Entity to File")
+						local result = TryProcessHoverObject("LLCM_CopyInfo4", cursor.HoverEntity, nil, e.ContextMenu, "[Dev] Save Cursor Entity to File")
 						if result then
 							table.insert(entries, result)
 						end
@@ -188,14 +188,14 @@ if isClient then
 				---@type TooltipItemRequest
 				local req = Game.Tooltip.GetCurrentOrLastRequest()
 				if req and req.ItemNetID then
-					local result = TryProcessHoverObject("LLCM_CopyInfoEditorItem", req.Item, "Item", e.ContextMenu, "Save Cursor Item to File")
+					local result = TryProcessHoverObject("LLCM_CopyInfoEditorItem", req.Item, "Item", e.ContextMenu, "[Dev] Save Cursor Item to File")
 					if result then
 						table.insert(entries, result)
 					end
 				end
 			end
 			if e.Target and GameHelpers.Ext.ObjectIsItem(e.Target) then
-				local result = TryProcessHoverObject("LLCM_CopyEquipmentInfo", e.Target, "Item", e.ContextMenu, "Save Cursor EQ to File")
+				local result = TryProcessHoverObject("LLCM_CopyEquipmentInfo", e.Target, "Item", e.ContextMenu, "[Dev] Save Cursor EQ to File")
 				if result then
 					table.insert(entries, result)
 				end
@@ -207,9 +207,9 @@ if isClient then
 							SaveInfoToFile(v)
 						end
 					end
-				end, "Save All Cursor Info to File", true, true, false, true)
+				end, "[Dev] Save All Cursor Info to File", true, true, false, true)
 			end
-			if characterTargetHandle then
+			if characterTargetHandle and (Vars.LeaderDebugMode or Vars.DebugSettings.DisplayExtraContextMenuOptions) then
 				--[[ e.ContextMenu:AddBuiltinEntry("LLCM_HighGroundTest", function(cm, ui, id, actionID, handle)
 					local target = GameHelpers.TryGetObject(Ext.UI.DoubleToHandle(handle))
 					if target then

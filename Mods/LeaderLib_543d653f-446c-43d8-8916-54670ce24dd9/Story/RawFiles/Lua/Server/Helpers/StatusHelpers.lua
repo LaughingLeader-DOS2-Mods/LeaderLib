@@ -73,7 +73,7 @@ function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, a
 end
 
 ---Set an active status' turns, or apply if if applyIfMissing is not false.
----@param obj string
+---@param obj ObjectParam
 ---@param statusId string
 ---@param turns integer
 ---@param allInstances boolean|nil
@@ -84,7 +84,7 @@ function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIf
 end
 
 ---Extend an active status' duration, or apply if if applyIfMissing is not false.
----@param obj string
+---@param obj ObjectParam
 ---@param statusId string
 ---@param addDuration number
 ---@param allInstances boolean|nil
@@ -95,7 +95,7 @@ function GameHelpers.Status.ExtendDuration(obj, statusId, addDuration, allInstan
 end
 
 ---Set an active status' turns, or apply if if applyIfMissing is not false.
----@param obj string
+---@param obj ObjectParam
 ---@param statusId string
 ---@param addTurns integer
 ---@param allInstances boolean|nil

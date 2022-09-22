@@ -25,6 +25,8 @@ local tostring = tostring
 local type = type
 local xpcall = xpcall
 
+local GameHelpers = GameHelpers
+
 local _GetClientCharacter = function() return GameHelpers.Client.GetCharacter or _C() end
 local _IsNaN = GameHelpers.Math.IsNaN
 local _IsValidHandle = GameHelpers.IsValidHandle

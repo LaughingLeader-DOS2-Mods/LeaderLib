@@ -671,7 +671,9 @@ if not _ISCLIENT then
 
 	---@class OnBasicAttackStartEventArgs
 	---@field Attacker EsvCharacter
+	---@field AttackerGUID GUID
 	---@field Target EsvCharacter|EsvItem|number[]
+	---@field TargetGUID GUID|nil
 	---@field TargetIsObject boolean
 	
 	---Called via AttackManager, when a character starts a basic attack.  

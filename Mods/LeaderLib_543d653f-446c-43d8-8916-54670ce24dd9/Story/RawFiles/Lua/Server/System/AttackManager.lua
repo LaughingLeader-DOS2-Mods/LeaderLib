@@ -112,7 +112,9 @@ RegisterProtectedOsirisListener("CharacterStartAttackObject", 3, "after", functi
 	if attacker and target then
 		Events.OnBasicAttackStart:Invoke({
 			Attacker = attacker,
+			AttackerGUID = attacker.MyGuid,
 			Target = target,
+			TargetGUID = target.MyGuid,
 			TargetIsObject = true,
 		})
 	end
@@ -125,6 +127,7 @@ RegisterProtectedOsirisListener("CharacterStartAttackPosition", 5, "after", func
 		_PV.StartAttackPosition[attacker.MyGuid] = target
 		Events.OnBasicAttackStart:Invoke({
 			Attacker = attacker,
+			AttackerGUID = attacker.MyGuid,
 			Target = target,
 			TargetIsObject = false,
 		})

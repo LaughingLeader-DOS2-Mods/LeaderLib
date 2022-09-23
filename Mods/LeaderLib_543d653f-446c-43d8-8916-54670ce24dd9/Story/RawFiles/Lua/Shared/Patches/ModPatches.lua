@@ -423,6 +423,16 @@ local Patches = {
 						end
 					end
 				end
+
+				--ArmCannon fix for the max energy tag not being cleared
+				Ext.Osiris.RegisterListener("LLWEAPONEX_ArmCannon_SetEnergyTags", 3, "after", function (char, weapon, energy)
+					local maxEnergy = GameHelpers.GetExtraData("LLWEAPONEX_RunicCannon_MaxEnergy", 3, true)
+					if energy > 0 and energy < maxEnergy then
+						Osi.LeaderLib_Tags_ClearPreservedTag(char, "LLWEAPONEX_ArmCannon_FullyCharged")
+						Osi.LeaderLib_Statuses_RemovePermanentStatus(char, "LLWEAPONEX_ARMCANNON_CHARGED")
+						GameHelpers.UI.SetSkillEnabled(char, "Zone_LLWEAPONEX_ArmCannon_Disperse", false)
+					end
+				end)
 			end
 		end
 	}

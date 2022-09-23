@@ -16,21 +16,24 @@ if not _ISCLIENT then
 
 	GameHelpers.UI.SetSlotEnabled = SetSlotEnabled
 
-	---@param client string
+	---@param client CharacterParam
 	---@param skill string
-	---@param enabled string
+	---@param enabled string|boolean
 	function GameHelpers.UI.SetSkillEnabled(client, skill, enabled)
-		if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
-			if _type(enabled) == "string" then
-				enabled = string.lower(enabled) == "true" or enabled == "1"
-			end
-			local slots = GameHelpers.Skill.GetSkillSlots(client, skill, true)
-			if #slots > 0 then
-				GameHelpers.Net.PostToUser(client, "LeaderLib_Hotbar_SetSlotEnabled", Common.JsonStringify({
-					Slots = slots,
-					Enabled = enabled,
-					UUID = client
-				}))
+		client = GameHelpers.GetUUID(client)
+		if not StringHelpers.IsNullOrEmpty(client) then
+			if GameHelpers.Character.IsPlayer(client) then
+				if _type(enabled) == "string" then
+					enabled = string.lower(enabled) == "true" or enabled == "1"
+				end
+				local slots = GameHelpers.Skill.GetSkillSlots(client, skill, true)
+				if #slots > 0 then
+					GameHelpers.Net.PostToUser(client, "LeaderLib_Hotbar_SetSlotEnabled", {
+						Slots = slots,
+						Enabled = enabled,
+						UUID = client
+					})
+				end
 			end
 		end
 	end

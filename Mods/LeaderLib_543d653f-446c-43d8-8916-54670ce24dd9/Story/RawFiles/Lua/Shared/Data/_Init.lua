@@ -2189,6 +2189,7 @@ Data.PropertyContext = {
 
 Data.ModID = {
 	LeaderLib = "7e737d2f-31d2-4751-963f-be6ccc59cd0c",
+	WeaponExpansion = "c60718c3-ba22-4702-9c5d-5ad92b41ba5f",
 	UnofficialPatch = "d15a346b-b332-4397-9b3f-f1e6045ff1c7",
 	TrainingDummy = "40efe511-7489-455e-a9c8-ad7495b8c9f2",
 	DivinityOriginalSin2 = "1301db3d-1f54-4e98-9be5-5094030916e4", -- Main campaign mod

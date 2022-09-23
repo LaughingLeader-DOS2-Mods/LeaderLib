@@ -1,18 +1,27 @@
 local _ISCLIENT = Ext.IsClient()
 
+--Updates the treasure tables to spawn more items, and spawn items at other traders. This is until the 1.0 update is released
+--Ext.IO.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Stats/Generated/TreasureTable.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_TreasureTable.txt")
+
+--Patches an event name conflict that prevented Soul Harvest's bonus from applying.
+Ext.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript")
+
 local Patches = {
 	--Weapon Expansion
 	["c60718c3-ba22-4702-9c5d-5ad92b41ba5f"] = {
 		Version = 153288705,
 		Patch = function (initialized, region)
 			Ext.Utils.PrintWarning("[LeaderLib] Patching Weapon Expansion version [153288706]")
-
-			--Fix Patches an event name conflict that prevented Soul Harvest's bonus from applying.
-			Ext.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript")
 			
 			if not initialized then
 				return
 			end
+
+			local stat = Ext.Stats.Get("ARM_LLWEAPONEX_HandCrossbow_A", nil, false)
+			if stat then
+				stat.ObjectCategory = "LLWEAPONEX_HandCrossbows"
+			end
+
 			if _ISCLIENT then
 				---@diagnostic disable undefined-field
 				if Ext.Utils.Version() < 56 then
@@ -267,27 +276,43 @@ local Patches = {
 					end
 				end
 
-				--Ext.IO.SaveFile("Dumps/ST_LLWEAPONEX_VendingMachine.json", Ext.DumpExport(Ext.GetTreasureTable("ST_LLWEAPONEX_VendingMachine")))
+				
 				--Buff weapon treasure drop amounts
-				local treasureTable = Ext.GetTreasureTable("ST_LLWEAPONEX_VendingMachine")
-				if treasureTable then
+				--TODO Wait for an extender patch that fixes the bug where updating a table breaks the rarities
+				local tt1 = Ext.Stats.TreasureTable.GetLegacy("ST_LLWEAPONEX_VendingMachine")
+				if tt1 then
 					local dropAmount = 16
-					fprint(LOGLEVEL.TRACE, "[LeaderLib] Buffing the ST_LLWEAPONEX_VendingMachine treasure table with more drops.")
-					for _,sub in pairs(treasureTable.SubTables) do
+					fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Buffing the ST_LLWEAPONEX_VendingMachine treasure table with more drops.")
+					for _,sub in pairs(tt1.SubTables) do
 						local checkTable = sub.Categories[1] and sub.Categories[1].TreasureTable or ""
 						if string.find(checkTable, "Weapons") then
 							sub.TotalCount = dropAmount
 							--Chance is actually Amount for some reason, and Amount if Chance/Frequency
-							sub.DropCounts = {{Amount = 1, Chance = dropAmount}}
+							sub.DropCounts = {{Amount = dropAmount, Chance = 1}}
 						end
 					end
-					Ext.UpdateTreasureTable(treasureTable)
+					Ext.Stats.TreasureTable.Update(tt1)
 				end
 
 				local FixDynamicStatsValueTranslation = {
 					CleavePercentage = 0.01,
 					WeaponRange = 0.01,
 				}
+
+				--These attributes are "Fire", "Air" etc in stats, but FireResistance and so on in the extender
+				for k,v in pairs(Mods.WeaponExpansion.Uniques) do
+					if v.ProgressionData then
+						for _,data in pairs(v.ProgressionData) do
+							if data.Attribute == "Skills" then
+								data.IsBoost = false
+							elseif data.Attribute == "Fire" then
+								data.Attribute = "FireResistance"
+							elseif data.Attribute == "Air" then
+								data.Attribute = "AirResistance"
+							end
+						end
+					end
+				end
 
 				Mods.WeaponExpansion.EquipmentManager.SyncItemStatChanges = function (item, changes, dynamicIndex)
 					if changes.Boosts ~= nil and changes.Boosts["Damage Type"] ~= nil then
@@ -334,7 +359,6 @@ local Patches = {
 						if v.ProgressionData then
 							for _,data in pairs(v.ProgressionData) do
 								if data.Attribute == "Skills" then
-									data.IsBoost = false
 									hasSkills = true
 								end
 							end

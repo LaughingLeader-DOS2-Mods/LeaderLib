@@ -489,3 +489,18 @@ SkillManager.Register.BeforeProjectileShoot(arrowSkills, function (e)
 		fprint(LOGLEVEL.DEFAULT, "[Test] Replaced projectile skill (%s) => (%s)", lastSkill, e.Data.SkillId)
     end
 end) ]]
+
+
+--[[
+---@type EsvStatusPolymorphed
+local status = Ext.PrepareStatus(target, "POLYMORPHED", -1.0)
+status.PolymorphResult = "2429c3a4-e54b-4cea-add7-2bc53024935a"
+status.OriginalTemplate = me.RootTemplate.Id;status.OriginalTemplateType = 1;status.DisableInteractions = false;status.TransformedRace = ""
+Ext.ApplyStatus(status)
+
+Ext.Events.BeforeStatusDelete:Subscribe(function(e) if e.Status.StatusType == "POLYMORPHED" then Ext.Dump({StatusId=e.Status.StatusId, PolymorphResult=e.Status.PolymorphResult, TransformedRace = e.Status.TransformedRace, OriginalTemplate = e.Status.OriginalTemplate, OriginalTemplateType = e.Status.OriginalTemplateType}) end end)
+
+Mods.LeaderLib.StatusManager.Subscribe.Applied("POLYMORPHED", function(e) local status = e.Status; status.PolymorphResult = "2429c3a4-e54b-4cea-add7-2bc53024935a"; status.OriginalTemplate = e.Target.RootTemplate.Id;status.OriginalTemplateType = 1;status.DisableInteractions = false;status.TransformedRace = "" end)
+
+local status = Ext.PrepareStatus(me.MyGuid, "POLYMORPHED", 12.0); status.ForceStatus = true; status.PolymorphResult = "2429c3a4-e54b-4cea-add7-2bc53024935a"; status.OriginalTemplate = me.RootTemplate.Id;status.OriginalTemplateType = 1;status.DisableInteractions = false;status.TransformedRace = ""; Ext.ApplyStatus(status)
+]]

@@ -22,6 +22,16 @@ local Patches = {
 				stat.ObjectCategory = "LLWEAPONEX_HandCrossbows"
 			end
 
+			--These keys were possibly never exported
+			for k,v in pairs({
+				LLWEAPONEX_DEMON_GAUNTLET_BONUS_CRIT_DisplayName = "Demonic Surge",
+				LLWEAPONEX_DEMON_GAUNTLET_BONUS_CRIT_Description = "The demon has slain an enemy.<font color='#ee3f70'>100% Critical Chance for your next attack or skill.</font>",
+			}) do
+				if StringHelpers.IsNullOrEmpty(Ext.L10N.GetTranslatedStringFromKey(k)) then
+					Ext.L10N.CreateTranslatedString(k,v)
+				end
+			end
+
 			if _ISCLIENT then
 				---@diagnostic disable undefined-field
 				if Ext.Utils.Version() < 56 then
@@ -54,6 +64,39 @@ local Patches = {
 					end
 				end)
 			else
+				--Boost battle book base damage to be closer to _Swords/_Clubs
+				for _,v in pairs({
+					"_LLWEAPONEX_BattleBooks_1H",
+					"WPN_LLWEAPONEX_BattleBook_1H",
+					"WPN_LLWEAPONEX_BattleBook_A",
+					"WPN_LLWEAPONEX_BattleBook_B",
+					"WPN_LLWEAPONEX_BattleBook_C",
+					"WPN_LLWEAPONEX_BattleBook_D",
+					"WPN_LLWEAPONEX_BattleBook_E",
+					"WPN_LLWEAPONEX_BattleBook_F",
+				}) do
+					local stat = Ext.Stats.Get(v, nil, false)
+					if stat and stat.DamageFromBase == 55 then
+						stat.DamageFromBase = 63
+						Ext.Stats.Sync(v, false)
+					end
+				end
+
+				--Ext.Stats.TreasureTable.Update(Ext.Stats.TreasureTable.GetLegacy("ST_WeaponLegendary"))
+				--Buff weapon treasure drop amounts
+				--TODO Wait for an extender patch that fixes the bug where updating a table breaks the rarities
+				local tt1 = Ext.Stats.TreasureTable.GetLegacy("ST_LLWEAPONEX_VendingMachine")
+				if tt1 then
+					fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Buffing the ST_LLWEAPONEX_VendingMachine treasure table with more drops.")
+					for _,sub in pairs(tt1.SubTables) do
+						local checkTable = sub.Categories[1] and sub.Categories[1].TreasureTable or ""
+						if string.find(checkTable, "Weapons") then
+							sub.DropCounts = {{Amount = 16, Chance = 1}}
+						end
+					end
+					Ext.Stats.TreasureTable.Update(tt1)
+				end
+
 				--Mods.WeaponExpansion.Uniques.Harvest.ProgressionData[11].Value = "Target_BlackShroud"
 				--TradeGenerationStarted("680d2702-721c-412d-b083-4f5e816b945a")
 				local _NPC = {
@@ -274,24 +317,6 @@ local Patches = {
 					elseif ObjectIsItem(uuid) == 1 then
 						GenerateTreasure(uuid, treasure, not GameHelpers.Item.IsObject(object) and object.Stats.Level or 1, uuid)
 					end
-				end
-
-				
-				--Buff weapon treasure drop amounts
-				--TODO Wait for an extender patch that fixes the bug where updating a table breaks the rarities
-				local tt1 = Ext.Stats.TreasureTable.GetLegacy("ST_LLWEAPONEX_VendingMachine")
-				if tt1 then
-					local dropAmount = 16
-					fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Buffing the ST_LLWEAPONEX_VendingMachine treasure table with more drops.")
-					for _,sub in pairs(tt1.SubTables) do
-						local checkTable = sub.Categories[1] and sub.Categories[1].TreasureTable or ""
-						if string.find(checkTable, "Weapons") then
-							sub.TotalCount = dropAmount
-							--Chance is actually Amount for some reason, and Amount if Chance/Frequency
-							sub.DropCounts = {{Amount = dropAmount, Chance = 1}}
-						end
-					end
-					Ext.Stats.TreasureTable.Update(tt1)
 				end
 
 				local FixDynamicStatsValueTranslation = {

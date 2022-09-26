@@ -10,6 +10,7 @@ local _EXTVERSION = Ext.Utils.Version()
 ---@field OnVisibilityChanged fun(self:UIObjectExtended, lastVisible:boolean, nextVisible:boolean)
 ---@field OnInitialized fun(self:UIObjectExtended, instance:UIObject)
 ---@field OnTick fun(self:UIObjectExtended, e:GameTime)
+---@field _GetIndex fun(self:table, key:string):any Custom function for providing more behavior in the __index metamethod for the instance.
 
 ---@class UIObjectExtended:UIObjectExtendedSettings
 ---@field Instance UIObject
@@ -42,6 +43,13 @@ local function GetIndex(tbl, k)
 			return Common.TableHasValue(ui.Flags, "OF_Visible")
 		end
 		return false
+	end
+	local _getIndex = rawget(tbl, "_GetIndex")
+	if _getIndex then
+		local v = _getIndex(tbl, k)
+		if v ~= nil then
+			return v
+		end
 	end
 	return UIObjectExtended[k]
 end

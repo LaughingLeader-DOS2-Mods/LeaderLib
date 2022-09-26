@@ -188,14 +188,19 @@ function SettingsManager.LoadConfigFiles()
 	local order = Ext.Mod.GetLoadOrder()
 	for i,uuid in pairs(order) do
 		if IgnoredMods[uuid] ~= true then
-			local info = Ext.Mod.GetMod(uuid).Info
-			if info ~= nil then
-				local b,result = xpcall(TryFindConfig, debug.traceback, info)
-				if not b then
-					Ext.Utils.PrintError(result)
-				elseif not StringHelpers.IsNullOrEmpty(result) then
-					LoadModSettingsConfig(uuid, result)
+			local mod = Ext.Mod.GetMod(uuid)
+			if mod then
+				local info = mod.Info
+				if info ~= nil then
+					local b,result = xpcall(TryFindConfig, debug.traceback, info)
+					if not b then
+						Ext.Utils.PrintError(result)
+					elseif not StringHelpers.IsNullOrEmpty(result) then
+						LoadModSettingsConfig(uuid, result)
+					end
 				end
+			else
+				fprint(LOGLEVEL.WARNING, "[LeaderLib:SettingsManager.LoadConfigFiles] Failed to retrieve mod data for mod (%s) in load order.", uuid)
 			end
 		end
 	end

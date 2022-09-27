@@ -62,15 +62,15 @@ local CHARACTER_STATS_PARAMS = {
 
 local function TraceType(character, attribute, attribute_type)
 	if attribute_type == "Integer" or attribute_type == "Flag" or attribute_type == "Integer64" or attribute_type == "Enum" then
-		PrintDebug("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
+		fprint(LOGLEVEL.TRACE, "[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	elseif attribute_type == "Real" then
-		PrintDebug("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
+		fprint(LOGLEVEL.TRACE, "[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	elseif attribute_type == "String" then
-		PrintDebug("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
+		fprint(LOGLEVEL.TRACE, "[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	elseif attribute_type == "table" then
-		PrintDebug("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..Common.Dump(character[attribute]).."")
+		fprint(LOGLEVEL.TRACE, "[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..Common.Dump(character[attribute]).."")
 	else
-		PrintDebug("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
+		fprint(LOGLEVEL.TRACE, "[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	end
 end
 
@@ -97,26 +97,26 @@ function Debug_TraceCharacter(character)
 		end
 	end
 
-	PrintDebug("=======================")
-	PrintDebug("===TRACING: "..tostring(characterObject.MyGuid).."====")
-	PrintDebug("=======================")
+	fprint(LOGLEVEL.TRACE, "=======================")
+	fprint(LOGLEVEL.TRACE, "===TRACING: "..tostring(characterObject.MyGuid).."====")
+	fprint(LOGLEVEL.TRACE, "=======================")
 	if characterObject ~= nil then
-		PrintDebug("=======================")
-		PrintDebug("===Character Params====")
-		PrintDebug("=======================")
+		fprint(LOGLEVEL.TRACE, "=======================")
+		fprint(LOGLEVEL.TRACE, "===Character Params====")
+		fprint(LOGLEVEL.TRACE, "=======================")
 		for attribute,attribute_type in pairs(CHARACTER_PARAMS) do
 			TraceType(characterObject, attribute, attribute_type)
 		end
-		PrintDebug("=======================")
+		fprint(LOGLEVEL.TRACE, "=======================")
 	end
 	if characterStats ~= nil then
-		PrintDebug("=======================")
-		PrintDebug("====Character Stats====")
-		PrintDebug("=======================")
+		fprint(LOGLEVEL.TRACE, "=======================")
+		fprint(LOGLEVEL.TRACE, "====Character Stats====")
+		fprint(LOGLEVEL.TRACE, "=======================")
 		for attribute,attribute_type in pairs(CHARACTER_STATS_PARAMS) do
 			TraceType(characterStats, attribute, attribute_type)
 		end
-		PrintDebug("=======================")
+		fprint(LOGLEVEL.TRACE, "=======================")
 	end
 end
 

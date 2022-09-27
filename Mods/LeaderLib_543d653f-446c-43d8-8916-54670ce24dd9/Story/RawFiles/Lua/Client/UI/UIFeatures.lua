@@ -1,10 +1,5 @@
 --param1:Number, param2:Boolean, param3:String, param4:Boolean = false
 
----@param ui UIObject
-local function PrintCall(ui, call, ...)
-	PrintDebug("[PrintCall]",call, Common.JsonStringify({...}))
-end
-
 function UI.GetArrayIndexStart(ui, arrayName, offset)
 	local i = 0
 	while i < 9999 do

@@ -140,53 +140,53 @@ AbsorbSurfaceRange = "Integer",
 
 local function TraceType(obj, handle, attribute, attribute_type)
 	if attribute_type == "Enum" then
-		PrintDebug("["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."|"..NRD_HitGetString(handle,attribute))
+		fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."|"..NRD_HitGetString(handle,attribute))
 	elseif attribute_type == "Integer" or attribute_type == "Flag" or attribute_type == "Integer64" then
-		PrintDebug("["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."")
+		fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."")
 	elseif attribute_type == "Real" then
-		PrintDebug("["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."")
+		fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."")
 	elseif attribute_type == "String" then
-		PrintDebug("["..attribute.."] = "..tostring(NRD_HitGetString(handle, attribute)).."")
+		fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..tostring(NRD_HitGetString(handle, attribute)).."")
 	else
-		PrintDebug("["..attribute.."] = "..tostring(NRD_HitGetString(handle, attribute)).."")
+		fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..tostring(NRD_HitGetString(handle, attribute)).."")
 	end
 end
 
 local function TraceStatusType(obj, handle, attribute, attribute_type)
 	if attribute_type == "Integer" or attribute_type == "Flag" or attribute_type == "Integer64" then
-		PrintDebug("["..attribute.."] = "..tostring(NRD_StatusGetInt(obj, handle, attribute)).."")
+		fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..tostring(NRD_StatusGetInt(obj, handle, attribute)).."")
 	elseif attribute_type == "Real" then
-		PrintDebug("["..attribute.."] = "..tostring(NRD_StatusGetReal(obj, handle, attribute)).."")
+		fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..tostring(NRD_StatusGetReal(obj, handle, attribute)).."")
 	elseif attribute_type == "String" then
-		PrintDebug("["..attribute.."] = "..tostring(NRD_StatusGetString(obj, handle, attribute)).."")
+		fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..tostring(NRD_StatusGetString(obj, handle, attribute)).."")
 	elseif attribute_type == "Enum" then
-		PrintDebug("["..attribute.."] = "..tostring(NRD_StatusGetInt(obj, handle, attribute)).."|"..tostring(NRD_StatusGetString(obj, handle, attribute)).."")
+		fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..tostring(NRD_StatusGetInt(obj, handle, attribute)).."|"..tostring(NRD_StatusGetString(obj, handle, attribute)).."")
 	elseif attribute_type == "GuidString" or attribute_type == "Handle" then
-		PrintDebug("["..attribute.."] = "..tostring(NRD_StatusGetGuidString(obj, handle, attribute)).."")
+		fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..tostring(NRD_StatusGetGuidString(obj, handle, attribute)).."")
 	end
 	if attribute == "SkillId" then
 		local skillprototype = NRD_StatusGetString(obj, handle, "SkillId")
 		if skillprototype ~= "" and skillprototype ~= nil then
 			local skill = GetSkillEntryName(skillprototype)
-			PrintDebug("["..attribute.."] = "..skillprototype.." => "..skill.."")
+			fprint(LOGLEVEL.TRACE, "["..attribute.."] = "..skillprototype.." => "..skill.."")
 		end
 	end
 end
 
 function Debug_TraceStatus(obj, status, handle)
-	PrintDebug("[LeaderLib_Debug.lua:TraceStatus] === "..obj.." || "..status.." ("..tostring(handle)..") === ")
+	fprint(LOGLEVEL.TRACE, "[LeaderLib_Debug.lua:TraceStatus] === "..obj.." || "..status.." ("..tostring(handle)..") === ")
 	for attribute,attribute_type in pairs(STATUS_ATTRIBUTE) do
 		TraceType(obj, handle, attribute, attribute_type)
 	end
-	PrintDebug("[LeaderLib_Debug.lua:TraceHit] Trying to get StatusType...")
+	fprint(LOGLEVEL.TRACE, "[LeaderLib_Debug.lua:TraceHit] Trying to get StatusType...")
 	local status_type = Ext.StatGetAttribute(status, "StatusType")
 	if status_type == "HEAL" then
-		PrintDebug("[LeaderLib_Debug.lua:TraceStatus] ===== HEAL TYPE ===== ")
+		fprint(LOGLEVEL.TRACE, "[LeaderLib_Debug.lua:TraceStatus] ===== HEAL TYPE ===== ")
 		for attribute,attribute_type in pairs(STATUS_HEAL_ATTRIBUTE) do
 			TraceType(obj, handle, attribute, attribute_type)
 		end
 	elseif status_type == "HEALING" then
-		PrintDebug("[LeaderLib_Debug.lua:TraceStatus] ===== HEALING TYPE ===== ")
+		fprint(LOGLEVEL.TRACE, "[LeaderLib_Debug.lua:TraceStatus] ===== HEALING TYPE ===== ")
 		for attribute,attribute_type in pairs(STATUS_HEALING_ATTRIBUTE) do
 			TraceType(obj, handle, attribute, attribute_type)
 		end
@@ -195,7 +195,7 @@ end
 
 function Debug_TraceHitPrepare(target,attacker,damage,handle,state)
 	fprint(LOGLEVEL.TRACE, "[PrepareHit:%s] damage(%s)[%s] attacker(%s) target(%s) handle(%s)", state, damage, NRD_HitGetString(handle, "DamageType"), attacker,target,handle)
-	PrintDebug("=======================")
+	fprint(LOGLEVEL.TRACE, "=======================")
 	for i,damageType in Data.DamageTypes:Get() do
 		local amount = NRD_HitGetDamage(handle, damageType)
 		if amount then
@@ -205,43 +205,43 @@ function Debug_TraceHitPrepare(target,attacker,damage,handle,state)
 	for attribute,attribute_type in pairs(HIT_ATTRIBUTE) do
 		TraceType(target, handle, attribute, attribute_type)
 	end
-	PrintDebug("=======================")
+	fprint(LOGLEVEL.TRACE, "=======================")
 end
 
 function Debug_TraceOnHit(target,attacker,damage,handle,state)
-	PrintDebug("[LeaderLib_Debug.lua:TraceOnHit] damage("..tostring(damage)..") attacker("..tostring(attacker)..") target("..tostring(target)..") handle("..tostring(handle)..")")
-	PrintDebug("=======================")
+	fprint(LOGLEVEL.TRACE, "[LeaderLib_Debug.lua:TraceOnHit] damage("..tostring(damage)..") attacker("..tostring(attacker)..") target("..tostring(target)..") handle("..tostring(handle)..")")
+	fprint(LOGLEVEL.TRACE, "=======================")
 	for i,damageType in Data.DamageTypes:Get() do
 		local amount = NRD_HitStatusGetDamage(target,handle, damageType)
 		if amount then
 			fprint(LOGLEVEL.TRACE, "[%s] = (%s)", damageType, amount)
 		end
 	end
-	--[[ PrintDebug("=======================")
-	PrintDebug("==========HIT==========")
-	PrintDebug("=======================")
+	--[[ fprint(LOGLEVEL.TRACE, "=======================")
+	fprint(LOGLEVEL.TRACE, "==========HIT==========")
+	fprint(LOGLEVEL.TRACE, "=======================")
 	for attribute,attribute_type in pairs(HIT_ATTRIBUTE) do
 		TraceStatusType(target, handle, attribute, attribute_type)
 	end
-	PrintDebug("=======================")
-	PrintDebug("======HIT STATUS=======")
-	PrintDebug("=======================")
+	fprint(LOGLEVEL.TRACE, "=======================")
+	fprint(LOGLEVEL.TRACE, "======HIT STATUS=======")
+	fprint(LOGLEVEL.TRACE, "=======================")
 	for attribute,attribute_type in pairs(STATUS_HIT) do
 		TraceStatusType(target, handle, attribute, attribute_type)
 	end
-	PrintDebug("=======================")
-	PrintDebug("========STATUS=========")
-	PrintDebug("=======================")
+	fprint(LOGLEVEL.TRACE, "=======================")
+	fprint(LOGLEVEL.TRACE, "========STATUS=========")
+	fprint(LOGLEVEL.TRACE, "=======================")
 	for attribute,attribute_type in pairs(STATUS_ATTRIBUTE) do
 		TraceStatusType(target, handle, attribute, attribute_type)
 	end
-	PrintDebug("=======================")
-	PrintDebug("[LeaderLib_Debug.lua:TraceHit] Trying to get StatusId...")
+	fprint(LOGLEVEL.TRACE, "=======================")
+	fprint(LOGLEVEL.TRACE, "[LeaderLib_Debug.lua:TraceHit] Trying to get StatusId...")
 	local status = NRD_StatusGetString(target, handle, "StatusId")
 	if status ~= nil and status ~= "HIT" then
 		Debug_TraceStatus(target, status, handle)
 	end ]]
-	PrintDebug("=======================")
+	fprint(LOGLEVEL.TRACE, "=======================")
 end
 
 -- Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
@@ -256,13 +256,13 @@ end
 -- end)
 
 function PrintModDB()
-	PrintDebug("[LeaderLib_Debug.lua:PrintDB] Printing database DB_LeaderLib_Mods_Registered.")
+	fprint(LOGLEVEL.TRACE, "[LeaderLib_Debug.lua:PrintDB] Printing database DB_LeaderLib_Mods_Registered.")
 	local values = Osi.DB_LeaderLib_Mods_Registered:Get(nil, nil, nil, nil, nil, nil, nil, nil)
-	PrintDebug(Common.JsonStringify(values))
+	fprint(LOGLEVEL.TRACE, Common.JsonStringify(values))
 end
 
 function PrintDB(name, arity)
-	PrintDebug("[LeaderLib_Debug.lua:PrintDB] Printing database "..name.." ("..tostring(arity)..")")
+	fprint(LOGLEVEL.TRACE, "[LeaderLib_Debug.lua:PrintDB] Printing database "..name.." ("..tostring(arity)..")")
 end
 
 function PrintTest(str)
@@ -289,7 +289,7 @@ function Debug_TestSkillScaleMath(level)
 		maxDamage = math.max(maxDamage, minDamage + 1.0)
 	end
 	
-	PrintDebug("[LeaderLib_Debug.lua:TestSkillScaleMath] Level("..level..") Range(30) Damage("..tostring(damage)..") FromBase("..tostring(damageAdjusted)..") Final Damage("..tostring(minDamage).." - "..tostring(maxDamage)..")" )
+	fprint(LOGLEVEL.TRACE, "[LeaderLib_Debug.lua:TestSkillScaleMath] Level("..level..") Range(30) Damage("..tostring(damage)..") FromBase("..tostring(damageAdjusted)..") Final Damage("..tostring(minDamage).." - "..tostring(maxDamage)..")" )
 end
 
 function Debug_Iterator_PrintCharacter(uuid)
@@ -298,16 +298,18 @@ function Debug_Iterator_PrintCharacter(uuid)
 	---@type StatCharacter
 	local characterStats = character.Stats
 	
-	PrintDebug("CHARACTER")
-	PrintDebug("===============")
-	PrintDebug("UUID:", uuid)
-	PrintDebug("NetID:", character.NetID)
-	PrintDebug("Name:", CharacterGetDisplayName(uuid))
-	PrintDebug("Stat:", characterStats.Name)
-	PrintDebug("Archetype:", character.Archetype)
-	PrintDebug("Pos:", Common.JsonStringify(characterStats.Position))
-	PrintDebug("Rot:", Common.JsonStringify(characterStats.Rotation))
-	PrintDebug("===============")
+	Ext.Utils.Print("CHARACTER")
+	Ext.Utils.Print("===============")
+	Ext.Utils.Print(Lib.serpent.block({
+		UUID = uuid,
+		NetID = character.NetID,
+		Name = GameHelpers.GetDisplayName(character),
+		Stat = characterStats.Name,
+		Archetype = character.Archetype,
+		Pos = character.WorldPos,
+		Rot = character.Rotation
+	}, {sortkeys=false}))
+	Ext.Utils.Print("===============")
 end
 
 local debug_DeltaModProperties = {
@@ -328,25 +330,25 @@ function Debug_Iterator_PrintDeltamod(item, deltamod, isGenerated)
 	local modifierType = NRD_StatGetType(NRD_ItemGetStatsId(item))
 	---@type DeltaMod
 	local deltamodObj = Ext.GetDeltaMod(deltamod, modifierType)
-	PrintDebug("DELTAMOD")
-	PrintDebug("===============")
-	PrintDebug("Item:", item)
-	PrintDebug("Item Stat:", GameHelpers.GetItem(item).Stats.Name)
-	PrintDebug("Name:", deltamod)
-	PrintDebug("ModifierType:", modifierType)
-	PrintDebug("IsGenerated:", isGenerated)
+	Ext.Utils.Print("DELTAMOD")
+	Ext.Utils.Print("===============")
+	Ext.Utils.Print("Item:", item)
+	Ext.Utils.Print("Item Stat:", GameHelpers.GetItem(item).Stats.Name)
+	Ext.Utils.Print("Name:", deltamod)
+	Ext.Utils.Print("ModifierType:", modifierType)
+	Ext.Utils.Print("IsGenerated:", isGenerated)
 	if deltamodObj ~= nil then
 		for i,prop in pairs(debug_DeltaModProperties) do
 			if prop.Name == "Boosts" then
-				PrintDebug("-------")
-				PrintDebug("Deltamod Boosts:")
-				PrintDebug("-------")
+				Ext.Utils.Print("-------")
+				Ext.Utils.Print("Deltamod Boosts:")
+				Ext.Utils.Print("-------")
 				for i,boost in pairs(deltamodObj.Boosts) do
-					PrintDebug(boost.Boost, boost.Count)
+					Ext.Utils.Print(boost.Boost, boost.Count)
 				end
-				PrintDebug("-------")
+				Ext.Utils.Print("-------")
 			else
-				PrintDebug(prop.Name, deltamodObj[prop.Name])
+				Ext.Utils.Print(prop.Name, deltamodObj[prop.Name])
 			end
 		end
 	end

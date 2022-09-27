@@ -167,7 +167,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 					--print("slot", slot, "local slot", slot%29, "currentBarIndex", currentBarIndex, "minSlot", minSlot, "maxSlot", maxSlot)
 					if slot <= maxSlot and slot >= minSlot then
 						hotbar.setSlotEnabled(slot%29, data.Enabled)
-						PrintDebug("[LeaderLib] Set slot ", slot, "enabled to", data.Enabled)
+						fprint(LOGLEVEL.TRACE, "[LeaderLib] Set slot %s enabled to %s", slot, data.Enabled)
 					end
 				end
 				return true
@@ -191,7 +191,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 					--print("slot", slot, "local slot", slot%29, "currentBarIndex", currentBarIndex, "minSlot", minSlot, "maxSlot", maxSlot)
 					if slot <= maxSlot and slot >= minSlot then
 						this.setSlotEnabled(slot%29, data.Enabled)
-						PrintDebug("[LeaderLib] Set slot ", slot, "enabled to", data.Enabled)
+						fprint(LOGLEVEL.TRACE, "[LeaderLib] Set slot %s enabled to %s", slot, data.Enabled)
 					end
 				end
 				return true
@@ -220,7 +220,6 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, data
 				for _,slotData in pairs(data.Slots) do
 					if slotData.Index and slotData.Cooldown then
 						local slot_mc = slotholder.slot_array[slotData.Index]
-						--PrintDebug(slotData.Index, slot_mc, slotData.Cooldown, slot_mc and slot_mc.cd_mc.cd_txt.htmlText or "")
 						if slot_mc then
 							slot_mc.setCoolDown(slotData.Cooldown)
 						end

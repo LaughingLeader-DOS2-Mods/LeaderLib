@@ -89,7 +89,7 @@ if not _ISCLIENT then
 								end
 							end
 							if remove then
-								--PrintDebug(string.format("[LeaderLib.GameHelpers.Surface.UpdateRules] Removing surfaces (%s) from [%s] ActionableSurfaces.", StringHelpers.Join(", ", surfaces), surfaceElement))
+								--fprint(LOGLEVEL.TRACE, string.format("[LeaderLib.GameHelpers.Surface.UpdateRules] Removing surfaces (%s) from [%s] ActionableSurfaces.", StringHelpers.Join(", ", surfaces), surfaceElement))
 								parentTable.ActionableSurfaces[i] = nil
 								rulesUpdated = true
 							end

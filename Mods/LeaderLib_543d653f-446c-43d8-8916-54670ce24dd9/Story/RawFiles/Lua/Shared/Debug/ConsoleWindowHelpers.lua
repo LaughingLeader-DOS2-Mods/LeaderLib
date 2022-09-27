@@ -122,7 +122,7 @@ if not _ISCLIENT then
 		if entries == party or entries == nil then
 			entries = GameHelpers.GetParty(nil, true, true, false, true)
 		end
-		PrintDebug(entries, #entries, status)
+		fprint(LOGLEVEL.TRACE, entries, #entries, status)
 		if status then
 			duration = duration or 6.0
 			if force == nil then
@@ -163,7 +163,7 @@ if not _ISCLIENT then
 		for k,v in pairs(party) do
 			if type(v) == "function" then
 				meta[k] = function(tbl, ...)
-					PrintDebug("meta", k, tbl == data, ...)
+					Ext.Utils.Print("meta", k, tbl == data, ...)
 					local b,result = pcall(v, data, ...)
 					return result
 				end

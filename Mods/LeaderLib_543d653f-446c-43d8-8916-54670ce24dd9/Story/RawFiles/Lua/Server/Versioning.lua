@@ -90,45 +90,6 @@ end
 
 Ext.NewQuery(VersionStringToVersionInteger, "LeaderLib_Ext_QRY_VersionStringToVersionInteger", "[in](STRING)_VersionString, [in](INTEGER)_Fallback, [out](INTEGER)_VersionInt")
 
-local function Register_Mod_Table(tbl)
-	local id = tbl["id"]
-	local author = tbl["author"]
-	local version = tbl["version"]
-	local b = false
-	local major,minor,revision,build = 0,0,0,0
-	if id ~= nil and author ~= nil then
-		if version == nil then
-			Osi.LeaderUpdater_Register_Mod(id, author, 0,0,0,0);
-		else
-			if type(version) == "string" then
-				b,major,minor,revision,build = pcall(StringToVersionIntegers, version)
-				if b then
-					Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
-				else
-					Osi.LeaderUpdater_Register_Mod(id,author,0,0,0,0)
-				end
-			elseif type(version) == "table" then
-				local major = Common.GetTableEntry(version, "major", 0)
-				local minor = Common.GetTableEntry(version, "minor", 0)
-				local revision = Common.GetTableEntry(version, "revision", 0)
-				local build = Common.GetTableEntry(version, "build", 0)
-				Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
-			end
-		end
-
-		local uuid = tbl["uuid"]
-		if uuid ~= nil then
-			Osi.LeaderUpdater_Register_UUID(id,author,uuid)
-		end
-		PrintDebug("[LeaderLib_Main.lua] Registered mod (",Common.Dump(tbl),").")
-	end
-end
-
-local function LeaderUpdater_OnModRegistered_Error (x)
-	Ext.Utils.PrintError("[LeaderLib:Bootstrap.lua] Error calling mod registered callback function: ", x)
-	return false
-end
-
 ---Calls initial registration functions stored in LeaderLib_ModRegistered.
 ---@param uuid string
 ---@param version integer
@@ -140,11 +101,6 @@ function OnModRegistered(uuid,version)
 			Ext.Utils.PrintError("[LeaderLib:OnModRegistered] Error calling function:\n", err)
 		end
 	end
-end
-
-local function LeaderUpdater_OnModUpdated_Error (x)
-	Ext.Utils.PrintError("[LeaderLib:Bootstrap.lua] Error calling mod update callback function: ", x)
-	return false
 end
 
 ---Calls update functions stored in LeaderLib_ModUpdater when that mod's version changes.
@@ -170,7 +126,7 @@ local function _LoadLeaderLib()
 end
 
 function LoadMods()
-	PrintDebug("[LeaderLib:Bootstrap.lua] Registering LeaderLib's mod info.")
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:Bootstrap.lua] Registering LeaderLib's mod info.")
 	_LoadLeaderLib()
 
 	local loadOrder = Ext.Mod.GetLoadOrder()

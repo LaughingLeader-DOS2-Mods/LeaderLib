@@ -93,14 +93,14 @@ Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
 	if param2 == "host" then param2 = host end
 	if param3 == "host" then param3 = host end
 
-	PrintDebug(cmd,target,param2,param3)
+	fprint(LOGLEVEL.TRACE, cmd,target,param2,param3)
 
 	if param2 == nil or param3 == nil then
 		if ObjectExists(target) == 1 then
-			PrintDebug("Teleporting",host,"to",target,GetPosition(target))
-			TeleportTo(host, target, "", 1, 0, 1)
+			fprint(LOGLEVEL.TRACE, "Teleporting (%s) to (%s)[%s]",host,target,StringHelpers.Join(";", GameHelpers.Math.GetPosition(target)))
+			Osi.TeleportTo(host, target)
 		else
-			PrintDebug("Target",target,"does not exist")
+			fprint(LOGLEVEL.TRACE, "Target (%s) does not exist", target)
 		end
 	else
 		local x = tonumber(target)
@@ -112,7 +112,7 @@ Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
 				TeleportToPosition(target, x, y, z, "", 1, 0)
 			end
 		else
-			PrintDebug("[teleport] Failed to parse position?")	
+			fprint(LOGLEVEL.TRACE, "[teleport] Failed to parse position?")	
 		end
 	end
 end)
@@ -154,7 +154,7 @@ Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force
 		--Invulnerable/Immortality can block statuses
 		force = 1
 	end
-	PrintDebug(command,status,target,source,duration,force)
+	fprint(LOGLEVEL.TRACE, command,status,target,source,duration,force)
 	ApplyStatus(target,status,duration,force,source)
 end)
 
@@ -295,7 +295,7 @@ local function processTreasure(treasure, props, host, generateAmount)
 				elseif cat.TreasureTable then
 					processTreasure(cat.TreasureTable, props, host, generateAmount)
 				else
-					PrintDebug(Common.Dump(cat))
+					fprint(LOGLEVEL.TRACE, Common.Dump(cat))
 				end
 			end
 		end
@@ -414,7 +414,7 @@ Ext.RegisterConsoleCommand("removeunmemorizedskills", function(cmd)
 		local slot = NRD_SkillBarFindSkill(host, skill)
 		if slot == nil then
 			table.insert(removedSkills[host], {Skill=skill, Slot=slot})
-			PrintDebug("[LeaderLib:removeunmemorizedskills] Removing "..skill)
+			fprint(LOGLEVEL.TRACE, "[LeaderLib:removeunmemorizedskills] Removing "..skill)
 			CharacterRemoveSkill(host, skill)
 			--local skillInfo = char:GetSkillInfo(skill)
 			--print(string.format("[%s](%i) IsActivated(%s) IsLearned(%s), ZeroMemory(%s)", skill, slot, skillInfo.IsActivated, skillInfo.IsLearned, skillInfo.ZeroMemory))
@@ -446,17 +446,17 @@ Ext.RegisterConsoleCommand("printalldeltamods", function(command, ...)
 			---@type EsvItem
 			local item = GameHelpers.GetItem(itemUUID)
 			if item ~= nil then
-				PrintDebug(slot, itemUUID)
-				PrintDebug("Stat:", item.StatsId)
-				PrintDebug("=======")
-				PrintDebug("Item Boost Stats:")
-				PrintDebug("=======")
+				fprint(LOGLEVEL.TRACE, slot, itemUUID)
+				fprint(LOGLEVEL.TRACE, "Stat (%s)", item.StatsId)
+				fprint(LOGLEVEL.TRACE, "=======")
+				fprint(LOGLEVEL.TRACE, "Item Boost Stats:")
+				fprint(LOGLEVEL.TRACE, "=======")
 				for i,stat in pairs(item.Stats.DynamicStats) do
 					if not StringHelpers.IsNullOrEmpty(stat.BoostName) then
-						PrintDebug(i,stat.BoostName)
+						fprint(LOGLEVEL.TRACE, i,stat.BoostName)
 					end
 				end
-				PrintDebug("=======")
+				fprint(LOGLEVEL.TRACE, "=======")
 				NRD_ItemIterateDeltaModifiers(itemUUID, "LLWEAPONEX_Debug_PrintDeltamod")
 			end
 		end
@@ -474,7 +474,7 @@ end)
 Ext.RegisterConsoleCommand("sethelmetoption", function(command, param)
 	local host = CharacterGetHostCharacter()
 	local enabled = param == "true"
-	PrintDebug("[sethelmetoption]",host,enabled)
+	fprint(LOGLEVEL.TRACE, "[sethelmetoption]",host,enabled)
 	GameHelpers.Net.PostToUser(host, "LeaderLib_SetHelmetOption", MessageData:CreateFromTable("HelmetOption", {UUID = host, Enabled = enabled}):ToString())
 end)
 
@@ -515,15 +515,15 @@ end)
 Ext.RegisterConsoleCommand("printitemboosts", function(cmd)
 	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 	local weapon = GameHelpers.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
-	PrintDebug(weapon.MyGuid, weapon.StatsId)
-	PrintDebug(weapon.Stats.Boosts)
+	fprint(LOGLEVEL.TRACE, weapon.MyGuid, weapon.StatsId)
+	fprint(LOGLEVEL.TRACE, weapon.Stats.Boosts)
 	for i,v in pairs(weapon:GetGeneratedBoosts()) do
-		PrintDebug(i,v)
+		fprint(LOGLEVEL.TRACE, i,v)
 	end
 	for i,v in pairs(weapon:GetDeltaMods()) do
-		PrintDebug(i,v)
+		fprint(LOGLEVEL.TRACE, i,v)
 	end
-	PrintDebug(weapon.Stats["Damage Type"])
+	fprint(LOGLEVEL.TRACE, weapon.Stats["Damage Type"])
 end)
 
 Ext.RegisterConsoleCommand("fx", function(cmd, effect, bone, target)
@@ -569,7 +569,7 @@ Ext.RegisterConsoleCommand("printdeltamods", function(cmd, attributeFilter, filt
 		-- 	--print(deltamod.Name, canPrint, deltamod.SlotType, deltamod.BoostType)
 		-- end
 		if canPrint then
-			PrintDebug(deltamod.Name)
+			fprint(LOGLEVEL.TRACE, deltamod.Name)
 			--print(string.format("[%s] BoostType(%s) LevelRange(%s-%s) Frequency(%s) ModifierType(%s) SlotType(%s:%s)\nBoosts:", deltamod.Name, deltamod.BoostType, deltamod.MinLevel, deltamod.MaxLevel, deltamod.Frequency, deltamod.ModifierType, deltamod.SlotType, slotType))
 			-- for i,boost in pairs(deltamod.Boosts) do
 			-- 	print("  ", i, boost.Boost, boost.Count)
@@ -603,9 +603,9 @@ Ext.RegisterConsoleCommand("printpdata", function(cmd, target)
 	local character = GameHelpers.GetCharacter(target)
 	if character ~= nil and character.PlayerCustomData ~= nil then
 		local pdata = character.PlayerCustomData
-			PrintDebug(string.format("[%s] %s", target, character.DisplayName))
+			fprint(LOGLEVEL.TRACE, string.format("[%s] %s", target, character.DisplayName))
 		for i,v in ipairs(PlayerCustomDataAttributes) do
-			PrintDebug(string.format("[%s] %s", v, pdata[v]))
+			fprint(LOGLEVEL.TRACE, string.format("[%s] %s", v, pdata[v]))
 		end
 	else
 		Ext.Utils.PrintError(target, "has no PlayerCustomData!")
@@ -616,30 +616,6 @@ Ext.RegisterConsoleCommand("hidestatusmc", function(command, visible)
 	visible = visible or "false"
 	GameHelpers.Net.PostToUser(CharacterGetHostCharacter(), "LeaderLib_UI_HideStatuses", visible)
 end)
-
---[[
----@param item EsvItem
-function CloneItemWithDeltaMods(item, deltamods)
-	--Testing
-	deltamods = deltamods or {"Boost_Weapon_Rune_LOOT_Rune_Venom_Giant", "Boost_Weapon_Damage_Poison_Axe"}
-	---@type ItemDefinition
-	local properties = {
-		GMFolding = false,
-		IsIdentified = true,
-		DeltaMods = item:GetDeltaMods(),
-		HasGeneratedStats = true,
-		ItemType = item.ItemType,
-		GenerationItemType = "Common",
-	}
-	local newItem = GameHelpers.Item.Clone(item, properties, deltamods)
-	if newItem then
-		PrintDebug("NewItem:", newItem.MyGuid, newItem.StatsId, newItem.ItemType)
-		PrintDebug("DeltaMods")
-		PrintDebug(Common.JsonStringify(newItem:GetDeltaMods()))
-	end
-	return newItem
-end
-]]
 
 Ext.RegisterConsoleCommand("clonedeltamodtest", function(command, amount)
 	---@type ItemDefinition
@@ -697,11 +673,11 @@ Ext.RegisterConsoleCommand("printrunes", function(command, equipmentSlot)
 		local boosts = GameHelpers.Stats.GetRuneBoosts(item.Stats)
 		if boosts then
 			fprint(LOGLEVEL.DEFAULT, "Runes (%s)", equipmentSlot)
-			PrintDebug("======")
+			fprint(LOGLEVEL.TRACE, "======")
 			for i,v in pairs(boosts) do
 				fprint(LOGLEVEL.DEFAULT, "[%s] (%s) RuneEffectWeapon(%s) RuneEffectUpperbody(%s) RuneEffectAmulet(%s)", v.Slot, v.Name, v.Boosts.RuneEffectWeapon, v.Boosts.RuneEffectUpperbody, v.Boosts.RuneEffectAmulet)
 			end
-			PrintDebug("======")
+			fprint(LOGLEVEL.TRACE, "======")
 		end
 	else
 		fprint(LOGLEVEL.WARNING, "No item in slot (%s)", equipmentSlot)

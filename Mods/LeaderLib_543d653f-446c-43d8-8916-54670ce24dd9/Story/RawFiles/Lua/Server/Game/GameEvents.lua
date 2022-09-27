@@ -36,8 +36,8 @@ local function OverrideLeaveActionStatuses()
 			end
 		end
 
-		PrintDebug("[LeaderLib:OverrideLeaveActionStatuses] Saved statuses to the Vars.LeaveActionData table.")
-		--PrintDebug(Common.JsonStringify(Vars.LeaveActionData))
+		fprint(LOGLEVEL.TRACE, "[LeaderLib:OverrideLeaveActionStatuses] Saved statuses to the Vars.LeaveActionData table.")
+		--fprint(LOGLEVEL.TRACE, Common.JsonStringify(Vars.LeaveActionData))
 	end
 end
 

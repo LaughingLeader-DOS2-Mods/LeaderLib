@@ -134,7 +134,7 @@ local function tpSelf(attacker, position, areaRadius)
 			-- PlayEffectAtPosition("RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_02", x, y, z)
 			CharacterMoveToPosition(attacker.MyGuid, x, y, z, 1, "")
 			--NRD_CreateGameObjectMove(attacker.MyGuid, x, y, z, "", attacker.MyGuid)
-			PrintDebug("TeleportSelf.ExecuteOnPosition", attacker.MyGuid, x, y, z, "from", table.unpack(attacker.WorldPos))
+			fprint(LOGLEVEL.TRACE, "TeleportSelf.ExecuteOnPosition", attacker.MyGuid, x, y, z, "from", table.unpack(attacker.WorldPos))
 			Timer.StartOneshot("MoveDone", 1500, function()
 				if attacker.Stats.CurrentAP ~= ap then
 					attacker.Stats.CurrentAP = ap
@@ -154,7 +154,6 @@ end
 ---@param property StatPropertyExtender
 local function MoveToTarget(object, position, areaRadius, skill, property)
 	local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(position, math.max(3, areaRadius))
-	PrintDebug("Context", Common.JsonStringify(property.Context))
 	--if not Common.TableHasValue(property.Context, "Target") then
 	if ObjectIsCharacter(object.MyGuid) == 1 then
 		if not _PV.SkillPropertiesAction.MoveToTarget[object.MyGuid] then

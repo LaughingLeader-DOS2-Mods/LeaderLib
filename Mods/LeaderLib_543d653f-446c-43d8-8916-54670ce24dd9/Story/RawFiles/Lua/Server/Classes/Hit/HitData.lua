@@ -118,10 +118,10 @@ function HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill
 end
 
 function HitData:PrintTargets()
-	PrintDebug("[LeaderLib:HitData]")
-	PrintDebug("============")
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:HitData]")
+	fprint(LOGLEVEL.TRACE, "============")
 	fprint(LOGLEVEL.TRACE, "[HitData:%s] Target(%s)", self.Handle, self.Target)
-	PrintDebug("============")
+	fprint(LOGLEVEL.TRACE, "============")
 end
 
 ---@param target DamageList

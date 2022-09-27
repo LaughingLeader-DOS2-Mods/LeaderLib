@@ -9,20 +9,20 @@ local function PrintArrayValue(ui, index, arrayName)
 		end
 	end
 	if val ~= nil then
-		PrintDebug(" ["..index.."] = ["..tostring(val).."]")
+		fprint(LOGLEVEL.TRACE, " ["..index.."] = ["..tostring(val).."]")
 	end
 end
 
 function UI.PrintArray(ui, arrayName)
-	PrintDebug("==============")
-	PrintDebug(arrayName)
-	PrintDebug("==============")
+	fprint(LOGLEVEL.TRACE, "==============")
+	fprint(LOGLEVEL.TRACE, arrayName)
+	fprint(LOGLEVEL.TRACE, "==============")
 	local i = 0
 	while i < 300 do
 		PrintArrayValue(ui, i, arrayName)
 		i = i + 1
 	end
-	PrintDebug("==============")
+	fprint(LOGLEVEL.TRACE, "==============")
 end
 
 local allUIFiles = {

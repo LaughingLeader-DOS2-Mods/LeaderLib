@@ -55,7 +55,7 @@ function SceneStateData:Create(id, action, params)
 end
 
 function SceneStateData:Resume(...)
-	PrintDebug("SceneStateData:Resume", self.Parent.ID, self.ID, self.Action, self.Thread, self:GetStatus())
+	fprint(LOGLEVEL.TRACE, "SceneStateData:Resume", self.Parent.ID, self.ID, self.Action, self.Thread, self:GetStatus())
 	if not self.Thread or self:GetStatus() == "dead" then
 		self.Thread = coroutine.create(RunAction)
 	end
@@ -81,7 +81,7 @@ end
 
 function SceneStateData:Pause()
 	local doYield = self.Thread and coroutine.running() == self.Thread
-	PrintDebug("SceneStateData:Pause", self.Active, self:GetStatus())
+	fprint(LOGLEVEL.TRACE, "SceneStateData:Pause", self.Active, self:GetStatus())
 	if doYield then
 		self.Active = false
 		coroutine.yield()
@@ -133,7 +133,7 @@ end
 
 ---@param timeInMilliseconds integer How long to wait in milliseconds.
 function SceneStateData:Wait(timeInMilliseconds)
-	PrintDebug("Waiting", timeInMilliseconds, "ms", self.Parent.ID, self.ID)
+	fprint(LOGLEVEL.TRACE, "Waiting (%s) ms [%s:%s]", timeInMilliseconds, self.Parent.ID, self.ID)
 	SceneManager.AddToQueue(SceneManager.QueueType.Waiting, self.Parent.ID, self.ID, timeInMilliseconds)
 	self:Pause()
 	return true
@@ -164,7 +164,7 @@ end
 
 ---@param character string
 ---@param animation string
----@param event string
+---@param event string|nil
 function SceneStateData:PlayAnimation(character, animation, event)
 	if not event then
 		event = "LLSSD_PA_" .. character .. animation

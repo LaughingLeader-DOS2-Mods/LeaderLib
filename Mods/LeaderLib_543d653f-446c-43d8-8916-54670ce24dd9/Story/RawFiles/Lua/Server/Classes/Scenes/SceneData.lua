@@ -36,7 +36,7 @@ end
 
 ---@param id string
 ---@param action SceneStateActionCallback
----@param params table<string,any>
+---@param params table<string,any>|nil
 ---@return SceneStateData
 function SceneData:CreateState(id, action, params)
 	local state = SceneStateData:Create(id, action, params)
@@ -84,7 +84,7 @@ function SceneData:Resume(id, ...)
 	if id == nil and self.CurrentState == "" then
 		id = self.StateOrder[1]
 	end
-	PrintDebug("SceneData:Resume", self.ID, id, ...)
+	fprint(LOGLEVEL.TRACE, "SceneData:Resume", self.ID, id, ...)
 	local state = self.States[id]
 	if state and state:CanResume(...) then
 		SetActive(self, id)

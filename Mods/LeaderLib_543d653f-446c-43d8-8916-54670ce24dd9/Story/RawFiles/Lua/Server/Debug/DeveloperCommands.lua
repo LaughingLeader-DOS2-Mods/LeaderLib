@@ -15,19 +15,19 @@ Ext.RegisterConsoleCommand("adddeltamod", function(command, slot, deltamod)
 	end
 	local target = CharacterGetHostCharacter()
 	local item = CharacterGetEquippedItem(target, slot)
-	PrintDebug(slot,deltamod,item,target)
+	fprint(LOGLEVEL.TRACE, slot,deltamod,item,target)
 	if item ~= nil then
 		ItemAddDeltaModifier(item, deltamod)
-		PrintDebug(string.format("[LeaderLib] Added deltamod %s to item (%s) in slot %s", deltamod, item, slot))
+		fprint(LOGLEVEL.TRACE, string.format("[LeaderLib] Added deltamod %s to item (%s) in slot %s", deltamod, item, slot))
 	end
 end)
 
 Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	if skill ~= nil then
 		RegisterSkillListener(skill, function(skill, uuid, state, ...)
-			PrintDebug("[LeaderLib:DebugMain.lua:SkillListener] skill(",skill,") caster(",uuid,") state(",state,") params(",Common.JsonStringify({...}),")")
+			fprint(LOGLEVEL.TRACE, "[LeaderLib:DebugMain.lua:SkillListener] skill(",skill,") caster(",uuid,") state(",state,") params(",Common.JsonStringify({...}),")")
 		end)
-		PrintDebug("[LeaderLib:listenskill] Registered listener function for skill ", skill)
+		fprint(LOGLEVEL.TRACE, "[LeaderLib:listenskill] Registered listener function for skill ", skill)
 		else
 			Ext.Utils.PrintWarning("[LeaderLib:listenskill] Please provide a valid skill ID to listen for!")
 		end
@@ -66,7 +66,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		TimerCancel("Timers_LeaderLib_Debug_LuaReset")
 		GlobalSetFlag("LeaderLib_ResettingLua")
 		TimerLaunch("Timers_LeaderLib_Debug_LuaReset", 500)
-		PrintDebug("[LeaderLib:luareset] Reseting lua.")
+		fprint(LOGLEVEL.TRACE, "[LeaderLib:luareset] Reseting lua.")
 		NRD_LuaReset(1,1,1)
 		Vars.JustReset = true
 	end
@@ -114,7 +114,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		local tag = Data.ResistancePenetrationTags["Fire"][4].Tag
 		SetTag(item, tag)
 		ItemLevelUpTo(item, level)
-		PrintDebug("[LeaderLib:testrespen] Added tag",tag,"to item",item)
+		fprint(LOGLEVEL.TRACE, "[LeaderLib:testrespen] Added tag",tag,"to item",item)
 		ItemToInventory(item, host, 1, 1, 0)
 	end)
 	
@@ -165,15 +165,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	end)
 	
 	Ext.RegisterConsoleCommand("printrespentags", function(command)
-		PrintDebug("Data.ResistancePenetrationTags = {")
-		for damageType,_ in pairs(Data.DamageTypeToResistance) do
-			PrintDebug("\t"..damageType.." = {")
-			for i,entry in pairs(Data.ResistancePenetrationTags[damageType]) do
-				PrintDebug(string.format("\t\t[%i] = {Tag=\"%s\", Amount=%i},", i, entry.Tag, entry.Amount))
-			end
-			PrintDebug("\t},")
-		end
-		PrintDebug("}")
+		Ext.Utils.Print(Lib.serpent.block(Data.ResistancePenetrationTags))
 	end)
 	
 	
@@ -183,7 +175,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		if param ~= nil then
 			state = math.tointeger(tonumber(param))
 		end
-		PrintDebug("[setarmoroption]",host,state)
+		Ext.Utils.Print("[setarmoroption]",host,state)
 		GameHelpers.Net.PostToUser(host, "LeaderLib_SetArmorOption", MessageData:CreateFromTable("ArmorOption", {UUID = host, State = state}):ToString())
 	end)
 	
@@ -278,7 +270,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	--!lleditskill Projectile_LLWEAPONEX_ArmCannon_Disperse_Explosion Template 1945ebb4-c7c5-447e-a40e-aa59b8952be9
 	
 	Ext.RegisterConsoleCommand("lleditskill", function(cmd, skill, attribute, value)
-		PrintDebug(attribute, value)
+		fprint(LOGLEVEL.TRACE, attribute, value)
 		local stat = Ext.Stats.Get(skill)
 		if stat ~= nil then
 			local curVal = stat[attribute]
@@ -303,7 +295,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 				end
 				changedSkillAttributes[skill][attribute] = value
 				Ext.Stats.Sync(skill, false)
-				PrintDebug("[lleditskill] Changed skill attribute",attribute, curVal, "=>", value)
+				fprint(LOGLEVEL.TRACE, "[lleditskill] Changed skill attribute",attribute, curVal, "=>", value)
 			end
 		end
 	end)
@@ -312,7 +304,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	Ext.RegisterConsoleCommand("llprintskilledits", function(cmd, skill)
 		local changes = changedSkillAttributes[skill]
 		if changes ~= nil then
-			PrintDebug("[llprintskilledits]", skill, Common.JsonStringify(changedSkillAttributes))
+			fprint(LOGLEVEL.TRACE, "[llprintskilledits]", skill, Common.JsonStringify(changedSkillAttributes))
 		end
 	end)
 	
@@ -553,8 +545,8 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 					end
 				end
 			end
-			PrintDebug("[llprintskill]")
-			PrintDebug(Common.JsonStringify(skillProps))
+			fprint(LOGLEVEL.TRACE, "[llprintskill]")
+			fprint(LOGLEVEL.TRACE, Common.JsonStringify(skillProps))
 		end
 	end)
 	
@@ -563,14 +555,14 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	Ext.RegisterConsoleCommand("llupdaterules", function(cmd)
 		GameHelpers.Surface.UpdateRules()
 		local rules = Ext.GetSurfaceTransformRules()
-		PrintDebug(Common.JsonStringify(rules["Fire"]))
-		PrintDebug(Common.JsonStringify(rules["Poison"]))
+		fprint(LOGLEVEL.TRACE, Common.JsonStringify(rules["Fire"]))
+		fprint(LOGLEVEL.TRACE, Common.JsonStringify(rules["Poison"]))
 	end)
 	
 	Ext.RegisterConsoleCommand("llresetrules", function(cmd)
 		Ext.UpdateSurfaceTransformRules(defaultRules)
-		PrintDebug("[llresetrules] Reset surface rules.")
-		PrintDebug(Common.JsonStringify(Ext.GetSurfaceTransformRules()["Fire"][1]))
+		fprint(LOGLEVEL.TRACE, "[llresetrules] Reset surface rules.")
+		fprint(LOGLEVEL.TRACE, Common.JsonStringify(Ext.GetSurfaceTransformRules()["Fire"][1]))
 	end)
 	
 	
@@ -713,16 +705,16 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		local weapon = GameHelpers.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
 		NRD_ItemSetPermanentBoostInt(weapon.MyGuid, "StrengthBoost", Ext.Random(1,30))
 		
-		PrintDebug(weapon.Stats.StrengthBoost, NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
+		fprint(LOGLEVEL.TRACE, weapon.Stats.StrengthBoost, NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
 		for i,v in pairs(weapon.Stats.DynamicStats) do
 			if v ~= nil and v.ObjectInstanceName ~= nil then
-				PrintDebug(i,v.ObjectInstanceName,v.StrengthBoost)
+				fprint(LOGLEVEL.TRACE, i,v.ObjectInstanceName,v.StrengthBoost)
 			else
-				PrintDebug(i, "nil")
+				fprint(LOGLEVEL.TRACE, i, "nil")
 			end
 		end
 		for i,v in pairs(weapon:GetGeneratedBoosts()) do
-			PrintDebug(i,v)
+			fprint(LOGLEVEL.TRACE, i,v)
 		end
 		GameHelpers.Net.PostToUser(host.MyGuid, "LeaderLib_UI_RefreshAll", host.MyGuid)
 	end)
@@ -798,7 +790,7 @@ Ext.RegisterConsoleCommand("sleeptest", function(command, delay)
 end)
 
 local function RemoveTempChar(v)
-	PrintDebug("Removing", v)
+	Ext.Utils.Print("Removing", v)
 	SetCanJoinCombat(v, 0)
 	SetCanFight(v, 0)
 	CharacterSetDetached(v, 1)
@@ -860,7 +852,7 @@ if SceneManager then
 			self:Wait(2000)
 			self:WaitForDialogEnd("GEB_AD_CannotPickpocket", true, host)
 			self:PlayAnimation(host, "Dance_01")
-			PrintDebug("All done!", self.ID)
+			Ext.Utils.Print("All done!", self.ID)
 		end)
 		SceneManager.AddScene(testScene, true)
 		id = id or "TestScene"
@@ -950,7 +942,7 @@ Ext.RegisterConsoleCommand("lldebug_keepAlive", function(command)
 			status.CurrentLifeTime = 6.0
 			status.LifeTime = 6.0
 			status.RequestClientSync = true
-			PrintDebug(status.KeepAlive, status.CurrentLifeTime)
+			fprint(LOGLEVEL.TRACE, status.KeepAlive, status.CurrentLifeTime)
 		end
 	end)
 end)
@@ -1023,11 +1015,11 @@ local function printHelperTable(name, tbl)
 		end
 		table.sort(printFunctionsBase)
 		for _,v in ipairs(printFunctionsBase) do
-			PrintDebug(v)
+			fprint(LOGLEVEL.TRACE, v)
 		end
 		table.sort(printFunctions)
 		for _,v in ipairs(printFunctions) do
-			PrintDebug(v)
+			fprint(LOGLEVEL.TRACE, v)
 		end
 	end
 end
@@ -1080,12 +1072,12 @@ Ext.RegisterConsoleCommand("help", function(command, text)
 		table.sort(printFunctionsBase)
 		for _,v in ipairs(printFunctionsBase) do
 			local name = string.gsub(v, "LeaderLib.", "")
-			PrintDebug(name)
+			fprint(LOGLEVEL.TRACE, name)
 		end
 		table.sort(printFunctions)
 		for _,v in ipairs(printFunctions) do
 			local name = string.gsub(v, "LeaderLib.", "")
-			PrintDebug(name)
+			fprint(LOGLEVEL.TRACE, name)
 		end
 	end
 end)
@@ -1225,7 +1217,7 @@ Ext.RegisterConsoleCommand("createitemtest", function()
 	if item ~= nil then
 		local boosts = {}
 		if item.Stats then
-			PrintDebug(Lib.inspect(item.Stats.DynamicStats))
+			fprint(LOGLEVEL.TRACE, Lib.inspect(item.Stats.DynamicStats))
 			-- for i,v in pairs(deltamods) do
 				-- 	local data = Ext.GetDeltaMod(v, "Armor")
 				-- 	if data then
@@ -1270,12 +1262,12 @@ end)
 
 Ext.RegisterConsoleCommand("partyrestore", function(cmd)
 	for player in GameHelpers.Character.GetPlayers(true) do
-		PrintDebug(player.MyGuid)
+		fprint(LOGLEVEL.TRACE, player.MyGuid)
 		if player.Dead then
 			CharacterResurrect(player.MyGuid)
 		end
 		player.Stats.CurrentVitality = player.Stats.MaxVitality
-		PrintDebug(player.Stats.CurrentVitality, player.Stats.MaxVitality)
+		fprint(LOGLEVEL.TRACE, player.Stats.CurrentVitality, player.Stats.MaxVitality)
 		CharacterSetHitpointsPercentage(player.MyGuid, 100.0)
 		CharacterSetArmorPercentage(player.MyGuid, 100.0)
 		CharacterSetMagicArmorPercentage(player.MyGuid, 100.0)
@@ -1376,7 +1368,7 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levels
 		level = math.tointeger(tonumber(levelstr)) or level
 	end
 	if not AddItemStat(stat, {StatsLevel = level, GenerationLevel = level, ItemType = rarity, GenerationItemType = rarity, HasGeneratedStats = rarity ~= "Unique"}) then
-		PrintDebug("[additemstat] Failed to generate item!", stat, {})
+		fprint(LOGLEVEL.TRACE, "[additemstat] Failed to generate item!", stat, {})
 	end
 end)
 

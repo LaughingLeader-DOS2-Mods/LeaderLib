@@ -13,7 +13,7 @@ local _EXTVERSION = Ext.Utils.Version()
 ---@param isHitHandle boolean Whether the handle is a hit or status handle.
 ---@return boolean
 function GameHelpers.Damage.ReduceDamage(target, attacker, handle, reduction, isHitHandle)
-	--PrintDebug("[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
+	--fprint(LOGLEVEL.TRACE, "[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
     for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
@@ -113,11 +113,11 @@ GameHelpers.IncreaseDamage = IncreaseDamage
 ---@param isHit boolean
 ---@return boolean
 function GameHelpers.Damage.RedirectDamage(target, defender, attacker, handle, reduction, isHit)
-	PrintDebug("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Defender("..tostring(defender)..") Attacker("..tostring(attacker)..") IsHit("..tostring(isHit)..")")
+	fprint(LOGLEVEL.TRACE, "[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Defender("..tostring(defender)..") Attacker("..tostring(attacker)..") IsHit("..tostring(isHit)..")")
     --if CanRedirectHit(defender, handle, hit_type) then -- Ignore surface, DoT, and reflected damage
     --local hit_type_name = NRD_StatusGetString(defender, handle, "DamageSourceType")
     --local hit_type = NRD_StatusGetInt(defender, handle, "HitType")
-    --PrintDebug("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",target,") Target(",defender,") Attacker(",attacker,")")
+    --fprint(LOGLEVEL.TRACE, "[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",target,") Target(",defender,") Attacker(",attacker,")")
     local redirected_hit = NRD_HitPrepare(defender, attacker)
     local damageRedirected = false
 
@@ -138,7 +138,7 @@ function GameHelpers.Damage.RedirectDamage(target, defender, attacker, handle, r
                 NRD_HitAddDamage(handle, damageType, removed_damage)
             end
             NRD_HitAddDamage(redirected_hit, damageType, reduced_damage)
-            PrintDebug("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..damageType)
+            fprint(LOGLEVEL.TRACE, "[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..damageType)
             damageRedirected = true
         end
     end

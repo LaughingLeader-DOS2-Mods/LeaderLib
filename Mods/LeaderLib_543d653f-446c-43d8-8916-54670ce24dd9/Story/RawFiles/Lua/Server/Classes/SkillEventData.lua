@@ -112,14 +112,14 @@ function SkillEventData:ForEach(func, mode)
 end
 
 function SkillEventData:Print()
-	PrintDebug("[LeaderLib:SkillEventData]")
-	PrintDebug("============")
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:SkillEventData]")
+	fprint(LOGLEVEL.TRACE, "============")
 	for k,v in pairs(SkillEventData) do
 		if type(v) ~= "function" and k ~= "__index" then
-			PrintDebug("["..k.."] = "..Common.Dump(self[k]))
+			fprint(LOGLEVEL.TRACE, "["..k.."] = "..Common.Dump(self[k]))
 		end
 	end
-	PrintDebug("============")
+	fprint(LOGLEVEL.TRACE, "============")
 end
 
 function SkillEventData:ToString()

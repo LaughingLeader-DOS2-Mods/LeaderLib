@@ -64,8 +64,7 @@ end
 ---@param character EsvCharacter
 ---@param status EsvStatus
 function BuffStatusPreserver.PreserveStatus(character, status, skipCheck)
-	if skipCheck or (not IgnoreStatus(status.StatusId)
-	and status.CurrentLifeTime > 0
+	if status.LifeTime > 0 and (skipCheck or not IgnoreStatus(status.StatusId)
 	and GameHelpers.Status.IsBeneficial(status.StatusId, true, BuffStatusPreserver.IgnoredStatusTypes)) then
 		if not _PV.BuffStatuses[character.MyGuid] then
 			_PV.BuffStatuses[character.MyGuid] = {}
@@ -158,15 +157,17 @@ function BuffStatusPreserver.OnSkillUsed(caster, skill, skillType, skillElement)
 		local props = GameHelpers.Stats.GetSkillProperties(skill)
 		if props then
 			for i,v in pairs(props) do
-				if v.Type == "Status"
-				and not IgnoreStatus(v.Action)
-				and GameHelpers.Status.IsBeneficial(v.Action, true, BuffStatusPreserver.IgnoredStatusTypes) then
-					if BuffStatusPreserver.NextBuffStatus[GUID] == nil then
-						BuffStatusPreserver.NextBuffStatus[GUID] = {}
+				if v.Type == "Status" then
+					---@cast v StatPropertyStatus
+					if v.Duration > 0 and not IgnoreStatus(v.Action)
+					and GameHelpers.Status.IsBeneficial(v.Action, true, BuffStatusPreserver.IgnoredStatusTypes) then
+						if BuffStatusPreserver.NextBuffStatus[GUID] == nil then
+							BuffStatusPreserver.NextBuffStatus[GUID] = {}
+						end
+						BuffStatusPreserver.NextBuffStatus[GUID][v.Action] = true
+						Timer.Cancel("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID)
+						Timer.StartObjectTimer("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID, 2000)
 					end
-					BuffStatusPreserver.NextBuffStatus[GUID][v.Action] = true
-					Timer.Cancel("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID)
-					Timer.StartObjectTimer("LeaderLib_BuffStatusPreserver_ClearStatusData", GUID, 2000)
 				end
 			end
 		end

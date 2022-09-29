@@ -30,10 +30,11 @@ function SettingsManager.Remove(uuid)
 	end
 end
 
+---@overload fun(uuid:string):ModSettings|nil
 ---@param uuid string
 ---@param createIfMissing boolean|nil
 ---@param tryInitialLoad boolean|nil
----@return ModSettings|nil
+---@return ModSettings
 function SettingsManager.GetMod(uuid, createIfMissing, tryInitialLoad)
 	if not StringHelpers.IsNullOrEmpty(uuid) then
 		if tryInitialLoad and not SettingsManager.LoadedInitially then

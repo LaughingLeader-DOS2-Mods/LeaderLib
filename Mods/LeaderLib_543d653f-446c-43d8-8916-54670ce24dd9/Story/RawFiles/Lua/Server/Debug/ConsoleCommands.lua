@@ -707,3 +707,9 @@ Ext.RegisterConsoleCommand("cctest", function(cmd, disable)
 		end)
 	end
 end)
+
+Ext.RegisterConsoleCommand("treasureupdatetest", function ()
+	Ext.IO.SaveFile("Dumps/TreasureTableTest_ST_WeaponLegendary_Before.json", Ext.DumpExport(Ext.Stats.TreasureTable.Get("ST_WeaponLegendary")))
+	Ext.Stats.TreasureTable.Update(Ext.Stats.TreasureTable.GetLegacy("ST_WeaponLegendary"))
+	Ext.IO.SaveFile("Dumps/TreasureTableTest_ST_WeaponLegendary_After.json", Ext.DumpExport(Ext.Stats.TreasureTable.Get("ST_WeaponLegendary")))
+end)

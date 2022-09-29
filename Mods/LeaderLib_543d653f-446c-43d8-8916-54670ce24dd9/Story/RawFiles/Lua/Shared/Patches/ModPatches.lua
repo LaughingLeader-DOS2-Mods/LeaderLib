@@ -84,7 +84,6 @@ local Patches = {
 
 				--Ext.Stats.TreasureTable.Update(Ext.Stats.TreasureTable.GetLegacy("ST_WeaponLegendary"))
 				--Buff weapon treasure drop amounts
-				--TODO Wait for an extender patch that fixes the bug where updating a table breaks the rarities
 				local tt1 = Ext.Stats.TreasureTable.GetLegacy("ST_LLWEAPONEX_VendingMachine")
 				if tt1 then
 					fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Buffing the ST_LLWEAPONEX_VendingMachine treasure table with more drops.")
@@ -144,8 +143,6 @@ local Patches = {
 					local nextItem = ObjectExists(nextGUID) == 1 and GameHelpers.GetItem(nextGUID) or nil
 					local equippedItem = ObjectExists(equippedGUID) == 1 and GameHelpers.GetItem(equippedGUID) or nil
 					if nextItem and equippedItem then
-						Ext.PrintError("GameHelpers.Item.ItemIsEquipped(char, nextItem)", GameHelpers.Item.ItemIsEquipped(char, nextItem))
-						Ext.PrintError("GameHelpers.Item.ItemIsEquipped(char, equippedItem)", GameHelpers.Item.ItemIsEquipped(char, equippedItem))
 						local isTwoHanded = false
 						local locked = equippedItem.UnEquipLocked
 						if nextItem.Stats.ItemType == "Weapon" then

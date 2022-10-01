@@ -557,10 +557,12 @@ function GameHelpers.Item.GetEquippedTemplateSlot(character, template)
     return nil
 end
 
+---Gets the first item with a matching tag, and the slot.
 ---@param character CharacterParam
 ---@param tag string|string[]
----@return ItemSlot|nil
----@return EsvItem|EclItem|nil
+---@return ItemSlot|nil slot
+---@return GUID|nil itemGUID
+---@return EsvItem|EclItem|nil item
 function GameHelpers.Item.GetEquippedTaggedItemSlot(character, tag)
     local char = GameHelpers.GetCharacter(character)
     fassert(char ~= nil, "'%s' is not a valid character", character)
@@ -568,7 +570,7 @@ function GameHelpers.Item.GetEquippedTaggedItemSlot(character, tag)
     fassert(tagType ~= "string" or tagType ~= "table", "'%s' is not a valid tag or table of tags", tag)
     for item in GameHelpers.Character.GetEquipment(character) do
         if GameHelpers.ItemHasTag(item, tag) then
-            return Data.EquipmentSlots[GameHelpers.Item.GetSlot(item)],item
+            return GameHelpers.Item.GetSlot(item, true), item.MyGuid, item
         end
     end
     return nil

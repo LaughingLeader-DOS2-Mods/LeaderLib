@@ -500,6 +500,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 
 	Game.Tooltip.Register.Global(function (request, tooltip, ...)
 		local params = {...}
+		--Mods.LeaderLib.UI.Debug.LogUI = true
 		if Vars.DebugMode and UI.Debug.LogUI then
 			local text = "local tooltip = " .. Lib.serpent.dump({
 				_Type = request.Type,

@@ -3,13 +3,15 @@
 ---@param item EsvItem
 ---@param equipped boolean
 local function OnEquipmentChanged(self, char, item, equipped)
-	local stat = Ext.Stats.Get(item.Stats.Name)
-	local armorType = stat.ArmorType
-	local slot = GameHelpers.Item.GetEquippedSlot(char.MyGuid, item.MyGuid) or item.Stats.Slot
-	if not equipped then
-		armorType = "None"
+	local stat = item.StatsFromName and item.StatsFromName.StatsEntry or nil
+	if stat then
+		local armorType = stat.ArmorType
+		local slot = GameHelpers.Item.GetEquippedSlot(char.MyGuid, item.MyGuid) or item.Stats.Slot
+		if not equipped then
+			armorType = "None"
+		end
+		self:ApplyVisualsForArmorType(char, armorType, slot)
 	end
-	self:ApplyVisualsForArmorType(char, armorType, slot)
 end
 
 ---@class VisualElementData

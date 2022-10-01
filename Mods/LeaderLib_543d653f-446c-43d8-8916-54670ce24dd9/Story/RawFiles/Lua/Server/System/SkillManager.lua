@@ -242,7 +242,7 @@ function OnSkillPreparing(char, skillprototype)
 
 	--(not last or last ~= skill) prevents invoke spam for PCs, since the PrepareSkill fires constantly for them
 	if (_enabledSkills[skill] or _enabledSkills.All) and (not last or last ~= skill) then
-		local skillData = Ext.Stats.Get(skill) or {Ability=""}
+		local skillData = Ext.Stats.Get(skill, nil, false) or {Ability=""}
 		local character = GameHelpers.GetCharacter(char)
 		_CreateSkillEventTable(skill, character, SKILL_STATE.PREPARE, skillData, "StatEntrySkillData")
 		Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.PREPARE, skillData, "StatEntrySkillData"))
@@ -255,7 +255,7 @@ end
 
 function SkillManager.OnSkillPreparingCancel(char, skillprototype, skill, skipRemoval)
 	skill = skill or StringHelpers.GetSkillEntryName(skillprototype)
-	local skillData = Ext.Stats.Get(skill) or {Ability=""}
+	local skillData = Ext.Stats.Get(skill, nil, false) or {Ability=""}
 	if (_enabledSkills[skill] or _enabledSkills.All) then
 		local character = GameHelpers.GetCharacter(char)
 		Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.CANCEL, skillData, "StatEntrySkillData"))

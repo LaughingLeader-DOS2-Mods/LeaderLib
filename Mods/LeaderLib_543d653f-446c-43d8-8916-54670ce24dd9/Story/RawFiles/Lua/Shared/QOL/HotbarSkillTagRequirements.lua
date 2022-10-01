@@ -37,7 +37,7 @@ if Vars.IsClient then
 				--IsEnabled
 				if arr[i+3] == true then
 					---@type StatEntrySkillData
-					local skillData = Ext.Stats.Get(skillId)
+					local skillData = Ext.Stats.Get(skillId, nil, false)
 					if skillData then
 						local isDisabled = false
 						for _,prop in pairs(skillData.Requirements) do
@@ -82,7 +82,7 @@ if Vars.IsClient then
 		local disabledTagSkillData = disabledTagSkills[character.NetID]
 		if disabledTagSkillData and disabledTagSkillData[skill] then
 			---@type StatEntrySkillData
-			local skillData = Ext.Stats.Get(skill)
+			local skillData = Ext.Stats.Get(skill, nil, false)
 			for _,prop in pairs(skillData.Requirements) do
 				if prop.Requirement == "Tag" then
 					local tagName = GameHelpers.GetStringKeyText(prop.Param)

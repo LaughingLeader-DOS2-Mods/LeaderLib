@@ -122,7 +122,7 @@ function GameHelpers.Stats.GetStats(statType, asStatsEntry)
 		return function ()
 			i = next(_cache, i)
 			if i then
-				return Ext.Stats.Get(_cache[i]),i
+				return Ext.Stats.Get(_cache[i], nil, false),i
 			end
 		end
 	end

@@ -220,7 +220,7 @@ local forceStatuses = {
 
 local function OverrideForce(shouldSync)
 	for i,statId in pairs(forceStatuses) do
-		local stat = Ext.Stats.Get(statId)
+		local stat = Ext.Stats.Get(statId, nil, false)
 		if stat then
 			stat.LeaveAction = ""
 			if shouldSync then
@@ -303,41 +303,43 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 		local total = 0
 		--Ext.Utils.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
 		for id in GameHelpers.Stats.GetSkills() do
-			local stat = Ext.Stats.Get(id)
-			local tier = stat.Tier
-			if gameSettings.StarterTierSkillOverrides == true then
-				if not _ISCLIENT then
-					if originalSkillTiers[stat] ~= nil then
-						tier = originalSkillTiers[stat]
-					end
-				end
-				if CanChangeSkillTier(id, tier) then
-					originalSkillTiers[id] = tier
-					total = total + 1
-					stat.Tier = "Starter"
-					if shouldSync then
-						Ext.Stats.Sync(id, false)
-					end
-				end
-			else
-				originalSkillTiers[id] = tier
-			end
-			if gameSettings.LowerMemorizationRequirements == true then
-				---@type StatRequirement[]
-				local memorizationReq = stat.MemorizationRequirements
-				local changed = false
-				if memorizationReq ~= nil then
-					for i,v in pairs(memorizationReq) do
-						if Data.Ability[v.Requirement] ~= nil and type(v.Param) == "number" and v.Param > 1 then
-							v.Param = 1
-							changed = true
+			local stat = Ext.Stats.Get(id, nil, false)
+			if stat then
+				local tier = stat.Tier
+				if gameSettings.StarterTierSkillOverrides == true then
+					if not _ISCLIENT then
+						if originalSkillTiers[stat] ~= nil then
+							tier = originalSkillTiers[stat]
 						end
 					end
+					if CanChangeSkillTier(id, tier) then
+						originalSkillTiers[id] = tier
+						total = total + 1
+						stat.Tier = "Starter"
+						if shouldSync then
+							Ext.Stats.Sync(id, false)
+						end
+					end
+				else
+					originalSkillTiers[id] = tier
 				end
-				if changed then
-					stat.MemorizationRequirements = memorizationReq
-					if shouldSync then
-						Ext.Stats.Sync(id, false)
+				if gameSettings.LowerMemorizationRequirements == true then
+					---@type StatRequirement[]
+					local memorizationReq = stat.MemorizationRequirements
+					local changed = false
+					if memorizationReq ~= nil then
+						for i,v in pairs(memorizationReq) do
+							if Data.Ability[v.Requirement] ~= nil and type(v.Param) == "number" and v.Param > 1 then
+								v.Param = 1
+								changed = true
+							end
+						end
+					end
+					if changed then
+						stat.MemorizationRequirements = memorizationReq
+						if shouldSync then
+							Ext.Stats.Sync(id, false)
+						end
 					end
 				end
 			end
@@ -350,7 +352,7 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 
 	if Vars.Overrides.SPIRIT_VISION_PROPERTY ~= nil then
 		--LeaderLib_PermanentSpiritVisionEnabled
-		local spiritVision = Ext.Stats.Get("Shout_SpiritVision")
+		local spiritVision = Ext.Stats.Get("Shout_SpiritVision", nil, false)
 		if spiritVision then
 			local toggleProp = Vars.Overrides.SPIRIT_VISION_PROPERTY
 			local properties = GameHelpers.Stats.GetSkillProperties(spiritVision)
@@ -382,7 +384,7 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 		for id,b in pairs(playerStats) do
 			if b == true or (type(b) == "string" and Ext.Mod.IsModLoaded(b)) then
 				---@type StatEntryCharacter
-				local stat = Ext.Stats.Get(id)
+				local stat = Ext.Stats.Get(id, nil, false)
 				if stat then
 					local changedStat = AdjustAP(stat, settings)
 					if changedStat and shouldSync then
@@ -400,7 +402,7 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 		-- }
 		local settings = gameSettings.APSettings.NPC
 		for _,id in pairs(Ext.Stats.GetStats("Character")) do
-			local stat = Ext.Stats.Get(id)
+			local stat = Ext.Stats.Get(id, nil, false)
 			local skip = skipCharacterStats[id] == true or playerStats[id] ~= nil
 			if not skip then
 				local max = stat.APMaximum
@@ -438,7 +440,7 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 	if not Ext.Mod.IsModLoaded(Data.ModID.UnofficialPatch) then
 		for statId,data in pairs(StatFixes) do
 			if not data.Mod or Ext.Mod.IsModLoaded(data.Mod) then
-				local stat = Ext.Stats.Get(statId)
+				local stat = Ext.Stats.Get(statId, nil, false)
 				if stat and data.CanChange(stat) then
 					for attribute,value in pairs(data.Changes) do
 						stat[attribute] = value

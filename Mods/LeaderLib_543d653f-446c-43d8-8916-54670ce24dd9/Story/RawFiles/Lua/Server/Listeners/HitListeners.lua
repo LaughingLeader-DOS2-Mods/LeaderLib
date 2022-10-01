@@ -133,7 +133,7 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 
 	local skill = nil
 	if not StringHelpers.IsNullOrEmpty(hitStatus.SkillId) then
-		skill = Ext.Stats.Get(GetSkillEntryName(hitStatus.SkillId))
+		skill = Ext.Stats.Get(GetSkillEntryName(hitStatus.SkillId), nil, false)
 		---@cast skill StatEntrySkillData
 	end
 

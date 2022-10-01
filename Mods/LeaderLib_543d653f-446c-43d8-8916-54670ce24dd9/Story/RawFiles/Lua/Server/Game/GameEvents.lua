@@ -29,9 +29,11 @@ local function OverrideLeaveActionStatuses()
 					Vars.LeaveActionData.Total = Vars.LeaveActionData.Total + 1
 					Osi.DB_LeaderLib_LeaveAction_StatusToSkill:Delete(stat, nil)
 					Osi.DB_LeaderLib_LeaveAction_StatusToSkill(stat, leaveActionSkill)
-					local statObj = Ext.Stats.Get(stat)
-					statObj.LeaveAction = ""
-					Ext.Stats.Sync(stat, false)
+					local statObj = Ext.Stats.Get(stat, nil, false)
+					if statObj then
+						statObj.LeaveAction = ""
+						Ext.Stats.Sync(stat, false)
+					end
 				end
 			end
 		end

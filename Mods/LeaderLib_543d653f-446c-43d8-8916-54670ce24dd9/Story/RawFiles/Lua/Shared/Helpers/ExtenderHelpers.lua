@@ -979,7 +979,7 @@ function GameHelpers.Ext.CreateStatCharacterTable(stat, mainhand, offhand)
 			TableHelpers.Clone(_EmptyCharacterDynamicStats),
 		}
 	}
-	local statObject = Ext.Stats.Get(stat)
+	local statObject = Ext.Stats.Get(stat, nil, false)
 	if statObject then
 		for i,attribute in pairs(characterStatAttributes) do
 			local value = statObject[attribute]
@@ -1035,7 +1035,7 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 	local weapon = {}
 	weapon.ItemType = "Weapon"
 	weapon.Name = stat
-	local statObject = Ext.Stats.Get(stat)
+	local statObject = Ext.Stats.Get(stat, nil, false)
 	if attribute ~= nil then
 		weapon.Requirements = {
 			{
@@ -1371,7 +1371,7 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameM
 			end
 		else
 			if _EXTVERSION >= 56 then
-				local stat = Ext.Stats.Get(skillName)
+				local stat = Ext.Stats.Get(skillName, nil, false)
 				if stat then
 					hasValidEntry = true
 					for k,_ in pairs(_SkillAttributes) do

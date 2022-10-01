@@ -20,7 +20,7 @@ function StatChangesConfig:_Apply()
 	local doSync = not _ISCLIENT and _validSyncStates[Ext.Server.GetGameState()]
 	for id,attributes in pairs(self._Data) do
 		if GameHelpers.Stats.Exists(id) then
-			local stat = Ext.Stats.Get(id)
+			local stat = Ext.Stats.Get(id, nil, false)
 			fprint(LOGLEVEL.TRACE, "[LeaderLib:StatChangesConfig] Modifying stat (%s):", id)
 			for k,v in pairs(attributes) do
 				fprint(LOGLEVEL.TRACE, "  [%s] = %s", k, Lib.serpent.line(v, {comment=false}))

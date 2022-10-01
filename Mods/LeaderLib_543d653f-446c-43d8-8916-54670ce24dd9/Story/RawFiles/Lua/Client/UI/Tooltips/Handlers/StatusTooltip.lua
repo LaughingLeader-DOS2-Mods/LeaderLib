@@ -134,17 +134,19 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 							local text = ""
 							if v.Type == "Status" then
 								if v.StatusChance > 0 and GameHelpers.Stats.Exists(v.Action, "StatusData") then
-									local stat = Ext.Stats.Get(v.Action)
-									local statusDisplayName = GameHelpers.GetStringKeyText(stat.DisplayName, stat.DisplayNameRef)
-									local chanceText = ""
-									if v.StatusChance < 1 then
-										chanceText = " " .. LocalizedText.Tooltip.Chance:ReplacePlaceholders(Ext.Round(v.StatusChance * 100))
-									end
-									if v.Duration > 0 then
-										local turns = v.Duration
-										text = LocalizedText.Tooltip.ExtraPropertiesWithTurns:ReplacePlaceholders(statusDisplayName, chanceText, "", turns)
-									else
-										text = LocalizedText.Tooltip.ExtraPropertiesPermanent:ReplacePlaceholders(statusDisplayName, chanceText, "")
+									local stat = Ext.Stats.Get(v.Action, nil, false)
+									if stat then
+										local statusDisplayName = GameHelpers.GetStringKeyText(stat.DisplayName, stat.DisplayNameRef)
+										local chanceText = ""
+										if v.StatusChance < 1 then
+											chanceText = " " .. LocalizedText.Tooltip.Chance:ReplacePlaceholders(Ext.Round(v.StatusChance * 100))
+										end
+										if v.Duration > 0 then
+											local turns = v.Duration
+											text = LocalizedText.Tooltip.ExtraPropertiesWithTurns:ReplacePlaceholders(statusDisplayName, chanceText, "", turns)
+										else
+											text = LocalizedText.Tooltip.ExtraPropertiesPermanent:ReplacePlaceholders(statusDisplayName, chanceText, "")
+										end
 									end
 								end
 							elseif v.Type == "GameAction" then

@@ -89,7 +89,7 @@ function GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute, st
 	if stat == nil then
 		local t = _type(statName)
 		if t == "string" then
-			stat = Ext.Stats.Get(statName)
+			stat = Ext.Stats.Get(statName, nil, false)
 		elseif t == "userdata" then
 			stat = statName
 		end
@@ -375,7 +375,7 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 	if GameHelpers.Stats.IsAction(statId) then
 		return true
 	end
-	local stat = Ext.Stats.Get(statId)
+	local stat = Ext.Stats.Get(statId, nil, false)
 	local character = GameHelpers.GetCharacter(char)
 	fassert(stat ~= nil, "Failed to get stat from %s", statId)
 	fassert(character ~= nil, "Failed to get character from %s", char)
@@ -545,7 +545,7 @@ function GameHelpers.Stats.GetDisplayName(id, statType)
 		id = id.StatusId
 	end
 	if not StringHelpers.IsNullOrEmpty(id) and GameHelpers.Stats.Exists(id, statType) then
-		local stat = Ext.Stats.Get(id)
+		local stat = Ext.Stats.Get(id, nil, false)
 		return GameHelpers.GetStringKeyText(stat.DisplayName, stat.DisplayNameRef)
 	end
 	return ""
@@ -559,7 +559,7 @@ function GameHelpers.Stats.GetModInfo(id, asDisplayName)
 	if GameHelpers.Stats.IsAction(id) then
 		return "Shared"
 	end
-	local stat = Ext.Stats.Get(id)
+	local stat = Ext.Stats.Get(id, nil, false)
 	if stat then
 		if not StringHelpers.IsNullOrEmpty(stat.ModId) then
 			local mod = Ext.Mod.GetMod(stat.ModId)

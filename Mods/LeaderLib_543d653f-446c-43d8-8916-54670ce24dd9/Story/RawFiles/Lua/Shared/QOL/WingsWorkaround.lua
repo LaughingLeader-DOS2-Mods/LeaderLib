@@ -30,11 +30,11 @@ local wingsVisualProps = {
 local function PropertiesHasWingsVisual(props)
 	for i,v in pairs(props) do
 		if v.Type == "Status" and v.Action ~= "WINGS" then
-			local stat = Ext.Stats.Get(v.Action)
+			local stat = Ext.Stats.Get(v.Action, nil, false)
 			if stat ~= nil then
 				if stat.Items ~= nil then
 					---@type StatItem
-					local itemStat = Ext.Stats.Get(stat.Items)
+					local itemStat = Ext.Stats.Get(stat.Items, nil, false)
 					if itemStat ~= nil and itemStat.Slot == "Wings" then
 						return true
 					end
@@ -66,7 +66,7 @@ function OverrideWings(shouldSync)
 	if Features.WingsWorkaround == true then
 		for statName,data in pairs(wingsOverride) do
 			---@type StatEntryStatusData
-			local stat = Ext.Stats.Get(statName)
+			local stat = Ext.Stats.Get(statName, nil, false)
 			if stat ~= nil then
 				for attribute,v in pairs(data) do
 					stat[attribute] = v
@@ -84,7 +84,7 @@ function OverrideWings(shouldSync)
 					local wingsPropIndex = PropertiesHasWings(props)
 					if wingsPropIndex ~= false and not PropertiesHasWingsVisual(props) then
 						props[wingsPropIndex].Action = "LEADERLIB_WINGS"
-						local stat = Ext.Stats.Get(statName)
+						local stat = Ext.Stats.Get(statName, nil, false)
 						if stat then
 							stat[attribute] = props
 							Ext.Stats.Sync(statName, false)

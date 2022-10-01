@@ -69,8 +69,8 @@ function GameHelpers.Item.GetItemLevel(item)
             local levelOverride = (item.LevelOverride and item.LevelOverride > 0) and item.LevelOverride or -1
             if levelOverride > -1 then
                 return levelOverride
-            else
-                return Ext.Stats.Get(item.StatsId)["Act part"] or 1
+            elseif item.StatsFromName and item.StatsFromName.StatsEntry then
+                return item.StatsFromName.StatsEntry["Act part"] or 1
             end
         end
     end

@@ -40,8 +40,8 @@ function ModifyPathInfluenceForAllPlayers(revert)
 	for statname,b in pairs(player_stats) do
 		if b == true or (type(b) == "string" and Ext.Mod.IsModLoaded(b)) then
 			---@type StatEntryCharacter
-			local stat = Ext.Stats.Get(statname)
-			if stat ~= nil then
+			local stat = Ext.Stats.Get(statname, nil, false)
+			if stat then
 				if revert == nil then
 					stat.PathInfluence = ignoreSurfacesPathInfluence
 				else
@@ -54,8 +54,8 @@ function ModifyPathInfluenceForAllPlayers(revert)
 	for statname,b in pairs(player_stats_undead) do
 		if b then
 			---@type StatEntryCharacter
-			local stat = Ext.Stats.Get(statname)
-			if stat ~= nil then
+			local stat = Ext.Stats.Get(statname, nil, false)
+			if stat then
 				if revert == nil then
 					stat.PathInfluence = ignoreUndeadSurfacesPathInfluence
 				else
@@ -73,8 +73,8 @@ end
 
 function ModifyPathInfluenceForPlayer(uuid, revert)
 	local player = GameHelpers.GetCharacter(uuid)
-	local stat = Ext.Stats.Get(player.Stats.Name)
-	if stat ~= nil then
+	local stat = Ext.Stats.Get(player.Stats.Name, nil, false)
+	if stat then
 		if player.Stats.TALENT_Zombie then
 			if revert == nil then
 				stat.PathInfluence = ignoreUndeadSurfacesPathInfluence

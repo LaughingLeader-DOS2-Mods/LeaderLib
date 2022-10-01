@@ -64,7 +64,7 @@ function GameHelpers.Status.GetStatusType(statusId)
 				statusType = GetStatusType(statusId)
 			end
 		elseif not Data.EngineStatus[statusId] then
-			local stat = Ext.Stats.Get(statusId)
+			local stat = Ext.Stats.Get(statusId, nil, false)
 			if stat then
 				statusType = stat.StatusType
 			end
@@ -189,13 +189,13 @@ local function IsHarmfulStatsId(statsId)
 		local potions,isTable = GameHelpers.Stats.ParseStatsIdPotions(statsId)
 		if isTable then
 			for _,v in pairs(potions) do
-				local stat = Ext.Stats.Get(v.ID)
+				local stat = Ext.Stats.Get(v.ID, nil, false)
 				if stat and IsHarmfulPotion(stat) then
 					return true
 				end
 			end
 		else
-			local stat = Ext.Stats.Get(potions)
+			local stat = Ext.Stats.Get(potions, nil, false)
 			if stat and IsHarmfulPotion(stat) then
 				return true
 			end
@@ -231,7 +231,7 @@ function GameHelpers.Status.StatusDealsDamage(statusId, checkDamageEvent)
 	local damageStats = Ext.StatGetAttribute(statusId, "DamageStats")
 	if not StringHelpers.IsNullOrWhitespace(damageStats) then
 		---@type StatEntryWeapon
-		local weapon = Ext.Stats.Get(damageStats)
+		local weapon = Ext.Stats.Get(damageStats, nil, false)
 		if weapon and weapon.DamageFromBase > 0 then
 			return true
 		end
@@ -262,13 +262,13 @@ local function IsBeneficialStatsId(statsId, ignoreItemPotions)
 		local potions,isTable = GameHelpers.Stats.ParseStatsIdPotions(statsId)
 		if isTable then
 			for _,v in pairs(potions) do
-				local stat = Ext.Stats.Get(v.ID)
+				local stat = Ext.Stats.Get(v.ID, nil, false)
 				if stat and IsBeneficialPotion(stat, ignoreItemPotions) then
 					return true
 				end
 			end
 		else
-			local stat = Ext.Stats.Get(potions)
+			local stat = Ext.Stats.Get(potions, nil, false)
 			if stat and IsBeneficialPotion(stat, ignoreItemPotions) then
 				return true
 			end
@@ -318,7 +318,7 @@ function GameHelpers.Stats.PotionHasStatBoosts(potionId)
 	local potions,isTable = GameHelpers.Stats.ParseStatsIdPotions(potionId)
 	if isTable then
 		for _,v in pairs(potions) do
-			local stat = Ext.Stats.Get(v.ID)
+			local stat = Ext.Stats.Get(v.ID, nil, false)
 			if stat then
 				for k,_ in pairs(potionProperties) do
 					if stat[k] ~= 0 then
@@ -328,7 +328,7 @@ function GameHelpers.Stats.PotionHasStatBoosts(potionId)
 			end
 		end
 	else
-		local stat = Ext.Stats.Get(potions)
+		local stat = Ext.Stats.Get(potions, nil, false)
 		if stat then
 			for k,_ in pairs(potionProperties) do
 				if stat[k] ~= 0 then
@@ -347,7 +347,7 @@ end
 function GameHelpers.Status.HasStatBoosts(status)
 	local t = _type(status)
 	if t == "string" then
-		local stat = Ext.Stats.Get(status)
+		local stat = Ext.Stats.Get(status, nil, false)
 		if stat and not StringHelpers.IsNullOrWhitespace(stat.StatsId) then
 			return GameHelpers.Stats.PotionHasStatBoosts(stat.StatsId)
 		end
@@ -464,7 +464,7 @@ function GameHelpers.Status.IsDisablingStatus(status, checkForLoseControl, stat)
 			return true,true
 		end
 		if not Data.EngineStatus[status] then
-			local stat = stat or Ext.Stats.Get(status)
+			local stat = stat or Ext.Stats.Get(status, nil, false)
 			if stat and stat.LoseControl == "Yes" then
 				return true,true
 			end
@@ -493,7 +493,7 @@ function GameHelpers.Status.CharacterLostControl(character, onlyFromEnemy)
 			end
 		end
 		if Data.EngineStatus[status.StatusId] ~= true then
-			local stat = Ext.Stats.Get(status.StatusId)
+			local stat = Ext.Stats.Get(status.StatusId, nil, false)
 			if stat and stat.LoseControl == "Yes" then
 				if onlyFromEnemy ~= true then
 					return true

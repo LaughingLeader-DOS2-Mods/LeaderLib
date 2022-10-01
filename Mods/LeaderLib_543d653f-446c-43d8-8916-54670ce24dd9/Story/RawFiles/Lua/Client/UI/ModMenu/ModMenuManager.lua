@@ -72,6 +72,13 @@ local function PrepareText(name, v, isCheckbox, entryType)
 			local t = type(v.Tooltip)
 			if t == "string" and not StringHelpers.IsNullOrEmpty(v.Tooltip) then
 				tooltip = v.Tooltip
+				--Automatically replace text if there's an underscore, as it's likely a string key
+				if StringHelpers.Count(tooltip, "_") > 0 then
+					local stringKey = GameHelpers.GetStringKeyText(tooltip, "")
+					if not StringHelpers.IsNullOrEmpty(stringKey) then
+						tooltip = stringKey
+					end
+				end
 			elseif t == "table" and v.Tooltip.Type == Classes.TranslatedString.Type and not StringHelpers.IsNullOrEmpty(v.Tooltip.Value) then
 				tooltip = v.Tooltip.Value
 			end
@@ -95,16 +102,18 @@ local function PrepareText(name, v, isCheckbox, entryType)
 	if displayName == "" then
 		displayName = name
 	end
-	if Vars.ControllerEnabled and isCheckbox == true then
-		displayName = string.gsub(displayName, "Enable ", ""):gsub("Disable ", "")
-	end
 	if Vars.ControllerEnabled then
-		--Toolsips in controller mode display at the bottom of the UI always
-		tooltip = GameHelpers.Tooltip.ReplacePlaceholders(tooltip)
-		if entryType == "ButtonData" then
-			tooltip = string.format("%s<br>%s", displayName, tooltip)
-			if string.len(displayName) >= 20 then
-				displayName = string.sub(displayName, 1, 20) .. "..."
+		if isCheckbox == true then
+			displayName = string.gsub(displayName, "Enable ", ""):gsub("Disable ", "")
+		end
+		if not StringHelpers.IsNullOrEmpty(tooltip) then
+			--Toolsips in controller mode display at the bottom of the UI always
+			tooltip = GameHelpers.Tooltip.ReplacePlaceholders(tooltip)
+			if entryType == "ButtonData" then
+				tooltip = string.format("%s<br>%s", displayName, tooltip)
+				if string.len(displayName) >= 20 then
+					displayName = string.sub(displayName, 1, 20) .. "..."
+				end
 			end
 		end
 	end

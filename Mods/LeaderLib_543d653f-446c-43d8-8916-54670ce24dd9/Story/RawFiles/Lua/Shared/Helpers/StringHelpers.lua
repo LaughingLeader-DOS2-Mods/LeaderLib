@@ -553,3 +553,10 @@ function StringHelpers.Contains(str, pattern, caseInsensitive, startPos, endPos,
 	end
 	return false
 end
+
+---@param str string
+---@param pattern string
+---@return integer
+function StringHelpers.Count(str, pattern)
+	return select(2, string.gsub(str, pattern, ""))
+end

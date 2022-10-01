@@ -7,9 +7,9 @@ local function _AlphabeticalCaseInsensitiveLabelSort(a,b)
 end
 
 local function _GetStatusAPCostBoost(id)
-	local status = Ext.Stats.Get(id)
-	if status then
-		local potion = Ext.Stats.Get(status.StatsId)
+	local status = Ext.Stats.Get(id, nil, false)
+	if status and not StringHelpers.IsNullOrWhitespace(status.StatsId) then
+		local potion = Ext.Stats.Get(status.StatsId, nil, false)
 		if potion then
 			return potion.APCostBoost
 		end

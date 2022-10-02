@@ -9,8 +9,8 @@
 			"Version": "1.7.26.9",
 			"Changes": [
 				"Sliders in the Mod Settings menu now default to a more reasonable upper limit if no value is set.",
-				"Fixed an error when GM's create certain tooltips in GM mode.",
-				"Fixed an error when retrieving a mod in the load order fails. Not sure why this can happen.",
+				"Fixed an error with certain tooltips in GM mode.",
+				"Fixed an error when retrieving a mod in the load order fails with the extender. Not sure why this can happen.",
 				"Fixed an issue where permanent statuses weren't ignored by the Buff Status Preservation option, resulting in them being removed when your turn ends in combat.",
 				"Weapon Expansion Fixes:",
 				"\t• Fixed an issue with Balrin's Throwing Axe not being removed when thrown.",

@@ -14,7 +14,7 @@
 				"Fixed an issue where permanent statuses weren't ignored by the Buff Status Preservation option, resulting in them being removed when your turn ends in combat.",
 				"Weapon Expansion Fixes:",
 				"\t• Fixed an issue with Balrin's Throwing Axe not being removed when thrown.",
-				"\t• Fixed the quantity of loot in the Strange Machine. These may show up as Common rarity until the next extender update.",
+				"\t• Fixed the quantity of loot in the Strange Machine.",
 				"\t• Added a name for 'LLWEAPONEX_DEMON_GAUNTLET_BONUS_CRIT_DisplayName'.",
 				"\t• Increased Battle Book base damage by 8%.",
 				"\t• Fixed certain unique items using the wrong attribute name when increasing resistance values.",

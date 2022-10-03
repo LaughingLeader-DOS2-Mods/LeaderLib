@@ -166,11 +166,11 @@ function StringHelpers.Split(str, delimiter)
 		return {}
 	end
 	local list = {}; local pos = 1
-	if _find("", delimiter, 1) then
+	if delimiter == "" then
 		table.insert(list, str)
 		return list
 	end
-	while 1 do
+	while true do
 		local first, last = _find(str, delimiter, pos)
 		if first then
 			table.insert(list, _sub(str, pos, first-1))
@@ -245,7 +245,7 @@ end
 --- @param n integer|nil
 --- @return string
 function StringHelpers.Replace(s, pattern, repl, n)
-	if not repl then
+	if not repl or not s then
 		return s
 	end
 	return _gsub(s, _regexEscape(pattern), _gsub(repl, "%%", "%%%%"), n)

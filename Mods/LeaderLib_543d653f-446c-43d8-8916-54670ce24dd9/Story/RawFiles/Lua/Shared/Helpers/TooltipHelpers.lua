@@ -372,7 +372,7 @@ function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
 end
 
 --- Formats a damage range typically returned from GameHelpers.Math.GetSkillDamageRange
----@param damageRange table<string,number[]>
+---@param damageRange table<StatsDamageType,{Min:integer, Max:integer}>
 ---@return string
 function GameHelpers.Tooltip.FormatDamageRange(damageRange)
 	if damageRange ~= nil then

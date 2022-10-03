@@ -1024,8 +1024,8 @@ local weaponStatAttributes = {
 
 ---@param stat string
 ---@param level integer
----@param attribute string
----@param weaponType string
+---@param attribute string|nil
+---@param weaponType string|nil
 ---@param damageFromBaseBoost integer|nil
 ---@param isBoostStat boolean|nil
 ---@param baseWeaponDamage number|nil

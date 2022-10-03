@@ -185,6 +185,46 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 	return ""
 end
 
+---@param id string The Weapon stat ID, i.e "WPN_Sword_1H".
+---@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
+---@param overrideParams StatEntryWeapon|nil A table of attributes to set on the weapon table before calculating the damage.
+---@param extraSettings {Attribute:PlayerUpgradeAttribute}|nil
+---@return string damageText
+function GameHelpers.Tooltip.GetWeaponDamageText(id, character, overrideParams, extraSettings)
+	if not StringHelpers.IsNullOrWhitespace(id) then
+		overrideParams = overrideParams or {}
+		extraSettings = extraSettings or {}
+		if character then
+			character = GameHelpers.GetCharacter(character)
+		end
+		local attribute = extraSettings.Attribute or nil
+		if character == nil then
+			if _ISCLIENT then
+				character = Client:GetCharacter()
+			elseif _OSIRIS() then
+				character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+			end
+		end
+		---@cast character EsvCharacter|EclCharacter
+		local weaponTable = GameHelpers.Ext.CreateWeaponTable(id, overrideParams.Level or character.Stats.Level, attribute, overrideParams.WeaponType, overrideParams.DamageFromBase)
+		if attribute == nil and weaponTable.Requirements then
+			for _,v in ipairs(weaponTable.Requirements) do
+				if Data.Attribute[v.Requirement] then
+					attribute = v.Requirement
+					break
+				end
+			end
+		end
+		for k,v in pairs(overrideParams) do
+			weaponTable[k] = v
+		end
+		local damageRanges = Game.Math.CalculateWeaponScaledDamageRanges(character, weaponTable)
+		local damageText = GameHelpers.Tooltip.FormatDamageRange(damageRanges)
+		return damageText
+	end
+	return ""
+end
+
 ---@param str string|TranslatedString
 ---@param character CharacterParam
 local function ReplacePlaceholders(str, character)
@@ -502,4 +542,86 @@ if Vars.IsClient then
 		end
 		return fallback or ""
 	end
+end
+
+---Get all the resulting values of a status stat's DescriptionParams.
+---@param stat StatEntryStatusData
+---@param character CharacterParam
+---@return string[] paramValues
+function GameHelpers.Tooltip.GetStatusDescriptionParamValues(stat, character)
+	local paramValues = {}
+	local char = GameHelpers.GetCharacter(character)
+	if char and not StringHelpers.IsNullOrWhitespace(stat.DescriptionParams) then
+		local statusParams = StringHelpers.Split(stat.DescriptionParams, ";")
+		if statusParams > 0 then
+			for _,vID in pairs(statusParams) do
+				local value = ""
+				local params = StringHelpers.Split(vID, ":")
+				if Ext.Events.StatusGetDescriptionParam then
+					local evt = {
+						Description = "",
+						Owner = character.Stats,
+						Params = params,
+						Status = {
+							AbsorbSurfaceTypes = {},
+							DisplayName = GameHelpers.Stats.GetDisplayName(stat.Name, "StatusData", char),
+							HasStats = stat.StatsId ~= "",
+							Icon = stat.Icon,
+							StatusId = stat.Name,
+							StatusName = stat.DisplayName
+						},
+						StatusSource = character.Stats,
+						Stopped = false
+					}
+					evt.StopPropagation = function()
+						evt.Stopped = true
+					end
+					Ext.Events.StatusGetDescriptionParam:Throw(evt)
+					if not StringHelpers.IsNullOrEmpty(evt.Description) then
+						value = evt.Description
+					end
+				end
+				if StringHelpers.IsNullOrEmpty(value) then
+					if params[2] then
+						local propType,propID,propAttribute = table.unpack(params)
+						if propID and propAttribute then
+							local propStat = Ext.Stats.Get(propID, nil, false)
+							if propStat then
+								if propAttribute == "Damage" then
+									if propType == "Skill" then
+										local damageText = GameHelpers.Tooltip.GetSkillDamageText(propID, char)
+										paramValues[#paramValues+1] = damageText
+									elseif propType == "Weapon" then
+										local damageText = GameHelpers.Tooltip.GetWeaponDamageText(propID, char)
+										paramValues[#paramValues+1] = damageText
+									end
+								else
+									local propValue = propStat[propAttribute]
+									if propValue ~= nil then
+										paramValues[#paramValues+1] = propValue
+									end
+								end
+							end
+						end
+					elseif params[1] then
+						local prop = params[1]
+						if prop == "Damage" then
+							if GameHelpers.Stats.Exists(stat.DamageStats, "Weapon") then
+								local damageText = GameHelpers.Tooltip.GetWeaponDamageText(stat.DamageStats, char)
+								paramValues[#paramValues+1] = damageText
+							end
+						else
+							local attValue = stat[prop]
+							if attValue ~= nil then
+								paramValues[#paramValues+1] = attValue
+							end
+						end
+					end
+				else
+					paramValues[#paramValues+1] = value
+				end
+			end
+		end
+	end
+	return paramValues
 end

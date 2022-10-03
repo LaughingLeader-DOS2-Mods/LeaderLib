@@ -654,7 +654,7 @@ end
 
 ---Get all colors for a race preset in dictionary format.  
 ---@param raceName string
----@return GameHelpers_Stats_GetAllRacePresetColorsResults
+---@return _GameHelpers_Stats_GetAllRacePresetColorsResults
 function GameHelpers.Stats.GetAllRacePresetColors(raceName)
 	local colors = {
 		Hair = {},
@@ -703,4 +703,46 @@ function GameHelpers.Stats.GetSkillAbility(id)
 		return stat.Ability
 	end
 	return ""
+end
+
+---@generic T:string|number|table
+---Safe way to get a stat's attribute. If the stat does not exist, the fallbackValue will be returned instead.
+---@param id string
+---@param attributeName string
+---@param fallbackValue T
+---@return T
+function GameHelpers.Stats.GetAttribute(id, attributeName, fallbackValue)
+	local stat = Ext.Stats.Get(id, nil, false)
+	if stat then
+		local value = stat[attributeName]
+		if value ~= nil then
+			return value
+		else
+			return fallbackValue
+		end
+	end
+	return fallbackValue
+end
+
+---@generic T:string|number|table
+---Similar to GameHelpers.Stats.GetAttribute, but runs a function instead of the stat and attribute exists, for when you want to easily make logic run only if the stat exists. 
+---@param id string
+---@param attributeName string
+---@param callback fun(stat:StatEntryType, attribute:string, value:string|number|table)
+---@return boolean success
+---@return any result
+function GameHelpers.Stats.TryGetAttribute(id, attributeName, callback)
+	local stat = Ext.Stats.Get(id, nil, false)
+	if stat then
+		local value = stat[attributeName]
+		if value ~= nil then
+			local b,result = xpcall(callback, debug.traceback, stat, attributeName, value)
+			if not b then
+				Ext.Utils.PrintError(result)
+			else
+				return true,result
+			end
+		end
+	end
+	return false,nil
 end

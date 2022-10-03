@@ -1030,7 +1030,7 @@ local weaponStatAttributes = {
 ---@param isBoostStat boolean|nil
 ---@param baseWeaponDamage number|nil
 ---@param rarity string|nil
----@return StatItem
+---@return CDivinityStatsItem
 function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damageFromBaseBoost,isBoostStat,baseWeaponDamage,rarity)
 	local weapon = {}
 	weapon.ItemType = "Weapon"

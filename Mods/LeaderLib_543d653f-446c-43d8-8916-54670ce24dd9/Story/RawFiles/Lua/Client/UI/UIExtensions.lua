@@ -67,6 +67,7 @@ local function DestroyInstance(force)
 end
 
 Events.BeforeLuaReset:Subscribe(function()
+	Vars.Resetting = true
 	UI.ContextMenu:ClearCustomIcons()
 	DestroyInstance(true)
 end)

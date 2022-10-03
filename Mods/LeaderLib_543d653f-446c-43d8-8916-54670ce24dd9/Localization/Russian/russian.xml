@@ -179,6 +179,7 @@
 	<content contentuid="h59075d75g55f1g4ba4g87b7g4953c6818ee3">[ON] Teleport to Dialog - Teleport your avatar to the dialog event when dialog gets redirected. [USER]</content>
 	<content contentuid="h5945db23gdaafg400ega4d6gc2ffa7a53f92">Mod Settings</content>
 	<content contentuid="h5a3c3cb9g4168g48eaga773g6e5cd41223b5">*He reaches for his bag.*</content>
+	<content contentuid="h5b8b22cfg56f9g4381g8698g53e73f82a32d">Flanking</content>
 	<content contentuid="h5bc5c82ag5c46g491cgb60ag58244a7301f9">Enable a 0.5 second delay for status tooltips (statuses next to portraits, and the examine window).</content>
 	<content contentuid="h5be7351cgb6eeg438fgbb32g65c8295bfb3b">[ON] Timed Autosaves Enabled [GLOBAL]</content>
 	<content contentuid="h5c245164g58d8g4449g958dg68236099e6f6">[SAVE] Save Game Settings - This file is automatically loaded/saved when you get in-game (loading saves, new games, etc). This will overwrite whatever changes you may have recently made.</content>

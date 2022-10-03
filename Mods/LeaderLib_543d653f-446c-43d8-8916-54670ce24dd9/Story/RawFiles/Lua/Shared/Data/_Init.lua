@@ -447,8 +447,30 @@ Data.EngineStatus = {
 	UNLOCK = true,
 	UNSHEATHED = true,
 	WIND_WALKER = true,
-	--Custom
-	LEADERLIB_RECALC = true,
+}
+
+Data.EngineStatusIcons = {
+	ADRENALINE = "statIcons_Adrenaline",
+	CHARMED = "statIcons_Charmed",
+	CLEAN = "statIcons_Clean",
+	DARK_AVENGER = "statIcons_DarkAvenger_0",
+	DECAYING_TOUCH = "statIcons_DecayingTouch",
+	DYING = "statIcons_Dead",
+	ENCUMBERED = "statIcons_Encumbered",
+	FLANKED = "statIcons_Flanked",
+	INFECTIOUS_DISEASED = "statIcons_Infectious_Disease",
+	LEADERSHIP = "statIcons_Leadership",
+	LINGERING_WOUNDS = "statIcons_LingeringWounds",
+	REMORSE = "statIcons_Remorse",
+	SHACKLES_OF_PAIN = "statIcons_ShacklesOfPain",
+	SHACKLES_OF_PAIN_CASTER = "statIcons_ShacklesOfPain",
+	SMELLY = "statIcons_Smelly",
+	SNEAKING = "Action_Sneak",
+	SOURCE_MUTED = "statIcons_SourceMuted",
+	SPIRIT = "statIcons_Spirit",
+	SPIRIT_VISION = "Skill_Source_SpiritVision",
+	UNHEALABLE = "statIcons_Unhealable",
+	WIND_WALKER = "statIcons_WindWalker",
 }
 
 Data.StatusStatsIdTypes = {
@@ -569,6 +591,7 @@ end
 Data.IgnoredStatus.CONSUME = false
 Data.IgnoredStatus.SUMMONING = false -- For the summoning listener
 Data.IgnoredStatus.SNEAKING = false
+Data.IgnoredStatus.LEADERLIB_RECALC = true
 
 Data.Surfaces = {
 	None = -1,

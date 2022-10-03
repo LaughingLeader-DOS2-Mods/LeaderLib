@@ -539,12 +539,48 @@ end
 ---Returns the DisplayName (translated) or the DisplayNameRef.
 ---@param id string
 ---@param statType StatType|nil
+---@param character CharacterParam|nil Optional character to use if this is an action skill (to determine sneak/sheathe text).
 ---@return string
-function GameHelpers.Stats.GetDisplayName(id, statType)
+function GameHelpers.Stats.GetDisplayName(id, statType, character)
 	if _type(id) == "userdata" then
 		id = id.StatusId
 	end
-	if not StringHelpers.IsNullOrEmpty(id) and GameHelpers.Stats.Exists(id, statType) then
+	if Data.ActionSkills[id] then
+		if id == "ActionSkillSheathe" or id == "ActionSkillSneak" then
+			if character == nil then
+				if _ISCLIENT then
+					character = Client:GetCharacter()
+				elseif Ext.Osiris.IsCallable() then
+					character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+				end
+			end
+			local tbl = LocalizedText.ActionSkills[id]
+			if character then
+				if id == "ActionSkillSheathe" then
+					if character.FightMode or character:GetStatus("UNSHEATHED") then
+						return tbl.On.Value
+					else
+						return tbl.Off.Value
+					end
+				elseif id == "ActionSkillSneak" then
+					if character:GetStatus("SNEAKING") then
+						return tbl.On.Value
+					else
+						return tbl.Off.Value
+					end
+				end
+			else
+				return tbl.Off.Value
+			end
+		else
+			return LocalizedText.ActionSkills[id].Value
+		end
+	elseif Data.EngineStatus[id] then
+		local name = LocalizedText.Status[id]
+		if name then
+			return name.Value
+		end
+	elseif not StringHelpers.IsNullOrEmpty(id) and GameHelpers.Stats.Exists(id, statType) then
 		local stat = Ext.Stats.Get(id, nil, false)
 		return GameHelpers.GetStringKeyText(stat.DisplayName, stat.DisplayNameRef)
 	end

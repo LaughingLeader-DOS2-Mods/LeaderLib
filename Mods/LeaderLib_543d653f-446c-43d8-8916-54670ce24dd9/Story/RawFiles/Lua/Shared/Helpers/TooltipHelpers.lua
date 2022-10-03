@@ -246,7 +246,6 @@ local function ReplacePlaceholders(str, character)
 				--value = string.format("%i", math.floor(value))
 			end
 		end
-		Ext.PrintError(id, property, value)
 		if value == nil then
 			fprint(LOGLEVEL.WARNING, "[LeaderLib:GameHelpers.Tooltip.ReplacePlaceholders] Stat(%s) or stat attribute (%s) not found.", id, property)
 			value = ""

@@ -371,6 +371,8 @@ LocalizedText.Status = {
 	WINGS = ts:Create("hd716a074gd36ag4dfcgbf79g53bd390dd202", "Wings"),
 }
 
+LocalizedText.StatusDescription = {}
+
 LocalizedText.WeaponType = {
 	Rifle = ts:Create("h4120c4e5g4931g46dbgad0fga7a57514ac42", "Rifle")
 }
@@ -661,6 +663,19 @@ LocalizedText.Surfaces = {
 	WebBlessed = ts:Create("h5855a730gc280g40c5g81ccg5e47dfc7a3dd", "Blessed Web"),
 	WebCursed = ts:Create("h32a3af9cg9befg45b2g9ec5ge9322161fc2d", "Cursed Web"),
 	WebPurified = ts:Create("h758c25fcgc899g4016g8967g1812cf70e353", "Web"),
+}
+
+LocalizedText.ActionSkills = {
+	ActionAttackGround = ts:Create("hbdac34fdg43b6g4439g9947g6676e9c03294", "Basic Attack"),
+	ActionSkillDisarm = ts:Create("h0caaedadg4d07g4378g9cd1ge13fee7703e7", "Disarm trap"),
+	ActionSkillEndTurn = ts:Create("ha17c1b4bgc146g4897g8cfeg8e379b560530", "End Turn"),
+	ActionSkillFlee = ts:Create("hb399d83eg5ae8g48d0g8f7eg1a89d707f7f9", "Flee"),
+	ActionSkillGuard = ts:Create("hcf2cc556g6779g4605g95a8g23ded44b1e7c", "Delay your turn"),
+	ActionSkillIdentify = ts:Create("ha3f5e4ecg662eg457fg95b5g4b37cf12028b", "Identify"),
+	ActionSkillLockpick = ts:Create("h12379ad5g2d06g43b0g8bb2gae030cc52b8a", "Pick Lock"),
+	ActionSkillRepair = ts:Create("hfb0ab865gb8dfg4e35g9c8dg0a8bb9445348", "Repair"),
+	ActionSkillSheathe = {Off=ts:Create("h14dec5c1g0fa6g4abag8219gba6727c227d8", "Unsheathe"), On=ts:Create("hbb510089g3d5bg434dga929gcb697fcaf656", "Sheathe")},
+	ActionSkillSneak = {Off=ts:Create("h7ccd039age7f6g4022g9078g4b8d3749c956", "Enter Sneak Mode"), On=ts:Create("hc0d5bf50g6523g4779g9b2egb772480114c7", "Exit Sneak Mode")},
 }
 
 Ext.Events.SessionLoaded:Subscribe(function ()

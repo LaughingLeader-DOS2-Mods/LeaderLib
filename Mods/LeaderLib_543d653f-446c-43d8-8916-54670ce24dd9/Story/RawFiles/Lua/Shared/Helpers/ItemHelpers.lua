@@ -778,11 +778,12 @@ function GameHelpers.Item.HasTagEquipped(character, tag)
 	return GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 end
 
+---@overload fun(character:CharacterParam, tag:string|string[]):table<ItemSlot,EsvItem|EclItem>
 ---Builds a list of items with a specific tag.
 ---@param character CharacterParam
 ---@param tag string|string[]
 ---@param asArray boolean|nil Optional param to make the table returned just be an array of UUIDs, instead of <slot,UUID>
----@return table<string,EsvItem|EclItem>|EsvItem[]|EclItem[]
+---@return EsvItem[]|EclItem[] items
 function GameHelpers.Item.FindTaggedEquipment(character, tag, asArray)
     local items = {}
     for item in GameHelpers.Character.GetEquipment(character) do

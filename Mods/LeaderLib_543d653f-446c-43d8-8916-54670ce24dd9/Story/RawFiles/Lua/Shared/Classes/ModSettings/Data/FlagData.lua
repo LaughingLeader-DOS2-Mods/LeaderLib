@@ -52,7 +52,7 @@ function FlagData:Create(flag, flagType, enabled, displayName, tooltip, isFromFi
     return this
 end
 
----@param listener fun(e:ModSettingsChangedEventArgs|LeaderLibSubscribableEventArgs)
+---@param listener fun(e:ModSettingsFlagChangedEventArgs|LeaderLibSubscribableEventArgs)
 function FlagData:Subscribe(listener)
 	local t = type(listener)
 	if t == "function" then

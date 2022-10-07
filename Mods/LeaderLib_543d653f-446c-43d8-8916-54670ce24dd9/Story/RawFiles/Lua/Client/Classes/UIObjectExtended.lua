@@ -103,7 +103,7 @@ end
 ---@param skipCreation boolean|nil
 ---@param setVisibility boolean|nil
 function UIObjectExtended:GetInstance(skipCreation, setVisibility)
-	local instance = Ext.UI.GetByName(self.ID) or Ext.GetBuiltinUI(self.SwfPath)
+	local instance = Ext.UI.GetByName(self.ID) or Ext.UI.GetByPath(self.SwfPath)
 	if not instance and skipCreation ~= true then
 		instance = self:Initialize(setVisibility)
 	end
@@ -185,7 +185,7 @@ end
 ---@param setVisibility boolean|nil
 ---@private
 function UIObjectExtended:Initialize(setVisibility)
-	local instance = Ext.UI.GetByName(self.ID) or Ext.GetBuiltinUI(self.SwfPath)
+	local instance = Ext.UI.GetByName(self.ID) or Ext.UI.GetByPath(self.SwfPath)
 	if not instance then
 		instance = Ext.UI.Create(self.ID, self.SwfPath, self.Layer, self.DefaultUIFlags)
 		self:Hide(instance)
@@ -213,6 +213,11 @@ local function DestroyInstance(self)
 	if instance then
 		instance:Destroy()
 	end
+end
+
+---Destroy any existing instances and recreate it.
+function UIObjectExtended:Reset()
+	DestroyInstance(self)
 end
 
 Events.BeforeLuaReset:Subscribe(function()

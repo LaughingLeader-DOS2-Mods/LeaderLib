@@ -250,7 +250,7 @@ package LS_Classes
          {
             Registry.ExtCall("PlaySound",this.SND_Click);
          }
-         if(!this.m_Disabled && this.m_AllowToggleActive && !this.m_Active)
+         if(!this.m_Disabled && this.m_AllowToggleActive)
          {
             this.setActive(!this.m_Active);
          }

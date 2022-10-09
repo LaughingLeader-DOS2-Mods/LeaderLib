@@ -130,17 +130,19 @@
 	<content contentuid="h409bfd42g2257g4cb8gb3fbgedcb8adecaed">Extra Stats</content>
 	<content contentuid="h40ac3891g3661g43eag878dg6510b001704a">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
 	<content contentuid="h4120c4e5g4931g46dbgad0fga7a57514ac42">Rifle</content>
-	<content contentuid="h41a533b7g535bg4e76gbc7eg202d33a73740">Automatically Add Mod Books</content>
+	<content contentuid="h41a533b7g535bg4e76gbc7eg202d33a73740">Mod Books</content>
 	<content contentuid="h4252ff7cgb624g4b24gbf03g1772392f3988">Old Man Lothar</content>
 	<content contentuid="h436c5291g12cdg49b3gbaf5gc7d5a0ab4201">Allow the Base Carry Weight value to override the game&apos;s regular value.</content>
 	<content contentuid="h43868aebg7281g40bfgbc1dgf6fe5a06512b">Autosave Interval</content>
 	<content contentuid="h43c8c461g3a16g46fdgae71ga5986e500941">If enabled, consumable items such as drinks, food, potions, and ingredients will show their effects without needing to consume it first.&lt;br&gt;The &lt;font color=&apos;#33FF66&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideConsumableEffects:Show Consumable Effects]&lt;/font&gt; setting can be disabled in the Gameplay tab to still hide these effects for yourself, while allowing it globally here.&lt;br&gt;&lt;font color=&apos;#FFAA33&apos;&gt;Note: This works without any permanent stat overrides, so it&apos;s safe to enable/disable at will.&lt;/font&gt; </content>
+	<content contentuid="h44c4be0fgd679g4da6g90a4g46bda9000a4e">[Key:Shout_LeaderLib_UnchainAll_DisplayName:Unchain All] Skill</content>
 	<content contentuid="h455f1349g6528g452bg8624g5d0674b01ac5">If enabled, tooltips that support shift-key expansion will always be expanded.</content>
 	<content contentuid="h456c5c8bg7103g4b19g9185ge4cd6ddbab30">Show Status in Portrait UI</content>
 	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9">Hidden Backpack</content>
 	<content contentuid="h46a7fef9g9976g4abeg8f95g8fddb41639b9">If &lt;font color=&apos;#33FF66&apos;&gt;Show Consumable Effects&lt;/font&gt; is enabled in the global Mod Settings, disable this setting to hide these effects for yourself only.</content>
 	<content contentuid="h46c05d65g039dg4651gb24eg027244f86897">Undead Dwarf</content>
 	<content contentuid="h46f32bf7gf965g4146ga6e1g4951c5d8c2fa">Clears surfaces in a [1]m range at the location of your target(s).</content>
+	<content contentuid="h4724329fg40d7g432dgb0a3g7ee4944ebe42">[Key:Shout_LeaderLib_OpenModMenu_DisplayName:Open Mod Menu] Skill</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d">Undead Human</content>
 	<content contentuid="h47d73bfcg16eag4504g83c0ge7b9c0048f13">*Ask to see the trader&apos;s goods.*</content>
 	<content contentuid="h4897d242gf62bg4dccg9c90g1470117392d8">If enabled, the health and armor bars will always show their values, instead of only on mouse hover.</content>
@@ -209,6 +211,7 @@
 	<content contentuid="h680a3621g57dag4544g8c63gb43e64633e24">[OFF] Autosave in Combat [GLOBAL]</content>
 	<content contentuid="h68300b5aga3a5g49c9g8e57gbdf5490fd4c1">The amount of action points gained when a character&apos;s turn starts.&lt;br&gt;(Default: 4)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
 	<content contentuid="h68ad69bfg9d72g4107g8285g691dd3abc27e">Add the Mod Menu Skill (Self)</content>
+	<content contentuid="h68ce22c1gc1e8g4f01g8814gf7c52204dc19">Automatically add the &apos;[Key:Shout_LeaderLib_UnchainAll_DisplayName:Unchain All]&apos; skill, which can be used to unchain all party members from the hotbar.</content>
 	<content contentuid="h69172b21g1ce4g462dgad6cg308dabf6f0a0">Toggle [1]</content>
 	<content contentuid="h69293304g80a8g47b6gb564g793f098abfb4">Reset all global LeaderLib settings. EXPERIMENTAL!</content>
 	<content contentuid="h69590addg7840g4821gb632g52799233bb88">&lt;font color=&apos;#FF0000&apos;&gt;-[1] Attitude&lt;/font&gt;</content>
@@ -263,6 +266,7 @@
 	<content contentuid="h80766295g4589g4681gb03cgf6c692463084">&lt;font color=&apos;#9A00FF&apos;&gt;[1] chaos damage&lt;/font&gt;</content>
 	<content contentuid="h808d2fe2ge0d2g4e78g94cag05b054d2b96b">[LeaderLib_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1]</content>
 	<content contentuid="h809bc35bgaa71g493egaf0agc20c110d90cf">If enabled, skills will be able to backstab depending on settings (melee only, minimum distance).&lt;br&gt;(Default: Disabled)</content>
+	<content contentuid="h80f9cfecg0750g4214gb67bgd5ebb2e37579">Automatically add the &apos;[Key:Shout_LeaderLib_OpenModMenu_DisplayName:Open Mod Menu]&apos; skill, which can be used to open the mod menu dialog without needing a book.</content>
 	<content contentuid="h810c9e32gefefg451cga58dgc6d44276ac7e">Override Base Carry Weight</content>
 	<content contentuid="h8154ae8eg2b37g4f0fgb6b6gd7e27fed37a6">Level [1]: [2]</content>
 	<content contentuid="h81a0d6b9g43adg4223gbcc9g0fceadeff883">*He coughs out some sea water.*  That she-beast of a sourceress nearly wiped me out with the others on the boat... *He trails off for a moment before returning his gaze back to you.*</content>
@@ -279,6 +283,7 @@
 	<content contentuid="h87df678agafbeg4816gbd41g1708cb5b2a41">Add Chain/Unchain Skills (User - All Owned Characters)</content>
 	<content contentuid="h8859d107g3e28g44dega723gc7434a93f206">Add the Mod Menu Skill (Party)</content>
 	<content contentuid="h898ea651g71ddg40f0g8a76g6296ffc9581f">[First]</content>
+	<content contentuid="h8993bac9g89e6g4a50g997bg58f8d4742984">[Key:Shout_LeaderLib_ChainAll_DisplayName:Chain All] Skill</content>
 	<content contentuid="h89b19292g87beg4312g9514g63c95313649f">*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3].</content>
 	<content contentuid="h8a959098gf62eg46e6gbd76g423808c8d7b9">Show Consumable Effects</content>
 	<content contentuid="h8b7d56a0g4114g4cf2ga2ceg50db94bad57f">Enable various debug features with LeaderLib. Not recommended.</content>
@@ -315,7 +320,9 @@
 	<content contentuid="h9863bb3eg058dg45acg8926gefb0f24ece72">Save When Combat Starts</content>
 	<content contentuid="h98bf1217gf2bfg4d82g99b9g6747f36f9aab">&lt;font color=&apos;#FF0000&apos;&gt;Script Extender Missing!&lt;/font&gt;</content>
 	<content contentuid="h98d315c5g189cg431eg9862g7cea569a5e3b">Hmm?</content>
+	<content contentuid="h98da5ca0g1685g4045ga3ccga021c464806e">Automatically Add</content>
 	<content contentuid="h9904f967g424bg4099gb4f3ge3b46fe30a68">Try to reduce max status tooltip size by combining elements, such as immunities.</content>
+	<content contentuid="h993bd3d5g0c32g4da9gadb1gaa09877c5a8a">Enable or disable the [Key:LeaderLib] trader ([Handle:h4252ff7cgb624g4b24gbf03g1772392f3988:Old Man Lothar]). Note that some mods add specific items to this trader, such as menu books.</content>
 	<content contentuid="h99a64909g2efdg4246g97bfg5e78915ecb08">UI</content>
 	<content contentuid="h9a089091g504ag4446ga707g787ad2d73d89">Go to [1] ([2])</content>
 	<content contentuid="h9ade7360g8608g42f6g8e7cgff542d517949">&lt;font color=&apos;#BB77FF&apos; size=&apos;22&apos;&gt;Preset Selection&lt;/font&gt;&lt;br&gt;Toggle the the Preset Selection dropdown.</content>
@@ -453,6 +460,7 @@
 	<content contentuid="hd3baa721g34c3g49f7ga360ge49af2a015b8">*You notice the old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
 	<content contentuid="hd4ee1fb0g40aeg4fbcgac8dg907287d435df">Swap Gender</content>
 	<content contentuid="hd525dc1fg4819g40b1g9bb8gc896dad435bd">[LUA] Reset LeaderLib Lua Scripts (&lt;b&gt;*WARNING*&lt;/b&gt; For testing purposes only!)</content>
+	<content contentuid="hd528b6bdgbca4g4bbdga099g1cabf4755956">Enable Trader</content>
 	<content contentuid="hd563faa9ga238g4a5fga229g491dd77d5068">The starting amount of action points when combat begins.&lt;br&gt;(Default: 4)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
 	<content contentuid="hd5803cb0ga2cdg4823g9bc1gebcbaec5fd2f">Unchain All</content>
 	<content contentuid="hd6575622g90aeg49d1gbe2dg1e81de23a636">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
@@ -484,6 +492,7 @@
 	<content contentuid="he5a918ecg8f34g4ddbg9af6g98e9f4575d91">Me? Oh, I&apos;m just a retired old man, looking to get some fishing done. *He rubs his beard, glancing at the broken-down scenery.* Afraid I don&apos;t have any fight left in me anywho.</content>
 	<content contentuid="he5c047ebg44afg4995gadf0g3638b568e5cb">Status Hiding</content>
 	<content contentuid="he7d3dd9bgc8b9g42a9g97bcga36f8c8f6553">Autosaving &lt;font color=&apos;#00FF00&apos;&gt;Enabled&lt;/font&gt; | Interval: &lt;font color=&apos;#00FFFF&apos;&gt;[1]&lt;/font&gt;[2]</content>
+	<content contentuid="he8021399ge8f6g4a5dgba07g2430e2e9444b">Automatically add the &apos;[Key:Shout_LeaderLib_ChainAll_DisplayName:Chain All]&apos; skill, which can be used to chain all party members from the hotbar.</content>
 	<content contentuid="he93fef85gaa09g45c2g92d3ga71a001dfe49">General Backstab Settings</content>
 	<content contentuid="hea20bb8dg93b1g4147g924ag686aa59a1cf8">Checking registered mods...</content>
 	<content contentuid="hea66772cgcbebg47a3g8c80g70763f921d72">Chain all characters under your control that are within [1].</content>

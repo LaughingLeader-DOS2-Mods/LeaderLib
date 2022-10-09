@@ -24,6 +24,9 @@ settings.Global:AddLocalizedFlags({
 	"LeaderLib_PermanentSpiritVisionEnabled",
 	"LeaderLib_ShowConsumableEffectsEnabled",
 	"LeaderLib_CarryWeightOverrideEnabled",
+	"LeaderLib_AutoAdd_ChainAll_Disabled",
+	"LeaderLib_AutoAdd_UnchainAll_Disabled",
+	"LeaderLib_AutoAdd_OpenModMenu_Disabled",
 })
 settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 --settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)
@@ -50,7 +53,6 @@ settings.GetMenuOrder = function()
 		}},
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_QOL", "Quality of Life"),
 		Entries = {
-			"LeaderLib_AutoAddModMenuBooksDisabled",
 			"LeaderLib_AutoUnlockInventoryInMultiplayer",
 			"LeaderLib_AutoIdentifyItemsEnabled",
 			"LeaderLib_CarryWeightOverrideEnabled",
@@ -59,6 +61,13 @@ settings.GetMenuOrder = function()
 			"LeaderLib_ShowConsumableEffectsEnabled",
 			"LeaderLib_AllTooltipsForItemsEnabled",
 			"LeaderLib_RemovePathInfluencesOnChainAll"
+		}},
+		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_AutomaticallyAdd", "Automatically Add"),
+		Entries = {
+			"LeaderLib_AutoAddModMenuBooksDisabled",
+			"LeaderLib_AutoAdd_OpenModMenu_Disabled",
+			"LeaderLib_AutoAdd_ChainAll_Disabled",
+			"LeaderLib_AutoAdd_UnchainAll_Disabled",
 		}},
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_DialogRedirection", "Dialog Redirection"),
 		Entries = {		
@@ -79,6 +88,7 @@ settings.GetMenuOrder = function()
 		}},	
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Misc", "Misc"),
 		Entries = {
+			"LeaderLib_TraderDisabled",
 			"LeaderLib_DebugModeEnabled",
 		}}
 	}
@@ -235,6 +245,20 @@ if Ext.IsServer() then
 		Timer.Cancel("Timers_LeaderLib_WorldTooltips_UpdateItems")
 		if e.Value then
 			QOL.WorldTooltips:StartTimer(true)
+		end
+	end)
+	local TRADER_GUID = "61ae5acc-1537-4970-82bb-d408a3334574"
+	settings.Global.Flags.LeaderLib_TraderDisabled:Subscribe(function(e)
+		if e.Value then
+			SetOnStage(TRADER_GUID, 0)
+		else
+			SetOnStage(TRADER_GUID, 1)
+		end
+	end)
+	Ext.Osiris.RegisterListener("LeaderLib_Traders_OnSpawned", 3, "after", function (traderGUID, traderID, region)
+		traderGUID = StringHelpers.GetUUID(traderGUID)
+		if traderGUID == TRADER_GUID and settings.Global:FlagEquals("LeaderLib_TraderDisabled", true) then
+			SetOnStage(TRADER_GUID, 0)
 		end
 	end)
 end

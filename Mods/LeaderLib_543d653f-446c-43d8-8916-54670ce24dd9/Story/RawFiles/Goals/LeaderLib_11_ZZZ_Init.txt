@@ -298,13 +298,10 @@ LeaderLib_Settings_AddModMenuSkillToParty()
 THEN
 LeaderLib_Settings_AddStarterSkillsToParty();
 
-
-IF
-StoryEvent(_, "LeaderLib_Initialized")
+PROC
+LeaderLib_Initialized((STRING)_Region)
 AND
-DB_CurrentLevel(_Level)
-AND
-IsGameLevel(_Level, 1)
+IsGameLevel(_Region, 1)
 AND
 NOT DB_GlobalFlag("LeaderLib_AddedStarterSkills")
 THEN
@@ -325,12 +322,35 @@ DB_Origins(_Player)
 THEN
 LeaderLib_Settings_AddStarterSkills(_Player);
 
+QRY
+LeaderLib_Settings_QRY_CanAddStarterSkill((CHARACTERGUID)_Player, "Shout_LeaderLib_OpenModMenu")
+AND
+GlobalGetFlag("LeaderLib_AutoAdd_OpenModMenu_Disabled", 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Settings_QRY_CanAddStarterSkill((CHARACTERGUID)_Player, "Shout_LeaderLib_ChainAll")
+AND
+GlobalGetFlag("LeaderLib_AutoAdd_ChainAll_Disabled", 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Settings_QRY_CanAddStarterSkill((CHARACTERGUID)_Player, "Shout_LeaderLib_UnchainAll")
+AND
+GlobalGetFlag("LeaderLib_AutoAdd_UnchainAll_Disabled", 0)
+THEN
+DB_NOOP(1);
+
 PROC
 LeaderLib_Settings_AddStarterSkills((CHARACTERGUID)_Player)
 AND
 ObjectExists(_Player, 1)
 AND
 DB_LeaderLib_StarterSkills("LeaderLib", _Skill, _Slot, _Flag)
+AND
+LeaderLib_Settings_QRY_CanAddStarterSkill(_Player, _Skill)
 THEN
 LeaderLib_Settings_Internal_AddStarterSkill(_Player, _Skill, _Slot, _Flag);
 

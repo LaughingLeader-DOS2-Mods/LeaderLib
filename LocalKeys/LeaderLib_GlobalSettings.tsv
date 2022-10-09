@@ -6,12 +6,19 @@ LeaderLib_UI_Settings_QOL	Quality of Life	hae93b18fgeba5g497ag987cgaf862638b237
 LeaderLib_UI_Settings_Fixes	Fixes	h86a5860ag96ddg46e0g84f7g82aac62689f9
 LeaderLib_UI_Settings_Misc	Misc	h45fbdc72g99a3g4062gb366g69361d2d0513
 LeaderLib_UI_Settings_Buttons	Actions	h26695cfdg01c9g421dga695ge2d6661643bf
+LeaderLib_UI_Settings_AutomaticallyAdd	Automatically Add	h1233cde3g78adg432eg82d9g8d6a100da366
 LeaderLib_UI_Button_Reset	Reset Settings	hdc816addgda80g4d5dg8d6dgccf0824c220a
 LeaderLib_UI_Button_Reset_Description	Reset all global LeaderLib settings. EXPERIMENTAL!	h69293304g80a8g47b6gb564g793f098abfb4
 LeaderLib_AllTooltipsForItemsEnabled	World Tooltips for All Items	h6aac0af6g1e02g4a73g9341g53c81e64eb03
 LeaderLib_AllTooltipsForItemsEnabled_Description	If enabled, all items will have a "World Tooltip", showing the item's name when world tooltips are enabled (ALT by default for keyboard + mouse, or clicking the Right Stick for controllers).<br>Disabling this may require a save/load to get items to reset.	h7372bd33g991dg41c7ga8c2g9b42778c29f5
-LeaderLib_AutoAddModMenuBooksDisabled	Automatically Add Mod Books	h41a533b7g535bg4e76gbc7eg202d33a73740
+LeaderLib_AutoAddModMenuBooksDisabled	Mod Books	h41a533b7g535bg4e76gbc7eg202d33a73740
 LeaderLib_AutoAddModMenuBooksDisabled_Description	Certain mod books will be automatically added to your inventory initially, if enabled.	h612f84f2gd275g41bdga76fg0b54166becb0
+LeaderLib_AutoAdd_OpenModMenu_Disabled	[Key:Shout_LeaderLib_OpenModMenu_DisplayName:Open Mod Menu] Skill	h3c471f10g1ca9g42e5g87eag2d1b6ea1c478
+LeaderLib_AutoAdd_OpenModMenu_Disabled_Description	Automatically add the '[Key:Shout_LeaderLib_OpenModMenu_DisplayName:Open Mod Menu]' skill, which can be used to open the mod menu dialog without needing a book.	h49208c63gb770g4a2cga879g617bb6d4e552
+LeaderLib_AutoAdd_ChainAll_Disabled	[Key:Shout_LeaderLib_ChainAll_DisplayName:Chain All] Skill	ha26a9930g4740g4f01g8091g61fddd50324a
+LeaderLib_AutoAdd_ChainAll_Disabled_Description	Automatically add the '[Key:Shout_LeaderLib_ChainAll_DisplayName:Chain All]' skill, which can be used to chain all party members from the hotbar.	h4a708c61g0a7eg43d3g8bd3gb37498963942
+LeaderLib_AutoAdd_UnchainAll_Disabled	[Key:Shout_LeaderLib_UnchainAll_DisplayName:Unchain All] Skill	hcdf6f05ag65c5g445eg9cfbg961fe97a764a
+LeaderLib_AutoAdd_UnchainAll_Disabled_Description	Automatically add the '[Key:Shout_LeaderLib_UnchainAll_DisplayName:Unchain All]' skill, which can be used to unchain all party members from the hotbar.	hf0b8619ag3364g4342g927dgb81c6f927343
 LeaderLib_AutoIdentifyItemsEnabled	Auto-Identify Items	he9ac6d86g4c67g4aa9g8435g637e6d761586
 LeaderLib_AutoIdentifyItemsEnabled_Description	If enabled, items will be automatically identified. 	h93eae8e8gf22eg41f6gbd5eg58c71893024a
 LeaderLib_AutosaveOnCombatStart	Save When Combat Starts	h9863bb3eg058dg45acg8926gefb0f24ece72
@@ -56,3 +63,5 @@ LeaderLib_Variables_CombatSightRangeMultiplier	Combat Sight Range Multiplier	hd5
 LeaderLib_Variables_CombatSightRangeMultiplier_Description	This is a multiplier the game uses to determine if a character should exit combat, due to not seeing any enemies. Setting this value higher will keep you in combat, despite being far away from any enemies.<br>Default: 2.5<br>Formula: ((Value * Value) * character.Sight) * character.Sight	hd512d483gb01ag40c6ga346g472274590bb5
 LeaderLib_ReloadStatChangesConfig	Reload Stat Changes Config	h121e346bgaf5dg42cagbf3bg45de27a5a667
 LeaderLib_ReloadStatChangesConfig_Description	Reload and re-apply the stat changes configuration file, located at:<br>Documents\Larian Studios\Divinity Original Sin 2 Definitive Edition\Osiris Data\LeaderLib_StatChanges.json	h8e0d18aagbc5cg4cafgb59fga2e92638c099
+LeaderLib_TraderDisabled	Enable Trader	h0e770a18g4a0dg4fddgb702g790a6b808219
+LeaderLib_TraderDisabled_Description	Enable or disable the [Key:LeaderLib] trader ([Handle:h4252ff7cgb624g4b24gbf03g1772392f3988:Old Man Lothar]). Note that some mods add specific items to this trader, such as menu books.	habfc9423ga899g4a00g90c0g2ccb2f29177a

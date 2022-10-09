@@ -258,7 +258,7 @@ local function ReplacePlaceholders(str, character)
 				trailingStr = string.sub(output, endPos+1, endPos+1)
 			end
 
-			if trailingStr == "%" and value > 0 and value <= 1 then
+			if trailingStr == "%" and value > 0 and (value < 1 or fallback == "1.0") then
 				-- Percentage display
 				value = value * 100
 				value = string.format("%i", math.floor(value))

@@ -386,6 +386,20 @@ function StringHelpers.StripFont(str)
 	return _gsub(str, "<font.-'>", ""):gsub("</font>", "")
 end
 
+---Remove only the outer font tags from a string, if it's wrapped in <font></font> tags.
+---@param str string
+function StringHelpers.StripOuterFont(str)
+	if str == nil or str == "" then
+		return str
+	end
+	local startIndex,endIndex = _find(str, "^<font")
+	if startIndex == 1 then
+		return _gsub(str, "^<font.-'>", "", 1):gsub("</font>$", "", 1)
+	else
+		return str
+	end
+end
+
 function StringHelpers.IsMatch(str, match, explicit)
 	if not explicit then
 		str = _lower(str)

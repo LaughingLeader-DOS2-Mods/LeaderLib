@@ -222,7 +222,7 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 				if string.sub(name, 0) == "h" then
 					name = GameHelpers.GetTranslatedString(name, "")
 				else
-					name = GameHelpers.GetStringKeyText(name, "")
+					name = GameHelpers.GetStringKeyText(name, name)
 				end
 				--mainMenu.addMenuInfoLabel(Ext.Random(500,600), section.DisplayName, "Info?")
 				if not StringHelpers.IsNullOrEmpty(name) then

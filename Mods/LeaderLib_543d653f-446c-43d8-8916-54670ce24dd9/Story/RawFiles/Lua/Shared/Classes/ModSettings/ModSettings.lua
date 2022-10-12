@@ -4,6 +4,7 @@ local ProfileSettings = Classes.ModSettingsClasses.ProfileSettings
 local isClient = Ext.IsClient()
 
 ---@class ModSettings
+---@field GetMenuOrder fun():table<string, table<string, string[]>>
 local ModSettings = {
 	Type = "ModSettings",
 	TitleColor = "#FFFFFF",
@@ -18,9 +19,7 @@ local ModSettings = {
 	UpdateVariable = nil,
 	---@type fun(uuid:string, name:string, data:VariableData):void
 	OnVariableSet = nil,
-	LoadedExternally = false,
-	---@type function<string, table<string, string[]>>
-	GetMenuOrder = nil,
+	LoadedExternally = false
 }
 
 ModSettings.__index = ModSettings
@@ -40,8 +39,7 @@ function ModSettings:Create(uuid, globalSettings)
 		Version = -1,
 		UpdateVariable = nil,
 		OnVariableSet = nil,
-		LoadedExternally = false,
-		GetMenuOrder = nil,
+		LoadedExternally = false
 	}
 	local mod = Ext.Mod.GetMod(uuid)
 	if mod ~= nil then

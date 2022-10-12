@@ -249,11 +249,26 @@ if Ext.IsServer() then
 		end
 	end)
 	local TRADER_GUID = "61ae5acc-1537-4970-82bb-d408a3334574"
+	local _tempRegionChangedIndex = nil
 	settings.Global.Flags.LeaderLib_TraderDisabled:Subscribe(function(e)
-		if e.Value then
-			SetOnStage(TRADER_GUID, 0)
+		if Ext.Osiris.IsCallable() then
+			if e.Value then
+				SetOnStage(TRADER_GUID, 0)
+			else
+				SetOnStage(TRADER_GUID, 1)
+			end
 		else
-			SetOnStage(TRADER_GUID, 1)
+			if not _tempRegionChangedIndex then
+				_tempRegionChangedIndex = Events.RegionChanged:Subscribe(function (e)
+					if e.State == REGIONSTATE.GAME then
+						if settings.Global:FlagEquals("LeaderLib_TraderDisabled", true) then
+							SetOnStage(TRADER_GUID, 0)
+						end
+						Events.RegionChanged:Unsubscribe(_tempRegionChangedIndex)
+						_tempRegionChangedIndex = nil
+					end
+				end)
+			end
 		end
 	end)
 	Ext.Osiris.RegisterListener("LeaderLib_Traders_OnSpawned", 3, "after", function (traderGUID, traderID, region)

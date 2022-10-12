@@ -127,7 +127,11 @@ local Init = function()
 		else
 			local listener = UIListenerWrapper._TypeListeners[t]
 			if listener then
-				OnUIListener(listener, "call", ui, event, table.unpack(args))
+				if e.Args and e.Args[1] then
+					OnUIListener(listener, "call", ui, event, table.unpack(args))
+				else
+					OnUIListener(listener, "call", ui, event)
+				end
 			end
 		end
 	end)

@@ -154,7 +154,9 @@ function LoadGlobalSettings(skipEventInvoking)
 				v:ApplyToGame()
 			end
 			if skipEventInvoking ~= true then
-				Events.ModSettingsLoaded:Invoke({UUID=uuid, Settings=v})
+				if _ISCLIENT or canCallOsiris then
+					Events.ModSettingsLoaded:Invoke({UUID=uuid, Settings=v})
+				end
 			end
 		end
 		if skipEventInvoking ~= true then
@@ -162,7 +164,12 @@ function LoadGlobalSettings(skipEventInvoking)
 				Events.GlobalSettingsLoaded:Invoke({Settings=GlobalSettings, FromSync=false})
 			elseif not _ISCLIENT and Ext.GetGameState() == "Running" then
 				Ext.OnNextTick(function (e)
-					Events.GlobalSettingsLoaded:Invoke({Settings=GlobalSettings, FromSync=false})
+					if Ext.Osiris.IsCallable() then
+						for uuid,v in pairs(GlobalSettings.Mods) do
+							Events.ModSettingsLoaded:Invoke({UUID=uuid, Settings=v})
+						end
+						Events.GlobalSettingsLoaded:Invoke({Settings=GlobalSettings, FromSync=false})
+					end
 				end)
 			end
 		end

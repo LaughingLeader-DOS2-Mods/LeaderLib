@@ -83,7 +83,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 		local eq = Ext.Stats.EquipmentSet.GetLegacy(equipment)
 		if eq ~= nil then
 			for i,v in pairs(eq.Groups) do
-				local stat = Ext.Stats.Get(v.Equipment[1], nil, false, level)
+				local stat = Ext.Stats.Get(v.Equipment[1], level, false)
 				if stat ~= nil then
 					local skip = false
 					if skipSlots ~= nil and stat.Slot ~= nil then

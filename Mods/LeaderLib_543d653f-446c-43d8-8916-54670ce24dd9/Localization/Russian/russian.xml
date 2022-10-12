@@ -16,6 +16,7 @@
 	<content contentuid="h07b0d455gbe0fg48a4gbe1eg3ae23e84b2eb">Confirm Preset Selection</content>
 	<content contentuid="h07ede36bgda99g42ecg813bgbc1496640e7d">Skip Tutorial (LB + Select)</content>
 	<content contentuid="h0817cecega5f8g4910g875fg07c2da1ba106">Delay Skill Tooltips</content>
+	<content contentuid="h0824ad38gb8f8g443dga589g5d6ed7a698b8">Divinity: Original Sin 2 (Campaign)</content>
 	<content contentuid="h085c69c2g47e1g4611g9c72g6f45ecb1768d">Always Show Divine Talents</content>
 	<content contentuid="h08bb8216g9d40g49f9g91d4g8a77ecb090d2">Swap between the undead and non-undead equivalent of your current race.</content>
 	<content contentuid="h0a498022g9474g4aacg9c4cged02cdca22a2">Show the mod a status, item, or skill originates from in tooltips.</content>
@@ -167,7 +168,6 @@
 	<content contentuid="h52804b8ag97ccg478eg90f8gc8b6f735dab2">&lt;font color=&apos;#FF0000&apos; size=&apos;32&apos;&gt;ERROR&lt;/font&gt;&lt;br&gt;You are missing the Script Extender, and the host has mods that require it!&lt;br&gt;&lt;font color=&apos;#FF00CC&apos; size=&apos;22&apos;&gt;Please exit the game and install the Script Extender.&lt;/font&gt;&lt;br&gt;The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.</content>
 	<content contentuid="h529c36c6g6b68g46e2g867dg863184908d5a">Remove the Mod Menu Skill (Self)</content>
 	<content contentuid="h52a29657gf5f3g4577gb783g6fa0c0052e5e">Timed Autosaving</content>
-	<content contentuid="h533d5081g8959g4a8eg817fg873c32143e01">See the full changelog in the &apos;Change Notes&apos; tab on the Steam Workshop page.&lt;br&gt;&lt;b&gt;&lt;font size=&apos;24&apos;&gt;1.7.24.2&lt;/font&gt;&lt;/b&gt;&lt;br&gt;• Fixed an issue with item tooltips if Improved Hotbars is enabled (may be fixed in Improved Hotbars as well).&lt;br&gt;• Made text in the Info section of the journal scrollable. This will only work if the journal UI is already overwritten, otherwise LeaderLib&apos;s UI override will be skipped.&lt;br&gt;&lt;b&gt;&lt;font size=&apos;24&apos;&gt;1.7.24.1&lt;/font&gt;&lt;/b&gt;&lt;br&gt;• Fixed an issue preventing the Buff Status Preservation feature from working.&lt;br&gt;&lt;b&gt;&lt;font size=&apos;24&apos;&gt;1.7.24.0&lt;/font&gt;&lt;/b&gt;&lt;br&gt;• Added new options to allow fading out items in the inventory (read books, known skillbooks).&lt;br&gt;&lt;b&gt;&lt;font size=&apos;24&apos;&gt;1.7.22.4&lt;/font&gt;&lt;/b&gt;&lt;br&gt;• Added an option to initially enable the combat log.&lt;br&gt;&lt;b&gt;&lt;font size=&apos;24&apos;&gt;1.7.22.3&lt;/font&gt;&lt;/b&gt;&lt;br&gt;• Fixed various tooltip-related issues in controller mode.&lt;br&gt;&lt;b&gt;&lt;font size=&apos;24&apos;&gt;1.7.22.2&lt;/font&gt;&lt;/b&gt;&lt;br&gt;• Fixed an issue preventing buff statuses from being preserved.&lt;br&gt;&lt;b&gt;&lt;font size=&apos;24&apos;&gt;1.7.22.1&lt;/font&gt;&lt;/b&gt;&lt;br&gt;• Fixed an issue where condensed item tooltips weren&apos;t displaying chances for &quot;On Hit&quot; bonuses.&lt;br&gt;• Fix client-side settings being greyed out in multiplayer.&lt;br&gt;&lt;b&gt;&lt;font size=&apos;24&apos;&gt;1.7.22.0&lt;/font&gt;&lt;/b&gt;&lt;br&gt;• Added new tooltip options in the Gameplay menu.&lt;br&gt;• Buff status preservation now only works on buffs applied by skills.&lt;br&gt;• Fixed an error when checking item tooltips as a GM, when not possessing a character.</content>
 	<content contentuid="h538e28f2g01fag43dcga7c2g040a105e38c1">([1]% Chance)</content>
 	<content contentuid="h5515ca23gf576g491dgb562ge71243c72ed8">Cancel Shapeshifting</content>
 	<content contentuid="h562f0a3bg4566g452eg860egb5c2ff3e750e">Undead Elf</content>
@@ -200,6 +200,7 @@
 	<content contentuid="h62fcf915g9babg41e3gbc1fg7cec5eeb59ce">[ON] Combat Log Logging [GLOBAL]</content>
 	<content contentuid="h632cbbd2g4193g4921g979fg1abd006f1e0b">Running command...</content>
 	<content contentuid="h6349d1c7g6af8g4bb0g9d17g1e09f64a3d6f">[LeaderLib_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261]</content>
+	<content contentuid="h6391cd9cg7556g4ee3g900fgda3429722beb">Show Base Mod Source</content>
 	<content contentuid="h6472ecb0g5977g4c93g8a51g6444c9402d47">So. How about a trade?</content>
 	<content contentuid="h64aef327g59b3g4c63gacb9g834c0ba020e0">Insight on how to manage multiple summons at the same time. For summoners, by summoners. Read this book to learn this skill.</content>
 	<content contentuid="h658b85b9g49abg4c9fg9215ga09ac36d3e53">[ON] Autosave in Combat [GLOBAL]</content>
@@ -270,8 +271,10 @@
 	<content contentuid="h810c9e32gefefg451cga58dgc6d44276ac7e">Override Base Carry Weight</content>
 	<content contentuid="h8154ae8eg2b37g4f0fgb6b6gd7e27fed37a6">Level [1]: [2]</content>
 	<content contentuid="h81a0d6b9g43adg4223gbcc9g0fceadeff883">*He coughs out some sea water.*  That she-beast of a sourceress nearly wiped me out with the others on the boat... *He trails off for a moment before returning his gaze back to you.*</content>
+	<content contentuid="h81c0c1edg1e20g4537g8b3bgaf1a16ac1b8a">If [Key:LeaderLib_UI_GameSettings_Client_ShowModInTooltips] is enabled, show base game mods as well, such as Divinity: Original Sin 2 (Base) or (Campaign).</content>
 	<content contentuid="h81c5d767gca44g446fg8d4bg56bdf03699a6">Clear Whitelist</content>
 	<content contentuid="h8311eb63g89cfg41c1g961cgde31f8d79927"></content>
+	<content contentuid="h84c9e085gbeb1g4b82ga66ag84eb281ed4cb">Divinity: Original Sin 2 (Base)</content>
 	<content contentuid="h85c3e4fag683cg471agaef1g448f3023e955">Selected Preset: [LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068]</content>
 	<content contentuid="h85e4dbcfg25c9g4db3g8297ga2cedc5ebe99">2 Hours</content>
 	<content contentuid="h861c65b9g0db7g4799gaeb2g67ac42f57540">[ON] Use Any Party Member - Disable user ID matching when finding the closest character a party member belongs to, allowing other players in multiplayer to be the redirection target. [GLOBAL]</content>

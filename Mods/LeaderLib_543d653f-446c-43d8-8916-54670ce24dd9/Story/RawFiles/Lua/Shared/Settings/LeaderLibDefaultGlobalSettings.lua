@@ -27,6 +27,7 @@ settings.Global:AddLocalizedFlags({
 	"LeaderLib_AutoAdd_ChainAll_Disabled",
 	"LeaderLib_AutoAdd_UnchainAll_Disabled",
 	"LeaderLib_AutoAdd_OpenModMenu_Disabled",
+	"LeaderLib_TraderDisabled",
 })
 settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 --settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)

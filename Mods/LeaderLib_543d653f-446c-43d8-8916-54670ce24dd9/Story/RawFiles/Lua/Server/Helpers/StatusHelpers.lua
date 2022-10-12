@@ -217,14 +217,8 @@ local function FinallyApplyStatus(target, status, duration, force, source, prope
 		fprint(LOGLEVEL.ERROR, "[LeaderLib:FinallyApplyStatus] Failed to create status (%s). Does the stat exist?", status)
 		return
 	end
-	local targetObj = nil
+	local targetObj = GameHelpers.TryGetObject(target)
 	local sourceObj = nil
-	if not StringHelpers.IsNullOrEmpty(target) then
-		targetObj = GameHelpers.TryGetObject(target)
-		if targetObj then
-			statusObject.TargetHandle = targetObj.Handle
-		end
-	end
 	if not StringHelpers.IsNullOrEmpty(source) then
 		sourceObj = GameHelpers.TryGetObject(source)
 		if sourceObj then

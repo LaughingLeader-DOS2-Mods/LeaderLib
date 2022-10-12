@@ -166,7 +166,6 @@ local function MoveToTarget(object, position, areaRadius, skill, property)
 			--object.Floating = true
 			-- local status = Ext.PrepareStatus(object.MyGuid, "LEADERLIB_COMBAT_MOVE", 6.0)
 			-- status.StatusSourceHandle = object.Handle
-			-- status.TargetHandle = object.Handle
 			-- status.TargetPos = object.WorldPos
 			-- status.KeepAlive = true
 			-- status.RequestDeleteAtTurnEnd = true

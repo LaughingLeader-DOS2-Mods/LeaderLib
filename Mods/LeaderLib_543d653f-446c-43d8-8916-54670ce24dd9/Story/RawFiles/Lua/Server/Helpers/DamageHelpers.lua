@@ -489,7 +489,6 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     ---@type EsvStatusHit
     local hit = Ext.PrepareStatus(target.MyGuid, "HIT", 0.0)
 
-    hit.TargetHandle = target.Handle
     hit.StatusSourceHandle = source.Handle
 
     local skillData = GameHelpers.Ext.CreateSkillTable(skill, nil, true)
@@ -733,13 +732,12 @@ function GameHelpers.Damage.ApplyDamage(source, target, params)
     local status = Ext.PrepareStatus(target.MyGuid, "HIT", 0.0)
     ---@cast status EsvStatusHit
 
-    status.TargetHandle = target.Handle
     status.StatusSourceHandle = source.Handle
 
     local hitType = params.HitType or _defaultParams.HitType
     status.ImpactOrigin = source.WorldPos
     status.ImpactPosition = target.WorldPos
-    status.ImpactDirection = {-target.Stats.Rotation[7],0,-target.Stats.Rotation[9]}
+    status.ImpactDirection = {-target.Rotation[7],0,-target.Rotation[9]}
     status.HitReason = Data.HitReason.ApplyDamage
     status.Hit.Hit = true
     status.Hit.DamageType = params.DamageType or _defaultParams.DamageType

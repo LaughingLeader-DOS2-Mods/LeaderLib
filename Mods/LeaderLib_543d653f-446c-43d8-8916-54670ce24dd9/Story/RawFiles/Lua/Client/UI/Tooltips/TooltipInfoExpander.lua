@@ -515,6 +515,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		if _EXTVERSION >= 57 and _ShowModInTooltipType[request.Type] then
 			local gameSettings = GameSettingsManager.GetSettings().Client
 			if gameSettings.ShowModInTooltips then
+				local showBaseGameMods = Vars.DebugMode or gameSettings.ShowBaseGameModsInTooltips == true
 				local stat = nil
 				local modName = nil
 				if request.Type == "Status" then
@@ -537,10 +538,12 @@ Ext.Events.SessionLoaded:Subscribe(function()
 								local _,_,modFolder = string.find(item.CurrentTemplate.FileName, ".-Data/Mods/(.-)/")
 								if not StringHelpers.IsNullOrEmpty(modFolder) then
 									for _,modGUID in pairs(Ext.Mod.GetLoadOrder()) do
-										local mod = Ext.Mod.GetMod(modGUID)
-										if mod and mod.Info.Directory == modFolder then
-											modName = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
-											break
+										if showBaseGameMods or not Vars.GetModInfoIgnoredMods[modGUID] then
+											local mod = Ext.Mod.GetMod(modGUID)
+											if mod and mod.Info.Directory == modFolder then
+												modName = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
+												break
+											end
 										end
 									end
 								end
@@ -548,17 +551,18 @@ Ext.Events.SessionLoaded:Subscribe(function()
 						end
 					end
 				end
-				if not StringHelpers.IsNullOrEmpty(stat) then
-					if modName == nil then
-						modName = GameHelpers.Stats.GetModInfo(stat, true)
-					end
+
+				if not StringHelpers.IsNullOrEmpty(stat) and modName == nil then
+					modName = GameHelpers.Stats.GetModInfo(stat, true, not showBaseGameMods)
 				end
 
 				if not StringHelpers.IsNullOrWhitespace(modName) then
-					if not Vars.DebugMode and (modName == "Shared" or modName == "Shared_DOS") then
-						modName = "Divinity: Original Sin 2 (Base)"
-					elseif modName == "Divinity: Original Sin 2" then
-						modName = "Divinity: Original Sin 2 (Campaign)"
+					if showBaseGameMods and not Vars.DebugMode then
+						if not Vars.DebugMode and (modName == "Shared" or modName == "Shared_DOS") then
+							modName = GameHelpers.GetStringKeyText("LeaderLib_UI_DOS2_Base", "Divinity: Original Sin 2 (Base)")
+						elseif modName == "Divinity: Original Sin 2" then
+							modName = GameHelpers.GetStringKeyText("LeaderLib_UI_DOS2_Campaign", "Divinity: Original Sin 2 (Campaign)")
+						end
 					end
 					local description = tooltip:GetDescriptionElement()
 					if description then

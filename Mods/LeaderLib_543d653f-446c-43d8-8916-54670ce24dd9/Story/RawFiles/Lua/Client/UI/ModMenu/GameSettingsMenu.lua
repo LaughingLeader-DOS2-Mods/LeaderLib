@@ -216,6 +216,8 @@ local text = {
 		KeepTooltipInScreen_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_KeepTooltipInScreen_Description", "If enabled, tooltips will be forced to stay on the screen, instead of clipping out of bounds.", _dst),
 		ShowModInTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_ShowModInTooltips", "Show Mod Source", _ds),
 		ShowModInTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_ShowModInTooltips_Description", "Show the mod a status, item, or skill originates from in tooltips.", _dst),
+		ShowBaseGameModsInTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_ShowBaseGameModsInTooltips", "Show Base Mod Source", _ds),
+		ShowBaseGameModsInTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_ShowBaseGameModsInTooltips_Description", "If [Key:LeaderLib_UI_GameSettings_Client_ShowModInTooltips] is enabled, show base game mods as well, such as Divinity: Original Sin 2 (Base) or (Campaign).", _dst),
 		EnableTooltipDelay = {
 			GlobalDelay = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_GlobalTooltipDelay", "Delay Override", _ds),
 			GlobalDelay_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_GlobalTooltipDelay_Description", "Delay tooltip creation by this amount in milliseconds. This value will override the usual 500ms delay. Set to 0 to re-enable the regular delay created by the tooltip UI.<br>Default: 0<br>Recommended: 500", _dst),
@@ -332,6 +334,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideStatusSource", nil, true), text.Client.HideStatusSource.Value, true, settings.Client.HideStatusSource and 0 or 1, false, text.Client.HideStatusSource_Description.Value)
 		if Ext.Utils.Version() >= 57 then
 			mainMenu.addMenuCheckbox(AddControl(settings.Client, "ShowModInTooltips"), text.Client.ShowModInTooltips.Value, true, settings.Client.ShowModInTooltips and 1 or 0, false, text.Client.ShowModInTooltips_Description.Value)
+			mainMenu.addMenuCheckbox(AddControl(settings.Client, "ShowBaseGameModsInTooltips"), text.Client.ShowBaseGameModsInTooltips.Value, true, settings.Client.ShowBaseGameModsInTooltips and 1 or 0, false, text.Client.ShowBaseGameModsInTooltips_Description.Value)
 		end
 
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client.AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client.AlwaysExpandTooltips_Description.Value)

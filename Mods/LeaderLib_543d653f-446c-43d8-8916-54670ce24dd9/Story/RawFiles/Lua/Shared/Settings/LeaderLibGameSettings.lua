@@ -70,6 +70,7 @@ local DefaultSettings = {
 		HideStatusSource = false,
 		KeepTooltipInScreen = true,
 		ShowModInTooltips = true,
+		ShowBaseGameModsInTooltips = false,
 		ToggleCombatLog = false,
 		EnableTooltipDelay = {
 			GlobalDelay = 0,

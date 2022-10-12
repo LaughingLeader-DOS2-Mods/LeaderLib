@@ -587,20 +587,29 @@ function GameHelpers.Stats.GetDisplayName(id, statType, character)
 	return ""
 end
 
+---@overload fun(id:string):Module|nil
 ---Returns which mod a stat originates from.
 ---@param id string The stat ID
 ---@param asDisplayName boolean|nil Return the mod's display name.
----@return Module|string|nil
-function GameHelpers.Stats.GetModInfo(id, asDisplayName)
+---@param ignoreBaseMods boolean|nil Ignore base mods and return nil if matched - Shared, Shared_DOS, DivinityOrigins.
+---@return string|nil
+function GameHelpers.Stats.GetModInfo(id, asDisplayName, ignoreBaseMods)
 	if GameHelpers.Stats.IsAction(id) then
+		if ignoreBaseMods and asDisplayName then
+			return nil
+		end
 		return "Shared"
 	end
 	local stat = Ext.Stats.Get(id, nil, false)
 	if stat then
-		if not StringHelpers.IsNullOrEmpty(stat.ModId) then
-			local mod = Ext.Mod.GetMod(stat.ModId)
+		local modGUID = stat.ModId
+		if not StringHelpers.IsNullOrEmpty(modGUID) then
+			local mod = Ext.Mod.GetMod(modGUID)
 			if mod then
 				if asDisplayName then
+					if ignoreBaseMods and Vars.GetModInfoIgnoredMods[modGUID] then
+						return nil
+					end
 					local name = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
 					return name
 				end

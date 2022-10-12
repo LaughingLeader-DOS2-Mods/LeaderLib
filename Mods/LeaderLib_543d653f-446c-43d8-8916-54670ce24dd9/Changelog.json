@@ -9,6 +9,7 @@
 			"Version": "1.7.27.0",
 			"Changes": [
 				"Mod Settings Additions:",
+				"\t• Fixed the LeaderLib settings categories missing from the menu.",
 				"\t• Added an option to hide the Old Man Lothar to LeaderLib's settings in the Mod Settings UI.",
 				"\t• Added options for disabling automatically adding the chain/unchain all and mod menu skills.",
 				"Made tooltips skip displaying if the tooltip's target is from Divinity: Original Sin 2, unless that option is enabled in the Gameplay tooltip settings ([Key:LeaderLib_UI_GameSettings_Client_ShowBaseGameModsInTooltips:Show Base Mod Source]).",

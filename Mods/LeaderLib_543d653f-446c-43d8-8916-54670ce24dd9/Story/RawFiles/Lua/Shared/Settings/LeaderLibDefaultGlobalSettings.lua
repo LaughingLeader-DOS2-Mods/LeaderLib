@@ -254,7 +254,7 @@ if Ext.IsServer() then
 		if Ext.Osiris.IsCallable() then
 			if e.Value then
 				SetOnStage(TRADER_GUID, 0)
-			else
+			elseif GetRegion(TRADER_GUID) == SharedData.RegionData.Current then
 				SetOnStage(TRADER_GUID, 1)
 			end
 		else
@@ -263,6 +263,8 @@ if Ext.IsServer() then
 					if e.State == REGIONSTATE.GAME then
 						if settings.Global:FlagEquals("LeaderLib_TraderDisabled", true) then
 							SetOnStage(TRADER_GUID, 0)
+						elseif GetRegion(TRADER_GUID) == e.Region then
+							SetOnStage(TRADER_GUID, 1)
 						end
 						Events.RegionChanged:Unsubscribe(_tempRegionChangedIndex)
 						_tempRegionChangedIndex = nil

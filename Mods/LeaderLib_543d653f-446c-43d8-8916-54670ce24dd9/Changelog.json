@@ -15,7 +15,7 @@
 				"Made tooltips skip displaying if the tooltip's target is from Divinity: Original Sin 2, unless that option is enabled in the Gameplay tooltip settings ([Key:LeaderLib_UI_GameSettings_Client_ShowBaseGameModsInTooltips:Show Base Mod Source]).",
 				"API Changes:",
 				"\t• Added support for getting engine skill/status icons and display names (works with GameHelpers.Stats.GetDisplayName).",
-				"\t• Added addional tooltip helpers for getting weapon damage text and status description params.",
+				"\t• Added additional tooltip helpers for getting weapon damage text and status description params.",
 				"\t• Fixed a few read-only properties being unnecessarily written.",
 				"\t• Fixed Vars.Resetting not being set on the client-side, when lua is being reset.",
 				"\t• Fixed an issue with parsing [Stats] placeholders in text."

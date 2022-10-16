@@ -18,8 +18,9 @@ local Patches = {
 			end
 
 			local stat = Ext.Stats.Get("ARM_LLWEAPONEX_HandCrossbow_A", nil, false)
-			if stat then
+			if stat and stat.ObjectCategory == "" then
 				stat.ObjectCategory = "LLWEAPONEX_HandCrossbows"
+				--if not _ISCLIENT then Ext.Stats.Sync("ARM_LLWEAPONEX_HandCrossbow_A", false) end
 			end
 
 			--These keys were possibly never exported
@@ -64,6 +65,8 @@ local Patches = {
 					end
 				end)
 			else
+				--#region Treasure
+				
 				--Boost battle book base damage to be closer to _Swords/_Clubs
 				for _,v in pairs({
 					"_LLWEAPONEX_BattleBooks_1H",
@@ -95,6 +98,113 @@ local Patches = {
 					end
 					Ext.Stats.TreasureTable.Update(tt1)
 				end
+
+				local _HCCAT = "LLWEAPONEX_HandCrossbows"
+				---@type table<string, StatTreasureCategory[]>
+				local _AppendCategories = {}
+				---@param tableName string
+				---@vararg StatTreasureCategory
+				local _ac = function (tableName, ...)
+					_AppendCategories[tableName] = {...}
+				end
+				local _regularCommonHC = {TreasureCategory = _HCCAT, Common = 1}
+				_ac("ST_LLWEAPONEX_AllWeapons", {TreasureCategory = _HCCAT})
+				_ac("ST_LLWEAPONEX_RangedNormal", _regularCommonHC)
+				_ac("ST_LLWEAPONEX_Trader_RangedNormal", _regularCommonHC)
+				_ac("ST_LLWEAPONEX_RingAmuletBelt", _regularCommonHC)
+
+				for tableName,data in pairs(_AppendCategories) do
+					local tt = Ext.Stats.TreasureTable.GetLegacy(tableName)
+					if tt then
+						local st = tt.SubTables[1]
+						if st then
+							for _,cat in pairs(data) do
+								---@type StatTreasureCategory
+								local appendCat = {
+									Common = 0,
+									Divine = 0,
+									Epic = 0,
+									Frequency = 1,
+									Legendary = 0,
+									Rare = 0,
+									Uncommon = 0,
+									Unique = 0,
+								}
+								for k,v in pairs(cat) do
+									appendCat[k] = v
+								end
+								if appendCat.TreasureTable or appendCat.TreasureCategory then
+									st.Categories[#st.Categories+1] = appendCat
+								end
+							end
+						end
+						Ext.Stats.TreasureTable.Update(tt)
+					end
+				end
+
+				---@type table<string, StatTreasureSubTable[]>
+				local _AppendSubtables = {}
+				---@param tableName string
+				---@vararg StatTreasureSubTable
+				local _ast = function (tableName, ...)
+					_AppendSubtables[tableName] = {...}
+				end
+				---@type StatTreasureSubTable
+				local _regularCommonHCST = {Amounts={0,1},DropCounts={2,1},Categories={TreasureCategory = _HCCAT, Common = 1}}
+				local _regularCommonHCST2 = {Amounts={0,1},DropCounts={4,1},Categories={TreasureCategory = _HCCAT, Common = 1}}
+				local _regularCommonHCST3 = {Amounts={1},DropCounts={1},Categories={TreasureCategory = _HCCAT, Common=10, Uncommon=2,Rare=1,}}
+				_ast("ST_Trader_WeaponRogue", _regularCommonHCST)
+				_ast("ST_Trader_WeaponArcher", _regularCommonHCST)
+				_ast("ST_QuestReward_Easy_Choice_Extra", _regularCommonHCST2)
+				_ast("ST_QuestReward_High_Choice_Extra", _regularCommonHCST2)
+				_ast("FTJ_GhettoGuard", _regularCommonHCST3)
+				_ast("FTJ_BlackMarketDealer", _regularCommonHCST3)
+				_ast("RC_WC_BombScientist", {Categories={TreasureTable = "ST_LLWEAPONEX_FirearmsNormal", Common=8, Rare=6, Uncommon=3}})
+
+				for tableName,data in pairs(_AppendSubtables) do
+					local tt = Ext.Stats.TreasureTable.GetLegacy(tableName)
+					if tt then
+						for _,st in pairs(data) do
+							---@type StatTreasureSubTable
+							local appendSub = {
+								Amounts = {1},
+								DropCounts = {1},
+								Categories = {},
+								TotalCount = 1,
+								TotalFrequency = 1,
+							}
+							for k,v in pairs(st) do
+								if k == "Categories" then
+									for _,cat in pairs(v) do
+										---@type StatTreasureCategory
+										local appendCat = {
+											Common = 0,
+											Divine = 0,
+											Epic = 0,
+											Frequency = 1,
+											Legendary = 0,
+											Rare = 0,
+											Uncommon = 0,
+											Unique = 0,
+										}
+										for k,v in pairs(cat) do
+											appendCat[k] = v
+										end
+										if appendCat.TreasureTable or appendCat.TreasureCategory then
+											appendSub.Categories[#appendSub.Categories+1] = appendCat
+										end
+									end
+								else
+									appendSub[k] = v
+								end
+							end
+							tt.SubTables[#tt.SubTables+1] = appendSub
+						end
+						Ext.Stats.TreasureTable.Update(tt)
+					end
+				end
+
+				--#end-region
 
 				--Mods.WeaponExpansion.Uniques.Harvest.ProgressionData[11].Value = "Target_BlackShroud"
 				--TradeGenerationStarted("680d2702-721c-412d-b083-4f5e816b945a")

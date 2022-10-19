@@ -19,6 +19,8 @@ local _MonotonicTime = Ext.Utils.MonotonicTime
 local _PrintError = Ext.Utils.PrintError
 local _PrintWarning = Ext.Utils.PrintWarning
 
+local _GetClientCharacter = GameHelpers.Client.GetCharacter
+
 local _IsNaN = GameHelpers.Math.IsNaN
 local _IsValidHandle = GameHelpers.IsValidHandle
 local _IsNullOrEmpty = StringHelpers.IsNullOrEmpty
@@ -128,45 +130,6 @@ local function _GetGMTargetCharacter()
 		end
 	end
 	return nil
-end
-
----Tries to get the client's current character.
----@return EclCharacter|nil
-local function _GetClientCharacter()
-	local character = nil
-	if not RequestProcessor.ControllerEnabled then
-		local ui = _GetUIByType(_UITYPE.hotBar)
-		if ui ~= nil then
-			local this = ui:GetRoot()
-			if this ~= nil then
-				character = _GetObjectFromDouble(this.hotbar_mc.characterHandle, _GetCharacter)
-			end
-		end
-		if not character then
-			local ui = _GetUIByType(_UITYPE.statusConsole)
-			if ui then
-				character = _GetObjectFromHandle(ui:GetPlayerHandle(), _GetCharacter)
-			end
-		end
-		if not character and _GetGameMode() == "GameMaster" then
-			character = _GetGMTargetCharacter()
-		end
-	else
-		local ui = _GetUIByType(_UITYPE.bottomBar_c)
-		if ui ~= nil then
-			local this = ui:GetRoot()
-			if this ~= nil then
-				character = _GetObjectFromDouble(this.characterHandle, _GetCharacter)
-			end
-		end
-		if not character then
-			local ui = _GetUIByType(_UITYPE.statusConsole)
-			if ui ~= nil then
-				character = _GetObjectFromHandle(ui:GetPlayerHandle(), _GetCharacter)
-			end
-		end
-	end
-	return character
 end
 
 ---Get the current character stored in characterSheet's main timeline.

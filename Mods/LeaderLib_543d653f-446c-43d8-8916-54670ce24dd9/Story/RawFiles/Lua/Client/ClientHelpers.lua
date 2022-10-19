@@ -58,10 +58,33 @@ function GameHelpers.Client.GetGMTargetCharacter()
 	return character
 end
 
----Get the current character set in the hotbar.
+---@param prioritizeSecondPlayer boolean|nil
 ---@return EclCharacter|nil
-function GameHelpers.Client.GetCharacter()
-	local character = nil
+local function _GetPlayerManagerCharacter(prioritizeSecondPlayer)
+	local playerManager = Ext.Entity.GetPlayerManager()
+	if playerManager then
+		if prioritizeSecondPlayer then
+			local player2Data = playerManager.ClientPlayerData[2]
+			if player2Data then
+				local client = GameHelpers.GetCharacter(player2Data.CharacterNetId)
+				if client then
+					return client
+				end
+			end
+		end
+		for id,data in pairs(playerManager.ClientPlayerData) do
+			local client = GameHelpers.GetCharacter(data.CharacterNetId)
+			if client then
+				return client
+			end
+		end
+	end
+	return nil
+end
+
+---@deprecated Pre-GetPlayerManager way of getting the client character.
+---@return EclCharacter|nil
+local function _GetClientCharacter()
 	if not Vars.ControllerEnabled then
 		local ui = Ext.GetUIByType(Data.UIType.hotBar)
 		if ui ~= nil then
@@ -101,6 +124,17 @@ function GameHelpers.Client.GetCharacter()
 		end
 	end
 	return character
+end
+
+---Get the current character on the client-side.
+---@param prioritizeSecondPlayer boolean|nil Priotize getting the second player in splitscreen mode. If there is no second player, the first player is returned anyway.
+---@return EclCharacter|nil
+function GameHelpers.Client.GetCharacter(prioritizeSecondPlayer)
+	local character = _GetPlayerManagerCharacter(prioritizeSecondPlayer)
+	if not character then
+		character = _GetClientCharacter()
+	end
+	return nil
 end
 
 ---@return EclCharacter

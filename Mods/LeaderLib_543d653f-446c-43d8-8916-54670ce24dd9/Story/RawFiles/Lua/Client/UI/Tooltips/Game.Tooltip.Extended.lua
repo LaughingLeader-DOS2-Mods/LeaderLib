@@ -25,24 +25,7 @@ local tostring = tostring
 local type = type
 local xpcall = xpcall
 
-local _GetPlayerManager = Ext.Entity.GetPlayerManager
-local _Client = Client
-local _GetClientCharacter = function()
-	local player = _Client:GetCharacter()
-	if player then
-		return player
-	end
-	local playerManager = _GetPlayerManager()
-	if playerManager then
-		for id,data in pairs(playerManager.ClientPlayerData) do
-			local client = _GetCharacter(data.CharacterNetId)
-			if client then
-				return client
-			end
-		end
-	end
-	return nil
-end
+local _GetClientCharacter = GameHelpers.Client.GetCharacter
 local _IsNaN = GameHelpers.Math.IsNaN
 local _IsValidHandle = GameHelpers.IsValidHandle
 local _Stringify = Common.JsonStringify

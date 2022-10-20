@@ -137,6 +137,22 @@ function GameHelpers.Client.GetCharacter(prioritizeSecondPlayer)
 	return nil
 end
 
+---Get the client character and any splitscreen characters.
+---@return EclCharacter[] players
+function GameHelpers.Client.GetLocalPlayers()
+	local players = {}
+	local playerManager = Ext.Entity.GetPlayerManager()
+	if playerManager then
+		for id,data in pairs(playerManager.ClientPlayerData) do
+			local client = GameHelpers.GetCharacter(data.CharacterNetId)
+			if client then
+				players[#players+1] = client
+			end
+		end
+	end
+	return players
+end
+
 ---@return EclCharacter
 function GameHelpers.Client.GetGameMaster()
 	if Client and Client.Character and (Client.Character.IsGameMaster and not Client.Character.IsPossessed) then

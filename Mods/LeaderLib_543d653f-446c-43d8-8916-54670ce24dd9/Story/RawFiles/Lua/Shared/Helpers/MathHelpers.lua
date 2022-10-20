@@ -74,9 +74,9 @@ function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
             distanceMult = 1.0
         end
         local forwardVector = {
-            -character.Stats.Rotation[7] * distanceMult,
+            -character.Rotation[7] * distanceMult,
             0,---rot[8] * distanceMult, -- Rot Y is never used since objects can't look "up"
-            -character.Stats.Rotation[9] * distanceMult,
+            -character.Rotation[9] * distanceMult,
         }
         x = character.Stats.Position[1] + forwardVector[1]
         z = character.Stats.Position[3] + forwardVector[3]
@@ -230,7 +230,7 @@ function GameHelpers.Math.GetDirectionalVectorBetweenObjects(obj1, obj2, reverse
     local dir = GameHelpers.Math.GetDirectionalVectorBetweenPositions(obj1.WorldPos, obj2.WorldPos, reverse, true)
     -- if GameHelpers.Ext.ObjectIsCharacter(obj2) then
     --     ---@type Quaternion
-    --     local angle = Classes.Quaternion(obj2.Stats.Rotation[7], obj2.Stats.Rotation[8], obj2.Stats.Rotation[9], 1)
+    --     local angle = Classes.Quaternion(obj2.Rotation[7], obj2.Rotation[8], obj2.Rotation[9], 1)
     --     a:Rotate(angle)
     -- end
 
@@ -409,8 +409,8 @@ function GameHelpers.Math.RotationMatrixToEuler(rot)
     return euler
 end
 
---local rot = Mods.LeaderLib.GameHelpers.Math.RotationMatrixToEuler(me.Stats.Rotation); local angle = rot[2]; local effectRot = Mods.LeaderLib.GameHelpers.Math.AngleToEffectRotationMatrix(angle); Mods.LeaderLib.EffectManager.PlayEffectAt("RS3_FX_Skills_Warrior_GroundSmash_Cast_01", me.WorldPos, {Rotation=effectRot})
---Ext.Dump(Mods.LeaderLib.GameHelpers.Math.ObjectRotationToEuler(me.Stats.Rotation)) Ext.Dump({GetRotation(me.MyGuid)})
+--local rot = Mods.LeaderLib.GameHelpers.Math.RotationMatrixToEuler(me.Rotation); local angle = rot[2]; local effectRot = Mods.LeaderLib.GameHelpers.Math.AngleToEffectRotationMatrix(angle); Mods.LeaderLib.EffectManager.PlayEffectAt("RS3_FX_Skills_Warrior_GroundSmash_Cast_01", me.WorldPos, {Rotation=effectRot})
+--Ext.Dump(Mods.LeaderLib.GameHelpers.Math.ObjectRotationToEuler(me.Rotation)) Ext.Dump({GetRotation(me.MyGuid)})
 
 ---@param rot number[]
 ---@return number[]

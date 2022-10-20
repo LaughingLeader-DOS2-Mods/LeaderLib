@@ -502,7 +502,7 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     hit.SkillId = skill
     hit.ImpactOrigin = source.WorldPos
     hit.ImpactPosition = target.WorldPos
-    hit.ImpactDirection = {-target.Stats.Rotation[7],0,-target.Stats.Rotation[9]}
+    hit.ImpactDirection = {-target.Rotation[7],0,-target.Rotation[9]}
     hit.HitReason = Data.HitReason.ExecPropertyDamage
     hit.Hit.Hit = true
     hit.Hit.DamageType = skillData.DamageType

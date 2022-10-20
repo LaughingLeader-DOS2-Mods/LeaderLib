@@ -1096,7 +1096,7 @@ local function RegisterControllerHandlers()
 			-- 4 is for non-skills like Flee, Sheathe etc
 			if slotType == 1 or slotType == 4 then
 				event = TooltipCalls.Skill
-				RequestProcessor.HandleCallback(requestType, ui, ui.Type, event, nil, slotsHolder_mc.tooltipStr)
+				RequestProcessor.HandleCallback(e, requestType, ui, ui.Type, event, nil, slotsHolder_mc.tooltipStr)
 			elseif slotType == 2 then
 				-- Sometimes tooltipSlot will be set to the tooltip index instead of the slot's handle value
 				if slotNum == slotHandle then
@@ -1110,7 +1110,7 @@ local function RegisterControllerHandlers()
 					if _IsValidHandle(handle) then
 						requestType = "Item"
 						event = TooltipCalls.Item
-						RequestProcessor.HandleCallback(requestType, ui, ui.Type, event, slotHandle)
+						RequestProcessor.HandleCallback(e, requestType, ui, ui.Type, event, slotHandle)
 					end
 				end
 			end

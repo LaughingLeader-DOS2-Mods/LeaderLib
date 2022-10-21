@@ -33,8 +33,6 @@ NOT DB_LeaderLib_GameScripts_Registered(_Group, _GoalName);
 IF
 RegionEnded(_Region)
 AND
-IsGameLevel(_Region, 1)
-AND
 DB_LeaderLib_GameScripts_Registered(_Group, _GoalName)
 AND
 SysIsActive(_GoalName)
@@ -44,7 +42,23 @@ SysCompleteGoal(_GoalName);
 IF
 RegionEnded(_Region)
 AND
-IsGameLevel(_Region, 1)
+DB_LeaderLib_GameScripts_RegisteredToggleScripts(_Group, _GoalName)
+AND
+SysIsActive(_GoalName)
+THEN
+SysCompleteGoal(_GoalName);
+
+IF
+SavegameLoading(_,_,_,_)
+AND
+DB_LeaderLib_GameScripts_Registered(_Group, _GoalName)
+AND
+SysIsActive(_GoalName)
+THEN
+SysCompleteGoal(_GoalName);
+
+IF
+SavegameLoading(_,_,_,_)
 AND
 DB_LeaderLib_GameScripts_RegisteredToggleScripts(_Group, _GoalName)
 AND

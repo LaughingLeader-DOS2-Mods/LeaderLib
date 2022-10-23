@@ -4,14 +4,17 @@ package
 	import flash.utils.Dictionary;
 	import flash.external.ExternalInterface;
 	import font.*;
-	import font.QuadraatBoldFont;
-	import font.QuadraatFont;
-	import font.QuadraatItalicFont;
-	import flash.utils.getQualifiedClassName;
 
 	public class Registry
 	{
 		private static var _canCallExternally:Boolean = true;
+
+		private static var _debugMode:Boolean = false;
+		public static function get DebugMode():Boolean
+		{
+			return _debugMode;
+		}
+
 		private static var ClassMap:Dictionary = new Dictionary();
 
 		/* Font classes
@@ -30,6 +33,7 @@ package
 			if(!ExternalInterface.available)
 			{
 				_canCallExternally = false;
+				_debugMode = true;
 			}
 			ClassMap["$Default"] = QuadraatFont;
 			ClassMap["$Default_Bold"] = QuadraatBoldFont;
@@ -47,7 +51,35 @@ package
 				ExternalInterface.call.apply(null, args);
 				return true;
 			} else {
-				trace(name);
+				if(args && args.length > 0)
+				{
+					var argsStr:String = "";
+					var len:uint = args.length;
+					for(var i:uint=0; i < len; i++)
+					{
+						if(args[i] is String)
+						{
+							argsStr = argsStr + "\"%s\"";
+						}
+						else
+						{
+							argsStr = argsStr + "%s";
+						}
+						
+						if(i < len-1)
+						{
+							argsStr = argsStr + ", ";
+						}
+					}
+					var msg:String = "[Registry] ExternalInterface.call(\"%s\", " + argsStr + ")";
+					args.unshift(msg, name);
+					Registry.Log.apply(null, args);
+					//Registry.Log("[Registry] ExternalInterface.call(\"%s\",%s)", name, args);
+				}
+				else
+				{
+					Registry.Log("[Registry] ExternalInterface.call(\"%s\")", name);
+				}
 			}
 			return false;
 		}
@@ -86,9 +118,13 @@ package
 			catch(e:*) {
 				trace(e);
 			}
-			if (!ExtCall("LeaderLib_UIAssert", msg))
+			if (!_canCallExternally)
 			{
 				trace(msg);
+			}
+			else
+			{
+				ExtCall("UIAssert", msg);
 			}
 		}
 	}

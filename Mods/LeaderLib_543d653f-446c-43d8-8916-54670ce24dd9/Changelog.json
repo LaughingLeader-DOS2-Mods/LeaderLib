@@ -6,6 +6,15 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.28.0",
+			"Changes": [
+				"Fixed the 'World Tooltips for All Items' global option making some items unstackable, due to the tooltip mode not being set in the item's base template.",
+				"Added raw input support for tooltip expanding (pressing the shift key expands tooltips, regardless of key bindings).",
+				"Fixed an error with surface tooltips in GM mode.",
+				"Added GameHelpers.Client.GetLocalPlayers, to support getting both client players in splitscreen mode."
+			]
+		},
+		{
 			"Version": "1.7.27.0",
 			"Changes": [
 				"Mod Settings Additions:",

@@ -36,7 +36,7 @@ Ext.Events.SessionLoaded:Subscribe(function (e)
 					Text = text
 				}))
 			end
-		end, false, true)
+		end)
 	
 		Input.RegisterMouseListener(UIExtensions.MouseEvent.Clicked, function(event, pressed, id, keys, controllerEnabled)
 			if Vars.Commands.Teleporting then

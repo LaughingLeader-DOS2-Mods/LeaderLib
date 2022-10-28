@@ -205,14 +205,6 @@ function Input.GetKeyState(name, t)
 	return KEYSTATE.UNREGISTERED
 end
 
-local function OnInputChanged(eventName, pressed, id, keys, controllerEnabled)
-	if not controllerEnabled then
-		if not Client.Character.IsGameMaster and eventName == "ToggleGMShroud" and not pressed then
-			UI.ToggleChainGroup()
-		end
-	end
-end
-
 --Workaround to prevent key event listeners firing more than once for the same state from a separate extender/flash event
 local lastFiredEventFrom = {}
 
@@ -233,7 +225,6 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 				Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", tostring(client.NetID))
 			end
 		end
-		OnInputChanged(eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 
 		local stopPropagation = false
 		if _EXTVERSION < 57 and eventName == TooltipExpander.KeyboardKey then
@@ -318,7 +309,6 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 			stopPropagation = TooltipExpander.OnKeyPressed(pressed) == true
 		end
 
-		OnInputChanged(eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
 		if type(id) == "table" then
 			for _,kid in pairs(id) do
 				InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
@@ -368,7 +358,6 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "setActionPreview", functio
 			if Input.Keys[v] ~= KEYSTATE.RELEASED then
 				Input.Keys[v] = KEYSTATE.RELEASED
 				local id = Data.Input[v]
-				OnInputChanged(v, false, id, Input.Keys, Vars.ControllerEnabled)
 				if type(id) == "table" then
 					for _,kid in pairs(id) do
 						InvokeListenerCallbacks(Listeners.InputEvent, v, false, kid, Input.Keys, Vars.ControllerEnabled)
@@ -394,7 +383,6 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.worldTooltip, "clearAll", function(
 		if Input.Keys[v] ~= KEYSTATE.RELEASED then
 			Input.Keys[v] = KEYSTATE.RELEASED
 			local id = Data.Input[v]
-			OnInputChanged(v, false, id, Input.Keys, Vars.ControllerEnabled)
 			if type(id) == "table" then
 				for _,kid in pairs(id) do
 					InvokeListenerCallbacks(Listeners.InputEvent, v, false, kid, Input.Keys, Vars.ControllerEnabled)
@@ -447,13 +435,13 @@ Input.Subscribe = {}
 ---@param keys InputRawType|InputRawType[]
 ---@param callback fun(e:LeaderLibRawInputEventArgs)
 ---@param requireAll boolean|nil If keys is a table of inputs, require all keys to be pressed.
----@param pressedOnly boolean|nil
-function Input.Subscribe.RawInput(keys, callback, requireAll, pressedOnly)
+---@param anyState boolean|nil
+function Input.Subscribe.RawInput(keys, callback, requireAll, anyState)
 	local t = type(keys)
 	if t == "table" then
 		---@param e LeaderLibRawInputEventArgs
 		local isMatch = function (e)
-			if pressedOnly and not e.Pressed then
+			if not anyState and not e.Pressed then
 				return false
 			end
 			if TableHelpers.HasValue(keys, e.ID) then
@@ -478,7 +466,11 @@ function Input.Subscribe.RawInput(keys, callback, requireAll, pressedOnly)
 		end
 		Events.RawInput:Subscribe(callback, {MatchArgs=isMatch})
 	else
-		Events.RawInput:Subscribe(callback, {MatchArgs={ID=keys, Pressed=pressedOnly}})
+		if not anyState then
+			Events.RawInput:Subscribe(callback, {MatchArgs={ID=keys, Pressed=true}})
+		else
+			Events.RawInput:Subscribe(callback, {MatchArgs={ID=keys}})
+		end
 	end
 end
 

@@ -963,7 +963,7 @@ else
 	---@field Device "Key"|"Mouse"|"C"|"Touchbar"|"Unknown"
 	---@field ID InputRawType
 	---@field Pressed boolean
-	---@field EventData EclLuaRawInputEvent
+	---@field EventData InjectInputData
 
 	---Called when an extender RawInput event occurs.
 	---🔧**Client-Only**🔧

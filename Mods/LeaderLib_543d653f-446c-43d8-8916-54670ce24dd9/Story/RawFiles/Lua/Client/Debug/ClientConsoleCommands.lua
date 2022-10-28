@@ -28,7 +28,7 @@ AddConsoleVariable("UIExt", UIExtensions)
 Ext.Events.SessionLoaded:Subscribe(function (e)
 	if Vars.DebugMode then
 		Input.Subscribe.RawInput("home", function (e)
-			if Input.IsControlPressed() then
+			if Input.Ctrl then
 				Vars.Commands.Teleporting = not Vars.Commands.Teleporting
 				local text = string.format("<font color='#76FF00'>Click to Teleport %s</font>", Vars.Commands.Teleporting and "Enabled" or "Disabled")
 				Ext.Net.PostMessageToServer("LeaderLib_CharacterStatusText", Common.JsonStringify({

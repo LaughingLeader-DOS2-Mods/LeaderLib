@@ -205,33 +205,6 @@ function Input.GetKeyState(name, t)
 	return KEYSTATE.UNREGISTERED
 end
 
----@return boolean
-function Input.IsShiftPressed()
-	local input = Ext.Input.GetInputManager()
-	if input then
-		return input.Shift
-	end
-	return false
-end
-
----@return boolean
-function Input.IsControlPressed()
-	local input = Ext.Input.GetInputManager()
-	if input then
-		return input.Ctrl
-	end
-	return false
-end
-
----@return boolean
-function Input.IsAltPressed()
-	local input = Ext.Input.GetInputManager()
-	if input then
-		return input.Alt
-	end
-	return false
-end
-
 local function OnInputChanged(eventName, pressed, id, keys, controllerEnabled)
 	if not controllerEnabled then
 		if not Client.Character.IsGameMaster and eventName == "ToggleGMShroud" and not pressed then
@@ -286,9 +259,6 @@ end
 
 Ext.Events.InputEvent:Subscribe(function (e)
 	local evt = e.Event
-	if evt.EventId == 285 then
-		Input.Shift = evt.Press
-	end
 	local eventName = Data.InputEnum[evt.EventId]
 	-- if Vars.DebugMode then
 	-- 	if type(eventName) ~= "string" or not string.find(eventName, "Mouse") then
@@ -374,9 +344,9 @@ local ShiftKeys = {
 }
 
 function Input.UpdateModifierKeys(ui, event, shiftKey, altKey, ctrlKey)
-	Input.Shift = shiftKey
-	Input.Alt = altKey
-	Input.Ctrl = ctrlKey
+	-- Input.Shift = shiftKey
+	-- Input.Alt = altKey
+	-- Input.Ctrl = ctrlKey
 end
 
 function Input.OnKeyboardEvent(ui, call, keyCode, keyName, pressed)

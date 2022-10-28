@@ -51,7 +51,7 @@ function TooltipExpander.IsExpanded()
 		return true
 	end
 	if not Vars.ControllerEnabled then
-		return Input.IsShiftPressed()
+		return Input.Shift
 	else
 		return Input.IsPressed(TooltipExpander.ControllerKey)
 	end

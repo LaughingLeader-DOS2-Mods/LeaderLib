@@ -108,7 +108,7 @@ local Init = function()
 		end
 		local ui = e.UI
 		local event = e.Function
-		local args = e.Args
+		local args = {table.unpack(e.Args)}
 		local t = ui.Type
 		if UI.Debug.PrintAll then
 			local name = Data.UITypeToName[t]
@@ -147,7 +147,7 @@ local Init = function()
 		end
 		local ui = e.UI
 		local event = e.Function
-		local args = e.Args
+		local args = {table.unpack(e.Args)}
 		local t = ui.Type
 		if UI.Debug.PrintAll then
 			local name = Data.UITypeToName[t]

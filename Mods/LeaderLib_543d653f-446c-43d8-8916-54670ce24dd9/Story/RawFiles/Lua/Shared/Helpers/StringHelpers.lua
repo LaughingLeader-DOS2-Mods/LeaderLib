@@ -118,8 +118,8 @@ end
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param delimiter string
 ---@param list table
----@param uniqueOnly boolean 
----@param getStringFunction table
+---@param uniqueOnly boolean|nil
+---@param getStringFunction table|nil
 function StringHelpers.DebugJoin(delimiter, list, uniqueOnly, getStringFunction)
 	local finalResult = ""
 	local useFunction = _type(getStringFunction) == "function"

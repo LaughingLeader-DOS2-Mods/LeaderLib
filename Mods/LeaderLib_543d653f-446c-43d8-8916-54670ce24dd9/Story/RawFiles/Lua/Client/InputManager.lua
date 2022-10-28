@@ -205,6 +205,33 @@ function Input.GetKeyState(name, t)
 	return KEYSTATE.UNREGISTERED
 end
 
+---@return boolean
+function Input.IsShiftPressed()
+	local input = Ext.Input.GetInputManager()
+	if input then
+		return input.Shift
+	end
+	return false
+end
+
+---@return boolean
+function Input.IsControlPressed()
+	local input = Ext.Input.GetInputManager()
+	if input then
+		return input.Ctrl
+	end
+	return false
+end
+
+---@return boolean
+function Input.IsAltPressed()
+	local input = Ext.Input.GetInputManager()
+	if input then
+		return input.Alt
+	end
+	return false
+end
+
 local function OnInputChanged(eventName, pressed, id, keys, controllerEnabled)
 	if not controllerEnabled then
 		if not Client.Character.IsGameMaster and eventName == "ToggleGMShroud" and not pressed then
@@ -444,20 +471,67 @@ end)
         "Stopped" : false
 }
 ]]
-if _EXTVERSION >= 57 then
-	Ext.Events.RawInput:Subscribe(function (e)
-		local device = e.Input.Input
-		local value = e.Input.Value
-		if device.DeviceId == "Key" then
-			local pressed = value.State == "Pressed"
-			if device.InputId == "lshift" or device.InputId == "rshift" then
-				Input.Shift = pressed
-				TooltipExpander.OnKeyPressed(pressed)
-			elseif device.InputId == "lctrl" or device.InputId == "rctrl" then
-				Input.Ctrl = pressed
-			elseif device.InputId == "lalt" or device.InputId == "ralt" then
-				Input.Alt = pressed
+
+Input.Subscribe = {}
+
+---@param keys InputRawType|InputRawType[]
+---@param callback fun(e:LeaderLibRawInputEventArgs)
+---@param requireAll boolean|nil If keys is a table of inputs, require all keys to be pressed.
+---@param pressedOnly boolean|nil
+function Input.Subscribe.RawInput(keys, callback, requireAll, pressedOnly)
+	local t = type(keys)
+	if t == "table" then
+		---@param e LeaderLibRawInputEventArgs
+		local isMatch = function (e)
+			if pressedOnly and not e.Pressed then
+				return false
 			end
+			if TableHelpers.HasValue(keys, e.ID) then
+				if not requireAll then
+					return true
+				else
+					local input = Ext.Input.GetInputManager()
+					if input then
+						for _,state in pairs(input.InputStates) do
+							for _,id in pairs(keys) do
+								local idNum = Data.RawInput[id]
+								if not state.Inputs[idNum] or state.Inputs[idNum].State ~= "Pressed" then
+									return false
+								end
+							end
+						end
+						return true
+					end
+				end
+			end
+			return false
 		end
-	end)
+		Events.RawInput:Subscribe(callback, {MatchArgs=isMatch})
+	else
+		Events.RawInput:Subscribe(callback, {MatchArgs={ID=keys, Pressed=pressedOnly}})
+	end
 end
+
+Ext.Events.RawInput:Subscribe(function (e)
+	local device = e.Input.Input
+	local value = e.Input.Value
+	if device.DeviceId == "Key" then
+		local pressed = value.State == "Pressed"
+		if device.InputId == "lshift" or device.InputId == "rshift" then
+			Input.Shift = pressed
+			TooltipExpander.OnKeyPressed(pressed)
+		elseif device.InputId == "lctrl" or device.InputId == "rctrl" then
+			Input.Ctrl = pressed
+		elseif device.InputId == "lalt" or device.InputId == "ralt" then
+			Input.Alt = pressed
+		end
+	end
+	if device.DeviceId == "Key" or device.DeviceId == "Unknown" or device.DeviceId == "C" then
+		Events.RawInput:Invoke({
+			Device = device.DeviceId,
+			ID = device.InputId,
+			Pressed = value.State == "Pressed",
+			EventData = e.Input
+		})
+	end
+end)

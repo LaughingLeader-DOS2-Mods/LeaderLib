@@ -958,4 +958,15 @@ else
 	Events.OnContextMenuEntryClicked = Classes.SubscribableEvent:Create("OnContextMenuEntryClicked", {
 		ArgsKeyOrder={"ContextMenu", "UI", "ID", "ActionID", "Handle"}
 	})
+
+	---@class LeaderLibRawInputEventArgs
+	---@field Device "Key"|"Mouse"|"C"|"Touchbar"|"Unknown"
+	---@field ID InputRawType
+	---@field Pressed boolean
+	---@field EventData EclLuaRawInputEvent
+
+	---Called when an extender RawInput event occurs.
+	---🔧**Client-Only**🔧
+	---@type LeaderLibSubscribableEvent<LeaderLibRawInputEventArgs>
+	Events.RawInput = Classes.SubscribableEvent:Create("RawInput")
 end

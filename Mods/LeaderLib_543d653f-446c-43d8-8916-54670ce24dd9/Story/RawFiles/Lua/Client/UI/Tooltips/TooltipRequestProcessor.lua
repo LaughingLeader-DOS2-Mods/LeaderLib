@@ -1252,14 +1252,14 @@ local function _GetItemDisplayName(item)
 	if item.StatsId ~= "" and item.StatsId ~= nil and not _itemRarity[item.StatsId] then
 		statsId = item.StatsId
 	end
-	if string.find(item.DisplayName, "|") or item.RootTemplate.DisplayName.Handle == nil or item.DisplayName == statsId then
+	if string.find(item.DisplayName, "|") or item.CurrentTemplate.DisplayName.Handle == nil or item.DisplayName == statsId then
 		if statsId then
 			local name = _GetTranslatedStringFromKey(item.StatsId)
 			if name ~= nil and name ~= "" then
 				return name
 			end
 		end
-		local translatedName = _GetTranslatedStringValue(item.RootTemplate.DisplayName)
+		local translatedName = _GetTranslatedStringValue(item.CurrentTemplate.DisplayName)
 		if translatedName ~= nil and translatedName ~= "" then
 			return translatedName
 		end
@@ -1318,7 +1318,7 @@ _InvokeHandler("setText", function(e, ui, event, text, levelText, shortenWidth)
 	if cursor and _IsValidHandle(cursor.HoverItem) then
 		local item = _GetItem(cursor.HoverItem)
 		---@cast item EclItem
-		if item and item.RootTemplate and item.RootTemplate.Tooltip > 0 then
+		if item and item.CurrentTemplate and item.CurrentTemplate.Tooltip > 0 then
 			local objectHandleDouble = _HandleToDouble(cursor.HoverItem)
 			local request = _CreateRequest()
 			if text == nil or text == "" then

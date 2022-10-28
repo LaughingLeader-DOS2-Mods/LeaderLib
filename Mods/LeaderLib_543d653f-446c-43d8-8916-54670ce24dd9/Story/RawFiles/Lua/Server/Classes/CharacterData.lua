@@ -241,18 +241,16 @@ function CharacterData:EquipTemplate(template, all)
 	if character then
 		local foundItems = {}
 		for item in GameHelpers.Character.GetEquipment(character) do
-			if item.RootTemplate and item.RootTemplate.Id == template then
-				if ItemIsEquipable(item.MyGuid) == 1 then
-					SetOnStage(item.MyGuid, 1)
-					NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
-					--CharacterEquipItem(self.UUID, v)
-					if all ~= true then
-						return item
-					else
-						foundItems[#foundItems+1] = item
-					end
-					--NRD_CharacterEquipItem(self.UUID, v, item.Stats.ItemSlot, 0, 0, 1, 1)
+			if GameHelpers.GetTemplate(item) == template and ItemIsEquipable(item.MyGuid) == 1 then
+				SetOnStage(item.MyGuid, 1)
+				NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
+				--CharacterEquipItem(self.UUID, v)
+				if all ~= true then
+					return item
+				else
+					foundItems[#foundItems+1] = item
 				end
+				--NRD_CharacterEquipItem(self.UUID, v, item.Stats.ItemSlot, 0, 0, 1, 1)
 			end
 		end
 		if all and #foundItems > 0 then

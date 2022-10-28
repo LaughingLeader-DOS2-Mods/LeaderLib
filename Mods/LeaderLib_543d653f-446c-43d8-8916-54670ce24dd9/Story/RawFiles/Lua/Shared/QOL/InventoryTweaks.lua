@@ -426,7 +426,7 @@ else
 			local player = GameHelpers.GetCharacter(charGUID)
 			local item = GameHelpers.GetItem(itemGUID)
 			local userID = GameHelpers.GetUserID(player)
-			if item and item.RootTemplate then
+			if item and item.CurrentTemplate then
 				local bookType = ""
 				local template = GameHelpers.GetTemplate(item)
 				local textID = nil
@@ -445,7 +445,7 @@ else
 						_PV.ReadBooks[userID][template] = textID
 					end
 				elseif GameHelpers.Item.IsObject(item) then
-					local actions = item.RootTemplate.OnUsePeaceActions
+					local actions = item.CurrentTemplate.OnUsePeaceActions
 					local len = actions and #actions or 0
 					if len > 0 then
 						for i=1,len do

@@ -424,9 +424,10 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
             props.StatsEntryName = stats[1]
         end
     elseif item.StatsId then
-        if item.RootTemplate then
-            props.RootTemplate = item.RootTemplate.Id
-            props.OriginalRootTemplate = item.RootTemplate.Id
+        local template = GameHelpers.GetTemplate(item)
+        if not StringHelpers.IsNullOrEmpty(template) then
+            props.RootTemplate = template
+            props.OriginalRootTemplate = template
         else
             local templates = GameHelpers.Item.GetRootTemplatesForStat(item.StatsId)
             if templates and #templates > 0 then
@@ -904,7 +905,7 @@ function GameHelpers.Item.HasConsumableSkillAction(item)
     if item then
         if GameHelpers.Item.IsObject(item) then
 			if _EXTVERSION >= 56 then
-                for _,v in pairs(item.RootTemplate.OnUsePeaceActions) do
+                for _,v in pairs(item.CurrentTemplate.OnUsePeaceActions) do
                     if v.Type == "UseSkill" and v.Consume == true and not StringHelpers.IsNullOrEmpty(v.SkillID) then
                         return true
                     end
@@ -1020,8 +1021,8 @@ function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableO
     }
 	if _EXTVERSION >= 56 then
         item = GameHelpers.GetItem(item)
-		if item and item.RootTemplate and item.RootTemplate.OnUsePeaceActions then
-			for _,v in pairs(item.RootTemplate.OnUsePeaceActions) do
+		if item and item.CurrentTemplate and item.CurrentTemplate.OnUsePeaceActions then
+			for _,v in pairs(item.CurrentTemplate.OnUsePeaceActions) do
                 if v.Type == "SkillBook" then
                     itemParams.IsSkillbook = true
                 elseif v.Type == "UseSkill" then

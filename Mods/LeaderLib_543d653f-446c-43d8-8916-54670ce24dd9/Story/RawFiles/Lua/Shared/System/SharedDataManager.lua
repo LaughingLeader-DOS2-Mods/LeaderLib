@@ -22,7 +22,7 @@ GAMEMODE = {
 }
 Classes.Enum:Create(GAMEMODE)
 
-local UserIds = {}
+local _Users = {}
 
 ---@class REGIONSTATE
 REGIONSTATE = {
@@ -53,7 +53,7 @@ SharedData = {
 ---Get the total amount of users.
 ---@return integer
 function GameHelpers.Data.GetTotalUsers()
-	return Common.TableLength(UserIds, true)
+	return Common.TableLength(_Users, true)
 end
 
 local function SetCurrentLevelData()
@@ -112,10 +112,11 @@ if not _ISCLIENT then
 
 	function GameHelpers.Data.SyncSharedData(syncSettings, client, ignoreProfile)
 		if CharacterGetHostCharacter() == nil then
+			Ext.Utils.PrintError("[LeaderLib:GameHelpers.Data.SyncSharedData] No host character!")
 			return
 		end
 		if client == nil then
-			local totalUsers = Common.TableLength(UserIds, true)
+			local totalUsers = Common.TableLength(_Users, true)
 			if totalUsers <= 0 then
 				IterateUsers("LeaderLib_StoreUserData")
 			else
@@ -123,10 +124,10 @@ if not _ISCLIENT then
 				if SharedData.GameMode == GAMEMODE.GAMEMASTER then
 					local gm = GameHelpers.GetCharacter(host)
 					if gm then
-						UserIds[gm.ReservedUserID] = true
+						_Users[gm.ReservedUserID] = true
 					end
 				end
-				for id,b in pairs(UserIds) do
+				for id,b in pairs(_Users) do
 					local profile = GetUserProfileID(id)
 					if profile ~= ignoreProfile then
 						local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
@@ -179,7 +180,8 @@ if not _ISCLIENT then
 	}
 
 	local function OnSyncTimer()
-		if not _validSyncStates[Ext.GetGameState()] then
+		local state = tostring(Ext.GetGameState())
+		if not _validSyncStates[state] then
 			syncOnGameState = true
 			return
 		end
@@ -363,15 +365,15 @@ if not _ISCLIENT then
 	end
 
 	Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, profileId)
-		if UserIds[id] ~= true then
-			UserIds[id] = true
+		if _Users[id] ~= true then
+			_Users[id] = true
 		end
 		GameHelpers.Data.SetCharacterData(id, profileId)
 	end)
 
 	Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
-		if UserIds[id] ~= true then
-			UserIds[id] = true
+		if _Users[id] ~= true then
+			_Users[id] = true
 		end
 		if event == "LeaderLib_StoreUserData" then
 			local profileId = GetUserProfileID(id)
@@ -382,15 +384,15 @@ if not _ISCLIENT then
 	end)
 
 	Ext.RegisterOsirisListener("UserDisconnected", 3, "after", function(id, username, profileId)
-		UserIds[id] = nil
+		_Users[id] = nil
 		SharedData.CharacterData[profileId] = nil
 		GameHelpers.Data.StartSyncTimer()
 	end)
 
 	Ext.RegisterOsirisListener("CharacterReservedUserIDChanged", 3, "after", function(uuid, last, id)
-		UserIds[last] = nil
+		_Users[last] = nil
 		if id > -1 then
-			UserIds[id] = true
+			_Users[id] = true
 			GameHelpers.Data.SetCharacterData(id)
 		elseif last > -1 then
 			GameHelpers.Data.SetCharacterData(last)
@@ -456,12 +458,13 @@ if not _ISCLIENT then
 	-- Ext.RegisterOsirisListener("CharacterRemoveMaxSourcePointsOverride", 2, "after", OnPointsChanged)
 
 	Ext.Events.GameStateChanged:Subscribe(function (e)
-		if syncOnGameState and _validSyncStates[e.ToState] then
+		local state = tostring(e.ToState)
+		if syncOnGameState and _validSyncStates[state] then
 			syncOnGameState = false
 			GameHelpers.Data.SyncSharedData(syncSettingsNext)
 			syncSettingsNext = false
 		else
-			if e.ToState == "Running" and e.FromState ~= "Paused" and e.FromState ~= "GameMasterPause" then
+			if state == "Running" and e.FromState ~= "Paused" and e.FromState ~= "GameMasterPause" then
 				IterateUsers("LeaderLib_StoreUserData")
 				GameHelpers.Data.StartSyncTimer()
 			end

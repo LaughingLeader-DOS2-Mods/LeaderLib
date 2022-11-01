@@ -92,8 +92,10 @@ else
 	function WorldTooltips.UpdateWorldItems(forceResync)
 		Timer.Cancel("Timers_LeaderLib_WorldTooltips_UpdateItems")
 
+		local state = tostring(Ext.GetGameState())
+
 		--Don't try and modify items during Sync/etc
-		if _ValidUpdateStates[Ext.GetGameState()] and WorldTooltips:IsEnabled() then
+		if _ValidUpdateStates[state] and WorldTooltips:IsEnabled() then
 			local time = Ext.Utils.MonotonicTime()
 			local updateDataLen = 0
 			local updateData = {

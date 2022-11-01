@@ -32,7 +32,7 @@ local _ValidStates = {
 }
 
 Ext.Events.GameStateChanged:Subscribe(function (e)
-	_GS = e.ToState
+	_GS = tostring(e.ToState)
 	_canInvokeListeners = _ValidStates[_GS] == true
 	if not _ValidStates[_GS] then
 		_canBlockDeletion = false

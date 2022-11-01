@@ -6,22 +6,10 @@ local _xpcall = xpcall
 
 local _SGetUUID = StringHelpers.GetUUID
 local _GetObject = GameHelpers.TryGetObject
-local _GetGameObject = Ext.GetGameObject
-local _GetStatus = Ext.GetStatus
-if _EXTVERSION >= 56 then
-	_GetStatus = Ext.Entity.GetStatus
-	_GetGameObject = Ext.Entity.GetGameObject
-end
+local _GetGameObject = Ext.Entity.GetGameObject
+local _GetStatus = Ext.Entity.GetStatus
 local _GetStatusType = GameHelpers.Status.GetStatusType
 local _IsValidHandle = GameHelpers.IsValidHandle
-
-if StatusManager == nil then
-	StatusManager = {}
-end
-Managers.Status = StatusManager
-
----Allow BeforeAttempt and Attempt events to invoke on dead characters. Only specific engine statuses can apply to corpses, so this is normally ignored.
-StatusManager.AllowDead = false
 
 ---@alias StatusEventID string
 ---|"BeforeAttempt" # NRD_OnStatusAttempt
@@ -33,6 +21,33 @@ StatusManager.AllowDead = false
 ---Automatically set to true after GameStarted.
 ---This is a local variable, instead of a key in _INTERNAL, so the BeforeStatusDelete listener doesn't need to parse a table within a table for every status firing the event.
 local _canBlockDeletion = false
+local _canInvokeListeners = false
+
+---@type EsvGameState
+local _GS = ""
+local _ValidStates = {
+	Running = true,
+	Paused = true,
+	GameMasterPause = true,
+}
+
+Ext.Events.GameStateChanged:Subscribe(function (e)
+	_GS = e.ToState
+	_canInvokeListeners = _ValidStates[_GS] == true
+	if not _ValidStates[_GS] then
+		_canBlockDeletion = false
+	elseif not _canBlockDeletion then
+		_canBlockDeletion = SharedData.RegionData.State == REGIONSTATE.GAME and SharedData.RegionData.LevelType == LEVELTYPE.GAME
+	end
+end)
+
+if StatusManager == nil then
+	StatusManager = {}
+end
+Managers.Status = StatusManager
+
+---Allow BeforeAttempt and Attempt events to invoke on dead characters. Only specific engine statuses can apply to corpses, so this is normally ignored.
+StatusManager.AllowDead = false
 
 ---@class StatusManagerInternals
 ---@field CanBlockDeletion boolean Whether the StatusManager can block status deletion in BeforeStatusDelete, for active permanent statuses.
@@ -618,71 +633,67 @@ function StatusManager.TogglePermanentStatus(target, status, source)
 	return _INTERNAL.SetPermanentStatus(target, status, not StatusManager.IsPermanentStatusActive(target, status), source)
 end
 
-if Ext.Utils.Version() >= 56 then
-	---@class ExtenderBeforeStatusDeleteEventParams
-	---@field Status EsvStatus
-	---@field PreventAction fun(self:ExtenderBeforeStatusDeleteEventParams)
+---@class ExtenderBeforeStatusDeleteEventParams
+---@field Status EsvStatus
+---@field PreventAction fun(self:ExtenderBeforeStatusDeleteEventParams)
 
-	---@param e ExtenderBeforeStatusDeleteEventParams
-	local function OnBeforeStatusDelete(e)
-		local target = _GetObject(e.Status.TargetHandle)
-		local targetGUID = target.MyGuid
-		local statusType = e.Status.StatusType
+---@param e ExtenderBeforeStatusDeleteEventParams
+local function OnBeforeStatusDelete(e)
+	local target = _GetObject(e.Status.TargetHandle)
+	local targetGUID = target.MyGuid
+	local statusType = e.Status.StatusType
 
-		local source = nil
-		local sourceGUID = StringHelpers.NULL_UUID
+	local source = nil
+	local sourceGUID = StringHelpers.NULL_UUID
 
-		if GameHelpers.IsValidHandle(e.Status.StatusSourceHandle) then
-			source = _GetObject(e.Status.StatusSourceHandle)
-			if source then
-				sourceGUID = GameHelpers.GetUUID(source)
-			end
-		end
-
-		local isDisabling = false
-		local isLoseControl = false
-
-		local disablingData = _DisablingStatuses.Statuses[e.Status.StatusId]
-		if disablingData then
-			isDisabling = disablingData.IsDisabling == true
-			isLoseControl = disablingData.IsLoseControl == true
-		end
-
-		---@type SubscribableEventInvokeResult<OnStatusBeforeDeleteEventArgs>
-		local result = Events.OnStatus:Invoke({
-			Target = target,
-			Source = source,
-			TargetGUID = targetGUID,
-			SourceGUID = sourceGUID,
-			Status = e.Status,
-			StatusId = e.Status.StatusId,
-			StatusEvent = "BeforeDelete",
-			StatusType = statusType,
-			PreventDelete = false,
-			IsDisabling = isDisabling,
-			IsLoseControl = isLoseControl
-		})
-
-		if result.ResultCode ~= "Error" and result.Args.PreventDelete == true then
-			e:PreventAction()
+	if GameHelpers.IsValidHandle(e.Status.StatusSourceHandle) then
+		source = _GetObject(e.Status.StatusSourceHandle)
+		if source then
+			sourceGUID = GameHelpers.GetUUID(source)
 		end
 	end
 
-	---@param e ExtenderBeforeStatusDeleteEventParams
-	Ext.Events.BeforeStatusDelete:Subscribe(function (e)
-		if _IsValidHandle(e.Status.TargetHandle) then
-			OnBeforeStatusDelete(e)
-			if _canBlockDeletion and e.Status.LifeTime == -1 then
-				local target = _GetGameObject(e.Status.TargetHandle)
-				if target ~= nil
-				and StatusManager.IsPermanentStatusActive(target.MyGuid, e.Status.StatusId)
-				and not GameHelpers.ObjectIsDead(target) then
-					e:PreventAction()
-				end
+	local isDisabling = false
+	local isLoseControl = false
+
+	local disablingData = _DisablingStatuses.Statuses[e.Status.StatusId]
+	if disablingData then
+		isDisabling = disablingData.IsDisabling == true
+		isLoseControl = disablingData.IsLoseControl == true
+	end
+
+	---@type SubscribableEventInvokeResult<OnStatusBeforeDeleteEventArgs>
+	local result = Events.OnStatus:Invoke({
+		Target = target,
+		Source = source,
+		TargetGUID = targetGUID,
+		SourceGUID = sourceGUID,
+		Status = e.Status,
+		StatusId = e.Status.StatusId,
+		StatusEvent = "BeforeDelete",
+		StatusType = statusType,
+		PreventDelete = false,
+		IsDisabling = isDisabling,
+		IsLoseControl = isLoseControl
+	})
+
+	if result.ResultCode ~= "Error" and result.Args.PreventDelete == true then
+		e:PreventAction()
+	end
+end
+
+---@param e ExtenderBeforeStatusDeleteEventParams
+Ext.Events.BeforeStatusDelete:Subscribe(function (e)
+	if _canInvokeListeners and _IsValidHandle(e.Status.TargetHandle) then
+		OnBeforeStatusDelete(e)
+		if _canBlockDeletion and not e.ActionPrevented and e.Status.LifeTime == -1 then
+			local target = _GetGameObject(e.Status.TargetHandle)
+			if target ~= nil and StatusManager.IsPermanentStatusActive(target.MyGuid, e.Status.StatusId) and not GameHelpers.ObjectIsDead(target) then
+				e:PreventAction()
 			end
 		end
-	end)
-end
+	end
+end)
 
 Events.RegionChanged:Subscribe(function (e)
 	_canBlockDeletion = e.State == REGIONSTATE.GAME and e.LevelType == LEVELTYPE.GAME
@@ -952,7 +963,7 @@ end
 --SetVarFixedString("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_RemoveStatusInfluence_ID", "WARM"); SetStoryEvent("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_Commands_RemoveStatusInfluence")
 
 local function ParseStatusAttempt(targetGUID,statusID,sourceGUID)
-	if IgnoreDead(targetGUID, statusID) then
+	if not _canInvokeListeners or IgnoreDead(targetGUID, statusID) then
 		return
 	end
 	if not IgnoreStatus(statusID, "Attempt") then
@@ -1105,7 +1116,7 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 end
 
 local function ParseStatusApplied(target,status,source)
-	if not IgnoreStatus(status, "Applied") then
+	if _canInvokeListeners and not IgnoreStatus(status, "Applied") then
 		target = _SGetUUID(target)
 		source = _SGetUUID(source)
 		OnStatusApplied(target, status, source)
@@ -1152,7 +1163,7 @@ local function OnStatusRemoved(targetGUID,statusID,sourceGUID)
 end
 
 local function ParseStatusRemoved(target,status)
-	if not IgnoreStatus(status, "Removed") then
+	if _canInvokeListeners and not IgnoreStatus(status, "Removed") then
 		target = _SGetUUID(target)
 		OnStatusRemoved(target, status)
 	end

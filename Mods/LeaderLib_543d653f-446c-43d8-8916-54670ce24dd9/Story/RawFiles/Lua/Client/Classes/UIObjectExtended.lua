@@ -122,17 +122,18 @@ local _inputFlags = {}
 function UIObjectExtended:Show(inst)
 	inst = inst or self.Instance
 	if inst then
-		if _EXTVERSION >= 56 then
-			local flags = _inputFlags[self.ID]
-			if flags then
-				for flag,b in pairs(_inputFlags[self.ID]) do
-					if not Common.TableHasEntry(inst.Flags, flag) then
-						inst.Flags[#inst.Flags+1] = flag
-					end
-				end
-				_inputFlags[self.ID] = nil
-			end
-		end
+		--TODO broken in v57 devel since inst.Flags is userdata
+		-- if _EXTVERSION >= 56 then
+		-- 	local flags = _inputFlags[self.ID]
+		-- 	if flags then
+		-- 		for flag,b in pairs(_inputFlags[self.ID]) do
+		-- 			if not Common.TableHasEntry(inst.Flags, flag) then
+		-- 				inst.Flags[#inst.Flags+1] = flag
+		-- 			end
+		-- 		end
+		-- 		_inputFlags[self.ID] = nil
+		-- 	end
+		-- end
 		inst:Show()
 	end
 end

@@ -208,21 +208,24 @@ end
 --- @param s string
 --- @return string
 function StringHelpers.Trim(s)
-	return _gsub(s, "^%s*(.-)%s*$", "%1")
+	local result = _gsub(s, "^%s*(.-)%s*$", "%1")
+	return result
 end
 
 --- Remove **all** whitespace from a string.
 --- @param s string
 --- @return string
 function StringHelpers.RemoveWhitespace(s)
-	return _gsub(s, "%s+", "")
+	local result = _gsub(s, "%s+", "")
+	return result
 end
 
 --- Escapes all magic characters, such as -
 --- @param s string
 --- @return string
 local function _escape(s)
-	return _gsub(s, '[%^%$%(%)%%%.%[%]%*%+%-%?]','%%%1')
+	local result = _gsub(s, '[%^%$%(%)%%%.%[%]%*%+%-%?]','%%%1')
+	return result
 end
 StringHelpers.EscapeMagic = _escape
 
@@ -230,12 +233,14 @@ StringHelpers.EscapeMagic = _escape
 --- @param s string
 --- @return string
 local function _escapePercentages(s)
-	return _gsub(s, "%%", "%%%%")
+	local result = _gsub(s, "%%", "%%%%")
+	return result
 end
 StringHelpers.EscapePercentages = _escapePercentages
 
 local function _regexEscape(str)
-	return str:gsub("[%(%)%.%%%+%-%*%?%[%^%$%]]", "%%%1")
+	local result = _gsub(str, "[%(%)%.%%%+%-%*%?%[%^%$%]]", "%%%1")
+	return result
 end
 
 --- Similar to gsub, but escapes all magic characters in the pattern beforehand.
@@ -248,7 +253,8 @@ function StringHelpers.Replace(s, pattern, repl, n)
 	if not repl or not s then
 		return s
 	end
-	return _gsub(s, _regexEscape(pattern), _gsub(repl, "%%", "%%%%"), n)
+	local result = _gsub(s, _regexEscape(pattern), _gsub(repl, "%%", "%%%%"), n)
+	return result
 end
 
 local _cachedParsedGUID = {}

@@ -381,17 +381,19 @@ function UIWrapper:Invoke(method, ...)
 	end
 end
 
-local _sfind = string.find
-
+local _GetUIPath = StringHelpers.GetLocalDataPath
 local _cachedShortPath = {}
+
+---@return string
 local function _GetUIPath(path)
-	local _,_,shortPath = _sfind(path, "(Public/.+)")
-	if shortPath then
-		_cachedShortPath[path] = shortPath
+	local _cached = _cachedShortPath[path]
+	if _cached then
+		return _cached
 	end
+	local shortPath = _GetUIPath(path)
+	_cachedShortPath[path] = shortPath
 	return shortPath
 end
-
 
 Ext.Events.UIInvoke:Subscribe(function (e)
 	local wrappers = _uiTypeWrappers[e.UI.Type]
@@ -401,7 +403,7 @@ Ext.Events.UIInvoke:Subscribe(function (e)
 			wrappers[i]:InvokeCallbacks("Invoke", e)
 		end
 	end
-	local path = _cachedShortPath[e.UI.Path] or _GetUIPath(e.UI.Path)
+	local path = _GetUIPath(e.UI.Path)
 	local wrappers = _uiPathWrappers[path]
 	if wrappers then
 		local len = #wrappers
@@ -419,7 +421,7 @@ Ext.Events.UICall:Subscribe(function (e)
 			wrappers[i]:InvokeCallbacks("Call", e)
 		end
 	end
-	local path = _cachedShortPath[e.UI.Path] or _GetUIPath(e.UI.Path)
+	local path = _GetUIPath(e.UI.Path)
 	local wrappers = _uiPathWrappers[path]
 	if wrappers then
 		local len = #wrappers
@@ -454,6 +456,6 @@ Classes.UIWrapper = UIWrapper
 
 Ext.Events.UIObjectCreated:Subscribe(function (e)
 	if not StringHelpers.IsNullOrEmpty(e.UI.Path) then
-		_GetUIPath(e.UI.Path)
+		_cachedShortPath[e.UI.Path] = _GetUIPath(e.UI.Path)
 	end
 end)

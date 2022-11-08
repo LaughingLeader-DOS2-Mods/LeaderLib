@@ -580,3 +580,11 @@ end
 function StringHelpers.Count(str, pattern)
 	return select(2, string.gsub(str, pattern, ""))
 end
+
+---Get the path relative to the Data directory, if the path is valid.
+---@param path string
+---@return string|nil
+function StringHelpers.GetLocalDataPath(path)
+	local _,_,shortPath = _find(path, "(Public/.+)")
+	return shortPath
+end

@@ -450,7 +450,7 @@ local function _HandleNextInput()
 	local ui = UIExtensions.GetInstance()
 	if ui then
 		ui:ExternalInterfaceCall("inputFocus")
-		Ext.OnNextTick(function (e)
+		Ext.OnNextTick(function()
 			local ui = UIExtensions.GetInstance()
 			if ui then
 				ui:ExternalInterfaceCall("inputFocusLost")
@@ -535,7 +535,7 @@ Ext.Events.RawInput:Subscribe(function (e)
 		---@type SubscribableEventInvokeResult<LeaderLibRawInputEventArgs>
 		local invokeResult = Events.RawInput:Invoke(eventData)
 		if invokeResult.ResultCode ~= "Error" then
-			local handled = invokeResult.Handled
+			local handled = invokeResult.Args.Handled
 
 			if invokeResult.Results then
 				for i=1,#invokeResult.Results do

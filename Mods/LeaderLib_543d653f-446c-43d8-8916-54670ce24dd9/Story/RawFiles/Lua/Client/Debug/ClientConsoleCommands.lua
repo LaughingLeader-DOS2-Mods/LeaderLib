@@ -25,7 +25,7 @@ AddConsoleVariable("UIExt", UIExtensions)
 --     Ext.Utils.Print("No Path of Blood flags set on players.") 
 -- end
 
-Ext.Events.SessionLoaded:Subscribe(function (e)
+Ext.Events.SessionLoaded:Subscribe(function (_)
 	if Vars.DebugMode then
 		Input.Subscribe.RawInput("home", function (e)
 			if Input.Ctrl then

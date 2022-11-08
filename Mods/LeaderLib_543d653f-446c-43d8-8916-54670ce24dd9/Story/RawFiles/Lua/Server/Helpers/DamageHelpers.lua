@@ -514,7 +514,7 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     hit.ForceStatus = true
     hit.AllowInterruptAction = false
     hit.Interruption = false
-    hit.HitByHandle = source.Handle
+    --hit.HitByHandle = source.Handle -- Read-only
 
     if skillData.UseWeaponDamage then
         hit.Hit.HitWithWeapon = true
@@ -749,7 +749,7 @@ function GameHelpers.Damage.ApplyDamage(source, target, params)
     status.ForceStatus = true
     status.AllowInterruptAction = false
     status.Interruption = false
-    status.HitByHandle = source.Handle
+    --status.HitByHandle = source.Handle
 
     if params.UseWeaponDamage then
         status.Hit.HitWithWeapon = true

@@ -533,7 +533,7 @@ Ext.Events.RawInput:Subscribe(function (e)
 			Handled = false,
 		}
 		---@type SubscribableEventInvokeResult<LeaderLibRawInputEventArgs>
-		local invokeResult = Events.GetHitResistanceBonus:Invoke(eventData)
+		local invokeResult = Events.RawInput:Invoke(eventData)
 		if invokeResult.ResultCode ~= "Error" then
 			local handled = invokeResult.Handled
 

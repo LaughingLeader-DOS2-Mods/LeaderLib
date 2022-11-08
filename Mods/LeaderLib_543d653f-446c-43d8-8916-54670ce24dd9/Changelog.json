@@ -6,6 +6,14 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.29.0",
+			"Changes": [
+				"Made it possible to override Data.txt entries by using 'ExtraData' for the stat ID in LeaderLib_StatChanges.json.",
+				"Fixed some minor errors in v58 of the extender.",
+				"Added Input.Subscribe.RawInput, which can block the next UI input if handled."
+			]
+		},
+		{
 			"Version": "1.7.28.0",
 			"Changes": [
 				"Fixed the 'World Tooltips for All Items' global option making some items unstackable, due to the tooltip mode not being set in the item's base template.",

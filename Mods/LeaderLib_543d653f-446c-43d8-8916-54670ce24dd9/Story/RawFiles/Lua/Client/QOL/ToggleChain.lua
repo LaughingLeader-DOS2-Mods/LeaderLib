@@ -54,5 +54,6 @@ end)
 Input.Subscribe.RawInput("space", function (e)
 	if Input.Ctrl then
 		QOL.ToggleChainGroup()
+		e.Handled = true
 	end
 end)

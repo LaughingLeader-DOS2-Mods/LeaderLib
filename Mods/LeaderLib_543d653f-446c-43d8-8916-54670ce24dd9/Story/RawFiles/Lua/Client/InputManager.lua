@@ -430,10 +430,45 @@ end)
 }
 ]]
 
+--Focus Tracking
+
+local _focusedUI = nil
+
+Ext.RegisterUINameCall("inputFocus", function (ui, event, ...)
+	if ui.AnchorObjectName ~= UIExtensions.ID then
+		_focusedUI = StringHelpers.GetLocalDataPath(ui.Path)
+	end
+end, "Before")
+
+Ext.RegisterUINameCall("inputFocusLost", function (ui, event, ...)
+	if ui.AnchorObjectName ~= UIExtensions.ID then
+		_focusedUI = nil
+	end
+end, "Before")
+
+local function _HandleNextInput()
+	local ui = UIExtensions.GetInstance()
+	if ui then
+		ui:ExternalInterfaceCall("inputFocus")
+		Ext.OnNextTick(function (e)
+			local ui = UIExtensions.GetInstance()
+			if ui then
+				ui:ExternalInterfaceCall("inputFocusLost")
+				if _focusedUI then
+					local lastUI = Ext.UI.GetByPath(_focusedUI)
+					if lastUI then
+						lastUI:ExternalInterfaceCall("inputFocus")
+					end
+				end
+			end
+		end)
+	end
+end
+
 Input.Subscribe = {}
 
 ---@param keys InputRawType|InputRawType[]
----@param callback fun(e:LeaderLibRawInputEventArgs)
+---@param callback fun(e:LeaderLibRawInputEventArgs|LeaderLibSubscribableEventArgs)
 ---@param requireAll boolean|nil If keys is a table of inputs, require all keys to be pressed.
 ---@param anyState boolean|nil
 function Input.Subscribe.RawInput(keys, callback, requireAll, anyState)
@@ -489,11 +524,31 @@ Ext.Events.RawInput:Subscribe(function (e)
 		end
 	end
 	if device.DeviceId == "Key" or device.DeviceId == "Unknown" or device.DeviceId == "C" then
-		Events.RawInput:Invoke({
+		---@type LeaderLibRawInputEventArgs|LeaderLibRuntimeSubscribableEventArgs
+		local eventData = {
 			Device = device.DeviceId,
 			ID = device.InputId,
 			Pressed = value.State == "Pressed",
-			EventData = e.Input
-		})
+			EventData = e.Input,
+			Handled = false,
+		}
+		---@type SubscribableEventInvokeResult<LeaderLibRawInputEventArgs>
+		local invokeResult = Events.GetHitResistanceBonus:Invoke(eventData)
+		if invokeResult.ResultCode ~= "Error" then
+			local handled = invokeResult.Handled
+
+			if invokeResult.Results then
+				for i=1,#invokeResult.Results do
+					if invokeResult.Results[i] == true then
+						handled = true
+					end
+				end
+			end
+
+			if handled then
+				e:StopPropagation()
+				_HandleNextInput()
+			end
+		end
 	end
 end)

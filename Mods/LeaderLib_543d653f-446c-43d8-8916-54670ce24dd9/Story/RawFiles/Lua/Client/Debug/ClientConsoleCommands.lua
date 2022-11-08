@@ -35,6 +35,7 @@ Ext.Events.SessionLoaded:Subscribe(function (e)
 					Target = Client.Character.UUID,
 					Text = text
 				}))
+				e.Handled = true
 			end
 		end)
 	

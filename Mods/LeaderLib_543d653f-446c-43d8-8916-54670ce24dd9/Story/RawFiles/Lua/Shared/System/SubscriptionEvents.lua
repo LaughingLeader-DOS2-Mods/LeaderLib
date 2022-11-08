@@ -964,8 +964,9 @@ else
 	---@field ID InputRawType
 	---@field Pressed boolean
 	---@field EventData InjectInputData
+	---@field Handled boolean If true, the input event is blocked.
 
-	---Called when an extender RawInput event occurs.
+	---Called when an extender RawInput event occurs.  
 	---🔧**Client-Only**🔧
 	---@type LeaderLibSubscribableEvent<LeaderLibRawInputEventArgs>
 	Events.RawInput = Classes.SubscribableEvent:Create("RawInput")

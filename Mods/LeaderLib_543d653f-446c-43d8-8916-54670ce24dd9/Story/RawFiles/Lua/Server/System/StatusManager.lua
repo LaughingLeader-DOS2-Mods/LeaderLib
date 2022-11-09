@@ -41,6 +41,10 @@ Ext.Events.GameStateChanged:Subscribe(function (e)
 	end
 end)
 
+Ext.Events.ResetCompleted:Subscribe(function (e)
+	_canInvokeListeners = _ValidStates[tostring(Ext.Server.GetGameState())] == true
+end)
+
 if StatusManager == nil then
 	StatusManager = {}
 end

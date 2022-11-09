@@ -18,7 +18,7 @@ local Patches = {
 			end
 
 			local stat = Ext.Stats.Get("ARM_LLWEAPONEX_HandCrossbow_A", nil, false)
-			if stat and stat.ObjectCategory == "" then
+			if stat and stat.ObjectCategory ~= "LLWEAPONEX_HandCrossbows" then
 				stat.ObjectCategory = "LLWEAPONEX_HandCrossbows"
 				--if not _ISCLIENT then Ext.Stats.Sync("ARM_LLWEAPONEX_HandCrossbow_A", false) end
 			end
@@ -100,6 +100,27 @@ local Patches = {
 				end
 
 				local _HCCAT = "LLWEAPONEX_HandCrossbows"
+
+				local hccatTable = Ext.Stats.TreasureCategory.GetLegacy("LLWEAPONEX_HandCrossbows")
+				if not hccatTable then
+					local cat = {
+						Category = "LLWEAPONEX_HandCrossbows",
+						Items = {
+							{
+								ActPart = 0,
+								MaxAmount = 1,
+								MaxLevel = 0,
+								MinAmount = 1,
+								MinLevel = 1,
+								Name = "ARM_LLWEAPONEX_HandCrossbow_A",
+								Priority = 1,
+								Unique = 0
+							}
+						}
+					}
+					Ext.Stats.TreasureCategory.Update("LLWEAPONEX_HandCrossbows", cat)
+				end
+
 				---@type table<string, StatTreasureCategory[]>
 				local _AppendCategories = {}
 				---@param tableName string
@@ -113,29 +134,41 @@ local Patches = {
 				_ac("ST_LLWEAPONEX_Trader_RangedNormal", _regularCommonHC)
 				_ac("ST_LLWEAPONEX_RingAmuletBelt", _regularCommonHC)
 
+				local _tryUpdateTable = function(st, data)
+					for _,cat in pairs(data) do
+						---@type StatTreasureCategory
+						local appendCat = {
+							Common = 0,
+							Divine = 0,
+							Epic = 0,
+							Frequency = 1,
+							Legendary = 0,
+							Rare = 0,
+							Uncommon = 0,
+							Unique = 0,
+						}
+						if type(cat) == "table" then
+							for k,v in pairs(cat) do
+								appendCat[k] = v
+							end
+						else
+							fprint(LOGLEVEL.WARNING, "[LeaderLib:_AppendCategories] Wrong category type? (%s)", type(cat))
+							Ext.Utils.PrintError(Ext.Dump(data))
+						end
+						if appendCat.TreasureTable or appendCat.TreasureCategory then
+							st.Categories[#st.Categories+1] = appendCat
+						end
+					end
+				end
+
 				for tableName,data in pairs(_AppendCategories) do
 					local tt = Ext.Stats.TreasureTable.GetLegacy(tableName)
 					if tt then
 						local st = tt.SubTables[1]
 						if st then
-							for _,cat in pairs(data) do
-								---@type StatTreasureCategory
-								local appendCat = {
-									Common = 0,
-									Divine = 0,
-									Epic = 0,
-									Frequency = 1,
-									Legendary = 0,
-									Rare = 0,
-									Uncommon = 0,
-									Unique = 0,
-								}
-								for k,v in pairs(cat) do
-									appendCat[k] = v
-								end
-								if appendCat.TreasureTable or appendCat.TreasureCategory then
-									st.Categories[#st.Categories+1] = appendCat
-								end
+							local b,err = xpcall(_tryUpdateTable, debug.traceback, st, data)
+							if not b then
+								Ext.Utils.PrintWarning(err)
 							end
 						end
 						Ext.Stats.TreasureTable.Update(tt)
@@ -150,9 +183,9 @@ local Patches = {
 					_AppendSubtables[tableName] = {...}
 				end
 				---@type StatTreasureSubTable
-				local _regularCommonHCST = {Amounts={0,1},DropCounts={2,1},Categories={TreasureCategory = _HCCAT, Common = 1}}
-				local _regularCommonHCST2 = {Amounts={0,1},DropCounts={4,1},Categories={TreasureCategory = _HCCAT, Common = 1}}
-				local _regularCommonHCST3 = {Amounts={1},DropCounts={1},Categories={TreasureCategory = _HCCAT, Common=10, Uncommon=2,Rare=1,}}
+				local _regularCommonHCST = {DropCounts={{Amount=0, Chance=1},{Amount=1,Chance=2}},Categories={TreasureCategory = _HCCAT, Common = 1}}
+				local _regularCommonHCST2 = {DropCounts={{Amount=0, Chance=1},{Amount=2,Chance=4}},Categories={TreasureCategory = _HCCAT, Common = 1}}
+				local _regularCommonHCST3 = {DropCounts={{Amount=1,Chance=1}},Categories={TreasureCategory = _HCCAT, Common=10, Uncommon=2,Rare=1,}}
 				_ast("ST_Trader_WeaponRogue", _regularCommonHCST)
 				_ast("ST_Trader_WeaponArcher", _regularCommonHCST)
 				_ast("ST_QuestReward_Easy_Choice_Extra", _regularCommonHCST2)
@@ -167,32 +200,34 @@ local Patches = {
 						for _,st in pairs(data) do
 							---@type StatTreasureSubTable
 							local appendSub = {
-								Amounts = {1},
-								DropCounts = {1},
+								DropCounts = {{Amount=1,Chance=1}},
 								Categories = {},
 								TotalCount = 1,
 								TotalFrequency = 1,
 							}
 							for k,v in pairs(st) do
 								if k == "Categories" then
-									for _,cat in pairs(v) do
-										---@type StatTreasureCategory
-										local appendCat = {
-											Common = 0,
-											Divine = 0,
-											Epic = 0,
-											Frequency = 1,
-											Legendary = 0,
-											Rare = 0,
-											Uncommon = 0,
-											Unique = 0,
-										}
-										for k,v in pairs(cat) do
+									---@type StatTreasureCategory
+									local appendCat = {
+										Common = 0,
+										Divine = 0,
+										Epic = 0,
+										Frequency = 1,
+										Legendary = 0,
+										Rare = 0,
+										Uncommon = 0,
+										Unique = 0,
+									}
+									if type(v) == "table" then
+										for k,v in pairs(v) do
 											appendCat[k] = v
 										end
-										if appendCat.TreasureTable or appendCat.TreasureCategory then
-											appendSub.Categories[#appendSub.Categories+1] = appendCat
-										end
+									else
+										fprint(LOGLEVEL.WARNING, "[LeaderLib:_AppendCategories] Wrong category type? (%s)", type(v))
+										Ext.Utils.PrintError(Ext.Dump(data))
+									end
+									if appendCat.TreasureTable or appendCat.TreasureCategory then
+										appendSub.Categories[#appendSub.Categories+1] = appendCat
 									end
 								else
 									appendSub[k] = v
@@ -200,7 +235,11 @@ local Patches = {
 							end
 							tt.SubTables[#tt.SubTables+1] = appendSub
 						end
-						Ext.Stats.TreasureTable.Update(tt)
+						local b,err = xpcall(Ext.Stats.TreasureTable.Update, debug.traceback, tt)
+						if not b then
+							Ext.Utils.PrintWarning(err)
+							fprint(LOGLEVEL.ERROR, "[LeaderLib] Error updating TreasureTable (%s)", tableName)
+						end
 					end
 				end
 

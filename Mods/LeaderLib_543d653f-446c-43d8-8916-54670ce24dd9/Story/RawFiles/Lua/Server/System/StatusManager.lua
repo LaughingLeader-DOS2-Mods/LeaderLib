@@ -37,7 +37,7 @@ Ext.Events.GameStateChanged:Subscribe(function (e)
 	if not _ValidStates[_GS] then
 		_canBlockDeletion = false
 	elseif not _canBlockDeletion then
-		_canBlockDeletion = SharedData.RegionData.State == REGIONSTATE.GAME and SharedData.RegionData.LevelType == LEVELTYPE.GAME
+		_canBlockDeletion = Vars.IsEditorMode or (SharedData.RegionData.State == REGIONSTATE.GAME and SharedData.RegionData.LevelType == LEVELTYPE.GAME)
 	end
 end)
 

@@ -108,6 +108,7 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 	if not hitStatus or not hitContext then
 		return
 	end
+	local hitRequest = e.Hit.Hit
 	local target = GameHelpers.TryGetObject(hitStatus.TargetHandle)
 	local source = GameHelpers.TryGetObject(hitStatus.StatusSourceHandle)
 
@@ -128,8 +129,6 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 			Timer.Restart(applySkillProperties[sourceGUID], 1)
 		end
 	end
-
-	local hitRequest = e.Hit.Hit
 
 	local skill = nil
 	if not StringHelpers.IsNullOrEmpty(hitStatus.SkillId) then

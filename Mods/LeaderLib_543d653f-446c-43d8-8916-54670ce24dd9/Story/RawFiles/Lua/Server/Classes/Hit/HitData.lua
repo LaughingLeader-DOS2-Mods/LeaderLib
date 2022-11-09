@@ -1,5 +1,3 @@
-local _EXTVERSION = Ext.Utils.Version()
-
 ---Data passed to hit callbacks, such as the various functions in SkillListeners.lua
 ---@class HitData
 ---@field Damage integer
@@ -21,15 +19,6 @@ local HitData = {
 	DamageList = {}
 }
 
-local function CreateDamageMetaList(target, handle)
-	local damageList = Ext.Stats.NewDamageList()
-	for _,damageType in Data.DamageTypes:Get() do
-		damageList:Add(damageType, NRD_HitStatusGetDamage(target, handle, damageType) or 0)
-	end
-	return damageList
-end
-
-local canUseRawFunctions = Ext.Utils.Version() >= 55
 local readOnlyProperties = {
 	Handle = true,
 	Target = true,
@@ -70,7 +59,7 @@ local function SetMeta(this)
 				--this:SetHitFlag("Missed", true)
 				return
 			end
-			if canUseRawFunctions and not readOnlyProperties[k] then
+			if not readOnlyProperties[k] then
 				rawset(tbl, k, v)
 			end
 		end
@@ -101,11 +90,7 @@ function HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill
 			this[k] = v
 		end
 	end
-	if this.HitRequest then
-		this.DamageList = this.HitRequest.DamageList
-	else
-		this.DamageList = CreateDamageMetaList(target, this.HitStatus.StatusHandle)
-	end
+	this.DamageList = hitStatus.Hit.DamageList
 	if this.SkillData ~= nil then
 		this.Skill = this.SkillData.Name
 		this.IsFromSkill = true
@@ -124,39 +109,13 @@ function HitData:PrintTargets()
 	fprint(LOGLEVEL.TRACE, "============")
 end
 
----@param target DamageList
----@param source DamageList
-local function CopyDamageList(target, source)
-	if not target or target == source then
-		return
-	end
-	if _EXTVERSION < 56 then
-		for _,damageType in Data.DamageTypes:Get() do
-			target:Clear(damageType)
-		end
-		target:Merge(source)
-	else
-		target:CopyFrom(source)
-	end
-end
-
 ---@deprecated
 function HitData:UpdateHitRequest() end
 
 ---Applies any DamageList changes to the actual hit.
 ---@param recalculate boolean|nil If true, lifesteal is recalculated.
 function HitData:ApplyDamageList(recalculate)
-	if _EXTVERSION < 56 then
-		self.HitRequest.DamageList = self.DamageList
-		NRD_HitStatusClearAllDamage(self.Target, self.Handle)
-		local damages = self.DamageList:ToTable()
-		for i=1,#damages do
-			local v = damages[i]
-			NRD_HitStatusAddDamage(self.Target, self.Handle, v.DamageType, v.Amount)
-		end
-	else
-		self.HitStatus.Hit.DamageList:CopyFrom(self.DamageList)
-	end
+	--self.HitStatus.Hit.DamageList:CopyFrom(self.DamageList)
 	if recalculate then
 		self:Recalculate(true, true)
 	end

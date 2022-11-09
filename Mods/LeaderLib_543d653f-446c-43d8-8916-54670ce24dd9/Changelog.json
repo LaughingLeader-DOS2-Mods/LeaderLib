@@ -6,6 +6,13 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.29.1",
+			"Changes": [
+				"Fixed an issue preventing status listeners from working if lua is reset.",
+				"Fixed an issue preventing Weapon Expansion treasure table tweaks from working correctly. Hand Crossbows should now show up as random loot."
+			]
+		},
+		{
 			"Version": "1.7.29.0",
 			"Changes": [
 				"Made it possible to override Data.txt entries by using 'ExtraData' for the stat ID in LeaderLib_StatChanges.json.",

@@ -139,6 +139,7 @@ end
 ---@param v FlagData|VariableData
 ---@param modUUID string The mod's UUID
 local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
+	local isHost = Client.IsHost or not GameHelpers.Client.ServerIsAvailable()
 	local debugEnabled = false
 	local LeaderLibSettings = SettingsManager.GetMod(ModuleUUID, false, false)
 	if LeaderLibSettings ~= nil and LeaderLibSettings.Global:FlagEquals("LeaderLib_DebugModeEnabled", true) then
@@ -146,7 +147,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 	end
 	if not v.DebugOnly or debugEnabled then
 		if v.Type == "FlagData" then
-			local enableControl = v.ClientSide or Client.IsHost or v.FlagType ~= "Global"
+			local enableControl = v.ClientSide or isHost or v.FlagType ~= "Global"
 			local state = 0
 			if v.Default then
 				state = v.Enabled and 0 or 1
@@ -163,7 +164,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 				local min = v.Min or 0
 				local max = v.Max or math.ceil(interval * 10) -- ToDO Find a good generic upper-limit
 				local displayName, tooltip = PrepareText(name, v, false, v.Type)
-				local controlsEnabled = v.ClientSide or Client.IsHost == true
+				local controlsEnabled = v.ClientSide or isHost
 				mainMenu.addMenuSlider(ModMenuManager.LastID, displayName, v.Value, min, max, interval, not controlsEnabled, tooltip)
 				AddControl(v, modUUID, v.Value)
 				
@@ -173,7 +174,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 					slider.slider_mc.m_disabled = not controlsEnabled
 				end
 			elseif varType == "boolean" then
-				local enableControl = v.ClientSide or Client.IsHost == true
+				local enableControl = v.ClientSide or isHost
 				local state = v.Value == true and 1 or 0
 				local displayName, tooltip = PrepareText(name, v, true, v.Type)
 				mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
@@ -191,7 +192,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 				end
 			end
 		elseif v.Type == "ButtonData" then
-			local enableControl = v.Enabled and (v.ClientSide or Client.IsHost == true or not v.HostOnly)
+			local enableControl = v.Enabled and (v.ClientSide or isHost or not v.HostOnly)
 			local displayName, tooltip = PrepareText(name, v, false, v.Type)
 			local soundUp = v.SoundUp or ""
 			if not Vars.ControllerEnabled then
@@ -278,8 +279,11 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 	ModMenuManager.LastID = 0
 	ModMenuManager.Controls = {}
 
-	local title = Ext.L10N.GetTranslatedString("h12905237ga2afg43fcg8fc4g6a993789ecba", "Mod Settings")
-	mainMenu.setTitle(title)
+	mainMenu.setTitle(LocalizedText.UI.ModSettings.Value)
+
+	if not SettingsManager.LoadedInitially and not GameHelpers.Client.ServerIsAvailable() then
+		LoadGlobalSettings()
+	end
 
 	---@type ModSettings[]
 	local settings = {}
@@ -408,7 +412,11 @@ function ModMenuManager.CommitChanges()
 			end
 		end
 	end
-	Ext.Net.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
+	if GameHelpers.Client.ServerIsAvailable() then
+		Ext.Net.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
+	else
+		SaveGlobalSettings()
+	end
 end
 
 function ModMenuManager.UndoChanges()

@@ -288,6 +288,8 @@ LocalizedText.UI = {
 	Active = ts:Create("h4d5a9819gb8efg4f9ag8ceeg1b11c1619b85", "Active"):WithFormat("<font color='#33FF33'>(%s)</font>"),
 	Inactive = ts:Create("hfbe448d5ga175g4f6aga6f8g758a142bff9e", "Inactive"):WithFormat("<font color='#FF3333'>(%s)</font>"),
 	--Change = ts:Create("hd2c3081eg2847g44bag82d5g121c54bfb29f", "Change"),
+	ModSettings = Classes.TranslatedString:Create("h5945db23gdaafg400ega4d6gc2ffa7a53f92", "Mod Settings"),
+	ModSettings_Description = Classes.TranslatedString:Create("hc5012999g3c27g43bfg9a89g2a6557effb94", "Various mod options for active mods."),
 }
 
 LocalizedText.ContextMenu = {

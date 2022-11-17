@@ -293,3 +293,10 @@ function GameHelpers.Client.SetInventoryLocked(locked)
 		end
 	end
 end
+
+---Returns true if the server side of the game is available and done loading.
+---@return boolean
+function GameHelpers.Client.ServerIsAvailable()
+	local state = tostring(Ext.Client.GetGameState())
+	return state == "Running" or state == "Paused" or state == "GameMasterPause"
+end

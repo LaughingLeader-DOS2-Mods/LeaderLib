@@ -9,9 +9,17 @@ To allow the Mod Settings button to work from the Controls view (everything is s
 This seems to be the easiest option since the engine does some weird thing to switch the GUI between both options GUI files.
 ]]
 
+Ext.IO.AddPathOverride("Public/Game/GUI/optionsSettings.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings.swf")
+Ext.IO.AddPathOverride("Public/Game/GUI/optionsSettings_c.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings_c.swf")
+
 local MOD_MENU_ID = 210
 local isOpening = false
 local menuWasOpen = false
+
+local _canSyncServer = false
+Ext.Events.SessionLoaded:Subscribe(function (e)
+	_canSyncServer = true
+end)
 
 OptionsSettingsHooks = {
 	MOD_MENU_ID = MOD_MENU_ID,
@@ -87,9 +95,6 @@ local OptionsInputUI = Classes.UIWrapper:CreateFromPath("Public/Game/GUI/options
 	end
 end) ]]
 
-local ModMenuTabButtonText = Classes.TranslatedString:Create("h5945db23gdaafg400ega4d6gc2ffa7a53f92", "Mod Settings")
-local ModMenuTabButtonTooltip = Classes.TranslatedString:Create("hc5012999g3c27g43bfg9a89g2a6557effb94", "Various mod options for active mods.")
-
 ---@return UIObject
 local function GetOptionsGUI()
 	return OptionsUI.Instance
@@ -141,7 +146,7 @@ local function SwitchToModMenu(ui, ...)
 			end
 		end]]
 	end
-	
+
 	ModMenuManager.CreateMenu(ui, mainMenu)
 
 	if not Vars.ControllerEnabled then
@@ -167,7 +172,7 @@ local function CreateModMenuButton(ui, method, ...)
 		---@type MainMenuMC
 		local mainMenu = main.mainMenu_mc
 		if mainMenu then
-			mainMenu.addOptionButton(ModMenuTabButtonText.Value, "switchToModMenu", MOD_MENU_ID, OptionsSettingsHooks.SwitchToModMenu, true)
+			mainMenu.addOptionButton(LocalizedText.UI.ModSettings.Value, "switchToModMenu", MOD_MENU_ID, OptionsSettingsHooks.SwitchToModMenu, true)
 			if OptionsSettingsHooks.SwitchToModMenu then
 				main.clearAll()
 				for i=0,#main.baseUpdate_Array do
@@ -189,7 +194,7 @@ end
 local function CreateModMenuButton_Controller(ui, method, ...)
 	local this = ui:GetRoot()
 	if this ~= nil then
-		this.addMenuButton(MOD_MENU_ID, ModMenuTabButtonText.Value, true, ModMenuTabButtonTooltip.Value)
+		this.addMenuButton(MOD_MENU_ID, LocalizedText.UI.ModSettings.Value, true, LocalizedText.UI.ModSettings_Description.Value)
 		local arr = this.mainMenu_mc.btnList.content_array
 		for i=0,#arr do
 			local button = arr[i]
@@ -358,11 +363,7 @@ local function getOriginalCall(call)
 	return false
 end
 
-Ext.Events.SessionLoaded:Subscribe(function()
-	--Override here so the settings in the main menu works
-	Ext.IO.AddPathOverride("Public/Game/GUI/optionsSettings.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings.swf")
-	Ext.IO.AddPathOverride("Public/Game/GUI/optionsSettings_c.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/optionsSettings_c.swf")
-
+local function _RegisterListeners()
 	local function OnApplyPressed(self, e, ui, event, ...)
 		if OptionsSettingsHooks.CurrentMenu == MOD_MENU_ID then
 			ModMenuManager.SaveScroll(ui)
@@ -414,7 +415,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		if this then
 			---@type MainMenuMC
 			local mainMenu = this.controlsMenu_mc
-			mainMenu.addMenuButton(ModMenuTabButtonText.Value, "switchToModMenuFromInput", MOD_MENU_ID, false)
+			mainMenu.addMenuButton(LocalizedText.UI.ModSettings.Value, "switchToModMenuFromInput", MOD_MENU_ID, false)
 		end
 	end, "After", "Keyboard")
 	
@@ -572,7 +573,11 @@ Ext.Events.SessionLoaded:Subscribe(function()
 				ui:ExternalInterfaceCall("switchMenu", 1)
 			else
 				OptionsSettingsHooks.SwitchToModMenu = true
-				SwitchToModMenu(ui)
+				local t = ui.Type
+				--Delay by a tick so we don't get issues from calling UI functions that call external calls during a UICall.
+				Ext.OnNextTick(function (e)
+					SwitchToModMenu(Ext.UI.GetByType(t))
+				end)
 			end
 		end
 		Ext.RegisterUINameCall("switchToModMenu", switchToModMenuFunc)
@@ -593,7 +598,10 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end)
 		Ext.RegisterUITypeCall(Data.UIType.msgBox_c, "ButtonPressed", onMessageBoxButton)
 	end
-end)
+end
+
+_RegisterListeners()
+--Ext.Events.SessionLoaded:Subscribe(_RegisterListeners)
 
 --Mods.LeaderLib.Events.GameSettingsChanged:Invoke({Settings=Mods.LeaderLib.GameSettingsManager.GetSettings(), FromSync=true})
 

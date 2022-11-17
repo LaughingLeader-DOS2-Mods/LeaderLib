@@ -66,14 +66,17 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 					skill[k] = v
 				end
 			end
-			if character then
-				character = GameHelpers.GetCharacter(character)
-			end
-			if character == nil then
-				if _ISCLIENT then
-					character = Client:GetCharacter()
-				elseif _OSIRIS() then
-					character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+			local t = _type(character)
+			if t == "userdata" or t ~= "table" then
+				if character then
+					character = GameHelpers.GetCharacter(character)
+				end
+				if character == nil then
+					if _ISCLIENT then
+						character = Client:GetCharacter()
+					elseif _OSIRIS() then
+						character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+					end
 				end
 			end
 			if character ~= nil and character.Stats ~= nil then
@@ -234,10 +237,20 @@ local function ReplacePlaceholders(str, character)
 	local character = GameHelpers.GetCharacter(character)
 	if character == nil then
 		if _ISCLIENT then
-			if Client then
-				character = Client:GetCharacter()
+			if Ext.GetGameState() ~= "Menu" then
+				if Client then
+					character = Client:GetCharacter()
+				else
+					character = GameHelpers.Client.GetCharacter()
+				end
 			else
-				character = GameHelpers.Client.GetCharacter()
+				local statCharacter = GameHelpers.Ext.CreateStatCharacterTable("DwarfMaleHero")
+				character = {
+					Stats = statCharacter,
+					WorldPos = {0,0,0},
+					NetID = -1,
+					MyGuid = StringHelpers.NULL_UUID,
+				}
 			end
 		elseif Ext.Osiris.IsCallable() then
 			character = GameHelpers.GetCharacter(CharacterGetHostCharacter())

@@ -256,7 +256,7 @@ function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listPro
 	if GameSettingsMenu.Controls[id] == nil and controlType ~= "menuLabel" then
 		return
 	end
-	local controlsEnabled = type(extraParam1) ~= "boolean" or extraParam1 == true or Client.IsHost
+	local controlsEnabled = type(extraParam1) ~= "boolean" or extraParam1 == true or Client.IsHost or not GameHelpers.Client.ServerIsAvailable()
 	local main = ui:GetRoot()
 	if main ~= nil then
 		---@type MainMenuMC
@@ -312,7 +312,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		end
 
 		local client = Client:GetCharacter()
-		local controlsEnabled = Client.IsHost == true
+		local controlsEnabled = Client.IsHost or not GameHelpers.Client.ServerIsAvailable()
 		local backstabTalentSupported = Mods.CharacterExpansionLib ~= nil or (client and (client.Stats.TALENT_Backstab or client.Stats.TALENT_RogueLoreDaggerBackStab))
 
 		local _lh = 40
@@ -474,6 +474,8 @@ function GameSettingsMenu.OnButtonPressed(id)
 	return false
 end
 
+
+
 function GameSettingsMenu.CommitChanges()
 	for i,v in pairs(GameSettingsMenu.Controls) do
 		if v.Data ~= nil and v.Value ~= v.Last then
@@ -483,15 +485,14 @@ function GameSettingsMenu.CommitChanges()
 	end
 	GameSettingsManager.Save()
 	GameSettings:Apply()
-	if Client.IsHost then
+	if Client.IsHost and GameHelpers.Client.ServerIsAvailable()  then
 		Ext.Net.PostMessageToServer("LeaderLib_GameSettingsChanged", GameSettings:ToString(true))
 	end
 	Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings, FromSync=false})
-	--Ext.Net.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
 end
 
 function GameSettingsMenu.UndoChanges()
-	if Client.IsHost then
+	if Client.IsHost or not GameHelpers.Client.ServerIsAvailable() then
 		for i,v in pairs(GameSettingsMenu.Controls) do
 			if v.Value ~= v.Last then
 				v.Value = v.Last

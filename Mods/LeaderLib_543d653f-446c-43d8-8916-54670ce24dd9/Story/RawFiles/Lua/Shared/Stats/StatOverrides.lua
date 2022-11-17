@@ -182,7 +182,7 @@ local function CanChangeSkillTier(stat, tier)
 	return false
 end
 
-Ext.AddPathOverride("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Stats/Generated/Data/LeaderLib_Skills_Force.txt", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Stats/Overrides/LeaderLib_Skills_SafeForce.txt")
+Ext.IO.AddPathOverride("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Stats/Generated/Data/LeaderLib_Skills_Force.txt", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Stats/Overrides/LeaderLib_Skills_SafeForce.txt")
 
 ---Modifies a stat if it differs from the desired value.
 ---@param stat StatEntryCharacter

@@ -408,7 +408,7 @@ function ModMenuManager.CommitChanges()
 			end
 		end
 	end
-	Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
+	Ext.Net.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
 end
 
 function ModMenuManager.UndoChanges()

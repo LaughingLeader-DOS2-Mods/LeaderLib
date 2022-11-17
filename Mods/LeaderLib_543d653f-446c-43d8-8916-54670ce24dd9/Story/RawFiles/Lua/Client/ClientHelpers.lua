@@ -9,9 +9,9 @@ function GameHelpers.Client.GetCharacterSheetCharacter(main)
 	local character = nil
 	if main == nil then
 		if not Vars.ControllerEnabled then
-			main = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
+			main = Ext.UI.GetByType(Data.UIType.characterSheet):GetRoot()
 		else
-			main = Ext.GetUIByType(Data.UIType.statsPanel_c):GetRoot()
+			main = Ext.UI.GetByType(Data.UIType.statsPanel_c):GetRoot()
 		end
 	end
 	if main ~= nil then
@@ -27,9 +27,9 @@ function GameHelpers.Client.GetCharacterCreationCharacter(main)
 	local character = nil
 	if main == nil then
 		if not Vars.ControllerEnabled then
-			main = Ext.GetUIByType(Data.UIType.characterCreation)
+			main = Ext.UI.GetByType(Data.UIType.characterCreation)
 		else
-			main = Ext.GetUIByType(Data.UIType.characterCreation_c)
+			main = Ext.UI.GetByType(Data.UIType.characterCreation_c)
 		end
 		if main ~= nil then
 			main = main:GetRoot()
@@ -45,7 +45,7 @@ end
 ---@return EclCharacter
 function GameHelpers.Client.GetGMTargetCharacter()
 	local character = nil
-	local ui = Ext.GetUIByType(Data.UIType.GMPanelHUD)
+	local ui = Ext.UI.GetByType(Data.UIType.GMPanelHUD)
 	if ui then
 		local this = ui:GetRoot()
 		if this then
@@ -85,8 +85,9 @@ end
 ---@deprecated Pre-GetPlayerManager way of getting the client character.
 ---@return EclCharacter|nil
 local function _GetClientCharacter()
+	local character = nil
 	if not Vars.ControllerEnabled then
-		local ui = Ext.GetUIByType(Data.UIType.hotBar)
+		local ui = Ext.UI.GetByType(Data.UIType.hotBar)
 		if ui ~= nil then
 			local main = ui:GetRoot()
 			if main ~= nil then
@@ -94,7 +95,7 @@ local function _GetClientCharacter()
 			end
 		end
 		if not character then
-			local ui = Ext.GetUIByType(Data.UIType.statusConsole)
+			local ui = Ext.UI.GetByType(Data.UIType.statusConsole)
 			if ui ~= nil then
 				local handle = ui:GetPlayerHandle()
 				if handle ~= nil then
@@ -106,7 +107,7 @@ local function _GetClientCharacter()
 			character = GameHelpers.Client.GetGMTargetCharacter()
 		end
 	else
-		local ui = Ext.GetUIByType(Data.UIType.bottomBar_c)
+		local ui = Ext.UI.GetByType(Data.UIType.bottomBar_c)
 		if ui ~= nil then
 			local main = ui:GetRoot()
 			if main ~= nil then
@@ -114,7 +115,7 @@ local function _GetClientCharacter()
 			end
 		end
 		if not character then
-			local ui = Ext.GetUIByType(Data.UIType.statusConsole)
+			local ui = Ext.UI.GetByType(Data.UIType.statusConsole)
 			if ui ~= nil then
 				local handle = ui:GetPlayerHandle()
 				if handle ~= nil then
@@ -123,6 +124,7 @@ local function _GetClientCharacter()
 			end
 		end
 	end
+	---@cast character -EsvCharacter
 	return character
 end
 
@@ -159,7 +161,7 @@ function GameHelpers.Client.GetGameMaster()
 		return Client:GetCharacter()
 	end
 	if not Vars.ControllerEnabled then
-		local ui = Ext.GetUIByType(Data.UIType.characterSheet)
+		local ui = Ext.UI.GetByType(Data.UIType.characterSheet)
 		if ui then
 			---@type FlashMainTimeline
 			local this = ui:GetRoot()
@@ -176,7 +178,7 @@ function GameHelpers.Client.IsGameMaster(ui, this)
 		return true
 	end
 	if not Vars.ControllerEnabled then
-		local ui = ui or Ext.GetUIByType(Data.UIType.characterSheet)
+		local ui = ui or Ext.UI.GetByType(Data.UIType.characterSheet)
 		if ui then
 			---@type FlashMainTimeline
 			local this = this or ui:GetRoot()

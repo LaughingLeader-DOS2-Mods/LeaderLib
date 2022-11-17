@@ -194,7 +194,7 @@ function ClientData:GetCharacter()
 		end
 	end
 	if character == nil then
-		character = GameHelpers.Client.GetCharacter()
+		return GameHelpers.Client.GetCharacter()
 	end
 	return character
 end

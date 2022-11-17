@@ -4,7 +4,7 @@ local _ISCLIENT = Ext.IsClient()
 --Ext.IO.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Stats/Generated/TreasureTable.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_TreasureTable.txt")
 
 --Patches an event name conflict that prevented Soul Harvest's bonus from applying.
-Ext.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript")
+Ext.IO.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript")
 
 local Patches = {
 	--Weapon Expansion
@@ -422,7 +422,7 @@ local Patches = {
 						local damages = damageList:ToTable()
 						local totalDamage = 0
 						for i,damage in pairs(damages) do
-							NRD_HitAddDamage(handle, damage.DamageType, damage.Amount)
+							NRD_HitAddDamage(handle, tostring(damage.DamageType), damage.Amount)
 							totalDamage = totalDamage + damage.Amount
 						end
 						if lizardHits[attacker] == 2 then

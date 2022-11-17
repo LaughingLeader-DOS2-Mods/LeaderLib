@@ -76,16 +76,22 @@ function TranslatedString:IsTranslatedString(target)
 	return false
 end
 
+local function _CanUpdateInitially()
+	--If lua was reset in the main menu, then it should be safe to update on creation
+	return Vars.Initialized or Ext.GetGameState() == "Menu"
+end
+
 ---@param handle string
 ---@param content string
 ---@param params TranslatedStringOptions|nil
 ---@return TranslatedString
 function TranslatedString:Create(handle, content, params)
+	content = content or ""
 	local this =
 	{
 		Handle = handle,
 		Content = content,
-		Value = "",
+		Value = content,
 		AutoReplacePlaceholders = false,
 	}
 	if _type(params) == "table" then
@@ -94,7 +100,7 @@ function TranslatedString:Create(handle, content, params)
 		end
 	end
 	_setmetatable(this, _TSTRING_META)
-	if Vars.Initialized then
+	if _CanUpdateInitially() then
 		TranslatedString.Update(this)
 	end
 	_translatedStringUpdate[#_translatedStringUpdate+1] = this
@@ -113,11 +119,12 @@ end
 ---@param params TranslatedStringOptions|nil
 ---@return TranslatedString
 function TranslatedString:CreateFromKey(key, fallback, params)
+	fallback = fallback or ""
 	local this = {
 		Key = key,
-		Content = fallback or "",
+		Content = fallback,
 		Handle = "",
-		Value = "",
+		Value = fallback,
 		AutoReplacePlaceholders = false,
 	}
 	if _type(params) == "table" then
@@ -126,7 +133,7 @@ function TranslatedString:CreateFromKey(key, fallback, params)
 		end
 	end
 	_setmetatable(this, _TSTRING_META)
-	if Vars.Initialized then
+	if _CanUpdateInitially() then
 		TranslatedString.Update(this)
 	end
 	_translatedStringUpdate[#_translatedStringUpdate+1] = this
@@ -252,6 +259,12 @@ function UpdateTranslatedStrings()
 end
 
 Events.Initialized:Subscribe(UpdateTranslatedStrings)
+
+Ext.Events.GameStateChanged:Subscribe(function (e)
+	if e.ToState == "Menu" then
+		UpdateTranslatedStrings()
+	end
+end)
 
 if Vars.DebugMode then
 	Ext.RegisterConsoleCommand("leaderlib_ts_missingkeys", function ()

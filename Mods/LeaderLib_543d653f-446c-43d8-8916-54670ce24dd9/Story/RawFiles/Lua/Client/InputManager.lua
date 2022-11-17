@@ -512,6 +512,10 @@ end
 Ext.Events.RawInput:Subscribe(function (e)
 	local device = e.Input.Input
 	local value = e.Input.Value
+	--Cancel tooltip delaying on right click
+	if device.DeviceId == "Mouse" and device.InputId == "r" then
+		Timer.Cancel("LeaderLib_ModMenu_DelayShowTooltip")
+	end
 	if device.DeviceId == "Key" then
 		local pressed = value.State == "Pressed"
 		if device.InputId == "lshift" or device.InputId == "rshift" then

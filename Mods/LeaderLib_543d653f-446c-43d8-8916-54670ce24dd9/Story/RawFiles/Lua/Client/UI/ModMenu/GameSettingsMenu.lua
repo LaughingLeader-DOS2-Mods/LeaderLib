@@ -484,10 +484,10 @@ function GameSettingsMenu.CommitChanges()
 	GameSettingsManager.Save()
 	GameSettings:Apply()
 	if Client.IsHost then
-		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", GameSettings:ToString(true))
+		Ext.Net.PostMessageToServer("LeaderLib_GameSettingsChanged", GameSettings:ToString(true))
 	end
 	Events.GameSettingsChanged:Invoke({Settings = GameSettings.Settings, FromSync=false})
-	--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
+	--Ext.Net.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Common.JsonStringify(changes))
 end
 
 function GameSettingsMenu.UndoChanges()

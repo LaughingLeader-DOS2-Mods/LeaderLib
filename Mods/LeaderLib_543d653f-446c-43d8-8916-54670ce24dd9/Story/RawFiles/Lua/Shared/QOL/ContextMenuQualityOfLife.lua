@@ -46,7 +46,7 @@ if isClient then
 			local uuid = obj.MyGuid or NETID_TO_UUID[hoverType][obj.NetID]
 			if uuid then
 				Vars.LastContextTarget = uuid
-				Ext.PostMessageToServer("LeaderLib_SetLastContextTarget", uuid)
+				Ext.Net.PostMessageToServer("LeaderLib_SetLastContextTarget", uuid)
 				local data,b = GameHelpers.IO.LoadJsonFile("LeaderLib_UUIDHelper.json", {})
 				if b then
 					Ext.Utils.Print("Updated Osiris Data/LeaderLib_UUIDHelper.json")
@@ -129,7 +129,7 @@ if isClient then
 				if not StringHelpers.IsNullOrEmpty(target.MyGuid) then
 					NETID_TO_UUID[hoverType][target.NetID] = target.MyGuid
 				end
-				Ext.PostMessageToServer("LeaderLib_ContextMenu_RequestUUID", Common.JsonStringify({NetID=target.NetID, Type=hoverType}))
+				Ext.Net.PostMessageToServer("LeaderLib_ContextMenu_RequestUUID", Common.JsonStringify({NetID=target.NetID, Type=hoverType}))
 				contextMenu:AddBuiltinEntry(id, function(contextMenu, ui, id, actionID, netid)
 					SaveInfoToFile(netid, hoverType)
 				end, displayName, true, true, false, true, target.NetID)

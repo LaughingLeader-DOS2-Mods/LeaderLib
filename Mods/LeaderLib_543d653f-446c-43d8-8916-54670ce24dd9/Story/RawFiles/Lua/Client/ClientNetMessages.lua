@@ -209,7 +209,7 @@ local function OnShowActiveSkill(ui, method, id)
 	if id == -1 and lastActiveSkill ~= id then
 		local char = Client:GetCharacter()
 		if char then
-			Ext.PostMessageToServer("LeaderLib_OnActiveSkillCleared", tostring(char.NetID))
+			Ext.Net.PostMessageToServer("LeaderLib_OnActiveSkillCleared", tostring(char.NetID))
 		end
 	end
 	lastActiveSkill = id

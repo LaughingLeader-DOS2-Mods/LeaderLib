@@ -374,7 +374,7 @@ if _ISCLIENT then
 				if (hasItems and hasOwner) or Vars.DebugMode then
 					local netid = item.NetID
 					e.ContextMenu:AddEntry("LeaderLib_Trade_OpenContainer", function ()
-						Ext.PostMessageToServer("LeaderLib_Trade_OpenContainer", Common.JsonStringify({Item=netid, Player=Client:GetCharacter().NetID}))
+						Ext.Net.PostMessageToServer("LeaderLib_Trade_OpenContainer", Common.JsonStringify({Item=netid, Player=Client:GetCharacter().NetID}))
 					end, "Open")
 				end
 			end

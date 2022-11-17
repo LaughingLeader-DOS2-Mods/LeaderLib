@@ -5,7 +5,7 @@ local hotBarButtons = {
 if call == "hotbarBtnPressed" then
 	local buttonID = math.floor(param1)
 	if buttonID == hotBarButtons.CharacterSheet then
-		Ext.PostMessageToServer("LeaderLib_CharacterSheet_StorePartyValues", "")
+		Ext.Net.PostMessageToServer("LeaderLib_CharacterSheet_StorePartyValues", "")
 	end
 end
 ]]
@@ -17,7 +17,7 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusStat", function (ui, eve
 		if stat and character then
 			---@cast character EclCharacter
 			Events.CharacterSheetPointChanged:Invoke({Character = character, CharacterGUID = GameHelpers.GetUUID(character) or Client.Character.UUID, Stat = stat, StatType = "Attribute"})
-			Ext.PostMessageToServer("LeaderLib_CharacterSheet_PointsChanged", "")
+			Ext.Net.PostMessageToServer("LeaderLib_CharacterSheet_PointsChanged", "")
 		end
 	end
 end)
@@ -28,7 +28,7 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusAbility", function (ui, 
 		local character = GameHelpers.Client.GetCharacter()
 		if stat and character then
 			Events.CharacterSheetPointChanged:Invoke({Character = character, CharacterGUID = GameHelpers.GetUUID(character) or Client.Character.UUID, Stat = stat, StatType = "Ability"})
-			Ext.PostMessageToServer("LeaderLib_CharacterSheet_PointsChanged", "")
+			Ext.Net.PostMessageToServer("LeaderLib_CharacterSheet_PointsChanged", "")
 		end
 	end
 end)
@@ -39,7 +39,7 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusTalent", function (ui, e
 		local character = GameHelpers.Client.GetCharacter()
 		if stat and character then
 			Events.CharacterSheetPointChanged:Invoke({Character = character, CharacterGUID = GameHelpers.GetUUID(character) or Client.Character.UUID, Stat = stat, StatType = "Attribute"})
-			Ext.PostMessageToServer("LeaderLib_CharacterSheet_PointsChanged", "")
+			Ext.Net.PostMessageToServer("LeaderLib_CharacterSheet_PointsChanged", "")
 		end
 	end
 end)
@@ -57,7 +57,7 @@ local function OnSetHelmetOptionState(ui, method, state)
 					NetID = id,
 					State = state
 				}
-				Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Common.JsonStringify(data))
+				Ext.Net.PostMessageToServer("LeaderLib_OnHelmetToggled", Common.JsonStringify(data))
 				lastHelmetState[id] = state
 			end
 		end
@@ -70,7 +70,7 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "setHelmetOption", OnSetHelme
 Ext.RegisterUITypeCall(Data.UIType.statusConsole, "GuardPressed", function(ui, call, ...)
 	local character = GameHelpers.Client.GetCharacter()
 	if character then
-		Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", tostring(character.NetID))
+		Ext.Net.PostMessageToServer("LeaderLib_OnDelayTurnClicked", tostring(character.NetID))
 		Events.TurnDelayed:Invoke({CharacterGUID = GameHelpers.GetUUID(character) or Client.Character.UUID, Character=character})
 	end
 end)

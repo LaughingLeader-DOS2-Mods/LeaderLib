@@ -687,7 +687,7 @@ if _ISCLIENT then
 					--changeDetected = true
 				end
 				if changeDetected and skipSync ~= true then
-					Ext.PostMessageToServer("LeaderLib_SharedData_CharacterSelected", Common.JsonStringify({Profile = Client.Profile, UUID = uuid, NetID=character.NetID}))
+					Ext.Net.PostMessageToServer("LeaderLib_SharedData_CharacterSelected", Common.JsonStringify({Profile = Client.Profile, UUID = uuid, NetID=character.NetID}))
 				end
 			end
 		end

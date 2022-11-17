@@ -13,7 +13,7 @@ if _EXTVERSION >= 56 then
 				Args = args
 			})
 		else
-			Ext.PostMessageToServer("LeaderLib_Debug_RunDumpCommand", Common.JsonStringify({
+			Ext.Net.PostMessageToServer("LeaderLib_Debug_RunDumpCommand", Common.JsonStringify({
 				Command = dumpType,
 				Args = args
 			}))

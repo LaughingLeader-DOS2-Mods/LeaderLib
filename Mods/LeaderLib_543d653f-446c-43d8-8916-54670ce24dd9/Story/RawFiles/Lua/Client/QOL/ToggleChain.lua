@@ -42,7 +42,7 @@ function QOL.ToggleChainGroup()
 		end
 	end
 	if groupData.Leader then
-		Ext.PostMessageToServer("LeaderLib_ToggleChainGroup", Common.JsonStringify(groupData))
+		Ext.Net.PostMessageToServer("LeaderLib_ToggleChainGroup", Common.JsonStringify(groupData))
 	end
 end
 ---@diagnostic enable

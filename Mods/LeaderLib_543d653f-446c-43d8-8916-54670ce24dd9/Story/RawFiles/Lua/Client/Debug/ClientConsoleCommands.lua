@@ -1,5 +1,5 @@
 Ext.RegisterConsoleCommand("luareset", function(cmd, delay)
-	Ext.PostMessageToServer("LeaderLib_Client_RequestLuaReset", delay or "")
+	Ext.Net.PostMessageToServer("LeaderLib_Client_RequestLuaReset", delay or "")
 end)
 
 -- Ext.Events.SessionLoaded:Subscribe(function()
@@ -43,7 +43,7 @@ Ext.Events.SessionLoaded:Subscribe(function (_)
 			if Vars.Commands.Teleporting then
 				local state = Ext.UI.GetPickingState()
 				if state and state.WalkablePosition then
-					Ext.PostMessageToServer("LeaderLib_TeleportToPosition", Common.JsonStringify({
+					Ext.Net.PostMessageToServer("LeaderLib_TeleportToPosition", Common.JsonStringify({
 						Target = GameHelpers.GetNetID(Client:GetCharacter()),
 						Pos = state.WalkablePosition
 					}))

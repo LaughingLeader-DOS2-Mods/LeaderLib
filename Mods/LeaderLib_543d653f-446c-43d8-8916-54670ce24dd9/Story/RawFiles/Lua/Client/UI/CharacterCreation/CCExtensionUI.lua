@@ -273,7 +273,7 @@ Ext.RegisterUINameCall("LeaderLib_SkipTutorialButton_LevelSelected", function (u
 			GameSettings.Settings.SkipTutorial.Enabled = true
 			GameSettings.Settings.SkipTutorial.Destination = level
 		end
-		Ext.PostMessageToServer("LeaderLib_SetSkipTutorial", level)
+		Ext.Net.PostMessageToServer("LeaderLib_SetSkipTutorial", level)
 		GameSettingsManager.Save()
 
 		local this = ui:GetRoot()

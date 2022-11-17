@@ -418,7 +418,7 @@ local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 			end
 		end
 		if canSync then
-			local _netMessageFunc = _ISCLIENT and Ext.PostMessageToServer or GameHelpers.Net.Broadcast
+			local _netMessageFunc = _ISCLIENT and Ext.Net.PostMessageToServer or GameHelpers.Net.Broadcast
 			_netMessageFunc("LeaderLib_SubscribableEvent_Invoke", Common.JsonStringify({
 				ID = self.ID,
 				Args = SerializeArgs(args)

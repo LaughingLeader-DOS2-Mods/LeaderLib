@@ -258,8 +258,8 @@ Ext.NewQuery(RandomQRY, "LeaderLib_Ext_Random", "[in](INTEGER)_Min, [in](INTEGER
 --Outdated editor version
 if Ext.GameVersion() == "v3.6.51.9303" then
 	--The lua helper goal contains 3 new events not in the editor version, so we swap this out to avoid the initial compile error in the editor
-	Ext.AddPathOverride("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Goals/LeaderLib_19_TS_LuaOsirisSubscription_Generated.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OutdatedEditorEventsFix.txt")
-	Ext.AddPathOverride("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Goals/__AAA_LeaderLib_19_TS_LuaOsirisSubscription.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OutdatedEditorQueriesFix.txt")
+	Ext.IO.AddPathOverride("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Goals/LeaderLib_19_TS_LuaOsirisSubscription_Generated.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OutdatedEditorEventsFix.txt")
+	Ext.IO.AddPathOverride("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Goals/__AAA_LeaderLib_19_TS_LuaOsirisSubscription.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OutdatedEditorQueriesFix.txt")
 end
 
 Events.Loaded:Invoke(nil)

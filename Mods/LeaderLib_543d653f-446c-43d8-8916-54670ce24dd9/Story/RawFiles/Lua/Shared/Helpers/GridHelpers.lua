@@ -819,7 +819,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 			if v ~= GUID and dist <= opts.Radius then
 				local obj = GameHelpers.GetItem(v)
 				if obj then
-					if opts.AllowDead or not GameHelpers.ObjectIsDead(obj) and opts.AllowOffStage or not obj.OffStage then
+					if (opts.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (opts.AllowOffStage or not obj.OffStage) then
 						if opts.Relation and opts.Relation.CanAdd then
 							local b,result = xpcall(opts.Relation.CanAdd, debug.traceback, obj, source)
 							if not b then

@@ -566,7 +566,7 @@ function GameHelpers.Tooltip.GetStatusDescriptionParamValues(stat, character)
 	local char = GameHelpers.GetCharacter(character)
 	if char and not StringHelpers.IsNullOrWhitespace(stat.DescriptionParams) then
 		local statusParams = StringHelpers.Split(stat.DescriptionParams, ";")
-		if statusParams > 0 then
+		if #statusParams > 0 then
 			for _,vID in pairs(statusParams) do
 				local value = ""
 				local params = StringHelpers.Split(vID, ":")

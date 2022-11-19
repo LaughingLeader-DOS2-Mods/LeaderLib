@@ -43,7 +43,7 @@ if isClient then
 					hoverType = "Item"
 				end
 			end
-			local uuid = obj.MyGuid or NETID_TO_UUID[hoverType][obj.NetID]
+			local uuid = NETID_TO_UUID[hoverType][obj.NetID] or obj.MyGuid
 			if uuid then
 				Vars.LastContextTarget = uuid
 				Ext.Net.PostMessageToServer("LeaderLib_SetLastContextTarget", uuid)
@@ -258,7 +258,12 @@ else
 	Ext.RegisterNetListener("LeaderLib_ContextMenu_RequestUUID", function(cmd, payload, userid)
 		local data = Common.JsonParse(payload)
 		if data then
-			local object = data.Type == "Item" and GameHelpers.GetItem(data.NetID) or GameHelpers.GetCharacter(data.NetID)
+			local object = nil
+
+			if data.Type == "Item" then object = GameHelpers.GetItem(data.NetID)
+			elseif data.Type == "Character" then object = GameHelpers.GetCharacter(data.NetID)
+			else object = GameHelpers.TryGetObject(data.NetID) end
+
 			if object then
 				Vars.LastContextTarget = object.MyGuid
 				local data = {
@@ -268,10 +273,10 @@ else
 					Rotation={GetRotation(object.MyGuid)},
 					Template = StringHelpers.GetUUID(GetTemplate(object.MyGuid)),
 				}
-				if ObjectIsCharacter(object.MyGuid) == 1 then
-					data.Boss = IsBoss(object.MyGuid) == 1 and true or false
+				if data.Type == "Character" then
+					data.Boss = object.CurrentTemplate.CombatTemplate.IsBoss
 					data.Temporary = object.Temporary
-					data.Faction = GetFaction(object.MyGuid)
+					data.Faction = object.CurrentTemplate.CombatTemplate.Alignment
 				end
 				GameHelpers.Net.PostToUser(userid, "LeaderLib_ContextMenu_SetUUID", data)
 			end

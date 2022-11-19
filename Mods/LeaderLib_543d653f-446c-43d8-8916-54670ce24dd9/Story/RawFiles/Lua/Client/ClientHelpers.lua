@@ -136,7 +136,7 @@ function GameHelpers.Client.GetCharacter(prioritizeSecondPlayer)
 	if not character then
 		character = _GetClientCharacter()
 	end
-	return nil
+	return character
 end
 
 ---Get the client character and any splitscreen characters.
@@ -214,9 +214,6 @@ end
 ---@param double number
 ---@return EclCharacter
 function GameHelpers.Client.TryGetCharacterFromDouble(double)
-	if double == nil or double == 0 then
-		return nil
-	end
 	local b,character = pcall(ProcessDoubleHandle, double, GameHelpers.GetCharacter)
 	if b then
 		return character

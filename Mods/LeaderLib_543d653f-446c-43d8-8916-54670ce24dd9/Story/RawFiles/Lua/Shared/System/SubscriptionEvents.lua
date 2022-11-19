@@ -356,9 +356,10 @@ if not _ISCLIENT then
 	---@class GetHitResistanceBonusEventArgs
 	---@field Target StatCharacter
 	---@field DamageType DamageType
-	---@field ResistancePenetration integer
-	---@field CurrentResistanceAmount integer
-	---@field ResistanceName string
+	---@field ResistancePenetration integer The retrieved res pen from whatever tags were found on the target. This value is applied to CurrentResistanceAmount before the event runs.
+	---@field OriginalResistanceAmount integer The target's original resistance, before res pen was applied.
+	---@field CurrentResistanceAmount integer The resistance value the hit calculation will use. Modify this to change the resulting resistance amount applied to damage.
+	---@field ResistanceName FixedString The resistance ID.
 	
 	---Called during HitOverrides.ApplyDamageCharacterBonuses, to apply resistances to a hit.  
 	---🔨**Server-Only**🔨  

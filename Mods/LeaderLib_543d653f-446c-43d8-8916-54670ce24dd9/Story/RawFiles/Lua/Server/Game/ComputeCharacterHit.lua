@@ -85,6 +85,8 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
         res = character[resName] or 0
     end
 
+    local originalResistance = res
+
 	if res > 0 and resistancePenetration ~= nil and resistancePenetration > 0 then
 		res = math.max(res - resistancePenetration, 0)
 	end
@@ -93,6 +95,7 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
         Target = character,
         DamageType = damageType,
         ResistancePenetration = resistancePenetration,
+        OriginalResistanceAmount = originalResistance,
         CurrentResistanceAmount = res,
         ResistanceName = resName,
     })
@@ -132,7 +135,7 @@ function HitOverrides.GetResistancePenetration(character, attacker)
 
     if attacker ~= nil and attacker.Character ~= nil then
         local _cachedTags = GameHelpers.GetAllTags(attacker.Character, true, true)
-        for tag,b in pairs(_cachedTags) do
+        for tag,_ in pairs(_cachedTags) do
             local damageType,amount = GameHelpers.ParseResistancePenetrationTag(tag)
             if damageType then
                 if resistancePenetration[damageType] == nil then
@@ -141,16 +144,6 @@ function HitOverrides.GetResistancePenetration(character, attacker)
                 resistancePenetration[damageType] = resistancePenetration[damageType] + amount
             end
         end
-        -- for damageType,tags in pairs(Data.ResistancePenetrationTags) do
-        --     for i,tagEntry in pairs(tags) do
-        --         if _cachedTags[tagEntry.Tag] then
-        --             if resistancePenetration[damageType] == nil then
-        --                 resistancePenetration[damageType] = 0
-        --             end
-        --             resistancePenetration[damageType] = resistancePenetration[damageType] + tagEntry.Amount
-        --         end
-        --     end
-        -- end
         if GameHelpers.CharacterOrEquipmentHasTag(attacker.Character, "LeaderLib_IgnoreUndeadPoisonResistance") and character.TALENT_Zombie then
             if not resistancePenetration["Poison"] then
                 resistancePenetration["Poison"] = 0

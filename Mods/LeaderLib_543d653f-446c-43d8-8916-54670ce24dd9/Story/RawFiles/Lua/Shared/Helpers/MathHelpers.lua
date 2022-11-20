@@ -68,6 +68,75 @@ end
 
 GameHelpers.Math.GetPosition = _GetPosition
 
+---@param startPos number[]
+---@param angle number
+---@param distanceMult number
+---@param unpack boolean|nil If true, x,y,z will be returned separately.
+---@return number[]|number
+---@return number|nil
+---@return number|nil
+function GameHelpers.Math.GetPositionWithAngle(startPos, angle, distanceMult, unpack)
+    if _type(distanceMult) ~= "number" then
+        distanceMult = 1.0
+    end
+    angle = _rad(angle)
+    local x,y,z = _unpack(startPos)
+    --y = GameHelpers.Grid.GetY(tx,tz)
+
+    local tx,ty,tz = GameHelpers.Grid.GetValidPositionInRadius({
+        x + (_cos(angle) * distanceMult),
+        y,
+        z + (_sin(angle) * distanceMult)},6.0)
+
+    if unpack then
+        return tx,ty,tz
+    else
+        return {tx,ty,tz}
+    end
+end
+
+---Get the relative angle between one position and another, from 0 to 360.  
+---The backstabbing range is 150 - 210, while being in "front" would be 0 - 30 or 330 = 360.  
+---@return integer A number from 0 to 360
+---@param target number[]|ObjectParam
+---@param attacker number[]|ObjectParam
+function Game.Math.GetRelativeAngle(target, attacker)
+    local targetPos = _GetPosition(target)
+    local attackerPos = _GetPosition(attacker)
+
+    local atkDir = {}
+    for i=1,3 do
+        atkDir[i] = attackerPos[i] - targetPos[i]
+    end
+
+    local atkAngle = math.deg(math.atan(atkDir[3], atkDir[1]))
+    if atkAngle < 0 then
+        atkAngle = 360 + atkAngle
+    end
+
+    local targetRot = target.Rotation
+    local angle = math.deg(math.atan(-targetRot[1], targetRot[3]))
+    if angle < 0 then
+        angle = 360 + angle
+    end
+
+    local relAngle = atkAngle - angle
+    if relAngle < 0 then
+        relAngle = 360 + relAngle
+    end
+
+    return relAngle
+end
+
+---@param pos1 number[]
+---@param pos2 number[]
+---@return boolean
+function GameHelpers.Math.PositionsEqual(pos1, pos2)
+    local x,y,z = _GetPosition(pos1, true)
+    local x2,y2,z2 = _GetPosition(pos2, true)
+    return x == x2 and y == y2 and z == z2
+end
+
 ---Get a position derived from a character's forward facing direction.
 ---@param char UUID|EsvCharacter
 ---@param distanceMult number|nil
@@ -405,42 +474,6 @@ function GameHelpers.Math.AngleToEffectRotationMatrix(angle)
     return {
         _cos(angle), 0, -_sin(angle), 0, 1, 0, _sin(angle), 0, _cos(angle)
     }
-end
-
----@param startPos number[]
----@param angle number
----@param distanceMult number
----@param unpack boolean|nil If true, x,y,z will be returned separately.
----@return number[]|number
----@return number|nil
----@return number|nil
-function GameHelpers.Math.GetPositionWithAngle(startPos, angle, distanceMult, unpack)
-    if _type(distanceMult) ~= "number" then
-        distanceMult = 1.0
-    end
-    angle = _rad(angle)
-    local x,y,z = _unpack(startPos)
-    --y = GameHelpers.Grid.GetY(tx,tz)
-
-    local tx,ty,tz = GameHelpers.Grid.GetValidPositionInRadius({
-        x + (_cos(angle) * distanceMult),
-        y,
-        z + (_sin(angle) * distanceMult)},6.0)
-
-    if unpack then
-        return tx,ty,tz
-    else
-        return {tx,ty,tz}
-    end
-end
-
----@param pos1 number[]
----@param pos2 number[]
----@return boolean
-function GameHelpers.Math.PositionsEqual(pos1, pos2)
-    local x,y,z = _GetPosition(pos1, true)
-    local x2,y2,z2 = _GetPosition(pos2, true)
-    return x == x2 and y == y2 and z == z2
 end
 
 ---@param sourcePos number[]|ObjectParam

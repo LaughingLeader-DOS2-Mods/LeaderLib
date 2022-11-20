@@ -134,12 +134,13 @@ local function CreateDamageMetaList(handle)
 		end
 	end
 	meta.__newindex = function(tbl,k,value)
-		if Data.DamageTypes[k] then
+		local dt = tostring(k)
+		if Data.DamageTypes[dt] then
 			if value == nil or value == 0 then
-				NRD_HitClearDamage(handle, k)
+				NRD_HitClearDamage(handle, dt)
 			elseif type(value) == "number" then
-				NRD_HitClearDamage(handle, k)
-				NRD_HitAddDamage(handle, k, value)
+				NRD_HitClearDamage(handle, dt)
+				NRD_HitAddDamage(handle, dt, value)
 			else
 				error(string.format("%s is not a valid integer amount!", value), 2)
 			end
@@ -270,7 +271,7 @@ end
 ---@param amount number
 ---@param skipRecalculate boolean|nil If true, self:Recalculate is skipped.
 function HitPrepareData:AddDamage(damageType, amount, skipRecalculate)
-	NRD_HitAddDamage(self.Handle, damageType, amount)
+	NRD_HitAddDamage(self.Handle, tostring(damageType), amount)
 	if skipRecalculate ~= true then
 		self:Recalculate()
 	end
@@ -281,8 +282,9 @@ end
 ---@param skipRecalculate boolean|nil If true, self:Recalculate is skipped.
 function HitPrepareData:MultiplyDamage(multiplier, skipRecalculate)
 	for damageType,amount in pairs(self.DamageList) do
-		NRD_HitClearDamage(self.Handle, damageType)
-		NRD_HitAddDamage(self.Handle, damageType, Ext.Utils.Round(amount * multiplier))
+		local dt = tostring(damageType)
+		NRD_HitClearDamage(self.Handle, dt)
+		NRD_HitAddDamage(self.Handle, dt, Ext.Utils.Round(amount * multiplier))
 	end
 	if skipRecalculate ~= true then
 		self:Recalculate()

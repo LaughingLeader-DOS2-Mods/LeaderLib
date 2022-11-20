@@ -16,13 +16,18 @@ local _unpack = table.unpack
 local _rad = math.rad
 local _ran = Ext.Random
 
+local _vecadd = Ext.Math.Add
+local _vecsub = Ext.Math.Sub
+local _vecnorm = Ext.Math.Normalize
+local _vecmul = Ext.Math.Mul
+
 ---Tries to get the position from whatever the variable is.
 ---@overload fun(obj:number[]|Vector3|ObjectParam, unpackResult:boolean, fallback:number[]|nil):number,number,number
 ---@param obj number[]|Vector3|ObjectParam
 ---@param unpackResult boolean|nil If true, the position value is returned as separate numbers.
 ---@param fallback number[]|nil If no position is found, this value or {0,0,0} is returned.
 ---@return number[]
-function GameHelpers.Math.GetPosition(obj, unpackResult, fallback)
+local function _GetPosition(obj, unpackResult, fallback)
     local t = _type(obj)
     local pos = nil
     if t == "string" and _OSIRIS() then
@@ -61,6 +66,8 @@ function GameHelpers.Math.GetPosition(obj, unpackResult, fallback)
     return fallback
 end
 
+GameHelpers.Math.GetPosition = _GetPosition
+
 ---Get a position derived from a character's forward facing direction.
 ---@param char UUID|EsvCharacter
 ---@param distanceMult number|nil
@@ -86,6 +93,7 @@ function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
             z = fromPosition[3] + forwardVector[3] or z
         end
     end
+    
     y = GameHelpers.Grid.GetY(x,z)
     return {x,y,z}
 end
@@ -187,77 +195,43 @@ end
 ---@param pos2 number[]|ObjectParam Second position array, or an object with a WorldPos.
 ---@return number distance
 function GameHelpers.Math.GetDistance(pos1, pos2)
-    local x,y,z = GameHelpers.Math.GetPosition(pos1, true)
-    local tx,ty,tz = GameHelpers.Math.GetPosition(pos2, true)
+    local x,y,z = _GetPosition(pos1, true)
+    local tx,ty,tz = _GetPosition(pos2, true)
     local xDiff = x - tx
     local yDiff = y - ty
     local zDiff = z - tz
     return _sqrt((xDiff^2) + (yDiff^2) + (zDiff^2))
 end
 
+---@overload fun(pos1:vec3|ObjectParam, pos2:vec3|ObjectParam, reverse:boolean|nil):number[]
 ---Get the directional vector between two Vector3 points.
----@param pos1 number[]
----@param pos2 number[]
+---@param pos1 vec3|ObjectParam
+---@param pos2 vec3|ObjectParam
 ---@param reverse boolean|nil Multiply the result by -1,-1,-1.
 ---@param asVector3 boolean|nil Optionally return the result as a Vector3
----@return number[]|Vector3
-function GameHelpers.Math.GetDirectionalVectorBetweenPositions(pos1, pos2, reverse, asVector3)
-    local vec = Classes.Vector3
-    ---@type Vector3
-    local a = vec(_unpack(pos1))
-    ---@type Vector3
-    local b = vec(_unpack(pos2))
-    a:Sub(b)
-    a:Normalize()
+---@return Vector3
+function GameHelpers.Math.GetDirectionalVector(pos1, pos2, reverse, asVector3)
+    local directionalVector = _vecnorm(_vecsub(_GetPosition(pos1), _GetPosition(pos2)))
     if reverse then
-        a:Mul(vec(-1,-1,-1))
+        directionalVector = _vecmul(directionalVector, {-1,-1,-1})
     end
     if asVector3 then
-        return a
+        return Classes.Vector3.Create(table.unpack(directionalVector))
     else
-        return {a:Unpack()}
+        return directionalVector
     end
 end
 
----Get the directional vector between two objects' WorldPos.
----@param obj1 EsvCharacter|EsvItem
----@param obj2 EsvCharacter|EsvItem
----@param reverse boolean|nil
----@param asVector3 boolean|nil Optionally return the result as a Vector3
----@return number[]|Vector3
-function GameHelpers.Math.GetDirectionalVectorBetweenObjects(obj1, obj2, reverse, asVector3)
-
-    local dir = GameHelpers.Math.GetDirectionalVectorBetweenPositions(obj1.WorldPos, obj2.WorldPos, reverse, true)
-    -- if GameHelpers.Ext.ObjectIsCharacter(obj2) then
-    --     ---@type Quaternion
-    --     local angle = Classes.Quaternion(obj2.Rotation[7], obj2.Rotation[8], obj2.Rotation[9], 1)
-    --     a:Rotate(angle)
-    -- end
-
-    if asVector3 then
-        return dir
-    else
-        return {dir:Unpack()}
-    end
+---@deprecated
+---[Deprecated] - Use GameHelpers.Math.GetDirectionalVector
+function GameHelpers.Math.GetDirectionalVectorBetweenPositions(...)
+    return GameHelpers.Math.GetDirectionalVector(...)
 end
 
----Get the directional vector between two Vector3 points.
----@param pos1 number[]|string
----@param pos2 number[]|string
----@return number[]
-function GameHelpers.Math.GetDirectionVector(pos1, pos2, reverse)
-    local vec = Classes.Vector3
-    local x,y,z = GameHelpers.Math.GetPosition(pos1, true)
-    local x2,y2,z2 = GameHelpers.Math.GetPosition(pos2, true)
-    local a = vec(x,y,z)
-    local b = vec(x2,y2,z2)
-    a:Sub(b)
-    a:Normalize()
-    if not reverse then
-        return {a:Unpack()}
-    else
-        return {-a.x,-a.y,-a.z}
-    end
+---@deprecated
+---[Deprecated] - Use GameHelpers.Math.GetDirectionalVector
+function GameHelpers.Math.GetDirectionalVectorBetweenObjects(...)
+    return GameHelpers.Math.GetDirectionalVector(...)
 end
 
 function GameHelpers.Math.Round(num, numPlaces)
@@ -464,8 +438,8 @@ end
 ---@param pos2 number[]
 ---@return boolean
 function GameHelpers.Math.PositionsEqual(pos1, pos2)
-    local x,y,z = GameHelpers.Math.GetPosition(pos1, true)
-    local x2,y2,z2 = GameHelpers.Math.GetPosition(pos2, true)
+    local x,y,z = _GetPosition(pos1, true)
+    local x2,y2,z2 = _GetPosition(pos2, true)
     return x == x2 and y == y2 and z == z2
 end
 
@@ -473,8 +447,8 @@ end
 ---@param targetPos number[]|ObjectParam
 ---@return StatsHighGroundBonus
 function GameHelpers.Math.GetHighGroundFlag(sourcePos, targetPos)
-    local sourcePos = GameHelpers.Math.GetPosition(sourcePos)
-    local targetPos = GameHelpers.Math.GetPosition(targetPos)
+    local sourcePos = _GetPosition(sourcePos)
+    local targetPos = _GetPosition(targetPos)
     if not sourcePos or not targetPos then
         return "EvenGround"
     end

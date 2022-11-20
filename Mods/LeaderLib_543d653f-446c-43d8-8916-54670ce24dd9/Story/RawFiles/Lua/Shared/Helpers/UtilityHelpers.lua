@@ -137,7 +137,7 @@ if not _ISCLIENT then
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
 		_PV.ForceMoveData[targetObject.MyGuid] = nil
 		--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distMult)
-		local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(targetObject, sourceObject, distMult < 0)
+		local directionalVector = GameHelpers.Math.GetDirectionalVector(targetObject, sourceObject, distMult < 0)
 		local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionalVector, distMult)
 	
 		if tx and tz then

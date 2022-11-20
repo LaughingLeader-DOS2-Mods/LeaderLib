@@ -5,7 +5,6 @@ local _EXTVERSION = Ext.Utils.Version()
 
 local function TrySetValue(target, k, v)
     if k == "DamageList" then
-        Ext.Dump(v:ToTable())
         local dlist = target[k]
         dlist:Clear()
         dlist:Merge(v)
@@ -476,7 +475,7 @@ function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParam
             if sourceObj and not props.SourcePosition and props.TargetPosition then
                 --Modifies the SourcePosition to between the source and target
                 local sourcePos = GameHelpers.Math.GetPosition(sourceObj)
-                local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenPositions(sourcePos, props.TargetPosition)
+                local directionalVector = GameHelpers.Math.GetDirectionalVector(sourcePos, props.TargetPosition)
                 props.SourcePosition = {GameHelpers.Grid.GetValidPositionAlongLine(sourcePos, directionalVector, 1.0)}
                 props.SourcePosition[2] = props.SourcePosition[2] + 2.0
             end

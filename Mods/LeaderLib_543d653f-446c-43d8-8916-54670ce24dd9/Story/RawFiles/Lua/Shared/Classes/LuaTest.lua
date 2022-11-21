@@ -212,7 +212,11 @@ function LuaTest:AssertGotSignal(signalId)
 	if self.SignalSuccess == signalId then
 		return
 	end
-	self:Failure(string.format("Last successful signal (%s) does not match given signal (%s). WaitForSignal likely timed out.", self.SignalSuccess or "nil", signalId), 2)
+	if self.SignalSuccess == nil then
+		self:Failure(string.format("No successful signal was detected when waiting for (%s). WaitForSignal likely timed out.", signalId), 2)
+	else
+		self:Failure(string.format("Last successful signal (%s) does not match given signal (%s). WaitForSignal likely timed out.", self.SignalSuccess, signalId), 2)
+	end
 end
 
 function LuaTest:AssertNotGotSignal(signalId)

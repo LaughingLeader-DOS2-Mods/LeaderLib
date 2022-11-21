@@ -100,8 +100,8 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
     local sourceObject = source and GameHelpers.TryGetObject(source) or nil
     local targetObject = type(target) == "userdata" and GameHelpers.TryGetObject(target) or nil
 
-    local targetPos = GameHelpers.Math.GetPosition(targetObject or target, false)
-    local sourcePos = source and GameHelpers.Math.GetPosition(sourceObject or source, false) or targetPos
+    local targetPos = GameHelpers.Math.GetPosition(targetObject or target)
+    local sourcePos = source and GameHelpers.Math.GetPosition(sourceObject or source) or targetPos
 
     local isFromItem = false
     ---@type LeaderLibProjectileCreationProperties
@@ -684,7 +684,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
 
     if applySkillProperties then
         if GameHelpers.Math.GetDistance(sourceId, props.Position) <= 1 then
-            Ext.ExecuteSkillPropertiesOnTarget(skillId, sourceId, sourceId, props.Position, "Self", false)
+            Ext.PropertyList.ExecuteSkillPropertiesOnTarget(skillId, sourceId, sourceId, props.Position, "Self", false)
         end
         if not props.SkillProperties then
             props.SkillProperties = GameHelpers.Stats.GetSkillProperties(skillId)

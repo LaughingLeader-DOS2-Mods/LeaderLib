@@ -4,6 +4,8 @@ end
 
 local _EXTVERSION = Ext.Utils.Version()
 
+local _SelfPropertyContext = {"Self", "SelfOnHit"}
+
 ---@deprecated
 ---Reduce damage by a percentage (ex. 0.5)
 ---@param target string
@@ -572,8 +574,8 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     end
 
     if params.ApplySkillProperties then
-        Ext.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, targetPos, "Target", false)
-        Ext.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, source.WorldPos, Data.PropertyContext.Self | Data.PropertyContext.SelfOnHit, false)
+        Ext.PropertyList.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, targetPos, "Target", false)
+        Ext.PropertyList.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, source.WorldPos, _SelfPropertyContext, false)
     end
 
     if damageList then
@@ -905,8 +907,8 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
     end
 
     if applySkillProperties then
-        Ext.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, targetPos, "Target", false)
-        Ext.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, source.WorldPos, Data.PropertyContext.Self | Data.PropertyContext.SelfOnHit, false)
+        Ext.PropertyList.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, targetPos, "Target", false)
+        Ext.PropertyList.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, source.WorldPos, _SelfPropertyContext, false)
     end
 
     if damageList then

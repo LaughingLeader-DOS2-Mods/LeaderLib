@@ -55,7 +55,7 @@ end)
 local _cachedBonusWeapon = {}
 setmetatable(_cachedBonusWeapon, {__mode = "kv"})
 
-local _SelfPropertyContext = Data.PropertyContext.Self | Data.PropertyContext.SelfOnHit
+local _SelfPropertyContext = {"Self", "SelfOnHit"}
 
 ---@param source ObjectParam
 ---@param target ObjectParam
@@ -124,8 +124,8 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 		---@see GameHelpers.Skill.ShootZoneAt
 		local applySkillProperties = Vars.ApplyZoneSkillProperties[hitStatus.SkillId]
 		if applySkillProperties and applySkillProperties[sourceGUID] then
-			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceGUID, targetGUID, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
-			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceGUID, sourceGUID, source.WorldPos, _SelfPropertyContext, GameHelpers.Ext.ObjectIsItem(source))
+			Ext.PropertyList.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceGUID, targetGUID, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
+			Ext.PropertyList.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceGUID, sourceGUID, source.WorldPos, _SelfPropertyContext, GameHelpers.Ext.ObjectIsItem(source))
 			Timer.Restart(applySkillProperties[sourceGUID], 1)
 		end
 	end

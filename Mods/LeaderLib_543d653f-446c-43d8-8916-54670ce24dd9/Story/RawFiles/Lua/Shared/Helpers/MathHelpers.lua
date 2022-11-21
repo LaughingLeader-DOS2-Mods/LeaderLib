@@ -22,11 +22,13 @@ local _vecnorm = Ext.Math.Normalize
 local _vecmul = Ext.Math.Mul
 
 ---Tries to get the position from whatever the variable is.
----@overload fun(obj:number[]|Vector3|ObjectParam, unpackResult:boolean, fallback:number[]|nil):number,number,number
+---@overload fun(obj:number[]|Vector3|ObjectParam):number[]
 ---@param obj number[]|Vector3|ObjectParam
----@param unpackResult boolean|nil If true, the position value is returned as separate numbers.
+---@param unpackResult boolean If true, the position value is returned as separate numbers.
 ---@param fallback number[]|nil If no position is found, this value or {0,0,0} is returned.
----@return number[]
+---@return number x
+---@return number y
+---@return number z
 local function _GetPosition(obj, unpackResult, fallback)
     local t = _type(obj)
     local pos = nil
@@ -63,6 +65,7 @@ local function _GetPosition(obj, unpackResult, fallback)
             return {0,0,0}
         end
     end
+    ---@cast fallback number[]
     return fallback
 end
 
@@ -177,7 +180,7 @@ end
 function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMult, x,y,z, forwardVector)
     local character = GameHelpers.GetCharacter(source)
     if character then
-        if not x and not y and not z then
+        if not x or not y or not z then
             x,y,z = _unpack(character.WorldPos)
         end
         if not forwardVector then

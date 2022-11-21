@@ -1650,11 +1650,6 @@ function GameHelpers.Ext.ObjectIsCharacter(obj)
 		if obj == StringHelpers.NULL_UUID then
 			return false
 		end
-		if not _ISCLIENT and _OSIRIS() then
-			return ObjectIsCharacter(obj) == 1
-		end
-	end
-	if t == "string" or t == "number" then
 		local char = GameHelpers.GetCharacter(obj)
 		if char then
 			return true,char

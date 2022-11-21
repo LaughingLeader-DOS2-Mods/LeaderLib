@@ -103,7 +103,7 @@ end
 ---@return integer A number from 0 to 360
 ---@param target number[]|ObjectParam
 ---@param attacker number[]|ObjectParam
-function Game.Math.GetRelativeAngle(target, attacker)
+function GameHelpers.Math.GetRelativeAngle(target, attacker)
     local targetPos = _GetPosition(target)
     local attackerPos = _GetPosition(attacker)
 

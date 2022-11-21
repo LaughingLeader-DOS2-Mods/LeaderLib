@@ -1,10 +1,12 @@
 ---Data passed to callbacks for the various functions in SkillListeners.lua
 ---@class SkillEventData
----@field SourceItemGUID UUID|nil Possible item GUID that this skill is originating from, such as a scroll or grenade.
+---@field Source GUID|nil
+---@field SourceObject EsvCharacter|EsvItem|nil
+---@field SourceItemGUID GUID|nil Possible item GUID that this skill is originating from, such as a scroll or grenade.
 ---@field SkillData StatEntrySkillData
 local SkillEventData = {
 	Type = "SkillEventData",
-	Source = nil,
+	Source = "",
 	Skill = "",
 	SkillType = "",
 	Ability = "",
@@ -20,7 +22,6 @@ local SkillEventData = {
 		Positions = 1
 	}
 }
-SkillEventData.__index = SkillEventData
 
 ---@param skillSource string The source of the skill.
 ---@param skill string
@@ -43,7 +44,14 @@ function SkillEventData:Create(skillSource, skill, skillType, skillAbility)
 	---@deprecated
 	---Use SkillData instead.
 	this.Stat = this.SkillData
-	setmetatable(this, self)
+	setmetatable(this, {
+		__index = function (tbl,k)
+			if k == "SourceObject" then
+				return GameHelpers.TryGetObject(rawget(tbl, "Source"))
+			end
+			return SkillEventData[k]
+		end
+	})
     return this
 end
 
@@ -61,6 +69,7 @@ function SkillEventData:AddTargetPosition(x,y,z)
 	self.TotalTargetPositions = self.TotalTargetPositions + 1
 end
 
+---Get the first taget position of the skill.
 ---@return number[]
 function SkillEventData:GetSkillTargetPosition()
 	if self.TotalTargetPositions > 0 then
@@ -68,7 +77,7 @@ function SkillEventData:GetSkillTargetPosition()
 	elseif self.TotalTargetObjects > 0 then
 		return table.pack(GetPosition(self.TargetObjects[1]))
 	end
-	return nil
+	return GameHelpers.Math.GetPosition(self.SourceObject)
 end
 
 function SkillEventData:Clear()

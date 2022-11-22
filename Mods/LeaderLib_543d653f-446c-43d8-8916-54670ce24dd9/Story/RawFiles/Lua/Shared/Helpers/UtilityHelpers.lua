@@ -438,3 +438,71 @@ if _ISCLIENT then
 		end
 	end)
 end
+
+---@class GameHelpers_Utils_SetPlayerCameraPositionOptions
+---@field CurrentLookAt number[] The current position of the camera. If you set this together with TargetLookAt, the camera will snap to the new position instantly.
+---@field TargetLookAt number[] The target position to move the camera to.
+
+---@param player NETID
+---@param opts GameHelpers_Utils_SetPlayerCameraPositionOptions
+local function _TryUpdateCamera(player, opts)
+	local cameraID = nil
+	for _,v in pairs(Ext.Entity.GetPlayerManager().ClientPlayerData) do
+		if v.CharacterNetId == player then
+			cameraID = v.CameraControllerId
+			break
+		end
+	end
+	if cameraID then
+		---@cast cameraID FixedString
+		local camera = Ext.Client.GetCameraManager().Controllers[cameraID]
+		if camera then
+			---@cast camera EclGameCamera
+
+			if opts.CurrentLookAt then
+				camera.CurrentLookAt = opts.CurrentLookAt
+			end
+
+			if opts.TargetLookAt then
+				camera.TargetLookAt = opts.TargetLookAt
+			end
+
+			return true
+		end
+	end
+	return false
+end
+
+---@param player CharacterParam
+---@param opts GameHelpers_Utils_SetPlayerCameraPositionOptions
+function GameHelpers.Utils.SetPlayerCameraPosition(player, opts)
+	player = GameHelpers.GetCharacter(player)
+	assert(GameHelpers.Character.IsPlayer(player), "player must be a valid player character.")
+	assert(_type(opts) == "table", "opts must be a table")
+	local currentLookAtValid = _type(opts.CurrentLookAt) == "table"
+	local targetLookAtValid = _type(opts.TargetLookAt) == "table"
+	assert(currentLookAtValid or targetLookAtValid, "Either CurrentLookAt and/or TargetLookAt must be set.")
+	if not _ISCLIENT then
+		local payloadData = {Player=player.NetID}
+		if currentLookAtValid then
+			payloadData.CurrentLookAt = opts.CurrentLookAt
+		end
+		if targetLookAtValid then
+			payloadData.TargetLookAt = opts.TargetLookAt
+		end
+		GameHelpers.Net.PostToUser(player, "LeaderLib_SetPlayerCameraPosition", payloadData)
+	else
+		local b,err = xpcall(_TryUpdateCamera, debug.traceback, player.NetID, opts)
+		if not b then
+			Ext.Utils.PrintError(err)
+		end
+	end
+end
+
+if _ISCLIENT then
+	Ext.RegisterNetListener("LeaderLib_SetPlayerCameraPosition", function (channel, payload, user)
+		local data = Common.JsonParse(payload)
+		assert(_type(data) == "table", "Failed to parse payload:\n" .. payload)
+		GameHelpers.Utils.SetPlayerCameraPosition(data.Player, data)
+	end)
+end

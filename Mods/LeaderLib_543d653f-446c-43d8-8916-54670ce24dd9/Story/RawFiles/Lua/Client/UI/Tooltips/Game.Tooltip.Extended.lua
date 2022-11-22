@@ -2126,8 +2126,8 @@ _TT.Register = {
 ---_TT.RegisterListener("Status", "HASTED", myFunction) - Register a function for a HASTED status tooltip.
 ---_TT.RegisterListener(myFunction) - Register a function for every kind of tooltip.
 ---@param tooltipTypeOrCallback TooltipRequestType|function The tooltip type, such as "Skill".
----@param idOrNil string|function The tooltip ID, such as "Projectile_Fireball".
----@param callbackOrNil function If the first two parameters are set, this is the function to invoke.
+---@param idOrNil string|function|nil The tooltip ID, such as "Projectile_Fireball".
+---@param callbackOrNil function|nil If the first two parameters are set, this is the function to invoke.
 function _TT.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
 	if type(callbackOrNil) == "function" then
 		--assert(type(tooltipTypeOrCallback) == "string", "If the third parameter is a function, the first parameter must be a string (TooltipType).")

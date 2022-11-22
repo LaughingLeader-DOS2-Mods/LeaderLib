@@ -406,30 +406,34 @@ function GameHelpers.ObjectHasTag(object, tags, requireAll, checkEquipmentTags, 
 	return false
 end
 
-local function _GetMyGuid(obj)
-	return obj.MyGuid
-end
-
+---@overload fun(object:ObjectParam):UUID|nil
 ---Tries to get a string UUID from whatever variable type object is.
 ---@param object ObjectParam
----@param returnNullId boolean|nil If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
+---@param returnNullId boolean If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
 ---@return UUID
 function GameHelpers.GetUUID(object, returnNullId)
 	local t = _type(object)
 	if t == "userdata" then
-		local b,uuid = _pcall(_GetMyGuid, object)
-		if uuid then
-			return uuid
+		if IsHandle(object) then
+			local obj = GameHelpers.TryGetObject(object)
+			if obj then
+				return obj.MyGuid
+			end
+		elseif object.MyGuid then
+			return object.MyGuid
 		end
 	elseif t == "string" then
 		return StringHelpers.GetUUID(object)
 	elseif t == "number" then
-		local obj = _getGameObject(object)
+		local obj = GameHelpers.TryGetObject(object)
 		if obj then
 			return obj.MyGuid
 		end
 	end
-	return returnNullId and "NULL_00000000-0000-0000-0000-000000000000" or nil
+	if returnNullId then
+		return StringHelpers.NULL_UUID
+	end
+	return nil
 end
 
 ---Tries to get a NetID from whatever variable type object is.
@@ -437,8 +441,15 @@ end
 ---@return NETID
 function GameHelpers.GetNetID(object)
 	local t = _type(object)
-	if t == "userdata" and object.NetID then
-		return object.NetID
+	if t == "userdata" then
+		if IsHandle(object) then
+			local obj = GameHelpers.TryGetObject(object)
+			if obj then
+				return obj.NetID
+			end
+		elseif object.NetID then
+			return object.NetID
+		end
 	elseif t == "string" then
 		local obj = _getGameObject(object)
 		if obj then

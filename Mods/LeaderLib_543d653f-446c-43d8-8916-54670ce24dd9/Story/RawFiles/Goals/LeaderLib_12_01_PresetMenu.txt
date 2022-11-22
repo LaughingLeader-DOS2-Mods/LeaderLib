@@ -548,7 +548,7 @@ LeaderLib_PresetMenu_Internal_CheckRaceSkill((CHARACTERGUID)_Player, (STRING)_Ra
 AND
 DB_LeaderLib_RacialSkills(_RaceTag, _Skill)
 AND
-DB_LeaderLib_RaceTags(_Race, _RaceTag, _BaseRaceTag) // The target race matches, so save this skill
+CharacterHasSkill(_Player, _Skill, 1)
 THEN
 DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, -1);
 // [END_NO_OSITOOLS]
@@ -559,7 +559,7 @@ LeaderLib_PresetMenu_Internal_CheckRaceSkill((CHARACTERGUID)_Player, (STRING)_Ra
 AND
 DB_LeaderLib_RacialSkills(_RaceTag, _Skill)
 AND
-DB_LeaderLib_RaceTags(_Race, _RaceTag, _BaseRaceTag)
+CharacterHasSkill(_Player, _Skill, 1)
 AND
 NRD_SkillBarFindSkill(_Player, _Skill, _Slot)
 THEN
@@ -570,7 +570,7 @@ LeaderLib_PresetMenu_Internal_CheckRaceSkill((CHARACTERGUID)_Player, (STRING)_Ra
 AND
 DB_LeaderLib_RacialSkills(_RaceTag, _Skill)
 AND
-DB_LeaderLib_RaceTags(_Race, _RaceTag, _BaseRaceTag)
+CharacterHasSkill(_Player, _Skill, 1)
 AND
 NOT NRD_SkillBarFindSkill(_Player, _Skill, _)
 THEN

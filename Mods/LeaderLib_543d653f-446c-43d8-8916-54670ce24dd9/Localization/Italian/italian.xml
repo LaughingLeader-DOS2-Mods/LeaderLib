@@ -19,6 +19,7 @@
 	<content contentuid="h0824ad38gb8f8g443dga589g5d6ed7a698b8">Divinity: Original Sin 2 (Campaign)</content>
 	<content contentuid="h085c69c2g47e1g4611g9c72g6f45ecb1768d">Always Show Divine Talents</content>
 	<content contentuid="h08bb8216g9d40g49f9g91d4g8a77ecb090d2">Swap between the undead and non-undead equivalent of your current race.</content>
+	<content contentuid="h08bd107egd712g4d0bgaa8eg6aceeaf1e6dc">Pull [Handle:h6bf7caf0g7756g443bg926dg1ee5975ee133:Sneaking]/[Key:INVISIBLE_DisplayName:Invisible] Characters Into Combat</content>
 	<content contentuid="h0a498022g9474g4aacg9c4cged02cdca22a2">Show the mod a status, item, or skill originates from in tooltips.</content>
 	<content contentuid="h0a56f2cfgf36fg4b73gba0cgc31271b3795f">If enabled, the Divine Talents will always be visible in the player UI, regardless if the gift bag is enabled.</content>
 	<content contentuid="h0a77a6c9g8b1ag49cdgaf0eg45c159b82b32">No rifle equipped</content>
@@ -216,6 +217,7 @@
 	<content contentuid="h69172b21g1ce4g462dgad6cg308dabf6f0a0">Toggle [1]</content>
 	<content contentuid="h69293304g80a8g47b6gb564g793f098abfb4">Reset all global LeaderLib settings. EXPERIMENTAL!</content>
 	<content contentuid="h69590addg7840g4821gb632g52799233bb88">&lt;font color=&apos;#FF0000&apos;&gt;-[1] Attitude&lt;/font&gt;</content>
+	<content contentuid="h6a73243bgbdbcg4c42g8a10g63b34a228971">If [Key:LeaderLib_PullPartyIntoCombat] is enabled, a timer will check the party&apos;s distance to the current combat, automatically pulling members into the combat if within the set distance.&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;When this is disabled, pulling is done only when a player enters combat or teleports to a pyramid/waypoint.&lt;/font&gt;&lt;br&gt;Default: Disabled</content>
 	<content contentuid="h6a80ffafg59d9g4848g8d1ag9359a1435030">Enable Timed Autosaving</content>
 	<content contentuid="h6aac0af6g1e02g4a73g9341g53c81e64eb03">World Tooltips for All Items</content>
 	<content contentuid="h6ba6354bg9a76g48c2g90e9gf8aeac752f5c">Fix the Unhealable Status</content>
@@ -234,6 +236,7 @@
 	<content contentuid="h70808d00g222dg4b4ega35cg661cb7eccd45">Urgh!</content>
 	<content contentuid="h70864c17g1034g48ccgb6edg03dbeb743375">Redirect For Owned Characters Only</content>
 	<content contentuid="h71766947g9564g4a6bg936bga055cccc01a0">Pure Resistance</content>
+	<content contentuid="h719772f0ga1d4g4263g894cg83482077bfc4">If [Key:LeaderLib_PullPartyIntoCombat] is enabled, allow pulling [Handle:h6bf7caf0g7756g443bg926dg1ee5975ee133:Sneaking]/[Key:INVISIBLE_DisplayName:Invisible] into combat.&lt;br&gt;Default: Disabled</content>
 	<content contentuid="h71f43d4fg54f9g4ba5gac4dg71e8d4c4e056">[OFF] Autosave when Combat Starts [GLOBAL]</content>
 	<content contentuid="h721accefge16dg4b60gb68dgbbe03addf706">Misc</content>
 	<content contentuid="h727273bcg948ag461agad93gef52b2419eca">from self</content>
@@ -287,6 +290,7 @@
 	<content contentuid="h8859d107g3e28g44dega723gc7434a93f206">Add the Mod Menu Skill (Party)</content>
 	<content contentuid="h898ea651g71ddg40f0g8a76g6296ffc9581f">[First]</content>
 	<content contentuid="h8993bac9g89e6g4a50g997bg58f8d4742984">[Key:Shout_LeaderLib_ChainAll_DisplayName:Chain All] Skill</content>
+	<content contentuid="h899bfe72g40f5g4608g801eg96a76cdd43a3">Monitor Party Range</content>
 	<content contentuid="h89b19292g87beg4312g9514g63c95313649f">*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3].</content>
 	<content contentuid="h8a959098gf62eg46e6gbd76g423808c8d7b9">Show Consumable Effects</content>
 	<content contentuid="h8b7d56a0g4114g4cf2ga2ceg50db94bad57f">Enable various debug features with LeaderLib. Not recommended.</content>
@@ -519,6 +523,7 @@
 	<content contentuid="hf33cf707g6e5eg4674g9d88gc6a9431cdabc">That&apos;s enough of that...</content>
 	<content contentuid="hf37c444fg879fg4e62gb3d5g77086202f362">Pull Radius</content>
 	<content contentuid="hf3a71217gb65cg43bfg99bbg5c82a6f01901">Autosave interval updated.</content>
+	<content contentuid="hf3b5294dgbe18g4b87ga837gb26f67c166af">Combat</content>
 	<content contentuid="hf3dfc274ga5ceg4cc0g8b9ag3c4372b9b507">Show the source of a status, if any, in status tooltips.</content>
 	<content contentuid="hf437b717gbcecg4961ga518g3bbe1ef85d2e">Permanent [Key:Shout_SpiritVision_DisplayName:Spirit Vision]</content>
 	<content contentuid="hf5360b3eg3045g43abgb750gf94ecc4443d6">Show Consumable Effects</content>

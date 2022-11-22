@@ -52,6 +52,11 @@ function SettingsManager.GetMod(uuid, createIfMissing, tryInitialLoad)
 	return nil
 end
 
+---@return LeaderLibGlobalSettings
+function SettingsManager.GetLeaderLibSettings()
+	return SettingsManager.GetMod(ModuleUUID, false, false)
+end
+
 local function ExportGlobalSettings(forSyncing)
 	local globalSettings = {
 		Mods = {},

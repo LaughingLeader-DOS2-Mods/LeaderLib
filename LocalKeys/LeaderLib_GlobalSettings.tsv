@@ -2,6 +2,7 @@ Key	Content	Handle
 LeaderLib_UI_Settings_Autosaving	Timed Autosaving	h52a29657gf5f3g4577gb783g6fa0c0052e5e
 LeaderLib_UI_Settings_DialogRedirection	Dialog Redirection	h8d5dac42geb51g4b3agae2egfce8019d8387
 LeaderLib_UI_Settings_Features	Features	h4b459589gc776g4a7fgb3abg2e219ea20844
+LeaderLib_UI_Settings_Combat	Combat	h58cc3c1cg438dg46f4gb007gfd44da498d09
 LeaderLib_UI_Settings_QOL	Quality of Life	hae93b18fgeba5g497ag987cgaf862638b237
 LeaderLib_UI_Settings_Fixes	Fixes	h86a5860ag96ddg46e0g84f7g82aac62689f9
 LeaderLib_UI_Settings_Misc	Misc	h45fbdc72g99a3g4062gb366g69361d2d0513
@@ -45,6 +46,10 @@ LeaderLib_PermanentSpiritVisionEnabled	Permanent [Key:Shout_SpiritVision_Display
 LeaderLib_PermanentSpiritVisionEnabled_Description	If enabled, [Key:Shout_SpiritVision_DisplayName:Spirit Vision] will turn into a toggle, allowing you to enable or disable [Handle:h81ca2748g7469g47c9g8e5dg49ecc8d1e382:Spirit Vision] at will. 	hca7f98c6gac84g489dg9864gdc63aac32dd4
 LeaderLib_PullPartyIntoCombat	Pull Party Into Combat	h15ce233fgbe8fg46adg94eagff09e732a307
 LeaderLib_PullPartyIntoCombat_Description	When entering combat, party members within the set radius will automatically join that combat.	h3d4aaceaga4c5g4056gb9f7gb4f642e5f422
+LeaderLib_CombatVacuum_IgnoreSneaking	Pull [Handle:h6bf7caf0g7756g443bg926dg1ee5975ee133:Sneaking]/[Key:INVISIBLE_DisplayName:Invisible] Characters Into Combat	h8f0003b2g61a8g4e07g879bg1f3b4841b7ad
+LeaderLib_CombatVacuum_IgnoreSneaking_Description	If [Key:LeaderLib_PullPartyIntoCombat] is enabled, allow pulling [Handle:h6bf7caf0g7756g443bg926dg1ee5975ee133:Sneaking]/[Key:INVISIBLE_DisplayName:Invisible] into combat.<br>Default: Disabled	h2d00f2b8g0ff7g447bg9a34ga4a3523d2b1d
+LeaderLib_CombatVacuum_TickCombat	Monitor Party Range	h497fd7cdgcd9cg4fa0gbd24g7c19edabdbbd
+LeaderLib_CombatVacuum_TickCombat_Description	If [Key:LeaderLib_PullPartyIntoCombat] is enabled, a timer will check the party's distance to the current combat, automatically pulling members into the combat if within the set distance.<br><font color='#FF9900'>When this is disabled, pulling is done only when a player enters combat or teleports to a pyramid/waypoint.</font><br>Default: Disabled	h1acdddb3g29cdg4552g81c0gf8c138732b10
 LeaderLib_RemovePathInfluencesOnChainAll	Remove Surface Avoidance When Chained	h15b88e5fg448eg4d13g9bffga608d21bc1da
 LeaderLib_RemovePathInfluencesOnChainAll_Description	Characters that follow you with Chain All will no longer avoid surfaces.	h15486e80g477bg46c1gb79bg5dfca9626411
 LeaderLib_ShowConsumableEffectsEnabled	Show Consumable Effects	hec9b2cf2g5a66g4b2bga0d2gd2771b517da5

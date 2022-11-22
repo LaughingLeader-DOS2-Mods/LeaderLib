@@ -2,6 +2,8 @@ local _ISCLIENT = Ext.IsClient()
 
 ---@type ModSettings
 local ModSettings = Classes.ModSettingsClasses.ModSettings
+
+---@class LeaderLibGlobalSettings:ModSettings
 local settings = ModSettings:Create(ModuleUUID)
 settings.TitleColor = "#369BFF"
 settings.Global:AddLocalizedFlags({
@@ -17,6 +19,8 @@ settings.Global:AddLocalizedFlags({
 	"LeaderLib_DialogRedirection_HighestPersuasionEnabled",
 	"LeaderLib_FriendlyFireEnabled",
 	"LeaderLib_PullPartyIntoCombat",
+	"LeaderLib_CombatVacuum_IgnoreSneaking",
+	"LeaderLib_CombatVacuum_TickCombat",
 	"LeaderLib_UnhealableFix_Enabled",
 	"LeaderLib_AllTooltipsForItemsEnabled",
 	"LeaderLib_BuffStatusPreserverEnabled",
@@ -48,7 +52,12 @@ settings.GetMenuOrder = function()
 		Entries = {
 			"LeaderLib_FriendlyFireEnabled",
 			"LeaderLib_BuffStatusPreserverEnabled",
+		}},
+		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Combat", "Combat Vacuum"),
+		Entries = {
 			"LeaderLib_PullPartyIntoCombat",
+			"LeaderLib_CombatVacuum_IgnoreSneaking",
+			"LeaderLib_CombatVacuum_TickCombat",
 			"AutoCombatRange",
 			"CombatSightRangeMultiplier",
 		}},
@@ -136,7 +145,7 @@ Events.GetTextPlaceholder:Subscribe(function (e)
 	local strength = e.Character.Strength
 	local weightPerStr = GameHelpers.GetExtraData("CarryWeightPerStr", 10000)
 	local carryWeightBase = GameHelpers.GetExtraData("CarryWeightBase", 0)
-	local result = Ext.Round((((packMuleBonus * strength) * weightPerStr) + carryWeightBase) * 0.001)
+	local result = Ext.Utils.Round((((packMuleBonus * strength) * weightPerStr) + carryWeightBase) * 0.001)
 	e.Result = GameHelpers.Tooltip.ReplacePlaceholders(_weightFormulaText:format(packMuleText, strength, weightPerStr, carryWeightBase, result))
 end, {MatchArgs={ID="CarryWeightFormula"}})
 
@@ -222,14 +231,22 @@ if Ext.IsServer() then
 	end)
 	settings.Global.Variables.AutoCombatRange:Subscribe(function(e)
 		if settings.Global:FlagEquals("LeaderLib_PullPartyIntoCombat", true) then
-			Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
+			Timer.Restart("LeaderLib_PullPartyIntoCombat", 500)
 		end
 	end)
 	settings.Global.Flags.LeaderLib_PullPartyIntoCombat:Subscribe(function(e)
 		if e.Value then
-			Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
+			Timer.Restart("LeaderLib_PullPartyIntoCombat", 500)
 		else
 			Timer.Cancel("LeaderLib_PullPartyIntoCombat")
+			Timer.Cancel("LeaderLib_CombatVacuum_TickCombat")
+		end
+	end)
+	settings.Global.Flags.LeaderLib_CombatVacuum_TickCombat:Subscribe(function(e)
+		if e.Value then
+			Timer.Restart("LeaderLib_CombatVacuum_TickCombat", QOL.CombatVacuum.TimerTickRate)
+		else
+			Timer.Cancel("LeaderLib_CombatVacuum_TickCombat")
 		end
 	end)
 	settings.Global.Flags.LeaderLib_AutoIdentifyItemsEnabled:Subscribe(function(e)
@@ -289,4 +306,9 @@ settings.Global.Flags.LeaderLib_AutosavingEnabled:Subscribe(function(e)
 			options.CanAutoSave = true
 		end
 	end
+end)
+
+Events.Initialized:Subscribe(function (e)
+	local absoluteMaxRange = GameHelpers.GetExtraData("LeaderLib_MaxCombatVacuumRange", 30)
+	settings.Global.Variables.AutoCombatRange.Max = absoluteMaxRange
 end)

@@ -1,20 +1,6 @@
----@class LeaderLibCombatVacuum
-local CombatVacuum = {}
+--[[Experimental script that tries to make combat work outside of the 30m range limit]]
 
----@param character EsvCharacter
----@param enemies EsvCharacter[]
----@param maxDist number
----@return boolean
-local function HasNearbyEnemy(character, enemies, maxDist)
-	for _,v in pairs(enemies) do
-		if GameHelpers.Character.IsEnemy(character, v) and GameHelpers.Math.GetDistance(character, v) <= maxDist then
-			return true
-		end
-	end
-	return false
-end
-
-CombatVacuum.HasNearbyEnemy = HasNearbyEnemy
+local CombatVacuum = QOL.CombatVacuum
 
 local function SetArenaFlag(uuid)
 	if ObjectGetFlag(uuid, "LeaderLib_ArenaModeEnabled") == 0 then
@@ -69,7 +55,7 @@ function CombatVacuum.UpdateArenaFlags(maxDist, enabled)
 				if processedCombats[combatid] == nil then
 					---@type EsvCharacter[]
 					local combatCharacters = GameHelpers.Combat.GetCharacters(combatid, nil, nil, true)
-					local hasNearbyEnemy = HasNearbyEnemy(player, combatCharacters, maxDist)
+					local hasNearbyEnemy = CombatVacuum.HasNearbyEnemy(player, combatCharacters, maxDist)
 					if hasNearbyEnemy then
 						for _,v in pairs(combatCharacters) do
 							SetArenaFlag(v.MyGuid)
@@ -114,13 +100,13 @@ end)
 RegisterProtectedOsirisListener("CharacterDying", 1, "before", ClearArenaFlag)
 RegisterProtectedOsirisListener("CharacterLeftParty", 1, "after", ClearArenaFlag)
 
-Ext.RegisterOsirisListener("FleeCombat", 1, "before", ClearArenaFlag)
+Ext.Osiris.RegisterListener("FleeCombat", 1, "before", ClearArenaFlag)
 
-Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "before", function (uuid, id)
+Ext.Osiris.RegisterListener("ObjectLeftCombat", 2, "before", function (uuid, id)
 	ClearArenaFlag(uuid)
 end)
 
-Ext.RegisterOsirisListener("ObjectTurnEnded", 1, "before", function (uuid)
+Ext.Osiris.RegisterListener("ObjectTurnEnded", 1, "before", function (uuid)
 	if GameHelpers.Character.IsPlayer(uuid) and ObjectGetFlag(uuid, "LeaderLib_ArenaModeEnabled") == 1 then
 		Timer.Start("LeaderLib_UpdateArenaFlags", 500)
 	end
@@ -130,12 +116,10 @@ Events.Initialized:Subscribe(function (e)
 	Timer.Start("LeaderLib_UpdateArenaFlags", 1500)
 end)
 
-Ext.RegisterOsirisListener("CharacterSawCharacter", 2, "before", function (player, other)
+Ext.Osiris.RegisterListener("CharacterSawCharacter", 2, "before", function (player, other)
 	if CharacterIsInCombat(player) == 0 and
 	ObjectGetFlag(player, "LeaderLib_ArenaModeEnabled") == 0
 	and ObjectGetFlag(other, "LeaderLib_ArenaModeEnabled") == 1 then
 		Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
 	end
 end)
-
-QOL.CombatVacuum = CombatVacuum

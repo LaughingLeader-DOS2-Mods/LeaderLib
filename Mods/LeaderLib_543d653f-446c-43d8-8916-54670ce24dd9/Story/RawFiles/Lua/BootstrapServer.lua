@@ -231,6 +231,7 @@ if Ext.Debug.IsDeveloperMode() then
 end
 Ext.Require("Server/Game/QOL/BuffStatusPreserver.lua")
 Ext.Require("Server/Game/QOL/SkipTutorial.lua")
+Ext.Require("Server/Game/QOL/CombatVacuum.lua")
 if Ext.Utils.Version() >= 56 then
 	Ext.Require("Shared/QOL/ExtenderVisualSupport.lua")
 	Ext.Require("Shared/QOL/InventoryTweaks.lua")

@@ -204,3 +204,13 @@ function GameHelpers.Combat.IsActiveTurn(obj)
 	end
 	return false
 end
+
+---@return boolean
+function GameHelpers.Combat.IsAnyPlayerInCombat()
+	for player in GameHelpers.Character.GetPlayers() do
+		if GameHelpers.Character.IsInCombat(player) then
+			return true
+		end
+	end
+	return false
+end

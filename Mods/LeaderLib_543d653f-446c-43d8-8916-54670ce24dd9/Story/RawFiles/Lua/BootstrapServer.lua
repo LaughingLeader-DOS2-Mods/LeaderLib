@@ -146,7 +146,8 @@ local defaultPersistentVars = {
 	---@field RestrictToVisual FixedString|nil If set, this visual will only be recreated if character.RootTemplate.VisualTemplate matches this value.
 
 	---@type table<UUID,LeaderLibPersistentVisualsEntry[]>
-	PersistentVisuals = {}
+	PersistentVisuals = {},
+	Debug = {},
 }
 
 

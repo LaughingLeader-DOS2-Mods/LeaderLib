@@ -57,16 +57,27 @@ function SettingsManager.GetLeaderLibSettings()
 	return SettingsManager.GetMod(ModuleUUID, false, false)
 end
 
-local function ExportGlobalSettings(forSyncing)
+---@param forSyncing boolean|nil
+---@param skipUpdating boolean|nil
+---@return table
+local function ExportGlobalSettings(forSyncing, skipUpdating)
 	local globalSettings = {
 		Mods = {},
 		Version = GlobalSettings.Version
 	}
 	for uuid,v in pairs(GlobalSettings.Mods) do
-		v:Update()
+		if not skipUpdating then
+			v:Update()
+		end
 		globalSettings.Mods[uuid] = v:Copy(forSyncing)
 	end
 	return globalSettings
+end
+
+---Get a string representation of the current global settings.
+---@return string
+function SettingsManager.Serialize()
+	return Common.JsonStringify(ExportGlobalSettings(false, true))
 end
 
 ---@param uuid string
@@ -189,9 +200,7 @@ function SaveGlobalSettings()
 		LoadGlobalSettings()
 	end
 	local b,err = xpcall(function()
-		local export = ExportGlobalSettings(false)
-		local json = Common.JsonStringify(export)
-		Ext.SaveFile("LeaderLib_GlobalSettings.json", json)
+		GameHelpers.IO.SaveJsonFile("LeaderLib_GlobalSettings.json", ExportGlobalSettings(false))
 		return true
 	end, debug.traceback)
 	if not b then

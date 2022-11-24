@@ -74,7 +74,7 @@ function GameSettingsManager.Save()
 	if GameSettings ~= nil then
 		local b,err = xpcall(function()
 			GameSettings:Apply()
-			Ext.SaveFile("LeaderLib_GameSettings.json", GameSettings:ToString(false))
+			Ext.IO.SaveFile("LeaderLib_GameSettings.json", GameSettings:ToString(false))
 		end, debug.traceback)
 		if not b then
 			Ext.Utils.PrintError(err)
@@ -82,6 +82,12 @@ function GameSettingsManager.Save()
 	elseif Vars.DebugMode then
 		Ext.Utils.PrintWarning("[LeaderLib:GameSettingsManager:GameSettingsManager.Save] GameSettings is nil?")
 	end
+end
+
+---Get a string representation of the current game settings.
+---@return string
+function GameSettingsManager.Serialize()
+	return GameSettings:ToString(false)
 end
 
 SaveGameSettings = GameSettingsManager.Save

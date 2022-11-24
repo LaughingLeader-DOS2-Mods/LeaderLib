@@ -52,3 +52,7 @@ Ext.RegisterNetListener("LeaderLib_CharacterStatusText", function(cmd, payload)
 	fassert(data.Text ~= nil, "[%s] A valid Text parameter is required. Payload:\n%s", cmd, payload)
 	CharacterStatusText(GameHelpers.GetUUID(data.Target), data.Text)
 end)
+
+Ext.RegisterNetListener("LeaderLib_SaveDebugInfo_Run", function(cmd, payload)
+	SettingsManager.GetLeaderLibSettings().Global:InvokeButton("LeaderLib_SaveDebugInfo")
+end)

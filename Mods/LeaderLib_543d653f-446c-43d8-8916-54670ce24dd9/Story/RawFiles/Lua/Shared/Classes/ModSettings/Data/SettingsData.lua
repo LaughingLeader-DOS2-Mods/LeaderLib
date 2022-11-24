@@ -424,6 +424,16 @@ function SettingsData:FlagEquals(id, b, target)
 	return b == false -- Flag doesn't exist, so it's not set
 end
 
+---Invoke the callback on a button.
+---@param id string
+---@vararg any
+function SettingsData:InvokeButton(id, ...)
+	local button = self.Buttons[id]
+	if button then
+		button:Invoke(...)
+	end
+end
+
 function SettingsData:Export(forSyncing)
 	local export = {Flags = {}, Variables = {}}
 	for name,v in pairs(self.Flags) do

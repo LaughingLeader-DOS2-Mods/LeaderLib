@@ -38,11 +38,19 @@ settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 settings.Global:AddLocalizedVariable("AutoCombatRange", "LeaderLib_Variables_AutoCombatRange", 30, 1, 30, 1)
 settings.Global:AddLocalizedVariable("CombatSightRangeMultiplier", "LeaderLib_Variables_CombatSightRangeMultiplier", 2.5, 1, 30, 0.5)
 settings.Global:AddLocalizedVariable("CarryWeightBase", "LeaderLib_Variables_CarryWeightBase", 0, 0, 1000, 10)
-settings.Global:AddLocalizedButton("LeaderLib_ReloadStatChangesConfig", "LeaderLib_ReloadStatChangesConfig", function (entry, modUUID, character)
+settings.Global:AddLocalizedButton("LeaderLib_ReloadStatChangesConfig", "LeaderLib_Button_ReloadStatChangesConfig", function ()
+	--Buttons are invoked client-side, but we check here in case a mod is invoking it server-side
 	if _ISCLIENT then
 		Ext.Net.PostMessageToServer("LeaderLib_StatChangesConfig_Run", "")
 	else
 		QOL.StatChangesConfig:Run()
+	end
+end, true, true)
+settings.Global:AddLocalizedButton("LeaderLib_SaveDebugInfo", "LeaderLib_Button_SaveDebugInfo", function ()
+	if _ISCLIENT then
+		Ext.Net.PostMessageToServer("LeaderLib_SaveDebugInfo_Run", "")
+	else
+		Debug.StoreDebugInfo()
 	end
 end, true, true)
 

@@ -4,6 +4,16 @@ local _EXTVERSION = Ext.Utils.Version()
 local _DEBUG = Ext.Debug.IsDeveloperMode()
 local _ISCLIENT = Ext.IsClient()
 
+---@class LeaderLibDebug
+Debug = {
+	StoreDebugInfo = function ()
+		if not _ISCLIENT then
+			_PV.Debug.GlobalSettings = SettingsManager.Serialize()
+			_PV.Debug.GameSettings = GameSettingsManager.Serialize()
+		end
+	end
+}
+
 function _OSIRIS()
 	if not _ISCLIENT then
 		return Ext.Osiris.IsCallable()

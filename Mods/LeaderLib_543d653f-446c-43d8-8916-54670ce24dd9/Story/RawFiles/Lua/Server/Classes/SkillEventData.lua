@@ -89,7 +89,7 @@ end
 
 ---@alias SkillEventDataTarget string|number[]
 ---@alias SkillEventDataForEachTargetType string|'"string"'|'"table"'
----@alias SkillEventDataForEachCallback fun(target:SkillEventDataTarget, targetType:SkillEventDataForEachTargetType, self:SkillEventData):void
+---@alias SkillEventDataForEachCallback fun(target:SkillEventDataTarget, targetType:SkillEventDataForEachTargetType, self:SkillEventData)
 
 ---Run a function on all target objects. The function is wrapped in an error handler.
 ---@param func SkillEventDataForEachCallback

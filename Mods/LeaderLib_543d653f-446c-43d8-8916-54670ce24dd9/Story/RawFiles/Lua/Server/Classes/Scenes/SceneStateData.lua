@@ -1,4 +1,4 @@
----@alias SceneStateActionCallback fun(self:SceneStateData):void
+---@alias SceneStateActionCallback fun(self:SceneStateData)
 
 ---@class SceneStateData
 local SceneStateData = {

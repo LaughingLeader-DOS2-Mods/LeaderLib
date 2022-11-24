@@ -3,10 +3,12 @@ if GameHelpers.PersistentVars == nil then
 	GameHelpers.PersistentVars = {}
 end
 
+---@generic T:table
 ---@param modGlobalTable {PersistentVars:table} The mod's global table.
----@param defaultTable table A table of default values to copy from.
+---@param defaultTable T A table of default values to copy from.
 ---@param initializedCallback fun(e:PersistentVarsLoadedEventArgs)|nil If set, this function will be called during the PersistentVarsLoaded event.
 ---@param autoUpdateVars boolean|nil If true, GameHelpers.PersistentVars.Update will be called on modGlobalTable.PersistentVars, using defaultTable, during the PersistentVarsLoaded event.
+---@return T persistentVars
 function GameHelpers.PersistentVars.Initialize(modGlobalTable, defaultTable, initializedCallback, autoUpdateVars)
 	local data = TableHelpers.Clone(defaultTable or {}, true)
 	if autoUpdateVars == true then

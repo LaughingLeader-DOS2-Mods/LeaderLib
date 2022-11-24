@@ -24,7 +24,7 @@
 ---@field Value boolean|any
 ---@field Last boolean|any
 
----@alias ModMenuButtonCallback fun(entry:ButtonData, modUUID:string, character:EclCharacter):void
+---@alias ModMenuButtonCallback fun(entry:ButtonData, modUUID:string, character:EclCharacter)
 
 ---@class ModMenuButtonEntryData
 ---@field Entry ButtonData

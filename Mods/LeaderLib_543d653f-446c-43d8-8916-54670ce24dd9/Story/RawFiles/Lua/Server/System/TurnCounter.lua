@@ -147,7 +147,7 @@ function TurnCounter.Subscribe(id, callback)
 	end
 end
 
----@alias TurnCounterCallback fun(id:string, turn:integer, lastTurn:integer, finished:boolean, data:TurnCounterData):void
+---@alias TurnCounterCallback fun(id:string, turn:integer, lastTurn:integer, finished:boolean, data:TurnCounterData)
 
 ---@deprecated
 ---@see LeaderLibTurnCounterSystem#Subscribe

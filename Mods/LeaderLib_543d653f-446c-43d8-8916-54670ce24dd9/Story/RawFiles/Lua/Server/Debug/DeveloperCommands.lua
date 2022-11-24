@@ -672,9 +672,6 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		end
 	end
 	
-	if Debug == nil then
-		Debug = {}
-	end
 	Debug.PrintItemStats = PrintItemStats
 	
 	Ext.RegisterConsoleCommand("printitemstats", function(command, slot)

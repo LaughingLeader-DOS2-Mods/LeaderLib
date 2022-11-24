@@ -68,9 +68,9 @@ function QuestStateData:Activate(uuid)
 end
 
 ---@class QuestDataRegistration
----@field Started fun(callback:fun(data:QuestData, character:EsvCharacter):void):void
----@field StateChanged fun(callback:fun(data:QuestData, state:QuestStateData, character:EsvCharacter, isCompleted:boolean):void):void
----@field Completed fun(callback:fun(data:QuestData, character:EsvCharacter):void):void
+---@field Started fun(callback:fun(data:QuestData, character:EsvCharacter))
+---@field StateChanged fun(callback:fun(data:QuestData, state:QuestStateData, character:EsvCharacter, isCompleted:boolean))
+---@field Completed fun(callback:fun(data:QuestData, character:EsvCharacter))
 
 ---@class QuestDataFields
 ---@field ID string

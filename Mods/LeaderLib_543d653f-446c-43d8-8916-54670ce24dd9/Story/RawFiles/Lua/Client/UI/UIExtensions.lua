@@ -1,14 +1,14 @@
 ---@class UIExtensionsMain:FlashMainTimeline
 ---@field addCheckbox fun(id:number, label:string, tooltip:string, stateID:number|nil, x:number|nil, y:number|nil, filterBool:boolean|nil, enabled:boolean|nil):FlashMovieClip
 ---@field removeControl fun(id:number):boolean
----@field addBar fun(id:number, label:string, tooltip:string|nil, x:number|nil, y:number|nil, percentage:number|nil, doTween:boolean|nil, color:number|nil):void
+---@field addBar fun(id:number, label:string, tooltip:string|nil, x:number|nil, y:number|nil, percentage:number|nil, doTween:boolean|nil, color:number|nil)
 
 ---@class LeaderLibUIExtensions:UIObject
 ---@field GetRoot fun():UIExtensionsMain
 
----@alias CheckboxCallback fun(ui:LeaderLibUIExtensions, controlType:string, id:number, state:number):void
----@alias LeaderLibDropdownCallback fun(ui:LeaderLibUIExtensions, controlType:string, id:number, selectedIndex:number):void
----@alias FlashTimerCallback fun(timerName:string, isComplete:boolean):void
+---@alias CheckboxCallback fun(ui:LeaderLibUIExtensions, controlType:string, id:number, state:number)
+---@alias LeaderLibDropdownCallback fun(ui:LeaderLibUIExtensions, controlType:string, id:number, selectedIndex:number)
+---@alias FlashTimerCallback fun(timerName:string, isComplete:boolean)
 
 ---@class UIExtensions
 ---@field Root UIExtensionsMain

@@ -705,7 +705,7 @@ if not _ISCLIENT then
 		ArgsKeyOrder={"Attacker", "Target", "Data", "TargetIsObject", "SkillData"}
 	})
 
-	---@alias WeaponType string | "Staff" | "Rifle" | "Spear" | "Sentinel" | "Sword" | "Bow" | "Axe" | "Wand" | "Arrow" | "None" | "Knife" | "Crossbow" | "Club"
+	---@alias WeaponType "Staff"|"Rifle"|"Spear"|"Sentinel"|"Sword"|"Bow"|"Axe"|"Wand"|"Arrow"|"None"|"Knife"|"Crossbow"|"Club"
 
 	---@class OnWeaponTypeHitEventArgs:OnWeaponHitEventArgs
 	---@field WeaponType WeaponType

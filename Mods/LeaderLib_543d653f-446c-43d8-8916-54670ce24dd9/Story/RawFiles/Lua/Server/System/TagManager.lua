@@ -9,7 +9,7 @@ TagManager.Callbacks = {
 	TagObject = {}
 }
 
----@alias TagManagerTagObjectCallback fun(object:EsvCharacter|EsvItem, isInCombat:boolean, isCharacter:boolean, ...:any):void
+---@alias TagManagerTagObjectCallback fun(object:EsvCharacter|EsvItem, isInCombat:boolean, isCharacter:boolean, ...:any)
 
 TagManager.Register = {
 	---@param callback TagManagerTagObjectCallback

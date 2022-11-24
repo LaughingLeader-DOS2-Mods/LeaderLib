@@ -15,9 +15,9 @@ local ModSettings = {
 	---@type SettingsData
 	Global = {},
 	Version = -1,
-	---@type fun(self:SettingsData, name:string, data:VariableData):void
+	---@type fun(self:SettingsData, name:string, data:VariableData)
 	UpdateVariable = nil,
-	---@type fun(uuid:string, name:string, data:VariableData):void
+	---@type fun(uuid:string, name:string, data:VariableData)
 	OnVariableSet = nil,
 	LoadedExternally = false
 }

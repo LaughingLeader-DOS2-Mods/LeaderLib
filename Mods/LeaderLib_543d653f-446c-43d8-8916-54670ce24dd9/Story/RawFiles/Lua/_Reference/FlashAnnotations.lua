@@ -28,66 +28,66 @@
 ---@field m_height number
 ---@field m_width number
 ---@field m_myInterlinie number
----@field setFrameWidth fun(param1:number):void
----@field setFrame fun(param1:number, param2:number):void
+---@field setFrameWidth fun(param1:number)
+---@field setFrame fun(param1:number, param2:number)
 ---@field getCurrentMovieClip fun():FlashMovieClip
 ---@field getElement fun(param1:number):FlashMovieClip
 ---@field getAt fun(param1:number):FlashMovieClip
 ---@field getElementByListID fun(param1:number):FlashMovieClip
----@field selectLastElement fun():void
+---@field selectLastElement fun()
 ---@field isLastElement fun(param1:FlashMovieClip):boolean
 ---@field isFirstElement fun(param1:FlashMovieClip):boolean
 ---@field getElementByNumber fun(param1:string, param2:number):FlashMovieClip
 ---@field getElementByBool fun(param1:string, param2:boolean):FlashMovieClip
 ---@field selectByOffset fun(param1:number, param2:boolean):boolean
 ---@field getElementByString fun(param1:string, param2:string):FlashMovieClip
----@field cleanUpElements fun():void
----@field positionElements fun():void
+---@field cleanUpElements fun()
+---@field positionElements fun()
 ---@field getElementWidth fun(param1:FlashMovieClip):number
 ---@field getElementHeight fun(param1:FlashMovieClip):number
 ---@field getContentHeight fun():number
----@field moveElementsToPosition fun(param1:number, param2:boolean):void
+---@field moveElementsToPosition fun(param1:number, param2:boolean)
 ---@field moveElementToPosition fun(param1:number, param2:number):boolean
----@field moveElementToBack fun(param1:number):void
----@field onRemovedFromStage fun(param1:FlashEvent):void
----@field addElement fun(param1:FlashDisplayObject, param2:boolean, param3:boolean):void
----@field addElementOnPosition fun(param1:FlashDisplayObject, param2:integer, param3:boolean, param4:boolean):void
----@field addElementToFront fun(param1:FlashDisplayObject, param2:boolean):void
----@field resetListPos fun():void
----@field stopElementTweens fun(param1:number):void
----@field fadeOutAndRemoveElement fun(param1:number, param2:number, param3:number, param4:boolean, param5:boolean):void
----@field removeElement fun(param1:number, param2:boolean|nil, param3:boolean|nil, param4:number|nil):void
+---@field moveElementToBack fun(param1:number)
+---@field onRemovedFromStage fun(param1:FlashEvent)
+---@field addElement fun(param1:FlashDisplayObject, param2:boolean, param3:boolean)
+---@field addElementOnPosition fun(param1:FlashDisplayObject, param2:integer, param3:boolean, param4:boolean)
+---@field addElementToFront fun(param1:FlashDisplayObject, param2:boolean)
+---@field resetListPos fun()
+---@field stopElementTweens fun(param1:number)
+---@field fadeOutAndRemoveElement fun(param1:number, param2:number, param3:number, param4:boolean, param5:boolean)
+---@field removeElement fun(param1:number, param2:boolean|nil, param3:boolean|nil, param4:number|nil)
 ---@field removeElementByListId fun(param1:number, param2:boolean):boolean
----@field clearElements fun():void
----@field next fun():void
----@field previous fun():void
+---@field clearElements fun()
+---@field next fun()
+---@field previous fun()
 ---@field getPreviousVisibleElement fun():FlashMovieClip
----@field selectByListID fun(param1:number):void
----@field selectMC fun(param1:FlashMovieClip, param2:boolean):void
----@field clearSelection fun():void
----@field select fun(param1:number, param2:boolean, param3:boolean):void
----@field filterShowAll fun():void
----@field filterHideAll fun():void
----@field filterHideBoolean fun(param1:string, param2:boolean):void
----@field filterShowBoolean fun(param1:string, param2:boolean, param3:boolean):void
----@field filterBySubString fun(param1:string, param2:string):void
----@field filterShowType fun(param1:string, param2:FlashObject, param3:boolean):void
----@field filterHideType fun(param1:string, param2:FlashObject):void
----@field filterType fun(param1:string, param2:FlashObject):void
+---@field selectByListID fun(param1:number)
+---@field selectMC fun(param1:FlashMovieClip, param2:boolean)
+---@field clearSelection fun()
+---@field select fun(param1:number, param2:boolean, param3:boolean)
+---@field filterShowAll fun()
+---@field filterHideAll fun()
+---@field filterHideBoolean fun(param1:string, param2:boolean)
+---@field filterShowBoolean fun(param1:string, param2:boolean, param3:boolean)
+---@field filterBySubString fun(param1:string, param2:string)
+---@field filterShowType fun(param1:string, param2:FlashObject, param3:boolean)
+---@field filterHideType fun(param1:string, param2:FlashObject)
+---@field filterType fun(param1:string, param2:FlashObject)
 ---@field getFirstElement fun(param1:boolean, param2:boolean):FlashMovieClip
 ---@field getFirstVisible fun(param1:boolean):FlashMovieClip
 ---@field getLastElement fun(param1:boolean, param2:boolean):FlashMovieClip
 ---@field getLastVisible fun(param1:boolean):FlashMovieClip
----@field selectFirstVisible fun(param1:boolean):void
----@field sortOn fun(param1:FlashObject, param2:FlashObject, param3:boolean):void
----@field redoSort fun():void
----@field sortOnce fun(param1:FlashObject, param2:FlashObject, param3:boolean):void
----@field cursorLeft fun():void
----@field cursorRight fun():void
----@field cursorUp fun():void
----@field cursorDown fun():void
----@field cursorAccept fun():void
----@field isOverlappingPosition fun(targetX:number, targetY:number, shapeTest:boolean):void
+---@field selectFirstVisible fun(param1:boolean)
+---@field sortOn fun(param1:FlashObject, param2:FlashObject, param3:boolean)
+---@field redoSort fun()
+---@field sortOnce fun(param1:FlashObject, param2:FlashObject, param3:boolean)
+---@field cursorLeft fun()
+---@field cursorRight fun()
+---@field cursorUp fun()
+---@field cursorDown fun()
+---@field cursorAccept fun()
+---@field isOverlappingPosition fun(targetX:number, targetY:number, shapeTest:boolean)
 
 ---@class FlashHorizontalList:FlashListDisplay
 ---@field rightSided boolean
@@ -97,8 +97,8 @@
 ---@field m_CenterHolders boolean
 ---@field m_RowHeight number
 ---@field m_holderArray table
----@field positionElements fun():void
----@field moveElementsToPosition fun(param1:number, param2:boolean):void
+---@field positionElements fun()
+---@field moveElementsToPosition fun(param1:number, param2:boolean)
 ---@field getContainerWidth fun():number
 
 ---@class FlashScrollbar:FlashMovieClip
@@ -119,15 +119,15 @@
 ---@field m_dragAutoScrollMod number
 ---@field m_bgTile1_mc FlashMovieClip
 ---@field m_bgTile2_mc FlashMovieClip
----@field selectMC fun(param1:FlashMovieClip, param2:boolean):void
----@field clearElements fun():void
----@field resetScroll fun():void
+---@field selectMC fun(param1:FlashMovieClip, param2:boolean)
+---@field clearElements fun()
+---@field resetScroll fun()
 ---@field selectByOffset fun(param1:number, param2:boolean):boolean
----@field checkScrollBar fun():void
----@field setFrameWidth fun(param1:number):void
----@field setFrame fun(param1:number, param2:number):void
----@field setFrameHeight fun(param1:number):void
----@field positionElements fun():void
+---@field checkScrollBar fun()
+---@field setFrameWidth fun(param1:number)
+---@field setFrame fun(param1:number, param2:number)
+---@field setFrameHeight fun(param1:number)
+---@field positionElements fun()
 
 ---@class CombatLogFlashMainTimeline:FlashMainTimeline
 ---@field log_mc CombatLogFlashMC
@@ -135,28 +135,28 @@
 ---@field layout string
 ---@field isUIMoving boolean
 ---@field tooltip_array table
----@field onEventResize fun():void
----@field onEventResolution fun(w:number, h:number):void
----@field onEventUp fun(index:number):void
----@field onEventInit fun():void
----@field onEventDown fun(index:number):void
----@field addFilter fun(index:number, tooltip:string, frame:number):void
----@field addTab fun(tabTooltip:string):void
----@field addTextToFilter fun(index:number, text:string):void
----@field addTextToTab fun(index:number, text:string):void
----@field clearAll fun():void
----@field clearAllTexts fun():void
----@field clearFilter fun(index:number):void
----@field clearTab fun(index:number):void
----@field reOpen fun():void
----@field requestSize fun():void
----@field selectFilter fun(index:number):void
----@field setBGVisibility fun(b:boolean):void
----@field setFilterSelection fun(index:number, b:boolean):void
----@field setLockInput fun(b:boolean):void
----@field setLogSize fun(b:number, param2:number):void
----@field setLogVisible fun(b:boolean):void
----@field setTooltip fun(index:number, tooltip:string):void
+---@field onEventResize fun()
+---@field onEventResolution fun(w:number, h:number)
+---@field onEventUp fun(index:number)
+---@field onEventInit fun()
+---@field onEventDown fun(index:number)
+---@field addFilter fun(index:number, tooltip:string, frame:number)
+---@field addTab fun(tabTooltip:string)
+---@field addTextToFilter fun(index:number, text:string)
+---@field addTextToTab fun(index:number, text:string)
+---@field clearAll fun()
+---@field clearAllTexts fun()
+---@field clearFilter fun(index:number)
+---@field clearTab fun(index:number)
+---@field reOpen fun()
+---@field requestSize fun()
+---@field selectFilter fun(index:number)
+---@field setBGVisibility fun(b:boolean)
+---@field setFilterSelection fun(index:number, b:boolean)
+---@field setLockInput fun(b:boolean)
+---@field setLogSize fun(b:number, param2:number)
+---@field setLogVisible fun(b:boolean)
+---@field setTooltip fun(index:number, tooltip:string)
 ---@field startsWith fun(str1:string, str2:string):boolean
 
 ---@class CombatLogFlashMC:FlashMovieClip
@@ -190,42 +190,42 @@
 ---@field frameW number
 ---@field sizeDispl number
 ---@field resizeDragging boolean
----@field addFilter fun(id:number, tooltip:string, frame:number):void
----@field addTextToFilter fun(param1:number, param2:string):void
----@field clearAll fun():void
----@field clearAllTexts fun():void
----@field clearFilter fun(param1:number):void
----@field dragInv fun(param1:FlashMouseEvent):void
----@field dragInvMove fun(param1:FlashMouseEvent):void
----@field filterInput fun(param1:number, param2:boolean):void
+---@field addFilter fun(id:number, tooltip:string, frame:number)
+---@field addTextToFilter fun(param1:number, param2:string)
+---@field clearAll fun()
+---@field clearAllTexts fun()
+---@field clearFilter fun(param1:number)
+---@field dragInv fun(param1:FlashMouseEvent)
+---@field dragInvMove fun(param1:FlashMouseEvent)
+---@field filterInput fun(param1:number, param2:boolean)
 ---@field getFilter fun(param1:number):CombatLogFlashFilter
----@field mouseLeave fun(param1:FlashEvent):void
----@field onBgHide fun(param1:FlashMouseEvent):void
----@field onBgMouseOut fun(param1:FlashMouseEvent):void
----@field onBgMouseOver fun(param1:FlashMouseEvent):void
----@field onBgShow fun(param1:FlashMouseEvent):void
----@field onMoveResize fun(param1:FlashMouseEvent):void
----@field onResizeOut fun(param1:FlashMouseEvent):void
----@field onResizeOver fun(param1:FlashMouseEvent):void
----@field onResizeStartDrag fun(param1:FlashMouseEvent):void
----@field onResizeStopDrag fun(param1:FlashMouseEvent):void
----@field onSBOut fun(param1:FlashMouseEvent):void
----@field onSBOver fun(param1:FlashMouseEvent):void
----@field refreshText fun():void
----@field removeFilterEntriesFromList fun(param1:number):void
----@field removeOldLines fun():void
----@field resizing fun():void
----@field selectFilter fun(param1:number):void
----@field setBGVisibility fun(param1:boolean):void
----@field setFilterSelection fun(param1:number, param2:boolean):void
----@field setListWidths fun(param1:number):void
----@field setLockInput fun(param1:boolean):void
----@field setLogSize fun(param1:number, param2:number):void
----@field setScrollWheelEnabled fun(param1:boolean):void
----@field stopDragging fun():void
----@field stopDragInv fun(param1:FlashMouseEvent):void
----@field toggleFadeVisibility fun():void
----@field toggleLock fun():void
+---@field mouseLeave fun(param1:FlashEvent)
+---@field onBgHide fun(param1:FlashMouseEvent)
+---@field onBgMouseOut fun(param1:FlashMouseEvent)
+---@field onBgMouseOver fun(param1:FlashMouseEvent)
+---@field onBgShow fun(param1:FlashMouseEvent)
+---@field onMoveResize fun(param1:FlashMouseEvent)
+---@field onResizeOut fun(param1:FlashMouseEvent)
+---@field onResizeOver fun(param1:FlashMouseEvent)
+---@field onResizeStartDrag fun(param1:FlashMouseEvent)
+---@field onResizeStopDrag fun(param1:FlashMouseEvent)
+---@field onSBOut fun(param1:FlashMouseEvent)
+---@field onSBOver fun(param1:FlashMouseEvent)
+---@field refreshText fun()
+---@field removeFilterEntriesFromList fun(param1:number)
+---@field removeOldLines fun()
+---@field resizing fun()
+---@field selectFilter fun(param1:number)
+---@field setBGVisibility fun(param1:boolean)
+---@field setFilterSelection fun(param1:number, param2:boolean)
+---@field setListWidths fun(param1:number)
+---@field setLockInput fun(param1:boolean)
+---@field setLogSize fun(param1:number, param2:number)
+---@field setScrollWheelEnabled fun(param1:boolean)
+---@field stopDragging fun()
+---@field stopDragInv fun(param1:FlashMouseEvent)
+---@field toggleFadeVisibility fun()
+---@field toggleLock fun()
 
 ---@class FlashTweensyTimelineZero
 ---@field time number
@@ -254,6 +254,6 @@
 ---@field selectedB boolean
 ---@field timeline FlashTweensyTimelineZero
 ---@field textContent string
----@field onDown fun(param1:FlashMouseEvent):void
----@field onOut fun(param1:FlashMouseEvent):void
----@field onOver fun(param1:FlashMouseEvent):void
+---@field onDown fun(param1:FlashMouseEvent)
+---@field onOut fun(param1:FlashMouseEvent)
+---@field onOver fun(param1:FlashMouseEvent)

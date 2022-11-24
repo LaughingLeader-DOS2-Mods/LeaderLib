@@ -112,7 +112,7 @@ _INTERNAL.Callbacks = {
 	LoopEffectStarted = {}
 }
 
----@alias EffectManagerLoopEffectStartedCallback fun(effect:string, target:ObjectParam|number[], handle:integer, bone:string|nil):void
+---@alias EffectManagerLoopEffectStartedCallback fun(effect:string, target:ObjectParam|number[], handle:integer, bone:string|nil)
 
 EffectManager.Register = {
 	---@param callback EffectManagerLoopEffectStartedCallback

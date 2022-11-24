@@ -9,10 +9,10 @@ AttackManager = {
 
 Managers.Attack = AttackManager
 
----@alias DeprecatedBasicAttackOnStartCallback fun(attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], targetIsObject:boolean):void
----@alias DeprecatedBasicAttackOnHitCallback fun(attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData|DamageList, targetIsObject:boolean, skill:StatEntrySkillData):void
----@alias DeprecatedBasicAttackOnWeaponTagHitCallback fun(tag:string, attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData, targetIsObject:boolean, skill:StatEntrySkillData):void
----@alias DeprecatedBasicAttackOnWeaponTypeHitCallback fun(weaponType:string, attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData, targetIsObject:boolean, skill:StatEntrySkillData):void
+---@alias DeprecatedBasicAttackOnStartCallback fun(attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], targetIsObject:boolean)
+---@alias DeprecatedBasicAttackOnHitCallback fun(attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData|DamageList, targetIsObject:boolean, skill:StatEntrySkillData)
+---@alias DeprecatedBasicAttackOnWeaponTagHitCallback fun(tag:string, attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData, targetIsObject:boolean, skill:StatEntrySkillData)
+---@alias DeprecatedBasicAttackOnWeaponTypeHitCallback fun(weaponType:string, attacker:EsvCharacter, target:EsvCharacter|EsvItem|number[], data:HitData, targetIsObject:boolean, skill:StatEntrySkillData)
 
 AttackManager.OnStart = {
 	---@deprecated

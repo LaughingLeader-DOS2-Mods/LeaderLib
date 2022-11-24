@@ -4,7 +4,7 @@ local CombatVacuum = {
 	TimerTickRate = 2000,
 	---enemy.Stats.DynamicStats[1].Sight is set to this value, to avoid pulled party members from getting kicked out of combat
 	---This only seems to affect combat range on the server-side, leaving sneaking vision cones unchanged
-	ServerSightOverride = 1000,
+	ServerSightOverride = 500,
 }
 
 QOL.CombatVacuum = CombatVacuum

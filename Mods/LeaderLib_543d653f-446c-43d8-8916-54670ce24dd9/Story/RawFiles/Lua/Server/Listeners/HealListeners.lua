@@ -80,7 +80,7 @@ Timer.Subscribe("LeaderLib_ClearLastUsedHealingSkill", function(e)
 	_PV.LastUsedHealingSkill[e.Data.UUID] = nil
 end)
 
----@alias OnHealCallback fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem, heal:EsvStatusHeal, originalAmount:integer, handle:integer, skill:string|nil, healingSourceStatus:EsvStatusHealing|nil):void
+---@alias OnHealCallback fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem, heal:EsvStatusHeal, originalAmount:integer, handle:integer, skill:string|nil, healingSourceStatus:EsvStatusHealing|nil)
 
 ---@deprecated
 ---@see OnHealEventArgs

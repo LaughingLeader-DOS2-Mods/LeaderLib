@@ -580,12 +580,15 @@ end
 
 ---@alias GameHelpers_Character_GetSummonsResultType EsvCharacter|EclCharacter|EsvItem|EclItem
 
+---@overload fun(owner:CharacterParam):fun():EsvCharacter|EclCharacter
+---@overload fun(owner:CharacterParam, includeItems:true):fun():GameHelpers_Character_GetSummonsResultType
+---@overload fun(owner:CharacterParam, includeItems:boolean|nil, asTable:true):fun():GameHelpers_Character_GetSummonsResultType[]
 ---Gets all the active summons of a character.
 ---@param owner CharacterParam
----@param includeItems boolean|nil If on the server, item summons can be fetched as well.
+---@param includeItems boolean|nil If on the server-side, item summons can be fetched as well if this is true.
 ---@param asTable boolean|nil Return the result as a table, instead of an iterator.
 ---@param ignoreObjects table<NETID|UUID, boolean>|nil Specific MyGuid or NetID values to ignore.
----@return fun():GameHelpers_Character_GetSummonsResultType|GameHelpers_Character_GetSummonsResultType[] summons
+---@return fun():GameHelpers_Character_GetSummonsResultType summons
 function GameHelpers.Character.GetSummons(owner, includeItems, asTable, ignoreObjects)
 	owner = GameHelpers.GetCharacter(owner)
 

@@ -212,7 +212,7 @@ end
 
 ---Tries to get a character from a double value.
 ---@param double number
----@return EclCharacter
+---@return EclCharacter|nil
 function GameHelpers.Client.TryGetCharacterFromDouble(double)
 	local b,character = pcall(ProcessDoubleHandle, double, GameHelpers.GetCharacter)
 	if b then
@@ -223,7 +223,7 @@ end
 
 ---Tries to get an item from a double value.
 ---@param double number
----@return EclItem
+---@return EclItem|nil
 function GameHelpers.Client.TryGetItemFromDouble(double)
 	if double == nil or double == 0 then
 		return nil
@@ -231,6 +231,20 @@ function GameHelpers.Client.TryGetItemFromDouble(double)
 	local b,item = pcall(ProcessDoubleHandle, double, GameHelpers.GetItem)
 	if b then
 		return item
+	end
+	return nil
+end
+
+---Tries to get the character the cursor is hovering over.
+---@return EclCharacter|nil
+function GameHelpers.Client.TryGetCursorCharacter()
+	local cursor = Ext.UI.GetPickingState()
+	if cursor then
+		if GameHelpers.IsValidHandle(cursor.HoverCharacter) then
+			return GameHelpers.GetCharacter(cursor.HoverCharacter)
+		elseif GameHelpers.IsValidHandle(cursor.HoverCharacter2) then
+			return GameHelpers.GetCharacter(cursor.HoverCharacter2)
+		end
 	end
 	return nil
 end

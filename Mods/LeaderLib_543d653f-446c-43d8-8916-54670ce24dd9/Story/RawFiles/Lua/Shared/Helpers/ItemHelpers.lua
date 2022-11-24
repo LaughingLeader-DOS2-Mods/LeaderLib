@@ -1046,6 +1046,23 @@ function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableO
     return skills,itemParams
 end
 
+---@param item ItemParam
+---@return boolean
+function GameHelpers.Item.IsConsumable(item)
+    item = GameHelpers.GetItem(item)
+    if item and item.CurrentTemplate and item.CurrentTemplate.OnUsePeaceActions then
+        local b,result = pcall(function ()
+            for _,v in pairs(item.CurrentTemplate.OnUsePeaceActions) do
+                if v.Consume then
+                    return true
+                end
+            end
+        end)
+        return b and result == true
+    end
+	return false
+end
+
 ---Get all the skills that an item grants when equipped in a dictionary-format table.
 ---@param item ItemParam
 ---@return table<string,boolean> skills

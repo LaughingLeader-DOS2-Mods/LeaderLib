@@ -239,7 +239,7 @@ if isClient then
 				end
 			end
 		end
-	end)
+	end, {Priority=0})
 
 	Ext.RegisterNetListener("LeaderLib_ContextMenu_SetUUID", function(cmd, payload)
 		local data = Common.JsonParse(payload)

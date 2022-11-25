@@ -182,32 +182,24 @@ function UI.TryFindUIByType(ui, tryFindId)
 	if t == "number" then
 		id = ui
 	else
-		id = ui:GetTypeId() or tryFindId
+		id = ui.Type or tryFindId
 	end
-	-- if id == Data.UIType.characterSheet then
-	-- 	ui:Invoke("setGameMasterMode", true, true, true)
-	-- end
-	-- if id == nil then
-	-- 	return nil
-	-- end
 	for i,v in ipairs(allUIFiles) do
 		local path = "Public/Game/GUI/"..v
-		local builtInUI = Ext.GetBuiltinUI(path)
+		local builtInUI = Ext.UI.GetByPath(path)
 		if builtInUI ~= nil then
-			local builtInID = builtInUI:GetTypeId()
-			--print(id, v, builtInID, builtInUI:GetRoot().stage)
+			local builtInID = builtInUI.Type
 			if builtInID == id or builtInUI == ui then
-				--fprint(LOGLEVEL.TRACE, "[LeaderLib:UI.TryFindUIByType] %s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID)
 				return builtInID,v,path
 			end
 		end
 	end
+	
 	for k,v in pairs(customUIs) do
 		local customUI = Ext.UI.GetByName(k)
 		if customUI then
-			local customID = customUI:GetTypeId()
-			if customID == id or customID == ui then
-				--fprint(LOGLEVEL.TRACE, "[LeaderLib:UI.TryFindUIByType] %s = %s,", v, customID)
+			local customID = customUI.Type
+			if customID == id or customUI == ui then
 				return customID,v
 			end
 		elseif t ~= "number" then
@@ -221,18 +213,13 @@ function UI.TryFindUIByType(ui, tryFindId)
 		if type(v) == "table" then
 			for _,v2 in pairs(v) do
 				if v2 == id then
-					--fprint(LOGLEVEL.TRACE, "[LeaderLib:UI.TryFindUIByType] %s = %s,", k, v2)
 					return v2,k
 				end
 			end
 		else
 			if v == id then
-				--fprint(LOGLEVEL.TRACE, "[LeaderLib:UI.TryFindUIByType] %s = %s,", k, id)
 				return id,k
 			end
 		end
 	end
-	-- if Vars.DebugMode then
-	-- 	fprint(LOGLEVEL.WARNING, "[UI.TryFindUIByType] Failed to find UI for UI(%s) or id(%s)", ui, id)
-	-- end
 end

@@ -1,7 +1,7 @@
 Ext.Events.UIObjectCreated:Subscribe(function(e)
 	local t,name,path = UI.TryFindUIByType(e.UI, e.UI.Type)
 	if t then
-		local ui = path and Ext.GetBuiltinUI(path) or Ext.GetUIByType(t)
+		local ui = path and Ext.UI.GetByPath(path) or Ext.UI.GetByType(t)
 		if ui then
 			local this = ui:GetRoot()
 			local player = Client:GetCharacter()

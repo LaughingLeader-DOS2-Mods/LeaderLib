@@ -43,9 +43,9 @@ package controls.panels
 			this.list.m_scrollbar_mc.m_hideWhenDisabled = false;
 			this.list.mouseWheelWhenOverEnabled = true;
 			this.list.setFrame(412,792);
-			this.list.m_scrollbar_mc.SND_Click = "UI_GM_Generic_Click_Press";
+			this.list.m_scrollbar_mc.SND_Click = "UI_Generic_Click_Press";
 			this.list.m_scrollbar_mc.SND_Over = "";
-			this.list.m_scrollbar_mc.SND_Release = "UI_GM_Generic_Click_Release";
+			this.list.m_scrollbar_mc.SND_Release = "UI_Generic_Click_Release";
 			this.listHolder_mc.addChild(this.list);
 
 			this.close_mc.init(this.onClose);

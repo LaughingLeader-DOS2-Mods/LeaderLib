@@ -147,7 +147,7 @@ package controls.contextMenu
 			this.removeEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
 			if(this.clickSound && !isParentOpen)
 			{
-				Registry.ExtCall("PlaySound","UI_GM_Generic_Click");
+				Registry.ExtCall("PlaySound","UI_Generic_Click");
 			}
 			this.pressedButton();
 		}

@@ -558,6 +558,12 @@ function ContextMenu:OnBuiltinMenuUpdating(ui, event)
 		--ContextMenu:AddEntry()
 	end
 
+	for action,actionId in GetOrderedContextMenuActions() do
+		if action.AutomaticallyAddToBuiltin and action:GetCanOpen(self, x, y) then
+			self:AddBuiltinEntry(action.ID, action.Callback, action:GetDisplayName(), action.Visible, action.UseClickSound, action.Disabled, action.IsLegal, action.Handle)
+		end
+	end
+
 	Events.OnBuiltinContextMenuOpening:Invoke({
 		ContextMenu = self,
 		UI = ui,
@@ -568,12 +574,6 @@ function ContextMenu:OnBuiltinMenuUpdating(ui, event)
 		X = x,
 		Y = y,
 	})
-
-	for action,actionId in GetOrderedContextMenuActions() do
-		if action.AutomaticallyAddToBuiltin and action:GetCanOpen(self, x, y) then
-			self:AddBuiltinEntry(action.ID, action.Callback, action:GetDisplayName(), action.Visible, action.UseClickSound, action.Disabled, action.IsLegal, action.Handle)
-		end
-	end
 
 	local i = length
 	for _,v in ipairs(builtinEntries) do

@@ -3,15 +3,18 @@ local _ISCLIENT = Ext.IsClient()
 --Updates the treasure tables to spawn more items, and spawn items at other traders. This is until the 1.0 update is released
 --Ext.IO.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Stats/Generated/TreasureTable.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_TreasureTable.txt")
 
---Patches an event name conflict that prevented Soul Harvest's bonus from applying.
-Ext.IO.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript")
-
 local Patches = {
 	--Weapon Expansion
 	["c60718c3-ba22-4702-9c5d-5ad92b41ba5f"] = {
 		Version = 153288705,
 		Patch = function (initialized, region)
 			Ext.Utils.PrintWarning("[LeaderLib] Patching Weapon Expansion version [153288706]")
+
+			local path = Ext.IO.GetPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript")
+			if path ~= "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript" then
+				--Patches an event name conflict that prevented Soul Harvest's bonus from applying.
+				Ext.IO.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript")
+			end
 			
 			if not initialized then
 				return

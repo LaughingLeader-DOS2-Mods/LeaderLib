@@ -198,7 +198,7 @@ end
 ---Creates an item by stat, provided it has an ItemGroup set (for equipment).
 ---🔨**Server-Only**🔨  
 ---@param statName string
----@param creationProperties ItemDefinition|nil
+---@param creationProperties EocItemDefinition|nil
 ---@return string|nil itemGUID
 ---@return EsvItem|nil generatedItem
 function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
@@ -267,7 +267,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
 
     if rootTemplate ~= nil then
         local constructor = Ext.CreateItemConstructor(rootTemplate)
-        ---@type ItemDefinition
+        ---@type EocItemDefinition
         local props = constructor[1]
         props.GMFolding = false
 
@@ -337,28 +337,31 @@ end
 
 ---🔨**Server-Only**🔨  
 ---@param template string
----@param setProperties ItemDefinition|nil
+---@param setProperties EocItemDefinition|nil
 ---@return EsvItem
 function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     if _ISCLIENT then
         error("[GameHelpers.Item.CreateItemByTemplate] is server-side only.", 2)
     end
     local constructor = Ext.CreateItemConstructor(template)
-    ---@type ItemDefinition
+    ---@type EocItemDefinition
     local props = constructor[1]
     props:ResetProgression()
-    if setProperties then
-        for k,v in pairs(setProperties) do
-            if itemConstructorProps[k] then
-                props[k] = v
-            else
-                fprint(LOGLEVEL.WARNING, "[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Property %s doesn't exist for ItemDefinition", k)
-            end
-        end
+    props.IsIdentified = true
+
+    setProperties = setProperties or {
+        IsIdentified = true
+    }
+
+    for k,v in pairs(setProperties) do
+        props[k] = v
     end
+
     local item = constructor:Construct()
     if item ~= nil then
-        item = GameHelpers.GetItem(item.Handle)
+        if props.IsIdentified ~= false then
+            NRD_ItemSetIdentified(item.MyGuid, 1)
+        end
         local statsId = GameHelpers.Item.GetItemStat(item)
         ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
         local invokeResult = Events.TreasureItemGenerated:Invoke({Item=item, StatsId=statsId, IsClone=false, ResultingItem=item})
@@ -373,7 +376,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
                 end
             end
             if nextItem and nextItem.MyGuid ~= item.MyGuid then
-                if Ext.OsirisIsCallable then
+                if Ext.Osiris.IsCallable() then
                     ItemRemove(item.MyGuid)
                 end
                 item = nextItem
@@ -393,7 +396,7 @@ end
 
 ---🔨**Server-Only**🔨  
 ---@param item ItemParam The target item to clone.
----@param setProperties ItemDefinition|nil
+---@param setProperties EocItemDefinition|nil
 ---@param opts GameHelpers_Item_CloneOptions|nil Optional table of additional options.
 ---@return EsvItem
 function GameHelpers.Item.Clone(item, setProperties, opts)
@@ -408,7 +411,7 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
     ---@type GameHelpers_Item_CloneOptions
     opts = opts or {}
     local constructor = Ext.CreateItemConstructor(item)
-    ---@type ItemDefinition
+    ---@type EocItemDefinition
     local props = constructor[1]
 
     local level = GameHelpers.Item.GetItemLevel(item)
@@ -444,7 +447,7 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
             if itemConstructorProps[k] then
                 props[k] = v
             else
-                fprint(LOGLEVEL.WARNING, "[LeaderLib:GameHelpers.Item.Clone] Property %s doesn't exist for ItemDefinition", k)
+                fprint(LOGLEVEL.WARNING, "[LeaderLib:GameHelpers.Item.Clone] Property %s doesn't exist for EocItemDefinition", k)
             end
         end
     end

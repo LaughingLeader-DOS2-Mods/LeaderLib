@@ -112,7 +112,7 @@ function PullPartyIntoCombat()
 		end
 
 		if totalOutOfCombat > 0 and settings.Global:FlagEquals("LeaderLib_CombatVacuum_TickCombat", true) then
-			Timer.Restart("LeaderLib_CombatVacuum_TickCombat", CombatVacuum.TimerTickRate)
+			Timer.Start("LeaderLib_CombatVacuum_TickCombat", CombatVacuum.TimerTickRate)
 		else
 			Timer.Cancel("LeaderLib_CombatVacuum_TickCombat")
 		end
@@ -127,7 +127,7 @@ end)
 
 local function CheckCombatTick()
 	if GameHelpers.Combat.IsAnyPlayerInCombat() then
-		Timer.Restart("LeaderLib_CombatVacuum_TickCombat", CombatVacuum.TimerTickRate)
+		Timer.Start("LeaderLib_CombatVacuum_TickCombat", CombatVacuum.TimerTickRate)
 	else
 		Timer.Cancel("LeaderLib_CombatVacuum_TickCombat")
 	end
@@ -148,7 +148,7 @@ Ext.Osiris.RegisterListener("ObjectLeftCombat", 2, "after", StartCombatTickTimer
 local function Teleported_StartTimer()
 	local settings = SettingsManager.GetMod(ModuleUUID, false)
 	if settings.Global:FlagEquals("LeaderLib_PullPartyIntoCombat", true) then
-		Timer.Restart("LeaderLib_PullPartyIntoCombat", 2000)
+		Timer.Start("LeaderLib_PullPartyIntoCombat", 2000)
 	end
 end
 

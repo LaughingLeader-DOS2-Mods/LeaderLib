@@ -239,12 +239,12 @@ if Ext.IsServer() then
 	end)
 	settings.Global.Variables.AutoCombatRange:Subscribe(function(e)
 		if settings.Global:FlagEquals("LeaderLib_PullPartyIntoCombat", true) then
-			Timer.Restart("LeaderLib_PullPartyIntoCombat", 500)
+			Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
 		end
 	end)
 	settings.Global.Flags.LeaderLib_PullPartyIntoCombat:Subscribe(function(e)
 		if e.Value then
-			Timer.Restart("LeaderLib_PullPartyIntoCombat", 500)
+			Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
 		else
 			Timer.Cancel("LeaderLib_PullPartyIntoCombat")
 			Timer.Cancel("LeaderLib_CombatVacuum_TickCombat")
@@ -252,7 +252,7 @@ if Ext.IsServer() then
 	end)
 	settings.Global.Flags.LeaderLib_CombatVacuum_TickCombat:Subscribe(function(e)
 		if e.Value then
-			Timer.Restart("LeaderLib_CombatVacuum_TickCombat", QOL.CombatVacuum.TimerTickRate)
+			Timer.Start("LeaderLib_CombatVacuum_TickCombat", QOL.CombatVacuum.TimerTickRate)
 		else
 			Timer.Cancel("LeaderLib_CombatVacuum_TickCombat")
 		end

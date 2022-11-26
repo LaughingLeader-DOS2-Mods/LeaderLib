@@ -126,7 +126,7 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 		if applySkillProperties and applySkillProperties[sourceGUID] then
 			Ext.PropertyList.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceGUID, targetGUID, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
 			Ext.PropertyList.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceGUID, sourceGUID, source.WorldPos, _SelfPropertyContext, GameHelpers.Ext.ObjectIsItem(source))
-			Timer.Restart(applySkillProperties[sourceGUID], 1)
+			Timer.Start(applySkillProperties[sourceGUID], 1)
 		end
 	end
 

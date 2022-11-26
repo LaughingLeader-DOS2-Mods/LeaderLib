@@ -8,7 +8,6 @@ Timer = {
 }
 
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Utils.Version()
 local type = type
 local _mt = Ext.Utils.MonotonicTime
 
@@ -333,6 +332,9 @@ local function OnTimerFinished(timerName, skipAlteringTickTable)
 		Timer.TimerNameMap[timerName] = nil
 	end
 
+	--Clear before invoking, in case a callback starts another timer with the same name
+	_INTERNAL.ClearData(originalTimerName)
+
 	local invoked = false
 
 	if type(data) == "table" then
@@ -389,7 +391,6 @@ local function OnTimerFinished(timerName, skipAlteringTickTable)
 	end
 
 	_INTERNAL.ClearOneshotSubscriptions(timerName, skipAlteringTickTable)
-	_INTERNAL.ClearData(originalTimerName)
 end
 
 ---Starts an Osiris timer with a unique string variance, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
@@ -450,6 +451,7 @@ end
 
 --#region Restarting
 
+---Restart a timer without altering any stored data.
 ---@param timerName string|string[]
 ---@param delay integer
 function Timer.Restart(timerName, delay)
@@ -478,7 +480,7 @@ function Timer.RestartOneshot(timerName, delay)
 	return Timer.Restart(timerName, delay)
 end
 
----Restarts a unique timer.
+---Restarts a unique timer without altering stored data.
 ---@param timerName string The generalized timer name.
 ---@param uniqueVariance string The string that makes this timer unique, such as a UUID.
 ---@param delay integer
@@ -487,7 +489,7 @@ function Timer.RestartUniqueTimer(timerName, uniqueVariance, delay)
 	return Timer.Restart(uniqueTimerName, delay)
 end
 
----Restarts an object timer.
+---Restarts an object timer without altering stored data.
 ---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
 ---@param object ObjectParam
 ---@param delay integer
@@ -495,13 +497,15 @@ function Timer.RestartObjectTimer(timerName, object, delay)
 	local uuid = GameHelpers.GetUUID(object)
 	if uuid then
 		return Timer.RestartUniqueTimer(timerName, uuid, delay)
+	else
+		fprint(LOGLEVEL.ERROR, "[LeaderLib:Timer.RestartObjectTimer] timerName(%s) object(%s) delay(%s) - Failed to get UUID for object.", timerName, object, delay)
 	end
 	return false
 end
 --#endregion
 
 if not _ISCLIENT then
-	Ext.RegisterOsirisListener("TimerFinished", 1, "after", OnTimerFinished)
+	Ext.Osiris.RegisterListener("TimerFinished", 1, "after", OnTimerFinished)
 
 	local function OnProcObjectTimerFinished(uuid, timerName)
 		uuid = StringHelpers.GetUUID(uuid)

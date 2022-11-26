@@ -23,6 +23,7 @@ local function GetTextParamValues(output, character)
 			---@type SubscribableEventInvokeResult<GetTextPlaceholderEventArgs>
 			local invokeResult = Events.GetTextPlaceholder:Invoke({
 				Character = character.Stats,
+				Char = character,
 				ID = param,
 				ExtraParams = props or {},
 				Result = ""

@@ -197,6 +197,8 @@ if not _ISCLIENT then
 						ID = targetData.ID or "",
 						Target = targetObject,
 						Source = source,
+						TargetGUID = targetObject.MyGuid,
+						SourceGUID = GameHelpers.GetUUID(source),
 						Distance = targetData.Distance,
 						StartingPosition = targetData.Start,
 						Skill = targetData.Skill,
@@ -217,6 +219,8 @@ if not _ISCLIENT then
 					ID = "",
 					Target = targetObject,
 					Source = targetObject,
+					TargetGUID = targetObject.MyGuid,
+					SourceGUID = targetObject.MyGuid,
 					Distance = 0,
 					StartingPosition = targetObject.WorldPos
 				})
@@ -867,7 +871,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 			end
 		end
 	else
-		fprint(LOGLEVEL.WARNING, "[GameHelpers.Grid.GetNearbyObjects] opts.Type(%s) is not a valid target type. Should be All, Item, or Character")
+		fprint(LOGLEVEL.WARNING, "[GameHelpers.Grid.GetNearbyObjects] opts.Type(%s) is not a valid target type. Should be All, Item, or Character", opts.Type)
 		if not opts.AsTable then
 			return function() end
 		else

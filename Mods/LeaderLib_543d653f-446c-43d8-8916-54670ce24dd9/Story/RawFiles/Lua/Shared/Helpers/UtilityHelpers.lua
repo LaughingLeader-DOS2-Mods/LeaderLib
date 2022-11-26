@@ -19,8 +19,6 @@ if not _ISCLIENT then
 			local targetObject = e.Data.Object
 			local targetData = _PV.ForceMoveData[target]
 			if targetData ~= nil and targetData.Position then
-				Ext.Utils.Print("ForceMoveData", Ext.DumpExport(targetData))
-				print(GameHelpers.Math.GetDistance(target, targetData.Position))
 				if GameHelpers.Math.GetDistance(target, targetData.Position) <= 1 then
 					pcall(NRD_GameActionDestroy,targetData.Handle)
 					_PV.ForceMoveData[target] = nil
@@ -37,13 +35,14 @@ if not _ISCLIENT then
 					if targetData.EndAnimation and not StringHelpers.IsNullOrWhitespace(targetData.EndAnimation) then
 						CharacterSetAnimationOverride(targetObject.MyGuid, "")
 						targetObject.AnimationOverride = ""
-						print("PlayAnimation", targetObject.MyGuid, targetData.EndAnimation)
 						PlayAnimation(targetObject.MyGuid, targetData.EndAnimation, "")
 					end
 					Events.ForceMoveFinished:Invoke({
 						ID = targetData.ID or "",
 						Target = targetObject,
 						Source = source,
+						TargetGUID = targetObject.MyGuid,
+						SourceGUID = GameHelpers.GetUUID(source),
 						Distance = targetData.Distance,
 						StartingPosition = targetData.Start,
 						Skill = skill
@@ -62,6 +61,9 @@ if not _ISCLIENT then
 				Events.ForceMoveFinished:Invoke({
 					ID = "",
 					Target = targetObject,
+					Source = targetObject,
+					TargetGUID = targetObject.MyGuid,
+					SourceGUID = GameHelpers.GetUUID(targetObject),
 					Distance = 0,
 					StartingPosition = targetObject.WorldPos
 				})
@@ -188,6 +190,7 @@ if not _ISCLIENT then
 		local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, opts.BeamEffect or "", sourceObject.MyGuid)
 		if handle ~= nil then
 			_PV.ForceMoveData[targetObject.MyGuid] = {
+				ID = opts.ID,
 				Position = {tx,ty,tz},
 				Start = {x,y,z},
 				Handle = handle,

@@ -183,6 +183,7 @@ Events.GetTooltipSkillParam = Classes.SubscribableEvent:Create("GetTooltipSkillP
 ---@class GetTextPlaceholderEventArgs
 ---@field ID string
 ---@field Character StatCharacter
+---@field Char EclCharacter Character is a StatCharacter due to backwards-compatibility, but while exists to easily provide the EclCharacter.
 ---@field ExtraParams string[]
 ---@field Result string The text to replace the placeholder with.
 
@@ -447,7 +448,9 @@ if not _ISCLIENT then
 	---@class ForceMoveFinishedEventArgs
 	---@field ID string A way to identify this action, if any.
 	---@field Target EsvCharacter
+	---@field TargetGUID GUID
 	---@field Source EsvCharacter|EsvItem|nil
+	---@field SourceGUID GUID|nil
 	---@field Distance number
 	---@field StartingPosition number[]
 	---@field SkillData StatEntrySkillData|nil

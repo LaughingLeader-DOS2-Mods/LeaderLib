@@ -210,7 +210,7 @@ if not _ISCLIENT then
 		end
 	end
 
-	Ext.RegisterOsirisListener("RegionStarted", 1, "after", function(region)
+	Ext.Osiris.RegisterListener("RegionStarted", 1, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.STARTED
 		GameHelpers.Data.SetRegion(region)
 		Events.RegionChanged:Invoke({
@@ -221,7 +221,7 @@ if not _ISCLIENT then
 		GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
 	end)
 	
-	Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region)
+	Ext.Osiris.RegisterListener("GameStarted", 2, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.GAME
 		GameHelpers.Data.SetRegion(region)
 		Events.RegionChanged:Invoke({
@@ -234,7 +234,7 @@ if not _ISCLIENT then
 		end
 	end)
 	
-	Ext.RegisterOsirisListener("RegionEnded", 1, "after", function(region)
+	Ext.Osiris.RegisterListener("RegionEnded", 1, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.ENDED
 		GameHelpers.Data.SetRegion(region)
 		Events.RegionChanged:Invoke({
@@ -278,7 +278,7 @@ if not _ISCLIENT then
 		end
 	end
 
-	Ext.RegisterOsirisListener("GameModeStarted", 2, "after", function(gameMode, isEditorMode)
+	Ext.Osiris.RegisterListener("GameModeStarted", 2, "after", function(gameMode, isEditorMode)
 		GameHelpers.Data.SetGameMode(gameMode)
 		
 		-- Only needs to be loaded if we'll be going to CC, and if Origins is the adventure.
@@ -364,14 +364,14 @@ if not _ISCLIENT then
 		end
 	end
 
-	Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, profileId)
+	Ext.Osiris.RegisterListener("UserConnected", 3, "after", function(id, username, profileId)
 		if _Users[id] ~= true then
 			_Users[id] = true
 		end
 		GameHelpers.Data.SetCharacterData(id, profileId)
 	end)
 
-	Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
+	Ext.Osiris.RegisterListener("UserEvent", 2, "after", function(id, event)
 		if _Users[id] ~= true then
 			_Users[id] = true
 		end
@@ -383,13 +383,13 @@ if not _ISCLIENT then
 		end
 	end)
 
-	Ext.RegisterOsirisListener("UserDisconnected", 3, "after", function(id, username, profileId)
+	Ext.Osiris.RegisterListener("UserDisconnected", 3, "after", function(id, username, profileId)
 		_Users[id] = nil
 		SharedData.CharacterData[profileId] = nil
 		GameHelpers.Data.StartSyncTimer()
 	end)
 
-	Ext.RegisterOsirisListener("CharacterReservedUserIDChanged", 3, "after", function(uuid, last, id)
+	Ext.Osiris.RegisterListener("CharacterReservedUserIDChanged", 3, "after", function(uuid, last, id)
 		_Users[last] = nil
 		if id > -1 then
 			_Users[id] = true
@@ -399,7 +399,7 @@ if not _ISCLIENT then
 		end
 	end)
 
-	Ext.RegisterOsirisListener("PROC_HandleMagicMirrorResult", 2, "after", function(uuid, result)
+	Ext.Osiris.RegisterListener("PROC_HandleMagicMirrorResult", 2, "after", function(uuid, result)
 		if not StringHelpers.IsNullOrEmpty(uuid) and result == 1 then
 			uuid = StringHelpers.GetUUID(uuid)
 			local id,profile = GetUserData(uuid)
@@ -409,7 +409,7 @@ if not _ISCLIENT then
 		end
 	end)
 
-	Ext.RegisterOsirisListener("CharacterCreationFinished", 1, "after", function(uuid)
+	Ext.Osiris.RegisterListener("CharacterCreationFinished", 1, "after", function(uuid)
 		if not StringHelpers.IsNullOrEmpty(uuid) then
 			uuid = StringHelpers.GetUUID(uuid)
 			local id,profile = GetUserData(uuid)
@@ -419,7 +419,7 @@ if not _ISCLIENT then
 		end
 	end)
 
-	Ext.Osiris.RegisterListener("ObjectTurnStarted", 2, "after", function(char, combatid)
+	Ext.Osiris.RegisterListener("ObjectTurnStarted", 2, "after", function(char)
 		if CharacterIsControlled(char) == 1 then
 			local id = CharacterGetReservedUserID(char)
 			if id ~= nil then
@@ -445,17 +445,17 @@ if not _ISCLIENT then
 
 	end
 
-	Ext.RegisterOsirisListener("CharacterLeveledUp", 1, "after", OnPointsChanged)
+	Ext.Osiris.RegisterListener("CharacterLeveledUp", 1, "after", OnPointsChanged)
 
 	--Calls not supported.
-	-- Ext.RegisterOsirisListener("CharacterAddAttributePoint", 2, "after", OnPointsChanged)
-	-- Ext.RegisterOsirisListener("CharacterAddAbilityPoint", 2, "after", OnPointsChanged)
-	-- Ext.RegisterOsirisListener("CharacterAddCivilAbilityPoint", 2, "after", OnPointsChanged)
-	-- Ext.RegisterOsirisListener("CharacterAddTalentPoint", 2, "after", OnPointsChanged)
-	-- Ext.RegisterOsirisListener("CharacterAddTalentPoint", 2, "after", OnPointsChanged)
-	-- Ext.RegisterOsirisListener("CharacterAddSourcePoints", 2, "after", OnPointsChanged)
-	-- Ext.RegisterOsirisListener("CharacterOverrideMaxSourcePoints", 2, "after", OnPointsChanged)
-	-- Ext.RegisterOsirisListener("CharacterRemoveMaxSourcePointsOverride", 2, "after", OnPointsChanged)
+	-- Ext.Osiris.RegisterListener("CharacterAddAttributePoint", 2, "after", OnPointsChanged)
+	-- Ext.Osiris.RegisterListener("CharacterAddAbilityPoint", 2, "after", OnPointsChanged)
+	-- Ext.Osiris.RegisterListener("CharacterAddCivilAbilityPoint", 2, "after", OnPointsChanged)
+	-- Ext.Osiris.RegisterListener("CharacterAddTalentPoint", 2, "after", OnPointsChanged)
+	-- Ext.Osiris.RegisterListener("CharacterAddTalentPoint", 2, "after", OnPointsChanged)
+	-- Ext.Osiris.RegisterListener("CharacterAddSourcePoints", 2, "after", OnPointsChanged)
+	-- Ext.Osiris.RegisterListener("CharacterOverrideMaxSourcePoints", 2, "after", OnPointsChanged)
+	-- Ext.Osiris.RegisterListener("CharacterRemoveMaxSourcePointsOverride", 2, "after", OnPointsChanged)
 
 	Ext.Events.GameStateChanged:Subscribe(function (e)
 		local state = tostring(e.ToState)

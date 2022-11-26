@@ -39,8 +39,8 @@ local ObjectHandleEffectParams = {
 
 ---@class LeaderLibObjectLoopEffectSaveData
 ---@field Effect string
----@field Bone string
 ---@field Handle integer
+---@field Params EffectManagerEsvEffectParams
 
 ---@param uuid string
 ---@param effect string
@@ -306,7 +306,7 @@ function EffectManager.PlayEffect(fx, object, params, skipSaving)
 	local uuid = GameHelpers.GetUUID(object)
 	local result = _INTERNAL.PlayEffect(fx, object, params)
 	if result and params and params.Loop == true and not skipSaving then
-		if type(result) == "table" then
+		if type(result) == "table" and #result > 0 then
 			for i,v in pairs(result) do
 				_INTERNAL.SaveObjectEffectData(uuid, v.ID, v.Handle, params)
 			end
@@ -597,15 +597,23 @@ function EffectManager.RestoreEffects(region)
 
 	for uuid,dataTable in pairs(_PV.ObjectLoopEffects) do
 		if ObjectExists(uuid) == 1 and #dataTable > 0 then
+			local restoredEffects = {}
 			for i,v in pairs(dataTable) do
-				StopLoopEffect(v.Handle)
-				v.Handle = PlayLoopEffect(uuid, v.Effect, v.Bone)
-				if not v.Handle then
-					table.remove(dataTable, i)
+				if not StringHelpers.IsNullOrEmpty(v.Effect) then
+					local params = v.Params or {}
+					if v.Handle then
+						StopLoopEffect(v.Handle)
+					end
+					v.Handle = PlayLoopEffect(uuid, v.Effect, params.Bone or "")
+					if v.Handle then
+						restoredEffects[#restoredEffects+1] = {Handle=v.Handle, Effect=v.Effect, Params = params}
+					end
 				end
 			end
-			if #dataTable == 0 then
+			if #restoredEffects == 0 then
 				_PV.ObjectLoopEffects[uuid] = nil
+			else
+				_PV.ObjectLoopEffects[uuid] = restoredEffects
 			end
 		else
 			_PV.ObjectLoopEffects[uuid] = nil

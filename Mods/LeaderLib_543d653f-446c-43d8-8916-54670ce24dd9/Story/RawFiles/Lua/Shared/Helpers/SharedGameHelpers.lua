@@ -258,7 +258,7 @@ function GameHelpers.GetItemTags(item, inDictionaryFormat, skipStats)
 	for _,v in pairs(item:GetTags()) do
 		tags[v] = true
 	end
-	if not skipStats and item.Stats and item.StatsFromName.StatsEntry then
+	if not skipStats and item.Stats and item.StatsFromName and item.StatsFromName.StatsEntry then
 		local tagsStr = item.StatsFromName.StatsEntry.Tags
 		if not StringHelpers.IsNullOrWhitespace(tagsStr) then
 			for _,v in pairs(StringHelpers.Split(tagsStr, ";")) do

@@ -208,6 +208,21 @@ function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMul
     return {x,y,z}
 end
 
+---@param pos vec3
+---@param distanceMult number
+---@param directionalVector vec3
+---@param skipSnapToGrid boolean|nil Skip snapping the y value to the grid height at the resulting position.
+---@return vec3 position
+function GameHelpers.Math.ExtendPositionWithDirectionalVector(pos, directionalVector, distanceMult, skipSnapToGrid)
+    local x,y,z = _GetPosition(pos, true)
+    x = x + (-directionalVector[1] * distanceMult)
+    z = z + (-directionalVector[3] * distanceMult)
+    if not skipSnapToGrid then
+        y = GameHelpers.Grid.GetY(x,z)
+    end
+    return {x,y,z}
+end
+
 ---Sets an object's rotation.
 ---@param object UUID|EsvCharacter|EsvItem|EclCharacter|EclItem
 ---@param rotx number

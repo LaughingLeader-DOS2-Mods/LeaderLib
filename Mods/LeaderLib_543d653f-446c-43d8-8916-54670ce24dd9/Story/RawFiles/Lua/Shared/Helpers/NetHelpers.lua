@@ -1,7 +1,6 @@
 if GameHelpers.Net == nil then GameHelpers.Net = {} end
 
 local _ISCLIENT = Ext.IsClient()
-local _EXTVERSION = Ext.Version()
 
 local function EnsureString(payload)
 	local t = type(payload)
@@ -17,13 +16,8 @@ local function EnsureString(payload)
 end
 
 if not _ISCLIENT then
-	local _postToUser = Ext.PostMessageToUser
-	local _broadcast = Ext.BroadcastMessage
-	
-	if _EXTVERSION >= 56 then
-		_postToUser = Ext.Net.PostMessageToUser
-		_broadcast = Ext.Net.BroadcastMessage
-	end
+	local _postToUser = Ext.Net.PostMessageToUser
+	local _broadcast = Ext.Net.BroadcastMessage
 
 	--- Shortcut for calling GameHelpers.Net.PostToUser to the host character.
 	--- @param channel string Channel that will receive the message.
@@ -71,11 +65,7 @@ if not _ISCLIENT then
 		GameHelpers.Net.PostToUser(uuid, channel)
 	end
 else
-	local _postMessageToServer = Ext.PostMessageToServer
-	
-	if _EXTVERSION >= 56 then
-		_postMessageToServer = Ext.Net.PostMessageToServer
-	end
+	local _postMessageToServer = Ext.Net.PostMessageToServer
 
 	---Send a net message to the server.  
 	---🔧**Client-Only**🔧  
@@ -85,3 +75,38 @@ else
 		_postMessageToServer(channel, EnsureString(payload))
 	end
 end
+
+local _listenerCallbacks = {}
+
+---@generic T
+---@param id `T` The channel ID string value. Hint: If this name matches an annotated class type, the data param will automatically be that type in the callback.
+---@param callback fun(e:LuaNetMessageEvent, data:T)
+---@param skipParse boolean|nil Skip automatically parsing Payload to a table.
+function GameHelpers.Net.Subscribe(id, callback, skipParse)
+	if _listenerCallbacks[id] == nil then
+		_listenerCallbacks[id] = {}
+	end
+	if not skipParse then
+		---@param e LuaNetMessageEvent
+		local wrapper = function (e)
+			local data = Common.JsonParse(e.Payload)
+			callback(e, data)
+		end
+		table.insert(_listenerCallbacks[id], wrapper)
+	else
+		table.insert(_listenerCallbacks[id], callback)
+	end
+end
+
+Ext.Events.NetMessageReceived:Subscribe(function (e)
+	local callbacks = _listenerCallbacks[e.Channel]
+	if callbacks then
+		local len = #callbacks
+		for i=1,len do
+			local b,err = xpcall(callbacks[i], debug.traceback, e, e.Payload)
+			if not b then
+				Ext.Utils.PrintError(err)
+			end
+		end
+	end
+end)

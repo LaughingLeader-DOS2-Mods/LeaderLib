@@ -229,6 +229,40 @@ function GameHelpers.Tooltip.GetWeaponDamageText(id, character, overrideParams, 
 	return ""
 end
 
+---@param character StatCharacter The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
+---@param overrideParams StatEntryWeapon|nil A table of attributes to set on the weapon table before calculating the damage.
+---@param extraSettings {Attribute:PlayerUpgradeAttribute}|nil
+---@return string damageText
+function GameHelpers.Tooltip.CalculateEquippedWeaponDamageText(character, overrideParams, extraSettings)
+	local mainWeapon = character.MainWeapon
+	local offHandWeapon = character.OffHandWeapon
+	local mainDamageRange = Game.Math.CalculateWeaponScaledDamageRanges(character, mainWeapon)
+
+	if offHandWeapon ~= nil and Game.Math.IsRangedWeapon(mainWeapon) == Game.Math.IsRangedWeapon(offHandWeapon) then
+		local offHandDamageRange = Game.Math.CalculateWeaponScaledDamageRanges(character, offHandWeapon)
+		local dualWieldPenalty = Ext.ExtraData.DualWieldingDamagePenalty
+		for damageType, range in pairs(offHandDamageRange) do
+			local min = math.ceil(range.Min * dualWieldPenalty)
+			local max = math.ceil(range.Max * dualWieldPenalty)
+			local range = mainDamageRange[damageType]
+			if mainDamageRange[damageType] ~= nil then
+				range.Min = range.Min + min
+				range.Max = range.Max + max
+			else
+				mainDamageRange[damageType] = {Min = min, Max = max}
+			end
+		end
+	end
+
+	for damageType, range in pairs(mainDamageRange) do
+		local min = range.Min
+		local max = range.Max
+		range.Min = min + math.ceil(min * Game.Math.GetDamageBoostByType(character, damageType))
+		range.Max = max + math.ceil(max * Game.Math.GetDamageBoostByType(character, damageType))
+	end
+	return GameHelpers.Tooltip.FormatDamageRange(mainDamageRange)
+end
+
 ---@param str string|TranslatedString
 ---@param character CharacterParam
 local function ReplacePlaceholders(str, character)
@@ -307,6 +341,15 @@ local function ReplacePlaceholders(str, character)
 			output = StringHelpers.Replace(output, v, value)
 		end
 		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
+	end
+	for v in string.gmatch(output, "%[BasicAttack%]") do
+		local value = GameHelpers.Tooltip.CalculateEquippedWeaponDamageText(character.Stats)
+		if value ~= nil then
+			if _type(value) == "number" then
+				value = string.format("%i", math.floor(value))
+			end
+			output = StringHelpers.Replace(output, v, value)
+		end
 	end
 	for v in string.gmatch(output, "%[SkillDamage:.-%]") do
 		local value = ""

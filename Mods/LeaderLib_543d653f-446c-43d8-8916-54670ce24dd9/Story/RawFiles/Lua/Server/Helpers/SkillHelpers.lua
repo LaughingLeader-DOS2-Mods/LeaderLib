@@ -35,8 +35,8 @@ local projectileCreationProperties = {
 }
 
 local function GetRandomPositionInCircleRadius(tx,ty,tz,radius,angle,theta)
-    local a = angle or math.rad(Ext.Random(0,359))
-    local r = theta or (radius * math.sqrt(Ext.Random()))
+    local a = angle or math.rad(Ext.Utils.Random(0,359))
+    local r = theta or (radius * math.sqrt(Ext.Utils.Random()))
 
     local x = tx + (r * math.cos(a))
     local z = tz - (r * math.sin(a))

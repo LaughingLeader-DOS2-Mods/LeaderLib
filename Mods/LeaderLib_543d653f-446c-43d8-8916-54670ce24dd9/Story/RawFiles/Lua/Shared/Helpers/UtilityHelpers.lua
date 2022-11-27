@@ -486,12 +486,12 @@ function GameHelpers.Utils.SetPlayerCameraPosition(player, opts)
 	local targetLookAtValid = _type(opts.TargetLookAt) == "table"
 	assert(currentLookAtValid or targetLookAtValid, "Either CurrentLookAt and/or TargetLookAt must be set.")
 	if not _ISCLIENT then
-		local payloadData = {Player=player.NetID}
+		local payloadData = {NetID=player.NetID, Opts={}}
 		if currentLookAtValid then
-			payloadData.CurrentLookAt = opts.CurrentLookAt
+			payloadData.Opts.CurrentLookAt = opts.CurrentLookAt
 		end
 		if targetLookAtValid then
-			payloadData.TargetLookAt = opts.TargetLookAt
+			payloadData.Opts.TargetLookAt = opts.TargetLookAt
 		end
 		GameHelpers.Net.PostToUser(player, "LeaderLib_SetPlayerCameraPosition", payloadData)
 	else
@@ -502,10 +502,38 @@ function GameHelpers.Utils.SetPlayerCameraPosition(player, opts)
 	end
 end
 
+---Set a player's CustomData, and sync it to the client if on the server-side.
+---@param player CharacterParam
+---@param opts EocPlayerCustomData
+function GameHelpers.Utils.SetPlayerCustomData(player, opts)
+	player = GameHelpers.GetCharacter(player)
+	if player and player.PlayerCustomData ~= nil then
+		for k,v in pairs(opts) do
+			player.PlayerCustomData[k] = v
+		end
+		if not _ISCLIENT then
+			GameHelpers.Net.Broadcast("LeaderLib_SetPlayerCustomData", {NetID=player.NetID, Data = opts})
+		end
+	end
+end
+
+---@class LeaderLib_SetPlayerCameraPosition
+---@field NetID NETID
+---@field Opts GameHelpers_Utils_SetPlayerCameraPositionOptions
+
+---@class LeaderLib_SetPlayerCustomData
+---@field NetID NETID
+---@field Data EocPlayerCustomData
+
 if _ISCLIENT then
-	Ext.RegisterNetListener("LeaderLib_SetPlayerCameraPosition", function (channel, payload, user)
-		local data = Common.JsonParse(payload)
-		assert(_type(data) == "table", "Failed to parse payload:\n" .. payload)
-		GameHelpers.Utils.SetPlayerCameraPosition(data.Player, data)
+	GameHelpers.Net.Subscribe("LeaderLib_SetPlayerCameraPosition", function (e, data)
+		GameHelpers.Utils.SetPlayerCameraPosition(data.NetID, data.Opts)
+	end)
+
+	GameHelpers.Net.Subscribe("LeaderLib_SetPlayerCustomData", function (e, data)
+		local player = GameHelpers.GetCharacter(data.NetID)
+		if player then
+			GameHelpers.Utils.SetPlayerCustomData(player, data.Data)
+		end
 	end)
 end

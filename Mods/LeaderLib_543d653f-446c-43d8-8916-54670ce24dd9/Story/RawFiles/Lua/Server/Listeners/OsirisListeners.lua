@@ -154,8 +154,8 @@ local function OnObjectEvent(eventType, event, obj1, obj2)
 		Event = event,
 		EventType = eventType,
 		Objects = {obj1,obj2},
-		ObjectGUID1 = obj1,
-		ObjectGUID2 = obj2
+		ObjectGUID1 = GameHelpers.GetUUID(obj1),
+		ObjectGUID2 = GameHelpers.GetUUID(obj2)
 	})
 end
 

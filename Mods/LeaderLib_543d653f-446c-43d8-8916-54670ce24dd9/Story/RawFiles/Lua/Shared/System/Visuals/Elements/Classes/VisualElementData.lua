@@ -5,8 +5,9 @@
 local function OnEquipmentChanged(self, char, item, equipped)
 	local stat = item.StatsFromName and item.StatsFromName.StatsEntry or nil
 	if stat then
+		---@cast stat +StatEntryArmor
 		local armorType = stat.ArmorType
-		local slot = GameHelpers.Item.GetEquippedSlot(char.MyGuid, item.MyGuid) or item.Stats.Slot
+		local slot = GameHelpers.Item.GetEquippedSlot(char.MyGuid, item.MyGuid) or stat.Slot
 		if not equipped then
 			armorType = "None"
 		end
@@ -66,21 +67,20 @@ function VisualElementData:AddVisualForSlot(resource, armorType, slot, visualSlo
 		armorTypeData[slot] = {}
 	end
 	table.insert(armorTypeData[slot], Classes.VisualResourceData:Create(resource, visualSlot, params))
+	return self
 end
 
 ---@param armorType string
 ---@param visuals table<string,VisualResourceData[]>
 ---@return VisualElementData
 function VisualElementData:AddVisualsForType(armorType, visuals)
-	if self == nil or armorType == nil or visuals == nil then
-		return
-	end
 	local armorTypeData = self.Visuals[armorType]
 	if armorTypeData == nil then
 		armorTypeData = {}
 		self.Visuals[armorType] = armorTypeData
 	end
 	for slot,data in pairs(visuals) do
+		---@cast data table
 		if armorTypeData[slot] == nil then
 			armorTypeData[slot] = {}
 		end
@@ -92,11 +92,12 @@ function VisualElementData:AddVisualsForType(armorType, visuals)
 			table.insert(armorTypeData[slot], data)
 		end
 	end
+	return self
 end
 
 ---@param armorType string
 ---@param slot string
----@return VisualResourceData[]
+---@return VisualResourceData[]|nil
 function VisualElementData:GetVisuals(armorType, slot)
 	if self.Visuals ~= nil then
 		local armorTypeData = self.Visuals[armorType]

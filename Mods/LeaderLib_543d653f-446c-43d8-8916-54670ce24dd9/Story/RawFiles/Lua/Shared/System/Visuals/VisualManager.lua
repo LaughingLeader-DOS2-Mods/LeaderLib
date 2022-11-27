@@ -66,6 +66,7 @@ if not _ISCLIENT then
 				RestrictToVisual = options.Persistence.CurrentVisualOnly == true and character.RootTemplate.VisualTemplate or nil
 			})
 		end
+		---@type LeaderLibRequestAttachVisualData
 		local data = {
 			ID = options.ID,
 			Target = character.NetID,
@@ -137,6 +138,7 @@ if not _ISCLIENT then
 			}
 		end
 		if not StringHelpers.IsNullOrEmpty(visual) then
+			---@type LeaderLibRequestAttachVisualData
 			local data = {
 				ID = options.ID,
 				Target = character.NetID,
@@ -247,7 +249,7 @@ if not _ISCLIENT then
 		if visuals then
 			for _,v in pairs(visuals) do
 				if CanCreateVisual(character, v) then
-					VisualManager.RequestAttachVisual(character, v.Resource, v.Options, v.ExtraOptions)
+					VisualManager.RequestAttachVisual(character, {Resource=v.Resource, ExtraOptions=v.ExtraOptions, Options=v.Options})
 				end
 			end
 		end

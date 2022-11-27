@@ -64,27 +64,20 @@ if _ISCLIENT then
 	---@param includeShield boolean|nil If true, include shield visuals.
 	---@return ExtenderClientVisualAttachment[]
 	function GameHelpers.Visual.GetWeaponVisuals(character, includeShield)
-		if _EXTVERSION >= 56 then
-			---@type EclCharacter
-			local character = GameHelpers.GetCharacter(character)
-			assert(GameHelpers.Ext.ObjectIsCharacter(character), "target parameter must be a character UUID, NetID, or Esv/EclCharacter")
-			local visuals = {}
-			--Visual.Attachments["16"].Weapon
-			--Visual.SubObjects["1"].Renderable.PropertyList.field_6
-			--Visual.ShowMesh
-			--Visual.Attachments["1"].Visual.Attachments["1"].Armor
-			if character.Visual then
-				for index,v in pairs(character.Visual.Attachments) do
-					if v.Weapon == true then
-						if includeShield or v.AttachmentBoneName ~= "Dummy_Weapon_SH" then
-							visuals[#visuals+1] = v
-						end
+		---@type EclCharacter
+		local character = GameHelpers.GetCharacter(character)
+		assert(GameHelpers.Ext.ObjectIsCharacter(character), "target parameter must be a character UUID, NetID, or Esv/EclCharacter")
+		local visuals = {}
+		if character.Visual then
+			for index,v in pairs(character.Visual.Attachments) do
+				if v.Weapon == true then
+					if includeShield or v.AttachmentBoneName ~= "Dummy_Weapon_SH" then
+						visuals[#visuals+1] = v
 					end
 				end
 			end
-			return visuals
 		end
-		return {}
+		return visuals
 	end
 
 	---Gets all attached effect visuals for a character's weapons. These may be visuals such as the effect damage type overlays.

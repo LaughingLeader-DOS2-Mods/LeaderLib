@@ -206,7 +206,7 @@ function Timer.StartOneshot(timerName, delay, callback, stopPrevious)
 		return -1
 	end
 	if StringHelpers.IsNullOrEmpty(timerName) then
-		timerName = string.format("LeaderLib_%s%s", _mt(), Ext.Random(0,999999))
+		timerName = string.format("LeaderLib_%s%s", _mt(), Ext.Utils.Random(0,999999))
 	end
 	if stopPrevious then
 		Timer.Cancel(timerName)
@@ -268,7 +268,6 @@ function Timer.Subscribe(name, callback, once, priority)
 		--fprint(LOGLEVEL.WARNING, "[Timer.Subscribe] name(%s) is not a valid timer name. Should be a string or table of strings.", name)
 		error(string.format("[Timer.Subscribe] name(%s) is not a valid timer name. Should be a string or table of strings.", name), 2)
 	end
-	return nil
 end
 
 --Support for older listeners where the callback params were (timerName, uuid|data)
@@ -527,7 +526,7 @@ end
 ---@field Delay integer
 
 if _ISCLIENT then
-	---@param e LuaTickEventParams
+	---@param e LuaTickEvent
 	local function OnTick(e)
 		local length = #_waitForTick
 		if length > 0 then

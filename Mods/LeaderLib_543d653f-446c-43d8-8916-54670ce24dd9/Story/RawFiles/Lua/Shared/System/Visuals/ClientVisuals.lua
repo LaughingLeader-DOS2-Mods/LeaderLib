@@ -159,6 +159,7 @@ function VisualManager.AttachVisual(character, visualResource, options, extraOpt
 end
 
 ---@class LeaderLibRequestAttachVisualData
+---@field ID string
 ---@field Target NETID
 ---@field Resource string
 ---@field Options ExtenderClientVisualOptions|nil
@@ -211,8 +212,8 @@ end)
 Events.BeforeLuaReset:Subscribe(function ()
 	pcall(function ()
 		for netid,entries in pairs(ActiveVisuals) do
-			for resourceid,handleINT in pairs(entries) do
-				local handler = _TryGetHandlerFromInt(handleINT)
+			for resourceid,handle in pairs(entries) do
+				local handler = Ext.Visual.Get(handle)
 				if handler then
 					handler:Delete()
 				end

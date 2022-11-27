@@ -117,7 +117,7 @@ function ClientCharacterData:UpdatePoints(uuid)
 	end
 end
 
----@private
+---@protected
 ---@return ClientCharacterData
 function ClientCharacterData:Export()
 	self:Update()

@@ -48,7 +48,7 @@ end
 ---Example: SubscribableEvent<CharacterResurrectedEventArgs>
 ---@see SubscribableEventArgs
 ---@see LeaderLibSubscriptionEvents
----@class LeaderLibSubscribableEvent<T>:{(Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer, Once:boolean, MatchArgs:T|(fun(e:T):boolean), CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:T|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil, getArgForMatch:(fun(self:T, argKey:string, matchedValue:any):any)|nil):SubscribableEventInvokeResult)}
+---@class LeaderLibSubscribableEvent<T>:{(Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer|nil, Once:boolean|nil, MatchArgs:T|(fun(e:T):boolean)|nil, CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:T|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil, getArgForMatch:(fun(self:T, argKey:string, matchedValue:any):any)|nil):SubscribableEventInvokeResult)}
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string

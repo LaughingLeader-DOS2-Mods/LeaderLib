@@ -324,7 +324,7 @@ if not _ISCLIENT then
 	})
 
 	---@class DoHitEventArgs
-	---@field Hit HitRequest
+	---@field Hit StatsHitDamageInfo
 	---@field DamageList DamageList
 	---@field StatusBonusDamageTypes table
 	---@field HitType HitTypeValues
@@ -376,15 +376,15 @@ if not _ISCLIENT then
 	---@field SkipPositionCheck boolean If true, target/attacker positions aren't checked, allowing a hit to backstab outside of melee range, and outside the backstab angle.
 	---@field Target StatCharacter
 	---@field Attacker StatCharacter
-	---@field Weapon StatItem
+	---@field Weapon CDivinityStatsItem
 	---@field DamageList DamageList
 	---@field HitType HitTypeValues
 	---@field NoHitRoll boolean
 	---@field ForceReduceDurability boolean
-	---@field Hit HitRequest	
+	---@field Hit StatsHitDamageInfo	
 	---@field AlwaysBackstab boolean
-	---@field HighGround HighGroundFlag
-	---@field CriticalRoll CriticalRollFlag
+	---@field HighGround StatsHighGroundBonus
+	---@field CriticalRoll StatsCriticalRoll
 	
 	---Modify the result of HitOverrides.CanBackstab by setting e.CanBackstab and/or e.SkipPositionCheck  
 	---| Parameter | Description |

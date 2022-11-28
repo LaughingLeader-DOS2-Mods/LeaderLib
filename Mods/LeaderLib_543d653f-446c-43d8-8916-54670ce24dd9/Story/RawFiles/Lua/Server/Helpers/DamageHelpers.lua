@@ -15,7 +15,6 @@ local _SelfPropertyContext = {"Self", "SelfOnHit"}
 ---@param isHitHandle boolean Whether the handle is a hit or status handle.
 ---@return boolean
 function GameHelpers.Damage.ReduceDamage(target, attacker, handle, reduction, isHitHandle)
-	--fprint(LOGLEVEL.TRACE, "[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
     for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
@@ -56,7 +55,7 @@ local function ReduceDamage_Call(target, attacker, handle_param, reduction_perc,
     return GameHelpers.Damage.ReduceDamage(target, attacker, handle, reduction, is_hit_param == 1)
 end
 
-Ext.NewCall(ReduceDamage_Call, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
+Ext.Osiris.NewCall(ReduceDamage_Call, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 
 ---@deprecated
 ---Increase damage by a percentage (0.5 = 50%). This increases damage for all damage types in the hit.
@@ -100,7 +99,7 @@ local function IncreaseDamage_Call(target, attacker, handle, amount, is_hit_para
     end
 end
 
-Ext.NewCall(IncreaseDamage_Call, "LeaderLib_Hit_IncreaseDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
+Ext.Osiris.NewCall(IncreaseDamage_Call, "LeaderLib_Hit_IncreaseDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 GameHelpers.Damage.IncreaseDamage = IncreaseDamage
 -- Legacy
 GameHelpers.IncreaseDamage = IncreaseDamage
@@ -115,11 +114,6 @@ GameHelpers.IncreaseDamage = IncreaseDamage
 ---@param isHit boolean
 ---@return boolean
 function GameHelpers.Damage.RedirectDamage(target, defender, attacker, handle, reduction, isHit)
-	fprint(LOGLEVEL.TRACE, "[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Defender("..tostring(defender)..") Attacker("..tostring(attacker)..") IsHit("..tostring(isHit)..")")
-    --if CanRedirectHit(defender, handle, hit_type) then -- Ignore surface, DoT, and reflected damage
-    --local hit_type_name = NRD_StatusGetString(defender, handle, "DamageSourceType")
-    --local hit_type = NRD_StatusGetInt(defender, handle, "HitType")
-    --fprint(LOGLEVEL.TRACE, "[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",target,") Target(",defender,") Attacker(",attacker,")")
     local redirected_hit = NRD_HitPrepare(defender, attacker)
     local damageRedirected = false
 
@@ -140,7 +134,6 @@ function GameHelpers.Damage.RedirectDamage(target, defender, attacker, handle, r
                 NRD_HitAddDamage(handle, damageType, removed_damage)
             end
             NRD_HitAddDamage(redirected_hit, damageType, reduced_damage)
-            fprint(LOGLEVEL.TRACE, "[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..damageType)
             damageRedirected = true
         end
     end
@@ -552,12 +545,16 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     end
 
     if highGroundFlag == nil then
-        highGroundFlag = GameHelpers.Character.GetHighGroundFlag(source, target)
+        if GameHelpers.Ext.ObjectIsCharacter(source) and GameHelpers.Ext.ObjectIsCharacter(target) then
+            highGroundFlag = GameHelpers.Character.GetHighGroundFlag(source, target)
+        else
+            highGroundFlag = GameHelpers.Math.GetHighGroundFlag(source, target)
+        end
     end
 
     ---@type DamageList
     local damageList = nil
-    ---@type DeathType
+    ---@type DeathType|nil
     local deathType = "None"
 
     if params.GetDamageFunction ~= nil then
@@ -593,10 +590,12 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
         hit.Hit.DamageList:Merge(damageList)
         GameHelpers.Hit.RecalculateLifeSteal(hit.Hit, target.Stats, source.Stats, hitType, true, true)
         if GameHelpers.Ext.ObjectIsCharacter(target) and GameHelpers.Ext.ObjectIsCharacter(source) then
-            if HitOverrides._ComputeCharacterHitFunction(target.Stats, source.Stats, source.Stats.MainWeapon, damageList, hitType, false, false, hit.Hit, alwaysBackstab, highGroundFlag, criticalRoll) then
-                
-            end
+            HitOverrides._ComputeCharacterHitFunction(target.Stats, source.Stats, source.Stats.MainWeapon, damageList, hitType, false, false, hit.Hit, alwaysBackstab, highGroundFlag, criticalRoll)
         end
+
+        hit.Hit.TotalDamageDone = 0
+        hit.Hit.DamageDealt = 0
+
         for _,damage in pairs(damageList:ToTable()) do
             hit.Hit.TotalDamageDone = hit.Hit.TotalDamageDone + damage.Amount
             hit.Hit.DamageDealt = hit.Hit.DamageDealt + damage.Amount
@@ -917,13 +916,6 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
         end
         if not StringHelpers.IsNullOrEmpty(deathType) then
             NRD_HitSetString(hit, "DeathType", deathType)
-        end
-        for k,t in pairs(Classes.HitPrepareData.HIT_ATTRIBUTE) do
-            if t == "number" or "boolean" then
-                print(k, NRD_HitGetInt(hit, k))
-            elseif t == "string" then
-                print(k, NRD_HitGetString(hit, k))
-            end
         end
         NRD_HitExecute(hit)
     end

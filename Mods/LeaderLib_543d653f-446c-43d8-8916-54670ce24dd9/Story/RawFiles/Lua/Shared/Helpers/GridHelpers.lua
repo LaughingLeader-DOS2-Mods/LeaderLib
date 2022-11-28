@@ -44,46 +44,45 @@ end
 ---@return number z
 ---@return boolean success
 function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
-	distIncrement = distIncrement or 0.1
-	startDistance = startDistance or 12.0
-	local grid = _getGrid()
-	if grid then
-		-- if GameHelpers.Grid.IsValidPosition(startPos[1], startPos[3], grid) then
-		-- 	return startPos[1],startPos[2],startPos[3]
-		if startDistance > 0 then
-			local currentTravelDist = reverse ~= true and startDistance or 0
-			while (reverse ~= true and currentTravelDist >= 0) or (reverse == true and currentTravelDist < startDistance) do
-				local x = (directionVector[1] * currentTravelDist) + startPos[1]
-				local z = (directionVector[3] * currentTravelDist) + startPos[3]
-				if GameHelpers.Grid.IsValidPosition(x, z, grid) then
-					local y = grid:GetCellInfo(x,z).Height
-					return x,y,z,true
-				end
-				if reverse ~= true then
-					currentTravelDist = currentTravelDist - distIncrement
-				else
-					currentTravelDist = currentTravelDist + distIncrement
-				end
-			end
-		end
+	local pos,success = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
+	if success then
+		local x,y,z = table.unpack(pos)
+		return x,y,z,true
 	end
-	if startPos then
-		local x,y,z = table.unpack(startPos)
-		return x,y,z,false
-	end
-	return 0,0,0,false
+	local x,y,z = table.unpack(startPos)
+	return x,y,z,false
 end
 
 ---@param startPos number[]
 ---@param directionVector number[]
----@param startDistance number|nil
+---@param maxDistance number|nil
 ---@param reverse boolean|nil Start from the smallest distance possible instead.
 ---@param distIncrement number|nil The number to progressively add when finding valid positions.
+---@param minDistance number|nil When in reverse, start from this distance instead of 0.
 ---@return vec3 position
 ---@return boolean success
-function GameHelpers.Grid.GetValidPositionTableAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
-	local x,y,z,success = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
-	return {x,y,z},success
+function GameHelpers.Grid.GetValidPositionTableAlongLine(startPos, directionVector, maxDistance, reverse, distIncrement, minDistance)
+	distIncrement = distIncrement or 0.1
+	maxDistance = maxDistance or 12.0
+	minDistance = minDistance or 0
+	local grid = _getGrid()
+	if grid and maxDistance > 0 then
+		local currentTravelDist = reverse ~= true and maxDistance or minDistance
+		while (reverse ~= true and currentTravelDist >= minDistance) or (reverse == true and currentTravelDist < maxDistance) do
+			local x = (directionVector[1] * currentTravelDist) + startPos[1]
+			local z = (directionVector[3] * currentTravelDist) + startPos[3]
+			if GameHelpers.Grid.IsValidPosition(x, z, grid) then
+				local y = grid:GetCellInfo(x,z).Height
+				return {x,y,z},true
+			end
+			if reverse ~= true then
+				currentTravelDist = currentTravelDist - distIncrement
+			else
+				currentTravelDist = currentTravelDist + distIncrement
+			end
+		end
+	end
+	return startPos,false
 end
 
 ---@param startPos number[]
@@ -749,6 +748,7 @@ end
 ---@field AllowOffStage boolean|nil Allow returning offstage objects.
 ---@field Relation GameHelpers_Grid_GetNearbyObjectsOptionsRelationOptions|nil Filter returned characters by this relation, such as "Ally" "Neutral".
 ---@field Sort string|"Distance"|"Random"|"LowestHP"|"HighestHP"|"None"|fun(a:ServerObject,b:ServerObject):boolean
+---@field IgnoreHeight boolean|nil If true, the y value of positions is ignored when comparing distance.
 
 ---@type GameHelpers_Grid_GetNearbyObjectsOptions
 local _defaultGetNearbyObjectsOptions = {
@@ -818,7 +818,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 		local len = #entries
 		for i=1,len do
 			local v = entries[i]
-			local dist = GameHelpers.Math.GetDistance(v, pos)
+			local dist = GameHelpers.Math.GetDistance(v, pos, opts.IgnoreHeight)
 			_distances[v] = dist
 			if v ~= GUID and dist <= opts.Radius then
 				local obj = GameHelpers.GetItem(v)
@@ -844,7 +844,7 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 		local len = #entries
 		for i=1,len do
 			local v = entries[i]
-			local dist = GameHelpers.Math.GetDistance(v, pos)
+			local dist = GameHelpers.Math.GetDistance(v, pos, opts.IgnoreHeight)
 			_distances[v] = dist
 			if v ~= GUID and dist <= opts.Radius then
 				local obj = GameHelpers.GetCharacter(v)

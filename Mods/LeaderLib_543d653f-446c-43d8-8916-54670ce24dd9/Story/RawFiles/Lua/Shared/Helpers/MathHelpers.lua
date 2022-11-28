@@ -280,12 +280,13 @@ end
 ---Get the distance between two Vector3 points, or objects.
 ---@param pos1 number[]|ObjectParam First position array, or an object with a WorldPos.
 ---@param pos2 number[]|ObjectParam Second position array, or an object with a WorldPos.
+---@param ignoreHeight boolean|nil Ignore the Y value when fetching the distance.
 ---@return number distance
-function GameHelpers.Math.GetDistance(pos1, pos2)
+function GameHelpers.Math.GetDistance(pos1, pos2, ignoreHeight)
     local x,y,z = _GetPosition(pos1, true)
     local tx,ty,tz = _GetPosition(pos2, true)
     local xDiff = x - tx
-    local yDiff = y - ty
+    local yDiff = not ignoreHeight and (y - ty) or 0
     local zDiff = z - tz
     return _sqrt((xDiff^2) + (yDiff^2) + (zDiff^2))
 end

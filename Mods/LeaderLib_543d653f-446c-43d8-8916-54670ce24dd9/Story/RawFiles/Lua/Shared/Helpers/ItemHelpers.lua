@@ -522,6 +522,7 @@ end
 ---@param slot ItemSlot
 ---@return EsvItem|EclItem|nil
 function GameHelpers.Item.GetItemInSlot(character, slot)
+    slot = tostring(slot)
     character = GameHelpers.GetCharacter(character)
     fassert(character ~= nil, "'%s' is not a valid character", character)
     local slotIndex = Data.EquipmentSlots[slot]

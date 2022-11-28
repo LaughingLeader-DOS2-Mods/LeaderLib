@@ -323,7 +323,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
                     end
                 end
                 if nextItem and nextItem.MyGuid ~= newItem.MyGuid then
-                    if Ext.OsirisIsCallable then
+                    if Ext.Osiris.IsCallable() then
                         ItemRemove(newItem.MyGuid)
                     end
                     newItem = nextItem
@@ -491,7 +491,7 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
                     end
                 end
                 if nextItem and nextItem.MyGuid ~= clone.MyGuid then
-                    if Ext.OsirisIsCallable then
+                    if Ext.Osiris.IsCallable() then
                         ItemRemove(clone.MyGuid)
                     end
                     clone = nextItem

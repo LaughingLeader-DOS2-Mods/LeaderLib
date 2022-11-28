@@ -203,8 +203,8 @@ function GameHelpers.StatItemHasTag(statItem, tag)
 		if statItem.DynamicStats then
 			for _,v in pairs(statItem.DynamicStats) do
 				if not StringHelpers.IsNullOrWhitespace(v.ObjectInstanceName) then
-					local tags = Ext.StatGetAttribute(v.ObjectInstanceName, "Tags")
-					if tags and StringHelpers.DelimitedStringContains(tags, ";", tag) then
+					local boost = Ext.Stats.Get(v.ObjectInstanceName, nil, false)
+					if boost and not StringHelpers.IsNullOrEmpty(boost.Tags) and StringHelpers.DelimitedStringContains(boost.Tags, ";", tag) then
 						return true
 					end
 				end

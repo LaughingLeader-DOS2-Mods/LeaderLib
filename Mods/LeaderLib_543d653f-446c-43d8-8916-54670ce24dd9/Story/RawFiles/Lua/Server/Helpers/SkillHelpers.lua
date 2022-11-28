@@ -584,6 +584,10 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
     props.Radius = skill.Range
     --Inherited properties
     props.SurfaceType = skill.SurfaceType
+    --The extender complains about this not being a correct value
+    if props.SurfaceType == "None" then
+        props.SurfaceType = nil
+    end
     props.StatusChance = 1.0
     props.Duration = (math.max(1, skill.SurfaceLifetime)) * 6.0
     if source then
@@ -735,6 +739,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
     for k,v in pairs(props) do
         local b,err = xpcall(TrySetValue, debug.traceback, action, k, v)
         if not b then
+            Ext.Utils.PrintError(k,v)
             Ext.Utils.PrintError(err)
             dumpAction = true
         end

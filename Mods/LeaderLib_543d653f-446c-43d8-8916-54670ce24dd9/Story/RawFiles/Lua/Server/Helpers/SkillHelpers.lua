@@ -511,6 +511,15 @@ function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
     if extraParams.CanDeflect == nil then
         extraParams.CanDeflect = false
     end
+    
+    if extraParams.SetHitObject == nil and skill.ExplodeRadius == 0 then
+        --[[
+            Scripted projectiles:
+            1. Can't hit targets with a KNOCKED_DOWN type status, if ExplodeRadius is 0.
+            2. Can't hit allies if ExplodeRadius is 0.
+        ]]
+        extraParams.SetHitObject = true
+    end
 
     local props = PrepareProjectileProps(target, skill, source, extraParams)
 

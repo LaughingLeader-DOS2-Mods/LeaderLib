@@ -1217,8 +1217,8 @@ end
 ---@param target CharacterParam
 ---@return StatsHighGroundBonus
 function GameHelpers.Character.GetHighGroundFlag(attacker, target)
-	local attacker = GameHelpers.GetCharacter(attacker)
-	local target = GameHelpers.GetCharacter(target)
+	local attacker = GameHelpers.TryGetObject(attacker)
+	local target = GameHelpers.TryGetObject(target)
 	assert(attacker ~= nil, "attacker parameter must be a character UUID, NetID, or Esv/EclCharacter")
 	assert(target ~= nil, "target parameter must be a character UUID, NetID, or Esv/EclCharacter")
 	local highGroundFlag = GameHelpers.Math.GetHighGroundFlag(attacker.WorldPos, target.WorldPos)

@@ -512,12 +512,8 @@ function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
         extraParams.CanDeflect = false
     end
     
-    if extraParams.SetHitObject == nil and skill.ExplodeRadius == 0 then
-        --[[
-            Scripted projectiles:
-            1. Can't hit targets with a KNOCKED_DOWN type status, if ExplodeRadius is 0.
-            2. Can't hit allies if ExplodeRadius is 0.
-        ]]
+    if extraParams.SetHitObject == nil and skill.ExplodeRadius == 0 and GameHelpers.Ext.ObjectIsAnyType(target) then
+        --Guarantee the hit object if the radius is 0 and target is an object
         extraParams.SetHitObject = true
     end
 

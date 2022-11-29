@@ -232,7 +232,7 @@ end
 ---@param skill string
 ---@param amount number
 function GameHelpers.Skill.AddCooldown(char, skill, amount)
-    local character = GameHelpers.GetCharacter(char)
+    local character = GameHelpers.GetCharacter(char) --[[@as EsvCharacter]]
     assert(character ~= nil, "A valid EsvCharacter, NetID, or UUID is required.")
     ---@cast character EsvCharacter
     local skillData = character.SkillManager.Skills[skill]

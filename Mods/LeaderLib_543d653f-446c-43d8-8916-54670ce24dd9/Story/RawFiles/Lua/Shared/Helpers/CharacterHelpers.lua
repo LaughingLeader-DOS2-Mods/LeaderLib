@@ -588,7 +588,7 @@ end
 ---@param includeItems boolean|nil If on the server-side, item summons can be fetched as well if this is true.
 ---@param asTable boolean|nil Return the result as a table, instead of an iterator.
 ---@param ignoreObjects table<NETID|UUID, boolean>|nil Specific MyGuid or NetID values to ignore.
----@return fun():GameHelpers_Character_GetSummonsResultType summons
+---@return fun():GameHelpers_Character_GetSummonsResultType|nil summons
 function GameHelpers.Character.GetSummons(owner, includeItems, asTable, ignoreObjects)
 	owner = GameHelpers.GetCharacter(owner)
 

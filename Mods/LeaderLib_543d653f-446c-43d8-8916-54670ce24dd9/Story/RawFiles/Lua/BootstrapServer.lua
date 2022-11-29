@@ -201,6 +201,7 @@ end
 
 Ext.Require("Server/Classes/_Init.lua")
 Ext.Require("Server/Data/BasePresets.lua")
+Ext.Require("Server/Helpers/ActionHelpers.lua")
 Ext.Require("Server/Helpers/MiscHelpers.lua")
 Ext.Require("Server/Helpers/DatabaseHelpers.lua")
 Ext.Require("Server/Helpers/CombatHelpers.lua")

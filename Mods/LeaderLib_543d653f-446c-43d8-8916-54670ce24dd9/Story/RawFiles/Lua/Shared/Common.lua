@@ -572,3 +572,16 @@ function Common.GetValueOrDefault(val, fallback)
 	end
 	return val
 end
+
+---Check if a variable matches any of the given types.
+---@param value any|nil
+---@param types string[]
+function Common.TypeMatchesAny(value, types)
+	local t = type(v)
+	for _,v in pairs(types) do
+		if v == t then
+			return true
+		end
+	end
+	return false
+end

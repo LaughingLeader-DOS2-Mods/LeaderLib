@@ -164,7 +164,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 			if varType == "number" then
 				local interval = v.Interval or 1
 				local min = v.Min or 0
-				local max = v.Max or math.ceil(interval * 10) -- ToDO Find a good generic upper-limit
+				local max = v.Max or math.ceil(interval * 10) -- TODO Find a good generic upper-limit
 				local displayName, tooltip = PrepareText(name, v, false, v.Type)
 				local controlsEnabled = v.ClientSide or isHost
 				mainMenu.addMenuSlider(ModMenuManager.LastID, displayName, v.Value, min, max, interval, not controlsEnabled, tooltip)

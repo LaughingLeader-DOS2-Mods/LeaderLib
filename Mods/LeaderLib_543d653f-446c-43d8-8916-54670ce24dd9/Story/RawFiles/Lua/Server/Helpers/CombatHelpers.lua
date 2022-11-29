@@ -9,7 +9,7 @@ end
 ---@param filter GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback|nil Used to filter returned charaters. Allies/Enemies/Neutral are the alignment relation towards the player party. If a function is supplied instead, a character is only included if the function returns true.
 ---@param filterReference EsvCharacter|EsvItem For when using preset filters like "Ally", is is a reference character for relational checks.
 ---@param asTable boolean|nil Return results as a table, instead of an iterator function.
----@return fun():EsvCharacter
+---@return fun():EsvCharacter|nil
 local function GetOsirisCombatCharacters(id, filter, filterReference, asTable)
 	local combat = Osi.DB_CombatCharacters:Get(nil, id)
 	if combat then
@@ -85,7 +85,7 @@ end
 ---@param filter GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback|nil Used to filter returned charaters. Allies/Enemies/Neutral are the alignment relation towards the player party. If a function is supplied instead, a character is only included if the function returns true.
 ---@param filterReference EsvCharacter|EsvItem|nil For when using preset filters like "Ally", is is a reference character for relational checks.
 ---@param asTable boolean|nil Return results as a table, instead of an iterator function.
----@return fun():EsvCharacter|EsvCharacter[]
+---@return fun():EsvCharacter|EsvCharacter[]|nil
 function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)
 	if _OSIRIS() then
 		return GetOsirisCombatCharacters(id, filter, filterReference, asTable)

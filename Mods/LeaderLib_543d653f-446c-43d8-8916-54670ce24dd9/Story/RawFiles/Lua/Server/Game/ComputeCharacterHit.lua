@@ -433,7 +433,7 @@ local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, targe
     hit.DamageList:CopyFrom(Ext.Stats.NewDamageList())
 
     for i,damageType in pairs(statusBonusDmgTypes) do
-        damageList.Add(damageType, math.ceil(totalDamage * 0.1))
+        damageList:Add(damageType, math.ceil(totalDamage * 0.1))
     end
 
     Game.Math.ApplyDamagesToHitInfo(damageList, hit)

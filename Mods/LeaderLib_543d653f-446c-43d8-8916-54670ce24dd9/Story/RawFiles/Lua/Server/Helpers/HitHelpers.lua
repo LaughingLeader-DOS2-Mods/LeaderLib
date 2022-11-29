@@ -183,7 +183,7 @@ local WeaponHitProperties = {
 ---@param hit HitContext
 ---@param skill StatEntrySkillData|nil
 ---@param hitStatus EsvStatusHit|nil
----@param hitType HitTypeValues|nil
+---@param hitType HitTypeValues|integer|nil
 ---@return boolean
 function GameHelpers.Hit.IsFromWeapon(hit, skill, hitStatus, hitType)
 	if not hitType and hit ~= nil then
@@ -255,26 +255,18 @@ function GameHelpers.Hit.IsDirect(hit)
 end
 
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.
----@param hit HitRequest|EsvStatusHit
+---@param hit StatsHitDamageInfo|EsvStatusHit
 ---@return boolean
 function GameHelpers.Hit.Succeeded(hit)
 	if GameHelpers.Ext.UserDataIsType(hit, Data.ExtenderClass.EsvStatusHit) then
+		---@cast hit EsvStatusHit
 		hit = hit.Hit
 	end
-	if _EXTVERSION < 56 then
-		if (hit.EffectFlags & Game.Math.HitFlag.Dodged) ~= 0 then
-			return false
-		end
-		if (hit.EffectFlags & Game.Math.HitFlag.Missed) ~= 0 then
-			return false
-		end
-		if (hit.EffectFlags & Game.Math.HitFlag.Blocked) ~= 0 then
-			return false
-		end
-	else
-		if hit.Dodged or hit.Missed or hit.Blocked then
-			return false
-		end
+	if not hit then
+		return false
+	end
+	if hit.Dodged or hit.Missed or hit.Blocked then
+		return false
 	end
 	return true
 end

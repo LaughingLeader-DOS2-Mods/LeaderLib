@@ -50,8 +50,11 @@ Mods.LeaderLib = {
 
 ---@alias StatCharacter CDivinityStatsCharacter
 ---@alias StatItem CDivinityStatsItem
+---@alias StatItemDynamic CDivinityDynamicStatsEntry
 ---@alias DamageList StatsDamagePairList
 ---@alias ObjectHandle ComponentHandle
+---@alias HitRequest StatsHitDamageInfo
+---@alias HitContext EsvPendingHit
 
 ---@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter):string
 

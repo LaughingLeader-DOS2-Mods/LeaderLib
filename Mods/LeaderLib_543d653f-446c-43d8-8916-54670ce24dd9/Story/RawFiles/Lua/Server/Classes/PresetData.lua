@@ -66,7 +66,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 				for tag,suffix in pairs(previewRaceSuffixes) do
 					if IsTagged(char, tag) == 1 then
 						local racePreviewSet = self.Equipment.."_"..suffix
-						local racePreviewEquipment = Ext.GetEquipmentSet(racePreviewSet)
+						local racePreviewEquipment = Ext.Stats.EquipmentSet.GetLegacy(racePreviewSet)
 						if racePreviewEquipment ~= nil and #racePreviewEquipment.Groups > 0 then
 							equipment = racePreviewSet
 							break
@@ -130,7 +130,7 @@ end
 ---@param char string
 ---@param checkMemorizationRequirements boolean
 function PresetData:AddSkillsToCharacter(char, checkMemorizationRequirements)
-	local skillSet = Ext.GetSkillSet(self.SkillSet)
+	local skillSet = Ext.Stats.SkillSet.GetLegacy(self.SkillSet)
 	if skillSet ~= nil then
 		for i,v in pairs(skillSet.Skills) do
 			if type(v) == "table" then
@@ -177,7 +177,7 @@ end
 
 ---@return string[]
 function PresetData:GetSkills()
-	return Ext.GetSkillSet(self.SkillSet)
+	return Ext.Stats.SkillSet.GetLegacy(self.SkillSet)
 end
 
 Classes.PresetData = PresetData

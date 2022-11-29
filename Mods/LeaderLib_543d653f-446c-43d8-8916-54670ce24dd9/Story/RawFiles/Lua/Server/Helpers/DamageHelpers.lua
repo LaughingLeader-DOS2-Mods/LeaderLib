@@ -468,7 +468,7 @@ local _defaultSkillParams = {
 ---@param skill string
 ---@param params GameHelpers.Damage.ApplySkillDamageParams|nil
 function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
-    source = GameHelpers.TryGetObject(source)
+    source = GameHelpers.GetCharacter(source)
     fassert(source ~= nil, "Failed to get object for source (%s)", source)
     target = GameHelpers.TryGetObject(target)
     fassert(target ~= nil, "Failed to get object for target (%s)", target)

@@ -212,7 +212,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
             properties = args[1]
         end
     end
-    ---@type StatEntryWeapon|StatEntryArmor|StatEntryShield|StatEntryObject|StatEntryPotion
+    ---@type StatEntryType|nil
     local stat = nil
     local statType = ""
     local level = properties and properties.StatsLevel or 1
@@ -1024,7 +1024,7 @@ function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableO
     if item and item.CurrentTemplate and item.CurrentTemplate.OnUsePeaceActions then
         for _,v in pairs(item.CurrentTemplate.OnUsePeaceActions) do
             ---@cast v +UseSkillActionData
-            
+
             if v.Type == "SkillBook" then
                 itemParams.IsSkillbook = true
             elseif v.Type == "UseSkill" then

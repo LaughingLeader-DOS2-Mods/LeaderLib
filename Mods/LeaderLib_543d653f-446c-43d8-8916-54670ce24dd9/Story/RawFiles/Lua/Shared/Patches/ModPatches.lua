@@ -497,26 +497,28 @@ local Patches = {
 					end
 				end
 
+				---@param item EsvItem
+				---@param changes table
+				---@param dynamicIndex integer|nil
 				Mods.WeaponExpansion.EquipmentManager.SyncItemStatChanges = function (item, changes, dynamicIndex)
 					if changes.Boosts ~= nil and changes.Boosts["Damage Type"] ~= nil then
 						changes.Boosts["DamageType"] = changes.Boosts["Damage Type"]
 						changes.Boosts["Damage Type"] = nil
 					end
 					local slot = GameHelpers.Item.GetSlot(item, true)
+					---@type CharacterParam|integer|nil
 					local owner = GameHelpers.Item.GetOwner(item)
 					if owner then
 						owner = owner.NetID
 					end
 					if item ~= nil and item.NetID ~= nil then
 						--Fix for CleavePercentage not being correctly translated from the stat attribute (20 = 0.2)
-						if changes then
-							if changes.Stats then
-								for k,mult in pairs(FixDynamicStatsValueTranslation) do
-									if changes.Stats[k] then
-										local value = Ext.StatGetAttribute(item.StatsId, k)
-										if value and value > 0 then
-											changes.Stats[k] = value * mult
-										end
+						if changes and changes.Stats and item.StatsFromName then
+							for k,mult in pairs(FixDynamicStatsValueTranslation) do
+								if changes.Stats[k] then
+									local value = item.StatsFromName.StatsEntry[k]
+									if value and value > 0 then
+										changes.Stats[k] = value * mult
 									end
 								end
 							end
@@ -548,7 +550,7 @@ local Patches = {
 						end
 						if hasSkills then
 							local item = GameHelpers.GetItem(v.UUID)
-							if item then
+							if item and item.Stats then
 								item.Stats.DynamicStats[2].Skills = ""
 								local syncData = {
 									ID = item.StatsId,
@@ -563,9 +565,11 @@ local Patches = {
 										Stats = {}
 									}
 								}
-								local cleave = Ext.StatGetAttribute(item.StatsId, "CleavePercentage")
-								if cleave > 0 then
-									syncData.Changes.Stats.CleavePercentage = cleave * 0.01
+								if item.StatsFromName then
+									local cleave = item.StatsFromName.StatsEntry.CleavePercentage
+									if cleave > 0 then
+										syncData.Changes.Stats.CleavePercentage = cleave * 0.01
+									end
 								end
 								if Mods.WeaponExpansion.EquipmentManager.ItemIsNearPlayers(item) then
 									GameHelpers.Net.Broadcast("LLWEAPONEX_SetItemStats", syncData)

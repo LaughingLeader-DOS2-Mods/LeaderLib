@@ -222,16 +222,21 @@ end
 ---@param uuid string Character uuid
 ---@return boolean
 function QuestData:HasQuest(uuid)
-	uuid = _uuidCheck(uuid)
-
-	return ObjectGetFlag(uuid, self.Flags.Add) == 1
+	local uuid = _uuidCheck(uuid)
+	if uuid then
+		return ObjectGetFlag(uuid, self.Flags.Add) == 1
+	end
+	return false
 end
 
 ---@param uuid string Character UUID
 ---@param state QuestStateData|string Either a state object, or a quest flag to check.
 ---@return boolean
 function QuestData:Activate(uuid, state)
-	uuid = _uuidCheck(uuid)
+	local uuid = _uuidCheck(uuid)
+	if not uuid then
+		return false
+	end
 
 	local addedFlags = {}
 	if ObjectGetFlag(uuid, self.Flags.Add) == 0 then
@@ -278,7 +283,8 @@ end
 ---Close and archive a quest.
 ---@param uuid string Character UUID
 function QuestData:Complete(uuid)
-	uuid = _uuidCheck(uuid)
+	local uuid = _uuidCheck(uuid)
+	assert(uuid ~= nil, "UUID is invalid")
 	ObjectSetFlag(uuid, self.Flags.Close, 0)
 end
 
@@ -291,7 +297,7 @@ Events.RegionChanged:Subscribe(function (e)
 	end
 end)
 
----@return string,string,string|nil
+---@param flag string
 local function GetQuestFromFlag(flag)
 	--DB_QuestDef_UpdateEvent first since the same flag could be used in DB_QuestDef_AddEvent
 	local b,id,stateId = GameHelpers.DB.TryUnpack(Osi.DB_QuestDef_UpdateEvent:Get(nil, nil, flag))

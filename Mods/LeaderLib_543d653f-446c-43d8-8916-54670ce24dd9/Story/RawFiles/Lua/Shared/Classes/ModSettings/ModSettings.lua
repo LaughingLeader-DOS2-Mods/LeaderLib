@@ -137,17 +137,19 @@ function ModSettings:SetVariable(id, value, profile)
 	end
 end
 
+---@return FlagData|VariableData|ButtonData|nil entry
 function ModSettings:GetEntry(id, profile)
+	local entry = nil
 	if profile ~= nil then
 		local profileSettings = self.Profiles[profile]
 		if profileSettings ~= nil then
-			local entry = profileSettings.Settings.Variables[id] or profileSettings.Settings.Flags[id]
-			if entry ~= nil then
+			entry = profileSettings.Settings.Variables[id] or profileSettings.Settings.Flags[id]
+			if entry then
 				return entry
 			end
 		end
 	end
-	local entry = self.Global.Buttons[id]
+	entry = self.Global.Buttons[id]
 	if entry then
 		return entry
 	end

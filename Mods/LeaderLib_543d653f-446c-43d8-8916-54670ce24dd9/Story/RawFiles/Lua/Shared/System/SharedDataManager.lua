@@ -282,9 +282,10 @@ if not _ISCLIENT then
 		GameHelpers.Data.SetGameMode(gameMode)
 		
 		-- Only needs to be loaded if we'll be going to CC, and if Origins is the adventure.
-		local firstLevel = Osi.DB_GLO_FirstLevelAfterCharacterCreation:Get(nil)
-		if firstLevel and #firstLevel > 0 then
-			firstLevel = firstLevel[1][1]
+		local firstLevel = nil
+		local db = Osi.DB_GLO_FirstLevelAfterCharacterCreation:Get(nil)
+		if db and #db > 0 then
+			firstLevel = db[1][1]
 		end
 		if firstLevel == "TUT_Tutorial_A" then
 			SkipTutorial.Initialize()

@@ -73,7 +73,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 
 		if fixPure or fixSulfur or fixSentinel then
 			for i,v in pairs(tooltip:GetElements("WeaponDamage")) do
-				local damageType = Ext.EnumIndexToLabel("DamageType", v.DamageType)
+				local damageType = Ext.Stats.EnumIndexToLabel("DamageType", v.DamageType)
 				if v.Label == "" then
 					if damageType == "None" and fixPure then
 						v.Label = LocalizedText.DamageTypeNames.None.Text.Value

@@ -11,7 +11,7 @@
 ---@alias FlashTimerCallback fun(timerName:string, isComplete:boolean)
 
 ---@class UIExtensions
----@field Root UIExtensionsMain
+---@field Root UIExtensionsMain|table
 ---@field Instance LeaderLibUIExtensions
 UIExtensions = {
 	Controls = {},

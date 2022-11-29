@@ -158,13 +158,11 @@ function GameHelpers.GetUserID(obj)
 	return nil
 end
 
----@param char1 string|EsvCharacter|EclCharacter
----@param char2 string|EsvCharacter|EclCharacter
+---@param char1 CharacterParam
+---@param char2 CharacterParam
 ---@return boolean
 function GameHelpers.CharacterUsersMatch(char1, char2)
-	---@type EsvCharacter
 	local character1 = char1
-	---@type EsvCharacter
 	local character2 = char2
 
 	local t1 = _type(char1)

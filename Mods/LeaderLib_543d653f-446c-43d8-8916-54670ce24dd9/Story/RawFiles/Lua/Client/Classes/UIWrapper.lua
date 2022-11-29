@@ -19,7 +19,7 @@ local _uiPathWrappers = {}
 ---@field Context UIListenerContext
 
 ---@class LeaderLibUIWrapper
----@field Root FlashMainTimeline
+---@field Root FlashMainTimeline|table
 ---@field Instance UIObject
 ---@field Visible boolean
 local UIWrapper = {

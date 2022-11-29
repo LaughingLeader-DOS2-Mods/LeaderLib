@@ -97,7 +97,7 @@ function ClientCharacterData:GetCharacter()
 	return GameHelpers.GetCharacter(self.NetID or self.UUID)
 end
 
----@private
+---@protected
 function ClientCharacterData:UpdatePoints(uuid)
 	local uuid = uuid or self.UUID
 	if not uuid then

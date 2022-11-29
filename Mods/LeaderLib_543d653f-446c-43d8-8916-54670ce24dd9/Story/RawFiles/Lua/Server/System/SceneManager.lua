@@ -195,7 +195,7 @@ end
 
 
 ---@param id string
----@param state string
+---@param state string|nil
 function SceneManager.SetSceneByID(id, state, ...)
 	local scene = SceneManager.GetSceneByID(id, true)
 	if scene then

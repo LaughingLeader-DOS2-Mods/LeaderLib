@@ -25,7 +25,7 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelfParam
 	end
 	local radius = 6.0
 	if radiusVal ~= nil then
-		radius = tonumber(radiusVal)
+		radius = tonumber(radiusVal) or 6.0
 	end
 	local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
 	local characters = nil
@@ -315,7 +315,7 @@ Ext.RegisterConsoleCommand("addtreasureex", function(command, treasure, level, f
 	if generateAmount then
 		generateAmount = tonumber(generateAmount) or 1
 	end
-	---@type ItemDefinition
+	---@type EocItemDefinition
 	local props = {
 		Level = level,
 		ItemType = forceRarity or "Rare",
@@ -618,7 +618,7 @@ Ext.RegisterConsoleCommand("hidestatusmc", function(command, visible)
 end)
 
 Ext.RegisterConsoleCommand("clonedeltamodtest", function(command, amount)
-	---@type ItemDefinition
+	---@type EocItemDefinition
 	local properties = {}
 	local deltamods = {
 		"Boost_Weapon_Rune_LOOT_Rune_Venom_Giant",

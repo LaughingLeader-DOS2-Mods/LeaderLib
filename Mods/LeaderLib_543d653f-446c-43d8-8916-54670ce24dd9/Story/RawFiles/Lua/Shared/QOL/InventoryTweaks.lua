@@ -109,7 +109,7 @@ if _ISCLIENT then
 		end
 	end
 
-	---@return fun():{SlotMC:FlashMovieClip, Item:EclItem}
+	---@return fun():{SlotMC:FlashMovieClip, Item:EclItem}|nil
 	local function GetContainerItems()
 		local entries = {}
 		local b,err = xpcall(function ()
@@ -145,7 +145,7 @@ if _ISCLIENT then
 		end
 	end
 
-	---@return fun():{SlotMC:FlashMovieClip, Item:EclItem}
+	---@return fun():{SlotMC:FlashMovieClip, Item:EclItem}|nil
 	local function GetTradeItems(controllerEnabled)
 		local entries = {}
 		local b,err = xpcall(function ()

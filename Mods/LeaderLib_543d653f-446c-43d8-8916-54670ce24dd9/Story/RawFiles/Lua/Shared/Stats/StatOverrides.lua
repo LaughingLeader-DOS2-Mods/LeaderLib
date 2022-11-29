@@ -53,7 +53,6 @@ end
 local StatFixes = {
 	--Original: "Burning,0,2;Melt" - Seems like it was meant to not apply BURNING, but Burning isn't a status.
 	Projectile_TrapEarthballNoIgnite = {
-		---@param stat StatEntrySkillData
 		CanChange = _SkillPropertiesActionMissing,
 		Changes = {
 			SkillProperties = {{
@@ -161,15 +160,18 @@ local ignoreSkills = {
 	Projectile_CON00_SetBonus = true
 }
 
-local function CanChangeSkillTier(stat, tier)
-	if ignoreSkills[stat] == true then
+---@param id string
+---@param stat StatEntrySkillData
+---@param tier any
+local function CanChangeSkillTier(id, stat, tier)
+	if ignoreSkills[id] == true then
 		return false
 	end
-	if Ext.StatGetAttribute(stat, "ForGameMaster") == "Yes" and Ext.StatGetAttribute(stat, "Ability") ~= "None" then
+	if stat.ForGameMaster == "Yes" and stat.Ability ~= "None" then
 		if tier == "" or tier == "Starter" or tier == "None" then
 			return false
 		end
-		if Ext.StatGetAttribute(stat, "IsEnemySkill") == "Yes" then
+		if stat.IsEnemySkill == "Yes" then
 			return false
 		end
 		for str,b in pairs(ignoreSkillNames) do
@@ -188,7 +190,7 @@ Ext.IO.AddPathOverride("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/St
 ---@param stat StatEntryCharacter
 ---@param attribute string
 ---@param nextVal number|integer|string|table
----@param force boolean
+---@param force boolean|nil
 local function AdjustStat(stat, attribute, nextVal, force)
 	if stat[attribute] and (stat[attribute] ~= nextVal or force) then
 		stat[attribute] = nextVal
@@ -312,7 +314,7 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 							tier = originalSkillTiers[stat]
 						end
 					end
-					if CanChangeSkillTier(id, tier) then
+					if CanChangeSkillTier(id, stat, tier) then
 						originalSkillTiers[id] = tier
 						total = total + 1
 						stat.Tier = "Starter"

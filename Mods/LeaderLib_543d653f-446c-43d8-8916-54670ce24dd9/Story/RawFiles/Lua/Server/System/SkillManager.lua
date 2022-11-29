@@ -612,7 +612,7 @@ end
 ---@param onlySkillState SKILL_STATE|SKILL_STATE[]|nil If set, the callback will only fire for specified skill states.
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
----@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
+---@return integer|integer[]|nil index Subscription index(s), which can be used to unsubscribe.
 function _REGISTER.All(skill, callback, onlySkillState, priority, once)
 	local t = type(skill)
 	if t == "table" then

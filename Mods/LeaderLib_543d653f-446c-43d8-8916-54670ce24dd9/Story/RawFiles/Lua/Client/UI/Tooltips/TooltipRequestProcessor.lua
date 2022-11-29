@@ -1083,7 +1083,7 @@ local function RegisterControllerHandlers()
 	end
 	--Custom controller tooltip calls.
 	_CallHandler("SlotHover", function (e, ui, event, slotNum)
-		---@type {bottombar_mc:{slotsHolder_mc:{tooltipSlotType:integer, tooltipSlot:number}}}
+		---@type {bottombar_mc:{slotsHolder_mc:{tooltipSlotType:integer, tooltipSlot:number, tooltipStr:string, slot_array:FlashArray}}}
 		local this = ui:GetRoot()
 		if this then
 			local slotsHolder_mc = this.bottombar_mc.slotsHolder_mc

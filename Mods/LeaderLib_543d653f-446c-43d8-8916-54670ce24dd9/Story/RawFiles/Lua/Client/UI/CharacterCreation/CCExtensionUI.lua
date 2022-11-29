@@ -1,7 +1,7 @@
 local _EXTVERSION = Ext.Utils.Version()
 
 ---@class CCExtensionsUI
----@field Root FlashMainTimeline
+---@field Root FlashMainTimeline|table
 ---@field Instance UIObject
 ---@field Visible boolean
 local CCExt = {

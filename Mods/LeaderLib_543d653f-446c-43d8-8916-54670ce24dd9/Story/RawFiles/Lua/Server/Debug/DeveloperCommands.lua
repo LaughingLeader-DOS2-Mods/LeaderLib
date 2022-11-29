@@ -173,7 +173,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		local host = CharacterGetHostCharacter()
 		local state = 2
 		if param ~= nil then
-			state = math.tointeger(tonumber(param))
+			state = math.tointeger(tonumber(param)) or 2
 		end
 		Ext.Utils.Print("[setarmoroption]",host,state)
 		GameHelpers.Net.PostToUser(host, "LeaderLib_SetArmorOption", MessageData:CreateFromTable("ArmorOption", {UUID = host, State = state}):ToString())
@@ -702,7 +702,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		local weapon = GameHelpers.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
 		NRD_ItemSetPermanentBoostInt(weapon.MyGuid, "StrengthBoost", Ext.Utils.Random(1,30))
 		
-		fprint(LOGLEVEL.TRACE, weapon.Stats.StrengthBoost, NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
+		fprint(LOGLEVEL.TRACE, weapon.Stats.StatsEntry.StrengthBoost, NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
 		for i,v in pairs(weapon.Stats.DynamicStats) do
 			if v ~= nil and v.ObjectInstanceName ~= nil then
 				fprint(LOGLEVEL.TRACE, i,v.ObjectInstanceName,v.StrengthBoost)
@@ -1300,7 +1300,7 @@ Ext.RegisterConsoleCommand("refreshcd", function(command)
 end)
 
 
----@param params ItemDefinition
+---@param params EocItemDefinition
 local function AddItemStat(stat, params)
 	if not params then
 		params = {}

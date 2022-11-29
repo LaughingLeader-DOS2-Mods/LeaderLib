@@ -308,7 +308,7 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 			if not x or not y or not z then
 				error(string.format("No valid position set (%s). Failed to apply status (%s)", Lib.inspect(target), status), 2)
 			end
-			for _,v in pairs(Ext.GetCharactersAroundPosition(x,y,z,radius)) do
+			for _,v in pairs(Ext.Entity.GetCharacterGuidsAroundPosition(x,y,z,radius)) do
 				if v ~= source then
 					if canApplyCallback then
 						local b,result = pcall(canApplyCallback, v, source, status, false)
@@ -321,7 +321,7 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 				end
 			end
 			if canTargetItems and (statusType ~= "CHARMED" and statusType ~= "DAMAGE_ON_MOVE") then
-				for _,v in pairs(Ext.GetItemsAroundPosition(x,y,z,radius)) do
+				for _,v in pairs(Ext.Entity.GetItemGuidsAroundPosition(x,y,z,radius)) do
 					if v ~= source then
 						if canApplyCallback then
 							local b,result = pcall(canApplyCallback, v, source, status, true)
@@ -360,7 +360,7 @@ function GameHelpers.Status.Remove(target, status, radius, canTargetItems, canRe
 				error(string.format("No valid position set (%s). Failed to remove status (%s)", Lib.inspect(target), status), 2)
 			end
 			local success = false
-			for _,v in pairs(Ext.GetCharactersAroundPosition(x,y,z,radius)) do
+			for _,v in pairs(Ext.Entity.GetCharacterGuidsAroundPosition(x,y,z,radius)) do
 				if canRemoveCallback then
 					local b,result = pcall(canRemoveCallback, v, status, false)
 					if b and result == true then
@@ -373,7 +373,7 @@ function GameHelpers.Status.Remove(target, status, radius, canTargetItems, canRe
 				end
 			end
 			if canTargetItems then
-				for _,v in pairs(Ext.GetItemsAroundPosition(x,y,z,radius)) do
+				for _,v in pairs(Ext.Entity.GetItemGuidsAroundPosition(x,y,z,radius)) do
 					if canRemoveCallback then
 						local b,result = pcall(canRemoveCallback, v, status, true)
 						if b and result == true then

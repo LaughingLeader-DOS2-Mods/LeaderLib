@@ -70,7 +70,7 @@ function Testing.RunTests(tbl, testingName)
 	end
 
 	if tests[1] and tests[1].Type == "LuaTest" then
-		local testUUID = string.format("%s", testingName or Ext.MonotonicTime())
+		local testUUID = string.format("%s", testingName or Ext.Utils.MonotonicTime())
 		_runningTest = {
 			Tests = tests,
 			Current = tests[1],

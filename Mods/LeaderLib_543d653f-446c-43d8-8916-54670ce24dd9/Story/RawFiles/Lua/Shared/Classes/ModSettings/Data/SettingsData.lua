@@ -123,11 +123,11 @@ end
 
 ---@param name string
 ---@param value string|integer|number|number[]
----@param displayName string
----@param tooltip string
----@param min any
----@param max any
----@param interval any
+---@param displayName string|nil
+---@param tooltip string|nil
+---@param min any|nil
+---@param max any|nil
+---@param interval any|nil
 ---@param canExport boolean|nil
 function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, interval, canExport, isFromFile)
 	if self.Variables[name] == nil then

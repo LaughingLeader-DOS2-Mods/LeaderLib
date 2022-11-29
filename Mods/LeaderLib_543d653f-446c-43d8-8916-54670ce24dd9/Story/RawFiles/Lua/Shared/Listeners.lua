@@ -112,45 +112,7 @@ local function OnTick(e)
 	InvokeListenerCallbacks(Listeners.Tick, e)
 end
 
-if _EXTVERSION >= 56 then
-	Ext.Events.Tick:Subscribe(OnTick)
-elseif Ext.Debug.IsDeveloperMode() and not _ISCLIENT then
-	local _minTime = 0.1 -- 10 FPS
-	local _maxTime = 0.016 -- 30 FPS
-	local _monoTime = Ext.MonotonicTime
-	local _clamp = nil
-
-	local _lastTime = _monoTime()
-
-	local _OnTick = nil
-	_OnTick = function()
-		local _ts = _monoTime()
-		local _dt = _clamp((_ts - _lastTime) / 1000000, _maxTime, _minTime)
-		--local _dt = (_ts - _lastTime) / 1000000
-		--fprint(LOGLEVEL.DEFAULT, "DeltaTime(%s)(%s) Ticks(%s) Time(%s)", _dt, (_ts - _lastTime)/ 1000000, _ts, _ts / 1000000)
-		_lastTime = _ts
-		OnTick({Time = {
-			DeltaTime = _dt,
-			Ticks = _ts,
-			Time = _ts / 1000000}})
-
-		--Timer.StartOneshot("LeaderLib_v55_Tick", 30, _OnTick, true)
-		if Testing.Active then
-			TimerCancel("LeaderLib_v55_Tick")
-			TimerLaunch("LeaderLib_v55_Tick", 30)
-		end
-	end
-
-	Ext.RegisterOsirisListener("TimerFinished", 1, "after", function (timerName)
-		if timerName == "LeaderLib_v55_Tick" then
-			_OnTick()
-		end
-	end)
-
-	Ext.Events.SessionLoaded:Subscribe(function ()
-		_clamp = GameHelpers.Math.Clamp
-	end)
-end
+Ext.Events.Tick:Subscribe(OnTick)
 
 ---endregion
 

@@ -708,7 +708,7 @@ Data.SurfaceChange = {
 
 Classes.Enum:Create(Data.SurfaceChange)
 
----@overload fun(string:UISWFName):integer
+---@overload fun(string:BuiltinUISWFName):integer
 Data.UIType = {
 	actionProgression = 0,
 	addContent = 57,
@@ -871,7 +871,7 @@ local function _UITypeIDCall(tbl, key)
 		local _default = id.Default
 		for k,v in pairs(id) do
 			if k ~= "Default" then
-				local ui = Ext.GetUIByType(v)
+				local ui = Ext.UI.GetByType(v)
 				if ui then
 					return v
 				end

@@ -291,7 +291,7 @@ Events.RegionChanged:Subscribe(function (e)
 	end
 end)
 
----@return string,string,string
+---@return string,string,string|nil
 local function GetQuestFromFlag(flag)
 	--DB_QuestDef_UpdateEvent first since the same flag could be used in DB_QuestDef_AddEvent
 	local b,id,stateId = GameHelpers.DB.TryUnpack(Osi.DB_QuestDef_UpdateEvent:Get(nil, nil, flag))

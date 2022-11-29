@@ -47,7 +47,7 @@ local Patches = {
 				---@diagnostic enable
 	
 				Ext.RegisterNetListener("LLWEAPONEX_SetWorldTooltipText", function (cmd, payload)
-					local ui = Ext.GetUIByType(Data.UIType.tooltip)
+					local ui = Ext.UI.GetByType(Data.UIType.tooltip)
 					if ui then
 						---@type {tf:{shortDesc:string|nil, setText:fun(text:string, type:integer)}, defaultTooltip:{shortDesc:string|nil, setText:fun(text:string, type:integer)}}
 						local main = ui:GetRoot()

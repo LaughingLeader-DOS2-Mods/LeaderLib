@@ -92,7 +92,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		end
 	end
 
-	Ext.RegisterOsirisListener("TimerFinished", 1, "after", function (timerName)
+	Ext.Osiris.RegisterListener("TimerFinished", 1, "after", function (timerName)
 		if timerName == "Timers_LeaderLib_Debug_ResetLua" then
 			ResetLua()
 		end
@@ -700,7 +700,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	Ext.RegisterConsoleCommand("permaboosttest", function(cmd)
 		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 		local weapon = GameHelpers.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
-		NRD_ItemSetPermanentBoostInt(weapon.MyGuid, "StrengthBoost", Ext.Random(1,30))
+		NRD_ItemSetPermanentBoostInt(weapon.MyGuid, "StrengthBoost", Ext.Utils.Random(1,30))
 		
 		fprint(LOGLEVEL.TRACE, weapon.Stats.StrengthBoost, NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
 		for i,v in pairs(weapon.Stats.DynamicStats) do
@@ -770,8 +770,8 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	local function sleep(timeInMilliseconds)
 		---This blocks the server thread while running, so best leave this only for debug mode
 		if Vars.DebugMode then
-			local time = Ext.MonotonicTime()
-		while Ext.MonotonicTime() - time <= timeInMilliseconds do end
+			local time = Ext.Utils.MonotonicTime()
+		while Ext.Utils.MonotonicTime() - time <= timeInMilliseconds do end
 	end
 end
 
@@ -779,10 +779,10 @@ Ext.RegisterConsoleCommand("sleeptest", function(command, delay)
 	ApplyStatus(CharacterGetHostCharacter(), "HASTED", 6.0, 1, CharacterGetHostCharacter())
 	Timer.StartOneshot("Timers_Commands_sleeptest", 500, function()
 		delay = delay and tonumber(delay) or 6000
-		local timeStart = Ext.MonotonicTime()
+		local timeStart = Ext.Utils.MonotonicTime()
 		fprint(LOGLEVEL.TRACE, "Sleeping Start(%s)", timeStart)
 		sleep(delay)
-		fprint(LOGLEVEL.TRACE, "Sleep done. Took %s ms", Ext.MonotonicTime() - timeStart)
+		fprint(LOGLEVEL.TRACE, "Sleep done. Took %s ms", Ext.Utils.MonotonicTime() - timeStart)
 	end)
 end)
 
@@ -829,16 +829,16 @@ if SceneManager then
 	Ext.RegisterConsoleCommand("scenetest", function(command, id)
 		local testScene = SceneManager.CreateScene("TestScene")
 		testScene:CreateState("TestState1", function(self)
-				local startTime = Ext.MonotonicTime()
+				local startTime = Ext.Utils.MonotonicTime()
 				print("Hello!", startTime, self.ID)
 				self:Wait(3000)
-				print("Waiting done", Ext.MonotonicTime() - startTime, self.ID)
+				print("Waiting done", Ext.Utils.MonotonicTime() - startTime, self.ID)
 		end)
 		testScene:CreateState("TestState2", function(self)
-				local startTime = Ext.MonotonicTime()
+				local startTime = Ext.Utils.MonotonicTime()
 				print("Hello2!", startTime, self.ID)
 				self:Wait(1000)
-				print("Waiting done", Ext.MonotonicTime() - startTime, self.ID)
+				print("Waiting done", Ext.Utils.MonotonicTime() - startTime, self.ID)
 		end)
 		testScene:CreateState("TestState3", function(self)
 			local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
@@ -958,7 +958,7 @@ Ext.RegisterConsoleCommand("lldebug_customstat", function(command, mType, theme)
 	NRD_CharacterSetCustomStat(CharacterGetHostCharacter(), id, 10)
 end)
 
--- Ext.RegisterOsirisListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)
+-- Ext.Osiris.RegisterListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)
 	-- 	print("NRD_OnActionStateEnter", char, state)
 	-- 	-- Timer.StartOneshot(nil, 2000, function()
 		-- 	-- 	local action = NRD_CharacterGetCurrentAction(char)
@@ -966,7 +966,7 @@ end)
 	-- 	-- end)
 -- end)
 
--- Ext.RegisterOsirisListener("NRD_OnActionStateExit", Data.OsirisEvents.NRD_OnActionStateExit, "after", function(char, state)
+-- Ext.Osiris.RegisterListener("NRD_OnActionStateExit", Data.OsirisEvents.NRD_OnActionStateExit, "after", function(char, state)
 	-- 	print("NRD_OnActionStateExit", char, state)
 -- end)
 
@@ -1276,7 +1276,7 @@ local cooldownsDisabled_AddedListener = false
 
 function Debug.SetCooldownMode(b)
 	if not cooldownsDisabled_AddedListener then
-		Ext.RegisterOsirisListener("SkillCast", 4, "after", function(char,...)
+		Ext.Osiris.RegisterListener("SkillCast", 4, "after", function(char,...)
 			if Vars.Commands.CooldownsDisabled then
 				CharacterResetCooldowns(char)
 			end

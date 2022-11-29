@@ -80,12 +80,12 @@ end
 
 ---@param ms number
 function LuaTest:Wait(ms)
-	self.WakeupTime = Ext.MonotonicTime() + ms
+	self.WakeupTime = Ext.Utils.MonotonicTime() + ms
 	self:Pause()
 end
 
 function LuaTest:CheckForWake()
-	if self.State == 0 and self.WakeupTime and Ext.MonotonicTime() >= self.WakeupTime then
+	if self.State == 0 and self.WakeupTime and Ext.Utils.MonotonicTime() >= self.WakeupTime then
 		if self:Resume() then
 			return true
 		end
@@ -105,7 +105,7 @@ function LuaTest:WaitForSignal(id, timeout)
 	self.SignalSuccess = nil
 	self.NextSignal = id
 	if timeout then
-		self.WakeupTime = Ext.MonotonicTime() + timeout
+		self.WakeupTime = Ext.Utils.MonotonicTime() + timeout
 	end
 	self:Pause()
 end
@@ -233,7 +233,7 @@ function LuaTest:Complete(success, ...)
 		if self.OnComplete then
 			local b,err = xpcall(self.OnComplete, debug.traceback, self, ...)
 			if not b then
-				fprint(LOGLEVEL.ERROR, "[LuaTest:%s] Error running OnComplete. Time(%s)\n%s", self.ID, Ext.MonotonicTime(), err)
+				fprint(LOGLEVEL.ERROR, "[LuaTest:%s] Error running OnComplete. Time(%s)\n%s", self.ID, Ext.Utils.MonotonicTime(), err)
 			end
 		end
 	end

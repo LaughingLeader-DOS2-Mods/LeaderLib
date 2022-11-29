@@ -40,7 +40,7 @@ function ProjectileHitData:Print()
 	fprint(LOGLEVEL.TRACE, "============")
 end
 function ProjectileHitData:PrintTargets()
-	fprint(LOGLEVEL.TRACE, "[ProjectileHitData:%s] Target(%s) Position(%s)", self.Skill, self.Target, Common.Dump(self.Position))
+	fprint(LOGLEVEL.TRACE, "[ProjectileHitData:%s] Target(%s) Position(%s)", self.Skill, self.Target, Ext.DumpExport(self.Position))
 end
 
 Classes.ProjectileHitData = ProjectileHitData

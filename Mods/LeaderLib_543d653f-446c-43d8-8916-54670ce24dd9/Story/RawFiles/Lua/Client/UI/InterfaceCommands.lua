@@ -1,5 +1,4 @@
----@type MessageData
-local MessageData = Classes.MessageData
+---@diagnostic disable
 
 --public function addOverhead(param1:Number, param2:String, param3:Number) : *
 
@@ -144,7 +143,7 @@ end)
 Ext.RegisterNetListener("LeaderLib_AutoSortPlayerInventory", function(call, uuid)
 	--TODO No way to sort controller inventories?
 	if not Vars.ControllerEnabled then
-		local ui = Ext.GetUIByType(Data.UIType.partyInventory)
+		local ui = Ext.UI.GetByType(Data.UIType.partyInventory)
 		if ui then
 			ui:ExternalInterfaceCall("autosort", Ext.UI.HandleToDouble(GameHelpers.GetCharacter(uuid).Handle), false)
 		end
@@ -153,7 +152,7 @@ end)
 
 Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataStr)
 	if not Vars.ControllerEnabled then
-		local ui = Ext.GetUIByType(Data.UIType.hotBar)
+		local ui = Ext.UI.GetByType(Data.UIType.hotBar)
 		if ui then
 			local status,err = xpcall(function()
 				local hotbar = ui:GetRoot().hotbar_mc
@@ -177,7 +176,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 			end
 		end
 	else
-		local ui = Ext.GetUIByType(Data.UIType.bottomBar_c)
+		local ui = Ext.UI.GetByType(Data.UIType.bottomBar_c)
 		if ui then
 			local status,err = xpcall(function()
 				local this = ui:GetRoot()
@@ -214,7 +213,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, data
 			end
 		end
 		if not Vars.ControllerEnabled then
-			local ui = Ext.GetUIByType(Data.UIType.hotBar)
+			local ui = Ext.UI.GetByType(Data.UIType.hotBar)
 			if ui then
 				local slotholder = ui:GetRoot().hotbar_mc.slotholder_mc
 				for _,slotData in pairs(data.Slots) do
@@ -227,7 +226,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, data
 				end
 			end
 		else
-			local ui = Ext.GetUIByType(Data.UIType.bottomBar_c)
+			local ui = Ext.UI.GetByType(Data.UIType.bottomBar_c)
 			if ui then
 				local slotholder = ui:GetRoot().bottombar_mc.slotsHolder_mc
 				for _,slotData in pairs(data.Slots) do
@@ -265,7 +264,7 @@ Ext.RegisterNetListener("LeaderLib_ClearCombatLog", function(call, filterStr)
 	local this = CombatLog.Root
 	if this then
 		if not Vars.ControllerEnabled then
-			this.clearFilter(Ext.Round(tonumber(filterStr)))
+			this.clearFilter(Ext.Utils.Round(tonumber(filterStr)))
 		else
 			this.clearAll()
 		end

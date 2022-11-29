@@ -2,7 +2,7 @@ local function CanInvokeListener(anyLevelType)
 	return Vars.Initialized == true and Ext.GetGameState() == "Running" and (anyLevelType or ((not anyLevelType and SharedData.RegionData.LevelType == LEVELTYPE.GAME)))
 end
 
-local _OsirisEventSubscribe = Ext.RegisterOsirisListener
+local _OsirisEventSubscribe = Ext.Osiris.RegisterListener
 if Ext.Utils.Version() >= 56 then
 	_OsirisEventSubscribe = Ext.Osiris.RegisterListener
 end
@@ -253,7 +253,7 @@ Ext.NewQuery(GetSkillEntryName, "LeaderLib_Ext_QRY_GetSkillEntryName", "[in](STR
 local function RandomQRY(min,max)
 	if min == nil then min = 0 end
 	if max == nil then max = 0 end
-	return Ext.Random(min,max)
+	return Ext.Utils.Random(min,max)
 end
 Ext.NewQuery(RandomQRY, "LeaderLib_Ext_Random", "[in](INTEGER)_Min, [in](INTEGER)_Max, [out](INTEGER)_Ran")
 

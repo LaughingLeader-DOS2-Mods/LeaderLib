@@ -243,7 +243,7 @@ local function OverrideForce(shouldSync)
 							Type = "Extender",
 							Action = "SafeForce",
 							Arg1 = 1,
-							Arg2 =  Ext.Round(dist * 6),
+							Arg2 =  Ext.Utils.Round(dist * 6),
 							Arg3 =  "",
 							Arg4 =  -1,
 							Arg5 =  -1,

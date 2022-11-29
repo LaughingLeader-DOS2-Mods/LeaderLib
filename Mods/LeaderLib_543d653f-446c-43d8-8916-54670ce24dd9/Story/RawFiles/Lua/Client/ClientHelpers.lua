@@ -3,7 +3,7 @@ if GameHelpers.Client == nil then
 end
 
 ---Get the current character stored in characterSheet's main timeline.
----@param main FlashObject|nil
+---@param main FlashMainTimeline|nil
 ---@return EclCharacter
 function GameHelpers.Client.GetCharacterSheetCharacter(main)
 	local character = nil
@@ -21,18 +21,19 @@ function GameHelpers.Client.GetCharacterSheetCharacter(main)
 end
 
 ---Get the current character stored in characterSheet's main timeline.
----@param main FlashObject|nil
+---@param main FlashMainTimeline|nil
 ---@return EclCharacter
 function GameHelpers.Client.GetCharacterCreationCharacter(main)
 	local character = nil
 	if main == nil then
+		local ui = nil
 		if not Vars.ControllerEnabled then
-			main = Ext.UI.GetByType(Data.UIType.characterCreation)
+			ui = Ext.UI.GetByType(Data.UIType.characterCreation)
 		else
-			main = Ext.UI.GetByType(Data.UIType.characterCreation_c)
+			ui = Ext.UI.GetByType(Data.UIType.characterCreation_c)
 		end
-		if main ~= nil then
-			main = main:GetRoot()
+		if ui ~= nil then
+			main = ui:GetRoot()
 		end
 	end
 	if main ~= nil then
@@ -155,7 +156,7 @@ function GameHelpers.Client.GetLocalPlayers()
 	return players
 end
 
----@return EclCharacter
+---@return EclCharacter|nil
 function GameHelpers.Client.GetGameMaster()
 	if Client and Client.Character and (Client.Character.IsGameMaster and not Client.Character.IsPossessed) then
 		return Client:GetCharacter()
@@ -269,14 +270,13 @@ end
 
 ---@param tbl table
 ---@param arr FlashArray<any>
----@return table
 function GameHelpers.Client.WriteTableToFlashArray(tbl, arr)
 	for i=1,#tbl do
 		arr[i-1] = tbl[i]
 	end
 end
 
----@alias ExtenderSkillBarSlotType string|'"None"'|'"Skill"'|'"Item"'
+---@alias ExtenderSkillBarSlotType "None"|"Skill"|"Item"
 
 ---@class ExtenderPlayerSkillBarSlot
 ---@field Type ExtenderSkillBarSlotType
@@ -296,7 +296,7 @@ function GameHelpers.Client.SetInventoryLocked(locked)
 		if type(locked) ~= "boolean" then
 			locked = false
 		end
-		local ui = Ext.GetBuiltinUI(not Vars.ControllerEnabled and Data.UIType.partyInventory or Data.UIType.partyInventory_c)
+		local ui = Ext.UI.GetByPath(not Vars.ControllerEnabled and Data.UIType.partyInventory or Data.UIType.partyInventory_c)
 		if ui then
 			for player in GameHelpers.Character.GetPlayers() do
 				ui:ExternalInterfaceCall("lockInventory", Ext.UI.HandleToDouble(player.Handle), locked)

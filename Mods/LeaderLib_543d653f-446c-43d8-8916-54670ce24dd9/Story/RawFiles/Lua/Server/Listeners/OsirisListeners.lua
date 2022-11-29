@@ -6,7 +6,7 @@ local function SendMissingExtenderMessage(uuid)
 	return false
 end
 
-Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, profileId)
+Ext.Osiris.RegisterListener("UserConnected", 3, "after", function(id, username, profileId)
 	Vars.Users[profileId] = {ID = id, Name=username}
 	if Ext.GetGameState() == "Running" then
 		if GameHelpers.IsLevelType(LEVELTYPE.GAME) and GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
@@ -29,17 +29,17 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 	end
 end)
 
-Ext.RegisterOsirisListener("UserDisconnected", 3, "after", function(id, username, profileId)
+Ext.Osiris.RegisterListener("UserDisconnected", 3, "after", function(id, username, profileId)
 	Vars.Users[profileId] = nil
 end)
 
-Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
+Ext.Osiris.RegisterListener("UserEvent", 2, "after", function(id, event)
 	if event == "Iterators_LeaderLib_UI_UnlockPartyInventory" and GameHelpers.IsLevelType(LEVELTYPE.GAME) then
 		GameHelpers.Net.PostToUser(id, "LeaderLib_UnlockCharacterInventory")
 	end
 end)
 
--- Ext.RegisterOsirisListener("CharacterAddToCharacterCreation", 3, "after", function(uuid, respec, success)
+-- Ext.Osiris.RegisterListener("CharacterAddToCharacterCreation", 3, "after", function(uuid, respec, success)
 -- 	if success == 1 then
 -- 		Timer.StartOneshot("", 1, function()
 -- 			Ext.PostMessageToClient(uuid, "LeaderLib_CCStarted", GameHelpers.GetCharacter(uuid).NetID)
@@ -47,7 +47,7 @@ end)
 -- 	end
 -- end)
 
-Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
+Ext.Osiris.RegisterListener("GameStarted", 2, "after", function(region, isEditorMode)
 	Vars.IsEditorMode = isEditorMode
 	GameHelpers.Net.Broadcast("LeaderLib_SyncFeatures", Common.JsonStringify(Features))
 end)
@@ -68,15 +68,15 @@ end
 
 -- if Vars.DebugMode then
 -- 	for i=1,16 do
--- 		Ext.RegisterOsirisListener("LeaderLog_Log", i, "before", OnLog)
+-- 		Ext.Osiris.RegisterListener("LeaderLog_Log", i, "before", OnLog)
 -- 	end
 -- end
 
-Ext.RegisterOsirisListener("GlobalFlagSet", 1, "after", function(flag)
+Ext.Osiris.RegisterListener("GlobalFlagSet", 1, "after", function(flag)
 	Events.GlobalFlagChanged:Invoke({Flag=flag, Enabled=true})
 end)
 
-Ext.RegisterOsirisListener("GlobalFlagCleared", 1, "after", function(flag)
+Ext.Osiris.RegisterListener("GlobalFlagCleared", 1, "after", function(flag)
 	Events.GlobalFlagChanged:Invoke({Flag=flag, Enabled=false})
 end)
 
@@ -159,15 +159,15 @@ local function OnObjectEvent(eventType, event, obj1, obj2)
 	})
 end
 
-Ext.RegisterOsirisListener("StoryEvent", Data.OsirisEvents.StoryEvent, "before", function(object, event)
+Ext.Osiris.RegisterListener("StoryEvent", Data.OsirisEvents.StoryEvent, "before", function(object, event)
 	OnObjectEvent("StoryEvent", event, StringHelpers.GetUUID(object))
 end)
 
-Ext.RegisterOsirisListener("CharacterCharacterEvent", Data.OsirisEvents.CharacterCharacterEvent, "before", function(obj1, obj2, event)
+Ext.Osiris.RegisterListener("CharacterCharacterEvent", Data.OsirisEvents.CharacterCharacterEvent, "before", function(obj1, obj2, event)
 	OnObjectEvent("CharacterCharacterEvent", event, StringHelpers.GetUUID(obj1), StringHelpers.GetUUID(obj2))
 end)
 
-Ext.RegisterOsirisListener("CharacterItemEvent", Data.OsirisEvents.CharacterItemEvent, "before", function(obj1, obj2, event)
+Ext.Osiris.RegisterListener("CharacterItemEvent", Data.OsirisEvents.CharacterItemEvent, "before", function(obj1, obj2, event)
 	OnObjectEvent("CharacterItemEvent", event, StringHelpers.GetUUID(obj1), StringHelpers.GetUUID(obj2))
 end)
 

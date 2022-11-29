@@ -970,7 +970,7 @@ local CallHandlers = {}
 local InvokeHandlers = {}
 
 ---@param event string|string[]
----@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
+---@param callback fun(e:EclLuaUICallEvent, ui:UIObject, event:string, ...:any)
 ---@param typeIds table<integer,boolean>|integer|nil
 ---@param when "Before"|"After"|nil
 local function _CallHandler(event, callback, typeIds, when)
@@ -995,7 +995,7 @@ local function _CallHandler(event, callback, typeIds, when)
 end
 
 ---@param event string|string[]
----@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
+---@param callback fun(e:EclLuaUICallEvent, ui:UIObject, event:string, ...:any)
 ---@param typeIds table<integer,boolean>|integer|nil
 ---@param when "Before"|"After"|nil
 local function _InvokeHandler(event, callback, typeIds, when)
@@ -1217,7 +1217,7 @@ local function _GetRequestCharacter(req)
 	return req.Character or _GetCurrentCharacter()
 end
 
----@param e EclLuaUICallEventParams
+---@param e EclLuaUICallEvent
 ---@param ui UIObject
 ---@param method string
 function _ttHooks:OnRenderGenericTooltip(e, ui, method, text, widthOverride, heightOverride, allowDelay, anchorEnum, backgroundType)
@@ -1628,7 +1628,7 @@ function _ttHooks:RegisterBeforeNotifyListener(requestType, listener)
 end
 
 ---@param request TooltipRequest
----@vararg string|boolean|number|EclGameObject
+---@vararg string|boolean|number|IEoCClientObject
 function _ttHooks:InvokeBeforeNotifyListeners(request, ...)
 	local rTypeTable = self.BeforeNotifyListeners[request.Type]
 	if rTypeTable then
@@ -1734,6 +1734,9 @@ end
 ---@field UIType integer
 ---@field Instance UIObject
 ---@field Root FlashMainTimeline
+---@field MarkDirty fun(self:TooltipData) Signals to the tooltip expander that pressing or releasing the expand key will cause the current visible tooltip to re-render.
+---@field IsExpanded boolean Whether or not the tooltip is expanded. Check this when setting up tooltip elements.
+---@field IsExtended boolean A simple variable a mod can check to see if this is a LeaderLib tooltip.
 local TooltipData = {}
 
 _TT.TooltipData = TooltipData
@@ -1784,7 +1787,7 @@ local DescriptionElements = {
 ---@param fallback AnyTooltipDescriptionElement|nil If a description isn't found, add this element.
 ---@return AnyTooltipDescriptionElement
 function TooltipData:GetDescriptionElement(fallback)
-	---@type {Type:TooltipElementType, Label:string|nil}
+	---@type {Type:TooltipElementType, Label:string|nil}[]
 	local elements = self.Data
 	for _,element in pairs(elements) do
 		if DescriptionElements[element.Type] then
@@ -1929,7 +1932,6 @@ end
 
 ---Append a table of elements to the end of the tooltip data.
 ---@param tbl TooltipElement[]
----@return TooltipElement
 function TooltipData:AppendElements(tbl)
 	for i=1,#tbl do
 		local ele = tbl[i]
@@ -2028,7 +2030,7 @@ function TooltipData:AppendElementBeforeType(ele, elementType)
 end
 
 _TT.Register = {
-	---@param callback fun(request:AnyTooltipRequest, tooltip:TooltipData)
+	---@param callback fun(request:AnyTooltipRequest, tooltip:TooltipData, ...:any)
 	Global = function(callback)
 		_ttHooks:RegisterListener(nil, nil, callback)
 	end,

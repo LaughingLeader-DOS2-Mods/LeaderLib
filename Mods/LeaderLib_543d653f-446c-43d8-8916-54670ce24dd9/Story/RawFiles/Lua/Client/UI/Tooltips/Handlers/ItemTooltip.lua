@@ -52,46 +52,15 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				isRead = UI.InventoryTweaks.ReadBooks[rootTemplate] ~= nil
 
 				if tooltip:GetElement("SkillDescription") ~= nil then
-					if _EXTVERSION >= 56 then
-						---Invokes skill tooltip listeners if the item has skill elements
-						local skills,itemParams = GameHelpers.Item.GetUseActionSkills(item, true)
-						for skill,b in pairs(skills) do
-							tooltip.IsFromItem = true
-							tooltip.ItemHasSkill = true
-							--TooltipHandler.OnSkillTooltip(character, skill, tooltip)
-							Game.Tooltip.TooltipHooks:NotifyAll(Game.Tooltip.TooltipHooks.TypeListeners.Skill, character, skill, tooltip)
-							if Game.Tooltip.TooltipHooks.ObjectListeners.Skill ~= nil then
-								Game.Tooltip.TooltipHooks:NotifyAll(Game.Tooltip.TooltipHooks.ObjectListeners.Skill[skill], character, skill, tooltip)
-							end
-						end
-					else
-						local savedSkills = TooltipHandler.SkillBookAssociatedSkills[rootTemplate]
-						if savedSkills == nil then
-							local skillBookSkillDisplayName = GameHelpers.Tooltip.GetElementAttribute(tooltip:GetElement("SkillbookSkill"), "Value")
-							local tooltipIcon = GameHelpers.Tooltip.GetElementAttribute(tooltip:GetElement("SkillIcon"), "Label")
-							local tooltipSkillDescription = GameHelpers.Tooltip.GetElementAttribute(tooltip:GetElement("SkillDescription"), "Label")
-							for skill in GameHelpers.Stats.GetSkills(true) do
-								local icon = skill.Icon
-								if tooltipIcon == icon then
-									local displayName = GameHelpers.GetStringKeyText(skill.DisplayName)
-									local description = GameHelpers.GetStringKeyText(skill.Description)
-			
-									if displayName == skillBookSkillDisplayName and description == tooltipSkillDescription then
-										if TooltipHandler.SkillBookAssociatedSkills[rootTemplate] == nil then
-											TooltipHandler.SkillBookAssociatedSkills[rootTemplate] = {}
-											savedSkills = TooltipHandler.SkillBookAssociatedSkills[rootTemplate]
-										end
-										TooltipHandler.SkillBookAssociatedSkills[rootTemplate][skill.Name] = true
-									end
-								end
-							end
-						end
-						if savedSkills ~= nil then
-							for skill,b in pairs(savedSkills) do
-								if b then
-									TooltipHandler.OnSkillTooltip(character, skill, tooltip)
-								end
-							end
+					---Invokes skill tooltip listeners if the item has skill elements
+					local skills,itemParams = GameHelpers.Item.GetUseActionSkills(item, true)
+					for skill,b in pairs(skills) do
+						tooltip.IsFromItem = true
+						tooltip.ItemHasSkill = true
+						--TooltipHandler.OnSkillTooltip(character, skill, tooltip)
+						Game.Tooltip.TooltipHooks:NotifyAll(Game.Tooltip.TooltipHooks.TypeListeners.Skill, character, skill, tooltip)
+						if Game.Tooltip.TooltipHooks.ObjectListeners.Skill ~= nil then
+							Game.Tooltip.TooltipHooks:NotifyAll(Game.Tooltip.TooltipHooks.ObjectListeners.Skill[skill], character, skill, tooltip)
 						end
 					end
 				end

@@ -68,7 +68,7 @@ local function TraceType(character, attribute, attribute_type)
 	elseif attribute_type == "String" then
 		fprint(LOGLEVEL.TRACE, "[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	elseif attribute_type == "table" then
-		fprint(LOGLEVEL.TRACE, "[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..Common.Dump(character[attribute]).."")
+		fprint(LOGLEVEL.TRACE, "[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..Ext.DumpExport(character[attribute]).."")
 	else
 		fprint(LOGLEVEL.TRACE, "[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	end

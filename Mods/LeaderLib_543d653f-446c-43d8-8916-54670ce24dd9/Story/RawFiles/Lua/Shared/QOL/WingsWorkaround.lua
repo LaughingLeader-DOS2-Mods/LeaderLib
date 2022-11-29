@@ -33,9 +33,8 @@ local function PropertiesHasWingsVisual(props)
 			local stat = Ext.Stats.Get(v.Action, nil, false)
 			if stat ~= nil then
 				if stat.Items ~= nil then
-					---@type StatItem
-					local itemStat = Ext.Stats.Get(stat.Items, nil, false)
-					if itemStat ~= nil and itemStat.Slot == "Wings" then
+					local itemStat = Ext.Stats.Get(stat.Items, nil, false) --[[@as StatEntryArmor]]
+					if itemStat and itemStat.Slot == "Wings" then
 						return true
 					end
 				end
@@ -97,7 +96,7 @@ function OverrideWings(shouldSync)
 end
 
 if Ext.IsServer() then
-	Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
+	Ext.Osiris.RegisterListener("GameStarted", 2, "after", function(region, isEditorMode)
 		if Features.WingsWorkaround == true and IsGameLevel(region) == 1 and GlobalGetFlag("LeaderLib_SetupWingsWorkaroundForRegion") == 0 then
 			for i,uuid in pairs(Ext.Entity.GetAllCharacterGuids(region)) do
 				if HasActiveStatus(uuid, "WINGS") == 1 then
@@ -108,26 +107,25 @@ if Ext.IsServer() then
 			GlobalSetFlag("LeaderLib_SetupWingsWorkaroundForRegion")
 		end
 	end)
-	Ext.RegisterOsirisListener("RegionEnded", 1, "after", function(region)
+	Ext.Osiris.RegisterListener("RegionEnded", 1, "after", function(region)
 		GlobalClearFlag("LeaderLib_SetupWingsWorkaroundForRegion")
 	end)
 
-	RegisterListener("Loaded", function()
-		RegisterStatusListener("Applied", "LEADERLIB_WINGS", function(target, statusId, source, statusType)
-			local obj = GameHelpers.TryGetObject(target)
-			---@type EsvStatusFloating
-			local wingsStatus = obj:GetStatus("WINGS")
+	Events.Loaded:Subscribe(function (e)
+		StatusManager.Subscribe.Applied("LEADERLIB_WINGS", function (e)
+			---@type EclStatusFloating
+			local wingsStatus = e.Target:GetStatus("WINGS")
 			if wingsStatus then
 				wingsStatus.CurrentLifeTime = -1.0
 				wingsStatus.LifeTime = -1.0
 				wingsStatus.RequestClientSync = true
 			else
-				ApplyStatus(target, "WINGS", -1.0, 0, source)
+				GameHelpers.Status.Apply(e.Target, "WINGS", -1.0, false, e.Source or e.Target)
 			end
 		end)
-	
-		RegisterStatusListener("Removed", "LEADERLIB_WINGS", function(target, statusId, source, statusType)
-			RemoveStatus(target, "WINGS")
+
+		StatusManager.Subscribe.Removed("LEADERLIB_WINGS", function (e)
+			GameHelpers.Status.Remove(e.Target, "WINGS")
 		end)
 	end)
 end

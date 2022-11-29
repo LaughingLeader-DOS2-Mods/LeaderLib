@@ -92,10 +92,13 @@ local function GetSkillDamageTypes(id, description)
 	if not StringHelpers.IsNullOrWhitespace(skill.StatsDescriptionParams) then
 		for _,v in pairs(StringHelpers.Split(skill.StatsDescriptionParams, ";")) do
 			local _,_,otherSkill = string.find(v, _skillDamagePattern)
-			if otherSkill and GameHelpers.Stats.Exists(otherSkill, "SkillData") then
-				local damageType = Ext.StatGetAttribute(otherSkill, "DamageType")
-				if damageType then
-					damageTypes[damageType] = true
+			if not StringHelpers.IsNullOrEmpty(otherSkill) then
+				local stat = Ext.Stats.Get(otherSkill, nil, false)
+				if stat then
+					local damageType = stat.DamageType
+					if damageType then
+						damageTypes[damageType] = true
+					end
 				end
 			end
 		end
@@ -131,41 +134,48 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 	local isAction = GameHelpers.Stats.IsAction(skill)
 
 	if not isAction then
-		if Features.FixRifleWeaponRequirement then
-			local requirement = Ext.StatGetAttribute(skill, "Requirement")
-			if requirement == "RifleWeapon" then
-				local skillRequirements = tooltip:GetElements("SkillRequiredEquipment")
-				local addRifleText = true
-				if skillRequirements ~= nil and #skillRequirements > 0 then
-					for i,element in pairs(skillRequirements) do
-						if string.find(element.Label, LocalizedText.SkillTooltip.RifleWeapon.Value) then
-							addRifleText = false
-							break
+		local stat = Ext.Stats.Get(skill, nil, false)
+		if stat then
+			if Features.FixRifleWeaponRequirement then
+				local requirement = stat.Requirement
+				if requirement == "RifleWeapon" then
+					local skillRequirements = tooltip:GetElements("SkillRequiredEquipment")
+					local addRifleText = true
+					if skillRequirements ~= nil and #skillRequirements > 0 then
+						for i,element in pairs(skillRequirements) do
+							if string.find(element.Label, LocalizedText.SkillTooltip.RifleWeapon.Value) then
+								addRifleText = false
+								break
+							end
 						end
 					end
-				end
-				if addRifleText then
-					local hasRequirement = character.Stats.MainWeapon ~= nil and character.Stats.MainWeapon.WeaponType == "Rifle"
-					local text = LocalizedText.SkillTooltip.SkillRequiredEquipment:ReplacePlaceholders(LocalizedText.SkillTooltip.RifleWeapon.Value)
-					tooltip:AppendElement({
-						Type="SkillRequiredEquipment",
-						RequirementMet = hasRequirement,
-						Label = text
-					})
+					if addRifleText then
+						local hasRequirement = character.Stats.MainWeapon ~= nil and character.Stats.MainWeapon.WeaponType == "Rifle"
+						local text = LocalizedText.SkillTooltip.SkillRequiredEquipment:ReplacePlaceholders(LocalizedText.SkillTooltip.RifleWeapon.Value)
+						tooltip:AppendElement({
+							Type="SkillRequiredEquipment",
+							RequirementMet = hasRequirement,
+							Label = text
+						})
+					end
 				end
 			end
-		end
 
-		if Features.FixFarOutManSkillRangeTooltip 
-		and (character ~= nil and character.Stats ~= nil
-		and character.Stats.TALENT_FaroutDude == true) then
-			local skillType = Ext.StatGetAttribute(skill, "SkillType")
-			local rangeAttribute = FarOutManFixSkillTypes[skillType]
-			if rangeAttribute ~= nil then
-				local element = tooltip:GetElement("SkillRange")
-				if element ~= nil then
-					local range = Ext.StatGetAttribute(skill, rangeAttribute)
-					element.Value = tostring(range).."m"
+			if Features.FixFarOutManSkillRangeTooltip 
+			and (character ~= nil and character.Stats ~= nil
+			and character.Stats.TALENT_FaroutDude == true) then
+				local skillType = stat.SkillType
+				local rangeAttribute = FarOutManFixSkillTypes[skillType]
+				if rangeAttribute ~= nil then
+					local element = tooltip:GetElement("SkillRange")
+					if element ~= nil then
+						local range = stat[rangeAttribute]
+						if range then
+							element.Value = tostring(range).."m"
+						else
+							element.Value = "0m"
+						end
+					end
 				end
 			end
 		end
@@ -227,14 +237,14 @@ Ext.Events.SkillGetDescriptionParam:Subscribe(function(e)
 			local value = GameHelpers.GetExtraData(param2, nil)
 			if value ~= nil then
 				if value == math.floor(value) then
-					return string.format("%i", math.floor(value))
+					e.Description = string.format("%i", math.floor(value))
 				else
 					if value <= 1.0 and value >= 0.0 then
 						-- Percentage display
 						value = value * 100
-						return string.format("%i", math.floor(value))
+						e.Description = string.format("%i", math.floor(value))
 					else
-						return tostring(value)
+						e.Description = tostring(value)
 					end
 				end
 			end

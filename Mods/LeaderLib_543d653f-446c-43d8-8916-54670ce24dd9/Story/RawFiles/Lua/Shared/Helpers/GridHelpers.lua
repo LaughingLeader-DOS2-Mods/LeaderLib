@@ -2,20 +2,10 @@ if GameHelpers.Grid == nil then
 	GameHelpers.Grid = {}
 end
 
-local _EXTVERSION = Ext.Utils.Version()
 local _ISCLIENT = Ext.IsClient()
 local _type = type
 
----@type fun():EocAiGrid
-local _getGrid = function() end
-
-if _EXTVERSION >= 56 then
-	_getGrid = Ext.Entity.GetAiGrid
-else
-	if not _ISCLIENT then
-		_getGrid = Ext.GetAiGrid
-	end
-end
+local _getGrid = Ext.Entity.GetAiGrid
 
 ---@param x number
 ---@param z number

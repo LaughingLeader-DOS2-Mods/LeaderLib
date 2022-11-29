@@ -49,6 +49,7 @@ Mods.LeaderLib = {
 ---@alias BaseRace "Dwarf"|"Elf"|"Human"|"Lizard"
 
 ---@alias StatCharacter CDivinityStatsCharacter
+---@alias StatItem CDivinityStatsItem
 ---@alias DamageList StatsDamagePairList
 ---@alias ObjectHandle ComponentHandle
 

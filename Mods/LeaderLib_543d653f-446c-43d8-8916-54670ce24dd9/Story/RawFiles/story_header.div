@@ -1376,5 +1376,6 @@ event NRD_OnPrepareHit((GUIDSTRING)_Target, (GUIDSTRING)_Instigator, (INTEGER)_D
 event NRD_OnHit((GUIDSTRING)_Target, (GUIDSTRING)_Instigator, (INTEGER)_Damage, (INTEGER64)_StatusHandle) (3,1600,5,1)
 event NRD_OnHeal((CHARACTERGUID)_Target, (GUIDSTRING)_Instigator, (INTEGER)_Amount, (INTEGER64)_StatusHandle) (3,1600,6,1)
 event NRD_OnActionStateEnter((CHARACTERGUID)_Character, (STRING)_Action) (3,1600,7,1)
+event NRD_OnActionStateExit((CHARACTERGUID)_Character, (STRING)_Action) (3,1600,10,1)
 event NRD_ItemDeltaModIteratorEvent((STRING)_Event, (ITEMGUID)_Item, (STRING)_DeltaMod, (INTEGER)_IsGenerated) (3,1600,8,1)
 event NRD_SkillIteratorEvent((STRING)_Event, (CHARACTERGUID)_Character, (STRING)_SkillId, (INTEGER)_IsLearned, (INTEGER)_IsActivated) (3,1600,9,1)

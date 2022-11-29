@@ -1,9 +1,11 @@
+---@diagnostic disable undefined-field
+
 if StatusHider == nil then
 	StatusHider = {}
 end
 
-local _DoubleToHandle = Ext.DoubleToHandle
-local _GetStatus = Ext.GetStatus
+local _DoubleToHandle = Ext.UI.DoubleToHandle
+local _GetStatus = Ext.Entity.GetStatus
 
 local function GetStatusVisibility(statusId, whitelist,blacklist,allVisible)
 	local blacklisted = blacklist[statusId] == true
@@ -74,7 +76,7 @@ local PlayerInfo = {}
 StatusHider.PlayerInfo = PlayerInfo
 
 function PlayerInfo:Get()
-	local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.playerInfo) or Ext.GetUIByType(Data.UIType.playerInfo_c)
+	local ui = not Vars.ControllerEnabled and Ext.UI.GetByType(Data.UIType.playerInfo) or Ext.UI.GetByType(Data.UIType.playerInfo_c)
 	if ui then
 		return ui:GetRoot()
 	end
@@ -278,7 +280,7 @@ local function RequestHealthbarRefresh()
 	if not lastHealthbarOwnerDouble or not GameSettings.Settings.Client.StatusOptions.AffectHealthbar then
 		return
 	end
-	local ui = Ext.GetUIByType(Data.UIType.enemyHealthBar)
+	local ui = Ext.UI.GetByType(Data.UIType.enemyHealthBar)
 	if ui then
 		local character = GameHelpers.GetCharacter(_DoubleToHandle(lastHealthbarOwnerDouble))
 		if character then
@@ -297,12 +299,16 @@ end
 
 local healthBarStatusToOwner = {}
 
----@param ui UIObject
+---@param ui UIObject|nil
+---@param this FlashMainTimeline|nil
+---@param whitelist table|nil
+---@param blacklist table|nil
+---@param allVisible boolean|nil
 local function UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,allVisible)
 	if not lastHealthbarOwnerDouble then
 		return
 	end
-	ui = ui or Ext.GetUIByType(Data.UIType.enemyHealthBar)
+	ui = ui or Ext.UI.GetByType(Data.UIType.enemyHealthBar)
 	if ui then
 		this = this or ui:GetRoot()
 		if this then

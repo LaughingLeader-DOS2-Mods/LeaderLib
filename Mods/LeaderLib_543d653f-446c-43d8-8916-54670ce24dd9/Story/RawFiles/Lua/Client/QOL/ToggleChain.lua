@@ -3,7 +3,7 @@ function QOL.ToggleChainGroup()
 	local targetGroupId = -1
 	local client = Client:GetCharacter()
 	local characters = {}
-	local ui = Ext.GetUIByType(Data.UIType.playerInfo)
+	local ui = Ext.UI.GetByType(Data.UIType.playerInfo)
 	if ui then
 		local this = ui:GetRoot()
 		if this then

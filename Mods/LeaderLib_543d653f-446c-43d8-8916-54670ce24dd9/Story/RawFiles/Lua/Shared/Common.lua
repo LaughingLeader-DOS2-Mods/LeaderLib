@@ -3,8 +3,8 @@ if Common == nil then Common = {} end
 local _EXTVERSION = Ext.Utils.Version()
 
 function Common.InitSeed()
-	local rnd = Ext.Random(9999)
-	local seed = (Ext.Random(9999) * 214013) + 2531011
+	local rnd = Ext.Utils.Random(9999)
+	local seed = (Ext.Utils.Random(9999) * 214013) + 2531011
 	_G["LEADERLIB_RAN_SEED"] = seed
 	--fprint(LOGLEVEL.TRACE, "[LeaderLib:Common.lua] Set LEADERLIB_RAN_SEED to ("..tostring(seed)..")")
 	if Ext.IsServer() then
@@ -178,8 +178,8 @@ end
 
 ---PrintDebug a value or table (recursive).
 ---@param o table
----@param indexMap table
----@param innerOnly boolean
+---@param indexMap table|nil
+---@param innerOnly boolean|nil
 ---@return string
 function Common.Dump(o, indexMap, innerOnly, recursionLevel)
 	if recursionLevel == nil then recursionLevel = 0 end
@@ -323,7 +323,7 @@ end
 ---@return any
 function Common.GetRandomTableEntry(tbl)
 	if #tbl > 0 then
-		local rnd = Ext.Random(1,#tbl)
+		local rnd = Ext.Utils.Random(1,#tbl)
 		--local ran = math.max(1, math.fmod(rnd,#tbl))
 		return tbl[rnd]
 	end
@@ -335,7 +335,7 @@ end
 ---@return any
 function Common.PopRandomTableEntry(tbl)
 	if #tbl > 0 then
-		local rnd = Ext.Random(1,#tbl)
+		local rnd = Ext.Utils.Random(1,#tbl)
 		--local ran = math.max(1, math.fmod(rnd,#tbl))
 		local entry = tbl[rnd]
 		tbl[rnd] = nil
@@ -400,10 +400,7 @@ function Common.ConvertTableKeysToNumbers(tbl, recursive)
 	end
 end
 
-local _jsonParse = Ext.JsonParse
-if _EXTVERSION >= 56 then
-	_jsonParse = Ext.Json.Parse
-end
+local _jsonParse = Ext.Json.Parse
 
 ---@param str string
 ---@param safeguardErrors boolean|nil If true, JsonParse is wrapped in an xpcall.
@@ -426,10 +423,7 @@ function Common.JsonParse(str, safeguardErrors)
 	return tbl
 end
 
-local _jsonStringify = Ext.JsonStringify
-if _EXTVERSION >= 56 then
-	_jsonStringify = Ext.Json.Stringify
-end
+local _jsonStringify = Ext.Json.Stringify
 
 ---@param tbl table
 ---@return string
@@ -449,7 +443,7 @@ end
 function Common.GetRandom(max,min)
 	if max == nil then max = 999 end
 	if min == nil then min = 0 end
-	local rnd = Ext.Random(0, _G["LEADERLIB_RAN_SEED"])
+	local rnd = Ext.Utils.Random(0, _G["LEADERLIB_RAN_SEED"])
 	local ran = math.max(min, math.fmod(rnd,max))
 	return ran
 end

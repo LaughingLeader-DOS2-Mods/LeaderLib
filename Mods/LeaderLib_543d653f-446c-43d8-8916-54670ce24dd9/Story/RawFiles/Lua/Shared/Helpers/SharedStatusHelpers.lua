@@ -422,7 +422,7 @@ function GameHelpers.Status.GetDuration(object, statusId, asTurns)
 			end
 		end
 		if asTurns then
-			Ext.Round(duration / 6.0)
+			Ext.Utils.Round(duration / 6.0)
 		else
 			return duration
 		end

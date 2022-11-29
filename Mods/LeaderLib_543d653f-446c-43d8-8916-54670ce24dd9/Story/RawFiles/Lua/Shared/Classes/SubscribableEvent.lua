@@ -395,7 +395,7 @@ local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 	if metatable then
 		setmetatable(args, nil)
 	end
-	local ts = Ext.MonotonicTime()
+	local ts = Ext.Utils.MonotonicTime()
 	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg, metatable, self.ID, getArgForMatch)
 	---@type SubscribableEventInvokeResultCode
 	local invokeResult = _INVOKERESULT.Success
@@ -431,7 +431,7 @@ local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 		handled = true
 	end
 	if self.Benchmark then
-		local timeTaken = Ext.MonotonicTime() - ts
+		local timeTaken = Ext.Utils.MonotonicTime() - ts
 		local msg = _format("[LeaderLib:%s:Invoke] Took (%s) ms to invoke callbacks.\nArgs:%s", self.ID, timeTaken, _sline(args, _serpentOpts))
 		if timeTaken > 100 then
 			_printWarning(msg)

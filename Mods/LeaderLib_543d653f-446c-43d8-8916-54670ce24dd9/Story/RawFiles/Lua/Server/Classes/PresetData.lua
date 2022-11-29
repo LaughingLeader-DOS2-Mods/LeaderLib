@@ -14,9 +14,9 @@ PresetData.__index = PresetData
 ---@param id string
 ---@param equipment string
 ---@param skillset string
----@param undeadEquipment string Optional undead equipment to use.
----@param isPreview boolean Whether this preset should use preview equipment. If previewEquipment is nil or blank, it will try to find the equipment string from the regular equipment + race suffix.
----@param previewEquipment string Optional preview equipment 
+---@param undeadEquipment string|nil Optional undead equipment to use.
+---@param isPreview boolean|nil Whether this preset should use preview equipment. If previewEquipment is nil or blank, it will try to find the equipment string from the regular equipment + race suffix.
+---@param previewEquipment string|nil Optional preview equipment 
 ---@return PresetData
 function PresetData:Create(id, equipment, skillset, undeadEquipment, isPreview, previewEquipment)
 	local this =
@@ -94,7 +94,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 							end
 						end
 					end
-					---@type ItemDefinition
+					---@type EocItemDefinition
 					local props = Common.CloneTable(presetItemStatProperties)
 					if skipIfExists == true then
 						local templates = GameHelpers.Item.GetRootTemplatesForStat(stat.Name)

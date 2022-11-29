@@ -54,7 +54,7 @@ end
 ---@param v userdata
 ---@return boolean
 local function IsHandle(v)
-	if _EXTVERSION >= 56 and _isValidHandle(v) then
+	if _isValidHandle(v) then
 		return true
 	end
 	return type(v) == "userdata" and getmetatable(v) == nil
@@ -703,32 +703,22 @@ end
 ---@param levelName string
 ---@return LEVELTYPE
 function GameHelpers.GetLevelType(levelName)
-	if _EXTVERSION >= 56 then
-		if not _ranCachedLevels then
-			if Ext.GetGameState() == "Running" then
-				_cacheAllModLevels()
-			else
-				if levelName == "SYS_Character_Creation_A" then
-					return LEVELTYPE.CHARACTER_CREATION
-				elseif levelName == "ARENA_Menu" then
-					return LEVELTYPE.LOBBY
-				end
-			end
-		end
-		local levelData = _cachedLevels[levelName]
-		if levelData then
-			if levelData.CharacterCreationLevel then
+	if not _ranCachedLevels then
+		if Ext.GetGameState() == "Running" then
+			_cacheAllModLevels()
+		else
+			if levelName == "SYS_Character_Creation_A" then
 				return LEVELTYPE.CHARACTER_CREATION
-			elseif levelData.LobbyLevel then
+			elseif levelName == "ARENA_Menu" then
 				return LEVELTYPE.LOBBY
 			end
 		end
-	elseif _osirisIsCallable() then
-		if IsGameLevel(levelName) == 1 then
-			return LEVELTYPE.GAME
-		elseif IsCharacterCreationLevel(levelName) == 1 then
+	end
+	local levelData = _cachedLevels[levelName]
+	if levelData then
+		if levelData.CharacterCreationLevel then
 			return LEVELTYPE.CHARACTER_CREATION
-		else
+		elseif levelData.LobbyLevel then
 			return LEVELTYPE.LOBBY
 		end
 	end
@@ -741,18 +731,16 @@ end
 function GameHelpers.IsLevelType(levelType, levelName)
 	--Assuming levelType is actually levelName and levelName is LEVELTYPE, swap the params
 	if not LEVELTYPE[levelType] and LEVELTYPE[levelName] then
+		---@cast levelType string
+		---@cast levelName LEVELTYPE
 		local lt = levelName
 		levelName = levelType
 		levelType = lt
 	end
 	if levelName == nil then
-		if _EXTVERSION >= 56 then
-			local level = Ext.Entity.GetCurrentLevel()
-			if level then
-				levelName = level.LevelDesc.LevelName
-			end
-		else
-			levelName = SharedData.RegionData.Current
+		local level = Ext.Entity.GetCurrentLevel()
+		if level then
+			levelName = level.LevelDesc.LevelName
 		end
 	end
 	if not StringHelpers.IsNullOrEmpty(levelName) then
@@ -834,16 +822,14 @@ function GameHelpers.GetDisplayName(obj)
 		if GameHelpers.Ext.ObjectIsCharacter(obj) then
 			return GameHelpers.Character.GetDisplayName(obj)
 		elseif GameHelpers.Ext.ObjectIsItem(obj) then
-			if _EXTVERSION >= 56 then
-				if string.find(obj.DisplayName, "|") or obj.RootTemplate.DisplayName.Handle == nil then
-					if GameHelpers.Item.IsObject(obj) and not StringHelpers.IsNullOrEmpty(obj.StatsId) and not Data.ItemRarity[obj.StatsId] then
-						local name = GameHelpers.GetStringKeyText(obj.StatsId, "")
-						if not StringHelpers.IsNullOrEmpty(name) then
-							return name
-						end
+			if string.find(obj.DisplayName, "|") or obj.RootTemplate.DisplayName.Handle == nil then
+				if GameHelpers.Item.IsObject(obj) and not StringHelpers.IsNullOrEmpty(obj.StatsId) and not Data.ItemRarity[obj.StatsId] then
+					local name = GameHelpers.GetStringKeyText(obj.StatsId, "")
+					if not StringHelpers.IsNullOrEmpty(name) then
+						return name
 					end
-					return GameHelpers.GetTranslatedStringValue(obj.RootTemplate.DisplayName, obj.DisplayName)
 				end
+				return GameHelpers.GetTranslatedStringValue(obj.RootTemplate.DisplayName, obj.DisplayName)
 			end
 			return obj.DisplayName
 		end

@@ -88,7 +88,7 @@ function CharacterData:GetCombatID()
 	end
 	local db = Osi.DB_CombatCharacters:Get(self.UUID, nil)
 	if db and #db > 0 then
-		id = db[1][2]
+		id = db[1][2] --[[@as integer]]
 		if id > 0 then
 			return id
 		end
@@ -108,7 +108,7 @@ function CharacterData:GetPosition(asVector3)
 end
 
 ---@param status string|string[]
----@param checkAll boolean Only return true if all statuses are found.
+---@param checkAll boolean|nil Only return true if all statuses are found.
 ---@return boolean
 function CharacterData:HasActiveStatus(status, checkAll)
 	return GameHelpers.Status.IsActive(self.UUID, status, checkAll)
@@ -243,7 +243,8 @@ function CharacterData:EquipTemplate(template, all)
 		for item in GameHelpers.Character.GetEquipment(character) do
 			if GameHelpers.GetTemplate(item) == template and ItemIsEquipable(item.MyGuid) == 1 then
 				SetOnStage(item.MyGuid, 1)
-				NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
+				--TODO Swap with a way to get the slot name for the item, like Weapon/Shield
+				NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.StatsFromName.StatsEntry.Slot, 0, 0, 1, 1)
 				--CharacterEquipItem(self.UUID, v)
 				if all ~= true then
 					return item
@@ -261,7 +262,7 @@ function CharacterData:EquipTemplate(template, all)
 			ItemToInventory(item.MyGuid, self.UUID, 1, 0, 0)
 			if ItemIsEquipable(item.MyGuid) == 1 then
 				SetOnStage(item.MyGuid, 1)
-				NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
+				NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.StatsFromName.StatsEntry.Slot, 0, 0, 1, 1)
 			end
 			return item
 		end
@@ -323,8 +324,8 @@ end
 
 ---Teleports to a position or object.
 ---This uses the behavior scripting teleport function so it doesn't force-teleport connected summons like Osiris' TeleportToPosition does.
----Supports a string/EsvGameObject/number array as the target, or separate x,y,z values.
----@param targetOrX number|number[]|string|EsvGameObject
+---Supports a string/GameObject/number array as the target, or separate x,y,z values.
+---@param targetOrX ObjectParam|vec3|number
 ---@param y number|nil
 ---@param z number|nil
 function CharacterData:TeleportTo(targetOrX,y,z)
@@ -353,7 +354,7 @@ function CharacterData:JumpToTurn(currentRound)
 	if self:Exists() then
 		local id = self:GetCombatID()
 		if id > 0 then
-			local combat = Ext.GetCombat(id)
+			local combat = Ext.Entity.GetCombat(id)
 			if combat then
 				---@type EsvCombatTeam[]
 				local order = nil

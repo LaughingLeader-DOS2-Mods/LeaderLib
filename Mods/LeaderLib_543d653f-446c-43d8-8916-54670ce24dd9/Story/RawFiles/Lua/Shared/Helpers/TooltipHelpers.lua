@@ -104,76 +104,54 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 					end
 				end
 				if useDefaultSkillDamage then
-					if _EXTVERSION >= 56 then
-						if _ISCLIENT then
-							if Ext.Events.SkillGetDescriptionParam then
-								---@type {Character:StatCharacter, Description:string, IsFromItem:boolean, Skill:StatEntrySkillData, Params:string[]}
-								local evt = {
-									Skill = skill,
-									Character = character.Stats,
-									Description = "",
-									IsFromItem = false,
-									Params = {"Damage"},
-									Stopped = false
-								}
-								evt.StopPropagation = function (self)
-									evt.Stopped = true
-								end
-								Ext.Events.SkillGetDescriptionParam:Throw(evt)
-								if not StringHelpers.IsNullOrWhitespace(evt.Description) then
-									return evt.Description
-								end
-							end
-						end
-						if Ext.Events.GetSkillDamage then
-							---@type {Attacker:StatCharacter, AttackerPosition:number[], DamageList:DamageList, DeathType:DeathType, IsFromItem:boolean, Level:integer, Skill:StatEntrySkillData, Stealthed:boolean, TargetPosition:number[]}
+					if _ISCLIENT then
+						if Ext.Events.SkillGetDescriptionParam then
+							---@type {Character:StatCharacter, Description:string, IsFromItem:boolean, Skill:StatEntrySkillData, Params:string[]}
 							local evt = {
 								Skill = skill,
-								Attacker = character.Stats,
-								AttackerPosition = character.WorldPos,
-								TargetPosition = character.WorldPos,
-								DamageList = Ext.Stats.NewDamageList(),
-								DeathType = "None",
-								Stealthed = character.Stats.IsSneaking == true,
+								Character = character.Stats,
+								Description = "",
 								IsFromItem = false,
-								Level = character.Stats.Level,
+								Params = {"Damage"},
 								Stopped = false
 							}
 							evt.StopPropagation = function (self)
 								evt.Stopped = true
 							end
-							Ext.Events.GetSkillDamage:Throw(evt)
-							if evt.DamageList then
-								local hasDamage = false
-								for _,v in pairs(evt.DamageList:ToTable()) do
-									if v.Amount > 0 then
-										hasDamage = true
-										break
-									end
-								end
-								if hasDamage then
-									return GameHelpers.Tooltip.FormatDamageList(evt.DamageList)
-								end
+							Ext.Events.SkillGetDescriptionParam:Throw(evt)
+							if not StringHelpers.IsNullOrWhitespace(evt.Description) then
+								return evt.Description
 							end
 						end
-					else
-						if _ISCLIENT then
-							local b,result = pcall(Ext._SkillGetDescriptionParam, skill, character, false, "Damage")
-							if not StringHelpers.IsNullOrEmpty(result) then
-								return result
-							end
+					end
+					if Ext.Events.GetSkillDamage then
+						---@type {Attacker:StatCharacter, AttackerPosition:number[], DamageList:DamageList, DeathType:DeathType, IsFromItem:boolean, Level:integer, Skill:StatEntrySkillData, Stealthed:boolean, TargetPosition:number[]}
+						local evt = {
+							Skill = skill,
+							Attacker = character.Stats,
+							AttackerPosition = character.WorldPos,
+							TargetPosition = character.WorldPos,
+							DamageList = Ext.Stats.NewDamageList(),
+							DeathType = "None",
+							Stealthed = character.Stats.IsSneaking == true,
+							IsFromItem = false,
+							Level = character.Stats.Level,
+							Stopped = false
+						}
+						evt.StopPropagation = function (self)
+							evt.Stopped = true
 						end
-						local b,damageList = pcall(Ext._GetSkillDamage, skill, character.Stats, false, character.Stats.IsSneaking == true, character.WorldPos, character.WorldPos, character.Stats.Level, true)
-						if damageList then
+						Ext.Events.GetSkillDamage:Throw(evt)
+						if evt.DamageList then
 							local hasDamage = false
-							for _,v in pairs(damageList:ToTable()) do
+							for _,v in pairs(evt.DamageList:ToTable()) do
 								if v.Amount > 0 then
 									hasDamage = true
 									break
 								end
 							end
 							if hasDamage then
-								return GameHelpers.Tooltip.FormatDamageList(damageList)
+								return GameHelpers.Tooltip.FormatDamageList(evt.DamageList)
 							end
 						end
 					end

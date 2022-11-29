@@ -148,7 +148,7 @@ end
 ---@param fx string|string[] The effect resource name
 ---@param object CharacterParam|ItemParam
 ---@param params EffectManagerEsvEffectParams|nil
----@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]
+---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]|nil
 function _INTERNAL.PlayEffect(fx, object, params)
 	local t = type(fx)
 	assert(t == "string" or t == "table", "fx parameter must be a string or a table of strings.")
@@ -159,48 +159,33 @@ function _INTERNAL.PlayEffect(fx, object, params)
 	assert(type(object) == "userdata", "object parameter must be a UUID, NetID, or EsvCharacter/EsvItem.")
 	if t == "string" then
 		local handle = nil
-		if _EXTVERSION >= 56 then
-			---@diagnostic disable undefined-field
-			---@type EffectManagerEsvEffect
-			local b,effect = xpcall(Ext.Effect.CreateEffect, debug.traceback, fx, object.Handle, params.Bone or "")
-			if b and effect then
-				effect.Loop = false
-				--TODO Ext.HandleToDouble is client-side
-				--handle = Ext.UI.HandleToDouble(effect.Component.Handle)
-				handle = Ext.Utils.HandleToInteger(effect.Component.Handle)
-				---@diagnostic enable
-				for k,v in pairs(params) do
-					if ObjectHandleEffectParams[k] then
-						local obj = GameHelpers.TryGetObject(v)
-						if obj then
-							effect[k] = obj.Handle
-						end
-					else
-						effect[k] = v
+		---@type EffectManagerEsvEffect
+		local b,effect = xpcall(Ext.Effect.CreateEffect, debug.traceback, fx, object.Handle, params.Bone or "")
+		if b and effect then
+			effect.Loop = false
+			--TODO Ext.HandleToDouble is client-side
+			--handle = Ext.UI.HandleToDouble(effect.Component.Handle)
+			handle = Ext.Utils.HandleToInteger(effect.Component.Handle)
+			---@diagnostic enable
+			for k,v in pairs(params) do
+				if ObjectHandleEffectParams[k] then
+					local obj = GameHelpers.TryGetObject(v)
+					if obj then
+						effect[k] = obj.Handle
 					end
-				end
-				if params.Loop then
-					InvokeListenerCallbacks(_INTERNAL.Callbacks.LoopEffectStarted, effect, object, effect.Component.Handle, params.Bone or "")
-				end
-				return CreateEffectResult(effect, handle, effect.EffectName)
-			else
-				if not b then
-					Ext.Utils.PrintError(effect)
-				end
-				fprint(LOGLEVEL.ERROR, "[EffectManager.PlayEffect] Failed to create effect (%s) with params:\n%s", fx, Lib.serpent.block(params))
-			end
-		elseif _OSIRIS() then
-			if params then
-				if params.BeamTarget ~= nil then
-					local beamTarget = GameHelpers.GetUUID(params.BeamTarget)
-					handle = PlayLoopBeamEffect(object.MyGuid, beamTarget, fx, params.Bone or "", params.BeamTargetBone or "")
 				else
-					handle = PlayLoopEffect(object.MyGuid, fx, params.Bone or "")
+					effect[k] = v
 				end
-			else
-				handle = PlayLoopEffect(object.MyGuid, fx, "")
 			end
-			return CreateEffectResult(fx, handle, fx)
+			if params.Loop then
+				InvokeListenerCallbacks(_INTERNAL.Callbacks.LoopEffectStarted, effect, object, effect.Component.Handle, params.Bone or "")
+			end
+			return CreateEffectResult(effect, handle, effect.EffectName)
+		else
+			if not b then
+				Ext.Utils.PrintError(effect)
+			end
+			fprint(LOGLEVEL.ERROR, "[EffectManager.PlayEffect] Failed to create effect (%s) with params:\n%s", fx, Lib.serpent.block(params))
 		end
 	elseif t == "table" then
 		local results = {}
@@ -217,7 +202,7 @@ end
 ---@param fx string|string[] The effect resource name
 ---@param pos number[]|ObjectParam
 ---@param params EffectManagerEsvEffectParams|nil
----@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]
+---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]|nil
 function _INTERNAL.PlayEffectAt(fx, pos, params)
 	local t = type(fx)
 	assert(t == "string" or t == "table", "Effect parameter must be a string or a table of strings.")
@@ -231,59 +216,36 @@ function _INTERNAL.PlayEffectAt(fx, pos, params)
 			x,y,z = table.unpack(pos.WorldPos)
 		end
 		assert(x and y and z, "Position table is invalid - {x,y,z} required.")
-		if _EXTVERSION >= 56 then
-			local handle = nil
-			---@diagnostic disable undefined-field
-			---@type EffectManagerEsvEffect
-			local b,effect = xpcall(Ext.Effect.CreateEffect, debug.traceback, fx, Ext.Entity.NullHandle(), "")
-			---@diagnostic enable
-			if b and effect then
-				effect.Position = {x,y,z}
-				effect.ForgetEffect = true
-				effect.Loop = false
+		local handle = nil
+		---@type EffectManagerEsvEffect
+		local b,effect = xpcall(Ext.Effect.CreateEffect, debug.traceback, fx, Ext.Entity.NullHandle(), "")
+		---@diagnostic enable
+		if b and effect then
+			effect.Position = {x,y,z}
+			effect.ForgetEffect = true
+			effect.Loop = false
 
-				if params and type(params) == "table" then
-					for k,v in pairs(params) do
-						if ObjectHandleEffectParams[k] then
-							local obj = GameHelpers.TryGetObject(v)
-							if obj then
-								effect[k] = obj.Handle
-							end
-						else
-							effect[k] = v
+			if params and type(params) == "table" then
+				for k,v in pairs(params) do
+					if ObjectHandleEffectParams[k] then
+						local obj = GameHelpers.TryGetObject(v)
+						if obj then
+							effect[k] = obj.Handle
 						end
-					end
-					if params.Loop then
-						handle = Ext.Utils.HandleToInteger(effect.Component.Handle)
+					else
+						effect[k] = v
 					end
 				end
-				return CreateEffectResult(effect, handle, effect.EffectName, {x,y,z})
-			else
-				if not b then
-					Ext.Utils.PrintError(effect)
-				end
-				fprint(LOGLEVEL.ERROR, "[EffectManager.PlayEffectAt] Failed to create effect (%s) with params:\n%s", fx, Lib.serpent.block(params))
-			end
-		elseif _OSIRIS() then
-			local handle = nil
-			if params then
 				if params.Loop then
-					if params.Scale then
-						handle = PlayScaledLoopEffectAtPosition(fx, params.Scale, x, y, z)
-					else
-						handle = PlayLoopEffectAtPosition(fx, x, y, z)
-					end
-				else
-					if params.Scale then
-						PlayScaledEffectAtPosition(fx, params.Scale, x, y, z)
-					else
-						PlayLoopEffectAtPosition(fx, x, y, z)
-					end
+					handle = Ext.Utils.HandleToInteger(effect.Component.Handle)
 				end
-			else
-				PlayEffectAtPosition(fx, x, y, z)
 			end
-			return CreateEffectResult(fx, handle, fx, {x,y,z})
+			return CreateEffectResult(effect, handle, effect.EffectName, {x,y,z})
+		else
+			if not b then
+				Ext.Utils.PrintError(effect)
+			end
+			fprint(LOGLEVEL.ERROR, "[EffectManager.PlayEffectAt] Failed to create effect (%s) with params:\n%s", fx, Lib.serpent.block(params))
 		end
 	elseif t == "table" then
 		local results = {}
@@ -301,7 +263,7 @@ end
 ---@param object CharacterParam|ItemParam
 ---@param params EffectManagerEsvEffectParams|nil
 ---@param skipSaving boolean|nil
----@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]
+---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]|nil
 function EffectManager.PlayEffect(fx, object, params, skipSaving)
 	local uuid = GameHelpers.GetUUID(object)
 	local result = _INTERNAL.PlayEffect(fx, object, params)
@@ -360,17 +322,12 @@ end
 function _INTERNAL.StopEffect(handle)
 	local t = type(handle)
 	if t == "number" then
-		if _OSIRIS() then
-			StopLoopEffect(handle)
-			return true
-		elseif _EXTVERSION >= 56 then
-			local fxHandle = Ext.Utils.IntegerToHandle(handle)
-			if fxHandle and Ext.Utils.IsValidHandle(fxHandle) then
-				local effect = Ext.Effect.GetEffect(fxHandle)
-				if effect then
-					effect:Delete()
-					return true
-				end
+		local fxHandle = Ext.Utils.IntegerToHandle(handle)
+		if fxHandle and Ext.Utils.IsValidHandle(fxHandle) then
+			local effect = Ext.Effect.GetEffect(fxHandle)
+			if effect then
+				effect:Delete()
+				return true
 			end
 		end
 	end
@@ -446,47 +403,45 @@ end
 ---@return EffectManagerEsvEffect[]
 function EffectManager.GetAllEffects(fx, target, distanceThreshold)
 	local effects = {}
-	if _EXTVERSION >= 56 then
-		distanceThreshold = distanceThreshold or 0.1
+	distanceThreshold = distanceThreshold or 0.1
 
-		---@type fun(effect:EffectManagerEsvEffect):boolean
-		local targetsMatch = nil
-		local t = type(target)
-		if t == "table" then
-			local firstParamType = type(target[1])
-			--Position
-			if firstParamType == "number" then
-				targetsMatch = function (effect)
-					return GameHelpers.Math.GetDistance(effect.Position, target) <= distanceThreshold
-				end
-			elseif firstParamType == "string" then --Table of UUIDs?
-				targetsMatch = function (effect)
-					return _TargetsMatch(effect, target, "table")
-				end
-			elseif firstParamType == "userdata" then --Table of EsvCharacter\EsvItem?
-				targetsMatch = function (effect)
-					for _,v in pairs(target) do
-						if _TargetsMatch(effect, GameHelpers.GetUUID(target), "string") then
-							return true
-						end
-					end
-					return false
-				end
-			end
-		elseif t == "number" or t == "string" or t == "userdata" then
-			local uuid = GameHelpers.GetUUID(target)
+	---@type fun(effect:EffectManagerEsvEffect):boolean
+	local targetsMatch = nil
+	local t = type(target)
+	if t == "table" then
+		local firstParamType = type(target[1])
+		--Position
+		if firstParamType == "number" then
 			targetsMatch = function (effect)
-				return _TargetsMatch(effect, uuid, "string")
+				return GameHelpers.Math.GetDistance(effect.Position, target) <= distanceThreshold
+			end
+		elseif firstParamType == "string" then --Table of UUIDs?
+			targetsMatch = function (effect)
+				return _TargetsMatch(effect, target, "table")
+			end
+		elseif firstParamType == "userdata" then --Table of EsvCharacter\EsvItem?
+			targetsMatch = function (effect)
+				for _,v in pairs(target) do
+					if _TargetsMatch(effect, GameHelpers.GetUUID(target), "string") then
+						return true
+					end
+				end
+				return false
 			end
 		end
-		for _,handle in pairs(Ext.Effect.GetAllEffectHandles()) do
-			---@type EffectManagerEsvEffect
-			local effect = Ext.Effect.GetEffect(handle)
-			if effect then
-				if not fx or effect.EffectName == fx then
-					if not targetsMatch or targetsMatch(effect) then
-						effects[#effects+1] = effect
-					end
+	elseif t == "number" or t == "string" or t == "userdata" then
+		local uuid = GameHelpers.GetUUID(target)
+		targetsMatch = function (effect)
+			return _TargetsMatch(effect, uuid, "string")
+		end
+	end
+	for _,handle in pairs(Ext.Effect.GetAllEffectHandles()) do
+		---@type EffectManagerEsvEffect
+		local effect = Ext.Effect.GetEffect(handle)
+		if effect then
+			if not fx or effect.EffectName == fx then
+				if not targetsMatch or targetsMatch(effect) then
+					effects[#effects+1] = effect
 				end
 			end
 		end

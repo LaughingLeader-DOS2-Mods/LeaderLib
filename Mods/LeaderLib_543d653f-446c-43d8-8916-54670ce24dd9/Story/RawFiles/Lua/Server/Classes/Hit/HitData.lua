@@ -188,7 +188,7 @@ function HitData:RedirectDamage(target, multiplier, aggregate)
 	end
 	local newDamage = Ext.Stats.NewDamageList()
 	for _,v in pairs(self.DamageList:ToTable()) do
-		newDamage:Add(v.DamageType, Ext.Round(v.Amount * multiplier))
+		newDamage:Add(v.DamageType, Ext.Utils.Round(v.Amount * multiplier))
 	end
 	local reduceBy = math.max(0, 1.0 - multiplier)
 	if reduceBy == 0 then
@@ -235,13 +235,13 @@ end
 ---@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
 ---@param percentage number|nil How much of the damage amount to convert, from 0 to 1.
 ---@param negate boolean|nil If true, convert damage types that *don't* match the damageType param.
----@param mathRoundFunction HitData.ConvertDamageTypeTo.MathRoundFunction|nil Optional function to use when rounding amounts (Ext.Round, math.ceil, etc)
+---@param mathRoundFunction HitData.ConvertDamageTypeTo.MathRoundFunction|nil Optional function to use when rounding amounts (Ext.Utils.Round, math.ceil, etc)
 function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate, percentage, negate, mathRoundFunction)
 	if aggregate then
 		self.DamageList:AggregateSameTypeDamages()
 	end
 	percentage = percentage or 1
-	mathRoundFunction = mathRoundFunction or Ext.Round
+	mathRoundFunction = mathRoundFunction or Ext.Utils.Round
 	local damages = self.DamageList:ToTable()
 	local damageList = Ext.Stats.NewDamageList()
 	local t = type(damageType)
@@ -326,12 +326,12 @@ end
 
 ---Saves the hit to Osiris Data/Dumps/Hits/Time_HitType.lua
 function HitData:DumpToFile()
-	-- GameHelpers.IO.SaveFile(string.format("Dumps/Hits/%s_%s.lua", Ext.MonotonicTime(), self.HitType), "local hit = " .. Lib.serpent.block({
+	-- GameHelpers.IO.SaveFile(string.format("Dumps/Hits/%s_%s.lua", Ext.Utils.MonotonicTime(), self.HitType), "local hit = " .. Lib.serpent.block({
 	-- 	HitStatus = self.HitStatus,
 	-- 	HitRequest = self.HitRequest,
 	-- 	HitContext = self.HitContext
 	-- }))
-	GameHelpers.IO.SaveJsonFile(string.format("Dumps/Hit/%s_%s.json", Ext.MonotonicTime(), self.HitType), Ext.DumpExport({
+	GameHelpers.IO.SaveJsonFile(string.format("Dumps/Hit/%s_%s.json", Ext.Utils.MonotonicTime(), self.HitType), Ext.DumpExport({
 		HitStatus = self.HitStatus,
 		HitRequest = self.HitRequest,
 		HitContext = self.HitContext

@@ -42,7 +42,7 @@ local function GetPlayerStatusMovieClips(character, matchStatus)
 		--TODO Parse playerInfo_c
 		return statusMovieclips
 	end
-	local ui = Ext.GetUIByType(Data.UIType.playerInfo)
+	local ui = Ext.UI.GetByType(Data.UIType.playerInfo)
 	if ui ~= nil then
 		local root = ui:GetRoot()
 		if root ~= nil then
@@ -133,7 +133,7 @@ end)
 Ext.RegisterNetListener("LeaderLib_SetHelmetOption", function(call, dataStr)
 	local data = MessageData:CreateFromString(dataStr)
 	if data.Params.UUID ~= nil and data.Params.Enabled ~= nil then
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
+		local ui = Ext.UI.GetByPath("Public/Game/GUI/characterSheet.swf")
 		if ui ~= nil then
 			local state = data.Params.Enabled and 1 or 0
 			ui:ExternalInterfaceCall("setHelmetOption", state)
@@ -144,7 +144,7 @@ end)
 Ext.RegisterNetListener("LeaderLib_SetArmorOption", function(call, dataStr)
 	local data = MessageData:CreateFromString(dataStr)
 	if data.Params.UUID ~= nil and data.Params.State ~= nil then
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterCreation.swf")
+		local ui = Ext.UI.GetByPath("Public/Game/GUI/characterCreation.swf")
 		if ui ~= nil then
 			ui:ExternalInterfaceCall("setArmourState", data.Params.State)
 		end

@@ -21,7 +21,7 @@ local CharacterCreation = Classes.UIWrapper:CreateFromType(Data.UIType.character
 UIExtensions.CharacterCreation = CharacterCreation
 
 function CCExt.GetInstance(skipSetup)
-	local instance = Ext.UI.GetByName(CCExt.ID) or Ext.GetBuiltinUI(CCExt.SwfPath)
+	local instance = Ext.UI.GetByName(CCExt.ID) or Ext.UI.GetByPath(CCExt.SwfPath)
 	if not instance and skipSetup ~= true then
 		instance = CCExt.SetupInstance()
 	end
@@ -43,10 +43,7 @@ setmetatable(CCExt, {
 		elseif k == "Visible" then
 			local ui = CCExt.GetInstance(true)
 			if ui then
-				if _EXTVERSION >= 56 then
-					return Common.TableHasValue(ui.Flags, "OF_Visible")
-				end
-				return true
+				return Common.TableHasValue(ui.Flags, "OF_Visible")
 			end
 			return false
 		end
@@ -74,16 +71,13 @@ local function GetCCVisibility()
 	if not _ISCCLEVEL or Vars.ControllerEnabled then
 		return false
 	end
-	local cc = Ext.GetUIByType(Data.UIType.characterCreation)
+	local cc = Ext.UI.GetByType(Data.UIType.characterCreation)
 	if cc then
 		local this = cc:GetRoot()
 		if this and this.isFinished == true then
 			return false
 		end
-		if _EXTVERSION >= 56 then
-			return Common.TableHasValue(cc.Flags, "OF_Visible")
-		end
-		return true
+		return Common.TableHasValue(cc.Flags, "OF_Visible")
 	end
 	return false
 end
@@ -111,7 +105,7 @@ function CCExt.PositionButtons(ccExt)
 		ccExt.skipTutorial_mc.x = x
 		ccExt.skipTutorial_mc.y = ccRoot.CCPanel_mc.y + ccRoot.CCPanel_mc.armourBtnHolder_mc.y + ccRoot.CCPanel_mc.armourBtnHolder_mc.armourBtn_mc.y + ccRoot.CCPanel_mc.armourBtnHolder_mc.armourBtn_mc.height + ccExt.skipTutorial_mc.height + 12
 
-		ccExt.presetButton_mc.visible = _EXTVERSION >= 56
+		ccExt.presetButton_mc.visible = true
 		ccExt.skipTutorial_mc.visible = true
 	end
 end
@@ -190,7 +184,7 @@ function CCExt.SetupInstance(force)
 	end
 	local visible = force or GetCCVisibility()
 	if visible then
-		local instance = Ext.UI.GetByName(CCExt.ID) or Ext.GetBuiltinUI(CCExt.SwfPath)
+		local instance = Ext.UI.GetByName(CCExt.ID) or Ext.UI.GetByPath(CCExt.SwfPath)
 		if not instance then
 			CCExt.Initialized = false
 			instance = Ext.UI.Create(CCExt.ID, CCExt.SwfPath, CCExt.Layer)
@@ -203,9 +197,7 @@ function CCExt.SetupInstance(force)
 				local tooltip = GameHelpers.GetStringKeyText("LeaderLib_UI_PresetDropdown_Tooltip", "<font color='#BB77FF' size='22'>Preset Selection</font><br>Toggle the the Preset Selection dropdown.")
 				this.presetButton_mc.setText(tooltip)
 				this.presetButton_mc.title_mc.setText(title)
-				if _EXTVERSION >= 56 then
-					UIExtensions.CC.PresetExt.CreatePresetDropdown()
-				end
+				UIExtensions.CC.PresetExt.CreatePresetDropdown()
 
 				CCExt.SetupSkipTutorialButton(this)
 				CCExt.PositionButtons(this)

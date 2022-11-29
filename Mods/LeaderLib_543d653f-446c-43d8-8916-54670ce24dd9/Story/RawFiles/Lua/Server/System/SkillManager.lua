@@ -159,7 +159,7 @@ local function _GetSkillSourceItem(character, skill, returnStoredtemData)
 		return nil
 	end
 	local sourceItem = nil
-	if _EXTVERSION >= 56 and GameHelpers.Ext.ObjectIsCharacter(character) then
+	if GameHelpers.Ext.ObjectIsCharacter(character) then
 		if character.SkillManager.CurrentSkillState and Ext.Utils.IsValidHandle(character.SkillManager.CurrentSkillState.SourceItemHandle) then
 			sourceItem = GameHelpers.GetItem(character.SkillManager.CurrentSkillState.SourceItemHandle)
 		end
@@ -174,9 +174,7 @@ local function _GetSkillSourceItem(character, skill, returnStoredtemData)
 						StatsId = lastItemData.StatsId,
 						DisplayName = lastItemData.DisplayName
 					}
-					if _EXTVERSION >= 56 then
-						sourceItem.RootTemplate = Ext.Template.GetTemplate(lastItemData.Template)
-					end
+					sourceItem.RootTemplate = Ext.Template.GetTemplate(lastItemData.Template)
 				elseif ObjectExists(lastItemData.Item) == 1 then
 					sourceItem = GameHelpers.GetItem(lastItemData.Item)			
 				end
@@ -186,28 +184,26 @@ local function _GetSkillSourceItem(character, skill, returnStoredtemData)
 	return sourceItem
 end
 
-if _EXTVERSION >= 56 then
-	Ext.Osiris.RegisterListener("CanUseItem", 3, "after", function(charGUID, itemGUID, requestId)
-		if ObjectExists(charGUID) == 1 and ObjectExists(itemGUID) == 1 then
-			local skills,data = GameHelpers.Item.GetUseActionSkills(itemGUID, false, false)
-			if data.IsConsumable and skills[1] then
-				charGUID = StringHelpers.GetUUID(charGUID)
-				itemGUID = StringHelpers.GetUUID(itemGUID)
-				local item = GameHelpers.GetItem(itemGUID)
-				local statsId = GameHelpers.Item.GetItemStat(item)
-				local template = GameHelpers.GetTemplate(item)
-				_lastUsedSkillItems[charGUID] = {
-					Item = itemGUID,
-					Skills = skills,
-					StatsId = statsId,
-					Template = template,
-					DisplayName = item.DisplayName
-				}
-				Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", charGUID)
-			end
+Ext.Osiris.RegisterListener("CanUseItem", 3, "after", function(charGUID, itemGUID, requestId)
+	if ObjectExists(charGUID) == 1 and ObjectExists(itemGUID) == 1 then
+		local skills,data = GameHelpers.Item.GetUseActionSkills(itemGUID, false, false)
+		if data.IsConsumable and skills[1] then
+			charGUID = StringHelpers.GetUUID(charGUID)
+			itemGUID = StringHelpers.GetUUID(itemGUID)
+			local item = GameHelpers.GetItem(itemGUID)
+			local statsId = GameHelpers.Item.GetItemStat(item)
+			local template = GameHelpers.GetTemplate(item)
+			_lastUsedSkillItems[charGUID] = {
+				Item = itemGUID,
+				Skills = skills,
+				StatsId = statsId,
+				Template = template,
+				DisplayName = item.DisplayName
+			}
+			Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", charGUID)
 		end
-	end)
-end
+	end
+end)
 
 ---@param skill string
 ---@param character EsvCharacter
@@ -465,7 +461,7 @@ RegisterProtectedOsirisListener("NRD_OnActionStateEnter", 2, "after", function(c
 	end
 end)
 
--- Ext.RegisterOsirisListener("NRD_OnActionStateExit", Data.OsirisEvents.NRD_OnActionStateExit, "after", function(char, state)
+-- Ext.Osiris.RegisterListener("NRD_OnActionStateExit", Data.OsirisEvents.NRD_OnActionStateExit, "after", function(char, state)
 -- 	if state == "PrepareSkill" then
 -- 		local skillprototype = NRD_ActionStateGetString(char, "SkillId")
 -- 		if skillprototype ~= nil and skillprototype ~= "" then
@@ -474,23 +470,23 @@ end)
 -- 	end
 -- end)
 
--- Ext.RegisterOsirisListener("CharacterUsedSkillOnTarget", 5, "after", function(char, target, skill, skilltype, element)
+-- Ext.Osiris.RegisterListener("CharacterUsedSkillOnTarget", 5, "after", function(char, target, skill, skilltype, element)
 -- 	StoreSkillEventData(char, skill, skilltype, element, target)
 -- end)
 
--- Ext.RegisterOsirisListener("CharacterUsedSkillAtPosition", 7, "after", function(char, x, y, z, skill, skilltype, element)
+-- Ext.Osiris.RegisterListener("CharacterUsedSkillAtPosition", 7, "after", function(char, x, y, z, skill, skilltype, element)
 -- 	StoreSkillEventData(char, skill, skilltype, element, x, y, z)
 -- end)
 
--- Ext.RegisterOsirisListener("CharacterUsedSkillOnZoneWithTarget", 5, "after", function(char, target, skill, skilltype, element)
+-- Ext.Osiris.RegisterListener("CharacterUsedSkillOnZoneWithTarget", 5, "after", function(char, target, skill, skilltype, element)
 -- 	StoreSkillEventData(char, skill, skilltype, element, target)
 -- end)
 
--- Ext.RegisterOsirisListener("CharacterUsedSkill", 4, "after", function(char, skill, skilltype, element)
+-- Ext.Osiris.RegisterListener("CharacterUsedSkill", 4, "after", function(char, skill, skilltype, element)
 -- 	OnSkillUsed(char, skill, skilltype, element)
 -- end)
 
--- Ext.RegisterOsirisListener("SkillCast", 4, "after", function(char, skill, skilltype, element)
+-- Ext.Osiris.RegisterListener("SkillCast", 4, "after", function(char, skill, skilltype, element)
 -- 	SkillCast(char, skill, skilltype, element)
 -- end)
 

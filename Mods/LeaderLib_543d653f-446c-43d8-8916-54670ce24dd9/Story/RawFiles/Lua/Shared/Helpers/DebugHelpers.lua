@@ -1361,9 +1361,7 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 			if obj.DisplayName then
 				props.DisplayName = function(_obj) return GameHelpers.GetDisplayName(_obj) end
 			end
-			if _EXTVERSION >= 56 then
-				props.UserdataType = function(_obj) return Ext.Types.GetObjectType(_obj) end
-			end
+			props.UserdataType = function(_obj) return Ext.Types.GetObjectType(_obj) end
 			if obj.NetID then
 				props.NetID = "number"
 			end
@@ -1418,44 +1416,36 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 			return data
 		end
 	else
-		if _EXTVERSION >= 56 then
-			local data = {
-				UserdataType = Ext.Types.GetObjectType(obj)
-			}
-			local _proccessEntry = nil
-			_proccessEntry = function(_d, k,v)
-				local t = _type(v)
-				if t == "userdata" then
-					local b,result = pcall(DebugHelpers.TraceUserDataSerpent, v, opts)
-					if b and result ~= nil then
-						_d[k] = result
-					end
-				elseif t == "table" then
-					_d[k] = {}
-					for k2,v2 in pairs(v) do
-						_proccessEntry(_d[k], k2,v2)
-					end
-				else
-					_d[k] = Ext.DumpExport(v)
+		local data = {
+			UserdataType = Ext.Types.GetObjectType(obj)
+		}
+		local _proccessEntry = nil
+		_proccessEntry = function(_d, k,v)
+			local t = _type(v)
+			if t == "userdata" then
+				local b,result = pcall(DebugHelpers.TraceUserDataSerpent, v, opts)
+				if b and result ~= nil then
+					_d[k] = result
 				end
-			end
-			local b,err = xpcall(function()
-				for k,v in pairs(obj) do
-					if k ~= "AttributeFlags" then
-						_proccessEntry(data, k,v)
-					end
+			elseif t == "table" then
+				_d[k] = {}
+				for k2,v2 in pairs(v) do
+					_proccessEntry(_d[k], k2,v2)
 				end
-			end, debug.traceback)
-			if not b then
-				data.Data = Ext.DumpExport(obj)
-			end
-			return data
-		else
-			if meta then
-				return tostring(meta)
 			else
-				return tostring(obj)
+				_d[k] = Ext.DumpExport(v)
 			end
 		end
+		local b,err = xpcall(function()
+			for k,v in pairs(obj) do
+				if k ~= "AttributeFlags" then
+					_proccessEntry(data, k,v)
+				end
+			end
+		end, debug.traceback)
+		if not b then
+			data.Data = Ext.DumpExport(obj)
+		end
+		return data
 	end
 end

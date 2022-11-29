@@ -222,9 +222,7 @@ function SkipTutorial.Initialize()
 				Timer.StartOneshot("Timers_LeaderLib_SkipFTJWakeup", 50, function()
 					for player in GameHelpers.Character.GetPlayers() do
 						skipTutorialWakeup(player.MyGuid)
-						if _EXTVERSION >= 56 then
-							ObjectClearFlag(player.MyGuid, "DLC_SquirrelKnight_OwnerFlag", 0)
-						end
+						ObjectClearFlag(player.MyGuid, "DLC_SquirrelKnight_OwnerFlag", 0)
 					end
 				end)
 
@@ -238,7 +236,7 @@ function SkipTutorial.Initialize()
 					end
 				end
 
-				-- if _EXTVERSION >= 56 and GlobalGetFlag("GLO_DLC_SquirrelWizard_Activated") == 1 then
+				-- if GlobalGetFlag("GLO_DLC_SquirrelWizard_Activated") == 1 then
 				-- 	TeleportTo("9183620e-c7d1-4762-b7c6-512045da9325", "2fd623f7-34f5-470d-bce3-3aa60ce50c3b", "", 0, 1, 1)
 				-- 	ClearVarObject("9183620e-c7d1-4762-b7c6-512045da9325", "owner")
 				-- 	GlobalClearFlag("GLO_DLC_SquirrelWizard_Activated")
@@ -310,7 +308,7 @@ function SkipTutorial.Initialize()
 		Osi.DB_CharacterCreationTransitionInfo:Delete(nil,nil,nil)
 		Osi.DB_CharacterCreationTransitionInfo:Delete(nil,nil,nil)
 
-		if _EXTVERSION >= 56 and region == "FJ_FortJoy_Main" then
+		if region == "FJ_FortJoy_Main" then
 			--Fix Sir Lora issues if the region loaded too fast
 			GlobalSetFlag("GLO_DLC_SquirrelWizard_Activated")
 		end
@@ -367,7 +365,7 @@ function SkipTutorial.Initialize()
 
 	subscribeIndex = Events.RegionChanged:Subscribe(SkipTutorial_RegionChanged, {Priority=999})
 
-	Ext.RegisterOsirisListener("CharacterCreationFinished", 1, "before", function(uuid)
+	Ext.Osiris.RegisterListener("CharacterCreationFinished", 1, "before", function(uuid)
 		-- CharacterCreationFinished(NULL) means that everyone is ready
 		if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
 			runSkipTutorialSetup = GameSettings.Settings.SkipTutorial.Enabled

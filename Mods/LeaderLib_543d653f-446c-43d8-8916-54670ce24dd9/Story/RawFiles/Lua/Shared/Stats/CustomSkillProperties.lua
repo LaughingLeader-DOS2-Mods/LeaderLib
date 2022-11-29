@@ -63,21 +63,21 @@ GameHelpers.Skill.CreateSkillProperty("SafeForce", function (property)
 			if chance >= 1 then
 				return LocalizedText.SkillTooltip.SafeForce:ReplacePlaceholders(distance, fromText)
 			else
-				chance = Ext.Round(chance * 100)
+				chance = Ext.Utils.Round(chance * 100)
 				return LocalizedText.SkillTooltip.SafeForceRandom:ReplacePlaceholders(distance, fromText, chance)
 			end
 		else
 			if chance >= 1 then
 				return LocalizedText.SkillTooltip.SafeForce_Negative:ReplacePlaceholders(math.abs(distance), fromText)
 			else
-				chance = Ext.Round(chance * 100)
+				chance = Ext.Utils.Round(chance * 100)
 				return LocalizedText.SkillTooltip.SafeForceRandom_Negative:ReplacePlaceholders(math.abs(distance), fromText, chance)
 			end
 		end
 end, function (property, attacker, position, areaRadius, isFromItem, skill, hit, skillId)
 	local chance = property.Arg1
 		local distance = math.floor(property.Arg2/6)
-		if chance >= 1.0 or Ext.Random(0,1) <= chance then
+		if chance >= 1.0 or Ext.Utils.Random(0,1) <= chance then
 			local x,y,z = table.unpack(position)
 			--local characters = Ext.GetCharactersAroundPosition(x,y,z, areaRadius)
 			local characters = {}
@@ -104,7 +104,7 @@ end, function (property, attacker, target, position, isFromItem, skill, hit, ski
 	if attacker.MyGuid ~= target.MyGuid then
 		local chance = property.Arg1
 		local distance = math.floor(property.Arg2/6)
-		if chance >= 1.0 or Ext.Random(0,1) <= chance then
+		if chance >= 1.0 or Ext.Utils.Random(0,1) <= chance then
 			local startPos = attacker.WorldPos
 			local useTargetForPosition = true
 			if not StringHelpers.IsNullOrWhitespace(property.Arg3) then
@@ -147,7 +147,7 @@ local function tpSelf(attacker, position, areaRadius)
 	end
 end
 
----@param object EsvCharacter|EsvItem|EsvGameObject
+---@param object EsvCharacter|EsvItem
 ---@param position number[]
 ---@param areaRadius number
 ---@param skill StatEntrySkillData
@@ -193,7 +193,7 @@ GameHelpers.Skill.CreateSkillProperty("ToggleStatus", function (property)
 	local statusDisplayName = ""
 	local statusId = property.Arg3
 	local duration = property.Arg2
-	local turns = duration > 0 and Ext.Round(duration / 6.0) or duration
+	local turns = duration > 0 and Ext.Utils.Round(duration / 6.0) or duration
 	if not StringHelpers.IsNullOrWhitespace(statusId) then
 		if Data.EngineStatus[statusId] then
 			local engineStatusName = LocalizedText.Status[statusId]
@@ -210,7 +210,7 @@ GameHelpers.Skill.CreateSkillProperty("ToggleStatus", function (property)
 			if settings.Global:FlagEquals("LeaderLib_PermanentSpiritVisionEnabled", false) then
 				local overrideProp = Vars.Overrides.SPIRIT_VISION_PROPERTY
 				if overrideProp and property.Arg1 == overrideProp.Arg1 and property.Arg2 == overrideProp.Arg2 and property.Arg4 == overrideProp.Arg4 then
-					turns = overrideProp.Arg5 > 0 and Ext.Round(overrideProp.Arg5 / 6.0) or overrideProp.Arg5
+					turns = overrideProp.Arg5 > 0 and Ext.Utils.Round(overrideProp.Arg5 / 6.0) or overrideProp.Arg5
 					if turns > 0 then
 						return LocalizedText.Tooltip.ExtraPropertiesWithTurns:ReplacePlaceholders(statusDisplayName, "", "", turns)
 					else

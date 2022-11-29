@@ -90,7 +90,7 @@ function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)
 	if _OSIRIS() then
 		return GetOsirisCombatCharacters(id, filter, filterReference, asTable)
 	end
-	local combat = Ext.GetCombat(id)
+	local combat = Ext.Entity.GetCombat(id)
 	if combat then
 		local refuuid = GameHelpers.GetUUID(filterReference)
 		local objects = {}

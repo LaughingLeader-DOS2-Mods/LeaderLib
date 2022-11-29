@@ -65,7 +65,7 @@ if _ISCLIENT then
 
 	---@return UIObject
 	function CombatLog.GetInstance()
-		local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.combatLog) or Ext.GetUIByType(Data.UIType.combatLog_c)
+		local ui = not Vars.ControllerEnabled and Ext.UI.GetByType(Data.UIType.combatLog) or Ext.UI.GetByType(Data.UIType.combatLog_c)
 		if ui then
 			return ui
 		end
@@ -272,7 +272,7 @@ if _ISCLIENT then
 					local this = CombatLog.Root
 					if this and not this.log_mc.visible then
 						--[[ if not Vars.ControllerEnabled then
-							local hotbar = Ext.GetUIByType(Data.UIType.hotBar)
+							local hotbar = Ext.UI.GetByType(Data.UIType.hotBar)
 							if hotbar then
 								hotbar:ExternalInterfaceCall("CombatLogBtnPressed")
 							end

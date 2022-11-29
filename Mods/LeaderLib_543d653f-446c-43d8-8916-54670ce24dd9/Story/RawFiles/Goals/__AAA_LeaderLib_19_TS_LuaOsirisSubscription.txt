@@ -3,7 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 KBSECTION
 /*
-Osiris events need to be used in a script somewhere for them to be used with Ext.RegisterOsirisListener in Lua.
+Osiris events need to be used in a script somewhere for them to be used with Ext.Osiris.RegisterListener in Lua.
 This script is never intended to run, as it's simply used so events can be listened for in Lua.
  */
 

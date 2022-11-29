@@ -2,7 +2,7 @@ Vars.HealingStatusToSkills = {}
 
 local function CalculateHealAmount(healValue, level)
 	local averageLevelDamage = Game.Math.GetAverageLevelDamage(level)
-	return Ext.Round(healValue * averageLevelDamage * Ext.ExtraData.HealToDamageRatio / 100.0)
+	return Ext.Utils.Round(healValue * averageLevelDamage * Ext.ExtraData.HealToDamageRatio / 100.0)
 end
 
 ---@param target EsvCharacter

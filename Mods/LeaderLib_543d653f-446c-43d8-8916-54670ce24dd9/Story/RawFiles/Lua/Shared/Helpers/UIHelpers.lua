@@ -181,9 +181,9 @@ else
 		local ui = nil
 		local t = _type(id)
 		if t == "number" then
-			ui = Ext.GetUIByType(id)
+			ui = Ext.UI.GetByType(id)
 		elseif t == "string" then
-			ui = Ext.GetBuiltinUI(id) or Ext.UI.GetByName(id)
+			ui = Ext.UI.GetByPath(id) or Ext.UI.GetByName(id)
 		end
 		if ui then
 			ui:Invoke(method, ...)
@@ -198,9 +198,9 @@ else
 		local ui = nil
 		local t = _type(id)
 		if t == "number" then
-			ui = Ext.GetUIByType(id)
+			ui = Ext.UI.GetByType(id)
 		elseif t == "string" then
-			ui = Ext.GetBuiltinUI(id) or Ext.UI.GetByName(id)
+			ui = Ext.UI.GetByPath(id) or Ext.UI.GetByName(id)
 		end
 		if ui then
 			return ui:GetRoot()
@@ -218,7 +218,7 @@ function GameHelpers.UI.RefreshSkillBar(client)
 			GameHelpers.Net.PostToUser(player, "LeaderLib_Hotbar_Refresh", "")
 		end
 	else
-		local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.hotBar) or Vars.ControllerEnabled and Ext.GetBuiltinUI(Data.UIType.bottomBar_c)
+		local ui = not Vars.ControllerEnabled and Ext.UI.GetByType(Data.UIType.hotBar) or Vars.ControllerEnabled and Ext.UI.GetByPath(Data.UIType.bottomBar_c)
 		if ui then
 			ui:ExternalInterfaceCall("updateSlots", UI.MaxHotbarSlots)
 		end

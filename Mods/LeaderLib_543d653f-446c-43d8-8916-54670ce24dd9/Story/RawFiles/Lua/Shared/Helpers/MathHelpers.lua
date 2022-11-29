@@ -14,7 +14,7 @@ local _floor = math.floor
 local _sqrt = math.sqrt
 local _unpack = table.unpack
 local _rad = math.rad
-local _ran = Ext.Random
+local _ran = Ext.Utils.Random
 
 local _vecadd = Ext.Math.Add
 local _vecsub = Ext.Math.Sub

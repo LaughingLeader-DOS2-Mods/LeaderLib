@@ -1,7 +1,7 @@
 --This fixes an issue where if the experience tooltip was open when the reward UI opens, it prevents being able to click on things.
 
 Ext.RegisterUITypeInvokeListener(Data.UIType.reward, "setTitle", function(ui, event)
-	local hotbar = Ext.GetUIByType(Data.UIType.hotBar)
+	local hotbar = Ext.UI.GetByType(Data.UIType.hotBar)
 	if hotbar then
 		local this = hotbar:GetRoot()
 		this.hotbar_mc.expBar_mc.mouseEnabled = false
@@ -11,7 +11,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.reward, "setTitle", function(ui, ev
 end)
 
 Ext.RegisterUITypeCall(Data.UIType.reward, "acceptClicked", function(ui, event)
-	local hotbar = Ext.GetUIByType(Data.UIType.hotBar)
+	local hotbar = Ext.UI.GetByType(Data.UIType.hotBar)
 	if hotbar then
 		local this = hotbar:GetRoot()
 		this.hotbar_mc.expBar_mc.mouseEnabled = true

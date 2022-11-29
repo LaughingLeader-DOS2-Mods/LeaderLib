@@ -154,7 +154,7 @@ local justResized = false
 local function OnResolution(ui, call, w, h)
 	-- if not justResized and _EXTVERSION >= 56 and SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
 	-- 	--ui:ExternalInterfaceCall("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
-	-- 	UIExtensions.ResizeToUI(Ext.GetUIByType(Vars.ControllerEnabled and Data.UIType.characterCreation_c or Data.UIType.characterCreation))
+	-- 	UIExtensions.ResizeToUI(Ext.UI.GetByType(Vars.ControllerEnabled and Data.UIType.characterCreation_c or Data.UIType.characterCreation))
 	-- end
 	-- if w == nil then
 	-- 	if _EXTVERSION >= 56 then
@@ -180,13 +180,15 @@ end
 --local defaultUIFlags = Data.DefaultUIFlags | Data.UIFlags.OF_FullScreen | Data.UIFlags.OF_KeepInScreen
 local defaultUIFlags = Data.DefaultUIFlags
 
+---@param skipCheck boolean|nil
+---@return UIObject
 function UIExtensions.SetupInstance(skipCheck)
 	-- if Ext.GetGameState() == "Menu" then
 	-- 	Ext.Utils.PrintError("[UIExtensions.SetupInstance] Game not ready yet.")
 	-- end
 	local instance = nil
 	if not skipCheck then
-		instance = Ext.UI.GetByName(UIExtensions.ID) or Ext.GetBuiltinUI(UIExtensions.SwfPath)
+		instance = Ext.UI.GetByName(UIExtensions.ID) or Ext.UI.GetByPath(UIExtensions.SwfPath)
 	end
 	if not instance then
 		if Vars.ControllerEnabled then
@@ -257,10 +259,11 @@ function UIExtensions.SetupInstance(skipCheck)
 	else
 		Ext.Utils.PrintError("[LeaderLib] Failed to create UI:", UIExtensions.SwfPath)
 	end
+	return instance
 end
 
 function UIExtensions.GetInstance(skipSetup)
-	local instance = Ext.UI.GetByName(UIExtensions.ID) or Ext.GetBuiltinUI(UIExtensions.SwfPath)
+	local instance = Ext.UI.GetByName(UIExtensions.ID) or Ext.UI.GetByPath(UIExtensions.SwfPath)
 	if not instance and not skipSetup then
 		instance = UIExtensions.SetupInstance(true)
 	end
@@ -291,7 +294,8 @@ end)
 ---@param y number|nil
 ---@param filterBool boolean|nil If true, the checkbox state progresses from 0-2 until it resets to 0 at > 2, otherwise it just toggles between 0 and 1.
 ---@param enabled boolean|nil
----@return integer Returns the ID of the checkbox created if successful.
+---@return integer|nil id The ID of the checkbox created if successful.
+---@return integer|nil index
 function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBool, enabled)
 	UIExtensions.SetupInstance()
 	local id = #UIExtensions.Controls
@@ -326,7 +330,9 @@ end
 ---@param y number
 ---@param text LeaderLibUIExtensionsDropdownTextSettings
 ---@param entries LeaderLibUIExtensionsDropdownEntry[]
----@return integer
+---@return FlashMovieClip|nil dropdown_mc
+---@return integer|nil id
+---@return integer|nil index
 function UIExtensions.AddDropdown(onChange, x, y, text, entries)
 	UIExtensions.SetupInstance()
 	local id = #UIExtensions.Controls
@@ -437,7 +443,7 @@ function UIExtensions.GetMousePosition()
 		local x = main.mouseX
 		local y = main.mouseY
 		if x < 0 or y < 0 then
-			local ui = Ext.GetUIByType(Data.UIType.playerInfo) or Ext.GetBuiltinUI(Data.UIType.playerInfo_c)
+			local ui = Ext.UI.GetByType(Data.UIType.playerInfo) or Ext.UI.GetByPath(Data.UIType.playerInfo_c)
 			if ui then
 				local root = ui:GetRoot()
 				if root then
@@ -542,7 +548,7 @@ end
 local registeredControllerListeners = false
 
 Ext.Events.SessionLoaded:Subscribe(function()
-	Vars.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
+	Vars.ControllerEnabled = (Ext.UI.GetByPath("Public/Game/GUI/msgBox_c.swf") or Ext.UI.GetByType(Data.UIType.msgBox_c)) ~= nil
 
 	UIExtensions.SetupInstance()
 

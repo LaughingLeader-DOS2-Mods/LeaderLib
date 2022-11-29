@@ -59,7 +59,7 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, par
 		params.Position = combat
 		combat = nil
 	end
-	local uniqueId = string.format("%s%s%s", id, Ext.MonotonicTime(), Ext.Random(9999))
+	local uniqueId = string.format("%s%s%s", id, Ext.Utils.MonotonicTime(), Ext.Utils.Random(9999))
 	---@type TurnCounterData
 	local tbl = {
 		ID = id,

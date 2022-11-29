@@ -512,7 +512,7 @@ if not _ISCLIENT then
 		Events.TimerFinished:Invoke({ID=timerName, Data={Object=object, UUID=uuid}})
 	end
 	
-	Ext.RegisterOsirisListener("ProcObjectTimerFinished", 2, "after", OnProcObjectTimerFinished)
+	Ext.Osiris.RegisterListener("ProcObjectTimerFinished", 2, "after", OnProcObjectTimerFinished)
 end
 
 ---@class ExtGameTime

@@ -537,7 +537,7 @@ end
 ---@param x number
 ---@param z number
 ---@param grid EocAiGrid
----@return {Cell:_GameTooltipGridCell, Ground:string|nil, Cloud:string|nil}
+---@return {Cell:_GameTooltipGridCell, Ground:string|nil, Cloud:string|nil}|nil
 local function _GetSurfaces(x, z, grid)
 	local cell = grid:GetCellInfo(x, z)
 	if cell then
@@ -591,7 +591,7 @@ end
 Ext.RegisterUITypeInvokeListener(_UITYPE.contextMenu.Object, "open", _CaptureCursorObject)
 Ext.RegisterUITypeCall(_UITYPE.examine, "hideUI", _OnExamineWindowClosed)
 
----@param e EclLuaUICallEventParams
+---@param e EclLuaUICallEvent
 ---@param ui UIObject
 ---@param event string
 ---@param typeIndex integer
@@ -692,7 +692,7 @@ function RequestProcessor.OnControllerExamineTooltip(e, ui, event, id, objectHan
 	local uiTypeId = ui.Type
 	request.UIType = uiTypeId
 
-	---@type EclItem|EclCharacter
+	---@type EclItem|EclCharacter|nil
 	local object = nil
 
 	if not _IsNaN(objectHandle) then
@@ -772,7 +772,7 @@ function RequestProcessor.OnControllerExamineTooltip(e, ui, event, id, objectHan
 	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, uiTypeId, event, id, objectHandle)
 end
 
----@param e EclLuaUICallEventParams
+---@param e EclLuaUICallEvent
 ---@param ui UIObject
 ---@param event string
 ---@param id number
@@ -815,7 +815,7 @@ function RequestProcessor.OnGMStatusTooltip(e, ui, event, id, ...)
 	RequestProcessor.Tooltip:InvokeRequestListeners(request, "After", ui, ui.Type, event, id, ...)
 end
 
----@param e EclLuaUICallEventParams
+---@param e EclLuaUICallEvent
 ---@param ui UIObject
 ---@param event string
 ---@param text string
@@ -908,19 +908,18 @@ StringifyInternalTypes = true,
 IterateUserdata = false,
 AvoidRecursion = true}
 
----@param e EclLuaUICallEventParams
+---@param e EclLuaUICallEvent
 ---@param requestType string
 ---@param ui UIObject
 ---@param uiType integer
 ---@param event string Call or method.
 ---@param idOrDoubleHandle any
 ---@param statOrWidth any
----@param ... any
+---@vararg any
 function RequestProcessor.HandleCallback(e, requestType, ui, uiType, event, idOrDoubleHandle, statOrWidth, ...)
 	---@type {characterHandle:number|nil}
 	local this = ui:GetRoot()
 
-	---@type EclCharacter
 	local character = _GetObjectFromHandle(ui:GetPlayerHandle())
 	local id = idOrDoubleHandle
 
@@ -989,14 +988,14 @@ end
 
 local function OnControllerSlotOver(e, ui, event, id, ...)
 	if id ~= 0 then
-		RequestProcessor.HandleCallback("Item", ui, ui.Type, TooltipCalls.Item, id, ...)
+		RequestProcessor.HandleCallback(e, "Item", ui, ui.Type, TooltipCalls.Item, id, ...)
 	end
 end
 
 local function RedirectControllerTooltip(e, tooltipType, ui, event, ...)
 	--Redirect to standard events, so the regular handlers work
 	local event = TooltipCalls[tooltipType] or event
-	RequestProcessor.HandleCallback(tooltipType, ui, ui.Type, event, ...)
+	RequestProcessor.HandleCallback(e, tooltipType, ui, ui.Type, event, ...)
 end
 
 ---@type table<string, {Callback:function, TypeIds:table<integer,boolean>|nil}>
@@ -1004,7 +1003,7 @@ local CallHandlers = {}
 local InvokeHandlers = {}
 
 ---@param event string
----@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
+---@param callback fun(e:EclLuaUICallEvent, ui:UIObject, event:string, ...:any)
 ---@param typeIds table<integer,boolean>|integer|nil
 local function _CallHandler(event, callback, typeIds)
 	if type(typeIds) == "number" then
@@ -1018,7 +1017,7 @@ local function _CallHandler(event, callback, typeIds)
 end
 
 ---@param event string
----@param callback fun(e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:any)
+---@param callback fun(e:EclLuaUICallEvent, ui:UIObject, event:string, ...:any)
 ---@param typeIds table<integer,boolean>|integer|nil
 local function _InvokeHandler(event, callback, typeIds)
 	if type(typeIds) == "number" then
@@ -1132,28 +1131,28 @@ local function RegisterControllerHandlers()
 
 	_CallHandler("runeSlotOver", function (e, ui, event, id, ...)
 		if id ~= -1 then
-			RequestProcessor.HandleCallback("Rune", ui, ui.Type, TooltipCalls.Rune, id, ...)
+			RequestProcessor.HandleCallback(e, "Rune", ui, ui.Type, TooltipCalls.Rune, id, ...)
 		end
 	end, _UITYPE.craftPanel_c)
 
 	_CallHandler("setTooltipVisible", function (e, ui, event, id, ...)
 		if id ~= -1 then
-			RequestProcessor.HandleCallback("Rune", ui, ui.Type, TooltipCalls.Rune, id, ...)
+			RequestProcessor.HandleCallback(e, "Rune", ui, ui.Type, TooltipCalls.Rune, id, ...)
 		end
 	end, _UITYPE.craftPanel_c)
 
 	_CallHandler("setTooltipVisible", function (e, ui, event, visible, ...)
 		if visible == true then
-			RequestProcessor.HandleCallback("Item", ui, ui.Type, TooltipCalls.Item)
+			RequestProcessor.HandleCallback(e, "Item", ui, ui.Type, TooltipCalls.Item)
 		end
 	end, _UITYPE.partyInventory_c)
 
 	_CallHandler("overItem", function (e, ui, event, itemHandleDouble, ...)
-		RequestProcessor.HandleCallback("Item", ui, ui.Type, TooltipCalls.Item, itemHandleDouble)
+		RequestProcessor.HandleCallback(e, "Item", ui, ui.Type, TooltipCalls.Item, itemHandleDouble)
 	end, _UITYPE.trade_c)
 
 	_CallHandler("refreshTooltip", function (e, ui, event, itemHandleDouble, ...)
-		RequestProcessor.HandleCallback("Item", ui, ui.Type, TooltipCalls.Item, itemHandleDouble)
+		RequestProcessor.HandleCallback(e, "Item", ui, ui.Type, TooltipCalls.Item, itemHandleDouble)
 	end, _UITYPE.reward_c)
 
 	_CallHandler("selectedAttribute", function (e, ui, event, id, ...)

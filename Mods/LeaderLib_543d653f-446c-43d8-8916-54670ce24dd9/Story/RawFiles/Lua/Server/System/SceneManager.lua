@@ -11,7 +11,7 @@ Managers.Scene = SceneManager
 SceneManager.Scenes = {}
 SceneManager.ActiveScene = {ID = "", State = ""}
 SceneManager.IsActive = false
-SceneManager.CurrentTime = Ext.MonotonicTime()
+SceneManager.CurrentTime = Ext.Utils.MonotonicTime()
 SceneManager.QueueType = {
 	StoryEvent = "StoryEvent",
 	Waiting = "Waiting",
@@ -85,14 +85,14 @@ function SceneManager.AddToQueue(group, sceneId, stateId, param, param2, param3,
 			SceneManager.Queue.Signal[param] = {}
 		end
 		if param2 and type(param2) == "number" and param2 > 0 then
-			SceneManager.CurrentTime = Ext.MonotonicTime()
+			SceneManager.CurrentTime = Ext.Utils.MonotonicTime()
 			SceneManager.Queue.Signal[sceneId] = {State=stateId, Time=SceneManager.CurrentTime + param2}
 			SceneManager.StartTimer()
 		else
 			SceneManager.Queue.Signal[param][sceneId] = {State=stateId}
 		end
 	elseif group == SceneManager.QueueType.Waiting then
-		SceneManager.CurrentTime = Ext.MonotonicTime()
+		SceneManager.CurrentTime = Ext.Utils.MonotonicTime()
 		SceneManager.Queue.Waiting[sceneId] = {State=stateId, Time=SceneManager.CurrentTime + param}
 		SceneManager.StartTimer()
 	end
@@ -224,7 +224,7 @@ end
 
 Timer.Subscribe("LeaderLib_SceneManager_WaitingTimer", function(e)
 	local keepTimerGoing = false
-	SceneManager.CurrentTime = Ext.MonotonicTime()
+	SceneManager.CurrentTime = Ext.Utils.MonotonicTime()
 	for sceneId,data in pairs(SceneManager.Queue.Waiting) do
 		if data.Time <= SceneManager.CurrentTime then
 			SceneManager.Queue.Waiting[sceneId] = nil
@@ -264,7 +264,7 @@ function SceneManager.StartTimer(tick)
 	if tick == nil then
 		tick = 250
 	end
-	SceneManager.CurrentTime = Ext.MonotonicTime()
+	SceneManager.CurrentTime = Ext.Utils.MonotonicTime()
 	StartTimer("LeaderLib_SceneManager_WaitingTimer", tick)
 end
 
@@ -294,11 +294,11 @@ local function OnStoryEvent(obj, event)
 	end
 end
 
-Ext.RegisterOsirisListener("StoryEvent", 2, "after", function(obj, event)
+Ext.Osiris.RegisterListener("StoryEvent", 2, "after", function(obj, event)
 	OnStoryEvent(StringHelpers.GetUUID(obj), event)
 end)
 
-Ext.RegisterOsirisListener("DialogEnded", 2, "after", function(dialog, instance)
+Ext.Osiris.RegisterListener("DialogEnded", 2, "after", function(dialog, instance)
 	local sceneIds = SceneManager.Queue.DialogEnded[dialog]
 	if sceneIds then
 		for sceneId,data in pairs(sceneIds) do
@@ -317,7 +317,7 @@ Ext.RegisterOsirisListener("DialogEnded", 2, "after", function(dialog, instance)
 	end
 end)
 
-Ext.RegisterOsirisListener("AutomatedDialogEnded", 2, "after", function(dialog, instance)
+Ext.Osiris.RegisterListener("AutomatedDialogEnded", 2, "after", function(dialog, instance)
 	local sceneIds = SceneManager.Queue.DialogEnded[dialog]
 	if sceneIds then
 		for sceneId,data in pairs(sceneIds) do
@@ -336,7 +336,7 @@ Ext.RegisterOsirisListener("AutomatedDialogEnded", 2, "after", function(dialog, 
 	end
 end)
 
-Ext.RegisterOsirisListener("DB_DialogName", 2, "after", function(dialog, instance)
+Ext.Osiris.RegisterListener("DB_DialogName", 2, "after", function(dialog, instance)
 	local sceneIds = SceneManager.Queue.DialogEnded[dialog]
 	if sceneIds then
 		local saveChanges = false

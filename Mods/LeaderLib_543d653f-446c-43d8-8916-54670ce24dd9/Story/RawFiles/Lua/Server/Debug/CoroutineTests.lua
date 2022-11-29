@@ -39,7 +39,7 @@ local function moveToPosition(obj, id, x, y, z, running)
 	return coroutine.yield(co)
 end
 
-Ext.RegisterOsirisListener("StoryEvent", 2, "after", function(obj, event)
+Ext.Osiris.RegisterListener("StoryEvent", 2, "after", function(obj, event)
 	local waiting = WAITING_ON_MOVE[event]
 	if waiting then
 		local obj = StringHelpers.GetUUID(obj)
@@ -91,10 +91,10 @@ end)
 Ext.RegisterConsoleCommand("coroutinetest", function(cmd)
 	Timer.Start("LeaderLib_CoroutineLoop", 250)
 	runProcess(function ()
-		local startTime = Ext.MonotonicTime()
-		fprint(LOGLEVEL.TRACE, "Hello world. I will now astound you by waiting for 2 seconds.", Ext.MonotonicTime())
+		local startTime = Ext.Utils.MonotonicTime()
+		fprint(LOGLEVEL.TRACE, "Hello world. I will now astound you by waiting for 2 seconds.", Ext.Utils.MonotonicTime())
 		wait(2000)
-		fprint(LOGLEVEL.TRACE, "Haha! I did it! [%s]", Ext.MonotonicTime() - startTime)
+		fprint(LOGLEVEL.TRACE, "Haha! I did it! [%s]", Ext.Utils.MonotonicTime() - startTime)
 		local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
 		local x,y,z = table.unpack(GameHelpers.Math.GetForwardPosition(host, 3.0))
 		fprint(LOGLEVEL.TRACE, "Moving to (%s;%s;%s)", x, y, z)

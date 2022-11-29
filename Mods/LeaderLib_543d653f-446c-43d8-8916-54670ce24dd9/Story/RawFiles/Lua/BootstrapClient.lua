@@ -23,7 +23,7 @@ Ext.RegisterUITypeCall(Data.UIType.bottomBar_c, "updateSlots", function (ui, cal
 end)
 
 Events.LuaReset:Subscribe(function ()
-	local ui = Ext.GetUIByType(not Vars.ControllerEnabled and Data.UIType.hotBar or Data.UIType.bottomBar_c)
+	local ui = Ext.UI.GetByType(not Vars.ControllerEnabled and Data.UIType.hotBar or Data.UIType.bottomBar_c)
 	if ui then
 		local this = ui:GetRoot()
 		if this and type(this._totalVisibleSlots) == "number" then
@@ -49,7 +49,7 @@ Ext.Events.UIObjectCreated:Subscribe(function(e)
 end)
 
 -- Should exist before SessionLoaded
-Vars.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
+Vars.ControllerEnabled = (Ext.UI.GetByPath("Public/Game/GUI/msgBox_c.swf") or Ext.UI.GetByType(Data.UIType.msgBox_c)) ~= nil
 -- if controllerUI ~= nil then
 -- 	Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
 -- end

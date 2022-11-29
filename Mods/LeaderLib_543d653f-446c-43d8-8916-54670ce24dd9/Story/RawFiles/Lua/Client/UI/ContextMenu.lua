@@ -247,7 +247,7 @@ end
 
 local _enabledActionsForContext = {}
 
----@return fun():ContextMenuAction,string
+---@return fun():ContextMenuAction|nil,string|nil
 local function GetOrderedContextMenuActions()
 	local ids = {}
 	for id,action in pairs(ContextMenu.Actions) do
@@ -638,7 +638,7 @@ function ContextMenu:Init()
 		Ext.RegisterUITypeCall(Data.UIType.examine, "showTooltip", function(...) self:OnShowExamineStatusTooltip(...) end)
 		Ext.RegisterUITypeCall(Data.UIType.playerInfo, "hideTooltip", function(...) self:OnHideTooltip(...) end)
 		Ext.RegisterUITypeCall(Data.UIType.examine, "hideTooltip", function(...) self:OnHideTooltip(...) end)
-		Input.RegisterListener("ContextMenu", function(...) self:OnRightClick(...) end)
+		Input.RegisterListener("ContextMenu", function(...) self:OnRightClick() end)
 		--Input.RegisterMouseListener(UIExtensions.MouseEvent.RightMouseUp, function(...) self:OnRightClick(...) end)
 
 		local onClose = function ()
@@ -947,7 +947,8 @@ local function GetPlayerInfoCursorStatus(x,y)
 	return nil
 end
 
----@return EsvStatus|nil
+---@return EsvStatus|nil status
+---@return integer|nil uiType
 function ContextMenu:GetCursorStatus(x,y)
 	local statusHandle,ownerHandle,uiType = GetExamineCursorStatus(x,y)
 	if not statusHandle then
@@ -959,7 +960,6 @@ function ContextMenu:GetCursorStatus(x,y)
 			return status,uiType
 		end
 	end
-	return nil
 end
 
 ContextMenu:Init()

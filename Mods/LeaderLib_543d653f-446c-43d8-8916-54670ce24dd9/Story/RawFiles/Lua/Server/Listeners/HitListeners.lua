@@ -82,17 +82,13 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 						_cachedBonusWeapon[potion] = bonusWeapon
 						local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
 						if extraProps and #extraProps > 0 then
-							if _EXTVERSION >= 56 then
-								Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, target, target.WorldPos, "Target", false, fromSkill)
-								--Basic attacks don't apply SELF statuses in ExtraProperties, but skills do
-								if fromSkill then
-									Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, source, source.WorldPos, _SelfPropertyContext, false, fromSkill)
-								else
-									--Basic attacks do apply Self:OnHit
-									Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, source, source.WorldPos, Data.PropertyContext.SelfOnHit, false, fromSkill)
-								end
+							Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, target, target.WorldPos, "Target", false, fromSkill)
+							--Basic attacks don't apply SELF statuses in ExtraProperties, but skills do
+							if fromSkill then
+								Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, source, source.WorldPos, _SelfPropertyContext, false, fromSkill)
 							else
-								GameHelpers.ApplyProperties(source, target, extraProps, nil, nil, fromSkill)
+								--Basic attacks do apply Self:OnHit
+								Ext.PropertyList.ExecuteExtraPropertiesOnTarget(bonusWeapon, "ExtraProperties", source, source, source.WorldPos, Data.PropertyContext.SelfOnHit, false, fromSkill)
 							end
 						end
 					end

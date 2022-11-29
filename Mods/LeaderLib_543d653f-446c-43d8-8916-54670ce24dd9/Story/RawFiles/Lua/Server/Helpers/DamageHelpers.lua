@@ -78,7 +78,7 @@ local function IncreaseDamage(target, attacker, handle, damageIncrease, isHitTyp
         end
         if damage > 0 then
             --NRD_HitStatusClearDamage(target, handle, damageType)
-            local increased_damage = Ext.Round(damage * damageIncrease)
+            local increased_damage = Ext.Utils.Round(damage * damageIncrease)
             if increased_damage ~= 0 then
                 if isHit ~= true then
                     NRD_HitStatusAddDamage(target, handle, damageType, increased_damage)
@@ -255,7 +255,7 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
         highGroundFlag = "LowGround"
     end
 
-    ---@type HitRequest
+    ---@type StatsHitDamageInfo
     local hit = {
         Equipment = 0,
         TotalDamageDone = 0,
@@ -271,12 +271,10 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
         SkillProperties = skillData.SkillProperties
     }
 
-    if _EXTVERSION >= 56 then
-        for k,v in pairs(Game.Math.HitFlag) do
-            hit[k] = false
-        end
-        hit.Hit = true
+    for k,v in pairs(Game.Math.HitFlag) do
+        hit[k] = false
     end
+    hit.Hit = true
     
     local hitType = GetSkillHitType(skill)
     local criticalRoll = "Roll"
@@ -396,7 +394,7 @@ local function GetSkillDamageWithTarget(skill, attacker, target, isFromItem, ste
         if noRandomization then
             randomMultiplier = 0.0
         else
-            randomMultiplier = 1.0 + (Ext.Random(0, damageRange) - damageRange/2) * 0.01
+            randomMultiplier = 1.0 + (Ext.Utils.Random(0, damageRange) - damageRange/2) * 0.01
         end
 
         local attrDamageScale
@@ -415,7 +413,7 @@ local function GetSkillDamageWithTarget(skill, attacker, target, isFromItem, ste
         end
         
         local finalDamage = baseDamage * randomMultiplier * attrDamageScale * damageMultipliers
-        finalDamage = math.max(Ext.Round(finalDamage), 1)
+        finalDamage = math.max(Ext.Utils.Round(finalDamage), 1)
         finalDamage = math.ceil(finalDamage * damageBoost)
         damageList:Add(damageType, finalDamage)
 
@@ -653,7 +651,7 @@ local function GetBasicDamage(source, target, damageEnum, damageType, damageMult
     damageMultiplier = damageMultiplier or 100
     damageRange = damageRange or 10
 
-    local randomMultiplier = 1.0 + (Ext.Random(0, damageRange) - damageRange/2) * 0.01
+    local randomMultiplier = 1.0 + (Ext.Utils.Random(0, damageRange) - damageRange/2) * 0.01
     local baseDamage = Game.Math.CalculateBaseDamage(damageEnum, source.Stats, target.Stats, source.Stats.Level)
 
     local damageList = Ext.Stats.NewDamageList()
@@ -681,7 +679,7 @@ local function GetBasicDamage(source, target, damageEnum, damageType, damageMult
     end
     
     local finalDamage = baseDamage * randomMultiplier * attrDamageScale * damageMultiplier
-    finalDamage = math.max(Ext.Round(finalDamage), 1)
+    finalDamage = math.max(Ext.Utils.Round(finalDamage), 1)
     finalDamage = math.ceil(finalDamage * damageBoost)
     damageList:Add(damageType, finalDamage)
 

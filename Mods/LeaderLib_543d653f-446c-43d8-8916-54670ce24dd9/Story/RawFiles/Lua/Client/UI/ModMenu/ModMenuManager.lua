@@ -12,7 +12,7 @@
 ---@field selectMenuDropDownEntry fun(id:integer, index:integer)
 ---@field addMenuSlider fun(id:integer, label:string, amount:integer, min:integer, max:integer, snapInterval:integer, hide:boolean, tooltip:string, fixedHeight:number|nil)
 ---@field setMenuSlider fun(id:integer, amount:integer)
----@field addMenuButton fun(id:integer, label:string, soundUp:string, enabled:boolean, tooltip:string, fixedHeight:number|nil)
+---@field addMenuButton fun(id:integer, label:string, soundUp:string, enabled:boolean, tooltip:string|nil, fixedHeight:number|nil)
 ---@field setButtonEnabled fun(id:integer, enabled:boolean)
 ---@field removeItems function
 ---@field resetMenuButtons fun(activeButtonId:integer)
@@ -57,7 +57,9 @@ local CreatedByText = Classes.TranslatedString:CreateFromKey("LeaderLib_Tooltip_
 ---@param isCheckbox boolean
 ---@return string,string
 local function PrepareText(name, v, isCheckbox, entryType)
+	---@type string|TranslatedString
 	local displayName = name
+	---@type string|TranslatedString
 	local tooltip = ""
 	if v ~= nil then
 		if v.DisplayName then
@@ -225,7 +227,7 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 				else
 					name = GameHelpers.GetStringKeyText(name, name)
 				end
-				--mainMenu.addMenuInfoLabel(Ext.Random(500,600), section.DisplayName, "Info?")
+				--mainMenu.addMenuInfoLabel(Ext.Utils.Random(500,600), section.DisplayName, "Info?")
 				if not StringHelpers.IsNullOrEmpty(name) then
 					if string.sub(name, 0) == "h" then
 						mainMenu.addMenuLabel(name, "", 40, topSpacing)

@@ -172,7 +172,7 @@ function Input.JustPressed(name, threshold)
 			local inputName = Data.InputEnum[name]
 			time = inputName and lastPressedTimes[inputName] or nil
 		end
-		if time and Ext.MonotonicTime() - time <= threshold then
+		if time and Ext.Utils.MonotonicTime() - time <= threshold then
 			return true
 		end
 	end
@@ -212,10 +212,10 @@ local lastFiredEventFrom = {}
 local function InvokeExtenderEventCallbacks(evt, eventName)
 	local nextState = evt.Press and KEYSTATE.DOWN or KEYSTATE.RELEASED
 	if evt.Press or Input.SkipStateCheck[eventName] == KEYSTATE.RELEASED then
-		lastPressedTimes[eventName] = Ext.MonotonicTime()
+		lastPressedTimes[eventName] = Ext.Utils.MonotonicTime()
 	end
 	-- if Vars.DebugMode then
-	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s) Last(%s) WillFire(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime(), lastFiredEventFrom[eventName], lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState)
+	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s) Last(%s) WillFire(%s)", eventName, evt.EventId, evt.Press, Ext.Utils.MonotonicTime(), lastFiredEventFrom[eventName], lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState)
 	-- end
 	if lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState then
 		Input.Keys[eventName] = nextState
@@ -286,7 +286,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	eventName = string.gsub(eventName, "IE ", "")
 	local nextState = pressed and KEYSTATE.DOWN or KEYSTATE.RELEASED
 	if pressed or Input.SkipStateCheck[eventName] == KEYSTATE.RELEASED then
-		lastPressedTimes[eventName] = Ext.MonotonicTime()
+		lastPressedTimes[eventName] = Ext.Utils.MonotonicTime()
 	end
 
 	-- if Vars.DebugMode and not string.find(eventName, "Mouse") then
@@ -400,7 +400,7 @@ end)
 -- if Vars.DebugMode then
 -- 	Input.RegisterListener(function(eventName, pressed, id, keys, controllerEnabled)
 -- 		if not string.find(eventName, "Mouse") then
--- 			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.MonotonicTime())
+-- 			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.Utils.MonotonicTime())
 -- 		end
 -- 	end)
 -- end

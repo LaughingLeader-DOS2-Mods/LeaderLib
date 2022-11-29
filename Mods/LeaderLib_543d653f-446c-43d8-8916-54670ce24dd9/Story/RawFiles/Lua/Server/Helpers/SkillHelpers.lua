@@ -346,7 +346,7 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
     --props.HitObjectPosition[2] = props.HitObjectPosition[2] + (extraParams.Height or skill.Height)
     --props.TargetPosition[2] = props.TargetPosition[2] + (extraParams.Height or skill.Height)
 
-    local id = string.format("%s%s", Ext.MonotonicTime(), Ext.Random(999999999))
+    local id = string.format("%s%s", Ext.Utils.MonotonicTime(), Ext.Utils.Random(999999999))
 
     local positions = nil
 
@@ -425,7 +425,7 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
 
     if count > 0 then
         local i = 1
-        local timerName = string.format("LeaderLib_ProjectileStrike%s_%s_%s", id, i, Ext.MonotonicTime())
+        local timerName = string.format("LeaderLib_ProjectileStrike%s_%s_%s", id, i, Ext.Utils.MonotonicTime())
         local onTimer = nil
         onTimer = function()
             if positions ~= nil then
@@ -441,7 +441,7 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
                 if delay <= 0 then
                     onTimer()
                 else
-                    timerName = string.format("LeaderLib_ProjectileStrike%s_%s_%s", id, i, Ext.MonotonicTime())
+                    timerName = string.format("LeaderLib_ProjectileStrike%s_%s_%s", id, i, Ext.Utils.MonotonicTime())
                     Timer.StartOneshot(timerName, skill.StrikeDelay or 250, onTimer)
                 end
             end
@@ -600,38 +600,36 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
                 props.DamageList = Ext.Stats.NewDamageList()
 
                 local useDefaultSkillDamage = true
-                if _EXTVERSION >= 56 then
-                    local evt = {
-                        Skill = skill,
-                        Attacker = sourceObject.Stats,
-                        AttackerPosition = props.Position,
-                        TargetPosition = props.Target,
-                        DamageList = Ext.Stats.NewDamageList(),
-                        DeathType = "Physical",
-                        Stealthed = sourceObject.Stats.IsSneaking == true,
-                        IsFromItem = false,
-                        Level = sourceObject.Stats.Level,
-                        Stopped = false
-                    }
-                    evt.StopPropagation = function (self)
-                        evt.Stopped = true
-                    end
-                    Ext.Events.GetSkillDamage:Throw(evt)
-                    if evt.DamageList then
-                        local hasDamage = false
-                        for _,v in pairs(evt.DamageList:ToTable()) do
-                            if v.Amount > 0 then
-                                hasDamage = true
-                                break
-                            end
-                        end
-                        if hasDamage then
-                            props.DamageList:CopyFrom(evt.DamageList)
-                            props.DeathType = evt.DeathType or "Physical"
-                            useDefaultSkillDamage = false
+                local evt = {
+                    Skill = skill,
+                    Attacker = sourceObject.Stats,
+                    AttackerPosition = props.Position,
+                    TargetPosition = props.Target,
+                    DamageList = Ext.Stats.NewDamageList(),
+                    DeathType = "Physical",
+                    Stealthed = sourceObject.Stats.IsSneaking == true,
+                    IsFromItem = false,
+                    Level = sourceObject.Stats.Level,
+                    Stopped = false
+                }
+                evt.StopPropagation = function (self)
+                    evt.Stopped = true
+                end
+                Ext.Events.GetSkillDamage:Throw(evt)
+                if evt.DamageList then
+                    local hasDamage = false
+                    for _,v in pairs(evt.DamageList:ToTable()) do
+                        if v.Amount > 0 then
+                            hasDamage = true
+                            break
                         end
                     end
-				end
+                    if hasDamage then
+                        props.DamageList:CopyFrom(evt.DamageList)
+                        props.DeathType = evt.DeathType or "Physical"
+                        useDefaultSkillDamage = false
+                    end
+                end
 
                 if useDefaultSkillDamage then
                     local b,damageList,deathType = xpcall(Game.Math.GetSkillDamage, debug.traceback, skill, sourceObject.Stats, false, sourceObject.Stats.IsSneaking == true, props.Position, props.Target, sourceObject.Stats.Level, false)

@@ -269,7 +269,7 @@ local function RebuildTooltip(pressed)
 			if Game.Tooltip.TooltipHooks.Last.Type == "Generic" then
 				rebuildingTooltip = true
 				dirty = false
-				local ui = Ext.GetUIByType(Data.UIType.tooltip)
+				local ui = Ext.UI.GetByType(Data.UIType.tooltip)
 				local text, x, y, width, height, side, allowDelay = table.unpack(TooltipExpander.CallData.Args)
 
 				---@type TooltipGenericRequest
@@ -290,21 +290,23 @@ local function RebuildTooltip(pressed)
 					request.BackgroundType = this.tf.bg_mc and this.tf.bg_mc.visible == true and 0 or 1
 				end
 
-				local tooltip = Game.Tooltip.TooltipData:Create(request)
+				local tooltip = Game.Tooltip.TooltipData:Create(request, Data.UIType.tooltip, Data.UIType.tooltip)
 				Game.Tooltip.TooltipHooks:NotifyListeners("Generic", nil, request, tooltip)
 
+				local tooltipData = tooltip.Data --[[@as TooltipGenericRequest]]
+
 				if this and this.tf then
-					this.tf.shortDesc = tooltip.Data.Text
+					this.tf.shortDesc = tooltipData.Text
 
 					if this.tf.setText then
-						this.tf.setText(tooltip.Data.Text,tooltip.Data.BackgroundType or 0)
+						this.tf.setText(tooltipData.Text,tooltipData.BackgroundType or 0)
 					else
 						Ext.Utils.PrintError(this.tf.name)
 					end
 
-					this.checkTooltipBoundaries(this.getTooltipWidth(),this.getTooltipHeight(), tooltip.Data.X + this.frameSpacing, tooltip.Data.Y + this.frameSpacing)
+					this.checkTooltipBoundaries(this.getTooltipWidth(),this.getTooltipHeight(), tooltipData.X + this.frameSpacing, tooltipData.Y + this.frameSpacing)
 
-					if tooltip.Data.BackgroundType and tooltip.Data.BackgroundType > 0 and tooltip.Data.BackgroundType < 5 then
+					if tooltipData.BackgroundType and tooltipData.BackgroundType > 0 and tooltipData.BackgroundType < 5 then
 						ui:ExternalInterfaceCall("keepUIinScreen", true)
 					else
 						ui:ExternalInterfaceCall("keepUIinScreen", false)
@@ -336,7 +338,7 @@ local function RebuildTooltip(pressed)
 					this.showFormattedTooltipAfterPos(false)
 				end
 			elseif TooltipExpander.CallData.UI ~= nil then
-				local ui = Ext.GetUIByType(TooltipExpander.CallData.UI)
+				local ui = Ext.UI.GetByType(TooltipExpander.CallData.UI)
 				if ui then
 					rebuildingTooltip = true
 					dirty = false
@@ -440,7 +442,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 	---Simple variable a mod can check to see if this is a LeaderLib tooltip.
 	Game.Tooltip.TooltipData.IsExtended = true
 
-	---Whether or not the tooltip should be expanded. Check this when setting up tooltip elements.
+	---Whether or not the tooltip is expanded. Check this when setting up tooltip elements.
 	---@return boolean
 	Game.Tooltip.TooltipData.IsExpanded = function(self)
 		return TooltipExpander.IsExpanded()
@@ -505,7 +507,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 				Params = params,
 			}, {SimplifyUserdata=true})
 			GameHelpers.IO.SaveFile("Dumps/LastTooltip.lua", text)
-			GameHelpers.IO.SaveFile(string.format("Dumps/Tooltips/%s_%sTooltip.lua", Ext.MonotonicTime(), request.Type), text)
+			GameHelpers.IO.SaveFile(string.format("Dumps/Tooltips/%s_%sTooltip.lua", Ext.Utils.MonotonicTime(), request.Type), text)
 		end
 		--ModId fixed in v57
 		if _EXTVERSION >= 57 and _ShowModInTooltipType[request.Type] then
@@ -583,7 +585,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 end)
 
 Ext.RegisterUINameCall("hideTooltip", function (ui, call, ...)
-	local tt = Ext.GetUIByType(Data.UIType.tooltip)
+	local tt = Ext.UI.GetByType(Data.UIType.tooltip)
 	if tt then
 		if #tooltipCustomIcons > 0 then
 			for _,v in pairs(tooltipCustomIcons) do

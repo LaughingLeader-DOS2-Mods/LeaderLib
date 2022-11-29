@@ -8,6 +8,7 @@ local UIListenerWrapper = {
 	Enabled = false,
 	CustomCallback = {},
 	Ignored = {},
+	PrintParams = false,
 }
 
 Classes.UIListenerWrapper = UIListenerWrapper
@@ -49,7 +50,7 @@ function UIListenerWrapper:Create(id, params)
 
 	if type(id) == "string" then
 		this.Name = string.find
-		local ui = Ext.GetBuiltinUI(id)
+		local ui = Ext.UI.GetByPath(id)
 
 		if not ui then
 			deferredRegistrations[id] = this
@@ -66,7 +67,7 @@ function UIListenerWrapper:Create(id, params)
 			for k,id2 in pairs(id) do
 				this.Name = Data.UITypeToName[id2] or ""
 				if this.Initialized then
-					local ui = Ext.GetBuiltinUI(id2)
+					local ui = Ext.UI.GetByPath(id2)
 					if ui then
 						local b,err = xpcall(this.Initialized, debug.traceback, ui)
 						if not b then
@@ -79,7 +80,7 @@ function UIListenerWrapper:Create(id, params)
 		else
 			this.Name = Data.UITypeToName[id] or ""
 			if this.Initialized then
-				local ui = Ext.GetUIByType(id)
+				local ui = Ext.UI.GetByType(id)
 				if ui then
 					local b,err = xpcall(this.Initialized, debug.traceback, ui)
 					if not b then

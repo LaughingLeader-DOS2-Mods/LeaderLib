@@ -186,7 +186,7 @@ Ext.RegisterConsoleCommand("setstatusturns", function(command,target,status,turn
 	if turnsStr ~= nil then
 		turns = tonumber(turnsStr)
 	else
-		turns = Ext.Random(2,5)
+		turns = Ext.Utils.Random(2,5)
 	end
 	--GameHelpers.UI.RefreshStatusTurns(target, status)
 	GameHelpers.Status.SetTurns(target, status, turns)
@@ -219,7 +219,7 @@ Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyIt
 	local host = CharacterGetHostCharacter()
 	local level = CharacterGetLevel(host)
 	if levelstr ~= nil then
-		level = Ext.Round(tonumber(levelstr))
+		level = Ext.Utils.Round(tonumber(levelstr))
 	end
 	local x,y,z = GetPosition(host)
 	if treasureChest == nil or ObjectExists(treasureChest) == 0 then
@@ -310,7 +310,7 @@ Ext.RegisterConsoleCommand("addtreasureex", function(command, treasure, level, f
 	if level == nil then
 		level = CharacterGetLevel(host)
 	else
-		level = Ext.Round(tonumber(level))
+		level = Ext.Utils.Round(tonumber(level))
 	end
 	if generateAmount then
 		generateAmount = tonumber(generateAmount) or 1

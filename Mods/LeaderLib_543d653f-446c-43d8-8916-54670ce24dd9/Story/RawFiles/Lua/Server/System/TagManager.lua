@@ -82,31 +82,31 @@ function TagManager:TagAll(...)
 	end
 end
 
-Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", function(uuid, combatId)
+Ext.Osiris.RegisterListener("ObjectEnteredCombat", 2, "after", function(uuid, combatId)
 	if ObjectIsCharacter(uuid) == 1 then
 		TagManager:TagObject(uuid, true)
 	end
 end)
 
-Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "after", function(uuid, combatId)
+Ext.Osiris.RegisterListener("ObjectLeftCombat", 2, "after", function(uuid, combatId)
 	if ObjectIsCharacter(uuid) == 1 then
 		TagManager:TagObject(uuid, false)
 	end
 end)
 
-Ext.RegisterOsirisListener("ObjectSwitchedCombat", 3, "after", function(uuid, oldCombatId, combatId)
+Ext.Osiris.RegisterListener("ObjectSwitchedCombat", 3, "after", function(uuid, oldCombatId, combatId)
 	if ObjectIsCharacter(uuid) == 1 then
 		TagManager:TagObject(uuid, true)
 	end
 end)
 
-Ext.RegisterOsirisListener("ObjectTransformed", 2, "after", function(uuid, template)
+Ext.Osiris.RegisterListener("ObjectTransformed", 2, "after", function(uuid, template)
 	if ObjectIsCharacter(uuid) == 1 then
 		TagManager:TagObject(uuid, true)
 	end
 end)
 
-Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
+Ext.Osiris.RegisterListener("GameStarted", 2, "after", function(region, isEditorMode)
 	--Delay in case a player loads a save again
 	Timer.StartOneshot("LeaderLib_TagAllCharacters", 5000, function()
 		TagManager:TagAll()

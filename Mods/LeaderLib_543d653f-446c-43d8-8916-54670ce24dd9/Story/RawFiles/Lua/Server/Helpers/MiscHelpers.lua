@@ -14,7 +14,7 @@ end
 
 ---Applies ExtraProperties/SkillProperties.
 ---@param source EsvCharacter
----@param target EsvGameObject|number[]
+---@param target IEoCServerObject|number[]
 ---@param properties StatProperty[]
 ---@param targetPosition number[]|nil
 ---@param radius number|nil
@@ -23,7 +23,10 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 	local canTargetItems = false
 	local t = type(target)
 	if fromSkill then
-		canTargetItems = Ext.StatGetAttribute(fromSkill, "CanTargetItems") == "Yes"
+		local stat = Ext.Stats.Get(fromSkill, nil, false)
+		if stat then
+			canTargetItems = stat.CanTargetItems == "Yes"
+		end
 	end
 	if not properties then
 		return false
@@ -46,7 +49,7 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 					GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid, v.StatsId)
 					GameHelpers.Skill.Explode(actionTarget, v.StatsId, source)
 				elseif v.StatusChance > 0 then
-					if Ext.Random(0.0, 1.0) <= v.StatusChance then
+					if Ext.Utils.Random(0.0, 1.0) <= v.StatusChance then
 						GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid, v.StatsId)
 						GameHelpers.Skill.Explode(actionTarget, v.StatsId, source)
 					end
@@ -63,9 +66,9 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 							ForceStatus = false,
 							StatusSourceHandle = source.Handle,
 							TargetHandle = aType == "userdata" and target.Handle or nil,
-							CanEnterChance = Ext.Round(v.StatusChance * 100)
+							CanEnterChance = Ext.Utils.Round(v.StatusChance * 100)
 						}
-						if Ext.Random(0,100) <= Game.Math.StatusGetEnterChance(statusObject, true) then
+						if Ext.Utils.Random(0,100) <= Game.Math.StatusGetEnterChance(statusObject, true) then
 							GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
 							GameHelpers.Status.Apply(actionTarget, v.Action, v.Duration, 0, source, radius, canTargetItems)
 						end
@@ -147,7 +150,7 @@ function GameHelpers.Roll(chance, includeZero)
 	elseif chance >= 100 then
 		return true,100
 	end
-	local roll = Ext.Random(0,100)
+	local roll = Ext.Utils.Random(0,100)
 	if includeZero == true then
 		return (roll <= chance),roll
 	else
@@ -198,7 +201,7 @@ end
 ---@param id integer
 ---@return EsvCharacter[]|nil
 function GameHelpers.GetCombatCharacters(id)
-	local combat = Ext.GetCombat(id)
+	local combat = Ext.Entity.GetCombat(id)
 	if combat then
 		local objects = {}
 		for i,v in pairs(combat:GetAllTeams()) do

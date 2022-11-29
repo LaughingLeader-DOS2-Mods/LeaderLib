@@ -260,7 +260,7 @@ function GameHelpers.Character.HasSkill(character, skill)
 		return false
 	end
 	local t = _type(skill)
-	if _EXTVERSION >= 56 and character.SkillManager then
+	if character.SkillManager then
 		local _skills = character.SkillManager.Skills
 		if t == "string" then
 			return _skills[skill] ~= nil
@@ -446,7 +446,7 @@ function GameHelpers.Character.GetDisplayName(character)
 	end
 	if character then
 		local name = character.DisplayName
-		if _EXTVERSION >= 56 and not _ISCLIENT and character.CustomDisplayName ~= nil then
+		if not _ISCLIENT and character.CustomDisplayName ~= nil then
 			return character.CustomDisplayName
 		end
 		if StringHelpers.IsNullOrWhitespace(name) or string.find(name, "|", 1, true) then

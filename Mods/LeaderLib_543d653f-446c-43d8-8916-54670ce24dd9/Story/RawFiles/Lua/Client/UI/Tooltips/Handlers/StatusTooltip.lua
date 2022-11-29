@@ -139,7 +139,7 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 										local statusDisplayName = GameHelpers.GetStringKeyText(stat.DisplayName, stat.DisplayNameRef)
 										local chanceText = ""
 										if v.StatusChance < 1 then
-											chanceText = " " .. LocalizedText.Tooltip.Chance:ReplacePlaceholders(Ext.Round(v.StatusChance * 100))
+											chanceText = " " .. LocalizedText.Tooltip.Chance:ReplacePlaceholders(Ext.Utils.Round(v.StatusChance * 100))
 										end
 										if v.Duration > 0 then
 											local turns = v.Duration
@@ -151,7 +151,7 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 								end
 							elseif v.Type == "GameAction" then
 								if v.Action == "TargetCreateSurface" then
-									local radius = Ext.Round(v.Arg4)
+									local radius = Ext.Utils.Round(v.Arg4)
 									local surface = v.Arg3
 									if surface == "None" then
 										text = LocalizedText.Tooltip.ExtraPropertiesClearSurfacesTarget:ReplacePlaceholders(radius)

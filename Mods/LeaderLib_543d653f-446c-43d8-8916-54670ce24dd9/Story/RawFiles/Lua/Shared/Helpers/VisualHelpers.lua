@@ -86,19 +86,16 @@ if _ISCLIENT then
 	---@param includeShield boolean|nil If true, include shield visuals.
 	---@return ExtenderClientVisualAttachment[]
 	function GameHelpers.Visual.GetAttachedWeaponEffectVisuals(character, includeShield)
-		if _EXTVERSION >= 56 then
-			local character = GameHelpers.TryGetObject(character)
-			assert(GameHelpers.Ext.ObjectIsCharacter(character), "target parameter must be a character UUID, NetID, or Esv/EclCharacter")
-			local effects = {}
-			for _,visual in pairs(GameHelpers.Visual.GetWeaponVisuals(character, includeShield)) do
-				for _,attachment in pairs(visual.Visual.Attachments) do
-					if attachment.BonusWeaponFX == true then
-						effects[#effects+1] = attachment
-					end
+		local character = GameHelpers.TryGetObject(character)
+		assert(GameHelpers.Ext.ObjectIsCharacter(character), "target parameter must be a character UUID, NetID, or Esv/EclCharacter")
+		local effects = {}
+		for _,visual in pairs(GameHelpers.Visual.GetWeaponVisuals(character, includeShield)) do
+			for _,attachment in pairs(visual.Visual.Attachments) do
+				if attachment.BonusWeaponFX == true then
+					effects[#effects+1] = attachment
 				end
 			end
-			return effects
 		end
-		return {}
+		return effects
 	end
 end

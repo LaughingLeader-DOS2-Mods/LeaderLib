@@ -83,18 +83,10 @@ function ItemData:GetPosition(asVector3)
 end
 
 ---@param status string|string[]
+---@param checkAll boolean|nil
 ---@return boolean
-function ItemData:HasActiveStatus(status)
-	if type(status) == "table" then
-		for i,v in pairs(status) do
-			if self:IsStatusActive(v) then
-				return true
-			end
-		end
-	else
-		return HasActiveStatus(self.UUID, status) == 1
-	end
-	return false
+function ItemData:HasActiveStatus(status, checkAll)
+	return GameHelpers.Status.IsActive(self.UUID, status, checkAll)
 end
 
 ---@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
@@ -229,8 +221,8 @@ end
 
 ---Teleports to a position or object.
 ---This uses the behavior scripting teleport function so it doesn't force-teleport connected summons like Osiris' TeleportToPosition does.
----Supports a string/EsvGameObject/number array as the target, or separate x,y,z values.
----@param targetOrX number|number[]|string|EsvGameObject
+---Supports a string/GameObject/number array as the target, or separate x,y,z values.
+---@param targetOrX ObjectParam|vec3|number
 ---@param y number|nil
 ---@param z number|nil
 function ItemData:TeleportTo(targetOrX,y,z)

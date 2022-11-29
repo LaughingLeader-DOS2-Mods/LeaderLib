@@ -258,10 +258,10 @@ local function CanInvokeCallback(data, eventType)
 end
 
 ---@alias UIWrapperEventContextType string|"Keyboard"|"Controller"|"All"
----@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, e:EclLuaUICallEventParams, ui:UIObject, event:string, ...:SerializableValue)
+---@alias UIWrapperCallbackHandler fun(self:LeaderLibUIWrapper, e:EclLuaUICallEvent, ui:UIObject, event:string, ...:SerializableValue)
 
 ---@param callbackType string
----@param e EclLuaUICallEventParams
+---@param e EclLuaUICallEvent
 function UIWrapper:InvokeCallbacks(callbackType, e)
 	if not self.Callbacks[callbackType] then
 		error(string.format("Invalid callback type %s", callbackType))

@@ -1,18 +1,14 @@
 ---@alias SceneStateActionCallback fun(self:SceneStateData)
 
 ---@class SceneStateData
+---@field CanResumeCallback (fun(...:any):boolean)|nil
+---@field Thread thread|nil
+---@field Action SceneStateActionCallback|nil
+---@field Parent SceneData|nil
 local SceneStateData = {
 	Type = "SceneStateData",
-	---@type SceneData
-	Parent = nil,
 	ID = "",
-	---@type SceneStateActionCallback
-	Action = nil,
-	---@type thread
-	Thread = nil,
 	Active = false,
-	---@type fun():boolean
-	CanResumeCallback = nil,
 	--If the distance between a character and position are less than this, movement is skipped.
 	MoveDistanceThreshold = 0.5
 }

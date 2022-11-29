@@ -13,7 +13,7 @@ local Changelogs_Title = ts:CreateFromKey("LeaderLib_UI_Journal_Changelogs_Title
 
 local lastId = 1000
 
---local this = Ext.GetUIByType(22):GetRoot().journal_mc.tutorialContainer_mc; print(this.title_txt.x)
+--local this = Ext.UI.GetByType(22):GetRoot().journal_mc.tutorialContainer_mc; print(this.title_txt.x)
 
 local _OVERRIDE_ENABLED = false
 

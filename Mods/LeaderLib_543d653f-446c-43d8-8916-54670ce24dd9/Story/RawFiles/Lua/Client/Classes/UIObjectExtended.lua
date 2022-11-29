@@ -142,12 +142,10 @@ end
 function UIObjectExtended:Hide(inst)
 	inst = inst or self.Instance
 	if inst then
-		if _EXTVERSION >= 56 then
-			_inputFlags[self.ID] = {}
-			for i,v in pairs(inst.Flags) do
-				if string.find(v, "PlayerInput") then
-					_inputFlags[self.ID][v] = true
-				end
+		_inputFlags[self.ID] = {}
+		for i,v in pairs(inst.Flags) do
+			if string.find(v, "PlayerInput") then
+				_inputFlags[self.ID][v] = true
 			end
 		end
 		inst:Hide()

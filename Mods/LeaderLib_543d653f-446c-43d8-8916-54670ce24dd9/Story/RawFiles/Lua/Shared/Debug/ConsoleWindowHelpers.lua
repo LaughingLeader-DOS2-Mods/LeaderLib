@@ -351,7 +351,7 @@ else
 	if Vars.DebugMode then
 		local function CreateUIWrapperTable(uiType, controllerUIType)
 			local tbl = {}
-			local _getInst = function() return Ext.GetUIByType(not Vars.ControllerEnabled and uiType or controllerUIType) end
+			local _getInst = function() return Ext.UI.GetByType(not Vars.ControllerEnabled and uiType or controllerUIType) end
 			setmetatable(tbl, {
 				__call = function()
 					local ui = _getInst()

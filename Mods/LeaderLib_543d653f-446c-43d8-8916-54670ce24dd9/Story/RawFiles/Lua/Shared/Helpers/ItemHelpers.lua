@@ -301,7 +301,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
 
         local newItem = constructor:Construct()
         if newItem then
-            newItem = GameHelpers.GetItem(newItem.Handle)
+            newItem = GameHelpers.GetItem(newItem.Handle) --[[@as EsvItem]]
             if not hasGeneratedStats then
                 if properties.IsIdentified then
                     NRD_ItemSetIdentified(newItem.MyGuid, 1)
@@ -908,14 +908,11 @@ function GameHelpers.Item.HasConsumableSkillAction(item)
     local item = GameHelpers.GetItem(item)
     if item then
         if GameHelpers.Item.IsObject(item) then
-			if _EXTVERSION >= 56 then
-                for _,v in pairs(item.CurrentTemplate.OnUsePeaceActions) do
-                    if v.Type == "UseSkill" and v.Consume == true and not StringHelpers.IsNullOrEmpty(v.SkillID) then
-                        return true
-                    end
+            for _,v in pairs(item.CurrentTemplate.OnUsePeaceActions) do
+                ---@cast v UseSkillActionData
+                if v.Type == "UseSkill" and v.Consume == true and not StringHelpers.IsNullOrEmpty(v.SkillID) then
+                    return true
                 end
-            else
-                return item:HasTag("SCROLL")
             end
 		end
     end
@@ -1023,30 +1020,31 @@ function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableO
         IsConsumable = false,
         CastsSkill = false
     }
-	if _EXTVERSION >= 56 then
-        item = GameHelpers.GetItem(item)
-		if item and item.CurrentTemplate and item.CurrentTemplate.OnUsePeaceActions then
-			for _,v in pairs(item.CurrentTemplate.OnUsePeaceActions) do
-                if v.Type == "SkillBook" then
-                    itemParams.IsSkillbook = true
-                elseif v.Type == "UseSkill" then
-                    itemParams.CastsSkill = true
-                end
-                if (v.Type == "UseSkill" or v.Type == "SkillBook") and v.Consume then
-                    itemParams.IsConsumable = true
-                end
+    item = GameHelpers.GetItem(item)
+    if item and item.CurrentTemplate and item.CurrentTemplate.OnUsePeaceActions then
+        for _,v in pairs(item.CurrentTemplate.OnUsePeaceActions) do
+            ---@cast v +UseSkillActionData
+            
+            if v.Type == "SkillBook" then
+                itemParams.IsSkillbook = true
+            elseif v.Type == "UseSkill" then
+                itemParams.CastsSkill = true
+            end
 
-				if (v.Type == "UseSkill" or v.Type == "SkillBook") and not StringHelpers.IsNullOrWhitespace(v.SkillID)
-                and (not consumableOnly or v.Consume == true) then
-                    if not inKeyValueFormat then
-                        skills[#skills+1] = v.SkillID
-                    else
-                        skills[v.SkillID] = true
-                    end
-				end
-			end
-		end
-	end
+            if (v.Type == "UseSkill" or v.Type == "SkillBook") and v.Consume then
+                itemParams.IsConsumable = true
+            end
+
+            if (v.Type == "UseSkill" or v.Type == "SkillBook") and not StringHelpers.IsNullOrWhitespace(v.SkillID)
+            and (not consumableOnly or v.Consume == true) then
+                if not inKeyValueFormat then
+                    skills[#skills+1] = v.SkillID
+                else
+                    skills[v.SkillID] = true
+                end
+            end
+        end
+    end
     return skills,itemParams
 end
 

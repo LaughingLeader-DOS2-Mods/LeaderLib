@@ -24,7 +24,7 @@ Ext.RegisterUINameInvokeListener("addStatusTooltip", function (ui, ...)
 end)
 
 local function FixMalusGroup(ui)
-	local ui = ui Ext.GetUIByType(Data.UIType.tooltip)
+	local ui = ui Ext.UI.GetByType(Data.UIType.tooltip)
 	if ui then
 		local this = ui:GetRoot()
 		if this then

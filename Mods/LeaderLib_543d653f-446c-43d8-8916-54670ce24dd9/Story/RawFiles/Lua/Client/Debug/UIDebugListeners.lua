@@ -10,7 +10,7 @@ local Init = function()
 	local UIListenerWrapper = Classes.UIListenerWrapper
 
 	local _logText = ""
-	local _logPrefix = Ext.MonotonicTime()
+	local _logPrefix = Ext.Utils.MonotonicTime()
 	local _logName = _format("Logs/UI/%s_All.log", _logPrefix)
 
 	local function _print(str, ...)
@@ -49,9 +49,9 @@ local Init = function()
 			-- 	return
 			end
 			if self.PrintParams then
-				_print("[%s(%s)][%s] %s(%s) [%s]", name, ui.Type, eventType, event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
+				_print("[%s(%s)][%s] %s(%s) [%s]", name, ui.Type, eventType, event, StringHelpers.DebugJoin(", ", {...}), Ext.Utils.MonotonicTime())
 			else
-				_print("[%s(%s)][%s] %s [%s]", name, ui.Type, eventType, event, Ext.MonotonicTime())
+				_print("[%s(%s)][%s] %s [%s]", name, ui.Type, eventType, event, Ext.Utils.MonotonicTime())
 			end
 
 			if self.CustomCallback[event] then
@@ -101,8 +101,8 @@ local Init = function()
 		if defaultIgnored[e.Function] then
 			return
 			-- local lastTime = lastTimeSinceIgnored[event] or 0
-			-- if Ext.MonotonicTime() - lastTime <= 1000 then
-			-- 	lastTimeSinceIgnored[event] = Ext.MonotonicTime()
+			-- if Ext.Utils.MonotonicTime() - lastTime <= 1000 then
+			-- 	lastTimeSinceIgnored[event] = Ext.Utils.MonotonicTime()
 			-- 	return
 			-- end
 		end
@@ -123,7 +123,7 @@ local Init = function()
 					name = ui.Path
 				end
 			end
-			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "call", event, StringHelpers.DebugJoin(", ", args), Ext.MonotonicTime())
+			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "call", event, StringHelpers.DebugJoin(", ", args), Ext.Utils.MonotonicTime())
 		else
 			local listener = UIListenerWrapper._TypeListeners[t]
 			if listener then
@@ -140,8 +140,8 @@ local Init = function()
 		if defaultIgnored[e.Function] then
 			return
 			-- local lastTime = lastTimeSinceIgnored[event] or 0
-			-- if Ext.MonotonicTime() - lastTime < 1000 then
-			-- 	lastTimeSinceIgnored[event] = Ext.MonotonicTime()
+			-- if Ext.Utils.MonotonicTime() - lastTime < 1000 then
+			-- 	lastTimeSinceIgnored[event] = Ext.Utils.MonotonicTime()
 			-- 	return
 			-- end
 		end
@@ -162,7 +162,7 @@ local Init = function()
 					name = ui.Path
 				end
 			end
-			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "invoke", event, StringHelpers.DebugJoin(", ", args), Ext.MonotonicTime())
+			_print("[%s(%s)][%s] %s(%s) [%s]", name, t, "invoke", event, StringHelpers.DebugJoin(", ", args), Ext.Utils.MonotonicTime())
 		else
 			local listener = UIListenerWrapper._TypeListeners[t]
 			if listener then
@@ -174,7 +174,7 @@ local Init = function()
 	Ext.Events.UIObjectCreated:Subscribe(function(e)
 		local ui = e.UI
 		for path,data in pairs(UIListenerWrapper._DeferredRegistrations) do
-			local ui2 = Ext.GetBuiltinUI(path)
+			local ui2 = Ext.UI.GetByPath(path)
 			if ui2 and (ui2.Type == ui.Type or ui == ui2) then
 				data.ID = ui2.Type
 				UIListenerWrapper._DeferredRegistrations[path] = nil
@@ -230,7 +230,7 @@ local Init = function()
 			hasData = true
 		end
 		if hasData then
-			--GameHelpers.IO.SaveJsonFile(_format("Dumps/overhead_%s.json", Ext.MonotonicTime()), Ext.DumpExport(data))
+			--GameHelpers.IO.SaveJsonFile(_format("Dumps/overhead_%s.json", Ext.Utils.MonotonicTime()), Ext.DumpExport(data))
 			GameHelpers.IO.SaveJsonFile("Dumps/overhead.json", Ext.DumpExport(data))
 		end
 	end
@@ -292,88 +292,12 @@ local Init = function()
 		end
 	end
 
-	---@param ui UIObject
-	-- contextMenu.CustomCallback["updateButtons"] = function(self, ui, method)
-	-- 	local this = ui:GetRoot()
-	-- 	local buttons = {}
-	-- 	local arr = this.buttonArr
-	-- 	if arr then
-	-- 		local length = #arr
-	-- 		if length > 0 then
-	-- 			for i=0,length,7 do
-	-- 				buttons[#buttons+1] = {
-	-- 					Index = i,
-	-- 					id = arr[i],
-	-- 					actionID = arr[i+1],
-	-- 					clickSound = arr[i+2],
-	-- 					text = arr[i+3],
-	-- 					disabled = arr[i+4],
-	-- 					legal = arr[i+5],
-	-- 					unused = arr[i+6],
-	-- 				}
-	-- 			end
-	-- 		end
-	-- 	end
-	-- 	Ext.Utils.Print(method,Lib.serpent.block(buttons))
-	-- end
-
-	--local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, enabledParam)
-	--[[
-	---@param ui UIObject
-	hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)
-		local this = ui:GetRoot()
-		local array = this.slotUpdateDataList
-		for i=0,#array-1 do
-			local entry = array[i]
-			if entry then
-				Ext.Utils.Print(i, entry)
-			else
-				Ext.Utils.Print(i, "nil")
-			end
-		end
-	end
-
-	---@param ui UIObject
-	hotbar.CustomCallback["updateSlots"] = function(self, ui, method)
-		local this = ui:GetRoot()
-		local array = this.slotUpdateList
-		for i=0,#array do
-			local entry = array[i]
-			if entry then
-				Ext.Utils.Print(i, entry)
-			else
-				Ext.Utils.Print(i, "nil")
-			end
-		end
-	end
-	]]
-
 	for k,v in pairs(Data.UIType.optionsSettings) do
 		UIListenerWrapper:Create(v, enabledParam)
 	end
 	for k,v in pairs(Data.UIType.optionsSettings_c) do
 		UIListenerWrapper:Create(v, enabledParam)
 	end
-
-	---@param ui UIObject
-	-- skills.CustomCallback["updateSkills"] = function(self, ui, method, b)
-	-- 	local this = ui:GetRoot()
-	-- 	local array = this.skillsUpdateList
-	-- 	for i=0,#array do
-	-- 		local entry = array[i]
-	-- 		if entry then
-	-- 			print(i, entry)
-	-- 			if type(entry) == "string" then
-	-- 				local stat = Ext.Stats.Get(entry)
-	-- 				if stat then
-	-- 					this.skillsUpdateList[i] = "Projectile_Fireball"
-	-- 				end
-	-- 			end
-	-- 		else
-	-- 			print(i, "nil")
-	-- 		end
-	-- 	end
-	-- end
 
 	local combatLog = UIListenerWrapper:Create(Data.UIType.combatLog, enabledParam)
 	local GMPanelHUD = UIListenerWrapper:Create(Data.UIType.GMPanelHUD,{

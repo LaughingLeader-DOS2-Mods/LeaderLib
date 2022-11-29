@@ -11,7 +11,7 @@ local function ApplyLeading(tooltip_mc, element, amount)
 		else
 			heightPadding = element.height / amount
 		end
-		heightPadding = Ext.Round(heightPadding)
+		heightPadding = Ext.Utils.Round(heightPadding)
 		if heightPadding <= 0 then
 			heightPadding = 1
 		end

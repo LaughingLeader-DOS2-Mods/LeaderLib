@@ -33,6 +33,6 @@ end)
 --Timer.StartObjectTimer("TestTimer", "bbca13e7-5ea3-4da2-82bd-8a0a3d23c979", 5000, {UUID = "bbca13e7-5ea3-4da2-82bd-8a0a3d23c979", Success=false, ID = "Idk", Damage=98})
 
 -- Timer.Subscribe("TestTimer", function(e)
--- 	fprint("TestTimer(%s)", Ext.MonotonicTime())
+-- 	fprint("TestTimer(%s)", Ext.Utils.MonotonicTime())
 -- 	print(Lib.inspect(e), ...)
 -- end)

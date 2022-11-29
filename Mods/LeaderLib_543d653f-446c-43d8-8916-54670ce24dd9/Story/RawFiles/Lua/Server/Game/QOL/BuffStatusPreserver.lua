@@ -184,9 +184,9 @@ Timer.Subscribe("LeaderLib_BuffStatusPreserver_ClearStatusData", function (e)
 end)
 
 local _combatLeftEnabled = false
---Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "after", BuffStatusPreserver.OnLeftCombat)
-Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", BuffStatusPreserver.OnEnteredCombat)
-Ext.RegisterOsirisListener("CharacterUsedSkill", 4, "after", BuffStatusPreserver.OnSkillUsed)
+--Ext.Osiris.RegisterListener("ObjectLeftCombat", 2, "after", BuffStatusPreserver.OnLeftCombat)
+Ext.Osiris.RegisterListener("ObjectEnteredCombat", 2, "after", BuffStatusPreserver.OnEnteredCombat)
+Ext.Osiris.RegisterListener("CharacterUsedSkill", 4, "after", BuffStatusPreserver.OnSkillUsed)
 
 Ext.Events.BeforeStatusApply:Subscribe(function(e)
 	if not BuffStatusPreserver.Enabled() or e.PreventStatusApply then return end

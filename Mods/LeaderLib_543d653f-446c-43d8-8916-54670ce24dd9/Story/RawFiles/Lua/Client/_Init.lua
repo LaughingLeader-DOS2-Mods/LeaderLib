@@ -15,7 +15,7 @@ if not Classes.PresetData then
 end
 
 local function OnSessionLoaded()
-	Vars.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
+	Vars.ControllerEnabled = (Ext.UI.GetByPath("Public/Game/GUI/msgBox_c.swf") or Ext.UI.GetByType(Data.UIType.msgBox_c)) ~= nil
 	if enableDebugUIListeners then
 		enableDebugUIListeners()
 	end

@@ -94,7 +94,7 @@ local function SafeGetArgs(tbl, call)
 	return args
 end
 
----@param e EclLuaUICallEventParams
+---@param e EclLuaUICallEvent
 local function OnUICall(e)
 	if e.When == "Before" then
 		-- if e.Function == "showTooltip" and OptionsSettingsHooks.IsLeaderLibMenuActive() then

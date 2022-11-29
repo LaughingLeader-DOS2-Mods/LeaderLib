@@ -1065,8 +1065,8 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 	end
 	local baseDamage = damage * (weaponStat.DamageFromBase * 0.01)
 	local range = baseDamage * (weaponStat["Damage Range"] * 0.01)
-	weaponStat.MinDamage = Ext.Round(baseDamage - (range/2))
-	weaponStat.MaxDamage = Ext.Round(baseDamage + (range/2))
+	weaponStat.MinDamage = Ext.Utils.Round(baseDamage - (range/2))
+	weaponStat.MaxDamage = Ext.Utils.Round(baseDamage + (range/2))
 	weaponStat.DamageType = weaponStat["Damage Type"]
 	weaponStat.StatsType = "Weapon"
 	if weaponType ~= nil then
@@ -1075,9 +1075,7 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 	end
 	weaponStat.Requirements = weapon.Requirements
 	weapon.DynamicStats = {weaponStat}
-	if _EXTVERSION >= 56 then
-		weapon.ExtraProperties = statObject.ExtraProperties
-	end
+	weapon.ExtraProperties = statObject.ExtraProperties
 	if not isBoostStat then
 		local boostsString = statObject.Boosts
 		if boostsString ~= nil and boostsString ~= "" then
@@ -1370,20 +1368,11 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameM
 				end
 			end
 		else
-			if _EXTVERSION >= 56 then
-				local stat = Ext.Stats.Get(skillName, nil, false)
-				if stat then
-					hasValidEntry = true
-					for k,_ in pairs(_SkillAttributes) do
-						skill[k] = stat[k]
-					end
-				end
-			else
+			local stat = Ext.Stats.Get(skillName, nil, false)
+			if stat then
+				hasValidEntry = true
 				for k,_ in pairs(_SkillAttributes) do
-					skill[k] = Ext.StatGetAttribute(skillName, k)
-					if not hasValidEntry and skill[k] ~= nil then
-						hasValidEntry = true
-					end
+					skill[k] = stat[k]
 				end
 			end
 		end

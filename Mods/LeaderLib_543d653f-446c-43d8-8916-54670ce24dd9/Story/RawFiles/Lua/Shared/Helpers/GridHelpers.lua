@@ -218,30 +218,6 @@ if not _ISCLIENT then
 	end
 
 	Timer.Subscribe("LeaderLib_OnForceMoveAction_Old", function(e) _INTERNAL.OnForceMoveTimer_Old(e) end)
-
-	---Checks if an object can be force moved with GameHelpers.ForceMoveObject.  
-	---Looks for specific tags and statuses, such as the LeaderLib_ForceImmune tag and the LEADERLIB_FORCE_IMMUNE status.
-	---@param target ObjectParam
-	---@return boolean canBeForceMoved
-	function GameHelpers.CanForceMove(target)
-		local t = _type(target)
-		if t == "string" and _OSIRIS() then
-			if CharacterIsDead(target) == 1 then
-				return false
-			end
-			if IsTagged(target, "LeaderLib_Dummy") == 1 or IsTagged(target, "LeaderLib_ForceImmune") == 1 or HasActiveStatus(target, "LEADERLIB_FORCE_IMMUNE") == 1 then
-				return false
-			end
-		elseif t == "userdata" and target.HasTag then
-			if target.Dead then
-				return false
-			end
-			if target:HasTag("LeaderLib_Dummy") or target:HasTag("LeaderLib_ForceImmune") or HasActiveStatus(target.MyGuid, "LEADERLIB_FORCE_IMMUNE") == 1 then
-				return false
-			end
-		end
-		return true
-	end
 	
 	---Push or pull a target from a source object or position.  
 	---Similar to the Force action, except it's grid-safe (no pushing objects out of the map).

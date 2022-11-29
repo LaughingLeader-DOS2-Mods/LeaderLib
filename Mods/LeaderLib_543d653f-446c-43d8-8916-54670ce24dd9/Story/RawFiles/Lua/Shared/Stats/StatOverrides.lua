@@ -175,7 +175,7 @@ local function CanChangeSkillTier(id, stat, tier)
 			return false
 		end
 		for str,b in pairs(ignoreSkillNames) do
-			if string.find(stat, str) then
+			if string.find(id, str) then
 				return false
 			end
 		end

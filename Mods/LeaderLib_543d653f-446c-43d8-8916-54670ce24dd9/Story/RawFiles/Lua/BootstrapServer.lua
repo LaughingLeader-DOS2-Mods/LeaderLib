@@ -163,7 +163,7 @@ end
 _SetPersistentVars(Common.CloneTable(defaultPersistentVars, true))
 
 ---@return LeaderLibPersistentVars
-local function _GetPersistentVars(tbl)
+local function _GetPersistentVars()
 	return PersistentVars
 end
 
@@ -172,8 +172,11 @@ _PV = _GetPersistentVars()
 ---Sneaky way to set PersistentVars in a way that doesn't override the type, since these vars are isolated to LeaderLib
 
 function LoadPersistentVars(skipCallback)
+	--Required for tables like ReadBooks that are indexed by UserID
+	Common.ConvertTableKeysToNumbers(PersistentVars, true)
 	_SetPersistentVars(GameHelpers.PersistentVars.Update(defaultPersistentVars, PersistentVars))
-	_PV = _GetPersistentVars(_G)
+
+	_PV = _GetPersistentVars()
 	SkillManager.LoadSaveData()
 	if not skipCallback then
 		Events.PersistentVarsLoaded:Invoke({})

@@ -376,6 +376,7 @@ end
 ---Converts a table string keys to numbers. Useful for converting JsonStringify number keys back to numbers.
 ---@param tbl table
 ---@param recursive boolean
+---@return table
 function Common.ConvertTableKeysToNumbers(tbl, recursive)
 	local replaceKeys = {}
 	local tables = {}
@@ -392,12 +393,19 @@ function Common.ConvertTableKeysToNumbers(tbl, recursive)
 	end
 	for k,d in pairs(replaceKeys) do
 		tbl[k] = nil
-		tbl[d.newKey] = d.value
+		local t = type(tbl[d.newKey])
+		if t == "nil" then
+			tbl[d.newKey] = d.value
+		elseif t == "table" then
+			TableHelpers.AddOrUpdate(tbl[d.newKey], d.value)
+		end
 	end
 
 	for i=1,#tables do
 		Common.ConvertTableKeysToNumbers(tables[i], recursive)
 	end
+
+	return tbl
 end
 
 local _jsonParse = Ext.Json.Parse

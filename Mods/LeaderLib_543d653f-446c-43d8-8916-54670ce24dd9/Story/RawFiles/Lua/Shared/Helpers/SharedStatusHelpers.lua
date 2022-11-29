@@ -514,19 +514,15 @@ function GameHelpers.Status.CharacterLostControl(character, onlyFromEnemy)
 	return false
 end
 
----@param status EsvStatus|EclStatus
----@return EsvCharacter|EsvItem|EclCharacter|EclItem|nil
-function GameHelpers.Status.GetSource(status)
-	if status and GameHelpers.IsValidHandle(status.StatusSourceHandle) then
-		return GameHelpers.TryGetObject(status.StatusSourceHandle)
-	end
-end
-
 ---@param target ObjectParam
----@param statusID string
+---@param statusID FixedString
 function GameHelpers.Status.GetSourceByID(target, statusID)
 	target = GameHelpers.TryGetObject(target)
 	if target then
-		return GameHelpers.Status.GetSource(target:GetStatus(statusID))
+		local status = target:GetStatus(statusID)
+		if status then
+			return GameHelpers.TryGetObject(status.StatusSourceHandle)
+		end
 	end
+	return nil
 end

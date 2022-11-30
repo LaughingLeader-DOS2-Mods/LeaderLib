@@ -426,7 +426,7 @@ function GameHelpers.Character.IsHumanoid(character)
 		for raceId,raceData in pairs(Vars.RaceData) do
 			if character:HasTag(raceData.Tag) 
 			or character:HasTag(raceData.BaseTag)
-			or string.find(character.RootTemplate.TemplateName, raceId)
+			or string.find(GameHelpers.GetTemplate(character), raceId)
 			or (character.PlayerCustomData and character.PlayerCustomData.Race == raceId) then
 				return true
 			end
@@ -1316,6 +1316,24 @@ function GameHelpers.Character.CloneEquipment(from, to)
 				end
 			end
 			return true
+		end
+	end
+	return false
+end
+
+---Check if it's a character's active turn in combat.
+---@param character CharacterParam
+function GameHelpers.Character.IsActiveTurn(character)
+	local character = GameHelpers.GetCharacter(character)
+	if not character then
+		return false
+	end
+	local turnManager = _ISCLIENT and Ext.Entity.GetTurnManager() or Ext.Combat.GetTurnManager()
+	if turnManager then
+		for _,entity in pairs(turnManager.EntityWrappers) do
+			if entity.Character and entity.Character.NetID == character.NetID then
+				return entity.CombatComponentPtr.IsTicking
+			end
 		end
 	end
 	return false

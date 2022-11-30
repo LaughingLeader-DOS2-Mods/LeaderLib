@@ -393,12 +393,11 @@ Ext.Events.ShootProjectile:Subscribe(function(e)
 	end
 end, {Priority=0})
 
-RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "after", function(uuid, skill, learned)
+RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "after", function(uuid, skill, learnedINT)
 	if ObjectExists(uuid) == 0 then
 		return
 	end
 	uuid = StringHelpers.GetUUID(uuid)
-	learned = learned == 1 and true or false
 	if (_enabledSkills[skill] or _enabledSkills.All) then
 		local character = GameHelpers.GetCharacter(uuid)
 		if character then
@@ -408,7 +407,17 @@ RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "aft
 				Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", character)
 				_lastUsedSkillItems[uuid] = nil
 			end
-			Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.LEARNED, learned, "boolean"))
+			local learned = false
+			local memorized = false
+			local skillInfo = character:GetSkillInfo(skill)
+			if skillInfo then
+				learned = skillInfo.IsLearned or #skillInfo.CauseList > 0
+				memorized = skillInfo.IsActivated or #skillInfo.CauseList > 0
+			end
+			local data = _CreateSkillEventTable(skill, character, SKILL_STATE.LEARNED, learned, "boolean")
+			data.Learned = learned
+			data.Memorized = memorized
+			Events.OnSkillState:Invoke(data)
 		end
 	end
 end)
@@ -418,15 +427,20 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 		return
 	end
 	uuid = StringHelpers.GetUUID(uuid)
-	local learned = false
 	local character = GameHelpers.GetCharacter(uuid)
 	if character then
+		local learned = false
+		local memorized = false
 		local skillInfo = character:GetSkillInfo(skill)
 		if skillInfo then
-			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
+			learned = skillInfo.IsLearned or #skillInfo.CauseList > 0
+			memorized = skillInfo.IsActivated or #skillInfo.CauseList > 0
 		end
 		if (_enabledSkills[skill] or _enabledSkills.All) then
-			Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.MEMORIZED, learned, "boolean"))
+			local data = _CreateSkillEventTable(skill, character, SKILL_STATE.MEMORIZED, true, "boolean")
+			data.Learned = learned
+			data.Memorized = memorized
+			Events.OnSkillState:Invoke(data)
 		end
 	end
 end)
@@ -444,9 +458,13 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
 		end
 		if (_enabledSkills[skill] or _enabledSkills.All) then
-			Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.UNMEMORIZED, learned, "boolean"))
+			local data = _CreateSkillEventTable(skill, character, SKILL_STATE.UNMEMORIZED, false, "boolean")
+			data.Learned = learned
+			Events.OnSkillState:Invoke(data)
 			if not learned then
-				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.LEARNED, learned, "boolean"))
+				data = _CreateSkillEventTable(skill, character, SKILL_STATE.LEARNED, false, "boolean")
+				data.Memorized = false
+				Events.OnSkillState:Invoke(data)
 			end
 		end
 	end
@@ -512,7 +530,7 @@ end
 
 --- Gets the base skill from a skill.
 --- @param skill string The skill entry to check.
---- @return string The base skill, if any, otherwise the skill that was passed in.
+--- @return string|nil skill The base skill, if any, otherwise the skill that was passed in.
 function SkillManager.GetBaseSkill(skill, match)
 	if skill ~= nil then
 		local checkParent = true
@@ -520,9 +538,9 @@ function SkillManager.GetBaseSkill(skill, match)
 			checkParent = false
 		end
 		if checkParent then
-			local skill = Ext.StatGetAttribute(skill, "Using")
-			if skill ~= nil then
-				return SkillManager.GetBaseSkill(skill, match)
+			local stat = Ext.Stats.Get(skill, nil, false)
+			if stat and not StringHelpers.IsNullOrEmpty(stat.Using) then
+				return SkillManager.GetBaseSkill(stat.Using, match)
 			end
 		end
 	end

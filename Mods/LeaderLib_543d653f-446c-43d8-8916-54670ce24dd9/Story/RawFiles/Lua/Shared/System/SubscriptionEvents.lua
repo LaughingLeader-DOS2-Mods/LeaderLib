@@ -540,10 +540,12 @@ if not _ISCLIENT then
 	---@field Data ProjectileHitData
 
 	---@class OnSkillStateLearnedEventArgs:OnSkillStateBaseEventArgs
-	---@field Data boolean
-
+	---@field Data boolean Whether the skill is learned or not.
+	---@field Memorized boolean
+	
 	---@class OnSkillStateMemorizedEventArgs:OnSkillStateBaseEventArgs
-	---@field Data boolean
+	---@field Data boolean Whether the skill is memorized or not.
+	---@field Learned boolean
 	
 	---Server-side event for when a skill state event occurs.  
 	---Use SkillManager.Register to register different skill listeners.  

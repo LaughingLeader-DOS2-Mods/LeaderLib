@@ -204,25 +204,15 @@ end ]]
 ---@param char CharacterParam
 ---@param skill string
 ---@param cooldown number
----@param skipTickDelay boolean|nil
-function GameHelpers.Skill.SetCooldown(char, skill, cooldown, skipTickDelay)
-    local character = GameHelpers.GetCharacter(char)
+function GameHelpers.Skill.SetCooldown(char, skill, cooldown)
+    local character = GameHelpers.GetCharacter(char) --[[@as EsvCharacter]]
     assert(character ~= nil, "A valid EsvCharacter, NetID, or UUID is required.")
-    ---@cast character EsvCharacter
     local skillData = character.SkillManager.Skills[skill]
     if skillData then
-        if cooldown ~= 0 then
-            if skipTickDelay then
-                skillData.ActiveCooldown = math.max(0, cooldown)
-            else
-                skillData.ActiveCooldown = 0
-                local guid = char.MyGuid
-                Timer.StartOneshot("", 33, function (e)
-                    GameHelpers.Skill.SetCooldown(guid, skill, cooldown, true)
-                end)
-            end
-        else
-            skillData.ActiveCooldown = 0
+        skillData.ActiveCooldown = cooldown
+        if cooldown ~= 0 and GameHelpers.Character.IsPlayer(character) and character.CharacterControl then
+            --Force the hotbar to refresh the cooldown animations
+            GameHelpers.UI.RefreshSkillBar(character)
         end
     end
 end
@@ -234,7 +224,6 @@ end
 function GameHelpers.Skill.AddCooldown(char, skill, amount)
     local character = GameHelpers.GetCharacter(char) --[[@as EsvCharacter]]
     assert(character ~= nil, "A valid EsvCharacter, NetID, or UUID is required.")
-    ---@cast character EsvCharacter
     local skillData = character.SkillManager.Skills[skill]
     if skillData then
         if skillData.ActiveCooldown ~= 60 or not GameHelpers.Character.IsInCombat(character) then

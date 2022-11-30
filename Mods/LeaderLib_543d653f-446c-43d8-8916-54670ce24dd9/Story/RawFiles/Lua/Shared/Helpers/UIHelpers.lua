@@ -63,21 +63,18 @@ if not _ISCLIENT then
 	RefreshSkillBarSkillCooldown = GameHelpers.UI.RefreshSkillBarSkillCooldown
 
 	---Refresh the skillbar's cooldowns.
-	---@param client string Client character UUID.
+	---@param client CharacterParam The client character 
 	function GameHelpers.UI.RefreshSkillBarCooldowns(client)
-		if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
-			local character = GameHelpers.GetCharacter(client)
+		local character = GameHelpers.GetCharacter(client) --[[@as EsvCharacter]]
+		if character and GameHelpers.Character.IsPlayer(character) then
 			local data = {NetID = GameHelpers.GetNetID(client), Slots = {}}
-			for i=0,144,1 do
-				local skill = NRD_SkillBarGetSkill(client, i)
-				if skill ~= nil then
-					local info = character:GetSkillInfo(skill)
-					if info ~= nil and info.ActiveCooldown > 0 then
-						table.insert(data.Slots, {
-							Index = i,
-							Cooldown = math.ceil(info.ActiveCooldown/6)
-						})
-					end
+			for i,v in pairs(character.PlayerData.SkillBar) do
+				if v.Type == "Skill" then
+					local skillInfo = character.SkillManager.Skills[v.SkillOrStatId]
+					table.insert(data.Slots, {
+						Index = i,
+						Cooldown = math.ceil(skillInfo.ActiveCooldown/6)
+					})
 				end
 			end
 			GameHelpers.Net.PostToUser(client, "LeaderLib_Hotbar_RefreshCooldowns", Common.JsonStringify(data))

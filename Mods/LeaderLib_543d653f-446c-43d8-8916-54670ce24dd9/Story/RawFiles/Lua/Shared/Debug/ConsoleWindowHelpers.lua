@@ -276,7 +276,7 @@ if not _ISCLIENT then
 							entry.NetID = c.NetID
 							entry.StatsId = c.Stats.Name
 							entry.Name = c.RootTemplate.Name
-							entry.RootTemplate = c.RootTemplate.TemplateName
+							entry.RootTemplate = GameHelpers.GetTemplate(c)
 							if c.OffStage then
 								entry.OffStage = true
 							end

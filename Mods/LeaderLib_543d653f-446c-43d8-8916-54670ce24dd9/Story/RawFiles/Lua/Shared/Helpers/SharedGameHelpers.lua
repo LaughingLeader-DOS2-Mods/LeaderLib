@@ -1059,7 +1059,7 @@ end
 ---Get a skill cooldown for a character. Defaults to 0 if the character doesn't have the skill.
 ---@param char CharacterParam
 ---@param skill FixedString
----@return integer cooldown
+---@return number cooldown
 function GameHelpers.Skill.GetCooldown(char, skill)
     local character = GameHelpers.GetCharacter(char)
     assert(character ~= nil, "A valid Esv/EclCharacter, NetID, or UUID is required.")

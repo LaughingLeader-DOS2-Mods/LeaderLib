@@ -1465,7 +1465,7 @@ function GameHelpers.Ext.ProjectileToTable(projectile)
 			-- EoCGameObjectTemplate
 			Id = projectile.RootTemplate.Id,
 			Name = projectile.RootTemplate.Name,
-			TemplateName = projectile.RootTemplate.TemplateName,
+			TemplateName = GameHelpers.GetTemplate(projectile),
 			-- IsGlobal = projectile.RootTemplate.IsGlobal,
 			-- IsDeleted = projectile.RootTemplate.IsDeleted,
 			-- LevelName = projectile.RootTemplate.LevelName,

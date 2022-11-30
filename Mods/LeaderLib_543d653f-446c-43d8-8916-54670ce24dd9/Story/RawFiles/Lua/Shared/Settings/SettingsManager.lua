@@ -57,6 +57,32 @@ function SettingsManager.GetLeaderLibSettings()
 	return SettingsManager.GetMod(ModuleUUID, false, false)
 end
 
+---@generic T:string|number
+---@param uuid string
+---@param id string
+---@param fallback T
+---@return T
+function SettingsManager.GetVariableValue(uuid, id, fallback)
+	local settings = SettingsManager.GetMod(uuid, false, true)
+	if settings then
+		return settings.Global:GetVariable(id, fallback)
+	end
+	return fallback
+end
+
+---@param uuid string
+---@param id string
+---@param b boolean
+---@param target GUID|nil
+---@return boolean
+function SettingsManager.FlagEquals(uuid, id, b, target)
+	local settings = SettingsManager.GetMod(uuid, false, true)
+	if settings then
+		return settings.Global:FlagEquals(id, b, target)
+	end
+	return false
+end
+
 ---@param forSyncing boolean|nil
 ---@param skipUpdating boolean|nil
 ---@return table

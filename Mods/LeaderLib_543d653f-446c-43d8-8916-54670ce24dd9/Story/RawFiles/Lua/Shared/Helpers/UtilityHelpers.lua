@@ -14,6 +14,7 @@ if not _ISCLIENT then
 
 	---@param handleINT integer
 	local function _DestroyMoveAction(handleINT)
+		--pcall(NRD_GameActionDestroy, handleINT)
 		local handle = Ext.Utils.IntegerToHandle(handleINT)
 		if Ext.Utils.IsValidHandle(handle) then
 			for _,v in pairs(Ext.ServerEntity.GetCurrentLevel().GameActionManager.GameActions) do
@@ -155,25 +156,26 @@ if not _ISCLIENT then
 		local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionalVector, distMult)
 	
 		if tx and tz then
-			local action = Ext.Action.CreateGameAction("GameObjectMoveAction", opts.Skill or "Projectile_LeaderLib_Force1", sourceObject)--[[@as EsvGameObjectMoveAction]]
-			action.CasterCharacterHandle = sourceObject.Handle
-			action.Handle = targetObject.Handle
-			action.BeamEffectName = opts.BeamEffect or ""
-			action.PathMover.DestinationPos = {tx,ty,tz}
-			action.PathMover.StartingPosition = targetObject.WorldPos
-			--local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, opts.BeamEffect or "", sourceObject.MyGuid)
-			if action then
+			local pos = {tx,ty,tz}
+			-- local action = Ext.Action.CreateGameAction("GameObjectMoveAction", opts.Skill or "", targetObject)--[[@as EsvGameObjectMoveAction]]
+			-- action.CasterCharacterHandle = sourceObject.Handle
+			-- action.BeamEffectName = opts.BeamEffect or ""
+			-- action.PathMover.DestinationPos = pos
+			-- action.PathMover.StartingPosition = targetObject.WorldPos
+			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, opts.BeamEffect or "", sourceObject.MyGuid)
+			if handle then
 				_PV.ForceMoveData[targetObject.MyGuid] = {
 					ID = opts.ID or "",
-					Position = {tx,ty,tz},
+					Position = pos,
 					Start = TableHelpers.Clone(startPos),
-					Handle = Ext.Utils.HandleToInteger(action.Handle),
+					--Handle = Ext.Utils.HandleToInteger(action.Handle),
+					Handle = handle,
 					Source = sourceObject.MyGuid,
 					IsFromSkill = opts.Skill ~= nil,
 					Skill = opts.Skill,
 					Distance = distMult
 				}
-				Ext.Action.ExecuteGameAction(action)
+				--Ext.Action.ExecuteGameAction(action, pos)
 				Timer.StartObjectTimer("LeaderLib_OnForceMoveAction", targetObject.MyGuid, _INTERNAL.FORCE_MOVE_UPDATE_MS)
 				return true
 			end
@@ -184,10 +186,10 @@ if not _ISCLIENT then
 	end
 	
 	---@param target EsvCharacter|EsvItem
-	---@param position number[]
+	---@param pos number[]
 	---@param opts ForceMoveObjectToPositionParameters|nil
-	function GameHelpers.Utils.ForceMoveObjectToPosition(target, position, opts)
-		fassert(_type(position) == "table" and position[1] and position[2] and position[3], "Invalid position parameter (%s)", Lib.serpent.line(position))
+	function GameHelpers.Utils.ForceMoveObjectToPosition(target, pos, opts)
+		fassert(_type(pos) == "table" and pos[1] and pos[2] and pos[3], "Invalid position parameter (%s)", Lib.serpent.line(pos))
 		local targetObject = GameHelpers.TryGetObject(target)
 		fassert(targetObject ~= nil, "Invalid target parameter (%s)", Lib.serpent.line(target))
 		if not opts then
@@ -202,29 +204,29 @@ if not _ISCLIENT then
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
 		_PV.ForceMoveData[targetObject.MyGuid] = nil
 
-		local dist = GameHelpers.Math.GetDistance(targetObject, position)
+		local dist = GameHelpers.Math.GetDistance(targetObject, pos)
 		local x,y,z = table.unpack(targetObject.WorldPos)
-		local tx,ty,tz = table.unpack(position)
-		local action = Ext.Action.CreateGameAction("GameObjectMoveAction", opts.Skill or "Projectile_LeaderLib_Force1", sourceObject)--[[@as EsvGameObjectMoveAction]]
-		action.CasterCharacterHandle = sourceObject.Handle
-		action.Handle = targetObject.Handle
-		action.BeamEffectName = opts.BeamEffect or ""
-		action.PathMover.DestinationPos = {tx,ty,tz}
-		action.PathMover.StartingPosition = targetObject.WorldPos
+		local tx,ty,tz = table.unpack(pos)
+		-- local action = Ext.Action.CreateGameAction("GameObjectMoveAction", opts.Skill or "", sourceObject)--[[@as EsvGameObjectMoveAction]]
+		-- action.CasterCharacterHandle = sourceObject.Handle
+		-- action.BeamEffectName = opts.BeamEffect or ""
+		-- action.PathMover.DestinationPos = pos
+		-- action.PathMover.StartingPosition = targetObject.WorldPos
 
-		--local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, opts.BeamEffect or "", sourceObject.MyGuid)
-		if action ~= nil then
+		local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, opts.BeamEffect or "", sourceObject.MyGuid)
+		if handle ~= nil then
 			_PV.ForceMoveData[targetObject.MyGuid] = {
 				ID = opts.ID,
-				Position = {tx,ty,tz},
+				Position = pos,
 				Start = {x,y,z},
-				Handle = Ext.Utils.HandleToInteger(action.Handle),
+				--Handle = Ext.Utils.HandleToInteger(action.Handle),
+				Handle = handle,
 				Source = sourceObject.MyGuid,
 				IsFromSkill = opts.Skill ~= nil,
 				Skill = opts.Skill,
 				Distance = dist
 			}
-			Ext.Action.ExecuteGameAction(action)
+			--Ext.Action.ExecuteGameAction(action, pos)
 			Timer.StartObjectTimer("LeaderLib_OnForceMoveAction", targetObject.MyGuid, 250)
 			return true
 		end

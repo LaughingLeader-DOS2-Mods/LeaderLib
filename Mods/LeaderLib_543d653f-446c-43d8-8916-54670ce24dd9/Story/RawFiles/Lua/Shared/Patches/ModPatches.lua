@@ -141,7 +141,7 @@ local Patches = {
 				end, {Priority=1})
 			else
 				--#region Treasure
-				
+
 				--Boost battle book base damage to be closer to _Swords/_Clubs
 				for _,v in pairs({
 					"_LLWEAPONEX_BattleBooks_1H",
@@ -567,6 +567,24 @@ local Patches = {
 							end
 						end
 					end
+					if (v.Owner == nil or v.Owner == Mods.WeaponExpansion.NPC.UniqueHoldingChest or GetRegion(v.UUID) == "")
+					and not StringHelpers.IsNullOrEmpty(v.DefaultOwner) 
+					and v.DefaultOwner ~= Mods.WeaponExpansion.NPC.UniqueHoldingChest
+					and ObjectGetFlag(v.UUID, "LLWEAPONEX_UniqueData_Initialized") == 1 then
+						local item = GameHelpers.GetItem(v.UUID)
+						if item then
+							local owner = GameHelpers.Item.GetOwner(v.UUID)
+							if owner == nil or owner.MyGuid == Mods.WeaponExpansion.NPC.UniqueHoldingChest then
+								if ObjectExists(v.DefaultOwner) == 1 then
+									ItemToInventory(v.UUID, v.DefaultOwner, 1, 0, 1)
+									fprint(LOGLEVEL.WARNING, "[LeaderLib:WeaponEx] Moved unique (%s) to '%s' since it was incorrectly without an owner.", k, GameHelpers.GetDisplayName(v.DefaultOwner))
+								else
+									ItemToInventory(v.UUID, Mods.WeaponExpansion.NPC.VendingMachine, 1, 0, 1)
+									fprint(LOGLEVEL.WARNING, "[LeaderLib:WeaponEx] Moved unique (%s) to the 'Strange Machine' since it was incorrectly without an owner.", k)
+								end
+							end
+						end
+					end
 				end
 
 				---@param item EsvItem
@@ -692,6 +710,40 @@ local Patches = {
 						GameHelpers.UI.SetSkillEnabled(char, "Zone_LLWEAPONEX_ArmCannon_Disperse", false)
 					end
 				end)
+
+				--FIX Add safeguards for making sure Frostdyne gets moved
+				Mods.WeaponExpansion.FortJoyEvent = function(event)
+					if event == "AlexanderDefeated" then
+						--Ext.Print(string.format("[FJ_AlexanderDefeated] Owner(%s) Alex(%s) Pos(%s)", Uniques.DivineBanner.Owner, NPC.BishopAlexander, Common.Dump(Ext.GetCharacter(NPC.BishopAlexander).WorldPos)))
+						if Mods.WeaponExpansion.Uniques.DivineBanner.Owner == Mods.WeaponExpansion.NPC.BishopAlexander then
+							local x,y,z = GetPosition(Mods.WeaponExpansion.NPC.BishopAlexander)
+							if x == nil then
+								x,y,z = GetPosition(Mods.WeaponExpansion.NPC.Dallis)
+							end
+							Mods.WeaponExpansion.Uniques.DivineBanner:ReleaseFromOwner(true)
+							ItemScatterAt(Mods.WeaponExpansion.Uniques.DivineBanner.UUID, x, y, z)
+							PlayEffectAtPosition("RS3_FX_Skills_Divine_Barrage_Impact_01", x, y, z)
+						end
+					elseif event == "SlaneReward" then
+						local frostDyne = Mods.WeaponExpansion.Uniques.Frostdyne
+						local slane = Mods.WeaponExpansion.NPC.Slane
+						local chest = Mods.WeaponExpansion.NPC.UniqueHoldingChest
+						if StringHelpers.IsNullOrEmpty(frostDyne.Owner) or frostDyne.Owner == slane or frostDyne.Owner == chest then
+							frostDyne:ReleaseFromOwner(true)
+							if CharacterIsDead(slane) == 1 then
+								ItemToInventory(frostDyne.UUID, slane, 1, 0, 1)
+							else
+								local x,y,z = GetPosition(slane)
+								if not x then
+									x = 583.75
+									z = 167.02076721191406
+								end
+								y = GameHelpers.Grid.GetY(x,z) + 0.15
+								ItemScatterAt(frostDyne.UUID, x, y, z)
+							end
+						end
+					end
+				end
 			end
 		end
 	}

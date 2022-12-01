@@ -26,25 +26,6 @@ end
 
 ---@param startPos number[]
 ---@param directionVector number[]
----@param startDistance number|nil
----@param reverse boolean|nil Start from the smallest distance possible instead.
----@param distIncrement number|nil The number to progressively add when finding valid positions.
----@return number x
----@return number y
----@return number z
----@return boolean success
-function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
-	local pos,success = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
-	if success then
-		local x,y,z = table.unpack(pos)
-		return x,y,z,true
-	end
-	local x,y,z = table.unpack(startPos)
-	return x,y,z,false
-end
-
----@param startPos number[]
----@param directionVector number[]
 ---@param maxDistance number|nil
 ---@param reverse boolean|nil Start from the smallest distance possible instead.
 ---@param distIncrement number|nil The number to progressively add when finding valid positions.
@@ -73,6 +54,25 @@ function GameHelpers.Grid.GetValidPositionTableAlongLine(startPos, directionVect
 		end
 	end
 	return startPos,false
+end
+
+---@param startPos number[]
+---@param directionVector number[]
+---@param startDistance number|nil
+---@param reverse boolean|nil Start from the smallest distance possible instead.
+---@param distIncrement number|nil The number to progressively add when finding valid positions.
+---@return number x
+---@return number y
+---@return number z
+---@return boolean success
+function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
+	local pos,success = GameHelpers.Grid.GetValidPositionTableAlongLine(startPos, directionVector, startDistance, reverse, distIncrement)
+	if success then
+		local x,y,z = table.unpack(pos)
+		return x,y,z,true
+	end
+	local x,y,z = table.unpack(startPos)
+	return x,y,z,false
 end
 
 ---@param startPos number[]

@@ -37,36 +37,108 @@ local Patches = {
 			end
 
 			if _ISCLIENT then
-				---@diagnostic disable undefined-field
-				if Ext.Utils.Version() < 56 then
-					Ext._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
-				else
-					Ext._Internal._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
-				end
+				---@diagnostic disable-next-line undefined-field
+				Ext._Internal._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
 
-				---@diagnostic enable
-	
-				Ext.RegisterNetListener("LLWEAPONEX_SetWorldTooltipText", function (cmd, payload)
-					local ui = Ext.UI.GetByType(Data.UIType.tooltip)
-					if ui then
-						---@type {tf:{shortDesc:string|nil, setText:fun(text:string, type:integer)}, defaultTooltip:{shortDesc:string|nil, setText:fun(text:string, type:integer)}}
-						local main = ui:GetRoot()
-						if main ~= nil then
-							local text = payload or ""
-							if main.tf ~= nil then
-								main.tf.shortDesc = text
-								if main.tf.setText ~= nil then
-									main.tf.setText(text,0)
-								end
-							elseif main.defaultTooltip ~= nil then
-								main.defaultTooltip.shortDesc = text
-								if main.defaultTooltip.setText ~= nil then
-									main.defaultTooltip.setText(text,0)
+				local ts = Classes.TranslatedString
+				local TwoHandedText = ts:Create("h3fb5cd5ag9ec8g4746g8f9cg03100b26bd3a", "Two-Handed")
+				local LLWEAPONEX_Unarmed = ts:Create("h1e98bcebg2e42g4699gba2bg6f647d428699", "Unarmed")
+				local WeaponTypeNames = {
+					--LLWEAPONEX_Bludgeon = {Text=ts:Create("h448753f3g7785g4681gb639ga0e9d58bfadd", "Bludgeon")},
+					--LLWEAPONEX_RunicCannon = {Text=ts:Create("h702bf925gf664g45a7gb3f5g34418bfa2c56", "Runic Weaponry")},
+					LLWEAPONEX_Banner = {Text=ts:Create("hbe8ca1e2g4683g4a93g8e20g984992e30d22", "Banner")},
+					LLWEAPONEX_BattleBook = {Text=ts:Create("he053a3abge5d8g4d14g9333ga18d6eba3df1", "Battle Book")},
+					LLWEAPONEX_DualShields = {Text=ts:Create("h00157a58g9ae0g4119gba1ag3f1e9f11db14", "Dual Shields")},
+					LLWEAPONEX_Firearm = {Text=ts:Create("h8d02e345ged4ag4d60g9be9g68a46dda623b", "Firearm")},
+					LLWEAPONEX_Greatbow = {Text=ts:Create("h52a81f92g3549g4cb4g9b18g066ba15399c0", "Greatbow")},
+					LLWEAPONEX_Katana = {Text=ts:Create("he467f39fg8b65g4136g828fg949f9f3aef15", "Katana"), TwoHandedText=ts:Create("hd1f993bag9dadg49cbga5edgb92880c38e46", "Odachi")},
+					LLWEAPONEX_Quarterstaff = {Text=ts:Create("h8d11d8efg0bb8g4130g9393geb30841eaea5", "Quarterstaff")},
+					LLWEAPONEX_Polearm = {Text=ts:Create("hd61320b6ge4e6g4f51g8841g132159d6b282", "Polearm")},
+					LLWEAPONEX_Rapier = {Text=ts:Create("h84b2d805gff5ag44a5g9f81g416aaf5abf18", "Rapier")},
+					LLWEAPONEX_Runeblade = {Text=ts:Create("hb66213fdg1a98g4127ga55fg429f9cde9c6a", "Runeblade")},
+					LLWEAPONEX_Scythe = {Text=ts:Create("h1e98bd0bg867dg4a57gb2d4g6d820b4e7dfa", "Scythe")},
+					LLWEAPONEX_Unarmed = {Text=LLWEAPONEX_Unarmed},
+					LLWEAPONEX_Rod = {Text=ts:Create("heb1c0428g158fg46d6gafa3g6d6143534f37", "One-Handed Scepter")},
+					--LLWEAPONEX_Dagger = {Text=ts:Create("h697f3261gc083g4152g84cdgbe559a5e0388", "Dagger")}
+				}
+				local UniqueWeaponTypeTags = {
+					LLWEAPONEX_UniqueBokken1H = ts:Create("h5264ef62gdc22g401fg8b62g303379cd7693", "Wooden Katana"),
+					LLWEAPONEX_Blunderbuss = ts:Create("h59b52860gd0e3g4e65g9e61gd66b862178c3", "Blunderbuss"),
+					LLWEAPONEX_RunicCannon = ts:Create("h702bf925gf664g45a7gb3f5g34418bfa2c56", "Runic Weaponry"),
+					LLWEAPONEX_UniqueWarchiefHalberdSpear = WeaponTypeNames.LLWEAPONEX_Polearm.Text,
+					LLWEAPONEX_UniqueWarchiefHalberdAxe = ts:Create("h42439ac8g67ddg48dag810fgf7319b62dc0d", "Axe"),
+				}
+				
+				local UniqueWeaponTypeTagsDisplayTwoHanded = {
+					LLWEAPONEX_UniqueBokken2H = true,
+					LLWEAPONEX_UniqueWarchiefHalberdAxe = true,
+				}
+				local weaponTypePreferenceOrder = {
+					"LLWEAPONEX_Rapier",
+					"LLWEAPONEX_RunicCannon",
+					"LLWEAPONEX_Banner",
+					"LLWEAPONEX_BattleBook",
+					"LLWEAPONEX_DualShields",
+					"LLWEAPONEX_Greatbow",
+					"LLWEAPONEX_Katana",
+					"LLWEAPONEX_Quarterstaff",
+					"LLWEAPONEX_Polearm",
+					"LLWEAPONEX_Scythe",
+					"LLWEAPONEX_Unarmed",
+					"LLWEAPONEX_Runeblade",
+					"LLWEAPONEX_Rod",
+					"LLWEAPONEX_Firearm",
+				}
+
+				---@param item EclItem
+				---@param _TAGS table<string,boolean>|nil
+				function GetItemTypeText(item, _TAGS)
+					if not _TAGS then
+						_TAGS = GameHelpers.GetAllTags(item, true)
+					end
+					for tag,t in pairs(UniqueWeaponTypeTags) do
+						if _TAGS[tag] then
+							if UniqueWeaponTypeTagsDisplayTwoHanded[tag] and item.Stats.IsTwoHanded then
+								return TwoHandedText.Value .. " " .. t.Value
+							else
+								return t.Value
+							end
+						end
+					end
+					local typeText = ""
+					for i=1,#weaponTypePreferenceOrder do
+						local tag = weaponTypePreferenceOrder[i]
+						if _TAGS[tag] then
+							local renameWeaponType = WeaponTypeNames[tag]
+							if renameWeaponType ~= nil then
+								if item.Stats.IsTwoHanded and renameWeaponType.TwoHandedText ~= nil and not Game.Math.IsRangedWeapon(item.Stats) then
+									typeText = StringHelpers.Append(typeText, renameWeaponType.TwoHandedText.Value, " ")
+								else
+									typeText = StringHelpers.Append(typeText, renameWeaponType.Text.Value, " ")
 								end
 							end
 						end
 					end
-				end)
+					return typeText
+				end
+
+				local worldTooltipTypeText = '%s<font size="15"><br>%s</font>'
+
+				Events.OnWorldTooltip:Subscribe(function(e)
+					if e.Item and e.IsFromItem then
+						local typeText = GetItemTypeText(e.Item)
+						if not StringHelpers.IsNullOrEmpty(typeText) then
+							local nextText = ""
+							local startPos,endPos = string.find(e.Text, '<font size="15"><br>.-</font>')
+							if startPos then
+								nextText = string.format(worldTooltipTypeText, string.sub(e.Text, 0, startPos-1), typeText)
+							else
+								nextText = string.format(worldTooltipTypeText, e.Text, typeText)
+							end
+							e.Text = nextText
+						end
+					end
+				end, {Priority=1})
 			else
 				--#region Treasure
 				

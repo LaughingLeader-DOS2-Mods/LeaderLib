@@ -188,27 +188,29 @@ local _combatLeftEnabled = false
 Ext.Osiris.RegisterListener("ObjectEnteredCombat", 2, "after", BuffStatusPreserver.OnEnteredCombat)
 Ext.Osiris.RegisterListener("CharacterUsedSkill", 4, "after", BuffStatusPreserver.OnSkillUsed)
 
-Ext.Events.BeforeStatusApply:Subscribe(function(e)
-	if not BuffStatusPreserver.Enabled() or e.PreventStatusApply then return end
-	local target = GameHelpers.TryGetObject(e.Status.TargetHandle)
-	if not target then return end
-	local targetGUID = target.MyGuid
-	local source = GameHelpers.TryGetObject(e.Status.StatusSourceHandle)
-
-	local data = BuffStatusPreserver.NextBuffStatus[targetGUID]
-	if data and data[e.Status.StatusId] then
-		BuffStatusPreserver.PreserveStatus(target, e.Status, true)
-		Timer.Cancel("LeaderLib_BuffStatusPreserver_ClearStatusData", targetGUID)
-		Timer.StartObjectTimer("LeaderLib_BuffStatusPreserver_ClearStatusData", targetGUID, 500)
-	elseif source and GameHelpers.Character.IsPlayerOrPartyMember(targetGUID) then -- Allow players to apply permanent buffs to other party members
-		local data = BuffStatusPreserver.NextBuffStatus[source.MyGuid]
+Ext.Events.SessionLoaded:Subscribe(function (e)
+	Ext.Events.BeforeStatusApply:Subscribe(function(e)
+		if not BuffStatusPreserver.Enabled() or e.PreventStatusApply then return end
+		local target = GameHelpers.GetObjectFromHandle(e.Status.TargetHandle, "EsvCharacter") --[[@as EsvCharacter|EsvItem]]
+		if not target then return end
+		local targetGUID = target.MyGuid
+		local source = GameHelpers.GetObjectFromHandle(e.Status.StatusSourceHandle, "EsvCharacter") --[[@as EsvCharacter|EsvItem]]
+	
+		local data = BuffStatusPreserver.NextBuffStatus[targetGUID]
 		if data and data[e.Status.StatusId] then
 			BuffStatusPreserver.PreserveStatus(target, e.Status, true)
-			Timer.Cancel("LeaderLib_BuffStatusPreserver_ClearStatusData", source.MyGuid)
-			Timer.StartObjectTimer("LeaderLib_BuffStatusPreserver_ClearStatusData", source.MyGuid, 500)
+			Timer.Cancel("LeaderLib_BuffStatusPreserver_ClearStatusData", targetGUID)
+			Timer.StartObjectTimer("LeaderLib_BuffStatusPreserver_ClearStatusData", targetGUID, 500)
+		elseif source and GameHelpers.Character.IsPlayerOrPartyMember(targetGUID) then -- Allow players to apply permanent buffs to other party members
+			local data = BuffStatusPreserver.NextBuffStatus[source.MyGuid]
+			if data and data[e.Status.StatusId] then
+				BuffStatusPreserver.PreserveStatus(target, e.Status, true)
+				Timer.Cancel("LeaderLib_BuffStatusPreserver_ClearStatusData", source.MyGuid)
+				Timer.StartObjectTimer("LeaderLib_BuffStatusPreserver_ClearStatusData", source.MyGuid, 500)
+			end
 		end
-	end
-end, {Priority=0})
+	end, {Priority=0})
+end)
 
 function BuffStatusPreserver.Disable()
 	if _PV.BuffStatuses then

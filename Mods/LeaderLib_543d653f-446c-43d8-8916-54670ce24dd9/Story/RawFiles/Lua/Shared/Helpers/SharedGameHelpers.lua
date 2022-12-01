@@ -7,7 +7,9 @@ local _getGameObject = Ext.Entity.GetGameObject
 local _getCharacter = Ext.Entity.GetCharacter
 local _getItem = Ext.Entity.GetItem
 local _getTrigger = Ext.Entity.GetTrigger
+local _getProjectile = Ext.Entity.GetProjectile
 local _isValidHandle = Ext.Utils.IsValidHandle
+local _getObjectType = Ext.Types.GetObjectType
 local _osirisIsCallable = not _ISCLIENT and Ext.Osiris.IsCallable or function() return false end
 local _round = Ext.Utils.Round
 
@@ -66,50 +68,71 @@ local getFuncs = {
 	_getCharacter,
 	_getItem,
 	_getGameObject,
-	_getTrigger
+	_getTrigger,
+	_getProjectile
+}
+
+local _objectTypes = {
+	["esv::Character"] = true,
+	["ecl::Character"] = true,
+	["esv::Item"] = true,
+	["ecl::Item"] = true,
+	["ecl::Scenery"] = true,
+	["esv::Projectile"] = true,
+	["ecl::Projectile"] = true,
+	["Trigger"] = true,
+	["AreaTrigger"] = true,
+	["AtmosphereTrigger"] = true,
+	["SoundVolumeTrigger"] = true,
+	["esv::AreaTriggerBase"] = true,
+	["esv::EocAreaTrigger"] = true,
+	["esv::EventTrigger"] = true,
+	["esv::CrimeAreaTrigger"] = true,
+	["esv::CrimeRegionTrigger"] = true,
+	["esv::MusicVolumeTrigger::Triggered"] = true,
+	["esv::MusicVolumeTrigger"] = true,
+	["esv::SecretRegionTrigger"] = true,
+	["esv::RegionTrigger"] = true,
+	["esv::ExplorationTrigger"] = true,
+	["esv::PointTriggerBase"] = true,
+	["esv::TeleportTrigger"] = true,
+	["esv::StartTrigger"] = true,
+	["esv::EocPointTrigger"] = true,
+	["esv::AIHintAreaTrigger"] = true,
+	["esv::StatsAreaTrigger"] = true,
+	["esv::AtmosphereTrigger"] = true,
+	["esv::SoundVolumeTrigger"] = true,
 }
 
 local function TryGetObject(id)
+	local extType = _getObjectType(id)
+	if _objectTypes[extType] then
+		return id
+	elseif extType == "CDivinityStats_Character" then
+		---@cast id CDivinityStatsCharacter
+		return id.Character --[[@as EsvCharacter|EclCharacter]]
+	elseif extType == "CDivinityStatsItem" then
+		---@cast id CDivinityStatsItem
+		return id.GameObject --[[@as EsvItem|EclItem]]
+	end
 	local t = _type(id)
-	local isHandle = IsHandle(id)
-	if _osirisIsCallable() and t == "string" then
-		if StringHelpers.IsNullOrEmpty(id) then
-			return nil
-		end
-		if ObjectIsCharacter(id) == 1 then
-			local b,obj = _pcall(_getCharacter, id)
-			if b and obj then
-				return obj
-			end
-		elseif ObjectIsItem(id) == 1 then
-			local b,obj = _pcall(_getItem, id)
-			if b and obj then
-				return obj
-			end
-		elseif StringHelpers.IsUUID(id) and ObjectExists(id) == 0 then
-			return nil
-		else
-			local b,obj = _pcall(_getGameObject, id)
-			if b and obj then
-				return obj
-			end
-		end
-	elseif isHandle then
+	if t == "string" and StringHelpers.IsNullOrEmpty(id) then
+		return nil
+	end
+	if IsHandle(id) or t == "string" then
 		local b,obj = _pcall(_getGameObject, id)
 		if b and obj then
 			return obj
 		end
 	elseif t == "number" then
-		--Assuming id is a NetID, try Character first, then Item
-		for i=1,3 do
+		--Assuming id is a NetID, try Character first, then Item etc
+		for i=1,5 do
 			local func = getFuncs[i]
 			local b,result = _pcall(func, id)
 			if b and result then
 				return result
 			end
 		end
-	elseif t == "userdata" and not isHandle then
-		return id
 	end
 	return nil
 end
@@ -117,7 +140,7 @@ end
 ---Tries to get a game object if the target exists, otherwise returns nil.
 ---@param id ObjectParam|ComponentHandle
 ---@param returnOriginal boolean|nil Return the original value if failed. Defaults to false, so nil is returned.
----@return EsvCharacter|EclCharacter|EsvItem|EclItem
+---@return EsvCharacter|EclCharacter|EsvItem|EclItem|nil
 local function _tryGetObject(id, returnOriginal)
 	local b,result = _pcall(TryGetObject, id)
 	if not b then
@@ -133,6 +156,135 @@ local function _tryGetObject(id, returnOriginal)
 end
 
 GameHelpers.TryGetObject = _tryGetObject
+
+---Tries to get an Esv/EclCharacter from whatever the value is.
+---@param object CharacterParam|StatCharacter|ComponentHandle
+---@return EsvCharacter|EclCharacter|nil
+function GameHelpers.GetCharacter(object)
+	local extType = _getObjectType(object)
+	if extType == "esv::Character" or extType == "ecl::Character" then
+		return object --[[@as EsvCharacter|EclCharacter]]
+	elseif extType == "CDivinityStats_Character" then
+		---@cast object CDivinityStatsCharacter
+		return object.Character --[[@as EsvCharacter|EclCharacter]]
+	end
+	local t = _type(object)
+	if IsHandle(object) or t == "string" or t == "number" then
+		local _,obj = _pcall(_getCharacter, object)
+		return obj
+	end
+	return nil
+end
+
+---Tries to get an Esv/EclItem from whatever the value is.
+---@param object ItemParam|CDivinityStatsItem|ComponentHandle
+---@return EsvItem|EclItem|nil
+function GameHelpers.GetItem(object)
+	local extType = _getObjectType(object)
+	if extType == "esv::Item" or extType == "ecl::Item" then
+		return object --[[@as EsvItem|EclItem]]
+	elseif extType == "CDivinityStatsItem" then
+		---@cast object CDivinityStatsItem
+		return object.GameObject --[[@as EsvItem|EclItem]]
+	end
+	local t = _type(object)
+	if IsHandle(object) or t == "string" or t == "number" then
+		local _,obj = _pcall(_getItem, object)
+		return obj
+	end
+	return nil
+end
+
+
+---@overload fun(object:ObjectParam):UUID|nil
+---Tries to get a string UUID from whatever variable type object is.
+---@param object ObjectParam
+---@param returnNullId boolean If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
+---@return UUID|nil
+function GameHelpers.GetUUID(object, returnNullId)
+	local t = _type(object)
+	if t == "userdata" then
+		if IsHandle(object) then
+			local obj = GameHelpers.TryGetObject(object)
+			if obj then
+				return obj.MyGuid
+			end
+		elseif object.MyGuid then
+			return object.MyGuid
+		end
+	elseif t == "string" then
+		return StringHelpers.GetUUID(object)
+	elseif t == "number" then
+		local obj = GameHelpers.TryGetObject(object)
+		if obj then
+			return obj.MyGuid
+		end
+	end
+	if returnNullId then
+		return StringHelpers.NULL_UUID
+	end
+	return nil
+end
+
+---Tries to get a NetID from whatever variable type object is.
+---@param object ObjectParam
+---@return NETID|nil
+function GameHelpers.GetNetID(object)
+	local t = _type(object)
+	if t == "userdata" then
+		if IsHandle(object) then
+			local obj = GameHelpers.TryGetObject(object)
+			if obj then
+				return obj.NetID
+			end
+		elseif object.NetID then
+			return object.NetID
+		end
+	elseif t == "string" then
+		local obj = _getGameObject(object)
+		if obj then
+			return obj.NetID
+		end
+	elseif t == "number" then
+		return object
+	end
+	return nil
+end
+
+---Tries to get a `UUID` on the server side or `NetID` on the client side.
+---@param object ObjectParam
+---@return UUID|NETID|nil
+function GameHelpers.GetObjectID(object)
+	local t = _type(object)
+	if t == "userdata" then
+		if IsHandle(object) then
+			local obj = GameHelpers.TryGetObject(object)
+			if obj then
+				if not _ISCLIENT then
+					return obj.MyGuid
+				else
+					return obj.NetID
+				end
+			end
+		elseif object.NetID then
+			if not _ISCLIENT then
+				return object.MyGuid
+			else
+				return object.NetID
+			end
+		end
+	elseif t == "string" or t == "number" then
+		local obj = GameHelpers.TryGetObject(object)
+		if obj then
+			if not _ISCLIENT then
+				return obj.MyGuid
+			else
+				return obj.NetID
+			end
+		end
+	end
+	return nil
+end
 
 local _UNSET_USERID = -65536
 
@@ -402,139 +554,6 @@ function GameHelpers.ObjectHasTag(object, tags, requireAll, checkEquipmentTags, 
 		end
 	end
 	return false
-end
-
----@overload fun(object:ObjectParam):UUID|nil
----Tries to get a string UUID from whatever variable type object is.
----@param object ObjectParam
----@param returnNullId boolean If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
----@return UUID
-function GameHelpers.GetUUID(object, returnNullId)
-	local t = _type(object)
-	if t == "userdata" then
-		if IsHandle(object) then
-			local obj = GameHelpers.TryGetObject(object)
-			if obj then
-				return obj.MyGuid
-			end
-		elseif object.MyGuid then
-			return object.MyGuid
-		end
-	elseif t == "string" then
-		return StringHelpers.GetUUID(object)
-	elseif t == "number" then
-		local obj = GameHelpers.TryGetObject(object)
-		if obj then
-			return obj.MyGuid
-		end
-	end
-	if returnNullId then
-		return StringHelpers.NULL_UUID
-	end
-	return nil
-end
-
----Tries to get a NetID from whatever variable type object is.
----@param object ObjectParam
----@return NETID
-function GameHelpers.GetNetID(object)
-	local t = _type(object)
-	if t == "userdata" then
-		if IsHandle(object) then
-			local obj = GameHelpers.TryGetObject(object)
-			if obj then
-				return obj.NetID
-			end
-		elseif object.NetID then
-			return object.NetID
-		end
-	elseif t == "string" then
-		local obj = _getGameObject(object)
-		if obj then
-			return obj.NetID
-		end
-	elseif t == "number" then
-		return object
-	end
-	return nil
-end
-
----Tries to get a `UUID` on the server side or `NetID` on the client side.
----@param object ObjectParam
----@return UUID|NETID
-function GameHelpers.GetObjectID(object)
-	local t = _type(object)
-	if t == "userdata" then
-		if IsHandle(object) then
-			local obj = GameHelpers.TryGetObject(object)
-			if obj then
-				if not _ISCLIENT then
-					return obj.MyGuid
-				else
-					return obj.NetID
-				end
-			end
-		elseif object.NetID then
-			if not _ISCLIENT then
-				return object.MyGuid
-			else
-				return object.NetID
-			end
-		end
-	elseif t == "string" or t == "number" then
-		local obj = GameHelpers.TryGetObject(object)
-		if obj then
-			if not _ISCLIENT then
-				return obj.MyGuid
-			else
-				return obj.NetID
-			end
-		end
-	end
-	return nil
-end
-
----Tries to get an Esv/EclCharacter from whatever the value is.
----@param object CharacterParam|StatCharacter|ComponentHandle
----@return EsvCharacter|EclCharacter
-function GameHelpers.GetCharacter(object)
-	local t = _type(object)
-	local isHandle = t == "userdata" and IsHandle(object) == true
-	if isHandle or t == "string" or t == "number" then
-		local b,obj = _pcall(_getCharacter, object)
-		if b and obj then
-			return obj
-		end
-	elseif t == "userdata" then
-		if GameHelpers.Ext.ObjectIsCharacter(object) then
-			return object
-		elseif GameHelpers.Ext.ObjectIsStatCharacter(object) then
-			return object.Character
-		elseif IsHandle(object) then
-			local b,obj = _pcall(_getCharacter, object)
-			if b then
-				return obj
-			end
-		end
-	end
-	return nil
-end
-
----Tries to get an Esv/EclItem from whatever the value is.
----@param object ItemParam|CDivinityStatsItem|ComponentHandle
----@return EsvItem|EclItem
-function GameHelpers.GetItem(object)
-	local t = _type(object)
-	local isHandle = t == "userdata" and IsHandle(object) == true
-	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(object) then
-		return object
-	elseif isHandle or t == "string" or t == "number" then
-		local b,obj = _pcall(_getItem, object)
-		if b and obj then
-			return obj
-		end
-	end
-	return nil
 end
 
 ---Checks if a character or item exists.

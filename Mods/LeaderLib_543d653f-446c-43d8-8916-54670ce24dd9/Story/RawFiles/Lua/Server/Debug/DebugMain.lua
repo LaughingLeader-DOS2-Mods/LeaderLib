@@ -244,14 +244,14 @@ function Debug_TraceOnHit(target,attacker,damage,handle,state)
 	fprint(LOGLEVEL.TRACE, "=======================")
 end
 
--- Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
+-- Ext.Osiris.RegisterListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
 -- 	Debug_TraceHitPrepare(target, attacker, damage, handle, "before")
 -- end)
--- Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "after", function(target, attacker, damage, handle)
+-- Ext.Osiris.RegisterListener("NRD_OnPrepareHit", 4, "after", function(target, attacker, damage, handle)
 -- 	Debug_TraceHitPrepare(target, attacker, damage, handle, "after")
 -- end)
 
--- Ext.RegisterOsirisListener("NRD_OnHit", 4, "before", function(target, attacker, damage, handle)
+-- Ext.Osiris.RegisterListener("NRD_OnHit", 4, "before", function(target, attacker, damage, handle)
 -- 	Debug_TraceOnHit(target, attacker, damage, handle)
 -- end)
 
@@ -363,10 +363,10 @@ end)
 --[[ Ext.Events.OnPeekAiAction:Subscribe(function (e)
 	local character = Ext.Entity.GetCharacter(e.CharacterHandle)
 	if character and character.Stats.Name == "AMC_Stats_WarTower" then
-		Ext.IO.SaveFile(string.format("Dumps/AI/AMC_Stats_WarTower_%s_OnAfterSortAiActions.json", Ext.MonotonicTime()), Ext.DumpExport(e.Request))
+		Ext.IO.SaveFile(string.format("Dumps/AI/AMC_Stats_WarTower_%s_OnAfterSortAiActions.json", Ext.Utils.MonotonicTime()), Ext.DumpExport(e.Request))
 	end
 end)
-Ext.Events.OnAfterSortAiActions:Subscribe(function (e) local character = Ext.Entity.GetCharacter(e.CharacterHandle) if character and character.Stats.Name == "AMC_Stats_WarTower" then Ext.IO.SaveFile(string.format("Dumps/AI/AMC_Stats_WarTower_%s_OnAfterSortAiActions.json", Ext.MonotonicTime()), Ext.DumpExport(e.Request)) end end) ]]
+Ext.Events.OnAfterSortAiActions:Subscribe(function (e) local character = Ext.Entity.GetCharacter(e.CharacterHandle) if character and character.Stats.Name == "AMC_Stats_WarTower" then Ext.IO.SaveFile(string.format("Dumps/AI/AMC_Stats_WarTower_%s_OnAfterSortAiActions.json", Ext.Utils.MonotonicTime()), Ext.DumpExport(e.Request)) end end) ]]
 
 -- Ext.Events.OnBeforeSortAiActions:Subscribe(function (e)
 -- 	for _,v in pairs(e.Request.AiActions) do
@@ -389,11 +389,11 @@ Ext.Events.OnAfterSortAiActions:Subscribe(function (e) local character = Ext.Ent
 				v.SkillId = "Target_FirstAidEnemy"
 			end
 		end
-		Ext.IO.SaveFile(string.format("Dumps/AI/%s_OnPeekAiAction.json", Ext.MonotonicTime()), Ext.DumpExport(e))
+		Ext.IO.SaveFile(string.format("Dumps/AI/%s_OnPeekAiAction.json", Ext.Utils.MonotonicTime()), Ext.DumpExport(e))
 	end)
 	
 	Ext.Events.OnBeforeSortAiActions:Subscribe(function (e)
-		Ext.IO.SaveFile(string.format("Dumps/AI/%s_OnBeforeSortAiActions.json", Ext.MonotonicTime()), Ext.DumpExport(e))
+		Ext.IO.SaveFile(string.format("Dumps/AI/%s_OnBeforeSortAiActions.json", Ext.Utils.MonotonicTime()), Ext.DumpExport(e))
 	end)
 	
 	Ext.Events.OnAfterSortAiActions:Subscribe(function (e)
@@ -405,7 +405,7 @@ Ext.Events.OnAfterSortAiActions:Subscribe(function (e) local character = Ext.Ent
 		for _,v in pairs(e.Request.Skills) do
 			v.SkillId = "Target_FirstAidEnemy"
 		end
-		Ext.IO.SaveFile(string.format("Dumps/AI/%s_OnAfterSortAiActions.json", Ext.MonotonicTime()), Ext.DumpExport(e))
+		Ext.IO.SaveFile(string.format("Dumps/AI/%s_OnAfterSortAiActions.json", Ext.Utils.MonotonicTime()), Ext.DumpExport(e))
 	end)
 	
 	Ext.Events.StatusDelete:Subscribe(function (e)
@@ -420,7 +420,7 @@ end ]]
 --[[ local TARGET = "02a77f1f-872b-49ca-91ab-32098c443beb"
 local aboutToPickUpItem = {}
 
-Ext.RegisterOsirisListener("ProcProcessPickupOfItem", 3, "before", function (charGUID, itemGUID, requestID)
+Ext.Osiris.RegisterListener("ProcProcessPickupOfItem", 3, "before", function (charGUID, itemGUID, requestID)
 	charGUID = GetUUID(charGUID)
 	if charGUID == TARGET then
 		return
@@ -435,7 +435,7 @@ Ext.RegisterOsirisListener("ProcProcessPickupOfItem", 3, "before", function (cha
 	aboutToPickUpItem[itemGUID] = charGUID
 end)
 
-Ext.RegisterOsirisListener("ItemAddedToCharacter", 2, "after", function (itemGUID, charGUID)
+Ext.Osiris.RegisterListener("ItemAddedToCharacter", 2, "after", function (itemGUID, charGUID)
 	charGUID = GetUUID(charGUID)
 	itemGUID = GetUUID(itemGUID)
 	if aboutToPickUpItem[itemGUID] == charGUID then
@@ -506,3 +506,61 @@ Mods.LeaderLib.StatusManager.Subscribe.Applied("POLYMORPHED", function(e) local 
 
 local status = Ext.PrepareStatus(me.MyGuid, "POLYMORPHED", 12.0); status.ForceStatus = true; status.PolymorphResult = "2429c3a4-e54b-4cea-add7-2bc53024935a"; status.OriginalTemplate = me.RootTemplate.Id;status.OriginalTemplateType = 1;status.DisableInteractions = false;status.TransformedRace = ""; Ext.ApplyStatus(status)
 ]]
+
+--[[ SkillManager.Register.Hit("Projectile_EnemyFireball", function (e)
+	if e.Data.Success then
+		--GameHelpers.Damage.ApplySkillDamage(e.Character, e.Data.TargetObject, "Projectile_Fireball")
+		GameHelpers.Skill.Explode(e.Data.TargetObject, "Projectile_LLWEAPONEX_MasteryBonus_CripplingBlowPiercingDamage", e.Character)
+		local dynDamageType = e.Character.Stats.MainWeapon.DynamicStats[1].DamageType
+	end
+end)
+
+Events.OnHit:Subscribe(function (e)
+	if GameHelpers.Character.IsPlayer(e.Source) then
+		Ext.Utils.Print(e.Data.HitContext.HitType, e.Data.HitStatus.HitReason, Ext.DumpExport(e.Data.DamageList:ToTable()))
+	end
+	-- if e.Data.IsFromSkill then
+	-- 	Ext.Utils.Print(e.Data.Skill, e.Data.HitRequest.TotalDamageDone, Ext.DumpExport(e.Data.DamageList:ToTable()))
+	-- end
+end)
+
+Ext.RegisterConsoleCommand("llconetest", function (cmd, zoneAngle, mathAngle)
+	local esvCaster = Ext.Entity.GetCharacter(CharacterGetHostCharacter())
+	local skill = Ext.Stats.Get("Cone_GroundSmash")
+	local length = -skill.Range
+	mathAngle = not mathAngle and skill.Angle/2 or tonumber(mathAngle)
+	zoneAngle = not zoneAngle and mathAngle or tonumber(zoneAngle)
+	local angleDeg = mathAngle + 180
+
+	local _,ry,_ = GetRotation(esvCaster.MyGuid)
+	local angle1 = ry + angleDeg
+	local angle2 = ry - angleDeg
+
+	local rotMat1 = Ext.Math.BuildRotation3({0,1,0}, math.rad(angle1))
+	local rotMat2 = Ext.Math.BuildRotation3({0,1,0}, math.rad(angle2))
+
+	local px,py,pz = table.unpack(esvCaster.WorldPos)
+	local tx,ty,tz = px - rotMat1[7] * length, py, pz - rotMat1[9] * length
+	local ux,uy,uz = px - rotMat2[7] * length, py, pz - rotMat2[9] * length
+
+	PlayEffectAtPositionAndRotation("RS3_FX_Skills_Warrior_GroundSmash_Cast_01", tx, ty, tz, angle1)
+	PlayEffectAtPositionAndRotation("RS3_FX_Skills_Warrior_GroundSmash_Cast_01", ux, uy, uz, angle2)
+	GameHelpers.Skill.ShootZoneAt("Cone_GroundSmash", esvCaster, esvCaster.WorldPos, {Position={tx,ty,tz}, Shape=0, SurfaceType="Water",AngleOrBase=zoneAngle})
+	GameHelpers.Skill.ShootZoneAt("Cone_GroundSmash", esvCaster, esvCaster.WorldPos, {Position={ux,uy,uz}, Shape=0, SurfaceType="Water",AngleOrBase=zoneAngle})
+end) ]]
+
+-- Ext.Osiris.RegisterListener("NRD_OnActionStateEnter", 2, "after", function (guid, actionType)
+-- 	if actionType == "Attack" then
+-- 		local character = GameHelpers.GetCharacter(guid)
+-- 		for _,v in pairs(character.ActionMachine.Layers) do
+-- 			if v.State and v.State.Type == "Attack" then
+-- 				local action = v.State --[[@as EsvASAttack]]
+-- 				for _,dlist in pairs(action.OffHandDamageList) do
+-- 					dlist.DamageList:ConvertDamageType("Water")
+-- 				end
+-- 			end
+-- 		end
+-- 	end
+-- end)
+
+-- Ext.Audio.PostEvent(_C().Handle, "Skill_Earth_Fortify_Impact_01", 0)

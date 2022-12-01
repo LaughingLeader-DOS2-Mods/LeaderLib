@@ -169,8 +169,7 @@ function CCExt.SetupSkipTutorialButton(this)
 	else
 		local dest = settings.SkipTutorial.Destination
 		local index = SkipTutorialRegions[dest]
-		if not index 
-		or (DeveloperOnlyRegions[dest] and not Vars.DebugMode) then
+		if not index or (DeveloperOnlyRegions[dest] and not Vars.DebugMode) then
 			index = SkipTutorialRegions.FJ_FortJoy_Main
 		end
 		this.skipTutorial_mc.selectItemByID(index, true)

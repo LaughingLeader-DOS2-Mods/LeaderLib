@@ -227,7 +227,7 @@ end
 
 ---@param ui UIObject
 local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
-	if NothingIsIgnored() and not Vars.LeaderDebugMode then
+	if NothingIsIgnored() then
 		return
 	end
 	local this = ui:GetRoot()

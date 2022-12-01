@@ -936,14 +936,13 @@ function GameHelpers.Item.GetOwner(item, returnNilUUID)
 				return object
 			end
 		end
-        
         --InventoryParentHandle on the client?
-		if Ext.Utils.IsValidHandle(item.ParentInventoryHandle) then
-			local object = GameHelpers.TryGetObject(item.ParentInventoryHandle)
-			if object then
-				return object
-			end
-		end
+		-- if Ext.Utils.IsValidHandle(item.ParentInventoryHandle) then
+		-- 	local object = GameHelpers.TryGetObject(item.ParentInventoryHandle)
+		-- 	if object then
+		-- 		return object
+		-- 	end
+		-- end
 	end
 	if returnNilUUID then
 		return StringHelpers.NULL_UUID

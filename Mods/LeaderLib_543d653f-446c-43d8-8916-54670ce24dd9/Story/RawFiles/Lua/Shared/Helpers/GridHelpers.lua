@@ -24,8 +24,8 @@ function GameHelpers.Grid.IsValidPosition(x, z, grid)
 	return false
 end
 
----@param startPos number[]
----@param directionVector number[]
+---@param startPos vec3|ObjectParam
+---@param directionVector vec3
 ---@param maxDistance number|nil
 ---@param reverse boolean|nil Start from the smallest distance possible instead.
 ---@param distIncrement number|nil The number to progressively add when finding valid positions.
@@ -33,6 +33,7 @@ end
 ---@return vec3 position
 ---@return boolean success
 function GameHelpers.Grid.GetValidPositionTableAlongLine(startPos, directionVector, maxDistance, reverse, distIncrement, minDistance)
+	startPos = GameHelpers.Math.GetPosition(startPos)
 	distIncrement = distIncrement or 0.1
 	maxDistance = maxDistance or 12.0
 	minDistance = minDistance or 0
@@ -56,8 +57,8 @@ function GameHelpers.Grid.GetValidPositionTableAlongLine(startPos, directionVect
 	return startPos,false
 end
 
----@param startPos number[]
----@param directionVector number[]
+---@param startPos vec3|ObjectParam
+---@param directionVector vec3
 ---@param startDistance number|nil
 ---@param reverse boolean|nil Start from the smallest distance possible instead.
 ---@param distIncrement number|nil The number to progressively add when finding valid positions.
@@ -75,15 +76,14 @@ function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, s
 	return x,y,z,false
 end
 
----@param startPos number[]
+---@param startPos vec3|ObjectParam
 ---@param maxRadius number|nil
 ---@param pointsInCircle number|nil
 ---@param reverse boolean|nil Start from the largest distance possible instead.
----@return number x
----@return number y
----@return number z
+---@return vec3 position
 ---@return boolean success
-function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsInCircle, reverse)
+function GameHelpers.Grid.GetValidPositionTableInRadius(startPos, maxRadius, pointsInCircle, reverse)
+	startPos = GameHelpers.Math.GetPosition(startPos)
 	maxRadius = maxRadius or 30.0
 	-- Convert to meters
 	if maxRadius > 1000 then
@@ -92,20 +92,9 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 	pointsInCircle = pointsInCircle or 9
 	local grid = _getGrid()
 	if grid then
-		local t = _type(startPos)
-		if t == "string" or t == "userdata" then
-			local obj = GameHelpers.TryGetObject(startPos)
-			if obj then
-				startPos = obj.WorldPos
-				t = "table"
-			end
-		end
-		if t ~= "table" then
-			ferror("Invalid startPos parameter:\n%s", Lib.serpent.block(startPos))
-		end
 		if GameHelpers.Grid.IsValidPosition(startPos[1], startPos[3], grid) then
 			local y = grid:GetHeight(startPos[1],startPos[3]) or startPos[2]
-			return startPos[1], y, startPos[3],true
+			return {startPos[1], y, startPos[3]},true
 		elseif maxRadius > 0 then
 			if reverse then
 				local radius = maxRadius
@@ -117,7 +106,7 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 						local z = math.floor((startPos[3] + radius * math.sin(angle))+0.5)
 						if GameHelpers.Grid.IsValidPosition(x, z, grid) then
 							local y = grid:GetCellInfo(x,z).Height
-							return x,y,z,true
+							return {x,y,z},true
 						end
 					end
 					radius = radius - 1.0
@@ -132,7 +121,7 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 						local z = math.floor((startPos[3] + radius * math.sin(angle))+0.5)
 						if GameHelpers.Grid.IsValidPosition(x, z, grid) then
 							local y = grid:GetCellInfo(x,z).Height
-							return x,y,z,true
+							return {x,y,z},true
 						end
 					end
 					radius = radius + 1.0
@@ -140,22 +129,25 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 			end
 		end
 	end
-	if startPos then
-		local x,y,z = table.unpack(startPos)
-		return x,y,z,false
-	end
-	return 0,0,0,false
+	return startPos,false
 end
 
----@param startPos number[]
+---@param startPos vec3[]
 ---@param maxRadius number|nil
 ---@param pointsInCircle number|nil
 ---@param reverse boolean|nil Start from the largest distance possible instead.
----@return vec3 position
+---@return number x
+---@return number y
+---@return number z
 ---@return boolean success
-function GameHelpers.Grid.GetValidPositionTableInRadius(startPos, maxRadius, pointsInCircle, reverse)
-	local x,y,z,success = GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsInCircle, reverse)
-	return {x,y,z},success
+function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsInCircle, reverse)
+	local pos,success = GameHelpers.Grid.GetValidPositionTableInRadius(startPos, maxRadius, pointsInCircle, reverse)
+	if success then
+		local x,y,z = table.unpack(pos)
+		return x,y,z,true
+	end
+	local x,y,z = table.unpack(startPos)
+	return x,y,z,false
 end
 
 if not _ISCLIENT then
@@ -225,7 +217,7 @@ if not _ISCLIENT then
 	---@param target EsvCharacter|EsvItem
 	---@param distanceMultiplier number|nil
 	---@param skill string|nil
-	---@param startPos number[]|nil If set, this will be the starting position to push from. Defaults to the source's WorldPosition otherwise.
+	---@param startPos vec3|nil If set, this will be the starting position to push from. Defaults to the source's WorldPosition otherwise.
 	---@param beamEffect string|nil The beam effect to play with the NRD_CreateGameObjectMove action.
 	---@param id string|nil An optional ID to associate with this move action
 	---@return boolean success Returns true if the force move action has started.
@@ -280,7 +272,7 @@ if not _ISCLIENT then
 	
 	---@param source EsvCharacter
 	---@param target EsvCharacter|EsvItem
-	---@param position number[]
+	---@param position vec3
 	---@param skill string|nil
 	---@param beamEffect string|nil The beam effect to play with the NRD_CreateGameObjectMove action.
 	---@return boolean success
@@ -345,7 +337,7 @@ end
 
 ---@class LeaderLibRadiusDataSurfaceEntry:table
 ---@field Surface EsvSurface
----@field Position number[]
+---@field Position vec3
 
 ---@class LeaderLibSurfaceRadiusData:table
 ---@field Cell table<integer, table<integer, ExtenderGridCellInfo>>
@@ -703,11 +695,11 @@ end
 ---@field Ally boolean|nil
 ---@field Neutral boolean|nil
 ---@field Enemy boolean|nil
----@field CanAdd fun(target:ServerObject, source:ServerObject|number[]):boolean Optional function that will be used to filter targets.
+---@field CanAdd fun(target:ServerObject, source:ServerObject|vec3):boolean Optional function that will be used to filter targets.
 
 ---@class GameHelpers_Grid_GetNearbyObjectsOptions
 ---@field Radius number The max distance between the source and objects. Defaults to 3.0 if not set.
----@field Position number[]|nil Use this position for distance checks, instead of the source.
+---@field Position vec3|nil Use this position for distance checks, instead of the source.
 ---@field AsTable boolean|nil Return the result as a table, instead of an iterator.
 ---@field Type GameHelpers_Grid_GetNearbyObjectsOptionsTargetType|nil
 ---@field AllowDead boolean|nil Allow returning dead characters/destroyed items.
@@ -750,7 +742,7 @@ end
 ---@alias GameHelpers_Grid_GetNearbyObjectsFunctionResult fun():ServerObject
 ---@alias GameHelpers_Grid_GetNearbyObjectsTableResult ServerObject[]
 
----@param source ObjectParam|number[] An object or position.
+---@param source ObjectParam|vec3 An object or position.
 ---@param opts GameHelpers_Grid_GetNearbyObjectsOptions
 ---@return GameHelpers_Grid_GetNearbyObjectsFunctionResult|GameHelpers_Grid_GetNearbyObjectsTableResult objects
 function GameHelpers.Grid.GetNearbyObjects(source, opts)

@@ -29,8 +29,8 @@ local function _ConditionalUnpack(pos, b)
 end
 
 ---Tries to get the position from whatever the variable is.
----@overload fun(obj:vec3|Vector3|ObjectParam):vec3
----@param obj vec3|Vector3|ObjectParam
+---@overload fun(obj:vec3|ObjectParam):vec3
+---@param obj vec3|ObjectParam
 ---@param unpackResult boolean If true, the position value is returned as separate numbers.
 ---@param fallback vec3|nil If no position is found, this value or {0,0,0} is returned.
 ---@return number x
@@ -71,7 +71,7 @@ end
 
 local _GetPosition = GameHelpers.Math.GetPosition
 
----@param startPos vec3
+---@param startPos vec3|ObjectParam
 ---@param angle number
 ---@param distanceMult number
 ---@param unpack boolean|nil If true, x,y,z will be returned separately.
@@ -79,11 +79,11 @@ local _GetPosition = GameHelpers.Math.GetPosition
 ---@return number|nil
 ---@return number|nil
 function GameHelpers.Math.GetPositionWithAngle(startPos, angle, distanceMult, unpack)
+	local x,y,z = _GetPosition(startPos, true)
 	if _type(distanceMult) ~= "number" then
 		distanceMult = 1.0
 	end
 	angle = _rad(angle)
-	local x,y,z = _unpack(startPos)
 	--y = GameHelpers.Grid.GetY(tx,tz)
 
 	local tx,ty,tz = GameHelpers.Grid.GetValidPositionInRadius({
@@ -141,9 +141,10 @@ function GameHelpers.Math.PositionsEqual(pos1, pos2)
 end
 
 ---Get a position derived from a character's forward facing direction.
----@param char UUID|EsvCharacter
+---@param char CharacterParam
 ---@param distanceMult number|nil
 ---@param fromPosition vec3|nil
+---@return vec3
 function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
 	---@type EsvCharacter
 	local character = GameHelpers.GetCharacter(char)
@@ -170,7 +171,7 @@ function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
 	return {x,y,z}
 end
 
----@param source UUID|EsvCharacter
+---@param source CharacterParam
 ---@param distanceMult number|nil
 ---@param x number|nil
 ---@param y number|nil
@@ -224,7 +225,7 @@ function GameHelpers.Math.ExtendPositionWithDirectionalVector(pos, directionalVe
 end
 
 ---Sets an object's rotation.
----@param object UUID|EsvCharacter|EsvItem|EclCharacter|EclItem
+---@param object ObjectParam
 ---@param rotx number
 ---@param rotz number
 ---@param turnTo boolean

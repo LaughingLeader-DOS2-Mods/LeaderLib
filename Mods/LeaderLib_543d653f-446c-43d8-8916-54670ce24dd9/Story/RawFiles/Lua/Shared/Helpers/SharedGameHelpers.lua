@@ -158,9 +158,11 @@ end
 GameHelpers.TryGetObject = _tryGetObject
 
 ---Tries to get an Esv/EclCharacter from whatever the value is.
+---@generic T:EsvCharacter|EclCharacter|nil
 ---@param object CharacterParam|StatCharacter|ComponentHandle
----@return EsvCharacter|EclCharacter|nil
-function GameHelpers.GetCharacter(object)
+---@param castType `T`
+---@return T
+function GameHelpers.GetCharacter(object, castType)
 	local extType = _getObjectType(object)
 	if extType == "esv::Character" or extType == "ecl::Character" then
 		return object --[[@as EsvCharacter|EclCharacter]]
@@ -177,9 +179,11 @@ function GameHelpers.GetCharacter(object)
 end
 
 ---Tries to get an Esv/EclItem from whatever the value is.
+---@generic T:EsvItem|EclItem|nil
 ---@param object ItemParam|CDivinityStatsItem|ComponentHandle
----@return EsvItem|EclItem|nil
-function GameHelpers.GetItem(object)
+---@param castType `T`
+---@return T
+function GameHelpers.GetItem(object, castType)
 	local extType = _getObjectType(object)
 	if extType == "esv::Item" or extType == "ecl::Item" then
 		return object --[[@as EsvItem|EclItem]]

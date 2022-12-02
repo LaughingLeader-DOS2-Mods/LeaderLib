@@ -130,7 +130,7 @@ if _ISCLIENT then
 			if data.IsItem then
 				obj = GameHelpers.GetItem(target, "EclItem")
 			else
-				obj = GameHelpers.GetCharacter(target, "EsvCharacter")
+				obj = GameHelpers.GetCharacter(target, "EclCharacter")
 			end
 			if obj then
 				target = obj.Handle

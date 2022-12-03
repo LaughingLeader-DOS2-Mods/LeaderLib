@@ -40,7 +40,7 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 		end
 		local aType = type(actionTarget)
 		if aType == "string" or aType == "number" then
-			actionTarget = GameHelpers.TryGetObject(actionTarget, true)
+			actionTarget = GameHelpers.TryGetObject(actionTarget)
 			aType = type(actionTarget)
 		end
 		if v.Type == "Status" then

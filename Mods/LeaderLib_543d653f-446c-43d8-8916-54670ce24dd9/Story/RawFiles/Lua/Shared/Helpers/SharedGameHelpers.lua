@@ -138,29 +138,24 @@ local function TryGetObject(id)
 end
 
 ---Tries to get a game object if the target exists, otherwise returns nil.
+---@generic T:EsvCharacter|EclCharacter|EsvItem|EclItem|nil
 ---@param id ObjectParam|ComponentHandle
----@param returnOriginal boolean|nil Return the original value if failed. Defaults to false, so nil is returned.
----@return EsvCharacter|EclCharacter|EsvItem|EclItem|nil
-local function _tryGetObject(id, returnOriginal)
+---@param castType `T` The class type to return, for auto-completion, such as "EsvCharacter".
+---@return T
+function GameHelpers.TryGetObject(id, castType)
 	local b,result = _pcall(TryGetObject, id)
-	if not b then
-		if Vars.DebugMode then
-			fprint(LOGLEVEL.ERROR, "[GameHelpers.TryGetObject] Error getting object from id (%s):\n%s", id, result)
-		end
-		return returnOriginal == true and id or nil
-	end
-	if result == nil and returnOriginal == true then
-		return id
+	if not b and Vars.DebugMode then
+		fprint(LOGLEVEL.ERROR, "[GameHelpers.TryGetObject] Error getting object from id (%s):\n%s", id, result)
 	end
 	return result
 end
 
-GameHelpers.TryGetObject = _tryGetObject
+local _tryGetObject = GameHelpers.TryGetObject
 
 ---Tries to get an Esv/EclCharacter from whatever the value is.
 ---@generic T:EsvCharacter|EclCharacter|nil
 ---@param object CharacterParam|StatCharacter|ComponentHandle
----@param castType `T`
+---@param castType `T` The class type to return, for auto-completion, such as "EsvCharacter".
 ---@return T
 function GameHelpers.GetCharacter(object, castType)
 	local extType = _getObjectType(object)
@@ -181,7 +176,7 @@ end
 ---Tries to get an Esv/EclItem from whatever the value is.
 ---@generic T:EsvItem|EclItem|nil
 ---@param object ItemParam|CDivinityStatsItem|ComponentHandle
----@param castType `T`
+---@param castType `T` The class type to return, for auto-completion, such as "EsvItem".
 ---@return T
 function GameHelpers.GetItem(object, castType)
 	local extType = _getObjectType(object)

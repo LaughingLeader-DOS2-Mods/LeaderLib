@@ -1297,6 +1297,25 @@ function GameHelpers.Character.SetEquipment(character, equipmentStatID, deleteEx
 	return false
 end
 
+local function _TrySetProperty(character, property, value)
+	character = GameHelpers.GetCharacter(character, "EsvCharacter")
+	if character then
+		character[property] = value
+		return true
+	end
+	return false
+end
+
+---Try to set a property on a character without throwing errors.
+---@param character CharacterParam
+---@param property string
+---@param value any
+---@return boolean success
+function GameHelpers.Character.TrySetProperty(character, property, value)
+	local _,b = pcall(_TrySetProperty, debug.traceback, property, value)
+	return b
+end
+
 ---Clone a character's equipment to another character.
 ---@param from CharacterParam
 ---@param to CharacterParam

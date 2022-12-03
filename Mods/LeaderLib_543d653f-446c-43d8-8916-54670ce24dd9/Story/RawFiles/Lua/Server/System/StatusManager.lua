@@ -700,12 +700,24 @@ Ext.Events.BeforeStatusDelete:Subscribe(function (e)
 end)
 
 ---Removes data for objects that no longer exist
-function _INTERNAL.SanityCheckData()
+---@param checkObjectExistance boolean|nil
+function _INTERNAL.SanityCheckData(checkObjectExistance)
 	local updateData = {}
 	local doReplaceData = false
 	for uuid,statuses in _pairs(_PV.ActivePermanentStatuses) do
-		if GameHelpers.ObjectExists(uuid) then
-			updateData[uuid] = statuses
+		if not checkObjectExistance or GameHelpers.ObjectExists(uuid) then
+			local statusData = {}
+			local doUpdateStatusData = false
+			for id,source in _pairs(statuses) do
+				if GameHelpers.Stats.Exists(id, "StatusData") then
+					statusData[id] = source
+					doUpdateStatusData = true
+				end
+			end 
+			if doUpdateStatusData then
+				updateData[uuid] = statusData
+				doReplaceData = true
+			end
 		else
 			doReplaceData = true
 		end
@@ -717,10 +729,6 @@ end
 
 Events.RegionChanged:Subscribe(function (e)
 	_canBlockDeletion = e.State == REGIONSTATE.GAME and e.LevelType == LEVELTYPE.GAME
-
-	if e.State == REGIONSTATE.GAME then
-		_INTERNAL.SanityCheckData()
-	end
 end)
 
 local function _TryReapply(uuid, statuses)
@@ -755,6 +763,7 @@ function _INTERNAL.ReapplyPermanentStatuses()
 end
 
 Events.PersistentVarsLoaded:Subscribe(function ()
+	_INTERNAL.SanityCheckData(true)
 	_INTERNAL.ReapplyPermanentStatuses()
 end)
 

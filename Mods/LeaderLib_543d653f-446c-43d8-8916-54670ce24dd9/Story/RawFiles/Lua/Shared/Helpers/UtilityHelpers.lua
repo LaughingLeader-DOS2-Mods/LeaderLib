@@ -42,7 +42,7 @@ if not _ISCLIENT then
 						source = targetObject
 					end
 					local skill = nil
-					if targetData.Skill then
+					if not StringHelpers.IsNullOrEmpty(targetData.Skill) then
 						skill = Ext.Stats.Get(targetData.Skill, nil, false)
 					end
 					if targetData.EndAnimation and not StringHelpers.IsNullOrWhitespace(targetData.EndAnimation) then
@@ -58,7 +58,8 @@ if not _ISCLIENT then
 						SourceGUID = GameHelpers.GetUUID(source),
 						Distance = targetData.Distance,
 						StartingPosition = targetData.Start,
-						Skill = skill
+						Skill = targetData.Skill,
+						SkillData = skill
 					})
 					if skill then
 						Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), targetData.Skill or "Skill")

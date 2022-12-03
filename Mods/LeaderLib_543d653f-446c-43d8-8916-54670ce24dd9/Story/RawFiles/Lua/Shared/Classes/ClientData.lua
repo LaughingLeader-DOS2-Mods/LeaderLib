@@ -41,7 +41,7 @@ ClientCharacterData.__index = ClientCharacterData
 
 local default = Common.GetValueOrDefault
 
----@param params ClientCharacterDataParams|table
+---@param params ClientCharacterDataParams|table|nil
 ---@return ClientCharacterData
 function ClientCharacterData:Create(params)
 	local this = {
@@ -57,7 +57,7 @@ function ClientCharacterData:Create(params)
 		Points = {},
 		Username = ""
 	}
-	if params and type(params) == "table" then
+	if type(params) == "table" then
 		for k,v in pairs(params) do
 			this[k] = v
 		end

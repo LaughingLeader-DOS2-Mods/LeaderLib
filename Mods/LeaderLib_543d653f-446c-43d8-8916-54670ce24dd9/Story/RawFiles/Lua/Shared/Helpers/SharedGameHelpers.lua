@@ -137,10 +137,11 @@ local function TryGetObject(id)
 	return nil
 end
 
+---@overload fun(id:ObjectParam|ComponentHandle):EsvCharacter|EclCharacter|EsvItem|EclItem|nil
 ---Tries to get a game object if the target exists, otherwise returns nil.
 ---@generic T:EsvCharacter|EclCharacter|EsvItem|EclItem|nil
 ---@param id ObjectParam|ComponentHandle
----@param castType `T` The class type to return, for auto-completion, such as "EsvCharacter".
+---@param castType? `T` The class type to return, for auto-completion, such as "EsvCharacter".
 ---@return T
 function GameHelpers.TryGetObject(id, castType)
 	local b,result = _pcall(TryGetObject, id)
@@ -152,6 +153,7 @@ end
 
 local _tryGetObject = GameHelpers.TryGetObject
 
+---@overload fun(object:CharacterParam|StatCharacter|ComponentHandle):EsvCharacter|EclCharacter|nil
 ---Tries to get an Esv/EclCharacter from whatever the value is.
 ---@generic T:EsvCharacter|EclCharacter|nil
 ---@param object CharacterParam|StatCharacter|ComponentHandle
@@ -173,6 +175,7 @@ function GameHelpers.GetCharacter(object, castType)
 	return nil
 end
 
+---@overload fun(object:ItemParam|CDivinityStatsItem|ComponentHandle):EsvItem|EclItem|nil
 ---Tries to get an Esv/EclItem from whatever the value is.
 ---@generic T:EsvItem|EclItem|nil
 ---@param object ItemParam|CDivinityStatsItem|ComponentHandle

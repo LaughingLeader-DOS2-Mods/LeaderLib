@@ -516,12 +516,13 @@ end
 
 ---@param target ObjectParam
 ---@param statusID FixedString
+---@return EsvCharacter|EsvItem|EclCharacter|EclItem|nil
 function GameHelpers.Status.GetSourceByID(target, statusID)
-	target = GameHelpers.TryGetObject(target)
+	target = GameHelpers.TryGetObject(target, "EsvCharacter")
 	if target then
 		local status = target:GetStatus(statusID)
 		if status then
-			return GameHelpers.TryGetObject(status.StatusSourceHandle)
+			return GameHelpers.GetObjectFromHandle(status.StatusSourceHandle, "EsvCharacter")
 		end
 	end
 	return nil

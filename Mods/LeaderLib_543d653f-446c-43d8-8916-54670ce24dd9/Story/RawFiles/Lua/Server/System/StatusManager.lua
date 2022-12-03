@@ -699,21 +699,57 @@ Ext.Events.BeforeStatusDelete:Subscribe(function (e)
 	end
 end)
 
+---Removes data for objects that no longer exist
+function _INTERNAL.SanityCheckData()
+	local updateData = {}
+	local doReplaceData = false
+	for uuid,statuses in _pairs(_PV.ActivePermanentStatuses) do
+		if GameHelpers.ObjectExists(uuid) then
+			updateData[uuid] = statuses
+		else
+			doReplaceData = true
+		end
+	end
+	if doReplaceData then
+		_PV.ActivePermanentStatuses = updateData
+	end
+end
+
 Events.RegionChanged:Subscribe(function (e)
 	_canBlockDeletion = e.State == REGIONSTATE.GAME and e.LevelType == LEVELTYPE.GAME
+
+	if e.State == REGIONSTATE.GAME then
+		_INTERNAL.SanityCheckData()
+	end
 end)
+
+local function _TryReapply(uuid, statuses)
+	local target = _GetObject(uuid)
+	if target then
+		for id,source in _pairs(statuses) do
+			if not GameHelpers.Status.IsActive(target, id) then
+				GameHelpers.Status.Apply(target, id, -1, true, source)
+			end
+		end
+		return true
+	end
+	return false
+end
 
 function _INTERNAL.ReapplyPermanentStatuses()
 	if _PV.ActivePermanentStatuses then
+		local updateData = {}
+		local doReplaceData = false
 		for uuid,statuses in _pairs(_PV.ActivePermanentStatuses) do
-			local target = _GetObject(uuid)
-			if target then
-				for id,source in _pairs(statuses) do
-					if not GameHelpers.Status.IsActive(target, id) then
-						GameHelpers.Status.Apply(target, id, -1, true, source)
-					end
-				end
+			local _,b = pcall(_TryReapply, uuid, statuses)
+			if b then
+				updateData[uuid] = statuses
+			else
+				doReplaceData = true
 			end
+		end
+		if doReplaceData then
+			_PV.ActivePermanentStatuses = updateData
 		end
 	end
 end
@@ -722,30 +758,42 @@ Events.PersistentVarsLoaded:Subscribe(function ()
 	_INTERNAL.ReapplyPermanentStatuses()
 end)
 
-Events.SyncData:Subscribe(function (e)
+function _INTERNAL.SyncData(userID)
 	local data = {}
 	local hasData = false
 	if _PV.ActivePermanentStatuses then
+		local tbl = {}
 		for uuid,statuses in _pairs(_PV.ActivePermanentStatuses) do
-			local target = _GetObject(uuid)
-			if target then
-				data[target.NetID] = {}
-				for id,source in _pairs(statuses) do
-					data[target.NetID][id] = true
-					hasData = true
+			if GameHelpers.ObjectExists(uuid) then
+				local netid = GameHelpers.GetNetID(uuid)
+				if netid then
+					data[netid] = {}
+					for id,source in _pairs(statuses) do
+						data[netid][id] = true
+						hasData = true
+					end
 				end
 			end
 		end
+		_PV.ActivePermanentStatuses = tbl
 	end
 	if hasData then
-		GameHelpers.Net.PostToUser(e.UserID, "LeaderLib_UpdateAllPermanentStatuses", data)
+		if userID then
+			GameHelpers.Net.PostToUser(userID, "LeaderLib_UpdateAllPermanentStatuses", data)
+		else
+			GameHelpers.Net.Broadcast("LeaderLib_UpdateAllPermanentStatuses", data)
+		end
 	end
+end
+
+Events.SyncData:Subscribe(function (e)
+	_INTERNAL.SyncData(e.UserID)
 end)
 
 ---@param character EsvCharacter
 ---@param refreshStatBoosts boolean|nil If true, active statuses with stat boosts will be re-applied.
 function StatusManager.ReapplyPermanentStatusesForCharacter(character, refreshStatBoosts)
-	character = GameHelpers.GetCharacter(character)
+	character = GameHelpers.GetCharacter(character, "EsvCharacter")
 	assert(character ~= nil, "An EsvCharacter, NetID, or UUID is required")
 	local permanentStatuses = _PV.ActivePermanentStatuses[character.MyGuid]
 	if permanentStatuses then

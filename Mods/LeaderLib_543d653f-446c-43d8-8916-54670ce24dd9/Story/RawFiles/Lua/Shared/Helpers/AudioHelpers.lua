@@ -22,7 +22,7 @@ function GameHelpers.Audio.PlaySound(target, sound, soundPosition, specificPlaye
 	if not _ISCLIENT then
 		local data = {Target=target, Event=sound, Position=soundPosition}
 		local t = _type(target)
-		if t == "userdata" or t == "string" then
+		if t == "userdata" or (t == "string" and StringHelpers.IsUUID(target)) then
 			local obj = GameHelpers.TryGetObject(target)
 			if obj then
 				data.Target = obj.NetID
@@ -96,7 +96,7 @@ function GameHelpers.Audio.PlayExternalSound(target, eventName, path, codecId, s
 	if not _ISCLIENT then
 		local data = {Target=target, Event=eventName, Path=path, CodecId=codecId}
 		local t = _type(target)
-		if t == "userdata" or t == "string" then
+		if t == "userdata" or (t == "string" and StringHelpers.IsUUID(target)) then
 			local obj = GameHelpers.TryGetObject(target)
 			if obj then
 				data.Target = obj.NetID

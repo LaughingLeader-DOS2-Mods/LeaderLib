@@ -1692,3 +1692,17 @@ function GameHelpers.Ext.ObjectIsAnyType(obj)
 	or GameHelpers.Ext.ObjectIsStatCharacter(obj)
 	or GameHelpers.Ext.ObjectIsStatItem(obj))
 end
+
+local _objectTypes = {
+	["esv::Character"] = true,
+	["ecl::Character"] = true,
+	["esv::Item"] = true,
+	["ecl::Item"] = true,
+}
+
+---Returns true if the object is a character or item.
+---@param obj ObjectParam
+---@return boolean
+function GameHelpers.Ext.IsObjectType(obj)
+	return _objectTypes[Ext.Types.GetObjectType(obj)] == true
+end

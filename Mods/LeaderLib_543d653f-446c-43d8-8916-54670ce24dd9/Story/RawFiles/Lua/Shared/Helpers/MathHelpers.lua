@@ -292,6 +292,31 @@ function GameHelpers.Math.GetDistance(pos1, pos2, ignoreHeight)
 	return _sqrt((xDiff^2) + (yDiff^2) + (zDiff^2))
 end
 
+---Get the distance between two Vector3 points, or objects, including the AI bounds radius of any objects
+---@param pos1 vec3|ObjectParam First position array, or an object with a WorldPos.
+---@param pos2 vec3|ObjectParam Second position array, or an object with a WorldPos.
+---@param ignoreHeight boolean|nil Ignore the Y value when fetching the distance.
+---@return number distance
+function GameHelpers.Math.GetOuterDistance(pos1, pos2, ignoreHeight)
+	local x,y,z = _GetPosition(pos1, true)
+	local tx,ty,tz = _GetPosition(pos2, true)
+	local dir = GameHelpers.Math.GetDirectionalVector(pos1,pos2)
+	if GameHelpers.Ext.IsObjectType(pos1) then
+		---@cast pos1 EsvCharacter|EsvItem
+		x = x + (-dir[1] * pos1.AI.AIBoundsRadius)
+		z = z + (-dir[3] * pos1.AI.AIBoundsRadius)
+	end
+	if GameHelpers.Ext.IsObjectType(pos2) then
+		---@cast pos2 EsvCharacter|EsvItem
+		tx = tx + (-dir[1] * pos2.AI.AIBoundsRadius)
+		tz = tz + (-dir[3] * pos2.AI.AIBoundsRadius)
+	end
+	local xDiff = x - tx
+	local yDiff = not ignoreHeight and (y - ty) or 0
+	local zDiff = z - tz
+	return _sqrt((xDiff^2) + (yDiff^2) + (zDiff^2))
+end
+
 ---@overload fun(pos1:vec3|ObjectParam, pos2:vec3|ObjectParam, reverse:boolean|nil):vec3
 ---Get the directional vector between two Vector3 points.
 ---@param pos1 vec3|ObjectParam

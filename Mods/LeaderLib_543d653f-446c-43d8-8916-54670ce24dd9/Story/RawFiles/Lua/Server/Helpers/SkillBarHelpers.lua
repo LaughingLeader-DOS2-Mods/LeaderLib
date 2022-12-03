@@ -228,11 +228,13 @@ function GameHelpers.Skill.AddCooldown(char, skill, amount)
     if skillData then
         if skillData.ActiveCooldown ~= 60 or not GameHelpers.Character.IsInCombat(character) then
             local cd = math.max(0, skillData.ActiveCooldown + amount)
-            local guid = character.MyGuid
-            skillData.ActiveCooldown = 0
-            Timer.StartOneshot("", 33, function (e)
-                GameHelpers.Skill.SetCooldown(guid, skill, cd, true)
-            end)
+            if skillData.ActiveCooldown ~= cd then
+                skillData.ActiveCooldown = cd
+                if cd ~= 0 and GameHelpers.Character.IsPlayer(character) and character.CharacterControl then
+                    --Force the hotbar to refresh the cooldown animations
+                    GameHelpers.UI.RefreshSkillBar(character)
+                end
+            end
         end
     end
 end

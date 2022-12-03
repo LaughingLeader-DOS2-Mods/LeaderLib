@@ -24,8 +24,9 @@ end
 ---@param allInstances boolean|nil
 ---@param applyIfMissing boolean|nil
 ---@param extendDuration boolean|nil If true, the current duration is added to the duration value set, instead of replacing it.
+---@param source ObjectParam|nil
 ---@return boolean
-function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, applyIfMissing, extendDuration)
+function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, applyIfMissing, extendDuration, source)
 	local object = GameHelpers.TryGetObject(obj)
 	if not object then
 		fprint(LOGLEVEL.WARNING, "[GameHelpers.Status.SetDuration] Failed to get object from (%s)", obj)
@@ -33,7 +34,7 @@ function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, a
 	end
 	if not GameHelpers.Status.IsActive(object, statusId) then
 		if applyIfMissing ~= false then
-			GameHelpers.Status.Apply(object, statusId, duration, false, object)
+			GameHelpers.Status.Apply(object, statusId, duration, false, source or object)
 			return true
 		end
 		return false
@@ -78,9 +79,11 @@ end
 ---@param turns integer
 ---@param allInstances boolean|nil
 ---@param applyIfMissing boolean|nil
+---@param extendDuration boolean|nil If true, the current duration is added to the duration value set, instead of replacing it.
+---@param source ObjectParam|nil
 ---@return boolean
-function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIfMissing)
-	return GameHelpers.Status.SetDuration(obj, statusId, turns*6, allInstances, applyIfMissing)
+function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIfMissing, extendDuration, source)
+	return GameHelpers.Status.SetDuration(obj, statusId, turns*6, allInstances, applyIfMissing, extendDuration, source)
 end
 
 ---Extend an active status' duration, or apply if if applyIfMissing is not false.
@@ -89,9 +92,10 @@ end
 ---@param addDuration number
 ---@param allInstances boolean|nil
 ---@param applyIfMissing boolean|nil
+---@param source ObjectParam|nil
 ---@return boolean
-function GameHelpers.Status.ExtendDuration(obj, statusId, addDuration, allInstances, applyIfMissing)
-	return GameHelpers.Status.SetDuration(obj, statusId, addDuration, allInstances, applyIfMissing, true)
+function GameHelpers.Status.ExtendDuration(obj, statusId, addDuration, allInstances, applyIfMissing, source)
+	return GameHelpers.Status.SetDuration(obj, statusId, addDuration, allInstances, applyIfMissing, true, source)
 end
 
 ---Set an active status' turns, or apply if if applyIfMissing is not false.
@@ -100,9 +104,10 @@ end
 ---@param addTurns integer
 ---@param allInstances boolean|nil
 ---@param applyIfMissing boolean|nil
+---@param source ObjectParam|nil
 ---@return boolean
-function GameHelpers.Status.ExtendTurns(obj, statusId, addTurns, allInstances, applyIfMissing)
-	return GameHelpers.Status.SetDuration(obj, statusId, addTurns*6, allInstances, applyIfMissing, true)
+function GameHelpers.Status.ExtendTurns(obj, statusId, addTurns, allInstances, applyIfMissing, source)
+	return GameHelpers.Status.SetDuration(obj, statusId, addTurns*6, allInstances, applyIfMissing, true, source)
 end
 
 ---Applies statuses in order of the table supplied. Use this for tiered statuses (i.e. MYMOD_POWERLEVEL1, MYMOD_POWERLEVEL2).

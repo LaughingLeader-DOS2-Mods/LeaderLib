@@ -577,7 +577,7 @@ end
 ---@param value any|nil
 ---@param types string[]
 function Common.TypeMatchesAny(value, types)
-	local t = type(v)
+	local t = type(value)
 	for _,v in pairs(types) do
 		if v == t then
 			return true

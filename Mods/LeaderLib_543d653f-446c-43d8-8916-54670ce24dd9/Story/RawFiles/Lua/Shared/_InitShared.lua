@@ -3,6 +3,9 @@
 ---@class LeaderLibGameHelpers
 GameHelpers = {}
 
+---@private
+GameHelpers._INTERNAL = {}
+
 ---@class LeaderLibQualityOfLifeTweaks
 QOL = {}
 

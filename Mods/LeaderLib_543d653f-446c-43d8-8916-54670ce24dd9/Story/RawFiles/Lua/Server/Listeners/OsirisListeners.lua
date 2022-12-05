@@ -39,38 +39,10 @@ Ext.Osiris.RegisterListener("UserEvent", 2, "after", function(id, event)
 	end
 end)
 
--- Ext.Osiris.RegisterListener("CharacterAddToCharacterCreation", 3, "after", function(uuid, respec, success)
--- 	if success == 1 then
--- 		Timer.StartOneshot("", 1, function()
--- 			Ext.PostMessageToClient(uuid, "LeaderLib_CCStarted", GameHelpers.GetCharacter(uuid).NetID)
--- 		end)
--- 	end
--- end)
-
 Ext.Osiris.RegisterListener("GameStarted", 2, "after", function(region, isEditorMode)
 	Vars.IsEditorMode = isEditorMode
 	GameHelpers.Net.Broadcast("LeaderLib_SyncFeatures", Common.JsonStringify(Features))
 end)
-
-local function OnLog(logType, ...)
-	if Osi.LeaderLib_QRY_AnyGoalsAreActive("LeaderLib_00_0_TS_StrictLogCalls", "LeaderLib_00_0_TS_AllLogging") == true then
-		return
-	end
-	if logType == "COMBINE" or Vars.DebugMode or Osi.LeaderLog_QRY_LogTypeEnabled(logType) == true then
-		local params = {...}
-		local msg = StringHelpers.Join("", params)
-		Osi.LeaderLog_Internal_RunString(logType, msg)
-		if Vars.DebugMode then
-			Ext.Utils.Print(string.format("[LeaderLib:Log(%s)] %s", logType, msg))
-		end
-	end
-end
-
--- if Vars.DebugMode then
--- 	for i=1,16 do
--- 		Ext.Osiris.RegisterListener("LeaderLog_Log", i, "before", OnLog)
--- 	end
--- end
 
 Ext.Osiris.RegisterListener("GlobalFlagSet", 1, "after", function(flag)
 	Events.GlobalFlagChanged:Invoke({Flag=flag, Enabled=true})
@@ -80,28 +52,59 @@ Ext.Osiris.RegisterListener("GlobalFlagCleared", 1, "after", function(flag)
 	Events.GlobalFlagChanged:Invoke({Flag=flag, Enabled=false})
 end)
 
+local function _SanitizeSummonsData()
+	local summonData = {}
+	for ownerGUID,tbl in pairs(_PV.Summons) do
+		if ObjectExists(ownerGUID) == 1 then
+			local totalSummons = 0
+			local summons = {}
+			for _,guid in pairs(tbl) do
+				if ObjectExists(guid) == 1 then
+					totalSummons = totalSummons + 1
+					summons[totalSummons] = guid
+				end
+			end
+			if totalSummons > 0 then
+				summonData[ownerGUID] = summons
+			end
+		end
+	end
+	_PV.Summons = summonData
+end
+
+GameHelpers._INTERNAL.SanitizeSummonsData = _SanitizeSummonsData
+
 local function OnObjectDying(obj)
 	if not Ext.GetGameState() == "Running" then
 		return
 	end
+	local summonGUID = StringHelpers.GetUUID(obj)
 	obj = StringHelpers.GetUUID(obj)
 	local isSummon = false
 	local owner = nil
-	local target = ObjectExists(obj) == 1 and GameHelpers.TryGetObject(obj) or nil
-	for ownerId,tbl in pairs(_PV.Summons) do
-		for i,uuid in pairs(tbl) do
-			if uuid == obj then
-				owner = GameHelpers.TryGetObject(ownerId)
-				table.remove(tbl, i)
+	local ownerGUID = nil
+	local target = GameHelpers.TryGetObject(obj)
+	for guid,summons in pairs(_PV.Summons) do
+		for i,summon in pairs(summons) do
+			if summon == summonGUID then
+				owner = GameHelpers.TryGetObject(guid)
+				if owner then
+					ownerGUID = owner.MyGuid
+				end
 				isSummon = true
 			end
 		end
-		if #tbl == 0 then
-			_PV.Summons[ownerId] = nil
-		end
 	end
 	if isSummon then
-		Events.SummonChanged:Invoke({Summon=target or obj, Owner=owner, IsDying=true, IsItem=ObjectIsItem(obj) == 1})
+		Events.SummonChanged:Invoke({
+			Summon=target or summonGUID,
+			SummonGUID=summonGUID,
+			Owner=owner,
+			OwnerGUID=ownerGUID,
+			IsDying=true,
+			IsItem=target and GameHelpers.Ext.ObjectIsItem(target) or false
+		})
+		_SanitizeSummonsData()
 	end
 	if target and GameHelpers.Ext.ObjectIsCharacter(target) then
 		Events.CharacterDied:Invoke({

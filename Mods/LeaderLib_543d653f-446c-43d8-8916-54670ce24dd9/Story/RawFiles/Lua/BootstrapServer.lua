@@ -178,6 +178,7 @@ function LoadPersistentVars(skipCallback)
 
 	_PV = _GetPersistentVars()
 	SkillManager.LoadSaveData()
+	GameHelpers._INTERNAL.SanitizeSummonsData()
 	if not skipCallback then
 		Events.PersistentVarsLoaded:Invoke({})
 	end

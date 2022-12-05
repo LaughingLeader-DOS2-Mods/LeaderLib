@@ -87,8 +87,10 @@ Events.LuaReset = Classes.SubscribableEvent:Create("LuaReset", {SyncInvoke=true}
 Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged", {ArgsKeyOrder={"Region", "State", "LevelType"}})
 
 ---@class SummonChangedEventArgs
----@field Summon EsvCharacter|EsvItem
----@field Owner EsvCharacter
+---@field Summon EsvCharacter|EsvItem|nil
+---@field SummonGUID GUID
+---@field Owner EsvCharacter|nil
+---@field OwnerGUID GUID|nil
 ---@field IsDying boolean
 ---@field IsItem boolean
 

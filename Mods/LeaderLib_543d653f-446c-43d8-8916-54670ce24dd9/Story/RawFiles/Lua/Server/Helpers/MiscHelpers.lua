@@ -12,7 +12,8 @@ local function ContextContains(context, find)
 	return false
 end
 
----Applies ExtraProperties/SkillProperties.
+---@deprecated
+---[DEPRECATED] Use `Ext.PropertyList.ExecuteSkillPropertiesOnTarget` instead.
 ---@param source EsvCharacter
 ---@param target IEoCServerObject|number[]
 ---@param properties StatProperty[]

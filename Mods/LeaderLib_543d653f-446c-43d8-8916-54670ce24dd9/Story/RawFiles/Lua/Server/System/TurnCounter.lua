@@ -29,7 +29,7 @@ TurnCounter._Internal = _INTERNAL
 ---@field ClearOnDeath boolean If the Target is an object, this turn counter will be cleared if they die.
 ---@field Position number[]
 ---@field Region string The level this turn counter was created in.
----@field Target string An optional target for this counter. If set then only their turn ending will count the timer down.
+---@field Target GUID An optional target for this counter. If set then only their turn ending will count the timer down.
 ---@field Infinite boolean If true, this counter will count until stopped, or if the counter is cleared (target death if ClearOnDeath is set). 
 ---@field Mode TURNCOUNTER_MODE
 ---@field Data table Optional data to store in PersistentVars, such as a UUID.
@@ -43,21 +43,23 @@ end
 ---@param turns integer How many turns to count.
 ---@param targetTurns integer The target turns when the counting should be complete, such as 0 in decrement mode.
 ---@param mode TURNCOUNTER_MODE
----@param combat integer|CharacterParam|number[] The combat id or character to get the combat id from.
+---@param target integer|CharacterParam|number[] The combat id or character to get the combat id from.
 ---@param params TurnCounterData|nil
-function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, params)
-	local t = type(combat)
-	if t == "string" or GameHelpers.Ext.ObjectIsCharacter(combat) then
-		local cid = GameHelpers.Combat.GetID(combat)
+function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, target, params)
+	params = params or {}
+	local t = type(target)
+	local combatID = -1
+	if t == "string" or GameHelpers.Ext.IsObjectType(target) then
+		local cid = GameHelpers.Combat.GetID(target)
 		if cid then
-			combat = cid
+			combatID = cid
 		end
-	elseif t == "table" and not (params and params.Position) then
-		if not params then
-			params = {}
+		local object = GameHelpers.TryGetObject(target)
+		if object then
+			params.Target = object
 		end
-		params.Position = combat
-		combat = nil
+	elseif t == "table" and not params.Position then
+		params.Position = target
 	end
 	local uniqueId = string.format("%s%s%s", id, Ext.Utils.MonotonicTime(), Ext.Utils.Random(9999))
 	---@type TurnCounterData
@@ -65,20 +67,20 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, par
 		ID = id,
 		Turns = turns,
 		TargetTurns = targetTurns,
-		Combat = combat or -1,
+		Combat = combatID,
 		Mode = mode,
+		Target = target,
 		Infinite = false
 		--OutOfCombatSpeed = 6000
 	}
-	if params then
-		params = TableHelpers.SanitizeTable(params, nil, true)
+	if type(params) == "table" then
 		for k,v in pairs(params) do
 			tbl[k] = v
 		end
 	end
 	tbl.Region = SharedData.RegionData.Current
-	_PV.TurnCounterData[uniqueId] = tbl
-	if not GameHelpers.IsActiveCombat(combat) and tbl.CombatOnly ~= true then
+	_PV.TurnCounterData[uniqueId] = TableHelpers.SanitizeTable(tbl, nil, true)
+	if not GameHelpers.IsActiveCombat(combatID) and tbl.CombatOnly ~= true then
 		local speed = tbl.OutOfCombatSpeed or TurnCounter.DefaultTimerSpeed
 		Timer.Start(uniqueId, speed)
 	end
@@ -218,7 +220,7 @@ end
 ---@param lastTurn integer
 function _INTERNAL.CountdownDone(data, uniqueId, lastTurn)
 	Events.OnTurnCounter:Invoke({
-		ID = data.ID,	
+		ID = data.ID,
 		Turn = data.Turns,
 		LastTurn = data.Turns,
 		Finished = true,

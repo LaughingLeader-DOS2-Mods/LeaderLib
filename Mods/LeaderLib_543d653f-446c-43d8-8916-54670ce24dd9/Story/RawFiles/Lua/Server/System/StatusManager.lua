@@ -1129,7 +1129,14 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 			end
 			table.insert(_PV.Summons[owner.MyGuid], target.MyGuid)
 		end
-		Events.SummonChanged:Invoke({Summon=target, Owner=owner, IsDying=false, IsItem=GameHelpers.Ext.ObjectIsItem(target)})
+		Events.SummonChanged:Invoke({
+			Summon=target, 
+			SummonGUID=target.MyGuid,
+			Owner=owner,
+			OwnerGUID=owner and owner.MyGuid or nil,
+			IsDying=false,
+			IsItem=GameHelpers.Ext.ObjectIsItem(target)
+		})
 	end
 	
 	local status = target:GetStatus(statusID)

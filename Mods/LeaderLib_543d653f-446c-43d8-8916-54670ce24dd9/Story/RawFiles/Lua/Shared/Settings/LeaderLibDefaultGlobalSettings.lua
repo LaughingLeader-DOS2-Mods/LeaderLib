@@ -258,7 +258,7 @@ if Ext.IsServer() then
 		end
 	end)
 	settings.Global.Flags.LeaderLib_AutoIdentifyItemsEnabled:Subscribe(function(e)
-		if e.Value then
+		if e.Value and Ext.GetGameState() == "Running" then
 			fprint(LOGLEVEL.TRACE, "[LeaderLib] Identifying the party's items...")
 			local total = 0
 			for player in GameHelpers.Character.GetPlayers() do

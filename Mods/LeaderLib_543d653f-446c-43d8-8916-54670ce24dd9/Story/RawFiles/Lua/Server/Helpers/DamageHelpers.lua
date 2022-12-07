@@ -588,7 +588,11 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
         hit.Hit.DamageList:Merge(damageList)
         GameHelpers.Hit.RecalculateLifeSteal(hit.Hit, target.Stats, source.Stats, hitType, true, true)
         if GameHelpers.Ext.ObjectIsCharacter(target) and GameHelpers.Ext.ObjectIsCharacter(source) then
-            HitOverrides._ComputeCharacterHitFunction(target.Stats, source.Stats, source.Stats.MainWeapon, damageList, hitType, false, false, hit.Hit, alwaysBackstab, highGroundFlag, criticalRoll)
+            if not HitOverrides.ComputeOverridesEnabled() then
+                HitOverrides._ComputeCharacterHitFunction(target.Stats, source.Stats, source.Stats.MainWeapon, damageList, hitType, false, false, hit.Hit, alwaysBackstab, highGroundFlag, criticalRoll)
+            else
+                HitOverrides.ComputeCharacterHit(target.Stats, source.Stats, source.Stats.MainWeapon, damageList, hitType, false, false, hit.Hit, alwaysBackstab, highGroundFlag, criticalRoll)
+            end
         end
 
         hit.Hit.TotalDamageDone = 0

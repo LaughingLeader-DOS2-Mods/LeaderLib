@@ -63,6 +63,14 @@ Ext.Require("Client/UI/Tooltips/Handlers/RuneTooltip.lua")
 Ext.Require("Client/UI/Tooltips/Handlers/WorldTooltip.lua")
 Ext.Require("Client/UI/Tooltips/Handlers/TooltipFormatting.lua")
 
+Game.Tooltip.Register.Generic(TooltipHandler.OnGenericTooltip)
+
+Game.Tooltip.RegisterRequestListener("Generic", function (request, ui, uiType, event, id, ...)
+	if not StringHelpers.IsNullOrWhitespace(request.Text) then
+		request.Text = GameHelpers.Tooltip.ReplacePlaceholders(request.Text)
+	end
+end, "After")
+
 local function RegisterTooltipHandlers()
 	local _r = Game.Tooltip.Register
 	_r.Item(TooltipHandler.OnItemTooltip)
@@ -82,12 +90,7 @@ local function RegisterTooltipHandlers()
 			description.Label = string.format("%s%s", description.Label or "", idText)
 		end
 	end) ]]
-	_r.Generic(TooltipHandler.OnGenericTooltip)
-	Game.Tooltip.RegisterRequestListener("Generic", function (request, ui, uiType, event, id, ...)
-		if not StringHelpers.IsNullOrWhitespace(request.Text) then
-			request.Text = GameHelpers.Tooltip.ReplacePlaceholders(request.Text, Client:GetCharacter())
-		end
-	end, "After")
+	--_r.Generic(TooltipHandler.OnGenericTooltip)
 
 	if Vars.DebugMode then
 		_r.Rune(TooltipHandler.OnRuneTooltip)

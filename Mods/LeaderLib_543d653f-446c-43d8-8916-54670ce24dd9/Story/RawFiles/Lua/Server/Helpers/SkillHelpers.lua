@@ -87,9 +87,9 @@ local LeaderLibProjectileCreationPropertyNames = {
     SkillOverrides = "table",
 }
 
----@param target UUID|EsvCharacter|EsvItem|number[]
+---@param target ObjectParam|vec3
 ---@param skill StatEntrySkillData
----@param source UUID|EsvCharacter|EsvItem|number[]
+---@param source ObjectParam|vec3
 ---@param extraParams LeaderLibProjectileCreationProperties
 ---@return LeaderLibProjectileCreationProperties
 local function PrepareProjectileProps(target, skill, source, extraParams)
@@ -97,8 +97,16 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
 
     local sourceLevel = extraParams and extraParams.CasterLevel or nil
 
-    local sourceObject = source and GameHelpers.TryGetObject(source) or nil
-    local targetObject = type(target) == "userdata" and GameHelpers.TryGetObject(target) or nil
+    ---@type EsvCharacter|EsvItem|nil
+    local sourceObject = nil
+    if source and type(source) ~= "table" then
+        sourceObject = GameHelpers.TryGetObject(source) --[[@as EsvCharacter|EsvItem|nil]]
+    end
+    ---@type EsvCharacter|EsvItem|nil
+    local targetObject = nil
+    if target and type(target) ~= "table" then
+        targetObject = GameHelpers.TryGetObject(target) --[[@as EsvCharacter|EsvItem|nil]]
+    end
 
     local targetPos = GameHelpers.Math.GetPosition(targetObject or target)
     local sourcePos = source and GameHelpers.Math.GetPosition(sourceObject or source) or targetPos
@@ -138,8 +146,8 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
         --props.SourcePosition = GameHelpers.Math.GetForwardPosition(sourceObject, 1.5)
     end
 
-    local sourceType = GameHelpers.Ext.ObjectIsCharacter(sourceObject) and "character" or GameHelpers.Ext.ObjectIsItem(sourceObject) and "item"
-    local targetType = GameHelpers.Ext.ObjectIsCharacter(targetObject) and "character" or GameHelpers.Ext.ObjectIsItem(targetObject) and "item"
+    local sourceType = GameHelpers.Ext.ObjectIsCharacter(sourceObject) and "character" or GameHelpers.Ext.ObjectIsItem(sourceObject) and "item" or ""
+    local targetType = GameHelpers.Ext.ObjectIsCharacter(targetObject) and "character" or GameHelpers.Ext.ObjectIsItem(targetObject) and "item" or ""
 
     if sourceLevel == nil then
         if sourceObject then

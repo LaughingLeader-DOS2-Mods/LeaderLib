@@ -9,7 +9,7 @@
 			"Version": "1.7.30.0",
 			"Changes": [
 				"Tooltip delaying is canceled if right click is pressed, to avoid tooltips popping up over the context menu.",
-				"Enabled the Mod Settings menu in the main menu.",
+				"Enabled the Mod Settings menu in the main menu options (experimental).",
 				"Fixed various typos/oversights.",
 				"Fixed 'has been read' states for books being reset when loading a save.",
 				"Fixed world tooltips not displaying the custom weapon type for Weapon Expansion.",

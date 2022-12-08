@@ -28,6 +28,7 @@
 	<content contentuid="h0bcff2begcd22g4e86g9b9fgfdd3ce0b28de">Enable a 0.5 second delay for skill tooltips.</content>
 	<content contentuid="h0ccbce3cg90f3g4d42g9755gd9da999968bd">&lt;font color=&apos;#6EB09D&apos;&gt;Applied by [1]&lt;/font&gt;</content>
 	<content contentuid="h0d0af957g4dc8g4ddagb0fag6c38340bb6de">Hello!</content>
+	<content contentuid="h0d48602eg4807g47b7gac1dg50dbf7cec9d4">Store specific debug information in the current save.&lt;br&gt;This button should be used before saving and submitting the save for debugging to LaughingLeader, as it will store your current Global and Game Settings in the save.</content>
 	<content contentuid="h0ea94b9dg27e8g4cdbgba52g40be7f66dd18">These settings only affect you. In multiplayer, these settings can be set independently from the host.</content>
 	<content contentuid="h102b274eg58b9g4199g91c1g2aef870786b8">Fade books (recipes, lore) that have already been read by this amount.&lt;br&gt;&lt;font color=&apos;#FF33FF&apos;&gt;Note: This setting isn&apos;t retroactive, so previous books read in the save may need to be read again, once.&lt;/font&gt;[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]</content>
 	<content contentuid="h109e781dg2032g4b77gacdagce8034c4e49e">Okay.</content>
@@ -63,6 +64,7 @@
 	<content contentuid="h1a6318dcgb094g4b3cg8492g6e26d8e3a11d">Mod Menu Settings</content>
 	<content contentuid="h1ae3aaa5gb444g4372g8b9ag231538f36a86">[LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96]</content>
 	<content contentuid="h1b1df860g4c70g46ccg9a4egb566babfcf09">Quality of Life</content>
+	<content contentuid="h1bcea212g810cg4ab5g8b55g6c300ea0cf36">Reload Stat Changes Config</content>
 	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee">[LOAD] Load Global Settings - These are global extender mod settings LeaderLib manages.&lt;br&gt;Path: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GlobalSettings.json&lt;/b&gt;</content>
 	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc">Control Summon</content>
 	<content contentuid="h1cdc775bgcae3g45b6g944bg0fb21db194a9">Keep Tooltip in Screen</content>
@@ -148,7 +150,6 @@
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d">Undead Human</content>
 	<content contentuid="h47d73bfcg16eag4504g83c0ge7b9c0048f13">*Ask to see the trader&apos;s goods.*</content>
 	<content contentuid="h4897d242gf62bg4dccg9c90g1470117392d8">If enabled, the health and armor bars will always show their values, instead of only on mouse hover.</content>
-	<content contentuid="h49be577dge6e7g4e41gb5aag5d1c414eb532">Reload Stat Changes Config</content>
 	<content contentuid="h4afd5d2bg1af0g4cc3g9a53gdb6c327d2d04">Enable Dialog Redirection</content>
 	<content contentuid="h4b459589gc776g4a7fgb3abg2e219ea20844">Features</content>
 	<content contentuid="h4c438f27gc833g4b46g8c3eg50716f12ae34">If &quot;Pull Party Into Combat&quot; is enabled, this is the minimum radius party members must be from that combat to automatically join. Default: 30m</content>
@@ -217,7 +218,7 @@
 	<content contentuid="h69172b21g1ce4g462dgad6cg308dabf6f0a0">Toggle [1]</content>
 	<content contentuid="h69293304g80a8g47b6gb564g793f098abfb4">Reset all global LeaderLib settings. EXPERIMENTAL!</content>
 	<content contentuid="h69590addg7840g4821gb632g52799233bb88">&lt;font color=&apos;#FF0000&apos;&gt;-[1] Attitude&lt;/font&gt;</content>
-	<content contentuid="h6a73243bgbdbcg4c42g8a10g63b34a228971">If [Key:LeaderLib_PullPartyIntoCombat] is enabled, a timer will check the party&apos;s distance to the current combat, automatically pulling members into the combat if within the set distance.&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;When this is disabled, pulling is done only when a player enters combat or teleports to a pyramid/waypoint.&lt;/font&gt;&lt;br&gt;Default: Disabled</content>
+	<content contentuid="h6a73243bgbdbcg4c42g8a10g63b34a228971">If &lt;font color=&apos;#3399FF&apos;&gt;[Key:LeaderLib_PullPartyIntoCombat]&lt;/font&gt; is enabled, a timer will check the party&apos;s distance to the current combat, automatically pulling members into the combat if within the set distance.&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;When this is disabled, pulling is done only when a player enters combat or teleports to a pyramid/waypoint.&lt;/font&gt;&lt;br&gt;Default: Disabled</content>
 	<content contentuid="h6a80ffafg59d9g4848g8d1ag9359a1435030">Enable Timed Autosaving</content>
 	<content contentuid="h6aac0af6g1e02g4a73g9341g53c81e64eb03">World Tooltips for All Items</content>
 	<content contentuid="h6ba6354bg9a76g48c2g90e9gf8aeac752f5c">Fix the Unhealable Status</content>
@@ -236,7 +237,7 @@
 	<content contentuid="h70808d00g222dg4b4ega35cg661cb7eccd45">Urgh!</content>
 	<content contentuid="h70864c17g1034g48ccgb6edg03dbeb743375">Redirect For Owned Characters Only</content>
 	<content contentuid="h71766947g9564g4a6bg936bga055cccc01a0">Pure Resistance</content>
-	<content contentuid="h719772f0ga1d4g4263g894cg83482077bfc4">If [Key:LeaderLib_PullPartyIntoCombat] is enabled, allow pulling [Handle:h6bf7caf0g7756g443bg926dg1ee5975ee133:Sneaking]/[Key:INVISIBLE_DisplayName:Invisible] into combat.&lt;br&gt;Default: Disabled</content>
+	<content contentuid="h719772f0ga1d4g4263g894cg83482077bfc4">If &lt;font color=&apos;#3399FF&apos;&gt;[Key:LeaderLib_PullPartyIntoCombat]&lt;/font&gt; is enabled, allow pulling party members with [Handle:h6bf7caf0g7756g443bg926dg1ee5975ee133:Sneaking]/[Key:INVISIBLE_DisplayName:Invisible] into combat.&lt;br&gt;Default: Disabled</content>
 	<content contentuid="h71f43d4fg54f9g4ba5gac4dg71e8d4c4e056">[OFF] Autosave when Combat Starts [GLOBAL]</content>
 	<content contentuid="h721accefge16dg4b60gb68dgbbe03addf706">Misc</content>
 	<content contentuid="h727273bcg948ag461agad93gef52b2419eca">from self</content>
@@ -297,6 +298,7 @@
 	<content contentuid="h8b8cb81bgf46eg435fg9fadg283b2bec5c89">Let&apos;s part ways.</content>
 	<content contentuid="h8d476de1g8b91g4821g87f2gd6ff1151b722">Delay Status Tooltips</content>
 	<content contentuid="h8d5dac42geb51g4b3agae2egfce8019d8387">Dialog Redirection</content>
+	<content contentuid="h8e6b8c80g8929g427cgb614ga389bd55c56f">Save Debug Info</content>
 	<content contentuid="h8e75b265ge400g4f0agbfcfg9b5a404d48f7">*With a puzzled look on your face, the old man speaks up before you get a chance to respond.*</content>
 	<content contentuid="h8e7bed3eg6e65g4b8agb542g83bc56753d17">Game Settings</content>
 	<content contentuid="h8ecc120fg9d67g4faegb198gebd73e4c836c">[OFF] Automatically Open the Mod Settings Menu - When closing another mod&apos;s settings menu, LeaderLib&apos;s Mod Settings menu will be automatically opened. [USER]&lt;br&gt;Note that this could possibly have unintended side-effects if that mod opens a sub-menu dialog after the main menu dialog is closed.</content>
@@ -442,7 +444,6 @@
 	<content contentuid="hc789b3e9g19dfg4670g9df6g1e2b18cb59ae">Enable redirecting automatically started dialog to characters that match your preferences, such as an avatar or character with the highest persuasion.</content>
 	<content contentuid="hc78dbfbbg99e3g4b81gbb3fg8068e2d4ecda">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc848f133g22fdg41c0g8205g8041758e7309">If enabled, status hiding settings will also apply to statuses under the healthbar when examining a character.</content>
-	<content contentuid="hc85837f3ge9cag453fgabb8g5008520008f3">Reload and re-apply the stat changes configuration file, located at:&lt;br&gt;Documents\Larian Studios\Divinity Original Sin 2 Definitive Edition\Osiris Data\LeaderLib_StatChanges.json</content>
 	<content contentuid="hc9377dd3g70d6g4d84g8c8fg812246a61029">Hide Status from Portrait UI</content>
 	<content contentuid="hc9ad7f0cg9a5bg4617gb138gce551f82c341">Removes the status malus icon and extra spacing, caused by a typo in Larian&apos;s UI code, and organizes bonuses and maluses together, while also sorting them alphabetically.</content>
 	<content contentuid="hc9cc1024g797fg4770g8ffagf1b4041e4c48">&lt;font color=&apos;#9400D3&apos;&gt;Stealth Mastery&lt;/font&gt;</content>

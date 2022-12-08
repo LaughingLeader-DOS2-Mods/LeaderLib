@@ -280,7 +280,7 @@ if Vars.DebugMode then
 			JumpToTurn(host)
 			self:Wait(500)
 			local duration = GameHelpers.Status.GetDuration(host, "FORTIFIED")
-			self:AssertEquals(duration == intendedDuration, true, string.format("Failed to make FORTIFIED (-1 turns) non-permanent (%s) in combat (Resulting duration: %s)", intendedDuration, duration))
+			self:AssertEquals(duration >= intendedDuration, true, string.format("Failed to make FORTIFIED (-1 turns) non-permanent (%s) in combat (Resulting duration: %s)", intendedDuration, duration))
 			self:Wait(3000)
 			return true
 		end,

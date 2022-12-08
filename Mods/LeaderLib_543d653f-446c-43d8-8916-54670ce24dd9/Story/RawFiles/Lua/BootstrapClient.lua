@@ -76,7 +76,7 @@ Ext.Require("Client/QOL/ShowBarText.lua")
 Ext.Require("Client/QOL/TooltipDelay.lua")
 Ext.Require("Client/QOL/ModMenuFixes.lua")
 Ext.Require("Client/QOL/ToggleChain.lua")
-if Ext.Utils.Version() < 56 or EnableGameTooltipOverride() then
+if EnableGameTooltipOverride() then
 	Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 end
 Ext.Require("Client/UI/CharacterSheet.lua")

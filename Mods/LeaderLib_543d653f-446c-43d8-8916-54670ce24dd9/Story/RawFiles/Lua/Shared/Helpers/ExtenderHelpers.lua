@@ -979,13 +979,23 @@ function GameHelpers.Ext.CreateStatCharacterTable(stat, mainhand, offhand)
 			TableHelpers.Clone(_EmptyCharacterDynamicStats),
 		}
 	}
+
+	local baseValue = GameHelpers.GetExtraData("AttributeBaseValue", 10)
 	local statObject = Ext.Stats.Get(stat, nil, false)
 	if statObject then
 		for i,attribute in pairs(characterStatAttributes) do
 			local value = statObject[attribute]
 			if value ~= nil then
-				data.DynamicStats[1][attribute] = value
+				if Data.Attribute[attribute] then
+					data.DynamicStats[1][attribute] = baseValue + value
+				else
+					data.DynamicStats[1][attribute] = value
+				end
 			end
+		end
+	else
+		for _,attribute in Data.Attribute:Get() do
+			data.DynamicStats[1][attribute] = baseValue
 		end
 	end
 

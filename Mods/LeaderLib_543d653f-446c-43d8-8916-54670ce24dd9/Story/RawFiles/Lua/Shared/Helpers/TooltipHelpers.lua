@@ -243,7 +243,7 @@ end
 
 ---@param str string|TranslatedString
 ---@param character CharacterParam
-local function ReplacePlaceholders(str, character)
+local function _ReplacePlaceholders(str, character)
 	if not str then
 		return str
 	end
@@ -406,7 +406,7 @@ local function ReplacePlaceholders(str, character)
 			if translatedText == nil then 
 				translatedText = "" 
 			else
-				translatedText = ReplacePlaceholders(translatedText, character)
+				translatedText = _ReplacePlaceholders(translatedText, character)
 			end
 			output = StringHelpers.Replace(output, v, translatedText)
 		elseif fallback then
@@ -423,7 +423,7 @@ local function ReplacePlaceholders(str, character)
 		if translatedText == nil then 
 			translatedText = "" 
 		else
-			translatedText = ReplacePlaceholders(translatedText, character)
+			translatedText = _ReplacePlaceholders(translatedText, character)
 		end
 		output = StringHelpers.Replace(output, v, translatedText)
 	end
@@ -435,7 +435,7 @@ end
 ---@param character CharacterParam|nil Optional character to use for the tooltip.
 ---@return string
 function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
-	local b,result = xpcall(ReplacePlaceholders, debug.traceback, str, character)
+	local b,result = xpcall(_ReplacePlaceholders, debug.traceback, str, character)
 	if b then
 		return result
 	else

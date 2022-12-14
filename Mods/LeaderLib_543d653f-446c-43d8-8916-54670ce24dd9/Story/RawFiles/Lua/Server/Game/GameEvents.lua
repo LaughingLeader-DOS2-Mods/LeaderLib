@@ -48,8 +48,6 @@ local _EventsInitializedKeyOrder = {"Region"}
 local function InvokeOnInitializedCallbacks(region)
 	region = region or ""
 	LoadPersistentVars()
-	Events.Initialized:Invoke({Region=region})
-	Osi.LeaderLib_LoadingDone(region)
 
 	if SceneManager then
 		SceneManager.Load()
@@ -79,6 +77,9 @@ local function InvokeOnInitializedCallbacks(region)
 			end
 		end
 	end
+
+	Events.Initialized:Invoke({Region=region})
+	Osi.LeaderLib_LoadingDone(region)
 end
 
 local function OnInitialized(region, isRunning)

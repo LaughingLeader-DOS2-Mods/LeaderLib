@@ -127,5 +127,14 @@ package
 				ExtCall("UIAssert", msg);
 			}
 		}
+
+		public static function IsValidString(str:String):Boolean
+		{
+			if (str == null || str == "")
+			{
+				return false;
+			}
+			return true;
+		}
 	}
 }

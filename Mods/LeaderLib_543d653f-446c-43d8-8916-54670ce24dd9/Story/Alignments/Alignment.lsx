@@ -65,6 +65,22 @@
                             <attribute id="Alignment" value="Hero" type="22" />
                             <attribute id="Name" value="Hero LLWEAPONEX_Korvash" type="22" />
                         </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero LLBUTCHER_TheButcher" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Generic_Companions" type="22" />
+                            <attribute id="Name" value="Origin_LLWEAPONEX_Harken" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Generic_Companions" type="22" />
+                            <attribute id="Name" value="Origin_LLWEAPONEX_Korvash" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Generic_Companions" type="22" />
+                            <attribute id="Name" value="Origin_LLBUTCHER_TheButcher" type="22" />
+                        </node>
                      </children>
                 </node>
                 <node id="Relations">

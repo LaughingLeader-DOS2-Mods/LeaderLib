@@ -86,8 +86,8 @@ function UIObjectExtended:Create(params)
 		}
 	}
 	for k,v in pairs(_SUB) do
-		_private.Subscribe[k] = function(reg, e)
-			v(e, this)
+		_private.Subscribe[k] = function(reg, ...)
+			v(this, ...)
 			return _private.Subscribe
 		end
 	end

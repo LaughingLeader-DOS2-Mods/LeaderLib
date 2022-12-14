@@ -18,6 +18,7 @@ local _uiPathWrappers = {}
 ---@field Type string
 ---@field Context UIListenerContext
 
+---A wrapper around an existing UI, for easier access to the instance/root/callback subscription.
 ---@class LeaderLibUIWrapper
 ---@field Root FlashMainTimeline|table
 ---@field Instance UIObject

@@ -1,5 +1,9 @@
 local _EXTVERSION = Ext.Utils.Version()
 
+---@alias UIObjectExtendedSubscriptionCallback fun(e:EclLuaUICallEvent, self:UIObjectExtended)
+---@alias UIObjectExtendedCallbackSubscriptionData {Callback:UIObjectExtendedSubscriptionCallback, Context:UICallbackEventType}
+
+---A wrapper around a UI that handles automatically creating/hiding the UI when it should be visible.
 ---@class UIObjectExtendedSettings
 ---@field ID string
 ---@field Layer integer
@@ -11,6 +15,8 @@ local _EXTVERSION = Ext.Utils.Version()
 ---@field OnInitialized fun(self:UIObjectExtended, instance:UIObject)
 ---@field OnTick fun(self:UIObjectExtended, e:GameTime)
 ---@field _GetIndex fun(self:table, key:string):any Custom function for providing more behavior in the __index metamethod for the instance.
+---@field Subscribe UIObjectExtendedSubscription
+---@field Callbacks {Invoke:table<string,UIObjectExtendedCallbackSubscriptionData[]>, Call:table<string,UIObjectExtendedCallbackSubscriptionData[]>}
 
 ---@class UIObjectExtended:UIObjectExtendedSettings
 ---@field Instance UIObject
@@ -23,11 +29,10 @@ local UIObjectExtended = {
 
 ---@type table<string, UIObjectExtended>
 local _registeredUIs = {}
---setmetatable(_registeredUIs, {__mode = "kv"})
-
+---@type table<integer, UIObjectExtended>
+local _registeredUITypes = {}
 ---@type UIObjectExtended[]
 local _registeredUIArray = {}
---setmetatable(_registeredUIArray, {__mode = "kv"})
 
 local function GetIndex(tbl, k)
 	if k == "Instance" then
@@ -54,8 +59,6 @@ local function GetIndex(tbl, k)
 	return UIObjectExtended[k]
 end
 
-UIObjectExtended.__index = GetIndex
-
 local FunctionParameters = {
 	ShouldBeVisible = true,
 	OnVisibilityChanged = true,
@@ -64,12 +67,30 @@ local FunctionParameters = {
 	SetPosition = true,
 }
 
+---@class UIObjectExtendedSubscription
+local _SUB = {}
+
 ---@param params UIObjectExtendedSettings
 function UIObjectExtended:Create(params)
 	---@type UIObjectExtended
 	local this = {
 		ResolutionInitialized = false,
+		Callbacks = {
+			Invoke = {},
+			Call = {},
+		},
 	}
+	local _private = {
+		Subscribe = {
+			__self = this
+		}
+	}
+	for k,v in pairs(_SUB) do
+		_private.Subscribe[k] = function(reg, e)
+			v(e, this)
+			return _private.Subscribe
+		end
+	end
 	if type(params) == "table" then
 		for k,v in pairs(params) do
 			if FunctionParameters[k] then
@@ -85,12 +106,26 @@ function UIObjectExtended:Create(params)
 				else
 					this[k] = v
 				end
-			else
+			elseif _private[k] == nil then
 				this[k] = v
 			end
 		end
 	end
-	setmetatable(this, UIObjectExtended)
+	setmetatable(this, {
+		__index = function (tbl,k)
+			if _private[k] ~= nil then
+				return _private[k]
+			end
+			return GetIndex(tbl,k)
+		end,
+		__newindex = function (tbl,k,v)
+			if _private[k] ~= nil then
+				return
+			else
+				rawset(tbl, k, v)
+			end
+		end
+	})
 
 	if not StringHelpers.IsNullOrEmpty(this.ID) then
 		_registeredUIs[this.ID] = this
@@ -106,6 +141,9 @@ function UIObjectExtended:GetInstance(skipCreation, setVisibility)
 	local instance = Ext.UI.GetByName(self.ID) or Ext.UI.GetByPath(self.SwfPath)
 	if not instance and skipCreation ~= true then
 		instance = self:Initialize(setVisibility)
+	end
+	if instance then
+		_registeredUITypes[instance.Type] = self
 	end
 	return instance
 end
@@ -207,9 +245,11 @@ function UIObjectExtended:ValidateVisibility()
 	end
 end
 
+---@param self UIObjectExtended
 local function DestroyInstance(self)
 	local instance = self:GetInstance(true)
 	if instance then
+		_registeredUITypes[instance.Type] = nil
 		instance:Destroy()
 	end
 end
@@ -257,6 +297,87 @@ Ext.RegisterUINameCall("LeaderLib_OnEventResolution", function (ui, event, id)
 	if data then
 		data.ResolutionInitialized = true
 		data:Reposition()
+	end
+end)
+
+---@param callbackType string
+---@param e EclLuaUICallEvent|LuaEventBase
+function UIObjectExtended:InvokeCallbacks(callbackType, e)
+	if not self.Callbacks[callbackType] then
+		error(string.format("Invalid callback type %s", callbackType))
+	end
+	local callbacks = self.Callbacks[callbackType][e.Function]
+	if callbacks then
+		local len = #callbacks
+		for i=1,len do
+			local callbackData = callbacks[i]
+			if callbackData.Context == e.When then
+				local b,err = xpcall(callbackData.Callback, debug.traceback, e, self)
+				if not b then
+					Ext.Utils.PrintError(err)
+				end
+			end
+		end
+	end
+end
+
+---@param self UIObjectExtended
+---@param event string|string[] The method name.
+---@param callback UIObjectExtendedSubscriptionCallback
+---@param eventType UICallbackEventType|nil
+---@return UIObjectExtendedSubscription
+function _SUB.Invoke(self, event, callback, eventType)
+	if type(event) == "table" then
+		for _,v in pairs(event) do
+			_SUB.Invoke(self, v, callback, eventType)
+		end
+	else
+		if self.Callbacks.Invoke[event] == nil then
+			self.Callbacks.Invoke[event] = {}
+		end
+		table.insert(self.Callbacks.Invoke[event], {
+			Callback = callback,
+			Context = eventType or "After",
+		})
+	---@diagnostic disable-next-line missing-return
+	end
+end
+
+---@param self UIObjectExtended
+---@param event string|string[] The ExternalInterface.call name.
+---@param callback UIObjectExtendedSubscriptionCallback
+---@param eventType UICallbackEventType|nil Defaults to "After"
+---@return UIObjectExtendedSubscription
+function _SUB.Call(self, event, callback, eventType)
+	if type(event) == "table" then
+		for _,v in pairs(event) do
+			_SUB.Invoke(self, v, callback, eventType)
+		end
+	else
+		if self.Callbacks.Call[event] == nil then
+			self.Callbacks.Call[event] = {}
+		end
+		table.insert(self.Callbacks.Call[event], {
+			Callback = callback,
+			Context = eventType or "After",
+		})
+	---@diagnostic disable-next-line missing-return
+	end
+end
+
+UIObjectExtended.Subscribe = _SUB
+
+Ext.Events.UIInvoke:Subscribe(function (e)
+	local object = _registeredUITypes[e.UI.Type]
+	if object then
+		object:InvokeCallbacks("Invoke", e)
+	end
+end)
+
+Ext.Events.UICall:Subscribe(function (e)
+	local object = _registeredUITypes[e.UI.Type]
+	if object then
+		object:InvokeCallbacks("Call", e)
 	end
 end)
 

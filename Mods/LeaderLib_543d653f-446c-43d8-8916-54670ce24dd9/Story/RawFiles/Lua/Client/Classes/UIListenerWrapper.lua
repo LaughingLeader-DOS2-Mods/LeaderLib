@@ -1,3 +1,4 @@
+---A debug class for registering listeners for a specific UI.
 ---@class UIListenerWrapper
 local UIListenerWrapper = {
 	Type = "UIListenerWrapper",

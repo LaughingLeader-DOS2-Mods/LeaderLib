@@ -769,8 +769,8 @@ end
 
 ---Returns true if the character is disabled by a status.
 ---@param character EsvCharacter|string
----@param checkForLoseControl boolean
----@param checkForZeroMovement boolean
+---@param checkForLoseControl boolean|nil
+---@param checkForZeroMovement boolean|nil
 ---@return boolean
 function GameHelpers.Character.IsDisabled(character, checkForLoseControl, checkForZeroMovement)
 	if _type(character) == "string" then
@@ -832,12 +832,12 @@ GameHelpers.Status.IsSneakingOrInvisible = GameHelpers.Character.IsSneakingOrInv
 ---@param character EsvCharacter|EclCharacter
 ---@param matchNames string|string[] Surface names to look for.
 ---@param maxRadius number|nil
----@param containingName boolean Look for surfaces containing the name, instead of explicit matching.
----@param onlyLayer integer Look only on layer 0 (ground) or 1 (clouds).
----@param grid AiGrid|nil
+---@param containingName boolean|nil Look for surfaces containing the name, instead of explicit matching.
+---@param onlyLayer integer|nil Look only on layer 0 (ground) or 1 (clouds).
+---@param grid EocAiGrid|nil
 ---@return boolean
 function GameHelpers.Character.IsInSurface(character, matchNames, maxRadius, containingName, onlyLayer, grid)
-	local pos = GameHelpers.Math.GetPosition(character, false, false)
+	local pos = GameHelpers.Math.GetPosition(character)
 	if pos then
 		if containingName == nil then
 			containingName = true

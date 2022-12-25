@@ -54,7 +54,7 @@ local DeltaModEntryGroup = {
 DeltaModEntryGroup.__index = DeltaModEntryGroup
 
 ---@param entries table
----@param vars table
+---@param vars table|nil
 ---@return DeltaModEntryGroup
 function DeltaModEntryGroup:Create(entries, vars)
     local this =

@@ -58,14 +58,14 @@ package LS_Classes
       
       public function initialize(buttonText:String, onClick:Function, onClickParams:Object = null, selected:Boolean = false, textSize:Number = -1, disabled:Boolean = false) : *
       {
-         var _loc7_:TextFormat = null;
+         var tf:TextFormat = null;
          if(this.text_txt)
          {
             if(textSize != -1)
             {
-               _loc7_ = this.text_txt.defaultTextFormat;
-               _loc7_.size = textSize;
-               this.text_txt.defaultTextFormat = _loc7_;
+               tf = this.text_txt.defaultTextFormat;
+               tf.size = textSize;
+               this.text_txt.defaultTextFormat = tf;
             }
             this.text_txt.alpha = !!selected?Number(this.textActiveAlpha):Number(this.textInActiveAlpha);
             this.text_txt.htmlText = buttonText;

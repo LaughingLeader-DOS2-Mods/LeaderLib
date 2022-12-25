@@ -74,9 +74,10 @@ if not _ISCLIENT then
 
 		local totalCharacters = math.max(0, params.TotalCharacters or 1)
 		local characters = {}
+		local userTemplate = params.UserTemplate or GameHelpers.GetTemplate(host) --[[@as string]]
 		for i=1,totalCharacters do
 			local pos = GameHelpers.Grid.GetValidPositionInRadius(startingPos, 6.0)
-			local character = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], params.UserTemplate or GameHelpers.GetTemplate(host), 0))
+			local character = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], userTemplate, 0))
 			NRD_CharacterSetPermanentBoostInt(character, "Accuracy", 200)
 			CharacterSetCustomName(character, "Test User1")
 			SetupCharacter(character, host.MyGuid, params.EquipmentSet)
@@ -88,9 +89,10 @@ if not _ISCLIENT then
 		local totalDummies = math.max(0, params.TotalDummies or 0)
 
 		local dummies = {}
+		local dummyTemplate = params.DummyTemplate or _GetDummyTemplate() --[[@as string]]
 		for i=1,totalDummies do
 			local pos = {GameHelpers.Grid.GetValidPositionInRadius(startingPos, 6.0)}
-			local dummy = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], params.DummyTemplate or _GetDummyTemplate(), 0))
+			local dummy = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], dummyTemplate, 0))
 			NRD_CharacterSetPermanentBoostInt(dummy, "Dodge", -100)
 
 			PlayEffect(dummy, "RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_01", "")

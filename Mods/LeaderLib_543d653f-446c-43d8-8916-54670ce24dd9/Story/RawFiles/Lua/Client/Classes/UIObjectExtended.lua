@@ -204,7 +204,6 @@ function UIObjectExtended:SetVisible(b)
 		end
 		if inst then
 			if b then
-				self:Reposition()
 				if self.OnVisibilityChanged then
 					self:OnVisibilityChanged(last, b)
 				end
@@ -292,13 +291,18 @@ Ext.Events.GameStateChanged:Subscribe(function (e)
 	end
 end)
 
-Ext.RegisterUINameCall("LeaderLib_OnEventResolution", function (ui, event, id)
-	local data = _registeredUIs[id]
-	if data then
+--[[
+The swf UI should call "LeaderLib_OnEventResolution" during the onEventResolution function to signal that the UI is ready.
+The id value should be the same ID used when creating the UIObjectExtended.
+]]
+---@param e EclLuaUICallEvent|LuaEventBase
+local function OnResolutionInitialized(e)
+	local data = _registeredUIs[e.Args[1]]
+	if data and not data.ResolutionInitialized then
 		data.ResolutionInitialized = true
 		data:Reposition()
 	end
-end)
+end
 
 ---@param callbackType string
 ---@param e EclLuaUICallEvent|LuaEventBase
@@ -375,6 +379,9 @@ Ext.Events.UIInvoke:Subscribe(function (e)
 end)
 
 Ext.Events.UICall:Subscribe(function (e)
+	if e.When == "After" and e.Function == "LeaderLib_OnEventResolution" then
+		OnResolutionInitialized(e)
+	end
 	local object = _registeredUITypes[e.UI.Type]
 	if object then
 		object:InvokeCallbacks("Call", e)

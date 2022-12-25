@@ -582,8 +582,8 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 					Ground = nil,
 					Cloud = nil,
 				}
-				data.HasSurface = function(s, name, containingName, onlyLayer)
-					return HasSurfaceSingle(s, name, containingName, onlyLayer)
+				data.HasSurface = function(...)
+					return HasSurfaceSingle(data, ...)
 				end
 				if not _ISCLIENT then
 					if cell.GroundSurface then

@@ -396,10 +396,18 @@ local function _ReplacePlaceholders(str, character)
 	
 	for v in string.gmatch(output, "%[Key:.-%]") do
 		local text = v:gsub("%[Key:", ""):gsub("%]", "")
-		local split = StringHelpers.Split(text, ":") or {}
-		local key,fallback = table.unpack(split)
+		local props = StringHelpers.Split(text, ":") or {}
+		local key,fallback = table.unpack(props)
 		if fallback == nil then 
 			fallback = key
+		else
+			--TODO Rejoin text if the fallback text has colons in it.
+			if props[3] then
+				extraText = StringHelpers.Join(":", {table.unpack(props, 3)})
+				if not StringHelpers.IsNullOrWhitespace(extraText) then
+					fallback = fallback .. ":" .. extraText
+				end
+			end
 		end
 		if not StringHelpers.IsNullOrWhitespace(key) then
 			local translatedText = GameHelpers.GetStringKeyText(key, fallback)
@@ -416,10 +424,19 @@ local function _ReplacePlaceholders(str, character)
 	for v in string.gmatch(output, "%[Handle:.-%]") do
 		local text = v:gsub("%[Handle:", ""):gsub("%]", "")
 		local props = StringHelpers.Split(text, ":")
-		if props[2] == nil then
-			props[2] = ""
+		local handle,fallback = table.unpack(props)
+		if fallback[2] == nil then
+			fallback = ""
+		else
+			--TODO Rejoin text if the fallback text has colons in it.
+			if props[3] then
+				extraText = StringHelpers.Join(":", {table.unpack(props, 3)})
+				if not StringHelpers.IsNullOrWhitespace(extraText) then
+					fallback = fallback .. ":" .. extraText
+				end
+			end
 		end
-		local translatedText = GameHelpers.GetTranslatedString(props[1], props[2])
+		local translatedText = GameHelpers.GetTranslatedString(handle, fallback)
 		if translatedText == nil then 
 			translatedText = "" 
 		else

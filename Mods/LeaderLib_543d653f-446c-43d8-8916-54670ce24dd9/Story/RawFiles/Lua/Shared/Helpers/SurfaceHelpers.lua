@@ -35,13 +35,11 @@ if not _ISCLIENT then
 	---@param ownerHandle userdata|nil
 	---@param ignoreCursed boolean|nil
 	---@param statusChance number|nil
-	---@return EsvSurfaceAction
 	function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, ownerHandle, ignoreCursed, statusChance)
 		if _type(pos) == "string" then
 			pos = table.pack(GetPosition(pos))
 		end
-		---@type EsvRectangleSurfaceAction
-		local surf = Ext.CreateSurfaceAction("CreateSurfaceAction")
+		local surf = Ext.CreateSurfaceAction("CreateSurfaceAction") --[[@as EsvRectangleSurfaceAction]]
 		surf.Position = pos
 		surf.SurfaceType = surface or "Water"
 		surf.Radius = radius or 1.0
@@ -49,7 +47,9 @@ if not _ISCLIENT then
 		surf.Duration = duration or 6.0
 		surf.StatusChance = statusChance or 1.0
 		--surf.DeathType = deathType or "DoT"
-		surf.OwnerHandle = ownerHandle or nil
+		if ownerHandle then
+			surf.OwnerHandle = ownerHandle
+		end
 		Ext.ExecuteSurfaceAction(surf)
 	end
 

@@ -318,6 +318,7 @@ function GameHelpers.Math.GetOuterDistance(pos1, pos2, ignoreHeight)
 end
 
 ---@overload fun(pos1:vec3|ObjectParam, pos2:vec3|ObjectParam, reverse:boolean|nil):vec3
+---@overload fun(pos1:vec3|ObjectParam, pos2:vec3|ObjectParam):vec3
 ---Get the directional vector between two Vector3 points.
 ---@param pos1 vec3|ObjectParam
 ---@param pos2 vec3|ObjectParam
@@ -448,6 +449,18 @@ function GameHelpers.Math.ConvertScreenCoordinates(fromX, fromY, fromWidth, from
 	return newX, newY
 end
 
+---@param totalWidth number
+---@param totalHeight number
+---@param width number
+---@param height number
+---@return number x
+---@return number y
+function GameHelpers.Math.Center(totalWidth, totalHeight, width, height)
+	local x = (totalWidth - width)/2
+	local y = (totalHeight - height)/2
+	return x, y
+end
+
 ---@class EulerAngle
 ---@field X number
 ---@field Y number
@@ -547,14 +560,15 @@ end
 ---@param minValue integer|nil Minimum value for the random range. Defaults to 0.
 ---@param maxValue integer|nil Maximum value for the random range. Defaults to 100.
 ---@return boolean success
+---@return integer roll
 function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)
 	minValue = minValue or 0
 	maxValue = maxValue or 100
 	if chance < minValue then
-		return false
+		return false,minValue
 	end
 	if chance >= maxValue then
-		return true
+		return true,maxValue
 	end
 	bonusRolls = bonusRolls or 0
 	--Increase random range to increase randomness (low ranges tend to give more successes)
@@ -567,8 +581,8 @@ function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)
 	for i=bonusRolls+1,0,-1 do
 		local roll = _ran(minValue, maxValue)
 		if roll > minValue and roll <= chance then
-			return true
+			return true,roll
 		end
 	end
-	return false
+	return false,0
 end

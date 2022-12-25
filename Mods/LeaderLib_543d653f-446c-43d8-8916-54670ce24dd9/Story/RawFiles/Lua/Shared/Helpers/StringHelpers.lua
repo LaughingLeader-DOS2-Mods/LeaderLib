@@ -407,7 +407,7 @@ function StringHelpers.StripOuterFont(str)
 end
 
 ---@param str string
----@param match string
+---@param match string|string[]
 ---@param explicit boolean|nil
 function StringHelpers.IsMatch(str, match, explicit)
 	if not explicit then

@@ -392,6 +392,14 @@ local function OnTimerFinished(timerName, skipAlteringTickTable)
 	_INTERNAL.ClearOneshotSubscriptions(timerName, skipAlteringTickTable)
 end
 
+---Starts a timer with optional data to include in the callback. Only serializable types are accepted for optional parameters.
+---@param timerName string
+---@param uniqueVariance string
+function Timer.IsUniqueTimerActive(timerName, uniqueVariance)
+	local uniqueTimerName = string.format("%s%s", timerName, uniqueVariance)
+	return Timer.TimerNameMap[uniqueTimerName] == timerName
+end
+
 ---Starts an Osiris timer with a unique string variance, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
 ---This is similar to an object timer, but you can set the unique string directly.
 ---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
@@ -416,6 +424,14 @@ function Timer.StartUniqueTimer(timerName, uniqueVariance, delay, ...)
 	else
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:StartUniqueTimer] A valid uniqueVariance is required. Parameter (%s) is invalid!", uniqueVariance or "nil")
 	end
+end
+
+---Starts a timer with optional data to include in the callback. Only serializable types are accepted for optional parameters.
+---@param timerName string
+---@param object ObjectParam
+function Timer.IsObjectTimerActive(timerName, object)
+	local uniqueTimerName = string.format("%s%s", timerName, GameHelpers.GetUUID(object))
+	return Timer.TimerNameMap[uniqueTimerName] == timerName
 end
 
 ---Starts an Osiris timer for an object, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.

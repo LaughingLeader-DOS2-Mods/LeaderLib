@@ -768,7 +768,7 @@ function GameHelpers.Character.IsUnsheathed(character)
 end
 
 ---Returns true if the character is disabled by a status.
----@param character EsvCharacter|string
+---@param character CharacterParam
 ---@param checkForLoseControl boolean|nil
 ---@param checkForZeroMovement boolean|nil
 ---@return boolean

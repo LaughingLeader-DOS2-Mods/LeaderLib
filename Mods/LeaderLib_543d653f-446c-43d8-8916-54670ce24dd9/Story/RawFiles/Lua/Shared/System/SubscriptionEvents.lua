@@ -294,11 +294,82 @@ if not _ISCLIENT then
 	---@field HitStatus EsvStatusHit
 	---@field HitContext EsvPendingHit
 	
-	---Called during StatusHitEnter, with a hit data wrapper for easier manipulation.  
+	---Called during `Ext.Events.StatusHitEnter`, before SkillManager and OnWeaponHit events fire, and before `Events.OnHit` is called.  
+	---🔨**Server-Only**🔨
+	---@type LeaderLibSubscribableEvent<OnHitEventArgs>
+	Events.BeforeOnHit = Classes.SubscribableEvent:Create("OnHit", {
+		ArgsKeyOrder={"Target", "Source", "Data", "HitStatus"}
+	})
+	
+	---Called during `Ext.Events.StatusHitEnter`, with a hit data wrapper for easier manipulation. This event is called after SkillManager and OnWeaponHit related events.  
 	---🔨**Server-Only**🔨
 	---@type LeaderLibSubscribableEvent<OnHitEventArgs>
 	Events.OnHit = Classes.SubscribableEvent:Create("OnHit", {
 		ArgsKeyOrder={"Target", "Source", "Data", "HitStatus"}
+	})
+
+	---@class OnBasicAttackStartEventArgs
+	---@field Attacker EsvCharacter
+	---@field AttackerGUID GUID
+	---@field Target EsvCharacter|EsvItem|number[]
+	---@field TargetGUID GUID|nil
+	---@field TargetIsObject boolean
+	
+	---Called via AttackManager, when a character starts a basic attack.  
+	---🔨**Server-Only**🔨
+	---@see LeaderLibAttackManager
+	---@type LeaderLibSubscribableEvent<OnBasicAttackStartEventArgs>
+	Events.OnBasicAttackStart = Classes.SubscribableEvent:Create("OnBasicAttackStart", {
+		ArgsKeyOrder={"Attacker", "Target", "Data"}
+	})
+
+	---@alias BasicAttackPositionDamageData {Type:string, DamageList:DamageList}
+
+	---@class OnWeaponHitEventArgs
+	---@field Target EsvCharacter|EsvItem|number[]
+	---@field TargetGUID GUID
+	---@field Attacker EsvCharacter|EsvItem|nil
+	---@field AttackerGUID GUID
+	---@field Data HitData|BasicAttackPositionDamageData
+	---@field TargetIsObject boolean
+	---@field Skill string|nil Separate from SkillData, so it can be used more easily with MatchArgs.
+	---@field SkillData StatEntrySkillData|nil
+	
+	---Called via AttackManager, when an object or position is hit with a basic attack or weapon skill.
+	---🔨**Server-Only**🔨
+	---@see LeaderLibAttackManager
+	---@type LeaderLibSubscribableEvent<OnWeaponHitEventArgs>
+	Events.OnWeaponHit = Classes.SubscribableEvent:Create("OnWeaponHit", {
+		ArgsKeyOrder={"Attacker", "Target", "Data", "TargetIsObject", "SkillData"}
+	})
+
+	---@alias WeaponType "Staff"|"Rifle"|"Spear"|"Sentinel"|"Sword"|"Bow"|"Axe"|"Wand"|"Arrow"|"None"|"Knife"|"Crossbow"|"Club"
+
+	---@class OnWeaponTypeHitEventArgs:OnWeaponHitEventArgs
+	---@field WeaponType WeaponType
+	
+	---Called via AttackManager, when an object or position is hit with a basic attack or weapon skill.
+	---🔨**Server-Only**🔨
+	---@see LeaderLibAttackManager
+	---@type LeaderLibSubscribableEvent<OnWeaponTypeHitEventArgs>
+	Events.OnWeaponTypeHit = Classes.SubscribableEvent:Create("OnWeaponTypeHit", {
+		ArgsKeyOrder={"WeaponType", "Attacker", "Target", "Data", "TargetIsObject", "Skill"}
+	})
+
+	---@class OnWeaponTagHitEventArgs:OnWeaponHitEventArgs
+	---@field Tag string
+	
+	---Called via AttackManager, when an object or position is hit with a basic attack or weapon skill.
+	---🔨**Server-Only**🔨
+	---@see LeaderLibAttackManager
+	---@type LeaderLibSubscribableEvent<OnWeaponTagHitEventArgs>
+	Events.OnWeaponTagHit = Classes.SubscribableEvent:Create("OnWeaponTagHit", {
+		ArgsKeyOrder={"Tag", "Attacker", "Target", "Data", "TargetIsObject", "Skill"},
+		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
+			if matchArgsType == "table" and type(opts.MatchArgs.Tag) == "string" then
+				AttackManager.EnabledTags[opts.MatchArgs.Tag] = true
+			end
+		end
 	})
 
 	---@class ComputeCharacterHitEventArgs
@@ -673,70 +744,6 @@ if not _ISCLIENT then
 						end
 					end
 				end
-			end
-		end
-	})
-
-	---@class OnBasicAttackStartEventArgs
-	---@field Attacker EsvCharacter
-	---@field AttackerGUID GUID
-	---@field Target EsvCharacter|EsvItem|number[]
-	---@field TargetGUID GUID|nil
-	---@field TargetIsObject boolean
-	
-	---Called via AttackManager, when a character starts a basic attack.  
-	---🔨**Server-Only**🔨
-	---@see LeaderLibAttackManager
-	---@type LeaderLibSubscribableEvent<OnBasicAttackStartEventArgs>
-	Events.OnBasicAttackStart = Classes.SubscribableEvent:Create("OnBasicAttackStart", {
-		ArgsKeyOrder={"Attacker", "Target", "Data"}
-	})
-
-	---@alias BasicAttackPositionDamageData {Type:string, DamageList:DamageList}
-
-	---@class OnWeaponHitEventArgs
-	---@field Target EsvCharacter|EsvItem|number[]
-	---@field TargetGUID GUID
-	---@field Attacker EsvCharacter|EsvItem|nil
-	---@field AttackerGUID GUID
-	---@field Data HitData|BasicAttackPositionDamageData
-	---@field TargetIsObject boolean
-	---@field Skill string|nil Separate from SkillData, so it can be used more easily with MatchArgs.
-	---@field SkillData StatEntrySkillData|nil
-	
-	---Called via AttackManager, when an object or position is hit with a basic attack or weapon skill.
-	---🔨**Server-Only**🔨
-	---@see LeaderLibAttackManager
-	---@type LeaderLibSubscribableEvent<OnWeaponHitEventArgs>
-	Events.OnWeaponHit = Classes.SubscribableEvent:Create("OnWeaponHit", {
-		ArgsKeyOrder={"Attacker", "Target", "Data", "TargetIsObject", "SkillData"}
-	})
-
-	---@alias WeaponType "Staff"|"Rifle"|"Spear"|"Sentinel"|"Sword"|"Bow"|"Axe"|"Wand"|"Arrow"|"None"|"Knife"|"Crossbow"|"Club"
-
-	---@class OnWeaponTypeHitEventArgs:OnWeaponHitEventArgs
-	---@field WeaponType WeaponType
-	
-	---Called via AttackManager, when an object or position is hit with a basic attack or weapon skill.
-	---🔨**Server-Only**🔨
-	---@see LeaderLibAttackManager
-	---@type LeaderLibSubscribableEvent<OnWeaponTypeHitEventArgs>
-	Events.OnWeaponTypeHit = Classes.SubscribableEvent:Create("OnWeaponTypeHit", {
-		ArgsKeyOrder={"WeaponType", "Attacker", "Target", "Data", "TargetIsObject", "Skill"}
-	})
-
-	---@class OnWeaponTagHitEventArgs:OnWeaponHitEventArgs
-	---@field Tag string
-	
-	---Called via AttackManager, when an object or position is hit with a basic attack or weapon skill.
-	---🔨**Server-Only**🔨
-	---@see LeaderLibAttackManager
-	---@type LeaderLibSubscribableEvent<OnWeaponTagHitEventArgs>
-	Events.OnWeaponTagHit = Classes.SubscribableEvent:Create("OnWeaponTagHit", {
-		ArgsKeyOrder={"Tag", "Attacker", "Target", "Data", "TargetIsObject", "Skill"},
-		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
-			if matchArgsType == "table" and type(opts.MatchArgs.Tag) == "string" then
-				AttackManager.EnabledTags[opts.MatchArgs.Tag] = true
 			end
 		end
 	})

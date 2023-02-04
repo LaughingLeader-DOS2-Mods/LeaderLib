@@ -142,6 +142,23 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 		WeaponHandle = weaponHandle
 	})
 
+	local eventData = {
+		Target=target,
+		Source=source,
+		TargetGUID=targetGUID,
+		SourceGUID=sourceGUID,
+		Data=data,
+		HitStatus=hitStatus,
+		HitContext=hitContext
+	}
+
+	Events.BeforeOnHit:Invoke(eventData)
+	
+	--Update skill in case a mod sets/changes it during BeforeOnHit
+	if skill ~= data.SkillData then
+		skill = data.SkillData
+	end
+
 	if skill and source then
 		OnSkillHit(skill.Name, target, source, data.Damage, hitRequest, hitContext, hitStatus, data)
 	end
@@ -162,13 +179,5 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 		end
 	end
 
-	Events.OnHit:Invoke({
-		Target=target,
-		Source=source,
-		TargetGUID = targetGUID,
-		SourceGUID = sourceGUID,
-		Data=data,
-		HitStatus=hitStatus,
-		HitContext=hitContext
-	})
+	Events.OnHit:Invoke(eventData)
 end)

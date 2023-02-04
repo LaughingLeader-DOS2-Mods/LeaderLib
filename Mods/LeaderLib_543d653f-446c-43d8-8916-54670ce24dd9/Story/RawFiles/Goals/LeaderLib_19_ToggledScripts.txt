@@ -419,6 +419,14 @@ NOT DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
 LeaderLib_ToggleScripts_OnGoalCleared(_GoalTitle, _GlobalFlag);
 
 PROC
+LeaderLib_ToggleScripts_Clear_ByGoal((STRING)_GoalTitle)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag);
+LeaderLib_ToggleScripts_OnGoalCleared(_GoalTitle, _TagOrFlag);
+
+PROC
 LeaderLib_ToggleScripts_Clear_ByFlag((STRING)_GlobalFlag)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)

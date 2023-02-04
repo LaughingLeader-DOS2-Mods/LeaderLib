@@ -11,7 +11,7 @@
 ---@field HitRequest StatsHitDamageInfo
 ---@field HitStatus EsvStatusHit
 ---@field SkillData StatEntrySkillData|nil
----@field Success boolean True if the hit has a target, and the hit wasn't Dodged, Blocked, or Missed.
+---@field Success boolean Read-only boolean for if the hit has a target, and the hit wasn't Dodged, Blocked, or Missed.
 local HitData = {
 	Type = "HitData",
 	Skill = "",

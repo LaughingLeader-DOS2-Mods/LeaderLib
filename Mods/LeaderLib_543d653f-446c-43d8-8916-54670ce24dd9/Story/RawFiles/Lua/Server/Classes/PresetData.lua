@@ -154,7 +154,7 @@ end
 ---@param targetRarity string
 ---@param skipSlots string[] Skip generating equipment for these slots.
 ---@param checkMemorizationRequirements boolean|nil
----@param skipIfExists boolean If an item already exists on the target character, skip creating another one.
+---@param skipIfExists boolean|nil If an item already exists on the target character, skip creating another one.
 function PresetData:ApplyToCharacter(char, targetRarity, skipSlots, checkMemorizationRequirements, skipIfExists)
 	--print("Applying",self.ClassType,"to",char, Ext.IsServer(), _OSIRIS())
 	if Ext.IsServer() then

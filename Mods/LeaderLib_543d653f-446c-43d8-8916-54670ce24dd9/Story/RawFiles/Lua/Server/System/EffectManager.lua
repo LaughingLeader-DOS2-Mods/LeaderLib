@@ -262,7 +262,7 @@ end
 ---@param fx string|string[] The effect resource name
 ---@param object CharacterParam|ItemParam
 ---@param params EffectManagerEsvEffectParams|nil
----@param skipSaving boolean|nil
+---@param skipSaving boolean|nil Skip saving if the params.Loop is true.
 ---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]|nil
 function EffectManager.PlayEffect(fx, object, params, skipSaving)
 	local uuid = GameHelpers.GetUUID(object)

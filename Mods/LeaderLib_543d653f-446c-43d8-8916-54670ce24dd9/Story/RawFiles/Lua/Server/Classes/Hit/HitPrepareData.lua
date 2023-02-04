@@ -8,7 +8,7 @@
 ---@field Cached boolean Whether attributes/damage has been cached/saved in the table.
 ---Hit API Attributes
 ---@field SimulateHit boolean
----@field HitType string
+---@field HitType StatsHitType
 ---@field NoHitRoll boolean
 ---@field CriticalRoll string
 ---@field ForceReduceDurability boolean
@@ -331,6 +331,17 @@ function HitPrepareData:IsFromWeapon(ignoreSkills, ignoreUnarmed)
 	else
 		return (hitReason == "Melee" or hitReason == "Ranged" or hitReason == "WeaponDamage")
 	end
+end
+
+local _INDIRECT_HIT_TYPE = {
+	Surface = true,
+	DoT = true,
+	Reflected = true
+}
+
+---Returns true if the HitType is Magic, WeaponDamage, Melee, or Ranged. Surface, DoT and Reflected is ignored.
+function HitPrepareData:IsDirect()
+	return _INDIRECT_HIT_TYPE[self.HitType] ~= true
 end
 
 function HitPrepareData:ToDebugString(indentChar)

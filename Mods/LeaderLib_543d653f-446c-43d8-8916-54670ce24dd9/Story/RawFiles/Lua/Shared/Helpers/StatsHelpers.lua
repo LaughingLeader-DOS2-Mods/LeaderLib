@@ -737,7 +737,7 @@ end
 ---Similar to GameHelpers.Stats.GetAttribute, but runs a function instead of the stat and attribute exists, for when you want to easily make logic run only if the stat exists. 
 ---@param id string
 ---@param attributeName string
----@param callback fun(stat:StatEntryType, attribute:string, value:string|number|table)
+---@param callback fun(stat:StatEntryType, attribute:string, value:string|number|table):any
 ---@return boolean success
 ---@return any result
 function GameHelpers.Stats.TryGetAttribute(id, attributeName, callback)

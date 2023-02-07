@@ -70,14 +70,13 @@ function StringHelpers.Capitalize(s)
 	return _upper(_sub(s, 1,1)).._sub(s, 2)
 end
 
----@alias StringHelpersJoinGetStringCallback fun(k:any,v:any):string
-
 ---Join a table of string into one string.
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param delimiter string
 ---@param list table
 ---@param uniqueOnly boolean|nil
----@param getStringFunction StringHelpersJoinGetStringCallback|nil
+---@param getStringFunction (fun(k:any,v:any):string)|nil
+---@return string
 function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 	local finalResult = ""
 	local useFunction = _type(getStringFunction) == "function"
@@ -384,23 +383,27 @@ function StringHelpers.GetLines(s)
 end
 
 ---Remove font tags from a string.
----@param str string
+---@param str string|nil
+---@return string
 function StringHelpers.StripFont(str)
 	if str == nil or str == "" then
-		return str
+		return str --[[@as string]]
 	end
-	return _gsub(str, "<font.-'>", ""):gsub("</font>", "")
+	local result = _gsub(str, "<font.-'>", ""):gsub("</font>", "")
+	return result
 end
 
 ---Remove only the outer font tags from a string, if it's wrapped in <font></font> tags.
 ---@param str string
+---@return string
 function StringHelpers.StripOuterFont(str)
 	if str == nil or str == "" then
-		return str
+		return str --[[@as string]]
 	end
 	local startIndex,endIndex = _find(str, "^<font")
 	if startIndex == 1 then
-		return _gsub(str, "^<font.-'>", "", 1):gsub("</font>$", "", 1)
+		local result = _gsub(str, "^<font.-'>", "", 1):gsub("</font>$", "", 1)
+		return result
 	else
 		return str
 	end
@@ -409,6 +412,7 @@ end
 ---@param str string
 ---@param match string|string[]
 ---@param explicit boolean|nil
+---@return boolean
 function StringHelpers.IsMatch(str, match, explicit)
 	if not explicit then
 		str = _lower(str)

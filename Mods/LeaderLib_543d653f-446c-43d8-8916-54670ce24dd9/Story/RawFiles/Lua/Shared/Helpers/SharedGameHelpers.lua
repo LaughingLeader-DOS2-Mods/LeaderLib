@@ -53,7 +53,7 @@ function GameHelpers.GetExtraData(key, fallback, asInteger)
 	return fallback
 end
 
----@param v userdata
+---@param v userdata|ComponentHandle|any
 ---@return boolean
 local function IsHandle(v)
 	if _isValidHandle(v) then

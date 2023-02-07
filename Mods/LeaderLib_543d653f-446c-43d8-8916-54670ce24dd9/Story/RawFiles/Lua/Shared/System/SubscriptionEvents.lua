@@ -15,7 +15,7 @@ Ext.Require("Shared/Classes/SubscribableEventArgs.lua")
 ---@field CharacterGUID GUID
 ---@field IsPlayer boolean
 
----Called when a character is resurrected.  
+---Called when a character is resurrected, which is after the RESURRECTED status is removed.  
 ---🔨🔧**Server/Client**🔧🔨 
 ---@type LeaderLibSubscribableEvent<CharacterResurrectedEventArgs>
 Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurrected", {

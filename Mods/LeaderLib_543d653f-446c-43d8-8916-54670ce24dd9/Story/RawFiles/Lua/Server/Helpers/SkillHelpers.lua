@@ -497,9 +497,9 @@ function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParam
 end
 
 ---Explode a skill as a target. Similar to CreateExplosion, EXPODE or LeaveAction/DieAction.
----@param target UUID|EsvCharacter|EsvItem|number[] The target character, item, or position.
----@param skillId string The skill to use for damage.
----@param source UUID|EsvCharacter|EsvItem The source of the damage, either a character, item, or UUID.
+---@param target ObjectParam|vec3 The target character, item, or position.
+---@param skillId FixedString The skill to use for damage.
+---@param source ObjectParam The source of the damage, either a character, item, or UUID.
 ---@param extraParams LeaderLibProjectileCreationProperties|nil Optional table of properties to apply on top of the properties set from the skill stat.
 function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
     --Support for older usage

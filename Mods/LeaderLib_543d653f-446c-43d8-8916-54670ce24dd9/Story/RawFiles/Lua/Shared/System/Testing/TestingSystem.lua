@@ -158,8 +158,10 @@ Ext.Events.Tick:Subscribe(function (e)
 	end
 end)
 
+---@alias TestingSystemGetTestsCallbackReturnType LuaTest|LuaTest[]|nil
+
 ---@alias TestingSystemGetDescriptionCallback fun(id, ...:string):string
----@alias TestingSystemGetTestsCallback fun(id:string, ...:string):LuaTest[]
+---@alias TestingSystemGetTestsCallback fun(id:string, ...:string):TestingSystemGetTestsCallbackReturnType
 
 ---@type table<string, {ID:string, Description:string|TestingSystemGetDescriptionCallback, Tests:LuaTest[]|TestingSystemGetTestsCallback}>
 local _consoleCommandTests = {}

@@ -463,10 +463,13 @@ function GameHelpers.Character.GetDisplayName(character)
 	return ""
 end
 
+---@overload fun():(fun():EsvCharacter|EclCharacter)
+---@generic T:EsvCharacter|EclCharacter
 ---@param includeSummons boolean|nil
 ---@param asTable boolean|nil if true, a regular table is returned, which needs to be used with pairs/ipairs.
----@return fun():EsvCharacter|EclCharacter
-function GameHelpers.Character.GetPlayers(includeSummons, asTable)
+---@param castType `T` The class type to return, for auto-completion, such as "EsvCharacter".
+---@return fun():T
+function GameHelpers.Character.GetPlayers(includeSummons, asTable, castType)
 	local players = {}
 	if not _ISCLIENT then
 		if SharedData.RegionData.LevelType == LEVELTYPE.GAME and _OSIRIS() then

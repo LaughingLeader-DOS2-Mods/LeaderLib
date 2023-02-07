@@ -1639,7 +1639,7 @@ function GameHelpers.Ext.ObjectIsItem(obj)
 	return false
 end
 
----@param obj ObjectParam
+---@param obj ObjectParam|nil
 function GameHelpers.Ext.ObjectIsCharacter(obj)
 	local t = _type(obj)
 	if t == "userdata" then

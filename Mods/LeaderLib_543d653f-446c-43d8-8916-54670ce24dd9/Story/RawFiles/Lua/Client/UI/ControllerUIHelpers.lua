@@ -79,13 +79,8 @@ local UITYPE = {
 	CRAFT_PANEL = 84
 }
 
----@class TooltipArrayData
----@field Main string
----@field CompareMain string|nil
----@field CompareOff string|nil
-
 ---@class TooltipHelperData
----@field Array table<string, TooltipArrayData>
+---@field Array TooltipArrayData
 ---@field MC table<string, fun(any):any>
 
 ---@type table<integer, TooltipHelperData>

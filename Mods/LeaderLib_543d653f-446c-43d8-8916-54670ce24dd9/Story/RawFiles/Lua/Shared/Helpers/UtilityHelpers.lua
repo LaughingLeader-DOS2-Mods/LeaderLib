@@ -267,7 +267,7 @@ if not _ISCLIENT then
 			return
 		end
 		fassert(_type(height) == "number", "Invalid height parameter (%s)", Lib.serpent.line(height))
-		local tobj = GameHelpers.TryGetObject(target)
+		local tobj = GameHelpers.TryGetObject(target, "EsvCharacter")
 		fassert(tobj ~= nil, "Invalid target parameter (%s)", Lib.serpent.line(target))
 		if not opts then
 			opts = {}
@@ -336,8 +336,7 @@ if not _ISCLIENT then
 			local grid = Ext.Entity.GetAiGrid()
 			for i=1,len do
 				local data = knockupData.ObjectData[i]
-				---@type EsvCharacter|EsvItem
-				local obj = GameHelpers.TryGetObject(data.GUID)
+				local obj = GameHelpers.TryGetObject(data.GUID, "EsvCharacter")
 				if not obj then
 					table.remove(knockupData.ObjectData, i)
 				end
@@ -367,6 +366,17 @@ if not _ISCLIENT then
 							PlayAnimation(obj.MyGuid, data.EndAnimation, "")
 						end
 						GameHelpers.Status.Remove(obj, "LEADERLIB_IN_AIR")
+						Events.ForceMoveFinished:Invoke({
+							ID = data.ID or "",
+							Target = obj,
+							Source = GameHelpers.TryGetObject(data.Source),
+							TargetGUID = obj.MyGuid,
+							SourceGUID = GameHelpers.GetUUID(data.Source),
+							Distance = data.Height,
+							StartingPosition = data.Start,
+							Skill = data.Skill,
+							SkillData = data.Skill and Ext.Stats.Get(data.Skill, nil, false) or nil
+						})
 					end
 				else
 					local dist = math.abs(data.End[2]) - math.abs(y)

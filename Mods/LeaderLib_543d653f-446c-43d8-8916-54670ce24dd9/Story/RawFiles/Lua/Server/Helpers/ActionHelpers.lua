@@ -8,7 +8,7 @@ end
 function GameHelpers.Action.Attack(attacker, target, opts)
 	local character = GameHelpers.GetCharacter(attacker) --[[@as EsvCharacter]]
 	fassert(character ~= nil, "Failed to get attacker character from (%s)", attacker)
-	local task = Ext.Action.CreateOsirisTask("Attack", attacker) --[[@as EsvOsirisAttackTask]]
+	local task = Ext.Action.CreateOsirisTask("Attack", character) --[[@as EsvOsirisAttackTask]]
 	local t = type(target)
 	if t == "table" then
 		task.TargetPos = target
@@ -53,6 +53,41 @@ function GameHelpers.Action.PlayAnimation(character, animation, opts)
 				callback(e.Objects[1], animation)
 			end, {Once=true, MatchArgs={Event=eventName, ObjectGUID1=character.MyGuid}})
 		end
+		for k,v in pairs(opts) do
+			task[k] = v
+		end
+	end
+	Ext.Action.QueueOsirisTask(task)
+end
+
+---@param caster CharacterParam
+---@param skill FixedString
+---@param target ComponentHandle|ObjectParam|vec3|nil Either a ComponentHandle, object, or position table. Defaults to the caster if not set.
+---@param opts EsvOsirisUseSkillTask|nil Optional parameters to set on the task
+function GameHelpers.Action.UseSkill(caster, skill, target, opts)
+	local character = GameHelpers.GetCharacter(caster) --[[@as EsvCharacter]]
+	fassert(character ~= nil, "Failed to get attacker character from (%s)", caster)
+	local task = Ext.Action.CreateOsirisTask("UseSkill", character) --[[@as EsvOsirisUseSkillTask]]
+	task.Skill = skill
+	task.IgnoreChecks = true
+	task.IgnoreHasSkill = true
+	task.Force = true
+	local t = type(target)
+	if t == "table" then
+		task.TargetPos = target
+	elseif t == "nil" then
+		task.Target = character.Handle
+	else
+		if GameHelpers.IsValidHandle(target) then
+			---@cast target ComponentHandle
+			task.Target = target
+		else
+			local obj = GameHelpers.TryGetObject(target, "EsvCharacter")
+			fassert(obj ~= nil, "Failed to get target object from (%s)", target)
+			task.Target = obj.Handle
+		end
+	end
+	if type(opts) == "table" then
 		for k,v in pairs(opts) do
 			task[k] = v
 		end

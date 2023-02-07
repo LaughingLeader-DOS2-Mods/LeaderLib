@@ -1436,3 +1436,21 @@ Ext.RegisterConsoleCommand("spawncharactertemplate", function (cmd, template)
 		RemoveTemporaryCharacter(character)
 	end)
 end)
+
+Ext.RegisterConsoleCommand("tplevel", function (cmd, region)
+	local triggers = {
+		TUT_Tutorial_A = "fe2995bf-aa16-8ce7-33a2-8cb8cf228152",
+		FJ_FortJoy_Main = "34d67d87-441c-427d-97bb-4cc506b42fe0",
+		LV_HoE_Main = "ce65a666-74e4-4903-bbcf-200251975965",
+		RC_Main = "e30fe0c4-9b40-4040-9670-e8edd53a34ce",
+		CoS_Main = "8c00afb8-43af-4de7-953a-a7456f996a4c",
+		ARX_Main = "fb573f96-d837-0033-4143-3bf31d88ae49",
+		ARX_Endgame = "bd166e2a-7623-490e-94df-78079e7cbacc",
+	}
+	local trigger = triggers[region]
+	if trigger then
+		CharacterTeleportPartiesToTrigger(trigger, "")
+	else
+		fprint(LOGLEVEL.ERROR, "[tplevel] No trigger set for region [%s]", region)
+	end
+end)

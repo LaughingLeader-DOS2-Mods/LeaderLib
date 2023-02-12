@@ -382,7 +382,7 @@ end
 
 ---@param id string Flag id.
 ---@param b boolean Value to compare, i.e. true for "Flag Is Set"
----@param target UUID|nil Optional character UUID to check, for object or user flags.
+---@param target Guid|nil Optional character UUID to check, for object or user flags.
 function SettingsData:FlagEquals(id, b, target)
 	local data = self.Flags[id]
 	if data ~= nil then

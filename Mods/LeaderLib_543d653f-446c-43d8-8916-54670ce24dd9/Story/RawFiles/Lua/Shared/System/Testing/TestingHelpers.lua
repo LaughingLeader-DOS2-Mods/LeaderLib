@@ -17,8 +17,8 @@ if not _ISCLIENT then
 		return "680e6e58-98f4-4684-9a84-d5a190f855d5"
 	end
 
-	---@param character GUID
-	---@param transformTarget GUID
+	---@param character Guid
+	---@param transformTarget Guid
 	---@param equipmentSet string|nil
 	local function SetupCharacter(character, transformTarget, equipmentSet)
 		if equipmentSet then
@@ -63,8 +63,8 @@ if not _ISCLIENT then
 
 	---Create a test character based on the host, and a target dummy.
 	---@param params LeaderLibTestingSystemUtilities.CreateTemporaryCharacterAndDummyParams|nil
-	---@return GUID|GUID[] characters # If the TotalCharacters are 1, this will be the first GUID, instead of a table.
-	---@return GUID|GUID[] dummies # If the TotalDummies are 1, this will be the first GUID, instead of a table.
+	---@return Guid|Guid[] characters # If the TotalCharacters are 1, this will be the first GUID, instead of a table.
+	---@return Guid|Guid[] dummies # If the TotalDummies are 1, this will be the first GUID, instead of a table.
 	---@return function cleanup
 	function Utils.CreateTestCharacters(params)
 		params = params or {}

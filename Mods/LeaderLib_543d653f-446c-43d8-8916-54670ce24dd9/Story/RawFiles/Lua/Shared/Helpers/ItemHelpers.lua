@@ -566,7 +566,7 @@ end
 ---@param character CharacterParam
 ---@param tag string|string[]
 ---@return ItemSlot|nil slot
----@return GUID|nil itemGUID
+---@return Guid|nil itemGUID
 ---@return EsvItem|EclItem|nil item
 function GameHelpers.Item.GetEquippedTaggedItemSlot(character, tag)
     local char = GameHelpers.GetCharacter(character)
@@ -634,7 +634,7 @@ if not _ISCLIENT then
     ---@field Stat StatEntryObject The rune object stat
     ---@field StatID string The rune object stat name
     ---@field Template GameObjectTemplate The object stat's root template
-    ---@field TemplateGUID GUID The object stat's root template GUID
+    ---@field TemplateGUID Guid The object stat's root template GUID
     ---@field BoostStat StatEntryWeapon|StatEntryArmor The active rune boost stat for this item
     ---@field BoostStatID string The active rune boost stat name for this item
     ---@field BoostStatAttribute "RuneEffectWeapon"|"RuneEffectAmulet"|"RuneEffectUpperbody"
@@ -846,7 +846,7 @@ function GameHelpers.Item.ItemIsLocked(item)
 end
 
 ---@deprecated
----@param uuid UUID
+---@param uuid Guid
 ---@return boolean
 function ContainerHasContents(uuid)
     local item = GameHelpers.GetItem(uuid)

@@ -32,7 +32,7 @@
 ---@field Scale number[] Size 3 Vector3-style table.
 ---@field Translate number[] Size 3 Vector3-style table.
 
----@type table<NETID,table<string, ComponentHandle>>
+---@type table<NetId,table<string, ComponentHandle>>
 local ActiveVisuals = {}
 
 ---@param character EclCharacter
@@ -160,7 +160,7 @@ end
 
 ---@class LeaderLibRequestAttachVisualData
 ---@field ID string
----@field Target NETID
+---@field Target NetId
 ---@field Resource string
 ---@field Options ExtenderClientVisualOptions|nil
 ---@field ExtraOptions LeaderLibClientVisualOptions|nil

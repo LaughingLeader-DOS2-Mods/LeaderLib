@@ -56,13 +56,13 @@ end
 ---@field IgnoreObjects boolean
 ---@field AlwaysDamage boolean
 ---@field CanDeflect boolean
----@field SourcePosition number[]|UUID|EsvCharacter|EsvItem
----@field TargetPosition number[]|UUID|EsvCharacter|EsvItem
----@field HitObjectPosition number[]|UUID|EsvCharacter|EsvItem
----@field Caster UUID|EsvCharacter|EsvItem
----@field Source UUID|EsvCharacter|EsvItem
----@field Target UUID|EsvCharacter|EsvItem
----@field HitObject UUID|EsvCharacter|EsvItem
+---@field SourcePosition number[]|Guid|EsvCharacter|EsvItem
+---@field TargetPosition number[]|Guid|EsvCharacter|EsvItem
+---@field HitObjectPosition number[]|Guid|EsvCharacter|EsvItem
+---@field Caster Guid|EsvCharacter|EsvItem
+---@field Source Guid|EsvCharacter|EsvItem
+---@field Target Guid|EsvCharacter|EsvItem
+---@field HitObject Guid|EsvCharacter|EsvItem
 
 ---@class LeaderLibProjectileCreationProperties:BaseLeaderLibProjectileCreationProperties
 ---@field PlayCastEffects boolean|nil
@@ -564,8 +564,8 @@ local LeaderLibZoneCreationPropertiesNames = {
 }
 
 ---@param skillId string Zone or Cone type skill.
----@param source UUID|EsvCharacter|EsvItem
----@param target UUID|number[]|EsvCharacter|EsvItem
+---@param source Guid|EsvCharacter|EsvItem
+---@param target Guid|number[]|EsvCharacter|EsvItem
 ---@param extraParams LeaderLibZoneCreationProperties An optional table of properties to apply on top of the parsed skill properties.
 local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
     local skill = GameHelpers.Ext.CreateSkillTable(skillId)
@@ -795,7 +795,7 @@ end
 
 ---Shoot a zone/cone skill in the direction the source object is looking.
 ---@param skillId string Zone or Cone type skill.
----@param source UUID|EsvCharacter|EsvItem
+---@param source Guid|EsvCharacter|EsvItem
 ---@param extraParams LeaderLibZoneCreationProperties A table of properties to apply on top of the parsed skill properties.
 function GameHelpers.Skill.ShootZoneFromSource(skillId, source, extraParams)
     local dist = extraParams and extraParams.Radius or Ext.StatGetAttribute(skillId, "Range") or 2

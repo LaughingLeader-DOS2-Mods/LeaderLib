@@ -1,7 +1,7 @@
 Ext.RegisterNetListener("LeaderLib_ToggleChainGroup", function(cmd, payload)
 	---@class ToggleChainGroupData
-	---@field Leader UUID
-	---@field Target UUID[]
+	---@field Leader Guid
+	---@field Target Guid[]
 	---@field TotalChained integer
 	---@field TotalUnchained integer
 	local data = Common.JsonParse(payload)

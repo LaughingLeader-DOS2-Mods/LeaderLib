@@ -73,7 +73,7 @@ end
 ---@param uuid string
 ---@param id string
 ---@param b boolean
----@param target GUID|nil
+---@param target Guid|nil
 ---@return boolean
 function SettingsManager.FlagEquals(uuid, id, b, target)
 	local settings = SettingsManager.GetMod(uuid, false, true)

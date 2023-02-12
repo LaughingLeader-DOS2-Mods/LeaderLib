@@ -1,7 +1,7 @@
 ---@diagnostic disable
 local _a = Ext.Stats.AddVoiceMetaData
 
----@param uuid GUID
+---@param uuid Guid
 GameHelpers.VoiceMetaData.Register.ScholarFemale = function(uuid)
 _a(uuid, "h003e5db6g7b77g4e5ega069g7e552686f934", "Localization/English/Soundbanks/vbe402c2af28c4a339256c17a42b23212_h003e5db6g7b77g4e5ega069g7e552686f934.wem", 5.088021)
 _a(uuid, "h004bc87fgf858g4c07gab8eg4ab2c3c0324b", "Localization/English/Soundbanks/vbe402c2af28c4a339256c17a42b23212_h004bc87fgf858g4c07gab8eg4ab2c3c0324b.wem", 4.533333)

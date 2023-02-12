@@ -110,7 +110,7 @@ function BuffStatusPreserver.PreserveAllStatuses(character)
 	end
 end
 
----@param obj UUID
+---@param obj Guid
 ---@param combatId integer
 function BuffStatusPreserver.OnLeftCombat(obj, combatId)
 	if not BuffStatusPreserver.Enabled() then return end
@@ -122,7 +122,7 @@ function BuffStatusPreserver.OnLeftCombat(obj, combatId)
 	end
 end
 
----@param obj UUID
+---@param obj Guid
 ---@param combatId integer
 function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
 	local GUID = GameHelpers.GetUUID(obj)

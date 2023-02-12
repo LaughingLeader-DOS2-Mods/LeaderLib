@@ -470,7 +470,7 @@ end
 ---@field CurrentLookAt number[] The current position of the camera. If you set this together with TargetLookAt, the camera will snap to the new position instantly.
 ---@field TargetLookAt number[] The target position to move the camera to.
 
----@param player NETID
+---@param player NetId
 ---@param opts GameHelpers_Utils_SetPlayerCameraPositionOptions
 local function _TryUpdateCamera(player, opts)
 	local cameraID = nil
@@ -542,11 +542,11 @@ function GameHelpers.Utils.SetPlayerCustomData(player, opts)
 end
 
 ---@class LeaderLib_SetPlayerCameraPosition
----@field NetID NETID
+---@field NetID NetId
 ---@field Opts GameHelpers_Utils_SetPlayerCameraPositionOptions
 
 ---@class LeaderLib_SetPlayerCustomData
----@field NetID NETID
+---@field NetID NetId
 ---@field Data EocPlayerCustomData
 
 if _ISCLIENT then

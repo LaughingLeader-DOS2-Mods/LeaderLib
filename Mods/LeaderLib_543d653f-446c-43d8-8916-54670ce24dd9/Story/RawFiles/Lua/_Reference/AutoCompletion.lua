@@ -59,3 +59,24 @@ Mods.LeaderLib = {
 ---@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter):string
 
 ---@alias OriginsCampaignRegion "TUT_Tutorial_A"|"FJ_FortJoy_Main"|"LV_HoE_Main"|"RC_Main"|"CoS_Main"|"ARX_Main"|"ARX_Endgame"
+
+---@alias Guid string
+---@alias NetId integer
+
+--Legacy support
+---@alias GUID string
+---@alias NETID integer
+
+---A parameter type that can be either item userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetItem.
+---@see GameHelpers.GetItem
+---@alias ItemParam EsvItem|EclItem|Guid|NetId|ComponentHandle
+
+---A parameter type that can be either character userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetCharacter.
+---@see GameHelpers.GetCharacter
+---@alias CharacterParam EsvCharacter|EclCharacter|Guid|NetId|ComponentHandle
+---@alias ObjectParam EsvCharacter|EclCharacter|EsvItem|EclItem|Guid|NetId|ComponentHandle
+---@alias ServerObject EsvCharacter|EsvItem
+---@alias ClientObject EclCharacter|EclItem
+
+---@alias ServerCharacterParam EsvCharacter|Guid|NetId|ComponentHandle
+---@alias ClientCharacterParam EclCharacter|Guid|NetId|ComponentHandle

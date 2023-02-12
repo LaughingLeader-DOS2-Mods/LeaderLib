@@ -28,7 +28,7 @@ if not _ISCLIENT then
 	end
 
 	--- Shortcut for calling Ext.PostMessageToUser for whatever UserID is associated with the UUID/EsvCharacter etc. If no UserID is found, the message is skipped.
-	--- @param user UUID|EsvCharacter|integer The UUID, character, or UserID of the client to send the message to.
+	--- @param user Guid|EsvCharacter|integer The UUID, character, or UserID of the client to send the message to.
 	--- @param channel string The channel ID that will receive the message.
 	--- @param payload SerializableValue|table|nil Message payload. If this is a non-string, it'll automatically be converted to a string.
 	--- @return boolean

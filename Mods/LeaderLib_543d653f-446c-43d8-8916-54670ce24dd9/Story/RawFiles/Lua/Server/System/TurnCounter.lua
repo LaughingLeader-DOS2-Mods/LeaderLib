@@ -29,7 +29,7 @@ TurnCounter._Internal = _INTERNAL
 ---@field ClearOnDeath boolean If the Target is an object, this turn counter will be cleared if they die.
 ---@field Position number[]
 ---@field Region string The level this turn counter was created in.
----@field Target GUID An optional target for this counter. If set then only their turn ending will count the timer down.
+---@field Target Guid An optional target for this counter. If set then only their turn ending will count the timer down.
 ---@field Infinite boolean If true, this counter will count until stopped, or if the counter is cleared (target death if ClearOnDeath is set). 
 ---@field Mode TURNCOUNTER_MODE
 ---@field Data table Optional data to store in PersistentVars, such as a UUID.

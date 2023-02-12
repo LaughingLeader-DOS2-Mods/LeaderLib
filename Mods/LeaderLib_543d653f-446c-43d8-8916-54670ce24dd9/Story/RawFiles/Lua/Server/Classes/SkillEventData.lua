@@ -1,8 +1,8 @@
 ---Data passed to callbacks for the various functions in SkillListeners.lua
 ---@class SkillEventData
----@field Source GUID|nil
+---@field Source Guid|nil
 ---@field SourceObject EsvCharacter|EsvItem|nil
----@field SourceItemGUID GUID|nil Possible item GUID that this skill is originating from, such as a scroll or grenade.
+---@field SourceItemGUID Guid|nil Possible item GUID that this skill is originating from, such as a scroll or grenade.
 ---@field SkillData StatEntrySkillData
 local SkillEventData = {
 	Type = "SkillEventData",

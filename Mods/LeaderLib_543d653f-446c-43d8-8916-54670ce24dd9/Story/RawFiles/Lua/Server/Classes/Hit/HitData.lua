@@ -178,7 +178,7 @@ function HitData:MultiplyDamage(multiplier, aggregate)
 end
 
 ---Redirects damage to another target.
----@param target UUID|EsvCharacter|EsvItem
+---@param target Guid|EsvCharacter|EsvItem
 ---@param multiplier number Multiplier value to reduce damage by (0.01 - 1.0), i.e 0.15 would multiply damage by 0.85 and deal 0.15 of the original damage to the target.
 ---@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
 ---@return StatsDamagePairList redirectedDamage

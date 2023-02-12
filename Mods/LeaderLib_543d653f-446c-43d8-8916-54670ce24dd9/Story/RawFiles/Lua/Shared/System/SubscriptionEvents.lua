@@ -12,7 +12,7 @@ Ext.Require("Shared/Classes/SubscribableEventArgs.lua")
 
 ---@class CharacterResurrectedEventArgs
 ---@field Character EsvCharacter|EclCharacter
----@field CharacterGUID GUID
+---@field CharacterGUID Guid
 ---@field IsPlayer boolean
 
 ---Called when a character is resurrected, which is after the RESURRECTED status is removed.  
@@ -25,7 +25,7 @@ Events.CharacterResurrected = Classes.SubscribableEvent:Create("CharacterResurre
 
 ---@class CharacterLeveledUpEventArgs
 ---@field Character EsvCharacter|EclCharacter
----@field CharacterGUID GUID
+---@field CharacterGUID Guid
 ---@field Level integer
 ---@field IsPlayer boolean
 
@@ -37,9 +37,9 @@ Events.CharacterLeveledUp = Classes.SubscribableEvent:Create("CharacterLeveledUp
 
 ---@class OnBookReadEventArgs
 ---@field Character EsvCharacter|EclCharacter
----@field CharacterGUID GUID
+---@field CharacterGUID Guid
 ---@field Item EsvItem|EclItem
----@field ItemGUID GUID
+---@field ItemGUID Guid
 ---@field Template string The root template GUID
 ---@field ID string The book ID or recipe ID
 ---@field BookType "Book"|"Recipe"|"Skillbook"
@@ -88,9 +88,9 @@ Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged", {ArgsKe
 
 ---@class SummonChangedEventArgs
 ---@field Summon EsvCharacter|EsvItem|nil
----@field SummonGUID GUID
+---@field SummonGUID Guid
 ---@field Owner EsvCharacter|nil
----@field OwnerGUID GUID|nil
+---@field OwnerGUID Guid|nil
 ---@field IsDying boolean
 ---@field IsItem boolean
 
@@ -142,7 +142,7 @@ Events.GameSettingsChanged = Classes.SubscribableEvent:Create("GameSettingsChang
 
 ---@class TurnDelayedEventArgs
 ---@field Character EsvCharacter|EclCharacter
----@field CharacterGUID GUID The character MyGuid, for easier matching.
+---@field CharacterGUID Guid The character MyGuid, for easier matching.
 
 ---Called when a character's turn is delayed in combat (clicking the "Shield" icon).  
 ---🔨🔧**Server/Client**🔧🔨  
@@ -271,10 +271,10 @@ if not _ISCLIENT then
 
 	---@class OnPrepareHitEventArgs
 	---@field Target EsvCharacter|EsvItem
-	---@field TargetGUID GUID
+	---@field TargetGUID Guid
 	---@field Source EsvCharacter|EsvItem|nil
-	---@field SourceGUID GUID|NULL_UUID
-	---@field Damage integer
+	---@field SourceGUID Guid|NULL_UUID
+	---@field Damage integer The initial damage amount, before any modifications. Check `e.Data.TotalDamageDone` for an updated damage value.
 	---@field Handle integer
 	---@field Data HitPrepareData
 	
@@ -310,9 +310,9 @@ if not _ISCLIENT then
 
 	---@class OnBasicAttackStartEventArgs
 	---@field Attacker EsvCharacter
-	---@field AttackerGUID GUID
+	---@field AttackerGUID Guid
 	---@field Target EsvCharacter|EsvItem|number[]
-	---@field TargetGUID GUID|nil
+	---@field TargetGUID Guid|nil
 	---@field TargetIsObject boolean
 	
 	---Called via AttackManager, when a character starts a basic attack.  
@@ -327,9 +327,9 @@ if not _ISCLIENT then
 
 	---@class OnWeaponHitEventArgs
 	---@field Target EsvCharacter|EsvItem|number[]
-	---@field TargetGUID GUID
+	---@field TargetGUID Guid
 	---@field Attacker EsvCharacter|EsvItem|nil
-	---@field AttackerGUID GUID
+	---@field AttackerGUID Guid
 	---@field Data HitData|BasicAttackPositionDamageData
 	---@field TargetIsObject boolean
 	---@field Skill string|nil Separate from SkillData, so it can be used more easily with MatchArgs.
@@ -508,7 +508,7 @@ if not _ISCLIENT then
 	---@class OnTurnEndedEventArgs
 	---@field ID string A turn counter ID tracking this character, if any.
 	---@field Object ObjectParam
-	---@field ObjectGUID GUID
+	---@field ObjectGUID Guid
 	
 	---Called when an object's turn ends in combat, or they leave combat.  
 	---If a TurnCounter is associated with this object, that ID is specified.  
@@ -521,9 +521,9 @@ if not _ISCLIENT then
 	---@class ForceMoveFinishedEventArgs
 	---@field ID string A way to identify this action, if any.
 	---@field Target EsvCharacter
-	---@field TargetGUID GUID
+	---@field TargetGUID Guid
 	---@field Source EsvCharacter|EsvItem|nil
-	---@field SourceGUID GUID|nil
+	---@field SourceGUID Guid|nil
 	---@field Distance number
 	---@field StartingPosition number[]
 	---@field SkillData StatEntrySkillData|nil
@@ -553,8 +553,8 @@ if not _ISCLIENT then
 	---@field Event string
 	---@field EventType ObjectEventEventType
 	---@field Objects ObjectParam[]
-	---@field ObjectGUID1 GUID
-	---@field ObjectGUID2 GUID|nil
+	---@field ObjectGUID1 Guid
+	---@field ObjectGUID2 Guid|nil
 	
 	---Called when a StoryEvent, CharacterItemEvent, or CharacterCharacterEvent occurs.  
 	---🔨**Server-Only**🔨  
@@ -565,7 +565,7 @@ if not _ISCLIENT then
 
 	---@class CharacterBasePointsChangedEventArgs
 	---@field Character EsvCharacter
-	---@field CharacterGUID GUID 
+	---@field CharacterGUID Guid 
 	---@field Stat string
 	---@field StatType string
 	---@field Last integer
@@ -580,7 +580,7 @@ if not _ISCLIENT then
 
 	---@class OnSkillStateBaseEventArgs
 	---@field Character EsvCharacter
-	---@field CharacterGUID GUID
+	---@field CharacterGUID Guid
 	---@field State SKILL_STATE
 	---@field Skill string
 	---@field Ability SkillAbility
@@ -751,7 +751,7 @@ if not _ISCLIENT then
 	---@class SyncDataEventArgs
 	---@field UserID integer
 	---@field Profile string
-	---@field UUID UUID
+	---@field UUID Guid
 	---@field IsHost boolean
 	
 	---Called via SharedData, when it syncs data for a specific user.
@@ -772,7 +772,7 @@ if not _ISCLIENT then
 
 	---@class CharacterDiedEventArgs
 	---@field Character EsvCharacter
-	---@field CharacterGUID GUID
+	---@field CharacterGUID Guid
 	---@field State CharacterDiedEventStateID
 	---@field StateIndex integer
 	---@field IsPlayer boolean
@@ -786,10 +786,10 @@ if not _ISCLIENT then
 
 	---@class CharacterUsedItemEventArgs
 	---@field Character EsvCharacter
-	---@field CharacterGUID GUID
+	---@field CharacterGUID Guid
 	---@field Item EsvItem
-	---@field ItemGUID GUID
-	---@field Template GUID
+	---@field ItemGUID Guid
+	---@field Template Guid
 	---@field Success boolean Can be false if this is raised by a CharacterUsedItemFailed event.
 
 	---Called when a character uses an item.  
@@ -799,13 +799,13 @@ if not _ISCLIENT then
 
 	---@class RuneChangedEventArgs
 	---@field Item EsvItem
-	---@field ItemGUID GUID
+	---@field ItemGUID Guid
 	---@field Character EsvCharacter
-	---@field CharacterGUID GUID
+	---@field CharacterGUID Guid
 	---@field RuneSlot integer
 	---@field Inserted boolean
 	---@field Rune EsvItem|nil Only set if the rune was removed, otherwise the rune object does not exist.
-	---@field RuneTemplate GUID The rune object stat root template.
+	---@field RuneTemplate Guid The rune object stat root template.
 	---@field BoostStat StatEntryWeapon|StatEntryArmor The active rune boost stat for this item
     ---@field BoostStatID string The active rune boost stat name for this item
     ---@field BoostStatAttribute "RuneEffectWeapon"|"RuneEffectAmulet"|"RuneEffectUpperbody"
@@ -824,7 +824,7 @@ if not _ISCLIENT then
 
 	---@class RebuildVisualsEventArgs
 	---@field Character EsvCharacter
-	---@field CharacterGUID GUID
+	---@field CharacterGUID Guid
 	---@field CharacterVisual FixedString The character's model visual resource GUID.
 	---@field Cause RebuildVisualsEventCause
 	---@field CauseIndex RebuildVisualsEventCauseIndex
@@ -851,7 +851,7 @@ else
 
 	---@class ClientCharacterChangedEventArgs
 	---@field Character EclCharacter
-	---@field CharacterGUID GUID
+	---@field CharacterGUID Guid
 	---@field CharacterData ClientCharacterData
 	---@field UserID integer
 	---@field Profile string
@@ -868,7 +868,7 @@ else
 
 	---@class CharacterSheetPointChangedEventArgs
 	---@field Character EclCharacter
-	---@field CharacterGUID GUID
+	---@field CharacterGUID Guid
 	---@field Stat string
 	---@field StatType string
 	

@@ -383,7 +383,7 @@ if _ISCLIENT then
 
 else
 	Ext.RegisterNetListener("LeaderLib_Trade_OpenContainer", function (channel, payload, user)
-		---@type {Item:NETID, Player:NETID}
+		---@type {Item:NetId, Player:NetId}
 		local data = Common.JsonParse(payload)
 		if data then
 			local item = GameHelpers.GetItem(data.Item)

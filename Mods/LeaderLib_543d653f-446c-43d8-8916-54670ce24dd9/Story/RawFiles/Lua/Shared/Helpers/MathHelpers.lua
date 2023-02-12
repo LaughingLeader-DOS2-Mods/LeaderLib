@@ -48,7 +48,7 @@ function GameHelpers.Math.GetPosition(obj, unpackResult, fallback)
 		else
 			return _ConditionalUnpack(obj, unpackResult)
 		end
-	elseif t == "string" or t == "number" or GameHelpers.IsValidHandle(obj) then --[[@cast obj GUID|NETID|ComponentHandle]]
+	elseif t == "string" or t == "number" or GameHelpers.IsValidHandle(obj) then --[[@cast obj Guid|NetId|ComponentHandle]]
 		local object = GameHelpers.TryGetObject(obj)
 		if object then
 			t = "userdata"

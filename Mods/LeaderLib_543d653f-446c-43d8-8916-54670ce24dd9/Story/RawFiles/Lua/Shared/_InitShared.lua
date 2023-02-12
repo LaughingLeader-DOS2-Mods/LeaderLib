@@ -121,7 +121,7 @@ Vars = {
 	},
 	---Temporary list of zone skills to listen for during OnHit, to then apply SkillProperties.
 	---@see GameHelpers.Skill.ShootZoneAt
-	---@type table<UUID,string>
+	---@type table<Guid,string>
 	ApplyZoneSkillProperties = {},
 	Commands = {
 		CooldownsDisabled = false,
@@ -133,7 +133,7 @@ Vars = {
 	},
 	LeaderDebugMode = false,
 	---The last GUID of a context menu object, in developer mode.
-	---@type UUID|nil
+	---@type Guid|nil
 	LastContextTarget = nil,
 	Print = {
 		HitPrepare = false,

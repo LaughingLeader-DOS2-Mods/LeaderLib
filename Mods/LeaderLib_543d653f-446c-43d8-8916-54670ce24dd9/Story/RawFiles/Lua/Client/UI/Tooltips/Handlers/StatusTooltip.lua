@@ -4,10 +4,10 @@ local function _AlphabeticalCaseInsensitiveLabelSort(a,b)
 	return string.lower(a.Label) < string.lower(b.Label)
 end
 
----@type table<NETID, table<string, boolean>>
+---@type table<NetId, table<string, boolean>>
 local _PermanentStatuses = {}
 
----@param netid NETID
+---@param netid NetId
 ---@param status string
 ---@param enabled boolean
 local function UpdatePermanentStatus(netid, status, enabled)

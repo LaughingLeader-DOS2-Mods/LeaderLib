@@ -1,7 +1,7 @@
 ---@diagnostic disable
 local _a = Ext.Stats.AddVoiceMetaData
 
----@param uuid GUID
+---@param uuid Guid
 GameHelpers.VoiceMetaData.Register.ScholarMale = function(uuid)
 --FIX registering a line wipes out all other registered lines in v56-v57
 --[[ _a(uuid, "h0002c88eg09a6g4f51g9976g8d7091681e05", "Localization/English/Soundbanks/v41a0698578514c298a78398ccb313f39_h0002c88eg09a6g4f51g9976g8d7091681e05.wem", 0.875)

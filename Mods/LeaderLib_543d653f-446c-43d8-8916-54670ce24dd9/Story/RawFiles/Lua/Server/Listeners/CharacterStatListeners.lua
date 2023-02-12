@@ -1,9 +1,9 @@
----@type table<UUID, LeaderLibCharacterStatListenersPlayerData>
+---@type table<Guid, LeaderLibCharacterStatListenersPlayerData>
 local statChanges = {}
 
 ---@alias LeaderLibCharacterStatListenersPlayerData {Attributes:table<string,integer>, Abilities:table<string,integer>, Talents:table<string,boolean>}
 
----@param uuid UUID
+---@param uuid Guid
 local function CreatePlayerData(uuid, player)
 	--local player = player or GameHelpers.GetCharacter(uuid)
 	local playerData = {
@@ -45,7 +45,7 @@ local function FireListenerEvents(uuid, stat, lastVal, nextVal, statType)
 	})
 end
 
----@param uuid UUID
+---@param uuid Guid
 ---@param playerData LeaderLibCharacterStatListenersPlayerData
 ---@param stat string
 ---@param statType string|"Attribute"|"Ability"|"Talent"

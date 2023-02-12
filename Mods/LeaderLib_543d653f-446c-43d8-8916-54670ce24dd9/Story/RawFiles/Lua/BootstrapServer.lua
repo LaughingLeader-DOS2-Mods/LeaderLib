@@ -55,23 +55,6 @@ function RegisterProtectedExtenderListener(event, listener, anyLevelType)
 	end)
 end
 
----@alias UUID string
----@alias NETID integer
-
----A parameter type that can be either item userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetItem.
----@see GameHelpers.GetItem
----@alias ItemParam EsvItem|EclItem|GUID|NETID|ComponentHandle
-
----A parameter type that can be either character userdata, or a ID to ultimately retrieve that userdata via GameHelpers.GetCharacter.
----@see GameHelpers.GetCharacter
----@alias CharacterParam EsvCharacter|EclCharacter|GUID|NETID|ComponentHandle
----@alias ObjectParam EsvCharacter|EclCharacter|EsvItem|EclItem|GUID|NETID|ComponentHandle
----@alias ServerObject EsvCharacter|EsvItem
----@alias ClientObject EclCharacter|EclItem
-
----@alias ServerCharacterParam EsvCharacter|GUID|NETID|ComponentHandle
----@alias ClientCharacterParam EclCharacter|GUID|NETID|ComponentHandle
-
 ---@class LeaderLibPersistentVars
 local defaultPersistentVars = {
 	---Associates a unique timer name (uuid-concatenated) with a general timer name.
@@ -81,12 +64,12 @@ local defaultPersistentVars = {
 	TimerData = {},
 	StatusSource = {},
 	---GUID->Statuses->ID->Source|False(for no source)
-	---@type table<GUID,table<string,GUID|boolean>>
+	---@type table<Guid,table<string,Guid|boolean>>
 	ActivePermanentStatuses = {},
 	ForceMoveData = {},
 	KnockupData = {
 		Active = false,
-		---@type {ID:string, GUID:GUID, Start:number[], End:number[], Source:GUID, Skill:string, Falling:boolean}[]
+		---@type {ID:string, GUID:Guid, Start:number[], End:number[], Source:Guid, Skill:string, Falling:boolean}[]
 		ObjectData = {}
 	},
 	SceneData = {
@@ -96,41 +79,41 @@ local defaultPersistentVars = {
 	SkillData = {},
 	SkillPropertiesAction = {
 		---Stores a GUID and AP to restore.
-		---@type table<GUID,integer>
+		---@type table<Guid,integer>
 		MoveToTarget = {}
 	},
-	---@type table<GUID,string>
+	---@type table<Guid,string>
 	IsPreparingSkill = {},
-	---@type table<GUID,TurnCounterData>
+	---@type table<Guid,TurnCounterData>
 	TurnCounterData = {},
-	---@type table<GUID,table<string,boolean>>
+	---@type table<Guid,table<string,boolean>>
 	WaitForTurnEnding = {},
-	---@type table<GUID, number>
+	---@type table<Guid, number>
 	ScaleOverride = {},
-	---@type table<GUID,GUID[]>
+	---@type table<Guid,Guid[]>
 	Summons = {},
-	---@type table<GUID,table<string,number>>
+	---@type table<Guid,table<string,number>>
 	BuffStatuses = {},
 
-	---@type table<GUID,LeaderLibObjectLoopEffectSaveData[]>
+	---@type table<Guid,LeaderLibObjectLoopEffectSaveData[]>
 	ObjectLoopEffects = {},
 
 	---@type table<string,LeaderLibWorldLoopEffectSaveData[]>
 	WorldLoopEffects = {},
 
-	---@type table<GUID,string>
+	---@type table<Guid,string>
 	LastUsedHealingSkill = {},
 
 	---@class LeaderLibNextGenericHealStatusSourceData
 	---@field StatusId string
-	---@field Source GUID
+	---@field Source Guid
 	---@field Time number
 
-	---@type table<GUID,LeaderLibNextGenericHealStatusSourceData>
+	---@type table<Guid,LeaderLibNextGenericHealStatusSourceData>
 	NextGenericHealStatusSource = {},
 
 	---Used to avoid exploding projectiles caused from applying BonusWeapon properties triggering further BonusWeapon hits, which makes for endless loops.
-	---@type table<GUID,boolean|string>
+	---@type table<Guid,boolean|string>
 	JustAppliedBonusWeaponStatuses = {},
 
 	BasicAttackData = {},
@@ -148,7 +131,7 @@ local defaultPersistentVars = {
 	---@field Persistence LeaderLibClientVisualPersistenceOptions|nil
 	---@field RestrictToVisual FixedString|nil If set, this visual will only be recreated if character.RootTemplate.VisualTemplate matches this value.
 
-	---@type table<GUID,LeaderLibPersistentVisualsEntry[]>
+	---@type table<Guid,LeaderLibPersistentVisualsEntry[]>
 	PersistentVisuals = {},
 	Debug = {},
 }

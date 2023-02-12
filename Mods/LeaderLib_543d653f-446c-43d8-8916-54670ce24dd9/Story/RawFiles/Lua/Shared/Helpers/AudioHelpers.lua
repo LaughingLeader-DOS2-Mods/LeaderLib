@@ -8,7 +8,7 @@ local _type = type
 ---@alias SoundObjectID "Global"|"Music"|"Ambient"|"HUD"|"GM"|"Player1"|"Player2"|"Player3"|"Player4"
 
 ---@class LeaderLib_GameHelpers_Audio_PlaySound
----@field Target NETID|string
+---@field Target NetId|string
 ---@field Event string
 ---@field Position number
 ---@field TargetIsNetID boolean
@@ -80,7 +80,7 @@ function GameHelpers.Audio.PlaySoundForAllPlayers(sound, soundPosition, soundObj
 end
 
 ---@class LeaderLib_GameHelpers_Audio_PlayExternalSound
----@field Target NETID|string
+---@field Target NetId|string
 ---@field Event string
 ---@field Path string
 ---@field CodecId integer|nil

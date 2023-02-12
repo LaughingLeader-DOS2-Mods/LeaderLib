@@ -715,7 +715,7 @@ local _defaultGetNearbyObjectsOptions = {
 	Sort = "None"
 }
 
----@param distances table<UUID,number>
+---@param distances table<Guid,number>
 ---@return fun(a:ServerObject, b:ServerObject):boolean
 local function _SortDistance(distances)
 	---@param a ServerObject

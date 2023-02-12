@@ -33,7 +33,7 @@ local ObjectHandleEffectParams = {
 }
 
 ---@class EffectManagerEsvEffect:EffectManagerEsvEffectParams
----@field NetID NETID
+---@field NetID NetId
 ---@field Delete fun(self:EffectManagerEsvEffect)
 ---@field Component {Handle:ComponentHandle, TypeId:integer}
 
@@ -398,7 +398,7 @@ local function _TargetsMatch(effect, uuid, uuidType)
 end
 
 ---@param fx string|string[]|nil Optional effect ID to filter effects for.
----@param target UUID|number[]|NETID|EsvCharacter|EsvItem Optional target to filter effects for.
+---@param target Guid|number[]|NetId|EsvCharacter|EsvItem Optional target to filter effects for.
 ---@param distanceThreshold number|nil The maximum distance between an effect position and a target position before it's considered a match. Defaults to 0.1
 ---@return EffectManagerEsvEffect[]
 function EffectManager.GetAllEffects(fx, target, distanceThreshold)

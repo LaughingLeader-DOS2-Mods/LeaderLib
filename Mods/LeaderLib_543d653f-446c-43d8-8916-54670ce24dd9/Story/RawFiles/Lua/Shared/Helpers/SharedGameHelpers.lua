@@ -210,11 +210,11 @@ function GameHelpers.GetObjectFromHandle(handle, typeName)
 end
 
 
----@overload fun(object:ObjectParam):UUID|nil
+---@overload fun(object:ObjectParam):Guid|nil
 ---Tries to get a string UUID from whatever variable type object is.
 ---@param object ObjectParam
 ---@param returnNullId boolean If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
----@return UUID|nil
+---@return Guid|nil
 function GameHelpers.GetUUID(object, returnNullId)
 	local t = _type(object)
 	if t == "userdata" then
@@ -242,7 +242,7 @@ end
 
 ---Tries to get a NetID from whatever variable type object is.
 ---@param object ObjectParam
----@return NETID|nil
+---@return NetId|nil
 function GameHelpers.GetNetID(object)
 	local t = _type(object)
 	if t == "userdata" then
@@ -267,7 +267,7 @@ end
 
 ---Tries to get a `UUID` on the server side or `NetID` on the client side.
 ---@param object ObjectParam
----@return UUID|NETID|nil
+---@return Guid|NetId|nil
 function GameHelpers.GetObjectID(object)
 	local t = _type(object)
 	if t == "userdata" then
@@ -303,7 +303,7 @@ end
 local _UNSET_USERID = -65536
 
 ---Get a character's user id, if any.
----@param obj UUID|EsvCharacter|EclCharacter
+---@param obj Guid|EsvCharacter|EclCharacter
 ---@return integer|nil
 function GameHelpers.GetUserID(obj)
 	local t = _type(obj)
@@ -384,7 +384,7 @@ function GameHelpers.StatItemHasTag(statItem, tag)
 	return false
 end
 
----@param item EsvItem|EclItem|UUID
+---@param item EsvItem|EclItem|Guid
 ---@param tag string|string[]
 function GameHelpers.ItemHasTag(item, tag)
 	local t = _type(tag)
@@ -670,7 +670,7 @@ local function _GetTemplateID(obj)
 	return nil
 end
 
----@overload fun(obj:ObjectParam):GUID|nil
+---@overload fun(obj:ObjectParam):Guid|nil
 ---Get an object's root template UUID.
 ---@param obj ObjectParam
 ---@param asGameObjectTemplate boolean Returns a GameObjectTemplate if true.
@@ -1015,7 +1015,7 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams)
 	return nil
 end
 
----@param guid GUID The mod GUID.
+---@param guid Guid The mod GUID.
 ---@param stripFont boolean|nil Strip all font tags.
 ---@return string name
 function GameHelpers.GetModName(guid, stripFont)
@@ -1030,7 +1030,7 @@ function GameHelpers.GetModName(guid, stripFont)
 	return ""
 end
 
----@param guid GUID The mod GUID.
+---@param guid Guid The mod GUID.
 ---@param stripFont boolean|nil Strip all font tags.
 ---@return string description
 function GameHelpers.GetModDescription(guid, stripFont)
@@ -1045,7 +1045,7 @@ function GameHelpers.GetModDescription(guid, stripFont)
 	return ""
 end
 
----@param guid GUID The mod GUID.
+---@param guid Guid The mod GUID.
 ---@param asSingleInteger boolean|nil Return the combined version integer.
 ---@return string description
 function GameHelpers.GetModVersion(guid, asSingleInteger)

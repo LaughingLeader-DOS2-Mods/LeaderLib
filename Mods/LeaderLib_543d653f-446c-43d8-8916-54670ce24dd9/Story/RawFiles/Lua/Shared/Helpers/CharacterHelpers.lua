@@ -1360,3 +1360,96 @@ function GameHelpers.Character.IsActiveTurn(character)
 	end
 	return false
 end
+
+---@param guid GUID
+---@return string
+local function _GetInPartyDialog(guid)
+	Osi.QRY_GLO_PartyMembers_GetInPartyDialog(guid)
+	local db = Osi.DB_GLO_PartyMembers_InPartyDialog:Get(guid, nil)
+	if db and db[1] then
+		local _,dialog = table.unpack(db[1])
+		if not StringHelpers.IsNullOrEmpty(dialog) then
+			return dialog
+		end
+	end
+	return "LeaderLib_Debug_RecruitCharacter"
+end
+
+---@param guid GUID
+---@return string
+local function _GetDefaultFaction(guid)
+	local db = Osi.DB_GLO_PartyMembers_DefaultFaction:Get(guid, nil)
+	if db and db[1] then
+		local _,faction = table.unpack(db[1])
+		if not StringHelpers.IsNullOrEmpty(faction) then
+			return faction
+		end
+	end
+	return "Hero Player20"
+end
+
+---@class GameHelpers_Character_MakePlayerOptions
+---@field SkipPartyCheck boolean Skip the party full/solo proc call.
+---@field SkipAssigningFaction boolean Skip assigning the player's faction to a player-related alignment.
+
+---Turn a character into a player.
+---🔨**Server-Only**🔨  
+---@param character CharacterParam
+---@param recruitingPlayer CharacterParam
+---@param opts GameHelpers_Character_MakePlayerOptions
+---@return boolean success
+function _TryMakePlayer(character, recruitingPlayer, opts)
+	assert(_ISCLIENT == false, "[GameHelpers.Character.MakePlayer] can only be called from the server side!")
+	local target = GameHelpers.GetCharacter(character, "EsvCharacter")
+	if recruitingPlayer == nil then
+		recruitingPlayer = StringHelpers.GetUUID(CharacterGetHostCharacter())
+	end
+	local player = GameHelpers.GetCharacter(recruitingPlayer, "EsvCharacter")
+	assert(target ~= nil,  string.format("Failed to get character from parameter (%s)", character))
+	assert(player ~= nil,  string.format("Failed to get player from parameter (%s)", recruitingPlayer))
+	local targetGUID = target.MyGuid
+	local playerGUID = player.MyGuid
+	CharacterRecruitCharacter(targetGUID, playerGUID)
+	Osi.QRY_GLO_PartyMembers_GetInPartyDialogReset(targetGUID)
+	Osi.ProcCharacterDisableAllCrimes(targetGUID)
+	Osi.ProcAssignCharacterToPlayer(targetGUID,playerGUID)
+	Osi.ProcRegisterPlayerTriggers(targetGUID)
+	local dialog = _GetInPartyDialog(targetGUID)
+	Osi.PROC_GLO_PartyMembers_SetInpartyDialog(targetGUID, dialog)
+	if not opts.SkipAssigningFaction then
+		local faction = _GetDefaultFaction(targetGUID)
+		SetFaction(targetGUID, faction)
+		Osi.DB_GLO_PartyMembers_DefaultFaction:Delete(targetGUID, nil)
+	end
+	Osi.DB_IsPlayer(targetGUID)
+	CharacterAttachToGroup(targetGUID,playerGUID)
+	if not opts.SkipPartyCheck then
+		Osi.Proc_CheckPartyFull()
+	end
+	Osi.Proc_CheckFirstTimeRecruited(targetGUID)
+	Osi.PROC_GLO_PartyMembers_RecruiteeAvatarBond_IfDifferent(targetGUID,playerGUID)
+	Osi.Proc_BondedAvatarTutorial(playerGUID)
+	CharacterSetCorpseLootable(targetGUID, 0)
+	Osi.PROC_GLO_PartyMembers_AddHook(targetGUID,playerGUID)
+	return true
+end
+
+---Turn a character into a player.
+---🔨**Server-Only**🔨  
+---@param character CharacterParam
+---@param recruitingPlayer CharacterParam
+---@param opts GameHelpers_Character_MakePlayerOptions|nil
+---@return boolean success
+function GameHelpers.Character.MakePlayer(character, recruitingPlayer, opts)
+	local b,err = xpcall(_TryMakePlayer, debug.traceback, character, recruitingPlayer, opts or {})
+	if not b then
+		if not _ISCLIENT then
+			local guid = GameHelpers.GetUUID(character)
+			if guid then
+				Osi.PROC_GLO_PartyMembers_Remove(guid, 1)
+			end
+		end
+		error(err, 2)
+	end
+	return true
+end

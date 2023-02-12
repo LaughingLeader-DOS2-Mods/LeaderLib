@@ -224,10 +224,12 @@ function GameHelpers.DB.Flatten(databaseTable)
 	return data
 end
 
+---@overload fun(name:string, arity:integer):table<integer, table<integer, OsirisValue>>
 ---@param name string The database name.
----@param arity integer|nil The number of parameters for this DB, or nil to try and auto-detect it.
+---@param arity integer The number of parameters for this DB, or nil to try and auto-detect it.
 ---@param index integer|nil The index to return, if any. Optional.
----@param unpack boolean|nil If true, table.unpack is called on the result when returning the data.
+---@param unpack boolean If true, table.unpack is called on the result when returning the data.
+---@return OsirisValue ... 
 function GameHelpers.DB.Get(name, arity, index, unpack)
 	local b,result = xpcall(function()
 		local db = Osi[name]:Get(GetArity(arity))

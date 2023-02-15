@@ -35,10 +35,22 @@
 ---@type table<NetId,table<string, ComponentHandle>>
 local ActiveVisuals = {}
 
+local _INTERNAL = {}
+local _CLIENT = {}
+
+---A collection of helpers used to create client-side visuals.  
+---🔧**Client-Only**🔧  
+---@class LeaderLibVisualManagerClientFunctions
+local _CLIENT = {
+	_Internal = _INTERNAL
+}
+
+VisualManager.Client = _CLIENT
+
 ---@param character EclCharacter
 ---@param visualResource string
 ---@return EclLuaVisualClientMultiVisual
-function VisualManager.GetVisualHandler(character, visualResource)
+function _INTERNAL.GetVisualHandler(character, visualResource)
 	local characterData = ActiveVisuals[character.NetID]
 	if characterData then
 		local handle = characterData[visualResource]
@@ -60,7 +72,7 @@ end
 ---@param character EclCharacter
 ---@param visualResource string
 ---@param handler EclLuaVisualClientMultiVisual
-function VisualManager.StoreVisualHandler(character, visualResource, handler)
+function _INTERNAL.StoreVisualHandler(character, visualResource, handler)
 	if GameHelpers.IsValidHandle(handler.Handle) then
 		if ActiveVisuals[character.NetID] == nil then
 			ActiveVisuals[character.NetID] = {}
@@ -69,11 +81,12 @@ function VisualManager.StoreVisualHandler(character, visualResource, handler)
 	end
 end
 
+---🔧**Client-Only**🔧   
 ---@param character EclCharacter
 ---@param visualResourceOrID string
 ---@return boolean
-function VisualManager.DeleteVisual(character, visualResourceOrID)
-	local handler = VisualManager.GetVisualHandler(character, visualResourceOrID)
+function _CLIENT.DeleteVisual(character, visualResourceOrID)
+	local handler = _INTERNAL.GetVisualHandler(character, visualResourceOrID)
 	if handler then
 		handler:Delete()
 		ActiveVisuals[character.NetID][visualResourceOrID] = nil
@@ -91,7 +104,7 @@ end
 ---@param extraOptions LeaderLibClientVisualOptions|nil
 ---@param id string|nil
 ---@return Visual
-function VisualManager.AttachVisual(character, visualResource, options, extraOptions, id)
+function _CLIENT.AttachVisual(character, visualResource, options, extraOptions, id)
 	options = options or {}
 	character = GameHelpers.GetCharacter(character)
 	if not character then
@@ -101,11 +114,11 @@ function VisualManager.AttachVisual(character, visualResource, options, extraOpt
 	if not id then
 		id = visualResource
 	end
-	VisualManager.DeleteVisual(character, id)
+	_INTERNAL.DeleteVisual(character, id)
 
 	---@type EclLuaVisualClientMultiVisual
 	local handler = Ext.Visual.CreateOnCharacter(character.Translate, character, character)
-	VisualManager.StoreVisualHandler(character, id, handler)
+	_INTERNAL.StoreVisualHandler(character, id, handler)
 	local addedVisual = handler:AddVisual(visualResource, options)
 
 	if addedVisual and extraOptions and type(extraOptions) == "table" then
@@ -175,10 +188,10 @@ Ext.RegisterNetListener("LeaderLib_VisualManager_RequestAttachVisual", function 
 		fassert(t == "string" or t == "table", "data.Resource is not a valid type (%s)[%s]", data.Target, t)
 
 		if t == "string" then
-			VisualManager.AttachVisual(character, data.Resource, data.Options, data.ExtraOptions, data.ID)
+			_CLIENT.AttachVisual(character, data.Resource, data.Options, data.ExtraOptions, data.ID)
 		elseif t == "table" then
 			for _,v in pairs(data.Resource) do
-				VisualManager.AttachVisual(character, v, data.Options, data.ExtraOptions, data.ID)
+				_CLIENT.AttachVisual(character, v, data.Options, data.ExtraOptions, data.ID)
 			end
 		end
 	end
@@ -194,10 +207,10 @@ Ext.RegisterNetListener("LeaderLib_VisualManager_RequestDeleteVisual", function 
 		fassert(t == "string" or t == "table", "data.Resource is not a valid type (%s)[%s]", data.Resource, t)
 
 		if t == "string" then
-			VisualManager.DeleteVisual(character, data.Resource)
+			_CLIENT.DeleteVisual(character, data.Resource)
 		elseif t == "table" then
 			for _,v in pairs(data.Resource) do
-				VisualManager.DeleteVisual(character, v)
+				_CLIENT.DeleteVisual(character, v)
 			end
 		end
 	end
@@ -226,7 +239,7 @@ local testMountVisual = nil
 
 Ext.RegisterConsoleCommand("lltestvisual", function (cmd, t)
 	if StringHelpers.IsNullOrEmpty(t) then
-		VisualManager.AttachVisual(Client:GetCharacter(), "df8b6237-d031-44d7-b729-a80eb074f3b3",
+		_CLIENT.AttachVisual(Client:GetCharacter(), "df8b6237-d031-44d7-b729-a80eb074f3b3",
 		{
 			Bone="LowerArm_R_Twist_Bone",
 			Weapon=true,
@@ -243,7 +256,7 @@ Ext.RegisterConsoleCommand("lltestvisual", function (cmd, t)
 			testMountVisual:Delete()
 		end
 		--Wolf
-		testMountVisual = VisualManager.AttachVisual(Client:GetCharacter(), "ebcf1ade-cfa1-4d48-9f10-e5e409830dcc",
+		testMountVisual = _CLIENT.AttachVisual(Client:GetCharacter(), "ebcf1ade-cfa1-4d48-9f10-e5e409830dcc",
 		{
 			Bone="Dummy_Root",
 			Armor=true,
@@ -258,7 +271,7 @@ end)
 ---@param fx string|string[]
 ---@param target ObjectParam
 ---@param params {Target:ObjectParam, WeaponBones:string}|nil
-function VisualManager.CreateClientEffect(fx, target, params)
+function _CLIENT.CreateClientEffect(fx, target, params)
 	params = params or {}
 	local ft = type(fx)
 	if ft == "string" then
@@ -294,7 +307,7 @@ function VisualManager.CreateClientEffect(fx, target, params)
 		end
 	elseif ft == "table" then
 		for _,v in pairs(fx) do
-			VisualManager.CreateClientEffect(v, target, params)
+			_CLIENT.CreateClientEffect(v, target, params)
 		end
 	end
 end
@@ -302,7 +315,7 @@ end
 Ext.RegisterNetListener("LeaderLib_EffectManager_PlayClientEffect", function (cmd, payload)
 	local data = Common.JsonParse(payload)
 	if data then
-		VisualManager.CreateClientEffect(data.FX, data.Target, data.Params)
+		_CLIENT.CreateClientEffect(data.FX, data.Target, data.Params)
 	end
 end)
 

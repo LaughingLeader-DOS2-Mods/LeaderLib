@@ -31,7 +31,6 @@ if not _ISCLIENT then
 	---@field Persistence LeaderLibClientVisualPersistenceOptions If set, this visual will be created when the game is initialized, or when it's destroyed and needs to be recreated again (i.e. after POLYMORPH is removed).
 	---@field CreationSettings ExtenderClientVisualOptions
 	---@field ExtraSettings LeaderLibClientVisualOptions
-	---@field AssociatedItem Guid|nil If this visual is associated with an item, it will be 
 
 	---@class LeaderLibVisualManagerRequestAttachVisualOptions:LeaderLibVisualManagerRequestAttachVisualBaseOptions
 	---@field Resource string|string[]

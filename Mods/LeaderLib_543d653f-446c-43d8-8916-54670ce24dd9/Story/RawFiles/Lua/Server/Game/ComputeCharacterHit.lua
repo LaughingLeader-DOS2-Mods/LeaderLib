@@ -562,7 +562,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     end
 
     --Oversight fix - Many melee skills have data "UseCharacterStats" "No", so the hitType ends up being "WeaponDamage".
-    if hitType == "Melee" or (hitType == "WeaponDamage" and not Game.Math.IsRangedWeapon(weapon)) then
+    if hitType == "Melee" or (hitType == "WeaponDamage" and not Game.Math.IsRangedWeapon(weapon) and hit.HitWithWeapon) then
         if Game.Math.IsInFlankingPosition(target, attacker) then
            hit.Flanking = true
         end

@@ -304,6 +304,8 @@ Features = {
 	FixChaosWeaponProjectileDamage = true,
 	---Changes Corrosive/Magic damage tooltip text from "Reduce Armor" to proper damage names.
 	FixCorrosiveMagicDamageDisplay = false,
+	---Prevents EXPLODE from applying, while exploding the skill it provides immediately. This allows multiple EXPLODE statuses applied in the same tick to deal damage (such as multiple damage statuses using EXPLODE to deal skill damage).
+	FixExplode = true,
 	---Fixes the incorrect skill tooltip range when you have Far Out Man.
 	FixFarOutManSkillRangeTooltip = false,
 	---Fixes the item tooltip AP cost being incorrect when a character has statuses that reduce AP costs.

@@ -902,6 +902,20 @@ Ext.Events.BeforeStatusApply:Subscribe(function (e)
 	local status = e.Status
 	local statusID = status.StatusId
 
+	if statusID == "EXPLODE" and Features.FixExplode and not GameHelpers.ObjectIsDead(target) then
+		e.PreventStatusApply = true
+		e:StopPropagation()
+		local projectileSkill = e.Status.Projectile
+		if not StringHelpers.IsNullOrEmpty(projectileSkill) then
+			if string.sub(projectileSkill, 1, 10) == "Projectile" then
+				GameHelpers.Skill.Explode(target, projectileSkill, source)
+			else
+				GameHelpers.Damage.ApplySkillDamage(source, target, projectileSkill)
+			end
+		end
+		return
+	end
+
 	if statusID == "DYING" and isCharacter then
 		Events.CharacterDied:Invoke({
 			Character = target,

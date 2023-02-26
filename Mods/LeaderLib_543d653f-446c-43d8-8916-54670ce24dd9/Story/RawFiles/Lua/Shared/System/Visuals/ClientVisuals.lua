@@ -27,10 +27,10 @@
 ---@field AllowReceiveDecalWhenAnimated boolean
 
 ---@class LeaderLibClientVisualOptions
----@field Matrix number[] Size 16 table of matrices.
----@field Rotate number[] Size 9 table of matrices.
----@field Scale number[] Size 3 Vector3-style table.
----@field Translate number[] Size 3 Vector3-style table.
+---@field Matrix mat4 Size 16 table of matrices.
+---@field Rotate vec3 Euler rotation vector. This will be converted to a mat3 rotation matrix.
+---@field Scale vec3 Size 3 Vector3-style table.
+---@field Translate vec3 Size 3 Vector3-style table.
 
 ---@type table<NetId,table<string, ComponentHandle>>
 local ActiveVisuals = {}
@@ -97,6 +97,17 @@ function _CLIENT.DeleteVisual(character, visualResourceOrID)
 	end
 	return false
 end
+  
+---@param character EclCharacter
+---@param visualResourceOrID string
+---@return boolean
+function _CLIENT.VisualExists(character, visualResourceOrID)
+	local handler = _INTERNAL.GetVisualHandler(character, visualResourceOrID)
+	if handler then
+		return true
+	end
+	return false
+end
 
 ---@param character CharacterParam
 ---@param visualResource string
@@ -114,7 +125,7 @@ function _CLIENT.AttachVisual(character, visualResource, options, extraOptions, 
 	if not id then
 		id = visualResource
 	end
-	_INTERNAL.DeleteVisual(character, id)
+	_CLIENT.DeleteVisual(character, id)
 
 	---@type EclLuaVisualClientMultiVisual
 	local handler = Ext.Visual.CreateOnCharacter(character.Translate, character, character)

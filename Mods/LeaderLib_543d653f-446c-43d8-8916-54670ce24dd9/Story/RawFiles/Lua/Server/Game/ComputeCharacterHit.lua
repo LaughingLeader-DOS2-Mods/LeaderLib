@@ -466,7 +466,7 @@ end
 function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, ctxOrNumber)
     --TODO Refactor things to use ctx.DamageMultiplier?
     local damageMultiplier = 1.0
-    local t = type(damageMultiplier)
+    local t = type(ctxOrNumber)
     if t == "table" then
         --Mods expecting the newer table arg
         damageMultiplier = ctxOrNumber.DamageMultiplier or 1.0

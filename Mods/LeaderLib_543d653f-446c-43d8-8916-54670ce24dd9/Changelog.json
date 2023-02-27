@@ -6,6 +6,23 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.0",
+			"Changes": [
+				"Tweaked the hit helpers to avoid applying Sadist to long-range 'melee' skills, such as Throwing Knife.",
+				"Fixed a typo in HitOverrides.DoHit, which potentially created an error if a mod is using a table for the damage multiplier.",
+				"API Changes:",
+				"\t• Added support for colons in the fallback text for Key and Handle placeholders.",
+				"\t• Added Timer.IsUniqueTimerActive / Timer.IsObjectTimerActive",
+				"\t• Added Events.BeforeOnHit, to allow mods to manipulate hit data before skill and regular OnHit events are called.",
+				"\t• Added the !tplevel developer console command, for teleporting to different levels (!tplevel RC_Main).",
+				"\t• Added GameHelpers.Action.UseSkill, which uses the new extender actions to cast a skill.",
+				"\t• GameHelpers.Utils.KnockUp now calls Events.ForceMoveFinished when completed.",
+				"\t• Added GameHelpers.Character.MakePlayer, which simplifies the process of turning a character into a player.",
+				"\t• Added Features.FixExplode, which prevents EXPLODE from applying to non-corpses, and explodes the given projectile. This allows multiple explodes in the same tick. This is disabled by default.",
+				"\t• Added VisualManager.Client.VisualExists, for checking if a given visual has been created with the VisualManager."
+			]
+		},
+		{
 			"Version": "1.7.30.0",
 			"Changes": [
 				"Tooltip delaying is canceled if right click is pressed, to avoid tooltips popping up over the context menu.",

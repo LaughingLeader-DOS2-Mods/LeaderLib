@@ -170,3 +170,118 @@ else
 		end
 	end)
 end ]]
+
+--[[ local CivilAbility = {
+	Telekinesis = 20,
+	Repair = 21,
+	Sneaking = 22,
+	Pickpocket = 23,
+	Thievery = 24,
+	Loremaster = 25,
+	Crafting = 26,
+	Barter = 27,
+	Charm = 28,
+	Intimidate = 29,
+	Reason = 30,
+	Persuasion = 31,
+	Luck = 33,
+	Runecrafting = 37,
+	Brewmaster = 38,
+}
+
+local function AddPoints(entries, maxAmount, currentAmount)
+	local remaining = maxAmount - currentAmount
+	local len = #entries
+	local bonusAmount = Ext.Utils.Round(remaining/len)
+	if bonusAmount > 0 then
+		for i=1,len do
+			local entry = entries[i]
+			if bonusAmount > remaining then
+				bonusAmount = remaining
+			end
+			entry.AmountIncreased = entry.AmountIncreased + bonusAmount
+			remaining = remaining - bonusAmount
+			if remaining <= 0 then
+				break
+			end
+		end
+	end
+end
+
+local MAX_ABILITY = 10
+local MAX_CIVIL_ABILITY = 5
+local MAX_ATTRIBUTE = 10
+
+local function AddPointsToPresets()
+	local cc = Ext.Stats.GetCharacterCreation()
+	for _,preset in pairs(cc.ClassPresets) do
+		if not string.find(preset.ClassType, "_Act2") then
+			---@type CharacterCreationAbilityChange[]
+			local combatAbilityEntries = {}
+			---@type CharacterCreationAbilityChange[]
+			local civilAbilityEntries = {}
+
+			for _,v in pairs(preset.AbilityChanges) do
+				if CivilAbility[v.Ability] then
+					civilAbilityEntries[#civilAbilityEntries+1] = v
+				else
+					combatAbilityEntries[#combatAbilityEntries+1] = v
+				end
+			end
+
+			if preset.NumStartingCombatAbilityPoints < MAX_ABILITY then
+				AddPoints(combatAbilityEntries, MAX_ABILITY, preset.NumStartingCombatAbilityPoints)
+				preset.NumStartingCombatAbilityPoints = MAX_ABILITY
+			end
+
+			if preset.NumStartingCivilAbilityPoints < MAX_CIVIL_ABILITY then
+				AddPoints(civilAbilityEntries, MAX_CIVIL_ABILITY, preset.NumStartingCivilAbilityPoints)
+				preset.NumStartingCivilAbilityPoints = MAX_CIVIL_ABILITY
+			end
+
+			if preset.NumStartingAttributePoints < MAX_ATTRIBUTE then
+				AddPoints(preset.AttributeChanges, MAX_ATTRIBUTE, preset.NumStartingAttributePoints)
+				preset.NumStartingAttributePoints = MAX_ATTRIBUTE
+			end
+		end
+	end
+end
+
+Ext.Events.StatsLoaded:Subscribe(function (e)
+	AddPointsToPresets()
+end)
+
+Ext.Events.ResetCompleted:Subscribe(function (e)
+	AddPointsToPresets()
+end) ]]
+
+--[[ Ext.Events.SessionLoaded:Subscribe(function (e)
+	local testTask = Classes.UserTask:Create("TEST_TASK")
+	testTask.HasValidTarget = function (self)
+		return Ext.Utils.IsValidHandle(Ext.UI.GetPickingHelper().HoverDeadCharacterHandle)
+	end
+	testTask:SetCallbacks({
+		CanEnter = function (self)
+			return testTask.Enabled and testTask:HasValidTarget()
+		end,
+		SetCursor = function (self)
+			local cc = Ext.UI.GetCursorControl()
+			if self.Running then
+					cc.MouseCursor = "CursorItemMove"
+				
+				if userAction.HasValidTargetPos() then
+					cc.RequestedFlags = 0x30
+					ClearCursorText()
+				else
+					cc.RequestedFlags = 0x10
+					SetCursorText("<font color=\"#C80030\">BAD BAD BAD!!!</font>")
+				end
+			elseif self.Previewing then
+					cc.MouseCursor = "CursorShovel"
+			else
+					cc.MouseCursor = "CursorSystem"
+			end
+		end,
+	})
+	testTask:Register()
+end) ]]

@@ -564,3 +564,155 @@ end) ]]
 -- end)
 
 -- Ext.Audio.PostEvent(_C().Handle, "Skill_Earth_Fortify_Impact_01", 0)
+
+---@class CombatMovementManager
+---@field _TickIndex integer|nil
+--[[ local CombatMovementManager = {
+	DIST_MIN = 0.5,
+	TICKS_MIN = 10
+}
+
+local _totalTicks = 0
+
+---@type table<ComponentHandle, vec3>
+local _combatPositions = {}
+
+local _getTurnManager = Ext.Combat.GetTurnManager
+
+---@param checkTag boolean|nil
+---@return fun():EsvCharacter
+local function GetActiveTurnCharacters(checkTag)
+	local characters = {}
+	local count = 0
+	local tm = _getTurnManager()
+	if tm then
+		local len = #tm.Combats
+		for i=1,len do
+			local combat = tm.Combats[i]
+			if combat.IsActive then
+				local team = tm.Combats[i]:GetCurrentTurnOrder()[1]
+				if team and team.Character then
+					if not checkTag or not team.Character:HasTag("MyMod_Moved") then
+						count = count + 1
+						characters[count] = team.Character
+					end
+				end
+			end
+		end
+	end
+	local i = 0
+	return function ()
+		i = i + 1
+		if i <= count then
+			return characters[i]
+		end
+	end
+end
+
+---@param character EsvCharacter
+---@param lastPos vec3
+function CombatMovementManager:OnCharacterMoved(character, lastPos)
+	SetTag(character.MyGuid, "MyMod_Moved")
+end
+
+---@param character EsvCharacter
+---@param skipCheck boolean|nil 
+local function CharacterHasMoved(character, skipCheck)
+	if not skipCheck then
+		local last = _combatPositions[character.Handle]
+		if last and Ext.Math.Distance(last, character.WorldPos) >= CombatMovementManager.DIST_MIN then
+			CombatMovementManager:OnCharacterMoved(character, last)
+			_combatPositions[character.Handle] = nil
+			return true
+		end
+	end
+	return false
+end
+
+---@param skipCheck boolean|nil Skip checking the distance from the last position.
+---@return boolean isWaiting
+function CombatMovementManager:UpdatePositions(skipCheck)
+	local isWaiting = false
+	for character in GetActiveTurnCharacters(true) do
+		if not CharacterHasMoved(character, skipCheck) then
+			_combatPositions[character.Handle] = character.WorldPos
+			isWaiting = true
+		end
+	end
+	return isWaiting
+end
+
+---@param e LuaEventBase|LuaTickEvent
+function CombatMovementManager:Tick(e)
+	_totalTicks = _totalTicks + 1
+	if _totalTicks >= self.TICKS_MIN then
+		if not self:UpdatePositions() then
+			Ext.OnNextTick(function (e)
+				CombatMovementManager:Toggle(false)
+			end)
+		else
+			_totalTicks = 0
+		end
+	end
+end
+
+---@param b boolean
+---@param skipClearPositions boolean|nil
+function CombatMovementManager:Toggle(b, skipClearPositions)
+	if b then
+		if self._TickIndex == nil then
+			_totalTicks = 0
+			self._TickIndex = Ext.Events.Tick:Subscribe(function(e) self:Tick(e) end)
+			self:UpdatePositions(true)
+		end
+	else
+		if not skipClearPositions then
+			_combatPositions = {}
+		end
+		_totalTicks = 0
+		if self._TickIndex ~= nil then
+			Ext.Events.Tick:Unsubscribe(self._TickIndex)
+			self._TickIndex = nil
+		end
+	end
+end
+
+local function IsWaitingForActiveCharacter()
+	for character in GetActiveTurnCharacters() do
+		if not character:HasTag("MyMod_Moved") then
+			return true
+		end
+	end
+	return false
+end
+
+Events.Initialized:Subscribe(function (e)
+	CombatMovementManager:Toggle(IsWaitingForActiveCharacter())
+end)
+
+Ext.Osiris.RegisterListener("ObjectTurnStarted", 1, "after", function (guid)
+	CombatMovementManager:Toggle(true)
+end)
+
+Ext.Osiris.RegisterListener("ObjectTurnEnded", 1, "after", function (guid)
+	CombatMovementManager:Toggle(false)
+	ClearTag(guid, "MyMod_Moved")
+end)
+
+Ext.Osiris.RegisterListener("CombatEnded", 1, "after", function (id)
+	Ext.OnNextTick(function (e)
+		CombatMovementManager:Toggle(IsWaitingForActiveCharacter())
+	end)
+end)
+
+Ext.Events.GameStateChanged:Subscribe(function (e)
+	if e.ToState ~= "Running" then
+		CombatMovementManager:Toggle(false, true)
+	end
+end) ]]
+
+
+--[[
+-- AOO bug test - AOO applying on your turn ends the turn
+local obj = Ext.Entity.GetCharacter("08348b3a-bded-4811-92ce-f127aa4310e0"); GameHelpers.Status.Apply(obj, "AOO", 6.0, 1, nil, nil, nil, nil, {AoOTargetHandle=obj.Handle, SourceHandle=me.Handle, PartnerHandle=obj.Handle})
+]]

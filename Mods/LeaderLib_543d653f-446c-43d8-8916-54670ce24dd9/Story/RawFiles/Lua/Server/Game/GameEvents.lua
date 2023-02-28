@@ -187,3 +187,22 @@ Ext.Events.ResetCompleted:Subscribe(function ()
 		OnLuaReset()
 	end
 end)
+
+Ext.Osiris.RegisterListener("UpdateTime", 2, "after", function (day, hour)
+	---@type GameTimeChangedEventArgs
+	local data = {
+		Day = day,
+		Hour = hour,
+		TotalHours = 0,
+		TimeSpeed = 300000,
+	}
+	local _,_,totalHours = GameHelpers.DB.Get("DB_Time", 3, 1, true)
+	if type(totalHours) == "number" then
+		data.TotalHours = totalHours
+	end
+	local speed = GameHelpers.DB.Get("DB_GameHour", 1, 1, true)
+	if type(speed) == "number" then
+		data.TimeSpeed = speed
+	end
+	Events.GameTimeChanged:Invoke(data)
+end)

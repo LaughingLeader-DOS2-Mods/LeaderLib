@@ -102,6 +102,20 @@ Events.SummonChanged = Classes.SubscribableEvent:Create("SummonChanged", {
 	ArgsKeyOrder={"Summon", "Owner", "IsDying", "IsItem"}
 })
 
+---@class GameTimeChangedEventArgs
+---@field Day integer
+---@field Hour integer
+---@field TotalHours integer
+---@field TimeSpeed integer The timer speed for each in-game hour, in ms. Defaults to 300,000 milliseconds.
+
+---Called when a summon is created or destroyed. Includes items like mines.  
+---🔨🔧**Server/Client**🔧🔨  
+---@type LeaderLibSubscribableEvent<GameTimeChangedEventArgs>
+Events.GameTimeChanged = Classes.SubscribableEvent:Create("GameTimeChanged", {
+	SyncInvoke = true,
+	ArgsKeyOrder={"Day", "Hour", "TotalHours", "TimeSpeed"}
+})
+
 ---@class ObjectTimerData:table
 ---@field UUID string
 ---@field Object EsvCharacter|EsvItem|EclCharacter|EclItem|nil

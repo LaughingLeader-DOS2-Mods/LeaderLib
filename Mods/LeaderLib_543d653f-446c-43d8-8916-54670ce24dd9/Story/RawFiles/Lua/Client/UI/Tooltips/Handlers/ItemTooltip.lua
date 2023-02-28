@@ -130,10 +130,12 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 			local requirements = tooltip:GetElements("ItemRequirement")
 			if #requirements > 0 then
 				for i,element in pairs(requirements) do
-					--Replaces double spacing or more with single spaces
-					element.Label = string.gsub(element.Label, "%s+", " ")
-					if not hasScalesWithText and string.find(element.Label, scalesWithTextSub) then
-						hasScalesWithText = true
+					if not StringHelpers.IsNullOrEmpty(element.Label) then
+						--Replaces double spacing or more with single spaces
+						element.Label = string.gsub(element.Label, "%s+", " ")
+						if not hasScalesWithText and string.find(element.Label, scalesWithTextSub) then
+							hasScalesWithText = true
+						end
 					end
 				end
 			end

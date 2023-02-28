@@ -195,7 +195,7 @@ function GameHelpers.Item.GetSupportedGenerationValues(itemGroupId, minLevel, ma
     return level,rarity,rootGroups
 end
 
----Creates an item by stat, provided it has an ItemGroup set (for equipment).
+---Creates an item by stat, provided it has an ItemGroup set (for equipment).  
 ---🔨**Server-Only**🔨  
 ---@param statName string
 ---@param creationProperties EocItemDefinition|nil
@@ -1100,4 +1100,24 @@ function GameHelpers.Item.GetItemStat(item)
         end
     end
     return ""
+end
+
+---@param item ItemParam
+---@return string|nil attribute
+---@return integer requirementAmount
+function GameHelpers.Item.GetPrimaryRequirementAttribute(item)
+	local attribute = nil
+	local value = -1
+	item = GameHelpers.GetItem(item, "EsvItem")
+	if item and not GameHelpers.Item.IsObject(item) then
+		for i,v in pairs(item.Stats.Requirements) do
+			if Data.Attribute[v.Requirement] ~= nil then
+				if type(v.Param) == "number" and v.Param >= value then
+					value = v.Param
+					attribute = v.Requirement
+				end
+			end
+		end
+	end
+	return attribute, value
 end

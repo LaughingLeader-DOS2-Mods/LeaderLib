@@ -1012,6 +1012,20 @@ local function OnStatusAttempt(targetGUID,statusID,sourceGUID)
 	
 	local statusType = _GetStatusType(statusID)
 
+	local statusObject = nil
+
+	if target.StatusMachine then
+		--Get the last status first, since it's more likely to be the attempted one
+		local len = #target.StatusMachine.Statuses
+		for i=len,1,-1 do
+			local v = target.StatusMachine.Statuses[i]
+			if v and v.StatusId == statusID then
+				statusObject = v
+				break
+			end
+		end
+	end
+
 	local isDisabling = false
 	local isLoseControl = false
 
@@ -1026,7 +1040,7 @@ local function OnStatusAttempt(targetGUID,statusID,sourceGUID)
 		Source = source,
 		TargetGUID = targetGUID,
 		SourceGUID = sourceGUID,
-		Status = statusID,
+		Status = statusObject or statusID,
 		StatusId = statusID,
 		StatusEvent = "Attempt",
 		StatusType = statusType,

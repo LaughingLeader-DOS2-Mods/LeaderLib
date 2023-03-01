@@ -664,7 +664,7 @@ if not _ISCLIENT then
 	---@field PreventApply boolean If true, the status attempt is prevented.
 
 	---@class OnStatusAttemptEventArgs:OnStatusBaseEventArgs
-	---@field Status string
+	---@field Status EsvStatus|string The status from object.StatusMachine.Statuses, or the statusID if that failed.
 
 	---@class OnStatusAppliedEventArgs:OnStatusBaseEventArgs
 	---@field Status EsvStatus

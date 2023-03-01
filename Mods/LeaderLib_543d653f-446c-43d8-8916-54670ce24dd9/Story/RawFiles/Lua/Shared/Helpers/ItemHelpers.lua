@@ -803,11 +803,12 @@ function GameHelpers.Item.FindTaggedEquipment(character, tag, asArray)
 	return items
 end
 
+---@overload fun(character:CharacterParam, tag:string|string[]):string[]
 ---Gets an array of items with specific tag(s) on a character.
 ---@param character CharacterParam
 ---@param tag string|string[]
 ---@param asEsvItem boolean
----@return string[]|EsvItem[]
+---@return EsvItem[]
 function GameHelpers.Item.FindTaggedItems(character, tag, asEsvItem)
     local items = {}
     character = GameHelpers.GetCharacter(character)

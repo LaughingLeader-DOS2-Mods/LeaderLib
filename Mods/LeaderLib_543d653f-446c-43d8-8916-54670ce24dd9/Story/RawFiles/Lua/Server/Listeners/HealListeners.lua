@@ -46,7 +46,7 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 
 	if source then
 		---Getting the HEALING status
-		if statusId == "HEAL" and healStatus.HealEffect == "Heal" then
+		if statusId == "HEAL" and (healStatus.HealEffect == "Heal" or healStatus.HealEffect == "Necromantic") then
 			local statuses = GetHealingStatusesForHeal(target, healStatus)
 			if #statuses > 0 then
 				healingSourceStatus = statuses[1]

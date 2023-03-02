@@ -568,7 +568,7 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
         damageList,deathType = GetSkillDamageWithTarget(skillData, source.Stats, target.Stats, false, false, pos, targetPos, level, false, params.MainWeapon, params.OffhandWeapon)
     end
 
-    if params.ApplySkillProperties then
+    if params.ApplySkillProperties and skillData.SkillProperties and #skillData.SkillProperties > 0 then
         Ext.PropertyList.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, targetPos, "Target", false)
         Ext.PropertyList.ExecuteSkillPropertiesOnTarget(skill, source.MyGuid, target.MyGuid, source.WorldPos, _SelfPropertyContext, false)
     end

@@ -209,7 +209,7 @@ function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMul
 	return {x,y,z}
 end
 
----@param pos vec3
+---@param pos vec3|ObjectParam
 ---@param distanceMult number
 ---@param directionalVector vec3
 ---@param skipSnapToGrid boolean|nil Skip snapping the y value to the grid height at the resulting position.
@@ -319,6 +319,7 @@ end
 
 ---@overload fun(pos1:vec3|ObjectParam, pos2:vec3|ObjectParam, reverse:boolean|nil):vec3
 ---@overload fun(pos1:vec3|ObjectParam, pos2:vec3|ObjectParam):vec3
+---@overload fun(object:ObjectParam):vec3
 ---Get the directional vector between two Vector3 points.
 ---@param pos1 vec3|ObjectParam
 ---@param pos2 vec3|ObjectParam
@@ -326,6 +327,10 @@ end
 ---@param asVector3 boolean|nil Optionally return the result as a Vector3
 ---@return Vector3
 function GameHelpers.Math.GetDirectionalVector(pos1, pos2, reverse, asVector3)
+	if GameHelpers.Ext.IsObjectType(pos1) and pos2 == nil and pos1.Rotation then
+		local rot = pos1.Rotation
+		return {rot[7],0,rot[9]}
+	end
 	local directionalVector = _vecnorm(_vecsub(_GetPosition(pos1), _GetPosition(pos2)))
 	if reverse then
 		directionalVector = _vecmul(directionalVector, {-1,-1,-1})

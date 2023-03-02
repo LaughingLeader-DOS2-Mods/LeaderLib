@@ -132,7 +132,7 @@ function GameHelpers.Grid.GetValidPositionTableInRadius(startPos, maxRadius, poi
 	return startPos,false
 end
 
----@param startPos vec3[]
+---@param startPos vec3|ObjectParam
 ---@param maxRadius number|nil
 ---@param pointsInCircle number|nil
 ---@param reverse boolean|nil Start from the largest distance possible instead.

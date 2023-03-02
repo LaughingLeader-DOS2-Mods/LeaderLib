@@ -69,15 +69,15 @@ if not _ISCLIENT then
 	function Utils.CreateTestCharacters(params)
 		params = params or {}
 		--pos, equipmentSet, userTemplate, dummyTemplate, setEnemy, totalDummies
-		local host = Ext.Entity.GetCharacter(CharacterGetHostCharacter())
+		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter(), "EsvCharacter")
 		local startingPos = params.Position or {GameHelpers.Grid.GetValidPositionInRadius(GameHelpers.Math.ExtendPositionWithForwardDirection(host, 6), 6.0)}
 
 		local totalCharacters = math.max(0, params.TotalCharacters or 1)
 		local characters = {}
 		local userTemplate = params.UserTemplate or GameHelpers.GetTemplate(host) --[[@as string]]
 		for i=1,totalCharacters do
-			local pos = GameHelpers.Grid.GetValidPositionInRadius(startingPos, 6.0)
-			local character = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], userTemplate, 0))
+			local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(startingPos, 6.0)
+			local character = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(x, y, z, userTemplate, 0))
 			NRD_CharacterSetPermanentBoostInt(character, "Accuracy", 200)
 			CharacterSetCustomName(character, "Test User1")
 			SetupCharacter(character, host.MyGuid, params.EquipmentSet)
@@ -90,9 +90,10 @@ if not _ISCLIENT then
 
 		local dummies = {}
 		local dummyTemplate = params.DummyTemplate or _GetDummyTemplate() --[[@as string]]
+		local dummyStartingPos = GameHelpers.Math.ExtendPositionWithDirectionalVector(startingPos, GameHelpers.Math.GetDirectionalVector(host), 6.0)
 		for i=1,totalDummies do
-			local pos = {GameHelpers.Grid.GetValidPositionInRadius(startingPos, 6.0)}
-			local dummy = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], dummyTemplate, 0))
+			local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(dummyStartingPos, 6.0)
+			local dummy = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(x, y, z, dummyTemplate, 0))
 			NRD_CharacterSetPermanentBoostInt(dummy, "Dodge", -100)
 
 			PlayEffect(dummy, "RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_01", "")
@@ -105,7 +106,7 @@ if not _ISCLIENT then
 				CharacterLevelUpTo(dummy, host.Stats.Level)
 			end
 			SetFaction(dummy, params.DummyFaction or "PVP_3")
-			TeleportToRandomPosition(dummy, 1.0, "")
+			--TeleportToRandomPosition(dummy, 1.0, "")
 			dummies[#dummies+1] = dummy
 		end
 

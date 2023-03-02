@@ -109,27 +109,34 @@ function _CLIENT.VisualExists(character, visualResourceOrID)
 	return false
 end
 
----@param character CharacterParam
+---@param object ObjectParam
 ---@param visualResource string
 ---@param options ExtenderClientVisualOptions|nil
 ---@param extraOptions LeaderLibClientVisualOptions|nil
 ---@param id string|nil
 ---@return Visual
-function _CLIENT.AttachVisual(character, visualResource, options, extraOptions, id)
+function _CLIENT.AttachVisual(object, visualResource, options, extraOptions, id)
 	options = options or {}
-	character = GameHelpers.GetCharacter(character)
-	if not character then
-		error("Character parameter is invalid")
+	object = GameHelpers.TryGetObject(object)
+	if not object then
+		error("Object parameter is invalid")
 	end
 
 	if not id then
 		id = visualResource
 	end
-	_CLIENT.DeleteVisual(character, id)
+	_CLIENT.DeleteVisual(object, id)
 
 	---@type EclLuaVisualClientMultiVisual
-	local handler = Ext.Visual.CreateOnCharacter(character.Translate, character, character)
-	_INTERNAL.StoreVisualHandler(character, id, handler)
+	local handler = nil
+	if GameHelpers.Ext.ObjectIsCharacter(object) then
+		handler = Ext.Visual.CreateOnCharacter(object.Translate, object, object)
+	elseif GameHelpers.Ext.ObjectIsItem(object) then
+		handler = Ext.Visual.CreateOnItem(object.Translate, object, object)
+	else
+		error("Only character or item objects can have a visual attached.")
+	end
+	_INTERNAL.StoreVisualHandler(object, id, handler)
 	local addedVisual = handler:AddVisual(visualResource, options)
 
 	if addedVisual and extraOptions and type(extraOptions) == "table" then
@@ -188,21 +195,27 @@ end
 ---@field Resource string
 ---@field Options ExtenderClientVisualOptions|nil
 ---@field ExtraOptions LeaderLibClientVisualOptions|nil
+---@field IsItem boolean
 
 Ext.RegisterNetListener("LeaderLib_VisualManager_RequestAttachVisual", function (channel, payload, user)
 	local data = Common.JsonParse(payload, true)
 	if data then
 		---@cast data LeaderLibRequestAttachVisualData
-		local character = GameHelpers.GetCharacter(data.Target)
-		fassert(character ~= nil, "Failed to get character from data.Target(%s)", data.Target)
+		local object = nil
+		if data.IsItem then
+			object = GameHelpers.GetItem(data.Target, "EclItem")
+		else
+			object = GameHelpers.GetCharacter(data.Target, "EclCharacter")
+		end
+		fassert(object ~= nil, "Failed to get object from data.Target(%s)", data.Target)
 		local t = type(data.Resource)
 		fassert(t == "string" or t == "table", "data.Resource is not a valid type (%s)[%s]", data.Target, t)
 
 		if t == "string" then
-			_CLIENT.AttachVisual(character, data.Resource, data.Options, data.ExtraOptions, data.ID)
+			_CLIENT.AttachVisual(object, data.Resource, data.Options, data.ExtraOptions, data.ID)
 		elseif t == "table" then
 			for _,v in pairs(data.Resource) do
-				_CLIENT.AttachVisual(character, v, data.Options, data.ExtraOptions, data.ID)
+				_CLIENT.AttachVisual(object, v, data.Options, data.ExtraOptions, data.ID)
 			end
 		end
 	end

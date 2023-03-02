@@ -40,38 +40,39 @@ if not _ISCLIENT then
 	--Mods.LeaderLib.VisualManager.RequestAttachVisual("d11296d9-833f-4070-9fa7-44ac606aedb8", {Resource="ba560b88-57e4-4f15-a4e2-379568f0c5b0", CreationSettings={Bone="Dummy_R_HandFX"}})
 
 	---🔨**Server-Only**🔨  
-	---@param character CharacterParam
+	---@param object ObjectParam
 	---@param options LeaderLibVisualManagerRequestAttachVisualOptions
-	function VisualManager.RequestAttachVisual(character, options)
-		character = GameHelpers.GetCharacter(character)
-		if not character then
-			error("Character parameter is invalid")
+	function VisualManager.RequestAttachVisual(object, options)
+		object = GameHelpers.TryGetObject(object)
+		if not object then
+			error("Object parameter is invalid")
 		end
 		options = options or {}
 		assert(options.Resource ~= nil, "options.Resource is required")
 		local opts = options.CreationSettings and TableHelpers.SanitizeTable(options.CreationSettings, {userdata=true, table=true}, true, _ObjToNetID) or nil
 		local extraOptions = options.ExtraSettings and TableHelpers.SanitizeTable(options.ExtraSettings, {userdata=true, table=true}, true, _ObjToNetID) or nil
 		if options.Persistence and Common.TableHasAnyEntry(options.Persistence) then
-			if _PV.PersistentVisuals[character.MyGuid] == nil then
-				_PV.PersistentVisuals[character.MyGuid] = {}
+			if _PV.PersistentVisuals[object.MyGuid] == nil then
+				_PV.PersistentVisuals[object.MyGuid] = {}
 			end
-			local persistentCharacterData = _PV.PersistentVisuals[character.MyGuid]
+			local persistentCharacterData = _PV.PersistentVisuals[object.MyGuid]
 			table.insert(persistentCharacterData, {
 				ID = options.ID,
 				Resource = options.Resource,
 				Options = opts,
 				ExtraOptions = extraOptions,
 				Persistence = TableHelpers.SanitizeTable(options.Persistence, nil, true),
-				RestrictToVisual = options.Persistence.CurrentVisualOnly == true and character.RootTemplate.VisualTemplate or nil
+				RestrictToVisual = options.Persistence.CurrentVisualOnly == true and object.RootTemplate.VisualTemplate or nil
 			})
 		end
 		---@type LeaderLibRequestAttachVisualData
 		local data = {
 			ID = options.ID,
-			Target = character.NetID,
+			Target = object.NetID,
 			Options = opts,
 			ExtraOptions = extraOptions,
 			Resource = options.Resource,
+			IsItem = GameHelpers.Ext.ObjectIsItem(object)
 		}
 		GameHelpers.Net.Broadcast("LeaderLib_VisualManager_RequestAttachVisual", data)
 	end

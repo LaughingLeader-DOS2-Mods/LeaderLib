@@ -235,6 +235,7 @@ Events.ModSettingsLoaded = Classes.SubscribableEvent:Create("ModSettingsLoaded",
 })
 
 ---@class BaseModSettingsChangedEventArgs
+---@field ModuleUUID Guid The UUID of the mod that owns these settings.
 ---@field ID string
 ---@field Settings SettingsData
 

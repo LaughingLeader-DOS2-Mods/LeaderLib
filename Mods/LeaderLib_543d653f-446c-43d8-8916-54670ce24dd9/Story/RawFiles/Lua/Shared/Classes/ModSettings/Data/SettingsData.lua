@@ -7,6 +7,7 @@ local isClient = Ext.IsClient()
 ---@class SettingsData
 local SettingsData = {
 	Type = "SettingsData",
+	ModuleUUID = "",
 	---@type table<string, FlagData>
 	Flags = {},
 	---@type table<string, VariableData>
@@ -58,7 +59,7 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 		if canExport then
 			self.Flags[flag].CanExport = canExport
 		end
-		Events.ModSettingsChanged:Invoke({ID=flag, Value=enabled, Data=self.Flags[flag], Settings = self})
+		Events.ModSettingsChanged:Invoke({ModuleUUID=self.ModuleUUID, ID=flag, Value=enabled, Data=self.Flags[flag], Settings = self})
 	else
 		local existing = self.Flags[flag]
 		local changed = false
@@ -77,7 +78,7 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 			existing.IsFromFile = false
 		end
 		if changed then
-			Events.ModSettingsChanged:Invoke({ID=flag, Value=enabled, Data=existing, Settings = self})
+			Events.ModSettingsChanged:Invoke({ModuleUUID=self.ModuleUUID, ID=flag, Value=enabled, Data=existing, Settings = self})
 		end
 	end
 end
@@ -135,7 +136,7 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 		if canExport then
 			self.Variables[name].CanExport = canExport
 		end
-		Events.ModSettingsChanged:Invoke({ID=name, Value=value, Data=self.Variables[name], Settings = self})
+		Events.ModSettingsChanged:Invoke({ModuleUUID=self.ModuleUUID, ID=name, Value=value, Data=self.Variables[name], Settings = self})
 	else
 		local existing = self.Variables[name]
 		local changed = false
@@ -158,7 +159,7 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 			existing.IsFromFile = false
 		end
 		if changed then
-			Events.ModSettingsChanged:Invoke({ID=name, Value=value, Data=existing, Settings = self})
+			Events.ModSettingsChanged:Invoke({ModuleUUID=self.ModuleUUID, ID=name, Value=value, Data=existing, Settings = self})
 		end
 	end
 end
@@ -540,7 +541,7 @@ function SettingsData:SetFlag(id, enabled)
 	local entry = self.Flags[id]
 	if entry ~= nil then
 		entry.Enabled = enabled
-		Events.ModSettingsChanged:Invoke({ID=id, Value=enabled, Data=entry, Settings = self})
+		Events.ModSettingsChanged:Invoke({ModuleUUID=self.ModuleUUID, ID=id, Value=enabled, Data=entry, Settings = self})
 		return true
 	end
 	return false
@@ -554,7 +555,7 @@ function SettingsData:SetVariable(id, value)
 		else
 			entry.Value = value
 		end
-		Events.ModSettingsChanged:Invoke({ID=id, Value=value, Data=entry, Settings = self})
+		Events.ModSettingsChanged:Invoke({ModuleUUID=self.ModuleUUID, ID=id, Value=value, Data=entry, Settings = self})
 		return true
 	end
 	return false

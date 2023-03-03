@@ -41,6 +41,7 @@ function ModSettings:Create(uuid, globalSettings)
 		OnVariableSet = nil,
 		LoadedExternally = false
 	}
+	this.Global.ModuleUUID = uuid
 	local mod = Ext.Mod.GetMod(uuid)
 	if mod ~= nil then
 		this.Name = mod.Info.Name
@@ -55,7 +56,7 @@ end
 ---@param overwriteExisting boolean
 function ModSettings:AddProfile(id, settings, overwriteExisting)
 	if self.Profiles[id] == nil then
-		self.Profiles[id] = ProfileSettings:Create(id, settings)
+		self.Profiles[id] = ProfileSettings:Create(id, self.UUID, settings)
 	elseif overwriteExisting == true then
 		self.Profiles[id].Settings = settings
 	end

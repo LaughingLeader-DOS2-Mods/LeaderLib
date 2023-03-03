@@ -11,13 +11,15 @@ local ProfileSettings = {
 ProfileSettings.__index = ProfileSettings
 
 ---@param id string
+---@param uuid Guid The ModuleUUID
 ---@param settings SettingsData|nil
-function ProfileSettings:Create(id, settings)
+function ProfileSettings:Create(id, uuid, settings)
     local this =
     {
 		ID = id,
 		Settings = settings or SettingsData:Create()
 	}
+	this.Settings.ModuleUUID = uuid
 	setmetatable(this, self)
     return this
 end

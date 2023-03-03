@@ -1,0 +1,60 @@
+{
+	"TitleColor": "#00CC00",
+	"Data": {
+		"Flags": [
+			{
+				"Type": "Global",
+				"Entries": [
+					"MYMOD_SomeGlobalFlag1",
+					"MYMOD_SomeGlobalFlag2"
+				]
+			}
+		],
+		"Variables": {
+			"NamePrefix": "MYMOD_Variable_",
+			"Entries": {
+				"SomeVariable1": {
+					"Value": 10,
+					"Min": 0,
+					"Max": 100,
+					"Increment": 1
+				},
+				"SomeVariable2": {
+					"Value": 40,
+					"Min": 5,
+					"Max": 50,
+					"Increment": 5
+				}
+			}
+		},
+		"Buttons": [
+			{
+				"ID" : "MYMOD_AddItemsToPartyButton",
+				"Callback": "Settings_AddItemsToParty",
+				"HostOnly": true
+			}
+		]
+	},
+	"MenuOrder": [
+		{
+			"Name": "MYMOD_SettingsMenu_Section_General",
+			"Entries": [
+				"MYMOD_SomeGlobalFlag1",
+				"MYMOD_SomeGlobalFlag2"
+			]
+		},
+		{
+			"Name": "MYMOD_SettingsMenu_Section_Balance",
+			"Entries": [
+				"SomeVariable1",
+				"SomeVariable2"
+			]
+		},
+		{
+			"Name": "MYMOD_SettingsMenu_Section_HostUtilities",
+			"Entries": [
+				"MYMOD_AddItemsToPartyButton"
+			]
+		}
+	]
+}

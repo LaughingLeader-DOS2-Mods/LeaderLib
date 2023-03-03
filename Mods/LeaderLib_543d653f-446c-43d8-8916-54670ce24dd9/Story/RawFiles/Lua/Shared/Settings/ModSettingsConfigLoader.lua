@@ -133,33 +133,18 @@ local function LoadModSettingsConfig(uuid, file)
 				local buttonid = 0
 				for _,buttonData in pairs(data) do
 					local id = buttonData.ID or string.format("%s_%s", uuid, buttonid)
-					local enabled = buttonData.Enabled ~= nil and buttonData.Enabled or buttonData.Enabled == nil and true
+					local enabled = true
+					if buttonData.Enabled ~= nil then
+						enabled = buttonData.Enabled == true
+					end
 					local callbackName = buttonData.Callback
 					local callback = nil
 					if callbackName ~= nil then
 						callback = TryFindCallback(uuid, callbackName)
 					end
 					local namePrefix = buttonData.NamePrefix or ""
-					settings.Global:AddLocalizedButton(id, namePrefix .. id, callback, buttonData.Enabled, buttonData.HostOnly)
+					settings.Global:AddLocalizedButton(id, namePrefix .. id, callback, enabled, buttonData.HostOnly)
 					buttonid = buttonid + 1
-				end
-				if data.Settings ~= nil then
-					for id,paramSettings in pairs(data.Settings) do
-						if StringHelpers.Equals(id, "all", true, true) then
-							for _,buttonData in pairs(settings.Global.Buttons) do
-								for param,value in pairs(paramSettings) do
-									buttonData[param] = value
-								end
-							end
-						else
-							local buttonData = settings.Global.Buttons[id]
-							if buttonData ~= nil then
-								for param,value in pairs(paramSettings) do
-									buttonData[param] = value
-								end
-							end
-						end
-					end
 				end
 			end
 		end

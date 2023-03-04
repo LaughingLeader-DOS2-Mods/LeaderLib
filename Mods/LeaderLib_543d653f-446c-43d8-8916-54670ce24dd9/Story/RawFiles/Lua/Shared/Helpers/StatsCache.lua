@@ -103,10 +103,13 @@ local function IsStatTypeValid(statType)
 	return _validStatTypes[statType] == true
 end
 
+---@overload fun(statType:StatType):(fun():string)
+---@generic T : StatEntryType
 ---@param statType StatType
----@param asStatsEntry boolean|nil Return the StatEntryType instead of string.
----@return fun():string|StatEntryType
-function GameHelpers.Stats.GetStats(statType, asStatsEntry)
+---@param asStatsEntry boolean Return the StatEntryType instead of a string ID.
+---@param castType? `T` A string used to cast the return cast (purely for the IDE).
+---@return fun():T
+function GameHelpers.Stats.GetStats(statType, asStatsEntry, castType)
 	assert(IsStatTypeValid(statType), "statType must be one of the following: Armor|DeltaMod|Potion|Shield|SkillData|StatusData|Weapon")
 	local _cache = _GetCachedStatType(statType)
 	if not asStatsEntry then

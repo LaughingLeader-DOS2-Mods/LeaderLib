@@ -1008,11 +1008,18 @@ function GameHelpers.Item.GetSlot(item, asName)
     return slot
 end
 
----@param item ItemParam
----@param inKeyValueFormat boolean|nil If true, the table is returned as table<skill,boolean>
----@param consumableOnly boolean|nil
----@return string[]|table<string,boolean> skills
----@return {IsSkillbook:boolean, IsConsumable:boolean, CastsSkill:boolean} itemParams
+---@class GameHelpers_Item_GetUseActionSkillsReturnData
+---@field IsSkillbook boolean
+---@field IsConsumable boolean
+---@field CastsSkill boolean
+
+---@overload fun(item:ItemParam|ItemTemplate):string[], GameHelpers_Item_GetUseActionSkillsReturnData
+---@overload fun(item:ItemParam|ItemTemplate, inKeyValueFormat:boolean):table<string,boolean>, GameHelpers_Item_GetUseActionSkillsReturnData
+---@param item ItemParam|ItemTemplate Either an item, or an item RootTemplate.
+---@param inKeyValueFormat? boolean If true, the table is returned as table<skill,boolean>
+---@param consumableOnly? boolean
+---@return table<string,boolean> skills
+---@return GameHelpers_Item_GetUseActionSkillsReturnData itemParams
 function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableOnly)
 	local skills = {}
     local itemParams = {
@@ -1020,9 +1027,18 @@ function GameHelpers.Item.GetUseActionSkills(item, inKeyValueFormat, consumableO
         IsConsumable = false,
         CastsSkill = false
     }
-    item = GameHelpers.GetItem(item)
-    if item and item.CurrentTemplate and item.CurrentTemplate.OnUsePeaceActions then
-        for _,v in pairs(item.CurrentTemplate.OnUsePeaceActions) do
+    ---@type ItemTemplate
+    local template = nil
+    if Ext.Types.GetObjectType(item) == "ItemTemplate" then
+        template = item
+    else
+        item = GameHelpers.GetItem(item)
+        if item and item.CurrentTemplate then
+            template = item.CurrentTemplate
+        end
+    end
+    if template and template.OnUsePeaceActions then
+        for _,v in pairs(template.OnUsePeaceActions) do
             ---@cast v +UseSkillActionData
 
             if v.Type == "SkillBook" then

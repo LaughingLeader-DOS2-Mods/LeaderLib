@@ -546,6 +546,9 @@ function Common.FormatNumber(amount)
 end
 
 function Common.TableLength(tbl, isKeyValueType)
+	if tbl == nil then
+		return 0
+	end
 	if isKeyValueType ~= true then
 		return #tbl
 	else

@@ -52,54 +52,54 @@ end
 
 GameHelpers.Skill.CreateSkillProperty("SafeForce", function (property)
 	local chance = property.Arg1
-		local distance = GameHelpers.Math.Round(math.floor(property.Arg2/6), 1)
+	local distance = GameHelpers.Math.Round(math.floor(property.Arg2/6), 1)
+	local useTargetForPosition = true
+	if not StringHelpers.IsNullOrWhitespace(property.Arg3) then
+		useTargetForPosition = StringHelpers.Equals(property.Arg3, "true", true, true) ~= true
+	end
+	
+	local fromText = useTargetForPosition and LocalizedText.SkillTooltip.FromTarget.Value or LocalizedText.SkillTooltip.FromSelf.Value
+	if distance >= 0 then
+		if chance >= 1 then
+			return LocalizedText.SkillTooltip.SafeForce:ReplacePlaceholders(distance, fromText)
+		else
+			chance = Ext.Utils.Round(chance * 100)
+			return LocalizedText.SkillTooltip.SafeForceRandom:ReplacePlaceholders(distance, fromText, chance)
+		end
+	else
+		if chance >= 1 then
+			return LocalizedText.SkillTooltip.SafeForce_Negative:ReplacePlaceholders(math.abs(distance), fromText)
+		else
+			chance = Ext.Utils.Round(chance * 100)
+			return LocalizedText.SkillTooltip.SafeForceRandom_Negative:ReplacePlaceholders(math.abs(distance), fromText, chance)
+		end
+	end
+end, function (property, attacker, position, areaRadius, isFromItem, skill, hit, skillId)
+	local chance = property.Arg1
+	local distance = math.floor(property.Arg2/6)
+	if chance >= 1.0 or Ext.Utils.Random(0,1) <= chance then
+		local x,y,z = table.unpack(position)
+		--local characters = Ext.GetCharactersAroundPosition(x,y,z, areaRadius)
+		local characters = {}
+		for i,v in pairs(Ext.Entity.GetAllCharacterGuids()) do
+			if v ~= attacker.MyGuid and GetDistanceToPosition(v, x,y,z) <= areaRadius then
+				characters[#characters+1] = v
+			end
+		end
+		local startPos = attacker.WorldPos
 		local useTargetForPosition = true
 		if not StringHelpers.IsNullOrWhitespace(property.Arg3) then
 			useTargetForPosition = StringHelpers.Equals(property.Arg3, "true", true, true) ~= true
 		end
-		
-		local fromText = useTargetForPosition and LocalizedText.SkillTooltip.FromTarget.Value or LocalizedText.SkillTooltip.FromSelf.Value
-		if distance >= 0 then
-			if chance >= 1 then
-				return LocalizedText.SkillTooltip.SafeForce:ReplacePlaceholders(distance, fromText)
-			else
-				chance = Ext.Utils.Round(chance * 100)
-				return LocalizedText.SkillTooltip.SafeForceRandom:ReplacePlaceholders(distance, fromText, chance)
+		for i,v in pairs(characters) do
+			local target = GameHelpers.GetCharacter(v)
+			if useTargetForPosition then
+				startPos = target.WorldPos
 			end
-		else
-			if chance >= 1 then
-				return LocalizedText.SkillTooltip.SafeForce_Negative:ReplacePlaceholders(math.abs(distance), fromText)
-			else
-				chance = Ext.Utils.Round(chance * 100)
-				return LocalizedText.SkillTooltip.SafeForceRandom_Negative:ReplacePlaceholders(math.abs(distance), fromText, chance)
-			end
+			GameHelpers.ForceMoveObject(attacker, target, distance, skillId, startPos)
+			ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 		end
-end, function (property, attacker, position, areaRadius, isFromItem, skill, hit, skillId)
-	local chance = property.Arg1
-		local distance = math.floor(property.Arg2/6)
-		if chance >= 1.0 or Ext.Utils.Random(0,1) <= chance then
-			local x,y,z = table.unpack(position)
-			--local characters = Ext.GetCharactersAroundPosition(x,y,z, areaRadius)
-			local characters = {}
-			for i,v in pairs(Ext.Entity.GetAllCharacterGuids()) do
-				if v ~= attacker.MyGuid and GetDistanceToPosition(v, x,y,z) <= areaRadius then
-					characters[#characters+1] = v
-				end
-			end
-			local startPos = attacker.WorldPos
-			local useTargetForPosition = true
-			if not StringHelpers.IsNullOrWhitespace(property.Arg3) then
-				useTargetForPosition = StringHelpers.Equals(property.Arg3, "true", true, true) ~= true
-			end
-			for i,v in pairs(characters) do
-				local target = GameHelpers.GetCharacter(v)
-				if useTargetForPosition then
-					startPos = target.WorldPos
-				end
-				GameHelpers.ForceMoveObject(attacker, target, distance, skillId, startPos)
-				ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
-			end
-		end
+	end
 end, function (property, attacker, target, position, isFromItem, skill, hit, skillId)
 	if attacker.MyGuid ~= target.MyGuid then
 		local chance = property.Arg1

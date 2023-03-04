@@ -132,7 +132,7 @@ local function LoadModSettingsConfig(uuid, file)
 				local data = config.Data.Buttons
 				local buttonid = 0
 				for _,buttonData in pairs(data) do
-					local id = buttonData.ID or string.format("%s_%s", uuid, buttonid)
+					local id = buttonData.ID or string.format("Button_%s_%s", uuid, buttonid)
 					local enabled = true
 					if buttonData.Enabled ~= nil then
 						enabled = buttonData.Enabled == true

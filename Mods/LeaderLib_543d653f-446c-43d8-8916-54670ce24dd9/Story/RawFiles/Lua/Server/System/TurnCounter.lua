@@ -246,9 +246,11 @@ function _INTERNAL.InvokeTurnEndedListeners(obj)
 	local GUID = GameHelpers.GetUUID(obj)
 	local object = GameHelpers.TryGetObject(GUID)
 	if GUID and object then
+		local fired = false
 		if _PV.WaitForTurnEnding[GUID] then
 			for id,b in pairs(_PV.WaitForTurnEnding[GUID]) do
 				if b then
+					fired = true
 					Events.OnTurnEnded:Invoke({
 						ID = id,
 						Object = object,
@@ -257,8 +259,10 @@ function _INTERNAL.InvokeTurnEndedListeners(obj)
 				end
 			end
 			_PV.WaitForTurnEnding[obj] = nil
-		else
+		end
+		if not fired then
 			Events.OnTurnEnded:Invoke({
+				ID = "",
 				Object = object,
 				ObjectGUID = object.MyGuid
 			})

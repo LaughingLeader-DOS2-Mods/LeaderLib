@@ -10,7 +10,9 @@
 			"Changes": [
 				"Tweaked the hit helpers to avoid applying Sadist to long-range 'melee' skills, such as Throwing Knife.",
 				"Fixed a typo in HitOverrides.DoHit, which potentially created an error if a mod is using a table for the damage multiplier.",
+				"LeaderLib tooltip listeners now go first, so mods can modify any conflicting elements.",
 				"API Changes:",
+				"\t• Added SkillManager.Register.GetAPCost.",
 				"\t• Added support for colons in the fallback text for Key and Handle placeholders.",
 				"\t• Added Timer.IsUniqueTimerActive / Timer.IsObjectTimerActive",
 				"\t• Added Events.BeforeOnHit, to allow mods to manipulate hit data before skill and regular OnHit events are called.",
@@ -19,7 +21,14 @@
 				"\t• GameHelpers.Utils.KnockUp now calls Events.ForceMoveFinished when completed.",
 				"\t• Added GameHelpers.Character.MakePlayer, which simplifies the process of turning a character into a player.",
 				"\t• Added Features.FixExplode, which prevents EXPLODE from applying to non-corpses, and explodes the given projectile. This allows multiple explodes in the same tick. This is disabled by default.",
-				"\t• Added VisualManager.Client.VisualExists, for checking if a given visual has been created with the VisualManager."
+				"\t• Added VisualManager.Client.VisualExists, for checking if a given visual has been created with the VisualManager.",
+				"\t• Visuals can now be attached to items.",
+				"\t• Added a check to GameHelpers.Damage.ApplySkillDamage to avoid applying properties if SkillProperties are nil/empty.",
+				"\t• Added ModuleUUID to Events.ModSettingsChanged, for filtering listeners with MatchArgs.",
+				"\t• Events.GameTimeChanged was added, which is an event for when the in-game hour changes.",
+				"\t• Events.OnHeal should now get the healing status if the HealEffect is 'Necromantic', instead of only 'Heal'.",
+				"\t• The 'Attempt' StatusManager event now has a status object.",
+				"\t• Added Testing.Utils.UseItemSkillOnTarget, for making a character use items with skills, like grenades/scrolls."
 			]
 		},
 		{

@@ -15,6 +15,7 @@
 ---@field Thread thread
 ---@field Tasks LuaTestTaskCallback[]
 ---@field CurrentTaskIndex integer
+---@field LastSignals string[]
 ---@overload fun(id:string, tasks:LuaTestTaskCallback|LuaTestTaskCallback[], params:LuaTestParams|nil):LuaTest
 local LuaTest = {
 	Type = "LuaTest",
@@ -48,6 +49,7 @@ function LuaTest:Create(id, tasks, params)
 		SuccessMessage = "",
 		Errors = {},
 		Failed = false,
+		LastSignals = {},
 	}
 	local tt = type(tasks)
 	if tt == "function" then
@@ -97,7 +99,7 @@ end
 ---@param timeout number|nil
 function LuaTest:WaitForSignal(id, timeout)
 	--For situations where this got a signal before the previous one was resumed
-	if self.LastUnmatchedSignal == id then
+	if self.LastUnmatchedSignal == id or self.LastSignals[#self.LastSignals] == id then
 		self.LastUnmatchedSignal = nil
 		self.SignalSuccess = id
 		return true
@@ -112,6 +114,7 @@ end
 
 ---@param id string
 function LuaTest:OnSignal(id)
+	self.LastSignals[#self.LastSignals+1] = id
 	if self.NextSignal == id then
 		self.SignalSuccess = id
 		if self:Resume() then
@@ -210,7 +213,12 @@ end
 
 function LuaTest:AssertGotSignal(signalId)
 	if self.SignalSuccess == signalId then
-		return
+		return true
+	end
+	for i=1,#self.LastSignals do
+		if self.LastSignals[i] == signalId then
+			return true
+		end
 	end
 	if self.SignalSuccess == nil then
 		self:Failure(string.format("No successful signal was detected when waiting for (%s). WaitForSignal likely timed out.", signalId), 2)
@@ -244,6 +252,7 @@ function LuaTest:Reset()
 	self.Failed = false
 	self.Thread = _NilThread
 	self.State = -1
+	self.LastSignals = {}
 end
 
 local function _SafeCleanup(self, ...)

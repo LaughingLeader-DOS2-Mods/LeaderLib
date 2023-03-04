@@ -256,6 +256,67 @@ Events.ModSettingsChanged = Classes.SubscribableEvent:Create("ModSettingsChanged
 	ArgsKeyOrder={"ID", "Value", "Data", "Settings"}
 })
 
+---@class OnSkillStateBaseEventArgs
+---@field Character EsvCharacter
+---@field CharacterGUID Guid
+---@field State SKILL_STATE
+---@field Skill string
+---@field Ability SkillAbility
+---@field SkillType SkillType
+---@field DataType LeaderLibSkillListenerDataType
+---@field SourceItem EsvItem|nil
+
+---@class OnSkillStateAllEventArgs:OnSkillStateBaseEventArgs
+---@field Data SkillEventData|HitData|ProjectileHitData|StatEntrySkillData|boolean
+
+---@class OnSkillStatePrepareEventArgs:OnSkillStateBaseEventArgs
+---@field Data StatEntrySkillData
+
+---@class OnSkillStateCancelEventArgs:OnSkillStateBaseEventArgs
+---@field Data StatEntrySkillData
+
+---@class OnSkillStateSkillEventEventArgs:OnSkillStateBaseEventArgs
+---@field Data SkillEventData
+
+---@class OnSkillStateHitEventArgs:OnSkillStateBaseEventArgs
+---@field Data HitData
+
+---@class OnSkillStateBeforeProjectileShootEventArgs:OnSkillStateBaseEventArgs
+---@field Data EsvShootProjectileHelper
+
+---@class OnSkillStateProjectileShootEventArgs:OnSkillStateBaseEventArgs
+---@field Data EsvProjectile
+
+---@class OnSkillStateProjectileHitEventArgs:OnSkillStateBaseEventArgs
+---@field Data ProjectileHitData
+
+---@class OnSkillStateLearnedEventArgs:OnSkillStateBaseEventArgs
+---@field Data boolean Whether the skill is learned or not.
+---@field Memorized boolean
+
+---@class OnSkillStateMemorizedEventArgs:OnSkillStateBaseEventArgs
+---@field Data boolean Whether the skill is memorized or not.
+---@field Learned boolean
+
+---@class OnSkillStateGetAPCost:OnSkillStateBaseEventArgs
+---@field Data LuaGetSkillAPCostEvent The event data from Ext.GetSkillAPCost.
+---@field Character EsvCharacter|EclCharacter
+
+---Server-side event for when a skill state event occurs.  
+---Use SkillManager.Register to register different skill listeners.  
+---**Note: Only the GETAPCOST state is client-side.**  
+---🔨🔧**Server/Client**🔧🔨  
+---@see LeaderLibSkillManagerRegistration#All
+---@type LeaderLibSubscribableEvent<OnSkillStateAllEventArgs>
+Events.OnSkillState = Classes.SubscribableEvent:Create("OnSkillState", {
+	ArgsKeyOrder={"Skill", "CharacterGUID", "State", "Data", "DataType"},
+	OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
+		if matchArgsType == "nil" or (matchArgsType == "table" and matchArgs.Skill == nil) then
+			SkillManager.EnableForAllSkills(true)
+		end
+	end
+})
+
 if not _ISCLIENT then
 	---@class GlobalFlagChangedEventArgs
 	---@field ID string The _FlagName value.
@@ -522,7 +583,7 @@ if not _ISCLIENT then
 
 	---@class OnTurnEndedEventArgs
 	---@field ID string A turn counter ID tracking this character, if any.
-	---@field Object ObjectParam
+	---@field Object EsvCharacter Could technically be an item, but this is EsvCharacter since it's likely a character in most cases.
 	---@field ObjectGUID Guid
 	
 	---Called when an object's turn ends in combat, or they leave combat.  
@@ -591,66 +652,6 @@ if not _ISCLIENT then
 	---@type LeaderLibSubscribableEvent<CharacterBasePointsChangedEventArgs>
 	Events.CharacterBasePointsChanged = Classes.SubscribableEvent:Create("CharacterBasePointsChanged", {
 		ArgsKeyOrder={"CharacterGUID", "Stat", "Last", "Current", "StatType"}
-	})
-
-	---@class OnSkillStateBaseEventArgs
-	---@field Character EsvCharacter
-	---@field CharacterGUID Guid
-	---@field State SKILL_STATE
-	---@field Skill string
-	---@field Ability SkillAbility
-	---@field SkillType SkillType
-	---@field DataType LeaderLibSkillListenerDataType
-	---@field SourceItem EsvItem|nil
-
-	---@class OnSkillStateAllEventArgs:OnSkillStateBaseEventArgs
-	---@field Data SkillEventData|HitData|ProjectileHitData|StatEntrySkillData|boolean
-
-	---@class OnSkillStatePrepareEventArgs:OnSkillStateBaseEventArgs
-	---@field Data StatEntrySkillData
-
-	---@class OnSkillStateCancelEventArgs:OnSkillStateBaseEventArgs
-	---@field Data StatEntrySkillData
-
-	---@class OnSkillStateSkillEventEventArgs:OnSkillStateBaseEventArgs
-	---@field Data SkillEventData
-
-	---@class OnSkillStateHitEventArgs:OnSkillStateBaseEventArgs
-	---@field Data HitData
-
-	---@class OnSkillStateBeforeProjectileShootEventArgs:OnSkillStateBaseEventArgs
-	---@field Data EsvShootProjectileHelper
-
-	---@class OnSkillStateProjectileShootEventArgs:OnSkillStateBaseEventArgs
-	---@field Data EsvProjectile
-
-	---@class OnSkillStateProjectileHitEventArgs:OnSkillStateBaseEventArgs
-	---@field Data ProjectileHitData
-
-	---@class OnSkillStateLearnedEventArgs:OnSkillStateBaseEventArgs
-	---@field Data boolean Whether the skill is learned or not.
-	---@field Memorized boolean
-	
-	---@class OnSkillStateMemorizedEventArgs:OnSkillStateBaseEventArgs
-	---@field Data boolean Whether the skill is memorized or not.
-	---@field Learned boolean
-	
-	---@class OnSkillStateGetAPCost:OnSkillStateBaseEventArgs
-	---@field Data LuaGetSkillAPCostEvent The event data from Ext.GetSkillAPCost.
-	---@field Character EsvCharacter|EclCharacter
-	
-	---Server-side event for when a skill state event occurs.  
-	---Use SkillManager.Register to register different skill listeners.  
-	---🔨**Server-Only**🔨  
-	---@see LeaderLibSkillManagerRegistration#All
-	---@type LeaderLibSubscribableEvent<OnSkillStateAllEventArgs>
-	Events.OnSkillState = Classes.SubscribableEvent:Create("OnSkillState", {
-		ArgsKeyOrder={"Skill", "CharacterGUID", "State", "Data", "DataType"},
-		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
-			if matchArgsType == "nil" or (matchArgsType == "table" and matchArgs.Skill == nil) then
-				SkillManager.EnableForAllSkills(true)
-			end
-		end
 	})
 
 	---@class OnStatusBaseEventArgs

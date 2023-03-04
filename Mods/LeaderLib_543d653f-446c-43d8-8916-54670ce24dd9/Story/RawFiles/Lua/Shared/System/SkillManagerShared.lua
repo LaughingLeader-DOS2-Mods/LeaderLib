@@ -1,8 +1,7 @@
 local _ISCLIENT = Ext.IsClient()
 
 local _enabledSkills = SkillManager._Internal.EnabledSkills
-
-local _lastUsedSkillItems = {}
+local _lastUsedSkillItems = SkillManager._Internal.LastUsedSkillItems
 
 ---@param character EsvCharacter
 ---@param skill string

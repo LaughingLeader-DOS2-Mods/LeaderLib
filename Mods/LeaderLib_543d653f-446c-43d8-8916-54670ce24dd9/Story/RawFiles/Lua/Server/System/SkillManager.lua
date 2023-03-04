@@ -12,6 +12,7 @@ local skillEventDataTable = {}
 local _enabledSkills = SkillManager._Internal.EnabledSkills
 local _CreateSkillEventTable = SkillManager._Internal.CreateSkillEventTable
 local _GetSkillSourceItem = SkillManager._Internal.GetSkillSourceItem
+local _lastUsedSkillItems = SkillManager._Internal.LastUsedSkillItems
 
 function SkillManager.EnableForAllSkills(enabled)
 	if enabled ~= false then

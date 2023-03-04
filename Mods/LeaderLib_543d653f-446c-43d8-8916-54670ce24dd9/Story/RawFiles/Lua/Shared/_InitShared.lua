@@ -13,6 +13,7 @@ QOL = {}
 SkillManager = {
 	_Internal = {
 		EnabledSkills = {},
+		LastUsedSkillItems = {},
 	},
 	---@class LeaderLibSkillManagerRegistration
 	Register = {}

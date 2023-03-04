@@ -274,19 +274,28 @@ end
 function GameHelpers.Status.Apply(target, status, duration, force, source, radius, canTargetItems, canApplyCallback, statusOpts)
 	if not duration then
 		duration = 6.0
-		local potion = Ext.StatGetAttribute(status, "StatsId")
-		if not StringHelpers.IsNullOrWhitespace(potion) then
-			if string.find(potion, ";") then
-				for m in string.gmatch(potion, "[%a%d_]+,") do
-					local potionDuration = Ext.StatGetAttribute(string.sub(m, 1, #m-1), "Duration")
-					if potionDuration and potionDuration > duration then
-						duration = potionDuration * 6.0
+		local stat = Ext.Stats.Get(status, nil, false)
+		if stat then
+			local potion = stat.StatsId
+			if not StringHelpers.IsNullOrWhitespace(potion) then
+				if string.find(potion, ";") then
+					for m in string.gmatch(potion, "[%a%d_]+,") do
+						local potionStat = Ext.Stats.Get(string.sub(m, 1, #m-1), nil, false)
+						if potionStat then
+							local potionDuration = potionStat.Duration
+							if potionDuration and potionDuration > duration then
+								duration = potionDuration * 6.0
+							end
+						end
 					end
-				end
-			else
-				local potionDuration = Ext.StatGetAttribute(potion, "Duration")
-				if potionDuration and potionDuration > 0 then
-					duration = potionDuration * 6.0
+				else
+					local potionStat = Ext.Stats.Get(potion, nil, false)
+					if potionStat then
+						local potionDuration = potionStat.Duration
+						if potionDuration then
+							duration = potionDuration * 6.0
+						end
+					end
 				end
 			end
 		end
@@ -303,7 +312,7 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 		local targetType = type(target)
 		if targetType ~= "table" then
 			target = GameHelpers.GetUUID(target)
-			if target then
+			if target and GameHelpers.ObjectExists(target) then
 				FinallyApplyStatus(target, status, duration, force, source, statusOpts)
 			end
 		else

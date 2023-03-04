@@ -8,13 +8,19 @@ end
 local Utils = {}
 Testing.Utils = Utils
 
+Testing.Vars = {
+	DefaultCharacterTemplate = "2ac80a2a-8326-4131-a03c-53906927f935",
+	DefaultDummyTemplate = "680e6e58-98f4-4684-9a84-d5a190f855d5",
+	TrainingDummyTemplate = "985acfab-b221-4221-8263-fa00797e8883",
+}
+
 if not _ISCLIENT then
 	---@return string
 	local function _GetDummyTemplate()
 		if Ext.Mod.IsModLoaded(Data.ModID.TrainingDummy) then
-			return "985acfab-b221-4221-8263-fa00797e8883"
+			return Testing.Vars.TrainingDummyTemplate
 		end
-		return "680e6e58-98f4-4684-9a84-d5a190f855d5"
+		return Testing.Vars.DefaultDummyTemplate
 	end
 
 	---@param character Guid
@@ -74,7 +80,7 @@ if not _ISCLIENT then
 
 		local totalCharacters = math.max(0, params.TotalCharacters or 1)
 		local characters = {}
-		local userTemplate = params.UserTemplate or GameHelpers.GetTemplate(host) --[[@as string]]
+		local userTemplate = params.UserTemplate or Testing.Vars.DefaultCharacterTemplate or GameHelpers.GetTemplate(host) --[[@as string]]
 		for i=1,totalCharacters do
 			local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(startingPos, 6.0)
 			local character = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(x, y, z, userTemplate, 0))
@@ -86,7 +92,7 @@ if not _ISCLIENT then
 			characters[#characters+1] = character
 		end
 
-		local totalDummies = math.max(0, params.TotalDummies or 0)
+		local totalDummies = math.max(0, params.TotalDummies or 1)
 
 		local dummies = {}
 		local dummyTemplate = params.DummyTemplate or _GetDummyTemplate() --[[@as string]]
@@ -131,5 +137,90 @@ if not _ISCLIENT then
 		end)
 		Timer.StartOneshot("", 60000, cleanup)
 		return totalCharacters > 1 and characters or characters[1],totalDummies > 1 and dummies or dummies[1],cleanup
+	end
+
+	local function _IsVec3(tbl)
+		for i=1,3 do
+			if type(tbl) ~= "number" then
+				return false
+			end
+		end
+		return tbl[4] == nil
+	end
+
+	---@class Testing_Utils_UseItemOnTargetOptions
+	---@field Skill FixedString
+	---@field SkillItem ItemParam
+	---@field Position1 vec3
+	---@field Position2 vec3
+	---@field SecondTargetCharacter CharacterParam
+	---@field SecondTargetItem ItemParam
+	---@field IgnoreHasSkill boolean
+
+	---@param charGUID Guid
+	---@param opts Testing_Utils_UseItemOnTargetOptions
+	local function _ApplyOpts(charGUID, opts)
+		if opts.Skill then
+			SetVarFixedString(charGUID, "Test_Skill", opts.Skill)
+		end
+		if opts.IgnoreHasSkill ~= nil then
+			SetVarInteger(charGUID, "Test_IgnoreHasSkill", opts.IgnoreHasSkill == true and 1 or 0)
+		end
+		if opts.Position1 then
+			SetVarFloat3(charGUID, "Test_SkillPos1", table.unpack(opts.Position1))
+		end
+		if opts.Position2 then
+			SetVarFloat3(charGUID, "Test_SkillPos2", table.unpack(opts.Position2))
+		end
+		if opts.SecondTargetCharacter then
+			SetVarFixedString(charGUID, "Test_SkillCharacterTarget2", GameHelpers.GetUUID(opts.SecondTargetCharacter))
+		end
+		if opts.SecondTargetItem then
+			SetVarFixedString(charGUID, "Test_SkillItemTarget2", GameHelpers.GetUUID(opts.SecondTargetItem))
+		end
+		if opts.SkillItem then
+			SetVarFixedString(charGUID, "Test_SkillItem", GameHelpers.GetUUID(opts.SkillItem))
+		end
+	end
+
+	---@param character CharacterParam This should be a character with the LeaderLib_TestCharacter script, as it has reactions to make an NPC use an item on a target.
+	---@param target ObjectParam|vec3
+	---@param item ItemParam And item with a cast skill use action.
+	---@param opts? Testing_Utils_UseItemOnTargetOptions
+	function Utils.UseItemSkillOnTarget(character, target, item, opts)
+		opts = opts or {}
+		character = GameHelpers.GetCharacter(character, "EsvCharacter")
+		item = GameHelpers.GetItem(item, "EsvItem")
+
+		assert(character ~= nil, "Failed to get character")
+		assert(item ~= nil, "Failed to get item")
+
+		local skill,data = GameHelpers.Item.GetUseActionSkills(item)
+
+		assert(data.CastsSkill == true, "Item does not have a skill cast action")
+		SetStoryEvent(character.MyGuid, "LeaderLib_Testing_ResetVariables")
+		SetVarFixedString(character.MyGuid, "Test_Skill", skill[1])
+		SetVarFixedString(character.MyGuid, "Test_SkillItem", item.MyGuid)
+		_ApplyOpts(character.MyGuid, opts)
+
+		local t = type(target)
+		if t == "table" then
+			assert(_IsVec3(target) == true, "Target table is not a valid vector3 position.")
+			local x,y,z = table.unpack(target)
+			SetVarFloat3(character.MyGuid, "Test_SkillPos1", x, y, z)
+			CharacterSetReactionPriority(character.MyGuid, "LeaderLib_Testing_UseSkillOnPosition", 9999)
+		else
+			target = GameHelpers.TryGetObject(target)
+			assert(target ~= nil, "Failed to get target")
+			if GameHelpers.Ext.ObjectIsCharacter(target) then
+				SetVarFixedString(character.MyGuid, "Test_SkillCharacterTarget1", target.MyGuid)
+				CharacterSetReactionPriority(character.MyGuid, "LeaderLib_Testing_UseSkillOnCharacter", 9999)
+			elseif GameHelpers.Ext.ObjectIsItem(target) then
+				SetVarFixedString(character.MyGuid, "Test_SkillItemTarget1", target.MyGuid)
+				CharacterSetReactionPriority(character.MyGuid, "LeaderLib_Testing_UseSkillOnItem", 9999)
+			else
+				error("Target is not a valid character or item", 2)
+			end
+		end
 	end
 end

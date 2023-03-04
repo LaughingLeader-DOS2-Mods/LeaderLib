@@ -1,0 +1,78 @@
+INIT
+	CHARACTER:__Me
+	SKILL:%Test_Skill = null
+	ITEM:%Test_SkillItem = null
+	FLOAT3:%Test_SkillPos1 = null
+	FLOAT3:%Test_SkillPos2 = null
+	CHARACTER:%Test_SkillCharacterTarget1 = null
+	CHARACTER:%Test_SkillCharacterTarget2 = null
+	ITEM:%Test_SkillItemTarget1 = null
+	ITEM:%Test_SkillItemTarget2 = null
+	INT:%Test_IgnoreHasSkill = 1
+EVENTS
+
+EVENT LeaderLib_Testing_ResetVariables
+ON
+	OnCharacterEvent(__Me, "LeaderLib_Testing_ResetVariables")
+	OnFunction("LeaderLib_Testing_ResetVariables")
+ACTIONS
+	Set(%Test_Skill, null)
+	Set(%Test_SkillPos1, null)
+	Set(%Test_SkillPos2, null)
+	Set(%Test_SkillCharacterTarget1, null)
+	Set(%Test_SkillCharacterTarget2, null)
+	Set(%Test_SkillItemTarget1, null)
+	Set(%Test_SkillItemTarget2, null)
+
+BEHAVIOUR
+
+REACTION LeaderLib_Testing_UseSkillOnPosition,0
+USAGE ALL
+ACTIONS
+IF "!c1"
+	IsEqual(%Test_SkillItemTarget2, null)
+THEN
+	CharacterUseSkill(%Test_Skill, %Test_SkillPos1, %Test_SkillItemTarget2, %Test_SkillItem, %Test_IgnoreHasSkill)
+ELIF "!c1"
+	IsEqual(%Test_SkillCharacterTarget2, null)
+THEN
+	CharacterUseSkill(%Test_Skill, %Test_SkillPos1, %Test_SkillCharacterTarget2, %Test_SkillItem, %Test_IgnoreHasSkill)
+ELSE
+	CharacterUseSkill(%Test_Skill, %Test_SkillPos1, %Test_SkillPos2, %Test_SkillItem, %Test_IgnoreHasSkill)
+ENDIF
+SetPriority("LeaderLib_Testing_UseSkillOnPosition", 0)
+Reset()
+
+REACTION LeaderLib_Testing_UseSkillOnCharacter,0
+USAGE ALL
+ACTIONS
+IF "!c1"
+	IsEqual(%Test_SkillCharacterTarget2, null)
+THEN
+	CharacterUseSkill(%Test_Skill, %Test_SkillCharacterTarget1, %Test_SkillCharacterTarget2, %Test_SkillItem, %Test_IgnoreHasSkill)
+ELIF "!c1"
+	IsEqual(%Test_SkillItemTarget2, null)
+THEN
+	CharacterUseSkill(%Test_Skill, %Test_SkillCharacterTarget1, %Test_SkillItemTarget2, %Test_SkillItem, %Test_IgnoreHasSkill)
+ELSE
+	CharacterUseSkill(%Test_Skill, %Test_SkillCharacterTarget1, %Test_SkillPos2, %Test_SkillItem, %Test_IgnoreHasSkill)
+ENDIF
+SetPriority("LeaderLib_Testing_UseSkillOnCharacter", 0)
+Reset()
+
+REACTION LeaderLib_Testing_UseSkillOnItem,0
+USAGE ALL
+ACTIONS
+IF "!c1"
+	IsEqual(%Test_SkillItemTarget2, null)
+THEN
+	CharacterUseSkill(%Test_Skill, %Test_SkillItemTarget1, %Test_SkillItemTarget2, %Test_SkillItem, %Test_IgnoreHasSkill)
+ELIF "!c1"
+	IsEqual(%Test_SkillCharacterTarget2, null)
+THEN
+	CharacterUseSkill(%Test_Skill, %Test_SkillItemTarget1, %Test_SkillCharacterTarget2, %Test_SkillItem, %Test_IgnoreHasSkill)
+ELSE
+	CharacterUseSkill(%Test_Skill, %Test_SkillItemTarget1, %Test_SkillPos2, %Test_SkillItem, %Test_IgnoreHasSkill)
+ENDIF
+SetPriority("LeaderLib_Testing_UseSkillOnItem", 0)
+Reset()

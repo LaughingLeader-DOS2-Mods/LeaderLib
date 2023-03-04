@@ -1016,7 +1016,7 @@ end
 ---@overload fun(item:ItemParam|ItemTemplate):string[], GameHelpers_Item_GetUseActionSkillsReturnData
 ---@overload fun(item:ItemParam|ItemTemplate, inKeyValueFormat:boolean):table<string,boolean>, GameHelpers_Item_GetUseActionSkillsReturnData
 ---@param item ItemParam|ItemTemplate Either an item, or an item RootTemplate.
----@param inKeyValueFormat? boolean If true, the table is returned as table<skill,boolean>
+---@param inKeyValueFormat boolean If true, the table is returned as table<skill,boolean>
 ---@param consumableOnly? boolean
 ---@return table<string,boolean> skills
 ---@return GameHelpers_Item_GetUseActionSkillsReturnData itemParams

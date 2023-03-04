@@ -103,6 +103,7 @@ Ext.Require("Shared/UI/CombatLog.lua")
 Ext.Require("Shared/UI/MessageBox.lua")
 Ext.Require("Shared/UI/Overhead.lua")
 Ext.Require("Shared/System/TutorialManager.lua")
+
 if Ext.Debug.IsDeveloperMode() then
 	Ext.Require("Shared/Debug/SharedDebug.lua")
 end

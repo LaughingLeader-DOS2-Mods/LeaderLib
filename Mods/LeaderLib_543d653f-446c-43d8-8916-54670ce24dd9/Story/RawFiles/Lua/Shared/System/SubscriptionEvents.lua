@@ -635,6 +635,10 @@ if not _ISCLIENT then
 	---@field Data boolean Whether the skill is memorized or not.
 	---@field Learned boolean
 	
+	---@class OnSkillStateGetAPCost:OnSkillStateBaseEventArgs
+	---@field Data LuaGetSkillAPCostEvent The event data from Ext.GetSkillAPCost.
+	---@field Character EsvCharacter|EclCharacter
+	
 	---Server-side event for when a skill state event occurs.  
 	---Use SkillManager.Register to register different skill listeners.  
 	---🔨**Server-Only**🔨  

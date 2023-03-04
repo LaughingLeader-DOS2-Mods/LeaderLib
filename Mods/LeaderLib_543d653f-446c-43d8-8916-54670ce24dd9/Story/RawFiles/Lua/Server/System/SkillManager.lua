@@ -1,10 +1,3 @@
-if SkillManager == nil then
-	---@class LeaderLibSkillManager
-	SkillManager = {}
-end
-
-Managers.Skill = SkillManager
-
 ---A temporary table used to store data for a skill, including targets / skill information.
 ---@type table<string,SkillEventData>
 local skillEventDataTable = {}
@@ -16,7 +9,9 @@ SkillManager.SkillEventDataTable = skillEventDataTable
 ---@type table<string,SkillEventData>
 local skillEventDataTable = {}
 
-local _enabledSkills = {}
+local _enabledSkills = SkillManager._Internal.EnabledSkills
+local _CreateSkillEventTable = SkillManager._Internal.CreateSkillEventTable
+local _GetSkillSourceItem = SkillManager._Internal.GetSkillSourceItem
 
 function SkillManager.EnableForAllSkills(enabled)
 	if enabled ~= false then
@@ -146,44 +141,6 @@ function StoreSkillEventData(char, skill, skillType, skillAbility, ...)
 	end
 end
 
--- Example: Finding the base skill of an enemy skill
--- GetBaseSkill(skill, "Enemy")
-
-local _lastUsedSkillItems = {}
-
----@param character EsvCharacter
----@param skill string
----@param returnStoredtemData boolean|nil Returns the last item data as a table, if the item no longer exists.
-local function _GetSkillSourceItem(character, skill, returnStoredtemData)
-	if not character then
-		return nil
-	end
-	local sourceItem = nil
-	if GameHelpers.Ext.ObjectIsCharacter(character) then
-		if character.SkillManager.CurrentSkillState and Ext.Utils.IsValidHandle(character.SkillManager.CurrentSkillState.SourceItemHandle) then
-			sourceItem = GameHelpers.GetItem(character.SkillManager.CurrentSkillState.SourceItemHandle)
-		end
-	end
-	if sourceItem == nil then
-		local lastItemData = _lastUsedSkillItems[character.MyGuid]
-		if lastItemData then
-			if StringHelpers.Contains(lastItemData.Skills, skill) then
-				if returnStoredtemData == true then
-					sourceItem = {
-						RootTemplate = lastItemData.Template,
-						StatsId = lastItemData.StatsId,
-						DisplayName = lastItemData.DisplayName
-					}
-					sourceItem.RootTemplate = Ext.Template.GetTemplate(lastItemData.Template)
-				elseif ObjectExists(lastItemData.Item) == 1 then
-					sourceItem = GameHelpers.GetItem(lastItemData.Item)			
-				end
-			end
-		end
-	end
-	return sourceItem
-end
-
 Ext.Osiris.RegisterListener("CanUseItem", 3, "after", function(charGUID, itemGUID, requestId)
 	if ObjectExists(charGUID) == 1 and ObjectExists(itemGUID) == 1 then
 		local skills,data = GameHelpers.Item.GetUseActionSkills(itemGUID, false, false)
@@ -204,29 +161,6 @@ Ext.Osiris.RegisterListener("CanUseItem", 3, "after", function(charGUID, itemGUI
 		end
 	end
 end)
-
----@param skill string
----@param character EsvCharacter
----@param state SKILL_STATE
----@param data any
----@param dataType string
-local function _CreateSkillEventTable(skill, character, state, data, dataType)
-	local skillData = Ext.Stats.Get(skill, nil, false)
-	if not skillData then
-		skillData = {Ability = "", SkillType = ""}
-	end
-	return {
-		Character = character,
-		CharacterGUID = character.MyGuid,
-		Skill = skill,
-		State = state,
-		Data = data,
-		DataType = dataType,
-		SourceItem = _GetSkillSourceItem(character, skill),
-		Ability = skillData.Ability,
-		SkillType = skillData.SkillType,
-	}
-end
 
 function OnSkillPreparing(char, skillprototype)
 	char = StringHelpers.GetUUID(char)
@@ -605,9 +539,6 @@ Ext.RegisterNetListener("LeaderLib_OnActiveSkillCleared", function(cmd, id)
 	end
 end)
 
----@class LeaderLibSkillManagerRegistration
-local _REGISTER = {}
-
 ---@param state SKILL_STATE
 ---@param matchState SKILL_STATE|SKILL_STATE[]
 ---@param matchStateType string
@@ -631,13 +562,13 @@ end
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[]|nil index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.All(skill, callback, onlySkillState, priority, once)
+function SkillManager.Register.All(skill, callback, onlySkillState, priority, once)
 	local t = type(skill)
 	if t == "table" then
 		local indexes = {}
 		for _,v in pairs(skill) do
 			if not GameHelpers.Stats.IsAction(v) then
-				local index = _REGISTER.All(v, callback, onlySkillState, priority, once)
+				local index = SkillManager.Register.All(v, callback, onlySkillState, priority, once)
 				if index then
 					indexes[#indexes+1] = index
 				end
@@ -680,8 +611,8 @@ end
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.Prepare(skill, callback, priority, once)
-	return _REGISTER.All(skill, callback, SKILL_STATE.PREPARE, priority, once)
+function SkillManager.Register.Prepare(skill, callback, priority, once)
+	return SkillManager.Register.All(skill, callback, SKILL_STATE.PREPARE, priority, once)
 end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.CANCEL event (when the skill preparation is cancelled).
@@ -690,8 +621,8 @@ end
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.Cancel(skill, callback, priority, once)
-	return _REGISTER.All(skill, callback, SKILL_STATE.CANCEL, priority, once)
+function SkillManager.Register.Cancel(skill, callback, priority, once)
+	return SkillManager.Register.All(skill, callback, SKILL_STATE.CANCEL, priority, once)
 end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.USED event.
@@ -700,8 +631,8 @@ end
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.Used(skill, callback, priority, once)
-	return _REGISTER.All(skill, callback, SKILL_STATE.USED, priority, once)
+function SkillManager.Register.Used(skill, callback, priority, once)
+	return SkillManager.Register.All(skill, callback, SKILL_STATE.USED, priority, once)
 end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.CAST event.
@@ -710,8 +641,8 @@ end
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.Cast(skill, callback, priority, once)
-	return _REGISTER.All(skill, callback, SKILL_STATE.CAST, priority, once)
+function SkillManager.Register.Cast(skill, callback, priority, once)
+	return SkillManager.Register.All(skill, callback, SKILL_STATE.CAST, priority, once)
 end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.HIT event.
@@ -720,8 +651,8 @@ end
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.Hit(skill, callback, priority, once)
-	return _REGISTER.All(skill, callback, SKILL_STATE.HIT, priority, once)
+function SkillManager.Register.Hit(skill, callback, priority, once)
+	return SkillManager.Register.All(skill, callback, SKILL_STATE.HIT, priority, once)
 end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.BEFORESHOOT event.
@@ -730,8 +661,8 @@ end
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.BeforeProjectileShoot(skill, callback, priority, once)
-	return _REGISTER.All(skill, callback, SKILL_STATE.BEFORESHOOT, priority, once)
+function SkillManager.Register.BeforeProjectileShoot(skill, callback, priority, once)
+	return SkillManager.Register.All(skill, callback, SKILL_STATE.BEFORESHOOT, priority, once)
 end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.SHOOTPROJECTILE event.
@@ -740,8 +671,8 @@ end
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.ProjectileShoot(skill, callback, priority, once)
-	return _REGISTER.All(skill, callback, SKILL_STATE.SHOOTPROJECTILE, priority, once)
+function SkillManager.Register.ProjectileShoot(skill, callback, priority, once)
+	return SkillManager.Register.All(skill, callback, SKILL_STATE.SHOOTPROJECTILE, priority, once)
 end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.PROJECTILEHIT event.
@@ -750,8 +681,8 @@ end
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.ProjectileHit(skill, callback, priority, once)
-	return _REGISTER.All(skill, callback, SKILL_STATE.PROJECTILEHIT, priority, once)
+function SkillManager.Register.ProjectileHit(skill, callback, priority, once)
+	return SkillManager.Register.All(skill, callback, SKILL_STATE.PROJECTILEHIT, priority, once)
 end
 
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.LEARNED event.
@@ -760,8 +691,8 @@ end
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.Learned(skill, callback, priority, once)
-	return _REGISTER.All(skill, callback, SKILL_STATE.LEARNED, priority, once)
+function SkillManager.Register.Learned(skill, callback, priority, once)
+	return SkillManager.Register.All(skill, callback, SKILL_STATE.LEARNED, priority, once)
 end
 
 local _MemorizationStates = {SKILL_STATE.MEMORIZED, SKILL_STATE.UNMEMORIZED}
@@ -772,8 +703,6 @@ local _MemorizationStates = {SKILL_STATE.MEMORIZED, SKILL_STATE.UNMEMORIZED}
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
-function _REGISTER.MemorizationChanged(skill, callback, priority, once)
-	return _REGISTER.All(skill, callback, _MemorizationStates, priority, once)
+function SkillManager.Register.MemorizationChanged(skill, callback, priority, once)
+	return SkillManager.Register.All(skill, callback, _MemorizationStates, priority, once)
 end
-
-SkillManager.Register = _REGISTER

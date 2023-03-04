@@ -381,6 +381,7 @@ SKILL_STATE = {
 	LEARNED = "LEARNED",
 	MEMORIZED = "MEMORIZED",
 	UNMEMORIZED = "UNMEMORIZED",
+	GETAPCOST = "GETAPCOST"
 }
 
 Ext.Require("Shared/Data/ResistancePenetrationTags.lua")

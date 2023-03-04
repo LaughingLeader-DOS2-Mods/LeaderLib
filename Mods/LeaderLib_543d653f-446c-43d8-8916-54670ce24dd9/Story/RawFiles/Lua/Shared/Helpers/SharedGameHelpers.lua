@@ -210,9 +210,9 @@ function GameHelpers.GetObjectFromHandle(handle, typeName)
 end
 
 
----@overload fun(object:ObjectParam):Guid|nil
+---@overload fun(object:ObjectParam|nil):Guid|nil
 ---Tries to get a string UUID from whatever variable type object is.
----@param object ObjectParam
+---@param object ObjectParam|nil
 ---@param returnNullId boolean If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
 ---@return Guid|nil
 function GameHelpers.GetUUID(object, returnNullId)

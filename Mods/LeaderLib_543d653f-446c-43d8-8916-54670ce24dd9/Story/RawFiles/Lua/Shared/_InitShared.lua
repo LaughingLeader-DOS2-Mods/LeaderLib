@@ -9,9 +9,20 @@ GameHelpers._INTERNAL = {}
 ---@class LeaderLibQualityOfLifeTweaks
 QOL = {}
 
+---@class LeaderLibSkillManager
+SkillManager = {
+	_Internal = {
+		EnabledSkills = {},
+	},
+	---@class LeaderLibSkillManagerRegistration
+	Register = {}
+}
+
 ---Manager tables that handle state changes and include ways to register callbacks for specific events.  
 ---@class LeaderLibManagers
-Managers = {}
+Managers = {
+	Skill = SkillManager
+}
 
 local function InitTable(name, target)
 	target = target or Mods.LeaderLib

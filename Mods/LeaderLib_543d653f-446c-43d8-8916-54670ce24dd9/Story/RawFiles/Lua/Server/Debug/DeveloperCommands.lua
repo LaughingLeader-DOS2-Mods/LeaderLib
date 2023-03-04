@@ -1429,7 +1429,7 @@ Ext.RegisterConsoleCommand("spawncharactertemplate", function (cmd, template)
 	local host = Ext.Entity.GetCharacter(CharacterGetHostCharacter())
 	template = template or "a3caf91b-3d65-4013-8f54-fb12b593972d"
 	local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(host.WorldPos, 8, nil, true)
-	character = TemporaryCharacterCreateAtPosition(x,y,z, template, 1)
+	local character = TemporaryCharacterCreateAtPosition(x,y,z, template, 1)
 	GameHelpers.Character.SetLevel(character, 1)
 	CharacterConsume(character, "SKILLBOOST_SparkmasterWeakenAttack")
 	Events.BeforeLuaReset:Subscribe(function (e)

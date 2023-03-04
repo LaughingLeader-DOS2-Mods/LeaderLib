@@ -159,6 +159,10 @@ if not _ISCLIENT then
 		if target ~= nil then
 			local targetObject = e.Data.Object
 			local targetData = _PV.ForceMoveData[target]
+			if not GameHelpers.ObjectExists(targetObject) then
+				_PV.ForceMoveData[target] = nil
+				return
+			end
 			if targetData ~= nil and targetData.Position then
 				if GameHelpers.Math.GetDistance(target, targetData.Position) <= 1 then
 					pcall(NRD_GameActionDestroy,targetData.Handle)
@@ -194,7 +198,7 @@ if not _ISCLIENT then
 				else
 					Timer.StartObjectTimer(e.ID, target, 250)
 				end
-			elseif targetObject then
+			else
 				fprint(LOGLEVEL.WARNING, "[LeaderLib_OnForceMoveAction_Old] No force move data for target (%s). How did this happen?", targetObject.DisplayName)
 				Events.ForceMoveFinished:Invoke({
 					ID = "",

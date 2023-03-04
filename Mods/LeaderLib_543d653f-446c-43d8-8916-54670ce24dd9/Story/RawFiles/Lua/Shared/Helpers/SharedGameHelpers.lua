@@ -460,7 +460,7 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	if _type(character) ~= "userdata" then
 		character = GameHelpers.GetCharacter(character)
 		if not character then
-			fprint(LOGLEVEL.ERROR, "GameHelpers.CharacterOrEquipmentHasTag requires a uuid, netid, ObjectHandle, or EsvCharacter/EclCharacter. Values provided: character(%s) tag(%s)", character, tag)
+			fprint(LOGLEVEL.WARNING, "GameHelpers.CharacterOrEquipmentHasTag requires a uuid, netid, ObjectHandle, or EsvCharacter/EclCharacter. Values provided: character(%s) tag(%s)", character, tag)
 			return false
 		end
 	end

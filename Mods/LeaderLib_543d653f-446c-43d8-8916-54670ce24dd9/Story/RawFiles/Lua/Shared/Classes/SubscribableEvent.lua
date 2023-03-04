@@ -459,13 +459,13 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, getArgForMatch)
 	return nil
 end
 
-local function DeserializeArgs(args)
+local function DeserializeArgs(id, args)
 	local tbl = {}
 	for k,v in _pairs(args) do
 		if _type(v) == "table" then
 			if v.Type == "Object" then
 				local _getObjFunc = GameHelpers.TryGetObject
-				if k == "Item" then
+				if k == "Item" or (id == "SummonChanged" and args.IsItem == true) then
 					_getObjFunc = GameHelpers.GetItem
 				elseif k == "Character" then
 					_getObjFunc = GameHelpers.GetCharacter
@@ -497,7 +497,7 @@ Ext.RegisterNetListener("LeaderLib_SubscribableEvent_Invoke", function(cmd, payl
 	if data then
 		local sub = Events[data.ID]
 		if sub then
-			sub:Invoke(DeserializeArgs(data.Args), true)
+			sub:Invoke(DeserializeArgs(data.ID, data.Args), true)
 		end
 	end
 end)

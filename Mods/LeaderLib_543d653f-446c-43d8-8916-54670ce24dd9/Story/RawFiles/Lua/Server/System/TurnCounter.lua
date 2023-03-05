@@ -56,10 +56,14 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, target, par
 		end
 		local object = GameHelpers.TryGetObject(target)
 		if object then
-			params.Target = object
+			target = object.MyGuid
 		end
 	elseif t == "table" and not params.Position then
 		params.Position = target
+		target = nil
+	elseif t == "number" then
+		combatID = target
+		target = nil
 	end
 	local uniqueId = string.format("%s%s%s", id, Ext.Utils.MonotonicTime(), Ext.Utils.Random(9999))
 	---@type TurnCounterData

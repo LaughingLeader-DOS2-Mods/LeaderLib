@@ -1280,8 +1280,23 @@ end
 
 DebugHelpers.userDataProps = userDataProps
 
-local function TryGetValue(obj,k,v)
-	return obj[k]
+local function TryGetValue(obj,k,t)
+	local value = obj[k]
+	local actualType = _type(value)
+	if actualType ~= t then
+		if actualType == "userdata" then
+			local userDataType = Ext.Types.GetObjectType(value)
+			if string.find(userDataType, "Array") then
+				local tbl = {}
+				for i=1,#value do
+					tbl[#tbl+1] = value[i]
+				end
+				return tbl
+			end
+		end
+		return tostring(value)
+	end
+	return value
 end
 
 function DebugHelpers.ProcessProps(obj, props, data, printNil)
@@ -1396,6 +1411,17 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 				LifeTime = "number",
 				StatsMultiplier = "number",
 			}
+			if obj.StatusType == "HEAL" then
+				props.HealAmount = "number"
+				props.HealEffect = "number"
+				props.HealEffectId = "string"
+				props.HealType = "number"
+				props.TargetDependentHeal = "boolean"
+				props.TargetDependentHealAmount = "table"
+			elseif obj.StatusType == "HEALING" then
+				props.HealAmount = "number"
+				props.HealStat = "number"
+			end
 		else
 			props = nil
 			meta = obj
@@ -1423,9 +1449,14 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 		_proccessEntry = function(_d, k,v)
 			local t = _type(v)
 			if t == "userdata" then
-				local b,result = pcall(DebugHelpers.TraceUserDataSerpent, v, opts)
-				if b and result ~= nil then
-					_d[k] = result
+				local userDataType = Ext.Types.GetObjectType(v)
+				if string.find(userDataType, "Array") then
+					_d[k] = Ext.DumpExport(v)
+				else
+					local b,result = pcall(DebugHelpers.TraceUserDataSerpent, v, opts)
+					if b and result ~= nil then
+						_d[k] = result
+					end
 				end
 			elseif t == "table" then
 				_d[k] = {}

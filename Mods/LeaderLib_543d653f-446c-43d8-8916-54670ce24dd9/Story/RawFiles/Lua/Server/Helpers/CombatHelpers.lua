@@ -81,12 +81,12 @@ local function GetOsirisCombatCharacters(id, filter, filterReference, asTable)
 	end
 end
 
----@overload fun(id:integer|nil, filter:GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback|nil, filterReference:EsvCharacter|EsvItem|nil):fun():EsvCharacter
+---@overload fun(id:integer|nil, filter:GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback|nil, filterReference:EsvCharacter|EsvItem):fun():EsvCharacter
 ---@overload fun(id:integer|nil):fun():EsvCharacter
 ---@param id integer|nil The combat ID, or nothing to get all characters in combat.
 ---@param filter GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback|nil Used to filter returned charaters. Allies/Enemies/Neutral are the alignment relation towards the player party. If a function is supplied instead, a character is only included if the function returns true.
 ---@param filterReference EsvCharacter|EsvItem|nil For when using preset filters like "Ally", is is a reference character for relational checks.
----@param asTable boolean|nil Return results as a table, instead of an iterator function.
+---@param asTable boolean Return results as a table, instead of an iterator function.
 ---@return EsvCharacter[]
 function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)
 	if _OSIRIS() then
@@ -187,7 +187,7 @@ end
 ---@return boolean
 function GameHelpers.Combat.IsActiveTurn(obj)
 	local object = GameHelpers.TryGetObject(obj)
-	if object and object.InCombat and not GameHelpers.ObjectIsDead(object) then
+	if object and not GameHelpers.ObjectIsDead(object) then
 		---@cast object EsvCharacter|EsvItem
 		local combatID = GameHelpers.Combat.GetID(object)
 		if combatID > -1 then
@@ -197,8 +197,13 @@ function GameHelpers.Combat.IsActiveTurn(obj)
 				local turnOrder = combat:GetCurrentTurnOrder()
 				if turnOrder then
 					local activeTeam = turnOrder[1]
-					if activeTeam and (activeTeam.Character.MyGuid == object.MyGuid or activeTeam.Item.MyGuid == object.MyGuid) then
-						return true
+					if activeTeam then
+						if activeTeam.Character and activeTeam.Character.MyGuid == object.MyGuid then
+							return true
+						end
+						if activeTeam.Item and activeTeam.Item.MyGuid == object.MyGuid then
+							return true
+						end
 					end
 				end
 			end

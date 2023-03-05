@@ -131,8 +131,8 @@ function GameHelpers.Math.GetRelativeAngle(target, attacker)
 	return relAngle
 end
 
----@param pos1 vec3
----@param pos2 vec3
+---@param pos1 vec3|ObjectParam
+---@param pos2 vec3|ObjectParam
 ---@return boolean
 function GameHelpers.Math.PositionsEqual(pos1, pos2)
 	local x,y,z = _GetPosition(pos1, true)
@@ -222,6 +222,20 @@ function GameHelpers.Math.ExtendPositionWithDirectionalVector(pos, directionalVe
 		y = GameHelpers.Grid.GetY(x,z)
 	end
 	return {x,y,z}
+end
+
+---@param pos1 vec3|ObjectParam
+---@param pos2 vec3|ObjectParam
+---@param percentage number The distance percentage to apply to the position between two targets, such as 0.5 to get the middle point.
+---@param skipSnapToGrid? boolean Skip snapping the y value to the grid height at the resulting position.
+---@return vec3
+function GameHelpers.Math.GetPositionBetween(pos1, pos2, percentage, skipSnapToGrid)
+	local pos1 = _GetPosition(pos1)
+	local pos2 = _GetPosition(pos2)
+	local dir = GameHelpers.Math.GetDirectionalVector(pos1, pos2)
+	local distMult = GameHelpers.Math.GetDistance(pos1, pos2) * percentage
+	local newPos = GameHelpers.Math.ExtendPositionWithDirectionalVector(pos1, dir, distMult, skipSnapToGrid)
+	return newPos
 end
 
 ---Sets an object's rotation.

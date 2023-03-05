@@ -15,7 +15,6 @@ SkillManager = {
 		EnabledSkills = {},
 		LastUsedSkillItems = {},
 	},
-	---@class LeaderLibSkillManagerRegistration
 	Register = {}
 }
 

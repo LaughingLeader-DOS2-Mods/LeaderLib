@@ -550,12 +550,14 @@ if not _ISCLIENT then
 
 	---@class OnHealEventArgs
 	---@field Target EsvCharacter
+	---@field TargetGUID Guid
 	---@field Source EsvCharacter|EsvItem|nil
+	---@field SourceGUID Guid|nil
 	---@field Heal EsvStatusHeal
+	---@field HealingSourceStatus EsvStatusHealing|nil The HEALING type status that may be responsible for this HEAL. The HealAmounts must match, alongside the HealType and HealStat.
 	---@field OriginalAmount integer The amount before LeaderLib's OnHeal listeners were invoked. 
 	---@field Handle integer The healing handle in NRD_OnHeal
-	---@field Skill string|nil
-	---@field HealingSourceStatus EsvStatusHealing|nil
+	---@field Skill string|nil The skill possibility associated with this HEAL/HEALING status combination, if HealingSourceStatus is set. This is the last healing skill the character casted, if it matches with the HEALING type status it thinks is associated with this HEAL.
 	
 	---Called during NRD_OnHeal, with extra data for the optional skill that was used, our source EsvStatusHealing.  
 	---🔨**Server-Only**🔨

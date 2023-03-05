@@ -10,10 +10,9 @@ end
 ---@return EsvStatusHealing[]
 local function GetHealingStatusesForHeal(target, healStatus)
 	local statuses = {}
-	---@type EsvStatusHealing[]
-	local activeStatuses = target:GetStatusObjects()
-	for _,status in pairs(activeStatuses) do
+	for _,status in pairs(target:GetStatusObjects()) do
 		if status.StatusType == "HEALING" then
+			---@cast status EsvStatusHealing
 			if status.HealAmount == healStatus.HealAmount and healStatus.HealType == status.HealStat then
 				statuses[#statuses+1] = status
 			end
@@ -67,7 +66,9 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 
 	Events.OnHeal:Invoke({
 		Target=target,
+		TargetGUID=target.MyGuid,
 		Source=source,
+		SourceGUID=GameHelpers.GetUUID(source),
 		Heal=healStatus,
 		OriginalAmount=amount,
 		Handle=handle,

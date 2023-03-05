@@ -559,7 +559,7 @@ if not _ISCLIENT then
 	---@field Handle integer The healing handle in NRD_OnHeal
 	---@field Skill string|nil The skill possibility associated with this HEAL/HEALING status combination, if HealingSourceStatus is set. This is the last healing skill the character casted, if it matches with the HEALING type status it thinks is associated with this HEAL.
 	
-	---Called during NRD_OnHeal, with extra data for the optional skill that was used, our source EsvStatusHealing.  
+	---Called during NRD_OnHeal, with extra data for the optional skill that was used, and/or the source EsvStatusHealing status.  
 	---🔨**Server-Only**🔨
 	---@type LeaderLibSubscribableEvent<OnHealEventArgs>
 	Events.OnHeal = Classes.SubscribableEvent:Create("OnHeal", {

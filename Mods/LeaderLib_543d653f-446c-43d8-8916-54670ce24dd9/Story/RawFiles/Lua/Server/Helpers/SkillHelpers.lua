@@ -623,7 +623,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
                 evt.StopPropagation = function (self)
                     evt.Stopped = true
                 end
-                Ext.Events.GetSkillDamage:Throw(evt)
+                Ext.Events.GetSkillDamage:Throw(evt) 
                 if evt.DamageList then
                     local hasDamage = false
                     for _,v in pairs(evt.DamageList:ToTable()) do

@@ -10,7 +10,7 @@ Data.ObjectStats = {}
 --Valid items with a Stats table can still have an empty StatsId for some reason.
 --Data.ObjectStats = {[""] = true}
 
----@type Enum
+---@type LeaderLibEnum
 Data.DamageTypes = {
 	None = 0,
 	Physical = 1,
@@ -77,7 +77,7 @@ Data.DamageTypeToArmorType = {
 	--Sulfuric = "CurrentArmor/CurrentMagicArmor", -- Affects CurrentMagicArmor if MagicalSulfur is true, otherwise CurrentArmor
 }
 
----@type Enum
+---@type LeaderLibEnum
 Data.EquipmentSlots = {
 	Helmet = 0,
 	Breast = 1,
@@ -115,7 +115,7 @@ Classes.Enum:Create(Data.EquipmentSlots)
 ---@deprecated
 Data.EquipmentSlotNames = Data.EquipmentSlots
 
----@type Enum
+---@type LeaderLibEnum
 Data.VisibleEquipmentSlots = {
 	[0]="Helmet",
 	[1]="Breast",
@@ -143,7 +143,7 @@ Data.VisibleEquipmentSlots = {
 Classes.Enum:Create(Data.VisibleEquipmentSlots)
 
 --- Enums for every ability in the game.
----@type Enum
+---@type LeaderLibEnum
 Data.Ability = {
 	WarriorLore = 0,
 	RangerLore = 1,
@@ -192,7 +192,7 @@ Classes.Enum:Create(Data.Ability)
 ---@deprecated
 Data.AbilityEnum = Data.Ability
 
----@type Enum
+---@type LeaderLibEnum
 Data.Attribute = {
 	Strength = 0,
 	Finesse = 1,
@@ -211,7 +211,7 @@ Classes.Enum:Create(Data.Attribute)
 ---@deprecated
 Data.AttributeEnum = Data.Attribute
 
----@type Enum
+---@type LeaderLibEnum
 Data.Talents = {
 	ItemMovement = 1,
 	ItemCreation = 2,
@@ -368,7 +368,7 @@ Data.ItemRarity = {
 
 Classes.Enum:Create(Data.ItemRarity, nil, nil, 0)
 
----@class SKILL_STATE
+---@enum SKILL_STATE
 SKILL_STATE = {
 	PREPARE = "PREPARE",
 	USED = "USED",

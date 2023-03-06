@@ -1,7 +1,8 @@
----@class Enum
+---@class LeaderLibEnum
 ---@field _Names table<string,integer>
 ---@field _Integers table<integer,string>
 ---@field Get fun():(fun():integer,string)
+---@operator call(string):integer
 local Enum = {}
 
 local iter = function (tbl,i)

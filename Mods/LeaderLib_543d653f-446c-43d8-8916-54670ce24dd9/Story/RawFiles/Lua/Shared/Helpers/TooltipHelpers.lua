@@ -167,6 +167,8 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 	return ""
 end
 
+--_D(Mods.LeaderLib.GameHelpers.Tooltip.GetWeaponDamageText("Damage_LLWEAPONEX_Throw_ImpaledDebuff", _C()))
+
 ---@param id string The Weapon stat ID, i.e "WPN_Sword_1H".
 ---@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
 ---@param overrideParams StatEntryWeapon|nil A table of attributes to set on the weapon table before calculating the damage.
@@ -200,7 +202,7 @@ function GameHelpers.Tooltip.GetWeaponDamageText(id, character, overrideParams, 
 		for k,v in pairs(overrideParams) do
 			weaponTable[k] = v
 		end
-		local damageRanges = Game.Math.CalculateWeaponScaledDamageRanges(character, weaponTable)
+		local damageRanges = Game.Math.CalculateWeaponScaledDamageRanges(character.Stats, weaponTable)
 		local damageText = GameHelpers.Tooltip.FormatDamageRange(damageRanges)
 		return damageText
 	end
@@ -329,7 +331,7 @@ local function _ReplacePlaceholders(str, character)
 			output = StringHelpers.Replace(output, v, value)
 		end
 	end
-	for v in string.gmatch(output, "%[WeaponDamage%]") do
+	for v in string.gmatch(output, "%[WeaponDamage:.-%]") do
 		local value = ""
 		local weaponStat = v:gsub("%[WeaponDamage:", ""):gsub("%]", "")
 		if not StringHelpers.IsNullOrWhitespace(weaponStat) then

@@ -1,16 +1,15 @@
 ---Data passed to hit callbacks, such as the various functions in SkillListeners.lua
 ---@class ProjectileHitData
+---@field TargetObject EsvCharacter|EsvItem|nil
+---@field AttackerObject EsvCharacter|EsvItem|nil
+---@field Position vec3
+---@field Projectile EsvProjectile
 local ProjectileHitData = {
 	Type = "ProjectileHitData",
 	Target = "",
 	Attacker = "",
-	Skill = "",
-	---@type EsvProjectile
-	Projectile = nil,
-	---@type number[]
-	Position = nil,
+	Skill = ""
 }
-ProjectileHitData.__index = ProjectileHitData
 
 ---@param target string The source of the skill.
 ---@param attacker string
@@ -29,7 +28,16 @@ function ProjectileHitData:Create(target, attacker, projectile, position, skill)
 		Position = position,
 		Skill = skill
 	}
-	setmetatable(this, self)
+	setmetatable(this, {
+		__index = function (_,k)
+			if k == "TargetObject" and not StringHelpers.IsNullOrEmpty(this.Target) then
+				return GameHelpers.TryGetObject(this.Target)
+			elseif k == "AttackerObject" and not StringHelpers.IsNullOrEmpty(this.Attacker) then
+				return GameHelpers.TryGetObject(this.Attacker)
+			end
+			return ProjectileHitData[k]
+		end
+	})
     return this
 end
 

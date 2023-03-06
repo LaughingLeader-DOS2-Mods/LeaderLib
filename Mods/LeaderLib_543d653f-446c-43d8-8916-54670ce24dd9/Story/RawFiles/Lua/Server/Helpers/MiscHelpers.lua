@@ -182,7 +182,7 @@ end
 function GameHelpers.SyncScale(object)
 	local netid = GameHelpers.GetNetID(object)
 	if netid then
-		GameHelpers.Net.Broadcast("LeaderLib_SyncScale", {NetID = netid, Scale = object.Scale})
+		GameHelpers.Net.Broadcast("LeaderLib_SyncScale", {NetID = netid, Scale = object.Scale, IsItem=GameHelpers.Ext.ObjectIsItem(object)})
 	end
 end
 

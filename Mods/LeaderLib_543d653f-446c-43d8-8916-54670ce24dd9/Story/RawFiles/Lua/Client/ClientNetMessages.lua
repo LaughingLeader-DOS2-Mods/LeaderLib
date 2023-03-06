@@ -15,7 +15,12 @@ end)
 Ext.RegisterNetListener("LeaderLib_SyncScale", function(cmd, payload)
 	local data = Common.JsonParse(payload)
 	if data.Scale and data.NetID then
-		local obj = GameHelpers.TryGetObject(data.NetID)
+		local obj = nil
+		if data.IsItem then
+			obj = GameHelpers.GetItem(data.NetID, "EclItem")
+		else
+			obj = GameHelpers.GetCharacter(data.NetID, "EclCharacter")
+		end
 		if obj and obj.Scale then
 			GameHelpers.SetScale(obj, data.Scale)
 		end

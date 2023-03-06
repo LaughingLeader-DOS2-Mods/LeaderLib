@@ -704,8 +704,9 @@ end)
 function _INTERNAL.SanityCheckData(checkObjectExistance)
 	local updateData = {}
 	local doReplaceData = false
-	for uuid,statuses in _pairs(_PV.ActivePermanentStatuses) do
-		if not checkObjectExistance or GameHelpers.ObjectExists(uuid) then
+	for guid,statuses in _pairs(_PV.ActivePermanentStatuses) do
+		local exists = GameHelpers.ObjectExists(guid)
+		if not checkObjectExistance or exists then
 			local statusData = {}
 			local doUpdateStatusData = false
 			for id,source in _pairs(statuses) do
@@ -715,10 +716,10 @@ function _INTERNAL.SanityCheckData(checkObjectExistance)
 				end
 			end 
 			if doUpdateStatusData then
-				updateData[uuid] = statusData
+				updateData[guid] = statusData
 				doReplaceData = true
 			end
-		else
+		elseif not exists then
 			doReplaceData = true
 		end
 	end
@@ -771,7 +772,6 @@ function _INTERNAL.SyncData(userID)
 	local data = {}
 	local hasData = false
 	if _PV.ActivePermanentStatuses then
-		local tbl = {}
 		for uuid,statuses in _pairs(_PV.ActivePermanentStatuses) do
 			if GameHelpers.ObjectExists(uuid) then
 				local netid = GameHelpers.GetNetID(uuid)
@@ -784,7 +784,6 @@ function _INTERNAL.SyncData(userID)
 				end
 			end
 		end
-		_PV.ActivePermanentStatuses = tbl
 	end
 	if hasData then
 		if userID then

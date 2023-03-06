@@ -329,6 +329,19 @@ local function _ReplacePlaceholders(str, character)
 			output = StringHelpers.Replace(output, v, value)
 		end
 	end
+	for v in string.gmatch(output, "%[WeaponDamage%]") do
+		local value = ""
+		local weaponStat = v:gsub("%[WeaponDamage:", ""):gsub("%]", "")
+		if not StringHelpers.IsNullOrWhitespace(weaponStat) then
+			value = GameHelpers.Tooltip.GetWeaponDamageText(weaponStat, character)
+		end
+		if value ~= nil then
+			if _type(value) == "number" then
+				value = string.format("%i", math.floor(value))
+			end
+			output = StringHelpers.Replace(output, v, value)
+		end
+	end
 	for v in string.gmatch(output, "%[SkillDamage:.-%]") do
 		local value = ""
 		local skillName = v:gsub("%[SkillDamage:", ""):gsub("%]", "")

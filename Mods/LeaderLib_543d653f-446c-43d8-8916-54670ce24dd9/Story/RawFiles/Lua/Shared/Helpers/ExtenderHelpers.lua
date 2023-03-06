@@ -1045,7 +1045,7 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 	local weapon = {}
 	weapon.ItemType = "Weapon"
 	weapon.Name = stat
-	local statObject = Ext.Stats.Get(stat, nil, false)
+	local statObject = Ext.Stats.Get(stat, level, false) --[[@as StatEntryWeapon]]
 	if attribute ~= nil then
 		weapon.Requirements = {
 			{

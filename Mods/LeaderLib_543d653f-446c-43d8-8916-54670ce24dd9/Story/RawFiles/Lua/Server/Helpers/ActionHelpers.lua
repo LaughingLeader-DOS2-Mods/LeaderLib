@@ -69,6 +69,7 @@ function GameHelpers.Action.UseSkill(caster, skill, target, opts)
 	fassert(character ~= nil, "Failed to get attacker character from (%s)", caster)
 	local task = Ext.Action.CreateOsirisTask("UseSkill", character) --[[@as EsvOsirisUseSkillTask]]
 	task.Skill = skill
+	task.Force = true
 	task.IgnoreChecks = true
 	task.IgnoreHasSkill = true
 	task.Force = true

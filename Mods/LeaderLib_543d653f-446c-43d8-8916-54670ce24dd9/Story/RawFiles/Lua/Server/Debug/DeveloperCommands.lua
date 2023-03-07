@@ -1364,7 +1364,7 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levels
 	if levelstr ~= nil then
 		level = math.tointeger(tonumber(levelstr)) or level
 	end
-	if not AddItemStat(stat, {StatsLevel = level, GenerationLevel = level, ItemType = rarity, GenerationItemType = rarity, HasGeneratedStats = rarity ~= "Unique"}) then
+	if not AddItemStat(stat, {StatsLevel = level, RootTemplate=template, GenerationLevel = level, ItemType = rarity, GenerationItemType = rarity, HasGeneratedStats = rarity ~= "Unique"}) then
 		fprint(LOGLEVEL.TRACE, "[additemstat] Failed to generate item!", stat, {})
 	end
 end)

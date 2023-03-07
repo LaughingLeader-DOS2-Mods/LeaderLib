@@ -80,3 +80,5 @@ Mods.LeaderLib = {
 
 ---@alias ServerCharacterParam EsvCharacter|Guid|NetId|ComponentHandle
 ---@alias ClientCharacterParam EclCharacter|Guid|NetId|ComponentHandle
+
+---@alias CalculatedDamageRange table<DamageType, {Min:integer, Max:integer}>

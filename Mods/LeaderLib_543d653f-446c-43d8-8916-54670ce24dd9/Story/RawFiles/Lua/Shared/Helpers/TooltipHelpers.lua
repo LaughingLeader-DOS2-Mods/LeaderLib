@@ -167,7 +167,8 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 	return ""
 end
 
---_D(Mods.LeaderLib.GameHelpers.Tooltip.GetWeaponDamageText("Damage_LLWEAPONEX_Throw_ImpaledDebuff", _C()))
+--_D(Mods.LeaderLib.GameHelpers.Tooltip.GetStatusDamageText("Damage_Burning", _C()))
+--_D(Mods.LeaderLib.GameHelpers.Tooltip.GetWeaponDamageText("WPN_Dagger", _C()))
 
 ---@param id string The Weapon stat ID, i.e "WPN_Sword_1H".
 ---@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
@@ -191,18 +192,42 @@ function GameHelpers.Tooltip.GetWeaponDamageText(id, character, overrideParams, 
 		end
 		---@cast character EsvCharacter|EclCharacter
 		local weaponTable = GameHelpers.Ext.CreateWeaponTable(id, overrideParams.Level or character.Stats.Level, attribute, overrideParams.WeaponType, overrideParams.DamageFromBase)
-		if attribute == nil and weaponTable.Requirements then
-			for _,v in ipairs(weaponTable.Requirements) do
-				if Data.Attribute[v.Requirement] then
-					attribute = v.Requirement
-					break
-				end
-			end
-		end
 		for k,v in pairs(overrideParams) do
 			weaponTable[k] = v
 		end
-		local damageRanges = Game.Math.CalculateWeaponScaledDamageRanges(character.Stats, weaponTable)
+		local damageRanges = Game.Math.CalculateWeaponDamageWithDamageBoost(weaponTable)
+		local damageText = GameHelpers.Tooltip.FormatDamageRange(damageRanges)
+		return damageText
+	end
+	return ""
+end
+
+---@param id string The Weapon stat ID, i.e "WPN_Sword_1H".
+---@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
+---@param overrideParams StatEntryWeapon|nil A table of attributes to set on the weapon table before calculating the damage.
+---@param extraSettings {StatsMultiplier:number}|nil
+---@return string damageText
+function GameHelpers.Tooltip.GetStatusDamageText(id, character, overrideParams, extraSettings)
+	if not StringHelpers.IsNullOrWhitespace(id) then
+		overrideParams = overrideParams or {}
+		extraSettings = extraSettings or {}
+		local statsMultiplier = extraSettings.StatsMultiplier or 1.0
+		if character then
+			character = GameHelpers.GetCharacter(character)
+		end
+		if character == nil then
+			if _ISCLIENT then
+				character = Client:GetCharacter()
+			elseif _OSIRIS() then
+				character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+			end
+		end
+		---@cast character EsvCharacter|EclCharacter
+		local weaponTable = GameHelpers.Ext.CreateWeaponTable(id, overrideParams.Level or character.Stats.Level, nil, overrideParams.WeaponType, overrideParams.DamageFromBase)
+		for k,v in pairs(overrideParams) do
+			weaponTable[k] = v
+		end
+		local damageRanges = GameHelpers.Math.CalculateStatusDamageRange(character.Stats, weaponTable, statsMultiplier)
 		local damageText = GameHelpers.Tooltip.FormatDamageRange(damageRanges)
 		return damageText
 	end
@@ -336,6 +361,19 @@ local function _ReplacePlaceholders(str, character)
 		local weaponStat = v:gsub("%[WeaponDamage:", ""):gsub("%]", "")
 		if not StringHelpers.IsNullOrWhitespace(weaponStat) then
 			value = GameHelpers.Tooltip.GetWeaponDamageText(weaponStat, character)
+		end
+		if value ~= nil then
+			if _type(value) == "number" then
+				value = string.format("%i", math.floor(value))
+			end
+			output = StringHelpers.Replace(output, v, value)
+		end
+	end
+	for v in string.gmatch(output, "%[StatusDamage:.-%]") do
+		local value = ""
+		local weaponStat = v:gsub("%[StatusDamage:", ""):gsub("%]", "")
+		if not StringHelpers.IsNullOrWhitespace(weaponStat) then
+			value = GameHelpers.Tooltip.GetStatusDamageText(weaponStat, character)
 		end
 		if value ~= nil then
 			if _type(value) == "number" then
@@ -478,7 +516,7 @@ function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
 end
 
 --- Formats a damage range typically returned from GameHelpers.Math.GetSkillDamageRange
----@param damageRange table<StatsDamageType,{Min:integer, Max:integer}>
+---@param damageRange table<DamageType,{Min:integer, Max:integer}>
 ---@return string
 function GameHelpers.Tooltip.FormatDamageRange(damageRange)
 	if damageRange ~= nil then

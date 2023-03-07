@@ -605,3 +605,42 @@ function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)
 	end
 	return false,0
 end
+
+---@param character CDivinityStatsCharacter
+---@param weapon CDivinityStatsItem
+---@param statsMultiplier? number Defaults to 1.0
+---@return CalculatedDamageRange
+function GameHelpers.Math.CalculateStatusDamageRange(character, weapon, statsMultiplier)
+	statsMultiplier = statsMultiplier or 1.0
+	local damages,damageBoost = Game.Math.ComputeBaseWeaponDamage(weapon)
+	
+	local tbl = {}
+	for damageType,data in pairs(damages) do
+		local min = data.Min
+		local max = data.Max
+		if min ~= 0 and max ~= 0 then
+			local finalMin = 0
+			local finalMax = 0
+			if damageBoost > 0 then
+				local damageMult = (damageBoost * 0.01) + 1.0
+				finalMin = math.ceil(damageMult * min)
+				finalMax = math.ceil(damageMult * max)
+			else
+				finalMin = Ext.Utils.Round(min)
+				finalMax = Ext.Utils.Round(max)
+			end
+			finalMin = Ext.Utils.Round(finalMin * statsMultiplier)
+			finalMax = Ext.Utils.Round(finalMax * statsMultiplier)
+			local boost = Ext.Stats.Math.GetDamageBoostByType(character, damageType)
+			if boost ~= 0 then
+				finalMin = finalMin + math.ceil((finalMin * boost) / 100)
+				finalMax = finalMax + math.ceil((finalMax * boost) / 100)
+			end
+			tbl[damageType] = {
+				Min = finalMin,
+				Max = finalMax
+			}
+		end
+	end
+	return tbl
+end

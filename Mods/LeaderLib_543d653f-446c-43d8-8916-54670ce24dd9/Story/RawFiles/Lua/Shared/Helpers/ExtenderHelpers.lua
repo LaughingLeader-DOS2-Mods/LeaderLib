@@ -1019,17 +1019,108 @@ function GameHelpers.Ext.CreateStatCharacterTable(stat, mainhand, offhand)
 	return data
 end
 
-local weaponStatAttributes = {
-	"ModifierType",
-	"Damage",
-	"DamageFromBase",
+local _WEAPON_STAT_ATTRIBUTES = {
+	"AccuracyBoost",
+	"Act part",
+	"Act",
+	"Air",
+	"AirSpecialist",
+	"AnimType",
+	"APMaximum",
+	"APRecovery",
+	"APStart",
+	"AttackAPCost",
+	"Barter",
+	"Boosts",
+	"ChanceToHitBoost",
+	"Charges",
+	"CleaveAngle",
+	"CleavePercentage",
+	"ComboCategory",
+	"ConstitutionBoost",
+	"CriticalChance",
+	"CriticalDamage",
 	"Damage Range",
 	"Damage Type",
+	"Damage",
 	"DamageBoost",
-	"CriticalDamage",
-	"CriticalChance",
+	"DamageFromBase",
+	"DodgeBoost",
+	"DualWielding",
+	"Durability",
+	"DurabilityDegradeSpeed",
+	"Earth",
+	"EarthSpecialist",
+	"FinesseBoost",
+	"Fire",
+	"FireSpecialist",
+	"Flags",
+	"Handedness",
+	"HearingBoost",
+	"IgnoreVisionBlock",
+	"Initiative",
+	"IntelligenceBoost",
+	"InventoryTab",
 	"IsTwoHanded",
+	"ItemColor",
+	"ItemGroup",
+	"Leadership",
+	"LifeSteal",
+	"Loremaster",
+	"Luck",
+	"MagicPointsBoost",
+	"MaxAmount",
+	"MaxCharges",
+	"MaxLevel",
+	"MaxSummons",
+	"MemoryBoost",
+	"MinAmount",
+	"MinLevel",
+	"ModifierType",
+	"Movement",
+	"Necromancy",
+	"NeedsIdentification",
+	"ObjectCategory",
+	"PainReflection",
+	"Perseverance",
+	"Persuasion",
+	"Physical",
+	"Piercing",
+	"Poison",
+	"Polymorph",
+	"Priority",
+	"Projectile",
+	"Ranged",
+	"RangerLore",
+	"Reflection",
+	"Repair",
+	"Requirements",
+	"RogueLore",
+	"RuneSlots_V1",
+	"RuneSlots",
+	"SightBoost",
+	"SingleHanded",
+	"Skills",
+	"Slot",
+	"Sneaking",
+	"Sourcery",
+	"StrengthBoost",
+	"Summoning",
+	"Tags",
+	"Talents",
+	"Telekinesis",
+	"Thievery",
+	"TwoHanded",
+	"Unique",
+	"Value",
+	"VitalityBoost",
+	"WarriorLore",
+	"Water",
+	"WaterSpecialist",
+	"WeaponRange",
 	"WeaponType",
+	"Weight",
+	"WitsBoost",
 }
 
 ---@param stat string
@@ -1039,13 +1130,13 @@ local weaponStatAttributes = {
 ---@param damageFromBaseBoost integer|nil
 ---@param isBoostStat boolean|nil
 ---@param baseWeaponDamage number|nil
----@param rarity string|nil
 ---@return CDivinityStatsItem
-function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damageFromBaseBoost,isBoostStat,baseWeaponDamage,rarity)
+function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damageFromBaseBoost,isBoostStat,baseWeaponDamage)
 	local weapon = {}
 	weapon.ItemType = "Weapon"
 	weapon.Name = stat
-	local statObject = Ext.Stats.Get(stat, level, false) --[[@as StatEntryWeapon]]
+	level = level or 1
+	local statObject = Ext.Stats.Get(stat, math.max(level, 1), false) --[[@as StatEntryWeapon]]
 	if attribute ~= nil then
 		weapon.Requirements = {
 			{
@@ -1058,7 +1149,7 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 		weapon.Requirements = statObject.Requirements
 	end
 	local weaponStat = {Name = stat}
-	for i,v in pairs(weaponStatAttributes) do
+	for i,v in pairs(_WEAPON_STAT_ATTRIBUTES) do
 		weaponStat[v] = statObject[v]
 	end
 	weapon["ModifierType"] = weaponStat["ModifierType"]
@@ -1067,16 +1158,15 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 	if damageFromBaseBoost ~= nil and damageFromBaseBoost > 0 then
 		weaponStat.DamageFromBase = weaponStat.DamageFromBase + damageFromBaseBoost
 	end
-	local damage = 0
+	local baseDamage = 0
 	if baseWeaponDamage ~= nil then
-		damage = baseWeaponDamage
+		baseDamage = baseWeaponDamage
 	else
-		damage = Game.Math.GetLevelScaledWeaponDamage(level)
+		baseDamage = statObject.Damage
 	end
-	local baseDamage = damage * (weaponStat.DamageFromBase * 0.01)
-	local range = baseDamage * (weaponStat["Damage Range"] * 0.01)
-	weaponStat.MinDamage = Ext.Utils.Round(baseDamage - (range/2))
-	weaponStat.MaxDamage = Ext.Utils.Round(baseDamage + (range/2))
+	local damageRange = (statObject["Damage Range"] * 0.005) * baseDamage
+	weaponStat.MinDamage = Ext.Utils.Round(baseDamage - damageRange)
+	weaponStat.MaxDamage = Ext.Utils.Round(baseDamage + damageRange)
 	weaponStat.DamageType = weaponStat["Damage Type"]
 	weaponStat.StatsType = "Weapon"
 	if weaponType ~= nil then
@@ -1092,7 +1182,7 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 			local boosts = StringHelpers.Split(boostsString, ";")
 			for i,boostStat in pairs(boosts) do
 				if boostStat ~= nil and boostStat ~= "" then
-					local boostWeaponStat = GameHelpers.Ext.CreateWeaponTable(boostStat, level, attribute, weaponType, nil, true, damage)
+					local boostWeaponStat = GameHelpers.Ext.CreateWeaponTable(boostStat, level, attribute, weaponType, nil, true, baseDamage)
 					if boostWeaponStat ~= nil then
 						table.insert(weapon.DynamicStats, boostWeaponStat.DynamicStats[1])
 					end

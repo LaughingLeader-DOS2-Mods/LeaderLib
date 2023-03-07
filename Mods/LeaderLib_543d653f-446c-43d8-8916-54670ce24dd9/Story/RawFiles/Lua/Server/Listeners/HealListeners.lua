@@ -1,4 +1,5 @@
 Vars.HealingStatusToSkills = {}
+Vars.HealingStatusHealEffectIdToStatus = {}
 
 local function CalculateHealAmount(healValue, level)
 	local averageLevelDamage = Game.Math.GetAverageLevelDamage(level)
@@ -10,11 +11,16 @@ end
 ---@return EsvStatusHealing[]
 local function GetHealingStatusesForHeal(target, healStatus)
 	local statuses = {}
+	local healingStatusId = Vars.HealingStatusHealEffectIdToStatus[healStatus.HealEffectId]
 	for _,status in pairs(target:GetStatusObjects()) do
 		if status.StatusType == "HEALING" then
 			---@cast status EsvStatusHealing
-			if status.HealAmount == healStatus.HealAmount and healStatus.HealType == status.HealStat then
+			if status.StatusId == healingStatusId then
 				statuses[#statuses+1] = status
+			else
+				if healStatus.HealType == status.HealStat and status.HealAmount == healStatus.HealAmount then
+					statuses[#statuses+1] = status
+				end
 			end
 		end
 	end
@@ -42,6 +48,7 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 	local statusId = healStatus.StatusId
 	---@type EsvStatusHealing
 	local healingSourceStatus = nil
+	local healingSourceStatusId = nil
 
 	if source then
 		---Getting the HEALING status
@@ -50,6 +57,7 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 			if #statuses > 0 then
 				healingSourceStatus = statuses[1]
 				statusId = healingSourceStatus.StatusId
+				healingSourceStatusId = statusId
 			end
 			-- local healingSourceData = PersistentVars.NextGenericHealStatusSource[target.MyGuid]
 			-- if healingSourceData and healingSourceData.Source == source.MyGuid then
@@ -70,10 +78,12 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 		Source=source,
 		SourceGUID=GameHelpers.GetUUID(source),
 		Heal=healStatus,
+		StatusId=healStatus.StatusId,
 		OriginalAmount=amount,
 		Handle=handle,
 		Skill=skill,
-		HealingSourceStatus=healingSourceStatus
+		HealingSourceStatus=healingSourceStatus,
+		HealingStatusId=healingSourceStatusId,
 	})
 end)
 
@@ -114,6 +124,26 @@ function ParseHealingStatusToSkills()
 			end
 		end
 	end
+	local uniqueHealEffectID = {}
+	for status in GameHelpers.Stats.GetStatuses(true) do
+		if status.StatusType == "HEALING" then
+			if not StringHelpers.IsNullOrEmpty(status.HealEffectId) then
+				if uniqueHealEffectID[status.HealEffectId] ~= nil then
+					uniqueHealEffectID[status.HealEffectId] = false
+				else
+					uniqueHealEffectID[status.HealEffectId] = status.Name
+				end
+			end
+		elseif status.StatusType == "HEAL" and uniqueHealEffectID[status.HealEffectId] ~= nil then
+			uniqueHealEffectID[status.HealEffectId] = false
+		end
+	end
+	for id,b in pairs(uniqueHealEffectID) do
+		if b ~= false then
+			Vars.HealingStatusHealEffectIdToStatus[id] = b
+		end
+	end
+	Ext.Dump({"Vars.HealingStatusHealEffectIdToStatus", Vars.HealingStatusHealEffectIdToStatus})
 end
 
 Ext.Events.SessionLoaded:Subscribe(function()

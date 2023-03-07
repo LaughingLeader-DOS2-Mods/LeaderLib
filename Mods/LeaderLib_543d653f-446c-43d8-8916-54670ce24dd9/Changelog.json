@@ -12,6 +12,7 @@
 				"Fixed a typo in HitOverrides.DoHit, which potentially created an error if a mod is using a table for the damage multiplier.",
 				"LeaderLib tooltip listeners now go first, so mods can modify any conflicting elements.",
 				"API Changes:",
+				"\t• Added WeaponDamage:WeaponStatId and StatusDamage:StatusId text placeholders.",
 				"\t• Added SkillManager.Register.GetAPCost.",
 				"\t• Added support for colons in the fallback text for Key and Handle placeholders.",
 				"\t• Added Timer.IsUniqueTimerActive / Timer.IsObjectTimerActive",
@@ -28,7 +29,9 @@
 				"\t• Events.GameTimeChanged was added, which is an event for when the in-game hour changes.",
 				"\t• Events.OnHeal should now get the healing status if the HealEffect is 'Necromantic', instead of only 'Heal'.",
 				"\t• The 'Attempt' StatusManager event now has a status object.",
-				"\t• Added Testing.Utils.UseItemSkillOnTarget, for making a character use items with skills, like grenades/scrolls."
+				"\t• Added Testing.Utils.UseItemSkillOnTarget, for making a character use items with skills, like grenades/scrolls.",
+				"\t• Added TargetObject to ProjectileHitData.",
+				"\t• Fixed permanent statuses in PersistentVars being cleared."
 			]
 		},
 		{

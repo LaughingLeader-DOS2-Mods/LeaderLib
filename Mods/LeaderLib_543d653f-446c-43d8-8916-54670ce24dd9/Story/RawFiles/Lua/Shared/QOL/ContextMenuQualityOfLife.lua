@@ -90,6 +90,17 @@ if isClient then
 					---@cast obj EclItem
 					if not GameHelpers.Item.IsObject(obj) then
 						existingEntry.StatsId = obj.StatsId or obj.Stats.Name
+						if obj.Stats.ItemType == "Weapon" then
+							data.Damages = {}
+							for i,v in pairs(obj.Stats.DynamicStats) do
+								if v and v.StatsType == "Weapon" and v.MinDamage > 0 and v.MaxDamage > 0 then
+									data.Damages[tostring(i)] = {
+										MinDamage = v.MinDamage,
+										MaxDamage = v.MaxDamage,
+									}
+								end
+							end
+						end
 					end
 					existingEntry.WorldPos = obj.WorldPos
 					if serverData then

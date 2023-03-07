@@ -70,10 +70,8 @@ local ControllerCharacterCreationCalls = {
 	Tag = "requestTagTooltip",
 }
 
----@alias GameTooltipRequestProcessorInternals.GetObjectFunction fun(handle:ComponentHandle|number|string):EclCharacter|EclItem|nil
-
 ---@param doubleHandle integer
----@param getObjectFunc GameTooltipRequestProcessorInternals.GetObjectFunction|nil
+---@param getObjectFunc? (fun(handle:ComponentHandle|number|string):EclCharacter|EclItem|nil)
 ---@return EclCharacter|EclItem|nil
 local function __TryGetObjectFromDouble(doubleHandle, getObjectFunc)
 	local handle = _DoubleToHandle(doubleHandle)

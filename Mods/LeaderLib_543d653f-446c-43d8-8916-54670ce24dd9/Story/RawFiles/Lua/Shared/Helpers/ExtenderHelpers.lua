@@ -1137,6 +1137,10 @@ function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damag
 	weapon.Name = stat
 	level = level or 1
 	local statObject = Ext.Stats.Get(stat, math.max(level, 1), false) --[[@as StatEntryWeapon]]
+	if statObject == nil then
+		--fprint(LOGLEVEL.ERROR, "[GameHelpers.Ext.CreateWeaponTable] Failed to get stat for id (%s)", stat)
+		error(string.format("[GameHelpers.Ext.CreateWeaponTable] Failed to get stat for id (%s)", stat), 2)
+	end
 	if attribute ~= nil then
 		weapon.Requirements = {
 			{

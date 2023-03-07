@@ -222,8 +222,16 @@ function GameHelpers.Tooltip.GetStatusDamageText(id, character, overrideParams, 
 				character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
 			end
 		end
+		local weaponID = id
+		local statType = GameHelpers.Stats.GetStatType(id)
+		if statType == "StatusData" then
+			local damageStat = GameHelpers.Stats.GetAttribute(id, "DamageStats", "")
+			if not StringHelpers.IsNullOrEmpty(damageStat) then
+				weaponID = damageStat
+			end
+		end
 		---@cast character EsvCharacter|EclCharacter
-		local weaponTable = GameHelpers.Ext.CreateWeaponTable(id, overrideParams.Level or character.Stats.Level, nil, overrideParams.WeaponType, overrideParams.DamageFromBase)
+		local weaponTable = GameHelpers.Ext.CreateWeaponTable(weaponID, overrideParams.Level or character.Stats.Level, nil, overrideParams.WeaponType, overrideParams.DamageFromBase)
 		for k,v in pairs(overrideParams) do
 			weaponTable[k] = v
 		end

@@ -131,20 +131,23 @@ function GameHelpers.Stats.GetStats(statType, asStatsEntry, castType)
 	end
 end
 
----@param asStatsEntry boolean|nil Return the StatEntrySkillData instead of string.
----@return fun():string|StatEntrySkillData
+---@overload fun():(fun():string)
+---@param asStatsEntry boolean Return the StatEntrySkillData instead of string.
+---@return fun():StatEntrySkillData
 function GameHelpers.Stats.GetSkills(asStatsEntry)
 	return GameHelpers.Stats.GetStats("SkillData", asStatsEntry)
 end
 
----@param asStatsEntry boolean|nil Return the StatEntrySkillData instead of string.
----@return fun():string|StatEntryStatusData
+---@overload fun():(fun():string)
+---@param asStatsEntry boolean Return the StatEntrySkillData instead of string.
+---@return fun():StatEntryStatusData
 function GameHelpers.Stats.GetStatuses(asStatsEntry)
 	return GameHelpers.Stats.GetStats("StatusData", asStatsEntry)
 end
 
----@param asStatsEntry boolean|nil Return the StatEntrySkillData instead of string.
----@return fun():string|StatEntryObject
+---@overload fun():(fun():string)
+---@param asStatsEntry boolean Return the StatEntrySkillData instead of string.
+---@return fun():StatEntryObject
 function GameHelpers.Stats.GetObjects(asStatsEntry)
 	return GameHelpers.Stats.GetStats("Object", asStatsEntry)
 end

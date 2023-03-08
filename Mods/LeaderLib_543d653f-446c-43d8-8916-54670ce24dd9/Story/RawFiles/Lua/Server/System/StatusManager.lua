@@ -888,6 +888,14 @@ local function IgnoreDead(target, status)
 end
 
 Ext.Events.BeforeStatusApply:Subscribe(function (e)
+	if e.Status.StatusId == "LEADERLIB_RECALC" and e.Status.LifeTime ~= 0 then
+		e.Status.CurrentLifeTime = 0
+		e.Status.LifeTime = 0
+		e.Status.RequestClientSync = true
+		e:StopPropagation()
+		return
+	end
+
 	local target = _GetObject(e.Status.TargetHandle)
 	if not target then return end
 	local source = _GetObject(e.Status.StatusSourceHandle)

@@ -750,17 +750,12 @@ end
 ---@param opts GameHelpers_Grid_GetNearbyObjectsOptions
 ---@return GameHelpers_Grid_GetNearbyObjectsFunctionResult|GameHelpers_Grid_GetNearbyObjectsTableResult objects
 function GameHelpers.Grid.GetNearbyObjects(source, opts)
-	local opts = opts
-
-	if not opts then
-		opts = _defaultGetNearbyObjectsOptions
+	---@type GameHelpers_Grid_GetNearbyObjectsOptions
+	local options = {}
+	if type(opts) == "table" then
+		setmetatable(options, {__index = _defaultGetNearbyObjectsOptions})
 	else
-		if not opts.Radius then
-			opts.Radius = _defaultGetNearbyObjectsOptions.Radius
-		end
-		if not opts.Type then
-			opts.Type = _defaultGetNearbyObjectsOptions.Type
-		end
+		options = _defaultGetNearbyObjectsOptions
 	end
 
 	local objects = {}
@@ -769,25 +764,25 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 	local sourceIsCharacter = GameHelpers.Ext.ObjectIsCharacter(source)
 
 	local pos = GameHelpers.Math.GetPosition(source)
-	if opts.Position then
-		pos = opts.Position
+	if options.Position then
+		pos = options.Position
 	end
 
 	local _distances = {}
 
-	if opts.Type == "All" or opts.Type == "Item" then
+	if options.Type == "All" or options.Type == "Item" then
 		local entries = Ext.Entity.GetAllItemGuids(SharedData.RegionData.Current)
 		local len = #entries
 		for i=1,len do
 			local v = entries[i]
-			local dist = GameHelpers.Math.GetDistance(v, pos, opts.IgnoreHeight)
+			local dist = GameHelpers.Math.GetDistance(v, pos, options.IgnoreHeight)
 			_distances[v] = dist
-			if v ~= GUID and dist <= opts.Radius then
+			if v ~= GUID and dist <= options.Radius then
 				local obj = GameHelpers.GetItem(v)
 				if obj then
-					if (opts.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (opts.AllowOffStage or not obj.OffStage) then
-						if opts.Relation and opts.Relation.CanAdd then
-							local b,result = xpcall(opts.Relation.CanAdd, debug.traceback, obj, source)
+					if (options.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (options.AllowOffStage or not obj.OffStage) then
+						if options.Relation and options.Relation.CanAdd then
+							local b,result = xpcall(options.Relation.CanAdd, debug.traceback, obj, source)
 							if not b then
 								Ext.Utils.PrintError(result)
 							elseif result == true then
@@ -801,25 +796,25 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 			end
 		end
 	end
-	if opts.Type == "All" or opts.Type == "Character" then
+	if options.Type == "All" or options.Type == "Character" then
 		local entries = Ext.Entity.GetAllCharacterGuids(SharedData.RegionData.Current)
 		local len = #entries
 		for i=1,len do
 			local v = entries[i]
-			local dist = GameHelpers.Math.GetDistance(v, pos, opts.IgnoreHeight)
+			local dist = GameHelpers.Math.GetDistance(v, pos, options.IgnoreHeight)
 			_distances[v] = dist
-			if v ~= GUID and dist <= opts.Radius then
+			if v ~= GUID and dist <= options.Radius then
 				local obj = GameHelpers.GetCharacter(v)
-				if obj and (opts.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (opts.AllowOffStage or not obj.OffStage) then
-					if opts.Relation and sourceIsCharacter then
-						if opts.Relation.Ally and CharacterIsAlly(GUID, v) == 1 then
+				if obj and (options.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (options.AllowOffStage or not obj.OffStage) then
+					if options.Relation and sourceIsCharacter then
+						if options.Relation.Ally and CharacterIsAlly(GUID, v) == 1 then
 							objects[#objects+1] = obj
-						elseif opts.Relation.Enemy and GameHelpers.Character.CanAttackTarget(GUID, v) then
+						elseif options.Relation.Enemy and GameHelpers.Character.CanAttackTarget(GUID, v) then
 							objects[#objects+1] = obj
-						elseif opts.Relation.Neutral and CharacterIsNeutral(GUID, v) == 1 then
+						elseif options.Relation.Neutral and CharacterIsNeutral(GUID, v) == 1 then
 							objects[#objects+1] = obj
-						elseif opts.Relation.CanAdd then
-							local b,result = xpcall(opts.Relation.CanAdd, debug.traceback, obj, source)
+						elseif options.Relation.CanAdd then
+							local b,result = xpcall(options.Relation.CanAdd, debug.traceback, obj, source)
 							if not b then
 								Ext.Utils.PrintError(result)
 							elseif result == true then
@@ -833,29 +828,29 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 			end
 		end
 	else
-		fprint(LOGLEVEL.WARNING, "[GameHelpers.Grid.GetNearbyObjects] opts.Type(%s) is not a valid target type. Should be All, Item, or Character", opts.Type)
-		if not opts.AsTable then
+		fprint(LOGLEVEL.WARNING, "[GameHelpers.Grid.GetNearbyObjects] opts.Type(%s) is not a valid target type. Should be All, Item, or Character", options.Type)
+		if not options.AsTable then
 			return function() end
 		else
 			return {}
 		end
 	end
 
-	if opts.Sort and opts.Sort ~= "None" then
-		if opts.Sort == "Random" then
+	if options.Sort and options.Sort ~= "None" then
+		if options.Sort == "Random" then
 			objects = Common.ShuffleTable(objects)
-		elseif opts.Sort == "Distance" then
+		elseif options.Sort == "Distance" then
 			table.sort(objects, _SortDistance(_distances))
-		elseif opts.Sort == "LowestHP" then
+		elseif options.Sort == "LowestHP" then
 			table.sort(objects, _SortVitality(false))
-		elseif opts.Sort == "HighestHP" then
+		elseif options.Sort == "HighestHP" then
 			table.sort(objects, _SortVitality(true))
-		elseif type(opts.Sort) == "function" then
-			table.sort(objects, opts.Sort)
+		elseif type(options.Sort) == "function" then
+			table.sort(objects, options.Sort)
 		end
 	end
 
-	if not opts.AsTable then
+	if not options.AsTable then
 		local i = 0
 		local count = #objects
 		return function ()

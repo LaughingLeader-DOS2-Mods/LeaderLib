@@ -22,7 +22,7 @@ local LuaTest = {
 	ThrowErrors = true,
 	ErrorMessage = "",
 	SuccessMessage = "",
-	CallCleanupAfterEachTask = false
+	CallCleanupAfterEachTask = true
 }
 setmetatable(LuaTest, {
 	__call = function (_, ...)

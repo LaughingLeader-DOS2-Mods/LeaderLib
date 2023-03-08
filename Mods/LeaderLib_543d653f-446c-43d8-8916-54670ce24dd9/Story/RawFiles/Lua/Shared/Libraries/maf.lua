@@ -54,10 +54,15 @@ function Vector3.Create(x, y, z)
 	return setmetatable({ x = x or 0, y = y or 0, z = z or 0 }, Vector3)
 end
 
-function Vector3.IsVector3(x)
-	if type(x) == "table" then
-		return x.Type == "Vector3"
-		--return getmetatable(x) == Vector3
+---@param obj any
+function Vector3.IsVector3(obj)
+	if type(obj) == "table" then
+		if obj.Type == "Vector3" then
+			return true
+		elseif #obj == 3 then
+			local x,y,z = table.unpack(obj)
+			return type(x) == "number" and type(y) == "number" and type(z) == "number"
+		end
 	end
 	return false
 end

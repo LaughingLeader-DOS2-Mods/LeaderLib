@@ -723,6 +723,20 @@ if not _ISCLIENT then
         return 0
     end
     Ext.NewQuery(ItemIsLockedQRY, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](ITEMGUID)_Item, [out](INTEGER)_Locked")
+
+    ---Set an item's amount using behavior scripting.  
+    ---🔨**Server-Only**🔨  
+    ---@param item ItemParam
+    ---@param amount integer **Must be higher than 0.**
+    function GameHelpers.Item.SetAmount(item, amount)
+        assert(Ext.Osiris.IsCallable(), "Osiris is not ready yet")
+        assert(amount > 0, "amount param must be greater than zero")
+        item = GameHelpers.GetItem(item, "EsvItem")
+        if item then
+            SetVarInteger(item.MyGuid, "LeaderLib_ItemAmount", amount)
+            SetStoryEvent(item.MyGuid, "LeaderLib_Commands_Internal_ItemSetAmount")
+        end
+    end
 end
 
 ---@param character CharacterParam

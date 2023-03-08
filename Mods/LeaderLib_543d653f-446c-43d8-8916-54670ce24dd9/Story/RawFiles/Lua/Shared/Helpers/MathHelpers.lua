@@ -396,6 +396,12 @@ function GameHelpers.Math.IsNaN(x)
 	return true
 end
 
+---Returns true if an object is a table with 3 indexed numbers.
+---@param obj any
+function GameHelpers.Math.IsPosition(obj)
+	return Classes.Vector3.IsVector3(obj)
+end
+
 ---@param value number
 ---@param minValue number
 ---@param maxValue number

@@ -57,7 +57,7 @@ if not _ISCLIENT then
 		return Ext.Entity.GetCharacter(character)
 	end
 
-	---@class LeaderLibTestingSystemUtilities.CreateTemporaryCharacterAndDummyParams
+	---@class LeaderLibTestingSystemUtilities_CreateTemporaryCharacterAndDummyParams
 	---@field Position vec3 Starting position.
 	---@field DummyPositions vec3[] Optional positions to use for all dummies.
 	---@field CharacterPositions vec3[] Optional positions to use for all characters.
@@ -68,14 +68,16 @@ if not _ISCLIENT then
 	---@field DummyFaction string Defaults to PVP_3
 	---@field TotalCharacters integer Defaults to 1
 	---@field TotalDummies integer Defaults to 0
+	---@field AutoPositionStartDistance number Used when getting a defualt starting position from this host. This is the distance extended from the host's forward facing direction.
 
 	local _DefaultParams = {
 		CharacterPositions = {},
 		DummyPositions = {},
+		AutoPositionStartDistance = 8,
 	}
 
 	---Create a test character based on the host, and a target dummy.
-	---@param params LeaderLibTestingSystemUtilities.CreateTemporaryCharacterAndDummyParams|nil
+	---@param params LeaderLibTestingSystemUtilities_CreateTemporaryCharacterAndDummyParams|nil
 	---@return Guid|Guid[] characters # If the TotalCharacters are 1, this will be the first GUID, instead of a table.
 	---@return Guid|Guid[] dummies # If the TotalDummies are 1, this will be the first GUID, instead of a table.
 	---@return function cleanup
@@ -84,7 +86,7 @@ if not _ISCLIENT then
 		setmetatable(params, {__index = _DefaultParams})
 		--pos, equipmentSet, userTemplate, dummyTemplate, setEnemy, totalDummies
 		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter(), "EsvCharacter")
-		local startingPos = params.Position or {GameHelpers.Grid.GetValidPositionInRadius(GameHelpers.Math.ExtendPositionWithForwardDirection(host, 6), 6.0)}
+		local startingPos = params.Position or {GameHelpers.Grid.GetValidPositionInRadius(GameHelpers.Math.ExtendPositionWithForwardDirection(host, params.AutoPositionStartDistance), 6.0)}
 
 		local totalCharacters = math.max(0, params.TotalCharacters or 1)
 		local characters = {}
@@ -110,9 +112,9 @@ if not _ISCLIENT then
 			local pos = params.DummyPositions[i] or dummyStartingPos
 			local x,y,z = table.unpack(pos)
 			local dummy = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(x, y, z, dummyTemplate, 0))
-			NRD_CharacterSetPermanentBoostInt(dummy, "Dodge", -100)
+			NRD_CharacterSetPermanentBoostInt(dummy, "Dodge", -200)
 
-			PlayEffect(dummy, "RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_01", "")
+			--PlayEffect(dummy, "RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_01", "")
 			SetTag(dummy, "LeaderLib_TemporaryCharacter")
 			SetTag(dummy, "NO_ARMOR_REGEN")
 			if Ext.Mod.IsModLoaded(Data.ModID.TrainingDummy) then

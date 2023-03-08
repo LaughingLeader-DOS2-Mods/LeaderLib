@@ -486,7 +486,7 @@ local function _ReplacePlaceholders(str, character)
 		local text = v:gsub("%[Handle:", ""):gsub("%]", "")
 		local props = StringHelpers.Split(text, ":")
 		local handle,fallback = table.unpack(props)
-		if fallback[2] == nil then
+		if props[2] == nil then
 			fallback = ""
 		else
 			--TODO Rejoin text if the fallback text has colons in it.

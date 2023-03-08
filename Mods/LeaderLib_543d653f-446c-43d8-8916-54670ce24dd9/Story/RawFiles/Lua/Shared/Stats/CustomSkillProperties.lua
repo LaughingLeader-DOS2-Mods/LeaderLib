@@ -96,7 +96,7 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit,
 			if useTargetForPosition then
 				startPos = target.WorldPos
 			end
-			GameHelpers.ForceMoveObject(attacker, target, distance, skillId, startPos)
+			GameHelpers.Utils.ForceMoveObject(target, {DistanceMultiplier=distance, Skill=skillId, Source=attacker, StartPos=startPos})
 			ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 		end
 	end
@@ -113,7 +113,7 @@ end, function (property, attacker, target, position, isFromItem, skill, hit, ski
 			if useTargetForPosition then
 				startPos = target.WorldPos
 			end
-			GameHelpers.ForceMoveObject(attacker, target, distance, skillId, startPos)
+			GameHelpers.Utils.ForceMoveObject(target, {DistanceMultiplier=distance, Skill=skillId, Source=attacker, StartPos=startPos})
 			ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 		end
 	end

@@ -151,6 +151,21 @@ if not _ISCLIENT then
 		end
 		Timer.Cancel("LeaderLib_OnForceMoveAction", targetObject)
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
+		local lastData = _PV.ForceMoveData[targetObject.MyGuid]
+		if lastData and lastData.Handle then
+			NRD_GameActionDestroy(lastData.Handle)
+			Events.ForceMoveFinished:Invoke({
+				ID = lastData.ID or "",
+				Target = targetObject,
+				Source = GameHelpers.TryGetObject(lastData.Source),
+				TargetGUID = targetObject.MyGuid,
+				SourceGUID = lastData.Source,
+				Distance = lastData.Distance,
+				StartingPosition = lastData.Start,
+				Skill = lastData.Skill,
+				SkillData = Ext.Stats.Get(lastData.Skill, nil, false)
+			})
+		end
 		_PV.ForceMoveData[targetObject.MyGuid] = nil
 		--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distMult)
 		local directionalVector = GameHelpers.Math.GetDirectionalVector(targetObject, sourceObject, distMult < 0)
@@ -190,19 +205,36 @@ if not _ISCLIENT then
 	---@param pos number[]
 	---@param opts ForceMoveObjectToPositionParameters|nil
 	function GameHelpers.Utils.ForceMoveObjectToPosition(target, pos, opts)
-		fassert(_type(pos) == "table" and pos[1] and pos[2] and pos[3], "Invalid position parameter (%s)", Lib.serpent.line(pos))
+		fassert(_type(pos) == "table" and #pos == 3, "Invalid position parameter (%s)", Lib.serpent.line(pos))
 		local targetObject = GameHelpers.TryGetObject(target)
 		fassert(targetObject ~= nil, "Invalid target parameter (%s)", Lib.serpent.line(target))
+		---@cast targetObject EsvCharacter|EsvItem
 		if not opts then
 			opts = {}
 		end
 		local sourceObject = targetObject
 		if opts.Source then
-			sourceObject = GameHelpers.TryGetObject(opts.Source) or targetObject
+			sourceObject = GameHelpers.TryGetObject(opts.Source) or targetObject --[[@as EsvCharacter|EsvItem]]
 		end
 
 		Timer.Cancel("LeaderLib_OnForceMoveAction", targetObject)
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
+
+		local lastData = _PV.ForceMoveData[targetObject.MyGuid]
+		if lastData and lastData.Handle then
+			NRD_GameActionDestroy(lastData.Handle)
+			Events.ForceMoveFinished:Invoke({
+				ID = lastData.ID or "",
+				Target = targetObject,
+				Source = GameHelpers.TryGetObject(lastData.Source),
+				TargetGUID = targetObject.MyGuid,
+				SourceGUID = lastData.Source,
+				Distance = lastData.Distance,
+				StartingPosition = lastData.Start,
+				Skill = lastData.Skill,
+				SkillData = Ext.Stats.Get(lastData.Skill, nil, false)
+			})
+		end
 		_PV.ForceMoveData[targetObject.MyGuid] = nil
 
 		local dist = GameHelpers.Math.GetDistance(targetObject, pos)

@@ -66,6 +66,7 @@ local defaultPersistentVars = {
 	---GUID->Statuses->ID->Source|False(for no source)
 	---@type table<Guid,table<string,Guid|boolean>>
 	ActivePermanentStatuses = {},
+	---@type table<Guid, {ID:string, Position:vec3, Start:vec3, Handle:integer, Source:Guid, IsFromSkill:boolean, Skill:string, Distance:number}>
 	ForceMoveData = {},
 	KnockupData = {
 		Active = false,

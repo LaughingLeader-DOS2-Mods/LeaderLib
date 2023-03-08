@@ -443,9 +443,9 @@ local defaultHitFlags = {
 }
 
 ---@class GameHelpers.Damage.BaseApplyDamageParams
----@field CriticalRoll StatsCriticalRoll|nil Used when computating a character hit. Defaults to "Roll".
----@field HighGroundFlag StatsHighGroundBonus|nil Used when computating a character hit. If not set, this will be determined using the height difference.
----@field HitParams table<string,any>|nil Hit parameters to apply.
+---@field CriticalRoll CriticalRoll|nil Used when computating a character hit. Defaults to "Roll".
+---@field HighGroundFlag HighGroundBonus|nil Used when computating a character hit. If not set, this will be determined using the height difference.
+---@field HitParams StatsHitDamageInfo|table Hit parameters to apply.
 ---@field MainWeapon CDivinityStatsItem|nil A weapon to use in place of the source's main weapon.
 ---@field OffhandWeapon CDivinityStatsItem|nil A weapon to use in place of the source's offhand weapon.
 ---@field HitType HitTypeValues|nil The hit type. Defaults to "Magic".

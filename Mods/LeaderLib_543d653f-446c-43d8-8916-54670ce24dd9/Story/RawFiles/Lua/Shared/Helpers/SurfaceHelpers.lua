@@ -11,7 +11,7 @@ if not _ISCLIENT then
 	---@param endPos number[]
 	function GameHelpers.Surface.CreateRectSurface(startPos, endPos, surface, width, lengthModifier, duration, speed, statusChance, deathType, owner, lineCheckBlock)
 		---@type EsvRectangleSurfaceAction
-		local surf = Ext.CreateSurfaceAction("RectangleSurfaceAction")
+		local surf = Ext.Surface.Action.Create("RectangleSurfaceAction")
 		surf.Position = startPos
 		surf.Target = endPos
 		if surface ~= "None" then
@@ -38,10 +38,8 @@ if not _ISCLIENT then
 	---@param ignoreCursed boolean|nil
 	---@param statusChance number|nil
 	function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, ownerHandle, ignoreCursed, statusChance)
-		if _type(pos) == "string" then
-			pos = table.pack(GetPosition(pos))
-		end
-		local surf = Ext.CreateSurfaceAction("CreateSurfaceAction") --[[@as EsvRectangleSurfaceAction]]
+		pos = GameHelpers.Math.GetPosition(pos)
+		local surf = Ext.Surface.Action.Create("CreateSurfaceAction") --[[@as EsvRectangleSurfaceAction]]
 		surf.Position = pos
 		if surface ~= "None" then
 			surf.SurfaceType = surface or "Water"
@@ -54,7 +52,7 @@ if not _ISCLIENT then
 		if ownerHandle then
 			surf.OwnerHandle = ownerHandle
 		end
-		Ext.ExecuteSurfaceAction(surf)
+		Ext.Surface.Action.Execute(surf)
 	end
 
 	---@type table<integer,EsvChangeSurfaceOnPathAction>
@@ -63,7 +61,7 @@ if not _ISCLIENT then
 	---🔨**Server-Only**🔨  
 	local function CreateFollowSurface(projectile)
 		---@type EsvChangeSurfaceOnPathAction
-		local surf = Ext.CreateSurfaceAction("ChangeSurfaceOnPathAction")
+		local surf = Ext.Surface.Action.Create("ChangeSurfaceOnPathAction")
 		surf.FollowObject = projectile.Handle
 		surf.SurfaceType = "FrostCloud"
 		--surf.SurfaceLayer = 0
@@ -121,9 +119,8 @@ if not _ISCLIENT then
 		if _type(pos) == "string" then
 			pos = table.pack(GetPosition(pos))
 		end
-
 		---@type EsvTransformSurfaceAction
-		local surf = Ext.CreateSurfaceAction("TransformSurfaceAction")
+		local surf = Ext.Surface.Action.Create("TransformSurfaceAction")
 		surf.SurfaceTransformAction = action
 		surf.Position = pos
 		surf.OriginSurface = originSurface or ""
@@ -132,7 +129,7 @@ if not _ISCLIENT then
 		surf.SurfaceLifetime = duration or 6.0
 		surf.SurfaceStatusChance = statusChance or 1.0
 		surf.OwnerHandle = ownerHandle or nil
-		Ext.ExecuteSurfaceAction(surf)
+		Ext.Surface.Action.Execute(surf)
 	end
 
 	---🔨**Server-Only**🔨  

@@ -708,7 +708,7 @@ function GameHelpers.Character.GetAllSummons(includeItems, asTable, ignoreObject
 	end
 end
 
----@param character EsvCharacter|EclCharacter
+---@param character CharacterParam
 ---@param asMeters boolean|nil If true, the range is returned as meters (WeaponRange/100).
 ---@return number
 function GameHelpers.Character.GetWeaponRange(character, asMeters)
@@ -746,12 +746,27 @@ function GameHelpers.Character.GetWeaponRange(character, asMeters)
 	return range
 end
 
----@param character EsvCharacter|EclCharacter
----@param target EsvCharacter|EsvItem|number[]
+---@param character CharacterParam
+---@param target CharacterParam|vec3
 ---@return boolean
 function GameHelpers.Character.IsWithinWeaponRange(character, target)
-	local weaponRange = GameHelpers.Character.GetWeaponRange(target, true)
+	local weaponRange = GameHelpers.Character.GetWeaponRange(character, true)
 	return GameHelpers.Math.GetDistance(character, target) <= weaponRange
+end
+
+---@param character CharacterParam
+---@return boolean
+function GameHelpers.Character.HasRangedWeapon(character)
+	character = GameHelpers.GetCharacter(character)
+	if character then
+		if character.Stats.MainWeapon and Game.Math.IsRangedWeapon(character.Stats.MainWeapon) then
+			return true
+		end
+		if character.Stats.OffHandWeapon and Game.Math.IsRangedWeapon(character.Stats.OffHandWeapon) then
+			return true
+		end
+	end
+	return false
 end
 
 ---@param character CharacterParam

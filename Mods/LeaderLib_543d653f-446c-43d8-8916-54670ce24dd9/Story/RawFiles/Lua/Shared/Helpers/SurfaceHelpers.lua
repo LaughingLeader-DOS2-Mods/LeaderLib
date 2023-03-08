@@ -14,7 +14,9 @@ if not _ISCLIENT then
 		local surf = Ext.CreateSurfaceAction("RectangleSurfaceAction")
 		surf.Position = startPos
 		surf.Target = endPos
-		surf.SurfaceType = surface or "Water"
+		if surface ~= "None" then
+			surf.SurfaceType = surface or "Water"
+		end
 		surf.SurfaceArea = width or 1.0
 		surf.Width = width or 1.0
 		surf.Length = GameHelpers.Math.GetDistance(startPos, endPos) + (lengthModifier or 0)
@@ -41,7 +43,9 @@ if not _ISCLIENT then
 		end
 		local surf = Ext.CreateSurfaceAction("CreateSurfaceAction") --[[@as EsvRectangleSurfaceAction]]
 		surf.Position = pos
-		surf.SurfaceType = surface or "Water"
+		if surface ~= "None" then
+			surf.SurfaceType = surface or "Water"
+		end
 		surf.Radius = radius or 1.0
 		surf.IgnoreIrreplacableSurfaces = ignoreCursed == true
 		surf.Duration = duration or 6.0

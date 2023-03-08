@@ -58,14 +58,21 @@ if not _ISCLIENT then
 	end
 
 	---@class LeaderLibTestingSystemUtilities.CreateTemporaryCharacterAndDummyParams
-	---@field Position number[]|nil
-	---@field EquipmentSet string|nil
-	---@field UserTemplate string|nil The root template to use for the non-dummy character.
-	---@field DummyTemplate string|nil The root template to use for the dummy character.
-	---@field CharacterFaction string|nil Defaults to PVP_1
-	---@field DummyFaction string|nil Defaults to PVP_3
-	---@field TotalCharacters integer|nil Defaults to 1
-	---@field TotalDummies integer|nil Defaults to 0
+	---@field Position vec3 Starting position.
+	---@field DummyPositions vec3[] Optional positions to use for all dummies.
+	---@field CharacterPositions vec3[] Optional positions to use for all characters.
+	---@field EquipmentSet string
+	---@field UserTemplate string The root template to use for the non-dummy character.
+	---@field DummyTemplate string The root template to use for the dummy character.
+	---@field CharacterFaction string Defaults to PVP_1
+	---@field DummyFaction string Defaults to PVP_3
+	---@field TotalCharacters integer Defaults to 1
+	---@field TotalDummies integer Defaults to 0
+
+	local _DefaultParams = {
+		CharacterPositions = {},
+		DummyPositions = {},
+	}
 
 	---Create a test character based on the host, and a target dummy.
 	---@param params LeaderLibTestingSystemUtilities.CreateTemporaryCharacterAndDummyParams|nil
@@ -74,6 +81,7 @@ if not _ISCLIENT then
 	---@return function cleanup
 	function Utils.CreateTestCharacters(params)
 		params = params or {}
+		setmetatable(params, {__index = _DefaultParams})
 		--pos, equipmentSet, userTemplate, dummyTemplate, setEnemy, totalDummies
 		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter(), "EsvCharacter")
 		local startingPos = params.Position or {GameHelpers.Grid.GetValidPositionInRadius(GameHelpers.Math.ExtendPositionWithForwardDirection(host, 6), 6.0)}
@@ -82,7 +90,8 @@ if not _ISCLIENT then
 		local characters = {}
 		local userTemplate = params.UserTemplate or Testing.Vars.DefaultCharacterTemplate or GameHelpers.GetTemplate(host) --[[@as string]]
 		for i=1,totalCharacters do
-			local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(startingPos, 6.0)
+			local pos = params.CharacterPositions[i] or startingPos
+			local x,y,z = table.unpack(pos)
 			local character = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(x, y, z, userTemplate, 0))
 			NRD_CharacterSetPermanentBoostInt(character, "Accuracy", 200)
 			CharacterSetCustomName(character, "Test User1")
@@ -98,7 +107,8 @@ if not _ISCLIENT then
 		local dummyTemplate = params.DummyTemplate or _GetDummyTemplate() --[[@as string]]
 		local dummyStartingPos = GameHelpers.Math.ExtendPositionWithDirectionalVector(startingPos, GameHelpers.Math.GetDirectionalVector(host), 6.0)
 		for i=1,totalDummies do
-			local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(dummyStartingPos, 6.0)
+			local pos = params.DummyPositions[i] or dummyStartingPos
+			local x,y,z = table.unpack(pos)
 			local dummy = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(x, y, z, dummyTemplate, 0))
 			NRD_CharacterSetPermanentBoostInt(dummy, "Dodge", -100)
 

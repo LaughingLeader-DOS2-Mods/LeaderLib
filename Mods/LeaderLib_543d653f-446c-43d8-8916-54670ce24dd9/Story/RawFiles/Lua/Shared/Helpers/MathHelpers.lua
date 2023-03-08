@@ -71,13 +71,14 @@ end
 
 local _GetPosition = GameHelpers.Math.GetPosition
 
+---@overload fun(startPos:vec3|ObjectParam, angle:number, distanceMult:number):vec3
 ---@param startPos vec3|ObjectParam
 ---@param angle number
 ---@param distanceMult number
----@param unpack boolean|nil If true, x,y,z will be returned separately.
----@return vec3|number
----@return number|nil
----@return number|nil
+---@param unpack boolean If true, x,y,z will be returned separately.
+---@return number x
+---@return number y
+---@return number z
 function GameHelpers.Math.GetPositionWithAngle(startPos, angle, distanceMult, unpack)
 	local x,y,z = _GetPosition(startPos, true)
 	if _type(distanceMult) ~= "number" then

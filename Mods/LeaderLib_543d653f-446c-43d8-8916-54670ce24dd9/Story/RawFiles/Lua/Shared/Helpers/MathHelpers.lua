@@ -342,7 +342,7 @@ end
 ---@param asVector3 boolean|nil Optionally return the result as a Vector3
 ---@return Vector3
 function GameHelpers.Math.GetDirectionalVector(pos1, pos2, reverse, asVector3)
-	if GameHelpers.Ext.IsObjectType(pos1) and pos2 == nil and pos1.Rotation then
+	if GameHelpers.Ext.IsObjectType(pos1) and (pos2 == nil or pos2 == pos1) and pos1.Rotation then
 		local rot = pos1.Rotation
 		return {rot[7],0,rot[9]}
 	end

@@ -28,7 +28,7 @@ if not _ISCLIENT then
 	---@param equipmentSet string|nil
 	local function SetupCharacter(character, transformTarget, equipmentSet)
 		if equipmentSet then
-			CharacterTransformAppearanceToWithEquipmentSet(character, transformTarget, equipmentSet, false)
+			CharacterTransformAppearanceToWithEquipmentSet(character, transformTarget, equipmentSet, 0)
 		else
 			CharacterTransformAppearanceTo(character, transformTarget, 1, 1)
 		end

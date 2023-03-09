@@ -7,6 +7,9 @@ local _type = type
 
 local _getGrid = Ext.Entity.GetAiGrid
 
+---@class GameHelpers_Grid_Bounds
+---@field Radius number
+
 ---@param x number
 ---@param z number
 ---@param grid EocAiGrid|nil
@@ -80,9 +83,10 @@ end
 ---@param maxRadius number|nil
 ---@param pointsInCircle number|nil
 ---@param reverse boolean|nil Start from the largest distance possible instead.
+---@param bounds boolean|nil Start from the largest distance possible instead.
 ---@return vec3 position
 ---@return boolean success
-function GameHelpers.Grid.GetValidPositionTableInRadius(startPos, maxRadius, pointsInCircle, reverse)
+function GameHelpers.Grid.GetValidPositionTableInRadius(startPos, maxRadius, pointsInCircle, reverse, bounds)
 	startPos = GameHelpers.Math.GetPosition(startPos)
 	maxRadius = maxRadius or 30.0
 	-- Convert to meters
@@ -703,20 +707,23 @@ end
 
 ---@class GameHelpers_Grid_GetNearbyObjectsOptions
 ---@field Radius number The max distance between the source and objects. Defaults to 3.0 if not set.
----@field Position vec3|nil Use this position for distance checks, instead of the source.
----@field AsTable boolean|nil Return the result as a table, instead of an iterator.
----@field Type GameHelpers_Grid_GetNearbyObjectsOptionsTargetType|nil
----@field AllowDead boolean|nil Allow returning dead characters/destroyed items.
----@field AllowOffStage boolean|nil Allow returning offstage objects.
----@field Relation GameHelpers_Grid_GetNearbyObjectsOptionsRelationOptions|nil Filter returned characters by this relation, such as "Ally" "Neutral".
+---@field Position vec3 Use this position for distance checks, instead of the source.
+---@field AsTable boolean Return the result as a table, instead of an iterator.
+---@field Type GameHelpers_Grid_GetNearbyObjectsOptionsTargetType
+---@field AllowDead boolean Allow returning dead characters/destroyed items.
+---@field AllowOffStage boolean Allow returning offstage objects.
+---@field Relation GameHelpers_Grid_GetNearbyObjectsOptionsRelationOptions Filter returned characters by this relation, such as "Ally" "Neutral".
 ---@field Sort string|"Distance"|"Random"|"LowestHP"|"HighestHP"|"None"|fun(a:ServerObject,b:ServerObject):boolean
----@field IgnoreHeight boolean|nil If true, the y value of positions is ignored when comparing distance.
+---@field IgnoreHeight boolean If true, the y value of positions is ignored when comparing distance.
 
 ---@type GameHelpers_Grid_GetNearbyObjectsOptions
 local _defaultGetNearbyObjectsOptions = {
 	Radius = 3.0,
 	Type = "Character",
-	Sort = "None"
+	Sort = "None",
+	AllowDead = false,
+	AllowOffStage = false,
+	IgnoreHeight = false,
 }
 
 ---@param distances table<Guid,number>
@@ -751,8 +758,9 @@ end
 ---@return GameHelpers_Grid_GetNearbyObjectsFunctionResult|GameHelpers_Grid_GetNearbyObjectsTableResult objects
 function GameHelpers.Grid.GetNearbyObjects(source, opts)
 	---@type GameHelpers_Grid_GetNearbyObjectsOptions
-	local options = {}
+	local options = nil
 	if type(opts) == "table" then
+		options = opts
 		setmetatable(options, {__index = _defaultGetNearbyObjectsOptions})
 	else
 		options = _defaultGetNearbyObjectsOptions

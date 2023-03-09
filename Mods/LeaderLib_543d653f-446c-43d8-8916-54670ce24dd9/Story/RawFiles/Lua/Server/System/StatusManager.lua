@@ -1202,7 +1202,8 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 
 	if statusID == "SHOCKWAVE" and Features.PreventShockwaveEndTurn then
 		local isActiveTurn,combatComponent = GameHelpers.Combat.IsActiveTurn(target)
-		if isActiveTurn and combatComponent.RequestEndTurn then
+		if isActiveTurn and combatComponent.RequestEndTurn and target.Stats.CurrentAP > 0
+		and not GameHelpers.Status.HasStatusType(target, {"KNOCKED_DOWN", "INCAPACITATED"}, {SHOCKWAVE=true}) then
 			combatComponent.RequestEndTurn = false
 		end
 	end

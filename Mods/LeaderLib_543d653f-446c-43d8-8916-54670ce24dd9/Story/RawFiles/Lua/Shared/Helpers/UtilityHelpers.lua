@@ -163,7 +163,7 @@ if not _ISCLIENT then
 				Distance = lastData.Distance,
 				StartingPosition = lastData.Start,
 				Skill = lastData.Skill,
-				SkillData = Ext.Stats.Get(lastData.Skill, nil, false)
+				SkillData = lastData.Skill and Ext.Stats.Get(lastData.Skill, nil, false) or nil
 			})
 		end
 		_PV.ForceMoveData[targetObject.MyGuid] = nil
@@ -232,7 +232,7 @@ if not _ISCLIENT then
 				Distance = lastData.Distance,
 				StartingPosition = lastData.Start,
 				Skill = lastData.Skill,
-				SkillData = Ext.Stats.Get(lastData.Skill, nil, false)
+				SkillData = lastData.Skill and Ext.Stats.Get(lastData.Skill, nil, false) or nil
 			})
 		end
 		_PV.ForceMoveData[targetObject.MyGuid] = nil

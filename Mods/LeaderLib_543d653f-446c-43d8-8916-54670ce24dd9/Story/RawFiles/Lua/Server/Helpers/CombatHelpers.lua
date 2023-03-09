@@ -184,7 +184,8 @@ end
 
 ---Returns true if it's the object's active turn in combat.
 ---@param obj ObjectParam
----@return boolean
+---@return boolean isActiveTurn
+---@return EocCombatComponent combatComponent
 function GameHelpers.Combat.IsActiveTurn(obj)
 	local object = GameHelpers.TryGetObject(obj)
 	if object and not GameHelpers.ObjectIsDead(object) then
@@ -199,10 +200,10 @@ function GameHelpers.Combat.IsActiveTurn(obj)
 					local activeTeam = turnOrder[1]
 					if activeTeam then
 						if activeTeam.Character and activeTeam.Character.MyGuid == object.MyGuid then
-							return true
+							return true,activeTeam.EntityWrapper.CombatComponentPtr
 						end
 						if activeTeam.Item and activeTeam.Item.MyGuid == object.MyGuid then
-							return true
+							return true,activeTeam.EntityWrapper.CombatComponentPtr
 						end
 					end
 				end
@@ -220,4 +221,25 @@ function GameHelpers.Combat.IsAnyPlayerInCombat()
 		end
 	end
 	return false
+end
+
+---@param character CharacterParam
+---@return EocCombatComponent|nil
+function GameHelpers.Combat.GetCombatComponent(character)
+	local character = GameHelpers.GetCharacter(character, "EsvCharacter")
+	if character then
+		local combatid = GameHelpers.Combat.GetID(character)
+		if combatid > -1 then
+			local turnManager = Ext.Combat.GetTurnManager()
+			local combat = turnManager.Combats[combatid]
+			if combat then
+				for _,team in pairs(combat:GetCurrentTurnOrder()) do
+					if team.Character == character and team.EntityWrapper then
+						return team.EntityWrapper.CombatComponentPtr
+					end
+				end
+			end
+		end
+	end
+	return nil
 end

@@ -500,6 +500,9 @@ local _skillPrototypeToId = {}
 ---@param skillPrototype string A skill id like Projectile_Fireball_-1
 ---@return string
 function StringHelpers.GetSkillEntryName(skillPrototype)
+	if skillPrototype == nil then
+		return nil
+	end
 	local result = _skillPrototypeToId[skillPrototype]
 	if result == nil then
 		result = _gsub(skillPrototype, "_%-?%d+$", "")

@@ -223,7 +223,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
     local itemGroup = nil
 
     if _type(statName) == "string" then
-        stat = Ext.Stats.Get(statName, level)
+        stat = Ext.Stats.Get(statName, nil, false)
         statType = GameHelpers.Stats.GetStatType(statName)
     else
         stat = statName

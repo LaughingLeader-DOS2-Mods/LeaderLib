@@ -223,9 +223,9 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	local changedSkillAttributes = {}
 	
 	Ext.RegisterConsoleCommand("flurrytest", function(cmd, skill, attribute, value)
-		local stat = Ext.Stats.Get("Target_DualWieldingAttack")
+		local stat = Ext.Stats.Get("Target_DualWieldingAttack", nil, false)
 		if stat ~= nil then
-			local newSkill = Ext.Stats.Get("Projectile_Test_FlurryDamage") or Ext.CreateStat("Projectile_Test_FlurryDamage", "SkillData", "_Projectile_LeaderLib_LeaveAction_DamageBase")
+			local newSkill = Ext.Stats.Get("Projectile_Test_FlurryDamage") or Ext.Stats.Create("Projectile_Test_FlurryDamage", "SkillData", "_Projectile_LeaderLib_LeaveAction_DamageBase")
 			newSkill.SkillProperties = {
 			{
 			Type = "Custom",

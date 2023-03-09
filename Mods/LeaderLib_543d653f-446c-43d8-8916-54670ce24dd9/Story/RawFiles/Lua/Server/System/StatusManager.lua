@@ -646,7 +646,7 @@ end
 local function OnBeforeStatusDelete(e)
 	local target = _GetObjectFromHandle(e.Status.TargetHandle, "EsvCharacter")
 	if not target then
-		return
+		return true
 	end
 	local targetGUID = target.MyGuid
 	local statusType = e.Status.StatusType
@@ -685,13 +685,15 @@ local function OnBeforeStatusDelete(e)
 	if result.ResultCode ~= "Error" and result.Args.PreventDelete == true then
 		e:PreventAction()
 	end
+
+	return false
 end
 
 ---@param e ExtenderBeforeStatusDeleteEventParams
 Ext.Events.BeforeStatusDelete:Subscribe(function (e)
 	if _canInvokeListeners and _IsValidHandle(e.Status.TargetHandle) then
-		OnBeforeStatusDelete(e)
-		if _canBlockDeletion and not e.ActionPrevented and e.Status.LifeTime == -1 then
+		local skipped = OnBeforeStatusDelete(e)
+		if not skipped and _canBlockDeletion and not e.ActionPrevented and e.Status.LifeTime == -1 then
 			local target = _GetObjectFromHandle(e.Status.TargetHandle, "EsvCharacter")
 			if target ~= nil and StatusManager.IsPermanentStatusActive(target.MyGuid, e.Status.StatusId) and not GameHelpers.ObjectIsDead(target) then
 				e:PreventAction()

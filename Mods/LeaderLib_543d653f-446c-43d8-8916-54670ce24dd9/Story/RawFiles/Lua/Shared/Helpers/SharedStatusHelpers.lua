@@ -433,20 +433,22 @@ end
 ---Returns true if the object has a status with a specific type.
 ---@param object ObjectParam
 ---@param statusType string|string[]
+---@param ignoreStatuses? table<string,boolean>
 ---@return boolean
-function GameHelpers.Status.HasStatusType(object, statusType)
+function GameHelpers.Status.HasStatusType(object, statusType, ignoreStatuses)
 	object = GameHelpers.TryGetObject(object)
 	if object and object.GetStatusObjects then
+		ignoreStatuses = ignoreStatuses or {}
 		local t = _type(statusType)
 		if t == "table" then
 			for i,v in pairs(statusType) do
-				if GameHelpers.Status.HasStatusType(object, v) then
+				if GameHelpers.Status.HasStatusType(object, v, ignoreStatuses) then
 					return true
 				end
 			end
 		elseif t == "string" and not StringHelpers.IsNullOrWhitespace(statusType) then
 			for _,v in pairs(object:GetStatusObjects()) do
-				if v.StatusId == statusType or v.StatusType == statusType then
+				if not ignoreStatuses[v.StatusId] and (v.StatusId == statusType or v.StatusType == statusType) then
 					return true
 				end
 			end

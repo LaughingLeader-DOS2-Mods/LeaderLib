@@ -140,7 +140,7 @@ end
 ---@overload fun(id:ObjectParam|ComponentHandle):EsvCharacter|EclCharacter|EsvItem|EclItem|nil
 ---Tries to get a game object if the target exists, otherwise returns nil.
 ---@generic T:EsvCharacter|EclCharacter|EsvItem|EclItem|nil
----@param id ObjectParam|ComponentHandle
+---@param id ObjectParam|ComponentHandle|nil
 ---@param castType? `T` The class type to return, for auto-completion, such as "EsvCharacter".
 ---@return T
 function GameHelpers.TryGetObject(id, castType)

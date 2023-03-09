@@ -366,7 +366,7 @@ function GameHelpers.Character.IsUndead(character)
 end
 
 ---Returns true if the character is dead, or if it has the DYING status.
----@param character CharacterParam
+---@param character CharacterParam|nil
 ---@return boolean
 function GameHelpers.Character.IsDeadOrDying(character)
 	local character = GameHelpers.GetCharacter(character)

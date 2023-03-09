@@ -1200,6 +1200,13 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 		isLoseControl = disablingData.IsLoseControl == true
 	end
 
+	if statusID == "SHOCKWAVE" and Features.PreventShockwaveEndTurn then
+		local isActiveTurn,combatComponent = GameHelpers.Combat.IsActiveTurn(target)
+		if isActiveTurn and combatComponent.RequestEndTurn then
+			combatComponent.RequestEndTurn = false
+		end
+	end
+
 	Events.OnStatus:Invoke({
 		Target = target,
 		Source = source,

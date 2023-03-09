@@ -335,6 +335,8 @@ Features = {
 	FixTooltipEmptySkillProperties = false,
 	---Formats tag element tooltips after they've been added to flash, allowing html font colors and more.
 	FormatTagElementTooltips = false,
+	---Prevents the SHOCKWAVE status from ending the target's turn.
+	PreventShockwaveEndTurn = false,
 	---Condenses item tooltips by simplifying the ExtraProperties text.
 	ReduceTooltipSize = true,
 	---Replaces various LeaderLib placeholders in tooltips.

@@ -120,6 +120,7 @@ if not _ISCLIENT then
 	---@class ForceMoveObjectParameters:ForceMoveObjectToPositionParameters
 	---@field DistanceMultiplier number|nil The distance to push the target, relative to where the Source or StartPos is.
 	---@field StartPos number[]|nil If set, this will be the starting position to push from. Defaults to the source's WorldPosition otherwise.
+	---@field IgnoreDistance boolean Disable skipping pushing the target if they're outside the distance multiplier.
 	
 	---Push or pull a target from a source object or position.  
 	---Similar to the Force action, except it's grid-safe (no pushing objects out of the map).
@@ -136,19 +137,37 @@ if not _ISCLIENT then
 		if opts.Source then
 			sourceObject = GameHelpers.TryGetObject(opts.Source) or targetObject
 		end
-		local startPos = sourceObject.WorldPos
-		if _type(opts.StartPos) == "table" then
-			startPos = opts.StartPos
-		end
-		local dist = GameHelpers.Math.GetDistance(targetObject, startPos)
+		local dist = GameHelpers.Math.GetOuterDistance(sourceObject, targetObject)
 		local distMult = 2
 		if opts.DistanceMultiplier then
 			distMult = opts.DistanceMultiplier
 		end
-		if dist > math.abs(distMult) then
-			fprint(LOGLEVEL.WARNING, "[GameHelpers.ForceMoveObject] target(%s) is outside of the push distance range (%s) > (%s) from the starting position. Skipping.", targetObject.DisplayName, dist, distMult)
-			return false
+		local distMultAbs = math.abs(distMult)
+		---@type vec3
+		local startPos = nil
+		if opts.IgnoreDistance then
+			startPos = targetObject.WorldPos
+		else
+			if distMult < 0 then
+				startPos = targetObject.WorldPos
+			else
+				startPos = sourceObject.WorldPos
+			end
+			if dist > distMultAbs then
+				fprint(LOGLEVEL.WARNING, "[GameHelpers.Utils.ForceMoveObject] target(%s) is outside of the push distance range (%s) > (%s) from the starting position. Skipping.", targetObject.DisplayName, dist, distMult)
+				return false
+			end
 		end
+
+		if distMult < 0 and distMultAbs > dist then
+			--Limit distance to just infront of the source if pulling would pull the target through them
+			distMultAbs = dist - sourceObject.AI.AIBoundsRadius
+		end
+
+		if GameHelpers.Math.IsPosition(opts.StartPos) then
+			startPos = opts.StartPos
+		end
+
 		Timer.Cancel("LeaderLib_OnForceMoveAction", targetObject)
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
 		local lastData = _PV.ForceMoveData[targetObject.MyGuid]
@@ -166,23 +185,33 @@ if not _ISCLIENT then
 				SkillData = lastData.Skill and Ext.Stats.Get(lastData.Skill, nil, false) or nil
 			})
 		end
+		
 		_PV.ForceMoveData[targetObject.MyGuid] = nil
 		--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distMult)
 		local directionalVector = GameHelpers.Math.GetDirectionalVector(targetObject, sourceObject, distMult < 0)
-		local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionalVector, distMult)
+		local targetPos,b = GameHelpers.Grid.GetValidPositionTableAlongLine(startPos, directionalVector, distMultAbs, nil, nil, sourceObject.AI.AIBoundsRadius)
+
+		if not b then
+			local tx,ty,tz = table.unpack(GameHelpers.Math.ExtendPositionWithDirectionalVector(startPos, directionalVector, distMult, false))
+			ty = ty + (targetObject.AI.AIBoundsHeight * 0.8) -- "Eye"-level?
+			local vx, vy, vz = FindValidPosition(tx, ty, tz, targetObject.AI.AIBoundsRadius * 3, targetObject.MyGuid)
+			if vx then
+				targetPos = {vx,vy,vz}
+				b = true
+			end
+		end
 	
-		if tx and tz then
-			local pos = {tx,ty,tz}
+		if b then
 			-- local action = Ext.Action.CreateGameAction("GameObjectMoveAction", opts.Skill or "", targetObject)--[[@as EsvGameObjectMoveAction]]
 			-- action.CasterCharacterHandle = sourceObject.Handle
 			-- action.BeamEffectName = opts.BeamEffect or ""
 			-- action.PathMover.DestinationPos = pos
 			-- action.PathMover.StartingPosition = targetObject.WorldPos
-			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, opts.BeamEffect or "", sourceObject.MyGuid)
+			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, targetPos[1], targetPos[2], targetPos[3], opts.BeamEffect or "", sourceObject.MyGuid)
 			if handle then
 				_PV.ForceMoveData[targetObject.MyGuid] = {
 					ID = opts.ID or "",
-					Position = pos,
+					Position = targetPos,
 					Start = TableHelpers.Clone(startPos),
 					--Handle = Ext.Utils.HandleToInteger(action.Handle),
 					Handle = handle,
@@ -195,6 +224,8 @@ if not _ISCLIENT then
 				Timer.StartObjectTimer("LeaderLib_OnForceMoveAction", targetObject.MyGuid, _INTERNAL.FORCE_MOVE_UPDATE_MS)
 				return true
 			end
+		else
+			fprint(LOGLEVEL.WARNING, "[GameHelpers.Utils.ForceMoveObject] Failed to find valid position for target (%s). Skipping.", targetObject.DisplayName)
 		end
 
 		--No valid position, or the action failed.

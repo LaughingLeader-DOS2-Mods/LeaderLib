@@ -6,6 +6,7 @@ local _xpcall = xpcall
 
 local _SGetUUID = StringHelpers.GetUUID
 local _GetObject = GameHelpers.TryGetObject
+local _GetObjectFromHandle = GameHelpers.GetObjectFromHandle
 local _GetGameObject = Ext.Entity.GetGameObject
 local _GetStatus = Ext.Entity.GetStatus
 local _GetStatusType = GameHelpers.Status.GetStatusType
@@ -643,18 +644,18 @@ end
 
 ---@param e ExtenderBeforeStatusDeleteEventParams
 local function OnBeforeStatusDelete(e)
-	local target = _GetObject(e.Status.TargetHandle)
+	local target = _GetObjectFromHandle(e.Status.TargetHandle, "EsvCharacter")
+	if not target then
+		return
+	end
 	local targetGUID = target.MyGuid
 	local statusType = e.Status.StatusType
 
-	local source = nil
+	local source = _GetObjectFromHandle(e.Status.StatusSourceHandle, "EsvCharacter")
 	local sourceGUID = StringHelpers.NULL_UUID
 
-	if GameHelpers.IsValidHandle(e.Status.StatusSourceHandle) then
-		source = _GetObject(e.Status.StatusSourceHandle)
-		if source then
-			sourceGUID = GameHelpers.GetUUID(source)
-		end
+	if source then
+		sourceGUID = source.MyGuid
 	end
 
 	local isDisabling = false
@@ -691,7 +692,7 @@ Ext.Events.BeforeStatusDelete:Subscribe(function (e)
 	if _canInvokeListeners and _IsValidHandle(e.Status.TargetHandle) then
 		OnBeforeStatusDelete(e)
 		if _canBlockDeletion and not e.ActionPrevented and e.Status.LifeTime == -1 then
-			local target = _GetGameObject(e.Status.TargetHandle)
+			local target = _GetObjectFromHandle(e.Status.TargetHandle, "EsvCharacter")
 			if target ~= nil and StatusManager.IsPermanentStatusActive(target.MyGuid, e.Status.StatusId) and not GameHelpers.ObjectIsDead(target) then
 				e:PreventAction()
 			end
@@ -863,18 +864,18 @@ local redirectStatusId = {
 
 local _DEAD_ALLOWED_STATUS = {
 	HIT = true,
-    DYING = true,
-    TELEPORT_FALLING = true,
-    COMBAT = true,
-    STORY_FROZEN = true,
-    BOOST = true,
-    UNSHEATHED = true,
-    LYING = true,
-    ROTATE = true,
-    EXPLODE = true,
-    DRAIN = true,
-    LINGERING_WOUNDS = true,
-    CHALLENGE = true,
+	DYING = true,
+	TELEPORT_FALLING = true,
+	COMBAT = true,
+	STORY_FROZEN = true,
+	BOOST = true,
+	UNSHEATHED = true,
+	LYING = true,
+	ROTATE = true,
+	EXPLODE = true,
+	DRAIN = true,
+	LINGERING_WOUNDS = true,
+	CHALLENGE = true,
 }
 
 local function IgnoreDead(target, status)
@@ -899,9 +900,9 @@ Ext.Events.BeforeStatusApply:Subscribe(function (e)
 		return
 	end
 
-	local target = _GetObject(e.Status.TargetHandle)
+	local target = _GetObjectFromHandle(e.Status.TargetHandle, "EsvCharacter")
 	if not target then return end
-	local source = _GetObject(e.Status.StatusSourceHandle)
+	local source = _GetObjectFromHandle(e.Status.StatusSourceHandle, "EsvCharacter")
 
 	local targetGUID = target.MyGuid
 	local sourceGUID = source and source.MyGuid or StringHelpers.NULL_UUID
@@ -1370,7 +1371,7 @@ end
 ---@param callback StatusEventCallback
 ---@param removeAll boolean|nil
 function RemoveStatusListener(event, status, callback, removeAll)
-    if removeAll ~= true then
+	if removeAll ~= true then
 		Events.OnStatus:Unsubscribe(callback, {MatchArgs={StatusId=status, StatusEvent=event}})
 	else
 		Events.OnStatus:Unsubscribe(nil, {MatchArgs={StatusId=status, StatusEvent=event}})
@@ -1407,7 +1408,7 @@ end
 ---@param callback StatusEventCallback
 ---@param removeAll boolean|nil
 function RemoveStatusTypeListener(event, statusType, callback, removeAll)
-    if removeAll ~= true then
+	if removeAll ~= true then
 		Events.OnStatus:Unsubscribe(callback, {StatusType=statusType, StatusEvent=event})
 	else
 		Events.OnStatus:Unsubscribe(nil, {StatusType=statusType, StatusEvent=event})

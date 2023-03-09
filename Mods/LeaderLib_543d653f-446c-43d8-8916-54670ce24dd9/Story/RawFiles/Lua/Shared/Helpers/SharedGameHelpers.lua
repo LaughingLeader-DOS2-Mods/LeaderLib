@@ -200,7 +200,7 @@ end
 ---Tries to get an object from a handle, skipping the Ext.Entity.GetGameObject call if it's invalid.
 ---@generic T
 ---@param handle ComponentHandle
----@param typeName `T` This should be the lua class name as a string, so the return type automatically changes.
+---@param typeName? `T` This should be the lua class name as a string, so the return type automatically changes.
 ---@return T
 function GameHelpers.GetObjectFromHandle(handle, typeName)
 	if _isValidHandle(handle) then

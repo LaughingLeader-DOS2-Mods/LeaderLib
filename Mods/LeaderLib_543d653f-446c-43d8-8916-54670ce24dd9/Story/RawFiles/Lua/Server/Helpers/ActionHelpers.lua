@@ -140,8 +140,9 @@ end
 ---@return integer totalSabotagedItems
 function GameHelpers.Action.Sabotage(target, opts)
 	---@type LeaderLibSabotageOptions
-	local options = {}
+	local options = nil
 	if type(opts) == "table" then
+		options = opts
 		if opts.GridOptions then
 			setmetatable(opts.GridOptions, {__index=_DefaultSabotageOptions.GridOptions})
 		end

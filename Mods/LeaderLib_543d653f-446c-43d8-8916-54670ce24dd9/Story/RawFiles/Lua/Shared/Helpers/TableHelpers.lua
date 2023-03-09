@@ -290,3 +290,20 @@ function TableHelpers.MakeUnique(tbl, sort, sortFunc)
 	end
 	return result
 end
+
+---Configure a table's metatable __index to point to a table of default keys/values.  
+---If tbl is not a table, the default values table is returned.
+---@generic T : table
+---@param opts table|nil A table of key/value entries.
+---@param defaultValues T An array-like table.
+---@return T
+function TableHelpers.SetDefaultOptions(opts, defaultValues)
+	local result = nil
+	if type(opts) == "table" then
+		result = opts
+		setmetatable(result, {__index = defaultValues})
+	else
+		result = defaultValues
+	end
+	return result
+end

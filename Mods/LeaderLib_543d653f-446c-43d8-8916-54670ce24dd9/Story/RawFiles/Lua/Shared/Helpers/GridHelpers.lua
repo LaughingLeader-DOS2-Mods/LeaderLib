@@ -757,14 +757,7 @@ end
 ---@param opts GameHelpers_Grid_GetNearbyObjectsOptions
 ---@return GameHelpers_Grid_GetNearbyObjectsFunctionResult|GameHelpers_Grid_GetNearbyObjectsTableResult objects
 function GameHelpers.Grid.GetNearbyObjects(source, opts)
-	---@type GameHelpers_Grid_GetNearbyObjectsOptions
-	local options = nil
-	if type(opts) == "table" then
-		options = opts
-		setmetatable(options, {__index = _defaultGetNearbyObjectsOptions})
-	else
-		options = _defaultGetNearbyObjectsOptions
-	end
+	local options = TableHelpers.SetDefaultOptions(opts, _defaultGetNearbyObjectsOptions)
 
 	local objects = {}
 

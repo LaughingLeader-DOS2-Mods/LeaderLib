@@ -5,6 +5,9 @@ local _EXTVERSION = Ext.Utils.Version()
 ---@param damage integer
 ---@param handle integer
 local function OnPrepareHit(target, source, damage, handle)
+	if ObjectExists(target) == 0 then
+		return
+	end
 	local data = Classes.HitPrepareData:Create(handle, damage, target, source, true)
 	if Features.FixChaosWeaponProjectileDamage and data:IsBuggyChaosDamage() then
 		local amount = data.DamageList.None

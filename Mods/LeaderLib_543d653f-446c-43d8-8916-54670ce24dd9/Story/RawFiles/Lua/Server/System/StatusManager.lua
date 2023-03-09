@@ -888,6 +888,9 @@ local function IgnoreDead(target, status)
 end
 
 Ext.Events.BeforeStatusApply:Subscribe(function (e)
+	if not _IsValidHandle(e.Status.TargetHandle) then
+		return
+	end
 	if e.Status.StatusId == "LEADERLIB_RECALC" and e.Status.LifeTime ~= 0 then
 		e.Status.CurrentLifeTime = 0
 		e.Status.LifeTime = 0
@@ -1058,7 +1061,10 @@ end
 
 --SetVarFixedString("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_RemoveStatusInfluence_ID", "WARM"); SetStoryEvent("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_Commands_RemoveStatusInfluence")
 
-local function ParseStatusAttempt(targetGUID,statusID,sourceGUID)
+local function ParseStatusAttempt(targetGUID,statusID,sourceGUID,skip)
+	if not skip and ObjectExists(targetGUID) == 0 then
+		return
+	end
 	if not _canInvokeListeners or IgnoreDead(targetGUID, statusID) then
 		return
 	end
@@ -1070,6 +1076,9 @@ local function ParseStatusAttempt(targetGUID,statusID,sourceGUID)
 end
 
 RegisterProtectedOsirisListener("CharacterStatusAttempt", 3, "after", function (targetGUID, statusID, sourceGUID)
+	if ObjectExists(targetGUID) == 0 then
+		return
+	end
 	if statusID == "DYING" then
 		local target = GameHelpers.GetCharacter(targetGUID)
 		if target then
@@ -1082,7 +1091,7 @@ RegisterProtectedOsirisListener("CharacterStatusAttempt", 3, "after", function (
 			})
 		end
 	end
-	ParseStatusAttempt(targetGUID, statusID, sourceGUID)
+	ParseStatusAttempt(targetGUID, statusID, sourceGUID, true)
 end)
 RegisterProtectedOsirisListener("ItemStatusAttempt", 3, "after", ParseStatusAttempt)
 
@@ -1226,7 +1235,10 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 	end
 end
 
-local function ParseStatusApplied(target,status,source)
+local function ParseStatusApplied(target,status,source,skip)
+	if not skip and ObjectExists(target) == 0 then
+		return
+	end
 	if _canInvokeListeners and not IgnoreStatus(status, "Applied") then
 		target = _SGetUUID(target)
 		source = _SGetUUID(source)
@@ -1235,7 +1247,10 @@ local function ParseStatusApplied(target,status,source)
 end
 
 local function OnStatusRemoved(targetGUID,statusID,sourceGUID)
-	local target = _GetObject(targetGUID, true)
+	local target = nil
+	if ObjectExists(targetGUID) == 1 then
+		target = _GetObject(targetGUID)
+	end
 	local statusType = _GetStatusType(statusID)
 	local source = nil
 	if Vars.LeaveActionData.Total > 0 then
@@ -1281,6 +1296,9 @@ local function ParseStatusRemoved(target,status)
 end
 
 RegisterProtectedOsirisListener("CharacterStatusApplied", 3, "after", function (targetGUID, statusID, sourceGUID)
+	if ObjectExists(targetGUID) == 0 then
+		return
+	end
 	if statusID == "DYING" then
 		local target = GameHelpers.GetCharacter(targetGUID)
 		if target then
@@ -1293,7 +1311,7 @@ RegisterProtectedOsirisListener("CharacterStatusApplied", 3, "after", function (
 			})
 		end
 	end
-	ParseStatusApplied(targetGUID, statusID, sourceGUID)
+	ParseStatusApplied(targetGUID, statusID, sourceGUID, true)
 end)
 RegisterProtectedOsirisListener("ItemStatusChange", 3, "after", ParseStatusApplied)
 RegisterProtectedOsirisListener("CharacterStatusRemoved", 3, "before", ParseStatusRemoved)

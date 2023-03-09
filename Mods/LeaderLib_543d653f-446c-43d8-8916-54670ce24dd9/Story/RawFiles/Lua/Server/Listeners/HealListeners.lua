@@ -28,6 +28,9 @@ local function GetHealingStatusesForHeal(target, healStatus)
 end
 
 RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, source, amount, handle)
+	if ObjectExists(target) == 0 then
+		return
+	end
 	---@type EsvStatusHeal
 	local healStatus = Ext.Entity.GetStatus(target, handle)
 

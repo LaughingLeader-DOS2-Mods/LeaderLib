@@ -415,18 +415,20 @@ local _jsonParse = Ext.Json.Parse
 ---@return table
 function Common.JsonParse(str, safeguardErrors)
 	local tbl = {}
-	if safeguardErrors then
-		local b,result = xpcall(_jsonParse, debug.traceback, str)
-		if b then
-			tbl = result
+	if not StringHelpers.IsNullOrWhitespace(str) then
+		if safeguardErrors then
+			local b,result = xpcall(_jsonParse, debug.traceback, str)
+			if b then
+				tbl = result
+			else
+				Ext.Utils.PrintError(result)
+			end
 		else
-			Ext.Utils.PrintError(result)
+			tbl = _jsonParse(str)
 		end
-	else
-		tbl = _jsonParse(str)
-	end
-	if tbl ~= nil then
-		Common.ConvertTableKeysToNumbers(tbl, true)
+		if tbl ~= nil then
+			Common.ConvertTableKeysToNumbers(tbl, true)
+		end
 	end
 	return tbl
 end

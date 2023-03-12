@@ -14,7 +14,7 @@ local _type = type
 function GameHelpers.IO.LoadJsonFile(filepath, fallback, context)
 	local file =_loadFile(filepath, context)
 	if file then
-		local data = Common.JsonParse(file)
+		local data = Common.JsonParse(file, true)
 		if data then
 			return data,true
 		end

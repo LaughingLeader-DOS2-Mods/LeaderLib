@@ -464,6 +464,7 @@ function GameHelpers.Character.GetDisplayName(character)
 end
 
 ---@overload fun():(fun():EsvCharacter|EclCharacter)
+---@overload fun(includeSummons:boolean, asTable:boolean):EsvCharacter[]|EclCharacter[]
 ---@generic T:EsvCharacter|EclCharacter
 ---@param includeSummons boolean|nil
 ---@param asTable boolean|nil if true, a regular table is returned, which needs to be used with pairs/ipairs.

@@ -53,6 +53,7 @@ local _READ_ONLY = {
 ---@field GetCharacter fun():EclCharacter
 ---@field IsPreviewing boolean Whether the task is being previewed (EnterPreview/ExitPreview).
 ---@field IsRunning boolean Whether the task is running (Enter/Exit).
+---@field Constructor fun(char:EclCharacter):UserspaceCharacterTaskCallbacks
 
 ---@class LeaderLibUserTaskServerSide:LeaderLibUserTask
 ---@field Subscribe LeaderLibUserTaskServerCallbackRegistration
@@ -138,6 +139,9 @@ local function _DefaultUserTaskCallbacks(task)
 		GetSightRange = function (self)
 			return task.DefaultSightRange
 		end,
+		ValidateTargetRange = function (self)
+			return task.DefaultSightRange
+		end,
 		HandleInputEvent = voidCallback("HandleInputEvent"),
 		SetAIColliding = voidCallback("SetAIColliding"),
 		SetCursor = voidCallback("SetCursor"),
@@ -180,10 +184,16 @@ function UserTask:Create(id, opts)
 		local defaultCallbacks = _DefaultUserTaskCallbacks(task)
 		task.Callbacks = {}
 		for k,v in pairs(defaultCallbacks) do
-			print(k)
 			task.Callbacks[k] = v
 		end
 		task.Subscribe = {}
+		task.Constructor = function (character)
+			local tbl = {}
+			for k,v in pairs(task.Callbacks) do
+				tbl[k] = v
+			end
+			return tbl
+		end
 		local function trySubscribe(key)
 			return function (callback, replaceOrignal)
 				assert(type(callback) == "function", "Callback must be a function type")
@@ -283,7 +293,13 @@ Ext.Events.SessionLoaded:Subscribe(function (e)
 	for _,v in pairs(_CreatedTasks) do
 		rawset(v, "IsRegistered", true)
 		if _ISCLIENT then
-			Ext.Behavior.RegisterCharacterTask(v.ID, v.Callbacks)
+			---@cast v LeaderLibUserTaskClientSide
+			local callbacks = v.Callbacks
+			if type(callbacks) == "table" then
+				Ext.Behavior.RegisterCharacterTask(v.ID, v.Constructor)
+			elseif callbacks ~= nil then
+				fprint(LOGLEVEL.ERROR, "[SessionLoaded:LeaderLibUserTask] Callbacks key is not a table type for task (%s). Type(%s)", v.ID, type(callbacks))
+			end
 		end
 		local onInitialized = v._OnInitialized
 		if type(onInitialized) == "function" then

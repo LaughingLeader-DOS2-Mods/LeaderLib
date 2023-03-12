@@ -2273,20 +2273,20 @@ end, _highPriority)
 ---@class TooltipElement
 ---@field Type TooltipElementType
 
----@class TooltipLabelElement
+---@class TooltipLabelElement:TooltipElement
 ---@field Label string
 
----@class TooltipLabelDamageElement
+---@class TooltipLabelDamageElement:TooltipElement
 ---@field Label string
 ---@field DamageType integer
 ---@field MinDamage integer
 ---@field MaxDamage integer
 
----@class TooltipLabelNumValueElement
+---@class TooltipLabelNumValueElement:TooltipElement
 ---@field Label string
 ---@field Value number
 
----@class TooltipLabelStringValueElement
+---@class TooltipLabelStringValueElement:TooltipElement
 ---@field Label string
 ---@field Value string
 

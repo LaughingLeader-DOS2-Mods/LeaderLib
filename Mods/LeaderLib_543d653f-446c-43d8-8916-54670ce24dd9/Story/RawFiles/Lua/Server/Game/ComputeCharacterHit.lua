@@ -658,10 +658,10 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
     end
 end
 
-Ext.Events.ComputeCharacterHit:Subscribe(function(event)
-    local hit = HitOverrides.ComputeCharacterHit(event.Target, event.Attacker, event.Weapon, event.DamageList, event.HitType, event.NoHitRoll, event.ForceReduceDurability, event.Hit, event.AlwaysBackstab, event.HighGround, event.CriticalRoll)
+Ext.Events.ComputeCharacterHit:Subscribe(function(e)
+    local hit = HitOverrides.ComputeCharacterHit(e.Target, e.Attacker, e.Weapon, e.DamageList, e.HitType, e.NoHitRoll, e.ForceReduceDurability, e.Hit, e.AlwaysBackstab, e.HighGround, e.CriticalRoll)
     if hit then
-        event.Handled = true
+        e.Handled = true
         --Ext.IO.SaveFile(string.format("Dumps/CCH_Hit_%s_%s.json", event.HitType, Ext.Utils.MonotonicTime()), Ext.DumpExport(event.Hit))
         --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})
     end

@@ -455,21 +455,32 @@ function GameHelpers.GetItemTags(item, inDictionaryFormat, skipStats)
 end
 
 ---@param character CharacterParam
----@param tag string
+---@param tag string|string[]
 function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
-	if _type(character) ~= "userdata" then
-		character = GameHelpers.GetCharacter(character)
-		if not character then
-			fprint(LOGLEVEL.WARNING, "GameHelpers.CharacterOrEquipmentHasTag requires a uuid, netid, ObjectHandle, or EsvCharacter/EclCharacter. Values provided: character(%s) tag(%s)", character, tag)
-			return false
+	if _type(tag) == "table" then
+		local _TAGS = GameHelpers.GetAllTags(character, true, true)
+		for _,v in pairs(tag) do
+			if _TAGS[v] then
+				return true
+			end
 		end
-	end
-	if character:HasTag(tag) then
-		return true
-	end
-	for item in GameHelpers.Character.GetEquipment(character) do
-		if GameHelpers.ItemHasTag(item, tag) then
+		return false
+	else
+		---@cast tag string
+		if _type(character) ~= "userdata" then
+			character = GameHelpers.GetCharacter(character)
+			if not character then
+				fprint(LOGLEVEL.WARNING, "GameHelpers.CharacterOrEquipmentHasTag requires a uuid, netid, ObjectHandle, or EsvCharacter/EclCharacter. Values provided: character(%s) tag(%s)", character, tag)
+				return false
+			end
+		end
+		if character:HasTag(tag) then
 			return true
+		end
+		for item in GameHelpers.Character.GetEquipment(character) do
+			if GameHelpers.ItemHasTag(item, tag) then
+				return true
+			end
 		end
 	end
 	return false

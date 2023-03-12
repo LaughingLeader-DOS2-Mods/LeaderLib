@@ -4,7 +4,9 @@ HitOverrides = {
     DoHitOriginal = Game.Math.DoHit,
     DoHitModified = nil, -- We get this in SessionLoaded in a case a mod has overwritten it.
     ApplyDamageCharacterBonusesOriginal = Game.Math.ApplyDamageCharacterBonuses,
-    ApplyDamageCharacterBonusesModified = nil
+    ApplyDamageCharacterBonusesModified = nil,
+    GetCriticalHitMultiplierOriginal = Game.Math.GetCriticalHitMultiplier,
+    GetCriticalHitMultiplierWasModified = false
 }
 --- This script tweaks Game.Math functions to allow lowering resistance with Resistance Penetration tags on items of the attacker.
 
@@ -321,6 +323,7 @@ end
 --- @return number
 function HitOverrides.GetCriticalHitMultiplier(weapon, character, criticalMultiplier)
 	criticalMultiplier = criticalMultiplier or 0
+
     if weapon.ItemType == "Weapon" then
         for i,stat in pairs(weapon.DynamicStats) do
             criticalMultiplier = criticalMultiplier + stat.CriticalDamage
@@ -335,8 +338,15 @@ function HitOverrides.GetCriticalHitMultiplier(weapon, character, criticalMultip
             end
         end
     end
-  
-    return criticalMultiplier * 0.01
+    local result = criticalMultiplier * 0.01
+
+    if HitOverrides.GetCriticalHitMultiplierWasModified then
+        local baseMult = Game.Math.GetCriticalHitMultiplier(weapon, character, criticalMultiplier)
+        if baseMult > result then
+            return baseMult
+        end
+    end
+    return result
 end
 
 --- @param hit HitRequest
@@ -628,7 +638,7 @@ HitOverrides._ComputeCharacterHitFunction = ComputeCharacterHit
 -- }
 
 function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-    if HitOverrides.ComputeOverridesEnabled() or Vars.DebugMode then
+    if HitOverrides.ComputeOverridesEnabled() then
         ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
         Events.ComputeCharacterHit:Invoke({
             Target = target,
@@ -667,4 +677,5 @@ Ext.Events.SessionLoaded:Subscribe(function()
     end
     Game.Math.DoHit = HitOverrides.DoHit
     Game.Math.ApplyDamageCharacterBonuses = HitOverrides.ApplyDamageCharacterBonuses
-end)
+    HitOverrides.GetCriticalHitMultiplierWasModified = Game.Math.GetCriticalHitMultiplier ~= HitOverrides.GetCriticalHitMultiplierOriginal
+end, {Priority=0})

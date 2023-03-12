@@ -82,3 +82,6 @@ Mods.LeaderLib = {
 ---@alias ClientCharacterParam EclCharacter|Guid|NetId|ComponentHandle
 
 ---@alias CalculatedDamageRange table<DamageType, {Min:integer, Max:integer}>
+
+---Mainly used to specify a default value in optional parameter tables.
+---@class DefaultValue<T>:{}

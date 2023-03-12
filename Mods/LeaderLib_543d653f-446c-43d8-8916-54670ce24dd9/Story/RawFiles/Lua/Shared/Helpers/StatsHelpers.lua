@@ -714,11 +714,11 @@ function GameHelpers.Stats.GetSkillAbility(id)
 	return ""
 end
 
----@generic T:string|number|table
+---@generic T:string|number|table|nil
 ---Safe way to get a stat's attribute. If the stat does not exist, the fallbackValue will be returned instead.
 ---@param id string
 ---@param attributeName string
----@param fallbackValue T
+---@param fallbackValue? T
 ---@return T
 function GameHelpers.Stats.GetAttribute(id, attributeName, fallbackValue)
 	local stat = Ext.Stats.Get(id, nil, false)

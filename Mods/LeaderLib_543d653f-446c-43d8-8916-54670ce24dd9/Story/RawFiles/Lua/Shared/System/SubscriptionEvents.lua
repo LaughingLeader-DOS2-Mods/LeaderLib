@@ -632,7 +632,7 @@ if not _ISCLIENT then
 	---@class ObjectEventEventArgs
 	---@field Event string
 	---@field EventType ObjectEventEventType
-	---@field Objects ObjectParam[]
+	---@field Objects ServerObject[]
 	---@field ObjectGUID1 Guid
 	---@field ObjectGUID2 Guid|nil
 	

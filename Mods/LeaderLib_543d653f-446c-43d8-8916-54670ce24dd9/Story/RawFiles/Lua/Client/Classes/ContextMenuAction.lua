@@ -4,8 +4,8 @@
 ---@field OnUpdate fun(self:ContextMenuAction) Called before this action is added to the context menu. Use it to set Disabled/Legal etc.
 ---@field Callback ContextMenuActionCallback
 ---@field Visible boolean
----@field DisplayName string|TranslatedString
----@field Tooltip string|TranslatedString
+---@field DisplayName string|TranslatedString|ContextMenuActionGetTextCallback
+---@field Tooltip string|TranslatedString|ContextMenuActionGetTextCallback
 ---@field Icon string
 ---@field UseClickSound boolean
 ---@field Disabled boolean
@@ -14,6 +14,8 @@
 ---@field StayOpen boolean
 ---@field Children ContextMenuActionSettings[]
 ---@field AutomaticallyAddToBuiltin boolean If true, this action will be added to the builtin context menu, if conditions are met. Note that the builtin menu does not support icons or nested actions.
+
+---@alias ContextMenuActionGetTextCallback (fun(character:EclCharacter):string|TranslatedString|nil)
 
 ---@class ContextMenuAction:ContextMenuActionSettings
 ---@field Handle any A specific value that will be passed along to the callback on click.
@@ -74,6 +76,13 @@ function ContextMenuAction:GetDisplayName(character)
 		return self.DisplayName
 	elseif t == "table" and self.DisplayName.Type == "TranslatedString" then
 		return GameHelpers.Tooltip.ReplacePlaceholders(self.DisplayName.Value, character)
+	elseif t == "function" then
+		local b,result = xpcall(self.DisplayName, debug.traceback, character)
+		if not b then
+			error(result, 2)
+		elseif result then
+			return result
+		end
 	end
 	return ""
 end
@@ -89,6 +98,13 @@ function ContextMenuAction:GetTooltip(character)
 		return self.Tooltip
 	elseif t == "table" and self.Tooltip.Type == "TranslatedString" then
 		return GameHelpers.Tooltip.ReplacePlaceholders(self.Tooltip.Value, character)
+	elseif t == "function" then
+		local b,result = xpcall(self.Tooltip, debug.traceback, character)
+		if not b then
+			error(result, 2)
+		else
+			return result
+		end
 	end
 	return ""
 end

@@ -872,7 +872,7 @@ Ext.RegisterConsoleCommand("ap", function(command, amountStr)
 	CharacterAddActionPoints(host, amount)
 end)
 
-Ext.RegisterConsoleCommand("animation", function(command, name)
+Ext.RegisterConsoleCommand("anim", function(command, name)
 	local host = CharacterGetHostCharacter()
 	name = name or "Dance_01"
 	PlayAnimation(host, name, "")

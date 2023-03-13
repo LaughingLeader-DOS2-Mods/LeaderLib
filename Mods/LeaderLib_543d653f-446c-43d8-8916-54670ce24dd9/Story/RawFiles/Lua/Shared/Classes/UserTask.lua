@@ -165,6 +165,10 @@ if _ISCLIENT then
 	end
 end
 
+local _IgnoreTraceCallback = {
+	GetPriority = true
+}
+
 ---@param id FixedString
 ---@param opts? LeaderLibUserTaskOptions
 ---@return LeaderLibUserTask
@@ -207,13 +211,15 @@ function UserTask:Create(id, opts)
 					end
 				else
 					task.Callbacks[key] = function (...)
-						if task._DebugTrace then
-							fprint(LOGLEVEL.TRACE, "[UserTask:%s:%s] Params(%s)", task.ID, key, Lib.serpent.block({...}))
+						if task._DebugTrace and not _IgnoreTraceCallback[key] then
+							local params = {...}
+							table.remove(params, 1)
+							fprint(LOGLEVEL.TRACE, "[UserTask:%s:%s] Params(%s)", task.ID, key, Lib.serpent.block(params))
 						end
 						local baseCallback = defaultCallbacks[key]
 						local baseResult = false
 						if baseCallback then
-							baseResult = pcall(baseCallback, ...)
+							_,baseResult = pcall(baseCallback, ...)
 						end
 						local b,result = xpcall(callback, debug.traceback, task, ...)
 						if not b then

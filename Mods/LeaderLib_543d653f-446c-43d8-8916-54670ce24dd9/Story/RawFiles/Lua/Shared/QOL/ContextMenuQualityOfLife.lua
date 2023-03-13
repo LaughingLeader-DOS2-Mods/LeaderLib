@@ -88,8 +88,10 @@ if isClient then
 				existingEntry.Tags = StringHelpers.Join(";", obj:GetTags())
 				if GameHelpers.Ext.ObjectIsItem(obj) then 
 					---@cast obj EclItem
+					if obj.StatsFromName ~= nil then
+						existingEntry.StatsId = obj.StatsFromName.Name
+					end
 					if not GameHelpers.Item.IsObject(obj) then
-						existingEntry.StatsId = obj.StatsId or obj.Stats.Name
 						if obj.Stats.ItemType == "Weapon" then
 							data.Damages = {}
 							for i,v in pairs(obj.Stats.DynamicStats) do

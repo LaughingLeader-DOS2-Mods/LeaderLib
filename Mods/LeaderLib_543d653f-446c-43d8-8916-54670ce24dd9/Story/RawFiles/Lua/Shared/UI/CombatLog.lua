@@ -40,6 +40,7 @@ setmetatable(CombatLog, {
 ---@field Index integer The index in the content_array.
 ---@field ID integer Generated ID.
 
+---@class LeaderLibCombatLogFilters
 CombatLog.Filters = {
 	Combat = {
 		Index = 0,

@@ -165,10 +165,10 @@ end
 ---@param x number
 ---@param z number
 ---@param matchNames string|string[]
----@param maxRadius number|nil
----@param containingName boolean Look for surfaces containing the name, instead of explicit matching.
----@param onlyLayer integer Look only on layer 0 (ground) or 1 (clouds).
----@param grid AiGrid|nil
+---@param maxRadius? number
+---@param containingName? boolean Look for surfaces containing the name, instead of explicit matching.
+---@param onlyLayer? integer Look only on layer 0 (ground) or 1 (clouds).
+---@param grid? AiGrid
 function GameHelpers.Surface.HasSurface(x, z, matchNames, maxRadius, containingName, onlyLayer, grid)
 	local surfaces = GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius)
 	return surfaces and surfaces.HasSurface(matchNames, containingName, onlyLayer)

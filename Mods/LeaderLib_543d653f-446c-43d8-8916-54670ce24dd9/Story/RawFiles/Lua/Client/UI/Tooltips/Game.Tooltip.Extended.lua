@@ -1737,6 +1737,8 @@ end
 ---@field MarkDirty fun(self:TooltipData) Signals to the tooltip expander that pressing or releasing the expand key will cause the current visible tooltip to re-render.
 ---@field IsExpanded fun(self:TooltipData):boolean Whether or not the tooltip is expanded. Check this when setting up tooltip elements.
 ---@field IsExtended boolean A simple variable a mod can check to see if this is a LeaderLib tooltip.
+---@field IsFromItem boolean|nil Set by LeaderLib when calling skill listeners for items with a skill tooltip.
+---@field ItemHasSkill boolean|nil Set by LeaderLib when calling skill listeners for items with a skill tooltip.
 local TooltipData = {}
 
 _TT.TooltipData = TooltipData

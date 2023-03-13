@@ -796,7 +796,7 @@ end
 ---Shoot a zone/cone skill in the direction the source object is looking.
 ---@param skillId string Zone or Cone type skill.
 ---@param source Guid|EsvCharacter|EsvItem
----@param extraParams LeaderLibZoneCreationProperties A table of properties to apply on top of the parsed skill properties.
+---@param extraParams? LeaderLibZoneCreationProperties A table of properties to apply on top of the parsed skill properties.
 function GameHelpers.Skill.ShootZoneFromSource(skillId, source, extraParams)
     local dist = extraParams and extraParams.Radius or Ext.StatGetAttribute(skillId, "Range") or 2
     local target = GameHelpers.Math.GetForwardPosition(source, dist)

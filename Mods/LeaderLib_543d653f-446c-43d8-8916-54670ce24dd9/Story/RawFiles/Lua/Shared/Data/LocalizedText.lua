@@ -376,7 +376,29 @@ LocalizedText.Status = {
 LocalizedText.StatusDescription = {}
 
 LocalizedText.WeaponType = {
-	Rifle = ts:Create("h4120c4e5g4931g46dbgad0fga7a57514ac42", "Rifle")
+	Bow = ts:Create("h0e38a42fg44dfg491dg8387g6d582a3cacf9", "Bow"),
+	Crossbow = ts:Create("h52ee27b1g46a7g4a0dg95b3gf519d1072d3b", "Crossbow"),
+	Dagger = ts:Create("hd6d18316gbc8bg400bga46eg18cd9f4185ee", "Dagger"),
+	Rifle = ts:Create("h4120c4e5g4931g46dbgad0fga7a57514ac42", "Rifle"),
+	Shield = ts:Create("h77557ac7g4f6fg49bdga76cg404de43d92f5", "Shield"),
+	Spear = ts:Create("h45830ff5g54bdg4098g9395gede7110cf8f1", "Spear"),
+	Staff = ts:Create("h0172003bg3d9cg492bga07cg55c4db8606a8", "Staff"),
+	Wand = ts:Create("h82e2ab7bg3b67g4e82ga2fdg312cd5b63603", "Wand"),
+	OneHandedAxe = ts:Create("h2c89d4e0g529bg4e4agbae9ge3119ee32cc9", "One-Handed Mace"),
+	TwoHandedAxe = ts:Create("h4be6203eg3fd9g4712g989egf69a65af1bfe", "Two-Handed Axe"),
+	OneHandedMace = ts:Create("h17a906aeg8f00g4f9dga784g93b8e4ad26b2", "One-Handed Mace"),
+	TwoHandedMace = ts:Create("h7b586984gd7abg42fcg84a4ge354c937ec07", "Two-Handed Mace"),
+	OneHandedSword = ts:Create("h657cfe58g240bg43c6g9129gf3a6a75d6ca4", "One-Handed Sword"),
+	TwoHandedSword = ts:Create("h57099d1cg88ccg44f5g9ba7gc1acedf94335", "Two-Handed Sword"),
+}
+
+LocalizedText.SkillRequirement = {
+	BowOrCrossbow = ts:Create("h4f8719aeg053bg40d5gb9cag3ba001b3f0ed", "Bow or Crossbow"),
+	Dagger = ts:Create("h6e21af89g96d5g4826ga11ag8688bee4a5f7", "Dagger"),
+	MeleeWeapon = ts:Create("h17d6fa6bgde7bg467cg81d7g4f382e194ba5", "Melee Weapon"),
+	RangedWeapon = ts:Create("h87b42cabg950ag4e52g802dg9fc6aa755f5e", "Ranged Weapon"),
+	Shield = ts:Create("h0c4dfdb5g88e7g4df8gabc9gf17b7042bf14", "Shield"),
+	StaffWeapon = ts:Create("h9d2c3f11g8702g4504ga467g9e63531ce7ab", "Staff Weapon"),
 }
 
 LocalizedText.Tooltip = {

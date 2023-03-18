@@ -719,9 +719,10 @@ end
 ---@param id string
 ---@param attributeName string
 ---@param fallbackValue? T
+---@param asReference? boolean Get the stat byRef.
 ---@return T
-function GameHelpers.Stats.GetAttribute(id, attributeName, fallbackValue)
-	local stat = Ext.Stats.Get(id, nil, false)
+function GameHelpers.Stats.GetAttribute(id, attributeName, fallbackValue, asReference)
+	local stat = Ext.Stats.Get(id, nil, false, asReference == true)
 	if stat then
 		local value = stat[attributeName]
 		if value ~= nil then

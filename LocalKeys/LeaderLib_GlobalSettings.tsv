@@ -67,7 +67,7 @@ LeaderLib_Variables_CarryWeightBase_Description	Set the base carry weight value.
 LeaderLib_Variables_CombatSightRangeMultiplier	Combat Sight Range Multiplier	hd59b40d6g8eb5g4288g92b0gdbf045f0dae5
 LeaderLib_Variables_CombatSightRangeMultiplier_Description	This is a multiplier the game uses to determine if a character should exit combat, due to not seeing any enemies. Setting this value higher will keep you in combat, despite being far away from any enemies.<br>Default: 2.5<br>Formula: ((Value * Value) * character.Sight) * character.Sight	hd512d483gb01ag40c6ga346g472274590bb5
 LeaderLib_Button_ReloadStatChangesConfig	Reload Stat Changes Config	h121e346bgaf5dg42cagbf3bg45de27a5a667
-LeaderLib_Button_ReloadStatChangesConfig_Description	Reload and re-apply the stat changes configuration file, located at:<br>Documents\Larian Studios\Divinity 
+LeaderLib_Button_ReloadStatChangesConfig_Description	Reload and re-apply the stat changes configuration file, located at:<br>Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_StatChanges.json	 h3d5dfed0gb52ag4582g86a5g6e3ac3deda52
 LeaderLib_Button_SaveDebugInfo	Save Debug Info	hfa6c9031gcc15g4c26g801cg92190fec8116
 LeaderLib_Button_SaveDebugInfo_Description	Store specific debug information in the current save.<br>This button should be used before saving and submitting the save for debugging to LaughingLeader, as it will store your current Global and Game Settings in the save.	ha2e9ddd4g4bffg44dega5dcgadec917a89ef
 LeaderLib_TraderDisabled	Enable Trader	h0e770a18g4a0dg4fddgb702g790a6b808219

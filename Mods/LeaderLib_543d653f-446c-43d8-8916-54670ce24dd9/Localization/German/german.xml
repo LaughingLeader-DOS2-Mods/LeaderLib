@@ -221,6 +221,7 @@
 	<content contentuid="h6a73243bgbdbcg4c42g8a10g63b34a228971">If &lt;font color=&apos;#3399FF&apos;&gt;[Key:LeaderLib_PullPartyIntoCombat]&lt;/font&gt; is enabled, a timer will check the party&apos;s distance to the current combat, automatically pulling members into the combat if within the set distance.&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;When this is disabled, pulling is done only when a player enters combat or teleports to a pyramid/waypoint.&lt;/font&gt;&lt;br&gt;Default: Disabled</content>
 	<content contentuid="h6a80ffafg59d9g4848g8d1ag9359a1435030">Enable Timed Autosaving</content>
 	<content contentuid="h6aac0af6g1e02g4a73g9341g53c81e64eb03">World Tooltips for All Items</content>
+	<content contentuid="h6b95a921gdbe2g4db2gb575g09f0b71e605e">Reload and re-apply the stat changes configuration file, located at:&lt;br&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_StatChanges.json</content>
 	<content contentuid="h6ba6354bg9a76g48c2g90e9gf8aeac752f5c">Fix the Unhealable Status</content>
 	<content contentuid="h6caacb07g5690g4febgbabcge6b6ba56733b">35 Minutes</content>
 	<content contentuid="h6d2689a6ge111g43b7g8c87g478a5e501f40">Mods&lt;br&gt;[LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]</content>

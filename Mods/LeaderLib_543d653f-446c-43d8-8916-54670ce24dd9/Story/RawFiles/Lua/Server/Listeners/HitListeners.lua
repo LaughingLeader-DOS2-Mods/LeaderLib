@@ -80,7 +80,7 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 			if Data.StatusStatsIdTypes[status.StatusType] then
 				local potion = status.StatsId
 				if not StringHelpers.IsNullOrWhitespace(potion) and not string.find(potion, ";") then
-					local bonusWeapon = _cachedBonusWeapon[potion] or Ext.StatGetAttribute(potion, "BonusWeapon")
+					local bonusWeapon = _cachedBonusWeapon[potion] or GameHelpers.Stats.GetAttribute(potion, "BonusWeapon", "")
 					if not StringHelpers.IsNullOrWhitespace(bonusWeapon) then
 						_cachedBonusWeapon[potion] = bonusWeapon
 						local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)

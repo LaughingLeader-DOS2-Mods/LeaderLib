@@ -260,10 +260,7 @@ if not _ISCLIENT then
 
 	function GameHelpers.Data.SetGameMode(gameMode)
 		if not gameMode then
-			local db = Osi.DB_LeaderLib_GameMode:Get(nil,nil)
-			if db and #db > 0 then
-				gameMode = db[1][1]
-			end
+			gameMode = Ext.Utils.GetGameMode()
 		end
 		if gameMode then
 			if gameMode == "Campaign" then

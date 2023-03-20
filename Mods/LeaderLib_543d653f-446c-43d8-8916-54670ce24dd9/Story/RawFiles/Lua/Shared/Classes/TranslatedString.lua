@@ -24,9 +24,7 @@ local _streq = StringHelpers.Equals
 local _replaceplaceholders = GameHelpers.Tooltip.ReplacePlaceholders
 
 ---@type TranslatedString[]
-local _translatedStringUpdate = {}
---Turn into a weak table since we don't care to update variables that were deleted.
---setmetatable(_translatedStringUpdate, {__mode = "kv"})
+local _registeredStrings = {}
 
 ---@class TranslatedStringOptions
 ---@field AutoReplacePlaceholders boolean|nil If true, GameHelpers.Tooltip.ReplacePlaceholders is called when the Value is updated.
@@ -35,25 +33,40 @@ local _translatedStringUpdate = {}
 ---Wrapper class around a translated string or string key, that auto-updates itself with the translated value when the session is loaded.   
 ---Allows easily replacing placeholders ([1], [2] etc) with variables.  
 ---@class TranslatedString:TranslatedStringOptions
+---@field private Content string The fallback text.
+---@field Value string The retrieved text for the key or handle. If the TranslatedString does not exist, this will be the fallback text or key.
 local TranslatedString = {
 	Type = "TranslatedString",
 	Handle = "",
 	Content = "",
-	Value = "",
 	Key = "",
 	Format = "",
 	AutoReplacePlaceholders = false,
 }
 
+local function _CanUpdate()
+	--If lua was reset in the main menu, then it should be safe to update on creation
+	return Vars.Initialized or Ext.GetGameState() == "Menu"
+end
+
 local _TSTRING_META = {
-	__index = function (_,k)
+	__index = function (tbl,k)
+		if k == "Value" then
+			--Update the value when a script tries to retrieve it, instead of updating everything at once
+			if _CanUpdate() then
+				local value = TranslatedString.Update(tbl)
+				return value
+			else
+				return tbl.Content
+			end
+		end
 		return TranslatedString[k]
 	end,
-	__tostring = function(t)
-		if t and t.Value then
-			return t.Value
+	__tostring = function(tbl)
+		if tbl then
+			return tbl.Value or ""
 		end
-		return _tostring(t)
+		return "nil"
 	end,
 	__eq = function (a,b)
 		return TranslatedString.Equals(a, b.Value, false)
@@ -76,22 +89,16 @@ function TranslatedString:IsTranslatedString(target)
 	return false
 end
 
-local function _CanUpdateInitially()
-	--If lua was reset in the main menu, then it should be safe to update on creation
-	return Vars.Initialized or Ext.GetGameState() == "Menu"
-end
-
 ---@param handle string
----@param content string
+---@param fallback string
 ---@param params TranslatedStringOptions|nil
 ---@return TranslatedString
-function TranslatedString:Create(handle, content, params)
-	content = content or ""
+function TranslatedString:Create(handle, fallback, params)
+	fallback = fallback or ""
 	local this =
 	{
 		Handle = handle,
-		Content = content,
-		Value = content,
+		Content = fallback,
 		AutoReplacePlaceholders = false,
 	}
 	if _type(params) == "table" then
@@ -100,10 +107,10 @@ function TranslatedString:Create(handle, content, params)
 		end
 	end
 	_setmetatable(this, _TSTRING_META)
-	if _CanUpdateInitially() then
+	if _CanUpdate() then
 		TranslatedString.Update(this)
 	end
-	_translatedStringUpdate[#_translatedStringUpdate+1] = this
+	_registeredStrings[#_registeredStrings+1] = this
 	return this
 end
 
@@ -124,7 +131,6 @@ function TranslatedString:CreateFromKey(key, fallback, params)
 		Key = key,
 		Content = fallback,
 		Handle = "",
-		Value = fallback,
 		AutoReplacePlaceholders = false,
 	}
 	if _type(params) == "table" then
@@ -133,53 +139,66 @@ function TranslatedString:CreateFromKey(key, fallback, params)
 		end
 	end
 	_setmetatable(this, _TSTRING_META)
-	if _CanUpdateInitially() then
+	if _CanUpdate() then
 		TranslatedString.Update(this)
 	end
-	_translatedStringUpdate[#_translatedStringUpdate+1] = this
+	_registeredStrings[#_registeredStrings+1] = this
 	return this
 end
 
+---@private
+---Updates the Value property of the TranslatedString, using either the Key or Handle. 
+---This is an internal function called when TranslatedString.Value is first fetched.
 function TranslatedString:Update()
-	if not _strnull(self.Key) then
-		local content,handle = _getTranslatedStringKey(self.Key)
+	local value = ""
+	local key = rawget(self, "Key") or ""
+	local fallback = rawget(self, "Content") or ""
+	local handle = rawget(self, "Handle") or ""
+	local format = rawget(self, "Format") or ""
+
+	if not _strnull(key) then
+		local content,handle = _getTranslatedStringKey(key)
 		if not _strnull(handle) then
-			self.Handle = handle
+			handle = handle
+			rawset(self, "Handle", handle)
 		end
 		if not _strnull(content) then
-			self.Value = content
-		elseif not _strnull(self.Content) then
-			self.Value = self.Content
+			---@cast content string
+			value = content
+		elseif not _strnull(fallback) then
+			value = fallback
 		else
-			self.Value = self.Key
+			value = key
 		end
 	else
-		if not _strnull(self.Handle) then
-			self.Value = _getTranslatedString(self.Handle, self.Content)
-			if _strnullspace(self.Value) then
-				self.Value = self.Content
+		if not _strnull(handle) then
+			value = _getTranslatedString(handle, fallback)
+			if _strnullspace(value) then
+				value = fallback
 			end
 		else
-			self.Value = self.Content
+			value = fallback
 		end
 	end
-	if not _strnullspace(self.Format) then
-		if not _strnull(self.Content) then
-			local b,result = _pcall(_format, self.Format, self.Content)
+	if not _strnullspace(format) then
+		if _strnull(value) then
+			local b,result = _pcall(_format, format, fallback)
 			if b then
-				self.Value = result
+				value = result
 			end
 		else
-			local b,result = _pcall(_format, self.Format, self.Value)
+			local b,result = _pcall(_format, format, value)
 			if b then
-				self.Value = result
+				value = result
 			end
 		end
 	end
-	if not _strnullspace(self.Value) and self.AutoReplacePlaceholders then
-		self.Value = _replaceplaceholders(self.Value)
+	if not _strnullspace(value) and self.AutoReplacePlaceholders then
+		value = _replaceplaceholders(value)
 	end
-	return self.Value
+	rawset(self, "Value", value)
+	Ext.Utils.Print("Updated TranslatedString", key, fallback, value)
+	return value
 end
 
 --- Replace placeholder values in a string, such as [1], [2], etc.  
@@ -241,38 +260,14 @@ function TranslatedString:Equals(val, caseInsensitive)
 end
 
 Classes.TranslatedString = TranslatedString
---local TranslatedString = Classes["TranslatedString"]
-
-function UpdateTranslatedStrings()
-	local length = #_translatedStringUpdate
-	if length > 0 then
-		for i=1,length do
-			local entry = _translatedStringUpdate[i]
-			if entry then
-				TranslatedString.Update(entry)
-			end
-		end
-	end
-	if Vars.DebugMode then
-		fprint(LOGLEVEL.TRACE, "[LeaderLib:TranslatedString:%s] Updated %s TranslatedString entries.", Ext.IsClient() and "CLIENT" or "SERVER", length)
-	end
-end
-
-Events.Initialized:Subscribe(UpdateTranslatedStrings)
-
-Ext.Events.GameStateChanged:Subscribe(function (e)
-	if e.ToState == "Menu" then
-		UpdateTranslatedStrings()
-	end
-end)
 
 if Vars.DebugMode then
 	Ext.RegisterConsoleCommand("leaderlib_ts_missingkeys", function ()
 		local kv = {}
 		local keys = {}
-		local length = #_translatedStringUpdate
+		local length = #_registeredStrings
 		for i=1,length do
-			local entry = _translatedStringUpdate[i]
+			local entry = _registeredStrings[i]
 			if entry then
 				if not _strnull(entry.Key) then
 					local content,handle = _getTranslatedStringKey(entry.Key)

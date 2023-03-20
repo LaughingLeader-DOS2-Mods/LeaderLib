@@ -1,3 +1,4 @@
+local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Utils.Version()
 
 local _type = type
@@ -44,7 +45,6 @@ local TranslatedString = {
 	AutoReplacePlaceholders = false,
 }
 
-local _canUpdate = false
 
 local _ValidStates = {
 	Menu = true,
@@ -52,6 +52,7 @@ local _ValidStates = {
 	Paused = true,
 	GameMasterPause = true,
 }
+local _canUpdate = _ValidStates[Ext.GetGameState()] == true
 
 Ext.Events.GameStateChanged:Subscribe(function (e)
 	_canUpdate = _ValidStates[e.ToState]
@@ -114,9 +115,6 @@ function TranslatedString:Create(handle, fallback, params)
 			this[k] = v
 		end
 	end
-	if _canUpdate then
-		TranslatedString.Update(this)
-	end
 	_setmetatable(this, _TSTRING_META)
 	_registeredStrings[#_registeredStrings+1] = this
 	return this
@@ -145,9 +143,6 @@ function TranslatedString:CreateFromKey(key, fallback, params)
 		for k,v in _pairs(params) do
 			this[k] = v
 		end
-	end
-	if _canUpdate then
-		TranslatedString.Update(this)
 	end
 	_setmetatable(this, _TSTRING_META)
 	_registeredStrings[#_registeredStrings+1] = this

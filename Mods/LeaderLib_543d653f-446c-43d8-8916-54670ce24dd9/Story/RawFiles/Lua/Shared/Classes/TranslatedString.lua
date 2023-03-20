@@ -44,16 +44,24 @@ local TranslatedString = {
 	AutoReplacePlaceholders = false,
 }
 
-local function _CanUpdate()
-	--If lua was reset in the main menu, then it should be safe to update on creation
-	return Vars.Initialized or Ext.GetGameState() == "Menu"
-end
+local _canUpdate = false
+
+local _ValidStates = {
+	Menu = true,
+	Running = true,
+	Paused = true,
+	GameMasterPause = true,
+}
+
+Ext.Events.GameStateChanged:Subscribe(function (e)
+	_canUpdate = _ValidStates[e.ToState]
+end)
 
 local _TSTRING_META = {
 	__index = function (tbl,k)
 		if k == "Value" then
 			--Update the value when a script tries to retrieve it, instead of updating everything at once
-			if _CanUpdate() then
+			if _canUpdate then
 				local value = TranslatedString.Update(tbl)
 				return value
 			else
@@ -106,10 +114,10 @@ function TranslatedString:Create(handle, fallback, params)
 			this[k] = v
 		end
 	end
-	_setmetatable(this, _TSTRING_META)
-	if _CanUpdate() then
+	if _canUpdate then
 		TranslatedString.Update(this)
 	end
+	_setmetatable(this, _TSTRING_META)
 	_registeredStrings[#_registeredStrings+1] = this
 	return this
 end
@@ -138,10 +146,10 @@ function TranslatedString:CreateFromKey(key, fallback, params)
 			this[k] = v
 		end
 	end
-	_setmetatable(this, _TSTRING_META)
-	if _CanUpdate() then
+	if _canUpdate then
 		TranslatedString.Update(this)
 	end
+	_setmetatable(this, _TSTRING_META)
 	_registeredStrings[#_registeredStrings+1] = this
 	return this
 end

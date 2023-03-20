@@ -55,7 +55,7 @@ local _ValidStates = {
 local _canUpdate = _ValidStates[Ext.GetGameState()] == true
 
 Ext.Events.GameStateChanged:Subscribe(function (e)
-	_canUpdate = _ValidStates[e.ToState]
+	_canUpdate = _ValidStates[e.ToState] == true
 end)
 
 local _TSTRING_META = {

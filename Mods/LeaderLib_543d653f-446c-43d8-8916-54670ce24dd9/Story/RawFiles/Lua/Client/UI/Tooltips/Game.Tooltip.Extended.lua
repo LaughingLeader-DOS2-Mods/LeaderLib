@@ -1096,6 +1096,7 @@ function _ttHooks:RegisterControllerHooks()
 		end
 	end, _UITYPE.overhead)
 
+	--TODO Probably no longer needed, since we can get the client player
 	_InvokeHandler("setPlayerHandle", function (e, ui, event, doubleHandle)
 		if doubleHandle ~= nil and doubleHandle ~= 0 then
 			local handle = _DoubleToHandle(doubleHandle)
@@ -1176,7 +1177,6 @@ function _ttHooks:Init()
 				end
 			end
 		end
-
 	end, {Priority=2})
 
 	_InvokeHandler("addFormattedTooltip", function (e, ui, call, x, y, b, ...)

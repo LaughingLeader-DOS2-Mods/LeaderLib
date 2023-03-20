@@ -11,6 +11,8 @@
 				"Tweaked the hit helpers to avoid applying Sadist to long-range 'melee' skills, such as Throwing Knife.",
 				"Fixed a typo in HitOverrides.DoHit, which potentially created an error if a mod is using a table for the damage multiplier.",
 				"LeaderLib tooltip listeners now go first, so mods can modify any conflicting elements.",
+				"Fixed mod-altered skill tooltips not working correctly for controllers.",
+				"Fixed several warning messages that occur when a status event fires for an object that no longer exists.",
 				"API Changes:",
 				"\t• Added WeaponDamage:WeaponStatId and StatusDamage:StatusId text placeholders.",
 				"\t• Added SkillManager.Register.GetAPCost.",
@@ -31,6 +33,7 @@
 				"\t• The 'Attempt' StatusManager event now has a status object.",
 				"\t• Added Testing.Utils.UseItemSkillOnTarget, for making a character use items with skills, like grenades/scrolls.",
 				"\t• Added TargetObject to ProjectileHitData.",
+				"\t• Added support for mods overriding Game.Math.GetCriticalHitMultiplier.",
 				"\t• Fixed permanent statuses in PersistentVars being cleared."
 			]
 		},

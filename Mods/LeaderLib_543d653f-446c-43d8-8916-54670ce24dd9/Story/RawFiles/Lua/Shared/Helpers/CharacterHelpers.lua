@@ -981,8 +981,7 @@ function GameHelpers.Character.GetEquipmentOnEquipStatuses(character, inDictiona
     fassert(char ~= nil, "'%s' is not a valid character", character)
 	local entries = {}
 	for item in GameHelpers.Character.GetEquipment(character) do
-		---@type StatPropertyStatus[]
-		local props = Ext.Stats.GetAttribute(item.Stats.Name, "ExtraProperties")
+		local props = GameHelpers.Stats.GetExtraProperties(item.Stats.Name)
 		if props and #props > 0 then
 			for _,v in pairs(props) do
 				if v.Type == "Status" and Common.TableHasValue(v.Context, "SelfOnEquip") then

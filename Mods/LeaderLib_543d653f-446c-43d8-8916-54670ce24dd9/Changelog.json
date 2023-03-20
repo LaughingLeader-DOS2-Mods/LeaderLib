@@ -6,6 +6,15 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.1",
+			"Changes": [
+				"Added a description for the 'Reload Stat Changes Config' button in LeaderLib's Mod Settings menu."
+			],
+			"API Changes": [
+				"Tweaked the TranslatedString class to only retrieve the actual text value when accessed initially. This basically means text can be fetched when a script first uses it, rather than updating hundreds of entries initially at once. This is a rework for the sake of optimization, rather than fixing an issue."
+			]
+		},
+		{
 			"Version": "1.7.31.0",
 			"Changes": [
 				"Tweaked the hit helpers to avoid applying Sadist to long-range 'melee' skills, such as Throwing Knife.",

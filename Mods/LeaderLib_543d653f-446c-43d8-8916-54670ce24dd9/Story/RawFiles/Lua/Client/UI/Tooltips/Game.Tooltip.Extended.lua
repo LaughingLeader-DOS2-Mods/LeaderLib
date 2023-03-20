@@ -965,8 +965,9 @@ local TooltipArrayNames = {
 }
 _TT.TooltipArrayNames = TooltipArrayNames
 
----@type table<string, {Callback:function, TypeIds:table<integer,boolean>|nil, When:string|nil}>
+---@type table<string, {Callback:function, TypeIds:table<integer,boolean>|nil, When:string|nil}[]>
 local CallHandlers = {}
+---@type table<string, {Callback:function, TypeIds:table<integer,boolean>|nil, When:string|nil}[]>
 local InvokeHandlers = {}
 
 ---@param event string|string[]
@@ -986,11 +987,14 @@ local function _CallHandler(event, callback, typeIds, when)
 			_CallHandler(event[i], callback, typeIds, when)
 		end
 	else
-		CallHandlers[event] = {
+		if CallHandlers[event] == nil then
+			CallHandlers[event] = {}
+		end
+		table.insert(CallHandlers[event], {
 			Callback = callback,
 			TypeIds = typeIds,
 			When = when
-		}
+		})
 	end
 end
 
@@ -1011,11 +1015,14 @@ local function _InvokeHandler(event, callback, typeIds, when)
 			_CallHandler(event[i], callback, typeIds, when)
 		end
 	else
-		InvokeHandlers[event] = {
+		if InvokeHandlers[event] == nil then
+			InvokeHandlers[event] = {}
+		end
+		table.insert(InvokeHandlers[event], {
 			Callback = callback,
 			TypeIds = typeIds,
 			When = when
-		}
+		})
 	end
 end
 
@@ -1136,29 +1143,40 @@ function _ttHooks:Init()
 	RequestProcessor:Init(_ttHooks)
 
 	Ext.Events.UIInvoke:Subscribe(function (e)
-		local handler = InvokeHandlers[e.Function]
-		if handler and ((not handler.When and e.When == "After") or e.When == handler.When) then
-			if handler.TypeIds then
-				if handler.TypeIds[e.UI.Type] == true then
-					handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
+		local handlers = InvokeHandlers[e.Function]
+		if handlers then
+			for i=1,#handlers do
+				local handler = handlers[i]
+				if (not handler.When and e.When == "After") or e.When == handler.When then
+					if handler.TypeIds then
+						if handler.TypeIds[e.UI.Type] == true then
+							handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
+						end
+					else
+						handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
+					end
 				end
-			else
-				handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
 			end
 		end
 	end, {Priority=2})
 	
 	Ext.Events.UICall:Subscribe(function (e)
-		local handler = CallHandlers[e.Function]
-		if handler and ((not handler.When and e.When == "After") or e.When == handler.When) then
-			if handler.TypeIds then
-				if handler.TypeIds[e.UI.Type] == true then
-					handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
+		local handlers = CallHandlers[e.Function]
+		if handlers then
+			for i=1,#handlers do
+				local handler = handlers[i]
+				if (not handler.When and e.When == "After") or e.When == handler.When then
+					if handler.TypeIds then
+						if handler.TypeIds[e.UI.Type] == true then
+							handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
+						end
+					else
+						handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
+					end
 				end
-			else
-				handler.Callback(e, e.UI, e.Function, table.unpack(e.Args))
 			end
 		end
+
 	end, {Priority=2})
 
 	_InvokeHandler("addFormattedTooltip", function (e, ui, call, x, y, b, ...)

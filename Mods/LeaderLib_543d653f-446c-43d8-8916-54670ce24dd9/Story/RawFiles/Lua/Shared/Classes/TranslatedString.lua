@@ -63,10 +63,10 @@ local _TSTRING_META = {
 		return TranslatedString[k]
 	end,
 	__tostring = function(tbl)
-		if tbl then
-			return tbl.Value or ""
+		if tbl and tbl.Value then
+			return tbl.Value
 		end
-		return "nil"
+		return tbl.Content
 	end,
 	__eq = function (a,b)
 		return TranslatedString.Equals(a, b.Value, false)
@@ -170,15 +170,13 @@ function TranslatedString:Update()
 		else
 			value = key
 		end
-	else
-		if not _strnull(handle) then
-			value = _getTranslatedString(handle, fallback)
-			if _strnullspace(value) then
-				value = fallback
-			end
-		else
+	elseif not _strnull(handle) then
+		value = _getTranslatedString(handle, fallback)
+		if _strnullspace(value) then
 			value = fallback
 		end
+	else
+		value = fallback
 	end
 	if not _strnullspace(format) then
 		if _strnull(value) then
@@ -197,7 +195,6 @@ function TranslatedString:Update()
 		value = _replaceplaceholders(value)
 	end
 	rawset(self, "Value", value)
-	Ext.Utils.Print("Updated TranslatedString", key, fallback, value)
 	return value
 end
 

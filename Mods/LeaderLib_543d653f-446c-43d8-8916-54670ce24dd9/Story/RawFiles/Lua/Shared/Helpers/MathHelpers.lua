@@ -702,8 +702,8 @@ end
 ---@field Target CDivinityStatsCharacter The character to use for heal-specific properties, like the Hydrosophist amount, level, Max Vitality/Armor/MagicArmor etc. If you want to use a different character for the Hydrosophist boost, set HydrosophistAmount directly.
 ---@field Shield CDivinityStatsItem If the HealType is 'Shield', use this instead of the Target's shield.
 ---@field ShieldOwner CDivinityStatsCharacter If the HealType is 'Shield', use this instead of the Target's for the armor attribute boosts.
----@field ApplyHydrosophistBoost DefaultValue<true> Apply the Hydrosophist healing boost to the final amount.
----@field HydrosophistAmount integer Use this amount for the Hydrosophist boost.
+---@field ApplyAbilityBoost DefaultValue<true> Apply the Hydrosophist healing boost to Vitality/Magic Armour restoration, and Geomancer boost to Physical Armour restoration.
+---@field AbilityAmount integer Use this amount for the ApplyAbilityBoost bonus. Ex. 5 would be 5 Hydrosophist for Vitality/Magic Armour.
 ---@field HealMultiplier DefaultValue<1> The multiplier to apply to the final amount, such as a status StatsMultiplier.
 
 ---@type GameHelpers_Math_CalculateHealAmountOptions
@@ -712,22 +712,46 @@ local _defaultCalculateHealAmountOptions = {
 	HealType = "Qualifier",
 	HealStat = "Vitality",
 	HealValue = 100,
-	ApplyHydrosophistBoost = true,
+	ApplyAbilityBoost = true,
 	HealMultiplier = 1.0
 }
 
-local function _FinalHealBonus(baseHeal, hydrosophistAmount, options)
-	local hydroAmount = hydrosophistAmount
-	if not options.ApplyHydrosophistBoost then
-		hydrosophistAmount = 0
-	end
-	local hydroBoost = 0
-	if hydroAmount > 0 then
-		hydroBoost = _ceil(hydroAmount * Ext.ExtraData.SkillAbilityVitalityRestoredPerPoint)
-	end
-
-	if hydroBoost ~= 0 then
-		return _round(options.HealMultiplier * (baseHeal + _round(_ceil((hydroBoost * baseHeal) / 100) * 1.0)))
+---@param baseHeal integer
+---@param boostAmount integer
+---@param options GameHelpers_Math_CalculateHealAmountOptions
+local function _FinalHealBonus(baseHeal, boostAmount, options)
+	if options.ApplyAbilityBoost then
+		if options.HealStat == "Vitality" or options.HealStat == "MagicArmor" then
+			local extraDataAmount = options.HealStat == "Vitality" and GameHelpers.GetExtraData("SkillAbilityVitalityRestoredPerPoint", 5) or GameHelpers.GetExtraData("SkillAbilityArmorRestoredPerPoint", 5)
+			--CDivinityStats_Character::ApplyHealHydrosophistBonus
+			local hydroAmount = boostAmount
+			if not options.ApplyAbilityBoost then
+				hydroAmount = 0
+			end
+			local hydroBoost = 0
+			if hydroAmount > 0 then
+				hydroBoost = _ceil(hydroAmount * extraDataAmount)
+			end
+		
+			if hydroBoost ~= 0 then
+				baseHeal = (baseHeal + _round(_ceil((hydroBoost * baseHeal) / 100) * 1.0))
+			end
+		elseif options.HealStat == "PhysicalArmor" then
+			--CDivinityStats_Character::ApplySkillAbilityPhysArmorRestore
+			local extraDataAmount = GameHelpers.GetExtraData("SkillAbilityVitalityRestoredPerPoint", 5)
+			local geoAmount = boostAmount
+			if not options.ApplyAbilityBoost then
+				geoAmount = 0
+			end
+			local geoBoost = 0
+			if geoAmount > 0 then
+				geoBoost = _ceil(geoAmount * extraDataAmount)
+			end
+		
+			if geoBoost ~= 0 then
+				baseHeal = baseHeal + _round(_ceil((geoBoost * baseHeal) / 100) * 1.0)
+			end
+		end
 	end
 	return _round(options.HealMultiplier * baseHeal)
 end
@@ -741,7 +765,7 @@ function GameHelpers.Math.CalculateHealAmount(opts)
 	local baseHeal = 0
 
 	local level = options.Level
-	local hydrosophistAmount = options.HydrosophistAmount or 0
+	local boostAmount = options.AbilityAmount or 0
 
 	if level == -1 then
 		if options.Target then
@@ -751,8 +775,12 @@ function GameHelpers.Math.CalculateHealAmount(opts)
 		end
 	end
 
-	if options.Target and options.HydrosophistAmount == nil then
-		hydrosophistAmount = options.Target.WaterSpecialist
+	if options.Target and options.AbilityAmount == nil then
+		if options.HealStat == "Vitality" or options.HealStat == "MagicArmor" then
+			boostAmount = options.Target.WaterSpecialist
+		elseif options.HealStat == "PhysicalArmor" then
+			boostAmount = options.Target.EarthSpecialist
+		end
 	end
 
 	if options.HealType == "FixedValue" or options.HealType == "DamagePercentage" then
@@ -766,10 +794,10 @@ function GameHelpers.Math.CalculateHealAmount(opts)
 		else
 			baseHeal = options.Target.MaxVitality or 0
 		end
-		return _FinalHealBonus(_ceil((options.HealValue * baseHeal) * 0.01), hydrosophistAmount, options)
+		return _FinalHealBonus(_ceil((options.HealValue * baseHeal) * 0.01), boostAmount, options)
 	elseif options.HealType == "Shield" then
 		if options.Target == nil then
-			return _FinalHealBonus(options.HealValue, hydrosophistAmount, options)
+			return _FinalHealBonus(options.HealValue, boostAmount, options)
 		end
 		local shieldOwner = options.ShieldOwner or options.Target
 		local shield = options.Shield
@@ -798,9 +826,9 @@ function GameHelpers.Math.CalculateHealAmount(opts)
 				--The engine code doesn't support AllArmor or All, or other types
 				return 0
 			end
-			return _FinalHealBonus(_round((baseHeal * options.HealValue) * 0.01), hydrosophistAmount, options)
+			return _FinalHealBonus(_round((baseHeal * options.HealValue) * 0.01), boostAmount, options)
 		else
-			return _FinalHealBonus(options.HealValue, hydrosophistAmount, options)
+			return _FinalHealBonus(options.HealValue, boostAmount, options)
 		end
 	elseif options.HealType == "TargetDependent" then
 		--TODO This uses EsvStatusHeal.TargetDependentValue
@@ -811,9 +839,9 @@ function GameHelpers.Math.CalculateHealAmount(opts)
 		else
 			baseHeal = options.Target.MaxVitality
 		end
-		return _FinalHealBonus(_round((baseHeal * options.HealValue) * 0.01), hydrosophistAmount, options)
+		return _FinalHealBonus(_round((baseHeal * options.HealValue) * 0.01), boostAmount, options)
 	elseif options.HealType == "Qualifier" then
 		baseHeal = _round(Ext.Stats.GetStatsManager().LevelMaps:GetByName("SkillData HealAmount"):GetScaledValue(options.HealValue, level))
 	end
-	return _FinalHealBonus(baseHeal, hydrosophistAmount, options)
+	return _FinalHealBonus(baseHeal, boostAmount, options)
 end

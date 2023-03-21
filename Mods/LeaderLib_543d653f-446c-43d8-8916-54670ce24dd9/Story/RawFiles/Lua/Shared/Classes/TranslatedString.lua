@@ -152,6 +152,7 @@ end
 ---@private
 ---Updates the Value property of the TranslatedString, using either the Key or Handle. 
 ---This is an internal function called when TranslatedString.Value is first fetched.
+---@return string
 function TranslatedString:Update()
 	local value = ""
 	local key = rawget(self, "Key") or ""

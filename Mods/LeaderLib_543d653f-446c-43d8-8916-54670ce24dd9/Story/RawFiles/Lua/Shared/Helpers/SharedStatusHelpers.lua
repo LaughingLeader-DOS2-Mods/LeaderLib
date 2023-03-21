@@ -529,3 +529,56 @@ function GameHelpers.Status.GetSourceByID(target, statusID)
 	end
 	return nil
 end
+
+---@class GameHelpers_Status_GetHealAmountOptions:GameHelpers_Math_CalculateHealAmountOptions
+---@field AsTooltipText boolean Return the value as text for a tooltip, such as "15 Vitality".
+
+---@param statusId FixedString a HEAL or HEALING status ID.
+---@param opts GameHelpers_Status_GetHealAmountOptions
+function GameHelpers.Status.GetHealAmount(statusId, opts)
+	---@type GameHelpers_Status_GetHealAmountOptions
+	local options = {}
+	local stat = Ext.Stats.Get(statusId, nil, false) --[[@as StatEntryStatusData]]
+	if stat then
+		options.HealValue = stat.HealValue
+		options.HealStat = stat.HealStat
+		options.HealType = stat.HealType
+		options.HealMultiplier = 1.0
+	end
+	if type(opts) == "table" then
+		for k,v in pairs(opts) do
+			options[k] = v
+		end
+	end
+	local value = GameHelpers.Math.CalculateHealAmount(options)
+	if options.AsTooltipText then
+		local healStat = options.HealStat
+		local healStatName = ""
+
+		local pattern = "%s %s"
+
+		--TODO Get the actual colors used in tooltips
+
+		if healStat == "All" then
+			pattern = "<font color='#97FBFF'>%s</font> %s"
+			healStatName = string.format("<font color='#4197E2'>%s</font>/<font color='#AE9F95'>%s</font>/<font color='#97FBFF'>%s</font>", LocalizedText.CharacterSheet.MagicArmour.Value, LocalizedText.CharacterSheet.PhysicalArmour.Value, LocalizedText.CharacterSheet.Vitality.Value)
+		elseif healStat == "AllArmor" then
+			pattern = "<font color='#97FBFF'>%s</font> %s"
+			healStatName = string.format("<font color='#4197E2'>%s</font>/<font color='#AE9F95'>%s</font>", LocalizedText.CharacterSheet.MagicArmour.Value, LocalizedText.CharacterSheet.PhysicalArmour.Value)
+		elseif healStat == "MagicArmor" then
+			pattern = "<font color='#4197E2'>%s %s</font>"
+			healStatName = LocalizedText.CharacterSheet.MagicArmour.Value
+		elseif healStat == "PhysicalArmor" then
+			pattern = "<font color='#AE9F95'>%s %s</font>"
+			healStatName = LocalizedText.CharacterSheet.PhysicalArmour.Value
+		elseif healStat == "Source" then
+			pattern = "<font color='#46B195'>%s %s</font>"
+			healStatName = LocalizedText.CharacterSheet.SourcePoints.Value
+		elseif healStat == "Vitality" then
+			pattern = "<font color='#97FBFF'>%s %s</font>"
+			healStatName = LocalizedText.CharacterSheet.Vitality.Value
+		end
+		return string.format(pattern, value, healStatName)
+	end
+	return value
+end

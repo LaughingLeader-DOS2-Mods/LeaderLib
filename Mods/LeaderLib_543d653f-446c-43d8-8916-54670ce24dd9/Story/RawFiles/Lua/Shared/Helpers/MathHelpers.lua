@@ -11,10 +11,12 @@ local _arctan = math.atan
 local _max = math.max
 local _min = math.min
 local _floor = math.floor
+local _ceil = math.ceil
 local _sqrt = math.sqrt
 local _unpack = table.unpack
 local _rad = math.rad
 local _ran = Ext.Utils.Random
+local _round = Ext.Utils.Round
 
 local _vecadd = Ext.Math.Add
 local _vecsub = Ext.Math.Sub
@@ -650,4 +652,168 @@ function GameHelpers.Math.CalculateStatusDamageRange(character, weapon, statsMul
 		end
 	end
 	return tbl
+end
+
+---@param item CDivinityStatsItem
+---@return number
+function GameHelpers.Math.CalculateShieldPhysicalArmor(item)
+	local value = 0
+    local boost = 0
+    for i=1,#item.DynamicStats do
+        local entry = item.DynamicStats[i] --[[@as CDivinityStatsEquipmentAttributesShield]]
+        boost = boost + entry.ArmorBoost
+    end
+    for i=1,#item.DynamicStats do
+        local entry = item.DynamicStats[i] --[[@as CDivinityStatsEquipmentAttributesShield]]
+        local mult = -100
+        if boost > -100 then
+            mult = boost
+        end
+        value = value + _round((_ceil(entry.ArmorValue * (mult + 100)) / 100))
+    end
+    return value
+end
+
+---@param item CDivinityStatsItem
+---@return number
+function GameHelpers.Math.CalculateShieldMagicArmor(item)
+	local value = 0
+    local boost = 0
+    for i=1,#item.DynamicStats do
+        local entry = item.DynamicStats[i] --[[@as CDivinityStatsEquipmentAttributesShield]]
+        boost = boost + entry.MagicArmorBoost
+    end
+    for i=1,#item.DynamicStats do
+        local entry = item.DynamicStats[i] --[[@as CDivinityStatsEquipmentAttributesShield]]
+        local mult = -100
+        if boost > -100 then
+            mult = boost
+        end
+        value = value + _round((_ceil(entry.MagicArmorValue * (mult + 100)) / 100))
+    end
+    return value
+end
+
+---@class GameHelpers_Math_CalculateHealAmountOptions
+---@field Level integer The level to scale the heal by. Defaults to 1.
+---@field HealType StatsHealValueType Defaults to Qualifier.
+---@field HealStat StatusHealType Defaults to Vitality.
+---@field HealValue DefaultValue<100>
+---@field Target CDivinityStatsCharacter The character to use for heal-specific properties, like the Hydrosophist amount, level, Max Vitality/Armor/MagicArmor etc. If you want to use a different character for the Hydrosophist boost, set HydrosophistAmount directly.
+---@field Shield CDivinityStatsItem If the HealType is 'Shield', use this instead of the Target's shield.
+---@field ShieldOwner CDivinityStatsCharacter If the HealType is 'Shield', use this instead of the Target's for the armor attribute boosts.
+---@field ApplyHydrosophistBoost DefaultValue<true> Apply the Hydrosophist healing boost to the final amount.
+---@field HydrosophistAmount integer Use this amount for the Hydrosophist boost.
+---@field HealMultiplier DefaultValue<1> The multiplier to apply to the final amount, such as a status StatsMultiplier.
+
+---@type GameHelpers_Math_CalculateHealAmountOptions
+local _defaultCalculateHealAmountOptions = {
+	Level = -1,
+	HealType = "Qualifier",
+	HealStat = "Vitality",
+	HealValue = 100,
+	ApplyHydrosophistBoost = true,
+	HealMultiplier = 1.0
+}
+
+local function _FinalHealBonus(baseHeal, hydrosophistAmount, options)
+	local hydroAmount = hydrosophistAmount
+	if not options.ApplyHydrosophistBoost then
+		hydrosophistAmount = 0
+	end
+	local hydroBoost = 0
+	if hydroAmount > 0 then
+		hydroBoost = _ceil(hydroAmount * Ext.ExtraData.SkillAbilityVitalityRestoredPerPoint)
+	end
+
+	if hydroBoost ~= 0 then
+		return _round(options.HealMultiplier * (baseHeal + _round(_ceil((hydroBoost * baseHeal) / 100) * 1.0)))
+	end
+	return _round(options.HealMultiplier * baseHeal)
+end
+
+---Calculate a heal amount using a variety of options.
+---@param opts GameHelpers_Math_CalculateHealAmountOptions
+---@return integer healAmount
+function GameHelpers.Math.CalculateHealAmount(opts)
+	local options = TableHelpers.SetDefaultOptions(opts, _defaultCalculateHealAmountOptions)
+	
+	local baseHeal = 0
+
+	local level = options.Level
+	local hydrosophistAmount = options.HydrosophistAmount or 0
+
+	if level == -1 then
+		if options.Target then
+			level = options.Target.Level
+		else
+			level = 1
+		end
+	end
+
+	if options.Target and options.HydrosophistAmount == nil then
+		hydrosophistAmount = options.Target.WaterSpecialist
+	end
+
+	if options.HealType == "FixedValue" or options.HealType == "DamagePercentage" then
+		return _round(options.HealMultiplier * options.HealValue)
+	elseif options.HealType == "Percentage" then
+		assert(GameHelpers.Ext.ObjectIsStatCharacter(options.Target), "Percentage-type heals require Target to be set to character stats (it's a CDivinityStatsCharacter type).")
+		if options.HealStat == "MagicArmor" then
+			baseHeal = options.Target.MaxMagicArmor or 0
+		elseif options.HealStat == "PhysicalArmor" then
+			baseHeal = options.Target.MaxArmor or 0
+		else
+			baseHeal = options.Target.MaxVitality or 0
+		end
+		return _FinalHealBonus(_ceil((options.HealValue * baseHeal) * 0.01), hydrosophistAmount, options)
+	elseif options.HealType == "Shield" then
+		if options.Target == nil then
+			return _FinalHealBonus(options.HealValue, hydrosophistAmount, options)
+		end
+		local shieldOwner = options.ShieldOwner or options.Target
+		local shield = options.Shield
+		if not shield and shieldOwner then
+			shield = shieldOwner:GetItemBySlot("Shield")
+		end
+		if shield and shield.ItemType == "Shield" then
+			---@cast shield +CDivinityStatsEquipmentAttributesShield
+			if options.HealStat == "MagicArmor" then
+				local baseArmor = GameHelpers.Math.CalculateShieldMagicArmor(shield)
+				local healBoost = 0
+				if shieldOwner then
+					local attBoost = (options.Target.Intelligence - GameHelpers.GetExtraData("AttributeBaseValue", 10)) * GameHelpers.GetExtraData("MagicArmourBoostFromAttribute", 0)
+					healBoost = _ceil(attBoost * 100)
+				end
+				baseHeal = _ceil(((healBoost + 100) * baseArmor) / 100)
+			elseif options.HealStat == "PhysicalArmor" then
+				local baseArmor = GameHelpers.Math.CalculateShieldPhysicalArmor(shield)
+				local healBoost = 0
+				if shieldOwner then
+					local attBoost = (options.Target.Strength - GameHelpers.GetExtraData("AttributeBaseValue", 10)) * GameHelpers.GetExtraData("PhysicalArmourBoostFromAttribute", 0)
+					healBoost = _ceil(attBoost * 100)
+				end
+				baseHeal = _ceil(((healBoost + 100) * baseArmor) / 100)
+			else
+				--The engine code doesn't support AllArmor or All, or other types
+				return 0
+			end
+			return _FinalHealBonus(_round((baseHeal * options.HealValue) * 0.01), hydrosophistAmount, options)
+		else
+			return _FinalHealBonus(options.HealValue, hydrosophistAmount, options)
+		end
+	elseif options.HealType == "TargetDependent" then
+		--TODO This uses EsvStatusHeal.TargetDependentValue
+		if options.HealStat == "MagicArmor" then
+			baseHeal = options.Target.MaxMagicArmor
+		elseif options.HealStat == "PhysicalArmor" then
+			baseHeal = options.Target.MaxArmor
+		else
+			baseHeal = options.Target.MaxVitality
+		end
+		return _FinalHealBonus(_round((baseHeal * options.HealValue) * 0.01), hydrosophistAmount, options)
+	elseif options.HealType == "Qualifier" then
+		baseHeal = _round(Ext.Stats.GetStatsManager().LevelMaps:GetByName("SkillData HealAmount"):GetScaledValue(options.HealValue, level))
+	end
+	return _FinalHealBonus(baseHeal, hydrosophistAmount, options)
 end

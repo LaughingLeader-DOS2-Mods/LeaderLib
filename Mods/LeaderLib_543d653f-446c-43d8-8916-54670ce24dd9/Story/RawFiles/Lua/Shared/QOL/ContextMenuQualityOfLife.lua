@@ -85,8 +85,26 @@ if isClient then
 				end
 
 				existingEntry.RootTemplateName = obj.RootTemplate.Name
+
+				local template = Ext.Template.GetTemplate(existingEntry.RootTemplate) --[[@as ItemTemplate]]
+				if template then
+					local _,_,modFolder = string.find(template.FileName, ".-Data/Mods/(.-)/")
+					if not modFolder then
+						_,_,modFolder = string.find(template.FileName, ".-Data/Public/(.-)/")
+					end
+					if not StringHelpers.IsNullOrEmpty(modFolder) then
+						for _,modGUID in pairs(Ext.Mod.GetLoadOrder()) do
+							local mod = Ext.Mod.GetMod(modGUID)
+							if mod and mod.Info.Directory == modFolder then
+								existingEntry.Mod = GameHelpers.GetTranslatedStringValue(mod.Info.DisplayName, mod.Info.Name)
+								existingEntry.ModId = modGUID
+							end
+						end
+					end
+				end
+
 				existingEntry.Tags = StringHelpers.Join(";", obj:GetTags())
-				if GameHelpers.Ext.ObjectIsItem(obj) then 
+				if GameHelpers.Ext.ObjectIsItem(obj) then
 					---@cast obj EclItem
 					if obj.StatsFromName ~= nil then
 						existingEntry.StatsId = obj.StatsFromName.Name
@@ -110,7 +128,7 @@ if isClient then
 					end
 					existingEntry.Tooltip = obj.RootTemplate.Tooltip
 				end
-				Ext.SaveFile("LeaderLib_UUIDHelper.json", Common.JsonStringify(data))
+				GameHelpers.IO.SaveJsonFile("LeaderLib_UUIDHelper.json", data)
 			end
 		end
 	end

@@ -534,6 +534,9 @@ Ext.Events.SessionLoaded:Subscribe(function()
 							local item = request.Item
 							if item and item.CurrentTemplate then
 								local _,_,modFolder = string.find(item.CurrentTemplate.FileName, ".-Data/Mods/(.-)/")
+								if not modFolder then
+									_,_,modFolder = string.find(item.CurrentTemplate.FileName, ".-Data/Public/(.-)/")
+								end
 								if not StringHelpers.IsNullOrEmpty(modFolder) then
 									for _,modGUID in pairs(Ext.Mod.GetLoadOrder()) do
 										if showBaseGameMods or not Vars.GetModInfoIgnoredMods[modGUID] then

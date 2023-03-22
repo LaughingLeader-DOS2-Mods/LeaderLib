@@ -120,7 +120,7 @@ end
 
 ---Returns true if the skill applies a HEAL status.
 ---@param skillId string
----@param healTypes HealType[]|nil If set, will return true only if the applied statuses matches a provided healing type.
+---@param healTypes? StatusHealType[] If set, will return true only if the applied statuses matches a provided healing type.
 ---@return boolean
 function GameHelpers.Stats.IsHealingSkill(skillId, healTypes)
 	local props = GameHelpers.Stats.GetSkillProperties(skillId)

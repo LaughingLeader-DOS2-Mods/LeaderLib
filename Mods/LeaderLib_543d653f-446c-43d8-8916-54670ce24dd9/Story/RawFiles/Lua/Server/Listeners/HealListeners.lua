@@ -27,7 +27,61 @@ local function GetHealingStatusesForHeal(target, healStatus)
 	return statuses
 end
 
-RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, source, amount, handle)
+Ext.Events.StatusGetEnterChance:Subscribe(function(e)
+	if e.EnterChance <= 0 then
+		return
+	end
+	if e.Status.StatusType == "HEAL" or e.Status.StatusType == "HEALING" then
+		local target = GameHelpers.GetObjectFromHandle(e.Status.TargetHandle, "EsvCharacter")
+		if not target then
+			return
+		end
+		local statusId = e.Status.StatusId
+		local statusType = e.Status.StatusType
+		local source = GameHelpers.GetObjectFromHandle(e.Status.StatusSourceHandle, "EsvCharacter")
+		if source == nil then
+			--Applied from Statuses.gameScript, source is nil for these.
+			--BonusFromAbility uses the target of the heal, so it uses Perseverance on the target.
+			if statusId == "POST_PHYS_CONTROL" or statusId == "POST_MAGIC_CONTROL" then
+				source = target
+			end
+		end
+
+		local skill = nil
+
+		if source then
+			local skills = Vars.HealingStatusToSkills[statusId]
+			local lastUsedSkill = _PV.LastUsedHealingSkill[source.MyGuid]
+			if skills and skills[lastUsedSkill] == true then
+				skill = lastUsedSkill
+				Timer.StartObjectTimer("LeaderLib_ClearLastUsedHealingSkill", source.MyGuid, 500)
+			end
+		end
+
+		local healType = ""
+
+		if statusType == "HEAL" then
+			healType = e.Status.HealType
+		elseif statusType == "HEALING" then
+			healType = e.Status.HealStat
+		end
+
+		Events.OnHeal:Invoke({
+			Target=target,
+			TargetGUID=target.MyGuid,
+			Source=source,
+			SourceGUID=GameHelpers.GetUUID(source),
+			Status=e.Status,
+			StatusId=statusId,
+			StatusType = statusType,
+			HealStat = healType,
+			Amount=e.Status.HealAmount,
+			Skill=skill,
+		})
+	end
+end, {Priority=0})
+
+--[[ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, source, amount, handle)
 	if ObjectExists(target) == 0 then
 		return
 	end
@@ -88,21 +142,11 @@ RegisterProtectedOsirisListener("NRD_OnHeal", 4, "after", function(target, sourc
 		HealingSourceStatus=healingSourceStatus,
 		HealingStatusId=healingSourceStatusId,
 	})
-end)
+end) ]]
 
 Timer.Subscribe("LeaderLib_ClearLastUsedHealingSkill", function(e)
 	_PV.LastUsedHealingSkill[e.Data.UUID] = nil
 end)
-
----@alias OnHealCallback fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem, heal:EsvStatusHeal, originalAmount:integer, handle:integer, skill:string|nil, healingSourceStatus:EsvStatusHealing|nil)
-
----@deprecated
----@see OnHealEventArgs
----Register a listener for when NRD_OnHeal is called. LeaderLib gets the EsvStatusHeal and associated game objects, as well as a skill source, if any.
----@param callback OnHealCallback
-function RegisterHealListener(callback)
-	RegisterListener("OnHeal", callback)
-end
 
 ---@private
 function ParseHealingStatusToSkills()

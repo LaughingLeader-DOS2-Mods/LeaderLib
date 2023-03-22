@@ -553,20 +553,18 @@ if not _ISCLIENT then
 	---@field TargetGUID Guid
 	---@field Source EsvCharacter|EsvItem|nil
 	---@field SourceGUID Guid|nil
-	---@field Heal EsvStatusHeal
+	---@field Status EsvStatusHeal|EsvStatusHealing
 	---@field StatusId string
-	---@field HealingSourceStatus EsvStatusHealing|nil The HEALING type status that may be responsible for this HEAL. The HealAmounts must match, alongside the HealType and HealStat.
-	---@field HealingStatusId string|nil The HEALING type statusId that may be responsible for this HEAL.
-	---@field OriginalAmount integer The amount before LeaderLib's OnHeal listeners were invoked. 
-	---@field Handle integer The healing handle in NRD_OnHeal
-	---@field Skill string|nil The skill possibility associated with this HEAL/HEALING status combination, if HealingSourceStatus is set. This is the last healing skill the character casted, if it matches with the HEALING type status it thinks is associated with this HEAL.
+	---@field StatusType "HEAL"|"HEALING"
+	---@field HealStat StatusHealType The Status.HealType for EsvStatusHeal, or Status.HealStat for EsvStatusHealing.
+	---@field OriginalAmount integer The HealAmount before listeners were invoked.
+	---@field Skill string|nil The skill possibility associated with this HEAL/HEALING status combination, if Source is set. This is the last healing skill the character casted, if it matches with the HEALING type status it thinks is associated with this HEAL.
+	---@field EnterEvent EsvLuaStatusGetEnterChanceEvent|LuaEventBase The event data from Ext.Events.StatusGetEnterChance.
 	
-	---Called during NRD_OnHeal, with extra data for the optional skill that was used, and/or the source EsvStatusHealing status.  
+	---Called during `Ext.Events.StatusGetEnterChance` for `HEAL` and `HEALING` status types. Altering the HealAmount here ensures the changes work on the client-side correctly.   
 	---🔨**Server-Only**🔨
 	---@type LeaderLibSubscribableEvent<OnHealEventArgs>
-	Events.OnHeal = Classes.SubscribableEvent:Create("OnHeal", {
-		ArgsKeyOrder={"Target", "Source", "Heal", "OriginalAmount", "Handle", "Skill", "HealingSourceStatus"}
-	})
+	Events.OnHeal = Classes.SubscribableEvent:Create("OnHeal")
 
 	---@class OnTurnCounterEventArgs
 	---@field ID string

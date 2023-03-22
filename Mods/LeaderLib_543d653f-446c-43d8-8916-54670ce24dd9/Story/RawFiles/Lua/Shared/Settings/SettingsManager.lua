@@ -249,11 +249,6 @@ if not _ISCLIENT then
 	end
 	
 	function SettingsManager.SyncAllSettings(id, skipSyncStatOverrides)
-		if id then
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with user (%s).", id)
-		elseif Vars.DebugMode then
-			Ext.Utils.Print("[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with clients.")
-		end
 		local data = {
 			GlobalSettings = ExportGlobalSettings(true),
 			Features = Features

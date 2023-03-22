@@ -8,10 +8,9 @@
 		{
 			"Version": "1.7.31.1",
 			"Changes": [
-				"Added a description for the 'Reload Stat Changes Config' button in LeaderLib's Mod Settings menu."
-			],
-			"API Changes": [
-				"Tweaked the TranslatedString class to only retrieve the actual text value when accessed initially. This basically means text can be fetched when a script first uses it, rather than updating hundreds of entries initially at once. This is a rework for the sake of optimization, rather than fixing an issue."
+				"Added a description for the 'Reload Stat Changes Config' button in LeaderLib's Mod Settings menu.",
+				"API Changes:",
+				"\t• Tweaked the TranslatedString class to only retrieve the actual text value when accessed initially. This basically means text can be fetched when a script first uses it, rather than updating hundreds of entries initially at once. This is a rework for the sake of optimization, rather than fixing an issue."
 			]
 		},
 		{

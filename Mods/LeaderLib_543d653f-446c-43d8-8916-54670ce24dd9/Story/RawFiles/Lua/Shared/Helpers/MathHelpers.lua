@@ -804,6 +804,7 @@ function GameHelpers.Math.CalculateHealAmount(opts)
 		if not shield and shieldOwner then
 			shield = shieldOwner:GetItemBySlot("Shield")
 		end
+		
 		if shield and shield.ItemType == "Shield" then
 			---@cast shield +CDivinityStatsEquipmentAttributesShield
 			if options.HealStat == "MagicArmor" then

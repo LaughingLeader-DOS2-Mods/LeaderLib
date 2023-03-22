@@ -28,7 +28,8 @@ local function GetHealingStatusesForHeal(target, healStatus)
 end
 
 Ext.Events.StatusGetEnterChance:Subscribe(function(e)
-	if e.EnterChance <= 0 then
+	local chance = e.EnterChance or 100
+	if e.IsEnterCheck and chance <= 0 then
 		return
 	end
 	if e.Status.StatusType == "HEAL" or e.Status.StatusType == "HEALING" then

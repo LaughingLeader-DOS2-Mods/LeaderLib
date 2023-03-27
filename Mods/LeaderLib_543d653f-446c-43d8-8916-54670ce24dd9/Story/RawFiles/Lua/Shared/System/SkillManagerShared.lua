@@ -3,6 +3,29 @@ local _ISCLIENT = Ext.IsClient()
 local _enabledSkills = SkillManager._Internal.EnabledSkills
 local _lastUsedSkillItems = SkillManager._Internal.LastUsedSkillItems
 
+function SkillManager.SetSkillEnabled(skill, b)
+	local current = _enabledSkills[skill] or 0
+	if b then
+		current = current + 1
+	else
+		current = math.max(0, current - 1)
+	end
+	_enabledSkills[skill] = current
+end
+
+function SkillManager.EnableForAllSkills(enabled)
+	SkillManager.SetSkillEnabled("All", enabled == true)
+end
+
+function SkillManager.IsSkillEnabled(skill)
+	local all = _enabledSkills.All or 0
+	if all > 0 then
+		return true
+	end
+	local current = _enabledSkills[skill] or 0
+	return current > 0
+end
+
 ---@param character EsvCharacter
 ---@param skill string
 ---@param returnStoredtemData boolean|nil Returns the last item data as a table, if the item no longer exists.
@@ -12,8 +35,12 @@ local function _GetSkillSourceItem(character, skill, returnStoredtemData)
 	end
 	local sourceItem = nil
 	if GameHelpers.Ext.ObjectIsCharacter(character) then
-		if character.SkillManager.CurrentSkillState and Ext.Utils.IsValidHandle(character.SkillManager.CurrentSkillState.SourceItemHandle) then
-			sourceItem = GameHelpers.GetItem(character.SkillManager.CurrentSkillState.SourceItemHandle)
+		if not _ISCLIENT then
+			if character.SkillManager.CurrentSkillState
+			and Ext.Utils.IsValidHandle(character.SkillManager.CurrentSkillState.SourceItemHandle)
+			then
+				sourceItem = GameHelpers.GetItem(character.SkillManager.CurrentSkillState.SourceItemHandle)
+			end
 		end
 	end
 	if sourceItem == nil then
@@ -90,17 +117,17 @@ function SkillManager.Register.GetAPCost(skill, callback, priority, once)
 		end
 		local opts = {Priority = priority, Once=once, MatchArgs={State=SKILL_STATE.GETAPCOST}}
 		if not StringHelpers.Equals(skill, "All", true) then
-			_enabledSkills[skill] = true
+			SkillManager.SetSkillEnabled(skill, true)
 			opts.MatchArgs.Skill=skill
 		else
-			_enabledSkills.All = true
+			SkillManager.EnableForAllSkills(true)
 		end
 		return Events.OnSkillState:Subscribe(callback, opts)
 	end
 end
 
 Ext.Events.GetSkillAPCost:Subscribe(function (e)
-	if (_enabledSkills[e.Skill.SkillId] or _enabledSkills.All) then
+	if SkillManager.IsSkillEnabled(e.Skill.SkillId) then
 		local character = nil
 		if e.Character then
 			character = e.Character.Character

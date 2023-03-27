@@ -9,18 +9,9 @@ SkillManager.SkillEventDataTable = skillEventDataTable
 ---@type table<string,SkillEventData>
 local skillEventDataTable = {}
 
-local _enabledSkills = SkillManager._Internal.EnabledSkills
 local _CreateSkillEventTable = SkillManager._Internal.CreateSkillEventTable
 local _GetSkillSourceItem = SkillManager._Internal.GetSkillSourceItem
 local _lastUsedSkillItems = SkillManager._Internal.LastUsedSkillItems
-
-function SkillManager.EnableForAllSkills(enabled)
-	if enabled ~= false then
-		_enabledSkills.All = true
-	else
-		_enabledSkills.All = false
-	end
-end
 
 ---@alias LeaderLibSkillListenerDataType string|"boolean"|"StatEntrySkillData"|"HitData"|"ProjectileHitData"|"SkillEventData"|"EsvShootProjectileRequest"
 
@@ -39,12 +30,12 @@ function RegisterSkillListener(skill, callback)
 	local t = type(skill)
 	if t == "string" then
 		if StringHelpers.Equals(skill, "All", true) then
-			_enabledSkills.All = true
+			SkillManager.EnableForAllSkills(true)
 			Events.OnSkillState:Subscribe(function (e)
 				callback(e:Unpack())
 			end)
 		else
-			_enabledSkills[skill] = true
+			SkillManager.SetSkillEnabled(skill, true)
 			Events.OnSkillState:Subscribe(function (e)
 				callback(e:Unpack())
 			end, {MatchArgs={Skill=skill}})
@@ -124,7 +115,7 @@ local function RemoveCharacterSkillData(uuid, skill)
 end
 
 function StoreSkillEventData(char, skill, skillType, skillAbility, ...)
-	if _enabledSkills[skill] or _enabledSkills["All"] then
+	if SkillManager.IsSkillEnabled(skill) then
 		local uuid = StringHelpers.GetUUID(char)
 		local eventParams = {...}
 		---@type SkillEventData
@@ -172,7 +163,7 @@ function OnSkillPreparing(char, skillprototype)
 	end
 
 	--(not last or last ~= skill) prevents invoke spam for PCs, since the PrepareSkill fires constantly for them
-	if (_enabledSkills[skill] or _enabledSkills.All) and (not last or last ~= skill) then
+	if SkillManager.IsSkillEnabled(skill) and (not last or last ~= skill) then
 		local skillData = Ext.Stats.Get(skill, nil, false) or {Ability=""}
 		local character = GameHelpers.GetCharacter(char)
 		_CreateSkillEventTable(skill, character, SKILL_STATE.PREPARE, skillData, "StatEntrySkillData")
@@ -187,7 +178,7 @@ end
 function SkillManager.OnSkillPreparingCancel(char, skillprototype, skill, skipRemoval)
 	skill = skill or StringHelpers.GetSkillEntryName(skillprototype)
 	local skillData = Ext.Stats.Get(skill, nil, false) or {Ability=""}
-	if (_enabledSkills[skill] or _enabledSkills.All) then
+	if SkillManager.IsSkillEnabled(skill) then
 		local character = GameHelpers.GetCharacter(char)
 		Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.CANCEL, skillData, "StatEntrySkillData"))
 	end
@@ -210,7 +201,7 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 		Timer.StartObjectTimer("LeaderLib_ClearLastUsedHealingSkill", uuid, 3000)
 	end
 	
-	if (_enabledSkills[skill] or _enabledSkills.All) then
+	if SkillManager.IsSkillEnabled(skill) then
 		local data = GetCharacterSkillData(skill, uuid, true, skillType, skillAbility)
 		if data then
 			local character = GameHelpers.GetCharacter(char)
@@ -227,7 +218,7 @@ end
 
 function OnSkillCast(char, skill, skilLType, skillAbility)
 	local uuid = StringHelpers.GetUUID(char)
-	if (_enabledSkills[skill] or _enabledSkills.All) then
+	if SkillManager.IsSkillEnabled(skill) then
 		--Some skills may not fire any target events, like MultiStrike, so create the data if it doesn't exist.
 		---@type SkillEventData
 		local data = GetCharacterSkillData(skill, uuid, true, skilLType, skillAbility, Vars.DebugMode, "OnSkillCast")
@@ -277,7 +268,7 @@ end
 --- @param hitStatus EsvStatusHit
 --- @param data HitData|ProjectileHitData
 function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, data)
-	if not IgnoreHitTarget(target.MyGuid) and (_enabledSkills[skillId] or _enabledSkills.All) then
+	if not IgnoreHitTarget(target.MyGuid) and SkillManager.IsSkillEnabled(skillId) then
 		Events.OnSkillState:Invoke(_CreateSkillEventTable(skillId, source, SKILL_STATE.HIT, data, data.Type))
 		InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skillId, SKILL_STATE.HIT, data)
 	end
@@ -287,7 +278,7 @@ Ext.Events.ProjectileHit:Subscribe(function (e)
 	if Ext.Utils.IsValidHandle(e.Projectile.CasterHandle) then
 		local projectile = e.Projectile
 		local skill = GetSkillEntryName(projectile.SkillId)
-		if not StringHelpers.IsNullOrEmpty(projectile.SkillId) and (_enabledSkills[skill] or _enabledSkills.All) then
+		if not StringHelpers.IsNullOrEmpty(projectile.SkillId) and SkillManager.IsSkillEnabled(skill) then
 			local caster = GameHelpers.TryGetObject(projectile.CasterHandle)
 			if caster then
 				local uuid = caster.MyGuid
@@ -305,7 +296,7 @@ Ext.Events.BeforeShootProjectile:Subscribe(function (e)
 	if Ext.Utils.IsValidHandle(e.Projectile.Caster) then
 		local projectile = e.Projectile
 		local skill = GetSkillEntryName(projectile.SkillId)
-		if not StringHelpers.IsNullOrEmpty(skill) and (_enabledSkills[skill] or _enabledSkills.All) then
+		if not StringHelpers.IsNullOrEmpty(skill) and SkillManager.IsSkillEnabled(skill) then
 			--request.Source could be a grenade, instead of the actual character
 			local caster =  GameHelpers.TryGetObject(projectile.Caster)
 			if caster then
@@ -319,7 +310,7 @@ Ext.Events.ShootProjectile:Subscribe(function(e)
 	if Ext.Utils.IsValidHandle(e.Projectile.CasterHandle) then
 		local projectile = e.Projectile
 		local skill = GetSkillEntryName(projectile.SkillId)
-		if not StringHelpers.IsNullOrEmpty(skill) and (_enabledSkills[skill] or _enabledSkills.All) then
+		if not StringHelpers.IsNullOrEmpty(skill) and SkillManager.IsSkillEnabled(skill) then
 			local caster = GameHelpers.TryGetObject(projectile.CasterHandle)
 			if caster then
 				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, caster, SKILL_STATE.SHOOTPROJECTILE, projectile, "EsvProjectile"))
@@ -333,7 +324,7 @@ RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "aft
 		return
 	end
 	uuid = StringHelpers.GetUUID(uuid)
-	if (_enabledSkills[skill] or _enabledSkills.All) then
+	if SkillManager.IsSkillEnabled(skill) then
 		local character = GameHelpers.GetCharacter(uuid)
 		if character then
 			local sourceItem = _GetSkillSourceItem(character, skill, true)
@@ -371,7 +362,7 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 			learned = skillInfo.IsLearned or #skillInfo.CauseList > 0
 			memorized = skillInfo.IsActivated or #skillInfo.CauseList > 0
 		end
-		if (_enabledSkills[skill] or _enabledSkills.All) then
+		if SkillManager.IsSkillEnabled(skill) then
 			local data = _CreateSkillEventTable(skill, character, SKILL_STATE.MEMORIZED, true, "boolean")
 			data.Learned = learned
 			data.Memorized = memorized
@@ -392,7 +383,7 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 		if skillInfo then
 			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
 		end
-		if (_enabledSkills[skill] or _enabledSkills.All) then
+		if SkillManager.IsSkillEnabled(skill) then
 			local data = _CreateSkillEventTable(skill, character, SKILL_STATE.UNMEMORIZED, false, "boolean")
 			data.Learned = learned
 			Events.OnSkillState:Invoke(data)
@@ -597,10 +588,10 @@ function SkillManager.Register.All(skill, callback, onlySkillState, priority, on
 		end
 		local opts = {Priority = priority, Once=once}
 		if not StringHelpers.Equals(skill, "All", true) then
-			_enabledSkills[skill] = true
+			SkillManager.SetSkillEnabled(skill, true)
 			opts.MatchArgs={Skill=skill}
 		else
-			_enabledSkills.All = true
+			SkillManager.EnableForAllSkills(true)
 		end
 		return Events.OnSkillState:Subscribe(callbackWrapper, opts)
 	end

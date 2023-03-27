@@ -236,3 +236,91 @@ if not _ISCLIENT then
 		end
 	end
 end
+
+
+---@class Testing_Utils_GetPositionsInLineParams
+---@field Target ObjectParam|vec3 Defaults to a position extendef from the host if not set. The line position is offset from the target's forward position, if it is an object.
+---@field StartDistance number The distance to apply to the host if Target isn't set, when determining the start position.
+---@field Distance number The total distance of the line.
+---@field Total integer
+---@field DirectionalVector vec3
+local _GetPositionsInLineDefaultParams = {
+	StartDistance = 6,
+	Distance = 12,
+	Total = 4,
+}
+setmetatable(_GetPositionsInLineDefaultParams, {
+	__index = function (tbl,k)
+		local startDistance = rawget(tbl, "StartDistance") or 6
+		if k == "Target" then
+			return GameHelpers.Math.ExtendPositionWithForwardDirection(GameHelpers.Character.GetHost(), startDistance)
+		elseif k == "DirectionalVector" then
+			return GameHelpers.Math.GetDirectionalVector(GameHelpers.Character.GetHost())
+		end
+	end
+})
+
+---@param opts? Testing_Utils_GetPositionsInLineParams
+---@return vec3[] positions
+---@return vec3 centerPosition
+function Utils.GetPositionsInLine(opts)
+	local options = TableHelpers.SetDefaultOptions(opts, _GetPositionsInLineDefaultParams)
+	local startPos = options.Target
+	if type(startPos) ~= "table" then
+		startPos = GameHelpers.Math.ExtendPositionWithForwardDirection(options.Target, options.StartDistance)
+	end
+	local dir = options.DirectionalVector
+	local total = options.Total
+	local positions = {}
+	local distPer = options.Distance / total
+	local dist = 0
+	for i=1,total do
+		local pos = GameHelpers.Math.ExtendPositionWithDirectionalVector(startPos, dir, dist, false)
+		positions[i] = pos
+		dist = dist + distPer
+	end
+	return positions,startPos
+end
+
+
+---@class Testing_Utils_GetPositionsInCircleParams
+---@field Target ObjectParam|vec3 Defaults to a position extendef from the host if not set. The circle position is offset from the target's forward position, if it is an object.
+---@field StartDistance number
+---@field Radius number
+---@field Total integer
+local _GetPositionsInCircleDefaultParams = {
+	StartDistance = 12,
+	Radius = 6,
+	Total = 5,
+}
+setmetatable(_GetPositionsInCircleDefaultParams, {
+	__index = function (tbl,k)
+		local startDistance = rawget(tbl, "StartDistance") or 12
+		if k == "Target" then
+			return GameHelpers.Math.ExtendPositionWithForwardDirection(GameHelpers.Character.GetHost(), startDistance)
+		end
+	end
+})
+
+---@param opts? Testing_Utils_GetPositionsInCircleParams
+---@return vec3[] positions
+---@return vec3 centerPosition
+function Utils.GetPositionsInCircle(opts)
+	local options = TableHelpers.SetDefaultOptions(opts, _GetPositionsInCircleDefaultParams)
+	local startPos = options.Target
+	if type(startPos) ~= "table" then
+		startPos = GameHelpers.Math.ExtendPositionWithForwardDirection(options.Target, options.StartDistance)
+	end
+	local total = options.Total
+	local positions = {}
+	local anglePer = 360 / total
+	local angle = 0
+	local radius = options.Radius
+	local clampRadius = radius+0.2
+	for i=1,total do
+		local pos = GameHelpers.Grid.GetValidPositionTableInRadius(GameHelpers.Math.GetPositionWithAngle(startPos, angle, radius), clampRadius)
+		positions[i] = pos
+		angle = angle + anglePer
+	end
+	return positions,startPos
+end

@@ -466,8 +466,8 @@ end
 ---@overload fun():(fun():EsvCharacter|EclCharacter)
 ---@overload fun(includeSummons:boolean, asTable:boolean):EsvCharacter[]|EclCharacter[]
 ---@generic T:EsvCharacter|EclCharacter
----@param includeSummons boolean|nil
----@param asTable boolean|nil if true, a regular table is returned, which needs to be used with pairs/ipairs.
+---@param includeSummons? boolean Include player summons if true.
+---@param asTable? boolean if true, a regular table is returned, which needs to be used with pairs/ipairs.
 ---@param castType `T` The class type to return, for auto-completion, such as "EsvCharacter".
 ---@return fun():T
 function GameHelpers.Character.GetPlayers(includeSummons, asTable, castType)
@@ -1467,4 +1467,17 @@ function GameHelpers.Character.MakePlayer(character, recruitingPlayer, opts)
 		error(err, 2)
 	end
 	return true
+end
+
+---Turn a character into a player.
+---🔨**Server-Only**🔨  
+---@param character CharacterParam
+function GameHelpers.Character.RemoveTemporyCharacter(character)
+	assert(_ISCLIENT == false, "[GameHelpers.Character.RemoveTemporyCharacter] can only be called from the server side!")
+	local guid = GameHelpers.GetUUID(character)
+	local netid = GameHelpers.GetNetID(character)
+	if guid then
+		RemoveTemporaryCharacter(guid)
+	end
+	Events.TemporaryCharacterRemoved:Invoke({CharacterGUID = guid, NetID=netid})
 end

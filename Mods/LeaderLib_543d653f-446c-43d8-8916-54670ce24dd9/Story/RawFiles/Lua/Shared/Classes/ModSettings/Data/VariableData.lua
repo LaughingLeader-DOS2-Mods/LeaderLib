@@ -1,6 +1,10 @@
+---@class VariableDataDropdownValue
+---@field Entries table
+---@field Selected integer
+
 ---@class VariableData
----@field Default string|integer|number|number[]
----@field Value string|integer|number|number[]
+---@field Default SerializableValue|VariableDataDropdownValue
+---@field Value SerializableValue|VariableDataDropdownValue
 ---@field Targets table|nil
 ---@field DisplayName string|TranslatedString|nil
 ---@field Tooltip string|TranslatedString|nil

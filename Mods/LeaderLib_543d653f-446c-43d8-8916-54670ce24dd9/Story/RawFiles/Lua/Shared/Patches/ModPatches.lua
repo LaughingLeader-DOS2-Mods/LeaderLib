@@ -711,6 +711,8 @@ local Patches = {
 					end
 				end)
 
+				Vars.DisableDummyStatusRedirection.LLWEAPONEX_GREATBOW_FUTUREBARRAGE_DUMMYHIT = true
+
 				--FIX Add safeguards for making sure Frostdyne gets moved
 				Mods.WeaponExpansion.FortJoyEvent = function(event)
 					if event == "AlexanderDefeated" then

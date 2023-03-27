@@ -263,22 +263,57 @@ function GameHelpers.DB.TryUnpack(tbl, index)
 	return false
 end
 
+---@alias OsirisValueReturnIterator fun():...:OsirisValue
+---@alias GuidReturnIterator fun():...:Guid
+
 ---Get an iterator for a database, which returns the unpacked table for each entry.
 ---@param name string The database name.
----@param arity integer|nil The number of parameters for this DB, or nil to try and auto-detect it.
----@return fun():...:SerializableValue
-function GameHelpers.DB.GetAllEntries(name, arity)
+---@param arity? integer The number of parameters for this DB, or nil to try and auto-detect it.
+---@param returnGuid? boolean Set to true if you want the returned values to be processed with `StringHelpers.GetUUID`. This assumes the DB is only GUIDSTRING/CHARACTERGUID etc values.
+---@param skipUnpack? boolean Skip unpacking the returned database entry.
+---@return OsirisValueReturnIterator iterator
+function GameHelpers.DB.GetAllEntries(name, arity, returnGuid, skipUnpack)
 	local db = GameHelpers.DB.Get(name, arity)
 	if db then
 		local i = 0
 		local count = #db
-		return function ()
-			i = i + 1
-			if i <= count then
-				return table.unpack(db[i])
+		local unpack = table.unpack
+		if skipUnpack then
+			unpack = function (tbl)
+				return tbl
+			end
+		end
+		if returnGuid then
+			return function ()
+				i = i + 1
+				if i <= count then
+					local entries = db[i]
+					local data = {}
+					for i,v in ipairs(entries) do
+						data[i] = StringHelpers.GetUUID(v)
+					end
+					return unpack(data)
+				end
+			end
+		else
+			return function ()
+				i = i + 1
+				if i <= count then
+					return unpack(db[i])
+				end
 			end
 		end
 	else
 		return function () end
 	end
+end
+
+---Basically `GameHelpers.DB.GetAllEntries`, but with a return value of Guid. 
+---This should be a database that is only Guids. 
+---@param name string The database name.
+---@param arity? integer The number of parameters for this DB, or nil to try and auto-detect it.
+---@param skipUnpack? boolean Skip unpacking the returned database entry.
+---@return GuidReturnIterator iterator
+function GameHelpers.DB.GetAllGuids(name, arity, skipUnpack)
+	return GameHelpers.DB.GetAllEntries(name, arity, true, skipUnpack)
 end

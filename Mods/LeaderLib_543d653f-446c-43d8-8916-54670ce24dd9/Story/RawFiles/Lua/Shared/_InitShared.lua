@@ -12,7 +12,9 @@ QOL = {}
 ---@class LeaderLibSkillManager
 SkillManager = {
 	_Internal = {
-		EnabledSkills = {},
+		EnabledSkills = {
+			All = 0,
+		},
 		LastUsedSkillItems = {},
 	},
 	Register = {}
@@ -220,7 +222,11 @@ Vars = {
 		["f243c84f-9322-43ac-96b7-7504f990a8f0"] = true,--Improved Organisation
 		["d2507d43-efce-48b8-ba5e-5dd136c715a7"] = true,--Pet Power
 		["3da57b9d-8b41-46c7-a33c-afb31eea38a3"] = true,--Armor Sets
-	}
+	},
+	---Prevent these statuses from being redirected from a dummy to their owner.
+	---StatusId->Bool
+	---@type table<string,boolean>
+	DisableDummyStatusRedirection = {}
 }
 
 if not _ISCLIENT then

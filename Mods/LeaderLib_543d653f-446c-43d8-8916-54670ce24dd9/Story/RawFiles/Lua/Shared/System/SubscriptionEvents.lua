@@ -80,6 +80,9 @@ Events.LuaReset = Classes.SubscribableEvent:Create("LuaReset", {SyncInvoke=true}
 ---@field Region string
 ---@field State REGIONSTATE
 ---@field LevelType LEVELTYPE
+---@field Level EsvLevel|EclLevel
+---@field GetAllCharacters (fun(asTable?:boolean):(fun():EsvCharacter|EclCharacter))
+---@field GetAllItems (fun(asTable?:boolean):(fun():EsvItem|EclItem))
 
 ---Called when the region or state (Started, Game, Ended) changes.  
 ---🔨🔧**Server/Client**🔧🔨  
@@ -314,6 +317,20 @@ Events.OnSkillState = Classes.SubscribableEvent:Create("OnSkillState", {
 		if matchArgsType == "nil" or (matchArgsType == "table" and matchArgs.Skill == nil) then
 			SkillManager.EnableForAllSkills(true)
 		end
+	end,
+	OnUnsubscribe = function (callback, opts, matchArgs, matchArgsType)
+		if matchArgsType == "nil" or (matchArgsType == "table" and matchArgs.Skill == nil) then
+			SkillManager.EnableForAllSkills(false)
+		elseif (matchArgsType == "table" and matchArgs.Skill ~= nil) then
+			local st = type(matchArgs.Skill)
+			if st == "table" then
+				for _,v in pairs(matchArgs.Skill) do
+					SkillManager.SetSkillEnabled(v, false)
+				end
+			elseif st == "string" then
+				SkillManager.SetSkillEnabled(matchArgs.Skill, false)
+			end
+		end
 	end
 })
 
@@ -419,10 +436,10 @@ if not _ISCLIENT then
 		ArgsKeyOrder={"Attacker", "Target", "Data", "TargetIsObject", "SkillData"}
 	})
 
-	---@alias WeaponType "Staff"|"Rifle"|"Spear"|"Sentinel"|"Sword"|"Bow"|"Axe"|"Wand"|"Arrow"|"None"|"Knife"|"Crossbow"|"Club"
+	---@alias WeaponTypeAlias "Staff"|"Rifle"|"Spear"|"Sentinel"|"Sword"|"Bow"|"Axe"|"Wand"|"Arrow"|"None"|"Knife"|"Crossbow"|"Club"
 
 	---@class OnWeaponTypeHitEventArgs:OnWeaponHitEventArgs
-	---@field WeaponType WeaponType
+	---@field WeaponType WeaponTypeAlias
 	
 	---Called via AttackManager, when an object or position is hit with a basic attack or weapon skill.
 	---🔨**Server-Only**🔨
@@ -451,11 +468,11 @@ if not _ISCLIENT then
 	---@class ComputeCharacterHitEventArgs
 	---@field AlwaysBackstab boolean
 	---@field Attacker StatCharacter
-	---@field CriticalRoll StatsCriticalRoll
+	---@field CriticalRoll CriticalRoll
 	---@field DamageList DamageList
 	---@field ForceReduceDurability boolean
 	---@field Handled boolean
-	---@field HighGround StatsHighGroundBonus
+	---@field HighGround HighGroundBonus
 	---@field Hit StatsHitDamageInfo
 	---@field HitType HitTypeValues
 	---@field NoHitRoll boolean
@@ -676,6 +693,12 @@ if not _ISCLIENT then
 
 	---@class OnStatusAppliedEventArgs:OnStatusBaseEventArgs
 	---@field Status EsvStatus
+
+	---@class OnStatusGetEnterChanceEventArgs:OnStatusBaseEventArgs
+	---@field Status EsvStatus
+	---@field EnterChance int32 100 if IsEnterCheck is false.
+	---@field IsEnterCheck boolean
+	---@field Event EsvLuaStatusGetEnterChanceEvent
 	
 	---@class OnStatusRemovedEventArgs:OnStatusBaseEventArgs
 	---@field Status string
@@ -684,7 +707,7 @@ if not _ISCLIENT then
 	---@field Status EsvStatus
 	---@field PreventDelete boolean If true, the status deletion is prevented.
 
-	---@alias OnStatusEventArgs OnStatusBeforeAttemptEventArgs|OnStatusAttemptEventArgs|OnStatusAppliedEventArgs|OnStatusRemovedEventArgs
+	---@alias OnStatusEventArgs OnStatusBeforeAttemptEventArgs|OnStatusAttemptEventArgs|OnStatusAppliedEventArgs|OnStatusRemovedEventArgs|OnStatusGetEnterChanceEventArgs
 	
 	---Server-side event for when a status event occurs.  
 	---Use StatusManager.Register to register different status listeners.  
@@ -1008,3 +1031,13 @@ else
 	---@type LeaderLibSubscribableEvent<LeaderLibRawInputEventArgs>
 	Events.RawInput = Classes.SubscribableEvent:Create("RawInput")
 end
+
+---@class TemporaryCharacterRemovedEventArgs
+---@field CharacterGUID Guid
+---@field NetID NetId|nil May be nil if the character was already destroyed.
+
+---Called GameHelpers.Character.RemoveTemporaryCharacter is called.  
+---This event is synced to the client-side, so mods can perform cleanup operations on the CharacterGUID/NetID.  
+---🔨🔧**Server/Client**🔧🔨 
+---@type LeaderLibSubscribableEvent<TemporaryCharacterRemovedEventArgs>
+Events.TemporaryCharacterRemoved = Classes.SubscribableEvent:Create("TemporaryCharacterRemoved", {SyncInvoke=true})

@@ -16,6 +16,7 @@ local _IsValidHandle = GameHelpers.IsValidHandle
 ---|"BeforeAttempt" # NRD_OnStatusAttempt
 ---|"Attempt" # CharacterStatusAttempt/ItemStatusAttempt
 ---|"Applied" # CharacterStatusApplied/ItemStatusChange
+---|"GetEnterChance" # StatusGetEnterChance
 ---|"BeforeDelete" # Ext.Events.BeforeStatusDelete
 ---|"Removed" # CharacterStatusRemoved/ItemStatusRemoved
 
@@ -24,7 +25,7 @@ local _IsValidHandle = GameHelpers.IsValidHandle
 local _canBlockDeletion = false
 local _canInvokeListeners = false
 
----@type EsvGameState
+---@type ServerGameState
 local _GS = ""
 local _ValidStates = {
 	Running = true,
@@ -66,6 +67,8 @@ local _INTERNAL = {
 		Attempt = {},
 		---@type table<string, boolean>
 		Applied = {},
+		---@type table<string, boolean>
+		GetEnterChance = {},
 		---@type table<string, boolean>
 		BeforeDelete = {},
 		---@type table<string, boolean>
@@ -110,6 +113,9 @@ function _DisablingStatuses.UpdateStatuses()
 		local isDisabling,isLoseControl = GameHelpers.Status.IsDisablingStatus(v.Name, true, v)
 		if isDisabling or isLoseControl then
 			_DisablingStatuses.Statuses[v.Name] = {IsDisabling = isDisabling, IsLoseControl = isLoseControl}
+		end
+		if string.find(v.Name, "DUMMY") then
+			Vars.DisableDummyStatusRedirection[v.Name] = true
 		end
 	end
 	for name,data in pairs(statuses) do
@@ -178,6 +184,14 @@ function _INTERNALREG.Applied(status, callback, priority)
 end
 
 ---@param status string|string[]
+---@param callback fun(e:OnStatusGetEnterChanceEventArgs)
+---@param priority integer|nil
+---@return integer|integer[] index
+function _INTERNALREG.GetEnterChance(status, callback, priority)
+	return _INTERNALREG.All(status, callback, priority, "GetEnterChance")
+end
+
+---@param status string|string[]
 ---@param callback fun(e:OnStatusRemovedEventArgs)
 ---@param priority integer|nil
 ---@return integer|integer[] index
@@ -186,11 +200,11 @@ function _INTERNALREG.Removed(status, callback, priority)
 end
 
 ---@param status string|string[]
----@param callback fun(e:OnStatusRemovedEventArgs)
+---@param callback fun(e:OnStatusBeforeDeleteEventArgs)
 ---@param priority integer|nil
 ---@return integer|integer[] index
 function _INTERNALREG.BeforeDelete(status, callback, priority)
-	return _INTERNALREG.All(status, callback, priority, "Removed")
+	return _INTERNALREG.All(status, callback, priority, "BeforeDelete")
 end
 
 ---@alias LeaderLibStatusType string
@@ -266,6 +280,15 @@ end
 ---@return integer|integer[] index
 function _INTERNALREG.AppliedType(statusType, callback, priority, secondaryStatusType)
 	return _INTERNALREG.AllType(statusType, callback, priority, "Applied", secondaryStatusType)
+end
+
+---@param statusType LeaderLibStatusType|LeaderLibStatusType[] Status type(s) to register the callback for
+---@param callback fun(e:OnStatusGetEnterChanceEventArgs) The function to call when this status event occurs
+---@param priority integer|nil Optional listener priority
+---@param secondaryStatusType StatStatusType|nil If statusType is a special value, such as "DISABLE", filter the match further by this type
+---@return integer|integer[] index
+function _INTERNALREG.GetEnterChanceType(statusType, callback, priority, secondaryStatusType)
+	return _INTERNALREG.AllType(statusType, callback, priority, "GetEnterChance", secondaryStatusType)
 end
 
 ---@param statusType LeaderLibStatusType|LeaderLibStatusType[] Status type(s) to register the callback for
@@ -972,7 +995,7 @@ Ext.Events.BeforeStatusApply:Subscribe(function (e)
 					source = owner
 					sourceGUID = owner.MyGuid
 				end
-			elseif source:HasTag("LeaderLib_Dummy") then
+			elseif source:HasTag("LeaderLib_Dummy") and Vars.DisableDummyStatusRedirection[statusID] ~= true then
 				--Redirect the source of statuses applied by dummies to their owners
 				local owner = GetVarObject(sourceGUID, "LeaderLib_Dummy_Owner")
 				if not StringHelpers.IsNullOrEmpty(owner) and ObjectExists(owner) == 1 then
@@ -1417,3 +1440,58 @@ function RemoveStatusTypeListener(event, statusType, callback, removeAll)
 	end
 end
 --#endregion
+
+Ext.Events.StatusGetEnterChance:Subscribe(function (e)
+	if not _IsValidHandle(e.Status.TargetHandle) then
+		return
+	end
+	local target = _GetObjectFromHandle(e.Status.TargetHandle, "EsvCharacter")
+	if not target then return end
+	local source = _GetObjectFromHandle(e.Status.StatusSourceHandle, "EsvCharacter")
+
+	local targetGUID = target.MyGuid
+	local sourceGUID = source and source.MyGuid or StringHelpers.NULL_UUID
+
+	local isCharacter = GameHelpers.Ext.ObjectIsCharacter(target)
+	local isItem = not isCharacter and GameHelpers.Ext.ObjectIsItem(target)
+
+	local status = e.Status
+	local statusID = status.StatusId
+	local statusType = status.StatusType
+
+	if IgnoreDead(target, statusID) then
+		return
+	end
+
+	if not IgnoreStatus(statusID, "GetEnterChance") then
+
+		local isDisabling = false
+		local isLoseControl = false
+
+		local disablingData = _DisablingStatuses.Statuses[statusID]
+		if disablingData then
+			isDisabling = disablingData.IsDisabling == true
+			isLoseControl = disablingData.IsLoseControl == true
+		end
+
+		---@type SubscribableEventInvokeResult<OnStatusGetEnterChanceEventArgs>
+		local result = Events.OnStatus:Invoke({
+			Target = target,
+			Source = source,
+			Status = status or statusID,
+			TargetGUID = targetGUID,
+			SourceGUID = sourceGUID,
+			StatusId = statusID,
+			StatusEvent = "GetEnterChance",
+			StatusType = statusType,
+			EnterChance = e.EnterChance or 100,
+			IsEnterCheck = e.IsEnterCheck,
+			Event = e,
+			IsDisabling = isDisabling,
+			IsLoseControl = isLoseControl
+		})
+		if result.ResultCode ~= "Error" and e.IsEnterCheck and result.Args.EnterChance then
+			e.EnterChance = result.Args.EnterChance
+		end
+	end
+end)

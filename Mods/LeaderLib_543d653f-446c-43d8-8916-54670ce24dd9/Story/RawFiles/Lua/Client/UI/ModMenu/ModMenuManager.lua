@@ -186,7 +186,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, modUUID)
 					local displayName, tooltip = PrepareText(name, v, false, v.Type)
 					mainMenu.addMenuDropDown(ModMenuManager.LastID, displayName, tooltip)
 					AddControl(v, modUUID, v.Value.Selected)
-					for _,entry in pairs(v.Value.Entries) do
+					for _,entry in ipairs(v.Value.Entries) do
 						local entryName,_ = PrepareText(entry, nil, false, v.Type)
 						mainMenu.addMenuDropDownEntry(ModMenuManager.LastID, entryName)
 						ModMenuManager.LastID = ModMenuManager.LastID + 1

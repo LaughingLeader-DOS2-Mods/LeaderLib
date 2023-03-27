@@ -155,7 +155,7 @@ LeaderLib_DialogOverride_Internal_StartDialog(_Automated,_RedirectionEnabled,_Di
 QRY
 LeaderLib_DialogOverride_QRY_SpeakerIsAvailableAndInDialogRange_Workaround((CHARACTERGUID)_Char,(CHARACTERGUID)_SourceCharacter)
 AND
-DB_CustomDialogRange(_SourceCharacter,_MaxDist)
+DB_CustomDialogRange(_SourceCharacter,(REAL)_MaxDist)
 AND
 CharacterIsDeadOrFeign(_Char,0)
 AND

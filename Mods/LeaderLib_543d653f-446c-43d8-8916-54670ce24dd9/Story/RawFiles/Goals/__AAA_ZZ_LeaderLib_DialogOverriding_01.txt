@@ -273,7 +273,7 @@ GetDistanceTo(_Avatar, _OwnedObject, _Dist)
 AND
 _Dist > 10.0
 THEN
-TeleportTo(_Avatar, _OwnedObject, "LeaderLib_DialogRedirectionTargetTeleported", 0, 1);
+TeleportTo(_Avatar, _OwnedObject, "LeaderLib_DialogRedirectionTargetTeleported", 0, 1, 1);
 DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget((GUIDSTRING)_Avatar);
 
 IF
@@ -292,7 +292,7 @@ ObjectIsCharacter((CHARACTERGUID)_Avatar, 1)
 AND
 CharacterCanSee(_Avatar, _OwnedObject, 0)
 THEN
-TeleportTo(_Avatar, _OwnedObject, "LeaderLib_DialogRedirectionTargetTeleported", 0, 1);
+TeleportTo(_Avatar, _OwnedObject, "LeaderLib_DialogRedirectionTargetTeleported", 0, 1, 1);
 DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget((GUIDSTRING)_Avatar);
 
 PROC

@@ -38,6 +38,7 @@ local _runningTest = {
 	Results = {},
 }
 
+---Emit a signal to whatever test is currently running.
 ---@param id string
 function Testing.EmitSignal(id)
 	if _runningTest.Current then
@@ -158,8 +159,9 @@ Ext.Events.Tick:Subscribe(function (e)
 	end
 end)
 
+---@alias TestingSystemRegisterTestCallback (fun(test:LuaTest):boolean|nil)
+---@alias TestingSystemRegisterTestArray table<any, TestingSystemRegisterTestCallback>
 ---@alias TestingSystemGetTestsCallbackReturnType LuaTest|LuaTest[]|nil
-
 ---@alias TestingSystemGetDescriptionCallback fun(id, ...:string):string
 ---@alias TestingSystemGetTestsCallback fun(id:string, ...:string):TestingSystemGetTestsCallbackReturnType
 
@@ -167,8 +169,8 @@ end)
 local _consoleCommandTests = {}
 
 ---@param id string
----@param test LuaTest|LuaTest[]|TestingSystemGetTestsCallback
----@param description string|TestingSystemGetDescriptionCallback|nil
+---@param test LuaTest|LuaTest[]|(TestingSystemGetTestsCallback)
+---@param description? string|(TestingSystemGetDescriptionCallback)
 function Testing.RegisterConsoleCommandTest(id, test, description)
 	local t = type(test)
 	local desc = description or ""

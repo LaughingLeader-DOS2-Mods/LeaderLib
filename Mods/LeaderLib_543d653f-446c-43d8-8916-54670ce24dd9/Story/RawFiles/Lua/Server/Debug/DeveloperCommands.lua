@@ -27,747 +27,679 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		RegisterSkillListener(skill, function(skill, uuid, state, ...)
 			fprint(LOGLEVEL.TRACE, "[LeaderLib:DebugMain.lua:SkillListener] skill(",skill,") caster(",uuid,") state(",state,") params(",Common.JsonStringify({...}),")")
 		end)
-		fprint(LOGLEVEL.TRACE, "[LeaderLib:listenskill] Registered listener function for skill ", skill)
-		else
-			Ext.Utils.PrintWarning("[LeaderLib:listenskill] Please provide a valid skill ID to listen for!")
-		end
-	end)
-	
-	local function ResetLua()
-		local varData = {
-			_PrintSettings = Vars.Print,
-			_CommandSettings = Vars.Commands,
-		}
-		
-		for name,data in pairs(Mods) do
-			if data.PersistentVars ~= nil then
-				local b,err = xpcall(Common.JsonStringify, debug.traceback, data.PersistentVars)
-				if not b then
-					Ext.Utils.PrintError("Error stringifying PersistentVars for", name)
-					local checkTable = nil
-					checkTable = function(tbl)
-						for k,v in pairs(tbl) do
-							if type(k) == "userdata" or type(v) == "userdata" then
-								Ext.Utils.PrintError(k,v)
-							elseif type(v) == "table" then
-								Ext.Utils.PrintError(k)
-								checkTable(v)
-							end
-						end
-					end
-					checkTable(data.PersistentVars)
-				end
-				varData[name] = TableHelpers.SanitizeTable(data.PersistentVars, nil, true)
-			end
-		end
-		if varData ~= nil then
-			GameHelpers.IO.SaveJsonFile("LeaderLib_Debug_PersistentVars.json", varData)
-		end
-		TimerCancel("Timers_LeaderLib_Debug_LuaReset")
-		GlobalSetFlag("LeaderLib_ResettingLua")
-		TimerLaunch("Timers_LeaderLib_Debug_LuaReset", 500)
-		fprint(LOGLEVEL.TRACE, "[LeaderLib:luareset] Reseting lua.")
-		NRD_LuaReset(1,1,1)
-		Vars.JustReset = true
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:listenskill] Registered listener function for skill ", skill)
+	else
+		Ext.Utils.PrintWarning("[LeaderLib:listenskill] Please provide a valid skill ID to listen for!")
 	end
-	
-	local function OnLuaResetCommand(cmd, delay)
-		if delay == "" then
-			delay = nil
-		end
-		Vars.Resetting = true
-		Events.BeforeLuaReset:Invoke({})
-		--GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", "BeforeLuaReset")
-		delay = delay or 1000
-		fprint(LOGLEVEL.WARNING, "[LeaderLib:luareset] Resetting lua after (%s) ms", delay)
-		if delay ~= nil then
-			delay = tonumber(delay)
-			if delay > 0 then
-				TimerLaunch("Timers_LeaderLib_Debug_ResetLua", delay)
-			else
-				ResetLua()
-			end
-		else
-			ResetLua()
-		end
-	end
+end)
 
-	Ext.Osiris.RegisterListener("TimerFinished", 1, "after", function (timerName)
-		if timerName == "Timers_LeaderLib_Debug_ResetLua" then
-			ResetLua()
-		end
-	end)
-	
-	Ext.RegisterConsoleCommand("luareset", OnLuaResetCommand)
-	Ext.RegisterNetListener("LeaderLib_Client_RequestLuaReset", OnLuaResetCommand)
-	
-	Ext.RegisterConsoleCommand("testrespen", function(command, level)
-		local host = CharacterGetHostCharacter()
+Ext.RegisterConsoleCommand("testrespen", function(command, level)
+	local host = CharacterGetHostCharacter()
+	local x,y,z = GetPosition(host)
+	if level ~= nil then
+		level = math.tointeger(tonumber(level))
+	else
+		level = CharacterGetLevel(host)
+	end
+	local item = CreateItemTemplateAtPosition("537a06a5-0619-4d57-b77d-b4c319eab3e6", x, y, z)
+	SetTag(item, "LeaderLib_HasResistancePenetration")
+	local tag = Data.ResistancePenetrationTags["Fire"][4].Tag
+	SetTag(item, tag)
+	ItemLevelUpTo(item, level)
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:testrespen] Added tag",tag,"to item",item)
+	ItemToInventory(item, host, 1, 1, 0)
+end)
+
+Ext.RegisterConsoleCommand("testrespen2", function(...)
+	local host = CharacterGetHostCharacter()
+	ApplyStatus(host, "LADY_VENGEANCE", -1.0, 0, host)
+	Timer.StartOneshot("Timers_LeaderLib_Debug_ResPenTest", 3000, function()
+		--ApplyDamage(CharacterGetHostCharacter(), 50, "Fire", CharacterGetHostCharacter())
+		--ApplyDamage(CharacterGetHostCharacter(), 1, "Physical")
+		--Osi.ApplyDamage(host, 10, "Water")
 		local x,y,z = GetPosition(host)
-		if level ~= nil then
-			level = math.tointeger(tonumber(level))
-		else
-			level = CharacterGetLevel(host)
-		end
-		local item = CreateItemTemplateAtPosition("537a06a5-0619-4d57-b77d-b4c319eab3e6", x, y, z)
-		SetTag(item, "LeaderLib_HasResistancePenetration")
-		local tag = Data.ResistancePenetrationTags["Fire"][4].Tag
-		SetTag(item, tag)
-		ItemLevelUpTo(item, level)
-		fprint(LOGLEVEL.TRACE, "[LeaderLib:testrespen] Added tag",tag,"to item",item)
-		ItemToInventory(item, host, 1, 1, 0)
+		CreateExplosionAtPosition(x, y, z, "Projectile_EnemyIceShard", 1)
+		CharacterStatusText(host, "Took Damage?")
 	end)
+end)
+
+Ext.RegisterConsoleCommand("combatlog", function(command, text)
+	local host = CharacterGetHostCharacter()
+	if text == nil then
+		local name = GameHelpers.GetCharacter(host).DisplayName
+		text = "<font color='#CCFF00'>Test</font> did <font color='#FF0000'>TONS</font> of damage to " .. name
+	end
+	GameHelpers.UI.CombatLog(text, 0)
+end)
 	
-	Ext.RegisterConsoleCommand("testrespen2", function(...)
+
+Ext.RegisterConsoleCommand("leaderlib_statustext", function(command, text)
+	if text == nil then
+		text = "Test Status Text!"
+	end
+	local host = CharacterGetHostCharacter()
+	GameHelpers.Net.Broadcast("LeaderLib_DisplayStatusText", MessageData:CreateFromTable("StatusTextData", {
+		UUID = host,
+		Text = text,
+		Duration = 5.0,
+		IsItem = false
+	}):ToString(), nil)
+	-- Timer.StartOneshot("Timers_LeaderLib_Debug_StatusTextTest", 2000, function()
+		
+	-- end)
+end)
+
+Ext.RegisterConsoleCommand("leaderlib_messageboxtest", function(command, text)
+	Timer.StartOneshot("Timers_LeaderLib_Debug_MessageBoxTest", 2000, function()
 		local host = CharacterGetHostCharacter()
-		ApplyStatus(host, "LADY_VENGEANCE", -1.0, 0, host)
-		Timer.StartOneshot("Timers_LeaderLib_Debug_ResPenTest", 3000, function()
-			--ApplyDamage(CharacterGetHostCharacter(), 50, "Fire", CharacterGetHostCharacter())
-			--ApplyDamage(CharacterGetHostCharacter(), 1, "Physical")
-			--Osi.ApplyDamage(host, 10, "Water")
-			local x,y,z = GetPosition(host)
-			CreateExplosionAtPosition(x, y, z, "Projectile_EnemyIceShard", 1)
-			CharacterStatusText(host, "Took Damage?")
-		end)
+		GameHelpers.UI.ShowMessageBox(string.format("<font  color='#FF00CC'>One or more players are missing the script extender.</font><br>Please help:<br>* %s", "LaughingLeader"), host, 1, "<font color='#FF0000'>Script Extender Missing!</font>")
 	end)
-	
-	Ext.RegisterConsoleCommand("combatlog", function(command, text)
-		local host = CharacterGetHostCharacter()
-		if text == nil then
-			local name = GameHelpers.GetCharacter(host).DisplayName
-			text = "<font color='#CCFF00'>Test</font> did <font color='#FF0000'>TONS</font> of damage to " .. name
+end)
+
+Ext.RegisterConsoleCommand("printrespentags", function(command)
+	Ext.Utils.Print(Lib.serpent.block(Data.ResistancePenetrationTags))
+end)
+
+
+Ext.RegisterConsoleCommand("setarmoroption", function(command, param)
+	local host = CharacterGetHostCharacter()
+	local state = 2
+	if param ~= nil then
+		state = math.tointeger(tonumber(param)) or 2
+	end
+	Ext.Utils.Print("[setarmoroption]",host,state)
+	GameHelpers.Net.PostToUser(host, "LeaderLib_SetArmorOption", MessageData:CreateFromTable("ArmorOption", {UUID = host, State = state}):ToString())
+end)
+
+Ext.RegisterConsoleCommand("llshoot", function(cmd, forceHit, source, target, skill)
+	if source == nil then
+		source = CharacterGetHostCharacter()
+	end
+	if target == nil then
+		for i,v in pairs(GameHelpers.GetCharacter(source):GetNearbyCharacters(12.0)) do
+			if CharacterCanSee(v, source) == 1 and GetDistanceTo(v, source) >= 3.0 then
+				target = v
+				break
+			end
 		end
-		GameHelpers.UI.CombatLog(text, 0)
-	end)
+	end
 	
+	if skill == nil then
+		skill = "Projectile_EnemyTotemWater"
+	end
 	
-	Ext.RegisterConsoleCommand("leaderlib_statustext", function(command, text)
-		if text == nil then
-			text = "Test Status Text!"
+	NRD_ProjectilePrepareLaunch()
+	
+	NRD_ProjectileSetString("SkillId", skill)
+	NRD_ProjectileSetInt("CasterLevel", CharacterGetLevel(source))
+	
+	NRD_ProjectileSetGuidString("Caster", source)
+	NRD_ProjectileSetGuidString("Source", source)
+	
+	local x,y,z = GetPosition(source)
+	NRD_ProjectileSetVector3("SourcePosition", x,y+2,z)
+	
+	if forceHit ~= nil then
+		NRD_ProjectileSetGuidString("HitObject", target)
+		NRD_ProjectileSetGuidString("HitObjectPosition", target)
+	end
+	NRD_ProjectileSetGuidString("TargetPosition", target)
+	NRD_ProjectileLaunch()
+end)
+
+
+-- function h()
+	-- 	return CharacterGetHostCharacter()
+-- end
+
+local changedSkillAttributes = {}
+
+Ext.RegisterConsoleCommand("flurrytest", function(cmd, skill, attribute, value)
+	local stat = Ext.Stats.Get("Target_DualWieldingAttack", nil, false)
+	if stat ~= nil then
+		local newSkill = Ext.Stats.Get("Projectile_Test_FlurryDamage") or Ext.Stats.Create("Projectile_Test_FlurryDamage", "SkillData", "_Projectile_LeaderLib_LeaveAction_DamageBase")
+		newSkill.SkillProperties = {
+		{
+		Type = "Custom",
+		Action = "CanBackstab",
+		Context = {"Target", "AoE"}
+		}
+		}
+		newSkill["Damage Multiplier"]= 41
+		newSkill.UseWeaponDamage = "Yes"
+		newSkill.UseWeaponProperties = "Yes"
+		Ext.Stats.Sync("Projectile_Test_FlurryDamage", false)
+		
+		stat.UseWeaponDamage = "No"
+		stat.UseWeaponProperties = "No"
+		stat["Damage Multiplier"]= 0
+		
+		---@type StatPropertyStatus
+		local prop = {
+			Type = "Status",
+			Action = "EXPLODE",
+			Context = {"Target", "AoE"},
+			Duration = 0,
+			StatusChance = 1.0,
+			StatsId = "Projectile_Test_FlurryDamage",
+			SurfaceBoost = false,
+			SurfaceBoosts = {},
+			Arg4 = -1,
+			Arg5 = -1,
+		}
+		stat.SkillProperties = {prop}
+		stat.Requirement = "MeleeWeapon"
+		Ext.Stats.Sync("Target_DualWieldingAttack", false)
+	end
+	local stat = Ext.Stats.Get("Projectile_EnemyThrowingKnife")
+	if stat ~= nil then
+		stat.Requirement = "MeleeWeapon"
+		Ext.Stats.Sync("Projectile_EnemyThrowingKnife", false)
+	end
+end)
+
+--!lleditskill Projectile_LLWEAPONEX_ArmCannon_Disperse_Explosion Template 04bdf5e2-3c6a-4711-b516-1a275ccbd720
+--!lleditskill Projectile_LLWEAPONEX_ArmCannon_Disperse_Explosion Template 1945ebb4-c7c5-447e-a40e-aa59b8952be9
+
+Ext.RegisterConsoleCommand("lleditskill", function(cmd, skill, attribute, value)
+	fprint(LOGLEVEL.TRACE, attribute, value)
+	local stat = Ext.Stats.Get(skill)
+	if stat ~= nil then
+		local curVal = stat[attribute]
+		local attType = type(curVal)
+		if attType ~= nil then
+			if attType == "number" then
+				value = tonumber(value)
+				if math.floor(stat[attribute]) == stat[attribute] then
+					value = math.floor(value)
+				end
+				stat[attribute] = value
+			elseif attType == "string" then
+				stat[attribute] = value
+			elseif attType == "table" then
+				value = Common.JsonParse(value)
+				if value ~= nil then
+					stat[attribute] = value
+				end
+			end
+			if changedSkillAttributes[skill] == nil then
+				changedSkillAttributes[skill] = {}
+			end
+			changedSkillAttributes[skill][attribute] = value
+			Ext.Stats.Sync(skill, false)
+			fprint(LOGLEVEL.TRACE, "[lleditskill] Changed skill attribute",attribute, curVal, "=>", value)
 		end
-		local host = CharacterGetHostCharacter()
-		GameHelpers.Net.Broadcast("LeaderLib_DisplayStatusText", MessageData:CreateFromTable("StatusTextData", {
-			UUID = host,
-			Text = text,
-			Duration = 5.0,
-			IsItem = false
-		}):ToString(), nil)
-		-- Timer.StartOneshot("Timers_LeaderLib_Debug_StatusTextTest", 2000, function()
-			
-		-- end)
-	end)
+	end
+end)
+
+
+Ext.RegisterConsoleCommand("llprintskilledits", function(cmd, skill)
+	local changes = changedSkillAttributes[skill]
+	if changes ~= nil then
+		fprint(LOGLEVEL.TRACE, "[llprintskilledits]", skill, Common.JsonStringify(changedSkillAttributes))
+	end
+end)
 	
-	Ext.RegisterConsoleCommand("leaderlib_messageboxtest", function(command, text)
-		Timer.StartOneshot("Timers_LeaderLib_Debug_MessageBoxTest", 2000, function()
-			local host = CharacterGetHostCharacter()
-			GameHelpers.UI.ShowMessageBox(string.format("<font  color='#FF00CC'>One or more players are missing the script extender.</font><br>Please help:<br>* %s", "LaughingLeader"), host, 1, "<font color='#FF0000'>Script Extender Missing!</font>")
-		end)
-	end)
-	
-	Ext.RegisterConsoleCommand("printrespentags", function(command)
-		Ext.Utils.Print(Lib.serpent.block(Data.ResistancePenetrationTags))
-	end)
-	
-	
-	Ext.RegisterConsoleCommand("setarmoroption", function(command, param)
-		local host = CharacterGetHostCharacter()
-		local state = 2
-		if param ~= nil then
-			state = math.tointeger(tonumber(param)) or 2
-		end
-		Ext.Utils.Print("[setarmoroption]",host,state)
-		GameHelpers.Net.PostToUser(host, "LeaderLib_SetArmorOption", MessageData:CreateFromTable("ArmorOption", {UUID = host, State = state}):ToString())
-	end)
-	
-	Ext.RegisterConsoleCommand("llshoot", function(cmd, forceHit, source, target, skill)
-		if source == nil then
-			source = CharacterGetHostCharacter()
-		end
-		if target == nil then
-			for i,v in pairs(GameHelpers.GetCharacter(source):GetNearbyCharacters(12.0)) do
-				if CharacterCanSee(v, source) == 1 and GetDistanceTo(v, source) >= 3.0 then
-					target = v
-					break
+local skillAttributes = {
+["SkillType"] = "FixedString",
+["Level"] = "ConstantInt",
+["Ability"] = "SkillAbility",
+["Element"] = "SkillElement",
+["Requirement"] = "SkillRequirement",
+["Requirements"] = "Requirements",
+["DisplayName"] = "FixedString",
+["DisplayNameRef"] = "FixedString",
+["Description"] = "FixedString",
+["DescriptionRef"] = "FixedString",
+["StatsDescription"] = "FixedString",
+["StatsDescriptionRef"] = "FixedString",
+["StatsDescriptionParams"] = "FixedString",
+["Icon"] = "FixedString",
+["FXScale"] = "ConstantInt",
+["PrepareAnimationInit"] = "FixedString",
+["PrepareAnimationLoop"] = "FixedString",
+["PrepareEffect"] = "FixedString",
+["PrepareEffectBone"] = "FixedString",
+["CastAnimation"] = "FixedString",
+["CastTextEvent"] = "FixedString",
+["CastAnimationCheck"] = "CastCheckType",
+["CastEffect"] = "FixedString",
+["CastEffectTextEvent"] = "FixedString",
+["TargetCastEffect"] = "FixedString",
+["TargetHitEffect"] = "FixedString",
+["TargetEffect"] = "FixedString",
+["SourceTargetEffect"] = "FixedString",
+["TargetTargetEffect"] = "FixedString",
+["LandingEffect"] = "FixedString",
+["ImpactEffect"] = "FixedString",
+["MaleImpactEffects"] = "FixedString",
+["FemaleImpactEffects"] = "FixedString",
+["OnHitEffect"] = "FixedString",
+["SelectedCharacterEffect"] = "FixedString",
+["SelectedObjectEffect"] = "FixedString",
+["SelectedPositionEffect"] = "FixedString",
+["DisappearEffect"] = "FixedString",
+["ReappearEffect"] = "FixedString",
+["ReappearEffectTextEvent"] = "FixedString",
+["RainEffect"] = "FixedString",
+["StormEffect"] = "FixedString",
+["FlyEffect"] = "FixedString",
+["SpatterEffect"] = "FixedString",
+["ShieldMaterial"] = "FixedString",
+["ShieldEffect"] = "FixedString",
+["ContinueEffect"] = "FixedString",
+["SkillEffect"] = "FixedString",
+["Template"] = "FixedString",
+["TemplateCheck"] = "CastCheckType",
+["TemplateOverride"] = "FixedString",
+["TemplateAdvanced"] = "FixedString",
+["Totem"] = "YesNo",
+["Template1"] = "FixedString",
+["Template2"] = "FixedString",
+["Template3"] = "FixedString",
+["WeaponBones"] = "FixedString",
+["TeleportSelf"] = "YesNo",
+["CanTargetCharacters"] = "YesNo",
+["CanTargetItems"] = "YesNo",
+["CanTargetTerrain"] = "YesNo",
+["ForceTarget"] = "YesNo",
+["TargetProjectiles"] = "YesNo",
+["UseCharacterStats"] = "YesNo",
+["UseWeaponDamage"] = "YesNo",
+["UseWeaponProperties"] = "YesNo",
+["SingleSource"] = "YesNo",
+["ContinueOnKill"] = "YesNo",
+["Autocast"] = "YesNo",
+["AmountOfTargets"] = "ConstantInt",
+["AutoAim"] = "YesNo",
+["AddWeaponRange"] = "YesNo",
+["Memory Cost"] = "ConstantInt",
+["Magic Cost"] = "ConstantInt",
+["ActionPoints"] = "ConstantInt",
+["Cooldown"] = "ConstantInt",
+["CooldownReduction"] = "ConstantInt",
+["ChargeDuration"] = "ConstantInt",
+["CastDelay"] = "ConstantInt",
+["Offset"] = "ConstantInt",
+["Lifetime"] = "ConstantInt",
+["Duration"] = "Qualifier",
+["TargetRadius"] = "ConstantInt",
+["ExplodeRadius"] = "ConstantInt",
+["AreaRadius"] = "ConstantInt",
+["HitRadius"] = "ConstantInt",
+["RadiusMax"] = "ConstantInt",
+["Range"] = "ConstantInt",
+["MaxDistance"] = "ConstantInt",
+["Angle"] = "ConstantInt",
+["TravelSpeed"] = "ConstantInt",
+["Acceleration"] = "ConstantInt",
+["Height"] = "ConstantInt",
+["Damage"] = "DamageSourceType",
+["Damage Multiplier"] = "ConstantInt",
+["Damage Range"] = "ConstantInt",
+["DamageType"] = "Damage Type",
+["DamageMultiplier"] = "PreciseQualifier",
+["DeathType"] = "Death Type",
+["BonusDamage"] = "Qualifier",
+["Chance To Hit Multiplier"] = "ConstantInt",
+["HitPointsPercent"] = "ConstantInt",
+["MinHitsPerTurn"] = "ConstantInt",
+["MaxHitsPerTurn"] = "ConstantInt",
+["HitDelay"] = "ConstantInt",
+["MaxAttacks"] = "ConstantInt",
+["NextAttackChance"] = "ConstantInt",
+["NextAttackChanceDivider"] = "ConstantInt",
+["EndPosRadius"] = "ConstantInt",
+["JumpDelay"] = "ConstantInt",
+["TeleportDelay"] = "ConstantInt",
+["PointsMaxOffset"] = "ConstantInt",
+["RandomPoints"] = "ConstantInt",
+["ChanceToPierce"] = "ConstantInt",
+["MaxPierceCount"] = "ConstantInt",
+["MaxForkCount"] = "ConstantInt",
+["ForkLevels"] = "ConstantInt",
+["ForkChance"] = "ConstantInt",
+["HealAmount"] = "PreciseQualifier",
+["StatusClearChance"] = "ConstantInt",
+["SurfaceType"] = "Surface Type",
+["SurfaceLifetime"] = "ConstantInt",
+["SurfaceStatusChance"] = "ConstantInt",
+["SurfaceTileCollision"] = "SurfaceCollisionFlags",
+["SurfaceGrowInterval"] = "ConstantInt",
+["SurfaceGrowStep"] = "ConstantInt",
+["SurfaceRadius"] = "ConstantInt",
+["TotalSurfaceCells"] = "ConstantInt",
+["SurfaceMinSpawnRadius"] = "ConstantInt",
+["MinSurfaces"] = "ConstantInt",
+["MaxSurfaces"] = "ConstantInt",
+["MinSurfaceSize"] = "ConstantInt",
+["MaxSurfaceSize"] = "ConstantInt",
+["GrowSpeed"] = "ConstantInt",
+["GrowOnSurface"] = "SurfaceCollisionFlags",
+["GrowTimeout"] = "ConstantInt",
+["SkillBoost"] = "FixedString",
+--["SkillAttributeFlags"] = "AttributeFlags",
+["SkillProperties"] = "Properties",
+["CleanseStatuses"] = "FixedString",
+["AoEConditions"] = "Conditions",
+["TargetConditions"] = "Conditions",
+["ForkingConditions"] = "Conditions",
+["CycleConditions"] = "Conditions",
+["ShockWaveDuration"] = "ConstantInt",
+["TeleportTextEvent"] = "FixedString",
+["SummonEffect"] = "FixedString",
+["ProjectileCount"] = "ConstantInt",
+["ProjectileDelay"] = "ConstantInt",
+["StrikeCount"] = "ConstantInt",
+["StrikeDelay"] = "ConstantInt",
+["PreviewStrikeHits"] = "YesNo",
+["SummonLevel"] = "ConstantInt",
+["Damage On Jump"] = "YesNo",
+["Damage On Landing"] = "YesNo",
+["StartTextEvent"] = "FixedString",
+["StopTextEvent"] = "FixedString",
+["Healing Multiplier"] = "ConstantInt",
+["Atmosphere"] = "AtmosphereType",
+["ConsequencesStartTime"] = "ConstantInt",
+["ConsequencesDuration"] = "ConstantInt",
+["HealthBarColor"] = "ConstantInt",
+["Skillbook"] = "FixedString",
+["PreviewImpactEffect"] = "FixedString",
+["IgnoreVisionBlock"] = "YesNo",
+["HealEffectId"] = "FixedString",
+["AddRangeFromAbility"] = "Ability",
+["DivideDamage"] = "YesNo",
+["OverrideMinAP"] = "YesNo",
+["OverrideSkillLevel"] = "YesNo",
+["Tier"] = "SkillTier",
+["GrenadeBone"] = "FixedString",
+["GrenadeProjectile"] = "FixedString",
+["GrenadePath"] = "FixedString",
+["MovingObject"] = "FixedString",
+["SpawnObject"] = "FixedString",
+["SpawnEffect"] = "FixedString",
+["SpawnFXOverridesImpactFX"] = "YesNo",
+["SpawnLifetime"] = "ConstantInt",
+["ProjectileTerrainOffset"] = "YesNo",
+["ProjectileType"] = "ProjectileType",
+["HitEffect"] = "FixedString",
+["PushDistance"] = "ConstantInt",
+["ForceMove"] = "YesNo",
+["Stealth"] = "YesNo",
+["Distribution"] = "ProjectileDistribution",
+["Shuffle"] = "YesNo",
+["PushPullEffect"] = "FixedString",
+["Stealth Damage Multiplier"] = "ConstantInt",
+["Distance Damage Multiplier"] = "ConstantInt",
+["BackStart"] = "ConstantInt",
+["FrontOffset"] = "ConstantInt",
+["TargetGroundEffect"] = "FixedString",
+["PositionEffect"] = "FixedString",
+["BeamEffect"] = "FixedString",
+["PreviewEffect"] = "FixedString",
+["CastSelfAnimation"] = "FixedString",
+["IgnoreCursed"] = "YesNo",
+["IsEnemySkill"] = "YesNo",
+["DomeEffect"] = "FixedString",
+["AuraSelf"] = "FixedString",
+["AuraAllies"] = "FixedString",
+["AuraEnemies"] = "FixedString",
+["AuraNeutrals"] = "FixedString",
+["AuraItems"] = "FixedString",
+["AIFlags"] = "AIFlags",
+["Shape"] = "FixedString",
+["Base"] = "ConstantInt",
+["AiCalculationSkillOverride"] = "FixedString",
+["TeleportSurface"] = "YesNo",
+["ProjectileSkills"] = "FixedString",
+["SummonCount"] = "ConstantInt",
+["LinkTeleports"] = "YesNo",
+["TeleportsUseCount"] = "ConstantInt",
+["HeightOffset"] = "ConstantInt",
+["ForGameMaster"] = "YesNo",
+["IsMelee"] = "YesNo",
+["MemorizationRequirements"] = "MemorizationRequirements",
+["IgnoreSilence"] = "YesNo",
+["IgnoreHeight"] = "YesNo",
+}
+
+Ext.RegisterConsoleCommand("llprintskill", function(cmd, skill, printEmpty)
+	local stat = Ext.Stats.Get(skill)
+	if stat ~= nil then
+		local skillProps = {}
+		for att,attType in pairs(skillAttributes) do
+			local val = stat[att]
+			if val ~= nil then
+				if printEmpty ~= nil then
+					skillProps[att] = val
+				elseif val ~= "" then
+					skillProps[att] = val
 				end
 			end
 		end
-		
-		if skill == nil then
-			skill = "Projectile_EnemyTotemWater"
-		end
-		
-		NRD_ProjectilePrepareLaunch()
-		
-		NRD_ProjectileSetString("SkillId", skill)
-		NRD_ProjectileSetInt("CasterLevel", CharacterGetLevel(source))
-		
-		NRD_ProjectileSetGuidString("Caster", source)
-		NRD_ProjectileSetGuidString("Source", source)
-		
-		local x,y,z = GetPosition(source)
-		NRD_ProjectileSetVector3("SourcePosition", x,y+2,z)
-		
-		if forceHit ~= nil then
-			NRD_ProjectileSetGuidString("HitObject", target)
-			NRD_ProjectileSetGuidString("HitObjectPosition", target)
-		end
-		NRD_ProjectileSetGuidString("TargetPosition", target)
-		NRD_ProjectileLaunch()
-	end)
-	
-	
-	-- function h()
-		-- 	return CharacterGetHostCharacter()
-	-- end
-	
-	local changedSkillAttributes = {}
-	
-	Ext.RegisterConsoleCommand("flurrytest", function(cmd, skill, attribute, value)
-		local stat = Ext.Stats.Get("Target_DualWieldingAttack", nil, false)
-		if stat ~= nil then
-			local newSkill = Ext.Stats.Get("Projectile_Test_FlurryDamage") or Ext.Stats.Create("Projectile_Test_FlurryDamage", "SkillData", "_Projectile_LeaderLib_LeaveAction_DamageBase")
-			newSkill.SkillProperties = {
-			{
-			Type = "Custom",
-			Action = "CanBackstab",
-			Context = {"Target", "AoE"}
-			}
-			}
-			newSkill["Damage Multiplier"]= 41
-			newSkill.UseWeaponDamage = "Yes"
-			newSkill.UseWeaponProperties = "Yes"
-			Ext.Stats.Sync("Projectile_Test_FlurryDamage", false)
-			
-			stat.UseWeaponDamage = "No"
-			stat.UseWeaponProperties = "No"
-			stat["Damage Multiplier"]= 0
-			
-			---@type StatPropertyStatus
-			local prop = {
-				Type = "Status",
-				Action = "EXPLODE",
-				Context = {"Target", "AoE"},
-				Duration = 0,
-				StatusChance = 1.0,
-				StatsId = "Projectile_Test_FlurryDamage",
-				SurfaceBoost = false,
-				SurfaceBoosts = {},
-				Arg4 = -1,
-				Arg5 = -1,
-			}
-			stat.SkillProperties = {prop}
-			stat.Requirement = "MeleeWeapon"
-			Ext.Stats.Sync("Target_DualWieldingAttack", false)
-		end
-		local stat = Ext.Stats.Get("Projectile_EnemyThrowingKnife")
-		if stat ~= nil then
-			stat.Requirement = "MeleeWeapon"
-			Ext.Stats.Sync("Projectile_EnemyThrowingKnife", false)
-		end
-	end)
-	
-	--!lleditskill Projectile_LLWEAPONEX_ArmCannon_Disperse_Explosion Template 04bdf5e2-3c6a-4711-b516-1a275ccbd720
-	--!lleditskill Projectile_LLWEAPONEX_ArmCannon_Disperse_Explosion Template 1945ebb4-c7c5-447e-a40e-aa59b8952be9
-	
-	Ext.RegisterConsoleCommand("lleditskill", function(cmd, skill, attribute, value)
-		fprint(LOGLEVEL.TRACE, attribute, value)
-		local stat = Ext.Stats.Get(skill)
-		if stat ~= nil then
-			local curVal = stat[attribute]
-			local attType = type(curVal)
-			if attType ~= nil then
-				if attType == "number" then
-					value = tonumber(value)
-					if math.floor(stat[attribute]) == stat[attribute] then
-						value = math.floor(value)
-					end
-					stat[attribute] = value
-				elseif attType == "string" then
-					stat[attribute] = value
-				elseif attType == "table" then
-					value = Common.JsonParse(value)
-					if value ~= nil then
-						stat[attribute] = value
-					end
-				end
-				if changedSkillAttributes[skill] == nil then
-					changedSkillAttributes[skill] = {}
-				end
-				changedSkillAttributes[skill][attribute] = value
-				Ext.Stats.Sync(skill, false)
-				fprint(LOGLEVEL.TRACE, "[lleditskill] Changed skill attribute",attribute, curVal, "=>", value)
-			end
-		end
-	end)
-	
-	
-	Ext.RegisterConsoleCommand("llprintskilledits", function(cmd, skill)
-		local changes = changedSkillAttributes[skill]
-		if changes ~= nil then
-			fprint(LOGLEVEL.TRACE, "[llprintskilledits]", skill, Common.JsonStringify(changedSkillAttributes))
-		end
-	end)
-	
-	local skillAttributes = {
-	["SkillType"] = "FixedString",
-	["Level"] = "ConstantInt",
-	["Ability"] = "SkillAbility",
-	["Element"] = "SkillElement",
-	["Requirement"] = "SkillRequirement",
-	["Requirements"] = "Requirements",
-	["DisplayName"] = "FixedString",
-	["DisplayNameRef"] = "FixedString",
-	["Description"] = "FixedString",
-	["DescriptionRef"] = "FixedString",
-	["StatsDescription"] = "FixedString",
-	["StatsDescriptionRef"] = "FixedString",
-	["StatsDescriptionParams"] = "FixedString",
-	["Icon"] = "FixedString",
-	["FXScale"] = "ConstantInt",
-	["PrepareAnimationInit"] = "FixedString",
-	["PrepareAnimationLoop"] = "FixedString",
-	["PrepareEffect"] = "FixedString",
-	["PrepareEffectBone"] = "FixedString",
-	["CastAnimation"] = "FixedString",
-	["CastTextEvent"] = "FixedString",
-	["CastAnimationCheck"] = "CastCheckType",
-	["CastEffect"] = "FixedString",
-	["CastEffectTextEvent"] = "FixedString",
-	["TargetCastEffect"] = "FixedString",
-	["TargetHitEffect"] = "FixedString",
-	["TargetEffect"] = "FixedString",
-	["SourceTargetEffect"] = "FixedString",
-	["TargetTargetEffect"] = "FixedString",
-	["LandingEffect"] = "FixedString",
-	["ImpactEffect"] = "FixedString",
-	["MaleImpactEffects"] = "FixedString",
-	["FemaleImpactEffects"] = "FixedString",
-	["OnHitEffect"] = "FixedString",
-	["SelectedCharacterEffect"] = "FixedString",
-	["SelectedObjectEffect"] = "FixedString",
-	["SelectedPositionEffect"] = "FixedString",
-	["DisappearEffect"] = "FixedString",
-	["ReappearEffect"] = "FixedString",
-	["ReappearEffectTextEvent"] = "FixedString",
-	["RainEffect"] = "FixedString",
-	["StormEffect"] = "FixedString",
-	["FlyEffect"] = "FixedString",
-	["SpatterEffect"] = "FixedString",
-	["ShieldMaterial"] = "FixedString",
-	["ShieldEffect"] = "FixedString",
-	["ContinueEffect"] = "FixedString",
-	["SkillEffect"] = "FixedString",
-	["Template"] = "FixedString",
-	["TemplateCheck"] = "CastCheckType",
-	["TemplateOverride"] = "FixedString",
-	["TemplateAdvanced"] = "FixedString",
-	["Totem"] = "YesNo",
-	["Template1"] = "FixedString",
-	["Template2"] = "FixedString",
-	["Template3"] = "FixedString",
-	["WeaponBones"] = "FixedString",
-	["TeleportSelf"] = "YesNo",
-	["CanTargetCharacters"] = "YesNo",
-	["CanTargetItems"] = "YesNo",
-	["CanTargetTerrain"] = "YesNo",
-	["ForceTarget"] = "YesNo",
-	["TargetProjectiles"] = "YesNo",
-	["UseCharacterStats"] = "YesNo",
-	["UseWeaponDamage"] = "YesNo",
-	["UseWeaponProperties"] = "YesNo",
-	["SingleSource"] = "YesNo",
-	["ContinueOnKill"] = "YesNo",
-	["Autocast"] = "YesNo",
-	["AmountOfTargets"] = "ConstantInt",
-	["AutoAim"] = "YesNo",
-	["AddWeaponRange"] = "YesNo",
-	["Memory Cost"] = "ConstantInt",
-	["Magic Cost"] = "ConstantInt",
-	["ActionPoints"] = "ConstantInt",
-	["Cooldown"] = "ConstantInt",
-	["CooldownReduction"] = "ConstantInt",
-	["ChargeDuration"] = "ConstantInt",
-	["CastDelay"] = "ConstantInt",
-	["Offset"] = "ConstantInt",
-	["Lifetime"] = "ConstantInt",
-	["Duration"] = "Qualifier",
-	["TargetRadius"] = "ConstantInt",
-	["ExplodeRadius"] = "ConstantInt",
-	["AreaRadius"] = "ConstantInt",
-	["HitRadius"] = "ConstantInt",
-	["RadiusMax"] = "ConstantInt",
-	["Range"] = "ConstantInt",
-	["MaxDistance"] = "ConstantInt",
-	["Angle"] = "ConstantInt",
-	["TravelSpeed"] = "ConstantInt",
-	["Acceleration"] = "ConstantInt",
-	["Height"] = "ConstantInt",
-	["Damage"] = "DamageSourceType",
-	["Damage Multiplier"] = "ConstantInt",
-	["Damage Range"] = "ConstantInt",
-	["DamageType"] = "Damage Type",
-	["DamageMultiplier"] = "PreciseQualifier",
-	["DeathType"] = "Death Type",
-	["BonusDamage"] = "Qualifier",
-	["Chance To Hit Multiplier"] = "ConstantInt",
-	["HitPointsPercent"] = "ConstantInt",
-	["MinHitsPerTurn"] = "ConstantInt",
-	["MaxHitsPerTurn"] = "ConstantInt",
-	["HitDelay"] = "ConstantInt",
-	["MaxAttacks"] = "ConstantInt",
-	["NextAttackChance"] = "ConstantInt",
-	["NextAttackChanceDivider"] = "ConstantInt",
-	["EndPosRadius"] = "ConstantInt",
-	["JumpDelay"] = "ConstantInt",
-	["TeleportDelay"] = "ConstantInt",
-	["PointsMaxOffset"] = "ConstantInt",
-	["RandomPoints"] = "ConstantInt",
-	["ChanceToPierce"] = "ConstantInt",
-	["MaxPierceCount"] = "ConstantInt",
-	["MaxForkCount"] = "ConstantInt",
-	["ForkLevels"] = "ConstantInt",
-	["ForkChance"] = "ConstantInt",
-	["HealAmount"] = "PreciseQualifier",
-	["StatusClearChance"] = "ConstantInt",
-	["SurfaceType"] = "Surface Type",
-	["SurfaceLifetime"] = "ConstantInt",
-	["SurfaceStatusChance"] = "ConstantInt",
-	["SurfaceTileCollision"] = "SurfaceCollisionFlags",
-	["SurfaceGrowInterval"] = "ConstantInt",
-	["SurfaceGrowStep"] = "ConstantInt",
-	["SurfaceRadius"] = "ConstantInt",
-	["TotalSurfaceCells"] = "ConstantInt",
-	["SurfaceMinSpawnRadius"] = "ConstantInt",
-	["MinSurfaces"] = "ConstantInt",
-	["MaxSurfaces"] = "ConstantInt",
-	["MinSurfaceSize"] = "ConstantInt",
-	["MaxSurfaceSize"] = "ConstantInt",
-	["GrowSpeed"] = "ConstantInt",
-	["GrowOnSurface"] = "SurfaceCollisionFlags",
-	["GrowTimeout"] = "ConstantInt",
-	["SkillBoost"] = "FixedString",
-	--["SkillAttributeFlags"] = "AttributeFlags",
-	["SkillProperties"] = "Properties",
-	["CleanseStatuses"] = "FixedString",
-	["AoEConditions"] = "Conditions",
-	["TargetConditions"] = "Conditions",
-	["ForkingConditions"] = "Conditions",
-	["CycleConditions"] = "Conditions",
-	["ShockWaveDuration"] = "ConstantInt",
-	["TeleportTextEvent"] = "FixedString",
-	["SummonEffect"] = "FixedString",
-	["ProjectileCount"] = "ConstantInt",
-	["ProjectileDelay"] = "ConstantInt",
-	["StrikeCount"] = "ConstantInt",
-	["StrikeDelay"] = "ConstantInt",
-	["PreviewStrikeHits"] = "YesNo",
-	["SummonLevel"] = "ConstantInt",
-	["Damage On Jump"] = "YesNo",
-	["Damage On Landing"] = "YesNo",
-	["StartTextEvent"] = "FixedString",
-	["StopTextEvent"] = "FixedString",
-	["Healing Multiplier"] = "ConstantInt",
-	["Atmosphere"] = "AtmosphereType",
-	["ConsequencesStartTime"] = "ConstantInt",
-	["ConsequencesDuration"] = "ConstantInt",
-	["HealthBarColor"] = "ConstantInt",
-	["Skillbook"] = "FixedString",
-	["PreviewImpactEffect"] = "FixedString",
-	["IgnoreVisionBlock"] = "YesNo",
-	["HealEffectId"] = "FixedString",
-	["AddRangeFromAbility"] = "Ability",
-	["DivideDamage"] = "YesNo",
-	["OverrideMinAP"] = "YesNo",
-	["OverrideSkillLevel"] = "YesNo",
-	["Tier"] = "SkillTier",
-	["GrenadeBone"] = "FixedString",
-	["GrenadeProjectile"] = "FixedString",
-	["GrenadePath"] = "FixedString",
-	["MovingObject"] = "FixedString",
-	["SpawnObject"] = "FixedString",
-	["SpawnEffect"] = "FixedString",
-	["SpawnFXOverridesImpactFX"] = "YesNo",
-	["SpawnLifetime"] = "ConstantInt",
-	["ProjectileTerrainOffset"] = "YesNo",
-	["ProjectileType"] = "ProjectileType",
-	["HitEffect"] = "FixedString",
-	["PushDistance"] = "ConstantInt",
-	["ForceMove"] = "YesNo",
-	["Stealth"] = "YesNo",
-	["Distribution"] = "ProjectileDistribution",
-	["Shuffle"] = "YesNo",
-	["PushPullEffect"] = "FixedString",
-	["Stealth Damage Multiplier"] = "ConstantInt",
-	["Distance Damage Multiplier"] = "ConstantInt",
-	["BackStart"] = "ConstantInt",
-	["FrontOffset"] = "ConstantInt",
-	["TargetGroundEffect"] = "FixedString",
-	["PositionEffect"] = "FixedString",
-	["BeamEffect"] = "FixedString",
-	["PreviewEffect"] = "FixedString",
-	["CastSelfAnimation"] = "FixedString",
-	["IgnoreCursed"] = "YesNo",
-	["IsEnemySkill"] = "YesNo",
-	["DomeEffect"] = "FixedString",
-	["AuraSelf"] = "FixedString",
-	["AuraAllies"] = "FixedString",
-	["AuraEnemies"] = "FixedString",
-	["AuraNeutrals"] = "FixedString",
-	["AuraItems"] = "FixedString",
-	["AIFlags"] = "AIFlags",
-	["Shape"] = "FixedString",
-	["Base"] = "ConstantInt",
-	["AiCalculationSkillOverride"] = "FixedString",
-	["TeleportSurface"] = "YesNo",
-	["ProjectileSkills"] = "FixedString",
-	["SummonCount"] = "ConstantInt",
-	["LinkTeleports"] = "YesNo",
-	["TeleportsUseCount"] = "ConstantInt",
-	["HeightOffset"] = "ConstantInt",
-	["ForGameMaster"] = "YesNo",
-	["IsMelee"] = "YesNo",
-	["MemorizationRequirements"] = "MemorizationRequirements",
-	["IgnoreSilence"] = "YesNo",
-	["IgnoreHeight"] = "YesNo",
-	}
-	
-	Ext.RegisterConsoleCommand("llprintskill", function(cmd, skill, printEmpty)
-		local stat = Ext.Stats.Get(skill)
-		if stat ~= nil then
-			local skillProps = {}
-			for att,attType in pairs(skillAttributes) do
-				local val = stat[att]
+		fprint(LOGLEVEL.TRACE, "[llprintskill]")
+		fprint(LOGLEVEL.TRACE, Common.JsonStringify(skillProps))
+	end
+end)
+
+local defaultRules = Ext.JsonParse(Ext.Require("Server/Debug/DefaultSurfaceTransformationRules.lua"))
+
+Ext.RegisterConsoleCommand("llupdaterules", function(cmd)
+	GameHelpers.Surface.UpdateRules()
+	local rules = Ext.GetSurfaceTransformRules()
+	fprint(LOGLEVEL.TRACE, Common.JsonStringify(rules["Fire"]))
+	fprint(LOGLEVEL.TRACE, Common.JsonStringify(rules["Poison"]))
+end)
+
+Ext.RegisterConsoleCommand("llresetrules", function(cmd)
+	Ext.UpdateSurfaceTransformRules(defaultRules)
+	fprint(LOGLEVEL.TRACE, "[llresetrules] Reset surface rules.")
+	fprint(LOGLEVEL.TRACE, Common.JsonStringify(Ext.GetSurfaceTransformRules()["Fire"][1]))
+end)
+
+
+local dynamicStatsVars = {
+"AccuracyBoost",
+"AirResistance",
+"APRecovery",
+"AttackAPCost",
+"Bodybuilding",
+"BoostName",
+"ChanceToHitBoost",
+"CleaveAngle",
+"CleavePercentage",
+"ConstitutionBoost",
+"CorrosiveResistance",
+"CriticalChance",
+"CriticalDamage",
+"CustomResistance",
+"DamageBoost",
+"DamageFromBase",
+"DamageType",
+"DodgeBoost",
+"Durability",
+"DurabilityDegradeSpeed",
+"EarthResistance",
+"FinesseBoost",
+"FireResistance",
+"HearingBoost",
+"Initiative",
+"IntelligenceBoost",
+"ItemColor",
+"LifeSteal",
+"MaxAP",
+"MaxDamage",
+"MaxSummons",
+"MemoryBoost",
+"MinDamage",
+"ModifierType",
+"Movement",
+"MovementSpeedBoost",
+"ObjectInstanceName",
+"PhysicalResistance",
+"PiercingResistance",
+"PoisonResistance",
+"RuneSlots_V1",
+"RuneSlots",
+"ShadowResistance",
+"SightBoost",
+"Skills",
+"SourcePointsBoost",
+"StartAP",
+"StatsType",
+"StrengthBoost",
+"Value",
+"VitalityBoost",
+"WaterResistance",
+"WeaponRange",
+"Weight",
+"Willpower",
+"WitsBoost",
+}
+
+local armorBoostProps = {
+"ArmorBoost",
+"ArmorValue",
+"Blocking",
+"MagicArmorBoost",
+"MagicArmorValue",
+"MagicResistance",
+}
+
+local function PrintDynamicStats(dynamicStats)
+	for i,v in pairs(dynamicStats) do
+		Ext.Utils.Print("["..tostring(i) .. "]")
+		if v ~= nil and v.DamageFromBase > 0 then
+			for i,attribute in pairs(dynamicStatsVars) do
+				local val = v[attribute]
 				if val ~= nil then
-					if printEmpty ~= nil then
-						skillProps[att] = val
-					elseif val ~= "" then
-						skillProps[att] = val
-					end
+					Ext.Utils.Print(string.format("  [%s] = (%s)", attribute, val))
 				end
 			end
-			fprint(LOGLEVEL.TRACE, "[llprintskill]")
-			fprint(LOGLEVEL.TRACE, Common.JsonStringify(skillProps))
-		end
-	end)
-	
-	local defaultRules = Ext.JsonParse(Ext.Require("Server/Debug/DefaultSurfaceTransformationRules.lua"))
-	
-	Ext.RegisterConsoleCommand("llupdaterules", function(cmd)
-		GameHelpers.Surface.UpdateRules()
-		local rules = Ext.GetSurfaceTransformRules()
-		fprint(LOGLEVEL.TRACE, Common.JsonStringify(rules["Fire"]))
-		fprint(LOGLEVEL.TRACE, Common.JsonStringify(rules["Poison"]))
-	end)
-	
-	Ext.RegisterConsoleCommand("llresetrules", function(cmd)
-		Ext.UpdateSurfaceTransformRules(defaultRules)
-		fprint(LOGLEVEL.TRACE, "[llresetrules] Reset surface rules.")
-		fprint(LOGLEVEL.TRACE, Common.JsonStringify(Ext.GetSurfaceTransformRules()["Fire"][1]))
-	end)
-	
-	
-	local dynamicStatsVars = {
-	"AccuracyBoost",
-	"AirResistance",
-	"APRecovery",
-	"AttackAPCost",
-	"Bodybuilding",
-	"BoostName",
-	"ChanceToHitBoost",
-	"CleaveAngle",
-	"CleavePercentage",
-	"ConstitutionBoost",
-	"CorrosiveResistance",
-	"CriticalChance",
-	"CriticalDamage",
-	"CustomResistance",
-	"DamageBoost",
-	"DamageFromBase",
-	"DamageType",
-	"DodgeBoost",
-	"Durability",
-	"DurabilityDegradeSpeed",
-	"EarthResistance",
-	"FinesseBoost",
-	"FireResistance",
-	"HearingBoost",
-	"Initiative",
-	"IntelligenceBoost",
-	"ItemColor",
-	"LifeSteal",
-	"MaxAP",
-	"MaxDamage",
-	"MaxSummons",
-	"MemoryBoost",
-	"MinDamage",
-	"ModifierType",
-	"Movement",
-	"MovementSpeedBoost",
-	"ObjectInstanceName",
-	"PhysicalResistance",
-	"PiercingResistance",
-	"PoisonResistance",
-	"RuneSlots_V1",
-	"RuneSlots",
-	"ShadowResistance",
-	"SightBoost",
-	"Skills",
-	"SourcePointsBoost",
-	"StartAP",
-	"StatsType",
-	"StrengthBoost",
-	"Value",
-	"VitalityBoost",
-	"WaterResistance",
-	"WeaponRange",
-	"Weight",
-	"Willpower",
-	"WitsBoost",
-	}
-	
-	local armorBoostProps = {
-	"ArmorBoost",
-	"ArmorValue",
-	"Blocking",
-	"MagicArmorBoost",
-	"MagicArmorValue",
-	"MagicResistance",
-	}
-	
-	local function PrintDynamicStats(dynamicStats)
-		for i,v in pairs(dynamicStats) do
-			Ext.Utils.Print("["..tostring(i) .. "]")
-			if v ~= nil and v.DamageFromBase > 0 then
-				for i,attribute in pairs(dynamicStatsVars) do
+			if v.StatsType ~= "Weapon" then
+				for i,attribute in pairs(armorBoostProps) do
 					local val = v[attribute]
 					if val ~= nil then
 						Ext.Utils.Print(string.format("  [%s] = (%s)", attribute, val))
 					end
 				end
-				if v.StatsType ~= "Weapon" then
-					for i,attribute in pairs(armorBoostProps) do
-						local val = v[attribute]
-						if val ~= nil then
-							Ext.Utils.Print(string.format("  [%s] = (%s)", attribute, val))
-						end
-					end
-				end
 			end
 		end
 	end
-	
-	---@param uuid string An item's GUIDSTRING/ITEMGUID.
-	local function PrintItemStats(uuid)
-		---@type EsvItem
-		local item = GameHelpers.GetItem(uuid)
-		if item ~= nil and item.Stats ~= nil then
-			Ext.Utils.Print("Item:", uuid, item.Stats.Name)
-			Ext.Utils.Print("Boost Stats:")
-			Ext.Utils.Print("------")
-			---@type StatItemDynamic[]
-			local stats = item.Stats.DynamicStats
-			PrintDynamicStats(item.Stats.DynamicStats)
-			Ext.Utils.Print("------")
-			Ext.Utils.Print("")
-		end
+end
+
+---@param uuid string An item's GUIDSTRING/ITEMGUID.
+local function PrintItemStats(uuid)
+	---@type EsvItem
+	local item = GameHelpers.GetItem(uuid)
+	if item ~= nil and item.Stats ~= nil then
+		Ext.Utils.Print("Item:", uuid, item.Stats.Name)
+		Ext.Utils.Print("Boost Stats:")
+		Ext.Utils.Print("------")
+		---@type StatItemDynamic[]
+		local stats = item.Stats.DynamicStats
+		PrintDynamicStats(item.Stats.DynamicStats)
+		Ext.Utils.Print("------")
+		Ext.Utils.Print("")
 	end
-	
-	Debug.PrintItemStats = PrintItemStats
-	
-	Ext.RegisterConsoleCommand("printitemstats", function(command, slot)
-		local target = CharacterGetHostCharacter()
-		---@type EsvCharacter
-		local characterObject = GameHelpers.GetCharacter(target)
-		if slot == nil then
-			for i,item in pairs(characterObject:GetInventoryItems()) do
-				PrintItemStats(item)
-			end
+end
+
+Debug.PrintItemStats = PrintItemStats
+
+Ext.RegisterConsoleCommand("printitemstats", function(command, slot)
+	local target = CharacterGetHostCharacter()
+	---@type EsvCharacter
+	local characterObject = GameHelpers.GetCharacter(target)
+	if slot == nil then
+		for i,item in pairs(characterObject:GetInventoryItems()) do
+			PrintItemStats(item)
+		end
+	else
+		local item = CharacterGetEquippedItem(target, slot)
+		if item ~= nil then
+			PrintItemStats(item)
 		else
-			local item = CharacterGetEquippedItem(target, slot)
-			if item ~= nil then
-				PrintItemStats(item)
-			else
-				Ext.Utils.PrintError("[LeaderLib:printitemstats] Item as slot", slot, "does not exist!")
-			end
+			Ext.Utils.PrintError("[LeaderLib:printitemstats] Item as slot", slot, "does not exist!")
 		end
-	end)
+	end
+end)
+
+Ext.RegisterConsoleCommand("refreshui", function(cmd)
+	local host = CharacterGetHostCharacter()
+	GameHelpers.Net.PostToUser(host, "LeaderLib_UI_RefreshAll", host)
+end)
+
+Ext.RegisterConsoleCommand("permaboosttest", function(cmd)
+	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+	local weapon = GameHelpers.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
+	NRD_ItemSetPermanentBoostInt(weapon.MyGuid, "StrengthBoost", Ext.Utils.Random(1,30))
 	
-	Ext.RegisterConsoleCommand("refreshui", function(cmd)
-		local host = CharacterGetHostCharacter()
-		GameHelpers.Net.PostToUser(host, "LeaderLib_UI_RefreshAll", host)
-	end)
-	
-	Ext.RegisterConsoleCommand("permaboosttest", function(cmd)
-		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
-		local weapon = GameHelpers.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
-		NRD_ItemSetPermanentBoostInt(weapon.MyGuid, "StrengthBoost", Ext.Utils.Random(1,30))
-		
-		fprint(LOGLEVEL.TRACE, weapon.Stats.StatsEntry.StrengthBoost, NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
-		for i,v in pairs(weapon.Stats.DynamicStats) do
-			if v ~= nil and v.ObjectInstanceName ~= nil then
-				fprint(LOGLEVEL.TRACE, i,v.ObjectInstanceName,v.StrengthBoost)
-			else
-				fprint(LOGLEVEL.TRACE, i, "nil")
-			end
+	fprint(LOGLEVEL.TRACE, weapon.Stats.StatsEntry.StrengthBoost, NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
+	for i,v in pairs(weapon.Stats.DynamicStats) do
+		if v ~= nil and v.ObjectInstanceName ~= nil then
+			fprint(LOGLEVEL.TRACE, i,v.ObjectInstanceName,v.StrengthBoost)
+		else
+			fprint(LOGLEVEL.TRACE, i, "nil")
 		end
-		for i,v in pairs(weapon:GetGeneratedBoosts()) do
-			fprint(LOGLEVEL.TRACE, i,v)
-		end
-		GameHelpers.Net.PostToUser(host.MyGuid, "LeaderLib_UI_RefreshAll", host.MyGuid)
-	end)
-	
-	
-	Ext.RegisterConsoleCommand("heal", function(command, t)
-		local target = t or CharacterGetHostCharacter()
-		local data = Classes.CharacterData:Create(target)
+	end
+	for i,v in pairs(weapon:GetGeneratedBoosts()) do
+		fprint(LOGLEVEL.TRACE, i,v)
+	end
+	GameHelpers.Net.PostToUser(host.MyGuid, "LeaderLib_UI_RefreshAll", host.MyGuid)
+end)
+
+
+Ext.RegisterConsoleCommand("heal", function(command, t)
+	local target = t or CharacterGetHostCharacter()
+	local data = Classes.CharacterData:Create(target)
+	data:FullRestore(true)
+end)
+
+Ext.RegisterConsoleCommand("healall", function(command)
+	for player in GameHelpers.Character.GetPlayers(true) do
+		local data = Classes.CharacterData:Create(player.MyGuid)
 		data:FullRestore(true)
-	end)
-	
-	Ext.RegisterConsoleCommand("healall", function(command)
-		for player in GameHelpers.Character.GetPlayers(true) do
-			local data = Classes.CharacterData:Create(player.MyGuid)
-			data:FullRestore(true)
+	end
+end)
+
+Ext.RegisterConsoleCommand("mostlydead", function(command, t)
+	local target = t or CharacterGetHostCharacter()
+	CharacterSetHitpointsPercentage(target, 1.0)
+	CharacterSetArmorPercentage(target, 0.0)
+	CharacterSetMagicArmorPercentage(target, 0.0)
+end)
+
+Ext.RegisterConsoleCommand("resurrectparty", function(command)
+	for player in GameHelpers.Character.GetPlayers() do
+		if player.Dead then
+			--CharacterResurrect(player.MyGuid)
+			CharacterResurrectCustom(player.MyGuid, "Dance_01")
 		end
-	end)
-	
-	Ext.RegisterConsoleCommand("mostlydead", function(command, t)
-		local target = t or CharacterGetHostCharacter()
-		CharacterSetHitpointsPercentage(target, 1.0)
-		CharacterSetArmorPercentage(target, 0.0)
-		CharacterSetMagicArmorPercentage(target, 0.0)
-	end)
-	
-	Ext.RegisterConsoleCommand("resurrectparty", function(command)
-		for player in GameHelpers.Character.GetPlayers() do
-			if player.Dead then
-				--CharacterResurrect(player.MyGuid)
-				CharacterResurrectCustom(player.MyGuid, "Dance_01")
-			end
-		end
-	end)
-	
-	Ext.RegisterConsoleCommand("levelup", function(command, amount)
-		amount = amount or "1"
-		amount = tonumber(amount)
-		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
-		local nextLevel = math.min(Ext.ExtraData.LevelCap, host.Stats.Level + amount)
-		if amount > 0 then
-			CharacterLevelUpTo(host.MyGuid, nextLevel)
-		else
-			GameHelpers.Character.SetLevel(host, nextLevel)
-		end
-		Osi.CharacterLeveledUp(host.MyGuid)
-	end)
-	
-	Ext.RegisterConsoleCommand("setlevel", function(command, level)
-		level = level or "1"
-		level = tonumber(level)
-		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
-		GameHelpers.Character.SetLevel(host, level)
-		Osi.CharacterLeveledUp(host.MyGuid)
-	end)
-	
-	local function sleep(timeInMilliseconds)
+	end
+end)
+
+Ext.RegisterConsoleCommand("levelup", function(command, amount)
+	amount = amount or "1"
+	amount = tonumber(amount)
+	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+	local nextLevel = math.min(Ext.ExtraData.LevelCap, host.Stats.Level + amount)
+	if amount > 0 then
+		CharacterLevelUpTo(host.MyGuid, nextLevel)
+	else
+		GameHelpers.Character.SetLevel(host, nextLevel)
+	end
+	Osi.CharacterLeveledUp(host.MyGuid)
+end)
+
+Ext.RegisterConsoleCommand("setlevel", function(command, level)
+	level = level or "1"
+	level = tonumber(level)
+	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+	GameHelpers.Character.SetLevel(host, level)
+	Osi.CharacterLeveledUp(host.MyGuid)
+end)
+
+local function sleep(timeInMilliseconds)
 		---This blocks the server thread while running, so best leave this only for debug mode
 		if Vars.DebugMode then
 			local time = Ext.Utils.MonotonicTime()
@@ -1446,6 +1378,8 @@ Ext.RegisterConsoleCommand("tplevel", function (cmd, region)
 		CoS_Main = "8c00afb8-43af-4de7-953a-a7456f996a4c",
 		ARX_Main = "fb573f96-d837-0033-4143-3bf31d88ae49",
 		ARX_Endgame = "bd166e2a-7623-490e-94df-78079e7cbacc",
+		TestLevel_LL_LeaderLib = "a5918303-c5da-87b6-19bb-d55f16f2025c",
+		LLAPOC_Test = "dde72a37-0176-8dab-4430-992e60ef79f3",
 	}
 	local trigger = triggers[region]
 	if trigger then

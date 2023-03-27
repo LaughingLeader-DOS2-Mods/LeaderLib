@@ -1,5 +1,76 @@
 local MessageData = Classes.MessageData
 
+local function ResetLua()
+	if not Ext.Debug.IsDeveloperMode() then
+		error("!luareset can only be reset in developer mode. True reset instead", 2)
+	end
+	local varData = {
+		_PrintSettings = Vars.Print,
+		_CommandSettings = Vars.Commands,
+	}
+	
+	for name,data in pairs(Mods) do
+		if data.PersistentVars ~= nil then
+			local b,err = xpcall(Common.JsonStringify, debug.traceback, data.PersistentVars)
+			if not b then
+				Ext.Utils.PrintError("Error stringifying PersistentVars for", name)
+				local checkTable = nil
+				checkTable = function(tbl,space)
+					for k,v in pairs(tbl) do
+						if type(k) == "userdata" or type(v) == "userdata" then
+							Ext.Utils.PrintError(string.format("%s%s",space,k),v)
+						elseif type(v) == "table" then
+							Ext.Utils.PrintError(string.format("%s%s",space,k))
+							checkTable(v,space .. " ")
+						end
+					end
+				end
+				checkTable(data.PersistentVars, "")
+			end
+			varData[name] = TableHelpers.SanitizeTable(data.PersistentVars, nil, true)
+		end
+	end
+	if varData ~= nil then
+		GameHelpers.IO.SaveJsonFile("LeaderLib_Debug_PersistentVars.json", varData)
+	end
+	TimerCancel("Timers_LeaderLib_Debug_LuaReset")
+	GlobalSetFlag("LeaderLib_ResettingLua")
+	TimerLaunch("Timers_LeaderLib_Debug_LuaReset", 500)
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:luareset] Reseting lua.")
+	NRD_LuaReset(1,1,1)
+	Vars.JustReset = true
+end
+
+local function OnLuaResetCommand(cmd, delay)
+	if delay == "" then
+		delay = nil
+	end
+	Vars.Resetting = true
+	Events.BeforeLuaReset:Invoke({})
+	--GameHelpers.Net.Broadcast("LeaderLib_Client_InvokeListeners", "BeforeLuaReset")
+	delay = delay or 1000
+	fprint(LOGLEVEL.WARNING, "[LeaderLib:luareset] Resetting lua after (%s) ms", delay)
+	if delay ~= nil then
+		delay = tonumber(delay)
+		if delay > 0 then
+			TimerLaunch("Timers_LeaderLib_Debug_ResetLua", delay)
+		else
+			ResetLua()
+		end
+	else
+		ResetLua()
+	end
+end
+
+Ext.Osiris.RegisterListener("TimerFinished", 1, "after", function (timerName)
+	if timerName == "Timers_LeaderLib_Debug_ResetLua" then
+		ResetLua()
+	end
+end)
+
+Ext.RegisterConsoleCommand("luareset", OnLuaResetCommand)
+Ext.RegisterNetListener("LeaderLib_Client_RequestLuaReset", OnLuaResetCommand)
+
 Ext.RegisterConsoleCommand("pos", function()
 	---@type StatCharacter
 	local character = CharacterGetHostCharacter()
@@ -154,8 +225,10 @@ Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force
 		--Invulnerable/Immortality can block statuses
 		force = 1
 	end
-	fprint(LOGLEVEL.TRACE, command,status,target,source,duration,force)
-	ApplyStatus(target,status,duration,force,source)
+	force = force == 1
+	fprint(LOGLEVEL.TRACE, "statusapply Status(\"%s\") Target(%s) Source(%s) Duration(%s) Force(%s)",status,target,source,duration,force)
+	GameHelpers.Status.Apply(target, status, duration, force, source)
+	--ApplyStatus(target,status,duration,force,source)
 end)
 
 -- !statusremove LLLICH_DOMINATED_BEAM_FX 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0

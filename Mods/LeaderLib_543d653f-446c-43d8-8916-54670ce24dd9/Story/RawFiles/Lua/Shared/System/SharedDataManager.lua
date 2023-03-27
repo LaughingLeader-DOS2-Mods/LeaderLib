@@ -70,6 +70,53 @@ SetCurrentLevelData()
 Ext.Events.SessionLoading:Subscribe(SetCurrentLevelData)
 Ext.Events.SessionLoaded:Subscribe(SetCurrentLevelData)
 
+---@param region string
+---@return RegionChangedEventArgs
+local function _GetRegionChangedEventData(region)
+	local level = Ext.Entity.GetCurrentLevel()
+	local data = {
+		Region = region,
+		State = SharedData.RegionData.State,
+		LevelType = SharedData.RegionData.LevelType,
+		Level = level,
+	}
+	data.GetAllCharacters = function (castType, asTable)
+		if castType == true then asTable = true end
+		local entries = level.CharacterManager.RegisteredCharacters
+
+		if not asTable then
+			local i = 0
+			local count = #entries
+			return function ()
+				i = i + 1
+				if i <= count then
+					return entries[i]
+				end
+			end
+		else
+			return entries
+		end
+	end
+	data.GetAllItems = function (castType, asTable)
+		if castType == true then asTable = true end
+		local entries = level.ItemManager.Items
+
+		if not asTable then
+			local i = 0
+			local count = #entries
+			return function ()
+				i = i + 1
+				if i <= count then
+					return entries[i]
+				end
+			end
+		else
+			return entries
+		end
+	end
+	return data
+end
+
 if not _ISCLIENT then
 	---@param id integer
 	---@param profile string
@@ -213,22 +260,14 @@ if not _ISCLIENT then
 	Ext.Osiris.RegisterListener("RegionStarted", 1, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.STARTED
 		GameHelpers.Data.SetRegion(region)
-		Events.RegionChanged:Invoke({
-			Region = region,
-			State = SharedData.RegionData.State,
-			LevelType = SharedData.RegionData.LevelType
-		})
+		Events.RegionChanged:Invoke(_GetRegionChangedEventData(region))
 		GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
 	end)
 	
 	Ext.Osiris.RegisterListener("GameStarted", 2, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.GAME
 		GameHelpers.Data.SetRegion(region)
-		Events.RegionChanged:Invoke({
-			Region = region,
-			State = SharedData.RegionData.State,
-			LevelType = SharedData.RegionData.LevelType
-		})
+		Events.RegionChanged:Invoke(_GetRegionChangedEventData(region))
 		if Ext.GetGameState() ~= "Running" then
 			GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
 		end
@@ -237,11 +276,7 @@ if not _ISCLIENT then
 	Ext.Osiris.RegisterListener("RegionEnded", 1, "after", function(region)
 		SharedData.RegionData.State = REGIONSTATE.ENDED
 		GameHelpers.Data.SetRegion(region)
-		Events.RegionChanged:Invoke({
-			Region = region,
-			State = SharedData.RegionData.State,
-			LevelType = SharedData.RegionData.LevelType
-		})
+		Events.RegionChanged:Invoke(_GetRegionChangedEventData(region))
 		if Ext.GetGameState() ~= "Running" then
 			GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
 		end
@@ -250,11 +285,8 @@ if not _ISCLIENT then
 	Events.LuaReset:Subscribe(function(e)
 		SharedData.RegionData.State = REGIONSTATE.GAME
 		GameHelpers.Data.SetRegion(e.Region)
-		Events.RegionChanged:Invoke({
-			Region = SharedData.RegionData.Current,
-			State = SharedData.RegionData.State,
-			LevelType = SharedData.RegionData.LevelType
-		})
+		_GetRegionChangedEventData(SharedData.RegionData.Current)
+		Events.RegionChanged:Invoke(_GetRegionChangedEventData(SharedData.RegionData.Current))
 		GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
 	end)
 
@@ -596,11 +628,7 @@ if _ISCLIENT then
 			end
 
 			if invokeRegionChanged then
-				Events.RegionChanged:Invoke({
-					Region = SharedData.RegionData.Current,
-					State = SharedData.RegionData.State,
-					LevelType = SharedData.RegionData.LevelType
-				})
+				Events.RegionChanged:Invoke(_GetRegionChangedEventData(SharedData.RegionData.Current))
 			end
 		end
 	end)
@@ -637,11 +665,7 @@ if _ISCLIENT then
 				Events.Initialized:Invoke({Region=SharedData.RegionData.Current})
 			end
 			if invokeRegionChanged then
-				Events.RegionChanged:Invoke({
-					Region = SharedData.RegionData.Current,
-					State = SharedData.RegionData.State,
-					LevelType = SharedData.RegionData.LevelType
-				})
+				Events.RegionChanged:Invoke(_GetRegionChangedEventData(SharedData.RegionData.Current))
 			end
 			return true
 		else

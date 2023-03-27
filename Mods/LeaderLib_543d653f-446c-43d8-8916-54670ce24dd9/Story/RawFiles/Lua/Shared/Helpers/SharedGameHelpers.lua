@@ -962,8 +962,12 @@ end
 ---@param skillId string The skill ID, i.e "Projectile_Fireball".
 ---@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
 ---@param skillParams StatEntrySkillData|nil A table of attributes to set on the skill table before calculating the damage.
+---@param noRandomization? boolean
 ---@return StatsDamagePairList|nil
-function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams)
+function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams, noRandomization)
+	if noRandomization == nil then
+		noRandomization = true
+	end
 	if not StringHelpers.IsNullOrWhitespace(skillId) then
 		local skill = GameHelpers.Ext.CreateSkillTable(skillId, nil, true)
 		if skill ~= nil then
@@ -987,16 +991,17 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams)
 				if Ext.Events.GetSkillDamage then
 					---@type {Attacker:StatCharacter, AttackerPosition:number[], DamageList:DamageList, DeathType:DeathType, IsFromItem:boolean, Level:integer, Skill:StatEntrySkillData, Stealthed:boolean, TargetPosition:number[]}
 					local evt = {
-						Skill = skill,
+						Stopped = false,
 						Attacker = character.Stats,
 						AttackerPosition = character.WorldPos,
-						TargetPosition = character.WorldPos,
 						DamageList = Ext.Stats.NewDamageList(),
 						DeathType = "None",
-						Stealthed = character.Stats.IsSneaking == true,
 						IsFromItem = false,
 						Level = character.Stats.Level,
-						Stopped = false
+						NoRandomization = noRandomization == true,
+						Skill = skill,
+						Stealthed = character.Stats.IsSneaking == true,
+						TargetPosition = character.WorldPos,
 					}
 					evt.StopPropagation = function (self)
 						evt.Stopped = true
@@ -1017,7 +1022,7 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams)
 				end
 
 				if useDefaultSkillDamage then
-					local damageList,deathType = Game.Math.GetSkillDamage(skill, character.Stats, false, false, character.WorldPos, character.WorldPos, character.Stats.Level, true, nil, nil)
+					local damageList,deathType = Game.Math.GetSkillDamage(skill, character.Stats, false, character.Stats.IsSneaking == true, character.WorldPos, character.WorldPos, character.Stats.Level, noRandomization, nil, nil)
 					return damageList
 				end
 			end

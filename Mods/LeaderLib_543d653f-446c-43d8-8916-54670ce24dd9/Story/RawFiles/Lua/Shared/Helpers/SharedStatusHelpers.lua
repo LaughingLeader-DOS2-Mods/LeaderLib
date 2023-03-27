@@ -544,6 +544,8 @@ function GameHelpers.Status.GetHealAmount(statusId, opts)
 		options.HealStat = stat.HealStat
 		options.HealType = stat.HealType
 		options.HealMultiplier = 1.0
+	else
+		error(string.format("Failed to get status for statusId (%s)", statusId), 2)
 	end
 	if type(opts) == "table" then
 		for k,v in pairs(opts) do

@@ -252,7 +252,7 @@ LeaderLib_Timers_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDu
 //SetVisible(_Dummy, 1);
 DB_LeaderLib_Skills_Temp_ListenForTargetCast(_Dummy, _Caster, _Target, _Skill);
 CharacterUseSkill(_Dummy, _Skill, _Target, 1, 1, 1);
-LeaderLib_Skills_MarkDummyForReset(_Dummy, 3000);
+LeaderLib_Skills_MarkDummyForReset(_Dummy, 5000);
 
 IF
 CharacterUsedSkillOnTarget(_Dummy, _Target, _Skill, _Skilltype, _SkillElement)
@@ -295,7 +295,7 @@ LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyArrived] Skill dummy is usin
 LeaderLib_Timers_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDummyCasting");
 DB_LeaderLib_Skills_Temp_ListenForPositionCast(_Dummy, _Caster, _x, _y, _z, _Skill);
 CharacterUseSkillAtPosition(_Dummy, _Skill, _x, _y, _z, 1, 1);
-LeaderLib_Skills_MarkDummyForReset(_Dummy, 3000);
+LeaderLib_Skills_MarkDummyForReset(_Dummy, 5000);
 
 IF
 CharacterUsedSkillAtPosition(_Dummy, _x, _y, _z, _Skill, _Skilltype, _SkillElement)
@@ -339,7 +339,7 @@ SkillCast(_Dummy, _Skill, _, _)
 AND
 ObjectGetFlag(_Dummy, "LeaderLib_IsSkillDummy", 1)
 THEN
-LeaderLib_Skills_MarkDummyForReset(_Dummy, 2500);
+LeaderLib_Skills_MarkDummyForReset(_Dummy, 5000);
 LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillCast(Dummy)] Skill dummy cast skill [",_Skill,"]. Resetting dummy after 2500ms.");
 //END_REGION
 
@@ -364,6 +364,7 @@ LeaderLib_Skills_Internal_PrepareDummyStats(_Dummy, _Caster, _CopyStats, _CopyEq
 CharacterSetDetached(_Dummy, 1);
 SetOnStage(_Dummy, 1);
 SetVarString(_Dummy, "LeaderLib_SkillDummyID", _ID);
+SetVarObject(_Dummy, "LeaderLib_Dummy_Owner", _Caster);
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
 
 PROC
@@ -383,6 +384,7 @@ CharacterMakeStoryNpc(_Dummy, 1);
 SetVisible(_Dummy, 0);
 CharacterSetDetached(_Dummy, 1);
 SetVarString(_Dummy, "LeaderLib_SkillDummyID", _ID);
+SetVarObject(_Dummy, "LeaderLib_Dummy_Owner", _Caster);
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
 
 PROC
@@ -401,7 +403,6 @@ SetCanJoinCombat(_Dummy, 0);
 SetCanFight(_Dummy, 0);
 SetTag(_Dummy, "LeaderLib_Dummy");
 SetTag(_Dummy, "SUMMON"); // For Crime/etc to ignore the dummy
-SetVarObject(_Dummy, "LeaderLib_Dummy_Owner", _Caster);
 LeaderLib_ToggleScripts_EnableScript("LeaderLib_DummyCrimesEnabled", "LeaderLib");
 //LeaderLib_Timers_StartCharacterCharacterTimer(_Dummy, _Caster, 50, "LeaderLib_Timers_SkillDummy_CopyStats", "LeaderLib_Commands_SkillDummy_CopyStats")
 

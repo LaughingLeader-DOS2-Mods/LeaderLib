@@ -476,6 +476,7 @@ end
 ---@param obj ObjectParam
 ---@param pos vec3
 function GameHelpers.Utils.SetPosition(obj, pos)
+	assert(GameHelpers.Math.IsPosition(pos), "Param 2 is not a position")
 	local object = GameHelpers.TryGetObject(obj)
 	if object and object.Translate then
 		object.Translate = pos

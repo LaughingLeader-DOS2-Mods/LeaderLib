@@ -6,6 +6,17 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.2",
+			"Changes": [
+				"Fixed an issue causing Future Barrage in Weapon Expansion to not deal damage.",
+				"API Changes:",
+				"\t• Reworked Events.OnHeal to be invoked for HEALING and HEAL statuses. It no longer tries to find the related healing status for heal types (this was unreliable), due to it being preferrable to edit the HealAmount on the healing status itself, which is possible now.",
+				"\t• Added GetEnterChance to StatusManager.Subscribe.",
+				"\t• Added GameHelpers.Status.GetHealAmount and GameHelpers.Math.CalculateHealAmount.",
+				"\t• The SkillManager now tracks how many listeners have subscribed to specific skills. This is so when unsubscribing, the 'enabled skills' are updated (i.e. if 1 mod listens for Fireball, but then it unsubscribes, the SkillManager will skip invoking events for Fireball)."
+			]
+		},
+		{
 			"Version": "1.7.31.1",
 			"Changes": [
 				"Added a description for the 'Reload Stat Changes Config' button in LeaderLib's Mod Settings menu.",

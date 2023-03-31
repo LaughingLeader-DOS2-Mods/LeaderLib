@@ -32,7 +32,7 @@ TurnCounter._Internal = _INTERNAL
 ---@field Target Guid An optional target for this counter. If set then only their turn ending will count the timer down.
 ---@field Infinite boolean If true, this counter will count until stopped, or if the counter is cleared (target death if ClearOnDeath is set). 
 ---@field Mode TURNCOUNTER_MODE
----@field Data table Optional data to store in PersistentVars, such as a UUID.
+---@field Extra table Optional extra data to store in PersistentVars, such as `{Source=source.MyGuid}`.
 
 function _INTERNAL.CleanupData(uniqueId)
 	_PV.TurnCounterData[uniqueId] = nil
@@ -74,7 +74,8 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, target, par
 		Combat = combatID,
 		Mode = mode,
 		Target = target,
-		Infinite = false
+		Infinite = false,
+		Extra = {},
 		--OutOfCombatSpeed = 6000
 	}
 	if type(params) == "table" then

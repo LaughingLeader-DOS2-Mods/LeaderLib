@@ -574,6 +574,7 @@ if not _ISCLIENT then
 	---@field StatusId string
 	---@field StatusType "HEAL"|"HEALING"
 	---@field HealStat StatusHealType The Status.HealType for EsvStatusHeal, or Status.HealStat for EsvStatusHealing.
+	---@field HealEffect HealEffect
 	---@field OriginalAmount integer The HealAmount before listeners were invoked.
 	---@field Skill string|nil The skill possibility associated with this HEAL/HEALING status combination, if Source is set. This is the last healing skill the character casted, if it matches with the HEALING type status it thinks is associated with this HEAL.
 	---@field EnterEvent EsvLuaStatusGetEnterChanceEvent|LuaEventBase The event data from Ext.Events.StatusGetEnterChance.

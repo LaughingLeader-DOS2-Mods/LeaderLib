@@ -12,9 +12,9 @@ local _xpcall = xpcall
 local _traceback = debug.traceback
 local _tblremove = table.remove
 
-local _printError = Ext.PrintError
-local _printWarning = Ext.PrintWarning
-local _print = Ext.Print
+local _printError = Ext.Utils.PrintError
+local _printWarning = Ext.Utils.PrintWarning
+local _print = Ext.Utils.Print
 local _format = string.format
 local _sline = Lib.serpent.line
 local _serpentOpts = {SimplifyUserdata=true}
@@ -48,7 +48,7 @@ end
 ---Example: SubscribableEvent<CharacterResurrectedEventArgs>
 ---@see SubscribableEventArgs
 ---@see LeaderLibSubscriptionEvents
----@class LeaderLibSubscribableEvent<T>:{(Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer|nil, Once:boolean|nil, MatchArgs:T|(fun(e:T):boolean)|nil, CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:T|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil, getArgForMatch:(fun(self:T, argKey:string, matchedValue:any):any)|nil):SubscribableEventInvokeResult)}
+---@class LeaderLibSubscribableEvent<T>:{(Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer|nil, Once:boolean|nil, MatchArgs:T|(fun(e:T):boolean)|nil, CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:T|(fun(e:T):boolean)|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, unpackedKeyOrder:string[]|nil, getArgForMatch:(fun(self:T, argKey:string, matchedValue:any):any)|nil):SubscribableEventInvokeResult)}
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string

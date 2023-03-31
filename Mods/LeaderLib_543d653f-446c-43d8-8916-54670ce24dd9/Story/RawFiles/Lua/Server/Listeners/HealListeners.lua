@@ -60,6 +60,7 @@ Ext.Events.StatusGetEnterChance:Subscribe(function(e)
 		end
 
 		local healType = ""
+		local healEffect = e.Status.HealEffect
 
 		if statusType == "HEAL" then
 			healType = e.Status.HealType
@@ -76,6 +77,7 @@ Ext.Events.StatusGetEnterChance:Subscribe(function(e)
 			StatusId=statusId,
 			StatusType = statusType,
 			HealStat = healType,
+			HealEffect = healEffect,
 			Amount=e.Status.HealAmount,
 			Skill=skill,
 		})

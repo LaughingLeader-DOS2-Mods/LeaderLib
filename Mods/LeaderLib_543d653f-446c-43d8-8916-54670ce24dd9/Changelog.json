@@ -11,8 +11,10 @@
 				"Fixed an issue causing Future Barrage in Weapon Expansion to not deal damage.",
 				"API Changes:",
 				"\t• Reworked Events.OnHeal to be invoked for HEALING and HEAL statuses. It no longer tries to find the related healing status for heal types (this was unreliable), due to it being preferrable to edit the HealAmount on the healing status itself, which is possible now.",
-				"\t• Added GetEnterChance to StatusManager.Subscribe.",
+				"\t• Added StatusManager.Subscribe.GetEnterChance.",
 				"\t• Added GameHelpers.Status.GetHealAmount and GameHelpers.Math.CalculateHealAmount.",
+				"\t• Events.RegionChanged now includes the level data (e.Level).",
+				"\t• Events.ClientCharacterChanged is now invoked when an origin preset changes in character creation.",
 				"\t• The SkillManager now tracks how many listeners have subscribed to specific skills. This is so when unsubscribing, the 'enabled skills' are updated (i.e. if 1 mod listens for Fireball, but then it unsubscribes, the SkillManager will skip invoking events for Fireball)."
 			]
 		},

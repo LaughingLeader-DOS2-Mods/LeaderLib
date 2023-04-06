@@ -120,13 +120,6 @@ function TranslatedString:Create(handle, fallback, params)
 	return this
 end
 
----@param format string Text to wrap around the content. Should include an %s for the content's position in the string, such as <font color='#FF0000'>%s</font>
----@return TranslatedString
-function TranslatedString:WithFormat(format)
-	self.Format = format
-	return self
-end
-
 ---@param key string
 ---@param fallback string|nil
 ---@param params TranslatedStringOptions|nil
@@ -147,6 +140,43 @@ function TranslatedString:CreateFromKey(key, fallback, params)
 	_setmetatable(this, _TSTRING_META)
 	_registeredStrings[#_registeredStrings+1] = this
 	return this
+end
+
+---Use with Create and CreateFromKey to create new translated string instances with default settings.
+---@class TranslatedStringCreationWrapper:TranslatedString
+
+---@param defaultParams TranslatedStringOptions
+---@return TranslatedStringCreationWrapper
+function TranslatedString:WithDefaultSettings(defaultParams)
+	local wrapper = {
+		Create = function(_, handle, fallback, params)
+			if params then
+				local combinedParams = TableHelpers.Clone(defaultParams)
+				TableHelpers.CopyKeys(combinedParams, params)
+				return TranslatedString:Create(handle, fallback, combinedParams)
+			else
+				return TranslatedString:Create(handle, fallback, defaultParams)
+			end
+		end,
+		CreateFromKey = function (_, key, fallback, params)
+			if params then
+				local combinedParams = TableHelpers.Clone(defaultParams)
+				TableHelpers.CopyKeys(combinedParams, params)
+				return TranslatedString:CreateFromKey(key, fallback, combinedParams)
+			else
+				return TranslatedString:CreateFromKey(key, fallback, defaultParams)
+			end
+		end
+	}
+	setmetatable(wrapper, {__index = TranslatedString})
+	return wrapper
+end
+
+---@param format string Text to wrap around the content. Should include an %s for the content's position in the string, such as <font color='#FF0000'>%s</font>
+---@return TranslatedString
+function TranslatedString:WithFormat(format)
+	self.Format = format
+	return self
 end
 
 ---@private

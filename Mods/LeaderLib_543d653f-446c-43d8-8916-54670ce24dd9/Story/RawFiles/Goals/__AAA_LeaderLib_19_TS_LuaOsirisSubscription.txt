@@ -944,12 +944,12 @@ DB_NOOP(1);
 
 //Why is this running?
 IF
-SavegameLoaded(_,_,_,_)
+SavegameLoading(_,_,_,_)
 THEN
 GoalCompleted;
 
 IF
-GameStarted(_,_)
+RegionStarted(_)
 THEN
 GoalCompleted;
 

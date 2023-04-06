@@ -193,7 +193,6 @@ function ParseHealingStatusToSkills()
 			Vars.HealingStatusHealEffectIdToStatus[id] = b
 		end
 	end
-	Ext.Dump({"Vars.HealingStatusHealEffectIdToStatus", Vars.HealingStatusHealEffectIdToStatus})
 end
 
 Ext.Events.SessionLoaded:Subscribe(function()

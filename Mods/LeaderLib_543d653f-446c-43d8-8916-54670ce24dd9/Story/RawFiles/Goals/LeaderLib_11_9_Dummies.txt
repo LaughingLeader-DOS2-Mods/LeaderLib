@@ -15,7 +15,7 @@ AND
 CharacterGetHostCharacter(_Host)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_11_9_Dummies] Moved TargetHelper_A dummy into level (",_Region,")");
-TeleportTo(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, _Host, "", 0, 1);
+TeleportTo(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, _Host, "", 0, 1, 1);
 SetOnStage(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, 0);
 //CharacterSetDetached(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, 1);
 

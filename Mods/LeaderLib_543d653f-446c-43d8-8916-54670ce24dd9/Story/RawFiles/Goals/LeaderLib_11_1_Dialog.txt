@@ -379,7 +379,7 @@ LeaderLib_Helper_QRY_ClearObjectFlag(_Object, _Flag)
 AND
 NOT ObjectGetFlag(_Object, "LeaderLib_ForceApplyStatus", _)
 THEN
-ApplyStatus(_Object, _Status, _Duration, 0);
+ApplyStatus(_Object, _Status, _Duration, 0, _Object);
 
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
@@ -391,7 +391,7 @@ AND
 ObjectGetFlag(_Object, "LeaderLib_ForceApplyStatus", _Force)
 THEN
 ObjectClearFlag(_Object, "LeaderLib_ForceApplyStatus", 0);
-ApplyStatus(_Object, _Status, _Duration, _Force);
+ApplyStatus(_Object, _Status, _Duration, _Force, _Object);
 
 /*
 IF

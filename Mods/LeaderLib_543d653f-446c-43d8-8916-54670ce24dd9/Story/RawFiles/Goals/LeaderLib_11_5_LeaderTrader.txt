@@ -583,7 +583,7 @@ LeaderLib_CreateByStat_Start(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipm
 PROC
 LeaderLib_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, (STRING)_Level)
 THEN
-ApplyStatus(_LeaderTrader, "LEADERLIB_PACIFIST", -1.0, 1);
+ApplyStatus(_LeaderTrader, "LEADERLIB_PACIFIST", -1.0, 1, _LeaderTrader);
 LeaderLib_Helper_RefreshEquipment(_LeaderTrader);
 
 IF
@@ -791,7 +791,7 @@ AND
 DB_LeaderLib_Traders_LevelPosition("LeaderLib.LeaderTrader", _Level, _x, _y, _z)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] [ERROR] LeaderTrader was unable to spawn via [LeaderLib_Traders_Internal_CreateTrader]! Attempting to teleport to position manually.");
-TeleportToPosition(_LeaderTrader, _x, _y, _z, "LeaderLib_Events_OnTraderTeleported", 0);
+TeleportToPosition(_LeaderTrader, _x, _y, _z, "LeaderLib_Events_OnTraderTeleported", 0, 1);
 DB_LeaderLib_Traders_Active(_LeaderTrader, "LeaderLib.LeaderTrader", _Level);
 //END_REGION
 
@@ -828,7 +828,7 @@ DB_LeaderLib_LeaderTrader_Temp_HasNewItems(1)
 AND
 HasActiveStatus(_LeaderTrader, "LEADERLIB_NEW_ITEMS", 0)
 THEN
-ApplyStatus(_LeaderTrader, "LEADERLIB_NEW_ITEMS", 180.0, 1);
+ApplyStatus(_LeaderTrader, "LEADERLIB_NEW_ITEMS", 180.0, 1, _LeaderTrader);
 LeaderLib_LeaderTrader_Internal_ClearHasNewItems();
 
 PROC

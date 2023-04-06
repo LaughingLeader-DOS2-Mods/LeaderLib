@@ -671,7 +671,7 @@ SelectAndStartDialog((GUIDSTRING)_Player,(GUIDSTRING)_Companion)
 AND
 NOT DB_FoundDialog(_Companion,_Player)
 AND
-DB_RelationshipDialogs((CHARACTERGUID)_Companion,_Dialog)
+DB_RelationshipDialogs((CHARACTERGUID)_Companion,(STRING)_Dialog)
 AND
 DB_CompanionAvatarBond((CHARACTERGUID)_Companion,(CHARACTERGUID)_Player)
 AND

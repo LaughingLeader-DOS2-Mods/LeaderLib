@@ -1,7 +1,7 @@
 ---@meta
 ---@diagnostic disable
 
---This file is never actually loaded, and is used to make EmmyLua work better.
+--This file is never actually loaded, and is used to make the vscode extension work better.
 
 if not Mods then Mods = {} end
 

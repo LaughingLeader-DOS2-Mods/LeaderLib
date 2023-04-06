@@ -726,7 +726,7 @@ AND
 DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object)
 THEN
 //DB_LeaderLib_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", "object");
-TeleportTo(_Trader, _Object, "LeaderLib_Events_OnTraderTeleported", 0);
+TeleportTo(_Trader, _Object, "LeaderLib_Events_OnTraderTeleported", 0, 1, 1);
 DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 
 PROC
@@ -739,7 +739,7 @@ DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 //GetPosition(_Trigger,_x,_y,_z)
 THEN
 //DB_LeaderLib_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", "trigger");
-TeleportTo(_Trader, _Trigger, "LeaderLib_Events_OnTraderTeleported", 0);
+TeleportTo(_Trader, _Trigger, "LeaderLib_Events_OnTraderTeleported", 0, 1, 1);
 DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 
 PROC
@@ -755,8 +755,8 @@ THEN
 //Workaround for global characters not showing up after teleporting to a position
 ObjectSetFlag(_Trader, "LeaderLib_Internal_TeleportWorkaroundActive", 0);
 SetVisible(_Trader, 0);
-TeleportTo(_Trader, _Host, "", 0);
-TeleportToPosition(_Trader, _x,_y,_z, "LeaderLib_Events_OnTraderTeleported", 0);
+TeleportTo(_Trader, _Host, "", 0, 1, 1);
+TeleportToPosition(_Trader, _x,_y,_z, "LeaderLib_Events_OnTraderTeleported", 0, 1);
 DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 
 IF
@@ -1304,7 +1304,7 @@ IsTagged(_Trader, "LeaderLib_Trader_DisableStockStatus", 0)
 AND
 HasActiveStatus(_Trader, "LEADERLIB_NEW_ITEMS", 0)
 THEN
-ApplyStatus(_Trader, "LEADERLIB_NEW_ITEMS", 180.0, 1);
+ApplyStatus(_Trader, "LEADERLIB_NEW_ITEMS", 180.0, 1, _Trader);
 
 PROC
 LeaderLib_Traders_ApplyNewStockStatus((CHARACTERGUID)_Trader)

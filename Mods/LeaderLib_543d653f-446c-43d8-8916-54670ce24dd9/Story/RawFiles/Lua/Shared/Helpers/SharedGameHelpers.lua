@@ -767,8 +767,8 @@ function GameHelpers.GetLevelType(levelName)
 	return LEVELTYPE.GAME
 end
 
----@param levelType LEVELTYPE
----@param levelName string|nil Optional level to use when checking.
+---@param levelType LEVELTYPE|string
+---@param levelName? string Optional level to use when checking.
 ---@return boolean
 function GameHelpers.IsLevelType(levelType, levelName)
 	--Assuming levelType is actually levelName and levelName is LEVELTYPE, swap the params

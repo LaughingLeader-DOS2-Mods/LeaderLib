@@ -830,7 +830,7 @@ AND
 DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, _Slot)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetApplied] Adding skill [",_Skill,"] to player.");
-CharacterAddSkill(_Player, _Skill);
+CharacterAddSkill(_Player, _Skill, 0);
 NOT DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, _Slot);
 // [END_NO_OSITOOLS]
 

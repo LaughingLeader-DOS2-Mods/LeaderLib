@@ -119,7 +119,7 @@ local function PrepareText(name, v, isCheckbox, entryType)
 			end
 		end
 	end
-	if Vars.DebugMode and v.Type == "FlagData" then
+	if v and Vars.DebugMode and v.Type == "FlagData" then
 		tooltip = string.format("%s<br><font color='#44AAFF'>(Flag: <font color='#FFAA33'>%s</font>)</font>", tooltip, v.ID)
 	end
 	return displayName,tooltip

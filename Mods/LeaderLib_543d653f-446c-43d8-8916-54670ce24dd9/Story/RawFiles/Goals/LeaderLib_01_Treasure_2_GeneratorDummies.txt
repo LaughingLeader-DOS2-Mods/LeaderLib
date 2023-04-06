@@ -194,7 +194,7 @@ NOT DB_LeaderLib_Treasure_NextGeneratorDummy(_, _DummyID)
 AND
 LeaderLib_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID(_Dummy, _DummyID)
 THEN
-TeleportTo(_Dummy, _AtObject, "", 0);
+TeleportTo(_Dummy, _AtObject, "", 0, 1, 1);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:GetNextDummy] Dummy found. Set ID to [",_DummyID,"] and setting as the next dummy.");
 SetVarString(_Dummy, "LeaderLib_DummyID", _DummyID);
 DB_LeaderLib_Treasure_NextGeneratorDummy(_Dummy, _DummyID);

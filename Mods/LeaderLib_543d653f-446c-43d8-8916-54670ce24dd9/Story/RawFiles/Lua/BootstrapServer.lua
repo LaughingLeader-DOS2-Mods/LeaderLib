@@ -175,14 +175,14 @@ end
 function SetModIsActiveFlag(uuid, modid)
 	--local flag = string.gsub(modid, "%s+", "_") -- Replace spaces
 	local flag = tostring(modid).. "_IsActive"
-	local flagEnabled = GlobalGetFlag(flag)
-	if NRD_IsModLoaded(uuid) == 1 then
+	local flagEnabled = Osi.GlobalGetFlag(flag)
+	if Ext.Mod.IsModLoaded(uuid) then
 		if flagEnabled == 0 then
-			GlobalSetFlag(flag)
+			Osi.GlobalSetFlag(flag)
 		end
 	else
 		if flagEnabled == 1 then
-			GlobalClearFlag(flag)
+			Osi.GlobalClearFlag(flag)
 		end
 	end
 end
@@ -237,20 +237,20 @@ Ext.Require("Server/Updates.lua")
 ---@param fallback string
 function SetCustomNameWithLocalization(char,handle,fallback)
 	local name,_ = Ext.L10N.GetTranslatedString(handle, fallback)
-	CharacterSetCustomName(char, name)
+	Osi.CharacterSetCustomName(char, name)
 end
 
-Ext.NewQuery(GetSkillEntryName, "LeaderLib_Ext_QRY_GetSkillEntryName", "[in](STRING)_SkillPrototype, [out](STRING)_SkillId")
+Ext.Osiris.NewQuery(GetSkillEntryName, "LeaderLib_Ext_QRY_GetSkillEntryName", "[in](STRING)_SkillPrototype, [out](STRING)_SkillId")
 
 local function RandomQRY(min,max)
 	if min == nil then min = 0 end
 	if max == nil then max = 0 end
 	return Ext.Utils.Random(min,max)
 end
-Ext.NewQuery(RandomQRY, "LeaderLib_Ext_Random", "[in](INTEGER)_Min, [in](INTEGER)_Max, [out](INTEGER)_Ran")
+Ext.Osiris.NewQuery(RandomQRY, "LeaderLib_Ext_Random", "[in](INTEGER)_Min, [in](INTEGER)_Max, [out](INTEGER)_Ran")
 
 --Outdated editor version
-if Ext.GameVersion() == "v3.6.51.9303" then
+if Ext.Utils.GameVersion() == "v3.6.51.9303" then
 	--The lua helper goal contains 3 new events not in the editor version, so we swap this out to avoid the initial compile error in the editor
 	Ext.IO.AddPathOverride("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Goals/LeaderLib_19_TS_LuaOsirisSubscription_Generated.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OutdatedEditorEventsFix.txt")
 	Ext.IO.AddPathOverride("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Goals/__AAA_LeaderLib_19_TS_LuaOsirisSubscription.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OutdatedEditorQueriesFix.txt")

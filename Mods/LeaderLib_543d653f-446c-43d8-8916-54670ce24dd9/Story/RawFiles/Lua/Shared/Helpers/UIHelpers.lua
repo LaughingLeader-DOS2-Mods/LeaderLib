@@ -133,9 +133,9 @@ if not _ISCLIENT then
 	---@param status string
 	---@param turns integer
 	function GameHelpers.UI.RefreshStatusTurns(player, status, turns)
-		if CharacterIsPlayer(player) == 1 then
+		if Osi.CharacterIsPlayer(player) == 1 then
 			local data = Common.JsonStringify({
-				UUID = GetUUID(player),
+				UUID = Osi.GetUUID(player),
 				Status = status,
 				Turns = turns
 			})
@@ -151,7 +151,7 @@ if not _ISCLIENT then
 	---@param client string|nil
 	function GameHelpers.UI.SetStatusVisibility(visible, client)
 		visible = visible ~= nil and tostring(visible) or tostring(GameSettings.Settings.Client.HideStatuses)
-		client = client or CharacterGetHostCharacter()
+		client = client or Osi.CharacterGetHostCharacter()
 		GameHelpers.Net.PostToUser(client, "LeaderLib_UI_UpdateStatusVisibility", visible)
 	end
 

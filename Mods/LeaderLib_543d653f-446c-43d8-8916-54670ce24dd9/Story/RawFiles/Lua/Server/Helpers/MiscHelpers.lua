@@ -86,11 +86,11 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 				elseif aType == "userdata" then
 					x,y,z = table.unpack(actionTarget.WorldPos)
 				elseif aType == "string" then
-					x,y,z = GetPosition(actionTarget)
+					x,y,z = Osi.GetPosition(actionTarget)
 				end
 			end
 			GameHelpers.TrackBonusWeaponPropertiesApplied(source.MyGuid)
-			TransformSurfaceAtPosition(x, y, z, v.Action, "Ground", 1.0, 6.0, source)
+			Osi.TransformSurfaceAtPosition(x, y, z, v.Action, "Ground", 1.0, 6.0, source)
 		elseif v.Type == "Force" then
 			local distance = math.floor(v.Arg2/6) or 1.0
 			if distance > 0 then
@@ -110,7 +110,7 @@ end
 ---@param includeSelf boolean
 ---@return string[]
 function GameHelpers.GetParty(partyMember, includeSummons, includeFollowers, excludeDead, includeSelf)
-	partyMember = StringHelpers.GetUUID(partyMember or CharacterGetHostCharacter())
+	partyMember = StringHelpers.GetUUID(partyMember or Osi.CharacterGetHostCharacter())
 	local party = {}
 	if includeSelf then
 		party[partyMember] = true
@@ -119,14 +119,14 @@ function GameHelpers.GetParty(partyMember, includeSummons, includeFollowers, exc
 	if allParty ~= nil then
 		for i,v in pairs(allParty) do
 			local uuid = StringHelpers.GetUUID(v[1])
-			local isDead = CharacterIsDead(uuid) == 1
+			local isDead = Osi.CharacterIsDead(uuid) == 1
 			if not isDead or excludeDead ~= true then
 				if uuid == partyMember and not includeSelf then
 					--Skip
 				else
-					if CharacterIsInPartyWith(partyMember, uuid) == 1
-					and (CharacterIsSummon(uuid) == 0 or includeSummons) 
-					and (CharacterIsPartyFollower(uuid) == 0 or includeFollowers)
+					if Osi.CharacterIsInPartyWith(partyMember, uuid) == 1
+					and (Osi.CharacterIsSummon(uuid) == 0 or includeSummons) 
+					and (Osi.CharacterIsPartyFollower(uuid) == 0 or includeFollowers)
 					then
 						party[uuid] = true
 					end
@@ -168,13 +168,13 @@ function GameHelpers.ClearActionQueue(character, purge)
 		return
 	end
 	if purge then
-		CharacterPurgeQueue(character)
+		Osi.CharacterPurgeQueue(character)
 	else
-		CharacterFlushQueue(character)
+		Osi.CharacterFlushQueue(character)
 	end
 
-	CharacterMoveTo(character, character, 1, "", 1)
-	CharacterSetStill(character)
+	Osi.CharacterMoveTo(character, character, 1, "", 1)
+	Osi.CharacterSetStill(character)
 end
 
 ---Sync an item or character's scale to clients.
@@ -319,7 +319,7 @@ function GameHelpers.SetExperienceLevel(object, level)
 		if GameHelpers.Ext.ObjectIsItem(object) then
 			if not GameHelpers.Item.IsObject(object) then
 				if level > object.Stats.Level then
-					ItemLevelUpTo(object.MyGuid, level)
+					Osi.ItemLevelUpTo(object.MyGuid, level)
 					return true
 				else
 					local xpNeeded = Data.LevelExperience[level]
@@ -334,7 +334,7 @@ function GameHelpers.SetExperienceLevel(object, level)
 					end
 				end
 			else
-				ItemLevelUpTo(object.MyGuid, level)
+				Osi.ItemLevelUpTo(object.MyGuid, level)
 				return true
 			end
 		else
@@ -350,7 +350,7 @@ function GameHelpers.SetExperienceLevel(object, level)
 					return true
 				end
 			else
-				CharacterLevelUpTo(object.MyGuid, level)
+				Osi.CharacterLevelUpTo(object.MyGuid, level)
 				return true
 			end
 		end

@@ -1466,7 +1466,7 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameM
 		local skill = {Name = skillName, AlwaysBackstab = false}
 		if isForGameMath then
 			for _,k in pairs(_GameMathSkillAttributes) do
-				skill[k] = Ext.StatGetAttribute(skillName, k)
+				skill[k] = GameHelpers.Stats.GetAttribute(skillName, k)
 				if not hasValidEntry and skill[k] ~= nil then
 					hasValidEntry = true
 				end
@@ -1523,7 +1523,7 @@ function GameHelpers.Ext.GetRuneBoosts(item)
 				table.insert(boosts, runeEntry)
 				for i,attribute in pairs(RuneAttributes) do
 					runeEntry.Boosts[attribute] = ""
-					local boostStat = Ext.StatGetAttribute(boost.BoostName, attribute)
+					local boostStat = GameHelpers.Stats.GetAttribute(boost.BoostName, attribute)
 					if boostStat ~= nil then
 						runeEntry.Boosts[attribute] = boostStat
 					end

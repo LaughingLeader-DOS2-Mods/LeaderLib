@@ -99,8 +99,8 @@ if Vars.IsClient then
 	end
 else
 	RegisterProtectedOsirisListener("ObjectWasTagged", 2, "after", function(uuid, tag)
-		if ObjectIsCharacter(uuid) == 1
-		and CharacterIsControlled(uuid) == 1
+		if Osi.ObjectIsCharacter(uuid) == 1
+		and Osi.CharacterIsControlled(uuid) == 1
 		and Features.FixSkillTagRequirements
 		and Data.SkillRequirementTags[tag] then
 			--Delay slightly to aggregate quick changes
@@ -108,8 +108,8 @@ else
 		end
 	end)
 	RegisterProtectedOsirisListener("ObjectLostTag", 2, "after", function(uuid, tag)
-		if ObjectIsCharacter(uuid) == 1
-		and CharacterIsControlled(uuid) == 1
+		if Osi.ObjectIsCharacter(uuid) == 1
+		and Osi.CharacterIsControlled(uuid) == 1
 		and Features.FixSkillTagRequirements
 		and Data.SkillRequirementTags[tag] then
 			GameHelpers.UI.RefreshSkillBarAfterDelay(uuid, 50)
@@ -117,11 +117,11 @@ else
 	end)
 
 	RegisterProtectedOsirisListener("ItemEquipped", Data.OsirisEvents.ItemEquipped, "after", function(item,character)
-		if ObjectExists(character) == 0 or ObjectExists(item) == 0 then
+		if Osi.ObjectExists(character) == 0 or Osi.ObjectExists(item) == 0 then
 			return
 		end
-		if ObjectIsCharacter(character) == 1
-		and CharacterIsControlled(character) == 1
+		if Osi.ObjectIsCharacter(character) == 1
+		and Osi.CharacterIsControlled(character) == 1
 		and Features.FixSkillTagRequirements then
 			local item = GameHelpers.GetItem(item)
 			if item and not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) then
@@ -137,17 +137,17 @@ else
 		end
 	end)
 	RegisterProtectedOsirisListener("ItemUnEquipped", Data.OsirisEvents.ItemUnEquipped, "after", function(item,character)
-		if ObjectExists(character) == 0 or ObjectExists(item) == 0 then
+		if Osi.ObjectExists(character) == 0 or Osi.ObjectExists(item) == 0 then
 			return
 		end
-		if ObjectIsCharacter(character) == 1
-		and CharacterIsControlled(character) == 1
+		if Osi.ObjectIsCharacter(character) == 1
+		and Osi.CharacterIsControlled(character) == 1
 		and Features.FixSkillTagRequirements then
 			local item = GameHelpers.GetItem(item)
 			if item and not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) then
 				local tags = StringHelpers.Split(item.Stats.Tags, ";")
 				for i,tag in pairs(tags) do
-					if Data.SkillRequirementTags[tag] and IsTagged(character, tag) ~= 1 then
+					if Data.SkillRequirementTags[tag] and Osi.IsTagged(character, tag) ~= 1 then
 						GameHelpers.UI.RefreshSkillBarAfterDelay(character, 250)
 						break
 					end

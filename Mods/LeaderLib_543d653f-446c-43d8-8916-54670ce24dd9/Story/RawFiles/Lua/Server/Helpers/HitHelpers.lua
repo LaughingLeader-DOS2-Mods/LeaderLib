@@ -12,9 +12,9 @@ local _EXTVERSION = Ext.Utils.Version()
 ---@return boolean
 function GameHelpers.HitSucceeded(target, handle, is_hit)
 	if is_hit == 1 or is_hit == true then
-		return NRD_HitGetInt(handle, "Dodged") == 0 and NRD_HitGetInt(handle, "Missed") == 0 and NRD_HitGetInt(handle, "Blocked") == 0
+		return Osi.NRD_HitGetInt(handle, "Dodged") == 0 and Osi.NRD_HitGetInt(handle, "Missed") == 0 and Osi.NRD_HitGetInt(handle, "Blocked") == 0
 	else
-		return NRD_StatusGetInt(target, handle, "Dodged") == 0 and NRD_StatusGetInt(target, handle, "Missed") == 0 and NRD_StatusGetInt(target, handle, "Blocked") == 0
+		return Osi.NRD_StatusGetInt(target, handle, "Dodged") == 0 and Osi.NRD_StatusGetInt(target, handle, "Missed") == 0 and Osi.NRD_StatusGetInt(target, handle, "Blocked") == 0
 	end
 end
 
@@ -68,7 +68,7 @@ local unarmedHitMatchProperties = {
 ---@return boolean
 function GameHelpers.Hit.IsPreparedUnarmedHit(hitHandle)
 	for prop,val in pairs(unarmedHitMatchProperties) do
-		if NRD_HitGetInt(hitHandle, prop) ~= val then
+		if Osi.NRD_HitGetInt(hitHandle, prop) ~= val then
 			return false
 		end
 	end
@@ -87,30 +87,30 @@ function GameHelpers.HitWithWeapon(target, handle, is_hit, allowSkills, source)
 		return false
 	end
 	if is_hit == 1 or is_hit == true then
-		local hitType = NRD_HitGetInt(handle, "HitType")
-		local hitWithWeapon = NRD_HitGetInt(handle, "HitWithWeapon") == 1
+		local hitType = Osi.NRD_HitGetInt(handle, "HitType")
+		local hitWithWeapon = Osi.NRD_HitGetInt(handle, "HitWithWeapon") == 1
 		return (hitType == 0) and hitWithWeapon
 	else
-		local hitReason = NRD_StatusGetInt(target, handle, "HitReason")
-		local hitWithWeapon = NRD_StatusGetInt(target, handle, "HitWithWeapon") == 1
+		local hitReason = Osi.NRD_StatusGetInt(target, handle, "HitReason")
+		local hitWithWeapon = Osi.NRD_StatusGetInt(target, handle, "HitWithWeapon") == 1
 		if hitReason == 0 and hitWithWeapon then
 			return true
 		end
-		local sourceType = NRD_StatusGetInt(target, handle, "DamageSourceType")
+		local sourceType = Osi.NRD_StatusGetInt(target, handle, "DamageSourceType")
 		
 		if hitReason ~= nil and sourceType ~= nil then
 			local hitReasonFromWeapon = hitReason <= 1
 			local hitWithWeapon = sourceType == 6 or sourceType == 7
-			local hasWeaponHandle = not StringHelpers.IsNullOrEmpty(NRD_StatusGetGuidString(target, handle, "WeaponHandle"))
+			local hasWeaponHandle = not StringHelpers.IsNullOrEmpty(Osi.NRD_StatusGetGuidString(target, handle, "WeaponHandle"))
 			if allowSkills == true then
-				local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
+				local skillprototype = Osi.NRD_StatusGetString(target, handle, "SkillId")
 				if skillprototype ~= "" and skillprototype ~= nil then
 					local skill = GetSkillEntryName(skillprototype)
-					hitReasonFromWeapon = Ext.StatGetAttribute(skill, "UseWeaponDamage") == "Yes" and (hitReason <= 1 or hitReason == 3)
+					hitReasonFromWeapon = GameHelpers.Stats.GetAttribute(skill, "UseWeaponDamage") == "Yes" and (hitReason <= 1 or hitReason == 3)
 					if hitReasonFromWeapon then
 						hasWeaponHandle = true
 					end
-					--Ext.StatGetAttribute(skill, "UseWeaponProperties") == "Yes"
+					--GameHelpers.Stats.GetAttribute(skill, "UseWeaponProperties") == "Yes"
 				end
 			end
 			return (hitReasonFromWeapon and hitWithWeapon) and hasWeaponHandle
@@ -237,7 +237,7 @@ function GameHelpers.Hit.IsDirect(hit)
 			if hit.HitReason == "ASAttack" then
 				return true
 			end
-			local damageSourceType = Ext.EnumLabelToIndex(hit.DamageSourceType, "DamageSourceType")
+			local damageSourceType = Ext.Stats.EnumLabelToIndex(hit.DamageSourceType, "DamageSourceType")
 			return damageSourceType == 0 or damageSourceType == 6 or damageSourceType == 7
 		elseif GameHelpers.Ext.UserDataIsType(hit, Data.ExtenderClass.HitContext, meta) then
 			return Data.HitType[hit.HitType] < 4

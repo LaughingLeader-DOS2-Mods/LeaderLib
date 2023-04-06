@@ -4,8 +4,8 @@ end
 
 local _EXTVERSION = Ext.Utils.Version()
 
-local _loadFile = _EXTVERSION < 56 and Ext.LoadFile or Ext.IO.LoadFile
-local _saveFile = _EXTVERSION < 56 and Ext.SaveFile or Ext.IO.SaveFile
+local _loadFile = Ext.IO.LoadFile
+local _saveFile = Ext.IO.SaveFile
 local _type = type
 
 ---@param filepath string

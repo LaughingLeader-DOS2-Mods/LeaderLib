@@ -2,7 +2,7 @@ if GameHelpers.Status == nil then
 	GameHelpers.Status = {}
 end
 
-Ext.NewQuery(GameHelpers.Status.HasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool")
+Ext.Osiris.NewQuery(GameHelpers.Status.HasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool")
 
 ---@param status EsvStatus
 ---@param target EsvCharacter|nil
@@ -170,7 +170,7 @@ function GameHelpers.Status.GetNextTieredStatus(obj, statusTable, duration, forc
 	local maxTier = #statusTable
 	local maxStatus = statusTable[maxTier]
 	-- We're at the max tier, so skip the iteration
-	if HasActiveStatus(obj, maxStatus) == 1 then
+	if Osi.HasActiveStatus(obj, maxStatus) == 1 then
 		return maxStatus,maxTier,maxTier
 	end
 	maxTier = maxTier - 1
@@ -178,7 +178,7 @@ function GameHelpers.Status.GetNextTieredStatus(obj, statusTable, duration, forc
 	local tier = 1
 	for i=1,maxTier do
 		local status = statusTable[i]
-		if HasActiveStatus(obj, status) == 1 then
+		if Osi.HasActiveStatus(obj, status) == 1 then
 			lastTier = tier
 			tier = i+1
 			break
@@ -196,7 +196,7 @@ function GameHelpers.Status.RemoveHarmful(obj, ignorePermanent)
 		if ignorePermanent and status.CurrentLifeTime == -1 then
 			-- skip
 		elseif GameHelpers.Status.IsHarmful(status.StatusId) then
-			RemoveStatus(obj.MyGuid, status.StatusId)
+			Osi.RemoveStatus(obj.MyGuid, status.StatusId)
 		end
 	end
 end
@@ -378,11 +378,11 @@ function GameHelpers.Status.Remove(target, status, radius, canTargetItems, canRe
 				if canRemoveCallback then
 					local b,result = pcall(canRemoveCallback, v, status, false)
 					if b and result == true then
-						RemoveStatus(v, status)
+						Osi.RemoveStatus(v, status)
 						success = true
 					end
 				else
-					RemoveStatus(v, status)
+					Osi.RemoveStatus(v, status)
 					success = true
 				end
 			end
@@ -391,11 +391,11 @@ function GameHelpers.Status.Remove(target, status, radius, canTargetItems, canRe
 					if canRemoveCallback then
 						local b,result = pcall(canRemoveCallback, v, status, true)
 						if b and result == true then
-							RemoveStatus(v, status)
+							Osi.RemoveStatus(v, status)
 							success = true
 						end
 					else
-						RemoveStatus(v, status)
+						Osi.RemoveStatus(v, status)
 						success = true
 					end
 				end
@@ -416,7 +416,7 @@ function GameHelpers.Status.Remove(target, status, radius, canTargetItems, canRe
 		if target then
 			local t2 = type(status)
 			if t2 == "string" then
-				RemoveStatus(target, status)
+				Osi.RemoveStatus(target, status)
 				return true
 			elseif t2 == "table" then
 				for k,v in pairs(status) do

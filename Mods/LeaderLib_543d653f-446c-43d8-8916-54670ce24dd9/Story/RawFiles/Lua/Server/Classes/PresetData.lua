@@ -50,7 +50,7 @@ local previewRaceSuffixes = {
 ---@param skipIfExists boolean If an item already exists on the target character, skip creating another one.
 function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipIfExists)
 	if Ext.IsServer() then
-		local level = CharacterGetLevel(char)
+		local level = Osi.CharacterGetLevel(char)
 		local equipment = self.Equipment
 		local presetItemStatProperties = {
 			Amount = 1,
@@ -64,7 +64,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 		if self.IsPreview then
 			if self.Equipment_Preview == nil or self.Equipment_Preview == "" then
 				for tag,suffix in pairs(previewRaceSuffixes) do
-					if IsTagged(char, tag) == 1 then
+					if Osi.IsTagged(char, tag) == 1 then
 						local racePreviewSet = self.Equipment.."_"..suffix
 						local racePreviewEquipment = Ext.Stats.EquipmentSet.GetLegacy(racePreviewSet)
 						if racePreviewEquipment ~= nil and #racePreviewEquipment.Groups > 0 then
@@ -76,7 +76,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 			else
 				equipment = self.Equipment_Preview
 			end
-		elseif self.Equipment_Undead ~= nil and self.Equipment_Undead ~= "" and IsTagged(char, "UNDEAD") == 1 or CharacterHasTalent(char, "Zombie") == 1 then
+		elseif self.Equipment_Undead ~= nil and self.Equipment_Undead ~= "" and Osi.IsTagged(char, "UNDEAD") == 1 or Osi.CharacterHasTalent(char, "Zombie") == 1 then
 			equipment = self.Equipment_Undead
 		end
 		
@@ -101,7 +101,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 						if templates and #templates > 0 then
 							local template = templates[1]
 							if not StringHelpers.IsNullOrEmpty(template) then
-								skip = ItemTemplateIsInCharacterInventory(char, template) > 0
+								skip = Osi.ItemTemplateIsInCharacterInventory(char, template) > 0
 								props.RootTemplate = template
 								props.OriginalRootTemplate = template
 							end
@@ -109,9 +109,9 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 					end
 					if not skip then
 						local item,itemObj = GameHelpers.Item.CreateItemByStat(stat, presetItemStatProperties)
-						if item ~= nil and ObjectExists(item) == 1 then
-							ItemToInventory(item, char, 1, 0, 1)
-							if ItemIsEquipable(item) == 1 and itemObj.Stats then
+						if item ~= nil and Osi.ObjectExists(item) == 1 then
+							Osi.ItemToInventory(item, char, 1, 0, 1)
+							if Osi.ItemIsEquipable(item) == 1 and itemObj.Stats then
 								Osi.LeaderLib_Timers_StartCharacterItemTimer(char, item, 1000, string.format("LLEG%s", item), "LeaderLib_Commands_EquipItem")
 								--CharacterEquipItem(char, item)
 								--NRD_CharacterEquipItem(char, item, stat.Slot, 0, 0, 1, 1)
@@ -136,12 +136,12 @@ function PresetData:AddSkillsToCharacter(char, checkMemorizationRequirements)
 			if type(v) == "table" then
 				for i,skill in pairs(v) do
 					if checkMemorizationRequirements ~= true or GameHelpers.Skill.CanMemorize(char, skill) then
-						CharacterAddSkill(char, skill, 0)
+						Osi.CharacterAddSkill(char, skill, 0)
 					end
 				end
 			elseif type(v) == "string" then
 				if checkMemorizationRequirements ~= true or GameHelpers.Skill.CanMemorize(char, v) then
-					CharacterAddSkill(char, v, 0)
+					Osi.CharacterAddSkill(char, v, 0)
 				end
 			end
 		end

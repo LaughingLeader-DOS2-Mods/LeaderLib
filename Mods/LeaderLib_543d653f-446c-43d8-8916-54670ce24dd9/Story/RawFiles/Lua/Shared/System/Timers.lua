@@ -101,11 +101,11 @@ end
 
 local _TimerLaunch = function (id, delay)
 	if _OSIRIS() then
-		TimerLaunch(id, delay)
+		Osi.TimerLaunch(id, delay)
 	elseif Ext.Server.GetGameState() == "Running" then
 		Ext.OnNextTick(function (e)
 			if _OSIRIS() then
-				TimerLaunch(id, delay)
+				Osi.TimerLaunch(id, delay)
 			end
 		end)
 	end
@@ -113,11 +113,11 @@ end
 
 local _TimerCancel = function (id)
 	if _OSIRIS() then
-		TimerCancel(id)
+		Osi.TimerCancel(id)
 	elseif Ext.Server.GetGameState() == "Running" then
 		Ext.OnNextTick(function (e)
 			if _OSIRIS() then
-				TimerCancel(id)
+				Osi.TimerCancel(id)
 			end
 		end)
 	end

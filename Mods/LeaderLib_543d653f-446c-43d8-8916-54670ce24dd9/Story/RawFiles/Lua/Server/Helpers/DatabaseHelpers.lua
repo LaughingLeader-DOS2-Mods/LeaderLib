@@ -76,7 +76,7 @@ local function SortDatabase(name, arity, sortColumn)
 	end
 end
 GameHelpers.DB.SortDatabase = SortDatabase
-Ext.NewCall(SortDatabase, "LeaderLib_Ext_SortDatabase", "(STRING)_DatabaseName, (INTEGER)_Arity, (INTEGER)_SortByColumn")
+Ext.Osiris.NewCall(SortDatabase, "LeaderLib_Ext_SortDatabase", "(STRING)_DatabaseName, (INTEGER)_Arity, (INTEGER)_SortByColumn")
 
 function SortDictionary(id)
 	local b,result = xpcall(function()

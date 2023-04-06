@@ -285,3 +285,88 @@ end) ]]
 	})
 	testTask:Register()
 end) ]]
+
+-- local baseHeal = Ext.Utils.Round(Ext.Stats.GetStatsManager().LevelMaps:GetByName("SkillData HealAmount"):GetScaledValue(Ext.Stats.Get("REGENERATION").HealValue, _C().Stats.Level)); local mult = math.ceil(_C().Stats.WaterSpecialist * Ext.ExtraData.SkillAbilityVitalityRestoredPerPoint); print(baseHeal, mult, baseHeal + Ext.Utils.Round(math.ceil((mult * baseHeal) / 100) * 1.0))
+--[[ if not _ISCLIENT then
+	Events.OnHeal:Subscribe(function (e)
+		--e.Status.HealAmount = GameHelpers.Status.GetHealAmount("BODYPART_HEAL", {ApplyAbilityBoost=false, Target=e.Target.Stats})
+		e.Status.HealAmount = 100
+	end, {MatchArgs={StatusId="REGENERATION"}})
+end ]]
+
+
+-- Ext.Events.SessionLoaded:Subscribe(function (e)
+-- 	if _ISCLIENT then
+-- 		GameHelpers.Net.Subscribe("LLTEST_CheckLifeSteal", function (e, data)
+-- 			Ext.OnNextTick(function (e)
+-- 				local character = GameHelpers.GetCharacter(data.NetID)
+-- 				GameHelpers.IO.SaveFile("Dumps/HEAL_Client.json", Ext.DumpExport(character:GetStatus("HEAL")))
+-- 			end)
+-- 		end)
+-- 	else
+-- 			--[[ Events.OnHeal:Subscribe(function (e)
+-- 			if e.Heal.StatusId == "LIFESTEAL" then
+-- 				print(e.Heal.HealAmount)
+-- 				e.Heal.HealAmount = 10
+-- 			end
+-- 		end, {Priority=0})
+
+-- 		Events.OnHit:Subscribe(function (e)
+-- 			if e.HitStatus.Hit.LifeSteal > 0 then
+-- 				e.Data:SetLifeSteal(10)
+-- 				Ext.Utils.PrintError(e.Data.HitRequest.LifeSteal)
+-- 			end
+-- 		end, {Priority=0})
+-- 		]]
+
+-- 		--[[ Ext.Osiris.RegisterListener("NRD_OnHeal", 4, "after", function (target, source, amount, handle)
+-- 			local status = Ext.Entity.GetStatus(target, handle)
+-- 			if status.StatusId == "HEAL" then
+-- 				local character = GameHelpers.GetCharacter(target)
+-- 				status.HealAmount = 100
+-- 				local regen = character:GetStatus("REGENERATION")
+-- 				if regen then
+-- 					regen.HealAmount = 100
+-- 				end
+-- 				GameHelpers.Net.Broadcast("LLTEST_CheckLifeSteal", {NetID=character.NetID})
+-- 				GameHelpers.IO.SaveFile("Dumps/HEAL_Server.json", Ext.DumpExport(status))
+-- 			end
+-- 		end) ]]
+
+-- 		local HEAL_TEST = 100
+
+-- 		StatusManager.Subscribe.BeforeAttempt("REGENERATION", function (e)
+-- 			HEAL_TEST = Ext.Utils.Random(50, 700)
+-- 		end)
+
+-- 		Events.OnHeal:Subscribe(function (e)
+-- 			if e.StatusId == "HEAL" then
+-- 				e.Heal.HealAmount = HEAL_TEST
+-- 				local regen = e.Target:GetStatus("REGENERATION")
+-- 				if regen then
+-- 					regen.HealAmount = e.Heal.HealAmount
+-- 					if GameHelpers.Ext.ObjectIsCharacter(e.Source) then
+-- 						local bonus = (Ext.ExtraData.SkillAbilityWaterDamageBoostPerPoint * e.Source.Stats.WaterSpecialist) * 0.01
+-- 						if bonus > 0 then
+-- 							local mult = (1 - bonus) + 0.03
+-- 							regen.HealAmount = Ext.Utils.Round(e.Heal.HealAmount * mult)
+-- 						end
+-- 					end
+-- 				end
+-- 			end
+-- 		end)
+
+-- 		--[[ Ext.Events.StatusHitEnter:Subscribe(function (e)
+-- 			if e.Hit.Hit.LifeSteal > 0 then
+-- 				e.Hit.Hit.LifeSteal = 100
+-- 				e:StopPropagation()
+-- 			end
+-- 		end, {Priority=9999999}) ]]
+
+-- 		--[[ Ext.Events.BeforeCharacterApplyDamage:Subscribe(function (e)
+-- 			if e.Hit.LifeSteal > 0 then
+-- 				e.Hit.LifeSteal = 777
+-- 			end
+-- 		end) ]]
+-- 	end
+-- end)

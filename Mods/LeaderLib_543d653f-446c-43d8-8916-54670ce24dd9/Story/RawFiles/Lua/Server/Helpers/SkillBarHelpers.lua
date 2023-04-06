@@ -8,12 +8,12 @@ end
 ---@param clearSkill boolean
 function StoreSkillCooldownData(char, skill, clearSkill)
     char = GameHelpers.GetUUID(char)
-    if CharacterIsPlayer(char) == 0 then
+    if Osi.CharacterIsPlayer(char) == 0 then
         return false
     end
-    local slot = NRD_SkillBarFindSkill(char, skill)
+    local slot = Osi.NRD_SkillBarFindSkill(char, skill)
     if slot ~= nil then
-        local success,cd = pcall(NRD_SkillGetCooldown, char, skill)
+        local success,cd = pcall(Osi.NRD_SkillGetCooldown, char, skill)
         if success == false or cd == nil then cd = 0.0; end
         cd = math.max(cd, 0.0)
         --Osi.LeaderLib_RefreshUI_Internal_StoreSkillCooldownData(char, skill, slot, cd)
@@ -22,21 +22,21 @@ function StoreSkillCooldownData(char, skill, clearSkill)
             clearSkill = clearSkill == "true"
         end
         if clearSkill then
-            NRD_SkillBarClear(char, slot)
+            Osi.NRD_SkillBarClear(char, slot)
         end
         fprint(LOGLEVEL.TRACE, "[LeaderLib_RefreshSkill] Refreshing (" .. tostring(skill) ..") for (" .. tostring(char) .. ") [" .. tostring(cd) .. "]")
     end
  end
 
 local function StoreSkillSlots(char)
-    if CharacterIsPlayer(char) == 0 then
+    if Osi.CharacterIsPlayer(char) == 0 then
         return false
     end
     -- Until we can fetch the active skill bar, iterate through every skill slot for now
     for i=0,144 do
-        local skill = NRD_SkillBarGetSkill(char, i)
+        local skill = Osi.NRD_SkillBarGetSkill(char, i)
         if skill ~= nil then
-            local success,cd = pcall(NRD_SkillGetCooldown, char, skill)
+            local success,cd = pcall(Osi.NRD_SkillGetCooldown, char, skill)
             if success == false or cd == nil then cd = 0.0 end;
             cd = math.max(cd, 0.0)
             Osi.LeaderLib_RefreshUI_Internal_StoreSkillCooldownData(char, skill, i, cd)
@@ -46,15 +46,15 @@ local function StoreSkillSlots(char)
 end
 
 local function ClearSlotsWithSkill(char, skill)
-    if CharacterIsPlayer(char) == 0 then
+    if Osi.CharacterIsPlayer(char) == 0 then
         return false
     end
     local maxslots = 144
     local slot = 0
     while slot < 144 do
-        local checkskill = NRD_SkillBarGetSkill(char, slot)
+        local checkskill = Osi.NRD_SkillBarGetSkill(char, slot)
         if checkskill == skill then
-            NRD_SkillBarClear(char, slot)
+            Osi.NRD_SkillBarClear(char, slot)
         end
         slot = slot + 1
     end
@@ -63,7 +63,7 @@ end
 ---Sets a skill into an empty slot, or finds empty space.
 local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
     char = GameHelpers.GetUUID(char)
-    if CharacterIsPlayer(char) == 0 then
+    if Osi.CharacterIsPlayer(char) == 0 then
         return false
     end
     if type(slot) == "string" then
@@ -78,9 +78,9 @@ local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
         ClearSlotsWithSkill(char, addskill)
     end
 
-    local skill = NRD_SkillBarGetSkill(char, slot)
+    local skill = Osi.NRD_SkillBarGetSkill(char, slot)
     if skill == nil or skill == "" then
-        NRD_SkillBarSetSkill(char, slot, addskill)
+        Osi.NRD_SkillBarSetSkill(char, slot, addskill)
         return true
     elseif skill == addskill then
         return true
@@ -88,9 +88,9 @@ local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
         local maxslots = 144 - slot
         local nextslot = slot
         while nextslot < maxslots do
-            skill = NRD_SkillBarGetSkill(char, nextslot)
+            skill = Osi.NRD_SkillBarGetSkill(char, nextslot)
             if skill == nil then
-                NRD_SkillBarSetSkill(char, slot, addskill)
+                Osi.NRD_SkillBarSetSkill(char, slot, addskill)
                 return true
             elseif skill == addskill then
                 return true
@@ -100,15 +100,15 @@ local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
     end
     return false
 end
-Ext.NewCall(TrySetSkillSlot, "LeaderLib_Ext_TrySetSkillSlot", "(CHARACTERGUID)_Character, (INTEGER)_Slot, (STRING)_Skill, (INTEGER)_ClearCurrentSlot")
+Ext.Osiris.NewCall(TrySetSkillSlot, "LeaderLib_Ext_TrySetSkillSlot", "(CHARACTERGUID)_Character, (INTEGER)_Slot, (STRING)_Skill, (INTEGER)_ClearCurrentSlot")
 
 ---Refreshes a skill if the character has it.
 local function RefreshSkill(char, skill)
-    if CharacterHasSkill(char, skill) == 1 then
-        NRD_SkillSetCooldown(char, skill, 0.0)
+    if Osi.CharacterHasSkill(char, skill) == 1 then
+        Osi.NRD_SkillSetCooldown(char, skill, 0.0)
     end
 end
-Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
+Ext.Osiris.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
 
 function GameHelpers.Skill.GetSkillSlots(char, skill, makeLocal)
 	local slots = {}
@@ -151,12 +151,12 @@ function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTarge
     end
     if not GameHelpers.Character.IsPlayer(character) then
         if removeTargetSkill ~= nil and removeTargetSkill ~= false then
-            CharacterRemoveSkill(GUID, targetSkill)
+            Osi.CharacterRemoveSkill(GUID, targetSkill)
         end
-        CharacterAddSkill(GUID, replacementSkill, 0)
+        Osi.CharacterAddSkill(GUID, replacementSkill, 0)
         return false
     end
-    CharacterAddSkill(GUID, replacementSkill, 0)
+    Osi.CharacterAddSkill(GUID, replacementSkill, 0)
     for i,v in pairs(character.PlayerData.SkillBar) do
         if v.SkillOrStatId == targetSkill then
             v.SkillOrStatId = replacementSkill
@@ -166,7 +166,7 @@ function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTarge
         end
     end
     if removeTargetSkill ~= false then
-        CharacterRemoveSkill(GUID, targetSkill)
+        Osi.CharacterRemoveSkill(GUID, targetSkill)
     end
     local addedSkillData = character.SkillManager.Skills[replacementSkill]
     if addedSkillData then
@@ -247,7 +247,7 @@ function GameHelpers.Skill.RemoveFromSlots(char, skill)
     local slots = GameHelpers.Skill.GetSkillSlots(char, skill)
     for i=1,#slots do
         local slot = slots[i]
-        NRD_SkillBarClear(char,slot)
+        Osi.NRD_SkillBarClear(char,slot)
     end
 end
 
@@ -261,7 +261,7 @@ function GameHelpers.Skill.RemoveAllSkills(char)
             return
         end
         for _,v in pairs(char:GetSkills()) do
-            CharacterRemoveSkill(char.MyGuid, v)
+            Osi.CharacterRemoveSkill(char.MyGuid, v)
         end
     end
 end
@@ -283,12 +283,12 @@ function GameHelpers.Skill.CanMemorize(char, skill)
             for i,v in pairs(memRequirements) do
                 if v.Not == false and type(v.Param) == "number" and v.Param > 0 then
                     if Data.Attribute[v.Requirement] ~= nil then
-                        local val = CharacterGetAttribute(char, v.Requirement)
+                        local val = Osi.CharacterGetAttribute(char, v.Requirement)
                         if val < v.Param then
                             return false
                         end
                     elseif Data.Ability[v.Requirement] ~= nil then
-                        local val = CharacterGetAbility(char, v.Requirement)
+                        local val = Osi.CharacterGetAbility(char, v.Requirement)
                         if val < v.Param then
                             return false
                         end

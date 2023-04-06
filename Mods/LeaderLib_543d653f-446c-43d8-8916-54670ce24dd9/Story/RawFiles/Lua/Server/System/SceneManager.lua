@@ -250,7 +250,7 @@ Timer.Subscribe("LeaderLib_SceneManager_WaitingTimer", function(e)
 		end
 	end
 	if keepTimerGoing then
-		StartTimer("LeaderLib_SceneManager_WaitingTimer", 250)
+		Timer.Start("LeaderLib_SceneManager_WaitingTimer", 250)
 	end
 	SceneManager.Save()
 end)
@@ -265,7 +265,7 @@ function SceneManager.StartTimer(tick)
 		tick = 250
 	end
 	SceneManager.CurrentTime = Ext.Utils.MonotonicTime()
-	StartTimer("LeaderLib_SceneManager_WaitingTimer", tick)
+	Timer.Start("LeaderLib_SceneManager_WaitingTimer", tick)
 end
 
 local function OnStoryEvent(obj, event)

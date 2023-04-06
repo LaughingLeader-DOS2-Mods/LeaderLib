@@ -34,7 +34,7 @@ local editorVersion = "v3.6.51.9303"
 ---@param elementName string
 local function SetVisualOnCharacter(char, visualSlot, elementName)
 	--fprint(LOGLEVEL.TRACE, "CharacterSetVisualElement(\"%s\", %s, \"%s\")", char, visualSlot, elementName)
-	CharacterSetVisualElement(char, visualSlot, elementName)
+	Osi.CharacterSetVisualElement(char, visualSlot, elementName)
 end
 
 ---@param char string
@@ -42,7 +42,7 @@ function VisualResourceData:SetVisualOnCharacter(char)
 	SetVisualOnCharacter(char, self.VisualSlot, self.Resource)
 end
 
-if Ext.GameVersion() == editorVersion then
+if Ext.Utils.GameVersion() == editorVersion then
 	Ext.Utils.PrintWarning("[LeaderLib:VisualResourceData:SetVisualOnCharacter] CharacterSetVisualElement isn't availble in the editor's game version (v3.6.51.9303).")
 	VisualResourceData.SetVisualOnCharacter = function() end
 end

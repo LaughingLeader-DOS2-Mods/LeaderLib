@@ -3,9 +3,9 @@
 local CombatVacuum = QOL.CombatVacuum
 
 local function SetArenaFlag(uuid)
-	if ObjectGetFlag(uuid, "LeaderLib_ArenaModeEnabled") == 0 then
-		ObjectSetFlag(uuid, "LeaderLib_ArenaModeEnabled", 0)
-		SetInArena(uuid, 1)
+	if Osi.ObjectGetFlag(uuid, "LeaderLib_ArenaModeEnabled") == 0 then
+		Osi.ObjectSetFlag(uuid, "LeaderLib_ArenaModeEnabled", 0)
+		Osi.SetInArena(uuid, 1)
 		fprint(LOGLEVEL.TRACE, "[SetArenaFlag] Enabled flag for (%s)[%s]", GameHelpers.Character.GetDisplayName(uuid), uuid)
 	end
 end
@@ -13,9 +13,9 @@ end
 CombatVacuum.SetArenaFlag = SetArenaFlag
 
 local function ClearArenaFlag(uuid, skipTimer)
-	if ObjectGetFlag(uuid, "LeaderLib_ArenaModeEnabled") == 1 then
-		ObjectClearFlag(uuid, "LeaderLib_ArenaModeEnabled", 0)
-		SetInArena(uuid, 0)
+	if Osi.ObjectGetFlag(uuid, "LeaderLib_ArenaModeEnabled") == 1 then
+		Osi.ObjectClearFlag(uuid, "LeaderLib_ArenaModeEnabled", 0)
+		Osi.SetInArena(uuid, 0)
 
 		fprint(LOGLEVEL.TRACE, "[ClearArenaFlag] Cleared flag for (%s)[%s]", GameHelpers.Character.GetDisplayName(uuid), uuid)
 
@@ -49,7 +49,7 @@ function CombatVacuum.UpdateArenaFlags(maxDist, enabled)
 		local playerInCombat = false
 		local processedCombats = {}
 		for player in GameHelpers.Character.GetPlayers(true) do
-			local combatid = CombatGetIDForCharacter(player.MyGuid) or 0
+			local combatid = GameHelpers.Combat.GetID(player)
 			if combatid > 0 then
 				playerInCombat = true
 				if processedCombats[combatid] == nil then
@@ -80,7 +80,7 @@ function CombatVacuum.UpdateArenaFlags(maxDist, enabled)
 		end
 	else
 		for player in GameHelpers.Character.GetPlayers(true) do
-			if ObjectGetFlag(player.MyGuid, "LeaderLib_ArenaModeEnabled") == 1 then
+			if Osi.ObjectGetFlag(player.MyGuid, "LeaderLib_ArenaModeEnabled") == 1 then
 				clearAllArenaFlags = true
 				break
 			end
@@ -107,7 +107,7 @@ Ext.Osiris.RegisterListener("ObjectLeftCombat", 2, "before", function (uuid, id)
 end)
 
 Ext.Osiris.RegisterListener("ObjectTurnEnded", 1, "before", function (uuid)
-	if GameHelpers.Character.IsPlayer(uuid) and ObjectGetFlag(uuid, "LeaderLib_ArenaModeEnabled") == 1 then
+	if GameHelpers.Character.IsPlayer(uuid) and Osi.ObjectGetFlag(uuid, "LeaderLib_ArenaModeEnabled") == 1 then
 		Timer.Start("LeaderLib_UpdateArenaFlags", 500)
 	end
 end)
@@ -117,9 +117,9 @@ Events.Initialized:Subscribe(function (e)
 end)
 
 Ext.Osiris.RegisterListener("CharacterSawCharacter", 2, "before", function (player, other)
-	if CharacterIsInCombat(player) == 0 and
-	ObjectGetFlag(player, "LeaderLib_ArenaModeEnabled") == 0
-	and ObjectGetFlag(other, "LeaderLib_ArenaModeEnabled") == 1 then
+	if Osi.CharacterIsInCombat(player) == 0 and
+	Osi.ObjectGetFlag(player, "LeaderLib_ArenaModeEnabled") == 0
+	and Osi.ObjectGetFlag(other, "LeaderLib_ArenaModeEnabled") == 1 then
 		Timer.Start("LeaderLib_PullPartyIntoCombat", 500)
 	end
 end)

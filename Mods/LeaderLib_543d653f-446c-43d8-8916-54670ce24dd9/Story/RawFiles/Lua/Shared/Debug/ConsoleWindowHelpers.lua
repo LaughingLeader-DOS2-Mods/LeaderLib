@@ -84,10 +84,10 @@ if not _ISCLIENT then
 	local me = {}
 	setmetatable(me, {
 		__call = function()
-			return GameHelpers.GetCharacter(CharacterGetHostCharacter())
+			return GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 		end,
 		__index = function(tbl,k)
-			local char = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+			local char = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 			if k == "Print" then
 				return Lib.inspect(char)
 			end
@@ -106,13 +106,13 @@ if not _ISCLIENT then
 			end
 		end,
 		__newindex = function(tbl,k,v)
-			local char = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+			local char = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 			if char then
 				char[k] = v
 			end
 		end,
 		__tostring = function()
-			return StringHelpers.GetUUID(CharacterGetHostCharacter())
+			return StringHelpers.GetUUID(Osi.CharacterGetHostCharacter())
 		end
 	})
 	AddConsoleVariable("me", me)
@@ -130,7 +130,7 @@ if not _ISCLIENT then
 			end
 			for i,v in pairs(entries) do
 				fprint(LOGLEVEL.DEFAULT, "party.ApplyStatus(\"%s\", \"%s\", %s, %s) to %s", v, status, duration, force, GameHelpers.Character.GetDisplayName(v))
-				ApplyStatus(v, status, duration, force, CharacterGetHostCharacter())
+				Osi.ApplyStatus(v, status, duration, force, Osi.CharacterGetHostCharacter())
 			end
 			return true
 		end
@@ -145,12 +145,12 @@ if not _ISCLIENT then
 			for i,v in pairs(entries) do
 				if not removeAll then
 					fprint(LOGLEVEL.DEFAULT, "party.RemoveStatus(\"%s\", \"%s\") from %s", v, status, GameHelpers.Character.GetDisplayName(v))
-					RemoveStatus(v, status)
+					Osi.RemoveStatus(v, status)
 				else
 					local statuses = GameHelpers.GetCharacter(v):GetStatuses()
 					fprint(LOGLEVEL.DEFAULT, "party.RemoveStatus(\"%s\", \"%s\") from %s", v, StringHelpers.Join(",", statuses), GameHelpers.Character.GetDisplayName(v))
 					for _,id in pairs(statuses) do
-						RemoveStatus(v, id)
+						Osi.RemoveStatus(v, id)
 					end
 				end
 			end
@@ -193,10 +193,10 @@ if not _ISCLIENT then
 	end
 	setmetatable(party, {
 		__call = function(includeSommons, includeFollowers)
-			return ConfigurePartyMetdata(GameHelpers.GetParty(CharacterGetHostCharacter(), includeSommons, includeFollowers, false, true))
+			return ConfigurePartyMetdata(GameHelpers.GetParty(Osi.CharacterGetHostCharacter(), includeSommons, includeFollowers, false, true))
 		end,
 		__index = function(tbl,k,v)
-			local partyMembers = GameHelpers.GetParty(CharacterGetHostCharacter(), true, true, false, true)
+			local partyMembers = GameHelpers.GetParty(Osi.CharacterGetHostCharacter(), true, true, false, true)
 			if type(k) == "string" then
 				k = string.lower(k)
 				local data = {}
@@ -209,14 +209,14 @@ if not _ISCLIENT then
 					return ConfigurePartyMetdata(data)
 				elseif string.find(k, "summon") then
 					for _,v in pairs(partyMembers) do
-						if CharacterIsSummon(v) == 1 then
+						if Osi.CharacterIsSummon(v) == 1 then
 							data[#data+1] = v
 						end
 					end
 					return ConfigurePartyMetdata(data)
 				elseif string.find(k, "follower") then
 					for _,v in pairs(partyMembers) do
-						if CharacterIsPartyFollower(v) == 1 then
+						if Osi.CharacterIsPartyFollower(v) == 1 then
 							data[#data+1] = v
 						end
 					end
@@ -227,7 +227,7 @@ if not _ISCLIENT then
 		end,
 		__tostring = function()
 			local data = {}
-			for _,v in pairs(GameHelpers.GetParty(CharacterGetHostCharacter(), false, false, false, true)) do
+			for _,v in pairs(GameHelpers.GetParty(Osi.CharacterGetHostCharacter(), false, false, false, true)) do
 				data[v] = GameHelpers.Character.GetDisplayName(v)
 			end
 			return Common.JsonStringify(data)
@@ -287,7 +287,7 @@ if not _ISCLIENT then
 				end
 			})
 			if exportToFileName then
-				Ext.SaveFile(string.format("ConsoleDebug/%s.json", exportToFileName), tostring(data))
+				Ext.IO.SaveFile(string.format("ConsoleDebug/%s.json", exportToFileName), tostring(data))
 			end
 			return data
 		end
@@ -295,7 +295,7 @@ if not _ISCLIENT then
 			__call = function(tbl, uuid)
 				local t = type(uuid)
 				if t == "string" then
-					if ObjectExists(uuid) == 0 then
+					if Osi.ObjectExists(uuid) == 0 then
 						error(string.format("UUID '%s' does not exist!", uuid))
 					end
 					return GameHelpers.GetCharacter(uuid)

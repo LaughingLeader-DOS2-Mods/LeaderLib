@@ -251,35 +251,35 @@ local function ProcessProjectileProps(props)
     if props.CasterLevel == nil then
         props.CasterLevel = GameHelpers.Character.GetHighestPlayerLevel()
     end
-    NRD_ProjectilePrepareLaunch()
+    Osi.NRD_ProjectilePrepareLaunch()
     for k,v in pairs(props) do
         if projectileCreationProperties[k] then
             local t = type(v)
             if t == "table" then
-                NRD_ProjectileSetVector3(k, table.unpack(v))
+                Osi.NRD_ProjectileSetVector3(k, table.unpack(v))
             elseif t == "number" then
-                NRD_ProjectileSetInt(k, v)
+                Osi.NRD_ProjectileSetInt(k, v)
             elseif t == "boolean" then
-                NRD_ProjectileSetInt(k, v == true and 1 or 0)
+                Osi.NRD_ProjectileSetInt(k, v == true and 1 or 0)
             elseif t == "string" then
                 local propType = projectileCreationProperties[k]
                 if propType == "GuidString" or propType == "Vector3/GuidString" then
                     local uuid = GameHelpers.GetUUID(v)
                     if not StringHelpers.IsNullOrEmpty(uuid) then
-                        NRD_ProjectileSetGuidString(k, uuid)
+                        Osi.NRD_ProjectileSetGuidString(k, uuid)
                     end
                 else
-                    NRD_ProjectileSetString(k, v)
+                    Osi.NRD_ProjectileSetString(k, v)
                 end
             elseif t == "userdata" and projectileCreationProperties[k] == "GuidString" then
                 local uuid = GameHelpers.GetUUID(v)
                 if uuid then
-                    NRD_ProjectileSetGuidString(k, uuid)
+                    Osi.NRD_ProjectileSetGuidString(k, uuid)
                 end
             end
         end
     end
-    NRD_ProjectileLaunch()
+    Osi.NRD_ProjectileLaunch()
 end
 
 --Mods.LeaderLib.GameHelpers.Skill.ProcessProjectileProps(CharacterGetHostCharacter(), "ProjectileStrike_HailStrike", CharacterGetHostCharacter())
@@ -768,24 +768,24 @@ function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
     local source = GameHelpers.TryGetObject(source)
     if _USE_BEHAVIOR and GameHelpers.Ext.ObjectIsCharacter(source) then
         if extraParams.Position then
-            SetVarFixedString(source.MyGuid, "LeaderLib_ShootWorldConeAt_Skill", skillId)
+            Osi.SetVarFixedString(source.MyGuid, "LeaderLib_ShootWorldConeAt_Skill", skillId)
             local x,y,z = GameHelpers.Math.GetPosition(target, true, source.WorldPos)
             local sx,sy,sz = table.unpack(extraParams.Position)
-            SetVarFloat3(source.MyGuid, "LeaderLib_ShootWorldConeAt_Target", x, y, z)
-            SetVarFloat3(source.MyGuid, "LeaderLib_ShootWorldConeAt_Source", sx, sy, sz)
-            SetStoryEvent(source.MyGuid, "LeaderLib_Commands_ShootWorldConeAt")
+            Osi.SetVarFloat3(source.MyGuid, "LeaderLib_ShootWorldConeAt_Target", x, y, z)
+            Osi.SetVarFloat3(source.MyGuid, "LeaderLib_ShootWorldConeAt_Source", sx, sy, sz)
+            Osi.SetStoryEvent(source.MyGuid, "LeaderLib_Commands_ShootWorldConeAt")
     
-            ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Skill")
-            ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Target")
-            ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Source")
+            Osi.ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Skill")
+            Osi.ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Target")
+            Osi.ClearVarObject(source.MyGuid, "LeaderLib_ShootWorldConeAt_Source")
         else
-            SetVarFixedString(source.MyGuid, "LeaderLib_ShootLocalConeAt_Skill", skillId)
+            Osi.SetVarFixedString(source.MyGuid, "LeaderLib_ShootLocalConeAt_Skill", skillId)
             local x,y,z = GameHelpers.Math.GetPosition(target, true, source.WorldPos)
-            SetVarFloat3(source.MyGuid, "LeaderLib_ShootLocalConeAt_Target", x, y, z)
-            SetStoryEvent(source.MyGuid, "LeaderLib_Commands_ShootLocalConeAt")
+            Osi.SetVarFloat3(source.MyGuid, "LeaderLib_ShootLocalConeAt_Target", x, y, z)
+            Osi.SetStoryEvent(source.MyGuid, "LeaderLib_Commands_ShootLocalConeAt")
     
-            ClearVarObject(source.MyGuid, "LeaderLib_ShootLocalConeAt_Skill")
-            ClearVarObject(source.MyGuid, "LeaderLib_ShootLocalConeAt_Target")
+            Osi.ClearVarObject(source.MyGuid, "LeaderLib_ShootLocalConeAt_Skill")
+            Osi.ClearVarObject(source.MyGuid, "LeaderLib_ShootLocalConeAt_Target")
         end
     else
         _CreateZoneActionFromSkill(skillId, source, target, extraParams)
@@ -798,7 +798,7 @@ end
 ---@param source Guid|EsvCharacter|EsvItem
 ---@param extraParams? LeaderLibZoneCreationProperties A table of properties to apply on top of the parsed skill properties.
 function GameHelpers.Skill.ShootZoneFromSource(skillId, source, extraParams)
-    local dist = extraParams and extraParams.Radius or Ext.StatGetAttribute(skillId, "Range") or 2
+    local dist = extraParams and extraParams.Radius or GameHelpers.Stats.GetAttribute(skillId, "Range") or 2
     local target = GameHelpers.Math.GetForwardPosition(source, dist)
     GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
 end

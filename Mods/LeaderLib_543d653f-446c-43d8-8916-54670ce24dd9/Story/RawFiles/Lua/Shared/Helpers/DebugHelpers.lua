@@ -1262,7 +1262,7 @@ userDataProps["eoc::ProjectileTemplate"] = {
 
 userDataProps["CRPGStats_Object"] = function(stat)
 	if _OSIRIS() then
-		local statType = NRD_StatGetType(stat.Name)
+		local statType = GameHelpers.Stats.GetStatType(stat.Name)
 		local attributeNames = statType and Data.StatAttributes[statType] or nil
 		if attributeNames then
 			local attributes = {}

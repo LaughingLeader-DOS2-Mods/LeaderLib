@@ -249,7 +249,7 @@ end
 function GameHelpers.Math.SetRotation(object, rotx, rotz, turnTo)
 	local uuid = GameHelpers.GetUUID(object)
 	if Ext.IsServer() then
-		if ObjectIsCharacter(uuid) == 1 then
+		if Osi.ObjectIsCharacter(uuid) == 1 then
 			local x,y,z = 0.0,0.0,0.0
 			if rotx ~= nil and rotz ~= nil then
 				local character = GameHelpers.GetCharacter(object)
@@ -262,21 +262,21 @@ function GameHelpers.Math.SetRotation(object, rotx, rotz, turnTo)
 				x = pos[1] + forwardVector[1]
 				y = pos[2]
 				z = pos[3] + forwardVector[3]
-				local target = CreateItemTemplateAtPosition("98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
+				local target = Osi.CreateItemTemplateAtPosition("98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
 				if turnTo ~= true then
-					CharacterLookAt(uuid, target, 1)
+					Osi.CharacterLookAt(uuid, target, 1)
 				end
 				Osi.LeaderLib_Timers_StartObjectTimer(target, 250, "Timers_LeaderLib_Commands_RemoveItem", "LeaderLib_Commands_RemoveItem")
 			end
 		else
-			local x,y,z = GetPosition(uuid)
-			local amount = ItemGetAmount(uuid)
-			local owner = ItemGetOwner(uuid)
+			local x,y,z = Osi.GetPosition(uuid)
+			local amount = Osi.ItemGetAmount(uuid)
+			local owner = Osi.ItemGetOwner(uuid)
 	
 			local pitch = 0.0174533 * rotx
 			local roll = 0.0174533 * rotz
 	
-			ItemToTransform(uuid, x, y, z, pitch, 0.0, roll, amount, owner)
+			Osi.ItemToTransform(uuid, x, y, z, pitch, 0.0, roll, amount, owner)
 		end
 	else
 		Ext.Net.PostMessageToServer("LeaderLib_Helpers_SetRotation", Common.JsonStringify({

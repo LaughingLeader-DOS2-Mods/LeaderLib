@@ -66,13 +66,13 @@ function ClientCharacterData:Create(params)
 		this.Points = {}
 		setmetatable(this.Points, {
 			__index = function(tbl,k)
-				if k == "Attribute" then return CharacterGetAttributePoints(this.UUID) end
-				if k == "Ability" then return CharacterGetAbilityPoints(this.UUID) end
-				if k == "Civil" then return CharacterGetCivilAbilityPoints(this.UUID) end
-				if k == "Talent" then return CharacterGetTalentPoints(this.UUID) end
-				if k == "SourceBase" then return CharacterGetBaseSourcePoints(this.UUID) end
-				if k == "SourceCurrent" then return CharacterGetSourcePoints(this.UUID) end
-				if k == "SourceMax" then return CharacterGetMaxSourcePoints(this.UUID) end
+				if k == "Attribute" then return Osi.CharacterGetAttributePoints(this.UUID) end
+				if k == "Ability" then return Osi.CharacterGetAbilityPoints(this.UUID) end
+				if k == "Civil" then return Osi.CharacterGetCivilAbilityPoints(this.UUID) end
+				if k == "Talent" then return Osi.CharacterGetTalentPoints(this.UUID) end
+				if k == "SourceBase" then return Osi.CharacterGetBaseSourcePoints(this.UUID) end
+				if k == "SourceCurrent" then return Osi.CharacterGetSourcePoints(this.UUID) end
+				if k == "SourceMax" then return Osi.CharacterGetMaxSourcePoints(this.UUID) end
 				error(string.format("[LeaderLib:ClientCharacterData] Invalid key for Points: (%s)", k), 2)
 			end
 		})
@@ -107,13 +107,13 @@ function ClientCharacterData:UpdatePoints(uuid)
 		end
 	end
 	if uuid then
-		self.Points.Attribute = CharacterGetAttributePoints(uuid) or 0
-		self.Points.Ability = CharacterGetAbilityPoints(uuid) or 0
-		self.Points.Civil = CharacterGetCivilAbilityPoints(uuid) or 0
-		self.Points.Talent = CharacterGetTalentPoints(uuid) or 0
-		self.Points.SourceBase = CharacterGetBaseSourcePoints(uuid) or 0
-		self.Points.SourceCurrent = CharacterGetSourcePoints(uuid) or 0
-		self.Points.SourceMax = CharacterGetMaxSourcePoints(uuid) or 0
+		self.Points.Attribute = Osi.CharacterGetAttributePoints(uuid) or 0
+		self.Points.Ability = Osi.CharacterGetAbilityPoints(uuid) or 0
+		self.Points.Civil = Osi.CharacterGetCivilAbilityPoints(uuid) or 0
+		self.Points.Talent = Osi.CharacterGetTalentPoints(uuid) or 0
+		self.Points.SourceBase = Osi.CharacterGetBaseSourcePoints(uuid) or 0
+		self.Points.SourceCurrent = Osi.CharacterGetSourcePoints(uuid) or 0
+		self.Points.SourceMax = Osi.CharacterGetMaxSourcePoints(uuid) or 0
 	end
 end
 

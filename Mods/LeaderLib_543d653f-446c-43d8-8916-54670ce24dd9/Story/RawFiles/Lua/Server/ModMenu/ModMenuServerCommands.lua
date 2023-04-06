@@ -2,16 +2,16 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_FlagChanged", function(cmd, payload)
 	local data = Common.JsonParse(payload)
 	if data.FlagType == "Global" then
 		if data.Enabled then
-			GlobalSetFlag(data.ID)
+			Osi.GlobalSetFlag(data.ID)
 		else
-			GlobalClearFlag(data.ID)
+			Osi.GlobalClearFlag(data.ID)
 		end
 	elseif data.FlagType == "User" then
-		local character = GetCurrentCharacter(data.User) or CharacterGetHostCharacter()
+		local character = Osi.GetCurrentCharacter(data.User) or Osi.CharacterGetHostCharacter()
 		if data.Enabled then
-			UserSetFlag(character, data.ID, 0)
+			Osi.UserSetFlag(character, data.ID, 0)
 		else
-			UserClearFlag(character, data.ID, 0)
+			Osi.UserClearFlag(character, data.ID, 0)
 		end
 	end
 	SaveGlobalSettings()

@@ -53,7 +53,7 @@ local _DUMP = {
 		end
 	end,
 	character = function (dumpType, synced, filename)
-		local character = isClient and Client:GetCharacter() or Ext.Entity.GetCharacter(CharacterGetHostCharacter())
+		local character = isClient and Client:GetCharacter() or Ext.Entity.GetCharacter(Osi.CharacterGetHostCharacter())
 		local name = GameHelpers.GetDisplayName(character):gsub(StringHelpers.ILLEGAL_FILE_CHARACTERS, "")
 		local fileName = string.format("Dumps/%s_%s_%s.json", filename or "Character", name, isClient and "Client" or "Server")
 		Ext.IO.SaveFile(fileName, Ext.DumpExport(character))
@@ -84,7 +84,7 @@ local _DUMP = {
 				end
 			end
 			filename = "Dumps/" .. (filename or "UIExtensions.json")
-			Ext.SaveFile(filename, Ext.DumpExport(data))
+			Ext.IO.SaveFile(filename, Ext.DumpExport(data))
 			fprint(LOGLEVEL.DEFAULT, "[dump:uiext] Saved UIExtensions data to %s", filename)
 		else
 			SendDumpCommand(dumpType, synced, filename)

@@ -278,18 +278,18 @@ if Ext.IsServer() then
 	settings.Global.Flags.LeaderLib_TraderDisabled:Subscribe(function(e)
 		if Ext.Osiris.IsCallable() then
 			if e.Value then
-				SetOnStage(TRADER_GUID, 0)
-			elseif GetRegion(TRADER_GUID) == SharedData.RegionData.Current then
-				SetOnStage(TRADER_GUID, 1)
+				Osi.SetOnStage(TRADER_GUID, 0)
+			elseif Osi.GetRegion(TRADER_GUID) == SharedData.RegionData.Current then
+				Osi.SetOnStage(TRADER_GUID, 1)
 			end
 		else
 			if not _tempRegionChangedIndex then
 				_tempRegionChangedIndex = Events.RegionChanged:Subscribe(function (e)
 					if e.State == REGIONSTATE.GAME then
 						if settings.Global:FlagEquals("LeaderLib_TraderDisabled", true) then
-							SetOnStage(TRADER_GUID, 0)
-						elseif GetRegion(TRADER_GUID) == e.Region then
-							SetOnStage(TRADER_GUID, 1)
+							Osi.SetOnStage(TRADER_GUID, 0)
+						elseif Osi.GetRegion(TRADER_GUID) == e.Region then
+							Osi.SetOnStage(TRADER_GUID, 1)
 						end
 						Events.RegionChanged:Unsubscribe(_tempRegionChangedIndex)
 						_tempRegionChangedIndex = nil
@@ -301,7 +301,7 @@ if Ext.IsServer() then
 	Ext.Osiris.RegisterListener("LeaderLib_Traders_OnSpawned", 3, "after", function (traderGUID, traderID, region)
 		traderGUID = StringHelpers.GetUUID(traderGUID)
 		if traderGUID == TRADER_GUID and settings.Global:FlagEquals("LeaderLib_TraderDisabled", true) then
-			SetOnStage(TRADER_GUID, 0)
+			Osi.SetOnStage(TRADER_GUID, 0)
 		end
 	end)
 end

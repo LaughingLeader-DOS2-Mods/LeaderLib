@@ -301,8 +301,8 @@ else
 					NetID = object.NetID,
 					UUID = object.MyGuid,
 					Type = data.Type,
-					Rotation={GetRotation(object.MyGuid)},
-					Template = StringHelpers.GetUUID(GetTemplate(object.MyGuid)),
+					Rotation={Osi.GetRotation(object.MyGuid)},
+					Template = StringHelpers.GetUUID(Osi.GetTemplate(object.MyGuid)),
 				}
 				if data.Type == "Character" then
 					data.Boss = object.CurrentTemplate.CombatTemplate.IsBoss
@@ -332,11 +332,11 @@ else
 			local target = GameHelpers.GetCharacter(data.Target)
 			local player = GameHelpers.GetCharacter(data.Source)
 			if target and player then
-				SetCanJoinCombat(target.MyGuid, 1)
-				SetCanFight(target.MyGuid, 1)
-				SetCanJoinCombat(player.MyGuid, 1)
-				SetCanFight(player.MyGuid, 1)
-				EnterCombat(player.MyGuid, target.MyGuid)
+				Osi.SetCanJoinCombat(target.MyGuid, 1)
+				Osi.SetCanFight(target.MyGuid, 1)
+				Osi.SetCanJoinCombat(player.MyGuid, 1)
+				Osi.SetCanFight(player.MyGuid, 1)
+				Osi.EnterCombat(player.MyGuid, target.MyGuid)
 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib_ContextMenu_StartCombat] EnterCombat(\"%s\", \"%s\")", player.MyGuid, target.MyGuid)
 			end
 		end
@@ -348,13 +348,13 @@ else
 			local target = GameHelpers.GetCharacter(data.Target)
 			local player = GameHelpers.GetCharacter(data.Source)
 			if target and player then
-				if CharacterIsInCombat(target.MyGuid) == 1 then
+				if GameHelpers.Character.IsInCombat(target) then
 					GameHelpers.Status.Apply(target, "INVISIBLE", 12.0, 0, target)
-					TeleportTo(target.MyGuid, target.MyGuid, "", 0, 1, 1)
+					Osi.TeleportTo(target.MyGuid, target.MyGuid, "", 0, 1, 1)
 				end
-				if player.MyGuid ~= target.MyGuid and CharacterIsInCombat(player.MyGuid) == 1 then
+				if player.MyGuid ~= target.MyGuid and GameHelpers.Character.IsInCombat(player.MyGuid) then
 					GameHelpers.Status.Apply(player, "INVISIBLE", 12.0, 0, player)
-					TeleportTo(player.MyGuid, player.MyGuid, "", 0, 1, 1)
+					Osi.TeleportTo(player.MyGuid, player.MyGuid, "", 0, 1, 1)
 				end
 			end
 		end

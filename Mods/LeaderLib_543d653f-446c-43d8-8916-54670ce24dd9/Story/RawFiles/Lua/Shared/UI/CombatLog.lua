@@ -288,10 +288,11 @@ else
 	---@param filterId string|integer
 	---@param text string
 	function CombatLog.AddTextToHost(filterId, text)
+		local host = GameHelpers.Character.GetHost()
 		if type(filterId) == "number" then
-			GameHelpers.Net.PostToUser(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToIndex", Common.JsonStringify({ID=filterId, Text=text}))
+			GameHelpers.Net.PostToUser(host, "LeaderLib_CombatLog_AddTextToIndex", Common.JsonStringify({ID=filterId, Text=text}))
 		else
-			GameHelpers.Net.PostToUser(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToFilter", Common.JsonStringify({ID=filterId, Text=text}))
+			GameHelpers.Net.PostToUser(host, "LeaderLib_CombatLog_AddTextToFilter", Common.JsonStringify({ID=filterId, Text=text}))
 		end
 	end
 

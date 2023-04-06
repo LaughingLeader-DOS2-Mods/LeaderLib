@@ -14,7 +14,7 @@ local function OverrideLeaveActionStatuses()
 	if #Vars.LeaveActionData.Prefixes > 0 then
 		for i,stat in pairs(Ext.Stats.GetStats("StatusData")) do
 			if CanOverrideLeaveActionStatus(stat) then
-				local leaveActionSkill = Ext.StatGetAttribute(stat, "LeaveAction")
+				local leaveActionSkill = GameHelpers.Stats.GetAttribute(stat, "LeaveAction")
 				if StringHelpers.IsNullOrWhitespace(leaveActionSkill) then
 					local savedSkill = Osi.DB_LeaderLib_LeaveAction_StatusToSkill:Get(stat, nil)
 					if savedSkill and #savedSkill > 0 then
@@ -55,7 +55,7 @@ local function InvokeOnInitializedCallbacks(region)
 
 	if _PV.ScaleOverride then
 		for uuid,scale in pairs(_PV.ScaleOverride) do
-			if ObjectExists(uuid) == 1 then
+			if Osi.ObjectExists(uuid) == 1 then
 				GameHelpers.SetScale(uuid, scale, false)
 			end
 		end
@@ -63,11 +63,11 @@ local function InvokeOnInitializedCallbacks(region)
 
 	if _PV.Summons then
 		for uuid,tbl in pairs(_PV.Summons) do
-			if ObjectExists(uuid) == 0 then
+			if Osi.ObjectExists(uuid) == 0 then
 				_PV.Summons[uuid] = nil
 			else
 				for i,v in pairs(tbl) do
-					if ObjectExists(v) == 0 then
+					if Osi.ObjectExists(v) == 0 then
 						table.remove(tbl, i)
 					end
 				end
@@ -120,7 +120,7 @@ local function OnInitialized(region, isRunning)
 
 	if isRunning == true or Ext.GetGameState() == "Running" then
 		InvokeOnInitializedCallbacks(region)
-		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1
+		if Osi.GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1
 		and GameHelpers.IsLevelType(LEVELTYPE.GAME) then
 			Timer.Start("LeaderLib_UnlockCharacterInventories", 10000)
 		end
@@ -170,10 +170,10 @@ function OnLuaReset()
 	GameHelpers.Data.SetRegion(region)
 	GameHelpers.Data.SetGameMode()
 	pcall(DebugLoadPersistentVars)
-	if IsCharacterCreationLevel(region) == 1 then
+	if Osi.IsCharacterCreationLevel(region) == 1 then
 		SkipTutorial.Initialize()
 	end
-	IterateUsers("LeaderLib_StoreUserData")
+	Osi.IterateUsers("LeaderLib_StoreUserData")
 	Vars.LeaderDebugMode = GameHelpers.IO.LoadFile("LeaderDebug") ~= nil
 	Events.LuaReset:Invoke({Region=region})
 	GameHelpers.Net.Broadcast("LeaderLib_Client_SyncDebugVars", {PrintSettings=Vars.Print, CommandSettings = Vars.Commands})
@@ -183,7 +183,7 @@ function OnLuaReset()
 end
 
 Ext.Events.ResetCompleted:Subscribe(function ()
-	if _OSIRIS() and GlobalGetFlag("LeaderLib_ResettingLua") == 0 then
+	if _OSIRIS() and Osi.GlobalGetFlag("LeaderLib_ResettingLua") == 0 then
 		OnLuaReset()
 	end
 end)

@@ -101,7 +101,7 @@ local CurrentSuffix = Classes.TranslatedString:CreateFromKey("LeaderLib_Autosavi
 ---Called from LeaderLib_11_3_Autosaving.txt
 function Autosaving_Internal_UpdateDialogVar(inst)
 	inst = tonumber(inst)
-	local isEnabled = GlobalGetFlag("LeaderLib_AutosavingEnabled") == 1
+	local isEnabled = Osi.GlobalGetFlag("LeaderLib_AutosavingEnabled") == 1
 	local intervalFlag = GameHelpers.DB.Get("DB_LeaderLib_Autosaving_CurrentInterval", 1, 1, true)
 	local intervalText = ""
 	local db = Osi.DB_LeaderLib_DynamicMenu_TranslatedStrings:Get("LeaderLib.Autosave.IntervalSettings", intervalFlag, nil, nil)
@@ -128,12 +128,12 @@ function Autosaving_Internal_UpdateDialogVar(inst)
 	else
 		text = AutoSavingDisabledDialogText:ReplacePlaceholders(intervalText)
 	end
-	DialogSetVariableStringForInstance(inst, "LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082", text)
+	Osi.DialogSetVariableStringForInstance(inst, "LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082", text)
 end
 
 function Autosaving_Internal_UpdateDialogVarMenuSelectedOption(inst, dialogVar, handle, fallback)
 	inst = tonumber(inst)
-	DialogSetVariableStringForInstance(inst, dialogVar, string.format("%s %s", Ext.L10N.GetTranslatedString(handle, fallback), CurrentSuffix.Value))
+	Osi.DialogSetVariableStringForInstance(inst, dialogVar, string.format("%s %s", Ext.L10N.GetTranslatedString(handle, fallback), CurrentSuffix.Value))
 end
 
 Timer.Subscribe("LeaderLib_UnlockCharacterInventories", function (e)
@@ -152,8 +152,8 @@ function LevelUpItemsWithTag(character, tag)
 		for item in GameHelpers.Character.GetTaggedItems(character, tag) do
 			if not GameHelpers.Item.IsObject(item) and item.Stats then
 				if item.Stats.Level < level then
-					ItemLevelUpTo(item.MyGuid, level)
-					CharacterItemSetEvent(character.MyGuid, item.MyGuid, "LeaderLib_Events_ItemLeveledUp")
+					Osi.ItemLevelUpTo(item.MyGuid, level)
+					Osi.CharacterItemSetEvent(character.MyGuid, item.MyGuid, "LeaderLib_Events_ItemLeveledUp")
 				end
 			end
 		end

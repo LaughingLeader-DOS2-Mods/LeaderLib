@@ -59,11 +59,11 @@ end
 
 ---@param uuid string Character UUID
 function QuestStateData:Activate(uuid)
-	if self.Flags.Update ~= nil and self.Flags.Update ~= "" and ObjectGetFlag(uuid, self.Flags.Update) == 0 then
+	if self.Flags.Update ~= nil and self.Flags.Update ~= "" and Osi.ObjectGetFlag(uuid, self.Flags.Update) == 0 then
 		if Vars.DebugMode then
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:QuestStateData] Activating quest state (%s:%s) on (%s)[%s]", self.ID, self.Flags.Update, GameHelpers.GetCharacter(uuid).DisplayName, uuid)
 		end
-		ObjectSetFlag(uuid, self.Flags.Update, 0)
+		Osi.ObjectSetFlag(uuid, self.Flags.Update, 0)
 	end
 end
 
@@ -212,7 +212,7 @@ end
 
 local function _uuidCheck(v)
 	local uuid = GameHelpers.GetUUID(v)
-	if not StringHelpers.IsNullOrEmpty(uuid) and ObjectIsCharacter(uuid) == 1 then
+	if not StringHelpers.IsNullOrEmpty(uuid) and Osi.ObjectIsCharacter(uuid) == 1 then
 		return uuid
 	else
 		error(string.format("Function requires a valid character UUID. '%s' was given.", v), 2)
@@ -224,7 +224,7 @@ end
 function QuestData:HasQuest(uuid)
 	local uuid = _uuidCheck(uuid)
 	if uuid then
-		return ObjectGetFlag(uuid, self.Flags.Add) == 1
+		return Osi.ObjectGetFlag(uuid, self.Flags.Add) == 1
 	end
 	return false
 end
@@ -239,30 +239,30 @@ function QuestData:Activate(uuid, state)
 	end
 
 	local addedFlags = {}
-	if ObjectGetFlag(uuid, self.Flags.Add) == 0 then
+	if Osi.ObjectGetFlag(uuid, self.Flags.Add) == 0 then
 		if Vars.DebugMode then
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:QuestData] Activating quest (%s:%s) on (%s)[%s]", self.ID, self.Flags.Add, GameHelpers.GetCharacter(uuid).DisplayName, uuid)
 		end
-		ObjectSetFlag(uuid, self.Flags.Add, 0)
+		Osi.ObjectSetFlag(uuid, self.Flags.Add, 0)
 		addedFlags[#addedFlags+1] = self.Flags.Add
 	end
 	if state ~= nil then
 		local t = type(state)
 		if t == "table" and state.Type == "QuestStateData" then
-			ObjectSetFlag(uuid, state.Flags.Update, 0)
+			Osi.ObjectSetFlag(uuid, state.Flags.Update, 0)
 			addedFlags[#addedFlags+1] = state.Flags.Update
 		elseif t == "string" then
 			local stateObject = self:GetState(state)
 			if stateObject then
-				ObjectSetFlag(uuid, stateObject.Flags.Update, 0)
+				Osi.ObjectSetFlag(uuid, stateObject.Flags.Update, 0)
 				addedFlags[#addedFlags+1] = stateObject.Flags.Update
 			else
 				if not string.find(state, "QuestUpdate_") then
 					local flag = string.format("QuestUpdate_%s_%s", self.ID, state)
-					ObjectSetFlag(uuid, flag, 0)
+					Osi.ObjectSetFlag(uuid, flag, 0)
 					addedFlags[#addedFlags+1] = flag
 				else
-					ObjectSetFlag(uuid, state, 0)
+					Osi.ObjectSetFlag(uuid, state, 0)
 					addedFlags[#addedFlags+1] = state
 				end
 			end
@@ -271,7 +271,7 @@ function QuestData:Activate(uuid, state)
 	local success = true
 	for i=1,#addedFlags do
 		local flag = addedFlags[i]
-		if ObjectGetFlag(uuid, flag) == 0 then
+		if Osi.ObjectGetFlag(uuid, flag) == 0 then
 			fprint(LOGLEVEL.ERROR, "[LeaderLib:QuestData:%s] Quest flag (%s) was not set on character (%s)", self.ID, flag, uuid)
 			success = false
 			break
@@ -285,7 +285,7 @@ end
 function QuestData:Complete(uuid)
 	local uuid = _uuidCheck(uuid)
 	assert(uuid ~= nil, "UUID is invalid")
-	ObjectSetFlag(uuid, self.Flags.Close, 0)
+	Osi.ObjectSetFlag(uuid, self.Flags.Close, 0)
 end
 
 Classes.QuestStateData = QuestStateData

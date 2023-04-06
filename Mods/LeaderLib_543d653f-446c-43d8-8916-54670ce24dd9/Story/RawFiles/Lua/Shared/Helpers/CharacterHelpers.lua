@@ -26,13 +26,13 @@ function GameHelpers.Character.IsPlayer(character)
 			end
 		else
 			if t == "userdata" then
-				if ObjectIsCharacter(character.MyGuid) == 1 and (character.IsPlayer or character.IsGameMaster) then
+				if Osi.ObjectIsCharacter(character.MyGuid) == 1 and (character.IsPlayer or character.IsGameMaster) then
 					return true
 				end
 				character = character.MyGuid
 			end
 			if _type(character) == "string" then
-				return CharacterIsPlayer(character) == 1 or CharacterGameMaster(character) == 1 or GameHelpers.DB.HasUUID("DB_IsPlayer", character)
+				return Osi.CharacterIsPlayer(character) == 1 or Osi.CharacterGameMaster(character) == 1 or GameHelpers.DB.HasUUID("DB_IsPlayer", character)
 			end
 		end
 	else
@@ -93,7 +93,7 @@ function GameHelpers.Character.IsPlayerOrPartyMember(character)
 	end
 	if not _ISCLIENT and _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(character)
-		return not StringHelpers.IsNullOrEmpty(GUID) and CharacterIsPartyMember(GUID) == 1
+		return not StringHelpers.IsNullOrEmpty(GUID) and Osi.CharacterIsPartyMember(GUID) == 1
 	end
 	return false
 end
@@ -143,7 +143,7 @@ function GameHelpers.Character.IsSummonOrPartyFollower(character)
 		if _type(character) == "userdata" then
 			return character.Summon or character.PartyFollower
 		elseif _type(character) == "string" then
-			return CharacterIsSummon(character) == 1 or CharacterIsPartyFollower(character) == 1
+			return Osi.CharacterIsSummon(character) == 1 or Osi.CharacterIsPartyFollower(character) == 1
 		end
 	else
 		if _type(character) ~= "userdata" then
@@ -160,9 +160,9 @@ end
 function GameHelpers.Character.IsAllyOfParty(character)
 	if not _ISCLIENT and _OSIRIS() then
 		character = GameHelpers.GetUUID(character)
-		if not character or ObjectIsCharacter(character) == 0 then return false end
+		if not character or Osi.ObjectIsCharacter(character) == 0 then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
-			if CharacterIsAlly(character, player.MyGuid) == 1 then
+			if Osi.CharacterIsAlly(character, player.MyGuid) == 1 then
 				return true
 			end
 		end
@@ -176,7 +176,7 @@ function GameHelpers.Character.IsEnemyOfParty(character)
 		local GUID = GameHelpers.GetUUID(character)
 		if not GUID then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
-			if CharacterIsEnemy(GUID, player.MyGuid) == 1 then
+			if Osi.CharacterIsEnemy(GUID, player.MyGuid) == 1 then
 				return true
 			end
 		end
@@ -192,8 +192,8 @@ function GameHelpers.Character.IsEnemy(char1, char2)
 			local a = GameHelpers.GetUUID(char1)
 			local b = GameHelpers.GetUUID(char2)
 			if not a or not b then return false end
-			local relation = CharacterGetRelationToCharacter(a,b)
-			return CharacterIsEnemy(a,b) == 1 or (relation and relation <= 0)
+			local relation = Osi.CharacterGetRelationToCharacter(a,b)
+			return Osi.CharacterIsEnemy(a,b) == 1 or (relation and relation <= 0)
 		else
 			local alignment = Ext.Entity.GetAlignmentManager()
 			local a = GameHelpers.GetCharacter(char1)
@@ -214,7 +214,7 @@ function GameHelpers.Character.IsNeutralToParty(character)
 		local GUID = GameHelpers.GetUUID(character)
 		if not GUID then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
-			if CharacterIsNeutral(GUID, player.MyGuid) == 1 then
+			if Osi.CharacterIsNeutral(GUID, player.MyGuid) == 1 then
 				return true
 			end
 		end
@@ -228,7 +228,7 @@ function GameHelpers.Character.IsInCombat(character)
 	if not _ISCLIENT and _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(character)
 		if not GUID then return false end
-		if CharacterIsInCombat(GUID) == 1 then
+		if Osi.CharacterIsInCombat(GUID) == 1 then
 			return true
 		elseif GameHelpers.DB.HasUUID("DB_CombatCharacters", GUID, 2, 1) then
 			return true
@@ -275,7 +275,7 @@ function GameHelpers.Character.HasSkill(character, skill)
 		if not _ISCLIENT and _OSIRIS() then
 			if t == "string" then
 				if _OSIRIS() then
-					return CharacterHasSkill(character.MyGuid, skill) == 1
+					return Osi.CharacterHasSkill(character.MyGuid, skill) == 1
 				else
 					for _,v in pairs(character:GetSkills()) do
 						if v == skill then
@@ -286,7 +286,7 @@ function GameHelpers.Character.HasSkill(character, skill)
 			elseif t == "table" then
 				if _OSIRIS() then
 					for i=1,#skill do
-						if CharacterHasSkill(character.MyGuid, skill[i]) == 1 then
+						if Osi.CharacterHasSkill(character.MyGuid, skill[i]) == 1 then
 							return true
 						end
 					end
@@ -451,7 +451,7 @@ function GameHelpers.Character.GetDisplayName(character)
 		end
 		if StringHelpers.IsNullOrWhitespace(name) or string.find(name, "|", 1, true) then
 			if not _ISCLIENT then
-				local handle,ref = CharacterGetDisplayName(character.MyGuid)
+				local handle,ref = Osi.CharacterGetDisplayName(character.MyGuid)
 				return Ext.L10N.GetTranslatedString(handle, not StringHelpers.IsNullOrWhitespace(name) and name or ref)
 			else
 				return name
@@ -482,7 +482,7 @@ function GameHelpers.Character.GetPlayers(includeSummons, asTable, castType)
 						local summons = _PV.Summons[player.MyGuid]
 						if summons then
 							for i,v in pairs(summons) do
-								if ObjectIsCharacter(v) == 1 then
+								if Osi.ObjectIsCharacter(v) == 1 then
 									local summon = GameHelpers.GetCharacter(v)
 									if summon then
 										players[#players+1] = summon
@@ -503,7 +503,7 @@ function GameHelpers.Character.GetPlayers(includeSummons, asTable, castType)
 			end
 		end
 		if SharedData.GameMode == GAMEMODE.GAMEMASTER then
-			local gm = StringHelpers.GetUUID(CharacterGetHostCharacter())
+			local gm = StringHelpers.GetUUID(Osi.CharacterGetHostCharacter())
 			if not StringHelpers.IsNullOrEmpty(gm) then
 				gm = GameHelpers.GetCharacter(gm)
 				if not Common.TableHasValue(players, gm) then
@@ -537,7 +537,7 @@ end
 ---@return EsvCharacter|EclCharacter host
 function GameHelpers.Character.GetHost()
 	if not _ISCLIENT then
-		return GameHelpers.GetCharacter(CharacterGetHostCharacter())
+		return GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 	else
 		for _,v in pairs(SharedData.CharacterData) do
 			if v.IsHost then
@@ -563,7 +563,7 @@ function GameHelpers.Character.GetPartySize(includeSummons)
 				local summons = _PV.Summons[player.MyGuid]
 				if summons then
 					for i,v in pairs(summons) do
-						if ObjectIsCharacter(v) == 1 then
+						if Osi.ObjectIsCharacter(v) == 1 then
 							local summon = GameHelpers.GetCharacter(v)
 							if summon then
 								count = count + 1
@@ -775,7 +775,7 @@ function GameHelpers.Character.IsUnsheathed(character)
 	if not _ISCLIENT and _OSIRIS() then
 		character = GameHelpers.GetUUID(character)
 		if not character then return false end
-		return HasActiveStatus(character, "UNSHEATHED") == 1 or CharacterIsInFightMode(character) == 1
+		return Osi.HasActiveStatus(character, "UNSHEATHED") == 1 or Osi.CharacterIsInFightMode(character) == 1
 	else
 		---@type EclCharacter
 		local character = GameHelpers.GetCharacter(character)
@@ -842,7 +842,7 @@ function GameHelpers.Character.IsSneakingOrInvisible(character)
 end
 
 if not _ISCLIENT then
-	Ext.NewQuery(GameHelpers.Character.IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "[in](GUIDSTRING)_Object, [out](INTEGER)_Bool")
+	Ext.Osiris.NewQuery(GameHelpers.Character.IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "[in](GUIDSTRING)_Object, [out](INTEGER)_Bool")
 end
 
 GameHelpers.Status.IsSneakingOrInvisible = GameHelpers.Character.IsSneakingOrInvisible
@@ -873,60 +873,60 @@ end
 function GameHelpers.Character.EquipItem(character, item)
 	if not _ISCLIENT then
 		local uuid = GameHelpers.GetUUID(character)
-		fassert(not StringHelpers.IsNullOrEmpty(uuid) and ObjectExists(uuid) == 1, "Character (%s) must be a valid UUID or EsvCharacter", character)
+		fassert(not StringHelpers.IsNullOrEmpty(uuid) and Osi.ObjectExists(uuid) == 1, "Character (%s) must be a valid UUID or EsvCharacter", character)
 		item = GameHelpers.GetItem(item)
 		fassert(item ~= nil and not GameHelpers.Item.IsObject(item), "Item (%s) must be a non-object item.", item and item.StatsId or "nil")
-		fassert(ItemIsEquipable(item.MyGuid) == 1, "Item (%s) is not equipable.", item.StatsId)
+		fassert(Osi.ItemIsEquipable(item.MyGuid) == 1, "Item (%s) is not equipable.", item.StatsId)
 		if item.Stats.Slot == "Weapon" then
 			local mainhand = GameHelpers.Item.GetItemInSlot(uuid, "Weapon")
 			local offhand = GameHelpers.Item.GetItemInSlot(uuid, "Shield")
 			if item.Stats.IsTwoHanded then
 				if mainhand then
-					ItemLockUnEquip(mainhand.MyGuid, 0)
-					ItemToInventory(mainhand.MyGuid, uuid, 1, 0, 0)
+					Osi.ItemLockUnEquip(mainhand.MyGuid, 0)
+					Osi.ItemToInventory(mainhand.MyGuid, uuid, 1, 0, 0)
 				end
 				if offhand then
-					ItemLockUnEquip(offhand.MyGuid, 0)
-					ItemToInventory(offhand.MyGuid, uuid, 1, 0, 0)
+					Osi.ItemLockUnEquip(offhand.MyGuid, 0)
+					Osi.ItemToInventory(offhand.MyGuid, uuid, 1, 0, 0)
 				end
-				SetOnStage(item.MyGuid, 1)
-				NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
+				Osi.SetOnStage(item.MyGuid, 1)
+				Osi.NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
 				return true
 			else
 				if mainhand then
 					if not offhand then
-						SetOnStage(item.MyGuid, 1)
-						NRD_CharacterEquipItem(uuid, item.MyGuid, "Shield", 0, 0, 1, 1)
+						Osi.SetOnStage(item.MyGuid, 1)
+						Osi.NRD_CharacterEquipItem(uuid, item.MyGuid, "Shield", 0, 0, 1, 1)
 						return true
 					else
-						ItemLockUnEquip(mainhand.MyGuid, 0)
-						ItemToInventory(mainhand.MyGuid, uuid, 1, 0, 0)
-						SetOnStage(item.MyGuid, 1)
-						NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
+						Osi.ItemLockUnEquip(mainhand.MyGuid, 0)
+						Osi.ItemToInventory(mainhand.MyGuid, uuid, 1, 0, 0)
+						Osi.SetOnStage(item.MyGuid, 1)
+						Osi.NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
 						return true
 					end
 				else
-					NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
+					Osi.NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
 					return true
 				end
 			end
 		elseif item.Stats.Slot == "Shield" then
 			local offhand = GameHelpers.Item.GetItemInSlot(uuid, "Shield")
 			if offhand then
-				ItemLockUnEquip(offhand.MyGuid, 0)
-				ItemToInventory(offhand.MyGuid, uuid, 1, 0, 0)
+				Osi.ItemLockUnEquip(offhand.MyGuid, 0)
+				Osi.ItemToInventory(offhand.MyGuid, uuid, 1, 0, 0)
 			end
-			SetOnStage(item.MyGuid, 1)
-			NRD_CharacterEquipItem(uuid, item.MyGuid, "Shield", 0, 0, 1, 1)
+			Osi.SetOnStage(item.MyGuid, 1)
+			Osi.NRD_CharacterEquipItem(uuid, item.MyGuid, "Shield", 0, 0, 1, 1)
 			return true
 		else
 			local existing = GameHelpers.Item.GetItemInSlot(uuid, item.Stats.Slot)
 			if existing then
-				ItemLockUnEquip(existing.MyGuid, 0)
-				ItemToInventory(existing.MyGuid, uuid, 1, 0, 0)
+				Osi.ItemLockUnEquip(existing.MyGuid, 0)
+				Osi.ItemToInventory(existing.MyGuid, uuid, 1, 0, 0)
 			end
-			SetOnStage(item.MyGuid, 1)
-			NRD_CharacterEquipItem(uuid, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
+			Osi.SetOnStage(item.MyGuid, 1)
+			Osi.NRD_CharacterEquipItem(uuid, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
 			return true
 		end
 	end
@@ -1041,7 +1041,7 @@ function GameHelpers.Character.GetEquippedWeapons(character)
 	else
 		if _OSIRIS() then
 			local mainhand,offhand = nil,nil
-			local mainhandId,offhandId = CharacterGetEquippedItem(char.MyGuid, "Weapon"), CharacterGetEquippedItem(char.MyGuid, "Shield")
+			local mainhandId,offhandId = Osi.CharacterGetEquippedItem(char.MyGuid, "Weapon"), Osi.CharacterGetEquippedItem(char.MyGuid, "Shield")
 			if not StringHelpers.IsNullOrEmpty(mainhandId) then
 				mainhand = GameHelpers.GetItem(mainhandId)
 			end
@@ -1132,9 +1132,9 @@ function GameHelpers.Character.HasFlag(character, flag)
 					end
 				end
 			elseif t == "string" then
-				return ObjectGetFlag(uuid, flag) == 1
-				or PartyGetFlag(uuid, flag) == 1
-				or UserGetFlag(uuid, flag) == 1
+				return Osi.ObjectGetFlag(uuid, flag) == 1
+				or Osi.PartyGetFlag(uuid, flag) == 1
+				or Osi.UserGetFlag(uuid, flag) == 1
 			else
 				error("flag parameter must be a string or table of strings.", 2)
 			end
@@ -1258,8 +1258,8 @@ function GameHelpers.Character.SetStats(character, statID)
 		local characterGUID = GameHelpers.GetUUID(character)
 		if characterGUID then
 			assert(GameHelpers.Stats.Exists(statID), string.format("Character Stat '%s' does not exist.", statID))
-			SetVarFixedString(characterGUID, "LeaderLib_CharacterSetStats_ID", statID)
-			SetStoryEvent(characterGUID, "LeaderLib_Commands_CharacterSetStats")
+			Osi.SetVarFixedString(characterGUID, "LeaderLib_CharacterSetStats_ID", statID)
+			Osi.SetStoryEvent(characterGUID, "LeaderLib_Commands_CharacterSetStats")
 			return true
 		end
 	end
@@ -1302,10 +1302,10 @@ function GameHelpers.Character.SetEquipment(character, equipmentStatID, deleteEx
 					if deleteExisting then
 						local existingItem = GameHelpers.Item.GetItemInSlot(character, slot)
 						if existingItem then
-							ItemRemove(existingItem.MyGuid)
+							Osi.ItemRemove(existingItem.MyGuid)
 						end
 					end
-					NRD_CharacterEquipItem(character.MyGuid, itemGUID, slot, 0, 0, 1, 1)
+					Osi.NRD_CharacterEquipItem(character.MyGuid, itemGUID, slot, 0, 0, 1, 1)
 					success = true
 				end
 			end
@@ -1349,7 +1349,7 @@ function GameHelpers.Character.CloneEquipment(from, to)
 				local clone = GameHelpers.Item.Clone(item, nil, {CopyTags=true, InvokeEvent=false})
 				if clone then
 					local slot = GameHelpers.Item.GetSlot(item, true)
-					NRD_CharacterEquipItem(target.MyGuid, clone.MyGuid, slot, 0, 0, 1, 1)
+					Osi.NRD_CharacterEquipItem(target.MyGuid, clone.MyGuid, slot, 0, 0, 1, 1)
 				end
 			end
 			return true
@@ -1417,14 +1417,14 @@ function _TryMakePlayer(character, recruitingPlayer, opts)
 	assert(_ISCLIENT == false, "[GameHelpers.Character.MakePlayer] can only be called from the server side!")
 	local target = GameHelpers.GetCharacter(character, "EsvCharacter")
 	if recruitingPlayer == nil then
-		recruitingPlayer = StringHelpers.GetUUID(CharacterGetHostCharacter())
+		recruitingPlayer = StringHelpers.GetUUID(Osi.CharacterGetHostCharacter())
 	end
 	local player = GameHelpers.GetCharacter(recruitingPlayer, "EsvCharacter")
 	assert(target ~= nil,  string.format("Failed to get character from parameter (%s)", character))
 	assert(player ~= nil,  string.format("Failed to get player from parameter (%s)", recruitingPlayer))
 	local targetGUID = target.MyGuid
 	local playerGUID = player.MyGuid
-	CharacterRecruitCharacter(targetGUID, playerGUID)
+	Osi.CharacterRecruitCharacter(targetGUID, playerGUID)
 	Osi.QRY_GLO_PartyMembers_GetInPartyDialogReset(targetGUID)
 	Osi.ProcCharacterDisableAllCrimes(targetGUID)
 	Osi.ProcAssignCharacterToPlayer(targetGUID,playerGUID)
@@ -1433,18 +1433,18 @@ function _TryMakePlayer(character, recruitingPlayer, opts)
 	Osi.PROC_GLO_PartyMembers_SetInpartyDialog(targetGUID, dialog)
 	if not opts.SkipAssigningFaction then
 		local faction = _GetDefaultFaction(targetGUID)
-		SetFaction(targetGUID, faction)
+		Osi.SetFaction(targetGUID, faction)
 		Osi.DB_GLO_PartyMembers_DefaultFaction:Delete(targetGUID, nil)
 	end
 	Osi.DB_IsPlayer(targetGUID)
-	CharacterAttachToGroup(targetGUID,playerGUID)
+	Osi.CharacterAttachToGroup(targetGUID,playerGUID)
 	if not opts.SkipPartyCheck then
 		Osi.Proc_CheckPartyFull()
 	end
 	Osi.Proc_CheckFirstTimeRecruited(targetGUID)
 	Osi.PROC_GLO_PartyMembers_RecruiteeAvatarBond_IfDifferent(targetGUID,playerGUID)
 	Osi.Proc_BondedAvatarTutorial(playerGUID)
-	CharacterSetCorpseLootable(targetGUID, 0)
+	Osi.CharacterSetCorpseLootable(targetGUID, 0)
 	Osi.PROC_GLO_PartyMembers_AddHook(targetGUID,playerGUID)
 	return true
 end
@@ -1477,7 +1477,7 @@ function GameHelpers.Character.RemoveTemporyCharacter(character)
 	local guid = GameHelpers.GetUUID(character)
 	local netid = GameHelpers.GetNetID(character)
 	if guid then
-		RemoveTemporaryCharacter(guid)
+		Osi.RemoveTemporaryCharacter(guid)
 	end
 	Events.TemporaryCharacterRemoved:Invoke({CharacterGUID = guid, NetID=netid})
 end

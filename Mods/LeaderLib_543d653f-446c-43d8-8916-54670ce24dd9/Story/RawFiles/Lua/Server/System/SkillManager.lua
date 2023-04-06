@@ -84,7 +84,7 @@ local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, sk
 	end
 
 	if data == nil and createIfMissing == true then
-		if Vars.DebugMode and printWarning and CharacterIsPlayer(uuid) == 1 then
+		if Vars.DebugMode and printWarning and Osi.CharacterIsPlayer(uuid) == 1 then
 			fprint(LOGLEVEL.WARNING, "[LeaderLib:OnSkillCast] No skill data for character (%s) and skill (%s) Context(%s)", uuid, skill, printContext or "")
 		end
 		data = Classes.SkillEventData:Create(uuid, skill, skillType, skillAbility)
@@ -134,7 +134,7 @@ function StoreSkillEventData(char, skill, skillType, skillAbility, ...)
 end
 
 Ext.Osiris.RegisterListener("CanUseItem", 3, "after", function(charGUID, itemGUID, requestId)
-	if ObjectExists(charGUID) == 1 and ObjectExists(itemGUID) == 1 then
+	if Osi.ObjectExists(charGUID) == 1 and Osi.ObjectExists(itemGUID) == 1 then
 		local skills,data = GameHelpers.Item.GetUseActionSkills(itemGUID, false, false)
 		if data.IsConsumable and skills[1] then
 			charGUID = StringHelpers.GetUUID(charGUID)
@@ -192,7 +192,7 @@ end
 
 -- Fires when CharacterUsedSkill fires. This happens after all the target events.
 function OnSkillUsed(char, skill, skillType, skillAbility)
-	if ObjectExists(char) == 0 then
+	if Osi.ObjectExists(char) == 0 then
 		return
 	end
 	local uuid = StringHelpers.GetUUID(char)
@@ -246,14 +246,14 @@ Timer.Subscribe("LeaderLib_SkillManager_RemoveLastUsedSkillItem", function (e)
 end)
 
 local function IgnoreHitTarget(target)
-	if ObjectExists(target) == 0 then
+	if Osi.ObjectExists(target) == 0 then
 		return true
 	end
-	if IsTagged(target, "MovingObject") == 1 then
+	if Osi.IsTagged(target, "MovingObject") == 1 then
 		return true
-	elseif ObjectIsCharacter(target) == 1 and Osi.LeaderLib_Helper_QRY_IgnoreCharacter(target) == true then
+	elseif Osi.ObjectIsCharacter(target) == 1 and Osi.LeaderLib_Helper_QRY_IgnoreCharacter(target) == true then
 		return true
-	elseif ObjectIsItem(target) == 1 and Osi.LeaderLib_Helper_QRY_IgnoreItem(target) == true then
+	elseif Osi.ObjectIsItem(target) == 1 and Osi.LeaderLib_Helper_QRY_IgnoreItem(target) == true then
 		return true
 	end
 	return false
@@ -320,7 +320,7 @@ Ext.Events.ShootProjectile:Subscribe(function(e)
 end, {Priority=0})
 
 RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "after", function(uuid, skill, learnedINT)
-	if ObjectExists(uuid) == 0 then
+	if Osi.ObjectExists(uuid) == 0 then
 		return
 	end
 	uuid = StringHelpers.GetUUID(uuid)
@@ -349,7 +349,7 @@ RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "aft
 end)
 
 RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivated, "after", function(uuid, skill)
-	if ObjectExists(uuid) == 0 then
+	if Osi.ObjectExists(uuid) == 0 then
 		return
 	end
 	uuid = StringHelpers.GetUUID(uuid)
@@ -372,7 +372,7 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 end)
 
 RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeactivated, "before", function(uuid, skill)
-	if ObjectExists(uuid) == 0 then
+	if Osi.ObjectExists(uuid) == 0 then
 		return
 	end
 	uuid = StringHelpers.GetUUID(uuid)
@@ -397,8 +397,8 @@ RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeact
 end)
 
 RegisterProtectedOsirisListener("NRD_OnActionStateEnter", 2, "after", function(char, state)
-	if state == "PrepareSkill" and ObjectExists(char) == 1 then
-		local skillprototype = NRD_ActionStateGetString(char, "SkillId")
+	if state == "PrepareSkill" and Osi.ObjectExists(char) == 1 then
+		local skillprototype = Osi.NRD_ActionStateGetString(char, "SkillId")
 		if not StringHelpers.IsNullOrEmpty(skillprototype) then
 			OnSkillPreparing(char, skillprototype)
 		end
@@ -476,7 +476,7 @@ end
 function SkillManager.LoadSaveData()
 	if _PV.SkillData then
 		for uuid,tbl in pairs(_PV.SkillData) do
-			if ObjectExists(uuid) == 1 and not StringHelpers.IsNullOrWhitespace(tbl.Skill) and NRD_StatExists(tbl.Skill) then
+			if Osi.ObjectExists(uuid) == 1 and not StringHelpers.IsNullOrWhitespace(tbl.Skill) and GameHelpers.Stats.Exists(tbl.Skill, "SkillData") then
 				local data = Classes.SkillEventData:Create(uuid, "", "", "")
 				data:LoadFromSave(tbl)
 				if skillEventDataTable[data.Skill] == nil then
@@ -493,8 +493,8 @@ end
 function SkillManager.CheckPreparingState(uuid)
 	local last = _PV.IsPreparingSkill[uuid]
 	if last then
-		local action = NRD_CharacterGetCurrentAction(uuid) or ""
-		local skill = StringHelpers.GetSkillEntryName(NRD_ActionStateGetString(uuid, "SkillId") or "")
+		local action = Osi.NRD_CharacterGetCurrentAction(uuid) or ""
+		local skill = StringHelpers.GetSkillEntryName(Osi.NRD_ActionStateGetString(uuid, "SkillId") or "")
 		if StringHelpers.IsNullOrEmpty(skill) or (action ~= "PrepareSkill" and action ~= "UseSkill") or skill ~= last then
 			SkillManager.OnSkillPreparingCancel(uuid, "", last)
 		end
@@ -507,9 +507,9 @@ Ext.RegisterNetListener("LeaderLib_Input_OnActionCancel", function(cmd, payload)
 		local netid = tonumber(payload)
 		local character = GameHelpers.GetCharacter(netid)
 		if character then
-			local action = NRD_CharacterGetCurrentAction(character.MyGuid) or ""
+			local action = Osi.NRD_CharacterGetCurrentAction(character.MyGuid) or ""
 			if action == "PrepareSkill" then
-				local skillPrototype = NRD_ActionStateGetString(character.MyGuid, "SkillId")
+				local skillPrototype = Osi.NRD_ActionStateGetString(character.MyGuid, "SkillId")
 				if not StringHelpers.IsNullOrEmpty(skillPrototype) then
 					SkillManager.OnSkillPreparingCancel(character.MyGuid, skillPrototype)
 				end

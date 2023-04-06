@@ -158,16 +158,16 @@ if not _ISCLIENT then
 	end
 
 	function GameHelpers.Data.SyncSharedData(syncSettings, client, ignoreProfile)
-		if CharacterGetHostCharacter() == nil then
+		if Osi.CharacterGetHostCharacter() == nil then
 			Ext.Utils.PrintError("[LeaderLib:GameHelpers.Data.SyncSharedData] No host character!")
 			return
 		end
 		if client == nil then
 			local totalUsers = Common.TableLength(_Users, true)
 			if totalUsers <= 0 then
-				IterateUsers("LeaderLib_StoreUserData")
+				Osi.IterateUsers("LeaderLib_StoreUserData")
 			else
-				local host = CharacterGetHostCharacter()
+				local host = Osi.CharacterGetHostCharacter()
 				if SharedData.GameMode == GAMEMODE.GAMEMASTER then
 					local gm = GameHelpers.GetCharacter(host)
 					if gm then
@@ -175,10 +175,10 @@ if not _ISCLIENT then
 					end
 				end
 				for id,b in pairs(_Users) do
-					local profile = GetUserProfileID(id)
+					local profile = Osi.GetUserProfileID(id)
 					if profile ~= ignoreProfile then
-						local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
-						local isHost = host ~= nil and CharacterGetReservedUserID(host) == id or false
+						local uuid = StringHelpers.GetUUID(Osi.GetCurrentCharacter(id))
+						local isHost = host ~= nil and Osi.CharacterGetReservedUserID(host) == id or false
 						local netid = GetNetID(uuid)
 						local data = PrepareSharedData(profile, isHost, id, netid)
 						SendSyncListenerEvent(id, profile, uuid, isHost)
@@ -193,18 +193,18 @@ if not _ISCLIENT then
 			local uuid = nil
 			local profile = nil
 			if clientType == "string" then
-				id = CharacterGetReservedUserID(client)
-				profile = GetUserProfileID(id)
+				id = Osi.CharacterGetReservedUserID(client)
+				profile = Osi.GetUserProfileID(id)
 				uuid = client
 			elseif clientType == "number" then
-				profile = GetUserProfileID(client)
-				uuid = StringHelpers.GetUUID(GetCurrentCharacter(client))
+				profile = Osi.GetUserProfileID(client)
+				uuid = StringHelpers.GetUUID(Osi.GetCurrentCharacter(client))
 				id = client
 			else
 				Ext.Utils.PrintError("[LeaderLib:GameHelpers.Data.SyncSharedData] Error syncing data: client is an incorrect type:", clientType, client)
 			end
 			if profile ~= ignoreProfile then
-				local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
+				local isHost = Osi.CharacterGetReservedUserID(Osi.CharacterGetHostCharacter()) == id
 				local netid = GetNetID(uuid)
 				local data = PrepareSharedData(profile, isHost, id, netid)
 				SendSyncListenerEvent(id, profile, uuid, isHost)
@@ -246,9 +246,9 @@ if not _ISCLIENT then
 		SharedData.RegionData.LastLevelType = SharedData.RegionData.LevelType
 
 		SharedData.RegionData.Current = region
-		if IsCharacterCreationLevel(region) == 1 then
+		if Osi.IsCharacterCreationLevel(region) == 1 then
 			SharedData.RegionData.LevelType = LEVELTYPE.CHARACTER_CREATION
-		elseif IsGameLevel(region) == 1 then
+		elseif Osi.IsGameLevel(region) == 1 then
 			SharedData.RegionData.LevelType = LEVELTYPE.GAME
 		elseif string.find(region, "Lobby") or string.find(region, "Menu") then
 			SharedData.RegionData.LevelType = LEVELTYPE.LOBBY
@@ -322,24 +322,24 @@ if not _ISCLIENT then
 	end)
 
 	local function GetUserData(uuid)
-		local id = CharacterGetReservedUserID(uuid)
+		local id = Osi.CharacterGetReservedUserID(uuid)
 		if id ~= nil then
-			local profile = GetUserProfileID(id)
+			local profile = Osi.GetUserProfileID(id)
 			return id,profile
 		end
 		return nil
 	end
 
 	local function TryGetProfileId(id)
-		local profileId = GetUserProfileID(id)
+		local profileId = Osi.GetUserProfileID(id)
 		if profileId then
 			return profileId
 		end
-		local host = CharacterGetHostCharacter()
+		local host = Osi.CharacterGetHostCharacter()
 		if not StringHelpers.IsNullOrEmpty(host) then
-			local hostId = CharacterGetReservedUserID(host)
+			local hostId = Osi.CharacterGetReservedUserID(host)
 			if hostId then
-				profileId = GetUserProfileID(hostId)
+				profileId = Osi.GetUserProfileID(hostId)
 				if profileId then
 					return profileId
 				end
@@ -355,11 +355,11 @@ if not _ISCLIENT then
 		if profileId == nil then
 			return false
 		end
-		uuid = StringHelpers.GetUUID(uuid or GetCurrentCharacter(id))
+		uuid = StringHelpers.GetUUID(uuid or Osi.GetCurrentCharacter(id))
 		if not StringHelpers.IsNullOrEmpty(uuid) then
 			local character = GameHelpers.GetCharacter(uuid)
 			if character then
-				local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
+				local isHost = Osi.CharacterGetReservedUserID(Osi.CharacterGetHostCharacter()) == id
 				---@type ClientCharacterData
 				local params = {
 					UUID = character.MyGuid,
@@ -371,7 +371,7 @@ if not _ISCLIENT then
 					IsPlayer = character.IsPlayer,
 					Profile = profileId,
 					ID = id,
-					Username = GetUserName(id),
+					Username = Osi.GetUserName(id),
 				}
 				if SharedData.CharacterData[profileId] == nil then
 					--Create(character.MyGuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
@@ -406,8 +406,8 @@ if not _ISCLIENT then
 			_Users[id] = true
 		end
 		if event == "LeaderLib_StoreUserData" then
-			local profileId = GetUserProfileID(id)
-			local name = GetUserName(id)
+			local profileId = Osi.GetUserProfileID(id)
+			local name = Osi.GetUserName(id)
 			Vars.Users[profileId] = {ID=id, Name=name}
 			GameHelpers.Data.SetCharacterData(id, profileId)
 		end
@@ -450,8 +450,8 @@ if not _ISCLIENT then
 	end)
 
 	Ext.Osiris.RegisterListener("ObjectTurnStarted", 2, "after", function(char)
-		if CharacterIsControlled(char) == 1 then
-			local id = CharacterGetReservedUserID(char)
+		if Osi.CharacterIsControlled(char) == 1 then
+			local id = Osi.CharacterGetReservedUserID(char)
 			if id ~= nil then
 				GameHelpers.Data.SetCharacterData(id, nil, StringHelpers.GetUUID(char))
 			end
@@ -495,7 +495,7 @@ if not _ISCLIENT then
 			syncSettingsNext = false
 		else
 			if state == "Running" and e.FromState ~= "Paused" and e.FromState ~= "GameMasterPause" then
-				IterateUsers("LeaderLib_StoreUserData")
+				Osi.IterateUsers("LeaderLib_StoreUserData")
 				GameHelpers.Data.StartSyncTimer()
 			end
 		end

@@ -216,7 +216,7 @@ function GameHelpers.Action.Sabotage(target, opts)
 			if amount > 0 then
 				GameHelpers.Item.SetAmount(entry.Item, amount)
 			else
-				ItemRemove(entry.Item.MyGuid)
+				Osi.ItemRemove(entry.Item.MyGuid)
 			end
 		end
 	end

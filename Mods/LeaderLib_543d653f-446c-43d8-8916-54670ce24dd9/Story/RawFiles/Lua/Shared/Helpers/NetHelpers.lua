@@ -24,7 +24,7 @@ if not _ISCLIENT then
 	--- @param payload SerializableValue|table|nil Message payload. If this is a table, it'll automatically be converted to a string.
 	--- @return boolean
 	function GameHelpers.Net.PostMessageToHost(channel, payload)
-		return GameHelpers.Net.PostToUser(CharacterGetHostCharacter(), channel, payload)
+		return GameHelpers.Net.PostToUser(Osi.CharacterGetHostCharacter(), channel, payload)
 	end
 
 	--- Shortcut for calling Ext.PostMessageToUser for whatever UserID is associated with the UUID/EsvCharacter etc. If no UserID is found, the message is skipped.

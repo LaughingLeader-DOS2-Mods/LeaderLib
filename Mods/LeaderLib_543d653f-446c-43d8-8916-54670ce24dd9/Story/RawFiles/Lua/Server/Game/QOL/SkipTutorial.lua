@@ -17,14 +17,14 @@ local function skipTutorialWakeup(uuid)
 	fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Speeding up Fort Joy beach wake-up for %s", uuid)
 	Osi.ProcObjectTimerCancel(uuid, "FTJ_GameStart_FadeIn")
 	Osi.ProcObjectTimerCancel(uuid, "FTJ_WakeUpTimer")
-	RemoveStatus(uuid, "WET")
-	CharacterUnfreeze(uuid)
+	Osi.RemoveStatus(uuid, "WET")
+	Osi.CharacterUnfreeze(uuid)
 	Osi.PROC_UnlockWaypoint("WAYP_FTJ_BeachStatue", uuid)
-	CharacterSetAnimationOverride(uuid,"")
+	Osi.CharacterSetAnimationOverride(uuid,"")
 	--PlayAnimation(uuid,"knockdown_getup","")
 	Osi.PROC_FTJ_StartWakeUpVoicebark(uuid)
 	--Osi.Proc_FTJ_UnfreezePlayers()
-	UserSetFlag(uuid,"QuestUpdate_FTJ_Voice_TUT_Voice", 0)
+	Osi.UserSetFlag(uuid,"QuestUpdate_FTJ_Voice_TUT_Voice", 0)
 end
 
 local function skipTutorialWakeupTimer(uuid, timerName)
@@ -56,7 +56,7 @@ function SkipTutorial.Initialize()
 		local targetPreset = "Inquisitor"
 		local startingVal = Ext.ExtraData.AttributeBaseValue or 10
 		for attribute,preset in pairs(attributeToPreset) do
-			local amount = CharacterGetAttribute(uuid, attribute)
+			local amount = Osi.CharacterGetAttribute(uuid, attribute)
 			if amount > highestVal and amount > startingVal then
 				highestVal = amount
 				targetPreset = preset
@@ -80,11 +80,11 @@ function SkipTutorial.Initialize()
 	local function SkipTutorial_MainSetup(settings, region)
 		fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping tutorial and going to region (%s).", region)
 
-		local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
+		local host = StringHelpers.GetUUID(Osi.CharacterGetHostCharacter())
 		local db = Osi.DB_OriginRecruitmentLocation_Region:Get("TUT_Tutorial_A",nil,nil,nil)
 		if db then
 			for _,entry in pairs(db) do
-				CharacterEnableAllCrimes(entry[2])
+				Osi.CharacterEnableAllCrimes(entry[2])
 			end
 		end
 
@@ -101,7 +101,7 @@ function SkipTutorial.Initialize()
 			-- Past Fort Joy, apply the _Act2 presets.
 			if regionLevel > 1 then
 				fprint(LOGLEVEL.TRACE, "[LeaderLib:SkipTutorial] Adding Bless to player (%s).", player.DisplayName)
-				CharacterAddSkill(player.MyGuid, "Target_Bless", 0)
+				Osi.CharacterAddSkill(player.MyGuid, "Target_Bless", 0)
 				-- if Vars.DebugMode then
 				-- 	Timer.StartOneshot(string.format("LeaderLib_SkipTutorialPostSetup%s", uuid), 1000, function()
 				-- 		local preset = GetVarFixedString(uuid, "LeaderLib_CurrentPreset")
@@ -128,13 +128,13 @@ function SkipTutorial.Initialize()
 			local gold = settings.StartingGold[region] or 0
 			if gold > 0 then
 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Adding (%s) party gold.", gold)
-				PartyAddGold(host, gold)
+				Osi.PartyAddGold(host, gold)
 			end
 		end
 
 		Timer.StartOneshot("LeaderLib_SkipTutorial_CreateAutoSave", 5000, function ()
 			if _OSIRIS() then
-				AutoSave()
+				Osi.AutoSave()
 			end
 		end)
 	end
@@ -155,8 +155,8 @@ function SkipTutorial.Initialize()
 				Ext.Utils.Print("[LeaderLib:SkipTutorial] Running Fort Joy setup.")
 
 				--Thanks to Lady C's Skip Tutorial mod
-				SetOnStage(ID.ShapeshifterMask, 1)
-				ItemToInventory(ID.ShapeshifterMask, ID.Windego, 1, 0, 0)
+				Osi.SetOnStage(ID.ShapeshifterMask, 1)
+				Osi.ItemToInventory(ID.ShapeshifterMask, ID.Windego, 1, 0, 0)
 
 				Osi.DB_TUT_OriginQuestStarts(ID.Ifan,"QuestAdd_FTJ_Ifan_DarkFaction","QuestUpdate_FTJ_Ifan_DarkFaction_Start_BeachWakeup")
 				Osi.DB_TUT_OriginQuestStarts(ID.Lohse,"QuestAdd_FTJ_OriginLohse","QuestUpdate_FTJ_OriginLohse_Start_BeachWakeup")
@@ -166,41 +166,41 @@ function SkipTutorial.Initialize()
 				Osi.DB_TUT_OriginQuestStarts(ID.Beast,"QuestAdd_FTJ_OriginBeast","QuestUpdate_FTJ_OriginBeast_Start_BoatWakeup")
 
 				-- She can fight again in Fort Joy
-				CharacterSetReactionPriority(ID.Windego, "TutorialFight", 0)
+				Osi.CharacterSetReactionPriority(ID.Windego, "TutorialFight", 0)
 
 				for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
 					local uuid = StringHelpers.GetUUID(db[1])
 					local questStartDB = Osi.DB_TUT_OriginQuestStarts:Get(uuid, nil, nil)
 					if questStartDB and #questStartDB > 1 then
 						for entry in questStartDB do
-							ObjectSetFlag(uuid, entry[1], 0)
-							ObjectSetFlag(uuid, entry[2], 0)
+							Osi.ObjectSetFlag(uuid, entry[1], 0)
+							Osi.ObjectSetFlag(uuid, entry[2], 0)
 						end
 					end
 					Osi.DB_TUT_PlayerReceivedQuests(uuid)
-					UserSetFlag(uuid,"QuestUpdate_CORE_Chapter1_TUT_Start", 0)
-					UserSetFlag(uuid,"QuestUpdate_CORE_Chapter1_TUT_Lore", 0)
-					UserSetFlag(uuid,"QuestUpdate_CORE_Chapter1_TUT_FTJ", 0)
-					UserSetFlag(uuid,"QuestUpdate_CORE_Magisters_InitialSetup", 0)
-					PartySetFlag(uuid,"QuestUpdate_TUT_ShipMurder_WakeUp", 0)
-					if IsTagged(uuid, "AVATAR") == 1 then
-						ObjectSetFlag(uuid, "QuestUpdate_RC_FTJ_SourceCollar_StartSourceCollar", 0)
-						ItemTemplateAddTo("FUR_Humans_Camping_Sleepingbag_B 4d7216c9-c21e-4ab0-b98e-97d744798912", uuid, 1, 0)
+					Osi.UserSetFlag(uuid,"QuestUpdate_CORE_Chapter1_TUT_Start", 0)
+					Osi.UserSetFlag(uuid,"QuestUpdate_CORE_Chapter1_TUT_Lore", 0)
+					Osi.UserSetFlag(uuid,"QuestUpdate_CORE_Chapter1_TUT_FTJ", 0)
+					Osi.UserSetFlag(uuid,"QuestUpdate_CORE_Magisters_InitialSetup", 0)
+					Osi.PartySetFlag(uuid,"QuestUpdate_TUT_ShipMurder_WakeUp", 0)
+					if Osi.IsTagged(uuid, "AVATAR") == 1 then
+						Osi.ObjectSetFlag(uuid, "QuestUpdate_RC_FTJ_SourceCollar_StartSourceCollar", 0)
+						Osi.ItemTemplateAddTo("FUR_Humans_Camping_Sleepingbag_B 4d7216c9-c21e-4ab0-b98e-97d744798912", uuid, 1, 0)
 					end
 
 					if GameSettings.Settings.SkipTutorial.AddRecipes then
-						CharacterUnlockRecipe(uuid, "CON_Food_PotatoBoiled_A_CON_Drink_Cup_A_Milk", 0)
-						CharacterUnlockRecipe(uuid, "CON_Food_Potato_A_FUR_BoilingPot_A", 0)
-						CharacterUnlockRecipe(uuid, "CON_Food_Potato_A_TOOL_Hammer", 0)
-						CharacterUnlockRecipe(uuid, "CON_Food_Potato_Mash_Cold_A_FUR_BoilingPot_A", 0)
-						CharacterUnlockRecipe(uuid, "Oven_CON_Food_Potato_Mash_Cold_A", 0)
-						CharacterUnlockRecipe(uuid, "FUR_BoilingPot_A_CON_Food_Potato_Mash_Cold_A", 0)
+						Osi.CharacterUnlockRecipe(uuid, "CON_Food_PotatoBoiled_A_CON_Drink_Cup_A_Milk", 0)
+						Osi.CharacterUnlockRecipe(uuid, "CON_Food_Potato_A_FUR_BoilingPot_A", 0)
+						Osi.CharacterUnlockRecipe(uuid, "CON_Food_Potato_A_TOOL_Hammer", 0)
+						Osi.CharacterUnlockRecipe(uuid, "CON_Food_Potato_Mash_Cold_A_FUR_BoilingPot_A", 0)
+						Osi.CharacterUnlockRecipe(uuid, "Oven_CON_Food_Potato_Mash_Cold_A", 0)
+						Osi.CharacterUnlockRecipe(uuid, "FUR_BoilingPot_A_CON_Food_Potato_Mash_Cold_A", 0)
 					end
 
 					--Windego's attitude toward the players has decreased due to the combat, but we want her to talk to them again in Fort Joy -> restore
-					local winAttitude = CharacterGetAttitudeTowardsPlayer(ID.Windego, uuid)
+					local winAttitude = Osi.CharacterGetAttitudeTowardsPlayer(ID.Windego, uuid)
 					if winAttitude < 0 then
-						CharacterAddAttitudeTowardsPlayer(ID.Windego, uuid, -winAttitude)
+						Osi.CharacterAddAttitudeTowardsPlayer(ID.Windego, uuid, -winAttitude)
 					end
 				end
 
@@ -209,27 +209,27 @@ function SkipTutorial.Initialize()
 				Osi.SetRelationFactionToPlayers("FTJ_SW_Windego", 50)
 
 				-- Give Beast Hat quest
-				GlobalSetFlag("FTJ_BST_BeastEndedTutWithHat")
+				Osi.GlobalSetFlag("FTJ_BST_BeastEndedTutWithHat")
 
 				-- Give Sebille Adrenaline from eating the arm
-				if GameHelpers.Character.IsPlayer(ID.Sebille) and CharacterHasSkill(ID.Sebille, "Shout_Adrenaline") == 0 then
-					CharacterAddSkill(ID.Sebille, "Shout_Adrenaline", 0)
+				if GameHelpers.Character.IsPlayer(ID.Sebille) and Osi.CharacterHasSkill(ID.Sebille, "Shout_Adrenaline") == 0 then
+					Osi.CharacterAddSkill(ID.Sebille, "Shout_Adrenaline", 0)
 				end
 
-				GlobalSetFlag("TUT_LowerDeck_OriginsFleeingToTop")
-				GlobalSetFlag("TUT_ChoseRescueOthers")
+				Osi.GlobalSetFlag("TUT_LowerDeck_OriginsFleeingToTop")
+				Osi.GlobalSetFlag("TUT_ChoseRescueOthers")
 
 				Timer.StartOneshot("Timers_LeaderLib_SkipFTJWakeup", 50, function()
 					for player in GameHelpers.Character.GetPlayers() do
 						skipTutorialWakeup(player.MyGuid)
-						ObjectClearFlag(player.MyGuid, "DLC_SquirrelKnight_OwnerFlag", 0)
+						Osi.ObjectClearFlag(player.MyGuid, "DLC_SquirrelKnight_OwnerFlag", 0)
 					end
 				end)
 
 				if Vars.DebugMode then
 					Ext.Utils.PrintWarning("Checking for Sir Lora bug...")
 					--TRIGGERGUID_S_FTJ_DLC_SquirrelWizard_SpawnPoint_2fd623f7-34f5-470d-bce3-3aa60ce50c3b
-					if ObjectExists("2fd623f7-34f5-470d-bce3-3aa60ce50c3b") == 0 then
+					if Osi.ObjectExists("2fd623f7-34f5-470d-bce3-3aa60ce50c3b") == 0 then
 						Ext.Utils.PrintError("Sir Lora spawnpoint trigger '2fd623f7-34f5-470d-bce3-3aa60ce50c3b' does not exist. He'll be teleported to the player")
 					else
 						Ext.Utils.Print("Sir Lora spawnpoint trigger '2fd623f7-34f5-470d-bce3-3aa60ce50c3b' exists!")
@@ -310,7 +310,7 @@ function SkipTutorial.Initialize()
 
 		if region == "FJ_FortJoy_Main" then
 			--Fix Sir Lora issues if the region loaded too fast
-			GlobalSetFlag("GLO_DLC_SquirrelWizard_Activated")
+			Osi.GlobalSetFlag("GLO_DLC_SquirrelWizard_Activated")
 		end
 
 		local data = LevelSettings[region]

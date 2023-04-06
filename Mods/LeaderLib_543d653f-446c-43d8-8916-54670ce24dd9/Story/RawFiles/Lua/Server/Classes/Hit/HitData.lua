@@ -145,7 +145,7 @@ function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamag
 		self.HitRequest.TotalDamageDone = total
 	end
 	if self.HitContext and self.HitRequest then
-		if recalcLifeSteal and ObjectIsCharacter(self.Target) == 1 and ObjectIsCharacter(self.Attacker) == 1 then
+		if recalcLifeSteal and Osi.ObjectIsCharacter(self.Target) == 1 and Osi.ObjectIsCharacter(self.Attacker) == 1 then
 			local t1 = GameHelpers.GetCharacter(self.Target)
 			local t2 = GameHelpers.GetCharacter(self.Attacker)
 			if t1 and t2 then

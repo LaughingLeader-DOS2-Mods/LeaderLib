@@ -389,7 +389,7 @@ else
 			local item = GameHelpers.GetItem(data.Item)
 			local player = GameHelpers.GetCharacter(data.Player)
 			if item and player then
-				CharacterUseItem(player.MyGuid, item.MyGuid, "")
+				Osi.CharacterUseItem(player.MyGuid, item.MyGuid, "")
 			end
 		end
 	end)
@@ -419,7 +419,7 @@ else
 	local _isBookTemplate = {}
 
 	Ext.Osiris.RegisterListener("CanUseItem", 3, "after", function (charGUID, itemGUID, requestID)
-		if CharacterIsPlayer(charGUID) == 1 then
+		if Osi.CharacterIsPlayer(charGUID) == 1 then
 			local updatedData = false
 			local player = GameHelpers.GetCharacter(charGUID)
 			local item = GameHelpers.GetItem(itemGUID)

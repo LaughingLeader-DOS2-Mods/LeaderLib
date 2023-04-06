@@ -997,8 +997,8 @@ Ext.Events.BeforeStatusApply:Subscribe(function (e)
 				end
 			elseif source:HasTag("LeaderLib_Dummy") and Vars.DisableDummyStatusRedirection[statusID] ~= true then
 				--Redirect the source of statuses applied by dummies to their owners
-				local owner = GetVarObject(sourceGUID, "LeaderLib_Dummy_Owner")
-				if not StringHelpers.IsNullOrEmpty(owner) and ObjectExists(owner) == 1 then
+				local owner = Osi.GetVarObject(sourceGUID, "LeaderLib_Dummy_Owner")
+				if not StringHelpers.IsNullOrEmpty(owner) and Osi.ObjectExists(owner) == 1 then
 					owner = _GetObject(owner)
 					if owner then
 						status.StatusSourceHandle = owner.Handle
@@ -1088,7 +1088,7 @@ end
 --SetVarFixedString("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_RemoveStatusInfluence_ID", "WARM"); SetStoryEvent("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_Commands_RemoveStatusInfluence")
 
 local function ParseStatusAttempt(targetGUID,statusID,sourceGUID,skip)
-	if not skip and ObjectExists(targetGUID) == 0 then
+	if not skip and Osi.ObjectExists(targetGUID) == 0 then
 		return
 	end
 	if not _canInvokeListeners or IgnoreDead(targetGUID, statusID) then
@@ -1102,7 +1102,7 @@ local function ParseStatusAttempt(targetGUID,statusID,sourceGUID,skip)
 end
 
 RegisterProtectedOsirisListener("CharacterStatusAttempt", 3, "after", function (targetGUID, statusID, sourceGUID)
-	if ObjectExists(targetGUID) == 0 then
+	if Osi.ObjectExists(targetGUID) == 0 then
 		return
 	end
 	if statusID == "DYING" then
@@ -1262,7 +1262,7 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 end
 
 local function ParseStatusApplied(target,status,source,skip)
-	if not skip and ObjectExists(target) == 0 then
+	if not skip and Osi.ObjectExists(target) == 0 then
 		return
 	end
 	if _canInvokeListeners and not IgnoreStatus(status, "Applied") then
@@ -1274,7 +1274,7 @@ end
 
 local function OnStatusRemoved(targetGUID,statusID,sourceGUID)
 	local target = nil
-	if ObjectExists(targetGUID) == 1 then
+	if Osi.ObjectExists(targetGUID) == 1 then
 		target = _GetObject(targetGUID)
 	end
 	local statusType = _GetStatusType(statusID)
@@ -1322,7 +1322,7 @@ local function ParseStatusRemoved(target,status)
 end
 
 RegisterProtectedOsirisListener("CharacterStatusApplied", 3, "after", function (targetGUID, statusID, sourceGUID)
-	if ObjectExists(targetGUID) == 0 then
+	if Osi.ObjectExists(targetGUID) == 0 then
 		return
 	end
 	if statusID == "DYING" then

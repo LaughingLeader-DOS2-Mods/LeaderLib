@@ -280,7 +280,7 @@ if not _ISCLIENT then
 	end
 	
 	Ext.Osiris.RegisterListener("ObjectTransformed", 2, "after", function (guid, template)
-		if ObjectExists(guid) == 1 and ObjectIsCharacter(guid) == 1 then
+		if Osi.ObjectExists(guid) == 1 and Osi.ObjectIsCharacter(guid) == 1 then
 			local character = GameHelpers.GetCharacter(guid)
 			if character then
 				_InvokeRebuildVisuals(character, "Transformed")

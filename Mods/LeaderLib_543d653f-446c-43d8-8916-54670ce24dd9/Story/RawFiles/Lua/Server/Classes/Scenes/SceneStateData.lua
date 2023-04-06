@@ -103,7 +103,7 @@ end
 ---@param running boolean
 function SceneStateData:MoveToPosition(character, event, x, y, z, running)
 	character = StringHelpers.GetUUID(character)
-	local dist = GetDistanceToPosition(character, x, y, z)
+	local dist = Osi.GetDistanceToPosition(character, x, y, z)
 	if dist >= self.MoveDistanceThreshold then
 		SceneManager.AddToQueue(SceneManager.QueueType.StoryEvent, self.Parent.ID, self.ID, event, character)
 		Osi.ProcCharacterMoveToPosition(character, x, y, z, running or true, event)
@@ -118,7 +118,7 @@ end
 ---@param running boolean
 function SceneStateData:MoveToObject(character, event, target, running)
 	character = StringHelpers.GetUUID(character)
-	local dist = GetDistanceTo(character, target)
+	local dist = Osi.GetDistanceTo(character, target)
 	if dist >= self.MoveDistanceThreshold then
 		SceneManager.AddToQueue(SceneManager.QueueType.StoryEvent, self.Parent.ID, self.ID, event, character)
 		Osi.ProcCharacterMoveTo(character, target, running or true, event)
@@ -167,7 +167,7 @@ function SceneStateData:PlayAnimation(character, animation, event)
 	end
 	character = StringHelpers.GetUUID(character)
 	SceneManager.AddToQueue(SceneManager.QueueType.StoryEvent, self.Parent.ID, self.ID, event, character)
-	PlayAnimation(character, animation, event)
+	Osi.PlayAnimation(character, animation, event)
 	self:Pause()
 	return true
 end

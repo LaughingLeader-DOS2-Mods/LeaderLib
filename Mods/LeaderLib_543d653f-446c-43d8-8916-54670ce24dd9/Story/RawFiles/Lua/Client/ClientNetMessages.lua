@@ -158,7 +158,7 @@ end)
 
 Ext.RegisterNetListener("LeaderLib_UI_RefreshAll", function(cmd, uuid)
 	local host = GameHelpers.GetCharacter(uuid)
-	Ext.UISetDirty(host, 0xffffffffffff)
+	Ext.UI.SetDirty(host, 0xffffffffffff)
 end)
 
 Ext.RegisterNetListener("LeaderLib_Client_SyncDebugVars", function(cmd, payload)

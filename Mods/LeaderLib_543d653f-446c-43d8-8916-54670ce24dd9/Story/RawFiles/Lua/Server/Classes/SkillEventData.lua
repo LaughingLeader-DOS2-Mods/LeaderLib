@@ -70,12 +70,12 @@ function SkillEventData:AddTargetPosition(x,y,z)
 end
 
 ---Get the first taget position of the skill.
----@return number[]
+---@return vec3
 function SkillEventData:GetSkillTargetPosition()
 	if self.TotalTargetPositions > 0 then
 		return self.TargetPositions[1]
 	elseif self.TotalTargetObjects > 0 then
-		return table.pack(GetPosition(self.TargetObjects[1]))
+		return GameHelpers.Math.GetPosition(self.TargetObjects[1])
 	end
 	return GameHelpers.Math.GetPosition(self.SourceObject)
 end

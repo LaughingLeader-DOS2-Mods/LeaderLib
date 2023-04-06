@@ -482,7 +482,7 @@ function EffectManager.StopEffectsByNameForObject(effect, target)
 		fassert(uuid ~= nil, "Failed to get UUID for target parameter %s", target)
 		if _OSIRIS() then
 			if uuid then
-				CharacterStopAllEffectsWithName(uuid, effect)
+				Osi.CharacterStopAllEffectsWithName(uuid, effect)
 				success = true
 			end
 		else
@@ -620,7 +620,7 @@ function EffectManager.RestoreEffects(region)
 	if worldEffects then
 		for i,v in pairs(worldEffects) do
 			if v.Handle and v.Handle ~= -1 then
-				StopLoopEffect(v.Handle)
+				Osi.StopLoopEffect(v.Handle)
 			end
 			if v.Params then
 				EffectManager.PlayEffectAt(v.Effect, v.Position, v.Params)
@@ -631,15 +631,15 @@ function EffectManager.RestoreEffects(region)
 	end
 
 	for uuid,dataTable in pairs(_PV.ObjectLoopEffects) do
-		if ObjectExists(uuid) == 1 and #dataTable > 0 then
+		if Osi.ObjectExists(uuid) == 1 and #dataTable > 0 then
 			local restoredEffects = {}
 			for i,v in pairs(dataTable) do
 				if not StringHelpers.IsNullOrEmpty(v.Effect) then
 					local params = v.Params or {}
 					if v.Handle then
-						StopLoopEffect(v.Handle)
+						Osi.StopLoopEffect(v.Handle)
 					end
-					v.Handle = PlayLoopEffect(uuid, v.Effect, params.Bone or "")
+					v.Handle = Osi.PlayLoopEffect(uuid, v.Effect, params.Bone or "")
 					if v.Handle then
 						restoredEffects[#restoredEffects+1] = {Handle=v.Handle, ID=v.ID, Effect=v.Effect, Params = params}
 					end
@@ -659,7 +659,7 @@ end
 function EffectManager.DeleteLoopEffects(region)
 	_PV.WorldLoopEffects[region] = nil
 	for uuid,dataTable in pairs(_PV.ObjectLoopEffects) do
-		if ObjectExists(uuid) == 0 or ObjectIsGlobal(uuid) == 0 then
+		if Osi.ObjectExists(uuid) == 0 or Osi.ObjectIsGlobal(uuid) == 0 then
 			_PV.ObjectLoopEffects[uuid] = nil
 		end
 	end

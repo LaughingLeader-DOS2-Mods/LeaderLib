@@ -77,7 +77,7 @@ if not _ISCLIENT then
 	function GameHelpers.Surface.UpdateRules()
 		if GameSettings.Settings.SurfaceSettings.PoisonDoesNotIgnite == true then
 			local rulesUpdated = false
-			local rules = Ext.GetSurfaceTransformRules()
+			local rules = Ext.Surface.GetTransformRules()
 			for surfaceElement,contents in pairs(rules) do
 				for i,parentTable in pairs(contents) do
 					if parentTable.TransformType == "Ignite" then
@@ -101,7 +101,7 @@ if not _ISCLIENT then
 			end
 			if rulesUpdated then
 				Ext.Utils.Print("[LeaderLib.GameHelpers.Surface.UpdateRules] Updating surface action rules.")
-				Ext.UpdateSurfaceTransformRules(rules)
+				Ext.Surface.UpdateTransformRules(rules)
 			end
 		end
 	end
@@ -117,7 +117,7 @@ if not _ISCLIENT then
 	---@return EsvSurfaceAction
 	function GameHelpers.Surface.Transform(pos, action, layer, duration, ownerHandle, originSurface, statusChance)
 		if _type(pos) == "string" then
-			pos = table.pack(GetPosition(pos))
+			pos = table.pack(Osi.GetPosition(pos))
 		end
 		---@type EsvTransformSurfaceAction
 		local surf = Ext.Surface.Action.Create("TransformSurfaceAction")

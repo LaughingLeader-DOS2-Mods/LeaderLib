@@ -33,11 +33,11 @@ local function ResetLua()
 	if varData ~= nil then
 		GameHelpers.IO.SaveJsonFile("LeaderLib_Debug_PersistentVars.json", varData)
 	end
-	TimerCancel("Timers_LeaderLib_Debug_LuaReset")
-	GlobalSetFlag("LeaderLib_ResettingLua")
-	TimerLaunch("Timers_LeaderLib_Debug_LuaReset", 500)
+	Osi.TimerCancel("Timers_LeaderLib_Debug_LuaReset")
+	Osi.GlobalSetFlag("LeaderLib_ResettingLua")
+	Osi.TimerLaunch("Timers_LeaderLib_Debug_LuaReset", 500)
 	fprint(LOGLEVEL.TRACE, "[LeaderLib:luareset] Reseting lua.")
-	NRD_LuaReset(1,1,1)
+	Osi.NRD_LuaReset(1,1,1)
 	Vars.JustReset = true
 end
 
@@ -53,7 +53,7 @@ local function OnLuaResetCommand(cmd, delay)
 	if delay ~= nil then
 		delay = tonumber(delay)
 		if delay > 0 then
-			TimerLaunch("Timers_LeaderLib_Debug_ResetLua", delay)
+			Osi.TimerLaunch("Timers_LeaderLib_Debug_ResetLua", delay)
 		else
 			ResetLua()
 		end
@@ -73,14 +73,14 @@ Ext.RegisterNetListener("LeaderLib_Client_RequestLuaReset", OnLuaResetCommand)
 
 Ext.RegisterConsoleCommand("pos", function()
 	---@type StatCharacter
-	local character = CharacterGetHostCharacter()
-	fprint("Pos:", GetPosition(character))
-	fprint("Rot:", GetRotation(character))
+	local character = Osi.CharacterGetHostCharacter()
+	fprint("Pos:", Osi.GetPosition(character))
+	fprint("Rot:", Osi.GetRotation(character))
 end)
 
 Ext.RegisterConsoleCommand("pos2", function()
 	---@type StatCharacter
-	local character = GameHelpers.GetCharacter(CharacterGetHostCharacter()).Stats
+	local character = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter()).Stats
 	fprint("Position:", Common.JsonStringify(character.Position))
 	fprint("Rotation:", Common.JsonStringify(character.Rotation))
 end)
@@ -98,7 +98,7 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelfParam
 	if radiusVal ~= nil then
 		radius = tonumber(radiusVal) or 6.0
 	end
-	local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
+	local host = StringHelpers.GetUUID(Osi.CharacterGetHostCharacter())
 	local characters = nil
 	if radius < 0 then
 		characters = Ext.Entity.GetAllCharacterGuids()
@@ -125,18 +125,18 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelfParam
 			print("Pos:", table.unpack(characterStats.Position))
 			print("Rot:", table.unpack(characterStats.Rotation))
 			print("CustomTradeTreasure:", Common.Dump(character.CustomTradeTreasure))
-			print("Gain:", Ext.StatGetAttribute(character.Stats.Name, "Gain"))
+			print("Gain:", GameHelpers.Stats.GetAttribute(character.Stats.Name, "Gain"))
 			print("===============")
 		end
 	end
 	if charactersOnly ~= true then
 		local items = nil
 		if radius < 0 then
-			items = Ext.GetAllItems()
+			items = Ext.Entity.GetAllItemGuids()
 		else
 			items = {}
-			for _,v in pairs(Ext.GetAllItems()) do
-				if GetDistanceTo(v, host) <= radius then
+			for _,v in pairs(Ext.Entity.GetAllItemGuids()) do
+				if Osi.GetDistanceTo(v, host) <= radius then
 					items[#items+1] = v
 				end
 			end
@@ -151,7 +151,7 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelfParam
 			print("Name:", item.DisplayName)
 			print("StatsId:", item.StatsId)
 			print("Pos:", table.unpack(item.WorldPos))
-			print("Rot:", GetRotation(item.MyGuid))
+			print("Rot:", Osi.GetRotation(item.MyGuid))
 			print("===============")
 		end
 	end
@@ -160,14 +160,14 @@ end)
 --!teleport "c099caa6-1938-4b4f-9365-d0881c611e71"
 
 Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	if param2 == "host" then param2 = host end
 	if param3 == "host" then param3 = host end
 
 	fprint(LOGLEVEL.TRACE, cmd,target,param2,param3)
 
 	if param2 == nil or param3 == nil then
-		if ObjectExists(target) == 1 then
+		if Osi.ObjectExists(target) == 1 then
 			fprint(LOGLEVEL.TRACE, "Teleporting (%s) to (%s)[%s]",host,target,StringHelpers.Join(";", GameHelpers.Math.GetPosition(target)))
 			Osi.TeleportTo(host, target)
 		else
@@ -180,7 +180,7 @@ Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
 			local z = tonumber(param3)
 
 			if y ~= nil and z ~= nil then
-				TeleportToPosition(target, x, y, z, "", 1, 0)
+				Osi.TeleportToPosition(target, x, y, z, "", 1, 0)
 			end
 		else
 			fprint(LOGLEVEL.TRACE, "[teleport] Failed to parse position?")	
@@ -192,15 +192,15 @@ Ext.RegisterConsoleCommand("movie", function(command,movie)
 	if movie == nil then
 		movie = "Splash_Logo_Larian"
 	end
-	local host = CharacterGetHostCharacter()
-	MoviePlay(host,movie)
+	local host = Osi.CharacterGetHostCharacter()
+	Osi.MoviePlay(host,movie)
 end)
 
 -- !statusapply LLLICH_DOMINATED 18.0 1 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host
 -- !statusapply LLLICH_DOMINATED_BEAM_FX 0.0 1 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host
 -- !statusapply MADNESS 12.0 1 319_31dc549d-dfc0-4558-821a-5e3d468e5b1a host
 Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force,target,source)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	if target == nil or target == "host" then
 		target = host
 	end
@@ -233,7 +233,7 @@ end)
 
 -- !statusremove LLLICH_DOMINATED_BEAM_FX 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0
 Ext.RegisterConsoleCommand("statusremove", function(command,status,target)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	if target == nil or target == "host" then
 		target = host
 	end
@@ -241,14 +241,14 @@ Ext.RegisterConsoleCommand("statusremove", function(command,status,target)
 		status = "HASTED"
 	end
 	if status == "ALL" then
-		RemoveHarmfulStatuses(target)
+		Osi.RemoveHarmfulStatuses(target)
 	else
-		RemoveStatus(target,status)
+		Osi.RemoveStatus(target,status)
 	end
 end)
 
 Ext.RegisterConsoleCommand("setstatusturns", function(command,target,status,turnsStr)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	if target == nil or target == "host" then
 		target = host
 	end
@@ -266,14 +266,14 @@ Ext.RegisterConsoleCommand("setstatusturns", function(command,target,status,turn
 end)
 
 Ext.RegisterConsoleCommand("clearinventory", function(command)
-	local host = CharacterGetHostCharacter()
-	local x,y,z = GetPosition(host)
+	local host = Osi.CharacterGetHostCharacter()
+	local x,y,z = Osi.GetPosition(host)
 	--local backpack = CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
 	for player in GameHelpers.Character.GetPlayers(false) do
 		for i,v in pairs(player:GetInventoryItems()) do
 			local item = GameHelpers.GetItem(v)
 			if Data.EquipmentSlots[item.Slot] and not item.StoryItem then
-				ItemRemove(v)
+				Osi.ItemRemove(v)
 			end
 		end
 	end
@@ -289,20 +289,20 @@ Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyIt
 	if treasure == nil or treasure == "" or treasure == "nil" then
 		treasure = "ArenaMode_ArmsTrader"
 	end
-	local host = CharacterGetHostCharacter()
-	local level = CharacterGetLevel(host)
+	local host = Osi.CharacterGetHostCharacter()
+	local level = Osi.CharacterGetLevel(host)
 	if levelstr ~= nil then
 		level = Ext.Utils.Round(tonumber(levelstr))
 	end
-	local x,y,z = GetPosition(host)
-	if treasureChest == nil or ObjectExists(treasureChest) == 0 then
-		treasureChest = CreateItemTemplateAtPosition("219f6175-312b-4520-afce-a92c7fadc1ee", x, y, z)
+	local x,y,z = Osi.GetPosition(host)
+	if treasureChest == nil or Osi.ObjectExists(treasureChest) == 0 then
+		treasureChest = Osi.CreateItemTemplateAtPosition("219f6175-312b-4520-afce-a92c7fadc1ee", x, y, z)
 	end
-	local tx,ty,tz = FindValidPosition(x,y,z, 8.0, treasureChest)
-	ItemMoveToPosition(treasureChest, tx,ty,tz,16.0,20.0,"",0)
-	GenerateTreasure(treasureChest, treasure, level, host)
+	local tx,ty,tz = Osi.FindValidPosition(x,y,z, 8.0, treasureChest)
+	Osi.ItemMoveToPosition(treasureChest, tx,ty,tz,16.0,20.0,"",0)
+	Osi.GenerateTreasure(treasureChest, treasure, level, host)
 	if identifyItems then
-		ContainerIdentifyAll(treasureChest)
+		Osi.ContainerIdentifyAll(treasureChest)
 	end
 end)
 
@@ -330,7 +330,7 @@ end
 
 local function processTreasure(treasure, props, host, generateAmount)
 	generateAmount = generateAmount or 1
-	local tbl = Ext.GetTreasureTable(treasure)
+	local tbl = Ext.Stats.TreasureTable.GetLegacy(treasure)
 	if tbl then
 		local stats = {
 			Armor = Ext.Stats.GetStats("Armor"),
@@ -347,7 +347,7 @@ local function processTreasure(treasure, props, host, generateAmount)
 						for i=0,generateAmount do
 							local item = GameHelpers.Item.CreateItemByStat(stat, props)
 							if item then
-								ItemToInventory(item, host, 1, 0, 0)
+								Osi.ItemToInventory(item, host, 1, 0, 0)
 							else
 								fprint(LOGLEVEL.WARNING, "Failed to create item for treasure (%s) stat (%s)", treasure, stat)
 							end
@@ -358,7 +358,7 @@ local function processTreasure(treasure, props, host, generateAmount)
 							for i=0,generateAmount do
 								local item = GameHelpers.Item.CreateItemByStat(stat, props)
 								if item then
-									ItemToInventory(item, host, 1, 0, 0)
+									Osi.ItemToInventory(item, host, 1, 0, 0)
 								else
 									fprint(LOGLEVEL.WARNING, "Failed to create item for treasure (%s) stat (%s)", treasure, stat)
 								end
@@ -376,12 +376,12 @@ local function processTreasure(treasure, props, host, generateAmount)
 end
 
 Ext.RegisterConsoleCommand("addtreasureex", function(command, treasure, level, forceRarity, generateAmount)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	if treasure == nil then
 		treasure = "ArenaMode_ArmsTrader"
 	end
 	if level == nil then
-		level = CharacterGetLevel(host)
+		level = Osi.CharacterGetLevel(host)
 	else
 		level = Ext.Utils.Round(tonumber(level))
 	end
@@ -404,42 +404,42 @@ Ext.RegisterConsoleCommand("addreward", function(command, treasure, identifyItem
 	if treasure == nil then
 		treasure = "ST_WeaponRare"
 	end
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	local identified = identifyItems ~= 0
-	CharacterGiveReward(host, treasure, identified)
+	Osi.CharacterGiveReward(host, treasure, identified)
 end)
 
 Ext.RegisterConsoleCommand("questreward", function(command, treasure, delay)
 	if treasure == nil then
 		treasure = "RC_GY_RykersContract"
 	end
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	if delay ~= nil then
 		delay = tonumber(delay)
 	end
 	if delay ~= nil then
 		Timer.StartOneshot(string.format("Timers_LeaderLib_Debug_QuestReward%s%s%s", host, treasure, delay), delay, function()
-			CharacterGiveQuestReward(host, treasure, "QuestReward")
+			Osi.CharacterGiveQuestReward(host, treasure, "QuestReward")
 		end)
 	else
-		CharacterGiveQuestReward(host, treasure, "QuestReward")
+		Osi.CharacterGiveQuestReward(host, treasure, "QuestReward")
 	end
 end)
 
 Ext.RegisterConsoleCommand("addskill", function(command, skill)
-	local host = CharacterGetHostCharacter()
-	CharacterAddSkill(host, skill, 1)
+	local host = Osi.CharacterGetHostCharacter()
+	Osi.CharacterAddSkill(host, skill, 1)
 end)
 
 Ext.RegisterConsoleCommand("addskillset", function(command, name, addRequirements)
-	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
-	local skillset = Ext.GetSkillSet(name)
+	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
+	local skillset = Ext.Stats.SkillSet.GetLegacy(name)
 	addRequirements = addRequirements == "true" or addRequirements == "1"
 	if skillset then
 		if addRequirements then
 			local total = #skillset.Skills
 			if host.Stats.Memory < total then
-				CharacterAddAttribute(host.MyGuid, "Memory", (total - host.Stats.Memory) + 1)
+				Osi.CharacterAddAttribute(host.MyGuid, "Memory", (total - host.Stats.Memory) + 1)
 			end
 		end
 		Timer.StartOneshot("", 250, function ()
@@ -452,20 +452,20 @@ Ext.RegisterConsoleCommand("addskillset", function(command, name, addRequirement
 								if Data.Ability[req.Requirement] then
 									local addAmount = req.Param - host.Stats[req.Requirement]
 									if addAmount > 0 then
-										CharacterAddAbility(host.MyGuid, req.Requirement, addAmount)
+										Osi.CharacterAddAbility(host.MyGuid, req.Requirement, addAmount)
 									end
 								elseif Data.Attribute[req.Requirement] then
 									local addAmount = req.Param - host.Stats[req.Requirement]
 									if addAmount > 0 then
-										CharacterAddAttribute(host.MyGuid, req.Requirement, addAmount)
+										Osi.CharacterAddAttribute(host.MyGuid, req.Requirement, addAmount)
 									end
 								end
 							end
 						end
 					end
 				end
-				CharacterRemoveSkill(host.MyGuid, v)
-				CharacterAddSkill(host.MyGuid, v, 1)
+				Osi.CharacterRemoveSkill(host.MyGuid, v)
+				Osi.CharacterAddSkill(host.MyGuid, v, 1)
 			end
 		end)
 	end
@@ -474,21 +474,21 @@ end)
 local removedSkills = {}
 
 Ext.RegisterConsoleCommand("removeskill", function(cmd, skill)
-	local host = CharacterGetHostCharacter()
-	CharacterRemoveSkill(host, skill)
+	local host = Osi.CharacterGetHostCharacter()
+	Osi.CharacterRemoveSkill(host, skill)
 	GameHelpers.Skill.RemoveFromSlots(host,skill)
 end)
 
 Ext.RegisterConsoleCommand("removeunmemorizedskills", function(cmd)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	local char = GameHelpers.GetCharacter(host)
 	removedSkills[host] = {}
 	for i,skill in pairs(char:GetSkills()) do
-		local slot = NRD_SkillBarFindSkill(host, skill)
+		local slot = Osi.NRD_SkillBarFindSkill(host, skill)
 		if slot == nil then
 			table.insert(removedSkills[host], {Skill=skill, Slot=slot})
 			fprint(LOGLEVEL.TRACE, "[LeaderLib:removeunmemorizedskills] Removing "..skill)
-			CharacterRemoveSkill(host, skill)
+			Osi.CharacterRemoveSkill(host, skill)
 			--local skillInfo = char:GetSkillInfo(skill)
 			--print(string.format("[%s](%i) IsActivated(%s) IsLearned(%s), ZeroMemory(%s)", skill, slot, skillInfo.IsActivated, skillInfo.IsLearned, skillInfo.ZeroMemory))
 		end
@@ -496,11 +496,11 @@ Ext.RegisterConsoleCommand("removeunmemorizedskills", function(cmd)
 end)
 
 Ext.RegisterConsoleCommand("undoremoveunmemorizedskills", function(cmd)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	local skills = removedSkills[host]
 	if skills ~= nil then
 		for i,v in pairs(skills) do
-			CharacterAddSkill(host, v.Skill, 0)
+			Osi.CharacterAddSkill(host, v.Skill, 0)
 			GameHelpers.Skill.TrySetSlot(host, v.Slot, v.Skill, true)
 		end
 		removedSkills[host] = nil
@@ -508,13 +508,13 @@ Ext.RegisterConsoleCommand("undoremoveunmemorizedskills", function(cmd)
 end)
 
 Ext.RegisterConsoleCommand("printalldeltamods", function(command, ...)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	---@type EsvCharacter
 	local character = GameHelpers.GetCharacter(host)
 	for i,slot in Data.EquipmentSlots:Get() do
 		---@type StatItem
 		--local item = character.Stats:GetItemBySlot(slot)
-		local itemUUID = CharacterGetEquippedItem(host, slot)
+		local itemUUID = Osi.CharacterGetEquippedItem(host, slot)
 		if itemUUID ~= nil then
 			---@type EsvItem
 			local item = GameHelpers.GetItem(itemUUID)
@@ -530,29 +530,29 @@ Ext.RegisterConsoleCommand("printalldeltamods", function(command, ...)
 					end
 				end
 				fprint(LOGLEVEL.TRACE, "=======")
-				NRD_ItemIterateDeltaModifiers(itemUUID, "LLWEAPONEX_Debug_PrintDeltamod")
+				Osi.NRD_ItemIterateDeltaModifiers(itemUUID, "LLWEAPONEX_Debug_PrintDeltamod")
 			end
 		end
 	end
 end)
 
 Ext.RegisterConsoleCommand("clearcombatlog", function(command, text)
-	GameHelpers.Net.PostToUser(CharacterGetHostCharacter(), "LeaderLib_ClearCombatLog", "0")
+	GameHelpers.Net.PostToUser(Osi.CharacterGetHostCharacter(), "LeaderLib_ClearCombatLog", "0")
 end)
 
 Ext.RegisterConsoleCommand("refreshskill", function(command, skill, enabled)
-	SetSkillEnabled(CharacterGetHostCharacter(), skill, false)
+	SetSkillEnabled(Osi.CharacterGetHostCharacter(), skill, false)
 end)
 
 Ext.RegisterConsoleCommand("sethelmetoption", function(command, param)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	local enabled = param == "true"
 	fprint(LOGLEVEL.TRACE, "[sethelmetoption]",host,enabled)
 	GameHelpers.Net.PostToUser(host, "LeaderLib_SetHelmetOption", MessageData:CreateFromTable("HelmetOption", {UUID = host, Enabled = enabled}):ToString())
 end)
 
 Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
-	local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
+	local host = StringHelpers.GetUUID(Osi.CharacterGetHostCharacter())
 	if amount == nil then
 		amount = 1
 	else
@@ -564,18 +564,18 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
 		pointType = StringHelpers.Trim(string.lower(pointType))
 	end
 	if pointType == "ability" then
-		CharacterAddAbilityPoint(host, amount)
+		Osi.CharacterAddAbilityPoint(host, amount)
 	elseif pointType == "attribute" then
-		CharacterAddAttributePoint(host, amount)
+		Osi.CharacterAddAttributePoint(host, amount)
 	elseif pointType == "civil" then
-		CharacterAddCivilAbilityPoint(host, amount)
+		Osi.CharacterAddCivilAbilityPoint(host, amount)
 	elseif pointType == "talent" then
-		CharacterAddTalentPoint(host, amount)
+		Osi.CharacterAddTalentPoint(host, amount)
 	elseif pointType == "source" then
-		CharacterAddSourcePoints(host, amount)
+		Osi.CharacterAddSourcePoints(host, amount)
 	elseif pointType == "sourcemax" then
-		local next = CharacterGetMaxSourcePoints(host) + amount
-		CharacterOverrideMaxSourcePoints(host, next)
+		local next = Osi.CharacterGetMaxSourcePoints(host) + amount
+		Osi.CharacterOverrideMaxSourcePoints(host, next)
 	elseif pointType == "custom" and id then
 		if Mods.CharacterExpansionLib then
 			Mods.CharacterExpansionLib.CustomStatSystem:AddAvailablePoints(host, id, amount)
@@ -586,8 +586,8 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
 end)
 
 Ext.RegisterConsoleCommand("printitemboosts", function(cmd)
-	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
-	local weapon = GameHelpers.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
+	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
+	local weapon = GameHelpers.GetItem(Osi.CharacterGetEquippedItem(host.MyGuid, "Weapon"))
 	fprint(LOGLEVEL.TRACE, weapon.MyGuid, weapon.StatsId)
 	fprint(LOGLEVEL.TRACE, weapon.Stats.Boosts)
 	for i,v in pairs(weapon:GetGeneratedBoosts()) do
@@ -600,15 +600,15 @@ Ext.RegisterConsoleCommand("printitemboosts", function(cmd)
 end)
 
 Ext.RegisterConsoleCommand("fx", function(cmd, effect, bone, target)
-	if target == nil then target = CharacterGetHostCharacter() end
+	if target == nil then target = Osi.CharacterGetHostCharacter() end
 	if bone == nil then bone = "Dummy_OverheadFX" end
-	PlayEffect(target, effect, bone)
+	Osi.PlayEffect(target, effect, bone)
 	fprint(LOGLEVEL.TRACE, "PlayEffect(\"%s\", \"%s\", \"%s\")", target, effect, bone)
 end)
 
 Ext.RegisterConsoleCommand("sfx", function(cmd, soundevent, target)
-	if target == nil then target = CharacterGetHostCharacter() end
-	PlaySound(target, soundevent)
+	if target == nil then target = Osi.CharacterGetHostCharacter() end
+	Osi.PlaySound(target, soundevent)
 end)
 
 local modifierTypes = {
@@ -621,7 +621,7 @@ Ext.RegisterConsoleCommand("printdeltamods", function(cmd, attributeFilter, filt
 	---@type DeltaMod[]
 	local deltamods = Ext.Stats.GetStats("DeltaMod")
 	for _,v in pairs(deltamods) do
-		local deltamod = Ext.GetDeltaMod(v.Name, v.ModifierType)
+		local deltamod = Ext.Stats.DeltaMod.GetLegacy(v.Name, v.ModifierType)
 		local canPrint = false
 		local slotType = Data.EquipmentSlots[deltamod.SlotType]
 		if attributeFilter == "SlotType" then
@@ -672,7 +672,7 @@ local PlayerCustomDataAttributes = {
 }
 
 Ext.RegisterConsoleCommand("printpdata", function(cmd, target)
-	target = target or CharacterGetHostCharacter()
+	target = target or Osi.CharacterGetHostCharacter()
 	local character = GameHelpers.GetCharacter(target)
 	if character ~= nil and character.PlayerCustomData ~= nil then
 		local pdata = character.PlayerCustomData
@@ -687,7 +687,7 @@ end)
 
 Ext.RegisterConsoleCommand("hidestatusmc", function(command, visible)
 	visible = visible or "false"
-	GameHelpers.Net.PostToUser(CharacterGetHostCharacter(), "LeaderLib_UI_HideStatuses", visible)
+	GameHelpers.Net.PostToUser(Osi.CharacterGetHostCharacter(), "LeaderLib_UI_HideStatuses", visible)
 end)
 
 Ext.RegisterConsoleCommand("clonedeltamodtest", function(command, amount)
@@ -714,8 +714,8 @@ Ext.RegisterConsoleCommand("clonedeltamodtest", function(command, amount)
 	properties.GenerationItemType = "Rare"
 	properties.HasModifiedSkills = true
 	properties.Skills = "Projectile_Fireball"
-	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
-	local weapon = CharacterGetEquippedWeapon(host.MyGuid)
+	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
+	local weapon = Osi.CharacterGetEquippedWeapon(host.MyGuid)
 	weapon = not StringHelpers.IsNullOrEmpty(weapon) and GameHelpers.GetItem(weapon) or "3dd01bc4-65e7-4468-9854-b19bc980b3f8"
 	-- local item = GameHelpers.Item.Clone(weapon, properties)
 	-- if item ~= nil then
@@ -723,14 +723,14 @@ Ext.RegisterConsoleCommand("clonedeltamodtest", function(command, amount)
 	-- end
 	local item2 = GameHelpers.Item.CreateItemByTemplate("3dd01bc4-65e7-4468-9854-b19bc980b3f8", properties)
 	if item2 ~= nil then
-		ItemToInventory(item2.MyGuid, host.MyGuid, 1, 1, 0)
-		NRD_ItemSetIdentified(item2.MyGuid, 1)
+		Osi.ItemToInventory(item2.MyGuid, host.MyGuid, 1, 1, 0)
+		Osi.NRD_ItemSetIdentified(item2.MyGuid, 1)
 	end
 	properties.HasGeneratedStats = true
 	local item2 = GameHelpers.Item.CreateItemByTemplate("3dd01bc4-65e7-4468-9854-b19bc980b3f8", properties)
 	if item2 ~= nil then
-		ItemToInventory(item2.MyGuid, host.MyGuid, 1, 1, 0)
-		NRD_ItemSetIdentified(item2.MyGuid, 1)
+		Osi.ItemToInventory(item2.MyGuid, host.MyGuid, 1, 1, 0)
+		Osi.NRD_ItemSetIdentified(item2.MyGuid, 1)
 	end
 	-- local item3 = GameHelpers.Item.CreateItemByStat("WPN_Sword_1H", true, properties)
 	-- if item3 then
@@ -740,7 +740,7 @@ end)
 
 Ext.RegisterConsoleCommand("printrunes", function(command, equipmentSlot)
 	equipmentSlot = equipmentSlot or "Weapon"
-	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 	local item = host:GetItemBySlot(equipmentSlot)
 	if item then
 		local boosts = GameHelpers.Stats.GetRuneBoosts(item.Stats)
@@ -759,8 +759,8 @@ end)
 
 Ext.RegisterConsoleCommand("cctest", function(cmd, disable)
 	local player = GameHelpers.Character.GetHost()
-	local username = GetUserName(player.ReservedUserID)
-	local profile = GetUserProfileID(player.ReservedUserID)
+	local username = Osi.GetUserName(player.ReservedUserID)
+	local profile = Osi.GetUserProfileID(player.ReservedUserID)
 	for dummy in GameHelpers.DB.GetAllEntries("DB_CharacterCreationDummy", 1) do
 		local assigned = Osi.DB_AssignedDummyForUser:Get(nil,dummy)
 		if disable then

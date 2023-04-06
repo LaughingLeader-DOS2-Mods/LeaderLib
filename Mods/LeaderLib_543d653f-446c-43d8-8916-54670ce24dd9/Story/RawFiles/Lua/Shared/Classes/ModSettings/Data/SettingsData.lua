@@ -240,20 +240,20 @@ function SettingsData:UpdateFlags()
 	for flag,data in pairs(self.Flags) do
 		if not data.ClientSide then
 			if data.FlagType == "Global" then
-				data.Enabled = GlobalGetFlag(flag) == 1
+				data.Enabled = Osi.GlobalGetFlag(flag) == 1
 			elseif data.FlagType == "User" or (data.FlagType == "Character" or data.FlagType == "Object") then
 				for player in GameHelpers.Character.GetPlayers(false) do
 					local uuid = player.MyGuid
 					if data.FlagType == "User" then
-						local id = CharacterGetReservedUserID(uuid)
+						local id = Osi.CharacterGetReservedUserID(uuid)
 						if id then
-							local profileid = GetUserProfileID(id)
+							local profileid = Osi.GetUserProfileID(id)
 							if profileid then
-								data:AddTarget(profileid, UserGetFlag(uuid, flag) == 1)
+								data:AddTarget(profileid, Osi.UserGetFlag(uuid, flag) == 1)
 							end
 						end
 					elseif (data.FlagType == "Character" or data.FlagType == "Object") then
-						local enabled = ObjectGetFlag(uuid, flag) == 1
+						local enabled = Osi.ObjectGetFlag(uuid, flag) == 1
 						if enabled then
 							data:AddTarget(uuid, true)
 						else
@@ -280,9 +280,9 @@ function SettingsData:ApplyFlags()
 		if not data.ClientSide then
 			if data.FlagType == "Global" then
 				if data.Enabled then
-					GlobalSetFlag(flag)
+					Osi.GlobalSetFlag(flag)
 				else
-					GlobalClearFlag(flag)
+					Osi.GlobalClearFlag(flag)
 				end
 			elseif data.Targets ~= nil then
 				for target,enabled in pairs(data.Targets) do
@@ -294,22 +294,22 @@ function SettingsData:ApplyFlags()
 						end
 						for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
 							local uuid = db[1]
-							local id = CharacterGetReservedUserID(uuid)
-							local profileid = GetUserProfileID(id)
-							local username = GetUserName(id)
+							local id = Osi.CharacterGetReservedUserID(uuid)
+							local profileid = Osi.GetUserProfileID(id)
+							local username = Osi.GetUserName(id)
 							if profileid == userid or username == userid then
 								if enabled then
-									UserSetFlag(uuid, flag, 0)
+									Osi.UserSetFlag(uuid, flag, 0)
 								else
-									UserClearFlag(uuid, flag, 0)
+									Osi.UserClearFlag(uuid, flag, 0)
 								end
 							end
 						end
-					elseif data.FlagType == "Character" and ObjectExists(target) == 1 then
+					elseif data.FlagType == "Character" and Osi.ObjectExists(target) == 1 then
 						if data.Enabled then
-							ObjectSetFlag(target, flag, 0)
+							Osi.ObjectSetFlag(target, flag, 0)
 						else
-							ObjectClearFlag(target, flag, 0)
+							Osi.ObjectClearFlag(target, flag, 0)
 						end
 					end
 				end
@@ -398,22 +398,22 @@ function SettingsData:FlagEquals(id, b, target)
 				if target then
 					local enabled = false
 					if data.FlagType == "User" then
-						enabled = UserGetFlag(target, data.ID) == 1
+						enabled = Osi.UserGetFlag(target, data.ID) == 1
 					elseif data.FlagType == "Character" then
-						enabled = ObjectGetFlag(target, data.ID) == 1
+						enabled = Osi.ObjectGetFlag(target, data.ID) == 1
 					end
 					return enabled == b
 				end
 			else
 				for player in GameHelpers.Character.GetPlayers() do
 					if data.FlagType == "User" then
-						if UserGetFlag(player.MyGuid, data.ID) == 1 then
+						if Osi.UserGetFlag(player.MyGuid, data.ID) == 1 then
 							if b then
 								return true
 							end
 						end
 					elseif data.FlagType == "Character" then
-						local enabled = ObjectGetFlag(player.MyGuid, data.ID) == 1
+						local enabled = Osi.ObjectGetFlag(player.MyGuid, data.ID) == 1
 						if enabled and b then
 							return true
 						end

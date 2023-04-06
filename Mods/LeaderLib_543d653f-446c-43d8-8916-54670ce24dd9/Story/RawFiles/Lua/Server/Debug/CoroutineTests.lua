@@ -35,7 +35,7 @@ local function moveToPosition(obj, id, x, y, z, running)
 	end
 	WAITING_ON_MOVE[id][obj] = co
 
-	CharacterMoveToPosition(obj, x, y, z, running, id)
+	Osi.CharacterMoveToPosition(obj, x, y, z, running, id)
 	return coroutine.yield(co)
 end
 
@@ -95,7 +95,7 @@ Ext.RegisterConsoleCommand("coroutinetest", function(cmd)
 		fprint(LOGLEVEL.TRACE, "Hello world. I will now astound you by waiting for 2 seconds.", Ext.Utils.MonotonicTime())
 		wait(2000)
 		fprint(LOGLEVEL.TRACE, "Haha! I did it! [%s]", Ext.Utils.MonotonicTime() - startTime)
-		local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
+		local host = StringHelpers.GetUUID(Osi.CharacterGetHostCharacter())
 		local x,y,z = table.unpack(GameHelpers.Math.GetForwardPosition(host, 3.0))
 		fprint(LOGLEVEL.TRACE, "Moving to (%s;%s;%s)", x, y, z)
 		moveToPosition(host, "LeaderLib_CoroutineMove", x, y, z, true)

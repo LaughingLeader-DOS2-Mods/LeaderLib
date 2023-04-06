@@ -80,7 +80,7 @@ function ElementManager.OnEquipmentChanged(char,item,equipped)
 			local data = ElementManager.Data[visual]
 			if data ~= nil and data.OnEquipmentChanged ~= nil then
 				-- Hidden Helmet
-				if equipped and (item.Stats.ItemSlot == ElementManager.Slot.Helmet) and ObjectGetFlag(char.MyGuid, "LeaderLib_HelmetHidden") == 1 then
+				if equipped and (item.Stats.ItemSlot == ElementManager.Slot.Helmet) and Osi.ObjectGetFlag(char.MyGuid, "LeaderLib_HelmetHidden") == 1 then
 					equipped = false
 				end
 				local b,result = xpcall(data.OnEquipmentChanged, debug.traceback, data, char, item, equipped)
@@ -93,14 +93,14 @@ function ElementManager.OnEquipmentChanged(char,item,equipped)
 end
 
 RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)
-	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
+	if Osi.ObjectExists(item) == 0 or Osi.ObjectExists(char) == 0 then
 		return
 	end
 	ElementManager.OnEquipmentChanged(GameHelpers.GetCharacter(char), GameHelpers.GetItem(item), true)
 end)
 
 RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char)
-	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
+	if Osi.ObjectExists(item) == 0 or Osi.ObjectExists(char) == 0 then
 		return
 	else
 		ElementManager.OnEquipmentChanged(GameHelpers.GetCharacter(char), GameHelpers.GetItem(item), false)
@@ -113,12 +113,12 @@ Ext.RegisterNetListener("LeaderLib_OnHelmetToggled", function(cmd, payload)
 		local char = GameHelpers.GetCharacter(data.NetID)
 		if char ~= nil then
 			if data.State == 1 then
-				ObjectClearFlag(char.MyGuid, "LeaderLib_HelmetHidden", 0)
+				Osi.ObjectClearFlag(char.MyGuid, "LeaderLib_HelmetHidden", 0)
 			else
-				ObjectSetFlag(char.MyGuid, "LeaderLib_HelmetHidden", 0)
+				Osi.ObjectSetFlag(char.MyGuid, "LeaderLib_HelmetHidden", 0)
 			end
 			local item = nil
-			local helmet = CharacterGetEquippedItem(char.MyGuid, "Helmet")
+			local helmet = Osi.CharacterGetEquippedItem(char.MyGuid, "Helmet")
 			if not StringHelpers.IsNullOrEmpty(helmet) then
 				item = GameHelpers.GetItem(helmet)
 			end

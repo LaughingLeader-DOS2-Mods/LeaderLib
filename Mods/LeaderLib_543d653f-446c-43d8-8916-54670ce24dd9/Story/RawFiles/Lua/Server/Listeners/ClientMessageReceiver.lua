@@ -9,19 +9,19 @@ Ext.RegisterNetListener("LeaderLib_ToggleChainGroup", function(cmd, payload)
 		local leader = GameHelpers.GetCharacter(data.Leader)
 		if leader then
 			if data.TotalChained > data.TotalUnchained then
-				Osi.LeaderLib_LifeHacks_ChainToggle(leader.MyGuid, CharacterGetReservedUserID(leader.MyGuid), 0)
+				Osi.LeaderLib_LifeHacks_ChainToggle(leader.MyGuid, Osi.CharacterGetReservedUserID(leader.MyGuid), 0)
 			else
-				Osi.LeaderLib_LifeHacks_ChainToggle(leader.MyGuid, CharacterGetReservedUserID(leader.MyGuid), 1)
+				Osi.LeaderLib_LifeHacks_ChainToggle(leader.MyGuid, Osi.CharacterGetReservedUserID(leader.MyGuid), 1)
 			end
 		end
 	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_RefreshCharacterSheet", function(cmd, uuid)
-	CharacterAddAbilityPoint(uuid, 0)
-	CharacterAddCivilAbilityPoint(uuid, 0)
-	CharacterAddAttributePoint(uuid, 0)
-	CharacterAddAttribute(uuid, "Dummy", 0)
+	Osi.CharacterAddAbilityPoint(uuid, 0)
+	Osi.CharacterAddCivilAbilityPoint(uuid, 0)
+	Osi.CharacterAddAttributePoint(uuid, 0)
+	Osi.CharacterAddAttribute(uuid, "Dummy", 0)
 end)
 
 Ext.RegisterNetListener("LeaderLib_DeferUICapture", function(cmd, userId)
@@ -42,7 +42,7 @@ Ext.RegisterNetListener("LeaderLib_TeleportToPosition", function(cmd, payload)
 	fassert(object ~= nil, "[%s] Object returned by the Target parameter is nil. Payload:\n%s", cmd, payload)
 	local x,y,z = table.unpack(data.Pos)
 	Osi.LeaderLib_Behavior_TeleportTo(object.MyGuid, x, y, z)
-	CharacterMoveToPosition(object.MyGuid, x, y, z, 1, "")
+	Osi.CharacterMoveToPosition(object.MyGuid, x, y, z, 1, "")
 end)
 
 Ext.RegisterNetListener("LeaderLib_CharacterStatusText", function(cmd, payload)
@@ -50,7 +50,7 @@ Ext.RegisterNetListener("LeaderLib_CharacterStatusText", function(cmd, payload)
 	fassert(data ~= nil, "[%s] Payload (%s) resulted in a nil table.", cmd, payload)
 	fassert(data.Target ~= nil, "[%s] A valid Target parameter is required. Payload:\n%s", cmd, payload)
 	fassert(data.Text ~= nil, "[%s] A valid Text parameter is required. Payload:\n%s", cmd, payload)
-	CharacterStatusText(GameHelpers.GetUUID(data.Target), data.Text)
+	Osi.CharacterStatusText(GameHelpers.GetUUID(data.Target), data.Text)
 end)
 
 Ext.RegisterNetListener("LeaderLib_SaveDebugInfo_Run", function(cmd, payload)

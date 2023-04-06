@@ -46,9 +46,9 @@ if not _ISCLIENT then
 						skill = Ext.Stats.Get(targetData.Skill, nil, false)
 					end
 					if targetData.EndAnimation and not StringHelpers.IsNullOrWhitespace(targetData.EndAnimation) then
-						CharacterSetAnimationOverride(targetObject.MyGuid, "")
+						Osi.CharacterSetAnimationOverride(targetObject.MyGuid, "")
 						targetObject.AnimationOverride = ""
-						PlayAnimation(targetObject.MyGuid, targetData.EndAnimation, "")
+						Osi.PlayAnimation(targetObject.MyGuid, targetData.EndAnimation, "")
 					end
 					Events.ForceMoveFinished:Invoke({
 						ID = targetData.ID or "",
@@ -94,17 +94,17 @@ if not _ISCLIENT then
 	function GameHelpers.CanForceMove(target)
 		local t = _type(target)
 		if t == "string" and _OSIRIS() then
-			if CharacterIsDead(target) == 1 then
+			if Osi.CharacterIsDead(target) == 1 then
 				return false
 			end
-			if IsTagged(target, "LeaderLib_Dummy") == 1 or IsTagged(target, "LeaderLib_ForceImmune") == 1 or HasActiveStatus(target, "LEADERLIB_FORCE_IMMUNE") == 1 then
+			if Osi.IsTagged(target, "LeaderLib_Dummy") == 1 or Osi.IsTagged(target, "LeaderLib_ForceImmune") == 1 or Osi.HasActiveStatus(target, "LEADERLIB_FORCE_IMMUNE") == 1 then
 				return false
 			end
 		elseif t == "userdata" and target.HasTag then
 			if target.Dead then
 				return false
 			end
-			if target:HasTag("LeaderLib_Dummy") or target:HasTag("LeaderLib_ForceImmune") or HasActiveStatus(target.MyGuid, "LEADERLIB_FORCE_IMMUNE") == 1 then
+			if target:HasTag("LeaderLib_Dummy") or target:HasTag("LeaderLib_ForceImmune") or Osi.HasActiveStatus(target.MyGuid, "LEADERLIB_FORCE_IMMUNE") == 1 then
 				return false
 			end
 		end
@@ -172,7 +172,7 @@ if not _ISCLIENT then
 		Timer.Cancel("LeaderLib_CheckKnockupDistance", targetObject)
 		local lastData = _PV.ForceMoveData[targetObject.MyGuid]
 		if lastData and lastData.Handle then
-			NRD_GameActionDestroy(lastData.Handle)
+			Osi.NRD_GameActionDestroy(lastData.Handle)
 			Events.ForceMoveFinished:Invoke({
 				ID = lastData.ID or "",
 				Target = targetObject,
@@ -194,7 +194,7 @@ if not _ISCLIENT then
 		if not b then
 			local tx,ty,tz = table.unpack(GameHelpers.Math.ExtendPositionWithDirectionalVector(startPos, directionalVector, distMult, false))
 			ty = ty + (targetObject.AI.AIBoundsHeight * 0.8) -- "Eye"-level?
-			local vx, vy, vz = FindValidPosition(tx, ty, tz, targetObject.AI.AIBoundsRadius * 3, targetObject.MyGuid)
+			local vx, vy, vz = Osi.FindValidPosition(tx, ty, tz, targetObject.AI.AIBoundsRadius * 3, targetObject.MyGuid)
 			if vx then
 				targetPos = {vx,vy,vz}
 				b = true
@@ -207,7 +207,7 @@ if not _ISCLIENT then
 			-- action.BeamEffectName = opts.BeamEffect or ""
 			-- action.PathMover.DestinationPos = pos
 			-- action.PathMover.StartingPosition = targetObject.WorldPos
-			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, targetPos[1], targetPos[2], targetPos[3], opts.BeamEffect or "", sourceObject.MyGuid)
+			local handle = Osi.NRD_CreateGameObjectMove(targetObject.MyGuid, targetPos[1], targetPos[2], targetPos[3], opts.BeamEffect or "", sourceObject.MyGuid)
 			if handle then
 				_PV.ForceMoveData[targetObject.MyGuid] = {
 					ID = opts.ID or "",
@@ -253,7 +253,7 @@ if not _ISCLIENT then
 
 		local lastData = _PV.ForceMoveData[targetObject.MyGuid]
 		if lastData and lastData.Handle then
-			NRD_GameActionDestroy(lastData.Handle)
+			Osi.NRD_GameActionDestroy(lastData.Handle)
 			Events.ForceMoveFinished:Invoke({
 				ID = lastData.ID or "",
 				Target = targetObject,
@@ -277,7 +277,7 @@ if not _ISCLIENT then
 		-- action.PathMover.DestinationPos = pos
 		-- action.PathMover.StartingPosition = targetObject.WorldPos
 
-		local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, opts.BeamEffect or "", sourceObject.MyGuid)
+		local handle = Osi.NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, opts.BeamEffect or "", sourceObject.MyGuid)
 		if handle ~= nil then
 			_PV.ForceMoveData[targetObject.MyGuid] = {
 				ID = opts.ID,
@@ -367,12 +367,12 @@ if not _ISCLIENT then
 			Events.ObjectEvent:Subscribe(function (e)
 				local uuid = GameHelpers.GetUUID(e.Objects[1])
 				if uuid and HasKnockupData(uuid) then
-					CharacterPurgeQueue(uuid)
-					CharacterSetAnimationOverride(uuid, opts.ActiveAnimation)
+					Osi.CharacterPurgeQueue(uuid)
+					Osi.CharacterSetAnimationOverride(uuid, opts.ActiveAnimation)
 				end
 			end, {Once=true, MatchArgs={Event = eventId}})
-			CharacterPurgeQueue(tobj.MyGuid)
-			PlayAnimation(tobj.MyGuid, "knockdown_fall", eventId)
+			Osi.CharacterPurgeQueue(tobj.MyGuid)
+			Osi.PlayAnimation(tobj.MyGuid, "knockdown_fall", eventId)
 		end
 		GameHelpers.Status.Apply(tobj, "LEADERLIB_IN_AIR", 30.0, true, sobj)
 		_PV.KnockupData.ObjectData[#_PV.KnockupData.ObjectData+1] = {
@@ -424,9 +424,9 @@ if not _ISCLIENT then
 						positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = floorY}
 						positionSyncLen = positionSyncLen + 1
 						if data.EndAnimation then
-							CharacterSetAnimationOverride(obj.MyGuid, "")
-							CharacterPurgeQueue(obj.MyGuid)
-							PlayAnimation(obj.MyGuid, data.EndAnimation, "")
+							Osi.CharacterSetAnimationOverride(obj.MyGuid, "")
+							Osi.CharacterPurgeQueue(obj.MyGuid)
+							Osi.PlayAnimation(obj.MyGuid, data.EndAnimation, "")
 						end
 						GameHelpers.Status.Remove(obj, "LEADERLIB_IN_AIR")
 						Events.ForceMoveFinished:Invoke({

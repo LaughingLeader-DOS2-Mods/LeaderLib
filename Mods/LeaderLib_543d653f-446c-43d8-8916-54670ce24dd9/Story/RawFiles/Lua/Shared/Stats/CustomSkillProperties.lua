@@ -78,11 +78,10 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit,
 	local chance = property.Arg1
 	local distance = math.floor(property.Arg2/6)
 	if chance >= 1.0 or Ext.Utils.Random(0,1) <= chance then
-		local x,y,z = table.unpack(position)
 		--local characters = Ext.GetCharactersAroundPosition(x,y,z, areaRadius)
 		local characters = {}
 		for i,v in pairs(Ext.Entity.GetAllCharacterGuids()) do
-			if v ~= attacker.MyGuid and GetDistanceToPosition(v, x,y,z) <= areaRadius then
+			if v ~= attacker.MyGuid and GameHelpers.Math.GetDistance(v, position) <= areaRadius then
 				characters[#characters+1] = v
 			end
 		end
@@ -97,7 +96,7 @@ end, function (property, attacker, position, areaRadius, isFromItem, skill, hit,
 				startPos = target.WorldPos
 			end
 			GameHelpers.Utils.ForceMoveObject(target, {DistanceMultiplier=distance, Skill=skillId, Source=attacker, StartPos=startPos})
-			ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
+			Osi.ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 		end
 	end
 end, function (property, attacker, target, position, isFromItem, skill, hit, skillId)
@@ -114,7 +113,7 @@ end, function (property, attacker, target, position, isFromItem, skill, hit, ski
 				startPos = target.WorldPos
 			end
 			GameHelpers.Utils.ForceMoveObject(target, {DistanceMultiplier=distance, Skill=skillId, Source=attacker, StartPos=startPos})
-			ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
+			Osi.ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 		end
 	end
 end)
@@ -124,24 +123,24 @@ local function tpSelf(attacker, position, areaRadius)
 	local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(position, math.max(3, areaRadius))
 	if not tping[attacker.MyGuid] then
 		tping[attacker.MyGuid] = true
-		ApplyStatus(attacker.MyGuid, "ETHEREAL_SOLES", 6.0, 1, attacker.MyGuid)
-		ApplyStatus(attacker.MyGuid, "LEADERLIB_COMBAT_MOVE", 6.0, 1, attacker.MyGuid)
+		Osi.ApplyStatus(attacker.MyGuid, "ETHEREAL_SOLES", 6.0, 1, attacker.MyGuid)
+		Osi.ApplyStatus(attacker.MyGuid, "LEADERLIB_COMBAT_MOVE", 6.0, 1, attacker.MyGuid)
 		local ap = attacker.Stats.CurrentAP
 		Timer.StartOneshot("", 600, function()
 			tping[attacker.MyGuid] = nil
 			-- PlayEffectAtPosition("RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_02", table.unpack(attacker.WorldPos))
 			-- TeleportToPosition(attacker.MyGuid, x, y, z, "", 0, 1)
 			-- PlayEffectAtPosition("RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_02", x, y, z)
-			CharacterMoveToPosition(attacker.MyGuid, x, y, z, 1, "")
+			Osi.CharacterMoveToPosition(attacker.MyGuid, x, y, z, 1, "")
 			--NRD_CreateGameObjectMove(attacker.MyGuid, x, y, z, "", attacker.MyGuid)
 			fprint(LOGLEVEL.TRACE, "TeleportSelf.ExecuteOnPosition", attacker.MyGuid, x, y, z, "from", table.unpack(attacker.WorldPos))
 			Timer.StartOneshot("MoveDone", 1500, function()
 				if attacker.Stats.CurrentAP ~= ap then
 					attacker.Stats.CurrentAP = ap
-					CharacterAddActionPoints(attacker.MyGuid, 0)
+					Osi.CharacterAddActionPoints(attacker.MyGuid, 0)
 				end
-				RemoveStatus(attacker.MyGuid, "ETHEREAL_SOLES")
-				RemoveStatus(attacker.MyGuid, "LEADERLIB_COMBAT_MOVE")
+				Osi.RemoveStatus(attacker.MyGuid, "ETHEREAL_SOLES")
+				Osi.RemoveStatus(attacker.MyGuid, "LEADERLIB_COMBAT_MOVE")
 			end)
 		end)
 	end
@@ -155,13 +154,13 @@ end
 local function MoveToTarget(object, position, areaRadius, skill, property)
 	local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(position, math.max(3, areaRadius))
 	--if not Common.TableHasValue(property.Context, "Target") then
-	if ObjectIsCharacter(object.MyGuid) == 1 then
+	if Osi.ObjectIsCharacter(object.MyGuid) == 1 then
 		if not _PV.SkillPropertiesAction.MoveToTarget[object.MyGuid] then
 			_PV.SkillPropertiesAction.MoveToTarget[object.MyGuid] = {
 				AP = object.Stats.CurrentAP,
 				Pos = {x,y,z}
 			}
-			ApplyStatus(object.MyGuid, "LEADERLIB_COMBAT_MOVE", -1.0, 1, object.MyGuid)
+			Osi.ApplyStatus(object.MyGuid, "LEADERLIB_COMBAT_MOVE", -1.0, 1, object.MyGuid)
 			Timer.Start("LeaderLib_SkillProperties_MoveToTargetStart", 250, {UUID=object.MyGuid})
 			--object.Floating = true
 			-- local status = Ext.PrepareStatus(object.MyGuid, "LEADERLIB_COMBAT_MOVE", 6.0)
@@ -177,7 +176,7 @@ local function MoveToTarget(object, position, areaRadius, skill, property)
 		end
 	else
 		_PV.SkillPropertiesAction.MoveToTarget[object.MyGuid] = -1
-		ItemMoveToPosition(object.MyGuid, x, y, z, 12.0, 24.0, "LeaderLib_SkillProperties_MoveToTargetDone", 0)
+		Osi.ItemMoveToPosition(object.MyGuid, x, y, z, 12.0, 24.0, "LeaderLib_SkillProperties_MoveToTargetDone", 0)
 	end
 end
 
@@ -378,7 +377,7 @@ if not _ISCLIENT then
 
 	function SkillPropertiesActionDone(action, uuid)
 		if action == "MoveToTarget" then
-			RemoveStatus(uuid, "LEADERLIB_COMBAT_MOVE")
+			Osi.RemoveStatus(uuid, "LEADERLIB_COMBAT_MOVE")
 			local data = _PV.SkillPropertiesAction.MoveToTarget[uuid]
 			if data then
 				local restoreAP = data.AP
@@ -387,7 +386,7 @@ if not _ISCLIENT then
 					--character.Floating = false
 					if character.Stats.CurrentAP ~= data.AP then
 						character.Stats.CurrentAP = data.AP
-						CharacterAddActionPoints(uuid, 0)
+						Osi.CharacterAddActionPoints(uuid, 0)
 					end
 				end
 			end

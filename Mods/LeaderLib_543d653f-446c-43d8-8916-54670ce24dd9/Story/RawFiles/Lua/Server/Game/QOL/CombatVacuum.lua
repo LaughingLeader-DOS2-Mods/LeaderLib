@@ -77,7 +77,7 @@ function PullPartyIntoCombat()
 	for _,player in pairs(players) do
 		if GameHelpers.Character.IsInCombat(player) then
 			if referencePlayer == nil then
-				activeCombatId = CombatGetIDForCharacter(player.MyGuid)
+				activeCombatId = GameHelpers.Combat.GetID(player.MyGuid)
 				referencePlayer = player
 			end
 		else
@@ -94,7 +94,7 @@ function PullPartyIntoCombat()
 				if (ignoreSneaking or not GameHelpers.Character.IsSneakingOrInvisible(player)) then
 					local enemy = GetClosestEnemy(player, enemies, maxDist)
 					if enemy then
-						if CharacterCanSee(player.MyGuid, enemy.MyGuid) == 0 then
+						if Osi.CharacterCanSee(player.MyGuid, enemy.MyGuid) == 0 then
 							if enemy.Stats.DynamicStats[1].Sight < CombatVacuum.ServerSightOverride then
 								enemy.Stats.DynamicStats[1].Sight = CombatVacuum.ServerSightOverride
 							end
@@ -104,7 +104,7 @@ function PullPartyIntoCombat()
 						-- 	QOL.CombatVacuum.SetArenaFlag(enemy.MyGuid)
 						-- end
 						Osi.DB_LeaderLib_Combat_Temp_EnteredCombat(player.MyGuid, activeCombatId)
-						EnterCombat(player.MyGuid, enemy.MyGuid)
+						Osi.EnterCombat(player.MyGuid, enemy.MyGuid)
 						totalOutOfCombat = totalOutOfCombat - 1
 					end
 				end

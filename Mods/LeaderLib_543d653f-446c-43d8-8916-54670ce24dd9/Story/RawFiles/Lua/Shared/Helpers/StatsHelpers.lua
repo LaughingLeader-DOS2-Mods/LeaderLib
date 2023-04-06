@@ -9,7 +9,7 @@ local _type = type
 --- @param match string
 --- @return boolean
 function GameHelpers.Stats.HasParent(stat, match)
-	local parent = Ext.StatGetAttribute(stat, "Using")
+	local parent = GameHelpers.Stats.GetAttribute(stat, "Using")
 	if parent ~= nil and parent ~= "" then
 		if parent == match then
 			return true
@@ -25,10 +25,10 @@ end
 --- @param attribute string
 --- @return boolean
 function GameHelpers.Stats.HasParentAttributeValue(stat, findParent, attribute)
-	local parent = Ext.StatGetAttribute(stat, "Using")
+	local parent = GameHelpers.Stats.GetAttribute(stat, "Using")
 	if parent ~= nil and parent ~= "" then
 		if parent == findParent then
-			return Ext.StatGetAttribute(stat, attribute) == Ext.StatGetAttribute(parent, attribute)
+			return GameHelpers.Stats.GetAttribute(stat, attribute) == GameHelpers.Stats.GetAttribute(parent, attribute)
 		else
 			return GameHelpers.Stats.HasParentAttributeValue(parent, findParent, attribute)
 		end
@@ -70,7 +70,7 @@ function GameHelpers.Stats.GetRuneBoosts(item)
 				table.insert(boosts, runeEntry)
 				for i,attribute in pairs(RuneAttributes) do
 					runeEntry.Boosts[attribute] = ""
-					local boostStat = Ext.StatGetAttribute(boost.BoostName, attribute)
+					local boostStat = GameHelpers.Stats.GetAttribute(boost.BoostName, attribute)
 					if boostStat ~= nil then
 						runeEntry.Boosts[attribute] = boostStat
 					end
@@ -132,7 +132,7 @@ function GameHelpers.Stats.IsHealingSkill(skillId, healTypes)
 					if not healTypes then
 						return true
 					else
-						local healType = Ext.StatGetAttribute(v.Action, "HealStat")
+						local healType = GameHelpers.Stats.GetAttribute(v.Action, "HealStat")
 						if Common.TableHasValue(healTypes, healType) then
 							return true
 						end
@@ -486,7 +486,7 @@ function GameHelpers.Stats.GetRangedMappedValue(value, maxEnumCount)
 	return (100 * value - 100) / (maxEnumCount - 2)
 end
 
-local _getEnumIndex = Ext.Utils.Version() >= 56 and Ext.Stats.EnumLabelToIndex or Ext.EnumLabelToIndex
+local _getEnumIndex = Ext.Stats.EnumLabelToIndex
 
 ---Get the scaled 
 ---@param value number The Penalty PreciseQualifier amount, such as -4 in Stats_Flesh_Sacrifice.
@@ -551,7 +551,7 @@ function GameHelpers.Stats.GetDisplayName(id, statType, character)
 				if _ISCLIENT then
 					character = Client:GetCharacter()
 				elseif Ext.Osiris.IsCallable() then
-					character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+					character = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 				end
 			end
 			local tbl = LocalizedText.ActionSkills[id]

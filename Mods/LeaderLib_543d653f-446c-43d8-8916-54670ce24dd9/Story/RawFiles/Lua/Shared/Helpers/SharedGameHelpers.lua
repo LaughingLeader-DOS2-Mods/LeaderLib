@@ -336,7 +336,7 @@ function GameHelpers.CharacterUsersMatch(char1, char2)
 
 	if not _ISCLIENT then
 		if t1 == "string" and t2 == t1 then
-			return CharacterGetReservedUserID(char1) == CharacterGetReservedUserID(char2)
+			return Osi.CharacterGetReservedUserID(char1) == Osi.CharacterGetReservedUserID(char2)
 		end
 	end
 
@@ -594,10 +594,10 @@ function GameHelpers.ObjectExists(object)
 			if IsHandle(object) then
 				return _tryGetObject(object) ~= nil
 			elseif object.MyGuid then
-				return ObjectExists(object.MyGuid) == 1
+				return Osi.ObjectExists(object.MyGuid) == 1
 			end
 		elseif t == "string" then
-			return ObjectExists(object) == 1
+			return Osi.ObjectExists(object) == 1
 		elseif t == "number" then
 			return _tryGetObject(object) ~= nil
 		end
@@ -622,7 +622,7 @@ function GameHelpers.ObjectIsDead(object)
 		if not GUID then
 			return false
 		end
-		if (ObjectIsCharacter(GUID) == 1 and CharacterIsDead(GUID) == 1) or (ObjectIsItem(GUID) == 1 and ItemIsDestroyed(GUID) == 1) then
+		if (Osi.ObjectIsCharacter(GUID) == 1 and Osi.CharacterIsDead(GUID) == 1) or (Osi.ObjectIsItem(GUID) == 1 and Osi.ItemIsDestroyed(GUID) == 1) then
 			return true
 		end
 		return false
@@ -643,7 +643,7 @@ end
 ---@return GameDifficulty
 function GameHelpers.GetGameDifficulty()
 	--int to string
-	return Data.Difficulty(Ext.GetDifficulty())	
+	return Data.Difficulty(Ext.Utils.GetDifficulty())	
 end
 
 ---@param obj ObjectParam
@@ -652,10 +652,10 @@ function GameHelpers.ObjectHasFlag(obj, flag)
 	if not _ISCLIENT and _osirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(obj)
 		if uuid then
-			return ObjectGetFlag(uuid, flag) == 1
-			or (ObjectIsCharacter(uuid) == 1
-			and PartyGetFlag(uuid, flag) == 1
-			or UserGetFlag(uuid, flag) == 1)
+			return Osi.ObjectGetFlag(uuid, flag) == 1
+			or (Osi.ObjectIsCharacter(uuid) == 1
+			and Osi.PartyGetFlag(uuid, flag) == 1
+			or Osi.UserGetFlag(uuid, flag) == 1)
 		end
 	end
 	return false
@@ -667,7 +667,7 @@ local function _GetTemplateID(obj)
 	if not _ISCLIENT and _osirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(obj)
 		if uuid then
-			return StringHelpers.GetUUID(GetTemplate(uuid))
+			return StringHelpers.GetUUID(Osi.GetTemplate(uuid))
 		end
 	end
 	local object = _tryGetObject(obj)
@@ -983,7 +983,7 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams, noRa
 				if _ISCLIENT then
 					character = Client:GetCharacter()
 				elseif _OSIRIS() then
-					character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+					character = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 				end
 			end
 			if character ~= nil and character.Stats ~= nil then
@@ -1091,7 +1091,7 @@ function GameHelpers.IsInCombat(obj)
 		if not uuid then
 			return false
 		end
-		if ObjectIsCharacter(uuid) == 1 and CharacterIsInCombat(uuid) == 1 then
+		if Osi.ObjectIsCharacter(uuid) == 1 and Osi.CharacterIsInCombat(uuid) == 1 then
 			return true
 		else
 			local db = Osi.DB_CombatObjects:Get(uuid, nil)

@@ -60,8 +60,8 @@ function GameHelpers.Status.GetStatusType(statusId)
 	local statusType = _statusIdToStatusType[statusId]
 	if statusType == nil then
 		if not _ISCLIENT and _OSIRIS() then
-			if NRD_StatExists(statusId) then
-				statusType = GetStatusType(statusId)
+			if GameHelpers.Stats.Exists(statusId, "StatusData") then
+				statusType = Osi.GetStatusType(statusId)
 			end
 		elseif not Data.EngineStatus[statusId] then
 			local stat = Ext.Stats.Get(statusId, nil, false)
@@ -223,12 +223,12 @@ function GameHelpers.Status.StatusDealsDamage(statusId, checkDamageEvent)
 		return false
 	end
 	if checkDamageEvent == true then
-		local damageEvent = Ext.StatGetAttribute(statusId, "DamageEvent")
+		local damageEvent = GameHelpers.Stats.GetAttribute(statusId, "DamageEvent")
 		if damageEvent == "None" then
 			return false
 		end
 	end
-	local damageStats = Ext.StatGetAttribute(statusId, "DamageStats")
+	local damageStats = GameHelpers.Stats.GetAttribute(statusId, "DamageStats")
 	if not StringHelpers.IsNullOrWhitespace(damageStats) then
 		---@type StatEntryWeapon
 		local weapon = Ext.Stats.Get(damageStats, nil, false)
@@ -391,7 +391,7 @@ function GameHelpers.Status.IsActive(object, statusId, checkAll)
 			return totalActive >= total
 		elseif t == "string" then
 			if _OSIRIS() then
-				return HasActiveStatus(uuid, statusId) == 1
+				return Osi.HasActiveStatus(uuid, statusId) == 1
 			else
 				local target = GameHelpers.TryGetObject(uuid)
 				if target and target.GetStatus then

@@ -1,4 +1,4 @@
----A helper table for NRD_OnPrepareHit that retrieves all relevant flags and damage values.
+---A helper table for Osi.NRD_OnPrepareHit that retrieves all relevant flags and damage values.
 ---@class HitPrepareData
 ---@field TotalDamageDone integer
 ---@field DamageList DamageList
@@ -116,9 +116,9 @@ local function CreateDamageMetaList(handle)
 			return function ()
 				local newTable = {}
 				for _,damageType in Data.DamageTypes:Get() do
-					if NRD_HitGetDamage(handle, damageType) > 0 then
+					if Osi.NRD_HitGetDamage(handle, damageType) > 0 then
 						newTable[#newTable+1] = {
-							Amount = NRD_HitGetDamage(handle, damageType),
+							Amount = Osi.NRD_HitGetDamage(handle, damageType),
 							DamageType = damageType
 						}
 					end
@@ -127,7 +127,7 @@ local function CreateDamageMetaList(handle)
 			end
 		else
 			if Data.DamageTypes[k] then
-				return NRD_HitGetDamage(handle, k)
+				return Osi.NRD_HitGetDamage(handle, k)
 			else
 				error(string.format("%s is not a valid damage type!", k), 2)
 			end
@@ -137,10 +137,10 @@ local function CreateDamageMetaList(handle)
 		local dt = tostring(k)
 		if Data.DamageTypes[dt] then
 			if value == nil or value == 0 then
-				NRD_HitClearDamage(handle, dt)
+				Osi.NRD_HitClearDamage(handle, dt)
 			elseif type(value) == "number" then
-				NRD_HitClearDamage(handle, dt)
-				NRD_HitAddDamage(handle, dt, value)
+				Osi.NRD_HitClearDamage(handle, dt)
+				Osi.NRD_HitAddDamage(handle, dt, value)
 			else
 				error(string.format("%s is not a valid integer amount!", value), 2)
 			end
@@ -154,7 +154,7 @@ local function CreateDamageMetaList(handle)
 			local damageType = Data.DamageTypes[i]
 			if damageType ~= nil then
 				i = i + 1
-				return damageType,NRD_HitGetDamage(handle, damageType) or 0
+				return damageType,Osi.NRD_HitGetDamage(handle, damageType) or 0
 			end
 		end
 		return iter, tbl, 0
@@ -166,17 +166,17 @@ end
 local function SaveHitAttributes(handle, data)
 	for k,t in pairs(HIT_ATTRIBUTE) do
 		if t == "number" then
-			data[k] = NRD_HitGetInt(handle, k) or nil
+			data[k] = Osi.NRD_HitGetInt(handle, k) or nil
 		elseif t == "boolean" then
-			data[k] = NRD_HitGetInt(handle, k) == 1 and true or false
+			data[k] = Osi.NRD_HitGetInt(handle, k) == 1 and true or false
 		elseif t == "string" then
-			data[k] = NRD_HitGetString(handle, k) or ""
+			data[k] = Osi.NRD_HitGetString(handle, k) or ""
 		end
 	end
 	local total = 0
 
 	for i,damageType in Data.DamageTypes:Get() do
-		local amount = NRD_HitGetDamage(handle, damageType)
+		local amount = Osi.NRD_HitGetDamage(handle, damageType)
 		if amount and amount > 0 then
 			total = total + amount
 			data.DamageList[damageType] = amount
@@ -196,11 +196,11 @@ local function SetMeta(data)
 			if tbl.Handle then
 				local t = HIT_ATTRIBUTE[k]
 				if t == "number" then
-					return NRD_HitGetInt(tbl.Handle, k)
+					return Osi.NRD_HitGetInt(tbl.Handle, k)
 				elseif t == "boolean" then
-					return NRD_HitGetInt(tbl.Handle, k) == 1 and true or false
+					return Osi.NRD_HitGetInt(tbl.Handle, k) == 1 and true or false
 				elseif t == "string" then
-					return NRD_HitGetString(tbl.Handle, k) or ""
+					return Osi.NRD_HitGetString(tbl.Handle, k) or ""
 				end
 			end
 			return HitPrepareData[k]
@@ -209,10 +209,10 @@ local function SetMeta(data)
 			if tbl.Handle then
 				local t = HIT_ATTRIBUTE[k]
 				if t == "number" or t == "boolean" then
-					NRD_HitSetInt(tbl.Handle, k, v)
+					Osi.NRD_HitSetInt(tbl.Handle, k, v)
 					return
 				elseif t == "string" then
-					NRD_HitSetString(tbl.Handle, k, v)
+					Osi.NRD_HitSetString(tbl.Handle, k, v)
 					return
 				end
 			end
@@ -259,7 +259,7 @@ end
 
 ---Cleats all damage from the hit.
 function HitPrepareData:ClearAllDamage()
-	NRD_HitClearAllDamage(self.Handle)
+	Osi.NRD_HitClearAllDamage(self.Handle)
 	if self.Cached then
 		self.DamageList = {}
 	end
@@ -271,7 +271,7 @@ end
 ---@param amount number
 ---@param skipRecalculate boolean|nil If true, self:Recalculate is skipped.
 function HitPrepareData:AddDamage(damageType, amount, skipRecalculate)
-	NRD_HitAddDamage(self.Handle, tostring(damageType), amount)
+	Osi.NRD_HitAddDamage(self.Handle, tostring(damageType), amount)
 	if skipRecalculate ~= true then
 		self:Recalculate()
 	end
@@ -283,8 +283,8 @@ end
 function HitPrepareData:MultiplyDamage(multiplier, skipRecalculate)
 	for damageType,amount in pairs(self.DamageList) do
 		local dt = tostring(damageType)
-		NRD_HitClearDamage(self.Handle, dt)
-		NRD_HitAddDamage(self.Handle, dt, Ext.Utils.Round(amount * multiplier))
+		Osi.NRD_HitClearDamage(self.Handle, dt)
+		Osi.NRD_HitAddDamage(self.Handle, dt, Ext.Utils.Round(amount * multiplier))
 	end
 	if skipRecalculate ~= true then
 		self:Recalculate()
@@ -312,7 +312,7 @@ function HitPrepareData:IsBuggyChaosDamage()
 		end
 	else
 		for i,damageType in Data.DamageTypes:Get() do
-			local amount = NRD_HitGetDamage(self.Handle, damageType) or 0
+			local amount = Osi.NRD_HitGetDamage(self.Handle, damageType) or 0
 			if isChaos and damageType ~= "None" and amount > 0 then
 				isChaos = false
 			end

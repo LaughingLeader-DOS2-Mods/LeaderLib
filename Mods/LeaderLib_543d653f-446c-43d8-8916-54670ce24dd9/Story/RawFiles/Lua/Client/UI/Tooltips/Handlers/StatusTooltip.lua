@@ -122,9 +122,9 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 	end
 	if Features.ApplyBonusWeaponStatuses then
 		if not Data.EngineStatus[status.StatusId] and Data.StatusStatsIdTypes[statusType] then
-			local potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
+			local potion = Ext.Stats.GetAttribute(status.StatusId, "StatsId")
 			if not StringHelpers.IsNullOrWhitespace(potion) and not string.find(potion, ";") then
-				local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
+				local bonusWeapon = Ext.Stats.GetAttribute(potion, "BonusWeapon")
 				if not StringHelpers.IsNullOrWhitespace(bonusWeapon) then
 					--ExtraProperties
 					local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
@@ -200,8 +200,8 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 				end
 
 				if Features.FixChaosDamageDisplay and not Data.EngineStatus[status.StatusId] then
-					local statusType = Ext.StatGetAttribute(status.StatusId, "StatusType")
-					local descParams = Ext.StatGetAttribute(status.StatusId, "DescriptionParams")
+					local statusType = Ext.Stats.GetAttribute(status.StatusId, "StatusType")
+					local descParams = Ext.Stats.GetAttribute(status.StatusId, "DescriptionParams")
 					if statusType == "DAMAGE"
 						and not StringHelpers.IsNullOrEmpty(descParams)
 						and string.find(descParams, "Damage")
@@ -314,7 +314,7 @@ Ext.Events.StatusGetDescriptionParam:Subscribe(function (e)
 					e.Description = result
 				end
 			elseif param3 == "ExplodeRadius" then
-				e.Description = tostring(Ext.StatGetAttribute(param2, param3))
+				e.Description = tostring(Ext.Stats.GetAttribute(param2, param3))
 			end
 		end
 	end

@@ -28,19 +28,19 @@ if not _ISCLIENT then
 	---@param equipmentSet string|nil
 	local function SetupCharacter(character, transformTarget, equipmentSet)
 		if equipmentSet then
-			CharacterTransformAppearanceToWithEquipmentSet(character, transformTarget, equipmentSet, 0)
+			Osi.CharacterTransformAppearanceToWithEquipmentSet(character, transformTarget, equipmentSet, 0)
 		else
-			CharacterTransformAppearanceTo(character, transformTarget, 1, 1)
+			Osi.CharacterTransformAppearanceTo(character, transformTarget, 1, 1)
 		end
-		SetStoryEvent(character, "ClearPeaceReturn")
-		CharacterSetReactionPriority(character, "StateManager", 0)
-		CharacterSetReactionPriority(character, "ResetInternalState", 0)
-		CharacterSetReactionPriority(character, "ReturnToPeacePosition", 0)
-		CharacterSetReactionPriority(character, "CowerIfNeutralSeeCombat", 0)
-		SetTag(character, "LeaderLib_TemporaryCharacter")
-		SetTag(character, "LLWEAPONEX_MasteryTestCharacter")
-		SetTag(character, "NO_ARMOR_REGEN")
-		SetFaction(character, "Good NPC")
+		Osi.SetStoryEvent(character, "ClearPeaceReturn")
+		Osi.CharacterSetReactionPriority(character, "StateManager", 0)
+		Osi.CharacterSetReactionPriority(character, "ResetInternalState", 0)
+		Osi.CharacterSetReactionPriority(character, "ReturnToPeacePosition", 0)
+		Osi.CharacterSetReactionPriority(character, "CowerIfNeutralSeeCombat", 0)
+		Osi.SetTag(character, "LeaderLib_TemporaryCharacter")
+		Osi.SetTag(character, "LLWEAPONEX_MasteryTestCharacter")
+		Osi.SetTag(character, "NO_ARMOR_REGEN")
+		Osi.SetFaction(character, "Good NPC")
 	end
 
 	Utils.SetupCharacter = SetupCharacter
@@ -49,11 +49,11 @@ if not _ISCLIENT then
 	---@param equipmentSet string|nil
 	---@return EsvCharacter
 	function Utils.CreateCharacterFromHost(pos, equipmentSet)
-		local host = Ext.Entity.GetCharacter(CharacterGetHostCharacter())
+		local host = Ext.Entity.GetCharacter(Osi.CharacterGetHostCharacter())
 		local pos = pos or GameHelpers.Math.ExtendPositionWithForwardDirection(host, 10)
-		local character = TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], host.RootTemplate.Id, 0)
+		local character = Osi.TemporaryCharacterCreateAtPosition(pos[1], pos[2], pos[3], host.RootTemplate.Id, 0)
 		SetupCharacter(character, host.MyGuid, equipmentSet)
-		SetTag(character, "LeaderLib_TemporaryCharacter")
+		Osi.SetTag(character, "LeaderLib_TemporaryCharacter")
 		return Ext.Entity.GetCharacter(character)
 	end
 
@@ -85,7 +85,7 @@ if not _ISCLIENT then
 		params = params or {}
 		setmetatable(params, {__index = _DefaultParams})
 		--pos, equipmentSet, userTemplate, dummyTemplate, setEnemy, totalDummies
-		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter(), "EsvCharacter")
+		local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter(), "EsvCharacter")
 		local startingPos = params.Position or {GameHelpers.Grid.GetValidPositionInRadius(GameHelpers.Math.ExtendPositionWithForwardDirection(host, params.AutoPositionStartDistance), 6.0)}
 
 		local totalCharacters = math.max(0, params.TotalCharacters or 1)
@@ -94,12 +94,12 @@ if not _ISCLIENT then
 		for i=1,totalCharacters do
 			local pos = params.CharacterPositions[i] or startingPos
 			local x,y,z = table.unpack(pos)
-			local character = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(x, y, z, userTemplate, 0))
-			NRD_CharacterSetPermanentBoostInt(character, "Accuracy", 200)
-			CharacterSetCustomName(character, "Test User1")
+			local character = StringHelpers.GetUUID(Osi.TemporaryCharacterCreateAtPosition(x, y, z, userTemplate, 0))
+			Osi.NRD_CharacterSetPermanentBoostInt(character, "Accuracy", 200)
+			Osi.CharacterSetCustomName(character, "Test User1")
 			SetupCharacter(character, host.MyGuid, params.EquipmentSet)
 			--TeleportToRandomPosition(character, 2.0, "")
-			SetFaction(character, params.CharacterFaction or "PVP_1")
+			Osi.SetFaction(character, params.CharacterFaction or "PVP_1")
 			characters[#characters+1] = character
 		end
 
@@ -111,35 +111,35 @@ if not _ISCLIENT then
 		for i=1,totalDummies do
 			local pos = params.DummyPositions[i] or dummyStartingPos
 			local x,y,z = table.unpack(pos)
-			local dummy = StringHelpers.GetUUID(TemporaryCharacterCreateAtPosition(x, y, z, dummyTemplate, 0))
-			NRD_CharacterSetPermanentBoostInt(dummy, "Dodge", -200)
+			local dummy = StringHelpers.GetUUID(Osi.TemporaryCharacterCreateAtPosition(x, y, z, dummyTemplate, 0))
+			Osi.NRD_CharacterSetPermanentBoostInt(dummy, "Dodge", -200)
 
 			--PlayEffect(dummy, "RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_01", "")
-			SetTag(dummy, "LeaderLib_TemporaryCharacter")
-			SetTag(dummy, "NO_ARMOR_REGEN")
+			Osi.SetTag(dummy, "LeaderLib_TemporaryCharacter")
+			Osi.SetTag(dummy, "NO_ARMOR_REGEN")
 			if Ext.Mod.IsModLoaded(Data.ModID.TrainingDummy) then
-				SetVarObject(dummy, "LLDUMMY_Owner", host.MyGuid)
+				Osi.SetVarObject(dummy, "LLDUMMY_Owner", host.MyGuid)
 				Osi.LLDUMMY_LevelUpTrainingDummy(dummy)
 			else
-				CharacterLevelUpTo(dummy, host.Stats.Level)
+				Osi.CharacterLevelUpTo(dummy, host.Stats.Level)
 			end
-			SetFaction(dummy, params.DummyFaction or "PVP_3")
+			Osi.SetFaction(dummy, params.DummyFaction or "PVP_3")
 			--TeleportToRandomPosition(dummy, 1.0, "")
 			dummies[#dummies+1] = dummy
 		end
 
 		local cleanup = function ()
 			for _,v in pairs(characters) do
-				if ObjectExists(v) == 1 then
-					RemoveTemporaryCharacter(v)
+				if Osi.ObjectExists(v) == 1 then
+					Osi.RemoveTemporaryCharacter(v)
 				end
 			end
 			for _,v in pairs(dummies) do
-				if ObjectExists(v) == 1 then
+				if Osi.ObjectExists(v) == 1 then
 					if Ext.Mod.IsModLoaded(Data.ModID.TrainingDummy) then
-						SetStoryEvent(v, "LLDUMMY_TrainingDummy_DieNow")
+						Osi.SetStoryEvent(v, "LLDUMMY_TrainingDummy_DieNow")
 					else
-						RemoveTemporaryCharacter(v)
+						Osi.RemoveTemporaryCharacter(v)
 					end
 				end
 			end
@@ -173,25 +173,25 @@ if not _ISCLIENT then
 	---@param opts Testing_Utils_UseItemOnTargetOptions
 	local function _ApplyOpts(charGUID, opts)
 		if opts.Skill then
-			SetVarFixedString(charGUID, "Test_Skill", opts.Skill)
+			Osi.SetVarFixedString(charGUID, "Test_Skill", opts.Skill)
 		end
 		if opts.IgnoreHasSkill ~= nil then
-			SetVarInteger(charGUID, "Test_IgnoreHasSkill", opts.IgnoreHasSkill == true and 1 or 0)
+			Osi.SetVarInteger(charGUID, "Test_IgnoreHasSkill", opts.IgnoreHasSkill == true and 1 or 0)
 		end
 		if opts.Position1 then
-			SetVarFloat3(charGUID, "Test_SkillPos1", table.unpack(opts.Position1))
+			Osi.SetVarFloat3(charGUID, "Test_SkillPos1", table.unpack(opts.Position1))
 		end
 		if opts.Position2 then
-			SetVarFloat3(charGUID, "Test_SkillPos2", table.unpack(opts.Position2))
+			Osi.SetVarFloat3(charGUID, "Test_SkillPos2", table.unpack(opts.Position2))
 		end
 		if opts.SecondTargetCharacter then
-			SetVarFixedString(charGUID, "Test_SkillCharacterTarget2", GameHelpers.GetUUID(opts.SecondTargetCharacter))
+			Osi.SetVarFixedString(charGUID, "Test_SkillCharacterTarget2", GameHelpers.GetUUID(opts.SecondTargetCharacter))
 		end
 		if opts.SecondTargetItem then
-			SetVarFixedString(charGUID, "Test_SkillItemTarget2", GameHelpers.GetUUID(opts.SecondTargetItem))
+			Osi.SetVarFixedString(charGUID, "Test_SkillItemTarget2", GameHelpers.GetUUID(opts.SecondTargetItem))
 		end
 		if opts.SkillItem then
-			SetVarFixedString(charGUID, "Test_SkillItem", GameHelpers.GetUUID(opts.SkillItem))
+			Osi.SetVarFixedString(charGUID, "Test_SkillItem", GameHelpers.GetUUID(opts.SkillItem))
 		end
 	end
 
@@ -210,26 +210,26 @@ if not _ISCLIENT then
 		local skill,data = GameHelpers.Item.GetUseActionSkills(item)
 
 		assert(data.CastsSkill == true, "Item does not have a skill cast action")
-		SetStoryEvent(character.MyGuid, "LeaderLib_Testing_ResetVariables")
-		SetVarFixedString(character.MyGuid, "Test_Skill", skill[1])
-		SetVarFixedString(character.MyGuid, "Test_SkillItem", item.MyGuid)
+		Osi.SetStoryEvent(character.MyGuid, "LeaderLib_Testing_ResetVariables")
+		Osi.SetVarFixedString(character.MyGuid, "Test_Skill", skill[1])
+		Osi.SetVarFixedString(character.MyGuid, "Test_SkillItem", item.MyGuid)
 		_ApplyOpts(character.MyGuid, opts)
 
 		local t = type(target)
 		if t == "table" then
 			assert(_IsVec3(target) == true, "Target table is not a valid vector3 position.")
 			local x,y,z = table.unpack(target)
-			SetVarFloat3(character.MyGuid, "Test_SkillPos1", x, y, z)
-			CharacterSetReactionPriority(character.MyGuid, "LeaderLib_Testing_UseSkillOnPosition", 9999)
+			Osi.SetVarFloat3(character.MyGuid, "Test_SkillPos1", x, y, z)
+			Osi.CharacterSetReactionPriority(character.MyGuid, "LeaderLib_Testing_UseSkillOnPosition", 9999)
 		else
 			target = GameHelpers.TryGetObject(target)
 			assert(target ~= nil, "Failed to get target")
 			if GameHelpers.Ext.ObjectIsCharacter(target) then
-				SetVarFixedString(character.MyGuid, "Test_SkillCharacterTarget1", target.MyGuid)
-				CharacterSetReactionPriority(character.MyGuid, "LeaderLib_Testing_UseSkillOnCharacter", 9999)
+				Osi.SetVarFixedString(character.MyGuid, "Test_SkillCharacterTarget1", target.MyGuid)
+				Osi.CharacterSetReactionPriority(character.MyGuid, "LeaderLib_Testing_UseSkillOnCharacter", 9999)
 			elseif GameHelpers.Ext.ObjectIsItem(target) then
-				SetVarFixedString(character.MyGuid, "Test_SkillItemTarget1", target.MyGuid)
-				CharacterSetReactionPriority(character.MyGuid, "LeaderLib_Testing_UseSkillOnItem", 9999)
+				Osi.SetVarFixedString(character.MyGuid, "Test_SkillItemTarget1", target.MyGuid)
+				Osi.CharacterSetReactionPriority(character.MyGuid, "LeaderLib_Testing_UseSkillOnItem", 9999)
 			else
 				error("Target is not a valid character or item", 2)
 			end

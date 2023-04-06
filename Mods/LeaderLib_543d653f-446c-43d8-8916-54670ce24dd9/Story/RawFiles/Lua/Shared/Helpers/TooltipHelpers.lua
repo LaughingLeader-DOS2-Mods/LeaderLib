@@ -76,7 +76,7 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 					if _ISCLIENT then
 						character = Client:GetCharacter()
 					elseif _OSIRIS() then
-						character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+						character = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 					end
 				end
 			end
@@ -187,7 +187,7 @@ function GameHelpers.Tooltip.GetWeaponDamageText(id, character, overrideParams, 
 			if _ISCLIENT then
 				character = Client:GetCharacter()
 			elseif _OSIRIS() then
-				character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+				character = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 			end
 		end
 		---@cast character EsvCharacter|EclCharacter
@@ -219,7 +219,7 @@ function GameHelpers.Tooltip.GetStatusDamageText(id, character, overrideParams, 
 			if _ISCLIENT then
 				character = Client:GetCharacter()
 			elseif _OSIRIS() then
-				character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+				character = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 			end
 		end
 		local weaponID = id
@@ -301,7 +301,7 @@ local function _ReplacePlaceholders(str, character)
 				}
 			end
 		elseif Ext.Osiris.IsCallable() then
-			character = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+			character = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 		end
 	end
 	if _type(str) == "table" and str.Type == "TranslatedString" then

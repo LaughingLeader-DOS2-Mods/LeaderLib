@@ -110,7 +110,7 @@ function ModSettings:SetFlag(id, enabled, profile)
 		if not self.Global:SetFlag(id, enabled) then
 			-- Try and find the active profile for this option
 			if Ext.IsServer() then
-				profile = GetUserProfileID(CharacterGetReservedUserID(CharacterGetHostCharacter()))
+				profile = Osi.GetUserProfileID(Osi.CharacterGetReservedUserID(Osi.CharacterGetHostCharacter()))
 				local profileSettings = self.Profiles[profile]
 				if profileSettings ~= nil then
 					profileSettings.Settings:SetFlag(id, enabled)
@@ -129,7 +129,7 @@ function ModSettings:SetVariable(id, value, profile)
 	elseif not self.Global:SetVariable(id, value) then
 		-- Try and find the active profile for this option
 		if Ext.IsServer() then
-			profile = GetUserProfileID(CharacterGetReservedUserID(CharacterGetHostCharacter()))
+			profile = Osi.GetUserProfileID(Osi.CharacterGetReservedUserID(Osi.CharacterGetHostCharacter()))
 			local profileSettings = self.Profiles[profile]
 			if profileSettings ~= nil then
 				profileSettings.Settings:SetVariable(id, value)

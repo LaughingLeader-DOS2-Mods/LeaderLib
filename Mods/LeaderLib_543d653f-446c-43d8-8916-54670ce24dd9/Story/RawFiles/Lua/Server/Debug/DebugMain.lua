@@ -1,6 +1,6 @@
 Events.LuaReset:Subscribe(function()
 	for player in GameHelpers.Character.GetPlayers(true) do
-		CharacterResetCooldowns(player.MyGuid)
+		Osi.CharacterResetCooldowns(player.MyGuid)
 	end
 end)
 

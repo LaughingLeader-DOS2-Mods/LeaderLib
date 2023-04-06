@@ -32,11 +32,11 @@ local function GetOsirisCombatCharacters(id, filter, filterReference, asTable)
 						if refuuid then
 							if filter == "Player" and character.IsPlayer then
 								objects[#objects+1] = character
-							elseif filter == "Ally" and CharacterIsAlly(refuuid, uuid) == 1 then
+							elseif filter == "Ally" and Osi.CharacterIsAlly(refuuid, uuid) == 1 then
 								objects[#objects+1] = character
-							elseif filter == "Enemy" and CharacterIsEnemy(refuuid, uuid) == 1 then
+							elseif filter == "Enemy" and Osi.CharacterIsEnemy(refuuid, uuid) == 1 then
 								objects[#objects+1] = character
-							elseif filter == "Neutral" and CharacterIsNeutral(refuuid, uuid) == 1 then
+							elseif filter == "Neutral" and Osi.CharacterIsNeutral(refuuid, uuid) == 1 then
 								objects[#objects+1] = character
 							elseif filter == "None" then
 								objects[#objects+1] = character
@@ -112,11 +112,11 @@ function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)
 						if refuuid and _OSIRIS() then
 							if filter == "Player" and v.Character.IsPlayer then
 								objects[#objects+1] = v.Character
-							elseif filter == "Ally" and CharacterIsAlly(refuuid, v.Character.MyGuid) == 1 then
+							elseif filter == "Ally" and Osi.CharacterIsAlly(refuuid, v.Character.MyGuid) == 1 then
 								objects[#objects+1] = v.Character
-							elseif filter == "Enemy" and CharacterIsEnemy(refuuid, v.Character.MyGuid) == 1 then
+							elseif filter == "Enemy" and Osi.CharacterIsEnemy(refuuid, v.Character.MyGuid) == 1 then
 								objects[#objects+1] = v.Character
-							elseif filter == "Neutral" and CharacterIsNeutral(refuuid, v.Character.MyGuid) == 1 then
+							elseif filter == "Neutral" and Osi.CharacterIsNeutral(refuuid, v.Character.MyGuid) == 1 then
 								objects[#objects+1] = v.Character
 							elseif filter == "None" then
 								objects[#objects+1] = v.Character

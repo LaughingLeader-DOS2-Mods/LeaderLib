@@ -115,7 +115,7 @@ if not _ISCLIENT then
 		--Resync to clients, but exclude the host that just sent us data
 		if GameHelpers.Data.GetTotalUsers() > 1 then
 			if user then
-				user = GameHelpers.GetUUID(GetCurrentCharacter(user))
+				user = GameHelpers.GetUUID(Osi.GetCurrentCharacter(user))
 			end
 			GameSettingsManager.Sync(nil, user)
 		end

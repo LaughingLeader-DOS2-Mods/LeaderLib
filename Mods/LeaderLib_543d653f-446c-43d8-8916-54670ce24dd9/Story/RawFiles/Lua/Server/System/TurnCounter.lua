@@ -321,7 +321,7 @@ function _INTERNAL.OnTurnEnded(uuid)
 end
 
 function _INTERNAL.OnTurnSkipped(uuid)
-	local id = CombatGetIDForCharacter(uuid)
+	local id = Osi.CombatGetIDForCharacter(uuid)
 	if id then
 		for uniqueId,data in pairs(_PV.TurnCounterData) do
 			if data.Combat == id and data.CountSkipDisabled then
@@ -419,10 +419,10 @@ RegisterProtectedOsirisListener("CharacterDied", 1, "after", function(uuid) _INT
 local function CheckDataForDeletion(uniqueId, data, region)
 	local t = type(data.Target)
 	if t == "string" then
-		if ObjectExists(data.Target) ~= 1 then
+		if Osi.ObjectExists(data.Target) ~= 1 then
 			_INTERNAL.CleanupData(uniqueId)
 			return true
-		elseif ObjectIsGlobal(data.Target) == 1 then
+		elseif Osi.ObjectIsGlobal(data.Target) == 1 then
 			data.Region = region
 		end
 	end

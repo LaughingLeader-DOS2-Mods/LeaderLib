@@ -19,18 +19,18 @@ function GameHelpers.Damage.ReduceDamage(target, attacker, handle, reduction, is
     for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
         if not isHitHandle then
-            damage = NRD_HitStatusGetDamage(target, handle, damageType)
+            damage = Osi.NRD_HitStatusGetDamage(target, handle, damageType)
         else
-            damage = NRD_HitGetDamage(handle, damageType)
+            damage = Osi.NRD_HitGetDamage(handle, damageType)
         end
         if damage ~= nil and damage > 0 then
             --local reduced_damage = math.max(math.ceil(damage * reduction), 1)
             --NRD_HitStatusClearDamage(target, handle, v)
             local reduced_damage = (damage * reduction) * -1
             if not isHitHandle then
-                NRD_HitStatusAddDamage(target, handle, damageType, reduced_damage)
+                Osi.NRD_HitStatusAddDamage(target, handle, damageType, reduced_damage)
             else
-                NRD_HitAddDamage(handle, damageType, reduced_damage)
+                Osi.NRD_HitAddDamage(handle, damageType, reduced_damage)
             end
 			success = true
         end
@@ -72,18 +72,18 @@ local function IncreaseDamage(target, attacker, handle, damageIncrease, isHitTyp
     for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
         if isHit ~= true then
-            damage = NRD_HitStatusGetDamage(target, handle, damageType) or 0
+            damage = Osi.NRD_HitStatusGetDamage(target, handle, damageType) or 0
         else
-            damage = NRD_HitGetDamage(handle, damageType) or 0
+            damage = Osi.NRD_HitGetDamage(handle, damageType) or 0
         end
         if damage > 0 then
             --NRD_HitStatusClearDamage(target, handle, damageType)
             local increased_damage = Ext.Utils.Round(damage * damageIncrease)
             if increased_damage ~= 0 then
                 if isHit ~= true then
-                    NRD_HitStatusAddDamage(target, handle, damageType, increased_damage)
+                    Osi.NRD_HitStatusAddDamage(target, handle, damageType, increased_damage)
                 else
-                    NRD_HitAddDamage(handle, damageType, increased_damage)
+                    Osi.NRD_HitAddDamage(handle, damageType, increased_damage)
                 end
                 success = true
             end
@@ -114,26 +114,26 @@ GameHelpers.IncreaseDamage = IncreaseDamage
 ---@param isHit boolean
 ---@return boolean
 function GameHelpers.Damage.RedirectDamage(target, defender, attacker, handle, reduction, isHit)
-    local redirected_hit = NRD_HitPrepare(defender, attacker)
+    local redirected_hit = Osi.NRD_HitPrepare(defender, attacker)
     local damageRedirected = false
 
     for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
         if isHit ~= true then
-            damage = NRD_HitStatusGetDamage(target, handle, damageType)
+            damage = Osi.NRD_HitStatusGetDamage(target, handle, damageType)
         else
-            damage = NRD_HitGetDamage(handle, damageType)
+            damage = Osi.NRD_HitGetDamage(handle, damageType)
         end
         if damage ~= nil and damage > 0 then
             local reduced_damage = math.max(math.ceil(damage * reduction), 1)
             --NRD_HitStatusClearDamage(defender, handle, damageType)
             local removed_damage = damage * -1
             if isHit ~= true then
-                NRD_HitStatusAddDamage(target, handle, damageType, removed_damage)
+                Osi.NRD_HitStatusAddDamage(target, handle, damageType, removed_damage)
             else
-                NRD_HitAddDamage(handle, damageType, removed_damage)
+                Osi.NRD_HitAddDamage(handle, damageType, removed_damage)
             end
-            NRD_HitAddDamage(redirected_hit, damageType, reduced_damage)
+            Osi.NRD_HitAddDamage(redirected_hit, damageType, reduced_damage)
             damageRedirected = true
         end
     end
@@ -141,20 +141,20 @@ function GameHelpers.Damage.RedirectDamage(target, defender, attacker, handle, r
     if damageRedirected then
         local is_crit = false
         if isHit ~= true then
-            is_crit = NRD_StatusGetInt(defender, handle, "CriticalHit") == 1
+            is_crit = Osi.NRD_StatusGetInt(defender, handle, "CriticalHit") == 1
         else
-            is_crit = NRD_HitGetInt(handle, "CriticalHit") == 1
+            is_crit = Osi.NRD_HitGetInt(handle, "CriticalHit") == 1
         end
         if is_crit then
-            NRD_HitSetInt(redirected_hit, "CriticalRoll", 1)
+            Osi.NRD_HitSetInt(redirected_hit, "CriticalRoll", 1)
         else
-            NRD_HitSetInt(redirected_hit, "CriticalRoll", 2)
+            Osi.NRD_HitSetInt(redirected_hit, "CriticalRoll", 2)
         end
-        NRD_HitSetInt(redirected_hit, "SimulateHit", 1)
-        NRD_HitSetInt(redirected_hit, "HitType", 6)
-        NRD_HitSetInt(redirected_hit, "Hit", 1)
-        NRD_HitSetInt(redirected_hit, "NoHitRoll", 1)
-        NRD_HitExecute(redirected_hit)
+        Osi.NRD_HitSetInt(redirected_hit, "SimulateHit", 1)
+        Osi.NRD_HitSetInt(redirected_hit, "HitType", 6)
+        Osi.NRD_HitSetInt(redirected_hit, "Hit", 1)
+        Osi.NRD_HitSetInt(redirected_hit, "NoHitRoll", 1)
+        Osi.NRD_HitExecute(redirected_hit)
 	end
 	return damageRedirected
 end
@@ -178,7 +178,7 @@ local function RedirectDamage_Call(target, defender, attacker, handle_param, red
     end
 end
 
-Ext.NewCall(RedirectDamage_Call, "LeaderLib_Hit_RedirectDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Defender, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
+Ext.Osiris.NewCall(RedirectDamage_Call, "LeaderLib_Hit_RedirectDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Defender, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 
 local HitType = {
     Melee = "Melee",
@@ -305,17 +305,17 @@ function GameHelpers.Damage.ApplyHitRequestFlags(hit, target, handle)
     if _EXTVERSION < 56 then
         for flag,num in pairs(Game.Math.HitFlag) do
             if hit.EffectFlags & num ~= 0 then
-                NRD_StatusSetInt(target, handle, flag, 1)
+                Osi.NRD_StatusSetInt(target, handle, flag, 1)
             else
-                NRD_StatusSetInt(target, handle, flag, 0)
+                Osi.NRD_StatusSetInt(target, handle, flag, 0)
             end
         end
     else
         for flag,num in pairs(Game.Math.HitFlag) do
             if hit[flag] == true then
-                NRD_StatusSetInt(target, handle, flag, 1)
+                Osi.NRD_StatusSetInt(target, handle, flag, 1)
             else
-                NRD_StatusSetInt(target, handle, flag, 0)
+                Osi.NRD_StatusSetInt(target, handle, flag, 0)
             end
         end
     end
@@ -855,8 +855,8 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
     target = GameHelpers.TryGetObject(target)
     fassert(target ~= nil, "Failed to get object for target (%s)", target)
 
-    local hit = NRD_HitPrepare(target.MyGuid, source.MyGuid)
-    NRD_HitSetInt(hit, "SimulateHit", 1)
+    local hit = Osi.NRD_HitPrepare(target.MyGuid, source.MyGuid)
+    Osi.NRD_HitSetInt(hit, "SimulateHit", 1)
 
     local skillData = GameHelpers.Ext.CreateSkillTable(skill, nil, true)
     if type(skillDataParamModifiers) == "table" then
@@ -866,10 +866,10 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
     end
 
     local hitType = GetSkillHitType(skillData)
-    NRD_HitSetString(hit, "HitType", hitType)
+    Osi.NRD_HitSetString(hit, "HitType", hitType)
 
     if skillData.UseWeaponDamage then
-        NRD_HitSetInt(hit, "HitWithWeapon", 1)
+        Osi.NRD_HitSetInt(hit, "HitWithWeapon", 1)
     end
 
     hitParams = hitParams or defaultHitFlags
@@ -878,11 +878,11 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
             if type(k) == "string" then
                 local t = type(v)
                 if t == "number" then
-                    NRD_HitSetInt(hit, k, v)
+                    Osi.NRD_HitSetInt(hit, k, v)
                 elseif t == "boolean" then
-                    NRD_HitSetInt(hit, k, v and 1 or 0)
+                    Osi.NRD_HitSetInt(hit, k, v and 1 or 0)
                 elseif t == "string" then
-                    NRD_HitSetString(hit, k, v)
+                    Osi.NRD_HitSetString(hit, k, v)
                 end
             end
         end
@@ -914,11 +914,11 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
 
     if damageList then
         for _,damage in pairs(damageList:ToTable()) do
-            NRD_HitAddDamage(hit, damage.DamageType, damage.Amount)
+            Osi.NRD_HitAddDamage(hit, damage.DamageType, damage.Amount)
         end
         if not StringHelpers.IsNullOrEmpty(deathType) then
-            NRD_HitSetString(hit, "DeathType", deathType)
+            Osi.NRD_HitSetString(hit, "DeathType", deathType)
         end
-        NRD_HitExecute(hit)
+        Osi.NRD_HitExecute(hit)
     end
 end

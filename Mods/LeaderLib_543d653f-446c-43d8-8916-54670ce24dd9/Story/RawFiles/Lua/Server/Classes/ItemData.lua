@@ -9,7 +9,7 @@ local ItemData = {
 
 local customAccessors = {
 	NetID = function(tbl) local item = GameHelpers.GetItem(tbl.UUID); return item and item.NetID or nil end,
-	Region = function(tbl) return GetRegion(tbl.UUID) end
+	Region = function(tbl) return Osi.GetRegion(tbl.UUID) end
 }
 
 ItemData.__index = function(tbl, k)
@@ -54,7 +54,7 @@ end
 
 ---@return boolean
 function ItemData:Exists()
-	return not StringHelpers.IsNullOrEmpty(self.UUID) and ObjectExists(self.UUID) == 1
+	return not StringHelpers.IsNullOrEmpty(self.UUID) and Osi.ObjectExists(self.UUID) == 1
 end
 
 ---Fetches the EsvItem associated with this item's UUID.
@@ -68,13 +68,13 @@ end
 
 ---@return boolean
 function ItemData:IsDestroyed()
-	return ItemIsDestroyed(self.UUID) == 1
+	return Osi.ItemIsDestroyed(self.UUID) == 1
 end
 
 ---@param asVector3 boolean|nil
 ---@return number,number,number|Vector3
 function ItemData:GetPosition(asVector3)
-	local x,y,z = GetPosition(self.UUID)
+	local x,y,z = Osi.GetPosition(self.UUID)
 	if asVector3 == true then
 		return Classes.Vector3(x,y,z)
 	else
@@ -92,8 +92,8 @@ end
 ---@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
 function ItemData:SetOffStage(force)
 	if self:Exists() then
-		if force == true or ObjectIsOnStage(self.UUID) == 1 then
-			SetOnStage(self.UUID, 0)
+		if force == true or Osi.ObjectIsOnStage(self.UUID) == 1 then
+			Osi.SetOnStage(self.UUID, 0)
 			return true
 		end
 	end
@@ -103,8 +103,8 @@ end
 ---@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
 function ItemData:SetOnStage(force)
 	if self:Exists() then
-		if force == true or ObjectIsOnStage(self.UUID) == 0 then
-			SetOnStage(self.UUID, 1)
+		if force == true or Osi.ObjectIsOnStage(self.UUID) == 0 then
+			Osi.SetOnStage(self.UUID, 1)
 			return true
 		end
 	end
@@ -122,8 +122,8 @@ function ItemData:ApplyOrSetStatus(status, duration, force, source)
 			self:ApplyOrSetStatus(v, duration, force, source)
 		end
 	else
-		if HasActiveStatus(self.UUID, status) == 0 then
-			ApplyStatus(self.UUID, status, duration or 6.0, force and 1 or 0, source or self.UUID)
+		if not GameHelpers.Status.IsActive(self.UUID, status) then
+			GameHelpers.Status.Apply(self.UUID, status, duration or 6.0, force, source or self.UUID)
 		else
 			local item = self:GetItem()
 			if item then
@@ -156,12 +156,12 @@ function ItemData:RemoveStatus(status, ignorePermanent)
 				if ignorePermanent == true then
 					for i,v in pairs(item:GetStatusObjects()) do
 						if v.CurrentLifeTime ~= -1 then
-							RemoveStatus(self.UUID, v.StatusId)
+							Osi.RemoveStatus(self.UUID, v.StatusId)
 						end
 					end
 				else
 					for i,v in pairs(item:GetStatuses()) do
-						RemoveStatus(self.UUID, v)
+						Osi.RemoveStatus(self.UUID, v)
 					end
 				end
 			end
@@ -171,12 +171,12 @@ function ItemData:RemoveStatus(status, ignorePermanent)
 				if item then
 					for i,v in pairs(item:GetStatusObjects()) do
 						if v.StatusId == status and v.CurrentLifeTime ~= -1 then
-							RemoveStatus(self.UUID, v.StatusId)
+							Osi.RemoveStatus(self.UUID, v.StatusId)
 						end
 					end
 				end
 			else
-				RemoveStatus(self.UUID, status)
+				Osi.RemoveStatus(self.UUID, status)
 			end
 		end
 	end

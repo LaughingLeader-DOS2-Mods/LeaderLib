@@ -1,4 +1,4 @@
-Ext.NewQuery(VersionIntegerToVersionString, "LeaderLib_Ext_QRY_VersionIntegerToString", "[in](INTEGER)_Version, [out](STRING)_VersionString")
+Ext.Osiris.NewQuery(VersionIntegerToVersionString, "LeaderLib_Ext_QRY_VersionIntegerToString", "[in](INTEGER)_Version, [out](STRING)_VersionString")
 
 ---Checks if a version string is less than a given version.
 ---@param past_version string
@@ -70,7 +70,7 @@ local function StringToVersion_Query(version_str)
 	end
 end
 
-Ext.NewQuery(StringToVersion_Query, "LeaderLib_Ext_QRY_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build")
+Ext.Osiris.NewQuery(StringToVersion_Query, "LeaderLib_Ext_QRY_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build")
 
 function VersionStringToVersionInteger(version_str, fallback)
 	local b,major,minor,revision,build = pcall(StringToVersionIntegers, version_str)
@@ -88,7 +88,7 @@ function VersionStringToVersionInteger(version_str, fallback)
 	return fallback
 end
 
-Ext.NewQuery(VersionStringToVersionInteger, "LeaderLib_Ext_QRY_VersionStringToVersionInteger", "[in](STRING)_VersionString, [in](INTEGER)_Fallback, [out](INTEGER)_VersionInt")
+Ext.Osiris.NewQuery(VersionStringToVersionInteger, "LeaderLib_Ext_QRY_VersionStringToVersionInteger", "[in](STRING)_VersionString, [in](INTEGER)_Fallback, [out](INTEGER)_VersionInt")
 
 ---Calls initial registration functions stored in LeaderLib_ModRegistered.
 ---@param uuid string

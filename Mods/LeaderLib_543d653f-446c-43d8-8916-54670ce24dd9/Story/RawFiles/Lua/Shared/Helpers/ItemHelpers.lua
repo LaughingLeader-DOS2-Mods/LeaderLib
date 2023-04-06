@@ -48,13 +48,13 @@ local itemConstructorProps = {
 function GameHelpers.Item.CloneItemForCharacter(char, item, completion_event, autolevel)
     if not _ISCLIENT then
         local autolevel_enabled = autolevel == "Yes"
-        NRD_ItemCloneBegin(item)
-        local cloned = NRD_ItemClone()
+        Osi.NRD_ItemCloneBegin(item)
+        local cloned = Osi.NRD_ItemClone()
         if autolevel_enabled then
-            local level = CharacterGetLevel(char)
-            ItemLevelUpTo(cloned,level)
+            local level = Osi.CharacterGetLevel(char)
+            Osi.ItemLevelUpTo(cloned,level)
         end
-        CharacterItemSetEvent(char, cloned, completion_event)
+        Osi.CharacterItemSetEvent(char, cloned, completion_event)
     end
 end
 
@@ -86,7 +86,7 @@ function GameHelpers.Item.GetRootTemplatesForStat(statName)
         if GameHelpers.Item.IsObject(statName) then
             return stat.RootTemplate
         elseif stat.ItemGroup then
-            local itemGroup = Ext.GetItemGroup(stat.ItemGroup)
+            local itemGroup = Ext.Stats.ItemGroup.GetLegacy(stat.ItemGroup)
             if itemGroup then
                 for _,lgroup in pairs(itemGroup.LevelGroups) do
                     for _,root in pairs(lgroup.RootGroups) do
@@ -114,7 +114,7 @@ function GameHelpers.Item.GetStatsForRootTemplate(template, statType)
     if isEquipment or not statType then
         local matchedgroups = {}
         for _,itemgroupName in pairs(Ext.Stats.GetStats("ItemGroup")) do
-            local itemGroup = Ext.GetItemGroup(itemgroupName)
+            local itemGroup = Ext.Stats.ItemGroup.GetLegacy(itemgroupName)
             if itemGroup then
                 for _,lgroup in pairs(itemGroup.LevelGroups) do
                     for _,root in pairs(lgroup.RootGroups) do
@@ -132,7 +132,7 @@ function GameHelpers.Item.GetStatsForRootTemplate(template, statType)
         end
         for i=1, #stats do
             local statName = stats[i]
-            if matchedgroups[Ext.StatGetAttribute(statName, "ItemGroup")] == true then
+            if matchedgroups[GameHelpers.Stats.GetAttribute(statName, "ItemGroup")] == true then
                 table.insert(matches, statName)
             end
         end
@@ -145,7 +145,7 @@ function GameHelpers.Item.GetStatsForRootTemplate(template, statType)
         end
         for i=1, #stats do
             local statName = stats[i]
-            if Ext.StatGetAttribute(statName, "RootTemplate") == template then
+            if GameHelpers.Stats.GetAttribute(statName, "RootTemplate") == template then
                 table.insert(matches, statName)
             end
         end
@@ -166,7 +166,7 @@ function GameHelpers.Item.GetSupportedGenerationValues(itemGroupId, minLevel, ma
     local rarity = "Common"
     local rootGroups = nil
     local level = minLevel
-    local group = Ext.GetItemGroup(itemGroupId)
+    local group = Ext.Stats.ItemGroup.GetLegacy(itemGroupId)
     if group then
         for i,v in pairs(group.LevelGroups) do
             if WithinLevelRange(v.MinLevel, v.MaxLevel, minLevel, maxLevel) then
@@ -304,10 +304,10 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
             newItem = GameHelpers.GetItem(newItem.Handle) --[[@as EsvItem]]
             if not hasGeneratedStats then
                 if properties.IsIdentified then
-                    NRD_ItemSetIdentified(newItem.MyGuid, 1)
+                    Osi.NRD_ItemSetIdentified(newItem.MyGuid, 1)
                 end
                 if properties.StatsLevel then
-                    ItemLevelUpTo(newItem.MyGuid, properties.StatsLevel)
+                    Osi.ItemLevelUpTo(newItem.MyGuid, properties.StatsLevel)
                 end
             end
             ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
@@ -324,7 +324,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
                 end
                 if nextItem and nextItem.MyGuid ~= newItem.MyGuid then
                     if Ext.Osiris.IsCallable() then
-                        ItemRemove(newItem.MyGuid)
+                        Osi.ItemRemove(newItem.MyGuid)
                     end
                     newItem = nextItem
                 end
@@ -360,7 +360,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     local item = constructor:Construct()
     if item ~= nil then
         if props.IsIdentified ~= false then
-            NRD_ItemSetIdentified(item.MyGuid, 1)
+            Osi.NRD_ItemSetIdentified(item.MyGuid, 1)
         end
         local statsId = GameHelpers.Item.GetItemStat(item)
         ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>
@@ -377,7 +377,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
             end
             if nextItem and nextItem.MyGuid ~= item.MyGuid then
                 if Ext.Osiris.IsCallable() then
-                    ItemRemove(item.MyGuid)
+                    Osi.ItemRemove(item.MyGuid)
                 end
                 item = nextItem
             end
@@ -469,7 +469,7 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
         clone = GameHelpers.GetItem(clone.Handle)
         if opts.CopyTags then
             for _,v in pairs(item:GetTags()) do
-                SetTag(clone.MyGuid, v)
+                Osi.SetTag(clone.MyGuid, v)
             end
         end
         --TODO No way to get all of an object's flags currently.
@@ -492,7 +492,7 @@ function GameHelpers.Item.Clone(item, setProperties, opts)
                 end
                 if nextItem and nextItem.MyGuid ~= clone.MyGuid then
                     if Ext.Osiris.IsCallable() then
-                        ItemRemove(clone.MyGuid)
+                        Osi.ItemRemove(clone.MyGuid)
                     end
                     clone = nextItem
                 end
@@ -530,7 +530,7 @@ function GameHelpers.Item.GetItemInSlot(character, slot)
     if not _ISCLIENT then
         ---@cast char EsvCharacter
         if _OSIRIS() then
-            local itemGUID = CharacterGetEquippedItem(character.MyGuid, slot)
+            local itemGUID = Osi.CharacterGetEquippedItem(character.MyGuid, slot)
             if not StringHelpers.IsNullOrEmpty(itemGUID) then
                 return GameHelpers.GetItem(itemGUID)
             end
@@ -592,9 +592,9 @@ if not _ISCLIENT then
         if _OSIRIS() then
             local char = GameHelpers.GetUUID(character)
             local itemGUID = GameHelpers.GetUUID(item)
-            if ObjectExists(itemGUID) == 1 and ObjectExists(char) == 1 then
-                SetOnStage(itemGUID, 1)
-                NRD_CharacterEquipItem(char, itemGUID, slot, 0, 0, 1, 1)
+            if Osi.ObjectExists(itemGUID) == 1 and Osi.ObjectExists(char) == 1 then
+                Osi.SetOnStage(itemGUID, 1)
+                Osi.NRD_CharacterEquipItem(char, itemGUID, slot, 0, 0, 1, 1)
                 return true
             end
         else
@@ -620,9 +620,9 @@ if not _ISCLIENT then
         local char = GameHelpers.GetUUID(character)
         for item in GameHelpers.Character.GetEquipment(character) do
             for runeSlot=0,2,1 do
-                local runeTemplate = ItemGetRuneItemTemplate(item.MyGuid, runeSlot)
+                local runeTemplate = Osi.ItemGetRuneItemTemplate(item.MyGuid, runeSlot)
                 if runeTemplate ~= nil and runeTemplates[runeTemplate] == true then
-                    local rune = ItemRemoveRune(char, item.MyGuid, runeSlot)
+                    local rune = Osi.ItemRemoveRune(char, item.MyGuid, runeSlot)
                     fprint(LOGLEVEL.TRACE, "[GameHelpers.Item.RemoveRunes] Removed rune (%s) from item (%s)[%s] for character (%s)", rune, item.DisplayName, runeSlot, char)
                 end
             end
@@ -707,10 +707,10 @@ if not _ISCLIENT then
         local item = GameHelpers.Item.GetItemInSlot(character, slot)
         if item ~= nil then
             if bypassLock == true or not GameHelpers.Item.ItemIsLocked(item) then
-                ItemLockUnEquip(item.MyGuid, 0)
-                CharacterUnequipItem(character.MyGuid, item.MyGuid)
+                Osi.ItemLockUnEquip(item.MyGuid, 0)
+                Osi.CharacterUnequipItem(character.MyGuid, item.MyGuid)
                 if delete == true and not item.Global then
-                    ItemRemove(item.MyGuid)
+                    Osi.ItemRemove(item.MyGuid)
                 end
             end
         end
@@ -722,7 +722,7 @@ if not _ISCLIENT then
         end
         return 0
     end
-    Ext.NewQuery(ItemIsLockedQRY, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](ITEMGUID)_Item, [out](INTEGER)_Locked")
+    Ext.Osiris.NewQuery(ItemIsLockedQRY, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](ITEMGUID)_Item, [out](INTEGER)_Locked")
 
     ---Set an item's amount using behavior scripting.  
     ---🔨**Server-Only**🔨  
@@ -733,8 +733,8 @@ if not _ISCLIENT then
         assert(amount > 0, "amount param must be greater than zero")
         item = GameHelpers.GetItem(item, "EsvItem")
         if item then
-            SetVarInteger(item.MyGuid, "LeaderLib_ItemAmount", amount)
-            SetStoryEvent(item.MyGuid, "LeaderLib_Commands_Internal_ItemSetAmount")
+            Osi.SetVarInteger(item.MyGuid, "LeaderLib_ItemAmount", amount)
+            Osi.SetStoryEvent(item.MyGuid, "LeaderLib_Commands_Internal_ItemSetAmount")
         end
     end
 end

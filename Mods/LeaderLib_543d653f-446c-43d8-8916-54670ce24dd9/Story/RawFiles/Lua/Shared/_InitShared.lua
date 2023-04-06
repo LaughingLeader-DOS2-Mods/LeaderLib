@@ -484,6 +484,6 @@ function ImportUnsafe(targetModTable)
 end
 
 --Outdated editor version
-if Ext.GameVersion() == "v3.6.51.9303" then
+if Ext.Utils.GameVersion() == "v3.6.51.9303" then
 	Vars.IsEditorMode = true
 end

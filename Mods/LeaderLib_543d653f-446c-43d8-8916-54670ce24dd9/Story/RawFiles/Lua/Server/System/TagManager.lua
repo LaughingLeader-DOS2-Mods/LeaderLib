@@ -24,28 +24,28 @@ TagManager.Register.TagObject(function(object, isInCombat, isCharacter, ...)
 		local args = {...}
 		local friendlyFireEnabled = args[1] == true or SettingsManager.GetMod(ModuleUUID, false).Global:FlagEquals("LeaderLib_FriendlyFireEnabled", true)
 		if friendlyFireEnabled then
-			SetTag(object.MyGuid, "LeaderLib_FriendlyFireEnabled")
+			Osi.SetTag(object.MyGuid, "LeaderLib_FriendlyFireEnabled")
 		else
-			ClearTag(object.MyGuid, "LeaderLib_FriendlyFireEnabled")
+			Osi.ClearTag(object.MyGuid, "LeaderLib_FriendlyFireEnabled")
 		end
 	
 		if object.RootTemplate.CombatTemplate.IsBoss then
-			SetTag(object.MyGuid, "BOSS")
+			Osi.SetTag(object.MyGuid, "BOSS")
 		else
-			ClearTag(object.MyGuid, "BOSS")
+			Osi.ClearTag(object.MyGuid, "BOSS")
 		end
 
 		if object.CannotDie then
-			SetTag(object.MyGuid, "IMMORTAL")
+			Osi.SetTag(object.MyGuid, "IMMORTAL")
 		else
-			ClearTag(object.MyGuid, "IMMORTAL")
+			Osi.ClearTag(object.MyGuid, "IMMORTAL")
 		end
 	else
 		if _OSIRIS() then
-			if ItemIsDestructible(object.MyGuid) == 0 then
-				SetTag(object.MyGuid, "IMMORTAL")
+			if Osi.ItemIsDestructible(object.MyGuid) == 0 then
+				Osi.SetTag(object.MyGuid, "IMMORTAL")
 			else
-				ClearTag(object.MyGuid, "IMMORTAL")
+				Osi.ClearTag(object.MyGuid, "IMMORTAL")
 			end
 		end
 	end
@@ -60,7 +60,7 @@ function TagManager:TagObject(object, isInCombat, ...)
 		local isCharacter = GameHelpers.Ext.ObjectIsCharacter(object)
 		if isInCombat == nil then
 			if isCharacter then
-				if _OSIRIS() and CharacterIsInCombat(object.MyGuid) == 1 then
+				if _OSIRIS() and Osi.CharacterIsInCombat(object.MyGuid) == 1 then
 					isInCombat = true
 				else
 					if object:GetStatus("COMBAT") then
@@ -83,25 +83,25 @@ function TagManager:TagAll(...)
 end
 
 Ext.Osiris.RegisterListener("ObjectEnteredCombat", 2, "after", function(uuid, combatId)
-	if ObjectIsCharacter(uuid) == 1 then
+	if Osi.ObjectIsCharacter(uuid) == 1 then
 		TagManager:TagObject(uuid, true)
 	end
 end)
 
 Ext.Osiris.RegisterListener("ObjectLeftCombat", 2, "after", function(uuid, combatId)
-	if ObjectIsCharacter(uuid) == 1 then
+	if Osi.ObjectIsCharacter(uuid) == 1 then
 		TagManager:TagObject(uuid, false)
 	end
 end)
 
 Ext.Osiris.RegisterListener("ObjectSwitchedCombat", 3, "after", function(uuid, oldCombatId, combatId)
-	if ObjectIsCharacter(uuid) == 1 then
+	if Osi.ObjectIsCharacter(uuid) == 1 then
 		TagManager:TagObject(uuid, true)
 	end
 end)
 
 Ext.Osiris.RegisterListener("ObjectTransformed", 2, "after", function(uuid, template)
-	if ObjectIsCharacter(uuid) == 1 then
+	if Osi.ObjectIsCharacter(uuid) == 1 then
 		TagManager:TagObject(uuid, true)
 	end
 end)

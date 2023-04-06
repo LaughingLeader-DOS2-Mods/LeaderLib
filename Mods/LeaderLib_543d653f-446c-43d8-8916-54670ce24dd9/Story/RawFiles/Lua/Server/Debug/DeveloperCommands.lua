@@ -13,11 +13,11 @@ Ext.RegisterConsoleCommand("adddeltamod", function(command, slot, deltamod)
 	if deltamod == nil then
 		deltamod = "Boost_Weapon_Status_Set_Petrify_Sword"
 	end
-	local target = CharacterGetHostCharacter()
-	local item = CharacterGetEquippedItem(target, slot)
+	local target = Osi.CharacterGetHostCharacter()
+	local item = Osi.CharacterGetEquippedItem(target, slot)
 	fprint(LOGLEVEL.TRACE, slot,deltamod,item,target)
 	if item ~= nil then
-		ItemAddDeltaModifier(item, deltamod)
+		Osi.ItemAddDeltaModifier(item, deltamod)
 		fprint(LOGLEVEL.TRACE, string.format("[LeaderLib] Added deltamod %s to item (%s) in slot %s", deltamod, item, slot))
 	end
 end)
@@ -34,37 +34,37 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 end)
 
 Ext.RegisterConsoleCommand("testrespen", function(command, level)
-	local host = CharacterGetHostCharacter()
-	local x,y,z = GetPosition(host)
+	local host = Osi.CharacterGetHostCharacter()
+	local x,y,z = Osi.GetPosition(host)
 	if level ~= nil then
 		level = math.tointeger(tonumber(level))
 	else
-		level = CharacterGetLevel(host)
+		level = Osi.CharacterGetLevel(host)
 	end
-	local item = CreateItemTemplateAtPosition("537a06a5-0619-4d57-b77d-b4c319eab3e6", x, y, z)
-	SetTag(item, "LeaderLib_HasResistancePenetration")
+	local item = Osi.CreateItemTemplateAtPosition("537a06a5-0619-4d57-b77d-b4c319eab3e6", x, y, z)
+	Osi.SetTag(item, "LeaderLib_HasResistancePenetration")
 	local tag = Data.ResistancePenetrationTags["Fire"][4].Tag
-	SetTag(item, tag)
-	ItemLevelUpTo(item, level)
+	Osi.SetTag(item, tag)
+	Osi.ItemLevelUpTo(item, level)
 	fprint(LOGLEVEL.TRACE, "[LeaderLib:testrespen] Added tag",tag,"to item",item)
-	ItemToInventory(item, host, 1, 1, 0)
+	Osi.ItemToInventory(item, host, 1, 1, 0)
 end)
 
 Ext.RegisterConsoleCommand("testrespen2", function(...)
-	local host = CharacterGetHostCharacter()
-	ApplyStatus(host, "LADY_VENGEANCE", -1.0, 0, host)
+	local host = Osi.CharacterGetHostCharacter()
+	Osi.ApplyStatus(host, "LADY_VENGEANCE", -1.0, 0, host)
 	Timer.StartOneshot("Timers_LeaderLib_Debug_ResPenTest", 3000, function()
 		--ApplyDamage(CharacterGetHostCharacter(), 50, "Fire", CharacterGetHostCharacter())
 		--ApplyDamage(CharacterGetHostCharacter(), 1, "Physical")
 		--Osi.ApplyDamage(host, 10, "Water")
-		local x,y,z = GetPosition(host)
-		CreateExplosionAtPosition(x, y, z, "Projectile_EnemyIceShard", 1)
-		CharacterStatusText(host, "Took Damage?")
+		local x,y,z = Osi.GetPosition(host)
+		Osi.CreateExplosionAtPosition(x, y, z, "Projectile_EnemyIceShard", 1)
+		Osi.CharacterStatusText(host, "Took Damage?")
 	end)
 end)
 
 Ext.RegisterConsoleCommand("combatlog", function(command, text)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	if text == nil then
 		local name = GameHelpers.GetCharacter(host).DisplayName
 		text = "<font color='#CCFF00'>Test</font> did <font color='#FF0000'>TONS</font> of damage to " .. name
@@ -77,7 +77,7 @@ Ext.RegisterConsoleCommand("leaderlib_statustext", function(command, text)
 	if text == nil then
 		text = "Test Status Text!"
 	end
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	GameHelpers.Net.Broadcast("LeaderLib_DisplayStatusText", MessageData:CreateFromTable("StatusTextData", {
 		UUID = host,
 		Text = text,
@@ -91,7 +91,7 @@ end)
 
 Ext.RegisterConsoleCommand("leaderlib_messageboxtest", function(command, text)
 	Timer.StartOneshot("Timers_LeaderLib_Debug_MessageBoxTest", 2000, function()
-		local host = CharacterGetHostCharacter()
+		local host = Osi.CharacterGetHostCharacter()
 		GameHelpers.UI.ShowMessageBox(string.format("<font  color='#FF00CC'>One or more players are missing the script extender.</font><br>Please help:<br>* %s", "LaughingLeader"), host, 1, "<font color='#FF0000'>Script Extender Missing!</font>")
 	end)
 end)
@@ -102,7 +102,7 @@ end)
 
 
 Ext.RegisterConsoleCommand("setarmoroption", function(command, param)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	local state = 2
 	if param ~= nil then
 		state = math.tointeger(tonumber(param)) or 2
@@ -113,11 +113,11 @@ end)
 
 Ext.RegisterConsoleCommand("llshoot", function(cmd, forceHit, source, target, skill)
 	if source == nil then
-		source = CharacterGetHostCharacter()
+		source = Osi.CharacterGetHostCharacter()
 	end
 	if target == nil then
 		for i,v in pairs(GameHelpers.GetCharacter(source):GetNearbyCharacters(12.0)) do
-			if CharacterCanSee(v, source) == 1 and GetDistanceTo(v, source) >= 3.0 then
+			if Osi.CharacterCanSee(v, source) == 1 and Osi.GetDistanceTo(v, source) >= 3.0 then
 				target = v
 				break
 			end
@@ -128,23 +128,23 @@ Ext.RegisterConsoleCommand("llshoot", function(cmd, forceHit, source, target, sk
 		skill = "Projectile_EnemyTotemWater"
 	end
 	
-	NRD_ProjectilePrepareLaunch()
+	Osi.NRD_ProjectilePrepareLaunch()
 	
-	NRD_ProjectileSetString("SkillId", skill)
-	NRD_ProjectileSetInt("CasterLevel", CharacterGetLevel(source))
+	Osi.NRD_ProjectileSetString("SkillId", skill)
+	Osi.NRD_ProjectileSetInt("CasterLevel", Osi.CharacterGetLevel(source))
 	
-	NRD_ProjectileSetGuidString("Caster", source)
-	NRD_ProjectileSetGuidString("Source", source)
+	Osi.NRD_ProjectileSetGuidString("Caster", source)
+	Osi.NRD_ProjectileSetGuidString("Source", source)
 	
-	local x,y,z = GetPosition(source)
-	NRD_ProjectileSetVector3("SourcePosition", x,y+2,z)
+	local x,y,z = Osi.GetPosition(source)
+	Osi.NRD_ProjectileSetVector3("SourcePosition", x,y+2,z)
 	
 	if forceHit ~= nil then
-		NRD_ProjectileSetGuidString("HitObject", target)
-		NRD_ProjectileSetGuidString("HitObjectPosition", target)
+		Osi.NRD_ProjectileSetGuidString("HitObject", target)
+		Osi.NRD_ProjectileSetGuidString("HitObjectPosition", target)
 	end
-	NRD_ProjectileSetGuidString("TargetPosition", target)
-	NRD_ProjectileLaunch()
+	Osi.NRD_ProjectileSetGuidString("TargetPosition", target)
+	Osi.NRD_ProjectileLaunch()
 end)
 
 
@@ -482,19 +482,19 @@ Ext.RegisterConsoleCommand("llprintskill", function(cmd, skill, printEmpty)
 	end
 end)
 
-local defaultRules = Ext.JsonParse(Ext.Require("Server/Debug/DefaultSurfaceTransformationRules.lua"))
+local defaultRules = Ext.Json.Parse(Ext.Require("Server/Debug/DefaultSurfaceTransformationRules.lua"))
 
 Ext.RegisterConsoleCommand("llupdaterules", function(cmd)
 	GameHelpers.Surface.UpdateRules()
-	local rules = Ext.GetSurfaceTransformRules()
+	local rules = Ext.Surface.GetTransformRules()
 	fprint(LOGLEVEL.TRACE, Common.JsonStringify(rules["Fire"]))
 	fprint(LOGLEVEL.TRACE, Common.JsonStringify(rules["Poison"]))
 end)
 
 Ext.RegisterConsoleCommand("llresetrules", function(cmd)
-	Ext.UpdateSurfaceTransformRules(defaultRules)
+	Ext.Surface.UpdateTransformRules(defaultRules)
 	fprint(LOGLEVEL.TRACE, "[llresetrules] Reset surface rules.")
-	fprint(LOGLEVEL.TRACE, Common.JsonStringify(Ext.GetSurfaceTransformRules()["Fire"][1]))
+	fprint(LOGLEVEL.TRACE, Common.JsonStringify(Ext.Surface.GetTransformRules()["Fire"][1]))
 end)
 
 
@@ -607,7 +607,7 @@ end
 Debug.PrintItemStats = PrintItemStats
 
 Ext.RegisterConsoleCommand("printitemstats", function(command, slot)
-	local target = CharacterGetHostCharacter()
+	local target = Osi.CharacterGetHostCharacter()
 	---@type EsvCharacter
 	local characterObject = GameHelpers.GetCharacter(target)
 	if slot == nil then
@@ -615,7 +615,7 @@ Ext.RegisterConsoleCommand("printitemstats", function(command, slot)
 			PrintItemStats(item)
 		end
 	else
-		local item = CharacterGetEquippedItem(target, slot)
+		local item = Osi.CharacterGetEquippedItem(target, slot)
 		if item ~= nil then
 			PrintItemStats(item)
 		else
@@ -625,16 +625,16 @@ Ext.RegisterConsoleCommand("printitemstats", function(command, slot)
 end)
 
 Ext.RegisterConsoleCommand("refreshui", function(cmd)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	GameHelpers.Net.PostToUser(host, "LeaderLib_UI_RefreshAll", host)
 end)
 
 Ext.RegisterConsoleCommand("permaboosttest", function(cmd)
-	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
-	local weapon = GameHelpers.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
-	NRD_ItemSetPermanentBoostInt(weapon.MyGuid, "StrengthBoost", Ext.Utils.Random(1,30))
+	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
+	local weapon = GameHelpers.GetItem(Osi.CharacterGetEquippedItem(host.MyGuid, "Weapon"))
+	Osi.NRD_ItemSetPermanentBoostInt(weapon.MyGuid, "StrengthBoost", Ext.Utils.Random(1,30))
 	
-	fprint(LOGLEVEL.TRACE, weapon.Stats.StatsEntry.StrengthBoost, NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
+	fprint(LOGLEVEL.TRACE, weapon.Stats.StatsEntry.StrengthBoost, Osi.NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
 	for i,v in pairs(weapon.Stats.DynamicStats) do
 		if v ~= nil and v.ObjectInstanceName ~= nil then
 			fprint(LOGLEVEL.TRACE, i,v.ObjectInstanceName,v.StrengthBoost)
@@ -650,7 +650,7 @@ end)
 
 
 Ext.RegisterConsoleCommand("heal", function(command, t)
-	local target = t or CharacterGetHostCharacter()
+	local target = t or Osi.CharacterGetHostCharacter()
 	local data = Classes.CharacterData:Create(target)
 	data:FullRestore(true)
 end)
@@ -663,17 +663,17 @@ Ext.RegisterConsoleCommand("healall", function(command)
 end)
 
 Ext.RegisterConsoleCommand("mostlydead", function(command, t)
-	local target = t or CharacterGetHostCharacter()
-	CharacterSetHitpointsPercentage(target, 1.0)
-	CharacterSetArmorPercentage(target, 0.0)
-	CharacterSetMagicArmorPercentage(target, 0.0)
+	local target = t or Osi.CharacterGetHostCharacter()
+	Osi.CharacterSetHitpointsPercentage(target, 1.0)
+	Osi.CharacterSetArmorPercentage(target, 0.0)
+	Osi.CharacterSetMagicArmorPercentage(target, 0.0)
 end)
 
 Ext.RegisterConsoleCommand("resurrectparty", function(command)
 	for player in GameHelpers.Character.GetPlayers() do
 		if player.Dead then
 			--CharacterResurrect(player.MyGuid)
-			CharacterResurrectCustom(player.MyGuid, "Dance_01")
+			Osi.CharacterResurrectCustom(player.MyGuid, "Dance_01")
 		end
 	end
 end)
@@ -681,10 +681,10 @@ end)
 Ext.RegisterConsoleCommand("levelup", function(command, amount)
 	amount = amount or "1"
 	amount = tonumber(amount)
-	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 	local nextLevel = math.min(Ext.ExtraData.LevelCap, host.Stats.Level + amount)
 	if amount > 0 then
-		CharacterLevelUpTo(host.MyGuid, nextLevel)
+		Osi.CharacterLevelUpTo(host.MyGuid, nextLevel)
 	else
 		GameHelpers.Character.SetLevel(host, nextLevel)
 	end
@@ -694,7 +694,7 @@ end)
 Ext.RegisterConsoleCommand("setlevel", function(command, level)
 	level = level or "1"
 	level = tonumber(level)
-	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 	GameHelpers.Character.SetLevel(host, level)
 	Osi.CharacterLeveledUp(host.MyGuid)
 end)
@@ -708,7 +708,7 @@ local function sleep(timeInMilliseconds)
 end
 
 Ext.RegisterConsoleCommand("sleeptest", function(command, delay)
-	ApplyStatus(CharacterGetHostCharacter(), "HASTED", 6.0, 1, CharacterGetHostCharacter())
+	Osi.ApplyStatus(Osi.CharacterGetHostCharacter(), "HASTED", 6.0, 1, Osi.CharacterGetHostCharacter())
 	Timer.StartOneshot("Timers_Commands_sleeptest", 500, function()
 		delay = delay and tonumber(delay) or 6000
 		local timeStart = Ext.Utils.MonotonicTime()
@@ -720,21 +720,21 @@ end)
 
 local function RemoveTempChar(v)
 	Ext.Utils.Print("Removing", v)
-	SetCanJoinCombat(v, 0)
-	SetCanFight(v, 0)
-	CharacterSetDetached(v, 1)
-	LeaveCombat(v)
+	Osi.SetCanJoinCombat(v, 0)
+	Osi.SetCanFight(v, 0)
+	Osi.CharacterSetDetached(v, 1)
+	Osi.LeaveCombat(v)
 	Timer.StartOneshot(string.format("Timers_DebugRemoveTemp%s", v), 250, function()
-		RemoveTemporaryCharacter(v)
+		Osi.RemoveTemporaryCharacter(v)
 	end)
 end
 
 Ext.RegisterConsoleCommand("removetemporycharacters", function(command, radius)
 	if radius then
 		local radius = tonumber(radius) or 24.0
-		local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+		local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 		for i,v in pairs(host:GetNearbyCharacters(radius)) do
-			if IsTagged(v, "LeaderLib_TemporaryCharacter") == 1 then
+			if Osi.IsTagged(v, "LeaderLib_TemporaryCharacter") == 1 then
 				RemoveTempChar(v)
 			else
 				local char = GameHelpers.GetCharacter(v)
@@ -745,7 +745,7 @@ Ext.RegisterConsoleCommand("removetemporycharacters", function(command, radius)
 		end
 	else
 		for i,v in pairs(Ext.Entity.GetAllCharacterGuids(SharedData.RegionData.Current)) do
-			if IsTagged(v, "LeaderLib_TemporaryCharacter") == 1 then
+			if Osi.IsTagged(v, "LeaderLib_TemporaryCharacter") == 1 then
 				RemoveTempChar(v)
 			else
 				local char = GameHelpers.GetCharacter(v)
@@ -773,11 +773,11 @@ if SceneManager then
 				print("Waiting done", Ext.Utils.MonotonicTime() - startTime, self.ID)
 		end)
 		testScene:CreateState("TestState3", function(self)
-			local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
+			local host = StringHelpers.GetUUID(Osi.CharacterGetHostCharacter())
 			local x,y,z = table.unpack(GameHelpers.Math.GetForwardPosition(host, 3.0))
 			self:MoveToPosition(host, self.ID .. "Move" .. host, x, y, z, true)
 			self:Wait(500)
-			PlayEffect(host, "RS3_FX_Skills_Divine_Shout_Cast_01", "")
+			Osi.PlayEffect(host, "RS3_FX_Skills_Divine_Shout_Cast_01", "")
 			self:Wait(2000)
 			self:WaitForDialogEnd("GEB_AD_CannotPickpocket", true, host)
 			self:PlayAnimation(host, "Dance_01")
@@ -795,23 +795,23 @@ if SceneManager then
 end
 
 Ext.RegisterConsoleCommand("ap", function(command, amountStr)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	local amount = GameHelpers.GetCharacter(host).Stats.APMaximum
 	if amountStr ~= nil then
 		amount = math.tointeger(tonumber(amountStr))
 	end
 	fprint(LOGLEVEL.TRACE, "CharacterAddActionPoints(\"%s\", %s)", host, amount)
-	CharacterAddActionPoints(host, amount)
+	Osi.CharacterAddActionPoints(host, amount)
 end)
 
 Ext.RegisterConsoleCommand("anim", function(command, name)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	name = name or "Dance_01"
-	PlayAnimation(host, name, "")
+	Osi.PlayAnimation(host, name, "")
 end)
 
 Ext.RegisterConsoleCommand("lldebug_surfacetransform", function(command, amountStr)
-	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 	local x,y,z = table.unpack(host.WorldPos)
 	
 	-- TransformSurfaceAtPosition(x, y, z, "Bloodify", "Ground", 6.0, 6.0, host)
@@ -852,18 +852,18 @@ Ext.RegisterConsoleCommand("lldebug_surfacetransform", function(command, amountS
 end)
 
 Ext.RegisterConsoleCommand("lldebug_tornadotest", function(command)
-	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
+	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 	local x,y,z = table.unpack(host.WorldPos)
 	local tx,ty,tz = table.unpack(GameHelpers.Math.ExtendPositionWithForwardDirection(host, 10.0, x, y, z))
-	local handle = NRD_CreateTornado(host.MyGuid, "Tornado_EnemyAir", x, y, z, tx, ty, tz)
+	local handle = Osi.NRD_CreateTornado(host.MyGuid, "Tornado_EnemyAir", x, y, z, tx, ty, tz)
 	Timer.StartOneshot(nil, 20000, function()
-		NRD_GameActionDestroy(handle)
+		Osi.NRD_GameActionDestroy(handle)
 	end)
 end)
 
 Ext.RegisterConsoleCommand("lldebug_keepAlive", function(command)
-	local host = GameHelpers.GetCharacter(CharacterGetHostCharacter())
-	ApplyStatus(host.MyGuid, "HASTED", -1.0, 1, host.MyGuid)
+	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
+	Osi.ApplyStatus(host.MyGuid, "HASTED", -1.0, 1, host.MyGuid)
 	Timer.StartOneshot(nil, 250, function()
 		local status = host:GetStatus("HASTED")
 		if status then
@@ -886,8 +886,8 @@ Ext.RegisterConsoleCommand("lldebug_music", function(command, mType, theme)
 end)
 
 Ext.RegisterConsoleCommand("lldebug_customstat", function(command, mType, theme)
-	local id = NRD_CreateCustomStat("Test", "TestDescription")
-	NRD_CharacterSetCustomStat(CharacterGetHostCharacter(), id, 10)
+	local id = Osi.NRD_CreateCustomStat("Test", "TestDescription")
+	Osi.NRD_CharacterSetCustomStat(Osi.CharacterGetHostCharacter(), id, 10)
 end)
 
 -- Ext.Osiris.RegisterListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)
@@ -1015,12 +1015,12 @@ Ext.RegisterConsoleCommand("setcustomstat", function(cmd, id, amount)
 	amount = amount or "1"
 	amount = tonumber(amount) or 1
 	if Mods.CharacterExpansionLib then
-		Mods.CharacterExpansionLib.CustomStatSystem:SetStat(CharacterGetHostCharacter(), id, amount)
+		Mods.CharacterExpansionLib.CustomStatSystem:SetStat(Osi.CharacterGetHostCharacter(), id, amount)
 	end
 end)
 
 Ext.RegisterConsoleCommand("testchaoswand", function(cmd)
-	local stat = Ext.Stats.Get("WPN_Wand_Chaos") or Ext.CreateStat("WPN_Wand_Chaos", "Weapon", "WPN_Wand_Air")
+	local stat = Ext.Stats.Get("WPN_Wand_Chaos") or Ext.Stats.Create("WPN_Wand_Chaos", "Weapon", "WPN_Wand_Air")
 	stat["Damage Type"] = "Chaos"
 	stat.ObjectCategory = "WandChaos"
 	stat.Projectile = "6770f065-df9b-4a0b-a6cb-bfa5e5c28c0e"
@@ -1043,13 +1043,13 @@ Ext.RegisterConsoleCommand("testchaoswand", function(cmd)
 	}
 	Ext.Stats.Sync("WPN_Wand_Chaos", false)
 	local item = GameHelpers.Item.CreateItemByStat("WPN_Wand_Chaos", {
-	StatsLevel = math.min(10, CharacterGetLevel(CharacterGetHostCharacter())),
+	StatsLevel = math.min(10, Osi.CharacterGetLevel(Osi.CharacterGetHostCharacter())),
 	ItemType = "Epic",
 	GMFolding = false,
 	IsIdentified = true
 	})
 	if item ~= nil then
-		ItemToInventory(item, CharacterGetHostCharacter(), 1, 1, 1)
+		Osi.ItemToInventory(item, Osi.CharacterGetHostCharacter(), 1, 1, 1)
 	else
 		error("Failed to create WPN_Wand_Chaos")
 	end
@@ -1183,7 +1183,7 @@ Ext.RegisterConsoleCommand("createitemtest", function()
 	--print(Lib.inspect(item:GetGeneratedBoosts()))
 	--print(Common.JsonStringify(boosts))
 	--item:SetDeltaMods(deltamods)
-	ItemToInventory(uuid, CharacterGetHostCharacter(), 1, 1, 1)
+	Osi.ItemToInventory(uuid, Osi.CharacterGetHostCharacter(), 1, 1, 1)
 else
 	error("Failed to create ARM_Light_Helmet")
 end
@@ -1193,14 +1193,14 @@ Ext.RegisterConsoleCommand("partyrestore", function(cmd)
 	for player in GameHelpers.Character.GetPlayers(true) do
 		fprint(LOGLEVEL.TRACE, player.MyGuid)
 		if player.Dead then
-			CharacterResurrect(player.MyGuid)
+			Osi.CharacterResurrect(player.MyGuid)
 		end
 		player.Stats.CurrentVitality = player.Stats.MaxVitality
 		fprint(LOGLEVEL.TRACE, player.Stats.CurrentVitality, player.Stats.MaxVitality)
-		CharacterSetHitpointsPercentage(player.MyGuid, 100.0)
-		CharacterSetArmorPercentage(player.MyGuid, 100.0)
-		CharacterSetMagicArmorPercentage(player.MyGuid, 100.0)
-		ApplyStatus(player.MyGuid, "LEADERLIB_RECALC", 0.0, 1, player.MyGuid)
+		Osi.CharacterSetHitpointsPercentage(player.MyGuid, 100.0)
+		Osi.CharacterSetArmorPercentage(player.MyGuid, 100.0)
+		Osi.CharacterSetMagicArmorPercentage(player.MyGuid, 100.0)
+		Osi.ApplyStatus(player.MyGuid, "LEADERLIB_RECALC", 0.0, 1, player.MyGuid)
 	end
 end)
 
@@ -1210,13 +1210,13 @@ function Debug.SetCooldownMode(b)
 	if not cooldownsDisabled_AddedListener then
 		Ext.Osiris.RegisterListener("SkillCast", 4, "after", function(char,...)
 			if Vars.Commands.CooldownsDisabled then
-				CharacterResetCooldowns(char)
+				Osi.CharacterResetCooldowns(char)
 			end
 		end)
 		cooldownsDisabled_AddedListener = true
 	end
 	if b then
-		CharacterResetCooldowns(CharacterGetHostCharacter())
+		Osi.CharacterResetCooldowns(Osi.CharacterGetHostCharacter())
 	end
 end
 
@@ -1227,7 +1227,7 @@ Ext.RegisterConsoleCommand("nocd", function(command)
 end)
 
 Ext.RegisterConsoleCommand("refreshcd", function(command)
-	local host = CharacterGetHostCharacter()
+	local host = Osi.CharacterGetHostCharacter()
 	GameHelpers.UI.RefreshSkillBarCooldowns(host)
 end)
 
@@ -1254,7 +1254,7 @@ local function AddItemStat(stat, params)
 		end
 	end
 	if params.StatsLevel == nil then
-		params.StatsLevel = CharacterGetLevel(CharacterGetHostCharacter())
+		params.StatsLevel = Osi.CharacterGetLevel(Osi.CharacterGetHostCharacter())
 	end
 	if params.ItemType == nil then
 		params.ItemType = "Epic"
@@ -1274,7 +1274,7 @@ local function AddItemStat(stat, params)
 
 	local item = GameHelpers.Item.CreateItemByStat(stat, params)
 	if item ~= nil then
-		ItemToInventory(item, CharacterGetHostCharacter(), 1, 1, 1)
+		Osi.ItemToInventory(item, Osi.CharacterGetHostCharacter(), 1, 1, 1)
 		return true
 	end
 	return false
@@ -1286,13 +1286,13 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levels
 		stat = "WPN_Sword_2H"
 	end
 	if rarity == nil then
-		if Ext.StatGetAttribute(stat, "Unique") == 1 then
+		if GameHelpers.Stats.GetAttribute(stat, "Unique") == 1 then
 			rarity = "Unique"
 		else
 			rarity = "Epic"
 		end
 	end
-	local level = CharacterGetLevel(CharacterGetHostCharacter())
+	local level = Osi.CharacterGetLevel(Osi.CharacterGetHostCharacter())
 	if levelstr ~= nil then
 		level = math.tointeger(tonumber(levelstr)) or level
 	end
@@ -1309,8 +1309,8 @@ Ext.RegisterConsoleCommand("additemtemplate", function(command, template, count)
 	else
 		count = math.tointeger(tonumber(count))
 	end
-	local host = CharacterGetHostCharacter()
-	ItemTemplateAddTo(template, host, count, 1)
+	local host = Osi.CharacterGetHostCharacter()
+	Osi.ItemTemplateAddTo(template, host, count, 1)
 end)
 
 Ext.RegisterConsoleCommand("dumpallcharacters", function (cmd, ...)
@@ -1352,20 +1352,20 @@ Ext.RegisterConsoleCommand("dumpallcharacters", function (cmd, ...)
 end)
 
 Ext.RegisterConsoleCommand("statustooltiptest", function (cmd, ...)
-	local host = Ext.Entity.GetCharacter(CharacterGetHostCharacter())
+	local host = Ext.Entity.GetCharacter(Osi.CharacterGetHostCharacter())
 	GameHelpers.Status.Apply(host, {"HASTED", "CLEAR_MINDED", "ENCOURAGED"}, 600, true, host)
 	GameHelpers.Status.Apply(host, "INVISIBLE", -1, true, host)
 end)
 
 Ext.RegisterConsoleCommand("spawncharactertemplate", function (cmd, template)
-	local host = Ext.Entity.GetCharacter(CharacterGetHostCharacter())
+	local host = Ext.Entity.GetCharacter(Osi.CharacterGetHostCharacter())
 	template = template or "a3caf91b-3d65-4013-8f54-fb12b593972d"
 	local x,y,z = GameHelpers.Grid.GetValidPositionInRadius(host.WorldPos, 8, nil, true)
-	local character = TemporaryCharacterCreateAtPosition(x,y,z, template, 1)
+	local character = Osi.TemporaryCharacterCreateAtPosition(x,y,z, template, 1)
 	GameHelpers.Character.SetLevel(character, 1)
-	CharacterConsume(character, "SKILLBOOST_SparkmasterWeakenAttack")
+	Osi.CharacterConsume(character, "SKILLBOOST_SparkmasterWeakenAttack")
 	Events.BeforeLuaReset:Subscribe(function (e)
-		RemoveTemporaryCharacter(character)
+		Osi.RemoveTemporaryCharacter(character)
 	end)
 end)
 
@@ -1383,7 +1383,7 @@ Ext.RegisterConsoleCommand("tplevel", function (cmd, region)
 	}
 	local trigger = triggers[region]
 	if trigger then
-		CharacterTeleportPartiesToTrigger(trigger, "")
+		Osi.CharacterTeleportPartiesToTrigger(trigger, "")
 	else
 		fprint(LOGLEVEL.ERROR, "[tplevel] No trigger set for region [%s]", region)
 	end

@@ -12,14 +12,14 @@ function VisualManager.Events.OnEquipmentChanged(char,item,equipped)
 end
 
 RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)
-	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
+	if Osi.ObjectExists(item) == 0 or Osi.ObjectExists(char) == 0 then
 		return
 	end
 	VisualManager.Events.OnEquipmentChanged(GameHelpers.GetCharacter(char), GameHelpers.GetItem(item), true)
 end)
 
 RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char)
-	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
+	if Osi.ObjectExists(item) == 0 or Osi.ObjectExists(char) == 0 then
 		return
 	else
 		VisualManager.Events.OnEquipmentChanged(GameHelpers.GetCharacter(char), GameHelpers.GetItem(item), false)

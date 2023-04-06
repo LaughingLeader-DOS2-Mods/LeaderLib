@@ -169,7 +169,7 @@ if not _ISCLIENT then
 			end
 			if targetData ~= nil and targetData.Position then
 				if GameHelpers.Math.GetDistance(target, targetData.Position) <= 1 then
-					pcall(NRD_GameActionDestroy,targetData.Handle)
+					pcall(Osi.NRD_GameActionDestroy,targetData.Handle)
 					_PV.ForceMoveData[target] = nil
 					local source = targetData.Source
 					if source then
@@ -257,7 +257,7 @@ if not _ISCLIENT then
 		--NRD_CreateGameObjectMove(me.MyGuid, me.WorldPos[1] + 2, me.WorldPos[2], me.WorldPos[3] + 2, "", me.MyGuid); Mods.LeaderLib.Timer.StartOneshot("", 50, function() Ext.IO.SaveFile("Dumps/ActionMachine.json", Ext.DumpExport(Ext.Entity.GetCurrentLevel().GameActionManager)) end);
 		--local x,y,z = table.unpack(me.WorldPos); NRD_CreateRain(me.MyGuid, "Rain_Water", x, y, z)
 		if tx and tz then
-			local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, beamEffect or "", sourceObject.MyGuid)
+			local handle = Osi.NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, beamEffect or "", sourceObject.MyGuid)
 			if handle then
 				_PV.ForceMoveData[targetObject.MyGuid] = {
 					ID = id or "",
@@ -297,7 +297,7 @@ if not _ISCLIENT then
 		
 		local x,y,z = table.unpack(targetObject.WorldPos)
 		local tx,ty,tz = table.unpack(position)
-		local handle = NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, beamEffect or "", sourceObject.MyGuid)
+		local handle = Osi.NRD_CreateGameObjectMove(targetObject.MyGuid, tx, ty, tz, beamEffect or "", sourceObject.MyGuid)
 		if handle ~= nil then
 			_PV.ForceMoveData[targetObject.MyGuid] = {
 				Position = {tx,ty,tz},
@@ -808,11 +808,11 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 				local obj = GameHelpers.GetCharacter(v)
 				if obj and (options.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (options.AllowOffStage or not obj.OffStage) then
 					if options.Relation and sourceIsCharacter then
-						if options.Relation.Ally and CharacterIsAlly(GUID, v) == 1 then
+						if options.Relation.Ally and Osi.CharacterIsAlly(GUID, v) == 1 then
 							objects[#objects+1] = obj
 						elseif options.Relation.Enemy and GameHelpers.Character.CanAttackTarget(GUID, v) then
 							objects[#objects+1] = obj
-						elseif options.Relation.Neutral and CharacterIsNeutral(GUID, v) == 1 then
+						elseif options.Relation.Neutral and Osi.CharacterIsNeutral(GUID, v) == 1 then
 							objects[#objects+1] = obj
 						elseif options.Relation.CanAdd then
 							local b,result = xpcall(options.Relation.CanAdd, debug.traceback, obj, source)

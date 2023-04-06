@@ -13,7 +13,7 @@ CharacterData.__index = function(tbl, k)
 	local uuid = rawget(tbl, "UUID")
 	if uuid then
 		if k == "Region" and _OSIRIS() then
-			return GetRegion(uuid)
+			return Osi.GetRegion(uuid)
 		end
 		local char = GameHelpers.GetCharacter(uuid)
 		if char then
@@ -57,7 +57,7 @@ end
 
 ---@return boolean
 function CharacterData:Exists()
-	return not StringHelpers.IsNullOrEmpty(self.UUID) and ObjectExists(self.UUID) == 1
+	return not StringHelpers.IsNullOrEmpty(self.UUID) and Osi.ObjectExists(self.UUID) == 1
 end
 
 ---Fetches the EsvCharacter associated with this character's UUID.
@@ -72,17 +72,17 @@ end
 ---@param allowPlayingDead boolean
 ---@return boolean
 function CharacterData:IsDead(allowPlayingDead)
-	return allowPlayingDead ~= true and CharacterIsDead(self.UUID) == 1 or CharacterIsDeadOrFeign(self.UUID) == 1
+	return allowPlayingDead ~= true and Osi.CharacterIsDead(self.UUID) == 1 or Osi.CharacterIsDeadOrFeign(self.UUID) == 1
 end
 
 ---@return boolean
 function CharacterData:IsInCombat()
-	return CharacterIsInCombat(self.UUID) == 1 or Common.OsirisDatabaseHasAnyEntry(Osi.DB_CombatCharacters:Get(self.UUID, nil))
+	return Osi.CharacterIsInCombat(self.UUID) == 1 or Common.OsirisDatabaseHasAnyEntry(Osi.DB_CombatCharacters:Get(self.UUID, nil))
 end
 
 ---@return integer
 function CharacterData:GetCombatID()
-	local id = CombatGetIDForCharacter(self.UUID)
+	local id = Osi.CombatGetIDForCharacter(self.UUID)
 	if id > 0 then
 		return id
 	end
@@ -99,7 +99,7 @@ end
 ---@param asVector3 boolean|nil
 ---@return number,number,number|Vector3
 function CharacterData:GetPosition(asVector3)
-	local x,y,z = GetPosition(self.UUID)
+	local x,y,z = Osi.GetPosition(self.UUID)
 	if asVector3 == true then
 		return Classes.Vector3(x,y,z)
 	else
@@ -127,8 +127,8 @@ end
 ---@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
 function CharacterData:SetOffStage(force)
 	if self:Exists() then
-		if force == true or ObjectIsOnStage(self.UUID) == 1 then
-			SetOnStage(self.UUID, 0)
+		if force == true or Osi.ObjectIsOnStage(self.UUID) == 1 then
+			Osi.SetOnStage(self.UUID, 0)
 			return true
 		end
 	end
@@ -138,8 +138,8 @@ end
 ---@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
 function CharacterData:SetOnStage(force)
 	if self:Exists() then
-		if force == true or ObjectIsOnStage(self.UUID) == 0 then
-			SetOnStage(self.UUID, 1)
+		if force == true or Osi.ObjectIsOnStage(self.UUID) == 0 then
+			Osi.SetOnStage(self.UUID, 1)
 			return true
 		end
 	end
@@ -191,12 +191,12 @@ function CharacterData:RemoveStatus(status, ignorePermanent)
 				if ignorePermanent == true then
 					for i,v in pairs(character:GetStatusObjects()) do
 						if v.CurrentLifeTime ~= -1 then
-							RemoveStatus(self.UUID, v.StatusId)
+							Osi.RemoveStatus(self.UUID, v.StatusId)
 						end
 					end
 				else
 					for i,v in pairs(character:GetStatuses()) do
-						RemoveStatus(self.UUID, v)
+						Osi.RemoveStatus(self.UUID, v)
 					end
 				end
 			end
@@ -206,12 +206,12 @@ function CharacterData:RemoveStatus(status, ignorePermanent)
 				if character then
 					for i,v in pairs(character:GetStatusObjects()) do
 						if v.StatusId == status and v.CurrentLifeTime ~= -1 then
-							RemoveStatus(self.UUID, v.StatusId)
+							Osi.RemoveStatus(self.UUID, v.StatusId)
 						end
 					end
 				end
 			else
-				RemoveStatus(self.UUID, status)
+				Osi.RemoveStatus(self.UUID, status)
 			end
 		end
 	end
@@ -241,10 +241,10 @@ function CharacterData:EquipTemplate(template, all)
 	if character then
 		local foundItems = {}
 		for item in GameHelpers.Character.GetEquipment(character) do
-			if GameHelpers.GetTemplate(item) == template and ItemIsEquipable(item.MyGuid) == 1 then
-				SetOnStage(item.MyGuid, 1)
+			if GameHelpers.GetTemplate(item) == template and Osi.ItemIsEquipable(item.MyGuid) == 1 then
+				Osi.SetOnStage(item.MyGuid, 1)
 				--TODO Swap with a way to get the slot name for the item, like Weapon/Shield
-				NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.StatsFromName.StatsEntry.Slot, 0, 0, 1, 1)
+				Osi.NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.StatsFromName.StatsEntry.Slot, 0, 0, 1, 1)
 				--CharacterEquipItem(self.UUID, v)
 				if all ~= true then
 					return item
@@ -259,10 +259,10 @@ function CharacterData:EquipTemplate(template, all)
 		end
 		local item = GameHelpers.Item.CreateItemByTemplate(template)
 		if item then
-			ItemToInventory(item.MyGuid, self.UUID, 1, 0, 0)
-			if ItemIsEquipable(item.MyGuid) == 1 then
-				SetOnStage(item.MyGuid, 1)
-				NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.StatsFromName.StatsEntry.Slot, 0, 0, 1, 1)
+			Osi.ItemToInventory(item.MyGuid, self.UUID, 1, 0, 0)
+			if Osi.ItemIsEquipable(item.MyGuid) == 1 then
+				Osi.SetOnStage(item.MyGuid, 1)
+				Osi.NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.StatsFromName.StatsEntry.Slot, 0, 0, 1, 1)
 			end
 			return item
 		end
@@ -274,12 +274,12 @@ end
 function CharacterData:FullRestore(resurrect)
 	if self:Exists() then
 		if resurrect and self:IsDead(false) then
-			CharacterResurrect(self.UUID)
+			Osi.CharacterResurrect(self.UUID)
 		end
-		CharacterSetHitpointsPercentage(self.UUID, 100.0)
-		CharacterSetArmorPercentage(self.UUID, 100.0)
-		CharacterSetMagicArmorPercentage(self.UUID, 100.0)
-		ApplyStatus(self.UUID, "LEADERLIB_RECALC", 0.0, 1, self.UUID)
+		Osi.CharacterSetHitpointsPercentage(self.UUID, 100.0)
+		Osi.CharacterSetArmorPercentage(self.UUID, 100.0)
+		Osi.CharacterSetMagicArmorPercentage(self.UUID, 100.0)
+		GameHelpers.Status.Apply(self.UUID, "LEADERLIB_RECALC", 0.0, true, self.UUID)
 		Timer.StartOneshot(nil, 500, function(e)
 			local character = self:GetCharacter()
 			if character then

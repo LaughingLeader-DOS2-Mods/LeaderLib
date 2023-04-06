@@ -373,8 +373,8 @@ local Patches = {
 					else
 						fprint(LOGLEVEL.ERROR, "[WeaponExpansion] Found no linked UUID for unique(%s)[%s]\n", id, uuid, Ext.DumpExport(Mods.WeaponExpansion.PersistentVars.LinkedUniques))
 					end
-					local nextItem = ObjectExists(nextGUID) == 1 and GameHelpers.GetItem(nextGUID) or nil
-					local equippedItem = ObjectExists(equippedGUID) == 1 and GameHelpers.GetItem(equippedGUID) or nil
+					local nextItem = Osi.ObjectExists(nextGUID) == 1 and GameHelpers.GetItem(nextGUID) or nil
+					local equippedItem = Osi.ObjectExists(equippedGUID) == 1 and GameHelpers.GetItem(equippedGUID) or nil
 					if nextItem and equippedItem then
 						local isTwoHanded = false
 						local locked = equippedItem.UnEquipLocked
@@ -383,32 +383,32 @@ local Patches = {
 						end
 						local slot = GameHelpers.Item.GetEquippedSlot(char,equippedItem) or GameHelpers.Item.GetEquippedSlot(char,nextItem) or "Weapon"
 				
-						ItemLockUnEquip(equippedItem.MyGuid, 0)
-						ItemLockUnEquip(nextItem.MyGuid, 0)
+						Osi.ItemLockUnEquip(equippedItem.MyGuid, 0)
+						Osi.ItemLockUnEquip(nextItem.MyGuid, 0)
 						--CharacterUnequipItem(char, equipped)
 				
 						if not isTwoHanded then
-							local currentEquipped = StringHelpers.GetUUID(CharacterGetEquippedItem(char, slot))
+							local currentEquipped = StringHelpers.GetUUID(Osi.CharacterGetEquippedItem(char, slot))
 							if not StringHelpers.IsNullOrEmpty(currentEquipped) and currentEquipped ~= equippedGUID then
-								ItemLockUnEquip(currentEquipped, 0)
-								CharacterUnequipItem(char, currentEquipped)
+								Osi.ItemLockUnEquip(currentEquipped, 0)
+								Osi.CharacterUnequipItem(char, currentEquipped)
 							end
-							NRD_CharacterEquipItem(char, nextItem.MyGuid, slot, 0, 0, 1, 1)
+							Osi.NRD_CharacterEquipItem(char, nextItem.MyGuid, slot, 0, 0, 1, 1)
 						else
 							local mainhand,offhand = GameHelpers.Character.GetEquippedWeapons(char)
 							if mainhand and mainhand.MyGuid ~= equippedItem.MyGuid then
-								ItemLockUnEquip(mainhand.MyGuid, 0)
-								CharacterUnequipItem(char, mainhand.MyGuid)
+								Osi.ItemLockUnEquip(mainhand.MyGuid, 0)
+								Osi.CharacterUnequipItem(char, mainhand.MyGuid)
 							end
 							if offhand and offhand.MyGuid ~= equippedItem.MyGuid then
-								ItemLockUnEquip(offhand.MyGuid, 0)
-								CharacterUnequipItem(char, offhand.MyGuid)
+								Osi.ItemLockUnEquip(offhand.MyGuid, 0)
+								Osi.CharacterUnequipItem(char, offhand.MyGuid)
 							end
-							NRD_CharacterEquipItem(char, nextItem.MyGuid, "Weapon", 0, 0, 1, 1)
+							Osi.NRD_CharacterEquipItem(char, nextItem.MyGuid, "Weapon", 0, 0, 1, 1)
 						end
 				
 						if locked then
-							ItemLockUnEquip(nextItem.MyGuid, 1)
+							Osi.ItemLockUnEquip(nextItem.MyGuid, 1)
 						end
 				
 						Osi.LeaderLib_Timers_StartObjectObjectTimer(equippedItem.MyGuid, _NPC.UniqueHoldingChest, 50, "Timers_LLWEAPONEX_MoveUniqueToUniqueHolder", "LeaderLib_Commands_ItemToInventory")
@@ -460,7 +460,7 @@ local Patches = {
 			
 				local function IsUnarmedHit(handle)
 					for prop,val in pairs(UnarmedHitMatchProperties) do
-						if NRD_HitGetInt(handle, prop) ~= val then
+						if Osi.NRD_HitGetInt(handle, prop) ~= val then
 							return false
 						end
 					end
@@ -473,7 +473,7 @@ local Patches = {
 					if damage > 0 and IsUnarmedHit(handle) then
 						local character = GameHelpers.GetCharacter(attacker)
 						local isLizard = character:HasTag("LIZARD")
-						local isCombinedHit = isLizard and NRD_HitGetInt(handle, "ProcWindWalker") == 0
+						local isCombinedHit = isLizard and Osi.NRD_HitGetInt(handle, "ProcWindWalker") == 0
 						local weapon,unarmedMasteryBoost,unarmedMasteryRank,highestAttribute,hasUnarmedWeapon = Mods.WeaponExpansion.UnarmedHelpers.GetUnarmedWeapon(character.Stats, true)
 				
 						if isCombinedHit then
@@ -492,12 +492,12 @@ local Patches = {
 							local offhandDamage = Mods.WeaponExpansion.UnarmedHelpers.CalculateWeaponDamage(character.Stats, weapon, false, highestAttribute, isLizard, true)
 							damageList:Merge(offhandDamage)
 						end
-						NRD_HitClearAllDamage(handle)
+						Osi.NRD_HitClearAllDamage(handle)
 						--NRD_HitStatusClearAllDamage(target, handle)
 						local damages = damageList:ToTable()
 						local totalDamage = 0
 						for i,damage in pairs(damages) do
-							NRD_HitAddDamage(handle, tostring(damage.DamageType), damage.Amount)
+							Osi.NRD_HitAddDamage(handle, tostring(damage.DamageType), damage.Amount)
 							totalDamage = totalDamage + damage.Amount
 						end
 						if lizardHits[attacker] == 2 then
@@ -507,45 +507,45 @@ local Patches = {
 				end
 
 				--Fix this flag not being cleared
-				ObjectClearFlag("680d2702-721c-412d-b083-4f5e816b945a", "LLWEAPONEX_VendingMachine_OrderMenuDisabled", 0)
+				Osi.ObjectClearFlag("680d2702-721c-412d-b083-4f5e816b945a", "LLWEAPONEX_VendingMachine_OrderMenuDisabled", 0)
 
 				--FIX Vending Machine ordering bug, from the backpack inventory being accessed too soon. Also identifies items it generates.
 				Mods.WeaponExpansion.GenerateTradeTreasure = function(uuid, treasure)
 					if uuid == "680d2702-721c-412d-b083-4f5e816b945a" then
-						ObjectClearFlag(uuid, "LLWEAPONEX_VendingMachine_OrderMenuDisabled", 0)
+						Osi.ObjectClearFlag(uuid, "LLWEAPONEX_VendingMachine_OrderMenuDisabled", 0)
 						--This event was mistakenly not fired like it was previously, causing the order flag to not clear
-						SetStoryEvent(uuid, "LLWEAPONEX_VendingMachine_OnOrderGenerated")
+						Osi.SetStoryEvent(uuid, "LLWEAPONEX_VendingMachine_OnOrderGenerated")
 					end
 					local object = GameHelpers.TryGetObject(uuid)
-					if ObjectIsCharacter(uuid) == 1 then
-						local x,y,z = GetPosition(uuid)
+					if Osi.ObjectIsCharacter(uuid) == 1 then
+						local x,y,z = Osi.GetPosition(uuid)
 						--LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830
-						local backpackGUID = CreateItemTemplateAtPosition("98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
+						local backpackGUID = Osi.CreateItemTemplateAtPosition("98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
 						Timer.StartOneshot("", 50, function ()
 							fprint(LOGLEVEL.TRACE, "[WeaponExpansion:GenerateTradeTreasure] Generating treasure table (%s) for (%s)", treasure, object.DisplayName, uuid)
 							local backpack = GameHelpers.GetItem(backpackGUID)
 							if backpack then
-								GenerateTreasure(backpackGUID, treasure, object.Stats.Level, uuid)
-								ContainerIdentifyAll(backpackGUID)
+								Osi.GenerateTreasure(backpackGUID, treasure, object.Stats.Level, uuid)
+								Osi.ContainerIdentifyAll(backpackGUID)
 								for i,v in pairs(backpack:GetInventoryItems()) do
 									local tItem = GameHelpers.GetItem(v)
 									if tItem ~= nil then
 										tItem.UnsoldGenerated = true -- Trade treasure flag
-										ItemToInventory(v, uuid, tItem.Amount, 0, 0)
+										Osi.ItemToInventory(v, uuid, tItem.Amount, 0, 0)
 									else
-										ItemToInventory(v, uuid, 1, 0, 0)
+										Osi.ItemToInventory(v, uuid, 1, 0, 0)
 									end
-									ItemSetOwner(v, uuid)
-									ItemSetOriginalOwner(v, uuid)
+									Osi.ItemSetOwner(v, uuid)
+									Osi.ItemSetOriginalOwner(v, uuid)
 								end
-								ItemRemove(backpackGUID)
+								Osi.ItemRemove(backpackGUID)
 							else
 								Ext.Utils.PrintError("[WeaponExpansion:GenerateTradeTreasure] Failed to create backpack from root template 'LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830'")
-								CharacterGiveReward(uuid, treasure, 1)
+								Osi.CharacterGiveReward(uuid, treasure, 1)
 							end
 						end)
-					elseif ObjectIsItem(uuid) == 1 then
-						GenerateTreasure(uuid, treasure, not GameHelpers.Item.IsObject(object) and object.Stats.Level or 1, uuid)
+					elseif Osi.ObjectIsItem(uuid) == 1 then
+						Osi.GenerateTreasure(uuid, treasure, not GameHelpers.Item.IsObject(object) and object.Stats.Level or 1, uuid)
 					end
 				end
 
@@ -567,19 +567,19 @@ local Patches = {
 							end
 						end
 					end
-					if (v.Owner == nil or v.Owner == Mods.WeaponExpansion.NPC.UniqueHoldingChest or GetRegion(v.UUID) == "")
+					if (v.Owner == nil or v.Owner == Mods.WeaponExpansion.NPC.UniqueHoldingChest or Osi.GetRegion(v.UUID) == "")
 					and not StringHelpers.IsNullOrEmpty(v.DefaultOwner) 
 					and v.DefaultOwner ~= Mods.WeaponExpansion.NPC.UniqueHoldingChest
-					and ObjectGetFlag(v.UUID, "LLWEAPONEX_UniqueData_Initialized") == 1 then
+					and Osi.ObjectGetFlag(v.UUID, "LLWEAPONEX_UniqueData_Initialized") == 1 then
 						local item = GameHelpers.GetItem(v.UUID)
 						if item then
 							local owner = GameHelpers.Item.GetOwner(v.UUID)
 							if owner == nil or owner.MyGuid == Mods.WeaponExpansion.NPC.UniqueHoldingChest then
-								if ObjectExists(v.DefaultOwner) == 1 then
-									ItemToInventory(v.UUID, v.DefaultOwner, 1, 0, 1)
+								if Osi.ObjectExists(v.DefaultOwner) == 1 then
+									Osi.ItemToInventory(v.UUID, v.DefaultOwner, 1, 0, 1)
 									fprint(LOGLEVEL.WARNING, "[LeaderLib:WeaponEx] Moved unique (%s) to '%s' since it was incorrectly without an owner.", k, GameHelpers.GetDisplayName(v.DefaultOwner))
 								else
-									ItemToInventory(v.UUID, Mods.WeaponExpansion.NPC.VendingMachine, 1, 0, 1)
+									Osi.ItemToInventory(v.UUID, Mods.WeaponExpansion.NPC.VendingMachine, 1, 0, 1)
 									fprint(LOGLEVEL.WARNING, "[LeaderLib:WeaponEx] Moved unique (%s) to the 'Strange Machine' since it was incorrectly without an owner.", k)
 								end
 							end
@@ -672,31 +672,31 @@ local Patches = {
 				--Fix Custom alignment entities may fail to load when the game is loaded multiple times it seems
 				--Harken = "e446752a-13cc-4a88-a32e-5df244c90d8b",
 				local uuid = "e446752a-13cc-4a88-a32e-5df244c90d8b"
-				if ObjectExists(uuid) == 1 then
-					local faction = GetFaction(uuid)
+				if Osi.ObjectExists(uuid) == 1 then
+					local faction = Osi.GetFaction(uuid)
 					if StringHelpers.IsNullOrWhitespace(faction) then
 						if GameHelpers.Character.IsPlayer(uuid) then
-							SetFaction(uuid, "Hero LLWEAPONEX_Harken")
-							if StringHelpers.IsNullOrWhitespace(GetFaction(uuid)) then
-								SetFaction(uuid, "Hero Henchman Fighter")
+							Osi.SetFaction(uuid, "Hero LLWEAPONEX_Harken")
+							if StringHelpers.IsNullOrWhitespace(Osi.GetFaction(uuid)) then
+								Osi.SetFaction(uuid, "Hero Henchman Fighter")
 							end
 						else
-							SetFaction(uuid, "Good NPC")
+							Osi.SetFaction(uuid, "Good NPC")
 						end
 					end
 				end
 				--Korvash = "3f20ae14-5339-4913-98f1-24476861ebd6"
 				uuid = "3f20ae14-5339-4913-98f1-24476861ebd6"
-				if ObjectExists(uuid) == 1 then
-					local faction = GetFaction(uuid)
+				if Osi.ObjectExists(uuid) == 1 then
+					local faction = Osi.GetFaction(uuid)
 					if StringHelpers.IsNullOrWhitespace(faction) then
 						if GameHelpers.Character.IsPlayer(uuid) then
-							SetFaction(uuid, "Hero LLWEAPONEX_Korvash")
-							if StringHelpers.IsNullOrWhitespace(GetFaction(uuid)) then
-								SetFaction(uuid, "Hero Henchman Inquisitor")
+							Osi.SetFaction(uuid, "Hero LLWEAPONEX_Korvash")
+							if StringHelpers.IsNullOrWhitespace(Osi.GetFaction(uuid)) then
+								Osi.SetFaction(uuid, "Hero Henchman Inquisitor")
 							end
 						else
-							SetFaction(uuid, "Good NPC")
+							Osi.SetFaction(uuid, "Good NPC")
 						end
 					end
 				end
@@ -718,13 +718,13 @@ local Patches = {
 					if event == "AlexanderDefeated" then
 						--Ext.Print(string.format("[FJ_AlexanderDefeated] Owner(%s) Alex(%s) Pos(%s)", Uniques.DivineBanner.Owner, NPC.BishopAlexander, Common.Dump(Ext.GetCharacter(NPC.BishopAlexander).WorldPos)))
 						if Mods.WeaponExpansion.Uniques.DivineBanner.Owner == Mods.WeaponExpansion.NPC.BishopAlexander then
-							local x,y,z = GetPosition(Mods.WeaponExpansion.NPC.BishopAlexander)
+							local x,y,z = Osi.GetPosition(Mods.WeaponExpansion.NPC.BishopAlexander)
 							if x == nil then
-								x,y,z = GetPosition(Mods.WeaponExpansion.NPC.Dallis)
+								x,y,z = Osi.GetPosition(Mods.WeaponExpansion.NPC.Dallis)
 							end
 							Mods.WeaponExpansion.Uniques.DivineBanner:ReleaseFromOwner(true)
-							ItemScatterAt(Mods.WeaponExpansion.Uniques.DivineBanner.UUID, x, y, z)
-							PlayEffectAtPosition("RS3_FX_Skills_Divine_Barrage_Impact_01", x, y, z)
+							Osi.ItemScatterAt(Mods.WeaponExpansion.Uniques.DivineBanner.UUID, x, y, z)
+							Osi.PlayEffectAtPosition("RS3_FX_Skills_Divine_Barrage_Impact_01", x, y, z)
 						end
 					elseif event == "SlaneReward" then
 						local frostDyne = Mods.WeaponExpansion.Uniques.Frostdyne
@@ -732,16 +732,16 @@ local Patches = {
 						local chest = Mods.WeaponExpansion.NPC.UniqueHoldingChest
 						if StringHelpers.IsNullOrEmpty(frostDyne.Owner) or frostDyne.Owner == slane or frostDyne.Owner == chest then
 							frostDyne:ReleaseFromOwner(true)
-							if CharacterIsDead(slane) == 1 then
-								ItemToInventory(frostDyne.UUID, slane, 1, 0, 1)
+							if Osi.CharacterIsDead(slane) == 1 then
+								Osi.ItemToInventory(frostDyne.UUID, slane, 1, 0, 1)
 							else
-								local x,y,z = GetPosition(slane)
+								local x,y,z = Osi.GetPosition(slane)
 								if not x then
 									x = 583.75
 									z = 167.02076721191406
 								end
 								y = GameHelpers.Grid.GetY(x,z) + 0.15
-								ItemScatterAt(frostDyne.UUID, x, y, z)
+								Osi.ItemScatterAt(frostDyne.UUID, x, y, z)
 							end
 						end
 					end

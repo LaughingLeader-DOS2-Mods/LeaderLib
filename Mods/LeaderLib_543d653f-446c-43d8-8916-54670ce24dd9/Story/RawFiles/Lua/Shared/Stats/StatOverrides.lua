@@ -398,9 +398,9 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 	end
 	if gameSettings.APSettings.NPC.Enabled then
 		-- local base = {
-		-- 	Max = Ext.StatGetAttribute("_Base", "APMaximum"),
-		-- 	Start = Ext.StatGetAttribute("_Base", "APStart"),
-		-- 	Recovery = Ext.StatGetAttribute("_Base", "APRecovery"),
+		-- 	Max = GameHelpers.Stats.GetAttribute("_Base", "APMaximum"),
+		-- 	Start = GameHelpers.Stats.GetAttribute("_Base", "APStart"),
+		-- 	Recovery = GameHelpers.Stats.GetAttribute("_Base", "APRecovery"),
 		-- }
 		local settings = gameSettings.APSettings.NPC
 		for _,id in pairs(Ext.Stats.GetStats("Character")) do
@@ -408,8 +408,8 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 			local skip = skipCharacterStats[id] == true or playerStats[id] ~= nil
 			if not skip then
 				local max = stat.APMaximum
-				--local start = Ext.StatGetAttribute(id, "APStart")
-				--local recovery = Ext.StatGetAttribute(id, "APRecovery")
+				--local start = GameHelpers.Stats.GetAttribute(id, "APStart")
+				--local recovery = GameHelpers.Stats.GetAttribute(id, "APRecovery")
 				--This stat is overriding a base AP value, so skip since it could be a totem or boss etc
 				--if max ~= base.Max or start ~= base.Start or recovery ~= base.Recovery then
 				--Skip totems etc

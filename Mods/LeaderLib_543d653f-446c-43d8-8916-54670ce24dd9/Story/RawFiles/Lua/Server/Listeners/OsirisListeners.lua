@@ -1,7 +1,7 @@
 local function SendMissingExtenderMessage(uuid)
 	local character = GameHelpers.GetCharacter(uuid)
-	if character and character.UserID ~= character.ReservedUserID and character.IsPlayer and CharacterIsControlled(uuid) == 1 then
-		return Ext.PlayerHasExtender(uuid)
+	if character and character.UserID ~= character.ReservedUserID and character.IsPlayer and Osi.CharacterIsControlled(uuid) == 1 then
+		return Ext.Net.PlayerHasExtender(uuid)
 	end
 	return false
 end
@@ -9,19 +9,19 @@ end
 Ext.Osiris.RegisterListener("UserConnected", 3, "after", function(id, username, profileId)
 	Vars.Users[profileId] = {ID = id, Name=username}
 	if Ext.GetGameState() == "Running" then
-		if GameHelpers.IsLevelType(LEVELTYPE.GAME) and GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
+		if GameHelpers.IsLevelType(LEVELTYPE.GAME) and Osi.GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
 			Timer.Start("LeaderLib_UnlockCharacterInventories", 1500)
 		end
-		local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
-		local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
+		local host = StringHelpers.GetUUID(Osi.CharacterGetHostCharacter())
+		local uuid = StringHelpers.GetUUID(Osi.GetCurrentCharacter(id))
 		if not StringHelpers.IsNullOrEmpty(uuid)
 		and not StringHelpers.IsNullOrEmpty(host)
 		and host ~= uuid then
 			SettingsManager.SyncAllSettings(id)
 			if SendMissingExtenderMessage(uuid) then
-				OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
+				Osi.OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
 				local text = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
-				OpenMessageBox(host, text)
+				Osi.OpenMessageBox(host, text)
 				--local hostText = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
 				--GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
 			end
@@ -55,11 +55,11 @@ end)
 local function _SanitizeSummonsData()
 	local summonData = {}
 	for ownerGUID,tbl in pairs(_PV.Summons) do
-		if ObjectExists(ownerGUID) == 1 then
+		if Osi.ObjectExists(ownerGUID) == 1 then
 			local totalSummons = 0
 			local summons = {}
 			for _,guid in pairs(tbl) do
-				if ObjectExists(guid) == 1 then
+				if Osi.ObjectExists(guid) == 1 then
 					totalSummons = totalSummons + 1
 					summons[totalSummons] = guid
 				end
@@ -147,10 +147,10 @@ RegisterProtectedOsirisListener("CharacterDied", 1, "before", function (characte
 end)
 
 local function OnObjectEvent(eventType, event, obj1, obj2)
-	if obj1 and ObjectExists(obj1) == 1 then
+	if obj1 and Osi.ObjectExists(obj1) == 1 then
 		obj1 = GameHelpers.TryGetObject(obj1) or obj1
 	end
-	if obj2 and ObjectExists(obj2) == 1 then
+	if obj2 and Osi.ObjectExists(obj2) == 1 then
 		obj2 = GameHelpers.TryGetObject(obj2) or obj2
 	end
 	Events.ObjectEvent:Invoke({

@@ -97,18 +97,18 @@ end
 
 if Ext.IsServer() then
 	Ext.Osiris.RegisterListener("GameStarted", 2, "after", function(region, isEditorMode)
-		if Features.WingsWorkaround == true and IsGameLevel(region) == 1 and GlobalGetFlag("LeaderLib_SetupWingsWorkaroundForRegion") == 0 then
+		if Features.WingsWorkaround == true and Osi.IsGameLevel(region) == 1 and Osi.GlobalGetFlag("LeaderLib_SetupWingsWorkaroundForRegion") == 0 then
 			for i,uuid in pairs(Ext.Entity.GetAllCharacterGuids(region)) do
-				if HasActiveStatus(uuid, "WINGS") == 1 then
-					local turns = GetStatusTurns(uuid, "WINGS")
-					ApplyStatus(uuid, "LEADERLIB_WINGS", math.max(-1.0, turns * 6.0), 0, uuid)
+				if Osi.HasActiveStatus(uuid, "WINGS") == 1 then
+					local turns = Osi.GetStatusTurns(uuid, "WINGS") or 0
+					Osi.ApplyStatus(uuid, "LEADERLIB_WINGS", math.max(-1.0, turns * 6.0), 0, uuid)
 				end
 			end
-			GlobalSetFlag("LeaderLib_SetupWingsWorkaroundForRegion")
+			Osi.GlobalSetFlag("LeaderLib_SetupWingsWorkaroundForRegion")
 		end
 	end)
 	Ext.Osiris.RegisterListener("RegionEnded", 1, "after", function(region)
-		GlobalClearFlag("LeaderLib_SetupWingsWorkaroundForRegion")
+		Osi.GlobalClearFlag("LeaderLib_SetupWingsWorkaroundForRegion")
 	end)
 
 	Events.Loaded:Subscribe(function (e)

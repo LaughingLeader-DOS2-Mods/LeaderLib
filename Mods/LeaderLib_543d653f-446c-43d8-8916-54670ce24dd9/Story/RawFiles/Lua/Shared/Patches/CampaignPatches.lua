@@ -21,7 +21,7 @@ if not _ISCLIENT then
 				local isInTrigger = false
 				for player in GameHelpers.Character.GetPlayers() do
 					--TRIGGERGUID_S_FTJ_SW_SUB_HallOfEchoes_3451f5d3-5b43-49d7-876b-82f5b7c9b65d
-					if ObjectIsInTrigger(player.MyGuid, "3451f5d3-5b43-49d7-876b-82f5b7c9b65d") == 1 then
+					if Osi.ObjectIsInTrigger(player.MyGuid, "3451f5d3-5b43-49d7-876b-82f5b7c9b65d") == 1 then
 						isInTrigger = true
 						break
 					end
@@ -30,18 +30,18 @@ if not _ISCLIENT then
 					local fixed = false
 					for i,entry in pairs(Osi.DB_FTJ_SW_HoECombatants:Get(nil)) do
 						local uuid = entry[1]
-						if ObjectExists(uuid) == 1 then
+						if Osi.ObjectExists(uuid) == 1 then
 							local character = Ext.Entity.GetCharacter(uuid)
 							if character then
-								if CharacterCanFight(uuid) == 1 then
-									SetCanFight(uuid, 0)
-									SetCanJoinCombat(uuid, 0)
+								if Osi.CharacterCanFight(uuid) == 1 then
+									Osi.SetCanFight(uuid, 0)
+									Osi.SetCanJoinCombat(uuid, 0)
 									fixed = true
 								end
 								if character.ScriptForceUpdateCount > 0 then
 									fixed = true
 									character.ScriptForceUpdateCount = 0
-									CharacterSetForceUpdate(uuid, 0)
+									Osi.CharacterSetForceUpdate(uuid, 0)
 								end
 							end
 						end
@@ -57,9 +57,9 @@ if not _ISCLIENT then
 					Fix for this corpse in an ArmorSets area in Fort Joy getting a "WARM" status influence, 
 					due to it "entering" the trigger before it died.
 					Trigger:"ccac77ee-d0b8-4d1f-b25c-dc53632a9a33"]]
-				if ObjectExists("702becec-f2c1-44b2-b7ab-c247f8da97ac") == 1 then
-					SetVarFixedString("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_RemoveStatusInfluence_ID", "WARM")
-					SetStoryEvent("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_Commands_RemoveStatusInfluence")
+				if Osi.ObjectExists("702becec-f2c1-44b2-b7ab-c247f8da97ac") == 1 then
+					Osi.SetVarFixedString("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_RemoveStatusInfluence_ID", "WARM")
+					Osi.SetStoryEvent("702becec-f2c1-44b2-b7ab-c247f8da97ac", "LeaderLib_Commands_RemoveStatusInfluence")
 					_ranPatch.FortJoyWarmSpamFix = true
 				end
 			end
@@ -76,10 +76,10 @@ if not _ISCLIENT then
 					local npcGUID = StringHelpers.GetUUID(npc)
 					--S_RC_DW_DrownedSourcerer_Corpse_cd81fcc1-7306-4bd0-bd68-bd7df15db801
 					if npcGUID == "cd81fcc1-7306-4bd0-bd68-bd7df15db801" 
-					and HasActiveStatus(player, "SPIRIT_VISION") == 1
+					and Osi.HasActiveStatus(player, "SPIRIT_VISION") == 1
 					and not _isSpiritVisionVoiceBarkDone() then
 						Osi.DB_OnlyOnce("RC_DW_VB_DrownedSourcerer_SpiritVision")
-						StartVoiceBark("RC_DW_VB_DrownedSourcerer_SpiritVision", npcGUID)
+						Osi.StartVoiceBark("RC_DW_VB_DrownedSourcerer_SpiritVision", npcGUID)
 					end
 				end)
 				_ranPatch.ReapersCoastSpiritVisionVoiceBark = true

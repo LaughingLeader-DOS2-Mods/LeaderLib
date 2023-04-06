@@ -13,13 +13,13 @@ local function CreatePlayerData(uuid, player)
 	}
 	statChanges[uuid] = playerData
 	for _,stat in Data.Attribute:Get() do
-		playerData.Attributes[stat] = CharacterGetBaseAttribute(uuid, stat) or 0
+		playerData.Attributes[stat] = Osi.CharacterGetBaseAttribute(uuid, stat) or 0
 	end
 	for _,stat in Data.Ability:Get() do
-		playerData.Abilities[stat] = CharacterGetBaseAbility(uuid, stat) or 0
+		playerData.Abilities[stat] = Osi.CharacterGetBaseAbility(uuid, stat) or 0
 	end
 	for _,stat in Data.Talents:Get() do
-		playerData.Talents[stat] = CharacterHasTalent(uuid, stat) == 1
+		playerData.Talents[stat] = Osi.CharacterHasTalent(uuid, stat) == 1
 	end
 	return playerData
 end
@@ -52,7 +52,7 @@ end
 local function DetectStatChanges(uuid, playerData, stat, statType)
 	if statType == "Attribute" then
 		local lastVal = playerData.Attributes[stat] or 0
-		local baseVal = CharacterGetBaseAttribute(uuid, stat) or 0
+		local baseVal = Osi.CharacterGetBaseAttribute(uuid, stat) or 0
 		if lastVal ~= baseVal then
 			Osi.LeaderLib_CharacterSheet_AttributeChanged(uuid, stat, lastVal, baseVal)
 			FireListenerEvents(uuid, stat, lastVal, baseVal, statType)
@@ -60,7 +60,7 @@ local function DetectStatChanges(uuid, playerData, stat, statType)
 		end
 	elseif statType == "Ability" then
 		local lastVal = playerData.Abilities[stat] or 0
-		local baseVal = CharacterGetBaseAbility(uuid, stat) or 0
+		local baseVal = Osi.CharacterGetBaseAbility(uuid, stat) or 0
 		if lastVal ~= baseVal then
 			Osi.LeaderLib_CharacterSheet_AbilityChanged(uuid, stat, lastVal, baseVal)
 			FireListenerEvents(uuid, stat, lastVal, baseVal, statType)
@@ -68,7 +68,7 @@ local function DetectStatChanges(uuid, playerData, stat, statType)
 		end
 	elseif statType == "Talent" then
 		local lastVal = playerData.Talents[stat] or false
-		local baseVal = CharacterHasTalent(uuid, stat) == 1
+		local baseVal = Osi.CharacterHasTalent(uuid, stat) == 1
 		if lastVal ~= baseVal then
 			Osi.LeaderLib_CharacterSheet_AbilityChanged(uuid, stat, lastVal, baseVal)
 			FireListenerEvents(uuid, stat, lastVal, baseVal, statType)
@@ -118,7 +118,7 @@ end)
 ---@param old integer
 ---@param new integer
 local function OnCharacterBaseAbilityChanged(uuid, ability, old, new)
-	if CharacterIsPlayer(uuid) == 1 then
+	if Osi.CharacterIsPlayer(uuid) == 1 then
 		uuid = StringHelpers.GetUUID(uuid)
 		FireListenerEvents(uuid, ability, old, new)
 	end
@@ -126,13 +126,13 @@ end
 
 RegisterProtectedOsirisListener("CharacterBaseAbilityChanged", 4, "after", OnCharacterBaseAbilityChanged)
 RegisterProtectedOsirisListener("CharacterJoinedParty", 1, "after", function(partyMember)
-	if CharacterIsPlayer(partyMember) == 1 and ObjectIsGlobal(partyMember) == 1 then
+	if Osi.CharacterIsPlayer(partyMember) == 1 and Osi.ObjectIsGlobal(partyMember) == 1 then
 		CreatePlayerData(StringHelpers.GetUUID(partyMember))
 	end
 end)
 
 RegisterProtectedOsirisListener("CharacterLeftParty", 1, "after", function(partyMember)
-	if CharacterIsPlayer(partyMember) == 0 then
+	if Osi.CharacterIsPlayer(partyMember) == 0 then
 		statChanges[StringHelpers.GetUUID(partyMember)] = nil
 	end
 end)

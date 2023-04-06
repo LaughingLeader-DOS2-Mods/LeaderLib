@@ -748,4 +748,38 @@ if _ISCLIENT then
 			end
 		end
 	end)
+
+	---@class LeaderLib_CC_OnServerPresetChanged
+	---@field NetID NetId
+	---@field Profile string
+
+	GameHelpers.Net.Subscribe("LeaderLib_CC_OnServerPresetChanged", function (e, data)
+		if data.NetID then
+			local character = GameHelpers.GetCharacter(data.NetID, "EclCharacter")
+			if character then
+				local currentCharacterData = GetClientCharacter(data.Profile, data.NetID)
+				Events.ClientCharacterChanged:Invoke({
+					Character = character,
+					CharacterGUID = currentCharacterData.UUID,
+					CharacterData = currentCharacterData,
+					IsHost = currentCharacterData.IsHost,
+					NetID = data.NetID,
+					Profile = currentCharacterData.Profile,
+					UserID = currentCharacterData.ID
+				})
+			end
+		end
+	end)
+else
+	Ext.Osiris.RegisterListener("LeaderLib_CC_OnOriginChanged", 3, "after", function (charGUID, lastOrigin, origin)
+		if lastOrigin ~= origin then
+			local character = GameHelpers.GetCharacter(charGUID, "EsvCharacter")
+			if character then
+				GameHelpers.Net.PostToUser(charGUID, "LeaderLib_CC_OnServerPresetChanged", {
+					NetID = character.NetID,
+					Profile = Osi.GetUserProfileID(character.ReservedUserID)
+				})
+			end
+		end
+	end)
 end

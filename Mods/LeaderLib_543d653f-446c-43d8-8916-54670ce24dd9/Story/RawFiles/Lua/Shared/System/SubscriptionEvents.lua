@@ -697,7 +697,7 @@ if not _ISCLIENT then
 
 	---@class OnStatusGetEnterChanceEventArgs:OnStatusBaseEventArgs
 	---@field Status EsvStatus
-	---@field EnterChance int32 100 if IsEnterCheck is false.
+	---@field EnterChance int32|nil Nil if IsEnterCheck is false.
 	---@field IsEnterCheck boolean
 	---@field Event EsvLuaStatusGetEnterChanceEvent
 	

@@ -8,7 +8,7 @@
 		{
 			"Version": "1.7.31.3",
 			"Changes": [
-				"Quick fix for the enter chance of statuses defaulting to 100, allowing it to bypass armor/etc.",
+				"Quick fix for the enter chance of statuses defaulting to 100, allowing it to bypass armor/etc."
 			]
 		},
 		{

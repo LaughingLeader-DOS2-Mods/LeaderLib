@@ -80,6 +80,7 @@ Ext.Events.StatusGetEnterChance:Subscribe(function(e)
 			HealEffect = healEffect,
 			Amount=e.Status.HealAmount,
 			Skill=skill,
+			EnterEvent = e,
 		})
 	end
 end, {Priority=0})

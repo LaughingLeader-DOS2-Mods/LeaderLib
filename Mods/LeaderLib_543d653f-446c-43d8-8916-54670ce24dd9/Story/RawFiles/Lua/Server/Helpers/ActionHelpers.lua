@@ -118,8 +118,8 @@ local _DefaultSabotageOptions = {
 ---@param itemGUID Guid
 ---@param options LeaderLibSabotageOptions
 ---@return boolean canSabotage
----@return EsvItem item
----@return FixedString skill
+---@return EsvItem|nil item
+---@return FixedString|nil skill
 local function _CanSabotageItem(itemGUID, options)
 	local item = GameHelpers.GetItem(itemGUID, "EsvItem")
 	if item then

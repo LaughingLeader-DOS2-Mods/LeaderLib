@@ -326,6 +326,7 @@ function HitOverrides.GetCriticalHitMultiplier(weapon, character, criticalMultip
 
     if weapon.ItemType == "Weapon" then
         for i,stat in pairs(weapon.DynamicStats) do
+            ---@cast stat CDivinityStatsEquipmentAttributesWeapon
             criticalMultiplier = criticalMultiplier + stat.CriticalDamage
         end
   

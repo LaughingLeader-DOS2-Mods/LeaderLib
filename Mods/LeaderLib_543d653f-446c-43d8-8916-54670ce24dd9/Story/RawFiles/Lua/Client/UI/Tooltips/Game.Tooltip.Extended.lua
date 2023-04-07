@@ -2055,8 +2055,8 @@ _TT.Register = {
 		_ttHooks:RegisterListener(nil, nil, callback)
 	end,
 
-	---@param callback fun(character:EclCharacter, ability:StatsAbilityType|string, tooltip:TooltipData)
-	---@param ability StatsAbilityType|nil Optional ability to filter by.
+	---@param callback fun(character:EclCharacter, ability:AbilityType|string, tooltip:TooltipData)
+	---@param ability AbilityType|nil Optional ability to filter by.
 	Ability = function(callback, ability)
 		_ttHooks:RegisterListener("Ability", ability, callback)
 	end,
@@ -2103,8 +2103,8 @@ _TT.Register = {
 	end,
 
 	---Register a callback for stat tooltips in the character sheet, such as attributes and resistances.
-	---@param callback fun(character:EclCharacter, stat:StatsCharacterStatGetterType|string, tooltip:TooltipData)
-	---@param id StatsCharacterStatGetterType|string|nil Optional Stat ID to filter by, such as "Damage".
+	---@param callback fun(character:EclCharacter, stat:string, tooltip:TooltipData)
+	---@param id string|nil Optional Stat ID to filter by, such as "Damage".
 	Stat = function(callback, id)
 		_ttHooks:RegisterListener("Stat", id, callback)
 	end,
@@ -2128,8 +2128,8 @@ _TT.Register = {
 		_ttHooks:RegisterListener("Tag", tag, callback)
 	end,
 
-	---@param callback fun(character:EclCharacter, talent:StatsTalentType|string, tooltip:TooltipData)
-	---@param talentId StatsTalentType|nil Optional Talent ID to filter by.
+	---@param callback fun(character:EclCharacter, talent:TalentType|string, tooltip:TooltipData)
+	---@param talentId TalentType|string|nil Optional Talent ID to filter by.
 	Talent = function(callback, talentId)
 		_ttHooks:RegisterListener("Talent", talentId, callback)
 	end,

@@ -549,8 +549,8 @@ if not _ISCLIENT then
 	---@field ForceReduceDurability boolean
 	---@field Hit StatsHitDamageInfo	
 	---@field AlwaysBackstab boolean
-	---@field HighGround StatsHighGroundBonus
-	---@field CriticalRoll StatsCriticalRoll
+	---@field HighGround HighGroundBonus
+	---@field CriticalRoll CriticalRoll
 	
 	---Modify the result of HitOverrides.CanBackstab by setting e.CanBackstab and/or e.SkipPositionCheck  
 	---| Parameter | Description |

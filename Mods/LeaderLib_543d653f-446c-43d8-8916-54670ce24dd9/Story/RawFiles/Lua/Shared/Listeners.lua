@@ -70,18 +70,13 @@ end
 
 ---region Tick Listeners
 
-local _state = Ext.GetGameState()
+local _state = tostring(Ext.GetGameState())
 
 Ext.Events.GameStateChanged:Subscribe(function (e)
-	_state = e.ToState
+	_state = tostring(e.ToState)
 end)
 
 Ext.Require("Shared/System/SubscriptionEvents.lua")
-
----@class GameTime
----@field Time number
----@field DeltaTime number
----@field Ticks integer
 
 ---Wrapper around Ext.Events.Tick that skips execution if resetting, or if the game isn't running.
 ---@type fun(e:GameTime)[]

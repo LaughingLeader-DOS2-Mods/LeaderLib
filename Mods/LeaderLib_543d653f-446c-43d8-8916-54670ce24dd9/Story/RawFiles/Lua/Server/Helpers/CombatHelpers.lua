@@ -185,7 +185,7 @@ end
 ---Returns true if it's the object's active turn in combat.
 ---@param obj ObjectParam
 ---@return boolean isActiveTurn
----@return EocCombatComponent combatComponent
+---@return EocCombatComponent|nil combatComponent
 function GameHelpers.Combat.IsActiveTurn(obj)
 	local object = GameHelpers.TryGetObject(obj)
 	if object and not GameHelpers.ObjectIsDead(object) then

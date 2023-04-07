@@ -79,9 +79,8 @@ Ext.RegisterConsoleCommand("pos", function()
 end)
 
 Ext.RegisterConsoleCommand("pos2", function()
-	---@type StatCharacter
-	local character = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter()).Stats
-	fprint("Position:", Common.JsonStringify(character.Position))
+	local character = GameHelpers.Character.GetHost()
+	fprint("Position:", Common.JsonStringify(character.WorldPos))
 	fprint("Rotation:", Common.JsonStringify(character.Rotation))
 end)
 
@@ -122,8 +121,8 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelfParam
 			print("Stat:", characterStats.Name)
 			print("Faction:", character.RootTemplate.CombatTemplate.Alignment)
 			print("Archetype:", character.Archetype)
-			print("Pos:", table.unpack(characterStats.Position))
-			print("Rot:", table.unpack(characterStats.Rotation))
+			print("Pos:", table.unpack(character.WorldPos))
+			print("Rot:", table.unpack(character.Rotation))
 			print("CustomTradeTreasure:", Common.Dump(character.CustomTradeTreasure))
 			print("Gain:", GameHelpers.Stats.GetAttribute(character.Stats.Name, "Gain"))
 			print("===============")
@@ -432,7 +431,7 @@ Ext.RegisterConsoleCommand("addskill", function(command, skill)
 end)
 
 Ext.RegisterConsoleCommand("addskillset", function(command, name, addRequirements)
-	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
+	local host = GameHelpers.Character.GetHost()
 	local skillset = Ext.Stats.SkillSet.GetLegacy(name)
 	addRequirements = addRequirements == "true" or addRequirements == "1"
 	if skillset then
@@ -586,10 +585,10 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
 end)
 
 Ext.RegisterConsoleCommand("printitemboosts", function(cmd)
-	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
+	local host = GameHelpers.Character.GetHost()
 	local weapon = GameHelpers.GetItem(Osi.CharacterGetEquippedItem(host.MyGuid, "Weapon"))
 	fprint(LOGLEVEL.TRACE, weapon.MyGuid, weapon.StatsId)
-	fprint(LOGLEVEL.TRACE, weapon.Stats.Boosts)
+	fprint(LOGLEVEL.TRACE, weapon.Stats.StatsEntry.Boosts)
 	for i,v in pairs(weapon:GetGeneratedBoosts()) do
 		fprint(LOGLEVEL.TRACE, i,v)
 	end
@@ -714,7 +713,7 @@ Ext.RegisterConsoleCommand("clonedeltamodtest", function(command, amount)
 	properties.GenerationItemType = "Rare"
 	properties.HasModifiedSkills = true
 	properties.Skills = "Projectile_Fireball"
-	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
+	local host = GameHelpers.Character.GetHost()
 	local weapon = Osi.CharacterGetEquippedWeapon(host.MyGuid)
 	weapon = not StringHelpers.IsNullOrEmpty(weapon) and GameHelpers.GetItem(weapon) or "3dd01bc4-65e7-4468-9854-b19bc980b3f8"
 	-- local item = GameHelpers.Item.Clone(weapon, properties)
@@ -740,10 +739,10 @@ end)
 
 Ext.RegisterConsoleCommand("printrunes", function(command, equipmentSlot)
 	equipmentSlot = equipmentSlot or "Weapon"
-	local host = GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
-	local item = host:GetItemBySlot(equipmentSlot)
+	local host = GameHelpers.Character.GetHost()
+	local item = GameHelpers.Item.GetItemInSlot(host, equipmentSlot)
 	if item then
-		local boosts = GameHelpers.Stats.GetRuneBoosts(item.Stats)
+		local boosts = GameHelpers.Stats.GetRuneBoosts(item)
 		if boosts then
 			fprint(LOGLEVEL.DEFAULT, "Runes (%s)", equipmentSlot)
 			fprint(LOGLEVEL.TRACE, "======")

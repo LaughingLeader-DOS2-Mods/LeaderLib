@@ -8,7 +8,7 @@
 ---@field Cached boolean Whether attributes/damage has been cached/saved in the table.
 ---Hit API Attributes
 ---@field SimulateHit boolean
----@field HitType StatsHitType
+---@field HitType HitType
 ---@field NoHitRoll boolean
 ---@field CriticalRoll string
 ---@field ForceReduceDurability boolean

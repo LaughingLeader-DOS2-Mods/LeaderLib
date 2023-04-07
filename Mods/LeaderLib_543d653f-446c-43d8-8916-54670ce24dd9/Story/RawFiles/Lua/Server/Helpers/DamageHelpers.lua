@@ -343,11 +343,8 @@ local function GetSkillDamageWithTarget(skill, attacker, target, isFromItem, ste
     local damageMultipliers = Game.Math.GetDamageMultipliers(skill, stealthed, attackerPos, targetPos)
     local skillDamageType = nil
 
-    if level == 0 then
-        level = skill.OverrideSkillLevel
-        if level == 0 then
-            level = skill.Level
-        end
+    if level == 0 and skill.OverrideSkillLevel == "Yes" then
+        level = skill.Level
     end
 
     local damageList = Ext.Stats.NewDamageList()

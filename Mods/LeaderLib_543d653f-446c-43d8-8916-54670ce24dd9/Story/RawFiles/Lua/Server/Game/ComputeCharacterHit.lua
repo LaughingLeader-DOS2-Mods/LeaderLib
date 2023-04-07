@@ -512,25 +512,31 @@ local function _CalculateHitChance(attacker, target)
     evt.StopPropagation = function (self)
         evt.Stopped = true
     end
+    
+    local chance = 0
+
+    if attacker.TALENT_Haymaker then
+        chance = 100
+    else
+        local ranged = Game.Math.IsRangedWeapon(attacker.MainWeapon)
+        local accuracy = attacker.Accuracy
+        local dodge = 0
+        if (not attacker.Invisible or ranged) and target.IsIncapacitatedRefCount == 0 then
+            dodge = target.Dodge
+        end
+
+        local chanceToHit1 = Ext.Utils.Round(((100.0 - dodge) * accuracy) / 100)
+        chanceToHit1 = math.max(0, math.min(100, chanceToHit1))
+        chance = chanceToHit1 + attacker.ChanceToHitBoost
+    end
+
+    evt.HitChance = chance
     Ext.Events.GetHitChance:Throw(evt)
     if type(evt.HitChance) == "number" then
         return evt.HitChance
+    else
+        return 0
     end
-    
-    if attacker.TALENT_Haymaker then
-        return 100
-    end
-
-    local ranged = Game.Math.IsRangedWeapon(attacker.MainWeapon)
-    local accuracy = attacker.Accuracy
-    local dodge = 0
-    if (not attacker.Invisible or ranged) and target.IsIncapacitatedRefCount == 0 then
-        dodge = target.Dodge
-    end
-
-    local chanceToHit1 = Ext.Utils.Round(((100.0 - dodge) * accuracy) / 100)
-    chanceToHit1 = math.max(0, math.min(100, chanceToHit1))
-    return chanceToHit1 + attacker.ChanceToHitBoost
 end
 
 --- @param target StatCharacter
@@ -542,8 +548,8 @@ end
 --- @param forceReduceDurability boolean
 --- @param hit StatsHitDamageInfo
 --- @param alwaysBackstab boolean
---- @param highGroundFlag StatsHighGroundBonus HighGround enumeration
---- @param criticalRoll StatsCriticalRoll CriticalRoll enumeration
+--- @param highGroundFlag HighGroundBonus HighGround enumeration
+--- @param criticalRoll CriticalRoll CriticalRoll enumeration
 --- @return StatsHitDamageInfo hit
 local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     local damageMultiplier = 1.0

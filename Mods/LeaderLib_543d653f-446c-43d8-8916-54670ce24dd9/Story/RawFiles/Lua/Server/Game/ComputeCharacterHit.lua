@@ -500,6 +500,23 @@ end
 --- @param attacker StatCharacter
 --- @param target StatCharacter
 local function _CalculateHitChance(attacker, target)
+    local evt = {
+        Name = "GetHitChance",
+        Stopped = false,
+        CanPreventAction = false,
+        ActionPrevented = false,
+        Attacker = attacker,
+        Target = target,
+        PreventAction = function () end
+    }
+    evt.StopPropagation = function (self)
+        evt.Stopped = true
+    end
+    Ext.Events.GetHitChance:Throw(evt)
+    if type(evt.HitChance) == "number" then
+        return evt.HitChance
+    end
+    
     if attacker.TALENT_Haymaker then
         return 100
     end

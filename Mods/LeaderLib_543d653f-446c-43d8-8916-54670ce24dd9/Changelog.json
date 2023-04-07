@@ -10,6 +10,7 @@
 			"Changes": [
 				"Fixed an issue causing Future Barrage in Weapon Expansion to not deal damage.",
 				"API Changes:",
+				"\t• Added a workaround for Events.GetHitChance not being thrown if LeaderLib's ComputeCharacterHit listener is enabled.",
 				"\t• Reworked Events.OnHeal to be invoked for HEALING and HEAL statuses. It no longer tries to find the related healing status for heal types (this was unreliable), due to it being preferrable to edit the HealAmount on the healing status itself, which is possible now.",
 				"\t• Added StatusManager.Subscribe.GetEnterChance.",
 				"\t• Added GameHelpers.Status.GetHealAmount and GameHelpers.Math.CalculateHealAmount.",

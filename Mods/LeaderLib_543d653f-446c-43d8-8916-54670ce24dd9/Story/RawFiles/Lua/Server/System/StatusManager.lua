@@ -1490,7 +1490,7 @@ Ext.Events.StatusGetEnterChance:Subscribe(function (e)
 			IsDisabling = isDisabling,
 			IsLoseControl = isLoseControl
 		})
-		if result.ResultCode ~= "Error" then
+		if result.ResultCode ~= "Error" and e.EnterChance ~= nil then
 			e.EnterChance = result.Args.EnterChance
 		end
 	end

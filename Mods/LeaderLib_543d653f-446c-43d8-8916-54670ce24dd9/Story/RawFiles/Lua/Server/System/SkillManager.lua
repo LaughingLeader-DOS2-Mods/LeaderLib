@@ -206,9 +206,16 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 		if data then
 			local character = GameHelpers.GetCharacter(char)
 			if character then
-				--Quake doesn't fire any target events, but works like a shout
-				if skillType == "quake" then
-					data:AddTargetPosition(table.unpack(character.WorldPos))
+				if data.TotalTargetObjects == 0 and data.TotalTargetPositions == 0 then
+					--Quake doesn't fire any target events, but works like a shout
+					if skillType == "quake" then
+						data:AddTargetPosition(table.unpack(character.WorldPos))
+					elseif skillType == "zone" or skillType == "cone" then
+						--The end point of the cone can be considered the target position
+						local range = data.SkillData.Range
+						local endPos = GameHelpers.Math.GetForwardPosition(character, range)
+						data:AddTargetPosition(table.unpack(endPos))
+					end
 				end
 				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.USED, data, data.Type))
 			end
@@ -216,15 +223,26 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 	end
 end
 
-function OnSkillCast(char, skill, skilLType, skillAbility)
+function OnSkillCast(char, skill, skillType, skillAbility)
 	local uuid = StringHelpers.GetUUID(char)
 	if SkillManager.IsSkillEnabled(skill) then
 		--Some skills may not fire any target events, like MultiStrike, so create the data if it doesn't exist.
 		---@type SkillEventData
-		local data = GetCharacterSkillData(skill, uuid, true, skilLType, skillAbility, Vars.DebugMode, "OnSkillCast")
+		local data = GetCharacterSkillData(skill, uuid, true, skillType, skillAbility, Vars.DebugMode, "OnSkillCast")
 		if data ~= nil then
 			local character = GameHelpers.GetCharacter(char)
 			if character then
+				if data.TotalTargetObjects == 0 and data.TotalTargetPositions == 0 then
+					--Quake doesn't fire any target events, but works like a shout
+					if skillType == "quake" then
+						data:AddTargetPosition(table.unpack(character.WorldPos))
+					elseif skillType == "zone" or skillType == "cone" then
+						--The end point of the cone can be considered the target position
+						local range = data.SkillData.Range
+						local endPos = GameHelpers.Math.GetForwardPosition(character, range)
+						data:AddTargetPosition(table.unpack(endPos))
+					end
+				end
 				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.CAST, data, data.Type))
 			end
 			data:Clear()

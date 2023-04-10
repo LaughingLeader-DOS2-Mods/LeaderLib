@@ -18,15 +18,21 @@ end
 ---@param getArgs fun(...:OsirisValue):table
 local function _CreateOsirisEventWrapper(name, getArgs)
 	local arity = Data.OsirisEvents[name]
-	Ext.Osiris.RegisterListener(name, arity, "after", function (...)
-		local b,data = xpcall(getArgs, debug.traceback, ...)
-		if not b then
-			fprint(LOGLEVEL.ERROR, "[Events.Osiris.%s] Failed to get args:\n%s", name, data)
-			return
+	local registeredListener = false
+	local event = Classes.SubscribableEvent:Create("Osiris." .. name, {OnSubscribe = function (_)
+		if not registeredListener then
+			registeredListener = true
+			Ext.Osiris.RegisterListener(name, arity, "after", function (...)
+				local b,data = xpcall(getArgs, debug.traceback, ...)
+				if not b then
+					fprint(LOGLEVEL.ERROR, "[Events.Osiris.%s] Failed to get args:\n%s", name, data)
+					return
+				end
+				Events.Osiris[name]:Invoke(data)
+			end)
 		end
-		Events.Osiris[name]:Invoke(data)
-	end)
-	return Classes.SubscribableEvent:Create("Osiris." .. name)
+	end})
+	return event
 end
 
 ---@type LeaderLibSubscribableEvent<{Character:EsvCharacter, CharacterGUID:Guid, Template:Guid}>

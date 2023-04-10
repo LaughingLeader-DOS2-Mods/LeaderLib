@@ -114,6 +114,7 @@ end
 ---@field Prev SubscribableEventNode|nil
 ---@field Next SubscribableEventNode|nil
 ---@field IsMatch fun(eventArgs:table):boolean If MatchArgs has a single entry, a function is created to run a quick match.
+---@field Unsubscribe function
 
 local wasSet = false
 ---@param self LeaderLibSubscribableEvent
@@ -173,7 +174,10 @@ function SubscribableEvent:Subscribe(callback, opts)
 		Index = index,
 		Priority = opts.Priority or 100,
 		Once = opts.Once == true,
-		Options = opts or {}
+		Options = opts or {},
+		Unsubscribe = function ()
+			self:Unsubscribe(index)
+		end
 	}
 
 	local matchArgs = opts.MatchArgs
@@ -383,7 +387,7 @@ local function InvokeCallbacks(self, args, resultsTable, ...)
 	return result
 end
 
----@param self LeaderLibSubscribableEvent
+---@param self BaseSubscribableEvent|SubscribableEventNode
 ---@param args table|nil
 ---@param skipAutoInvoke boolean|nil
 ---@param getArgForMatch LeaderLibSubscribableEventArgsGetArgForMatchCallback|nil
@@ -397,6 +401,7 @@ local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 	end
 	local ts = Ext.Utils.MonotonicTime()
 	local eventObject = Classes.SubscribableEventArgs:Create(args, self.ArgsKeyOrder, self.GetArg, metatable, self.ID, getArgForMatch)
+	rawset(eventObject, "Unsubscribe", self.Unsubscribe)
 	---@type SubscribableEventInvokeResultCode
 	local invokeResult = _INVOKERESULT.Success
 	local results = {}

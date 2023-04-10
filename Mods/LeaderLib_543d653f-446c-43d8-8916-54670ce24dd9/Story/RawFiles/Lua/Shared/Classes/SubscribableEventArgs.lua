@@ -6,6 +6,7 @@ local type = type
 ---@field StopPropagation fun(self:LeaderLibSubscribableEventArgs) Stop the event from continuing on to other registered listeners.
 ---@field Dump fun(self:LeaderLibSubscribableEventArgs) Dumps the event's parameters to the console.
 ---@field DumpExport fun(self:LeaderLibSubscribableEventArgs):string Converts the event's parameters to a string.
+---@field Unsubscribe fun(self:LeaderLibSubscribableEventArgs) Unsubscribes the current listener.
 
 ---@class LeaderLibRuntimeSubscribableEventArgsPrivateFields
 ---@field LLEventID string The Event ID
@@ -43,12 +44,12 @@ end
 ---@field __index fun(tbl:table, key:any):any
 ---@field __newindex fun(tbl:table, key:any, value:any)
 
----@param args table|nil
----@param unpackedKeyOrder string[]|nil
----@param getArg SubscribableEventGetArgFunction|nil
----@param customMeta SubscribableEventCustomMetatable|nil Automatically set if the args table had a metatable set.
----@param eventID string|nil
----@param getArgForMatch LeaderLibSubscribableEventArgsGetArgForMatchCallback|nil
+---@param args? table
+---@param unpackedKeyOrder? string[]
+---@param getArg? SubscribableEventGetArgFunction
+---@param customMeta? SubscribableEventCustomMetatable Automatically set if the args table had a metatable set.
+---@param eventID? string
+---@param getArgForMatch? LeaderLibSubscribableEventArgsGetArgForMatchCallback
 ---@return LeaderLibRuntimeSubscribableEventArgs
 function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta, eventID, getArgForMatch)
 	local _private = {
@@ -59,7 +60,7 @@ function SubscribableEventArgs:Create(args, unpackedKeyOrder, getArg, customMeta
 		--When unpacking, this is the specific order to unpack values in.
 		KeyOrder = unpackedKeyOrder,
 		GetArg = getArg,
-		GetArgForMatch = getArgForMatch
+		GetArgForMatch = getArgForMatch,
 	}
 	local eventArgs = {}
 	if type(args) == "table" then

@@ -466,6 +466,35 @@ function EffectManager.GetAllEffects(fx, target, distanceThreshold)
 	return effects
 end
 
+---Get the first effect for a given ID.
+---@param id string
+---@param object ObjectParam
+---@return EsvEffect
+function EffectManager.GetEffectByIDForObject(id, object)
+	local uuid = GameHelpers.GetUUID(object)
+	fassert(uuid ~= nil, "Failed to get UUID for object parameter %s", object)
+	local dataTable = _PV.ObjectLoopEffects[uuid]
+	local handleInt = nil
+	if dataTable then
+		for i,v in pairs(dataTable) do
+			if v.ID == id then
+				handleInt = v.Handle
+			end
+		end
+	end
+
+	if handleInt then
+		for _,handle in pairs(Ext.Effect.GetAllEffectHandles()) do
+			if Ext.Utils.HandleToInteger(handle) == handleInt then
+				local effect = Ext.Effect.GetEffect(handle)
+				if effect then
+					return effect
+				end
+			end
+		end
+	end
+end
+
 ---@param effect string|string[]
 ---@param target ObjectParam
 function EffectManager.StopEffectsByNameForObject(effect, target)
@@ -527,7 +556,7 @@ function EffectManager.StopEffectsByIDForObject(id, target)
 			local nextTotal = len
 			for i=1,len do
 				local v = dataTable[i]
-				if v.ID == id then
+				if v and v.ID == id then
 					for _,fx in pairs(EffectManager.GetAllEffects(v.Effect, uuid)) do
 						fx:Delete()
 						success = true
@@ -589,19 +618,16 @@ function EffectManager.DeleteEffectsForObject(target)
 	local dataTable = _PV.ObjectLoopEffects[uuid]
 	if dataTable then
 		local len = #dataTable
-		local nextTotal = len
 		for i=1,len do
 			local v = dataTable[i]
-			for _,fx in pairs(EffectManager.GetAllEffects(v.Effect, uuid)) do
-				fx:Delete()
+			if v and v.Effect then
+				for _,fx in pairs(EffectManager.GetAllEffects(v.Effect, uuid)) do
+					fx:Delete()
+				end
 			end
-			table.remove(dataTable, i)
-			nextTotal = nextTotal - 1
 		end
-		if nextTotal <= 0 then
-			_PV.ObjectLoopEffects[uuid] = nil
-			success = true
-		end
+		_PV.ObjectLoopEffects[uuid] = nil
+		success = true
 	end
 	return success
 end

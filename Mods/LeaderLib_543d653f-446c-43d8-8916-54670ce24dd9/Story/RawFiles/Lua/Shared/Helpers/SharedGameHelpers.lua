@@ -661,46 +661,54 @@ function GameHelpers.ObjectHasFlag(obj, flag)
 	return false
 end
 
----@param obj ObjectParam
+---@param object ObjectParam
+---@param ignorePolymorph? boolean
 ---@return string
-local function _GetTemplateID(obj)
---[[ 	if not _ISCLIENT and _osirisIsCallable() then
-		local uuid = GameHelpers.GetUUID(obj)
-		if uuid then
-			return StringHelpers.GetUUID(Osi.GetTemplate(uuid))
-		end
-	end ]]
-	local object = _tryGetObject(obj)
+local function _GetTemplateID(object, ignorePolymorph)
+	local object = _tryGetObject(object, "EclCharacter")
 	if object then
-		if object.CurrentTemplate then
+		local instanceData = object.CurrentTemplate or object.RootTemplate
+		if instanceData then
+			if ignorePolymorph then
+				if not _ISCLIENT then
+					for _,status in pairs(object:GetStatusObjects()) do
+						if status.StatusType == "POLYMORPHED" then
+							---@cast status EsvStatusPolymorphed
+							if not StringHelpers.IsNullOrEmpty(status.OriginalTemplate)	then
+								return status.OriginalTemplate
+							end
+						end
+					end
+				else
+					if not StringHelpers.IsNullOrEmpty(object.RootTemplate.RootTemplate) and object.RootTemplate.RootTemplate ~= object.MyGuid then
+						return object.RootTemplate.RootTemplate
+					end
+				end
+			end
 			--When not transformed, CurrentTemplate.Id is the character's MyGuid, and CurrentTemplate.RootTemplate is their root template.
 			--When polymorphed etc, CurrentTemplate.Id is the polymorph root template, and CurrentTemplate.RootTemplate is empty.
-			if object.CurrentTemplate.Id == obj.MyGuid then
-				if not StringHelpers.IsNullOrEmpty(object.CurrentTemplate.RootTemplate) then
-					return object.CurrentTemplate.RootTemplate
+			if instanceData.Id == object.MyGuid then
+				if not StringHelpers.IsNullOrEmpty(instanceData.RootTemplate) then
+					return instanceData.RootTemplate
 				end
-			elseif not StringHelpers.IsNullOrEmpty(object.CurrentTemplate.Id) then
-				return object.CurrentTemplate.Id
-			end
-		end
-		if object.RootTemplate then
-			if not StringHelpers.IsNullOrEmpty(object.RootTemplate.RootTemplate) then
-				return object.RootTemplate.RootTemplate
-			else
-				return object.RootTemplate.Id
+			elseif not StringHelpers.IsNullOrEmpty(instanceData.Id) then
+				return instanceData.Id
 			end
 		end
 	end
 	return nil
 end
 
+--local t = Mods.LeaderLib.GameHelpers.GetTemplate(me.MyGuid, true, true); if t then print(t.Name) else print("nil") end
+
 ---@overload fun(obj:ObjectParam):Guid|nil
 ---Get an object's root template UUID.
 ---@param obj ObjectParam
 ---@param asGameObjectTemplate boolean Returns a GameObjectTemplate if true.
+---@param ignorePolymorph? boolean Get the true root template if polymorphed.
 ---@return GameObjectTemplate|nil
-function GameHelpers.GetTemplate(obj, asGameObjectTemplate)
-	local templateId = _GetTemplateID(obj)
+function GameHelpers.GetTemplate(obj, asGameObjectTemplate, ignorePolymorph)
+	local templateId = _GetTemplateID(obj, ignorePolymorph)
 	if templateId and asGameObjectTemplate then
 		return Ext.Template.GetRootTemplate(templateId)
 	end

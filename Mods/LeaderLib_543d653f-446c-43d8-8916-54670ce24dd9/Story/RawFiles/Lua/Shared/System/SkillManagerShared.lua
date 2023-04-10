@@ -127,7 +127,8 @@ function SkillManager.Register.GetAPCost(skill, callback, priority, once)
 end
 
 Ext.Events.GetSkillAPCost:Subscribe(function (e)
-	if SkillManager.IsSkillEnabled(e.Skill.SkillId) then
+	local skill = StringHelpers.GetSkillEntryName(e.Skill.SkillId)
+	if SkillManager.IsSkillEnabled(skill) then
 		local character = nil
 		if e.Character then
 			character = e.Character.Character
@@ -139,7 +140,7 @@ Ext.Events.GetSkillAPCost:Subscribe(function (e)
 				character = GameHelpers.Character.GetHost()
 			end
 		end
-		local data = _CreateSkillEventTable(e.Skill.SkillId, character, SKILL_STATE.GETAPCOST, e, "userdata")
+		local data = _CreateSkillEventTable(skill, character, SKILL_STATE.GETAPCOST, e, "userdata")
 		Events.OnSkillState:Invoke(data)
 	end
 end, {Priority=0})

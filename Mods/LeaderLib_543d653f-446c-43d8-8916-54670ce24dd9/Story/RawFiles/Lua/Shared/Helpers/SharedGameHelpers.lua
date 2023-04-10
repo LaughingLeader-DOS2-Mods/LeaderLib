@@ -664,18 +664,31 @@ end
 ---@param obj ObjectParam
 ---@return string
 local function _GetTemplateID(obj)
-	if not _ISCLIENT and _osirisIsCallable() then
+--[[ 	if not _ISCLIENT and _osirisIsCallable() then
 		local uuid = GameHelpers.GetUUID(obj)
 		if uuid then
 			return StringHelpers.GetUUID(Osi.GetTemplate(uuid))
 		end
-	end
+	end ]]
 	local object = _tryGetObject(obj)
-	if object and object.RootTemplate then
-		if object.RootTemplate.RootTemplate ~= "" then
-			return object.RootTemplate.RootTemplate
-		else
-			return object.RootTemplate.Id
+	if object then
+		if object.CurrentTemplate then
+			--When not transformed, CurrentTemplate.Id is the character's MyGuid, and CurrentTemplate.RootTemplate is their root template.
+			--When polymorphed etc, CurrentTemplate.Id is the polymorph root template, and CurrentTemplate.RootTemplate is empty.
+			if object.CurrentTemplate.Id == obj.MyGuid then
+				if not StringHelpers.IsNullOrEmpty(object.CurrentTemplate.RootTemplate) then
+					return object.CurrentTemplate.RootTemplate
+				end
+			elseif not StringHelpers.IsNullOrEmpty(object.CurrentTemplate.Id) then
+				return object.CurrentTemplate.Id
+			end
+		end
+		if object.RootTemplate then
+			if not StringHelpers.IsNullOrEmpty(object.RootTemplate.RootTemplate) then
+				return object.RootTemplate.RootTemplate
+			else
+				return object.RootTemplate.Id
+			end
 		end
 	end
 	return nil

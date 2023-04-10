@@ -381,7 +381,7 @@ end
 ---Returns the base visual race of the character, if it's one of the base 4 player races.  
 ---This works by first checking the character's visual resource, to see if it's a base hero skeleton.  
 ---Then it checks GameHelpers.Character.GetRace, before finally looking at the root template name, if nothing is found.  
----Use GameHelpers.Character.GetRace if you want to just find whatever the race is.  
+---Use `GameHelpers.Character.GetRace` if you want to just find whatever the race is.  
 ---@param character CharacterParam
 ---@return BaseRace|nil
 function GameHelpers.Character.GetBaseRace(character)
@@ -417,11 +417,28 @@ function GameHelpers.Character.GetRace(character)
 	return GameHelpers.Character.GetBaseRace(character) or "None"
 end
 
----Returns true if the character is one of the regular humanoid races.
+---Returns true if the character is using a dwarf/elf/lizard/human base skeleton.
+---@param character CharacterParam
+---@return boolean
+function GameHelpers.Character.IsBaseSkeleton(character)
+	character = GameHelpers.GetCharacter(character)
+	if character and character.CurrentTemplate then
+		local visualRace = Data.HeroBaseSkeletonToRace[character.CurrentTemplate.VisualTemplate]
+		if visualRace then
+			return true
+		end
+	end
+	return false
+end
+
+---Returns true if the character is one of the regular humanoid races (i.e. it's using a dwarf/elf/lizard/human base skeleton), or if it has a base race tag.
 ---@param character CharacterParam
 ---@return boolean
 function GameHelpers.Character.IsHumanoid(character)
 	character = GameHelpers.GetCharacter(character)
+	if GameHelpers.Character.IsBaseSkeleton(character) then
+		return true
+	end
 	if character and character.HasTag then
 		for raceId,raceData in pairs(Vars.RaceData) do
 			if character:HasTag(raceData.Tag) 

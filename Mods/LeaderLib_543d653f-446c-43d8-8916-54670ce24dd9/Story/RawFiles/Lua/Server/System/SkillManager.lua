@@ -19,6 +19,11 @@ local _lastUsedSkillItems = SkillManager._Internal.LastUsedSkillItems
 
 local _EXTVERSION = Ext.Utils.Version()
 
+---@param e OnSkillStateAllEventArgs
+local function _IsOldState(e)
+	return e.State ~= SKILL_STATE.GETAPCOST
+end
+
 ---Registers a function to call when skill events fire for a skill or table of skills.
 ---@param skill string|string[]
 ---@param callback LeaderLibSkillListenerCallback
@@ -33,12 +38,14 @@ function RegisterSkillListener(skill, callback)
 			SkillManager.EnableForAllSkills(true)
 			Events.OnSkillState:Subscribe(function (e)
 				callback(e.Skill, e.CharacterGUID, e.State, e.Data, e.DataType)
-			end)
+			end, {MatchArgs=_IsOldState})
 		else
 			SkillManager.SetSkillEnabled(skill, true)
 			Events.OnSkillState:Subscribe(function (e)
 				callback(e.Skill, e.CharacterGUID, e.State, e.Data, e.DataType)
-			end, {MatchArgs={Skill=skill}})
+			end, {MatchArgs=function (e)
+				return e.Skill == skill and _IsOldState(e)
+			end})
 		end
 
 		if Vars.Initialized then

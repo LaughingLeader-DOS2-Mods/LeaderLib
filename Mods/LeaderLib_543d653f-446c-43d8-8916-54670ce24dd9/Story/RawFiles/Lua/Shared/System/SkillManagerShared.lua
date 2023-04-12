@@ -136,7 +136,6 @@ Ext.Events.GetSkillAPCost:Subscribe(function (e)
 			if _ISCLIENT then
 				character = Client:GetCharacter()
 			else
-				--TODO Can this happen?
 				character = GameHelpers.Character.GetHost()
 			end
 		end

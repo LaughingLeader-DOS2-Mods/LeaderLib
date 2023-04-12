@@ -553,7 +553,7 @@ end
 
 ---@return EsvCharacter|EclCharacter host
 function GameHelpers.Character.GetHost()
-	if not _ISCLIENT then
+	if not _ISCLIENT and _OSIRIS() then
 		return GameHelpers.GetCharacter(Osi.CharacterGetHostCharacter())
 	else
 		for _,v in pairs(SharedData.CharacterData) do

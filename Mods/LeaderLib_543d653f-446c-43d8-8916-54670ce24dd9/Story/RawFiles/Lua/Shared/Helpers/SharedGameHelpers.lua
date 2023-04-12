@@ -788,7 +788,7 @@ function GameHelpers.GetLevelType(levelName)
 	return LEVELTYPE.GAME
 end
 
----@param levelType LEVELTYPE|string
+---@param levelType LEVELTYPE|string|integer
 ---@param levelName? string Optional level to use when checking.
 ---@return boolean
 function GameHelpers.IsLevelType(levelType, levelName)

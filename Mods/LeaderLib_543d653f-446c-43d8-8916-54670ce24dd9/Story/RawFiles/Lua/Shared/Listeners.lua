@@ -114,6 +114,7 @@ Ext.Events.Tick:Subscribe(OnTick)
 ---@class LeaderLibGlobals:table
 ---@field RegisterListener fun(event:LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[], callbackOrKey:function|string, callbackOrNil:function|nil)
 
+---@deprecated
 --- Registers a function to call when a specific Lua LeaderLib event fires.
 ---@param event LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[] Listener table name.
 ---@param callbackOrKey function|string If a string, the function is stored in a subtable of the event, such as NamedTimerFinished.TimerName = function

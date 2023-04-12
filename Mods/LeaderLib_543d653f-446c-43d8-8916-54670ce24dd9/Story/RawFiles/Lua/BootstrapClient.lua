@@ -55,10 +55,11 @@ Vars.ControllerEnabled = (Ext.UI.GetByPath("Public/Game/GUI/msgBox_c.swf") or Ex
 -- end
 
 local function EnableGameTooltipOverride()
-	if Game and Game.Tooltip and Game.Tooltip.RequestProcessor then
-		return false
-	end
 	return true
+	-- if Game and Game.Tooltip and Game.Tooltip.RequestProcessor then
+	-- 	return false
+	-- end
+	-- return true
 end
 
 Ext.Require("Client/Classes/_Init.lua")

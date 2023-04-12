@@ -32,12 +32,12 @@ function RegisterSkillListener(skill, callback)
 		if StringHelpers.Equals(skill, "All", true) then
 			SkillManager.EnableForAllSkills(true)
 			Events.OnSkillState:Subscribe(function (e)
-				callback(e:Unpack())
+				callback(e.Skill, e.CharacterGUID, e.State, e.Data, e.DataType)
 			end)
 		else
 			SkillManager.SetSkillEnabled(skill, true)
 			Events.OnSkillState:Subscribe(function (e)
-				callback(e:Unpack())
+				callback(e.Skill, e.CharacterGUID, e.State, e.Data, e.DataType)
 			end, {MatchArgs={Skill=skill}})
 		end
 

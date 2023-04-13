@@ -1,4 +1,5 @@
 local _ISCLIENT = Ext.IsClient()
+local _EXTVERSION = Ext.Utils.Version()
 
 local _enabledSkills = SkillManager._Internal.EnabledSkills
 local _lastUsedSkillItems = SkillManager._Internal.LastUsedSkillItems
@@ -63,27 +64,192 @@ local function _GetSkillSourceItem(character, skill, returnStoredtemData)
 	return sourceItem
 end
 
+local _ActionMachineSkillStates = {
+	[SKILL_STATE.PREPARE] = true,
+	[SKILL_STATE.USED] = true,
+	[SKILL_STATE.CAST] = true,
+}
+
 ---@param skill string
----@param character EsvCharacter
----@param state SKILL_STATE
+---@param character EsvCharacter|EclCharacter
+---@param stateID SKILL_STATE
 ---@param data any
 ---@param dataType string
-local function _CreateSkillEventTable(skill, character, state, data, dataType)
+local function _CreateSkillEventTable(skill, character, stateID, data, dataType)
 	local skillData = Ext.Stats.Get(skill, nil, false)
 	if not skillData then
 		skillData = {Ability = "", SkillType = ""}
 	end
-	return {
+	local eventData = {
 		Character = character,
 		CharacterGUID = character.MyGuid,
 		Skill = skill,
-		State = state,
+		State = stateID,
 		Data = data,
 		DataType = dataType,
 		SourceItem = _GetSkillSourceItem(character, skill),
 		Ability = skillData.Ability,
+		---@type SkillType
 		SkillType = skillData.SkillType,
 	}
+	if _EXTVERSION >= 59 and character and _ActionMachineSkillStates[stateID] then
+		if character.ActionMachine and character.ActionMachine.Layers then
+			for _,v in pairs(character.ActionMachine.Layers) do
+				local action = v.State
+				if action then
+					if action.Type == "UseSkill" then
+						---@cast data SkillEventData
+						---@cast action EsvASUseSkill
+						if StringHelpers.GetSkillEntryName(action.Skill.SkillId) == skill then
+							eventData.Action = action
+							local state = action.Skill
+							if eventData.SkillType == "Dome" then
+								---@cast state EsvSkillStateDome
+								data:Clear()
+								data:AddTargetPosition(state.Position)
+							elseif eventData.SkillType == "Jump" then
+								---@cast state EsvSkillStateJump
+								data:Clear()
+								data:AddTargetPosition(state.Position)
+							elseif eventData.SkillType == "MultiStrike" then
+								---@cast state EsvSkillStateMultiStrike
+								data:Clear()
+								for _,handle in pairs(state.Targets) do
+									local object = GameHelpers.GetObjectFromHandle(handle)
+									if object then
+										data:AddTargetObject(object.MyGuid)
+									end
+								end
+								data:AddTargetPosition(state.EndPosition)
+							elseif eventData.SkillType == "Path" then
+								---@cast state EsvSkillStatePath
+								data:Clear()
+								data:AddTargetPosition(state.StartPosition)
+								for _,pos in pairs(state.Path) do
+									data:AddTargetPosition(pos)
+								end
+							elseif eventData.SkillType == "Projectile" then
+								---@cast state EsvSkillStateProjectile
+								data:Clear()
+								for _,ptarget in pairs(state.Targets) do
+									local object = GameHelpers.GetObjectFromHandle(ptarget.TargetHandle)
+									if object then
+										data:AddTargetObject(object.MyGuid)
+									else
+										if not GameHelpers.Math.IsDefaultPositionOrNil(ptarget.TargetPosition) then
+											data:AddTargetPosition(ptarget.TargetPosition)
+										end
+									end
+								end
+							elseif eventData.SkillType == "ProjectileStrike" then
+								---@cast state EsvSkillStateProjectileStrike
+								data:Clear()
+								data.PrimaryTargetPosition = state.SteeringTargetPosition
+								for _,ptarget in pairs(state.Targets) do
+									local object = GameHelpers.GetObjectFromHandle(ptarget.Target)
+									if object then
+										data:AddTargetObject(object.MyGuid)
+									else
+										if not GameHelpers.Math.IsDefaultPositionOrNil(ptarget.TargetPosition) then
+											data:AddTargetPosition(ptarget.TargetPosition)
+										elseif not GameHelpers.Math.IsDefaultPositionOrNil(ptarget.TargetPosition2) then
+											data:AddTargetPosition(ptarget.TargetPosition2)
+										end
+									end
+								end
+							elseif eventData.SkillType == "Quake" then
+							elseif eventData.SkillType == "Rain" then
+								---@cast state EsvSkillStateRain
+								data:Clear()
+								data:AddTargetPosition(state.TargetPosition)
+							elseif eventData.SkillType == "Rush" then
+								---@cast state EsvSkillStateRush
+								data:Clear()
+								data.PrimaryTargetPosition = state.TargetPosition
+								for _,handle in pairs(state.DamagedTargets) do
+									local object = GameHelpers.GetObjectFromHandle(handle)
+									if object then
+										data:AddTargetObject(object.MyGuid)
+									end
+								end
+								data:AddTargetPosition(state.StartPosition)
+								data:AddTargetPosition(state.TargetPosition)
+								local target = GameHelpers.GetObjectFromHandle(state.TargetHandle)
+								if target then
+									data:AddTargetObject(target.MyGuid)
+								end
+							elseif eventData.SkillType == "Shout" then
+								---@cast state EsvSkillStateShout
+								data:Clear()
+								data:AddTargetPosition(state.Position)
+							elseif eventData.SkillType == "SkillHeal" then
+								---@cast state EsvSkillStateHeal
+								local object = GameHelpers.GetObjectFromHandle(state.TargetHandle)
+								if object then
+									data:Clear()
+									data:AddTargetObject(object.MyGuid)
+								end
+							elseif eventData.SkillType == "Storm" then
+								---@cast state EsvSkillStateStorm
+								data:Clear()
+								data:AddTargetPosition(state.Position)
+							elseif eventData.SkillType == "Summon" then
+								---@cast state EsvSkillStateSummon
+								data:Clear()
+								for _,pos in pairs(state.SummonPositions) do
+									data:AddTargetPosition(pos)
+								end
+							elseif eventData.SkillType == "Target" then
+								---@cast state EsvSkillStateTarget
+								data.PrimaryTargetPosition = state.TargetPosition
+								local target = GameHelpers.GetObjectFromHandle(state.TargetHandle)
+								if target then
+									data:AddTargetObject(target.MyGuid)
+								end
+							elseif eventData.SkillType == "Teleportation" then
+								---@cast state EsvSkillStateTeleportation
+								data:Clear()
+								data.PrimaryTargetPosition = state.TargetPosition
+								data:AddTargetPosition(state.SourcePosition)
+								data:AddTargetPosition(state.TargetPosition)
+								local target = GameHelpers.GetObjectFromHandle(state.TargetHandle)
+								if target then
+									data:AddTargetObject(target.MyGuid)
+								end
+							elseif eventData.SkillType == "Tornado" then
+								---@cast state EsvSkillStateTornado
+								data:Clear()
+								data:AddTargetPosition(state.Position)
+							elseif eventData.SkillType == "Wall" then
+								---@cast state EsvSkillStateWall
+								data:Clear()
+								data:AddTargetPosition(state.StartPosition)
+								data:AddTargetPosition(state.EndPosition)
+							elseif eventData.SkillType == "Zone" then
+								---@cast state EsvSkillStateZone
+								data:Clear()
+								data:AddTargetPosition(state.TargetPosition)
+								for _,handle in pairs(state.Targets) do
+									local object = GameHelpers.GetObjectFromHandle(handle)
+									if object then
+										data:AddTargetObject(object.MyGuid)
+									end
+								end
+							end
+							return eventData
+						end
+					elseif action.Type == "PrepareSkill" then
+						---@cast action EsvASPrepareSkill
+						if StringHelpers.GetSkillEntryName(action.SkillId) == skill then
+							eventData.Action = action
+							return eventData
+						end
+					end
+				end
+			end
+		end
+	end
+	return eventData
 end
 
 SkillManager._Internal.CreateSkillEventTable = _CreateSkillEventTable

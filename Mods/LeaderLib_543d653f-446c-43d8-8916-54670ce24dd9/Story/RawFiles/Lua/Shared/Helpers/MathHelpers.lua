@@ -404,6 +404,15 @@ function GameHelpers.Math.IsPosition(obj)
 	return Classes.Vector3.IsVector3(obj)
 end
 
+---Returns true if an object is a table with {0,0,0}.
+---@param obj any
+function GameHelpers.Math.IsDefaultPositionOrNil(obj)
+	if Classes.Vector3.IsVector3(obj) then
+		return obj[1] == 0 and obj[2] == 0 and obj[3] == 0
+	end
+	return true
+end
+
 ---@param value number
 ---@param minValue number
 ---@param maxValue number

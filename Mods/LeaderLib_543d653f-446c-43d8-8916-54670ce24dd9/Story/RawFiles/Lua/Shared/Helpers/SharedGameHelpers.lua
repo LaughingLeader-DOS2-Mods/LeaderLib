@@ -197,6 +197,7 @@ function GameHelpers.GetItem(object, castType)
 	return nil
 end
 
+---@overload fun(handle:ComponentHandle):ServerObject|ClientObject|nil
 ---Tries to get an object from a handle, skipping the Ext.Entity.GetGameObject call if it's invalid.
 ---@generic T
 ---@param handle ComponentHandle

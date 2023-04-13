@@ -57,21 +57,34 @@ end
 
 ---@param target string
 function SkillEventData:AddTargetObject(target)
-	self.TargetObjects[#self.TargetObjects+1] = StringHelpers.GetUUID(target)
-	self.TotalTargetObjects = self.TotalTargetObjects + 1
+	local guid = StringHelpers.GetUUID(target)
+	if guid then
+		if self.TotalTargetObjects == 0 or not TableHelpers.HasValue(self.TargetObjects, guid) then
+			self.TargetObjects[#self.TargetObjects+1] = guid
+			self.TotalTargetObjects = self.TotalTargetObjects + 1
+		end
+	end
 end
 
+---@overload fun(pos:vec3)
 ---@param x number
 ---@param y number
 ---@param z number
 function SkillEventData:AddTargetPosition(x,y,z)
-	self.TargetPositions[#self.TargetPositions+1] = {x,y,z}
+	if type(x) == "table" then
+		self.TargetPositions[#self.TargetPositions+1] = x
+	else
+		self.TargetPositions[#self.TargetPositions+1] = {x,y,z}
+	end
 	self.TotalTargetPositions = self.TotalTargetPositions + 1
 end
 
 ---Get the first taget position of the skill.
 ---@return vec3
 function SkillEventData:GetSkillTargetPosition()
+	if self.PrimaryTargetPosition then
+		return self.PrimaryTargetPosition
+	end
 	if self.TotalTargetPositions > 0 then
 		return self.TargetPositions[1]
 	elseif self.TotalTargetObjects > 0 then
@@ -80,6 +93,7 @@ function SkillEventData:GetSkillTargetPosition()
 	return GameHelpers.Math.GetPosition(self.SourceObject)
 end
 
+---Clears all targets/target positions.
 function SkillEventData:Clear()
 	self.TargetObjects = {}
 	self.TargetPositions = {}

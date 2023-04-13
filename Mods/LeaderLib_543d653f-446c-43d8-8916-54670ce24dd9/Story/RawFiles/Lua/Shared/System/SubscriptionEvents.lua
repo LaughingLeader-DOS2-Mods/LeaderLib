@@ -273,12 +273,14 @@ Events.ModSettingsChanged = Classes.SubscribableEvent:Create("ModSettingsChanged
 
 ---@class OnSkillStatePrepareEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data StatEntrySkillData
+---@field Action EsvASPrepareSkill|nil
 
 ---@class OnSkillStateCancelEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data StatEntrySkillData
 
 ---@class OnSkillStateSkillEventEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data SkillEventData
+---@field Action EsvASUseSkill
 
 ---@class OnSkillStateHitEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data HitData

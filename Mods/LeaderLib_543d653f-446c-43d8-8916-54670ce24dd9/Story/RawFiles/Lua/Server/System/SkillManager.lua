@@ -218,6 +218,7 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 		if data then
 			local character = GameHelpers.GetCharacter(char)
 			if character then
+				local eventData = _CreateSkillEventTable(skill, character, SKILL_STATE.USED, data, data.Type)
 				if data.TotalTargetObjects == 0 and data.TotalTargetPositions == 0 then
 					--Quake doesn't fire any target events, but works like a shout
 					if skillType == "quake" then
@@ -226,10 +227,10 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 						--The end point of the cone can be considered the target position
 						local range = data.SkillData.Range
 						local endPos = GameHelpers.Math.GetForwardPosition(character, range)
-						data:AddTargetPosition(table.unpack(endPos))
+						data:AddTargetPosition(endPos)
 					end
 				end
-				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.USED, data, data.Type))
+				Events.OnSkillState:Invoke(eventData)
 			end
 		end
 	end
@@ -244,6 +245,7 @@ function OnSkillCast(char, skill, skillType, skillAbility)
 		if data ~= nil then
 			local character = GameHelpers.GetCharacter(char)
 			if character then
+				local eventData = _CreateSkillEventTable(skill, character, SKILL_STATE.CAST, data, data.Type)
 				if data.TotalTargetObjects == 0 and data.TotalTargetPositions == 0 then
 					--Quake doesn't fire any target events, but works like a shout
 					if skillType == "quake" then
@@ -252,10 +254,10 @@ function OnSkillCast(char, skill, skillType, skillAbility)
 						--The end point of the cone can be considered the target position
 						local range = data.SkillData.Range
 						local endPos = GameHelpers.Math.GetForwardPosition(character, range)
-						data:AddTargetPosition(table.unpack(endPos))
+						data:AddTargetPosition(endPos)
 					end
 				end
-				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, character, SKILL_STATE.CAST, data, data.Type))
+				Events.OnSkillState:Invoke(eventData)
 			end
 			data:Clear()
 		end

@@ -360,3 +360,7 @@ end) ]]
 -- AOO bug test - AOO applying on your turn ends the turn
 local obj = Ext.Entity.GetCharacter("08348b3a-bded-4811-92ce-f127aa4310e0"); GameHelpers.Status.Apply(obj, "AOO", 6.0, 1, nil, nil, nil, nil, {AoOTargetHandle=obj.Handle, SourceHandle=me.Handle, PartnerHandle=obj.Handle})
 ]]
+
+SkillManager.Subscribe.Used("Rush_EnemyBatteringRam", function (e)
+	Ext.Dump({TargetObjects=e.Data.TargetObjects,TargetPositions=e.Data.TargetPositions})
+end)

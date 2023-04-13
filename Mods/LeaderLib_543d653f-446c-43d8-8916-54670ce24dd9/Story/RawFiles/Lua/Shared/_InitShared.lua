@@ -20,6 +20,8 @@ SkillManager = {
 	Register = {}
 }
 
+SkillManager.Subscribe = SkillManager.Register
+
 ---Manager tables that handle state changes and include ways to register callbacks for specific events.  
 ---@class LeaderLibManagers
 Managers = {

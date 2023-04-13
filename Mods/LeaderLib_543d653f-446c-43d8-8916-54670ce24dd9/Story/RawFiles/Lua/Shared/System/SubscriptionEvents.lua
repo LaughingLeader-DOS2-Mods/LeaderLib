@@ -267,43 +267,57 @@ Events.ModSettingsChanged = Classes.SubscribableEvent:Create("ModSettingsChanged
 ---@field Ability SkillAbility
 ---@field SkillType SkillType
 ---@field DataType LeaderLibSkillListenerDataType
+
+---@class OnSkillStateBaseActionEventArgs:OnSkillStateBaseEventArgs
 ---@field SourceItem EsvItem|nil
 
----@class OnSkillStateAllEventArgs:OnSkillStateBaseEventArgs
----@field Data SkillEventData|HitData|ProjectileHitData|StatEntrySkillData|boolean
-
----@class OnSkillStatePrepareEventArgs:OnSkillStateBaseEventArgs
+---@class OnSkillStatePrepareEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data StatEntrySkillData
 
----@class OnSkillStateCancelEventArgs:OnSkillStateBaseEventArgs
+---@class OnSkillStateCancelEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data StatEntrySkillData
 
----@class OnSkillStateSkillEventEventArgs:OnSkillStateBaseEventArgs
+---@class OnSkillStateSkillEventEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data SkillEventData
 
----@class OnSkillStateHitEventArgs:OnSkillStateBaseEventArgs
+---@class OnSkillStateHitEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data HitData
 
----@class OnSkillStateBeforeProjectileShootEventArgs:OnSkillStateBaseEventArgs
+---@class OnSkillStateBeforeProjectileShootEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data EsvShootProjectileHelper
 
----@class OnSkillStateProjectileShootEventArgs:OnSkillStateBaseEventArgs
+---@class OnSkillStateProjectileShootEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data EsvProjectile
 
----@class OnSkillStateProjectileHitEventArgs:OnSkillStateBaseEventArgs
+---@class OnSkillStateProjectileHitEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data ProjectileHitData
 
----@class OnSkillStateLearnedEventArgs:OnSkillStateBaseEventArgs
+---@class OnSkillStateLearnedEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data boolean Whether the skill is learned or not.
 ---@field Memorized boolean
 
----@class OnSkillStateMemorizedEventArgs:OnSkillStateBaseEventArgs
+---@class OnSkillStateMemorizedEventArgs:OnSkillStateBaseActionEventArgs
 ---@field Data boolean Whether the skill is memorized or not.
 ---@field Learned boolean
 
----@class OnSkillStateGetAPCost:OnSkillStateBaseEventArgs
----@field Data LuaGetSkillAPCostEvent The event data from Ext.GetSkillAPCost.
+---@class OnSkillStateGetAPCostEventArgs:OnSkillStateBaseEventArgs
+---@field Data LuaGetSkillAPCostEvent The event data from `Ext.Events.GetSkillAPCost`.
 ---@field Character EsvCharacter|EclCharacter
+
+---@class OnSkillStateGetDamageAmountEventArgs:OnSkillStateBaseEventArgs
+---@field Data LuaGetSkillDamageEvent The event data from `Ext.Events.GetSkillDamage`.
+---@field Character EsvCharacter|EclCharacter The `e.Data.Attacker.Character`, if it's a character.
+---@field IsTooltip boolean
+---@field Result StatsDamagePairList The damage list to set on `e.Data.DamageList`.
+
+---@class OnSkillStateGetDamageTextEventArgs:OnSkillStateBaseEventArgs
+---@field Data EclLuaSkillGetDescriptionParamEvent The event data from `Ext.Events.SkillGetDescriptionParam`.
+---@field Character EsvCharacter|EclCharacter
+---@field Result CalculatedDamageRange The damage range to turn into text. You can set e.Data.Description directly to skip this.
+
+---@alias OnSkillStateGetDamageEventArgs OnSkillStateGetDamageAmountEventArgs|OnSkillStateGetDamageTextEventArgs
+
+---@alias OnSkillStateAllEventArgs OnSkillStateBeforeProjectileShootEventArgs|OnSkillStateCancelEventArgs|OnSkillStateGetAPCostEventArgs|OnSkillStateGetDamageEventArgs|OnSkillStateHitEventArgs|OnSkillStateLearnedEventArgs|OnSkillStateMemorizedEventArgs|OnSkillStatePrepareEventArgs|OnSkillStateProjectileHitEventArgs|OnSkillStateProjectileShootEventArgs|OnSkillStateSkillEventEventArgs
 
 ---Server-side event for when a skill state event occurs.  
 ---Use SkillManager.Register to register different skill listeners.  

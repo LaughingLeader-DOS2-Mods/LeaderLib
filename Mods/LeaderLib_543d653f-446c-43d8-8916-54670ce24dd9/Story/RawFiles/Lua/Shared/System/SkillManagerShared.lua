@@ -89,9 +89,10 @@ end
 SkillManager._Internal.CreateSkillEventTable = _CreateSkillEventTable
 SkillManager._Internal.GetSkillSourceItem = _GetSkillSourceItem
 
----Registers a function to call when a specific skill or array of skills has a skill event. This function fires for all skill events unless otherwise specified.
+---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.GETAPCOST event.  
+---🔨🔧**Server/Client**🔧🔨  
 ---@param skill string|string[]
----@param callback fun(e:OnSkillStateGetAPCost)
+---@param callback fun(e:OnSkillStateGetAPCostEventArgs)
 ---@param priority integer|nil Optional listener priority
 ---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[]|nil index Subscription index(s), which can be used to unsubscribe.
@@ -100,13 +101,9 @@ function SkillManager.Register.GetAPCost(skill, callback, priority, once)
 	if t == "table" then
 		local indexes = {}
 		for _,v in pairs(skill) do
-			if not GameHelpers.Stats.IsAction(v) then
-				local index = SkillManager.Register.GetAPCost(v, callback, priority, once)
-				if index then
-					indexes[#indexes+1] = index
-				end
-			else
-				fprint(LOGLEVEL.WARNING, "[SkillManager.Register.GetAPCost] Skill (%s) is a hotbar action, and not an actual skill. Skipping.", v)
+			local index = SkillManager.Register.GetAPCost(v, callback, priority, once)
+			if index then
+				indexes[#indexes+1] = index
 			end
 		end
 		return indexes
@@ -143,3 +140,99 @@ Ext.Events.GetSkillAPCost:Subscribe(function (e)
 		Events.OnSkillState:Invoke(data)
 	end
 end, {Priority=0})
+
+---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.GETDAMAGE event.  
+---This is called for the actual damage (`Ext.Events.GetSkillDamage`), and for `Damage` param tooltips (`Ext.Events.SkillGetDescriptionParam`).  
+---Check `e.IsTooltip` to determine what to set `e.Result` to.  
+---🔨🔧**Server/Client**🔧🔨  
+---@param skill string|string[]
+---@param callback fun(e:OnSkillStateGetDamageEventArgs)
+---@param priority integer|nil Optional listener priority
+---@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@return integer|integer[]|nil index Subscription index(s), which can be used to unsubscribe.
+function SkillManager.Register.GetDamage(skill, callback, priority, once)
+	local t = type(skill)
+	if t == "table" then
+		local indexes = {}
+		for _,v in pairs(skill) do
+			local index = SkillManager.Register.GetDamage(v, callback, priority, once)
+			if index then
+				indexes[#indexes+1] = index
+			end
+		end
+		return indexes
+	elseif t == "string" then
+		if GameHelpers.Stats.IsAction(skill) then
+			fprint(LOGLEVEL.WARNING, "[SkillManager.Register.GetDamage] Skill (%s) is a hotbar action, and not an actual skill. Skipping.", skill)
+			return nil
+		end
+		local opts = {Priority = priority, Once=once, MatchArgs={State=SKILL_STATE.GETDAMAGE}}
+		if not StringHelpers.Equals(skill, "All", true) then
+			SkillManager.SetSkillEnabled(skill, true)
+			opts.MatchArgs.Skill=skill
+		else
+			SkillManager.EnableForAllSkills(true)
+		end
+		return Events.OnSkillState:Subscribe(callback, opts)
+	end
+end
+
+Ext.Events.GetSkillDamage:Subscribe(function (e)
+	local skill = StringHelpers.GetSkillEntryName(e.Skill.SkillId)
+	if SkillManager.IsSkillEnabled(skill) then
+		local character = nil
+		if GameHelpers.Ext.ObjectIsStatCharacter(e.Attacker) then
+			character = e.Attacker.Character
+		end
+		local data = _CreateSkillEventTable(skill, character, SKILL_STATE.GETDAMAGE, e, "userdata") --[[@as OnSkillStateGetDamageAmountEventArgs]]
+		data.IsTooltip = false
+		---@type SubscribableEventInvokeResult<OnSkillStateGetDamageAmountEventArgs>
+		local invokeResult = Events.OnSkillState:Invoke(data)
+		if invokeResult.ResultCode ~= "Error" then
+			local damageList = invokeResult.Args.Result
+			if invokeResult.Results then
+				for i=1,#invokeResult.Results do
+					local b = invokeResult.Results[i]
+					if type(b) == "StatsDamagePairList" then
+						damageList = b
+					end
+				end
+			end
+			if damageList ~= nil then
+				e.DamageList:CopyFrom(damageList)
+			end
+		end
+	end
+end, {Priority=0})
+
+if _ISCLIENT then
+	Ext.Events.SkillGetDescriptionParam:Subscribe(function (e)
+		if e.Params[1] == "Damage" then
+			local skill = StringHelpers.GetSkillEntryName(e.Skill.SkillId)
+			if SkillManager.IsSkillEnabled(skill) then
+				local character = nil
+				if e.Character then
+					character = e.Character.Character
+				end
+				local data = _CreateSkillEventTable(skill, character, SKILL_STATE.GETDAMAGE, e, "userdata") --[[@as OnSkillStateGetDamageTextEventArgs]]
+				data.IsTooltip = true
+				---@type SubscribableEventInvokeResult<OnSkillStateGetDamageTextEventArgs>
+				local invokeResult = Events.OnSkillState:Invoke(data)
+				if invokeResult.ResultCode ~= "Error" then
+					local damageRange = invokeResult.Args.Result
+					if invokeResult.Results then
+						for i=1,#invokeResult.Results do
+							local b = invokeResult.Results[i]
+							if type(b) == "table" then
+								damageRange = b
+							end
+						end
+					end
+					if damageRange ~= nil then
+						e.Description = GameHelpers.Tooltip.FormatDamageRange(damageRange)
+					end
+				end
+			end
+		end
+	end, {Priority=0})
+end

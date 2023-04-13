@@ -19,9 +19,14 @@ local _lastUsedSkillItems = SkillManager._Internal.LastUsedSkillItems
 
 local _EXTVERSION = Ext.Utils.Version()
 
+local _IgnoreStateForDeprecated = {
+	[SKILL_STATE.GETAPCOST] = true,
+	[SKILL_STATE.GETDAMAGE] = true,
+}
+
 ---@param e OnSkillStateAllEventArgs
 local function _IsOldState(e)
-	return e.State ~= SKILL_STATE.GETAPCOST
+	return _IgnoreStateForDeprecated[e.State] ~= true
 end
 
 ---Registers a function to call when skill events fire for a skill or table of skills.

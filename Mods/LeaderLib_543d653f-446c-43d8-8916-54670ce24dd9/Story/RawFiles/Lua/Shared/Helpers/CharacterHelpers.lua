@@ -1167,6 +1167,9 @@ end
 ---@return boolean
 function GameHelpers.Character.CanAttackTarget(target, attacker, allowItems)
 	local target = GameHelpers.TryGetObject(target)
+	if target == nil then
+		return false
+	end
 	if GameHelpers.Ext.ObjectIsItem(target) then
 		---@cast target EsvItem|EclItem
 		return allowItems == true and not GameHelpers.Item.IsDestructible(target)

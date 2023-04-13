@@ -372,6 +372,8 @@ GameHelpers.Skill.IsAction = GameHelpers.Stats.IsAction
 ---@return boolean hasRequirements
 ---@return CharacterHasRequirementsFailureReason|nil requirementsFailedReason # The initial reason the requirements aren't met.
 function GameHelpers.Stats.CharacterHasRequirements(char, statId)
+	local character = GameHelpers.GetCharacter(char, "EsvCharacter")
+	fassert(character ~= nil, "Failed to get character from %s", char)
 	local requirements = nil
 	local stat = nil
 	if type(statId) == "table" then
@@ -386,9 +388,6 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 			requirements = stat.Requirements
 		end
 	end
-
-	local character = GameHelpers.GetCharacter(char, "EsvCharacter")
-	fassert(character ~= nil, "Failed to get character from %s", char)
 	local isInCombat = character:GetStatus("COMBAT") ~= nil
 	if requirements then
 		for _,req in pairs(requirements) do
@@ -483,10 +482,8 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 				return false,"AP"
 			end
 		end
-		
-		return true
 	end
-	return false
+	return true
 end
 
 local _MaxEnumCount = {

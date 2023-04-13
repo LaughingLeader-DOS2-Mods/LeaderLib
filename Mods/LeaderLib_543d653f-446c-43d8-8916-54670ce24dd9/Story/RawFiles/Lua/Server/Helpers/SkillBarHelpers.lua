@@ -102,10 +102,13 @@ local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
 end
 Ext.Osiris.NewCall(TrySetSkillSlot, "LeaderLib_Ext_TrySetSkillSlot", "(CHARACTERGUID)_Character, (INTEGER)_Slot, (STRING)_Skill, (INTEGER)_ClearCurrentSlot")
 
----Refreshes a skill if the character has it.
+---Sets a skill cooldown to 0 if the character has it.
+---@param char Guid
+---@param skill string
 local function RefreshSkill(char, skill)
+    char = GameHelpers.GetUUID(char)
     if Osi.CharacterHasSkill(char, skill) == 1 then
-        Osi.NRD_SkillSetCooldown(char, skill, 0.0)
+        GameHelpers.Skill.SetCooldown(char, skill, 0)
     end
 end
 Ext.Osiris.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
@@ -202,17 +205,25 @@ end ]]
 
 ---Set a skill cooldown if the character has the skill.
 ---@param char CharacterParam
----@param skill string
+---@param skill string|string[]
 ---@param cooldown number
 function GameHelpers.Skill.SetCooldown(char, skill, cooldown)
     local character = GameHelpers.GetCharacter(char) --[[@as EsvCharacter]]
     assert(character ~= nil, "A valid EsvCharacter, NetID, or UUID is required.")
-    local skillData = character.SkillManager.Skills[skill]
-    if skillData then
-        skillData.ActiveCooldown = cooldown
-        if cooldown ~= 0 and GameHelpers.Character.IsPlayer(character) and character.CharacterControl then
-            --Force the hotbar to refresh the cooldown animations
-            GameHelpers.UI.RefreshSkillBar(character)
+    local t = type(skill)
+    if t == "table" then
+        for _,v in pairs(skill) do
+            GameHelpers.Skill.SetCooldown(character, v, cooldown)
+        end
+    else
+        assert(t == "string", "Skill must be a string (incorrect type: " .. t)
+        local skillData = character.SkillManager.Skills[skill]
+        if skillData then
+            skillData.ActiveCooldown = cooldown
+            if cooldown ~= 0 and GameHelpers.Character.IsPlayer(character) and character.CharacterControl then
+                --Force the hotbar to refresh the cooldown animations
+                GameHelpers.UI.RefreshSkillBar(character)
+            end
         end
     end
 end

@@ -38,7 +38,8 @@ function GameHelpers.Damage.ReduceDamage(target, attacker, handle, reduction, is
 	return success
 end
 
--- Legacy
+---@deprecated
+---@diagnostic disable-next-line
 GameHelpers.ReduceDamage = GameHelpers.Damage.ReduceDamage
 
 ---Reduce damage by a percentage (ex. 0.5)
@@ -52,6 +53,7 @@ local function ReduceDamage_Call(target, attacker, handle_param, reduction_perc,
     local handle = Common.SafeguardParam(handle_param, "integer", nil)
     if handle == nil then error("[LeaderLib_GameMechanics.lua:ReduceDamage] Handle is null! Skipping.") end
     local reduction = Common.SafeguardParam(reduction_perc, "number", 0.5)
+    ---@diagnostic disable-next-line
     return GameHelpers.Damage.ReduceDamage(target, attacker, handle, reduction, is_hit_param == 1)
 end
 
@@ -174,8 +176,11 @@ local function RedirectDamage_Call(target, defender, attacker, handle_param, red
     else
         local reduction = Common.SafeguardParam(reduction_perc, "number", 0.5)
         local isHit = is_hit_param == true or (Common.SafeguardParam(is_hit_param, "integer", 0) and is_hit_param == 1)
+        ---@diagnostic disable-next-line
         GameHelpers.Damage.RedirectDamage(target, defender, attacker, handle, reduction, isHit)
+        return true
     end
+    return false
 end
 
 Ext.Osiris.NewCall(RedirectDamage_Call, "LeaderLib_Hit_RedirectDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Defender, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")

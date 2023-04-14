@@ -39,6 +39,7 @@ Ext.Events.SessionLoaded:Subscribe(function (_)
 			end
 		end)
 	
+		---@diagnostic disable-next-line
 		Input.RegisterMouseListener(UIExtensions.MouseEvent.Clicked, function(event, pressed, id, keys, controllerEnabled)
 			if Vars.Commands.Teleporting then
 				local state = Ext.UI.GetPickingState()

@@ -46,6 +46,7 @@ for name,ids in pairs(Data.InputEnum) do
 	Input.Keys[name] = 0
 end
 
+---@deprecated
 ---Wrapper around RegisterListener for easier auto-completion.
 ---@param callbackOrInputName InputEventCallback|string|integer
 ---@param callbackOrNil InputEventCallback|nil
@@ -53,6 +54,7 @@ function Input.RegisterListener(callbackOrInputName, callbackOrNil)
 	local t = type(callbackOrInputName)
 	if t == "table" then
 		for i,v in pairs(callbackOrInputName) do
+			---@diagnostic disable-next-line
 			Input.RegisterListener(v, callbackOrNil)
 		end
 	else
@@ -64,21 +66,26 @@ function Input.RegisterListener(callbackOrInputName, callbackOrNil)
 					error(string.format("Invalid input id %s", id))
 				end
 			end
+			---@diagnostic disable-next-line
 			RegisterListener("NamedInputEvent", callbackOrInputName, callbackOrNil)
 		elseif t == "function" then
+			---@diagnostic disable-next-line
 			RegisterListener("InputEvent", callbackOrInputName)
 		end
 	end
 end
 
+---@deprecated
 ---Wrapper around RegisterListener for easier auto-completion.
 ---@param callbackOrEventName InputEventCallback|string
 ---@param callbackOrNil InputEventCallback|nil
 function Input.RegisterMouseListener(callbackOrEventName, callbackOrNil)
 	local t = type(callbackOrEventName)
 	if t == "string" and callbackOrNil ~= nil then
+		---@diagnostic disable-next-line
 		RegisterListener("MouseInputEvent", callbackOrEventName, callbackOrNil)
 	elseif t == "function" then
+		---@diagnostic disable-next-line
 		RegisterListener("MouseInputEvent", UIExtensions.MouseEvent.All, callbackOrEventName)
 	end
 end

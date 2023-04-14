@@ -156,6 +156,8 @@ end
 
 ---@alias TurnCounterCallback fun(id:string, turn:integer, lastTurn:integer, finished:boolean, data:TurnCounterData)
 
+---@diagnostic disable deprecated
+
 ---@deprecated
 ---@see LeaderLibTurnCounterSystem#Subscribe
 ---@param id string|string[]|nil
@@ -177,6 +179,8 @@ function TurnCounter.RegisterListener(id, callback)
 		RegisterListener("OnTurnCounter", callback)
 	end
 end
+
+---@diagnostic enable
 
 ---Check if a turn counter is active.
 ---@param id string|string[] The turn counter ID.

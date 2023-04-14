@@ -61,6 +61,7 @@ function RegisterSkillListener(skill, callback)
 		end
 	elseif t == "table" then
 		for i,v in pairs(skill) do
+			---@diagnostic disable-next-line
 			RegisterSkillListener(v, callback)
 		end
 	end
@@ -76,6 +77,7 @@ function RemoveSkillListener(skill, callback)
 		Events.OnSkillState:Unsubscribe(callback, {Skill=skill})
 	elseif t == "table" then
 		for i,v in pairs(skill) do
+			---@diagnostic disable-next-line
 			RemoveSkillListener(v, callback)
 		end
 	elseif type(callback) == "function" then
@@ -302,6 +304,7 @@ end
 function OnSkillHit(skillId, target, source, damage, hit, context, hitStatus, data)
 	if not IgnoreHitTarget(target.MyGuid) and SkillManager.IsSkillEnabled(skillId) then
 		Events.OnSkillState:Invoke(_CreateSkillEventTable(skillId, source, SKILL_STATE.HIT, data, data.Type))
+		---@diagnostic disable-next-line
 		InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skillId, SKILL_STATE.HIT, data)
 	end
 end
@@ -318,6 +321,7 @@ Ext.Events.ProjectileHit:Subscribe(function (e)
 				---@type ProjectileHitData
 				local data = Classes.ProjectileHitData:Create(target, uuid, projectile, e.Position, skill)
 				Events.OnSkillState:Invoke(_CreateSkillEventTable(skill, caster, SKILL_STATE.PROJECTILEHIT, data, data.Type))
+				---@diagnostic disable-next-line
 				InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.PROJECTILEHIT, data, data.Type)
 			end
 		end

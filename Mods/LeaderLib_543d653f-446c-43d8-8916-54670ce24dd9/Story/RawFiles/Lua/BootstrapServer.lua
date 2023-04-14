@@ -40,11 +40,13 @@ function RegisterProtectedOsirisListener(name, arity, event, handler, anyLevelTy
 	end
 end
 
+---@deprecated
 --- Wraps an extender listener in a check to make sure the game is running before calling the supplied function.
 --- @param event string
 --- @param listener function Lua function to run when the event fires
 --- @param anyLevelType boolean|nil If true, the function will only be called for non-game levels as well (lobby, character creation).
 function RegisterProtectedExtenderListener(event, listener, anyLevelType)
+	---@diagnostic disable-next-line
 	Ext.RegisterListener(event, function(...)
 		if CanInvokeListener(anyLevelType) then
 			local b,result = xpcall(listener, debug.traceback, ...)

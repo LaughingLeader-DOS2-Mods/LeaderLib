@@ -24,8 +24,10 @@ function MessageBox:RegisterListener(id, callback)
 		if StringHelpers.Equals(id, "all", true) then
 			id = "All"
 		end
+		---@diagnostic disable-next-line
 		RegisterListener("MessageBoxEvent", id, callback)
 	elseif t == "function" then
+		---@diagnostic disable-next-line
 		RegisterListener("MessageBoxEvent", "All", callback)
 	elseif t == "table" then
 		for _,v in pairs(id) do

@@ -127,6 +127,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 			listenerTable = event
 		else
 			for i,v in pairs(event) do
+				---@diagnostic disable-next-line
 				RegisterListener(v, callbackOrKey, callbackOrNil)
 			end
 			return
@@ -162,6 +163,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 				end, {MatchArgs={id=callbackOrKey}})
 			elseif keyType == "table" then
 				for _,v in pairs(keyType) do
+					---@diagnostic disable-next-line
 					RegisterListener("OnNamedTurnCounter", v, callbackOrNil)
 				end
 			end

@@ -1,3 +1,5 @@
+---@diagnostic disable deprecated
+
 ---@type QuestData[]
 local _questRegistration = {}
 

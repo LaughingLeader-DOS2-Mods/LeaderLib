@@ -24,6 +24,7 @@ end)
 
 Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	if skill ~= nil then
+		---@diagnostic disable-next-line
 		RegisterSkillListener(skill, function(skill, uuid, state, ...)
 			fprint(LOGLEVEL.TRACE, "[LeaderLib:DebugMain.lua:SkillListener] skill(",skill,") caster(",uuid,") state(",state,") params(",Common.JsonStringify({...}),")")
 		end)

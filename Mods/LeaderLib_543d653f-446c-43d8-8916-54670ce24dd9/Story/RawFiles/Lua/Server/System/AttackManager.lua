@@ -55,7 +55,8 @@ AttackManager.OnWeaponTagHit = {
 	Register = function(tag, callback, allowSkills, priority)
 		local t = type(tag)
 		if t == "table" then
-			for k,v in pairs(tag) do 
+			for k,v in pairs(tag) do
+				---@diagnostic disable-next-line
 				AttackManager.OnWeaponTagHit.Register(v, callback, allowSkills, priority) 
 			end
 		elseif t == "string" then
@@ -88,6 +89,7 @@ AttackManager.OnWeaponTypeHit = {
 		local t = type(weaponType)
 		if t == "table" then
 			for k,v in pairs(weaponType) do 
+				---@diagnostic disable-next-line
 				AttackManager.OnWeaponTypeHit.Register(v, callback, allowSkills, priority) 
 			end
 		elseif t == "string" then

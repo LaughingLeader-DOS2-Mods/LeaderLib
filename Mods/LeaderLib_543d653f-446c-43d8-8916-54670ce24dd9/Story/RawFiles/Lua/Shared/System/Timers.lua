@@ -312,6 +312,7 @@ function Timer.RegisterListener(name, callback)
 		Events.TimerFinished:Subscribe(CreateDeprecatedWrapper(callback))
 	elseif t == "table" then
 		for _,v in pairs(name) do
+			---@diagnostic disable-next-line
 			Timer.RegisterListener(v, callback)
 		end
 	end

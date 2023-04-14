@@ -32,11 +32,13 @@ Events.LuaReset:Subscribe(function ()
 	end
 end)
 
+---@deprecated
 ---Deprecated since UIListeners were moved to the regular Listeners.
 ---Registers a function to call when a specific Lua LeaderLib UI event fires.
 ---@param event string OnTooltipPositioned
 ---@param callback function
 function UI.RegisterListener(event, callback, ...)
+	---@diagnostic disable-next-line
 	RegisterListener(event, callback, ...)
 end
 

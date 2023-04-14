@@ -60,6 +60,7 @@ function Testing.RunTests(tbl, testingName)
 		Timer.Cancel("LeaderLib_LuaTesting_RunNext")
 		local co,isMain = coroutine.running()
 		if co and not isMain then
+			---@diagnostic disable-next-line
 			coroutine.close(co)
 		end
 	end
@@ -97,6 +98,7 @@ function Testing.Stop()
 	if _runningTest and _runningTest.Length > 0 then
 		local co,isMain = coroutine.running()
 		if co and not isMain then
+			---@diagnostic disable-next-line
 			pcall(coroutine.close, co)
 		end
 		

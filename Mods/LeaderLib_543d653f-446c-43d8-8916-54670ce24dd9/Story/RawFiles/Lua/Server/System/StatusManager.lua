@@ -1371,6 +1371,7 @@ function RegisterStatusListener(event, status, callback)
 	local t = _type(status)
 	if t == "table" then
 		for i,v in _pairs(status) do
+			---@diagnostic disable-next-line
 			RegisterStatusListener(event, v, callback)
 		end
 	elseif t == "string" then
@@ -1410,6 +1411,7 @@ end
 function RegisterStatusTypeListener(event, statusType, callback)
 	if _type(statusType) == "table" then
 		for i,v in _pairs(statusType) do
+			---@diagnostic disable-next-line
 			RegisterStatusTypeListener(event, v, callback)
 		end
 	else

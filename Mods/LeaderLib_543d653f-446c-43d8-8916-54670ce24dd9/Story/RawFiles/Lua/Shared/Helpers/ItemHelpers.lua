@@ -528,7 +528,7 @@ function GameHelpers.Item.GetItemInSlot(character, slot)
     local slotIndex = Data.EquipmentSlots[slot]
     fassert(slotIndex ~= nil, "'%s' is not a valid slot name", slot)
     if not _ISCLIENT then
-        ---@cast char EsvCharacter
+        ---@cast character EsvCharacter
         if _OSIRIS() then
             local itemGUID = Osi.CharacterGetEquippedItem(character.MyGuid, slot)
             if not StringHelpers.IsNullOrEmpty(itemGUID) then
@@ -542,7 +542,7 @@ function GameHelpers.Item.GetItemInSlot(character, slot)
             end
         end
     else
-        ---@cast char EclCharacter
+        ---@cast character EclCharacter
         return character:GetItemObjectBySlot(slot)
     end
     return nil
@@ -872,6 +872,7 @@ function ContainerHasContents(uuid)
     return false
 end
 
+---@diagnostic disable-next-line
 GameHelpers.Item.ContainerHasContents = ContainerHasContents
 
 ---Returns true if the item's stat is an Object type.

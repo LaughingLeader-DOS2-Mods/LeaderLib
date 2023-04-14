@@ -270,11 +270,11 @@ function UIExtensions.GetInstance(skipSetup)
 	return instance
 end
 
-RegisterListener("ClientDataSynced", function(modData, sharedData)
+Events.ClientDataSynced:Subscribe(function (e)
 	local main = UIExtensions.Root
 	if main then
 		main.controllerEnabled = Vars.ControllerEnabled
-		main.isInCharacterCreation = sharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
+		main.isInCharacterCreation = e.Data.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
 	end
 end)
 

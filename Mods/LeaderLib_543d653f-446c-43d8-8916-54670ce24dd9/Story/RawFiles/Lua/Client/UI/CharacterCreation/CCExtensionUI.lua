@@ -286,7 +286,7 @@ Ext.RegisterNetListener("LeaderLib_EnableSkipTutorialUI", function (cmd, payload
 	end
 end)
 
-RegisterListener("ClientDataSynced", function ()
+Events.ClientDataSynced:Subscribe(function (e)
 	CCExt.IsHost = Client.IsHost
 	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
 		local this = CCExt.Root

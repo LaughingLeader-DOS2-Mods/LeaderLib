@@ -347,6 +347,29 @@ Classes.Enum:Create(Data.Talents)
 ---@deprecated
 Data.TalentEnum = Data.Talents
 
+---@type LeaderLibEnum
+Data.Traits = {
+	Forgiving = 0,
+	Vindictive = 1,
+	Bold = 2,
+	Timid = 3,
+	Altruistic = 4,
+	Egotistical = 5,
+	Independent = 6,
+	Obedient = 7,
+	Pragmatic = 8,
+	Romantic = 9,
+	Spiritual = 10,
+	Materialistic = 11,
+	Righteous = 12,
+	Renegade = 13,
+	Blunt = 14,
+	Considerate = 15,
+	Compassionate = 16,
+	Heartless = 17,
+}
+Classes.Enum:Create(Data.Traits)
+
 Data.ItemRarity = {
 	Sentinel = -1,
 	Common = 0,

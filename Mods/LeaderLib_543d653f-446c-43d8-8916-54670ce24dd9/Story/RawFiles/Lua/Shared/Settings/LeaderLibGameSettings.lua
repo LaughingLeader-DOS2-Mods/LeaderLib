@@ -285,11 +285,18 @@ function LeaderLibGameSettings:ApplyAPChanges()
 	end
 end
 
+local function _TryToggleDivineTalents(enabled)
+	Mods.CharacterExpansionLib.SheetManager.Talents.Builtin.ToggleDivineTalents(enabled, ModuleUUID)
+end
+
 function LeaderLibGameSettings:ApplyClient()
 	if _ISCLIENT then
 		StatusHider.RefreshStatusVisibility()
 		if Mods.CharacterExpansionLib then
-			Mods.CharacterExpansionLib.SheetManager.Talents.ToggleDivineTalents(self.Settings.Client.DivineTalentsEnabled)
+			local b,err = xpcall(_TryToggleDivineTalents, debug.traceback, self.Settings.Client.DivineTalentsEnabled)
+			if not b then
+				Ext.Utils.PrintError(err)
+			end
 		end
 	end
 end

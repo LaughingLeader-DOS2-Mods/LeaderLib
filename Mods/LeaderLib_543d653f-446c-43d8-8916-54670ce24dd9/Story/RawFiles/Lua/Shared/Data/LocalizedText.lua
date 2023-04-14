@@ -1,11 +1,9 @@
----@type TranslatedString
-local ts = Classes["TranslatedString"]
+local ts = Classes.TranslatedString
 
 ---@class ColoredTranslatedStringEntry
 ---@field Text TranslatedString
 ---@field Color string
 
----@type table<string, ColoredTranslatedStringEntry>
 LocalizedText.DamageTypeHandles = {
 	None = {Text=ts:Create("h8a070775gc251g4f34g9086gb1772f7e2cff","pure damage"), Color="#13D177"},
 	Physical = {Text=ts:Create("h40782d69gbfaeg40cegbe3cg370ef44e3980","physical damage"), Color="#AE9F95"},
@@ -23,7 +21,6 @@ LocalizedText.DamageTypeHandles = {
 	Sentinel = {Text=ts:Create("h972f1d0cgbce6g4a8fg8ab4g02430e78b2b4","unknown damage"), Color="#008858"}, -- Special LeaderLib handle
 }
 
----@type table<string, ColoredTranslatedStringEntry>
 LocalizedText.DamageTypeNames = {
 	None = {Text=ts:Create("h37e16e2cgb2c7g46a6g942egb35eb0a825f1","Pure"), Color="#13D177"},
 	Physical = {Text=ts:Create("ha6c38456g4c6ag47b2gae87g60a26cf4bf7b","Physical"), Color="#AE9F95"},
@@ -251,7 +248,6 @@ LocalizedText.TalentNames = {
 	MagicCycles = ts:Create("h4564bbfbgd845g4318g97e7ge85f5923b323", "Magic Cycles"),
 }
 
----@type table<string, TranslatedString>
 LocalizedText.Slots = {
 	Helmet = ts:Create("hd4b98ff5g33a8g44e0ga6a9gdb1ab7d70bf3", "Helmet"),
 	Breast = ts:Create("hb5c52d20g6855g4929ga78ege3fe776a1f2e", "Chest Armour"),
@@ -313,6 +309,11 @@ LocalizedText.SkillTooltip = {
 	ToggleStatusDuration = ts:CreateFromKey("LeaderLib_Tooltip_ToggleStatus", "Toggle [1] for [2] Turn(s)"),
 	--BasicAttack = ts:Create("hbdac34fdg43b6g4439g9947g6676e9c03294", "Basic Attack"),
 	LeaderLibToggleGrouping = ts:CreateFromKey("LeaderLib_Tooltip_ToggleGrouping", "<font color='#00CCFF'>Keyboard Shortcut</font><br><font color='#44CCAA'>Press CTRL + Spacebar to chain/unchain party members. No skill required.</font><br>(Note: This is the '<font color='#FFAA11'>[Handle:h310a22a4g1ebag4b1cg89d6g5cebc301c5c5:Toggle Game Master Shroud]</font>' [Handle:h6867dea8g129fg4a85g9368g1cf6534df65f:Key]).", {AutoReplacePlaceholders = true}),
+	DamageLevelScaled = ts:Create("h71b09f9fg285fg4532gab16g1c7640864141", "Damage is based on your level and receives bonus from [1]."),
+	DamageWeaponScaled = ts:Create("ha4cfd852g52f1g4079g8919gd392ac8ade1a", "Damage is based on your basic attack and receives a bonus from [1]."),
+	DamageShieldScaled = ts:Create("hc8bae163gccf2g4127g8e0dg68d172d2ecf6", "Damage is based on the Physical Armour of your shield."),
+	DamagePhysicalArmourScaled = ts:Create("h1351a6d8g5dc2g4f9bgbda1gfee5cde2c85e", "Damage is based on your current Physical Armour."),
+	DamageMagicArmourScaled = ts:Create("hf1ff2734g96adg486fg800cgd9d0320b04c7", "Damage is based on your current Magic Armour."),
 }
 
 --Engine statuses from eoc::GetStatusTranslatedName
@@ -443,31 +444,109 @@ LocalizedText.Base = {
 }
 
 LocalizedText.CharacterSheet = {
-	Strength = LocalizedText.AttributeNames.Strength,
-	Finesse = LocalizedText.AttributeNames.Finesse,
-	Intelligence = LocalizedText.AttributeNames.Intelligence,
-	Constitution = LocalizedText.AttributeNames.Constitution,
-	Memory = LocalizedText.AttributeNames.Memory,
-	Wits = LocalizedText.AttributeNames.Wits,
+	Strength = ts:Create("hc8c67074g3c19g44d1g8b7bg9e5a8d06d87f", "Strength"),
+	Finesse = ts:Create("h3b3ad9d6g754fg44a0g953dg4f87d4ac96fe", "Finesse"),
+	Intelligence = ts:Create("h33d41553g12cag401eg8c71g640d3d654054", "Intelligence"),
+	Constitution = ts:Create("hcd19f46ag85bcg41f2gb8fbg1dc69843d250", "Constitution"),
+	Memory = ts:Create("h8d2cecb4g5be0g4fafg8b9bga446ca226c92", "Memory"),
+	Wits = ts:Create("h0f1053bbg8ac4g461fg9179g6f28b9d091bd", "Wits"),
+	Damage = ts:Create("h9531fd22g6366g4e93g9b08g11763cac0d86", "Damage"),
+	Tooltip = {
+		ExtraDamage = ts:Create("h947808bdgf2b2g431eg83d9g86bba689ec0c", "Currently: [1] based attacks and skills do [2][3]% extra damage."),
+		SpellSlots = ts:Create("hea9cf9e9gb7f0g4cc0ga3d7gdd7516bc04bb", "Base slots: [1]. Extra slots from Memory: +[2]."),
+		Memory_Description = ts:Create("h49b9da32gdb42g4772ga68dgd155a02fb246", "+[1] point = +1 Slot."),
+		Constitution_Description = ts:Create("h6d615e0bgea5bg4fe3g922ega508e86bceed", "1 point would add +[1]% Vitality."),
+		Wits_Description = ts:Create("hd5dd26e5gadc6g40d9ga0c6g2ae909cbc842", "1 point would add [1]% Critical Chance + [2] Initiative."),
+		StatBase = ts:Create("hbb9884d7g3b9ag43dfga88egdcc32db8bd74", "<br>Base: [1]"),
+		Vitality = ts:Create("hba9570fega15cg4069gad0eg7754669e7209", "Vitality Bonus: [1][2]%"),
+		CriticalChance = ts:Create("h84bafbedgb201g4356gaa16g41cf785deff0", "<br>Critical Multiplier: [1]%"),
+		AccuracyWeaponPenalty = ts:Create("hea8697b1g2bd6g4e6bga901gf1837a763f15", "Weapon level too high: [1][2]%"),
+		AccuracyBlindedPenalty = ts:Create("hf76d16e7g8b08g4240ga6b6g88c0d9d27156", "<br>Blinded!"),
+		MovementSpeedPenalty = ts:Create("h8951ca6dgc1a1g4fcega09agf54d40f3be37", "<br>Movement Speed Penalty: [1][2]%"),
+		MovementSpeedBoost = ts:Create("h331c7392g2787g49f7g88d4g72ff33dca16c", "<br>Movement Speed Boost: [1][2]%"),
+		ActionPoints = {
+			StartAP = ts:Create("h8723691egfcd3g498fgbcb4g2bf0a0f4d00d", "<br><br>Start Action Points: [1]"),
+			StartAP_Description = ts:Create("h97706f14gb39eg4975gbcb6gb876c0bdd4d4", "<br>How many Action Points you start combat with."),
+			MaxAP = ts:Create("h4938529agb8d4g4f9bg98d2gf057c8e17b8a", "<br><br>Maximum Action Points: [1]"),
+			MaxAP_Description = ts:Create("hddbbffffgc663g4a20ga452gf25cbbd871c8", "The number of Action Points you can have in total. You save up unused Action Points from previous turns, but never more than this."),
+			FromGlassCannonTalent = ts:Create("h2f644eafg3fcag4043ga68bg4f8e6488b840", "<br>From [1]: Start AP equal to Maximum AP."),
+			ActionPointCost = ts:Create("hac06d8ecg2be5g4b1egac56g9cd90cf03b46", "<br>Action Points cost: [1]"),
+			RecoveryAP = ts:Create("hfabcc55fgc0d2g45ccg85c7g2ebf651f470f", "<br><br>Turn Action Points: [1]"),
+			RecoveryAP_Description = ts:Create("h07ef9f40g7f92g45d1g9f7egb3628a5ab01d", "<br>How many Action Points you gain in subsequent turns."),
+		},
+		FromGear = ts:Create("h89018e24g2f67g4f5bg80e1gc6724d1a122e", "<br>From Gear: [1][2]"),
+		BaseBoost = ts:Create("h5f77d376g279cg4a8bga7a8gf1886a8cd7e7", "<br>Base Boost: [1]%"),
+		FromPhysicalArmourAbility = ts:Create("hb71362a8gcb34g4db8gb821g4416a786f7b5", "From Physical Armour ability: [1][2]%"),
+		FromMagicArmourAbility = ts:Create("h3e6d0038g5b02g47b7ga291gd039dd29736c", "From Magic Armour ability: [1][2]%"),
+		FromVitalityAbility = ts:Create("h075e5eeeg248eg4bd3g9031ga5b0f7a30c17", "From Vitality ability: [1][2]%"),
+		FromFlanking = ts:Create("hefbdb9d7g49c6g4432g987fge1ef96b86851", "From Flanking: [1]%"),
+		FromLevel = ts:Create("h8a3ccfcegd106g4076gabceg175e0c192575", "<br>From Level: +[1]"),
+		FromWits = ts:Create("h8b2c9945g7714g47dagb168g4fc45d47058e", "<br>From Wits: [1][2]"),
+		FromStrength = ts:Create("h6318785cgfc54g4611gb4c7ge980849f08c5", "<br>From Strength: [1][2]"),
+		FromCarryTalent = ts:Create("h5ec34e8cge6b7g4288g91f7g0e6df1f3d685", "<br>From [1]: +[2]"),
+		Damage = {
+			FromCharacter = ts:Create("h5d4473fdg9d82g494dg8ee1g18e855eaefcb", "<br>From character: [1][2]%"),
+			FromSneaking = ts:Create("he3c4035ag8e41g49d5gb1d5gd604872ef5b2", "<br>From Sneaking: x[1]"),
+			FromBullyTalent = ts:Create("h03c85049g2e71g49b1gb87eg1a3ed11a2564", "<br>From [1]: +[2]% (Against opponents with [3], [4] or [5])"),
+			FromMultiplicative = ts:Create("hd2273461gcca8g4f08g9eaeged96827308c2", "From [1]: [2] damage increased by [3]% (multiplicative)"),
+			FromFists = ts:Create("h0881bb60gf067g4223ga925ga343fa0f2cbd", "<br>From Fists: [1]-[2]"),
+			FromWeapon = ts:Create("hfa8c138bg7c52g4b7fgaccdgbe39e6a3324c", "<br>From Weapon: [1]-[2]"),
+			FromOffhandWeapon = ts:Create("hfe5601bdg2912g4beag895eg6c28772311fb", "<br>From Offhand Weapon: [1]-[2]"),
+			DualWieldingPenalty = ts:Create("he3980bf8gf554g4dd8g823cgf2ccb71036a6", "Dual wielding penalty: [1]%"),
+			TotalDamage = ts:Create("h1035c3e5gc73dg4cc4ga914ga03a8a31e820", "Total damage: [1]-[2]"),
+			None = ts:Create("hed58f57eg7b16g4b63g812ega842be8f1953","pure"),
+			Physical = ts:Create("h666fff63g3033g4063gb364g72c7b70c0969","physical"),
+			Piercing = ts:Create("h5022bb08ge403g4110gb272g043a6b5fcd05","piercing"),
+			Corrosive = ts:Create("h161d5479g06d6g408egade2g37a203e3361f","Physical Armour"),
+			Magic = ts:Create("hdb4307b4g1a6fg4c05g9602g6a4a6e7a29d9","Magic Armour"),
+			Air = ts:Create("he90b8313g9f8dg4dddg871ag3deb9dfeeb10","air"),
+			Earth = ts:Create("h0d765ef8gca43g4e90ga3cegbb41065861cb","earth"),
+			Fire = ts:Create("h72d4ba14gd1c7g4878ga2d6g940925b0332c","fire"),
+			Poison = ts:Create("h7ecb0492g363fg4b80gb9e2gdb068327e2f8","poison"),
+			Shadow = ts:Create("h168f52b6g342ag42e0g99d0g47d94b7363c8","rot"),
+			Water = ts:Create("h67923c72gd6f7g4430gab14gd893c772d522","water"),
+		}
+	},
+	PhysicalArmour = ts:Create("hb677b3f7g5cf6g49c3g84fag2f773ef50dd6", "Physical Armour"),
+	MagicArmour = ts:Create("hc6dcb940gb6b6g41aagaeceg31008af9c082", "Magic Armour"),
+	CriticalChance = ts:Create("h1b6a1120gb023g4df1gb463gc317e509ee2c", "Critical Chance"),
+	Accuracy = ts:Create("h6372c697g5d05g414cga3e3gbb2656f62f2d", "Accuracy"):WithFormat("<font color=\"#411600\">%s</font>"),
+	Dodge = ts:Create("h5b82f1a5gb4bcg48bdg8827g0d9baecfaada", "Dodging"):WithFormat("<font color=\"#411600\">%s</font>"),
 	Vitality = ts:Create("h67a4c781g589ag4872g8c46g870e336074bd", "Vitality"),
 	ActionPoints = ts:Create("h4ef9c467g3c7bg4614g96d0g801b09fcc05c", "Action Points"),
 	SourcePoints = ts:Create("hc4281cefg2577g4c22g9a01gf90be11a051f", "Source Points"),
-	Damage = ts:Create("h9531fd22g6366g4e93g9b08g11763cac0d86", "Damage"),
-	CriticalChance = ts:Create("h1b6a1120gb023g4df1gb463gc317e509ee2c", "Critical Chance"),
-	Accuracy = ts:Create("h6372c697g5d05g414cga3e3gbb2656f62f2d", "Accuracy"):WithFormat("<font color=\"#411600\">%s</font>"),
-	Dodging = ts:Create("h5b82f1a5gb4bcg48bdg8827g0d9baecfaada", "Dodging"):WithFormat("<font color=\"#411600\">%s</font>"),
+	Reputation = ts:Create("haf00c1a8gc56bg4eacgbd98g933b95e9f4b7", "Reputation"),
+	Karma = ts:Create("h1fbed78cg6928g414ag9046g7ae3aabc8fee", "Karma"),
+	Sight = ts:Create("hbd823364g3cd7g40a8g86dcg683cbc11515e", "Sight"),
+	Hearing = ts:Create("h72f5211cg1ad9g4092g8398g799c66b2311f", "Hearing"),
 	Movement = ts:Create("ha9fe36bfg692ag4f8bg8d9eg379bbbf04c87", "Movement"),
 	Initiative = ts:Create("h8c8cc7e3gdaf7g46d2g9d3bg04a31d8f0599", "Initiative"),
-	--TODO Many entries for these words. Not sure which handle is actually used by the sheet.
-	PhysicalArmour = ts:Create("h1feadc00g239ag430bgac99g7b5f3605a1c1", "Physical Armour"),
-	MagicArmour = ts:Create("h50eb8e33g82edg412eg9886gec19ca591254", "Magic Armour"),
+	Block = ts:Create("h7f512771g9783g4c18g8af1g8c052a73edc5", "|Block|"),
+	PiercingResistance = ts:Create("he840ff3eg35e6g4e06ga987g970ebee744e3", "Piercing Resistance"),
+	PhysicalResistance = ts:Create("hcd84ee03g9912g4b0dga49age6bce09b19d1", "Physical Resistance"),
+	CorrosiveResistance = ts:Create("hacc27ae5gfaf0g4854g85a6ga57d5be46dc5", "Corrosive Resistance"),
+	MagicResistance = ts:Create("h8bfd4518ge6deg47a2g90a6g541f5ba1ba88", "Magic Resistance"),
+	TenebriumResistance = ts:Create("hef0c737eg2a72g4564ga5cfg088484ac8b45", "Tenebrium Resistance"),
+	FireResistance = ts:Create("he04c3934g32b0g455fgac3dg75f2b7fd2119", "Fire Resistance"),
+	WaterResistance = ts:Create("he5441d99gdb3cg40acga0c4g24379b8b09f7", "Water Resistance"),
+	EarthResistance = ts:Create("hac36ad5ag557fg4456ga0edga5a40606fabb", "Earth Resistance"),
+	AirResistance = ts:Create("h134d72acgdd42g4c2dg97a8g6df0af2802a5", "Air Resistance"),
+	PoisonResistance = ts:Create("he526af2ag192cg4a71g8247gb306eb0eb97d", "Poison Resistance"),
+	Experience = ts:Create("he50fce4dg250cg4449g9f33g7706377086f6", "Experience"),
+	NextLevel = ts:Create("hd2c1d752gc727g4c69g9a6cg67116ca0b97e", "Next Level"),
+	MaxAP = ts:Create("hf82911f7g7ee2g4d32gb42ag391f69336428", "Max AP"),
+	StartAP = ts:Create("h38fd7a07gf031g4dfeg89e2g30679a0898d9", "Start AP"),
+	APRecovery = ts:Create("h544d0f04ga5b2g4350g9208g24b6ba25cbe8", "AP Recovery"),
+	MaxWeight = ts:Create("hd47021f7g7867g4714ga91cg02ac22e9cfb3", "Max Weight"),
+	MinDamage = ts:Create("h0cda6f38gcd49g4f74g8e14gd5bc2600a6e7", "Min Damage"),
+	MaxDamage = ts:Create("he43f0127ge25eg464cg8093g343ca73872bc", "Max Damage"),
+	LifeSteal = ts:Create("h69bafc0bgd06eg4ca0gbc2eg0959423c19b6", "Life Steal"),
+	Gain = ts:Create("hd0a6556ag7601g41fdg9a72gff05a766e77c", "Gain"),
 	Fire = ts:Create("h051b2501g091ag4c93ga699g407cd2b29cdc", "Fire"),
 	Water = ts:Create("hd30196cdg0253g434dga42ag12be43dac4ec", "Water"),
 	Earth = ts:Create("h85fee3f4g0226g41c6g9d38g83b7b5bf96ba", "Earth"),
 	Air = ts:Create("h1cea7e28gc8f1g4915ga268g31f90767522c","Air"),
 	Poison = ts:Create("haa64cdb8g22d6g40d6g9918g61961514f70f", "Poison"),
-	Experience = ts:Create("he50fce4dg250cg4449g9f33g7706377086f6", "Experience"),
-	NextLevel = ts:Create("hd2c1d752gc727g4c69g9a6cg67116ca0b97e", "Next Level"),
 	--Custom replacement for Next Level
 	Total = ts:Create("h9e9c017dg3bceg4c21ga665g71b50ca351b6", "Total"),
 }
@@ -701,6 +780,21 @@ LocalizedText.ActionSkills = {
 	ActionSkillRepair = ts:Create("hfb0ab865gb8dfg4e35g9c8dg0a8bb9445348", "Repair"),
 	ActionSkillSheathe = {Off=ts:Create("h14dec5c1g0fa6g4abag8219gba6727c227d8", "Unsheathe"), On=ts:Create("hbb510089g3d5bg434dga929gcb697fcaf656", "Sheathe")},
 	ActionSkillSneak = {Off=ts:Create("h7ccd039age7f6g4022g9078g4b8d3749c956", "Enter Sneak Mode"), On=ts:Create("hc0d5bf50g6523g4779g9b2egb772480114c7", "Exit Sneak Mode")},
+}
+
+LocalizedText.Requirements = {
+	Level = ts:Create("hdac4a008g7019g4a50g9887gc03eb73be9b4", "Level"),
+	NotCombat = ts:Create("hb1b287b5g3c91g4b52ga408g4fece4a73d24", "Can only be cast outside of combat."),
+	Combat = ts:Create("hc03e8eaagdca1g423dgb096gae39e3a975f2", "Can only be cast in combat."),
+	MinKarma = ts:Create("h3a4ccbd9g3562g457dgbd42g4819bafceba8", "Minimum Karma"),
+	MaxKarma = ts:Create("h735e123eg3bedg40e4gb445ge3e84405c963", "Maximum Karma"),
+	Immobile = ts:Create("hc3338918g67a4g4002g85f4g07818bad4e94", "Cannot use when Movement speed is 0."),
+	NotImmobile = ts:Create("hb449144agb84dg4499ga455g06ea10b1bd7a", "Can only use when Movement speed is 0."),
+	Tag = ts:Create("h67e90c1eg8eefg4313ga2efg34d42f163756", "tag"),
+	TalentIncompatibleWith = ts:Create("h97ce8eb1gaa65g475egb663g210e24bb0833", "Incompatible with [1]"),
+	TalentRequires = ts:Create("h7de69a95g70cag4bb3gbabcg1cf2df46f12c", "Requires [1]"),
+	TalentIncompatibleWithMultiple = ts:Create("h3fa5694dgb995g4311ga09eg8369fa1c3847", "Incompatible with [1] [2]"),
+	TalentRequiresMultiple = ts:Create("ha6e36605gee35g4aaagaddbg7ab8bfaf86f6", "Requires [1] [2]"),
 }
 
 Ext.Events.SessionLoaded:Subscribe(function ()

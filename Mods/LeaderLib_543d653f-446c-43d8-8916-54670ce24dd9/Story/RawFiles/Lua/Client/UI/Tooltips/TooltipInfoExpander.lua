@@ -44,7 +44,7 @@ function TooltipExpander.IsDirty()
 	return dirty
 end
 
----Whether or not the tooltip should be expanded. Check this when setting up tooltip elements.
+---Whether or not the tooltip is expanded. Check this when setting up tooltip elements.
 ---@return boolean
 function TooltipExpander.IsExpanded()
 	if GameSettings.Settings.Client.AlwaysExpandTooltips then

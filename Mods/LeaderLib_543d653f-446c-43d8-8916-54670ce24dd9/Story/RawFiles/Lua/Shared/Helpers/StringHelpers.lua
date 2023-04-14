@@ -59,8 +59,7 @@ end
 ---@param str string|nil
 ---@return boolean
 function StringHelpers.IsNullOrWhitespace(str)
-	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
-	return str == nil or str == "" or NULL_UUID[str] or _type(str) ~= "string" or _gsub(str, "%s+", "") == ""
+	return StringHelpers.IsNullOrEmpty(str) or _gsub(str, "%s+", "") == ""
 end
 
 ---Capitalize a string.

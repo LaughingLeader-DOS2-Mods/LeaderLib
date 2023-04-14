@@ -514,7 +514,7 @@ LocalizedText.CharacterSheet = {
 	MagicArmour = ts:Create("hc6dcb940gb6b6g41aagaeceg31008af9c082", "Magic Armour"),
 	CriticalChance = ts:Create("h1b6a1120gb023g4df1gb463gc317e509ee2c", "Critical Chance"),
 	Accuracy = ts:Create("h6372c697g5d05g414cga3e3gbb2656f62f2d", "Accuracy"):WithFormat("<font color=\"#411600\">%s</font>"),
-	Dodge = ts:Create("h5b82f1a5gb4bcg48bdg8827g0d9baecfaada", "Dodging"):WithFormat("<font color=\"#411600\">%s</font>"),
+	Dodging = ts:Create("h5b82f1a5gb4bcg48bdg8827g0d9baecfaada", "Dodging"):WithFormat("<font color=\"#411600\">%s</font>"),
 	Vitality = ts:Create("h67a4c781g589ag4872g8c46g870e336074bd", "Vitality"),
 	ActionPoints = ts:Create("h4ef9c467g3c7bg4614g96d0g801b09fcc05c", "Action Points"),
 	SourcePoints = ts:Create("hc4281cefg2577g4c22g9a01gf90be11a051f", "Source Points"),

@@ -24,18 +24,26 @@ local _errormsg = function (str, ...)
 end
 
 ---Optional function to manipulate returned parameters when the event arguments are being unpacked for legacy listeners.
----@alias SubscribableEventGetArgFunction fun(self:LeaderLibRuntimeSubscribableEventArgs, paramId:string, param:any):any
+---@alias SubscribableEventGetArgFunction (fun(self:LeaderLibRuntimeSubscribableEventArgs, id:string, value:any):any)
+---Called when serializing event args, when syncing it to the other context.  
+---Pass true as the second return to force the arg to be "handled".  
+---@alias SubscribableEventSerializeArgFunction (fun(self:LeaderLibRuntimeSubscribableEventArgs, args:table, id:string, value:any, argType:type):SerializableValue|nil,boolean|nil)
+---Called when deserializing event args, after the data has been syncing to the other context.  
+---Pass true as the second return to force the arg to be "handled".
+---@alias SubscribableEventDeserializeArgFunction (fun(self:LeaderLibRuntimeSubscribableEventArgs, args:table, id:string, value:SerializableValue, argType:type):any|nil,boolean|nil)
 
 ---@class SubscribableEventCreateOptions
----@field GatherResults boolean|nil If true, event results from callbacks are gathered and return in in the Invoke function.
----@field SyncInvoke boolean|nil If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
+---@field GatherResults boolean If true, event results from callbacks are gathered and return in in the Invoke function.
+---@field SyncInvoke boolean If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
 ---@field CanSync fun(self:LeaderLibSubscribableEvent, args:LeaderLibSubscribableEventArgs, ...):boolean If set, this event can only sync is this function returns true.
----@field Disabled boolean|nil If this event is disabled, Invoke won't invoke registered callbacks.
----@field ArgsKeyOrder string[]|nil
----@field GetArg SubscribableEventGetArgFunction|nil
----@field OnSubscribe fun(callback:function, opts:SubscribableEventCreateOptions|nil, matchArgs:table|nil, matchArgsType:string) Called when a callback is subscribed to the event.
----@field OnUnsubscribe fun(callback:function, opts:SubscribableEventCreateOptions|nil, matchArgs:table|nil, matchArgsType:string) Called when a callback is unsubscribed to the event.
----@field Benchmark boolean|nil Print the time it takes to invoke listeners in DeveloperMode.
+---@field Disabled boolean If this event is disabled, Invoke won't invoke registered callbacks.
+---@field ArgsKeyOrder string[]
+---@field GetArg SubscribableEventGetArgFunction Used when the event data is unpacked, such as when passing the data to an old callback listener.
+---@field SerializeArg SubscribableEventSerializeArgFunction Called when the event data is synced, and specific non-serializable args need to be converted (userdata etc).
+---@field DeserializeArg SubscribableEventDeserializeArgFunction Called when the event data is done syncing, and specific args need to be converted back to non-serializable types.
+---@field OnSubscribe fun(callback:function, opts:SubscribableEventCreateOptions, matchArgs:table, matchArgsType:string) Called when a callback is subscribed to the event.
+---@field OnUnsubscribe fun(callback:function, opts:SubscribableEventCreateOptions, matchArgs:table, matchArgsType:string) Called when a callback is unsubscribed to the event.
+---@field Benchmark boolean Print the time it takes to invoke listeners in DeveloperMode.
 
 ---@alias SubscribableEventInvokeResultCode string|"Success"|"Handled"|"Error"
 
@@ -315,24 +323,44 @@ local function _EventArgsMatch(self, node, eventArgs)
 	return match
 end
 
---Convert userdata event args to a table with the NetID, so the other side can retrieve it.
-local function SerializeArgs(args)
+---Converts userdata event args to a table with the NetID, so the other side can retrieve it.
+---@param sub BaseSubscribableEvent|SubscribableEventNode
+---@param subArgs table The outer args
+---@param eventID string
+---@param args table Current table being processed
+---@param seralizeFunc? SubscribableEventSerializeArgFunction
+local function _SerializeArgs(sub, subArgs, eventID, args, seralizeFunc)
 	local tbl = {}
 	for k,v in _pairs(args) do
 		local t = _type(v)
-		if t == "userdata" then
-			if GameHelpers.IsValidHandle(v) then
-				--TODO this is probably a server/client handle, so it won't work in the other context
-				tbl[k] = {Type="Object", HandleINT = Ext.Utils.HandleToInteger(v)}
-			else
-				if v.NetID or v.UUID then
-					tbl[k] = {Type="Object", NetID=v.NetID, UUID=v.MyGuid}
-				end
+		local handled = false
+		if seralizeFunc then
+			local b,result,forceHandled = xpcall(seralizeFunc, debug.traceback, sub, subArgs, k, v, t)
+			if not b then
+				Ext.Utils.PrintError(result)
+			elseif result ~= nil then
+				tbl[k] = result
+				handled = true
 			end
-		elseif t == "table" then
-			tbl[k] = SerializeArgs(v)
-		elseif t == "boolean" or t == "string" or t == "number" then
-			tbl[k] = v
+			if forceHandled == true then
+				handled = true
+			end
+		end
+		if not handled then
+			if t == "userdata" then
+				if GameHelpers.IsValidHandle(v) then
+					--TODO this is probably a server/client handle, so it won't work in the other context
+					tbl[k] = {Type="Object", HandleINT = Ext.Utils.HandleToInteger(v)}
+				else
+					if v.NetID or v.UUID then
+						tbl[k] = {Type="Object", NetID=v.NetID, UUID=v.MyGuid}
+					end
+				end
+			elseif t == "table" then
+				tbl[k] = _SerializeArgs(sub, subArgs, eventID, v, seralizeFunc)
+			elseif t == "boolean" or t == "string" or t == "number" then
+				tbl[k] = v
+			end
 		end
 	end
 	return tbl
@@ -426,7 +454,7 @@ local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 			local _netMessageFunc = _ISCLIENT and Ext.Net.PostMessageToServer or GameHelpers.Net.Broadcast
 			_netMessageFunc("LeaderLib_SubscribableEvent_Invoke", Common.JsonStringify({
 				ID = self.ID,
-				Args = SerializeArgs(args)
+				Args = _SerializeArgs(self, self.ID, args, args, self.SerializeArg)
 			}))
 		end
 	end
@@ -464,34 +492,55 @@ function SubscribableEvent:Invoke(args, skipAutoInvoke, getArgForMatch)
 	return nil
 end
 
-local function DeserializeArgs(id, args)
+---@param sub BaseSubscribableEvent|SubscribableEventNode
+---@param subArgs table The outer args
+---@param eventID string
+---@param args table Current table being processed
+---@param deserializeFunc? SubscribableEventDeserializeArgFunction
+local function _DeserializeArgs(sub, subArgs, eventID, args, deserializeFunc)
 	local tbl = {}
 	for k,v in _pairs(args) do
-		if _type(v) == "table" then
-			if v.Type == "Object" then
-				local _getObjFunc = GameHelpers.TryGetObject
-				if k == "Item" or (id == "SummonChanged" and args.IsItem == true) then
-					_getObjFunc = GameHelpers.GetItem
-				elseif k == "Character" then
-					_getObjFunc = GameHelpers.GetCharacter
-				end
-				local obj = nil
-				if not obj and v.NetID then
-					obj = _getObjFunc(v.NetID)
-				end
-				if not obj and v.UUID then
-					obj = _getObjFunc(v.UUID)
-				end
-				if not obj then
-					tbl[k] = v.UUID
+		local t = _type(v)
+		local handled = false
+		if deserializeFunc then
+			local b,result,forceHandled = xpcall(deserializeFunc, debug.traceback, subArgs, k, v, t)
+			if not b then
+				Ext.Utils.PrintError(result)
+			elseif result ~= nil then
+				tbl[k] = result
+				handled = true
+			end
+			if forceHandled == true then
+				handled = true
+			end
+		end
+		if not handled then
+			if t == "table" then
+				if v.Type == "Object" then
+					local _getObjFunc = GameHelpers.TryGetObject
+					if k == "Item" or (eventID == "SummonChanged" and args.IsItem == true) then
+						_getObjFunc = GameHelpers.GetItem
+					elseif k == "Character" then
+						_getObjFunc = GameHelpers.GetCharacter
+					end
+					local obj = nil
+					if not obj and v.NetID then
+						obj = _getObjFunc(v.NetID)
+					end
+					if not obj and v.UUID then
+						obj = _getObjFunc(v.UUID)
+					end
+					if not obj then
+						tbl[k] = v.UUID
+					else
+						tbl[k] = obj
+					end
 				else
-					tbl[k] = obj
+					tbl[k] = _DeserializeArgs(sub, subArgs, eventID, v, deserializeFunc)
 				end
 			else
-				tbl[k] = DeserializeArgs(v)
+				tbl[k] = v
 			end
-		else
-			tbl[k] = v
 		end
 	end
 	return tbl
@@ -500,9 +549,9 @@ end
 Ext.RegisterNetListener("LeaderLib_SubscribableEvent_Invoke", function(cmd, payload)
 	local data = Common.JsonParse(payload, true)
 	if data then
-		local sub = Events[data.ID]
+		local sub = Events[data.ID] --[[@as BaseSubscribableEvent|SubscribableEventNode]]
 		if sub then
-			sub:Invoke(DeserializeArgs(data.ID, data.Args), true)
+			sub:Invoke(_DeserializeArgs(sub, data.Args, data.ID, data.Args, sub.DeserializeArg), true)
 		end
 	end
 end)

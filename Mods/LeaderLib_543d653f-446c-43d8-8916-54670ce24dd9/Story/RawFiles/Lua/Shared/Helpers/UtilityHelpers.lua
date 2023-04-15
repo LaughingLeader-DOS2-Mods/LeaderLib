@@ -605,6 +605,50 @@ function GameHelpers.Utils.SetPlayerCustomData(player, opts)
 	end
 end
 
+---Ensures PlayerCustomData values are set (IsMale, Race, Icon etc).
+---Automatically assigns `PlayerCustomData.SkinColor` etc using the character's visual set, then syncs those changes to the client.
+---@param player CharacterParam
+function GameHelpers.Utils.UpdatePlayerCustomData(player)
+	player = GameHelpers.GetCharacter(player)
+	if player and player.PlayerCustomData ~= nil then
+		local visualSet = GameHelpers.Visual.GetVisualSet(player, true)
+		local vs = player.CurrentTemplate.VisualSetIndices
+		local skinColorIndex = vs:GetColor(0) + 1
+		local hairColorIndex = vs:GetColor(1) + 1
+		local clothColorIndex = vs:GetColor(2) + 1
+		
+		-- local raceData = GameHelpers.Visual.GetRacePreset(player)
+		-- player.PlayerCustomData.HairColor = raceData.HairColors[hairColorIndex].Value
+		-- player.PlayerCustomData.SkinColor = raceData.SkinColors[skinColorIndex].Value
+		-- player.PlayerCustomData.ClothColor1 = raceData.ClothColors[clothColorIndex].Value
+
+		player.PlayerCustomData.SkinColor = visualSet.Colors[1][skinColorIndex]
+		player.PlayerCustomData.HairColor = visualSet.Colors[2][hairColorIndex]
+		player.PlayerCustomData.ClothColor1 = visualSet.Colors[3][clothColorIndex]
+		player.PlayerCustomData.ClothColor2 = player.PlayerCustomData.ClothColor1
+		player.PlayerCustomData.ClothColor3 = player.PlayerCustomData.ClothColor1
+		player.PlayerCustomData.IsMale = player.PlayerCustomData.IsMale or player:HasTag("MALE")
+
+		local opts = {
+			SkinColor = player.PlayerCustomData.SkinColor,
+			HairColor = player.PlayerCustomData.HairColor,
+			ClothColor1 = player.PlayerCustomData.ClothColor1,
+			ClothColor2 = player.PlayerCustomData.ClothColor2,
+			ClothColor3 = player.PlayerCustomData.ClothColor3,
+			IsMale = player.PlayerCustomData.IsMale
+		}
+
+		if player.PlayerCustomData.Icon == "" then
+			player.PlayerCustomData.Icon = player.CurrentTemplate.Icon
+			opts.Icon = player.CurrentTemplate.Icon
+		end
+
+		if not _ISCLIENT then
+			GameHelpers.Net.Broadcast("LeaderLib_SetPlayerCustomData", {NetID=player.NetID, Data = opts})
+		end
+	end
+end
+
 ---@class LeaderLib_SetPlayerCameraPosition
 ---@field NetID NetId
 ---@field Opts GameHelpers_Utils_SetPlayerCameraPositionOptions

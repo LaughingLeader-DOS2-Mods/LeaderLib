@@ -16,6 +16,22 @@ function GameHelpers.Visual.GetVisualSet(character, ignorePolymorph)
 	return template.VisualSet
 end
 
+---@param character CharacterParam
+---@return CharacterCreationRaceDesc
+function GameHelpers.Visual.GetRacePreset(character)
+	character = GameHelpers.GetCharacter(character, "EsvCharacter")
+	assert(character.PlayerCustomData ~= nil, "character.PlayerCustomData not set")
+	local race = character.PlayerCustomData.Race
+	local cc = Ext.Stats.GetCharacterCreation()
+	--#a42832
+	for _,v in pairs(cc.RacePresets) do
+		if v.RaceName == race then
+			return v
+		end
+	end
+	return cc.DefaultRace
+end
+
 if _ISCLIENT then
 	--- @class ExtenderClientVisual
 	--- @field OverrideScalarMaterialParameter fun(self:ExtenderClientVisual, propertyName:string, value:number)

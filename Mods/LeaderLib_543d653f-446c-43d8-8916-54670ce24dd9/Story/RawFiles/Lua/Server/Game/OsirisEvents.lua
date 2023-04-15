@@ -56,6 +56,10 @@ end)
 ---@type LeaderLibSubscribableEvent<OsirisCharacterEventArgs>
 Events.Osiris.CharacterStoppedPolymorph = _CreateOsirisEventWrapper("CharacterStoppedPolymorph", _SingleGuidEvent)
 
+---@type LeaderLibSubscribableEvent<OsirisCharacterEventArgs>
+Events.Osiris.CharacterJoinedParty = _CreateOsirisEventWrapper("CharacterJoinedParty", _SingleGuidEvent)
+Events.Osiris.CharacterLeftParty = _CreateOsirisEventWrapper("CharacterLeftParty", _SingleGuidEvent)
+
 ---@type LeaderLibSubscribableEvent<{Character:EsvCharacter, CharacterGUID:Guid, Percentage:integer}>
 Events.Osiris.CharacterVitalityChanged = _CreateOsirisEventWrapper("CharacterVitalityChanged", function (guid, percentage)
 	return {

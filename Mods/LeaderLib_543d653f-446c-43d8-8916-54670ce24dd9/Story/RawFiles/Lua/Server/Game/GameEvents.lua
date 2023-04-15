@@ -206,3 +206,10 @@ Ext.Osiris.RegisterListener("UpdateTime", 2, "after", function (day, hour)
 	end
 	Events.GameTimeChanged:Invoke(data)
 end)
+
+--Fixes recruited origins turning pink if their visual element changes
+Events.Osiris.CharacterJoinedParty:Subscribe(function (e)
+	if not e.Character.HasOwner and e.Character.PlayerCustomData and e.Character.PlayerCustomData.Icon == "" then
+		GameHelpers.Utils.UpdatePlayerCustomData(e.Character)
+	end
+end)

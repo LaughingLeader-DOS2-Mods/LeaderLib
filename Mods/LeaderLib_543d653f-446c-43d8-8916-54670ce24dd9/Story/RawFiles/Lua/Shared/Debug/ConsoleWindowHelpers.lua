@@ -396,6 +396,7 @@ else
 					return tostring(not Vars.ControllerEnabled and uiType or controllerUIType)
 				end
 			})
+			return tbl
 		end
 
 		AddConsoleVariable("_ui_sheet", CreateUIWrapperTable(Data.UIType.characterSheet, Data.UIType.statsPanel_c))

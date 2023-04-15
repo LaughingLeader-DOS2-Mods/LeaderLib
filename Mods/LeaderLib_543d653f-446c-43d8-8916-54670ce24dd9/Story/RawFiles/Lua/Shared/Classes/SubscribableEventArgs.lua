@@ -158,7 +158,7 @@ end
 
 ---Debug function for dumping args to the console.
 function SubscribableEventArgs:Dump()
-	fprint(LOGLEVEL.TRACE, Lib.serpent.block({_Event=self._Private.LLEventID, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, {SimplifyUserdata = true}))
+	fprint(LOGLEVEL.TRACE, "%s", Lib.serpent.block({_Event=self._Private.LLEventID, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, {SimplifyUserdata = true}))
 end
 
 ---@return string

@@ -6,6 +6,16 @@ if GameHelpers.Visual == nil then
 	GameHelpers.Visual = {}
 end
 
+---@param character CharacterParam
+---@param ignorePolymorph? boolean
+---@return VisualSet
+function GameHelpers.Visual.GetVisualSet(character, ignorePolymorph)
+	character = GameHelpers.GetCharacter(character, "EsvCharacter")
+	local template = GameHelpers.GetTemplate(character, true, ignorePolymorph) --[[@as CharacterTemplate]]
+	assert(template ~= nil, "Failed to get root template for character: " .. tostring(character))
+	return template.VisualSet
+end
+
 if _ISCLIENT then
 	--- @class ExtenderClientVisual
 	--- @field OverrideScalarMaterialParameter fun(self:ExtenderClientVisual, propertyName:string, value:number)

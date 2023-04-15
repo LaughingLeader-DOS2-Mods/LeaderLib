@@ -36,16 +36,18 @@ function StringHelpers.Equals(a,b, insensitive, trimWhitespace)
 	return false
 end
 
-local NULL_UUID = {
-	["NULL_00000000-0000-0000-0000-000000000000"] = true,
-	["00000000-0000-0000-0000-000000000000"] = true
-}
-
 ---@alias NULL_UUID "NULL_00000000-0000-0000-0000-000000000000"
 
 StringHelpers.NULL_UUID = "NULL_00000000-0000-0000-0000-000000000000"
+StringHelpers.BadFood = "0xbaadf00d"
 StringHelpers.UNSET_HANDLE = "ls::TranslatedStringRepository::s_HandleUnknown"
 StringHelpers.ILLEGAL_FILE_CHARACTERS = "[<>:\"/\\|?%*]"
+
+local NULL_UUID = {
+	[StringHelpers.NULL_UUID] = true,
+	["00000000-0000-0000-0000-000000000000"] = true,
+	[StringHelpers.BadFood] = true
+}
 
 ---Checks if a string is null or empty.
 ---@param str string|nil

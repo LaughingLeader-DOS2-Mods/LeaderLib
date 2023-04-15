@@ -5,7 +5,7 @@ local ClientCharacterData = Classes.ClientCharacterData
 local _ISCLIENT = Ext.IsClient()
 local _EXTVERSION = Ext.Utils.Version()
 
----@class LEVELTYPE
+---@enum LEVELTYPE
 LEVELTYPE = {
 	GAME = 1,
 	CHARACTER_CREATION = 2,
@@ -14,7 +14,7 @@ LEVELTYPE = {
 }
 Classes.Enum:Create(LEVELTYPE)
 
----@class GAMEMODE
+---@enum GAMEMODE
 GAMEMODE = {
 	CAMPAIGN = 1,
 	ARENA = 2,
@@ -24,7 +24,7 @@ Classes.Enum:Create(GAMEMODE)
 
 local _Users = {}
 
----@class REGIONSTATE
+---@enum REGIONSTATE
 REGIONSTATE = {
 	NONE = 0,
 	STARTED = 1,

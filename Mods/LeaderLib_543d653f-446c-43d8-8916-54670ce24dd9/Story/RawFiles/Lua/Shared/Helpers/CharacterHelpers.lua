@@ -1501,3 +1501,36 @@ function GameHelpers.Character.RemoveTemporyCharacter(character)
 	end
 	Events.TemporaryCharacterRemoved:Invoke({CharacterGUID = guid, NetID=netid})
 end
+
+---Set a character's permanent boosts, and syncs it to the client if on the server-side.
+---@param character CharacterParam
+---@param opts StatsCharacterDynamicStat
+---@param index? integer Defaults to 2
+function GameHelpers.Character.SetPermanentBoosts(character, opts, index)
+	character = GameHelpers.GetCharacter(character)
+	index = index or 2
+	if character and character.Stats ~= nil then
+		for k,v in pairs(opts) do
+			character.Stats.DynamicStats[index][k] = v
+		end
+		if not _ISCLIENT then
+			GameHelpers.Net.Broadcast("LeaderLib_Character_SetPermanentBoosts", {NetID=character.NetID, Data=opts, Index=index})
+		end
+	end
+end
+
+---@class LeaderLib_Character_SetPermanentBoosts
+---@field NetID NetId
+---@field Data StatsCharacterDynamicStat
+---@field Index integer
+
+if _ISCLIENT then
+	Events.Loaded:Subscribe(function (e)
+		GameHelpers.Net.Subscribe("LeaderLib_Character_SetPermanentBoosts", function (e, data)
+			local player = GameHelpers.GetCharacter(data.NetID)
+			if player then
+				GameHelpers.Character.SetPermanentBoosts(player, data.Data, data.Index)
+			end
+		end)
+	end, {Once=true})
+end

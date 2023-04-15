@@ -590,7 +590,7 @@ function GameHelpers.Utils.SetPlayerCameraPosition(player, opts)
 	end
 end
 
----Set a player's CustomData, and sync it to the client if on the server-side.
+---Set a player's CustomData, and syncs it to the client if on the server-side.
 ---@param player CharacterParam
 ---@param opts EocPlayerCustomData
 function GameHelpers.Utils.SetPlayerCustomData(player, opts)

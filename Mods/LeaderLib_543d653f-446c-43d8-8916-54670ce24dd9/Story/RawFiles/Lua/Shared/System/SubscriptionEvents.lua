@@ -259,6 +259,32 @@ Events.ModSettingsChanged = Classes.SubscribableEvent:Create("ModSettingsChanged
 	ArgsKeyOrder={"ID", "Value", "Data", "Settings"}
 })
 
+---@class ModVersionLoadedEventArgs
+---@field Changed boolean True if `LastVersion ~= Version`.
+---@field ModuleUUID Guid The mod UUID
+---@field Mod Module
+---@field LastVersion integer
+---@field Version integer
+---@field LastVersionString string
+---@field VersionString string
+
+---Called when a mod's version is loaded, and includes the last version stored in the save, if any. 
+---This is also called when the mod's version is stored for the first time.  
+---🔨🔧**Server/Client**🔧🔨  
+---@type LeaderLibSubscribableEvent<ModVersionLoadedEventArgs>
+Events.ModVersionLoaded = Classes.SubscribableEvent:Create("ModVersionLoaded", {SyncInvoke=true,
+	SerializeArg=function (self, args, id, value, t)
+		if id == "Mod" then
+			return args.ModuleUUID
+		end
+	end,
+	DeserializeArg=function (self, args, id, value, t)
+		if id == "Mod" then
+			return Ext.Mod.GetMod(value)
+		end
+	end
+})
+
 ---@class OnSkillStateBaseEventArgs
 ---@field Character EsvCharacter
 ---@field CharacterGUID Guid
@@ -742,7 +768,7 @@ if not _ISCLIENT then
 				if type(param) == "string" then
 					return param
 				end
-				if self.Args.StatusEvent == "BeforeAttempt" then
+				if self._Private.Args.StatusEvent == "BeforeAttempt" then
 					return param
 				else
 					return param.StatusId

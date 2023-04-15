@@ -144,23 +144,34 @@ function LoadMods()
 				if modName == nil then
 					modName = ""
 				end
+				--DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _LastAuthor, _LastVersion, _LastMajor, _LastMinor, _LastRevision, _LastBuild)
+				local lastVersion = -1
+				local db = Osi.DB_LeaderLib_Mods_Registered:Get(uuid, nil, nil, nil, nil, nil, nil, nil, nil)
+				if db ~= nil and #db > 0 then
+					local _,_,_,_,lastVersionStored = table.unpack(db[1])
+					if lastVersionStored ~= nil then
+						lastVersion = lastVersionStored
+					end
+				end
+
 				local callback = ModListeners.Loaded[uuid]
 				if callback ~= nil then
-					--DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _LastAuthor, _LastVersion, _LastMajor, _LastMinor, _LastRevision, _LastBuild)
-					local lastVersion = -1
-					local db = Osi.DB_LeaderLib_Mods_Registered:Get(uuid, nil, nil, nil, nil, nil, nil, nil, nil)
-					if db ~= nil and #db > 0 then
-						local _,_,_,_,lastVersionStored = table.unpack(db[1])
-						if lastVersionStored ~= nil then
-							lastVersion = lastVersionStored
-						end
-					end
 					local b,err = xpcall(callback, debug.traceback, lastVersion, versionInt)
 					if not b then
 						Ext.Utils.PrintError(err)
 					end
 				end
 				Osi.LeaderLib_Mods_OnModLoaded(uuid, modid, modName, author, versionInt, major, minor, revision, build)
+
+				Events.ModVersionLoaded:Invoke({
+					Changed = lastVersion ~= versionInt,
+					ModuleUUID = uuid,
+					Mod = mod,
+					LastVersion = lastVersion,
+					Version = versionInt,
+					LastVersionString = lastVersion ~= -1 and VersionIntegerToVersionString(lastVersion) or "-1",
+					VersionString = string.format("%s.%s.%s.%s", major,minor,revision,build),
+				})
 			else
 				fprint(LOGLEVEL.WARNING, "[LeaderLib:LoadMods] Failed to retrieve mod data for mod (%s) in load order.", uuid)
 			end

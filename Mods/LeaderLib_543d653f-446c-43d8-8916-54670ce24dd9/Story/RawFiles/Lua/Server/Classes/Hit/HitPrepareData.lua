@@ -111,20 +111,26 @@ end
 local function CreateDamageMetaList(handle)
 	local damageList = {}
 	local meta = {}
+	local function _GetByType(self, damageType)
+		return Osi.NRD_HitGetDamage(handle, damageType)
+	end
+	local function _ToTable()
+		local newTable = {}
+		for _,damageType in Data.DamageTypes:Get() do
+			if Osi.NRD_HitGetDamage(handle, damageType) > 0 then
+				newTable[#newTable+1] = {
+					Amount = Osi.NRD_HitGetDamage(handle, damageType),
+					DamageType = damageType
+				}
+			end
+		end
+		return newTable
+	end
 	meta.__index = function(tbl,k)
 		if k == "ToTable" then
-			return function ()
-				local newTable = {}
-				for _,damageType in Data.DamageTypes:Get() do
-					if Osi.NRD_HitGetDamage(handle, damageType) > 0 then
-						newTable[#newTable+1] = {
-							Amount = Osi.NRD_HitGetDamage(handle, damageType),
-							DamageType = damageType
-						}
-					end
-				end
-				return newTable
-			end
+			return _ToTable
+		elseif k == "GetByType" then
+			return _GetByType
 		else
 			if Data.DamageTypes[k] then
 				return Osi.NRD_HitGetDamage(handle, k)

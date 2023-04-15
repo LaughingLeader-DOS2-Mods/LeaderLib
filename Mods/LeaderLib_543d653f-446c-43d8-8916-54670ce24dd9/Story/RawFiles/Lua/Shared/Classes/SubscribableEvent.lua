@@ -351,7 +351,7 @@ local function _SerializeArgs(sub, subArgs, eventID, args, seralizeFunc)
 				if GameHelpers.IsValidHandle(v) then
 					--TODO this is probably a server/client handle, so it won't work in the other context
 					tbl[k] = {Type="Object", HandleINT = Ext.Utils.HandleToInteger(v)}
-				else
+				elseif GameHelpers.Ext.ObjectIsAnyType(v) then
 					if v.NetID or v.UUID then
 						tbl[k] = {Type="Object", NetID=v.NetID, UUID=v.MyGuid}
 					end
@@ -451,11 +451,17 @@ local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 			end
 		end
 		if canSync then
-			local _netMessageFunc = _ISCLIENT and Ext.Net.PostMessageToServer or GameHelpers.Net.Broadcast
-			_netMessageFunc("LeaderLib_SubscribableEvent_Invoke", Common.JsonStringify({
-				ID = self.ID,
-				Args = _SerializeArgs(self, self.ID, args, args, self.SerializeArg)
-			}))
+			local b,args = xpcall(_SerializeArgs, debug.traceback, self, args, self.ID, args, self.SerializeArg)
+			if not b then
+				Ext.Utils.PrintError(args)
+			else
+				local payload = {ID = self.ID, Args = args}
+				if _ISCLIENT then
+					GameHelpers.Net.PostMessageToServer("LeaderLib_SubscribableEvent_Invoke", payload)
+				else
+					GameHelpers.Net.Broadcast("LeaderLib_SubscribableEvent_Invoke", payload)
+				end
+			end
 		end
 	end
 	local handled = false
@@ -503,7 +509,7 @@ local function _DeserializeArgs(sub, subArgs, eventID, args, deserializeFunc)
 		local t = _type(v)
 		local handled = false
 		if deserializeFunc then
-			local b,result,forceHandled = xpcall(deserializeFunc, debug.traceback, subArgs, k, v, t)
+			local b,result,forceHandled = xpcall(deserializeFunc, debug.traceback, sub, subArgs, k, v, t)
 			if not b then
 				Ext.Utils.PrintError(result)
 			elseif result ~= nil then

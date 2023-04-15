@@ -268,7 +268,7 @@ Events.ModSettingsChanged = Classes.SubscribableEvent:Create("ModSettingsChanged
 ---@field LastVersionString string
 ---@field VersionString string
 
----Called when a mod's version is loaded, and includes the last version stored in the save, if any. 
+---Called when a mod's version is loaded (GameModeStarted or SaveGameLoaded), and includes the last version stored in the save, if any. 
 ---This is also called when the mod's version is stored for the first time.  
 ---🔨🔧**Server/Client**🔧🔨  
 ---@type LeaderLibSubscribableEvent<ModVersionLoadedEventArgs>

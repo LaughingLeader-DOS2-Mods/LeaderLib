@@ -223,6 +223,93 @@ end)
 
 --#region Combat
 
+---@class OsirisCombatObjectEventArgs
+---@field Object EsvCharacter|EsvItem
+---@field ObjectGUID Guid
+---@field CombatID integer
+---@field Combat EsvCombat
+---@field CombatTeam EsvCombatTeam
+---@field CombatComponent EsvCombatComponent
+
+local function _CombatMetaIndex(tbl, k)
+	local combatid = rawget(tbl, "CombatID")
+	--These are properties that we can skip actually setting until a callback tries to access it
+	if k == "Combat" then
+		local combat = Ext.Entity.GetCombat(combatid)
+		if combat then
+			rawset(tbl, "Combat", combat)
+			return combat
+		end
+	elseif k == "CombatTeam" then
+		local combat = Ext.Entity.GetCombat(combatid)
+		if combat then
+			rawset(tbl, "Combat", combat)
+			local object = rawget(tbl, "Object")
+			for _,v in pairs(combat:GetAllTeams()) do
+				if v.Character == object or v.Item == object then
+					rawset(tbl, "CombatTeam", v)
+					return v
+				end
+			end
+		end
+	elseif k == "CombatComponent" then
+		local object = rawget(tbl, "Object")
+		local component = GameHelpers.Combat.GetCombatComponent(object)
+		if component then
+			rawset(tbl, "CombatComponent", component)
+			return component
+		end
+	end
+end
+
+local function _SingleObjectCombatEvent(guid, id)
+	if Osi.ObjectExists(guid) == 0 then
+		return false
+	end
+	local object = GameHelpers.TryGetObject(guid, "EsvCharacter")
+	local combatid = id or GameHelpers.Combat.GetID(object)
+	local evt = {
+		Object = object,
+		ObjectGUID = _GetGUID(guid),
+		CombatID = combatid
+	}
+	setmetatable(evt, {__index = _CombatMetaIndex})
+	return evt
+end
+
+---@param name string
+---@param getArgs fun(...:OsirisValue):table|boolean
+---@return LeaderLibSubscribableEvent<OsirisCombatObjectEventArgs>
+local function _CreateOsirisCombatEventWrapper(name)
+	_CreateOsirisEventWrapper(name, _SingleObjectCombatEvent)
+end
+
+Events.Osiris.ObjectTurnStarted = _CreateOsirisCombatEventWrapper("ObjectTurnStarted")
+Events.Osiris.ObjectTurnEnded = _CreateOsirisCombatEventWrapper("ObjectTurnEnded")
+Events.Osiris.ObjectEnteredCombat = _CreateOsirisCombatEventWrapper("ObjectEnteredCombat")
+Events.Osiris.ObjectReadyInCombat = _CreateOsirisCombatEventWrapper("ObjectReadyInCombat")
+Events.Osiris.ObjectLeftCombat = _CreateOsirisCombatEventWrapper("ObjectLeftCombat")
+
+---@class OsirisObjectSwitchedCombatEventArgs:OsirisCombatObjectEventArgs
+---@field OldCombatID integer
+---@field OldCombat EsvCombat|nil
+
+---@type LeaderLibSubscribableEvent<OsirisObjectSwitchedCombatEventArgs>
+Events.Osiris.ObjectSwitchedCombat = _CreateOsirisEventWrapper("ObjectSwitchedCombat", function (guid, oldcombatID, combatID)
+	if Osi.ObjectExists(guid) == 0 then
+		return false
+	end
+	local evt = {
+		Object = GameHelpers.TryGetObject(guid, "EsvCharacter"),
+		ObjectGUID = _GetGUID(guid),
+		CombatID = combatID,
+		OldCombatID = oldcombatID,
+		OldCombat = Ext.Entity.GetCombat(oldcombatID)
+	}
+	setmetatable(evt, {__index = _CombatMetaIndex})
+	return evt
+end)
+
 ---@type LeaderLibSubscribableEvent<{CombatID:integer}>
 Events.Osiris.CombatStarted = _CreateOsirisEventWrapper("CombatStarted", function (combatID) return {CombatID = combatID} end)
 ---@type LeaderLibSubscribableEvent<{CombatID:integer}>
@@ -232,44 +319,6 @@ Events.Osiris.CombatRoundStarted = _CreateOsirisEventWrapper("CombatRoundStarted
 	return {
 		CombatID = combatID,
 		Round = round
-	}
-end)
-
-
----@type LeaderLibSubscribableEvent<{Character:EsvCharacter, CharacterGUID:Guid, CombatID:integer}>
-Events.Osiris.ObjectEnteredCombat = _CreateOsirisEventWrapper("ObjectEnteredCombat", function (guid, combatID)
-	return {
-		Character = GameHelpers.GetCharacter(guid),
-		CharacterGUID = _GetGUID(guid),
-		CombatID = combatID
-	}
-end)
-
----@type LeaderLibSubscribableEvent<{Character:EsvCharacter, CharacterGUID:Guid, CombatID:integer}>
-Events.Osiris.ObjectLeftCombat = _CreateOsirisEventWrapper("ObjectLeftCombat", function (guid, combatID)
-	return {
-		Character = GameHelpers.GetCharacter(guid),
-		CharacterGUID = _GetGUID(guid),
-		CombatID = combatID
-	}
-end)
-
----@type LeaderLibSubscribableEvent<{Character:EsvCharacter, CharacterGUID:Guid, CombatID:integer}>
-Events.Osiris.ObjectReadyInCombat = _CreateOsirisEventWrapper("ObjectReadyInCombat", function (guid, combatID)
-	return {
-		Character = GameHelpers.GetCharacter(guid),
-		CharacterGUID = _GetGUID(guid),
-		CombatID = combatID
-	}
-end)
-
----@type LeaderLibSubscribableEvent<{Character:EsvCharacter, CharacterGUID:Guid, OldcombatID:integer, CombatID:integer}>
-Events.Osiris.ObjectSwitchedCombat = _CreateOsirisEventWrapper("ObjectSwitchedCombat", function (guid, oldcombatID, combatID)
-	return {
-		Character = GameHelpers.GetCharacter(guid),
-		CharacterGUID = _GetGUID(guid),
-		OldcombatID = oldcombatID,
-		CombatID = combatID,
 	}
 end)
 

@@ -30,6 +30,7 @@ TurnCounter._Internal = _INTERNAL
 ---@field Position number[]
 ---@field Region string The level this turn counter was created in.
 ---@field Target Guid An optional target for this counter. If set then only their turn ending will count the timer down.
+---@field TargetObject EsvCharacter|EsvItem|nil If Target is set, this is the object version of it.
 ---@field Infinite boolean If true, this counter will count until stopped, or if the counter is cleared (target death if ClearOnDeath is set). 
 ---@field Mode TURNCOUNTER_MODE
 ---@field Extra table Optional extra data to store in PersistentVars, such as `{Source=source.MyGuid}`.
@@ -39,11 +40,14 @@ function _INTERNAL.CleanupData(uniqueId)
 	Timer.Cancel(uniqueId)
 end
 
+---The combat id, character to get the combat id from / use as a target, or a position.
+---@alias TurnCounterTargetParamType integer|CharacterParam|vec3
+
 ---@param id string Identifier for this countdown.
 ---@param turns integer How many turns to count.
 ---@param targetTurns integer The target turns when the counting should be complete, such as 0 in decrement mode.
 ---@param mode TURNCOUNTER_MODE
----@param target integer|CharacterParam|number[] The combat id or character to get the combat id from.
+---@param target TurnCounterTargetParamType The combat id or character to get the combat id from.
 ---@param params TurnCounterData|nil
 function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, target, params)
 	params = params or {}
@@ -120,18 +124,18 @@ end
 
 ---@param id string Identifier for this countdown.
 ---@param turns integer How many turns to count down for.
----@param combat integer|CharacterParam|nil The combat id or character to get the combat id from.
----@param params TurnCounterData|nil
-function TurnCounter.CountDown(id, turns, combat, params)
-	TurnCounter.CreateTurnCounter(id, turns, 0,  TurnCounter.Mode.Decrement, combat, params)
+---@param combatOrTarget? TurnCounterTargetParamType The combat id or character to get the combat id from.
+---@param params? TurnCounterData
+function TurnCounter.CountDown(id, turns, combatOrTarget, params)
+	TurnCounter.CreateTurnCounter(id, turns, 0,  TurnCounter.Mode.Decrement, combatOrTarget, params)
 end
 
 ---@param id string Identifier for this countdown.
 ---@param turns integer How many turns to count up for.
----@param combat integer|CharacterParam|nil The combat id or character to get the combat id from.
----@param params TurnCounterData|nil
+---@param combatOrTarget? TurnCounterTargetParamType The combat id or character to get the combat id from.
+---@param params? TurnCounterData
 function TurnCounter.CountUp(id, turns, combat, params)
-	TurnCounter.CreateTurnCounter(id, 0, turns, TurnCounter.Mode.Increment, combat, params)
+	TurnCounter.CreateTurnCounter(id, 0, turns, TurnCounter.Mode.Increment, combatOrTarget, params)
 end
 
 ---@param id string|string[]|nil
@@ -212,29 +216,40 @@ function TurnCounter.IsActive(id, target)
 	return false
 end
 
+local function _SetEventMetadata(evt, data)
+	setmetatable(evt, {
+		__index = function (_,k)
+			if k == "TargetObject" then
+				return GameHelpers.TryGetObject(data.Target)
+			end
+		end
+	})
+	return evt
+end
+
 ---@param data TurnCounterData
 ---@param uniqueId string
 function _INTERNAL.Started(data, uniqueId)
-	Events.OnTurnCounter:Invoke({
+	Events.OnTurnCounter:Invoke(_SetEventMetadata({
 		ID = data.ID,
 		Turn = data.Turns,
 		LastTurn = data.Turns,
 		Finished = false,
 		Data = data,
-	})
+	}, data))
 end
 
 ---@param data TurnCounterData
 ---@param uniqueId string
 ---@param lastTurn integer
 function _INTERNAL.CountdownDone(data, uniqueId, lastTurn)
-	Events.OnTurnCounter:Invoke({
+	Events.OnTurnCounter:Invoke(_SetEventMetadata({
 		ID = data.ID,
 		Turn = data.Turns,
 		LastTurn = data.Turns,
 		Finished = true,
 		Data = data,
-	})
+	}, data))
 	_INTERNAL.CleanupData(uniqueId)
 end
 
@@ -296,13 +311,14 @@ function _INTERNAL.TickTurn(data, uniqueId)
 			return true
 		end
 	end
-	Events.OnTurnCounter:Invoke({
+
+	Events.OnTurnCounter:Invoke(_SetEventMetadata({
 		ID = data.ID,	
 		Turn = data.Turns,
 		LastTurn = last,
 		Finished = false,
 		Data = data,
-	})
+	}, data))
 	return false
 end
 

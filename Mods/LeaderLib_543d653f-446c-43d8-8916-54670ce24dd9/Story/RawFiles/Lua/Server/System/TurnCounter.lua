@@ -23,6 +23,7 @@ TurnCounter._Internal = _INTERNAL
 ---@field Turns integer
 ---@field TargetTurns integer By default, 0 in decrement mode.
 ---@field Combat integer
+---@field RoundOnly boolean Only count rounds, not turns.
 ---@field OutOfCombatSpeed integer
 ---@field CombatOnly boolean If true, turn counting will only occur in combat.
 ---@field CountSkipDisabled boolean If true, turn counting will not count a turn ending if it was skipped. Otherwise, turn delays count towards the total.
@@ -333,7 +334,7 @@ function _INTERNAL.OnTurnEnded(uuid)
 	local id = GameHelpers.Combat.GetID(uuid)
 	if id then
 		for uniqueId,data in pairs(_PV.TurnCounterData) do
-			if data.Combat == id and (not data.Target or data.Target == uuid) then
+			if not data.RoundOnly and data.Combat == id and (not data.Target or data.Target == uuid) then
 				_INTERNAL.TickTurn(data, uniqueId)
 			end
 		end
@@ -432,6 +433,14 @@ RegisterProtectedOsirisListener("ObjectTurnEnded", 1, "after", function(uuid) _I
 RegisterProtectedOsirisListener("CharacterGuarded", 1, "before", function(uuid) _INTERNAL.OnTurnSkipped(_GetUUID(uuid)) end)
 RegisterProtectedOsirisListener("ObjectLeftCombat", 2, "after", function(uuid, id) _INTERNAL.OnLeftCombat(_GetUUID(uuid), id) end)
 RegisterProtectedOsirisListener("CharacterDied", 1, "after", function(uuid) _INTERNAL.OnCharacterDied(_GetUUID(uuid)) end)
+
+Events.Osiris.CombatRoundStarted:Subscribe(function (e)
+	for uniqueId,data in pairs(_PV.TurnCounterData) do
+		if data.RoundOnly and data.Combat == e.CombatID then
+			_INTERNAL.TickTurn(data, uniqueId)
+		end
+	end
+end)
 
 ---@param uniqueId string
 ---@param data TurnCounterData

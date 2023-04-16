@@ -1127,6 +1127,9 @@ function GameHelpers.Item.GetItemStat(item)
         if item.StatsId and not Data.ItemRarity[item.StatsId] then
             return item.StatsId
         end
+        if item.StatsFromName then
+            return item.StatsFromName.Name
+        end
         if not GameHelpers.Item.IsObject(item) and item.Stats then
             return item.Stats.Name
         end

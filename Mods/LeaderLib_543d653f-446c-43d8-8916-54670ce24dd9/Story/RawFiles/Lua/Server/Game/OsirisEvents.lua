@@ -10,6 +10,17 @@ local function _SingleGuidEvent(guid)
 	}
 end
 
+local function _AnyObjectDoesNotExist(...)
+	local params = {...}
+	local len = #params
+	for i=1,len do
+		if Osi.ObjectExists(params[i]) == 0 then
+			return true
+		end
+	end
+	return false
+end
+
 ---@class OsirisCharacterEventArgs
 ---@field Character EsvCharacter
 ---@field CharacterGUID Guid The character MyGuid, for easier matching.
@@ -19,12 +30,13 @@ end
 ---@field CharacterGUID Guid The character MyGuid, for easier matching.
 ---@field Item EsvItem
 ---@field ItemGUID Guid The Item MyGuid, for easier matching.
+---@field StatsId string The item StatsId
 
 ---@class OsirisProcBlockEventArgs:OsirisCharacterItemEventArgs
 ---@field PreventAction fun(e:OsirisProcBlockEventArgs)
 
 ---@param name string
----@param getArgs fun(...:OsirisValue):table
+---@param getArgs fun(...:OsirisValue):table|boolean
 local function _CreateOsirisEventWrapper(name, getArgs)
 	local arity = Data.OsirisEvents[name]
 	local registeredListener = false
@@ -33,6 +45,9 @@ local function _CreateOsirisEventWrapper(name, getArgs)
 			registeredListener = true
 			Ext.Osiris.RegisterListener(name, arity, "after", function (...)
 				local b,data = xpcall(getArgs, debug.traceback, ...)
+				if data == false then -- object doesn't exist etc
+					return
+				end
 				if not b then
 					fprint(LOGLEVEL.ERROR, "[Events.Osiris.%s] Failed to get args:\n%s", name, data)
 					return
@@ -45,7 +60,7 @@ local function _CreateOsirisEventWrapper(name, getArgs)
 end
 
 ---@param name string
----@param getArgs fun(...:OsirisValue):table
+---@param getArgs fun(...:OsirisValue):table|boolean
 local function _CreateOsirisProcWrapper(name, arity, getArgs)
 	local registeredListener = false
 	local event = Classes.SubscribableEvent:Create("Osiris." .. name, {OnSubscribe = function (_)
@@ -53,6 +68,7 @@ local function _CreateOsirisProcWrapper(name, arity, getArgs)
 			registeredListener = true
 			Ext.Osiris.RegisterListener(name, arity, "after", function (...)
 				local b,data = xpcall(getArgs, debug.traceback, ...)
+				if data == false then return end
 				if not b then
 					fprint(LOGLEVEL.ERROR, "[Events.Osiris.%s] Failed to get args:\n%s", name, data)
 					return
@@ -74,6 +90,7 @@ local function _CreateOsirisProcBlockWrapper(name, getArgs, blockAction)
 			registeredListener = true
 			Ext.Osiris.RegisterListener(name, 2, "before", function (...)
 				local b,data = xpcall(getArgs, debug.traceback, ...)
+				if data == false then return end
 				if not b then
 					fprint(LOGLEVEL.ERROR, "[Events.Osiris.%s] Failed to get args:\n%s", name, data)
 					return
@@ -150,6 +167,48 @@ Events.Osiris.CharacterCreationFinished = _CreateOsirisEventWrapper("CharacterCr
 
 --#endregion
 
+---@class OsirisCharacterLootedCharacterCorpseEventArgs
+---@field Player EsvCharacter
+---@field PlayerGUID Guid
+---@field Corpse EsvCharacter
+---@field CorpseGUID Guid
+---@field Inventory EsvInventory The corpse's inventory.
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterLootedCharacterCorpseEventArgs>
+Events.Osiris.CharacterLootedCharacterCorpse = _CreateOsirisEventWrapper("CharacterLootedCharacterCorpse", function (playerGUID, corpseGUID)
+	local corpse = GameHelpers.GetCharacter(corpseGUID, "EsvCharacter")
+	return {
+		Player = GameHelpers.GetCharacter(playerGUID),
+		PlayerGUID = _GetGUID(playerGUID),
+		Corpse = corpse,
+		CorpseGUID = _GetGUID(corpseGUID),
+		Inventory = corpse and Ext.Entity.GetInventory(corpse.InventoryHandle)
+	}
+end)
+
+---@class OsirisItemTemplateOpeningEventArgs
+---@field Character EsvCharacter
+---@field CharacterGUID Guid
+---@field Item EsvItem
+---@field ItemGUID Guid
+---@field Inventory EsvInventory|nil The item's inventory, if it's a container.
+---@field TemplateGUID Guid
+---@field Template ItemTemplate
+
+---@type LeaderLibSubscribableEvent<OsirisItemTemplateOpeningEventArgs>
+Events.Osiris.ItemTemplateOpening = _CreateOsirisEventWrapper("ItemTemplateOpening", function (templateGUID, itemGUID, charGUID)
+	local item = GameHelpers.GetItem(itemGUID)
+	return {
+		Character = GameHelpers.GetCharacter(charGUID),
+		CharacterGUID = _GetGUID(charGUID),
+		Item = item,
+		ItemGUID = _GetGUID(itemGUID),
+		Template = Ext.Template.GetTemplate(templateGUID),
+		TemplateGUID = _GetGUID(templateGUID),
+		Inventory = item and Ext.Entity.GetInventory(item.InventoryHandle)
+	}
+end)
+
 ---@type LeaderLibSubscribableEvent<{LevelName:string, Level:EsvLevel}>
 Events.Osiris.CharacterCreationStarted = _CreateOsirisEventWrapper("CharacterCreationStarted", function(level) return {LevelName=level, Level=Ext.Entity.GetCurrentLevel()} end)
 
@@ -216,35 +275,46 @@ end)
 
 --#endregion
 
+---@see Events.CharacterUsedItem
 ---@type LeaderLibSubscribableEvent<OsirisCharacterItemEventArgs>
 Events.Osiris.CharacterUsedItem = _CreateOsirisEventWrapper("CharacterUsedItem", function (charGUID, itemGUID)
+	if _AnyObjectDoesNotExist(charGUID, itemGUID) then return false end
+	local item = GameHelpers.GetItem(itemGUID)
 	return {
 		Character = GameHelpers.GetCharacter(charGUID),
 		CharacterGUID = _GetGUID(charGUID),
-		Item = GameHelpers.GetItem(itemGUID),
+		Item = item,
 		ItemGUID = _GetGUID(itemGUID),
+		StatsId = GameHelpers.Item.GetItemStat(item),
 	}
 end)
 
+---@see Events.CharacterUsedItem
 ---@type LeaderLibSubscribableEvent<OsirisCharacterItemEventArgs>
 Events.Osiris.CharacterUsedItemFailed = _CreateOsirisEventWrapper("CharacterUsedItemFailed", function (charGUID, itemGUID)
+	if _AnyObjectDoesNotExist(charGUID, itemGUID) then return false end
+	local item = GameHelpers.GetItem(itemGUID)
 	return {
+		StatsId = GameHelpers.Item.GetItemStat(item),
 		Character = GameHelpers.GetCharacter(charGUID),
 		CharacterGUID = _GetGUID(charGUID),
-		Item = GameHelpers.GetItem(itemGUID),
+		Item = item,
 		ItemGUID = _GetGUID(itemGUID),
 	}
 end)
 
 ---@type LeaderLibSubscribableEvent<{Character:EsvCharacter, CharacterGUID:Guid, Item:EsvItem, ItemGUID:Guid, Template:ItemTemplate, TemplateGUID:Guid}>
 Events.Osiris.CharacterUsedItemTemplate = _CreateOsirisEventWrapper("CharacterUsedItemTemplate", function (charGUID, templateGUID, itemGUID)
+	if _AnyObjectDoesNotExist(charGUID, itemGUID) then return false end
+	local item = GameHelpers.GetItem(itemGUID)
 	return {
 		Character = GameHelpers.GetCharacter(charGUID),
 		CharacterGUID = _GetGUID(charGUID),
-		Item = GameHelpers.GetItem(itemGUID),
+		Item = item,
 		ItemGUID = _GetGUID(itemGUID),
 		Template = Ext.Template.GetTemplate(templateGUID),
 		TemplateGUID = _GetGUID(templateGUID),
+		StatsId = GameHelpers.Item.GetItemStat(item),
 	}
 end)
 
@@ -296,10 +366,12 @@ end)
 
 ---@type LeaderLibSubscribableEvent<OsirisProcBlockEventArgs>
 Events.Osiris.ProcBlockUseOfItem = _CreateOsirisProcBlockWrapper("ProcBlockUseOfItem", function (charGUID, itemGUID)
+	local item = GameHelpers.GetItem(itemGUID)
 	return {
+		StatsId = GameHelpers.Item.GetItemStat(item),
+		Item = item,
 		Character = GameHelpers.GetCharacter(charGUID),
 		CharacterGUID = _GetGUID(charGUID),
-		Item = GameHelpers.GetItem(itemGUID),
 		ItemGUID = _GetGUID(itemGUID)
 	}
 end, function (e)
@@ -308,10 +380,12 @@ end)
 
 ---@type LeaderLibSubscribableEvent<OsirisProcBlockEventArgs>
 Events.Osiris.ProcBlockMoveOfItem = _CreateOsirisProcBlockWrapper("ProcBlockMoveOfItem", function (charGUID, itemGUID)
+	local item = GameHelpers.GetItem(itemGUID)
 	return {
+		StatsId = GameHelpers.Item.GetItemStat(item),
+		Item = item,
 		Character = GameHelpers.GetCharacter(charGUID),
 		CharacterGUID = _GetGUID(charGUID),
-		Item = GameHelpers.GetItem(itemGUID),
 		ItemGUID = _GetGUID(itemGUID)
 	}
 end, function (e)
@@ -320,10 +394,12 @@ end)
 
 ---@type LeaderLibSubscribableEvent<OsirisProcBlockEventArgs>
 Events.Osiris.ProcBlockPickupOfItem = _CreateOsirisProcBlockWrapper("ProcBlockPickupOfItem", function (charGUID, itemGUID)
+	local item = GameHelpers.GetItem(itemGUID)
 	return {
+		StatsId = GameHelpers.Item.GetItemStat(item),
+		Item = item,
 		Character = GameHelpers.GetCharacter(charGUID),
 		CharacterGUID = _GetGUID(charGUID),
-		Item = GameHelpers.GetItem(itemGUID),
 		ItemGUID = _GetGUID(itemGUID)
 	}
 end, function (e)
@@ -332,10 +408,12 @@ end)
 
 ---@type LeaderLibSubscribableEvent<OsirisProcBlockEventArgs>
 Events.Osiris.ProcBlockLockpickItem = _CreateOsirisProcBlockWrapper("ProcBlockLockpickItem", function (charGUID, itemGUID)
+	local item = GameHelpers.GetItem(itemGUID)
 	return {
+		StatsId = GameHelpers.Item.GetItemStat(item),
+		Item = item,
 		Character = GameHelpers.GetCharacter(charGUID),
 		CharacterGUID = _GetGUID(charGUID),
-		Item = GameHelpers.GetItem(itemGUID),
 		ItemGUID = _GetGUID(itemGUID)
 	}
 end, function (e)

@@ -184,6 +184,9 @@ function OnCharacterResurrected(uuid)
 end
 
 Ext.Osiris.RegisterListener("CharacterUsedItem", 2, "before", function (characterGUID, itemGUID)
+	if Osi.ObjectExists(itemGUID) == 0 or Osi.ObjectExists(characterGUID) == 0 then
+		return
+	end
 	characterGUID = StringHelpers.GetUUID(characterGUID)
 	itemGUID = StringHelpers.GetUUID(itemGUID)
 	local character = GameHelpers.GetCharacter(characterGUID)
@@ -194,11 +197,15 @@ Ext.Osiris.RegisterListener("CharacterUsedItem", 2, "before", function (characte
 		Item = item,
 		ItemGUID = itemGUID,
 		Template = item and GameHelpers.GetTemplate(item) or "",
+		StatsId = GameHelpers.Item.GetItemStat(item),
 		Success = true,
 	})
 end)
 
 Ext.Osiris.RegisterListener("CharacterUsedItemFailed", 2, "before", function (characterGUID, itemGUID)
+	if Osi.ObjectExists(itemGUID) == 0 or Osi.ObjectExists(characterGUID) == 0 then
+		return
+	end
 	characterGUID = StringHelpers.GetUUID(characterGUID)
 	itemGUID = StringHelpers.GetUUID(itemGUID)
 	local character = GameHelpers.GetCharacter(characterGUID)
@@ -209,6 +216,7 @@ Ext.Osiris.RegisterListener("CharacterUsedItemFailed", 2, "before", function (ch
 		Item = item,
 		ItemGUID = itemGUID,
 		Template = item and GameHelpers.GetTemplate(item) or "",
+		StatsId = GameHelpers.Item.GetItemStat(item),
 		Success = false,
 	})
 end)

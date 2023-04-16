@@ -877,6 +877,7 @@ if not _ISCLIENT then
 	---@field CharacterGUID Guid
 	---@field Item EsvItem
 	---@field ItemGUID Guid
+	---@field StatsId FixedString The item's StatsId
 	---@field Template Guid
 	---@field Success boolean Can be false if this is raised by a CharacterUsedItemFailed event.
 

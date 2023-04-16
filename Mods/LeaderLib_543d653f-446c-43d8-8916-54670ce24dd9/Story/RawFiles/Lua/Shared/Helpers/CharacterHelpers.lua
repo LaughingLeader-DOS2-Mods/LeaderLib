@@ -1527,10 +1527,7 @@ end
 if _ISCLIENT then
 	Events.Loaded:Subscribe(function (e)
 		GameHelpers.Net.Subscribe("LeaderLib_Character_SetPermanentBoosts", function (e, data)
-			local player = GameHelpers.GetCharacter(data.NetID)
-			if player then
-				GameHelpers.Character.SetPermanentBoosts(player, data.Data, data.Index)
-			end
+			GameHelpers.Character.SetPermanentBoosts(data.NetID, data.Data, data.Index)
 		end)
 	end, {Once=true})
 end

@@ -475,7 +475,6 @@ end
 --- @param attacker StatCharacter
 --- @param ctxOrNumber number|{DamageMultiplier:number}
 function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, ctxOrNumber)
-    --TODO Refactor things to use ctx.DamageMultiplier?
     local damageMultiplier = 1.0
     local t = type(ctxOrNumber)
     if t == "table" then
@@ -559,7 +558,6 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 
 	local damageList = Ext.Stats.NewDamageList()
     damageList:CopyFrom(preDamageList)
-    local statusBonusDmgTypes = {}
     local hitBlocked = false
 
     --Fix: Temp fix for infinite reflection damage via Shackles of Pain + Retribution. This flag isn't being set or something in v56.

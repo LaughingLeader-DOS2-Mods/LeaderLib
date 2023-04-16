@@ -60,6 +60,33 @@ function GameHelpers.Action.PlayAnimation(character, animation, opts)
 	Ext.Action.QueueOsirisTask(task)
 end
 
+---@class GameHelpersActionResurrectOptions:EsvOsirisResurrectTask
+---@field Animation FixedString The optional animation to play.
+---@field HPPercentage int32 The vitality percentage that will be set on the target. Defaults to 100.
+---@field Callback fun(e:CharacterResurrectedEventArgs) A single-use function to call when the character is resurrected.
+
+---@param character CharacterParam
+---@param percentage? integer The vitality percentage that will be set on the target. Defaults to 100.
+---@param opts? GameHelpersActionResurrectOptions
+function GameHelpers.Action.Resurrect(character, opts)
+	local character = GameHelpers.GetCharacter(character) --[[@as EsvCharacter]]
+	fassert(character ~= nil, "Failed to get attacker character from (%s)", character)
+	local task = Ext.Action.CreateOsirisTask("Resurrect", character) --[[@as EsvOsirisResurrectTask]]
+	task.HPPercentage = 100
+	if type(opts) == "table" then
+		if opts.Callback then
+			Events.CharacterResurrected:Subscribe(opts.Callback, {Once=true, MatchArgs={CharacterGUID=character.MyGuid}})
+		end
+		if opts.Animation then
+			task.Animation = opts.Animation
+		end
+		if opts.HPPercentage then
+			task.HPPercentage = opts.HPPercentage
+		end
+	end
+	Ext.Action.QueueOsirisTask(task)
+end
+
 ---@param caster CharacterParam
 ---@param skill FixedString
 ---@param target ComponentHandle|ObjectParam|vec3|nil Either a ComponentHandle, object, or position table. Defaults to the caster if not set.

@@ -86,3 +86,5 @@ Mods.LeaderLib = {
 
 ---Mainly used to specify a default value in optional parameter tables.
 ---@class DefaultValue<T>:{}
+
+---@alias CrimeType "ActiveSummon"|"Assault"|"AttackAnimal"|"Diseased"|"EmptyPocketNoticed"|"IncapacitatedAssault"|"ItemDestroy"|"KilledAnimal"|"LoudContinuousNoise"|"MoveForbiddenItem"|"Murder"|"PickPocketFailed"|"Polymorphed"|"Smelly"|"Sneaking"|"SneakKilledAnimal"|"SneakMurder"|"SneakUseForbiddenItem"|"SourceMagic"|"Steal"|"SummonAssault"|"SummonAttackAnimal"|"SummonItemDestroy"|"SummonKilledAnimal"|"SummonMoveForbiddenItem"|"SummonMurder"|"SummonVandalise"|"SummonVandaliseNoOwner"|"TeleportPlayerDialog"|"Trespassing"|"UseForbiddenItem"|"Vandalise"|"VandaliseNoOwner"|"WeaponsDrawn"

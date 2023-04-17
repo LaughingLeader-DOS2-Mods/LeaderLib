@@ -210,6 +210,7 @@ local _actionMap = {}
 ---@private
 ---@param ui UIObject
 function ContextMenu:OnEntryClicked(ui, event, index, actionID, handle, isBuiltIn, stayOpen)
+	Ext.Audio.PostEvent("HUD", "UI_Generic_Click")
 	local action = self.DefaultActionCallbacks[actionID] or _actionMap[actionID]
 	local b,result = false,nil
 	if action then
@@ -247,20 +248,28 @@ end
 
 local _enabledActionsForContext = {}
 
+local function _SortByName(a,b)
+	return a.Name < b.Name
+end
+
+local function _SortByDisplayName(a,b)
+	return a:GetDisplayName() < b:GetDisplayName()
+end
+
 ---@return fun():ContextMenuAction|nil,string|nil
-local function GetOrderedContextMenuActions()
+local function _GetOrderedContextMenuActions()
 	local ids = {}
+	local len = 0
 	for id,action in pairs(ContextMenu.Actions) do
-		ids[#ids+1] = {Name=action:GetDisplayName(),ID=id}
+		len = len + 1
+		local sortName = StringHelpers.Trim(string.lower(action:GetSortName()))
+		ids[len] = {Name=sortName,ID=id}
 	end
-	table.sort(ids, function(a,b)
-		return a.Name < b.Name
-	end)
+	table.sort(ids, _SortByName)
 	local i = 0
-	local count = #ids
 	return function ()
 		i = i + 1
-		if i <= count then
+		if i <= len then
 			local entry = ids[i]
 			return ContextMenu.Actions[entry.ID],entry.ID
 		end
@@ -347,9 +356,11 @@ function ContextMenu:OnRightClick()
 					end
 				end
 
-				for action,actionId in GetOrderedContextMenuActions() do
+				local len = 0
+				for action,actionId in _GetOrderedContextMenuActions() do
 					if _enabledActionsForContext[actionId] then
-						self.Entries[#self.Entries+1] = action
+						len = len + 1
+						self.Entries[len] = action
 						_enabledActionsForContext[actionId] = nil
 					end
 				end
@@ -384,9 +395,11 @@ function ContextMenu:OnRightClick()
 					end
 				end
 			end
-			for action,actionId in GetOrderedContextMenuActions() do
+			local len = 0
+			for action,actionId in _GetOrderedContextMenuActions() do
 				if _enabledActionsForContext[actionId] then
-					self.Entries[#self.Entries+1] = action
+					len = len + 1
+					self.Entries[len] = action
 					_enabledActionsForContext[actionId] = nil
 				end
 			end
@@ -558,7 +571,7 @@ function ContextMenu:OnBuiltinMenuUpdating(ui, event)
 		--ContextMenu:AddEntry()
 	end
 
-	for action,actionId in GetOrderedContextMenuActions() do
+	for action,actionId in _GetOrderedContextMenuActions() do
 		if action.AutomaticallyAddToBuiltin and action:GetCanOpen(self, x, y) then
 			self:AddBuiltinEntry(action.ID, action.Callback, action:GetDisplayName(), action.Visible, action.UseClickSound, action.Disabled, action.IsLegal, action.Handle)
 		end
@@ -726,7 +739,7 @@ end
 ---@param targetContextMenu {addEntry:function, list:FlashListDisplay}
 ---@param entry ContextMenuAction
 ---@param depth integer
-local function AddEntryMC(targetContextMenu, entry, depth)
+local function _AddEntryMC(targetContextMenu, entry, depth)
 	if not entry then
 		return
 	end
@@ -746,7 +759,7 @@ local function AddEntryMC(targetContextMenu, entry, depth)
 		menuItem.createSubmenu()
 		for j=1,#entry.Children do
 			local child = entry.Children[j]
-			AddEntryMC(menuItem.childCM, child, depth + 1)
+			_AddEntryMC(menuItem.childCM, child, depth + 1)
 		end
 		menuItem.childCM.updateDone()
 	end
@@ -771,7 +784,7 @@ function ContextMenu:MoveAndRebuild(x,y)
 			end
 			for i=1,totalEntries do
 				local entry = self.Entries[i]
-				AddEntryMC(contextMenu, entry, 0)
+				_AddEntryMC(contextMenu, entry, 0)
 			end
 	
 			contextMenu.updateDone()
@@ -815,7 +828,7 @@ function ContextMenu:Open()
 		local totalEntries = #self.Entries
 		for i=1,totalEntries do
 			local entry = self.Entries[i]
-			AddEntryMC(contextMenu, entry, 0)
+			_AddEntryMC(contextMenu, entry, 0)
 		end
 
 		contextMenu.updateDone()

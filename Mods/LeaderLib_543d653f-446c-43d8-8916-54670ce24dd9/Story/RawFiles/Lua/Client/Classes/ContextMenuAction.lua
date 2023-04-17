@@ -4,8 +4,9 @@
 ---@field OnUpdate fun(self:ContextMenuAction) Called before this action is added to the context menu. Use it to set Disabled/Legal etc.
 ---@field Callback ContextMenuActionCallback
 ---@field Visible boolean
----@field DisplayName string|TranslatedString|ContextMenuActionGetTextCallback
----@field Tooltip string|TranslatedString|ContextMenuActionGetTextCallback
+---@field DisplayName ContextMenuActionDisplayNameType
+---@field SortName ContextMenuActionDisplayNameType The name to use when sorting. Defaults to the initial value of DisplayName.
+---@field Tooltip ContextMenuActionDisplayNameType
 ---@field Icon string
 ---@field UseClickSound boolean
 ---@field Disabled boolean
@@ -15,7 +16,8 @@
 ---@field Children ContextMenuActionSettings[]
 ---@field AutomaticallyAddToBuiltin boolean If true, this action will be added to the builtin context menu, if conditions are met. Note that the builtin menu does not support icons or nested actions.
 
----@alias ContextMenuActionGetTextCallback (fun(character:EclCharacter):string|TranslatedString|nil)
+---@alias ContextMenuActionGetTextCallback (fun(character:EclCharacter):string|TranslatedString|nil,boolean|nil)
+---@alias ContextMenuActionDisplayNameType string|TranslatedString|ContextMenuActionGetTextCallback
 
 ---@class ContextMenuAction:ContextMenuActionSettings
 ---@field Handle any A specific value that will be passed along to the callback on click.
@@ -46,6 +48,9 @@ function ContextMenuAction:Create(params)
 			this[k] = v
 		end
 	end
+	if this.SortName == nil then
+		this.SortName = this.DisplayName
+	end
 	if this.Children then
 		if this.UseClickSound == nil then
 			this.UseClickSound = false
@@ -65,48 +70,48 @@ function ContextMenuAction:Create(params)
 	return this
 end
 
----@param character EclCharacter|nil
+---@param character? EclCharacter
+---@param displayName? ContextMenuActionDisplayNameType Override what would normally be `self.DisplayName`
 ---@return string
-function ContextMenuAction:GetDisplayName(character)
-	local t = type(self.DisplayName)
+function ContextMenuAction:GetDisplayName(character, displayName)
+	displayName = displayName or self.DisplayName
+	local t = type(displayName)
 	if t == "string" then
-		if string.find(self.DisplayName, "_") then
-			return GameHelpers.GetStringKeyText(self.DisplayName)
+		if string.find(displayName, "_") then
+			return GameHelpers.GetStringKeyText(displayName)
 		end
-		return self.DisplayName
-	elseif t == "table" and self.DisplayName.Type == "TranslatedString" then
-		return GameHelpers.Tooltip.ReplacePlaceholders(self.DisplayName.Value, character)
+		return displayName
+	elseif t == "table" and displayName.Type == "TranslatedString" then
+		return GameHelpers.Tooltip.ReplacePlaceholders(displayName.Value, character)
 	elseif t == "function" then
-		local b,result = xpcall(self.DisplayName, debug.traceback, character)
+		local b,result,skipReplace = xpcall(displayName, debug.traceback, character)
 		if not b then
 			error(result, 2)
 		elseif result then
-			return result
+			if not skipReplace then
+				return GameHelpers.Tooltip.ReplacePlaceholders(result, character)
+			else
+				return result
+			end
 		end
 	end
 	return ""
 end
 
+---@param character? EclCharacter
+---@return string
+function ContextMenuAction:GetSortName(character)
+	if StringHelpers.IsNullOrEmpty(self.SortName) then
+		self.SortName = self:GetDisplayName(character)
+		return self.SortName
+	end
+	return self:GetDisplayName(character, self.SortName)
+end
+
 ---@param character EclCharacter|nil
 ---@return string
 function ContextMenuAction:GetTooltip(character)
-	local t = type(self.Tooltip)
-	if t == "string" then
-		if string.find(self.Tooltip, "_") then
-			return GameHelpers.GetStringKeyText(self.Tooltip)
-		end
-		return self.Tooltip
-	elseif t == "table" and self.Tooltip.Type == "TranslatedString" then
-		return GameHelpers.Tooltip.ReplacePlaceholders(self.Tooltip.Value, character)
-	elseif t == "function" then
-		local b,result = xpcall(self.Tooltip, debug.traceback, character)
-		if not b then
-			error(result, 2)
-		else
-			return result
-		end
-	end
-	return ""
+	return self:GetDisplayName(character, self.Tooltip)
 end
 
 ---@param contextMenu ContextMenu

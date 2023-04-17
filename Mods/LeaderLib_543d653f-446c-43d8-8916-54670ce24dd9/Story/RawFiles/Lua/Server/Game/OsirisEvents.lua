@@ -37,13 +37,14 @@ end
 
 ---@param name string
 ---@param getArgs fun(...:OsirisValue):table|boolean
-local function _CreateOsirisEventWrapper(name, getArgs)
+---@param eventStage? OsirisEventType
+local function _CreateOsirisEventWrapper(name, getArgs, eventStage)
 	local arity = Data.OsirisEvents[name]
 	local registeredListener = false
 	local event = Classes.SubscribableEvent:Create("Osiris." .. name, {OnSubscribe = function (_)
 		if not registeredListener then
 			registeredListener = true
-			Ext.Osiris.RegisterListener(name, arity, "after", function (...)
+			Ext.Osiris.RegisterListener(name, arity, eventStage or "after", function (...)
 				local b,data = xpcall(getArgs, debug.traceback, ...)
 				if data == false then -- object doesn't exist etc
 					return
@@ -105,11 +106,12 @@ local function _CreateOsirisProcBlockWrapper(name, getArgs, blockAction)
 	return event
 end
 
----@type LeaderLibSubscribableEvent<{Object:EsvCharacter|EsvItem, ObjectGUID:Guid, TemplateGUID:Guid, Template:CharacterTemplate|ItemTemplate}>
+---@type LeaderLibSubscribableEvent<{Object:EsvCharacter|EsvItem, ObjectGUID:Guid, ObjectType:"Character"|"Item", TemplateGUID:Guid, Template:CharacterTemplate|ItemTemplate}>
 Events.Osiris.ObjectTransformed = _CreateOsirisEventWrapper("ObjectTransformed", function (guid, template)
 	return {
 		Object = GameHelpers.TryGetObject(guid),
 		ObjectGUID = _GetGUID(guid),
+		ObjectType = Osi.ObjectIsCharacter(guid) == 1 and "Character" or "Item",
 		TemplateGUID = _GetGUID(template),
 		Template = Ext.Template.GetTemplate(template),
 	}
@@ -226,6 +228,7 @@ end)
 ---@class OsirisCombatObjectEventArgs
 ---@field Object EsvCharacter|EsvItem
 ---@field ObjectGUID Guid
+---@field ObjectType "Character"|"Item"
 ---@field CombatID integer
 ---@field Combat EsvCombat
 ---@field CombatTeam EsvCombatTeam
@@ -271,23 +274,25 @@ local function _SingleObjectCombatEvent(guid, id)
 	local evt = {
 		Object = object,
 		ObjectGUID = _GetGUID(guid),
-		CombatID = combatid
+		CombatID = combatid,
+		ObjectType = GameHelpers.Ext.ObjectIsCharacter(object) and "Character" or "Item"
 	}
 	setmetatable(evt, {__index = _CombatMetaIndex})
 	return evt
 end
 
 ---@param name string
----@param getArgs fun(...:OsirisValue):table|boolean
 ---@return LeaderLibSubscribableEvent<OsirisCombatObjectEventArgs>
 local function _CreateOsirisCombatEventWrapper(name)
-	_CreateOsirisEventWrapper(name, _SingleObjectCombatEvent)
+	return _CreateOsirisEventWrapper(name, _SingleObjectCombatEvent)
 end
 
 Events.Osiris.ObjectTurnStarted = _CreateOsirisCombatEventWrapper("ObjectTurnStarted")
+---@see Events.OnTurnEnded
 Events.Osiris.ObjectTurnEnded = _CreateOsirisCombatEventWrapper("ObjectTurnEnded")
 Events.Osiris.ObjectEnteredCombat = _CreateOsirisCombatEventWrapper("ObjectEnteredCombat")
 Events.Osiris.ObjectReadyInCombat = _CreateOsirisCombatEventWrapper("ObjectReadyInCombat")
+---@see Events.OnTurnEnded
 Events.Osiris.ObjectLeftCombat = _CreateOsirisCombatEventWrapper("ObjectLeftCombat")
 
 ---@class OsirisObjectSwitchedCombatEventArgs:OsirisCombatObjectEventArgs
@@ -299,9 +304,11 @@ Events.Osiris.ObjectSwitchedCombat = _CreateOsirisEventWrapper("ObjectSwitchedCo
 	if Osi.ObjectExists(guid) == 0 then
 		return false
 	end
+	local object = GameHelpers.TryGetObject(guid, "EsvCharacter")
 	local evt = {
-		Object = GameHelpers.TryGetObject(guid, "EsvCharacter"),
+		Object = object,
 		ObjectGUID = _GetGUID(guid),
+		ObjectType = GameHelpers.Ext.ObjectIsCharacter(object) and "Character" or "Item",
 		CombatID = combatID,
 		OldCombatID = oldcombatID,
 		OldCombat = Ext.Entity.GetCombat(oldcombatID)
@@ -367,7 +374,97 @@ Events.Osiris.CharacterUsedItemTemplate = _CreateOsirisEventWrapper("CharacterUs
 	}
 end)
 
---#region Item Requests (_CRIME_CrimeTriggers)
+--#region Pickpocketing
+
+
+---@class OsirisRequestPickpocketEventArgs
+---@field Player EsvCharacter
+---@field PlayerGUID Guid
+---@field Target EsvCharacter
+---@field TargetGUID Guid
+---@field AllowAction fun(self:OsirisRequestPickpocketEventArgs) Force the request to succeed via `Osi.StartPickpocket`.
+---@field PreventAction fun(self:OsirisRequestPickpocketEventArgs) Deny the request via.
+
+---@type LeaderLibSubscribableEvent<OsirisRequestPickpocketEventArgs>
+Events.Osiris.RequestPickpocket = _CreateOsirisEventWrapper("CanUseItem", function (playerGUID, targetGUID)
+	local player = GameHelpers.GetCharacter(playerGUID)
+	local target = GameHelpers.GetCharacter(targetGUID)
+	return {
+		Player = player,
+		PlayerGUID = _GetGUID(playerGUID),
+		Target = target,
+		TargetGUID = _GetGUID(targetGUID),
+		AllowAction = function ()
+			if Ext.Utils.GetGameMode() ~= "Campaign" then
+				if not GameHelpers.Character.IsPlayerOrPartyMember(target) then
+					Osi.GenTradeItems(playerGUID, targetGUID)
+				end
+			end
+			Osi.StartPickpocket(playerGUID, targetGUID, 1)
+		end,
+		PreventAction = function ()
+			--The _CRIME_CrimeTriggers script doesn't run in GM mode
+			if Ext.Utils.GetGameMode() ~= "Campaign" then
+				Osi.StartPickpocket(playerGUID, targetGUID, 0)
+			else
+				Osi.DB_PickpocketingBlocked(1)
+			end
+		end
+	}
+end, "before")
+
+---@class OsirisCharacterPickpocketSuccessEventArgs
+---@field Player EsvCharacter
+---@field PlayerGUID Guid
+---@field Target EsvCharacter
+---@field TargetGUID Guid
+---@field Item EsvItem
+---@field ItemGUID Guid
+---@field Amount integer
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterPickpocketSuccessEventArgs>
+Events.Osiris.CharacterPickpocketSuccess = _CreateOsirisEventWrapper("CharacterPickpocketSuccess", function (playerGUID, targetGUID, itemGUID, amount)
+	local player = GameHelpers.GetCharacter(playerGUID)
+	local target = GameHelpers.GetCharacter(targetGUID)
+	local item = GameHelpers.GetItem(itemGUID)
+	return {
+		Player = player,
+		PlayerGUID = _GetGUID(playerGUID),
+		Target = target,
+		TargetGUID = _GetGUID(targetGUID),
+		Item = item,
+		ItemGUID = _GetGUID(itemGUID),
+		Amount = amount
+	}
+end)
+
+---@class OsirisCharacterPickpocketFailedEventArgs
+---@field Player EsvCharacter
+---@field PlayerGUID Guid
+---@field Target EsvCharacter
+---@field TargetGUID Guid
+---@field PreventAction fun(self:OsirisCharacterPickpocketFailedEventArgs) Prevent the crimes script from creating a crime.
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterPickpocketFailedEventArgs>
+Events.Osiris.CharacterPickpocketFailed = _CreateOsirisEventWrapper("CharacterPickpocketFailed", function (playerGUID, targetGUID)
+	local player = GameHelpers.GetCharacter(playerGUID)
+	local target = GameHelpers.GetCharacter(targetGUID)
+	return {
+		Player = player,
+		PlayerGUID = _GetGUID(playerGUID),
+		Target = target,
+		TargetGUID = _GetGUID(targetGUID),
+		PreventAction = function ()
+			if Ext.Utils.GetGameMode() == "Campaign" then
+				Osi.DB_PickpocketingBlocked(1)
+			end
+		end
+	}
+end, "before")
+
+--#endregion
+
+--#region Requests (_CRIME_CrimeTriggers)
 
 ---@type LeaderLibSubscribableEvent<{Character:EsvCharacter, CharacterGUID:Guid, Item:EsvItem, ItemGUID:Guid, RequestID:integer}>
 Events.Osiris.CanUseItem = _CreateOsirisEventWrapper("CanUseItem", function (charGUID, itemGUID, requestID)
@@ -607,5 +704,97 @@ end
 Events.Osiris.ChildDialogRequested = _CreateOsirisDialogEventWrapper("ChildDialogRequested", _SetTargetDialog)
 ---@type LeaderLibSubscribableEvent<OsirisChildDialogRequestedEventArgs>
 Events.Osiris.DualDialogRequested = _CreateOsirisDialogEventWrapper("DualDialogRequested", _SetTargetDialog)
+
+--#endregion
+
+--#region Crimes
+
+---@class OsirisCrimeIsRegisteredEventArgs
+---@field Target EsvCharacter
+---@field TargetGUID Guid
+---@field CrimeType CrimeType
+---@field CrimeID integer
+---@field Evidence ServerObject
+---@field EvidenceGUID Guid
+---@field Criminals EsvCharacter[]
+---@field CriminalGUIDs Guid[]
+---@field TotalCriminals integer
+
+---@type LeaderLibSubscribableEvent<OsirisCrimeIsRegisteredEventArgs>
+Events.Osiris.CrimeIsRegistered = _CreateOsirisEventWrapper("CrimeIsRegistered", function (targetGUID, crimeType, crimeID, evidenceGUID, ...)
+	local criminalGUIDs = {}
+	local criminals = {}
+	local totalCriminals = 0
+	for i,v in pairs({...}) do
+		if not StringHelpers.IsNullOrEmpty(v) then
+			totalCriminals = totalCriminals + 1
+			criminalGUIDs[totalCriminals] = _GetGUID(v)
+			criminals[totalCriminals] = GameHelpers.GetCharacter(v)
+		end
+	end
+	local target = GameHelpers.GetCharacter(targetGUID)
+	---@type OsirisCrimeIsRegisteredEventArgs
+	return {
+		Target = target,
+		TargetGUID = _GetGUID(targetGUID),
+		CrimeType = crimeType,
+		CrimeID = crimeID,
+		Evidence = GameHelpers.TryGetObject(evidenceGUID),
+		EvidenceGUID = _GetGUID(evidenceGUID),
+		CriminalGUIDs = criminalGUIDs,
+		Criminals = criminals,
+		TotalCriminals = totalCriminals
+	}
+end, "before")
+
+--#endregion
+
+--#region Tags
+
+---@class OsirisObjectTagEventArgs
+---@field Object ServerObject
+---@field ObjectGUID Guid
+---@field ObjectType "Character"|"Item"
+---@field Tag string
+---@field AllTags table<string, boolean> All of the object's tags, including tags found on equipped items, in tag -> boolean format. Only fetched when initially accessed.
+
+local function _ObjectTagIndexMeta(tbl, k)
+	if k == "AllTags" then
+		local object = rawget(tbl, "Object")
+		if object then
+			local tags = GameHelpers.GetAllTags(object, true, true)
+			rawset(tbl, "AllTags", tags)
+			return tags
+		end
+	end
+end
+
+local _ObjectTagEventMeta = {__index = _ObjectTagIndexMeta}
+
+---@type LeaderLibSubscribableEvent<OsirisObjectTagEventArgs>
+Events.Osiris.ObjectWasTagged = _CreateOsirisEventWrapper("ObjectWasTagged", function (guid, tag)
+	local object = GameHelpers.TryGetObject(guid)
+	local evt = {
+		Object = object,
+		ObjectGUID = _GetGUID(guid),
+		Tag = tag,
+		ObjectType = GameHelpers.Ext.ObjectIsCharacter(object) and "Character" or "Item"
+	}
+	setmetatable(evt, _ObjectTagEventMeta)
+	return evt
+end)
+
+---@type LeaderLibSubscribableEvent<OsirisObjectTagEventArgs>
+Events.Osiris.ObjectLostTag = _CreateOsirisEventWrapper("ObjectLostTag", function (guid, tag)
+	local object = GameHelpers.TryGetObject(guid)
+	local evt = {
+		Object = object,
+		ObjectGUID = _GetGUID(guid),
+		ObjectType = GameHelpers.Ext.ObjectIsCharacter(object) and "Character" or "Item",
+		Tag = tag,
+	}
+	setmetatable(evt, _ObjectTagEventMeta)
+	return evt
+end)
 
 --#endregion

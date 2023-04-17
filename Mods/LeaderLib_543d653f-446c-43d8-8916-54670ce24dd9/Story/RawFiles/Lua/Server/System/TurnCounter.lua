@@ -8,7 +8,7 @@ Managers.TurnCounter = TurnCounter
 TurnCounter.DefaultTimerSpeed = 6000
 TurnCounter.CombatMinDistance = 6.0
 
----@class TURNCOUNTER_MODE
+---@enum TURNCOUNTER_MODE
 TurnCounter.Mode = {
 	Decrement = "decrement",
 	Increment = "increment"
@@ -135,7 +135,7 @@ end
 ---@param turns integer How many turns to count up for.
 ---@param combatOrTarget? TurnCounterTargetParamType The combat id or character to get the combat id from.
 ---@param params? TurnCounterData
-function TurnCounter.CountUp(id, turns, combat, params)
+function TurnCounter.CountUp(id, turns, combatOrTarget, params)
 	TurnCounter.CreateTurnCounter(id, 0, turns, TurnCounter.Mode.Increment, combatOrTarget, params)
 end
 

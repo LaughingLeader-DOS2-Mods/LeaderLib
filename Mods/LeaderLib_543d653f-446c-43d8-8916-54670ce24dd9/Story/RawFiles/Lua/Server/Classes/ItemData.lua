@@ -260,7 +260,7 @@ function ItemData:RegisterProcBlockUseOfItemListener(callback)
 		character = StringHelpers.GetUUID(character)
 		item = StringHelpers.GetUUID(item)
 		if item == self.UUID then
-			local b,result = xpcall(callback, self, GameHelpers.GetCharacter(character), GameHelpers.GetItem(item))
+			local b,result = xpcall(callback, debug.traceback, self, GameHelpers.GetCharacter(character), GameHelpers.GetItem(item))
 			if not b then
 				fprint(LOGLEVEL.ERROR, "[ItemData:ProcBlockUseOfItem] Error invoking callback:\n%s", result)
 			elseif result ~= nil then

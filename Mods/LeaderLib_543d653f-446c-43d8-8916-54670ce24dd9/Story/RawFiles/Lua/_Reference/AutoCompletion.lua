@@ -78,6 +78,8 @@ Mods.LeaderLib = {
 ---@alias ObjectParam EsvCharacter|EclCharacter|EsvItem|EclItem|Guid|NetId|ComponentHandle
 ---@alias ServerObject EsvCharacter|EsvItem
 ---@alias ClientObject EclCharacter|EclItem
+---@alias CharacterObject EsvCharacter|EclCharacter
+---@alias ItemObject EsvItem|EclItem
 
 ---@alias ServerCharacterParam EsvCharacter|Guid|NetId|ComponentHandle
 ---@alias ClientCharacterParam EclCharacter|Guid|NetId|ComponentHandle

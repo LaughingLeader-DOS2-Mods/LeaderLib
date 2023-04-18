@@ -157,13 +157,38 @@ function GameHelpers.Character.IsSummonOrPartyFollower(character)
 end
 
 ---@param character CharacterParam
-function GameHelpers.Character.IsAllyOfParty(character)
+---@param partyMember? CharacterParam
+function GameHelpers.Character.IsAllyOfParty(character, partyMember)
 	if not _ISCLIENT and _OSIRIS() then
 		character = GameHelpers.GetUUID(character)
 		if not character or Osi.ObjectIsCharacter(character) == 0 then return false end
-		for player in GameHelpers.Character.GetPlayers(false) do
-			if Osi.CharacterIsAlly(character, player.MyGuid) == 1 then
-				return true
+		if partyMember then
+			return Osi.CharacterIsAlly(character, GameHelpers.GetUUID(partyMember)) == 1
+		else
+			for player in GameHelpers.Character.GetPlayers(false) do
+				if Osi.CharacterIsAlly(character, player.MyGuid) == 1 then
+					return true
+				end
+			end
+		end
+
+	end
+	return false
+end
+
+---@param character CharacterParam
+---@param partyMember? CharacterParam
+function GameHelpers.Character.IsNeutralToParty(character, partyMember)
+	if not _ISCLIENT and _OSIRIS() then
+		local GUID = GameHelpers.GetUUID(character)
+		if not GUID then return false end
+		if partyMember then
+			return Osi.CharacterIsNeutral(character, GameHelpers.GetUUID(partyMember)) == 1
+		else
+			for player in GameHelpers.Character.GetPlayers(false) do
+				if Osi.CharacterIsNeutral(GUID, player.MyGuid) == 1 then
+					return true
+				end
 			end
 		end
 	end
@@ -171,13 +196,18 @@ function GameHelpers.Character.IsAllyOfParty(character)
 end
 
 ---@param character CharacterParam
-function GameHelpers.Character.IsEnemyOfParty(character)
+---@param partyMember? CharacterParam
+function GameHelpers.Character.IsEnemyOfParty(character, partyMember)
 	if not _ISCLIENT and _OSIRIS() then
 		local GUID = GameHelpers.GetUUID(character)
 		if not GUID then return false end
-		for player in GameHelpers.Character.GetPlayers(false) do
-			if Osi.CharacterIsEnemy(GUID, player.MyGuid) == 1 then
-				return true
+		if partyMember then
+			return Osi.CharacterIsEnemy(character, GameHelpers.GetUUID(partyMember)) == 1
+		else
+			for player in GameHelpers.Character.GetPlayers(false) do
+				if Osi.CharacterIsEnemy(GUID, player.MyGuid) == 1 then
+					return true
+				end
 			end
 		end
 	end
@@ -202,20 +232,6 @@ function GameHelpers.Character.IsEnemy(char1, char2)
 				a = a.Handle
 				b = b.Handle
 				return alignment:IsPermanentEnemy(a,b) or alignment:IsTemporaryEnemy(a,b)
-			end
-		end
-	end
-	return false
-end
-
----@param character CharacterParam
-function GameHelpers.Character.IsNeutralToParty(character)
-	if not _ISCLIENT and _OSIRIS() then
-		local GUID = GameHelpers.GetUUID(character)
-		if not GUID then return false end
-		for player in GameHelpers.Character.GetPlayers(false) do
-			if Osi.CharacterIsNeutral(GUID, player.MyGuid) == 1 then
-				return true
 			end
 		end
 	end
@@ -1161,9 +1177,9 @@ function GameHelpers.Character.HasFlag(character, flag)
 end
 
 ---Returns true if the target is an enemy or Friendly Fire is enabled.
----@param target CharacterParam
----@param attacker CharacterParam|nil If not specified, then this will return true if the target is an enemy of the party.
----@param allowItems boolean|nil If true, this will return true if target is an item.
+---@param target CharacterParam|ItemParam
+---@param attacker? CharacterParam If not specified, then this will return true if the target is an enemy of the party.
+---@param allowItems? boolean If true, this will return true if target is an item.
 ---@return boolean
 function GameHelpers.Character.CanAttackTarget(target, attacker, allowItems)
 	local target = GameHelpers.TryGetObject(target)

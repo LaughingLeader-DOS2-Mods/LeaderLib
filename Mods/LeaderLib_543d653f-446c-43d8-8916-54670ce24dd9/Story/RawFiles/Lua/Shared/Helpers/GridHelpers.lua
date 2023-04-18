@@ -6,6 +6,8 @@ local _ISCLIENT = Ext.IsClient()
 local _type = type
 
 local _getGrid = Ext.Entity.GetAiGrid
+local _getCurrentLevel = Ext.Entity.GetCurrentLevel
+local _getDistance = Ext.Math.Distance
 
 ---@class GameHelpers_Grid_Bounds
 ---@field Radius number
@@ -715,6 +717,7 @@ end
 ---@field Relation GameHelpers_Grid_GetNearbyObjectsOptionsRelationOptions Filter returned characters by this relation, such as "Ally" "Neutral".
 ---@field Sort string|"Distance"|"Random"|"LowestHP"|"HighestHP"|"None"|fun(a:ServerObject,b:ServerObject):boolean
 ---@field IgnoreHeight boolean If true, the y value of positions is ignored when comparing distance.
+---@field ActivatedOnly boolean If true, only activated items/characters will be checked (objects within 30m of a player). Enable this for a more performant search.
 
 ---@type GameHelpers_Grid_GetNearbyObjectsOptions
 local _defaultGetNearbyObjectsOptions = {
@@ -724,6 +727,13 @@ local _defaultGetNearbyObjectsOptions = {
 	AllowDead = false,
 	AllowOffStage = false,
 	IgnoreHeight = false,
+	ActivatedOnly = false
+}
+
+local _ValidObjectType = {
+	All = true,
+	Character = true,
+	Item = true,
 }
 
 ---@param distances table<Guid,number>
@@ -732,8 +742,8 @@ local function _SortDistance(distances)
 	---@param a ServerObject
 	---@param b ServerObject
 	return function (a,b)
-		local d1 = distances[a.MyGuid] or 9999
-		local d2 = distances[b.MyGuid] or 9999
+		local d1 = distances[GameHelpers.GetObjectID(a)] or 9999
+		local d2 = distances[GameHelpers.GetObjectID(b)] or 9999
 		return d1 < d2
 	end
 end
@@ -753,6 +763,172 @@ end
 ---@alias GameHelpers_Grid_GetNearbyObjectsFunctionResult fun():ServerObject
 ---@alias GameHelpers_Grid_GetNearbyObjectsTableResult ServerObject[]
 
+---@param level EsvLevel|EclLevel
+---@param activatedOnly boolean
+---@param isItem boolean
+local function _GetEntities(level, activatedOnly, isItem)
+	level = level or _getCurrentLevel()
+	if not level then
+		return {}
+	end
+	local levelName = level.LevelDesc.LevelName
+	local entries = nil
+	if isItem then
+		if activatedOnly then
+			entries = level.EntityManager.ItemConversionHelpers.ActivatedItems[levelName]
+		else
+			entries = level.EntityManager.ItemConversionHelpers.RegisteredItems[levelName]
+		end
+	else
+		if activatedOnly then
+			entries = level.EntityManager.CharacterConversionHelpers.ActivatedCharacters[levelName]
+		else
+			entries = level.EntityManager.CharacterConversionHelpers.RegisteredCharacters[levelName]
+		end
+	end
+	return entries or {}
+end
+
+---@param distances table
+---@param objects table
+---@param level EsvLevel|EclLevel
+---@param options GameHelpers_Grid_GetNearbyObjectsOptions
+---@param source ServerObject|ClientObject
+---@param pos vec3
+---@return integer total
+local function _GetNearbyObjects_ObjectSource(distances, objects, level, options, source, pos)
+	local sourceID = GameHelpers.GetObjectID(source)
+	local sourceIsCharacter = GameHelpers.Ext.ObjectIsCharacter(source)
+	local total = 0
+	if options.Type == "All" or options.Type == "Item" then
+		local entries = _GetEntities(level, options.ActivatedOnly, true)
+		local len = #entries
+		for i=1,len do
+			local obj = entries[i]
+			local objID = _ISCLIENT and obj.NetID or obj.MyGuid
+			local dist = GameHelpers.Math.GetDistance(obj, pos, options.IgnoreHeight)
+			distances[objID] = dist
+			if objID ~= sourceID and dist <= options.Radius then
+				if (options.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (options.AllowOffStage or not obj.OffStage) then
+					if options.Relation and options.Relation.CanAdd then
+						local b,result = xpcall(options.Relation.CanAdd, debug.traceback, obj, source)
+						if not b then
+							Ext.Utils.PrintError(result)
+						elseif result == true then
+							total = total + 1
+							objects[total] = obj
+						end
+					elseif GameHelpers.Character.CanAttackTarget(obj, source, true) then
+						total = total + 1
+						objects[total] = obj
+					end
+				end
+			end
+		end
+	end
+	if options.Type == "All" or options.Type == "Character" then
+		local entries = _GetEntities(level, options.ActivatedOnly, false)
+		local len = #entries
+		for i=1,len do
+			local obj = entries[i]
+			local objID = _ISCLIENT and obj.NetID or obj.MyGuid
+			local dist = GameHelpers.Math.GetDistance(obj, pos, options.IgnoreHeight)
+			distances[objID] = dist
+			if objID ~= sourceID and dist <= options.Radius then
+				if (options.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (options.AllowOffStage or not obj.OffStage) then
+					if options.Relation and sourceIsCharacter then
+						if options.Relation.Ally and GameHelpers.Character.IsAllyOfParty(obj, source) then
+							total = total + 1
+							objects[total] = obj
+						elseif options.Relation.Enemy and GameHelpers.Character.CanAttackTarget(obj, source) then
+							total = total + 1
+							objects[total] = obj
+						elseif options.Relation.Neutral and GameHelpers.Character.IsNeutralToParty(obj, source) then
+							total = total + 1
+							objects[total] = obj
+						elseif options.Relation.CanAdd then
+							local b,result = xpcall(options.Relation.CanAdd, debug.traceback, obj, source)
+							if not b then
+								Ext.Utils.PrintError(result)
+							elseif result == true then
+								total = total + 1
+								objects[total] = obj
+							end
+						end
+					else
+						total = total + 1
+						objects[total] = obj
+					end
+				end
+			end
+		end
+	end
+	return total
+end
+
+---@param distances table
+---@param objects table
+---@param level EsvLevel|EclLevel
+---@param options GameHelpers_Grid_GetNearbyObjectsOptions
+---@param pos vec3
+---@return integer total
+local function _GetNearbyObjects_PositionSource(distances, objects, level, options, pos)
+	local total = 0
+	if options.Type == "All" or options.Type == "Item" then
+		local entries = _GetEntities(level, options.ActivatedOnly, true)
+		local len = #entries
+		for i=1,len do
+			local obj = entries[i]
+			local objID = _ISCLIENT and obj.NetID or obj.MyGuid
+			local dist = GameHelpers.Math.GetDistance(obj, pos, options.IgnoreHeight)
+			distances[objID] = dist
+			if dist <= options.Radius then
+				if (options.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (options.AllowOffStage or not obj.OffStage) then
+					if options.Relation and options.Relation.CanAdd then
+						local b,result = xpcall(options.Relation.CanAdd, debug.traceback, obj, pos)
+						if not b then
+							Ext.Utils.PrintError(result)
+						elseif result == true then
+							total = total + 1
+							objects[total] = obj
+						end
+					else
+						total = total + 1
+						objects[total] = obj
+					end
+				end
+			end
+		end
+	end
+	if options.Type == "All" or options.Type == "Character" then
+		local entries = _GetEntities(level, options.ActivatedOnly, false)
+		local len = #entries
+		for i=1,len do
+			local obj = entries[i]
+			local objID = _ISCLIENT and obj.NetID or obj.MyGuid
+			local dist = GameHelpers.Math.GetDistance(obj, pos, options.IgnoreHeight)
+			distances[objID] = dist
+			if dist <= options.Radius then
+				if (options.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (options.AllowOffStage or not obj.OffStage) then
+					if options.Relation and options.Relation.CanAdd then
+						local b,result = xpcall(options.Relation.CanAdd, debug.traceback, obj, pos)
+						if not b then
+							Ext.Utils.PrintError(result)
+						elseif result == true then
+							total = total + 1
+							objects[total] = obj
+						end
+					else
+						total = total + 1
+						objects[total] = obj
+					end
+				end
+			end
+		end
+	end
+	return total
+end
+
 ---@param source ObjectParam|vec3 An object or position.
 ---@param opts GameHelpers_Grid_GetNearbyObjectsOptions
 ---@return GameHelpers_Grid_GetNearbyObjectsFunctionResult|GameHelpers_Grid_GetNearbyObjectsTableResult objects
@@ -760,88 +936,40 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 	local options = TableHelpers.SetDefaultOptions(opts, _defaultGetNearbyObjectsOptions)
 
 	local objects = {}
+	local distances = {}
 
-	local GUID = GameHelpers.GetUUID(source, true)
-	local sourceIsCharacter = GameHelpers.Ext.ObjectIsCharacter(source)
+	local sourceObject = GameHelpers.TryGetObject(source)
 
 	local pos = GameHelpers.Math.GetPosition(source)
 	if options.Position then
 		pos = options.Position
 	end
 
-	local _distances = {}
-
-	if options.Type == "All" or options.Type == "Item" then
-		local entries = Ext.Entity.GetAllItemGuids(SharedData.RegionData.Current)
-		local len = #entries
-		for i=1,len do
-			local v = entries[i]
-			local dist = GameHelpers.Math.GetDistance(v, pos, options.IgnoreHeight)
-			_distances[v] = dist
-			if v ~= GUID and dist <= options.Radius then
-				local obj = GameHelpers.GetItem(v)
-				if obj then
-					if (options.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (options.AllowOffStage or not obj.OffStage) then
-						if options.Relation and options.Relation.CanAdd then
-							local b,result = xpcall(options.Relation.CanAdd, debug.traceback, obj, source)
-							if not b then
-								Ext.Utils.PrintError(result)
-							elseif result == true then
-								objects[#objects+1] = obj
-							end
-						elseif GameHelpers.Character.CanAttackTarget(GUID, v, true) then
-							objects[#objects+1] = obj
-						end
-					end
-				end
-			end
+	local level = _getCurrentLevel()
+	if not level then
+		if not options.AsTable then
+			return function () return nil end
+		else
+			return objects
 		end
 	end
-	if options.Type == "All" or options.Type == "Character" then
-		local entries = Ext.Entity.GetAllCharacterGuids(SharedData.RegionData.Current)
-		local len = #entries
-		for i=1,len do
-			local v = entries[i]
-			local dist = GameHelpers.Math.GetDistance(v, pos, options.IgnoreHeight)
-			_distances[v] = dist
-			if v ~= GUID and dist <= options.Radius then
-				local obj = GameHelpers.GetCharacter(v)
-				if obj and (options.AllowDead or not GameHelpers.ObjectIsDead(obj)) and (options.AllowOffStage or not obj.OffStage) then
-					if options.Relation and sourceIsCharacter then
-						if options.Relation.Ally and Osi.CharacterIsAlly(GUID, v) == 1 then
-							objects[#objects+1] = obj
-						elseif options.Relation.Enemy and GameHelpers.Character.CanAttackTarget(GUID, v) then
-							objects[#objects+1] = obj
-						elseif options.Relation.Neutral and Osi.CharacterIsNeutral(GUID, v) == 1 then
-							objects[#objects+1] = obj
-						elseif options.Relation.CanAdd then
-							local b,result = xpcall(options.Relation.CanAdd, debug.traceback, obj, source)
-							if not b then
-								Ext.Utils.PrintError(result)
-							elseif result == true then
-								objects[#objects+1] = obj
-							end
-						end
-					else
-						objects[#objects+1] = obj
-					end
-				end
-			end
-		end
+
+	if not _ValidObjectType[options.Type] then
+		error(string.format("[GameHelpers.Grid.GetNearbyObjects] opts.Type(%s) is not a valid target type. Should be All, Item, or Character", options.Type), 2)
+	end
+
+	local count = 0
+	if sourceObject then
+		count = _GetNearbyObjects_ObjectSource(distances, objects, level, options, sourceObject, pos)
 	else
-		fprint(LOGLEVEL.WARNING, "[GameHelpers.Grid.GetNearbyObjects] opts.Type(%s) is not a valid target type. Should be All, Item, or Character", options.Type)
-		if not options.AsTable then
-			return function() end
-		else
-			return {}
-		end
+		count = _GetNearbyObjects_PositionSource(distances, objects, level, options, pos)
 	end
 
 	if options.Sort and options.Sort ~= "None" then
 		if options.Sort == "Random" then
 			objects = Common.ShuffleTable(objects)
 		elseif options.Sort == "Distance" then
-			table.sort(objects, _SortDistance(_distances))
+			table.sort(objects, _SortDistance(distances))
 		elseif options.Sort == "LowestHP" then
 			table.sort(objects, _SortVitality(false))
 		elseif options.Sort == "HighestHP" then
@@ -853,10 +981,97 @@ function GameHelpers.Grid.GetNearbyObjects(source, opts)
 
 	if not options.AsTable then
 		local i = 0
-		local count = #objects
 		return function ()
 			i = i + 1
 			if i <= count then
+				return objects[i]
+			end
+		end
+	else
+		return objects
+	end
+end
+
+local function _GetObjectsWithinDistance(pos, radius, list)
+	local total = 0
+	local objects = {}
+	for _,v in pairs(list) do
+		if _getDistance(v.WorldPos, pos) <= radius then
+			total = total + 1
+			objects[total] = v
+		end
+	end
+	return objects,total
+end
+
+---@overload fun(pos:vec3, radius:number, activeOnly?:boolean):(fun():CharacterObject)
+---A faster way to get nearby characters that lacks any type/param safeguards.  
+---@param pos vec3
+---@param radius number
+---@param activeOnly boolean
+---@param asTable boolean
+---@return CharacterObject[]
+function GameHelpers.Grid.GetNearbyCharactersFast(pos, radius, activeOnly, asTable)
+	local level = _getCurrentLevel()
+	if not level then
+		if not asTable then
+			return function () return nil end
+		else
+			return {}
+		end
+	end
+	local levelName = level.LevelDesc.LevelName
+	local list = nil
+	if activeOnly then
+		list = level.EntityManager.CharacterConversionHelpers.ActivatedCharacters[levelName]
+	else
+		list = level.EntityManager.CharacterConversionHelpers.RegisteredCharacters[levelName]
+	end
+	local objects,total = _GetObjectsWithinDistance(pos, radius, list)
+
+	if not asTable then
+		local i = 0
+		return function ()
+			i = i + 1
+			if i <= total then
+				return objects[i]
+			end
+		end
+	else
+		return objects
+	end
+end
+
+---@overload fun(pos:vec3, radius:number, activeOnly?:boolean):(fun():ItemObject)
+---A faster way to get nearby items that lacks any type/param safeguards.  
+---@param pos vec3
+---@param radius number
+---@param activeOnly boolean
+---@param asTable boolean
+---@return ItemObject[]
+function GameHelpers.Grid.GetNearbyItemsFast(pos, radius, activeOnly, asTable)
+	local level = _getCurrentLevel()
+	if not level then
+		if not asTable then
+			return function () return nil end
+		else
+			return {}
+		end
+	end
+	local levelName = level.LevelDesc.LevelName
+	local list = nil
+	if activeOnly then
+		list = level.EntityManager.ItemConversionHelpers.ActivatedItems[levelName]
+	else
+		list = level.EntityManager.ItemConversionHelpers.RegisteredItems[levelName]
+	end
+	local objects,total = _GetObjectsWithinDistance(pos, radius, list)
+
+	if not asTable then
+		local i = 0
+		return function ()
+			i = i + 1
+			if i <= total then
 				return objects[i]
 			end
 		end

@@ -24,6 +24,8 @@ local table = table
 local tostring = tostring
 local type = type
 local xpcall = xpcall
+local rawget = rawget
+local rawset = rawset
 
 local _GetClientCharacter = GameHelpers.Client.GetCharacter
 local _IsNaN = GameHelpers.Math.IsNaN
@@ -1803,6 +1805,21 @@ local DescriptionElements = {
 
 ---@alias AnyTooltipDescriptionElement AbilityDescription|GenericDescription|ItemDescription|SkillDescription|StatsDescription|StatusDescription|SurfaceDescription|TagDescription|TalentDescription
 
+local function _WrapDescriptionElement(element, descriptionAttribute)
+	setmetatable(element, {
+		__index = function (tbl,k)
+			if k == "Label" then
+				return rawget(tbl, descriptionAttribute)
+			end
+		end,
+		__newindex = function (tbl,k, v)
+			if k == "Label" then
+				return rawset(tbl, descriptionAttribute, v)
+			end
+		end
+	})
+end
+
 ---Gets whichever element is the description.
 ---@param fallback AnyTooltipDescriptionElement|nil If a description isn't found, add this element.
 ---@return AnyTooltipDescriptionElement
@@ -1811,6 +1828,9 @@ function TooltipData:GetDescriptionElement(fallback)
 	local elements = self.Data
 	for _,element in pairs(elements) do
 		if DescriptionElements[element.Type] then
+			if element.Label == nil and element.Description then
+				_WrapDescriptionElement(element, "Description")
+			end
 			return element
 		end
 	end

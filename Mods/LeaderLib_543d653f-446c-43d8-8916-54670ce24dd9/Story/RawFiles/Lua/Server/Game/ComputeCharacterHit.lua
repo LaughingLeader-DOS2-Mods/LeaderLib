@@ -6,7 +6,8 @@ HitOverrides = {
     ApplyDamageCharacterBonusesOriginal = Game.Math.ApplyDamageCharacterBonuses,
     ApplyDamageCharacterBonusesModified = nil,
     GetCriticalHitMultiplierOriginal = Game.Math.GetCriticalHitMultiplier,
-    GetCriticalHitMultiplierWasModified = false
+    GetCriticalHitMultiplierWasModified = false,
+    ListenersRegistered = 0
 }
 --- This script tweaks Game.Math functions to allow lowering resistance with Resistance Penetration tags on items of the attacker.
 
@@ -39,7 +40,7 @@ function HitOverrides.ApplyDamageCharacterBonuses(character, attacker, damageLis
         Game.Math.ApplyDamageSkillAbilityBonuses(damageList, attacker)
     end
  
-    Events.ApplyDamageCharacterBonuses:Invoke({
+    Events.CCH.ApplyDamageCharacterBonuses:Invoke({
         Target = character,
         Attacker = attacker,
         DamageList = damageList,
@@ -93,7 +94,7 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
 		res = math.max(res - resistancePenetration, 0)
 	end
     ---@type SubscribableEventInvokeResult<GetHitResistanceBonusEventArgs>
-    local invokeResult = Events.GetHitResistanceBonus:Invoke({
+    local invokeResult = Events.CCH.GetHitResistanceBonus:Invoke({
         Target = character,
         DamageType = damageType,
         ResistancePenetration = resistancePenetration,
@@ -187,7 +188,7 @@ end
 local function GetCanBackstabFinalResult(canBackstab, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     local skipPositionCheck = false
     ---@type SubscribableEventInvokeResult<GetCanBackstabEventArgs>
-    local invokeResult = Events.GetCanBackstab:Invoke({
+    local invokeResult = Events.CCH.GetCanBackstab:Invoke({
         CanBackstab = canBackstab,
         SkipPositionCheck = skipPositionCheck,
         Target = target,
@@ -282,11 +283,36 @@ end
 --endregion
 
 --region SpellsCanCrit
+
 --- @param hit HitRequest
 --- @param attacker StatCharacter
---- @param hitType string HitType enumeration
---- @param criticalRoll string CriticalRoll enumeration
+--- @param hitType HitType
+--- @param criticalRoll CriticalRoll
+local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
+    ---@type SubscribableEventInvokeResult<LeaderLibGetShouldApplyCriticalHitEventArgs>
+    local invokeResult = Events.CCH.GetShouldApplyCriticalHit:Invoke({
+        Attacker = attacker,
+        Hit = hit,
+        HitType = hitType,
+        CriticalRoll = criticalRoll,
+        IsCriticalHit = false
+    })
+    if invokeResult.ResultCode ~= "Error" then
+        return invokeResult.Args.IsCriticalHit == true
+    end
+    return false
+end
+
+--- @param hit HitRequest
+--- @param attacker StatCharacter
+--- @param hitType HitType
+--- @param criticalRoll CriticalRoll
 function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
+    local isCriticalHitOverride = _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
+    if isCriticalHitOverride then
+        return true
+    end
+
     if criticalRoll ~= "Roll" then
         return criticalRoll == "Critical"
     end
@@ -321,6 +347,23 @@ end
 --- @param character StatCharacter
 --- @param criticalMultiplier number
 --- @return number
+local function _InvokeGetCriticalHitMultiplier(weapon, character, criticalMultiplier)
+    ---@type SubscribableEventInvokeResult<LeaderLibGetCriticalHitMultiplierEventArgs>
+    local invokeResult = Events.CCH.GetCriticalHitMultiplier:Invoke({
+        Attacker = character,
+        Weapon = weapon,
+        CriticalMultiplier = criticalMultiplier
+    })
+    if invokeResult.ResultCode ~= "Error" and type(invokeResult.Args.CriticalMultiplier) == "number" then
+        return invokeResult.Args.CriticalMultiplier
+    end
+    return criticalMultiplier
+end
+
+--- @param weapon StatItem
+--- @param character StatCharacter
+--- @param criticalMultiplier number
+--- @return number
 function HitOverrides.GetCriticalHitMultiplier(weapon, character, criticalMultiplier)
 	criticalMultiplier = criticalMultiplier or 0
 
@@ -344,10 +387,10 @@ function HitOverrides.GetCriticalHitMultiplier(weapon, character, criticalMultip
     if HitOverrides.GetCriticalHitMultiplierWasModified then
         local baseMult = Game.Math.GetCriticalHitMultiplier(weapon, character, criticalMultiplier)
         if baseMult > result then
-            return baseMult
+            result = baseMult
         end
     end
-    return result
+    return _InvokeGetCriticalHitMultiplier(weapon, character, result)
 end
 
 --- @param hit HitRequest
@@ -382,12 +425,15 @@ function HitOverrides.ComputeOverridesEnabled()
     if Features.DisableHitOverrides == true then
         return false
     end
+    -- Any mod is subscribed to a LeaderLib ComputeCharacterHit-related event
+    if HitOverrides.ListenersRegistered > 0 then
+        return true
+    end
     return Features.BackstabCalculation == true
     or Features.SpellsCanCrit == true
     or GameSettings.Settings.SpellsCanCritWithoutTalent == true
     or (GameSettings.Settings.BackstabSettings.Player.Enabled or GameSettings.Settings.BackstabSettings.NPC.Enabled)
     or Features.ResistancePenetration == true
-    or Events.ComputeCharacterHit.First ~= nil -- Any mod is subscribed to LeaderLib's ComputeCharacterHit event
 end
 
 --- @param hit HitRequest
@@ -485,7 +531,7 @@ function HitOverrides.DoHit(hitRequest, damageList, statusBonusDmgTypes, hitType
         damageMultiplier = ctxOrNumber
     end
     DoHitUpdated(hitRequest, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
-    Events.DoHit:Invoke({
+    Events.CCH.DoHit:Invoke({
         Hit = hitRequest,
         DamageList = damageList,
         StatusBonusDamageTypes = statusBonusDmgTypes,
@@ -662,7 +708,7 @@ HitOverrides._ComputeCharacterHitFunction = ComputeCharacterHit
 function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     if HitOverrides.ComputeOverridesEnabled() then
         ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-        Events.ComputeCharacterHit:Invoke({
+        Events.CCH.ComputeCharacterHit:Invoke({
             Target = target,
             Attacker = attacker,
             Weapon = weapon,

@@ -81,6 +81,7 @@ local function GetOsirisCombatCharacters(id, filter, filterReference, asTable)
 	end
 end
 
+---🔨**Server-Only**🔨  
 ---@overload fun(id:integer|nil, filter:GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback|nil, filterReference:EsvCharacter|EsvItem):fun():EsvCharacter
 ---@overload fun(id:integer|nil):fun():EsvCharacter
 ---@param id integer|nil The combat ID, or nothing to get all characters in combat.
@@ -159,87 +160,4 @@ function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)
 	else
 		return {}
 	end
-end
-
----@param obj ObjectParam
----@return integer
-function GameHelpers.Combat.GetID(obj)
-	if _OSIRIS() then
-		local GUID = GameHelpers.GetUUID(obj)
-		if GUID then
-			--TODO replace with obj.RootTempate.CombatComponent index, if that's made available
-			local db = Osi.DB_CombatObjects:Get(GUID, nil)
-			if db and db[1] then
-				local _,id = table.unpack(db[1])
-				if id then
-					return id
-				end
-			end
-		end
-	else
-		--TODO Get from EocCombatComponent once that's made available
-	end
-	return -1
-end
-
----Returns true if it's the object's active turn in combat.
----@param obj ObjectParam
----@return boolean isActiveTurn
----@return EocCombatComponent|nil combatComponent
-function GameHelpers.Combat.IsActiveTurn(obj)
-	local object = GameHelpers.TryGetObject(obj)
-	if object and not GameHelpers.ObjectIsDead(object) then
-		---@cast object EsvCharacter|EsvItem
-		local combatID = GameHelpers.Combat.GetID(object)
-		if combatID > -1 then
-			local turnManager = Ext.Combat.GetTurnManager()
-			local combat = turnManager.Combats[combatID]
-			if combat then
-				local turnOrder = combat:GetCurrentTurnOrder()
-				if turnOrder then
-					local activeTeam = turnOrder[1]
-					if activeTeam then
-						if activeTeam.Character and activeTeam.Character.MyGuid == object.MyGuid then
-							return true,activeTeam.EntityWrapper.CombatComponentPtr
-						end
-						if activeTeam.Item and activeTeam.Item.MyGuid == object.MyGuid then
-							return true,activeTeam.EntityWrapper.CombatComponentPtr
-						end
-					end
-				end
-			end
-		end
-	end
-	return false
-end
-
----@return boolean
-function GameHelpers.Combat.IsAnyPlayerInCombat()
-	for player in GameHelpers.Character.GetPlayers() do
-		if GameHelpers.Character.IsInCombat(player) then
-			return true
-		end
-	end
-	return false
-end
-
----@param character CharacterParam
----@return EocCombatComponent|nil
-function GameHelpers.Combat.GetCombatComponent(character)
-	local character = GameHelpers.GetCharacter(character, "EsvCharacter")
-	if character then
-		local combatid = GameHelpers.Combat.GetID(character)
-		if combatid > -1 then
-			local turnManager = Ext.Combat.GetTurnManager()
-			local combat = turnManager.Combats[combatid]
-			if combat then
-				for _,team in pairs(combat:GetCurrentTurnOrder()) do
-					if team.Character == character and team.EntityWrapper then
-						return team.EntityWrapper.CombatComponentPtr
-					end
-				end
-			end
-		end
-	end
-	return nil
 end

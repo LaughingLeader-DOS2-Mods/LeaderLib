@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<save>
+    <header version="2" />
+    <version major="3" minor="6" revision="1" build="0" />
+    <region id="IconUVList">
+        <node id="root">
+			<children></children>
+		</node>
+    </region>
+    <region id="TextureAtlasInfo">
+        <node id="root">
+            <children>
+                <node id="TextureAtlasIconSize">
+                    <attribute id="Height" value="64" type="4" />
+                    <attribute id="Width" value="64" type="4" />
+                </node>
+                <node id="TextureAtlasPath">
+                    <attribute id="Path" value="Assets/Textures/Icons/Ability_Skill_Status_Icons.dds" type="20" />
+                    <attribute id="UUID" value="f0613a03-6ebc-4d7d-a2c4-5a5fddd5b49a" type="22" />
+                </node>
+                <node id="TextureAtlasTextureSize">
+                    <attribute id="Height" value="2048" type="4" />
+                    <attribute id="Width" value="2048" type="4" />
+                </node>
+            </children>
+        </node>
+    </region>
+</save>

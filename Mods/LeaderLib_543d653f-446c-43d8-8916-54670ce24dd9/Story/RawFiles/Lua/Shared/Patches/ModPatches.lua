@@ -3,6 +3,8 @@ local _ISCLIENT = Ext.IsClient()
 --Updates the treasure tables to spawn more items, and spawn items at other traders. This is until the 1.0 update is released
 --Ext.IO.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Stats/Generated/TreasureTable.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_TreasureTable.txt")
 
+local EmptyAtlas = "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/EmptyAtlas.lsx"
+
 local Patches = {
 	--Weapon Expansion
 	["c60718c3-ba22-4702-9c5d-5ad92b41ba5f"] = {
@@ -746,6 +748,15 @@ local Patches = {
 						end
 					end
 				end
+			end
+		end
+	},
+	--Toggle Sprint DE
+	["3cdec0ff-5d98-e859-87cd-c663b7b9fcfe"] = {
+		Patch = function (initialized, region)
+			--Override the icon atlas, since LeaderLib has the same icons
+			if not Ext.IO.GetPathOverride("Public/ToggleSprintDefinitiveEdition_4dbc489b-f5cb-40c2-bc9c-ac4f6fb20fad/GUI/LLSPRINT_Icons.lsx") then
+				Ext.IO.AddPathOverride("Public/ToggleSprintDefinitiveEdition_4dbc489b-f5cb-40c2-bc9c-ac4f6fb20fad/GUI/LLSPRINT_Icons.lsx", EmptyAtlas)
 			end
 		end
 	}

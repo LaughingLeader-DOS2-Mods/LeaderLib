@@ -1274,7 +1274,7 @@ Data.HitReason = {
 	[3] = "Explode",
 	[4] = "Trap",
 	[5] = "InSurface",
-	[6] = "SetHP|OsiApplyDamage|StatusConsume",
+	[6] = "SetHP|OsiApplyDamage|StatusConsume|Reflected",
 	ASAttack = 0,
 	ApplyDamage = 1,
 	StatusDying = 1,
@@ -1287,6 +1287,7 @@ Data.HitReason = {
 	SetHP = 6,
 	OsiApplyDamage = 6,
 	StatusConsume = 6,
+	Reflected = 6,
 }
 
 Classes.Enum:Create(Data.HitReason)

@@ -77,6 +77,9 @@ Ext.Events.GameStateChanged:Subscribe(function (e)
 end)
 
 Ext.Require("Shared/System/SubscriptionEvents.lua")
+if not _ISCLIENT then
+	Ext.Require("Server/Game/CCHEvents.lua")
+end
 
 ---Wrapper around Ext.Events.Tick that skips execution if resetting, or if the game isn't running.
 ---@type fun(e:GameTime)[]

@@ -214,8 +214,11 @@ local function SetMeta(data)
 		__newindex = function(tbl,k,v)
 			if tbl.Handle then
 				local t = HIT_ATTRIBUTE[k]
-				if t == "number" or t == "boolean" then
+				if t == "number" then
 					Osi.NRD_HitSetInt(tbl.Handle, k, v)
+					return
+				elseif t == "boolean" then
+					Osi.NRD_HitSetInt(tbl.Handle, k, v and 1 or 0)
 					return
 				elseif t == "string" then
 					Osi.NRD_HitSetString(tbl.Handle, k, v)

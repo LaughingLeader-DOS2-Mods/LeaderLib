@@ -188,6 +188,90 @@ function Testing.RegisterConsoleCommandTest(id, test, description)
 	end
 end
 
+local function _GetLuaTest(data, ...)
+	local t = type(data)
+	if t == "function" then
+		local tests = data.Tests(...)
+		local returnType = type(tests)
+		if returnType == "table" then
+			return tests
+		end
+	elseif t == "table" then
+		return data
+	end
+end
+
+---@param id string
+---@param description? string|(TestingSystemGetDescriptionCallback)
+function Testing.AddCommandGroup(id, description)
+	local desc = description or ""
+	local cmdID = string.lower(id)
+	local getSubTest = function (id, subid)
+		local group = _consoleCommandTests[cmdID]
+		if group then
+			local tests = group.SubTests
+			if StringHelpers.Equals(subid, "all", true, true) then
+				local runTests = {}
+				for _,tbl in pairs(tests) do
+					for _,v in ipairs(tbl) do
+						runTests[#runTests+1] = _GetLuaTest(v.Tests, id, subid)
+					end
+				end
+				return runTests
+			else
+				local sid = string.lower(subid)
+				local test = tests[sid]
+				if test then
+					return _GetLuaTest(test.Tests, id, subid)
+				else
+					fprint(LOGLEVEL.WARNING, "[test:%s] No test for ID (%s)", id, subid)
+				end
+			end
+		end
+	end
+	_consoleCommandTests[cmdID] = {
+		ID=id,
+		Description=function (...)
+			local group = _consoleCommandTests[cmdID]
+			local tests = group.SubTests
+			local testNames = {}
+			for bid,v in pairs(tests) do
+				testNames[#testNames+1] = " " .. bid
+			end
+			if #testNames > 0 then
+				table.sort(testNames)
+				return "\n" .. StringHelpers.Join("\n", testNames)
+			else
+				return "No registered tests."
+			end
+		end,
+		Tests=getSubTest,
+		SubTests = {}
+	}
+end
+
+---@param groupId string
+---@param id string
+---@param test LuaTest|LuaTest[]|(TestingSystemGetTestsCallback)
+---@param description? string|(TestingSystemGetDescriptionCallback)
+function Testing.AddSubCommand(groupId, id, test, description)
+	local group = _consoleCommandTests[string.lower(groupId)]
+	local t = type(test)
+	local desc = description or ""
+	local sid = string.lower(id)
+	if t == "table" then
+		if test.Type == "LuaTest" then
+			id = id or test.ID
+			sid = string.lower(id)
+			group.SubTests[sid] = {ID=id, Description=desc, Tests={test}}
+		elseif test[1] then
+			group.SubTests[sid] = {ID=id, Description=desc, Tests=test}
+		end
+	elseif t == "function" then
+		group.SubTests[sid] = {ID=id, Description=desc, Tests=test}
+	end
+end
+
 Ext.RegisterConsoleCommand("test", function (cmd, id, ...)
 	local cmdId = nil
 	if id then
@@ -212,10 +296,11 @@ Ext.RegisterConsoleCommand("test", function (cmd, id, ...)
 		if data then
 			if type(data.Tests) == "function" then
 				local tests = data.Tests(cmdId, ...)
-				if type(tests) == "table" then
+				local returnType = type(tests)
+				if returnType == "table" then
 					Testing.RunTests(tests, cmdId)
 				else
-					fprint(LOGLEVEL.ERROR, "[test] Failed to get table from Tests function for test id (%s)", id)
+					fprint(LOGLEVEL.ERROR, "[test] Failed to get table from Tests function for test id (%s). Function return type was (%s)", id, returnType)
 				end
 			else
 				Testing.RunTests(data.Tests, data.ID)

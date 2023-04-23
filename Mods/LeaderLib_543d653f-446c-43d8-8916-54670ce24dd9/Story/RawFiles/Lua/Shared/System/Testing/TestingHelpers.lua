@@ -69,6 +69,7 @@ if not _ISCLIENT then
 	---@field TotalCharacters integer Defaults to 1
 	---@field TotalDummies integer Defaults to 0
 	---@field AutoPositionStartDistance number Used when getting a defualt starting position from this host. This is the distance extended from the host's forward facing direction.
+	---@field Test LuaTest The test to automatically set the Cleanup function on.
 
 	local _DefaultParams = {
 		CharacterPositions = {},
@@ -95,6 +96,7 @@ if not _ISCLIENT then
 			local pos = params.CharacterPositions[i] or startingPos
 			local x,y,z = table.unpack(pos)
 			local character = StringHelpers.GetUUID(Osi.TemporaryCharacterCreateAtPosition(x, y, z, userTemplate, 0))
+			Osi.SetTag(character, "NO_ARMOR_REGEN")
 			Osi.NRD_CharacterSetPermanentBoostInt(character, "Accuracy", 200)
 			Osi.CharacterSetCustomName(character, "Test User1")
 			SetupCharacter(character, host.MyGuid, params.EquipmentSet)
@@ -131,15 +133,17 @@ if not _ISCLIENT then
 		local cleanup = function ()
 			for _,v in pairs(characters) do
 				if Osi.ObjectExists(v) == 1 then
-					Osi.RemoveTemporaryCharacter(v)
+					GameHelpers.Character.RemoveTemporyCharacter(v)
 				end
 			end
 			for _,v in pairs(dummies) do
 				if Osi.ObjectExists(v) == 1 then
 					if Ext.Mod.IsModLoaded(Data.ModID.TrainingDummy) then
+						local netid = GameHelpers.GetNetID(v)
+						Events.TemporaryCharacterRemoved:Invoke({CharacterGUID = v, NetID=netid})
 						Osi.SetStoryEvent(v, "LLDUMMY_TrainingDummy_DieNow")
 					else
-						Osi.RemoveTemporaryCharacter(v)
+						GameHelpers.Character.RemoveTemporyCharacter(v)
 					end
 				end
 			end
@@ -148,6 +152,9 @@ if not _ISCLIENT then
 			cleanup()
 		end)
 		Timer.StartOneshot("", 60000, cleanup)
+		if params.Test then
+			params.Test.Cleanup = cleanup
+		end
 		return totalCharacters > 1 and characters or characters[1],totalDummies > 1 and dummies or dummies[1],cleanup
 	end
 

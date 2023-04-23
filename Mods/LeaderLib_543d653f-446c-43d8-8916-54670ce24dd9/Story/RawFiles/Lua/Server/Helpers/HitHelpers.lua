@@ -224,7 +224,7 @@ function GameHelpers.Hit.TypesAreFromWeapon(hitType, damageSourceType, weaponHan
 end
 
 ---Returns true if a hit is from the source directly (not from a surface, DoT etc).
----@param hit EsvStatusHit|HitContext
+---@param hit EsvStatusHit|EsvPendingHit
 ---@return boolean
 function GameHelpers.Hit.IsDirect(hit)
 	if not hit then
@@ -234,12 +234,14 @@ function GameHelpers.Hit.IsDirect(hit)
 	if t == "userdata" then
 		local meta = getmetatable(hit)
 		if GameHelpers.Ext.UserDataIsType(hit, Data.ExtenderClass.EsvStatusHit, meta) then
+			---@cast hit EsvStatusHit
 			if hit.HitReason == "ASAttack" then
 				return true
 			end
 			local damageSourceType = Ext.Stats.EnumLabelToIndex(hit.DamageSourceType, "DamageSourceType")
 			return damageSourceType == 0 or damageSourceType == 6 or damageSourceType == 7
 		elseif GameHelpers.Ext.UserDataIsType(hit, Data.ExtenderClass.HitContext, meta) then
+			---@cast hit EsvPendingHit
 			return Data.HitType[hit.HitType] < 4
 		end
 	end

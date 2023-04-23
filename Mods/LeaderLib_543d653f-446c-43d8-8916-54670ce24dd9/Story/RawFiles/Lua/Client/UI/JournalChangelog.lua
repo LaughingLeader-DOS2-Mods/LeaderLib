@@ -247,6 +247,9 @@ local function GetStringValue(str, character)
 	return result
 end
 
+local _Bullet = "•"
+local _NoBullet = "<nb>"
+
 ---Load all Mods/ModName_UUID/Changelog.json files. Called automatically at SessionLoaded.
 function Changelog.LoadFiles()
 	local character = Client:GetCharacter()
@@ -296,10 +299,14 @@ function Changelog.LoadFiles()
 				if type(logEntry.Changes) == "table" then
 					for k=1,#logEntry.Changes do
 						local txt = GetStringValue(logEntry.Changes[k], character)
-						local bullet = "• "
-						if string.find(txt, "•") then
+						local bullet = _Bullet .. " "
+						if StringHelpers.IsNullOrWhitespace(txt) or string.find(txt, _Bullet) then
 							bullet = ""
+						elseif string.find(txt, _NoBullet) then
+							bullet = ""
+							txt = string.gsub(txt, _NoBullet, "")
 						end
+						txt = string.gsub(txt, "\t", "    ")
 						changelogText = string.format("%s%s%s<br>", changelogText, bullet, txt)
 					end
 				end

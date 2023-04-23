@@ -202,7 +202,7 @@ Events.GetTooltipSkillParam = Classes.SubscribableEvent:Create("GetTooltipSkillP
 ---@class GetTextPlaceholderEventArgs
 ---@field ID string
 ---@field Character StatCharacter
----@field Char EclCharacter Character is a StatCharacter due to backwards-compatibility, but while exists to easily provide the EclCharacter.
+---@field Char EclCharacter|EsvCharacter While Character is a StatCharacter due to backwards-compatibility, this exists to easily provide the `EclCharacter`/`EsvCharacter`.
 ---@field ExtraParams string[]
 ---@field Result string The text to replace the placeholder with.
 

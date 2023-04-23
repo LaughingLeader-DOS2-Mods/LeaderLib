@@ -25,6 +25,11 @@ end
 ---@field Character EsvCharacter
 ---@field CharacterGUID Guid The character MyGuid, for easier matching.
 
+---@class OsirisItemEventArgs
+---@field Item EsvItem
+---@field ItemGUID Guid The Item MyGuid, for easier matching.
+---@field StatsId string The item StatsId
+
 ---@class OsirisCharacterItemEventArgs
 ---@field Character EsvCharacter
 ---@field CharacterGUID Guid The character MyGuid, for easier matching.
@@ -34,6 +39,12 @@ end
 
 ---@class OsirisProcBlockEventArgs:OsirisCharacterItemEventArgs
 ---@field PreventAction fun(e:OsirisProcBlockEventArgs)
+
+---@class OsirisCharacterTriggerEventArgs
+---@field Character EsvCharacter
+---@field CharacterGUID Guid
+---@field Trigger Trigger
+---@field TriggerGUID Guid
 
 ---@param name string
 ---@param getArgs fun(...:OsirisValue):table|boolean
@@ -103,6 +114,80 @@ local function _CreateOsirisProcBlockWrapper(name, getArgs, blockAction)
 			end)
 		end
 	end})
+	return event
+end
+
+---@param name string
+---@param getArgs? fun(...:OsirisValue):table
+---@param eventStage? OsirisEventType
+local function _CreateCharacterItemEventWrapper(name, getArgs, eventStage)
+	local event = _CreateOsirisEventWrapper(name, function (charGUID, itemGUID)
+		if _AnyObjectDoesNotExist(charGUID, itemGUID) then return false end
+		local item = GameHelpers.GetItem(itemGUID)
+		local data = {
+			Character = GameHelpers.GetCharacter(charGUID),
+			CharacterGUID = _GetGUID(charGUID),
+			Item = item,
+			ItemGUID = _GetGUID(itemGUID),
+			StatsId = GameHelpers.Item.GetItemStat(item),
+		}
+		if getArgs then
+			local tblExtras = getArgs(charGUID, itemGUID)
+			if tblExtras then
+				TableHelpers.AddOrUpdate(data, tblExtras)
+			end
+		end
+		return data
+	end, eventStage)
+	return event
+end
+
+---@param name string
+---@param getArgs? fun(...:OsirisValue):table
+---@param eventStage? OsirisEventType
+local function _CreateItemCharacterEventWrapper(name, getArgs, eventStage)
+	local event = _CreateOsirisEventWrapper(name, function (itemGUID, charGUID)
+		if _AnyObjectDoesNotExist(charGUID, itemGUID) then return false end
+		local item = GameHelpers.GetItem(itemGUID)
+		local data = {
+			Character = GameHelpers.GetCharacter(charGUID),
+			CharacterGUID = _GetGUID(charGUID),
+			Item = item,
+			ItemGUID = _GetGUID(itemGUID),
+			StatsId = GameHelpers.Item.GetItemStat(item),
+		}
+		if getArgs then
+			local tblExtras = getArgs(charGUID, itemGUID)
+			if tblExtras then
+				TableHelpers.AddOrUpdate(data, tblExtras)
+			end
+		end
+		return data
+	end, eventStage)
+	return event
+end
+
+---@param name string
+---@param getArgs? fun(...:OsirisValue):table
+---@param eventStage? OsirisEventType
+---@return LeaderLibSubscribableEvent<OsirisItemEventArgs>
+local function _CreateItemEventWrapper(name, getArgs, eventStage)
+	local event = _CreateOsirisEventWrapper(name, function (itemGUID, ...)
+		if _AnyObjectDoesNotExist(itemGUID) then return false end
+		local item = GameHelpers.GetItem(itemGUID)
+		local data = {
+			Item = item,
+			ItemGUID = _GetGUID(itemGUID),
+			StatsId = GameHelpers.Item.GetItemStat(item),
+		}
+		if getArgs then
+			local tblExtras = getArgs(itemGUID, ...)
+			if tblExtras then
+				TableHelpers.AddOrUpdate(data, tblExtras)
+			end
+		end
+		return data
+	end, eventStage)
 	return event
 end
 
@@ -331,35 +416,26 @@ end)
 
 --#endregion
 
----@see Events.CharacterUsedItem
----@type LeaderLibSubscribableEvent<OsirisCharacterItemEventArgs>
-Events.Osiris.CharacterUsedItem = _CreateOsirisEventWrapper("CharacterUsedItem", function (charGUID, itemGUID)
-	if _AnyObjectDoesNotExist(charGUID, itemGUID) then return false end
-	local item = GameHelpers.GetItem(itemGUID)
-	return {
-		Character = GameHelpers.GetCharacter(charGUID),
-		CharacterGUID = _GetGUID(charGUID),
-		Item = item,
-		ItemGUID = _GetGUID(itemGUID),
-		StatsId = GameHelpers.Item.GetItemStat(item),
-	}
-end)
+--#region Item Events
+
+
+---@class OsirisCharacterUsedItemEventArgs:OsirisCharacterItemEventArgs
 
 ---@see Events.CharacterUsedItem
----@type LeaderLibSubscribableEvent<OsirisCharacterItemEventArgs>
-Events.Osiris.CharacterUsedItemFailed = _CreateOsirisEventWrapper("CharacterUsedItemFailed", function (charGUID, itemGUID)
-	if _AnyObjectDoesNotExist(charGUID, itemGUID) then return false end
-	local item = GameHelpers.GetItem(itemGUID)
-	return {
-		StatsId = GameHelpers.Item.GetItemStat(item),
-		Character = GameHelpers.GetCharacter(charGUID),
-		CharacterGUID = _GetGUID(charGUID),
-		Item = item,
-		ItemGUID = _GetGUID(itemGUID),
-	}
-end)
+---@type LeaderLibSubscribableEvent<OsirisCharacterUsedItemEventArgs>
+Events.Osiris.CharacterUsedItem = _CreateCharacterItemEventWrapper("CharacterUsedItem")
 
----@type LeaderLibSubscribableEvent<{Character:EsvCharacter, CharacterGUID:Guid, Item:EsvItem, ItemGUID:Guid, Template:ItemTemplate, TemplateGUID:Guid}>
+---@class OsirisCharacterUsedItemFailedEventArgs:OsirisCharacterItemEventArgs
+
+---@see Events.CharacterUsedItem
+---@type LeaderLibSubscribableEvent<OsirisCharacterUsedItemFailedEventArgs>
+Events.Osiris.CharacterUsedItemFailed = _CreateCharacterItemEventWrapper("CharacterUsedItemFailed")
+
+---@class OsirisCharacterUsedItemTemplateEventArgs:OsirisCharacterItemEventArgs
+---@field Template ItemTemplate
+---@field TemplateGUID Guid
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterUsedItemTemplateEventArgs>
 Events.Osiris.CharacterUsedItemTemplate = _CreateOsirisEventWrapper("CharacterUsedItemTemplate", function (charGUID, templateGUID, itemGUID)
 	if _AnyObjectDoesNotExist(charGUID, itemGUID) then return false end
 	local item = GameHelpers.GetItem(itemGUID)
@@ -373,6 +449,149 @@ Events.Osiris.CharacterUsedItemTemplate = _CreateOsirisEventWrapper("CharacterUs
 		StatsId = GameHelpers.Item.GetItemStat(item),
 	}
 end)
+
+
+---@class OsirisItemEquippedEventArgs:OsirisCharacterItemEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisItemEquippedEventArgs>
+Events.Osiris.ItemEquipped = _CreateItemCharacterEventWrapper("ItemEquipped")
+
+---@class OsirisItemUnEquippedEventArgs:OsirisCharacterItemEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisItemUnEquippedEventArgs>
+Events.Osiris.ItemUnEquipped = _CreateItemCharacterEventWrapper("ItemUnEquipped")
+
+---@class OsirisItemUnEquipFailedEventArgs:OsirisCharacterItemEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisItemUnEquipFailedEventArgs>
+Events.Osiris.ItemUnEquipFailed = _CreateItemCharacterEventWrapper("ItemUnEquipFailed")
+
+---@class OsirisItemAddedToCharacterEventArgs:OsirisCharacterItemEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisItemAddedToCharacterEventArgs>
+Events.Osiris.ItemAddedToCharacter = _CreateItemCharacterEventWrapper("ItemAddedToCharacter")
+
+---@class OsirisItemRemovedFromCharacterEventArgs:OsirisCharacterItemEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisItemRemovedFromCharacterEventArgs>
+Events.Osiris.ItemRemovedFromCharacter = _CreateItemCharacterEventWrapper("ItemRemovedFromCharacter")
+
+local function _GetItemContainerEventArgs(itemGUID, containerGUID)
+	if _AnyObjectDoesNotExist(itemGUID, containerGUID) then return false end
+	local item = GameHelpers.GetItem(itemGUID)
+	return {
+		Item = item,
+		ItemGUID = _GetGUID(itemGUID),
+		StatsId = GameHelpers.Item.GetItemStat(item),
+		Container = GameHelpers.GetItem(containerGUID),
+		ContainerGUID = _GetGUID(containerGUID),
+	}
+end
+
+---@class OsirisItemSendToHomesteadEventEventArgs:OsirisCharacterItemEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisItemSendToHomesteadEventEventArgs>
+Events.Osiris.ItemSendToHomesteadEvent = _CreateCharacterItemEventWrapper("ItemSendToHomesteadEvent")
+
+---@class OsirisItemRemovedFromContainerEventArgs
+---@field Item EsvItem
+---@field ItemGUID Guid
+---@field StatsId string The item StatsId
+---@field Container EsvItem
+---@field ContainerGUID Guid
+
+---@type LeaderLibSubscribableEvent<OsirisItemRemovedFromCharacterEventArgs>
+Events.Osiris.ItemRemovedFromContainer = _CreateOsirisEventWrapper("ItemRemovedFromContainer", _GetItemContainerEventArgs)
+
+---@class OsirisItemAddedToContainerEventArgs:OsirisItemRemovedFromContainerEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisItemAddedToCharacterEventArgs>
+Events.Osiris.ItemAddedToContainer = _CreateOsirisEventWrapper("ItemAddedToContainer", _GetItemContainerEventArgs)
+
+Events.Osiris.ItemClosed = _CreateItemEventWrapper("ItemClosed")
+Events.Osiris.ItemDropped = _CreateItemEventWrapper("ItemDropped")
+Events.Osiris.ItemDestroying = _CreateItemEventWrapper("ItemDestroying")
+Events.Osiris.ItemGhostRevealed = _CreateItemEventWrapper("ItemGhostRevealed")
+Events.Osiris.ItemMoved = _CreateItemEventWrapper("ItemMoved")
+Events.Osiris.ItemOpened = _CreateItemEventWrapper("ItemOpened")
+Events.Osiris.ItemReceivedDamage = _CreateItemEventWrapper("ItemReceivedDamage")
+
+---@class OsirisItemDestroyedEventArgs
+---@field ItemGUID Guid
+
+---@type LeaderLibSubscribableEvent<OsirisItemDestroyedEventArgs>
+Events.Osiris.ItemDestroyed = _CreateOsirisEventWrapper("ItemDestroyed", function (itemGUID) return {ItemGUID = _GetGUID(itemGUID),} end)
+
+---@class OsirisItemCreatedAtTriggerEventArgs:OsirisItemEventArgs
+---@field Trigger Trigger
+---@field TriggerGUID Guid
+---@field Template ItemTemplate
+---@field TemplateGUID Guid
+
+---@type LeaderLibSubscribableEvent<OsirisItemCreatedAtTriggerEventArgs>
+Events.Osiris.ItemCreatedAtTrigger = _CreateOsirisEventWrapper("ItemCreatedAtTrigger", function (triggerGUID, templateGUID, itemGUID)
+	if _AnyObjectDoesNotExist(itemGUID) then return false end
+	local item = GameHelpers.GetItem(itemGUID)
+	return {
+		Trigger = Ext.Entity.GetTrigger(triggerGUID),
+		TriggerGUID = _GetGUID(triggerGUID),
+		Template = Ext.Template.GetTemplate(templateGUID),
+		TemplateGUID = _GetGUID(templateGUID),
+		Item = item,
+		ItemGUID = _GetGUID(itemGUID),
+		StatsId = GameHelpers.Item.GetItemStat(item),
+	}
+end)
+
+---@class OsirisItemDisplayTextEndedEventArgs:OsirisItemEventArgs
+---@field Text string
+
+---@type LeaderLibSubscribableEvent<OsirisItemDisplayTextEndedEventArgs>
+Events.Osiris.ItemDisplayTextEnded = _CreateOsirisEventWrapper("ItemDisplayTextEnded", function (itemGUID, text)
+	if _AnyObjectDoesNotExist(itemGUID) then return false end
+	local item = GameHelpers.GetItem(itemGUID)
+	return {
+		Item = item,
+		ItemGUID = _GetGUID(itemGUID),
+		StatsId = GameHelpers.Item.GetItemStat(item),
+		Text = text,
+	}
+end)
+
+local function _GetItemRegionArgs(itemGUID, region)
+	if _AnyObjectDoesNotExist(itemGUID) then return false end
+	local item = GameHelpers.GetItem(itemGUID)
+	local data = {
+		Item = item,
+		ItemGUID = _GetGUID(itemGUID),
+		StatsId = GameHelpers.Item.GetItemStat(item),
+		Region = region
+	}
+	setmetatable(data, {
+		__index = function (tbl, k)
+			if k == "Level" then
+				local level = Ext.Server.GetLevelManager().Levels[region]
+				rawset(tbl, k, level)
+				return level
+			end
+		end
+	})
+	return data
+end
+
+---@class OsirisItemEnteredRegionEventArgs:OsirisItemEventArgs
+---@field Region string
+---@field Level EsvLevel
+
+---@type LeaderLibSubscribableEvent<OsirisItemEnteredRegionEventArgs>
+Events.Osiris.ItemEnteredRegion = _CreateOsirisEventWrapper("ItemEnteredRegion", _GetItemRegionArgs)
+
+---@class OsirisItemLeftRegionEventArgs:OsirisItemEnteredRegionEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisItemEnteredRegionEventArgs>
+Events.Osiris.ItemLeftRegion = _CreateOsirisEventWrapper("ItemLeftRegion", _GetItemRegionArgs)
+
+--#endregion
 
 --#region Pickpocketing
 
@@ -556,11 +775,11 @@ end)
 Events.Osiris.ProcBlockLockpickItem = _CreateOsirisProcBlockWrapper("ProcBlockLockpickItem", function (charGUID, itemGUID)
 	local item = GameHelpers.GetItem(itemGUID)
 	return {
-		StatsId = GameHelpers.Item.GetItemStat(item),
 		Item = item,
+		ItemGUID = _GetGUID(itemGUID),
+		StatsId = GameHelpers.Item.GetItemStat(item),
 		Character = GameHelpers.GetCharacter(charGUID),
 		CharacterGUID = _GetGUID(charGUID),
-		ItemGUID = _GetGUID(itemGUID)
 	}
 end, function (e)
 	Osi.DB_CustomLockpickItemResponse(e.CharacterGUID, e.ItemGUID, 0)
@@ -796,5 +1015,84 @@ Events.Osiris.ObjectLostTag = _CreateOsirisEventWrapper("ObjectLostTag", functio
 	setmetatable(evt, _ObjectTagEventMeta)
 	return evt
 end)
+
+--#endregion
+
+--#region Teleportation Events
+
+---@param triggerGUID Guid
+---@return string|nil id
+---@return string|nil itemGUID
+local function _GetWaypointFromTrigger(triggerGUID)
+	local db = Osi.DB_WaypointInfo:Get(nil, triggerGUID, nil)
+	if db and db[1] then
+		local itemGUID,_,id = table.unpack(db[1])
+		return id,_GetGUID(itemGUID)
+	end
+end
+
+---@class OsirisCharacterTeleportByItemEventArgs:OsirisCharacterTriggerEventArgs
+---@field Item EsvItem
+---@field ItemGUID Guid
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterTeleportByItemEventArgs>
+Events.Osiris.CharacterTeleportByItem = _CreateOsirisEventWrapper("CharacterTeleportByItem", function (charGUID, itemGUID, triggerGUID)
+	return {
+		Character = GameHelpers.GetCharacter(charGUID),
+		CharacterGUID = _GetGUID(charGUID),
+		Item = GameHelpers.GetItem(itemGUID),
+		ItemGUID = _GetGUID(itemGUID),
+		Trigger = Ext.Entity.GetTrigger(triggerGUID),
+		TriggerGUID = _GetGUID(triggerGUID),
+	}
+end)
+
+---@class OsirisCharacterTeleportToFleeWaypointEventArgs:OsirisCharacterTriggerEventArgs
+---@field WaypointID string
+---@field WaypointItem EsvItem|nil
+---@field WaypointItemGUID Guid|nil
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterTeleportToFleeWaypointEventArgs>
+Events.Osiris.CharacterTeleportToFleeWaypoint = _CreateOsirisEventWrapper("CharacterTeleportToFleeWaypoint", function (charGUID, triggerGUID)
+	local data = {
+		Character = GameHelpers.GetCharacter(charGUID),
+		CharacterGUID = _GetGUID(charGUID),
+		Trigger = Ext.Entity.GetTrigger(triggerGUID),
+		TriggerGUID = _GetGUID(triggerGUID),
+		WaypointID = "",
+	}
+	local waypoint,itemGUID = _GetWaypointFromTrigger(triggerGUID)
+	if waypoint then
+		data.WaypointID = waypoint
+		data.WaypointItemGUID = itemGUID
+		data.WaypointItem = GameHelpers.GetItem(itemGUID)
+	end
+	return data
+end)
+
+---@class OsirisCharacterTeleportToWaypointEventArgs:OsirisCharacterTeleportToFleeWaypointEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterTeleportToWaypointEventArgs>
+Events.Osiris.CharacterTeleportToWaypoint = _CreateOsirisEventWrapper("CharacterTeleportToWaypoint", function (charGUID, triggerGUID)
+	local data = {
+		Character = GameHelpers.GetCharacter(charGUID),
+		CharacterGUID = _GetGUID(charGUID),
+		Trigger = Ext.Entity.GetTrigger(triggerGUID),
+		TriggerGUID = _GetGUID(triggerGUID),
+		WaypointID = "",
+	}
+	local waypoint,itemGUID = _GetWaypointFromTrigger(triggerGUID)
+	if waypoint then
+		data.WaypointID = waypoint
+		data.WaypointItemGUID = itemGUID
+		data.WaypointItem = GameHelpers.GetItem(itemGUID)
+	end
+	return data
+end)
+
+---@class OsirisCharacterTeleportToPyramidEventArgs:OsirisCharacterItemEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterTeleportToPyramidEventArgs>
+Events.Osiris.CharacterTeleportToPyramid = _CreateCharacterItemEventWrapper("CharacterTeleportToPyramid")
 
 --#endregion

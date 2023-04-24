@@ -21,6 +21,7 @@
 				"\t• Added GameHelpers.Visual.GetVisualSet.",
 				"\t• Added GameHelpers.Action.Resurrect.",
 				"\t• Added Testing.AddCommandGroup and Testing.AddSubCommand, for registering tests within a broader command. This also allows you to run all the tests for a test group in sequence.",
+				"\t• Changelog entries now omit adding a bullet symbol if <nb> is present in the text. Tabs are now indented by 4 spaces.",
 				"\t• Turn counters now support counting combat rounds.",
 				"\t• GameHelpers.Grid.GetNearbyObjects now works on the client-side.",
 				"\t• Fixed some weirdnesss with custom context menu action sorting, if the action has a name that can change. Now actions can have a 'SortName'.",

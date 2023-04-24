@@ -824,6 +824,10 @@ LocalizedText.Requirements = {
 	ScalesWith = ts:Create("h565537edgdec5g4483g938fg296519760088", "Scales With [1]"),
 }
 
+LocalizedText.Mods = {
+	DivineTalents = ts:Create("he470681fg8373g4fa6ga978g02089eae5d9e", "Divine Talents"),
+}
+
 Ext.Events.SessionLoaded:Subscribe(function ()
 	LocalizedText.DamageTypeNameAlphabeticalOrder = {}
 	local nameToDamageType = {}

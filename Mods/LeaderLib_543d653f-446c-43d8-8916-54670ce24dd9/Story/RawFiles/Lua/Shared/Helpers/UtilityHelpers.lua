@@ -608,7 +608,9 @@ end
 ---Ensures PlayerCustomData values are set (IsMale, Race, Icon etc).
 ---Automatically assigns `PlayerCustomData.SkinColor` etc using the character's visual set, then syncs those changes to the client.
 ---@param player CharacterParam
-function GameHelpers.Utils.UpdatePlayerCustomData(player)
+---@param race? string The race to set if `PlayerCustomData.Race` is unset.
+---@param origin? string The origin to set if `PlayerCustomData.OriginName` is unset.
+function GameHelpers.Utils.UpdatePlayerCustomData(player, race, origin)
 	player = GameHelpers.GetCharacter(player)
 	if player and player.PlayerCustomData ~= nil then
 		local visualSet = GameHelpers.Visual.GetVisualSet(player, true)
@@ -616,6 +618,14 @@ function GameHelpers.Utils.UpdatePlayerCustomData(player)
 		local skinColorIndex = vs:GetColor(0) + 1
 		local hairColorIndex = vs:GetColor(1) + 1
 		local clothColorIndex = vs:GetColor(2) + 1
+
+		if race and player.PlayerCustomData.Race == "" then
+			player.PlayerCustomData.Race = race
+		end
+
+		if origin and player.PlayerCustomData.OriginName == "" then
+			player.PlayerCustomData.OriginName = origin
+		end
 		
 		-- local raceData = GameHelpers.Visual.GetRacePreset(player)
 		-- player.PlayerCustomData.HairColor = raceData.HairColors[hairColorIndex].Value
@@ -635,7 +645,9 @@ function GameHelpers.Utils.UpdatePlayerCustomData(player)
 			ClothColor1 = player.PlayerCustomData.ClothColor1,
 			ClothColor2 = player.PlayerCustomData.ClothColor2,
 			ClothColor3 = player.PlayerCustomData.ClothColor3,
-			IsMale = player.PlayerCustomData.IsMale
+			IsMale = player.PlayerCustomData.IsMale,
+			Race = player.PlayerCustomData.Race,
+			OriginName = player.PlayerCustomData.OriginName,
 		}
 
 		if player.PlayerCustomData.Icon == "" then

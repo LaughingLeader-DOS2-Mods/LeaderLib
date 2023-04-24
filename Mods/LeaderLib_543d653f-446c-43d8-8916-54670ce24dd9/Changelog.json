@@ -6,6 +6,28 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.4",
+			"Changes": [
+				"Fix for an error during the GetSkillAP skill state for Weapon Expansion Beta.",
+				"Added a fix to recruited origin character colors. This fixes an issue where they turn pink when trying to change a visual element for a recruited character, before they've run through the respec mirror.",
+				"API Changes:",
+				"\t• Added several new osiris event wrappers to Events.Osiris.",
+				"\t• Reorganized ComputeCharacterHit events under Events.CCH. The previous events in will be preserved for compatibility.",
+				"\t• Added Events.CCH.GetShouldApplyCriticalHit and Events.CCH.GetCriticalHitMultiplier.",
+				"\t• Added a new SkillManager.Register.GetDamage listener, or providing the damage and damage param value for skills.",
+				"\t• SkillManager listeners now better support fetching skill targets for skill types that don't fire Osiris events, such as MultiStrike. You can now see these targets in the Used and Cast skill states.",
+				"\t• Added several new engine text entries to LocalizedText.",
+				"\t• Added GameHelpers.Character.SetPermanentBoosts, for easier DynamicStats manipulation.",
+				"\t• Added GameHelpers.Visual.GetVisualSet.",
+				"\t• Added GameHelpers.Action.Resurrect.",
+				"\t• Added Testing.AddCommandGroup and Testing.AddSubCommand, for registering tests within a broader command. This also allows you to run all the tests for a test group in sequence.",
+				"\t• Turn counters now support counting combat rounds.",
+				"\t• GameHelpers.Grid.GetNearbyObjects now works on the client-side.",
+				"\t• Fixed some weirdnesss with custom context menu action sorting, if the action has a name that can change. Now actions can have a 'SortName'.",
+				"\t• GameHelpers.GetTemplate now supports getting the non-polymorph root template when a character is polymorphed."
+			]
+		},
+		{
 			"Version": "1.7.31.3",
 			"Changes": [
 				"Quick fix for the enter chance of statuses defaulting to 100, allowing it to bypass armor/etc."

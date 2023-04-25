@@ -35,6 +35,7 @@ Mods.LeaderLib = {
 	UI = UI,
 	Vars = Vars,
 	VisualManager = VisualManager,
+	Lib = Lib,
 	ModuleUUID = "7e737d2f-31d2-4751-963f-be6ccc59cd0c",
 }
 

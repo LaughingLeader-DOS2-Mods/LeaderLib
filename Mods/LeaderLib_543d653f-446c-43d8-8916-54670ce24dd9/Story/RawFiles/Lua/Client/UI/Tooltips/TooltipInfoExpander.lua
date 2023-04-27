@@ -585,7 +585,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 			end
 		end ]]
 	end)
-end)
+end, {Priority=0})
 
 Ext.RegisterUINameCall("hideTooltip", function (ui, call, ...)
 	local tt = Ext.UI.GetByType(Data.UIType.tooltip)

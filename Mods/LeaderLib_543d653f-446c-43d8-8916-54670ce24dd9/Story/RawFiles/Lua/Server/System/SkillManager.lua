@@ -147,24 +147,19 @@ function StoreSkillEventData(char, skill, skillType, skillAbility, ...)
 	end
 end
 
-Ext.Osiris.RegisterListener("CanUseItem", 3, "after", function(charGUID, itemGUID, requestId)
-	if Osi.ObjectExists(charGUID) == 1 and Osi.ObjectExists(itemGUID) == 1 then
-		local skills,data = GameHelpers.Item.GetUseActionSkills(itemGUID, false, false)
-		if data.IsConsumable and skills[1] then
-			charGUID = StringHelpers.GetUUID(charGUID)
-			itemGUID = StringHelpers.GetUUID(itemGUID)
-			local item = GameHelpers.GetItem(itemGUID)
-			local statsId = GameHelpers.Item.GetItemStat(item)
-			local template = GameHelpers.GetTemplate(item)
-			_lastUsedSkillItems[charGUID] = {
-				Item = itemGUID,
-				Skills = skills,
-				StatsId = statsId,
-				Template = template,
-				DisplayName = item.DisplayName
-			}
-			Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", charGUID)
-		end
+Events.Osiris.CanUseItem:Subscribe(function(e)
+	local skills,data = GameHelpers.Item.GetUseActionSkills(e.Item, false, false)
+	if data.IsConsumable and skills[1] then
+		local statsId = GameHelpers.Item.GetItemStat(e.Item)
+		local template = GameHelpers.GetTemplate(e.Item)
+		_lastUsedSkillItems[e.CharacterGUID] = {
+			Item = e.Item,
+			Skills = skills,
+			StatsId = statsId,
+			Template = template,
+			DisplayName = GameHelpers.GetDisplayName(e.Item)
+		}
+		Timer.Cancel("LeaderLib_SkillManager_RemoveLastUsedSkillItem", e.Character)
 	end
 end)
 

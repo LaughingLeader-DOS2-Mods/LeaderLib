@@ -418,11 +418,11 @@ else
 	---@type table<string, {BookType:string, TextID:string}>
 	local _isBookTemplate = {}
 
-	Ext.Osiris.RegisterListener("CanUseItem", 3, "after", function (charGUID, itemGUID, requestID)
-		if Osi.CharacterIsPlayer(charGUID) == 1 then
+	Events.Osiris.CanUseItem:Subscribe(function(e)
+		if GameHelpers.Character.IsPlayer(e.Character) then
 			local updatedData = false
-			local player = GameHelpers.GetCharacter(charGUID)
-			local item = GameHelpers.GetItem(itemGUID)
+			local player = e.Character
+			local item = e.Item
 			local userID = GameHelpers.GetUserID(player)
 			if item and item.CurrentTemplate then
 				local bookType = ""

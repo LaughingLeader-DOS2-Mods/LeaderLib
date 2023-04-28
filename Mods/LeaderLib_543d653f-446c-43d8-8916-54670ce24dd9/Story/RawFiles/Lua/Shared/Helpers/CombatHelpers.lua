@@ -4,6 +4,7 @@ end
 
 local _ISCLIENT = Ext.IsClient()
 
+---@param character EsvCharacter|EclCharacter
 local function _GetCombatComponent_Old(character)
 	local combatid = GameHelpers.Combat.GetID(character)
 	if combatid > -1 then
@@ -23,12 +24,12 @@ end
 ---@param character CharacterParam
 ---@return EocCombatComponent|nil
 function GameHelpers.Combat.GetCombatComponent(character)
-	return _GetCombatComponent_Old(character)
-	-- local character = GameHelpers.GetCharacter(character, "EsvCharacter")
-	-- if character then
-	-- 	return Ext.Entity.GetCombatComponent(character.Handle)
-	-- end
-	-- return nil
+	local character = GameHelpers.GetCharacter(character, "EsvCharacter")
+	if character then
+		--return Ext.Entity.GetCombatComponent(character.Handle)
+		return _GetCombatComponent_Old(character)
+	end
+	return nil
 end
 
 local function _GetCombatID_ServerDB(obj)

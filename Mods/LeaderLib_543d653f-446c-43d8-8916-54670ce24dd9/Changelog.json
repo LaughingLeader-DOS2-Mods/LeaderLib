@@ -6,6 +6,12 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.5",
+			"Changes": [
+				"Quick fix for a minor script warning if the combat vacuum is enabled."
+			]
+		},
+		{
 			"Version": "1.7.31.4",
 			"Changes": [
 				"Fix for an error during the GetSkillAP skill state for Weapon Expansion Beta.",

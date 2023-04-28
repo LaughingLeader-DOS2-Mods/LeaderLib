@@ -23,11 +23,12 @@ end
 ---@param character CharacterParam
 ---@return EocCombatComponent|nil
 function GameHelpers.Combat.GetCombatComponent(character)
-	local character = GameHelpers.GetCharacter(character, "EsvCharacter")
-	if character then
-		return Ext.Entity.GetCombatComponent(character.Handle)
-	end
-	return nil
+	return _GetCombatComponent_Old(character)
+	-- local character = GameHelpers.GetCharacter(character, "EsvCharacter")
+	-- if character then
+	-- 	return Ext.Entity.GetCombatComponent(character.Handle)
+	-- end
+	-- return nil
 end
 
 local function _GetCombatID_ServerDB(obj)
@@ -50,11 +51,12 @@ end
 ---@param obj ObjectParam
 ---@return integer
 function GameHelpers.Combat.GetID(obj)
-	local comp = GameHelpers.Combat.GetCombatComponent(obj)
-	if comp and comp.CombatAndTeamIndex then
-		return comp.CombatAndTeamIndex.CombatId
-	end
-	if not _ISCLIENT then
+	if not _OSIRIS() then
+		local comp = GameHelpers.Combat.GetCombatComponent(obj)
+		if comp and comp.CombatAndTeamIndex then
+			return comp.CombatAndTeamIndex.CombatId
+		end
+	else
 		return _GetCombatID_ServerDB(obj)
 	end
 	return -1

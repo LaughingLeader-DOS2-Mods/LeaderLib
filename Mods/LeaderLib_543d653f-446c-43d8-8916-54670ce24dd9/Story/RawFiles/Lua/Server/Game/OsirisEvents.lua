@@ -616,7 +616,7 @@ Events.Osiris.ItemLeftRegion = _CreateOsirisEventWrapper("ItemLeftRegion", _GetI
 ---@field PreventAction fun(self:OsirisRequestPickpocketEventArgs) Deny the request via.
 
 ---@type LeaderLibSubscribableEvent<OsirisRequestPickpocketEventArgs>
-Events.Osiris.RequestPickpocket = _CreateOsirisEventWrapper("CanUseItem", function (playerGUID, targetGUID)
+Events.Osiris.RequestPickpocket = _CreateOsirisEventWrapper("RequestPickpocket", function (playerGUID, targetGUID)
 	if _AnyObjectDoesNotExist(playerGUID, targetGUID) then return false end
 	local player = GameHelpers.GetCharacter(playerGUID)
 	local target = GameHelpers.GetCharacter(targetGUID)

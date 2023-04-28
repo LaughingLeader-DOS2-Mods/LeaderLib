@@ -80,6 +80,18 @@ local function RegisterTooltipHandlers()
 	end)
 	_r.Status(TooltipHandler.OnStatusTooltip)
 	_r.Stat(TooltipHandler.OnStatTooltip)
+	_r.Talent(function (character, talent, tooltip)
+		if Data.Talents[talent] then
+			local equipmentTalents = GameHelpers.Character.GetEquipmentTalents(character, true)
+			local item = equipmentTalents[talent]
+			if item then
+				local itemName = string.format("<br>%s", GameHelpers.GetDisplayName(item))
+				local slot = string.format("<br>(%s)", LocalizedText.Slots[item.Stats.ItemSlot].Value)
+				local text = LocalizedText.CharacterSheet.Tooltip.FromGear:ReplacePlaceholders(itemName, slot):gsub("<br>", "", 1)
+				tooltip:AppendElementAfterType({Type="StatsTalentsBoost", Label=text}, "StatsTalentsBoost")
+			end
+		end
+	end)
 	--TODO Need an extender way to get a surface on the client
 	--[[ _r.Surface(function (character, surface, tooltip)
 		if Features.SurfaceDisplaySource then

@@ -1,10 +1,10 @@
 local _type = type
 
----@class GameHelpersTooltipRegisterAttributeOptions:LeaderLibCustomAttributeTooltipSettings
+---@class GameHelpersUIRegisterAttributeOptions:LeaderLibCustomAttributeTooltipSettings
 ---@field StatType ModifierListType|ModifierListType[]
 
 ---@param statType ModifierListType
----@param opts GameHelpersTooltipRegisterAttributeOptions
+---@param opts GameHelpersUIRegisterAttributeOptions
 ---@param sm StatsRPGStats
 local function _AddCustomAttributeEntry(statType, opts, sm)
 	if sm then
@@ -28,7 +28,7 @@ end
 ---Attributes must be added via `Ext.Stats.AddAttribute` during `Ext.Events.StatsStructureLoaded`, in `BootstrapModule.lua`.  
 ---🔧**Client-Only**🔧  
 ---@see Ext_Stats.AddAttribute
----@param opts GameHelpersTooltipRegisterAttributeOptions
+---@param opts GameHelpersUIRegisterAttributeOptions
 function GameHelpers.UI.RegisterCustomAttribute(opts)
 	assert(_type(opts.Attribute) == "string", "Attribute param must be a string")
 	local sm = Ext.Stats.GetStatsManager()

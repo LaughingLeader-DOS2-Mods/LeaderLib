@@ -17,6 +17,38 @@ local function _GetStatusAPCostBoost(id)
 	return nil
 end
 
+local function _AddResistancePen_Old(item, tooltip)
+	-- Resistance Penetration display
+	local resistancePenetration = {}
+	local tags = GameHelpers.GetAllTags(item, true)
+	for tag,b in pairs(tags) do
+		local damageType,amount = GameHelpers.ParseResistancePenetrationTag(tag)
+		if damageType then
+			if resistancePenetration[damageType] == nil then
+				resistancePenetration[damageType] = 0
+			end
+			resistancePenetration[damageType] = resistancePenetration[damageType] + amount
+		end
+	end
+	local resPenText = LocalizedText.ItemBoosts.ResistancePenetration
+	for i=1,#LocalizedText.DamageTypeNameAlphabeticalOrder do
+		local damageType = LocalizedText.DamageTypeNameAlphabeticalOrder[i]
+		local amount = resistancePenetration[damageType] or 0
+		if amount > 0 then
+			local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
+			if not StringHelpers.IsNullOrWhitespace(resistanceText) then
+				local result = resPenText:ReplacePlaceholders(resistanceText)
+				local element = {
+					Type = "ResistanceBoost",
+					Label = result,
+					Value = amount,
+				}
+				tooltip:AppendElement(element)
+			end
+		end
+	end
+end
+
 ---@param item EclItem
 ---@param tooltip TooltipData
 function TooltipHandler.OnItemTooltip(item, tooltip)
@@ -87,36 +119,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		end
 
 		if Features.ResistancePenetration == true then
-			-- Resistance Penetration display
-			--if GameHelpers.ItemHasTag(item, "LeaderLib_HasResistancePenetration") then
-			local resistancePenetration = {}
-			local tags = GameHelpers.GetAllTags(item, true)
-			for tag,b in pairs(tags) do
-				local damageType,amount = GameHelpers.ParseResistancePenetrationTag(tag)
-				if damageType then
-					if resistancePenetration[damageType] == nil then
-						resistancePenetration[damageType] = 0
-					end
-					resistancePenetration[damageType] = resistancePenetration[damageType] + amount
-				end
-			end
-			local resPenText = LocalizedText.ItemBoosts.ResistancePenetration
-			for i=1,#LocalizedText.DamageTypeNameAlphabeticalOrder do
-				local damageType = LocalizedText.DamageTypeNameAlphabeticalOrder[i]
-				local amount = resistancePenetration[damageType] or 0
-				if amount > 0 then
-					local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
-					if not StringHelpers.IsNullOrWhitespace(resistanceText) then
-						local result = resPenText:ReplacePlaceholders(resistanceText)
-						local element = {
-							Type = "ResistanceBoost",
-							Label = result,
-							Value = amount,
-						}
-						tooltip:AppendElement(element)
-					end
-				end
-			end
+			--_AddResistancePen_Old()
 		end
 		if TooltipHandler.HasTagTooltipData then
 			TooltipHandler.AddTooltipTags(item, tooltip)

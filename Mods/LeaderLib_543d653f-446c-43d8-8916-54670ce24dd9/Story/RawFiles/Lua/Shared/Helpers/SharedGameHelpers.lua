@@ -815,6 +815,8 @@ end
 
 local TAG_PREFIX = "LeaderLib_ResistancePenetration_"
 
+---@deprecated
+---@see GameHelpers.Stats.GetResistancePenetration
 ---@param tag string A tag such as LeaderLib_ResistancePenetration_Poison50
 ---@return string damageType
 ---@return integer amount
@@ -827,7 +829,7 @@ function GameHelpers.ParseResistancePenetrationTag(tag)
 			return damageType,amount
 		end
 	end
-	return 0
+	return nil, 0
 end
 
 --local amt = 3; local dl = Ext.Stats.NewDamageList(); dl:Add("Fire", 4); dl:Add("Water", 3); local ndl = Mods.LeaderLib.GameHelpers.Damage.DivideDamage(dl, amt); local pdl = {}; for _,v in pairs(ndl) do table.insert(pdl, v:ToTable()) end; Ext.Dump(pdl)

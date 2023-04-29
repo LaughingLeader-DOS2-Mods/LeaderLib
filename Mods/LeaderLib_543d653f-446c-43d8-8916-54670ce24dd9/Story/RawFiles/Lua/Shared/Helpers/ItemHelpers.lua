@@ -882,6 +882,14 @@ function GameHelpers.Item.IsObject(item)
 	local t = _type(item)
 	if t == "userdata" then
 		if GameHelpers.Ext.ObjectIsItem(item) then
+            ---@cast item EsvItem|EclItem
+            if item.StatsFromName then
+                if item.StatsFromName.ModifierListIndex < 3 then
+                    return false
+                elseif item.StatsFromName.ModifierListIndex == 4 then
+                    return true
+                end
+            end
 			if Data.ObjectStats[item.StatsId] or item.ItemType == "Object" then
 				return true
 			end

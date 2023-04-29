@@ -268,6 +268,7 @@ RequestProcessor.CallbackHandler[TooltipCalls.Status] = function(request, ui, ui
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Item] = function (request, ui, uiType, event, ...)
+	request.ObjectHandleDouble = nil
 	local params = {...}
 	if uiType == _UITYPE.partyInventory_c then
 		local this = ui:GetRoot()
@@ -333,6 +334,14 @@ RequestProcessor.CallbackHandler[TooltipCalls.Item] = function (request, ui, uiT
 	else
 		local id = params[1]
 		if _IsNaN(id) then
+			local drag = Ext.UI.GetDragDrop()
+			if drag and drag.PlayerDragDrops[1] then
+				local dragData = drag.PlayerDragDrops[1]
+				if dragData.DragObject ~= nil then
+					request.ObjectHandleDouble = Ext.UI.HandleToDouble(dragData.DragObject)
+					return request
+				end
+			end
 			_PrintWarning(string.format("[Game.Tooltip.RequestProcessor:%s] Item handle (%s) is nil? UI(%s)", event, id, uiType))
 			return request
 		end
@@ -964,20 +973,17 @@ function RequestProcessor.HandleCallback(e, requestType, ui, uiType, event, idOr
 		end
 	end
 
-	if not character then
-		character = _GetClientCharacter()
-	end
-
 	if uiType == _UITYPE.characterCreation then
 		id = statOrWidth
 	end
 
 	local request = _CreateRequest()
 	request.Type = requestType
-	if character then
-		request.ObjectHandleDouble = _HandleToDouble(character.Handle)
-	end
 	request.UIType = uiType
+
+	if not character then
+		character = _GetClientCharacter()
+	end
 
 	RequestProcessor.Tooltip.NextRequest = request
 

@@ -33,5 +33,8 @@ Ext.Events.StatsStructureLoaded:Subscribe(function (e)
 		Ext.Stats.AddAttribute("Weapon", attributeName, "ConstantInt")
 		Ext.Stats.AddAttribute("Character", attributeName, "ConstantInt")
 		Ext.Stats.AddAttribute("Potion", attributeName, "ConstantInt")
+		if Ext.Debug.IsDeveloperMode() then
+			Ext.Utils.Print(("  [LeaderLib:StatsStructureLoaded] Registered attribute (%s)."):format(attributeName))
+		end
 	end
 end)

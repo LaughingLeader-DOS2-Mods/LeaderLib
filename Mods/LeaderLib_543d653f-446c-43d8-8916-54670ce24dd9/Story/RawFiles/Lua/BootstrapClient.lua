@@ -124,9 +124,13 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		LoadGlobalSettings()
 	end
 
+	local function _ValueIsSet(x)
+		return x and x > 0
+	end
+
 	---@param e LeaderLibCustomAttributeTooltipCallbackEventArgs
 	local function _GetResistancePenElement(e)
-		if e.Value > 0 then
+		if _ValueIsSet(e.Value) then
 			local damageType = Data.ResistancePenetrationAttributes[e.Attribute]
 			local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
 			if not StringHelpers.IsNullOrWhitespace(resistanceText) then
@@ -158,7 +162,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		GameHelpers.UI.RegisterCustomAttribute({
 			Attribute = "ArmorBoost",
 			GetTooltipElement = function (e)
-				if e.TooltipType == "Rune" and e.Value > 0 then
+				if e.TooltipType == "Rune" and _ValueIsSet(e.Value) then
 					e:UpdateElement("Spaghetti Code: 2")
 				end
 			end,

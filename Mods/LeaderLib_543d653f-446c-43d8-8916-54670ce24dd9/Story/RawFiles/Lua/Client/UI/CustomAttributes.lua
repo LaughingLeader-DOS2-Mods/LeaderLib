@@ -367,6 +367,9 @@ function GameHelpers.Tooltip.SetCustomAttributeElements(character, tooltip, tool
 				local stat = Ext.Stats.Get(options.Status.StatusId, nil, false)
 				_AddElementForStat(stat, "StatusData", statsManager, character, tooltip, tooltipType, options)
 			end
+			if not GameHelpers.Ext.TypeHasMember(status, "StatsDataPerTurn") then
+				return
+			end
 			---@cast status EclStatusConsumeBase
 			if status.StatsDataPerTurn then
 				for _,v in pairs(status.StatsDataPerTurn) do

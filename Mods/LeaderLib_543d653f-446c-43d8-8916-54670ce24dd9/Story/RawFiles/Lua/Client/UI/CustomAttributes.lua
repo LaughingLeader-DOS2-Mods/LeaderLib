@@ -300,7 +300,7 @@ function GameHelpers.Tooltip.SetCustomAttributeElements(character, tooltip, tool
 					local b,value = xpcall(_TryGetCustomAttributeFromItem, debug.traceback, item, v.Attribute)
 					if not b then
 						fprint(LOGLEVEL.ERROR, "[LeaderLib] Failed to get custom attribute (%s) on item (%s):\n%s", v.Attribute, GameHelpers.Item.GetItemStat(item), value)
-					else
+					elseif value ~= nil then
 						if v.GetTooltipElement then
 							local valueType = statsManager.ModifierValueLists:GetByName(v.Attribute)
 

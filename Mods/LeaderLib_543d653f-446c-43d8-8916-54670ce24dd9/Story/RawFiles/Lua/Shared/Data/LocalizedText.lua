@@ -448,7 +448,11 @@ LocalizedText.Slots = {
 }
 
 LocalizedText.ItemBoosts = {
-	ResistancePenetration = ts:Create("hf638bc67g5cb6g4dcfg8663gce1951caad2b", "[1] Penetration")
+	ResistancePenetration = ts:CreateFromKey("LeaderLib_Tooltip_ResistancePenetrationBoost", "[1] Penetration"),
+}
+
+LocalizedText.StatusBoosts = {
+	ResistancePenetration = ts:CreateFromKey("LeaderLib_Tooltip_ResistancePenetrationStatusBoost", "[1] Penetration: [2]%"),
 }
 
 -- <content contentuid="h9b6e0ed8g07afg413dg939fg5d5b91a9461c">Next level costs [1] ability point(s)</content>

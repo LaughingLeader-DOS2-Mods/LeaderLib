@@ -102,3 +102,16 @@ for damageType,_ in pairs(Data.DamageTypeToResistance) do
 	end
 end
  ]]
+
+Data.ResistancePenetrationAttributes = {
+	PhysicalResistancePenetration = "Physical",
+	PiercingResistancePenetration = "Piercing",
+	CorrosiveResistancePenetration = "Corrosive",
+	MagicResistancePenetration = "Magic",
+	AirResistancePenetration = "Air",
+	EarthResistancePenetration = "Earth",
+	FireResistancePenetration = "Fire",
+	PoisonResistancePenetration = "Poison",
+	ShadowResistancePenetration = "Shadow",
+	WaterResistancePenetration = "Water",
+}

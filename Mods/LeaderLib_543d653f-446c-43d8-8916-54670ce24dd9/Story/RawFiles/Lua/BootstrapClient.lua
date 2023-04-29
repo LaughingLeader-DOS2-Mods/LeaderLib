@@ -146,13 +146,14 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end
 	end
 
-	-- for attributeName,_ in pairs(Data.ResistancePenetrationAttributes) do
-	-- 	GameHelpers.Tooltip.RegisterCustomAttribute({
-	-- 		Attribute = attributeName,
-	-- 		GetTooltipElement = _GetResistancePenElement,
-	-- 		StatType = {"Armor", "Shield", "Weapon", "Character", "Potion"}
-	-- 	})
-	-- end
+	for attributeName,_ in pairs(Data.ResistancePenetrationAttributes) do
+		GameHelpers.UI.RegisterCustomAttribute({
+			Attribute = attributeName,
+			GetTooltipElement = _GetResistancePenElement,
+			StatType = {"Armor", "Shield", "Weapon", "Character", "Potion"}
+		})
+	end
+
 	if Vars.LeaderDebugMode then
 		GameHelpers.UI.RegisterCustomAttribute({
 			Attribute = "ArmorBoost",

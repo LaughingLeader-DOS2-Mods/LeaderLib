@@ -107,6 +107,8 @@ Mods.LeaderLib = {
 ---@field Item EclItem|nil The item, if the tooltip type includes an item.
 ---@field Skill FixedString|nil The skill, if the tooltip is a skill type.
 ---@field Status EclStatus|nil The status, if the tooltip is a status type.
+---@field UpdateElement fun(self:LeaderLibCustomAttributeTooltipCallbackEventArgs, value:string|number, overwriteValue?:boolean) When `e.Options` has Element set, use this function to update the element value.<br>This is mainly for rune tooltips, or runes inserted in an item that have custom attributes.
+---@field Options GameHelpersTooltipGetCustomAttributeElementsOptions The params passed in to `GameHelpers.Tooltip.SetCustomAttributeElements`.
 
 ---@class LeaderLibCustomAttributeTooltipSettings
 ---@field Attribute FixedString

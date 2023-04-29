@@ -794,7 +794,9 @@ if not _ISCLIENT then
 	---@field RuneSlot integer
 	---@field Inserted boolean
 	---@field Rune EsvItem|nil Only set if the rune was removed, otherwise the rune object does not exist.
-	---@field RuneTemplate Guid The rune object stat root template.
+	---@field RuneTemplate ItemTemplate The rune object stat root template.
+	---@field RuneTemplateGUID Guid The rune object stat root template.
+	---@field RuneStat StatEntryObject The rune object stat, from the template.
 	---@field BoostStat StatEntryWeapon|StatEntryArmor The active rune boost stat for this item
     ---@field BoostStatID string The active rune boost stat name for this item
     ---@field BoostStatAttribute "RuneEffectWeapon"|"RuneEffectAmulet"|"RuneEffectUpperbody"

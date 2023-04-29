@@ -707,11 +707,12 @@ end
 ---@param obj ObjectParam
 ---@param asGameObjectTemplate boolean Returns a GameObjectTemplate if true.
 ---@param ignorePolymorph? boolean Get the true root template if polymorphed.
----@return GameObjectTemplate|nil
+---@return GameObjectTemplate|nil template
+---@return Guid|nil templateGUID
 function GameHelpers.GetTemplate(obj, asGameObjectTemplate, ignorePolymorph)
 	local templateId = _GetTemplateID(obj, ignorePolymorph)
 	if templateId and asGameObjectTemplate then
-		return Ext.Template.GetRootTemplate(templateId)
+		return Ext.Template.GetRootTemplate(templateId), templateId
 	end
 	return templateId
 end

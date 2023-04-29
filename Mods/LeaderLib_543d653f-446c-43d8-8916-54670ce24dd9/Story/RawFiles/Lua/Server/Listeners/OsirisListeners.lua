@@ -257,15 +257,20 @@ Ext.Osiris.RegisterListener("RuneInserted", 4, "before", function (characterGUID
 	runeTemplate = StringHelpers.GetUUID(runeTemplate)
 	local character = GameHelpers.GetCharacter(characterGUID)
 	local item = GameHelpers.GetItem(itemGUID)
-	local template = Ext.Template.GetRootTemplate(runeTemplate)
-	local runeStat = Ext.Stats.Get(template.Stats, nil, false)
+	local template = Ext.Template.GetRootTemplate(runeTemplate)--[[@as ItemTemplate]]
+	local runeStat = nil
+	if template then
+		runeStat = Ext.Stats.Get(template.Stats, nil, false)
+	end
 	local boostStat,boostStatName,boostStatAttribute = _GetRuneBoost(item, runeStat)
 	Events.RuneChanged:Invoke({
 		Character = character,
 		CharacterGUID = characterGUID,
 		Item = item,
 		ItemGUID = itemGUID,
-		RuneTemplate = runeTemplate,
+		RuneTemplateGUID = runeTemplate,
+		RuneTemplate = template,
+		RuneStat = runeStat,
 		RuneSlot = slot,
 		Inserted = true,
 		BoostStat = boostStat,
@@ -281,6 +286,7 @@ Ext.Osiris.RegisterListener("RuneRemoved", 4, "after", function (characterGUID, 
 	local character = GameHelpers.GetCharacter(characterGUID)
 	local item = GameHelpers.GetItem(itemGUID)
 	local rune = GameHelpers.GetItem(runeGUID)
+	local runeTemplate,templateGUID = GameHelpers.GetTemplate(rune, true)--[[@as ItemTemplate]]
 	local runeStatEntry = rune.StatsFromName and rune.StatsFromName.StatsEntry or nil
 	local boostStat,boostStatName,boostStatAttribute = _GetRuneBoost(item, runeStatEntry)
 	Events.RuneChanged:Invoke({
@@ -288,7 +294,9 @@ Ext.Osiris.RegisterListener("RuneRemoved", 4, "after", function (characterGUID, 
 		CharacterGUID = characterGUID,
 		Item = item,
 		ItemGUID = itemGUID,
-		RuneTemplate = rune and GameHelpers.GetTemplate(rune) or "",
+		RuneTemplate = runeTemplate,
+		RuneTemplateGUID = templateGUID,
+		RuneStat = runeStatEntry,
 		RuneSlot = slot,
 		Inserted = false,
 		BoostStat = boostStat,

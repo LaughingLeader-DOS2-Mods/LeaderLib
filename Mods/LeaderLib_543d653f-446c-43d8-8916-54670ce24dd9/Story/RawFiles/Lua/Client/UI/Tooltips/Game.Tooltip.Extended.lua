@@ -238,7 +238,7 @@ local _Icon = {"Icon", "string"}
 local _Warning = {"Warning", "string"}
 local _Unused = {nil, nil}
 local BoostSpec = {_Label, _NumValue, _Unused}
-TooltipSpecs = {
+_TT.TooltipSpecs = {
 	ItemName = {_Label},
 	ItemWeight = {_Label, _Unused},
 	ItemGoldValue = {_Label},
@@ -598,7 +598,7 @@ function ParseTooltipArray(tt)
 		elseif typeName == "ArmorSet" then
 			index, element = ParseTooltipArmorSet(tt, index)
 		else
-			local spec = TooltipSpecs[typeName]
+			local spec = _TT.TooltipSpecs[typeName]
 			if spec == nil then
 				_PrintError("No spec available for tooltip item type: ", typeName)
 				return elements
@@ -706,7 +706,7 @@ function EncodeTooltipArray(elements)
 					table.insert(tt, type)
 					EncodeTooltipArmorSet(tt, element)
 				else
-					local spec = TooltipSpecs[element.Type]
+					local spec = _TT.TooltipSpecs[element.Type]
 					if spec == nil then
 						if _DEBUG then
 							_PrintError("No encoder found for tooltip element type:", element.Type)
@@ -751,14 +751,15 @@ end
 
 ---@class TooltipItemRequest:TooltipRequest
 ---@field Item EclItem
----@field Character EclCharacter
+---@field Character EclCharacter The client-side character.
 
 ---@class TooltipPyramidRequest:TooltipRequest
 ---@field Item EclItem
+---@field Character EclCharacter The client-side character.
 
 ---@class TooltipRuneRequest:TooltipRequest
 ---@field Item EclItem
----@field Character EclCharacter
+---@field Character EclCharacter The client-side character.
 ---@field Rune StatEntryObject The rune stat entry.
 ---@field Slot integer
 ---@field StatsId string The rune stat id.

@@ -151,7 +151,7 @@ local function _AddElementForStat(stat, attributeType, statsManager, character, 
 				local b,value = xpcall(_TryGetCustomAttributeFromStat, debug.traceback, stat, v.Attribute)
 				if not b then
 					fprint(LOGLEVEL.ERROR, "[LeaderLib] Failed to get custom attribute (%s) on stat (%s):\n%s", v.Attribute, stat.Name, value)
-				else
+				elseif value ~= nil then
 					if v.GetTooltipElement then
 						local valueType = statsManager.ModifierValueLists:GetByName(v.Attribute)
 
@@ -203,10 +203,13 @@ local _RuneAccessorySlot = {
 ---@param tooltipType TooltipRequestType
 ---@param options GameHelpersTooltipGetCustomAttributeElementsOptions
 local function _AddRuneCustomAttributes(item, statsManager, character, tooltip, tooltipType, options)
+	if not item.StatsFromName then
+		return
+	end
 	local runeEffect = tooltip:GetElement("RuneEffect")
 	local runeSlots = tooltip:GetElements("RuneSlot")
-	if runeEffect and GameHelpers.Item.IsObject(item) then
-		local runeStat = Ext.Stats.Get(item.StatsFromName.Name, nil, false) --[[@as StatEntryObject]]
+	if runeEffect and item.StatsFromName.ModifierListIndex == 4 then
+		local runeStat = item.StatsFromName.StatsEntry --[[@as StatEntryObject]]
 		if runeStat then
 			local weaponBoost = Ext.Stats.Get(runeStat.RuneEffectWeapon, nil, false)
 			local armorBoost = Ext.Stats.Get(runeStat.RuneEffectUpperbody, nil, false)
@@ -222,7 +225,7 @@ local function _AddRuneCustomAttributes(item, statsManager, character, tooltip, 
 			options.ElementValue = runeEffect.Rune3
 			_AddElementForStat(accessoryBoost, "Armor", statsManager, character, tooltip, "Rune", options)
 		end
-	elseif runeSlots ~= nil then
+	elseif item.StatsFromName.ModifierListIndex < 3 then
 		local len = #item.Stats.DynamicStats
 		if len >= 3 then
 			local itemType = item.Stats.ItemType
@@ -479,7 +482,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.uiCraft, "updateRuneSlots", functio
 					local b,value = xpcall(_TryGetCustomAttributeFromStat, debug.traceback, boostStat, v.Attribute)
 					if not b then
 						fprint(LOGLEVEL.ERROR, "[LeaderLib] Failed to get custom attribute (%s) on stat (%s):\n%s", v.Attribute, boostStat.Name, value)
-					else
+					elseif value ~= nil then
 						if v.GetTooltipElement then
 							local valueType = statsManager.ModifierValueLists:GetByName(v.Attribute)
 

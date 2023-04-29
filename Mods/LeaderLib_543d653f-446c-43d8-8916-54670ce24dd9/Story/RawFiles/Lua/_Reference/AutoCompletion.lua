@@ -99,8 +99,9 @@ Mods.LeaderLib = {
 
 ---@class LeaderLibCustomAttributeTooltipCallbackEventArgs
 ---@field Character EclCharacter
----@field Tooltip TooltipData Append the created tooltip element to the tooltip here.
+---@field Tooltip TooltipData|nil When not nil, append a new tooltip element to the tooltip data.<br>For Rune tooltips, use `e:UpdateElement(value)` instead to update the rune text.<br>This is nil if `TooltipType` is Rune and IsUIText is true.
 ---@field TooltipType TooltipRequestType
+---@field IsUIText boolean|nil Only `true`when updating rune text for the crafting UI.
 ---@field Attribute FixedString
 ---@field Value SerializableValue
 ---@field Modifier StatsModifierList

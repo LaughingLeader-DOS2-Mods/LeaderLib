@@ -608,7 +608,8 @@ LocalizedText.Tooltip = {
 	ImmuneTo = ts:Create("hac7cca96gd0dfg4391gb188gc53fd12cb6a5", "Immune to [1]"),
 	BookIsKnown = ts:CreateFromKey("LeaderLib_Tooltip_BookIsKnown", "<br><font color='#44FF33'>(This book has been read)</font>"),
 	StatusSource = ts:CreateFromKey("LeaderLib_Tooltip_StatusSource", "<font color='#6EB09D'>Applied by [1]</font>"),
-	APCost = ts:Create("hc9eb3ff8ge40dg4d7bg91d2gd2107aa86f9c", "([1] AP)")
+	APCost = ts:Create("hc9eb3ff8ge40dg4d7bg91d2gd2107aa86f9c", "([1] AP)"),
+	Unlocks = ts:Create("h71c8fc3eg415bg4cedgba5fgb720f9ca3023", "Unlocks [1]"),
 }
 
 LocalizedText.Input = {

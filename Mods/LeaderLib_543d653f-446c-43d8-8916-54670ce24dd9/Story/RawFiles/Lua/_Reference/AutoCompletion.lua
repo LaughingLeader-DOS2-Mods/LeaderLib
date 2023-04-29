@@ -91,3 +91,25 @@ Mods.LeaderLib = {
 ---@class DefaultValue<T>:{}
 
 ---@alias CrimeType "ActiveSummon"|"Assault"|"AttackAnimal"|"Diseased"|"EmptyPocketNoticed"|"IncapacitatedAssault"|"ItemDestroy"|"KilledAnimal"|"LoudContinuousNoise"|"MoveForbiddenItem"|"Murder"|"PickPocketFailed"|"Polymorphed"|"Smelly"|"Sneaking"|"SneakKilledAnimal"|"SneakMurder"|"SneakUseForbiddenItem"|"SourceMagic"|"Steal"|"SummonAssault"|"SummonAttackAnimal"|"SummonItemDestroy"|"SummonKilledAnimal"|"SummonMoveForbiddenItem"|"SummonMurder"|"SummonVandalise"|"SummonVandaliseNoOwner"|"TeleportPlayerDialog"|"Trespassing"|"UseForbiddenItem"|"Vandalise"|"VandaliseNoOwner"|"WeaponsDrawn"
+
+---@class TagTooltipData
+---@field Title TranslatedString
+---@field Description TranslatedString
+
+---@class LeaderLibCustomAttributeTooltipCallbackEventArgs
+---@field Character EclCharacter
+---@field Tooltip TooltipData Append the created tooltip element to the tooltip here.
+---@field TooltipType TooltipRequestType
+---@field Attribute FixedString
+---@field Value SerializableValue
+---@field Modifier StatsModifierList
+---@field ModifierValueType StatsValueList 
+---@field Item EclItem|nil The item, if the tooltip type includes an item.
+---@field Skill FixedString|nil The skill, if the tooltip is a skill type.
+---@field Status EclStatus|nil The status, if the tooltip is a status type.
+
+---@class LeaderLibCustomAttributeTooltipSettings
+---@field Attribute FixedString
+---@field DisplayName TranslatedString
+---@field TooltipElementType TooltipElementType|nil Optional tooltip type to use instead of a stat-oriented one.
+---@field GetTooltipElement (fun(e:LeaderLibCustomAttributeTooltipCallbackEventArgs)) Optional callback to use to build the tooltip element.

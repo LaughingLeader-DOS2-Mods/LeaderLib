@@ -301,7 +301,27 @@ function TableHelpers.SetDefaultOptions(opts, defaultValues)
 	local result = nil
 	if type(opts) == "table" then
 		result = opts
-		setmetatable(result, {__index = defaultValues})
+		local meta = getmetatable(opts)
+		if meta then
+			local inheritedIndex = meta.__index
+			local inheritedIndexType = _type(inheritedIndex)
+			local newMeta = {
+				__index = function (tbl,k)
+					if defaultValues[k] ~= nil then
+						return defaultValues[k]
+					end
+					if inheritedIndexType == "table" then
+						return inheritedIndex[k]
+					elseif inheritedIndexType == "function" then
+						return inheritedIndex(tbl,k)
+					end 
+				end
+			}
+			TableHelpers.AddOrUpdate(newMeta, meta, true)
+			setmetatable(result, newMeta)
+		else
+			setmetatable(result, {__index = defaultValues})
+		end
 	else
 		result = defaultValues
 	end

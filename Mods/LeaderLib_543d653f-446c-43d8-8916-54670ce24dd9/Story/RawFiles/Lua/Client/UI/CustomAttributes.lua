@@ -3,7 +3,16 @@ local _type = type
 ---@class GameHelpersTooltipRegisterAttributeOptions:LeaderLibCustomAttributeTooltipSettings
 ---@field StatType ModifierListType|ModifierListType[]
 
-local function _AddCustomAttributeEntry(statType, opts)
+---@param statType ModifierListType
+---@param opts GameHelpersTooltipRegisterAttributeOptions
+---@param sm StatsRPGStats
+local function _AddCustomAttributeEntry(statType, opts, sm)
+	if sm then
+		local modifier = sm.ModifierLists:GetByName(statType)
+		if not modifier or modifier.Attributes:GetByName(opts.Attribute) == nil then
+			fprint(LOGLEVEL.WARNING, "[GameHelpers.UI.RegisterCustomAttribute] Custom attribute (%s) does not exist in stat type (%s).", opts.Attribute, statType)
+		end
+	end
 	if TooltipHandler.CustomAttributes[statType] == nil then
 		TooltipHandler.CustomAttributes[statType] = {}
 	end
@@ -22,13 +31,14 @@ end
 ---@param opts GameHelpersTooltipRegisterAttributeOptions
 function GameHelpers.UI.RegisterCustomAttribute(opts)
 	assert(_type(opts.Attribute) == "string", "Attribute param must be a string")
+	local sm = Ext.Stats.GetStatsManager()
 	local t = _type(opts.StatType)
 	if t == "string" then
-		_AddCustomAttributeEntry(opts.StatType, opts)
+		_AddCustomAttributeEntry(opts.StatType, opts, sm)
 	elseif t == "table" then
 		for _,v in pairs(opts.StatType) do
 			assert(_type(v) == "string", "StatType param must be a string")
-			_AddCustomAttributeEntry(v, opts)
+			_AddCustomAttributeEntry(v, opts, sm)
 		end
 	else
 		error(("Wrong type (%s) for opts.StatType"):format(t), 2)

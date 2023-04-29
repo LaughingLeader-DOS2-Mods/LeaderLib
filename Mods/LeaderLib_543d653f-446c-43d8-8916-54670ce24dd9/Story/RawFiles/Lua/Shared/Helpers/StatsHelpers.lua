@@ -799,23 +799,39 @@ local function _GetTaggedResistancePenetration(object)
 	return results
 end
 
+---@class GameHelpersStatsGetResistancePenetrationOptions
+---@field SkipTagCheck boolean Skip checking for the deprecated resistance pen tags when calculating the amount.
+---@field SkipEquipmentCheck boolean Skip checking equipment stats when tallying up the total res pen.
+local _DefaultGameHelpersStatsGetResistancePenetrationOptions = {
+	SkipTagCheck = false,
+	SkipEquipmentCheck = false,
+}
+
 ---Get the total amount of resistance penetration for a character or item.  
 ---This is a custom attribute added by LeaderLib (i.e. `FireResistancePenetration`).  
 ---@overload fun(object:ObjectParam):table<DamageType, integer>
 ---@overload fun(object:ObjectParam, damageType:DamageType):integer
 ---@param object ObjectParam
 ---@param damageType DamageType Get the amount for a specific damage type.
----@param skipTagCheck boolean Skip checking for the deprecated resistance pen tags when calculating the amount.
+---@param opts GameHelpersStatsGetResistancePenetrationOptions
 ---@return table<DamageType, integer>
-function GameHelpers.Stats.GetResistancePenetration(object, damageType, skipTagCheck)
+function GameHelpers.Stats.GetResistancePenetration(object, damageType, opts)
+	local options = TableHelpers.SetDefaultOptions(opts, _DefaultGameHelpersStatsGetResistancePenetrationOptions)
 	object = GameHelpers.TryGetObject(object)
 	if not object then
 		return damageType and 0 or {}
 	end
-	local taggedPen = not skipTagCheck and _GetTaggedResistancePenetration(object) or {}
+	local taggedPen = not options.SkipTagCheck and _GetTaggedResistancePenetration(object) or {}
 	if damageType then
 		local attribute = _DamageTypeToResPen[damageType]
-		return (object.Stats[attribute] or 0) + (taggedPen[damageType] or 0)
+		local amount = (object.Stats[attribute] or 0)
+		if not options.SkipEquipmentCheck and GameHelpers.Ext.ObjectIsCharacter(object) then
+			for item in GameHelpers.Character.GetEquipment(object) do
+				local itemPen = GameHelpers.Stats.GetResistancePenetration(item, damageType)
+				amount = amount + itemPen
+			end
+		end
+		return amount + (taggedPen[damageType] or 0)
 	else
 		local results = {}
 		for attribute,dType in pairs(Data.ResistancePenetrationAttributes) do
@@ -825,6 +841,14 @@ function GameHelpers.Stats.GetResistancePenetration(object, damageType, skipTagC
 			end
 			if amount > 0 then
 				results[dType] = amount
+			end
+		end
+		if not options.SkipEquipmentCheck and GameHelpers.Ext.ObjectIsCharacter(object) then
+			for item in GameHelpers.Character.GetEquipment(object) do
+				local itemPen = GameHelpers.Stats.GetResistancePenetration(item)
+				for dType,amount in pairs(itemPen) do
+					results[dType] = (results[dType] or 0) + amount
+				end
 			end
 		end
 		return results

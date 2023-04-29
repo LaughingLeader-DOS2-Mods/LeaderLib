@@ -115,3 +115,65 @@ Data.ResistancePenetrationAttributes = {
 	ShadowResistancePenetration = "Shadow",
 	WaterResistancePenetration = "Water",
 }
+
+local _DamageTypeToResPen = {
+	Physical = "PhysicalResistancePenetration",
+	Piercing = "PiercingResistancePenetration",
+	Corrosive = "CorrosiveResistancePenetration",
+	Magic = "MagicResistancePenetration",
+	Air = "AirResistancePenetration",
+	Earth = "EarthResistancePenetration",
+	Fire = "FireResistancePenetration",
+	Poison = "PoisonResistancePenetration",
+	Shadow = "ShadowResistancePenetration",
+	Water = "WaterResistancePenetration",
+}
+
+---@param object AnyObjectInstanceType
+local function _GetTaggedResistancePenetration(object)
+	local results = {}
+	local tags = GameHelpers.GetAllTags(object, true, true)
+	for tag,_ in pairs(tags) do
+		---@diagnostic disable-next-line
+		local damageType,amount = GameHelpers.ParseResistancePenetrationTag(tag)
+		if damageType then
+			if results[damageType] == nil then
+				results[damageType] = 0
+			end
+			results[damageType] = results[damageType] + amount
+		end
+	end
+	return results
+end
+
+---Get the total amount of resistance penetration for a character or item.  
+---This is a custom attribute added by LeaderLib (i.e. `FireResistancePenetration`).  
+---@overload fun(object:ObjectParam):table<DamageType, integer>
+---@overload fun(object:ObjectParam, damageType:DamageType):integer
+---@param object ObjectParam
+---@param damageType DamageType Get the amount for a specific damage type.
+---@param skipTagCheck boolean Skip checking for the deprecated resistance pen tags when calculating the amount.
+---@return table<DamageType, integer>
+function GameHelpers.Stats.GetResistancePenetration(object, damageType, skipTagCheck)
+	object = GameHelpers.TryGetObject(object)
+	if not object then
+		return damageType and 0 or {}
+	end
+	local taggedPen = not skipTagCheck and _GetTaggedResistancePenetration(object) or {}
+	if damageType then
+		local attribute = _DamageTypeToResPen[damageType]
+		return (object.Stats[attribute] or 0) + (taggedPen[damageType] or 0)
+	else
+		local results = {}
+		for attribute,dType in pairs(Data.ResistancePenetrationAttributes) do
+			local amount = object.Stats[attribute] or 0
+			if taggedPen[damageType] then
+				amount = amount + taggedPen[damageType]
+			end
+			if amount > 0 then
+				results[dType] = amount
+			end
+		end
+		return results
+	end
+end

@@ -977,13 +977,16 @@ function RequestProcessor.HandleCallback(e, requestType, ui, uiType, event, idOr
 		id = statOrWidth
 	end
 
-	local request = _CreateRequest()
-	request.Type = requestType
-	request.UIType = uiType
-
 	if not character then
 		character = _GetClientCharacter()
 	end
+
+	local request = _CreateRequest()
+	request.Type = requestType
+	if character then
+		request.ObjectHandleDouble = _HandleToDouble(character.Handle)
+	end
+	request.UIType = uiType
 
 	RequestProcessor.Tooltip.NextRequest = request
 

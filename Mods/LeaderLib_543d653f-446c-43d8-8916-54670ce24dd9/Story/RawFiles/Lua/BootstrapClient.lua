@@ -1,4 +1,4 @@
-Ext.Require("BootstrapShared.lua")
+Ext.Require("Shared.lua")
 
 Client = Classes.ClientData:Create("")
 

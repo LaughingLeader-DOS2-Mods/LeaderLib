@@ -8,11 +8,10 @@ Ext.Events.SessionLoaded:Subscribe(function (e)
 			local gameSettings = GameSettingsManager.GetSettings()
 			if settings.Global:FlagEquals("LeaderLib_ShowConsumableEffectsEnabled", true) and not gameSettings.Client.HideConsumableEffects then
 				local item = GameHelpers.Client.TryGetItemFromDouble(request.ObjectHandleDouble)
-				if item and item.StatsFromName then
-					local statEntry = item.StatsFromName.StatsEntry
-					local itemType = item.StatsFromName.ModifierListIndex
+				if item and item.StatsFromName and item.StatsFromName.ModifierListIndex == 3 then
 					-- 0 is Weapon, 1 is Armor, 2 is Shield, 3 is Potion, 4 is Object
-					if itemType == 3 and statEntry.UnknownBeforeConsume == "Yes" then
+					local statEntry = item.StatsFromName.StatsEntry --[[@as StatEntryPotion]]
+					if statEntry.UnknownBeforeConsume == "Yes" then
 						changedStats[statEntry.Name] = true
 						hasStatChanges = true
 						statEntry.UnknownBeforeConsume = "No"

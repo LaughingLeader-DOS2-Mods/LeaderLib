@@ -167,6 +167,20 @@ local _ObjectParamNames = {
 	Object = true,
 }
 
+local _RequestTypeObjectParams = {
+	Skill = {Character=true},
+	Status = {Character=true},
+	Item = {Item=true},
+	Stat = {Character=true},
+	Ability = {Character=true},
+	Talent = {Character=true},
+	Tag = {Character=true},
+	CustomStat = {Character=true},
+	Rune = {Item=true, RuneItem=true},
+	Pyramid = {Item=true},
+	PlayerPortrait = {Character=true},
+}
+
 ---@return TooltipRequest
 local function _CreateRequest()
 	local request = {
@@ -177,15 +191,20 @@ local function _CreateRequest()
 		__index = function(tbl,k)
 			local tooltipType = rawget(tbl, "Type")
 			if _ObjectParamNames[k] then
-				local objectHandleDouble = rawget(tbl, "ObjectHandleDouble")
-				if objectHandleDouble then
-					if k == "Character" then
-						return _GetObjectFromDouble(objectHandleDouble, _GetCharacter)
-					elseif k == "Item" or k == "RuneItem" then
-						return _GetObjectFromDouble(objectHandleDouble, _GetItem)
-					elseif "Object" then
-						return _GetObjectFromDouble(objectHandleDouble)
+				local validObjectParams = _RequestTypeObjectParams[tooltipType]
+				if validObjectParams and validObjectParams[k] then
+					local objectHandleDouble = rawget(tbl, "ObjectHandleDouble")
+					if objectHandleDouble then
+						if k == "Character" then
+							return _GetObjectFromDouble(objectHandleDouble, _GetCharacter)
+						elseif k == "Item" or k == "RuneItem" then
+							return _GetObjectFromDouble(objectHandleDouble, _GetItem)
+						elseif "Object" then
+							return _GetObjectFromDouble(objectHandleDouble)
+						end
 					end
+				elseif k == "Character" then
+					return Client:GetCharacter()
 				end
 			else
 				if k == "Owner" and tooltipType == "Item" then

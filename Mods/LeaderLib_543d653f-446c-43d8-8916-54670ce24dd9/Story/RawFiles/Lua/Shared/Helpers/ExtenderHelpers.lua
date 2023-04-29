@@ -1810,3 +1810,46 @@ local _objectTypes = {
 function GameHelpers.Ext.IsObjectType(obj)
 	return _objectTypes[Ext.Types.GetObjectType(obj)] == true
 end
+
+local _CachedTypeChecks = {}
+
+local function _StoreTypeCheck(typeName, member, b)
+	if _CachedTypeChecks[typeName] == nil then
+		_CachedTypeChecks[typeName] = {}
+	end
+	_CachedTypeChecks[typeName][member] = b
+end
+
+local function _HasTypeCheck(typeName, member)
+	if _CachedTypeChecks[typeName] ~= nil then
+		return _CachedTypeChecks[typeName][member] == true
+	end
+	return false
+end
+
+---Returns true if the object is a character or item.
+---@param object userdata
+---@param memberName string
+---@return boolean
+function GameHelpers.Ext.TypeHasMember(object, memberName)
+	local typeName = Ext.Types.GetObjectType(object)
+	if _HasTypeCheck(typeName, memberName) then
+		return true
+	end
+	local typeData = Ext.Types.GetTypeInfo(typeName)
+	if typeData then
+		if typeData.Members[memberName] ~= nil then
+			_StoreTypeCheck(typeName, memberName, true)
+			return true
+		end
+		local parent = typeData.ParentType
+		while parent ~= nil do
+			if parent.Members[memberName] then
+				_StoreTypeCheck(typeName, memberName, true)
+				return true
+			end
+			parent = parent.ParentType
+		end
+	end
+	return false
+end

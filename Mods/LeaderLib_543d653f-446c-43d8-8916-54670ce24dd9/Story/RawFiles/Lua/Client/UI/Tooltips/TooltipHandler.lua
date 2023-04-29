@@ -1,27 +1,23 @@
-if TooltipHandler == nil then
-	TooltipHandler = {}
-end
 
---Global access for mods
-TooltipHandler.Settings = {
-	ChaosDamagePattern = "<font color=\"#C80030\">([%d-%s]+)</font>",
-	---Skills to always avoid formatting damage text for.
-	---@see LeaderLibFeatures#FixChaosDamageDisplay
-	IgnoreDamageFixingSkills = {}
+---🔧**Client-Only**🔧  
+---@class LeaderLibTooltipHandler
+---@field LastItem EclItem|nil
+TooltipHandler = {
+	HasTagTooltipData = false,
+	Settings = {
+		ChaosDamagePattern = "<font color=\"#C80030\">([%d-%s]+)</font>",
+		---Skills to always avoid formatting damage text for.
+		---@see LeaderLibFeatures#FixChaosDamageDisplay
+		IgnoreDamageFixingSkills = {}
+	},
+	---@type table<ModifierListType, LeaderLibCustomAttributeTooltipSettings[]>
+	CustomAttributes = {},
+	---RootTemplate -> Skill -> Enabled
+	---@type table<string,table<string,boolean>>
+	SkillBookAssociatedSkills = {},
+	---@type table<string,TagTooltipData>
+	TagTooltips = {},
 }
-
----@type table<string,TagTooltipData>
-TooltipHandler.TagTooltips = {}
-TooltipHandler.HasTagTooltipData = false
----@type EclItem
-TooltipHandler.LastItem = nil
----RootTemplate -> Skill -> Enabled
----@type table<string,table<string,boolean>>
-TooltipHandler.SkillBookAssociatedSkills = {}
-
----@class TagTooltipData
----@field Title TranslatedString
----@field Description TranslatedString
 
 ---Registers a tag to display on item tooltips.
 ---@param tag string
@@ -71,8 +67,19 @@ Game.Tooltip.RegisterRequestListener("Generic", function (request, ui, uiType, e
 	end
 end, "After")
 
+local function _AppendCustomAttributeElements(request, ui, method, tooltip)
+	local opts = {}
+	setmetatable(opts, {__index = function(_,k) return request[k] end})
+	GameHelpers.Tooltip.SetCustomAttributeElements(request.Character or Client:GetCharacter(), tooltip, request.Type, opts)
+end
+
 local function RegisterTooltipHandlers()
+	Game.Tooltip.RegisterBeforeNotifyListener("Item", _AppendCustomAttributeElements)
+	Game.Tooltip.RegisterBeforeNotifyListener("Skill", _AppendCustomAttributeElements)
+	Game.Tooltip.RegisterBeforeNotifyListener("Status", _AppendCustomAttributeElements)
+
 	local _r = Game.Tooltip.Register
+
 	_r.Item(TooltipHandler.OnItemTooltip)
 	_r.Skill(function (...)
 		HotbarFixer.UpdateSkillRequirements(...)

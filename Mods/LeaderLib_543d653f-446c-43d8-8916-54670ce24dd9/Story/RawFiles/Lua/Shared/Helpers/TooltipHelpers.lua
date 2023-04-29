@@ -738,3 +738,225 @@ function GameHelpers.Tooltip.GetStatusDescriptionParamValues(stat, character)
 	end
 	return paramValues
 end
+
+if _ISCLIENT then
+	---@class GameHelpersTooltipRegisterAttributeOptions:LeaderLibCustomAttributeTooltipSettings
+	---@field StatType ModifierListType|ModifierListType[]
+
+	local function _AddCustomAttributeEntry(statType, opts)
+		if TooltipHandler.CustomAttributes[statType] == nil then
+			TooltipHandler.CustomAttributes[statType] = {}
+		end
+		table.insert(TooltipHandler.CustomAttributes[statType], {
+			Attribute = opts.Attribute,
+			DisplayName = opts.DisplayName,
+			TooltipElementType = opts.TooltipElementType,
+			GetTooltipElement = opts.GetTooltipElement
+		})
+	end
+
+	---Register data for displaying custom attributes in tooltips.  
+	---Attributes must be added via `Ext.Stats.AddAttribute` during `Ext.Events.StatsStructureLoaded`, in `BootstrapModule.lua`.  
+	---🔧**Client-Only**🔧  
+	---@see Ext_Stats.AddAttribute
+	---@param opts GameHelpersTooltipRegisterAttributeOptions
+	function GameHelpers.Tooltip.RegisterCustomAttribute(opts)
+		assert(_type(opts.Attribute) == "string", "Attribute param must be a string")
+		local t = _type(opts.StatType)
+		if t == "string" then
+			_AddCustomAttributeEntry(opts.StatType, opts)
+		elseif t == "table" then
+			for _,v in pairs(opts.StatType) do
+				assert(_type(v) == "string", "StatType param must be a string")
+				_AddCustomAttributeEntry(v, opts)
+			end
+		else
+			error(("Wrong type (%s) for opts.StatType"):format(t), 2)
+		end
+	end
+
+	---@param item EclItem
+	---@param id FixedString
+	---@return SerializableValue|nil
+	local function _TryGetCustomAttributeFromItem(item, id)
+		if GameHelpers.Item.IsObject(item) then
+			if item.StatsFromName then
+				local value = item.StatsFromName.StatsEntry[id]
+				if value ~= nil then
+					return value
+				end
+			end
+		else
+			return item.Stats[id]
+		end
+		return nil
+	end
+
+	---@param stat StatEntryType
+	---@param id FixedString
+	---@return SerializableValue|nil
+	local function _TryGetCustomAttributeFromStat(stat, id)
+		local value = stat[id]
+		if value ~= nil then
+			return value
+		end
+		return nil
+	end
+
+	---@param v LeaderLibCustomAttributeTooltipSettings
+	---@param modifier StatsModifierList
+	---@param statsManager StatsRPGStats
+	---@param value any
+	---@param character EclCharacter
+	---@return TooltipElement|nil
+	local function _GetElementForValue(v, modifier, statsManager, value, character)
+		local attributeIndex = modifier.Attributes.NameToIndex[v.Attribute]
+		---@type ModifierValueType
+		local valueType = statsManager.ModifierValueLists.Elements[attributeIndex].Name
+
+		local element = {Type="StatsBaseValue"}
+		if _type(v.TooltipElementType) == "string" then
+			element.Type = v.TooltipElementType
+		else
+			if valueType == "FixedString" then
+				element.Type = "StatsBaseValue"
+			elseif _type(value) == "number" then
+				element.Type = "StatBoost"
+			end
+		end
+		local spec = Game.Tooltip.TooltipSpecs[element.Type]
+		for _,prop in pairs(spec) do
+			local propName,propType = table.unpack(prop)
+			if propName == "Value" then
+				element.Value = tostring(value)
+			elseif propName == "NumValue" then
+				element.NumValue = value
+			elseif propName == "Label" then
+				if v.DisplayName then
+					element.Label = GameHelpers.Tooltip.ReplacePlaceholders(v.DisplayName, character)
+				else
+					fprint(LOGLEVEL.WARNING, "[GameHelpers.Tooltip.GetCustomAttributeElements] No DisplayName for attribute (%s). Using the attribute ID.", v.Attribute)
+					element.Label = v.Attribute
+				end
+			else
+				if propType == "string" then
+					element[propName] = ""
+				elseif propType == "number" then
+					element[propName] = 0
+				elseif propType == "boolean" then
+					element[propName] = false
+				end
+			end
+		end
+		return element
+	end
+
+	---@class GameHelpersTooltipGetCustomAttributeElementsOptions
+	---@field Item EclItem|nil
+	---@field Skill FixedString|nil
+	---@field Status EclStatus|nil
+
+	---@param character EclCharacter
+	---@param tooltip TooltipData
+	---@param tooltipType TooltipRequestType
+	---@param options GameHelpersTooltipGetCustomAttributeElementsOptions
+	function GameHelpers.Tooltip.SetCustomAttributeElements(character, tooltip, tooltipType, options)
+		local statsManager = Ext.Stats.GetStatsManager()
+		if tooltipType == "Item" then
+			assert(options.Item ~= nil, "options.Item must be set for Item tooltips")
+			local item = options.Item --[[@as EclItem]]
+			if item.StatsFromName then
+				local modifier = statsManager.ModifierLists.Elements[item.StatsFromName.ModifierListIndex+1]
+				local entries = TooltipHandler.CustomAttributes[modifier.Name]
+				if entries then
+					for _,v in pairs(entries) do
+						local b,value = xpcall(_TryGetCustomAttributeFromItem, debug.traceback, item, v.Attribute)
+						if not b then
+							fprint(LOGLEVEL.ERROR, "[LeaderLib] Failed to get custom attribute (%s) on item (%s):\n%s", v.Attribute, GameHelpers.Item.GetItemStat(item), value)
+						else
+							if v.GetTooltipElement then
+								local attributeIndex = modifier.Attributes.NameToIndex[v.Attribute]
+								local valueType = statsManager.ModifierValueLists.Elements[attributeIndex]
+
+								---@type LeaderLibCustomAttributeTooltipCallbackEventArgs
+								local data = {
+									Character = character,
+									Tooltip = tooltip,
+									TooltipType = tooltipType,
+									Item = item,
+									Value = value,
+									Attribute = v.Attribute,
+									Modifier = modifier,
+									ModifierValueType = valueType,
+								}
+								local b2,err = xpcall(v.GetTooltipElement, debug.traceback, data)
+								if not b2 then
+									fprint(LOGLEVEL.ERROR, "[LeaderLib] Failed to get tooltip element for custom attribute (%s) on item (%s):\n%s", v.Attribute, GameHelpers.Item.GetItemStat(item), err)
+								end
+							else
+								local element = _GetElementForValue(v, modifier, statsManager, value, character)
+								if element then
+									tooltip:AppendElementAfterType(element, element.Type)
+								end
+							end
+						end
+					end
+				end
+			end
+		else
+			local stat = nil
+			local attributeType = nil
+			if tooltipType == "Skill" then
+				assert(options.Skill ~= nil, "options.Skill must be set for Skill tooltips")
+				stat = Ext.Stats.Get(options.Skill, nil, false)
+				attributeType = "SkillData"
+			elseif tooltipType == "Status" then
+				assert(options.Status ~= nil, "options.Status must be set for Status tooltips")
+				if not Data.EngineStatus[options.Status.StatusId] then
+					stat = Ext.Stats.Get(options.Status.StatusId, nil, false)
+				end
+				attributeType = "StatusData"
+			end
+			if stat and attributeType then
+				local entries = TooltipHandler.CustomAttributes[attributeType]
+				local modifierIndex = statsManager.ModifierLists.NameToIndex[attributeType]
+				local modifier = statsManager.ModifierLists.Elements[modifierIndex]
+				if entries then
+					for _,v in pairs(entries) do
+						local b,value = xpcall(_TryGetCustomAttributeFromStat, debug.traceback, stat, v.Attribute)
+						if not b then
+							fprint(LOGLEVEL.ERROR, "[LeaderLib] Failed to get custom attribute (%s) on stat (%s):\n%s", v.Attribute, stat.Name, value)
+						else
+							if v.GetTooltipElement then
+								local attributeIndex = modifier.Attributes.NameToIndex[v.Attribute]
+								local valueType = statsManager.ModifierValueLists.Elements[attributeIndex]
+
+								---@type LeaderLibCustomAttributeTooltipCallbackEventArgs
+								local data = {
+									Character = character,
+									Tooltip = tooltip,
+									TooltipType = tooltipType,
+									Skill = options.Skill,
+									Status = options.Status,
+									Value = value,
+									Attribute = v.Attribute,
+									Modifier = modifier,
+									ModifierValueType = valueType,
+								}
+								local b2,err = xpcall(v.GetTooltipElement, debug.traceback, data)
+								if not b2 then
+									fprint(LOGLEVEL.ERROR, "[LeaderLib] Failed to get tooltip element for custom attribute (%s) and stat (%s):\n%s", v.Attribute, stat.Name, err)
+								end
+							else
+								local element = _GetElementForValue(v, modifier, statsManager, value, character)
+								if element then
+									tooltip:AppendElementAfterType(element, element.Type)
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end

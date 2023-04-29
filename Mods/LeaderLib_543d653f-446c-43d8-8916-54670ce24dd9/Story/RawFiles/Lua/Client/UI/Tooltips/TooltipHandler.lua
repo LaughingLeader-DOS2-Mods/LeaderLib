@@ -77,6 +77,7 @@ local function RegisterTooltipHandlers()
 	Game.Tooltip.RegisterBeforeNotifyListener("Item", _AppendCustomAttributeElements)
 	Game.Tooltip.RegisterBeforeNotifyListener("Skill", _AppendCustomAttributeElements)
 	Game.Tooltip.RegisterBeforeNotifyListener("Status", _AppendCustomAttributeElements)
+	Game.Tooltip.RegisterBeforeNotifyListener("Rune", _AppendCustomAttributeElements)
 
 	local _r = Game.Tooltip.Register
 

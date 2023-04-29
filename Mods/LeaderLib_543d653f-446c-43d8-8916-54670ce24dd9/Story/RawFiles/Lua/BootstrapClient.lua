@@ -82,6 +82,7 @@ Ext.Require("Client/QOL/ToggleChain.lua")
 if EnableGameTooltipOverride() then
 	Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 end
+Ext.Require("Client/UI/CustomAttributes.lua")
 Ext.Require("Client/UI/CharacterSheet.lua")
 Ext.Require("Client/UI/ModMenu/_Init.lua")
 Ext.Require("Client/UI/Tooltips/TooltipHandler.lua")
@@ -121,6 +122,47 @@ Ext.RegisterNetListener("LeaderLib_SyncRanSeed", LeaderLib_SyncRanSeed)
 Ext.Events.SessionLoaded:Subscribe(function()
 	if not SettingsManager.LoadedInitially then
 		LoadGlobalSettings()
+	end
+
+	---@param e LeaderLibCustomAttributeTooltipCallbackEventArgs
+	local function _GetResistancePenElement(e)
+		if e.Value > 0 then
+			local damageType = Data.ResistancePenetrationAttributes[e.Attribute]
+			local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
+			if not StringHelpers.IsNullOrWhitespace(resistanceText) then
+				if e.TooltipType == "Item" then
+					e.Tooltip:AppendElementAfterType({
+						Type = "ResistanceBoost",
+						Label = LocalizedText.ItemBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText),
+						Value = e.Value,
+					}, "ResistanceBoost")
+				elseif e.TooltipType == "Status" then
+					e.Tooltip:AppendElementAfterType({
+						Type = "StatusBonus",
+						Label = LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value),
+					}, "StatusBonus")
+				end
+			end
+		end
+	end
+
+	-- for attributeName,_ in pairs(Data.ResistancePenetrationAttributes) do
+	-- 	GameHelpers.Tooltip.RegisterCustomAttribute({
+	-- 		Attribute = attributeName,
+	-- 		GetTooltipElement = _GetResistancePenElement,
+	-- 		StatType = {"Armor", "Shield", "Weapon", "Character", "Potion"}
+	-- 	})
+	-- end
+	if Vars.LeaderDebugMode then
+		GameHelpers.UI.RegisterCustomAttribute({
+			Attribute = "ArmorBoost",
+			GetTooltipElement = function (e)
+				if e.TooltipType == "Rune" and e.Value > 0 then
+					e:UpdateElement("Spaghetti Code: 2")
+				end
+			end,
+			StatType = {"Armor"}
+		})
 	end
 end)
 

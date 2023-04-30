@@ -600,7 +600,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 
 	local damageList = Ext.Stats.NewDamageList()
     damageList:CopyFrom(preDamageList)
-    local hitBlocked = false
+    local hitBlocked = hit.Dodged or hit.Blocked or hit.Missed
 
     --Fix: Temp fix for infinite reflection damage via Shackles of Pain + Retribution. This flag isn't being set or something in v56.
     if hitType == "Reflected" then
@@ -659,7 +659,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         damageMultiplier = damageMultiplier + 0.1
     end
 
-    if not noHitRoll then
+    if not noHitRoll and not hitBlocked then
         local hitChance = _CalculateHitChance(attacker, target)
         local hitRoll = Ext.Utils.Random(0, 99)
         if hitRoll >= hitChance then
@@ -740,6 +740,13 @@ Ext.Events.ComputeCharacterHit:Subscribe(function(e)
         --Fixes hits still hitting if a mod has changed one of these flags
         if hit.Dodged or hit.Blocked or hit.Missed then
             hit.Hit = false
+            if hit.Blocked then
+                hit.DamageList:Clear()
+                hit.TotalDamageDone = 0
+                hit.DamageDealt = 0
+                hit.LifeSteal = 0
+                hit.ArmorAbsorption = 0
+            end
         end
         e.Handled = true
         --Ext.IO.SaveFile(string.format("Dumps/CCH_Hit_%s_%s.json", event.HitType, Ext.Utils.MonotonicTime()), Ext.DumpExport(event.Hit))

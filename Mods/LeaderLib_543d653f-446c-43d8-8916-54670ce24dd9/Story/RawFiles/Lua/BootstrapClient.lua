@@ -145,6 +145,8 @@ Ext.Events.SessionLoaded:Subscribe(function()
 						Type = "StatusBonus",
 						Label = LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value),
 					}, "StatusBonus")
+				elseif e.TooltipType == "Rune" then
+					e:UpdateElement(LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value))
 				end
 			end
 		end
@@ -162,8 +164,20 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		GameHelpers.UI.RegisterCustomAttribute({
 			Attribute = "ArmorBoost",
 			GetTooltipElement = function (e)
-				if e.TooltipType == "Rune" and _ValueIsSet(e.Value) then
-					e:UpdateElement("Spaghetti Code: 2")
+				if not _ValueIsSet(e.Value) then return end
+				if e.TooltipType == "Rune" then
+					e:UpdateElement(("Spaghetti Code: %s"):format(e.Value))
+				elseif e.TooltipType == "Item" then
+					e.Tooltip:AppendElementAfterType({
+						Type="StatBoost",
+						Label = "Spaghetti Code",
+						Value = e.Value
+					}, "StatBoost")
+				elseif e.TooltipType == "Status" then
+					e.Tooltip:AppendElementAfterType({
+						Type = "StatusBonus",
+						Label = ("Spaghetti Code: %s"):format(e.Value),
+					}, "StatusBonus")
 				end
 			end,
 			StatType = {"Armor"}

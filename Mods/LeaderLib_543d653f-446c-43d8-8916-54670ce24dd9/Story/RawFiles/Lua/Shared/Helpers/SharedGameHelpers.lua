@@ -414,10 +414,11 @@ function GameHelpers.ItemHasTag(item, tag)
 end
 
 ---@overload fun(item:EsvItem|EclItem):string[]
+---@overload fun(item:EsvItem|EclItem, inDictionaryFormat:nil, skipStats:boolean):string[]
 ---@param item EsvItem|EclItem
----@param inDictionaryFormat boolean|nil
----@param skipStats boolean|nil Skip checking the stat Tags attribute.
----@return string[]
+---@param inDictionaryFormat boolean
+---@param skipStats boolean Skip checking the stat Tags attribute.
+---@return table<string,boolean>
 function GameHelpers.GetItemTags(item, inDictionaryFormat, skipStats)
 	local tags = {}
 	for _,v in pairs(item:GetTags()) do
@@ -611,6 +612,39 @@ function GameHelpers.ObjectExists(object)
 		end
 	elseif t == "string" or t == "number" then
 		return _tryGetObject(object) ~= nil
+	end
+	return false
+end
+
+---Checks if an item exists.
+---@param item ItemParam
+---@return boolean
+function GameHelpers.ItemExists(item)
+	local t = _type(item)
+	if t == "string" and StringHelpers.IsNullOrWhitespace(item) then
+		return false
+	end
+	if _osirisIsCallable() then
+		if t == "userdata" then
+			if IsHandle(item) then
+				return _getItem(item) ~= nil
+			elseif item.MyGuid then
+				return Osi.ObjectExists(item.MyGuid) == 1
+			end
+		elseif t == "string" then
+			return Osi.ObjectExists(item) == 1
+		elseif t == "number" then
+			return _getItem(item) ~= nil
+		end
+	end
+	if t == "userdata" then
+		if IsHandle(item) then
+			return _getItem(item) ~= nil
+		else
+			return GameHelpers.Ext.ObjectIsItem(item)
+		end
+	elseif t == "string" or t == "number" then
+		return _getItem(item) ~= nil
 	end
 	return false
 end

@@ -153,7 +153,7 @@ Events.Osiris.CanUseItem:Subscribe(function(e)
 		local statsId = GameHelpers.Item.GetItemStat(e.Item)
 		local template = GameHelpers.GetTemplate(e.Item)
 		_lastUsedSkillItems[e.CharacterGUID] = {
-			Item = e.Item,
+			Item = e.ItemGUID,
 			Skills = skills,
 			StatsId = statsId,
 			Template = template,

@@ -462,7 +462,12 @@ end
 ---@param attacker StatCharacter
 ---@param damageMultiplier number
 local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
-    hit.Hit = true
+    --Fixes hits still hitting if a mod has changed one of these flags
+    if hit.Dodged or hit.Blocked or hit.Missed then
+        hit.Hit = false
+    else
+        hit.Hit = true
+    end
     damageList:AggregateSameTypeDamages()
     damageList:Multiply(damageMultiplier)
 
@@ -580,13 +585,13 @@ end
 --- @param attacker StatCharacter
 --- @param weapon CDivinityStatsItem
 --- @param preDamageList DamageList
---- @param hitType HitTypeValues HitType enumeration
+--- @param hitType HitTypeValues
 --- @param noHitRoll boolean
 --- @param forceReduceDurability boolean
 --- @param hit StatsHitDamageInfo
 --- @param alwaysBackstab boolean
---- @param highGroundFlag HighGroundBonus HighGround enumeration
---- @param criticalRoll CriticalRoll CriticalRoll enumeration
+--- @param highGroundFlag HighGroundBonus
+--- @param criticalRoll CriticalRoll
 --- @return StatsHitDamageInfo hit
 local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     local damageMultiplier = 1.0
@@ -696,6 +701,18 @@ HitOverrides._ComputeCharacterHitFunction = ComputeCharacterHit
 --     end
 -- }
 
+--- @param target StatCharacter
+--- @param attacker StatCharacter
+--- @param weapon CDivinityStatsItem
+--- @param damageList DamageList
+--- @param hitType HitTypeValues
+--- @param noHitRoll boolean
+--- @param forceReduceDurability boolean
+--- @param hit StatsHitDamageInfo
+--- @param alwaysBackstab boolean
+--- @param highGroundFlag HighGroundBonus
+--- @param criticalRoll CriticalRoll
+--- @return StatsHitDamageInfo|nil
 function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     if HitOverrides.ComputeOverridesEnabled() then
         ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
@@ -720,6 +737,10 @@ end
 Ext.Events.ComputeCharacterHit:Subscribe(function(e)
     local hit = HitOverrides.ComputeCharacterHit(e.Target, e.Attacker, e.Weapon, e.DamageList, e.HitType, e.NoHitRoll, e.ForceReduceDurability, e.Hit, e.AlwaysBackstab, e.HighGround, e.CriticalRoll)
     if hit then
+        --Fixes hits still hitting if a mod has changed one of these flags
+        if hit.Dodged or hit.Blocked or hit.Missed then
+            hit.Hit = false
+        end
         e.Handled = true
         --Ext.IO.SaveFile(string.format("Dumps/CCH_Hit_%s_%s.json", event.HitType, Ext.Utils.MonotonicTime()), Ext.DumpExport(event.Hit))
         --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})

@@ -1180,6 +1180,16 @@ local forceStatuses = {
 	LEADERLIB_FORCE_PUSH20 = 20,
 }
 
+local _destroyingItems = {}
+
+Events.Osiris.ItemDestroying:Subscribe(function (e)
+	_destroyingItems[e.ItemGUID] = true
+end)
+
+Events.Osiris.ItemDestroyed:Subscribe(function (e)
+	_destroyingItems[e.ItemGUID] = nil
+end)
+
 local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 	local target = _GetObject(targetGUID)
 	local source = _GetObject(sourceGUID)
@@ -1199,14 +1209,23 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 			end
 			table.insert(_PV.Summons[owner.MyGuid], target.MyGuid)
 		end
+		local isItem = false
+		local isDying = false
+		if _destroyingItems[targetGUID] then
+			isItem = true
+			isDying = true
+		else
+			isDying = GameHelpers.ObjectIsDead(target)
+			isItem = GameHelpers.Ext.ObjectIsItem(target)
+		end
 		Events.SummonChanged:Invoke({
 			Summon=target, 
 			SummonGUID=target.MyGuid,
 			Owner=owner,
 			OwnerGUID=owner and owner.MyGuid or nil,
-			IsDying=false,
-			IsItem=GameHelpers.Ext.ObjectIsItem(target)
-		})
+			IsDying=isDying,
+			IsItem=isItem
+		}, not isDying)
 	end
 	
 	local status = target:GetStatus(statusID)

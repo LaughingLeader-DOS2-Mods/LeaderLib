@@ -96,14 +96,15 @@ local function OnObjectDying(obj)
 		end
 	end
 	if isSummon then
+		local isItem = target and GameHelpers.Ext.ObjectIsItem(target) or false
 		Events.SummonChanged:Invoke({
 			Summon=target or summonGUID,
 			SummonGUID=summonGUID,
 			Owner=owner,
 			OwnerGUID=ownerGUID,
 			IsDying=true,
-			IsItem=target and GameHelpers.Ext.ObjectIsItem(target) or false
-		})
+			IsItem=isItem
+		}, true)
 		_SanitizeSummonsData()
 	end
 	if target and GameHelpers.Ext.ObjectIsCharacter(target) then

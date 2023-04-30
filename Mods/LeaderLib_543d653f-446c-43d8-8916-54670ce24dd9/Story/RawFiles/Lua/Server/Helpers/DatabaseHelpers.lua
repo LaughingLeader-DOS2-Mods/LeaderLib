@@ -317,3 +317,14 @@ end
 function GameHelpers.DB.GetAllGuids(name, arity, skipUnpack)
 	return GameHelpers.DB.GetAllEntries(name, arity, true, skipUnpack)
 end
+
+local function _TryDelete(id, ...)
+	Osi[id]:Delete(...)
+end
+
+---Simple helper to wrap Osi DB deletion in a pcall, to ignore any errors (DB not existing etc).
+---@param id string
+---@param ... OsirisValue
+function GameHelpers.DB.TryDelete(id, ...)
+	return pcall(_TryDelete, id, ...)
+end

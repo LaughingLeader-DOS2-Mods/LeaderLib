@@ -10,7 +10,8 @@ local function _AddCustomAttributeEntry(statType, opts, sm)
 	if sm then
 		local modifier = sm.ModifierLists:GetByName(statType)
 		if not modifier or modifier.Attributes:GetByName(opts.Attribute) == nil then
-			fprint(LOGLEVEL.WARNING, "[GameHelpers.UI.RegisterCustomAttribute] Custom attribute (%s) does not exist in stat type (%s).", opts.Attribute, statType)
+			fprint(LOGLEVEL.WARNING, "[GameHelpers.UI.RegisterCustomAttribute] Custom attribute (%s) does not exist in stat type (%s). Skipping registration.", opts.Attribute, statType)
+			return
 		end
 	end
 	if TooltipHandler.CustomAttributes[statType] == nil then
@@ -208,7 +209,7 @@ local function _AddRuneCustomAttributes(item, statsManager, character, tooltip, 
 	end
 	local runeEffect = tooltip:GetElement("RuneEffect")
 	local runeSlots = tooltip:GetElements("RuneSlot")
-	if runeEffect and item.StatsFromName.ModifierListIndex == 4 then
+	if runeEffect and item.StatsFromName.ModifierListIndex == 4 then -- Object
 		local runeStat = item.StatsFromName.StatsEntry --[[@as StatEntryObject]]
 		if runeStat then
 			local weaponBoost = Ext.Stats.Get(runeStat.RuneEffectWeapon, nil, false)

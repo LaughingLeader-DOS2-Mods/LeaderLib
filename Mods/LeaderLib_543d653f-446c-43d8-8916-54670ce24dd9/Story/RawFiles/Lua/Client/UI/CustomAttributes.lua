@@ -423,23 +423,41 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.uiCraft, "setCraftResultHandle", fu
 	_lastRuneSlot = runeSlot
 end, "Before")
 
+local function _TryGetRuneTarget(runesPanel_mc)
+	local result = nil
+	if runesPanel_mc.targetHit_mc ~= nil then
+		result = runesPanel_mc.targetHit_mc.itemHandle
+		if result and result ~= 0 then
+			return result
+		end
+	end
+	if runesPanel_mc.inventory_mc ~= nil and runesPanel_mc.inventory_mc.selectecItemMC ~= nil then
+		result = runesPanel_mc.inventory_mc.selectecItemMC.itemHandle
+		if result and result ~= 0 then
+			return result
+		end
+	end
+	return _lastRuneDoubleHandle
+end
+
 Ext.RegisterUITypeInvokeListener(Data.UIType.uiCraft, "updateRuneSlots", function (ui, event, ...)
 	local this = ui:GetRoot()
 	local arr = this.runeslotUpdateList
 	local runesPanel_mc = this.craftPanel_mc.runesPanel_mc
-	local doubleHandle = runesPanel_mc.targetHit_mc.itemHandle
-	if doubleHandle == nil or doubleHandle == 0 then
-		doubleHandle = _lastRuneDoubleHandle
+	local doubleHandle = _TryGetRuneTarget(runesPanel_mc)
+	if doubleHandle == 0 or doubleHandle == nil then
+		return
 	end
-	if doubleHandle == nil or doubleHandle == 0 and runesPanel_mc.inventory_mc.selectecItemMC then
-		doubleHandle = runesPanel_mc.inventory_mc.selectecItemMC.itemHandle
-	end
-	local runeSlot = math.max(1, runesPanel_mc.targetHit_mc.contextParam or _lastRuneSlot)
 	local item = GameHelpers.Client.TryGetItemFromDouble(doubleHandle)
 	if not item then
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:CustomAttributes:uiCraft] Failed to get item from runesPanel_mc.targetHit_mc.itemHandle(%s)", doubleHandle)
 		return
 	end
+	local runeSlot = _lastRuneSlot
+	if runesPanel_mc.targetHit_mc ~= nil then
+		runeSlot = runesPanel_mc.targetHit_mc.contextParam or _lastRuneSlot
+	end
+	runeSlot = math.max(1, runeSlot)
 	local character = Client:GetCharacter()
 	local boostEntry = item.Stats.DynamicStats[2+runeSlot]
 	---@type StatEntryObject

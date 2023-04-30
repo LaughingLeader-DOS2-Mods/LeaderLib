@@ -290,6 +290,42 @@ function HitData:ClearAllDamage()
 	self:ApplyDamageList(true)
 end
 
+local _MissedClearedHitProperties = {
+	DamageDealt = 0,
+	ArmorAbsorption = 0,
+	LifeSteal = 0,
+	ProcWindWalker = false,
+	-- CriticalHit = false,
+	-- DoT = false,
+	-- Backstab = false,
+	-- Bleeding = false,
+	-- Burning = false,
+	-- Poisoned = false,
+	-- Reflection = false,
+	DamagedMagicArmor = false,
+	DamagedPhysicalArmor = false,
+	DamagedVitality = false,
+}
+
+---Make the hit miss the target by setting `Hit = false` and `Missed = true`.  
+---This also clears the damage / updates the related properties to represent a missed hit.  
+---@param skipUpdatingProperties? boolean Skip clearing the damage and adjusting the other hit properties.
+function HitData:ForceMiss(skipUpdatingProperties)
+	if self.HitRequest then
+		self.HitRequest.Missed = true
+		self.HitRequest.Hit = false
+		if not skipUpdatingProperties then
+			for k,v in pairs(_MissedClearedHitProperties) do
+				self.HitRequest[k] = v
+			end
+		end
+	end
+	if not skipUpdatingProperties then
+		self:ClearAllDamage()
+		self.Damage = 0
+	end
+end
+
 ---Sets the amount of LifeSteal done.
 ---@param amount integer
 function HitData:SetLifeSteal(amount)

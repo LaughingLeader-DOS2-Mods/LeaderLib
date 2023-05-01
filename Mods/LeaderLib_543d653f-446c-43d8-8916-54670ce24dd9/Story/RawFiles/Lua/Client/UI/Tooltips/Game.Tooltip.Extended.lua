@@ -40,7 +40,8 @@ end
 ---@class ExtenderTooltipAPI
 local _TT = {
 	_Internal = {
-		HighPriority = {Priority = 1000}
+		 -- Sort of a unique priority, in case someone wants to unsubscribe us using indexes
+		HighPriority = {Priority = 1234}
 	},
 }
 

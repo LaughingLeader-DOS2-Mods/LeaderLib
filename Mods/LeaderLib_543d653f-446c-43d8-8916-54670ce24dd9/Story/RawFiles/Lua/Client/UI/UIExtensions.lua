@@ -183,7 +183,7 @@ local defaultUIFlags = Data.DefaultUIFlags
 ---@param skipCheck boolean|nil
 ---@return UIObject
 function UIExtensions.SetupInstance(skipCheck)
-	-- if Ext.GetGameState() == "Menu" then
+	-- if _GS() == "Menu" then
 	-- 	Ext.Utils.PrintError("[UIExtensions.SetupInstance] Game not ready yet.")
 	-- end
 	local instance = nil

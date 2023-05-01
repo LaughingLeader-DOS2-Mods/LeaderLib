@@ -8,7 +8,7 @@ end
 
 Ext.Osiris.RegisterListener("UserConnected", 3, "after", function(id, username, profileId)
 	Vars.Users[profileId] = {ID = id, Name=username}
-	if Ext.GetGameState() == "Running" then
+	if _GS() == "Running" then
 		if GameHelpers.IsLevelType(LEVELTYPE.GAME) and Osi.GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
 			Timer.Start("LeaderLib_UnlockCharacterInventories", 1500)
 		end
@@ -75,7 +75,7 @@ end
 GameHelpers._INTERNAL.SanitizeSummonsData = _SanitizeSummonsData
 
 local function OnObjectDying(obj)
-	if not Ext.GetGameState() == "Running" then
+	if not _GS() == "Running" then
 		return
 	end
 	local summonGUID = StringHelpers.GetUUID(obj)

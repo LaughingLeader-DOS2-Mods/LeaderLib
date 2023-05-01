@@ -245,7 +245,7 @@ end
 function LeaderLibGameSettings:ApplyAPChanges()
 	local settings = self.Settings.APSettings.Player
 
-	if Ext.GetGameState() == "Running" or SharedData.RegionData.Current ~= "" then
+	if _GS() == "Running" or SharedData.RegionData.Current ~= "" then
 		for player in GameHelpers.Character.GetPlayers() do
 			local stats = {}
 			local baseStat = Ext.Stats.Get(player.Stats.Name, nil, false)

@@ -45,7 +45,7 @@ local Init = function()
 				if string.find(txt, "Experience:", 1, true) then
 					return
 				end
-			-- elseif lastEvent == event and Ext.GetGameState() ~= "Running" then
+			-- elseif lastEvent == event and _GS() ~= "Running" then
 			-- 	return
 			end
 			if self.PrintParams then

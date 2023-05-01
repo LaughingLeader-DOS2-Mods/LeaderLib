@@ -150,7 +150,7 @@ function QuestData:Create(id, params)
 		__tostring = _idToString
 	})
 	_questRegistration[#_questRegistration+1] = this
-	-- if _OSIRIS() and Ext.GetGameState() == "Running" then
+	-- if _OSIRIS() and _GS() == "Running" then
 	-- end
     return this
 end

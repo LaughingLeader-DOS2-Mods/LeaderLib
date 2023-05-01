@@ -137,7 +137,7 @@ function Autosaving_Internal_UpdateDialogVarMenuSelectedOption(inst, dialogVar, 
 end
 
 Timer.Subscribe("LeaderLib_UnlockCharacterInventories", function (e)
-	if GameHelpers.IsLevelType(LEVELTYPE.GAME) and Ext.GetGameState() == "Running" then
+	if GameHelpers.IsLevelType(LEVELTYPE.GAME) and _GS() == "Running" then
 		GameHelpers.Net.Broadcast("LeaderLib_UnlockCharacterInventory")
 	end
 end)

@@ -52,7 +52,7 @@ local _ValidStates = {
 	Paused = true,
 	GameMasterPause = true,
 }
-local _canUpdate = _ValidStates[Ext.GetGameState()] == true
+local _canUpdate = _ValidStates[_GS()] == true
 
 Ext.Events.GameStateChanged:Subscribe(function (e)
 	_canUpdate = _ValidStates[e.ToState] == true

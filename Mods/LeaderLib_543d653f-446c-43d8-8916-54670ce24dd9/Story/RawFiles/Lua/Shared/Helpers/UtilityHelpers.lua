@@ -392,7 +392,7 @@ if not _ISCLIENT then
 
 	local function _OnTick(e)
 		local knockupData = _PV.KnockupData
-		if Ext.GetGameState() == "Running" and knockupData and knockupData.Active then
+		if _GS() == "Running" and knockupData and knockupData.Active then
 			local len = #knockupData.ObjectData
 			local positionSync = {}
 			local positionSyncLen = 0

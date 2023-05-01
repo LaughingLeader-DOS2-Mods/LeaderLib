@@ -24,7 +24,7 @@ end
 function SettingsManager.Remove(uuid)
 	if GlobalSettings.Mods[uuid] ~= nil then
 		GlobalSettings.Mods[uuid] = nil
-		if Ext.GetGameState() == "Running" then
+		if _GS() == "Running" then
 			SettingsManager.SyncGlobalSettings()
 		end
 	end
@@ -204,7 +204,7 @@ function LoadGlobalSettings(skipEventInvoking)
 		if skipEventInvoking ~= true then
 			if _ISCLIENT or canCallOsiris then
 				Events.GlobalSettingsLoaded:Invoke({Settings=GlobalSettings, FromSync=false})
-			elseif not _ISCLIENT and Ext.GetGameState() == "Running" then
+			elseif not _ISCLIENT and _GS() == "Running" then
 				Ext.OnNextTick(function (e)
 					if Ext.Osiris.IsCallable() then
 						for uuid,v in pairs(GlobalSettings.Mods) do

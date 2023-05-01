@@ -292,7 +292,7 @@ end
 
 ---@param locked boolean|nil Defaults to false.
 function GameHelpers.Client.SetInventoryLocked(locked)
-	if Ext.GetGameState() == "Running" then
+	if _GS() == "Running" then
 		if type(locked) ~= "boolean" then
 			locked = false
 		end

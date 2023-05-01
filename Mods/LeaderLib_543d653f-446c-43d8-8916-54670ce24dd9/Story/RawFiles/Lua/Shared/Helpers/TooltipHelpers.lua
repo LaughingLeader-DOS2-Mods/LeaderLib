@@ -285,7 +285,7 @@ local function _ReplacePlaceholders(str, character)
 	local character = GameHelpers.GetCharacter(character)
 	if character == nil then
 		if _ISCLIENT then
-			if Ext.GetGameState() ~= "Menu" then
+			if _GS() ~= "Menu" then
 				if Client then
 					character = Client:GetCharacter()
 				else

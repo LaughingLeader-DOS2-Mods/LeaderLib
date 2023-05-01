@@ -245,7 +245,7 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 			stopPropagation = true
 		end
 
-		if Ext.GetGameState() == "Running" then
+		if _GS() == "Running" then
 			if not UIExtensions.MouseEnabled and evt.Press and eventName == "FlashLeftMouse" or eventName == "FlashRightMouse" then
 				UIExtensions.Invoke("fireMouseClicked", eventName)
 			end

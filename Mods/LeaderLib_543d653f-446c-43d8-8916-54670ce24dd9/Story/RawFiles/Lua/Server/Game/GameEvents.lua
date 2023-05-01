@@ -118,7 +118,7 @@ local function OnInitialized(region, isRunning)
 		Vars.PostLoadEnableLuaListeners = false
 	end
 
-	if isRunning == true or Ext.GetGameState() == "Running" then
+	if isRunning == true or _GS() == "Running" then
 		InvokeOnInitializedCallbacks(region)
 		if Osi.GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1
 		and GameHelpers.IsLevelType(LEVELTYPE.GAME) then

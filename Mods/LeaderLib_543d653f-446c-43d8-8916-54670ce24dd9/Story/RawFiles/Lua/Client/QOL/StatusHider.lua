@@ -400,7 +400,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.enemyHealthBar, "hide", function(ui
 end)
 
 function StatusHider.RefreshStatusVisibility()
-	if Ext.GetGameState() == "Running" then
+	if _GS() == "Running" then
 		RequestPlayerInfoRefresh()
 		RequestHealthbarRefresh()
 	end

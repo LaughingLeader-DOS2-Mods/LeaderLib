@@ -4,6 +4,15 @@ local _EXTVERSION = Ext.Utils.Version()
 local _DEBUG = Ext.Debug.IsDeveloperMode()
 local _ISCLIENT = Ext.IsClient()
 
+---@return EsvGameState gameState
+function _GS()
+	if _ISCLIENT then
+		return Ext.Client.GetGameState()
+	else
+		return Ext.Server.GetGameState()
+	end
+end
+
 ---@class LeaderLibDebug
 Debug = {
 	StoreDebugInfo = function ()

@@ -70,7 +70,7 @@ end
 
 ---region Tick Listeners
 
-local _state = tostring(Ext.GetGameState())
+local _state = tostring(_GS())
 
 Ext.Events.GameStateChanged:Subscribe(function (e)
 	_state = tostring(e.ToState)

@@ -1,5 +1,5 @@
 local function CanInvokeListener(anyLevelType)
-	return Vars.Initialized == true and Ext.GetGameState() == "Running" and (anyLevelType or ((not anyLevelType and SharedData.RegionData.LevelType == LEVELTYPE.GAME)))
+	return Vars.Initialized == true and _GS() == "Running" and (anyLevelType or ((not anyLevelType and SharedData.RegionData.LevelType == LEVELTYPE.GAME)))
 end
 
 local _OsirisEventSubscribe = Ext.Osiris.RegisterListener

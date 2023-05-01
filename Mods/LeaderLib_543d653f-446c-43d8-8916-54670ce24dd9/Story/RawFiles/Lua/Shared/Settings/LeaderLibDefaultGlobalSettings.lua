@@ -233,7 +233,7 @@ if Ext.IsServer() then
 		end
 	end)
 	settings.Global.Flags.LeaderLib_FriendlyFireEnabled:Subscribe(function(e)
-		if Ext.GetGameState() == "Running" then
+		if _GS() == "Running" then
 			TagManager:TagAll(e.Value)
 		end
 	end)
@@ -258,7 +258,7 @@ if Ext.IsServer() then
 		end
 	end)
 	settings.Global.Flags.LeaderLib_AutoIdentifyItemsEnabled:Subscribe(function(e)
-		if e.Value and Ext.GetGameState() == "Running" then
+		if e.Value and _GS() == "Running" then
 			fprint(LOGLEVEL.TRACE, "[LeaderLib] Identifying the party's items...")
 			local total = 0
 			for player in GameHelpers.Character.GetPlayers() do

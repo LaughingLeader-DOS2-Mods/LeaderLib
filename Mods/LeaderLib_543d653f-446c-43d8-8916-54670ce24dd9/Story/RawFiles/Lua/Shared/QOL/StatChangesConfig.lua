@@ -55,7 +55,7 @@ local function _ParseSpecialKey(id, tbl)
 end
 
 function StatChangesConfig:_Apply()
-	local state = tostring(Ext.GetGameState())
+	local state = tostring(_GS())
 	local doSync = not _ISCLIENT and _validSyncStates[state]
 	for id,attributes in pairs(self._Data) do
 		if not _ParseSpecialKey(id, attributes) then

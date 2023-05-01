@@ -803,7 +803,7 @@ end
 ---@return LEVELTYPE
 function GameHelpers.GetLevelType(levelName)
 	if not _ranCachedLevels then
-		if Ext.GetGameState() == "Running" then
+		if _GS() == "Running" then
 			_cacheAllModLevels()
 		else
 			if levelName == "SYS_Character_Creation_A" then

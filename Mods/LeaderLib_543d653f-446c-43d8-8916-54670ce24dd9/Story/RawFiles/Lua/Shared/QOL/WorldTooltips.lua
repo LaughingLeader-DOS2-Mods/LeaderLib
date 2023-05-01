@@ -92,7 +92,7 @@ else
 	function WorldTooltips.UpdateWorldItems(forceResync)
 		Timer.Cancel("Timers_LeaderLib_WorldTooltips_UpdateItems")
 
-		local state = tostring(Ext.GetGameState())
+		local state = tostring(_GS())
 
 		--Don't try and modify items during Sync/etc
 		if _ValidUpdateStates[state] and WorldTooltips:IsEnabled() then
@@ -132,7 +132,7 @@ else
 
 	Ext.Osiris.RegisterListener("ItemEnteredRegion", Data.OsirisEvents.ItemEnteredRegion, "after", function(uuid, region)
 		--Sync state safety
-		if _ValidUpdateStates[Ext.GetGameState()] and WorldTooltips:IsEnabled() then
+		if _ValidUpdateStates[_GS()] and WorldTooltips:IsEnabled() then
 			WorldTooltips:OnItemEnteredWorld(GameHelpers.GetItem(uuid))
 		end
 	end)

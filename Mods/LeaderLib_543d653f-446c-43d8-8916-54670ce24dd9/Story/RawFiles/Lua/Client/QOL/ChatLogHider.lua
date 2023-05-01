@@ -1,4 +1,4 @@
-local _currentState = Ext.GetGameState()
+local _currentState = _GS()
 
 Ext.Events.GameStateChanged:Subscribe(function (e)
 	_currentState = e.ToState

@@ -227,7 +227,7 @@ if not _ISCLIENT then
 	}
 
 	local function OnSyncTimer()
-		local state = tostring(Ext.GetGameState())
+		local state = tostring(_GS())
 		if not _validSyncStates[state] then
 			syncOnGameState = true
 			return
@@ -268,7 +268,7 @@ if not _ISCLIENT then
 		SharedData.RegionData.State = REGIONSTATE.GAME
 		GameHelpers.Data.SetRegion(region)
 		Events.RegionChanged:Invoke(_GetRegionChangedEventData(region))
-		if Ext.GetGameState() ~= "Running" then
+		if _GS() ~= "Running" then
 			GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
 		end
 	end)
@@ -277,7 +277,7 @@ if not _ISCLIENT then
 		SharedData.RegionData.State = REGIONSTATE.ENDED
 		GameHelpers.Data.SetRegion(region)
 		Events.RegionChanged:Invoke(_GetRegionChangedEventData(region))
-		if Ext.GetGameState() ~= "Running" then
+		if _GS() ~= "Running" then
 			GameHelpers.Net.Broadcast("LeaderLib_SharedData_SetRegionData", SharedData.RegionData)
 		end
 	end)

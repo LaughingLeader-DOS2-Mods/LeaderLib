@@ -5,7 +5,7 @@ function EnableFeature(id)
 	if Features[id] ~= true then
 		Features[id] = true
 		Events.FeatureChanged:Invoke({ID=id, Enabled = true})
-		if not isClient and Ext.GetGameState() == "Running" then
+		if not isClient and _GS() == "Running" then
 			GameHelpers.Net.Broadcast("LeaderLib_EnableFeature", id)
 		end
 	end
@@ -16,7 +16,7 @@ function DisableFeature(id)
 	if Features[id] ~= false then
 		Features[id] = false
 		Events.FeatureChanged:Invoke({ID=id, Enabled = false})
-		if not isClient and Ext.GetGameState() == "Running" then
+		if not isClient and _GS() == "Running" then
 			GameHelpers.Net.Broadcast("LeaderLib_DisableFeature", id)
 		end
 	end

@@ -1,3 +1,29 @@
+local _DEBUG = Ext.Debug.IsDeveloperMode()
+
+local function _MaybeUnsubscribeGameTooltip(evt)
+	local targetIndex = nil
+	local total = 0
+	local cur = evt.First
+	while cur ~= nil do
+		if cur.Priority == 999 then
+			total = total + 1
+			targetIndex = cur.Index
+		end
+		cur = cur.Next
+	end
+	if targetIndex and total == 1 then
+		if _DEBUG then
+			Ext.Utils.PrintError("[LeaderLib] Unsubscribed Game.Tooltip from event", evt.Name, targetIndex)
+		end
+		evt:Unsubscribe(targetIndex)
+	end
+end
+
+--Not a big deal if these can't unsubscribe (if another mod subscribed at 999 priority), since _ttHooks:Init() shouldn't get called.
+_MaybeUnsubscribeGameTooltip(Ext.Events.GameStateChanged)
+_MaybeUnsubscribeGameTooltip(Ext.Events.SessionLoaded)
+_MaybeUnsubscribeGameTooltip(Ext.Events.UIObjectCreated)
+
 Ext.Require("Shared.lua")
 
 Client = Classes.ClientData:Create("")
@@ -124,7 +150,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		LoadGlobalSettings()
 	end
 
-	if Ext.Utils.Version() >= 59 then
+	if Ext.Utils.Version() >= 58 then
 
 		local function _ValueIsSet(x)
 			return x and x > 0

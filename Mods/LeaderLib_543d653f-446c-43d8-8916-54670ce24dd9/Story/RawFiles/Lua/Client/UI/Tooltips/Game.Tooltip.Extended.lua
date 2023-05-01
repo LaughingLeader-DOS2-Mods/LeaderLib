@@ -760,92 +760,6 @@ function _TT.DebugTooltipEncoding(ui)
 	_Print("Encoding matches: ", _Stringify(parsed2) == _Stringify(parsed))
 end
 
----@class TooltipRequest:table
----@field Type TooltipRequestType
----@field UIType integer The UI type ID for the UI that initially called for a tooltip.
----@field TooltipUIType integer The UI type ID for the tooltip UI.
----@field ObjectHandleDouble number|nil
-
----@class TooltipItemRequest:TooltipRequest
----@field Item EclItem
----@field Character EclCharacter The client-side character.
-
----@class TooltipPyramidRequest:TooltipRequest
----@field Item EclItem
----@field Character EclCharacter The client-side character.
-
----@class TooltipRuneRequest:TooltipRequest
----@field Item EclItem
----@field Character EclCharacter The client-side character.
----@field Rune StatEntryObject The rune stat entry.
----@field Slot integer
----@field StatsId string The rune stat id.
-
----@class TooltipSkillRequest:TooltipRequest
----@field Character EclCharacter
----@field Skill string
-
----@class TooltipStatusRequest:TooltipRequest
----@field Character EclCharacter
----@field Status EclStatus
----@field StatusId string
-
----@class TooltipStatRequest:TooltipRequest
----@field Character EclCharacter
----@field Stat string
-
----@class TooltipAbilityRequest:TooltipRequest
----@field Character EclCharacter
----@field Ability string
-
----@class TooltipTalentRequest:TooltipRequest
----@field Character EclCharacter
----@field Talent string
-
----@class TooltipTagRequest:TooltipRequest
----@field Character EclCharacter
----@field Tag string
----@field Category string
-
----@class TooltipCustomStatRequest:TooltipRequest
----@field Character EclCharacter
----@field Stat number The stat handle.
----@field StatIndex integer The stat index in the characterSheet array.
----@field StatData {ID:string, __tostring:fun(tbl:table):string}|nil Custom stats data that returns a string ID via the metamethod __tostring. Must be implemented by a mod, otherwise this is nil.
-
----@class TooltipSurfaceRequest:TooltipRequest
----@field Character EclCharacter
----@field Ground string|nil
----@field Cloud string|nil
-
----@class TooltipGenericRequest:TooltipRequest
----@field Text string
----@field X number|nil
----@field Y number|nil
----@field Width number|nil
----@field Height number|nil
----@field Side string|nil
----@field AllowDelay boolean|nil
----@field AnchorEnum integer|nil
----@field BackgroundType integer|nil
----@field IsCharacterTooltip boolean|nil
-
----@class TooltipWorldRequest:TooltipRequest
----@field Text string Set this to change the resulting world tooltip text.
----@field X number
----@field Y number
----@field IsFromItem boolean
----@field Item EclItem|nil
-
----@class TooltipPlayerPortraitRequest:TooltipRequest
----@field Text string Set this to change the resulting tooltip text.
----@field X number
----@field Y number
----@field Width number|nil
----@field Height number|nil
----@field Side string|nil
----@field Character EclCharacter
-
 local previousListeners = {}
 
 ---@class TooltipHooks
@@ -2180,11 +2094,9 @@ _TT.Register = {
 	end,
 }
 
----Register a function to call when a tooltip occurs.
----Examples:
----_TT.RegisterListener("Skill", nil, myFunction) - Register a function for skill type tooltips.
----_TT.RegisterListener("Status", "HASTED", myFunction) - Register a function for a HASTED status tooltip.
----_TT.RegisterListener(myFunction) - Register a function for every kind of tooltip.
+---Register a function to call when a tooltip occurs.  
+---*Use `Game.Tooltip.Register` for annotated callback types.*  
+---Examples:<p>Game.Tooltip.RegisterListener("Skill", nil, myFunction) - Register a function for skill type tooltips.<br>Game.Tooltip.RegisterListener("Status", "HASTED", myFunction) - Register a function for a HASTED status tooltip.<br>Game.Tooltip.RegisterListener(myFunction) - Register a function for every kind of tooltip.</p>
 ---@param tooltipTypeOrCallback TooltipRequestType|function The tooltip type, such as "Skill".
 ---@param idOrNil string|function|nil The tooltip ID, such as "Projectile_Fireball".
 ---@param callbackOrNil function|nil If the first two parameters are set, this is the function to invoke.
@@ -2326,6 +2238,93 @@ Ext.Events.SessionLoaded:Subscribe(_TT._Internal.EnableHooksAfterSessionLoaded, 
 Ext.Events.UIObjectCreated:Subscribe(_TT._Internal.OnUIObjectCreated, _TT._Internal.HighPriority)
 
 --#region Annotations
+
+
+---@class TooltipRequest:table
+---@field Type TooltipRequestType
+---@field UIType integer The UI type ID for the UI that initially called for a tooltip.
+---@field TooltipUIType integer The UI type ID for the tooltip UI.
+---@field ObjectHandleDouble number|nil
+
+---@class TooltipItemRequest:TooltipRequest
+---@field Item EclItem
+---@field Character EclCharacter The client-side character.
+
+---@class TooltipPyramidRequest:TooltipRequest
+---@field Item EclItem
+---@field Character EclCharacter The client-side character.
+
+---@class TooltipRuneRequest:TooltipRequest
+---@field Item EclItem
+---@field Character EclCharacter The client-side character.
+---@field Rune StatEntryObject The rune stat entry.
+---@field Slot integer
+---@field StatsId string The rune stat id.
+
+---@class TooltipSkillRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Skill string
+
+---@class TooltipStatusRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Status EclStatus
+---@field StatusId string
+
+---@class TooltipStatRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Stat string
+
+---@class TooltipAbilityRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Ability string
+
+---@class TooltipTalentRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Talent string
+
+---@class TooltipTagRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Tag string
+---@field Category string
+
+---@class TooltipCustomStatRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Stat number The stat handle.
+---@field StatIndex integer The stat index in the characterSheet array.
+---@field StatData {ID:string, __tostring:fun(tbl:table):string}|nil Custom stats data that returns a string ID via the metamethod __tostring. Must be implemented by a mod, otherwise this is nil.
+
+---@class TooltipSurfaceRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Ground string|nil
+---@field Cloud string|nil
+
+---@class TooltipGenericRequest:TooltipRequest
+---@field Text string
+---@field X number|nil
+---@field Y number|nil
+---@field Width number|nil
+---@field Height number|nil
+---@field Side string|nil
+---@field AllowDelay boolean|nil
+---@field AnchorEnum integer|nil
+---@field BackgroundType integer|nil
+---@field IsCharacterTooltip boolean|nil
+
+---@class TooltipWorldRequest:TooltipRequest
+---@field Text string Set this to change the resulting world tooltip text.
+---@field X number
+---@field Y number
+---@field IsFromItem boolean
+---@field Item EclItem|nil
+
+---@class TooltipPlayerPortraitRequest:TooltipRequest
+---@field Text string Set this to change the resulting tooltip text.
+---@field X number
+---@field Y number
+---@field Width number|nil
+---@field Height number|nil
+---@field Side string|nil
+---@field Character EclCharacter
 
 ---@alias TooltipElementType string|"AbilityBoost"|"AbilityDescription"|"AbilityTitle"|"AccuracyBoost"|"APCostBoost"|"APMaximumBoost"|"APRecoveryBoost"|"APStartBoost"|"ArmorBoost"|"ArmorSet"|"ArmorSlotType"|"ArmorValue"|"Blocking"|"CanBackstab"|"ChanceToHitBoost"|"ConsumableDamage"|"ConsumableDuration"|"ConsumableEffect"|"ConsumableEffectUknown"|"ConsumablePermanentDuration"|"ContainerIsLocked"|"CritChanceBoost"|"DamageBoost"|"DodgeBoost"|"Durability"|"EmptyRuneSlot"|"Engraving"|"EquipmentUnlockedSkill"|"Equipped"|"ExtraProperties"|"Flags"|"IsQuestItem"|"ItemAttackAPCost"|"ItemDescription"|"ItemGoldValue"|"ItemLevel"|"ItemName"|"ItemRarity"|"ItemRequirement"|"ItemUseAPCost"|"ItemWeight"|"MagicArmorValue"|"NeedsIdentifyLevel"|"OtherStatBoost"|"PickpocketInfo"|"PriceToIdentify"|"PriceToRepair"|"Reflection"|"ResistanceBoost"|"RuneEffect"|"RuneSlot"|"ShowSkillIcon"|"SkillAlreadyLearned"|"SkillAlreadyUsed"|"SkillAPCost"|"SkillbookSkill"|"SkillCanFork"|"SkillCanPierce"|"SkillCleansesStatus"|"SkillCooldown"|"SkillDamage"|"SkillDescription"|"SkillDuration"|"SkillExplodeRadius"|"SkillHealAmount"|"SkillIcon"|"SkillMPCost"|"SkillMultiStrikeAttacks"|"SkillName"|"SkillOnCooldown"|"SkillPathDistance"|"SkillPathSurface"|"SkillProjectileCount"|"SkillProperties"|"SkillRange"|"SkillRequiredEquipment"|"SkillSchool"|"SkillStrikeCount"|"SkillTier"|"SkillWallDistance"|"StatBoost"|"StatMEMSlot"|"StatName"|"StatsAPBase"|"StatsAPBonus"|"StatsAPDesc"|"StatsAPMalus"|"StatsAPTitle"|"StatsATKAPCost"|"StatsBaseValue"|"StatsCriticalInfos"|"StatsDescription"|"StatsDescriptionBoost"|"StatsGearBoostNormal"|"StatsPercentageBoost"|"StatsPercentageMalus"|"StatsPercentageTotal"|"StatsPointValue"|"StatsTalentsBoost"|"StatsTalentsMalus"|"StatsTotalDamage"|"StatSTRWeight"|"StatusBonus"|"StatusDescription"|"StatusImmunity"|"StatusMalus"|"TagDescription"|"Tags"|"TalentDescription"|"TalentTitle"|"VitalityBoost"|"WandCharges"|"WandSkill"|"WarningText"|"WeaponCritChance"|"WeaponCritMultiplier"|"WeaponDamage"|"WeaponDamagePenalty"|"WeaponRange"|
 ---@alias TooltipRequestType "Ability"|"CustomStat"|"Generic"|"Item"|"PlayerPortrait"|"Pyramid"|"Rune"|"Skill"|"Stat"|"Status"|"Surface"|"Tag"|"Talent"|"World"

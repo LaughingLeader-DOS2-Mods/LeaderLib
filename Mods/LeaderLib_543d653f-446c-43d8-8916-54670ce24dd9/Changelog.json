@@ -201,7 +201,7 @@
 				"\t• Fixed the quantity of loot in the Strange Machine.",
 				"\t• Added a name for 'LLWEAPONEX_DEMON_GAUNTLET_BONUS_CRIT_DisplayName'.",
 				"\t• Increased Battle Book base damage by 8%.",
-				"\t• Fixed certain unique items using the wrong attribute name when increasing resistance values.",
+				"\t• Fixed certain unique items using the wrong attribute name when increasing resistance values."
 			]
 		},
 		{

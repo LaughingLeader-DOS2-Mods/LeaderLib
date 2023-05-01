@@ -744,7 +744,7 @@ Ext.Events.ComputeCharacterHit:Subscribe(function(e)
     local hit = HitOverrides.ComputeCharacterHit(e.Target, e.Attacker, e.Weapon, e.DamageList, e.HitType, e.NoHitRoll, e.ForceReduceDurability, e.Hit, e.AlwaysBackstab, e.HighGround, e.CriticalRoll)
     if hit then
         --Fixes hits still hitting if a mod has changed one of these flags
-        if _IsHitUnsuccessful(hit.Hit) then
+        if _IsHitUnsuccessful(hit) then
             hit.Hit = false
             if hit.Blocked or ((hit.EffectFlags & 0x100 ) ~= 0) then
                 hit.DamageList:Clear()

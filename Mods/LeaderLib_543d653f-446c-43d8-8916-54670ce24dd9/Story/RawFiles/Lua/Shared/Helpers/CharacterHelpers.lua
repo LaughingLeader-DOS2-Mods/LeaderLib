@@ -1521,13 +1521,19 @@ end
 ---Set a character's permanent boosts, and syncs it to the client if on the server-side.
 ---@param character CharacterParam
 ---@param opts StatsCharacterDynamicStat
----@param index? integer Defaults to 2
+---@param index? integer Defaults to 2. Set to -1 to set `character.Stats` instead.
 function GameHelpers.Character.SetPermanentBoosts(character, opts, index)
 	character = GameHelpers.GetCharacter(character)
 	index = index or 2
 	if character and character.Stats ~= nil then
-		for k,v in pairs(opts) do
-			character.Stats.DynamicStats[index][k] = v
+		if index == -1 then
+			for k,v in pairs(opts) do
+				character.Stats[k] = v
+			end
+		else
+			for k,v in pairs(opts) do
+				character.Stats.DynamicStats[index][k] = v
+			end
 		end
 		if not _ISCLIENT then
 			GameHelpers.Net.Broadcast("LeaderLib_Character_SetPermanentBoosts", {NetID=character.NetID, Data=opts, Index=index})

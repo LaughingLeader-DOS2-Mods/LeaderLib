@@ -1,4 +1,5 @@
 local _ISCLIENT = Ext.IsClient()
+local _EXTVERSION = Ext.Utils.Version()
 
 local skipCharacterStats = {
 	["StoryPlayer"] = true,
@@ -285,6 +286,23 @@ local function AdjustAP(stat, settings)
 	return changedStat
 end
 
+local function _ResPenTest(shouldSync)
+	if Vars.LeaderDebugMode and _EXTVERSION >= 59 then
+		local stat = Ext.Stats.Get("FTJ_Trompdoy_Hatchet", nil, false)
+		if stat then
+			stat.AirResistancePenetration = 10
+			stat.Boosts = "_Boost_Weapon_Damage_Air;_Boost_Weapon_Damage_Poison_Small"
+			Ext.Stats.Get("_Boost_Weapon_Damage_Air").AirResistancePenetration = 10
+			Ext.Stats.Get("_Boost_Weapon_Damage_Poison_Small").PoisonResistancePenetration = 5
+			if shouldSync then
+				Ext.Stats.Sync("_Boost_Weapon_Damage_Air", false)
+				Ext.Stats.Sync("_Boost_Weapon_Damage_Poison_Small", false)
+				Ext.Stats.Sync("FTJ_Trompdoy_Hatchet", false)
+			end
+		end
+	end
+end
+
 ---@param gameSettings LeaderLibGameSettings|nil
 ---@param statsLoadedState boolean|nil
 local function _OverrideStats(gameSettings, statsLoadedState)
@@ -455,6 +473,7 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 		end
 	end
 
+	_ResPenTest(shouldSync)
 	_loadedStatuses = {}
 end
 
@@ -468,3 +487,7 @@ function SyncStatOverrides(gameSettings)
 	--Run here so users connecting to a host will get the host's stat changes
 	QOL.StatChangesConfig:Run()
 end
+
+Events.LuaReset:Subscribe(function (e)
+	_ResPenTest(true)
+end)

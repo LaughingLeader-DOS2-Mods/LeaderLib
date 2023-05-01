@@ -802,6 +802,7 @@ function _TT.DebugTooltipEncoding(ui)
 	_Print("Encoding matches: ", _Stringify(parsed2) == _Stringify(parsed))
 end
 
+--TODO Probably can delete this
 local previousListeners = {}
 
 ---@class TooltipHooks
@@ -1853,6 +1854,17 @@ function TooltipData:GetElements(t)
 	return elements
 end
 
+---Gets elements for the given type while removing them from the tooltip.
+---@overload fun(self:TooltipData, t:TooltipElementType)
+---@generic T:TooltipElement|TooltipElementType
+---@param t `T`|`T`[] The tooltip element type, or an array of element types.
+---@return T[] elements An array of elements, or an empty table.
+function TooltipData:PopElements(t)
+	local elements = self:GetElements(t)
+	self:RemoveElements(t)
+	return elements
+end
+
 ---Remove all elements matching the given tooltip element type(s).
 ---@param t TooltipElementType|TooltipElementType[] The tooltip element type, or an array of element types.
 ---@return boolean success Whether any elements matching the given types were removed.
@@ -1999,6 +2011,42 @@ function TooltipData:AppendElementBeforeType(ele, elementType)
 	end
 
 	return ele
+end
+
+---@param a TooltipLabelElement
+---@param b TooltipLabelElement
+local function _LabelCompare(a, b)
+	local name1 = a.Label or ""
+	local name2 = b.Label or ""
+	return name1 < name2
+end
+_TT._Internal.LabelCompare = _LabelCompare
+
+---Sorts a given type by the Label, if the element has one.
+---@param elementType TooltipElementType|table<TooltipElementType,boolean>
+---@param appendAfterType? TooltipElementType|table<TooltipElementType,boolean>
+function TooltipData:SortType(elementType, appendAfterType)
+	local elements = self:PopElements(elementType)
+	table.sort(elements, _LabelCompare)
+	local existing = self:GetElement(appendAfterType)
+	if existing then
+		local t = existing.Type
+		local startIndex = #self.Data
+		for i=self.Data,1,-1 do
+			local element = self.Data[i]
+			if element and element.Type == t then
+				startIndex = i+1
+				break
+			end
+		end
+		for i=1,#elements do
+			local element = elements[i]
+			table.insert(self.Data, startIndex, elements)
+			startIndex = startIndex + 1
+		end
+	else
+		self:AppendElements(elements)
+	end
 end
 
 _TT.Register = {

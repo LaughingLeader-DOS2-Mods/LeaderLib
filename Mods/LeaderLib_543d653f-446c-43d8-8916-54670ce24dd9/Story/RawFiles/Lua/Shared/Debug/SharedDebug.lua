@@ -370,3 +370,131 @@ end ]]
 -- 		end) ]]
 -- 	end
 -- end)
+
+--[[ if _ISCLIENT then
+	Events.ModVersionLoaded:Subscribe(function (e)
+		e:Dump()
+	end)
+end ]]
+
+--[[ Ext.RegisterConsoleCommand("debugitertest", function (cmd, ...)
+	local character = Ext.IsClient() and Client:GetCharacter() or GameHelpers.Character.GetHost()
+	local pos = character.WorldPos
+	local level = Ext.Entity.GetCurrentLevel()
+	Ext.Utils.Print("[debugitertest] ", Ext.IsClient() and "CLIENT" or "SERVER")
+	local time = Ext.Utils.MonotonicTime()
+	local items = level.EntityManager.ItemConversionHelpers.RegisteredItems[level.LevelDesc.LevelName]
+	local len = #items
+	Ext.Utils.Print("RegisteredItems:", len)
+	for i=1,len do
+		local item = items[i]
+		if Ext.Math.Distance(item.WorldPos, pos) <= 30 then
+			--Nearby
+		end
+	end
+	Ext.Utils.Print("Iteration took", Ext.Utils.MonotonicTime() - time, "ms")
+	time = Ext.Utils.MonotonicTime()
+	local items = level.EntityManager.ItemConversionHelpers.ActivatedItems[level.LevelDesc.LevelName]
+	local len = #items
+	Ext.Utils.Print("ActivatedItems:", len)
+	local distances = {}
+	for i=1,len do
+		local item = items[i]
+		distances[#distances+1] = {Name=GameHelpers.GetDisplayName(item), Distance=Ext.Math.Distance(item.WorldPos, pos),
+		MyGuid=item.MyGuid,
+		ForceSync=item.ForceSync == true and true or nil,}
+	end
+	Ext.Utils.Print("Iteration took", Ext.Utils.MonotonicTime() - time, "ms")
+	table.sort(distances, function(a,b) return a.Distance < b.Distance end)
+	Ext.IO.SaveFile("Dumps/ActivatedItems_Server.json", Ext.DumpExport(distances))
+end) ]]
+
+--[[
+Ext.Events.Tick:Subscribe(function (e) local host = Mods.LeaderLib.GameHelpers.Character.GetHost(); for obj in Mods.LeaderLib.GameHelpers.Grid.GetNearbyObjects(host, {Type="Item", Radius=10}) do end end)
+]]
+
+--Ext.Events.Tick:Subscribe(function (e) local host = Mods.LeaderLib.GameHelpers.Character.GetHost(); for obj in Mods.LeaderLib.GameHelpers.Grid.GetNearbyObjects(host, {Type="Item", Radius=10, ActivatedOnly=true}) do end end)
+--for i=0,50 do Ext.Events.Tick:Subscribe(function (e) local host = Mods.LeaderLib.GameHelpers.Character.GetHost(); for obj in Mods.LeaderLib.GameHelpers.Grid.GetNearbyItemsFast(host, 10) do end end) end
+--for i=0,1000 do Ext.Events.Tick:Subscribe(function (e) for _,v in pairs(_C():GetNearbyCharacters(10)) do end end) end
+--for i=0,500 do Ext.Events.Tick:Subscribe(function (e) local x,y,z = table.unpack(_C().WorldPos); Ext.Entity.GetItemGuidsAroundPosition(x,y,z,30) end) end
+
+--for i=0,100 do Ext.Events.Tick:Subscribe(function (e) local pos = _C().WorldPos; local l = Ext.Entity.GetCurrentLevel() for _,v in pairs(l.EntityManager.ItemConversionHelpers.RegisteredItems[l.LevelDesc.LevelName]) do Ext.Math.Distance(pos, v.WorldPos) end end) end
+
+--[[ if not _ISCLIENT then
+	local hitLogTest = Classes.LuaTest:Create("hitlog", {
+		---@param self LuaTest
+		function(self)
+			local host = GameHelpers.Character.GetHost().MyGuid
+			local characters,_,cleanup = Testing.Utils.CreateTestCharacters({AutoPositionStartDistance=10, TotalCharacters=2, TotalDummies=0, EquipmentSet="Class_Wizard_Act2"})
+			local c1,c2 = table.unpack(characters)
+			self:Wait(500)
+			Osi.SetFaction(c1, "Evil")
+			Osi.SetFaction(c2, "Evil")
+			local hitListenerIndex = nil
+			local pos = GameHelpers.Math.GetPosition(c2)
+			self.Cleanup = function (self)
+				cleanup()
+				Ext.Events.GetHitChance:Unsubscribe(hitListenerIndex)
+				GameHelpers.Surface.CreateSurface(pos, "None", 24)
+			end
+			Osi.SetTag(c2, "LLDEBUG_AutoDodge")
+			GameHelpers.Net.Broadcast("LeaderLib_Test_Debug_CheckHitStatus", {Target=GameHelpers.GetNetID(c2)})
+			hitListenerIndex = Ext.Events.GetHitChance:Subscribe(function (e)
+				if e.Target.Character:HasTag("LLDEBUG_AutoDodge") then
+					e.HitChance = 0
+					--e.HitStatus.HitReason = 3
+				end
+			end)
+			Osi.TeleportToRandomPosition(c1, 12, "")
+			self:Wait(500)
+			Osi.SetCanJoinCombat(c1, 1)
+			Osi.SetCanJoinCombat(c2, 1)
+			Osi.SetCanFight(c1, 1)
+			Osi.SetCanFight(c2, 1)
+			self:Wait(500)
+			Osi.EnterCombat(c1, c2)
+			Osi.EnterCombat(c1, host)
+			GameHelpers.Action.Attack(c1, c2)
+			self:Wait(5000)
+			return true
+		end,
+	},{
+		CallCleanupAfterEachTask = true
+	})
+	Testing.RegisterConsoleCommandTest(hitLogTest.ID, hitLogTest, "Test some odd NPC-only messages.")
+else
+	local _hitStatusTarget = nil
+	local _tickIndex = nil
+
+	local function _OnTick()
+		if _hitStatusTarget then
+			local target = GameHelpers.GetCharacter(_hitStatusTarget, "EclCharacter")
+			if target then
+				for _,status in pairs(target.StatusMachine.Statuses) do
+					if status and status.StatusId == "HIT" then
+						---@cast status EclStatusHit
+						fprint(LOGLEVEL.TRACE, "[EclStatusHit] HitByType(%s) HitReason(%s) Dodged(%s)", status.HitByType, status.HitReason, status.DamageInfo.Dodged)
+						-- if status.DamageInfo.Dodged then
+						-- 	status.HitByType = 24
+						-- 	status.HitReason = 3
+						-- end
+						status.HitByType = 24
+						status.HitReason = 3
+						status.DamageInfo.Dodged = true
+					end
+				end
+			else
+				Ext.Events.Tick:Unsubscribe(_tickIndex)
+				_tickIndex = nil
+			end
+		end
+	end
+
+	GameHelpers.Net.Subscribe("LeaderLib_Test_Debug_CheckHitStatus", function (e, data)
+		print("LeaderLib_Test_Debug_CheckHitStatus", Ext.DumpExport(data))
+		_hitStatusTarget = data.Target
+		if _tickIndex == nil then
+			_tickIndex = Ext.Events.Tick:Subscribe(_OnTick)
+		end
+	end)
+end ]]

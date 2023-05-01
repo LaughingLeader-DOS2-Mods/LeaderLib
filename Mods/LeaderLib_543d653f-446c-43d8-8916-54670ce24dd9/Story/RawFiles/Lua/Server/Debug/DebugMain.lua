@@ -361,6 +361,75 @@ end) ]]
 local obj = Ext.Entity.GetCharacter("08348b3a-bded-4811-92ce-f127aa4310e0"); GameHelpers.Status.Apply(obj, "AOO", 6.0, 1, nil, nil, nil, nil, {AoOTargetHandle=obj.Handle, SourceHandle=me.Handle, PartnerHandle=obj.Handle})
 ]]
 
-SkillManager.Subscribe.Used("Rush_EnemyBatteringRam", function (e)
-	Ext.Dump({TargetObjects=e.Data.TargetObjects,TargetPositions=e.Data.TargetPositions})
+-- Events.OnPrepareHit:Subscribe(function (e)
+-- 	-- Osi.NRD_HitSetInt(e.Handle, "NoHitRoll", 1)
+-- 	-- Osi.NRD_HitSetInt(e.Handle, "Missed", 1)
+-- 	-- Osi.NRD_HitSetInt(e.Handle, "Hit", 0)
+-- 	-- Osi.NRD_HitSetInt(e.Handle, "TotalDamageDone", 0)
+-- 	-- Osi.NRD_HitSetInt(e.Handle, "LifeSteal", 0)
+-- 	-- Osi.NRD_HitSetInt(e.Handle, "ProcWindWalker", 0)
+-- 	-- Osi.NRD_HitSetInt(e.Handle, "ArmorAbsorption", 0)
+-- 	-- Osi.NRD_HitSetString(e.Handle, "DeathType", "None")
+-- 	--e.Data.NoHitRoll = true
+-- 	e.Data.Dodged = true
+-- 	--e.Data.Missed = true
+-- 	--e.Data.Blocked = true
+-- 	--e.Data.Hit = false
+-- 	--e.Data:ClearAllDamage()
+-- end)
+
+--[[ SkillManager.Register.Cast("MultiStrike_EnemyBlinkStrike", function (e)
+	e.Data:ForEach(function (target, targetType, self)
+		if targetType == "table" then
+			EffectManager.PlayEffectAt("RS3_FX_Skills_Soul_Impact_ReplenishSource_01", target)	
+		else
+			Osi.DisplayText(target, "Target!")
+		end
+	end, -1)
+	Ext.Dump({
+		Skill="MultiStrike_EnemyBlinkStrike",
+		Targets = e.Data.TargetObjects,
+		Positions = e.Data.TargetPositions
+	})
 end)
+
+SkillManager.Register.Cast("Rush_EnemyBatteringRam", function (e)
+	Ext.Dump({
+		Skill="Rush_EnemyBatteringRam",
+		Targets = e.Data.TargetObjects,
+		Positions = e.Data.TargetPositions
+	})
+end) ]]
+
+-- Events.OnHit:Subscribe(function (e)
+-- 	e.HitStatus.Hit.Missed = true
+-- 	e.HitStatus.Hit.Hit = false
+-- 	e.HitStatus.Hit.LifeSteal = 0
+-- 	e.HitStatus.Hit.DamageDealt = 0
+-- 	e.HitStatus.Hit.TotalDamageDone = 0
+-- end)
+
+-- Ext.Events.StatusHitEnter:Subscribe(function (e)
+-- 	e.Hit.Hit.Missed = true
+-- 	e.Hit.Hit.Hit = false
+-- 	e.Hit.Hit.LifeSteal = 0
+-- 	e.Hit.Hit.DamageDealt = 0
+-- 	e.Hit.Hit.TotalDamageDone = 0
+-- end)
+
+-- Events.OnHit:Subscribe(function (e)
+-- 	e.Data:ForceMiss()
+-- end)
+
+--[[ local opts = {
+	Beautify = true,
+	StringifyInternalTypes = true,
+	IterateUserdata = true,
+	AvoidRecursion = true,
+	LimitDepth = 1,
+	LimitArrayElements = 3
+}
+
+Ext.Events.BeforeCharacterApplyDamage:Subscribe(function (e)
+	Ext.IO.SaveFile(("Dumps/Hit/BeforeCharacterApplyDamage_%s.json"):format(Ext.Utils.MonotonicTime()), Ext.Json.Stringify(e, opts))
+end) ]]

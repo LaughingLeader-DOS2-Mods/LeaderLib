@@ -342,4 +342,9 @@ local Init = function()
 	_initialized = true
 end
 
+Ext.RegisterConsoleCommand("lluidebug", function (cmd, ...)
+	UI.Debug.LogUI = true
+	UI.Debug.PrintAll = true
+end)
+
 return Init

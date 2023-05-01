@@ -230,7 +230,7 @@ if _ISCLIENT then
 	---@param getItemsFunc fun(controllerEnabled:boolean):(fun():{SlotMC:FlashMovieClip, Item:EclItem})
 	---@param slotSettings {Size:number, Offset:number}
 	local function AdjustSlots(getItemsFunc, slotSettings)
-		local posOffset = slotSettings.Offset -1
+		local posOffset = slotSettings.Offset or -1
 		local slotSize = slotSettings.Size or 51
 
 		local settings = GameSettingsManager.GetSettings()

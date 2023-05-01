@@ -264,10 +264,10 @@ function GameHelpers.Hit.Succeeded(hit)
 		---@cast hit EsvStatusHit
 		hit = hit.Hit
 	end
-	if not hit then
+	if not hit or hit.Hit == false then
 		return false
 	end
-	if hit.Dodged or hit.Missed or hit.Blocked then
+	if hit.Dodged or hit.Missed or hit.Blocked or (hit.EffectFlags & 0x100) ~= 0 then
 		return false
 	end
 	return true

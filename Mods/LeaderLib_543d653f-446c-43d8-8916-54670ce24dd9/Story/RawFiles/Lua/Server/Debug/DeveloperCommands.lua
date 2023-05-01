@@ -1321,11 +1321,11 @@ Ext.RegisterConsoleCommand("dumpallcharacters", function (cmd, ...)
 	end
 	local function _getStats(c) 
 		local s = {Stat=c.Stats.Name, Ancestors={}} 
-		local p = Ext.Stats.GetAttribute(c.Stats.Name, "Using")
+		local p = GameHelpers.Stats.GetAttribute(c.Stats.Name, "Using")
 		local ancestorLevel = 1
 		while p ~= nil do 
 			s.Ancestors[#s.Ancestors+1] = {Index=ancestorLevel, Stat=p}
-			p = Ext.Stats.GetAttribute(p, "Using") 
+			p = GameHelpers.Stats.GetAttribute(p, "Using") 
 			ancestorLevel = ancestorLevel + 1
 		end
 		return s

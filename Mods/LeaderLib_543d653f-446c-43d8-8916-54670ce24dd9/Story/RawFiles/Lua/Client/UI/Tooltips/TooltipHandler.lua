@@ -124,4 +124,4 @@ local function RegisterTooltipHandlers()
 	end
 end
 
-Ext.Events.SessionLoaded:Subscribe(RegisterTooltipHandlers, {Priority = 999})
+Ext.Events.SessionLoaded:Subscribe(RegisterTooltipHandlers, {Priority = 1000})

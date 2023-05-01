@@ -199,8 +199,11 @@ GameHelpers.Skill.CreateSkillProperty("ToggleStatus", function (property)
 			if engineStatusName then
 				statusDisplayName = engineStatusName.Value
 			end
-		elseif GameHelpers.Stats.Exists(statusId, "StatusData") then
-			statusDisplayName = GameHelpers.GetStringKeyText(Ext.Stats.GetAttribute(statusId, "DisplayName"), Ext.Stats.GetAttribute(statusId, "DisplayNameRef"))
+		else
+			local stat = Ext.Stats.Get(statusId, nil, false)
+			if stat then
+				statusDisplayName = GameHelpers.GetStringKeyText(stat.DisplayName, stat.DisplayNameRef)
+			end
 		end
 	end
 	if not StringHelpers.IsNullOrWhitespace(statusDisplayName) then

@@ -2,6 +2,8 @@ if GameHelpers.Math == nil then
 	GameHelpers.Math = {}
 end
 
+local _EXTVERSION = Ext.Utils.Version()
+
 local _type = type
 local _cos = math.cos
 local _sin = math.sin
@@ -851,6 +853,10 @@ function GameHelpers.Math.CalculateHealAmount(opts)
 		end
 		return _FinalHealBonus(_round((baseHeal * options.HealValue) * 0.01), boostAmount, options)
 	elseif options.HealType == "Qualifier" then
+		if _EXTVERSION < 59 then --Ext.Stats.GetStatsManager() is v59 and up
+			Ext.Utils.PrintWarning("[GameHelpers.Math.CalculateHealAmount] Qualifier HealType heals require the StatsManager, which is only in v59+ of the extender.")
+			return 0
+		end
 		baseHeal = _round(Ext.Stats.GetStatsManager().LevelMaps:GetByName("SkillData HealAmount"):GetScaledValue(options.HealValue, level))
 	end
 	return _FinalHealBonus(baseHeal, boostAmount, options)

@@ -1,5 +1,7 @@
 local _type = type
 
+local _EXTVERSION = Ext.Utils.Version()
+
 ---@class GameHelpersUIRegisterAttributeOptions:LeaderLibCustomAttributeTooltipSettings
 ---@field StatType ModifierListType|ModifierListType[]
 
@@ -31,6 +33,7 @@ end
 ---@see Ext_Stats.AddAttribute
 ---@param opts GameHelpersUIRegisterAttributeOptions
 function GameHelpers.UI.RegisterCustomAttribute(opts)
+	if _EXTVERSION < 59 then return end --Ext.Stats.GetStatsManager() is v59 and up
 	assert(_type(opts.Attribute) == "string", "Attribute param must be a string")
 	local sm = Ext.Stats.GetStatsManager()
 	local t = _type(opts.StatType)
@@ -285,6 +288,7 @@ end
 ---@param tooltipType TooltipRequestType
 ---@param options GameHelpersTooltipGetCustomAttributeElementsOptions
 function GameHelpers.Tooltip.SetCustomAttributeElements(character, tooltip, tooltipType, options)
+	if _EXTVERSION < 59 then return end --Ext.Stats.GetStatsManager() is v59 and up
 	local statsManager = Ext.Stats.GetStatsManager()
 	if tooltipType == "Item" then
 		assert(options.Item ~= nil, "options.Item must be set for Item tooltips")
@@ -400,6 +404,10 @@ function GameHelpers.Tooltip.SetCustomAttributeElements(character, tooltip, tool
 			end
 		end
 	end
+end
+
+if _EXTVERSION < 59 then
+	return
 end
 
 ---@param self {Result:string}

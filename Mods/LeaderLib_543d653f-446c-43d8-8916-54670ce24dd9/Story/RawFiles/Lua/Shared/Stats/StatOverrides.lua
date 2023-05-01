@@ -428,11 +428,11 @@ local function _OverrideStats(gameSettings, statsLoadedState)
 		end
 	end
 
-	for _,v in pairs(Ext.Stats.GetStats("StatusData")) do
-		_loadedStatuses[v] = true
-		local statusType = Ext.Stats.GetAttribute(v, "StatusType")
+	for stat in GameHelpers.Stats.GetStatuses(true) do
+		_loadedStatuses[stat.Name] = true
+		local statusType = stat.StatusType
 		if statusType then
-			Data.StatusToType[v] = statusType
+			Data.StatusToType[stat.Name] = statusType
 		end
 	end
 

@@ -299,7 +299,9 @@ end
 ---@return T
 function TableHelpers.SetDefaultOptions(opts, defaultValues)
 	local result = nil
-	if type(opts) == "table" then
+	if type(opts) ~= "table" then
+		result = {}
+	else
 		result = opts
 		local meta = getmetatable(opts)
 		if meta then
@@ -315,15 +317,16 @@ function TableHelpers.SetDefaultOptions(opts, defaultValues)
 					elseif inheritedIndexType == "function" then
 						return inheritedIndex(tbl,k)
 					end 
-				end
+				end,
+				__newindex = function (_,k,v) rawset(result, k, v) end
 			}
 			TableHelpers.AddOrUpdate(newMeta, meta, true)
 			setmetatable(result, newMeta)
-		else
-			setmetatable(result, {__index = defaultValues})
+			return result
 		end
-	else
-		result = defaultValues
+	end
+	if defaultValues then
+		setmetatable(result, {__index = defaultValues, __newindex = function (_,k,v) rawset(result, k, v) end})
 	end
 	return result
 end

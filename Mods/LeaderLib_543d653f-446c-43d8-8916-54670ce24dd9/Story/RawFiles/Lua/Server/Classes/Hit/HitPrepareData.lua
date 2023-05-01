@@ -314,6 +314,7 @@ end
 ---@param skipUpdatingProperties? boolean Skip clearing the damage and adjusting the other hit properties.
 function HitPrepareData:ForceMiss(skipUpdatingProperties)
 	if not self.Missed then
+		self.NoHitRoll = true
 		self.Missed = true
 		self.Hit = false
 		if not skipUpdatingProperties then

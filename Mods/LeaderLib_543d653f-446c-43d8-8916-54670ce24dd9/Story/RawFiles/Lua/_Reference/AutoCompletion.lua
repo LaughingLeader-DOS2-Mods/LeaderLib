@@ -114,6 +114,7 @@ Mods.LeaderLib = {
 
 ---@class LeaderLibCustomAttributeTooltipSettings
 ---@field Attribute FixedString
+---@field IsBoostable boolean This attribute should be considered a boost-enabled attribute, which makes the callback count all the values on boost stats for items, or equipment and statuses for characters.
 ---@field DisplayName TranslatedString
 ---@field TooltipElementType TooltipElementType|nil Optional tooltip type to use instead of a stat-oriented one.
 ---@field GetTooltipElement (fun(e:LeaderLibCustomAttributeTooltipCallbackEventArgs)) Optional callback to use to build the tooltip element.

@@ -196,11 +196,14 @@ Ext.Events.SessionLoaded:Subscribe(function()
 					if e.TooltipType == "Rune" then
 						e:UpdateElement(("Spaghetti Code: %s"):format(e.Value))
 					elseif e.TooltipType == "Item" then
-						e.Tooltip:AppendElementAfterType({
+						local statBoosts = e.Tooltip:PopElements("StatBoost")
+						statBoosts[#statBoosts+1] = {
 							Type="StatBoost",
 							Label = "Spaghetti Code",
 							Value = e.Value
-						}, "StatBoost")
+						}
+						table.sort(statBoosts, Game.Tooltip._Internal.LabelCompare)
+						e.Tooltip:AppendElements(statBoosts)
 					elseif e.TooltipType == "Status" then
 						e.Tooltip:AppendElementAfterType({
 							Type = "StatusBonus",
@@ -208,6 +211,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 						}, "StatusBonus")
 					end
 				end,
+				IsBoostable = true,
 				StatType = {"Armor"}
 			})
 		end

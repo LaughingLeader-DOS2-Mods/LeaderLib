@@ -6,24 +6,40 @@ local _EXTVERSION = Ext.Utils.Version()
 ---@field StatType ModifierListType|ModifierListType[]
 
 ---@param statType ModifierListType
+---@param attribute string
+---@param sm? StatsRPGStats
+local function _StatTypeHasAttribute(statType, attribute, sm)
+	if not sm then
+		sm = Ext.Stats.GetStatsManager()
+	end
+	if sm then
+		local modifier = sm.ModifierLists:GetByName(statType)
+		if modifier and modifier.Attributes:GetByName(attribute) ~= nil then
+			return true
+		end
+	end
+	return false
+end
+
+---@param statType ModifierListType
 ---@param opts GameHelpersUIRegisterAttributeOptions
 ---@param sm StatsRPGStats
 local function _AddCustomAttributeEntry(statType, opts, sm)
-	if sm then
-		local modifier = sm.ModifierLists:GetByName(statType)
-		if not modifier or modifier.Attributes:GetByName(opts.Attribute) == nil then
-			fprint(LOGLEVEL.WARNING, "[GameHelpers.UI.RegisterCustomAttribute] Custom attribute (%s) does not exist in stat type (%s). Skipping registration.", opts.Attribute, statType)
-			return
-		end
+	if not _StatTypeHasAttribute(statType, opts.Attribute, sm) then
+		fprint(LOGLEVEL.WARNING, "[GameHelpers.UI.RegisterCustomAttribute] Custom attribute (%s) does not exist in stat type (%s). Skipping registration.", opts.Attribute, statType)
+		return false
 	end
 	if TooltipHandler.CustomAttributes[statType] == nil then
 		TooltipHandler.CustomAttributes[statType] = {}
 	end
-	table.insert(TooltipHandler.CustomAttributes[statType], {
+	table.insert(TooltipHandler.CustomAttributes[statType],
+	---@type LeaderLibCustomAttributeTooltipSettings
+	{
 		Attribute = opts.Attribute,
 		DisplayName = opts.DisplayName,
 		TooltipElementType = opts.TooltipElementType,
-		GetTooltipElement = opts.GetTooltipElement
+		GetTooltipElement = opts.GetTooltipElement,
+		IsBoostable = opts.IsBoostable == true
 	})
 end
 
@@ -51,8 +67,10 @@ end
 
 ---@param item EclItem
 ---@param id FixedString
+---@param statsManager StatsRPGStats
+---@param checkBoosts? boolean
 ---@return SerializableValue|nil
-local function _TryGetCustomAttributeFromItem(item, id)
+local function _TryGetCustomAttributeFromItem(item, id, statsManager, checkBoosts)
 	if GameHelpers.Item.IsObject(item) then
 		if item.StatsFromName then
 			local value = item.StatsFromName.StatsEntry[id]
@@ -61,20 +79,56 @@ local function _TryGetCustomAttributeFromItem(item, id)
 			end
 		end
 	else
-		return item.Stats[id]
+		print(item, id, checkBoosts, item.Stats.ItemType, _StatTypeHasAttribute(item.Stats.ItemType, "Boosts", statsManager))
+		if not checkBoosts then
+			return item.Stats[id]
+		else
+			local total = item.Stats[id] or 0
+			local statType = item.Stats.ItemType
+			local _baseStatBoosts = {}
+			if _StatTypeHasAttribute(statType, "Boosts", statsManager) then
+				local boosts = StringHelpers.Split(item.Stats.StatsEntry.Boosts, ";")
+				for _,boostName in pairs(boosts) do
+					if not StringHelpers.IsNullOrEmpty(boostName) and GameHelpers.Stats.IsStatType(boostName, statType) then
+						_baseStatBoosts[boostName] = true
+						total = total + GameHelpers.Stats.GetAttribute(boostName, id, 0)
+					end
+				end
+			end
+			for i=2,#item.Stats.DynamicStats do
+				local entry = item.Stats.DynamicStats[i]
+				if entry and not _baseStatBoosts[entry.BoostName]
+				and not StringHelpers.IsNullOrEmpty(entry.BoostName)
+				and GameHelpers.Stats.IsStatType(entry.BoostName, statType) then
+					total = total + GameHelpers.Stats.GetAttribute(entry.BoostName, id, 0)
+				end
+			end
+			return total
+		end
 	end
 	return nil
 end
 
 ---@param stat StatEntryType
 ---@param id FixedString
+---@param statsManager StatsRPGStats
+---@param checkBoosts? boolean
 ---@return SerializableValue|nil
-local function _TryGetCustomAttributeFromStat(stat, id)
-	local value = stat[id]
-	if value ~= nil then
-		return value
+local function _TryGetCustomAttributeFromStat(stat, id, statsManager, checkBoosts)
+	if checkBoosts then
+		local total = stat[id] or 0
+		local statType = GameHelpers.Stats.GetStatType(stat.Name)
+		if _StatTypeHasAttribute(statType, "Boosts", statsManager) then
+			local boosts = StringHelpers.Split(stat.Boosts, ";")
+			for _,boostName in pairs(boosts) do
+				if not StringHelpers.IsNullOrEmpty(boostName) and GameHelpers.Stats.IsStatType(boostName, statType) then
+					total = total + GameHelpers.Stats.GetAttribute(boostName, id, 0)
+				end
+			end
+		end
+		return total
 	end
-	return nil
+	return stat[id]
 end
 
 ---@param v LeaderLibCustomAttributeTooltipSettings
@@ -152,7 +206,7 @@ local function _AddElementForStat(stat, attributeType, statsManager, character, 
 		local modifier = statsManager.ModifierLists:GetByName(attributeType)
 		if entries then
 			for _,v in pairs(entries) do
-				local b,value = xpcall(_TryGetCustomAttributeFromStat, debug.traceback, stat, v.Attribute)
+				local b,value = xpcall(_TryGetCustomAttributeFromStat, debug.traceback, stat, v.Attribute, statsManager, v.IsBoostable)
 				if not b then
 					fprint(LOGLEVEL.ERROR, "[LeaderLib] Failed to get custom attribute (%s) on stat (%s):\n%s", v.Attribute, stat.Name, value)
 				elseif value ~= nil then
@@ -302,7 +356,7 @@ function GameHelpers.Tooltip.SetCustomAttributeElements(character, tooltip, tool
 			local entries = TooltipHandler.CustomAttributes[modifier.Name]
 			if entries then
 				for _,v in pairs(entries) do
-					local b,value = xpcall(_TryGetCustomAttributeFromItem, debug.traceback, item, v.Attribute)
+					local b,value = xpcall(_TryGetCustomAttributeFromItem, debug.traceback, item, v.Attribute, statsManager, v.IsBoostable)
 					if not b then
 						fprint(LOGLEVEL.ERROR, "[LeaderLib] Failed to get custom attribute (%s) on item (%s):\n%s", v.Attribute, GameHelpers.Item.GetItemStat(item), value)
 					elseif value ~= nil then
@@ -509,7 +563,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.uiCraft, "updateRuneSlots", functio
 				local state = arr[i+4]
 				local tooltip = arr[i+5]
 				for _,v in pairs(entries) do
-					local b,value = xpcall(_TryGetCustomAttributeFromStat, debug.traceback, boostStat, v.Attribute)
+					local b,value = xpcall(_TryGetCustomAttributeFromStat, debug.traceback, boostStat, v.Attribute, statsManager, v.IsBoostable)
 					if not b then
 						fprint(LOGLEVEL.ERROR, "[LeaderLib] Failed to get custom attribute (%s) on stat (%s):\n%s", v.Attribute, boostStat.Name, value)
 					elseif value ~= nil then

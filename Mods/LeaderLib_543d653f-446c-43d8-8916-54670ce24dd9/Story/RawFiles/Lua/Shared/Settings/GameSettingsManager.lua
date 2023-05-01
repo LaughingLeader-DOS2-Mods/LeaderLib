@@ -123,8 +123,14 @@ if not _ISCLIENT then
 end
 
 if Vars.DebugMode then
+	local _IgnoreStateChanges = {
+		Paused = true,
+		GameMasterPause = true,
+	}
 	Ext.Events.GameStateChanged:Subscribe(function(e)
-		fprint(LOGLEVEL.TRACE, "[GameStateChanged:%s] (%s) => (%s)", _ISCLIENT and "CLIENT" or "SERVER", e.FromState, e.ToState)
+		if not _IgnoreStateChanges[tostring(e.ToState)] and not _IgnoreStateChanges[tostring(e.FromState)] then
+			fprint(LOGLEVEL.TRACE, "[GameStateChanged:%s] (%s) => (%s)", _ISCLIENT and "CLIENT" or "SERVER", e.FromState, e.ToState)
+		end
 	end)
 end
 

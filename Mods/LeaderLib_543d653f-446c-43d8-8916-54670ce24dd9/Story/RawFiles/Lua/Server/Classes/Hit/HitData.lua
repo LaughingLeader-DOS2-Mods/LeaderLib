@@ -23,6 +23,7 @@ local readOnlyProperties = {
 	Handle = true,
 	Target = true,
 	Attacker = true,
+	Success = true,
 }
 
 ---@param this HitData
@@ -54,9 +55,6 @@ local function SetMeta(this)
 		__newindex = function(tbl,k,v)
 			if k == "Damage" then
 				this.HitRequest.TotalDamageDone = v
-				return
-			elseif k == "Success" then
-				--this:SetHitFlag("Missed", true)
 				return
 			end
 			if not readOnlyProperties[k] then

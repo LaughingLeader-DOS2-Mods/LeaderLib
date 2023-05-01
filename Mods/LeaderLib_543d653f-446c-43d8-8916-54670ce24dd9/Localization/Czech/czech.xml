@@ -333,6 +333,7 @@
 	<content contentuid="h98da5ca0g1685g4045ga3ccga021c464806e">Automatically Add</content>
 	<content contentuid="h9904f967g424bg4099gb4f3ge3b46fe30a68">Try to reduce max status tooltip size by combining elements, such as immunities.</content>
 	<content contentuid="h993bd3d5g0c32g4da9gadb1gaa09877c5a8a">Enable or disable the [Key:LeaderLib] trader ([Handle:h4252ff7cgb624g4b24gbf03g1772392f3988:Old Man Lothar]). Note that some mods add specific items to this trader, such as menu books.</content>
+	<content contentuid="h995eb173g0b22g4b3egbd09gc976dd4a8736">[1] Penetration: [2]%</content>
 	<content contentuid="h99a64909g2efdg4246g97bfg5e78915ecb08">UI</content>
 	<content contentuid="h9a089091g504ag4446ga707g787ad2d73d89">Go to [1] ([2])</content>
 	<content contentuid="h9ade7360g8608g42f6g8e7cgff542d517949">&lt;font color=&apos;#BB77FF&apos; size=&apos;22&apos;&gt;Preset Selection&lt;/font&gt;&lt;br&gt;Toggle the the Preset Selection dropdown.</content>

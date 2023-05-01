@@ -6,6 +6,19 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.6",
+			"Changes": [
+				"Talent tooltips now display what equipment granted them, if any.",
+				"Fixed a script error when throwing grenades or using scrolls.",
+				"API Changes:",
+				"\t• Added additional checks to scripts where the object was likely to not exist, to avoid extender error warnings (the scripts still worked).",
+				"\t• In extender v59, tooltip support for custom attributes now exist via GameHelpers.UI.RegisterCustomAttribute.",
+				"\t• Added HitData:ForceMiss for Events.OnHit. This sets all the related properties to make a hit miss.",
+				"\t• Added additional logic to LeaderLib's ComputeCharacterHit to make a hit fail if the hit has Missed/Blocked/Dodged. This fixes an issue where if a mod tried to make a hit not be successful, CCH sets Hit to true anyway (this is in the default logic of CCH), making the hit succeed.",
+				"\t• Added GameHelpers.DB.TryDelete, a safe way to delete a DB that may or may not exist."
+			]
+		},
+		{
 			"Version": "1.7.31.5",
 			"Changes": [
 				"Quick fix for a minor script warning if the combat vacuum is enabled."

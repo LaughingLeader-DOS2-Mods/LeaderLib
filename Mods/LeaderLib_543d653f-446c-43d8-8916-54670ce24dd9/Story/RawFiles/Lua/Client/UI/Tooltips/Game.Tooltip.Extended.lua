@@ -594,9 +594,17 @@ local function ParseTooltipArray(tt)
 		if _TT.TooltipItemIds[id] == nil then
 			if _DEBUG then
 				_PrintError(string.format("[Game.Tooltip] Encountered unknown tooltip type: index(%s) id(%s)", index, id))
+				_PrintError("==============")
+				local formatStr = "[%s] type(%s) value(%s)"
 				for i=1,len do
-					_Print(i, tt[i])
+					local vtype = type(value)
+					local value = tt[i]
+					if vtype == "nil" then
+						value = "nil"
+					end
+					_PrintError(formatStr:format(i, vtype, value))
 				end
+				_PrintError("==============")
 			end
 			return elements
 		end

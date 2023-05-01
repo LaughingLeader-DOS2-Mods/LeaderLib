@@ -38,7 +38,11 @@ if Game == nil then
 end
 
 ---@class ExtenderTooltipAPI
-local _TT = {}
+local _TT = {
+	_Internal = {
+		HighPriority = {Priority = 1000}
+	},
+}
 
 Game.Tooltip = _TT
 
@@ -77,7 +81,7 @@ function _TT.AddCustomIconToTooltip(id, icon, w, h)
 	end
 end
 
-TooltipItemIds = {
+_TT.TooltipItemIds = {
 	"ItemName","ItemWeight","ItemGoldValue","ItemLevel","ItemDescription","ItemRarity","ItemUseAPCost","ItemAttackAPCost","StatBoost",
 	"ResistanceBoost","AbilityBoost","OtherStatBoost","VitalityBoost","ChanceToHitBoost","DamageBoost","APCostBoost","APMaximumBoost",
 	"APStartBoost","APRecoveryBoost","CritChanceBoost","ArmorBoost","ConsumableDuration","ConsumablePermanentDuration","ConsumableEffect",
@@ -95,7 +99,7 @@ TooltipItemIds = {
 	"StatsAPBase","StatsAPBonus","StatsAPMalus","StatsTotalDamage","TagDescription","StatusImmunity","StatusBonus","StatusMalus","StatusDescription",
 	"Title","SurfaceDescription","Duration","Fire","Water","Earth","Air","Poison","Physical","Sulfur","Heal","Splitter","ArmorSet"
 }
-TooltipItemTypes = {
+_TT.TooltipItemTypes = {
 	ItemName = 1,
 	ItemWeight = 2,
 	ItemGoldValue = 3,
@@ -382,7 +386,7 @@ _TT.TooltipSpecs = {
 	Splitter = {}
 }
 
-TooltipStatAttributes = {
+_TT.TooltipStatAttributes = {
 	[0x0] = "Strength",
 	[0x1] = "Finesse",
 	[0x2] = "Intelligence",
@@ -429,7 +433,7 @@ _TT.TooltipStatAttributes = TooltipStatAttributes
 --- @param ui UIObject
 --- @param name string MainTimeline property name to fetch
 --- @return table
-function TableFromFlash(ui, name, this)
+function _TT.TableFromFlash(ui, name, this)
 	local value
 	local idx = 0
 	local tbl = {}
@@ -456,7 +460,7 @@ end
 --- @param name string MainTimeline property name to write
 --- @param tbl table Table to convert to Flash
 --- @param this FlashMainTimeline|nil
-function TableToFlash(ui, name, tbl, this)
+function _TT.TableToFlash(ui, name, tbl, this)
 	local this = this or ui:GetRoot()
 	local arr = this[name]
 	if arr ~= nil then
@@ -470,9 +474,9 @@ end
 --- @param propertyName string Flash property name (tooltip_array, tooltipCompare_array, etc.)
 --- @param tooltipArray table Tooltip array
 --- @param originalTooltipArray table Unmodified tooltip array
-function ReplaceTooltipArray(ui, propertyName, tooltipArray, originalTooltipArray)
+function _TT.ReplaceTooltipArray(ui, propertyName, tooltipArray, originalTooltipArray)
 	local this = ui:GetRoot()
-	TableToFlash(ui, propertyName, tooltipArray, this)
+	_TT.TableToFlash(ui, propertyName, tooltipArray, this)
 	if #tooltipArray < #originalTooltipArray then
 		-- Pad out the tooltip array with dummy values
 		for i=#tooltipArray,#originalTooltipArray do
@@ -481,7 +485,7 @@ function ReplaceTooltipArray(ui, propertyName, tooltipArray, originalTooltipArra
 	end
 end
 
-function ParseTooltipElement(tt, index, spec, typeName)
+function _TT.ParseTooltipElement(tt, index, spec, typeName)
 	if #tt - index + 1 < #spec then
 		_PrintError("Not enough fields to parse spec @" .. index)
 		return
@@ -501,7 +505,7 @@ function ParseTooltipElement(tt, index, spec, typeName)
 	return index + #spec, element
 end
 
-function ParseTooltipSkillProperties(tt, index)
+function _TT.ParseTooltipSkillProperties(tt, index)
 	local element = {
 		Type = "SkillProperties",
 		Properties = {},
@@ -535,7 +539,7 @@ function ParseTooltipSkillProperties(tt, index)
 	return index, element
 end
 
-function ParseTooltipArmorSet(tt, index)
+function _TT.ParseTooltipArmorSet(tt, index)
 	local element = {
 		Type = "ArmorSet",
 		GrantedStatuses = {},
@@ -575,28 +579,32 @@ end
 
 --- @param tt table Flash tooltip array
 --- @return TooltipElement[]
-function ParseTooltipArray(tt)
+local function ParseTooltipArray(tt)
 	local index = 1
 	local element
 	local elements = {}
 
-	while index <= #tt do
+	local len = #tt
+
+	while index <= len do
 		local id = tt[index]
 		index = index + 1
 
-		if TooltipItemIds[id] == nil then
+		if _TT.TooltipItemIds[id] == nil then
 			if _DEBUG then
-				Ext.Dump(tt)
-				_PrintError("[Game.Tooltip] Encountered unknown tooltip item type: ", index, id)
+				_PrintError(string.format("[Game.Tooltip] Encountered unknown tooltip type: index(%s) id(%s)", index, id))
+				for i=1,len do
+					_Print(i, tt[i])
+				end
 			end
 			return elements
 		end
 
-		local typeName = TooltipItemIds[id]
+		local typeName = _TT.TooltipItemIds[id]
 		if typeName == "SkillProperties" then
-			index, element = ParseTooltipSkillProperties(tt, index)
+			index, element = _TT.ParseTooltipSkillProperties(tt, index)
 		elseif typeName == "ArmorSet" then
-			index, element = ParseTooltipArmorSet(tt, index)
+			index, element = _TT.ParseTooltipArmorSet(tt, index)
 		else
 			local spec = _TT.TooltipSpecs[typeName]
 			if spec == nil then
@@ -604,7 +612,7 @@ function ParseTooltipArray(tt)
 				return elements
 			end
 
-			index, element = ParseTooltipElement(tt, index, spec, typeName)
+			index, element = _TT.ParseTooltipElement(tt, index, spec, typeName)
 			if element == nil then
 				return elements
 			end
@@ -616,7 +624,7 @@ function ParseTooltipArray(tt)
 	return elements
 end
 
-function EncodeTooltipElement(tt, spec, element)
+function _TT.EncodeTooltipElement(tt, spec, element)
 	for i,field in pairs(spec) do
 		local name = field[1]
 		local fieldType = field[2]
@@ -646,7 +654,7 @@ function EncodeTooltipElement(tt, spec, element)
 	end
 end
 
-function EncodeTooltipSkillProperties(tt, element)
+function _TT.EncodeTooltipSkillProperties(tt, element)
 	local properties = element.Properties or {}
 	table.insert(tt, "")
 	table.insert(tt, #properties)
@@ -663,7 +671,7 @@ function EncodeTooltipSkillProperties(tt, element)
 	end
 end
 
-function EncodeTooltipArmorSet(tt, element)
+function _TT.EncodeTooltipArmorSet(tt, element)
 	local statuses = element.GrantedStatuses or {}
 	local statuses2 = element.GrantedStatuses2 or {}
 
@@ -687,12 +695,12 @@ end
 
 --- @param elements table Flash tooltip array
 --- @return table
-function EncodeTooltipArray(elements)
+function _TT.EncodeTooltipArray(elements)
 	local tt = {}
 	for i=1,#elements do
 		local element = elements[i]
 		if element then
-			local type = TooltipItemTypes[element.Type]
+			local type = _TT.TooltipItemTypes[element.Type]
 			if type == nil then
 				if _DEBUG then
 					_PrintError("Couldn't encode tooltip element with unknown type:", element.Type)
@@ -701,10 +709,10 @@ function EncodeTooltipArray(elements)
 			else
 				if element.Type == "SkillProperties" then
 					table.insert(tt, type)
-					EncodeTooltipSkillProperties(tt, element)
+					_TT.EncodeTooltipSkillProperties(tt, element)
 				elseif element.Type == "ArmorSet" then
 					table.insert(tt, type)
-					EncodeTooltipArmorSet(tt, element)
+					_TT.EncodeTooltipArmorSet(tt, element)
 				else
 					local spec = _TT.TooltipSpecs[element.Type]
 					if spec == nil then
@@ -714,7 +722,7 @@ function EncodeTooltipArray(elements)
 						end
 					else
 						table.insert(tt, type)
-						EncodeTooltipElement(tt, spec, element)
+						_TT.EncodeTooltipElement(tt, spec, element)
 					end
 				end
 			end
@@ -723,13 +731,13 @@ function EncodeTooltipArray(elements)
 	return tt
 end
 
-function DebugTooltipEncoding(ui)
-	local tooltipArray = TableFromFlash(ui, "tooltip_array")
+function _TT.DebugTooltipEncoding(ui)
+	local tooltipArray = _TT.TableFromFlash(ui, "tooltip_array")
 	local tooltipArray2 = {}
 
 	for i,s in pairs(tooltipArray) do
-		if s ~= nil and type(s) == "number" and TooltipItemIds[s] ~= nil then
-			s = "TYPE: " .. TooltipItemIds[s]
+		if s ~= nil and type(s) == "number" and _TT.TooltipItemIds[s] ~= nil then
+			s = "TYPE: " .. _TT.TooltipItemIds[s]
 		end
 
 		tooltipArray2[i] = s
@@ -738,7 +746,7 @@ function DebugTooltipEncoding(ui)
 	_Print("tooltip_array: " .. _Stringify(tooltipArray2))
 	local parsed = ParseTooltipArray(tooltipArray)
 	_Print("Parsed: " .. _Stringify(parsed))
-	local encoded = EncodeTooltipArray(parsed)
+	local encoded = _TT.EncodeTooltipArray(parsed)
 	local parsed2 = ParseTooltipArray(encoded)
 	_Print("Encoding matches: ", _Stringify(parsed2) == _Stringify(parsed))
 end
@@ -866,7 +874,7 @@ local _ttHooks = {
 }
 
 ---@type TooltipHooks
-TooltipHooks = {}
+local TooltipHooks = {}
 
 setmetatable(TooltipHooks, {
 	__index = function(_,k)
@@ -1603,7 +1611,7 @@ local function _RunNotifyListeners(self, req, ui, method, tooltip, ...)
 	end
 end
 
-TooltipHooks._RunNotifyListeners = _RunNotifyListeners
+_TT.TooltipHooks._RunNotifyListeners = _RunNotifyListeners
 
 ---@param ui UIObject
 ---@param arrayId string
@@ -2258,7 +2266,7 @@ function _TT.IsOpen()
 	return _ttHooks.IsOpen
 end
 
-local function CaptureBuiltInUIs()
+function _TT._Internal.CaptureBuiltInUIs()
 	for i = 1,150 do
 		local ui = _GetUIByType(i)
 		if ui ~= nil then
@@ -2268,31 +2276,30 @@ local function CaptureBuiltInUIs()
 	end
 end
 
-local function EnableHooks()
+function _TT._Internal.EnableHooks()
 	RequestProcessor.ControllerEnabled = (_GetUIByPath("Public/Game/GUI/msgBox_c.swf") or _GetUIByType(_UITYPE.msgBox_c)) ~= nil
 
 	if _ttHooks.InitializationRequested then
 		_ttHooks:Init()
 	end
 
-	CaptureBuiltInUIs()
+	_TT._Internal.CaptureBuiltInUIs()
 end
 
-local _highPriority = {Priority = 999}
-
-Ext.Events.GameStateChanged:Subscribe(function (e)
+---@param e EclLuaGameStateChangedEvent
+function _TT._Internal.EnableHooksAfterGameState(e)
 	if e.ToState == "Menu" then
-		EnableHooks()
+		_TT._Internal.EnableHooks()
 	end
-end, _highPriority)
+end
 
-Ext.Events.SessionLoaded:Subscribe(function (e)
+function _TT._Internal.EnableHooksAfterSessionLoaded()
 	_ttHooks.SessionLoaded = true
-	EnableHooks()
-end, _highPriority)
+	_TT._Internal.EnableHooks()
+end
 
-Ext.Events.UIObjectCreated:Subscribe(function (e)
-	---@type UIObject
+---@param e EclLuaUIObjectCreatedEvent
+function _TT._Internal.OnUIObjectCreated(e)
 	local ui = e.UI
 	ui:CaptureExternalInterfaceCalls()
 	-- Has the 'no flash player' warning if the root is nil
@@ -2303,7 +2310,11 @@ Ext.Events.UIObjectCreated:Subscribe(function (e)
 			CaptureBuiltInUIs()
 		end)
 	end
-end, _highPriority)
+end
+
+Ext.Events.GameStateChanged:Subscribe(_TT._Internal.EnableHooksAfterGameState, _TT._Internal.HighPriority)
+Ext.Events.SessionLoaded:Subscribe(_TT._Internal.EnableHooksAfterSessionLoaded, _TT._Internal.HighPriority)
+Ext.Events.UIObjectCreated:Subscribe(_TT._Internal.OnUIObjectCreated, _TT._Internal.HighPriority)
 
 --#region Annotations
 

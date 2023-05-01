@@ -735,7 +735,6 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
             HighGround = highGroundFlag,
             CriticalRoll = criticalRoll,
         })
-        -- Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=hitType, ["event.DamageList"]=damageList:ToTable()})
         return hit
     end
 end
@@ -755,8 +754,6 @@ Ext.Events.ComputeCharacterHit:Subscribe(function(e)
             end
         end
         e.Handled = true
-        --Ext.IO.SaveFile(string.format("Dumps/CCH_Hit_%s_%s.json", event.HitType, Ext.Utils.MonotonicTime()), Ext.DumpExport(event.Hit))
-        --Ext.Dump({Context="ComputeCharacterHit", ["hit.DamageList"]=hit.DamageList:ToTable(), TotalDamageDone=hit.TotalDamageDone, HitType=event.HitType, ["event.DamageList"]=event.DamageList:ToTable()})
     end
 end, {Priority=101})
 

@@ -1,25 +1,10 @@
 local _type = type
+local _StatTypeHasAttribute = GameHelpers.Stats.StatTypeHasAttribute
 
 local _EXTVERSION = Ext.Utils.Version()
 
 ---@class GameHelpersUIRegisterAttributeOptions:LeaderLibCustomAttributeTooltipSettings
 ---@field StatType ModifierListType|ModifierListType[]
-
----@param statType ModifierListType
----@param attribute string
----@param sm? StatsRPGStats
-local function _StatTypeHasAttribute(statType, attribute, sm)
-	if not sm then
-		sm = Ext.Stats.GetStatsManager()
-	end
-	if sm then
-		local modifier = sm.ModifierLists:GetByName(statType)
-		if modifier and modifier.Attributes:GetByName(attribute) ~= nil then
-			return true
-		end
-	end
-	return false
-end
 
 ---@param statType ModifierListType
 ---@param opts GameHelpersUIRegisterAttributeOptions
@@ -79,7 +64,6 @@ local function _TryGetCustomAttributeFromItem(item, id, statsManager, checkBoost
 			end
 		end
 	else
-		print(item, id, checkBoosts, item.Stats.ItemType, _StatTypeHasAttribute(item.Stats.ItemType, "Boosts", statsManager))
 		if not checkBoosts then
 			return item.Stats[id]
 		else

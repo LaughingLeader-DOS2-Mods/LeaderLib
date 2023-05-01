@@ -362,16 +362,9 @@ local obj = Ext.Entity.GetCharacter("08348b3a-bded-4811-92ce-f127aa4310e0"); Gam
 ]]
 
 -- Events.OnPrepareHit:Subscribe(function (e)
--- 	-- Osi.NRD_HitSetInt(e.Handle, "NoHitRoll", 1)
--- 	-- Osi.NRD_HitSetInt(e.Handle, "Missed", 1)
--- 	-- Osi.NRD_HitSetInt(e.Handle, "Hit", 0)
--- 	-- Osi.NRD_HitSetInt(e.Handle, "TotalDamageDone", 0)
--- 	-- Osi.NRD_HitSetInt(e.Handle, "LifeSteal", 0)
--- 	-- Osi.NRD_HitSetInt(e.Handle, "ProcWindWalker", 0)
--- 	-- Osi.NRD_HitSetInt(e.Handle, "ArmorAbsorption", 0)
--- 	-- Osi.NRD_HitSetString(e.Handle, "DeathType", "None")
+-- 	e.Data:ForceMiss()
 -- 	--e.Data.NoHitRoll = true
--- 	e.Data.Dodged = true
+-- 	--e.Data.Dodged = true
 -- 	--e.Data.Missed = true
 -- 	--e.Data.Blocked = true
 -- 	--e.Data.Hit = false
@@ -400,14 +393,6 @@ SkillManager.Register.Cast("Rush_EnemyBatteringRam", function (e)
 		Positions = e.Data.TargetPositions
 	})
 end) ]]
-
--- Events.OnHit:Subscribe(function (e)
--- 	e.HitStatus.Hit.Missed = true
--- 	e.HitStatus.Hit.Hit = false
--- 	e.HitStatus.Hit.LifeSteal = 0
--- 	e.HitStatus.Hit.DamageDealt = 0
--- 	e.HitStatus.Hit.TotalDamageDone = 0
--- end)
 
 -- Ext.Events.StatusHitEnter:Subscribe(function (e)
 -- 	e.Hit.Hit.Missed = true

@@ -163,16 +163,22 @@ Ext.Events.SessionLoaded:Subscribe(function()
 				local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
 				if not StringHelpers.IsNullOrWhitespace(resistanceText) then
 					if e.TooltipType == "Item" then
-						e.Tooltip:AppendElementAfterType({
+						local elements = e.Tooltip:PopElements("ResistanceBoost")
+						elements[#elements+1] = {
 							Type = "ResistanceBoost",
 							Label = LocalizedText.ItemBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText),
 							Value = e.Value,
-						}, "ResistanceBoost")
+						}
+						table.sort(elements, Game.Tooltip._Internal.LabelCompare)
+						e.Tooltip:AppendElements(elements)
 					elseif e.TooltipType == "Status" then
-						e.Tooltip:AppendElementAfterType({
+						local elements = e.Tooltip:PopElements("StatusBonus")
+						elements[#elements+1] = {
 							Type = "StatusBonus",
 							Label = LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value),
-						}, "StatusBonus")
+						}
+						table.sort(elements, Game.Tooltip._Internal.LabelCompare)
+						e.Tooltip:AppendElements(elements)
 					elseif e.TooltipType == "Rune" then
 						e:UpdateElement(LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value))
 					end
@@ -184,11 +190,12 @@ Ext.Events.SessionLoaded:Subscribe(function()
 			GameHelpers.UI.RegisterCustomAttribute({
 				Attribute = attributeName,
 				GetTooltipElement = _GetResistancePenElement,
-				StatType = {"Armor", "Shield", "Weapon", "Character", "Potion"}
+				StatType = {"Armor", "Shield", "Weapon", "Character", "Potion"},
+				IsBoostable = true,
 			})
 		end
 
-		if Vars.LeaderDebugMode then
+		--[[ if Vars.LeaderDebugMode then
 			GameHelpers.UI.RegisterCustomAttribute({
 				Attribute = "ArmorBoost",
 				GetTooltipElement = function (e)
@@ -214,7 +221,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 				IsBoostable = true,
 				StatType = {"Armor"}
 			})
-		end
+		end ]]
 	end
 end)
 

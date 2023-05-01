@@ -242,7 +242,8 @@ Ext.RegisterConsoleCommand("statusremove", function(command,status,target)
 	if status == "ALL" then
 		Osi.RemoveHarmfulStatuses(target)
 	else
-		Osi.RemoveStatus(target,status)
+		fprint(LOGLEVEL.TRACE, "statusremove Status(\"%s\") Target(%s)",status,target)
+		GameHelpers.Status.Remove(target, status)
 	end
 end)
 

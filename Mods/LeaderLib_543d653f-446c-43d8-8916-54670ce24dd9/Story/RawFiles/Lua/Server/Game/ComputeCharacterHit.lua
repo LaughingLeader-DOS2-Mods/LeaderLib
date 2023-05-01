@@ -454,6 +454,12 @@ local function ApplyLifeSteal(hit, target, attacker, hitType)
     end
 end
 
+---@param hit StatsHitDamageInfo
+---@return boolean
+local function _IsHitUnsuccessful(hit)
+    return hit.Dodged or hit.Blocked or hit.Missed or ((hit.EffectFlags & 0x100 ) ~= 0)
+end
+
 ---@param hit HitRequest
 ---@param damageList DamageList
 ---@param statusBonusDmgTypes string[]
@@ -463,7 +469,7 @@ end
 ---@param damageMultiplier number
 local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     --Fixes hits still hitting if a mod has changed one of these flags
-    if hit.Dodged or hit.Blocked or hit.Missed then
+    if _IsHitUnsuccessful(hit) then
         hit.Hit = false
     else
         hit.Hit = true
@@ -600,7 +606,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 
 	local damageList = Ext.Stats.NewDamageList()
     damageList:CopyFrom(preDamageList)
-    local hitBlocked = hit.Dodged or hit.Blocked or hit.Missed
+    local hitBlocked = _IsHitUnsuccessful(hit)
 
     --Fix: Temp fix for infinite reflection damage via Shackles of Pain + Retribution. This flag isn't being set or something in v56.
     if hitType == "Reflected" then
@@ -738,9 +744,9 @@ Ext.Events.ComputeCharacterHit:Subscribe(function(e)
     local hit = HitOverrides.ComputeCharacterHit(e.Target, e.Attacker, e.Weapon, e.DamageList, e.HitType, e.NoHitRoll, e.ForceReduceDurability, e.Hit, e.AlwaysBackstab, e.HighGround, e.CriticalRoll)
     if hit then
         --Fixes hits still hitting if a mod has changed one of these flags
-        if hit.Dodged or hit.Blocked or hit.Missed then
+        if _IsHitUnsuccessful(hit.Hit) then
             hit.Hit = false
-            if hit.Blocked then
+            if hit.Blocked or ((hit.EffectFlags & 0x100 ) ~= 0) then
                 hit.DamageList:Clear()
                 hit.TotalDamageDone = 0
                 hit.DamageDealt = 0

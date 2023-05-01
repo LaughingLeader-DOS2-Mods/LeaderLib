@@ -1360,6 +1360,13 @@ _InvokeHandler("setText", function(e, ui, event, text, levelText, shortenWidth)
 	end
 end, _UITYPE.enemyHealthBar)
 
+---@param ui UIObject
+---@param event EclLuaUICallEvent
+---@param text string
+---@param x number
+---@param y number
+---@param isItem boolean
+---@param item EclItem|nil
 ---@return string
 local function _CreateWorldTooltipRequest(ui, event, text, x, y, isItem, item)
 	local uiType = ui.Type

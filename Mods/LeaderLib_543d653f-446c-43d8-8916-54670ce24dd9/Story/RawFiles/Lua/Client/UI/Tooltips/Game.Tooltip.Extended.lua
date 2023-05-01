@@ -429,7 +429,49 @@ _TT.TooltipStatAttributes = {
 	[0x2D] = "Gain",
 }
 
-_TT.TooltipStatAttributes = TooltipStatAttributes
+---@class TooltipData
+---@field Data TooltipElement[]
+---@field ControllerEnabled boolean
+---@field TooltipUIType integer
+---@field UIType integer
+---@field Instance UIObject
+---@field Root FlashMainTimeline
+---@field MarkDirty fun(self:TooltipData) Signals to the tooltip expander that pressing or releasing the expand key will cause the current visible tooltip to re-render.
+---@field IsExpanded fun(self:TooltipData):boolean Whether or not the tooltip is expanded. Check this when setting up tooltip elements.
+---@field IsExtended boolean A simple variable a mod can check to see if this is a LeaderLib tooltip.
+---@field IsFromItem boolean|nil Set by LeaderLib when calling skill listeners for items with a skill tooltip.
+---@field ItemHasSkill boolean|nil Set by LeaderLib when calling skill listeners for items with a skill tooltip.
+local TooltipData = {}
+
+
+---@param data TooltipElement[]
+---@param tooltipUIType integer
+---@param requestingUIType integer
+---@return TooltipData
+function TooltipData:Create(data, tooltipUIType, requestingUIType)
+	local tt = {
+		Data = data,
+		ControllerEnabled = RequestProcessor.ControllerEnabled or false,
+		TooltipUIType = tooltipUIType,
+		UIType = requestingUIType
+	}
+	setmetatable(tt, {
+		__index = function(tbl, k)
+			if k == "Instance" then
+				return _GetUIByType(tooltipUIType)
+			elseif k == "Root" then
+				local ui = _GetUIByType(tooltipUIType)
+				if ui then
+					return ui:GetRoot()
+				end
+			end
+			return TooltipData[k]
+		end
+	})
+	return tt
+end
+
+_TT.TooltipData = TooltipData
 
 --- @param ui UIObject
 --- @param name string MainTimeline property name to fetch
@@ -1524,11 +1566,11 @@ local function _RunNotifyListeners(self, req, ui, method, tooltip, ...)
 		end
 	elseif req.Type == "World" then
 		-- Manually invoked in RequestProcessor, so the text array can be updated
-		---@see GameTooltipRequestProcessorInternals#CreateWorldTooltipRequest
+		---@see GameTooltipRequestProcessorInternals.CreateWorldTooltipRequest
 	elseif req.Type == "PlayerPortrait" then
-		---@see TooltipHooks#OnRenderGenericTooltip
+		---@see TooltipHooks.OnRenderGenericTooltip
 	elseif req.Type == "Generic" then
-		---@see TooltipHooks#OnRenderGenericTooltip
+		---@see TooltipHooks.OnRenderGenericTooltip
 	else
 		_PrintError("Unknown tooltip type? ", req.Type)
 	end
@@ -1541,14 +1583,14 @@ _TT.TooltipHooks._RunNotifyListeners = _RunNotifyListeners
 ---@param req AnyTooltipRequest
 ---@param method string
 function _ttHooks:OnRenderSubTooltip(ui, arrayId, req, method, ...)
-	local tt = TableFromFlash(ui, arrayId)
+	local tt = _TT.TableFromFlash(ui, arrayId)
 	local params = ParseTooltipArray(tt)
 	if params ~= nil then
 		local tooltip = TooltipData:Create(params, ui:GetTypeId(), req.UIType)
 		_RunNotifyListeners(self, req, ui, method, tooltip, ...)
-		local newTooltip = EncodeTooltipArray(tooltip.Data)
+		local newTooltip = _TT.EncodeTooltipArray(tooltip.Data)
 		if newTooltip ~= nil then
-			ReplaceTooltipArray(ui, arrayId, newTooltip, tt)
+			_TT.ReplaceTooltipArray(ui, arrayId, newTooltip, tt)
 		end
 	end
 end
@@ -1679,49 +1721,6 @@ function _ttHooks:InvokeRequestListeners(request, state, ...)
 	InvokeListenerTable(self.RequestListeners.All[state], request, ...)
 end
 
----@class TooltipData
----@field Data TooltipElement[]
----@field ControllerEnabled boolean
----@field TooltipUIType integer
----@field UIType integer
----@field Instance UIObject
----@field Root FlashMainTimeline
----@field MarkDirty fun(self:TooltipData) Signals to the tooltip expander that pressing or releasing the expand key will cause the current visible tooltip to re-render.
----@field IsExpanded fun(self:TooltipData):boolean Whether or not the tooltip is expanded. Check this when setting up tooltip elements.
----@field IsExtended boolean A simple variable a mod can check to see if this is a LeaderLib tooltip.
----@field IsFromItem boolean|nil Set by LeaderLib when calling skill listeners for items with a skill tooltip.
----@field ItemHasSkill boolean|nil Set by LeaderLib when calling skill listeners for items with a skill tooltip.
-local TooltipData = {}
-
-_TT.TooltipData = TooltipData
-
----@param data TooltipElement[]
----@param tooltipUIType integer
----@param requestingUIType integer
----@return TooltipData
-function TooltipData:Create(data, tooltipUIType, requestingUIType)
-	local tt = {
-		Data = data,
-		ControllerEnabled = RequestProcessor.ControllerEnabled or false,
-		TooltipUIType = tooltipUIType,
-		UIType = requestingUIType
-	}
-	setmetatable(tt, {
-		__index = function(tbl, k)
-			if k == "Instance" then
-				return _GetUIByType(tooltipUIType)
-			elseif k == "Root" then
-				local ui = _GetUIByType(tooltipUIType)
-				if ui then
-					return ui:GetRoot()
-				end
-			end
-			return TooltipData[k]
-		end
-	})
-	return tt
-end
-
 local DescriptionElements = {
 	AbilityDescription = true,
 	GenericDescription = true, -- World/Generic Tooltips
@@ -1759,6 +1758,7 @@ function TooltipData:GetDescriptionElement(fallback)
 	---@type {Type:TooltipElementType, Label:string|nil}[]
 	local elements = self.Data
 	for _,element in pairs(elements) do
+		---@cast element AnyTooltipDescriptionElement
 		if DescriptionElements[element.Type] then
 			if element.Label == nil and element.Description then
 				_WrapDescriptionElement(element, "Description")
@@ -2228,7 +2228,7 @@ function _TT._Internal.OnUIObjectCreated(e)
 		ui:CaptureInvokes()
 	elseif _GetGameState() == "Running" then
 		Ext.OnNextTick(function (e)
-			CaptureBuiltInUIs()
+			_TT._Internal.CaptureBuiltInUIs()
 		end)
 	end
 end

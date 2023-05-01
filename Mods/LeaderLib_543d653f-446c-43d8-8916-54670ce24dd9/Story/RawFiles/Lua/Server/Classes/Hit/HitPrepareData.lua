@@ -309,6 +309,25 @@ function HitPrepareData:Recalculate()
 	self.TotalDamageDone = total
 end
 
+---Make the hit miss the target by setting `Hit = false` and `Missed = true`.  
+---This also clears the damage / updates the related properties to represent a missed hit.  
+---@param skipUpdatingProperties? boolean Skip clearing the damage and adjusting the other hit properties.
+function HitPrepareData:ForceMiss(skipUpdatingProperties)
+	if not self.Missed then
+		self.Missed = true
+		self.Hit = false
+		if not skipUpdatingProperties then
+			for k,v in pairs(Vars.HitConfig.MissedProperties) do
+				self[k] = v
+			end
+		end
+	end
+	if not skipUpdatingProperties then
+		self:ClearAllDamage()
+		self.Damage = 0
+	end
+end
+
 ---Returns true if this hit has all the signs of a projectile weapon with Chaos damage.
 ---DamageType will be a random type, while the actual damage in the list will be "None" type.
 function HitPrepareData:IsBuggyChaosDamage()

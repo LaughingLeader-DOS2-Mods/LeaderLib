@@ -146,6 +146,29 @@ Ext.Require("Shared/UI/MessageBox.lua")
 Ext.Require("Shared/UI/Overhead.lua")
 Ext.Require("Shared/System/TutorialManager.lua")
 
+Vars.HitConfig = {
+	---Used by HitData/HitPrepareData when clearing properties after ForceMiss.
+	---@see HitData.ForceMiss
+	---@see HitPrepareData.ForceMiss
+	MissedProperties = {
+		TotalDamageDone = 0,
+		DamageDealt = 0,
+		ArmorAbsorption = 0,
+		LifeSteal = 0,
+		ProcWindWalker = false,
+		-- CriticalHit = false,
+		-- DoT = false,
+		-- Backstab = false,
+		-- Bleeding = false,
+		-- Burning = false,
+		-- Poisoned = false,
+		-- Reflection = false,
+		DamagedMagicArmor = false,
+		DamagedPhysicalArmor = false,
+		DamagedVitality = false,
+	}
+}
+
 local function _SetPersistentVars(v)
 	PersistentVars = v
 end

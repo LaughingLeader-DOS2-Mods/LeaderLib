@@ -290,32 +290,25 @@ function HitData:ClearAllDamage()
 	self:ApplyDamageList(true)
 end
 
-local _MissedClearedHitProperties = {
-	DamageDealt = 0,
-	ArmorAbsorption = 0,
-	LifeSteal = 0,
-	ProcWindWalker = false,
-	-- CriticalHit = false,
-	-- DoT = false,
-	-- Backstab = false,
-	-- Bleeding = false,
-	-- Burning = false,
-	-- Poisoned = false,
-	-- Reflection = false,
-	DamagedMagicArmor = false,
-	DamagedPhysicalArmor = false,
-	DamagedVitality = false,
-}
-
 ---Make the hit miss the target by setting `Hit = false` and `Missed = true`.  
 ---This also clears the damage / updates the related properties to represent a missed hit.  
 ---@param skipUpdatingProperties? boolean Skip clearing the damage and adjusting the other hit properties.
-function HitData:ForceMiss(skipUpdatingProperties)
+---@param setInvulnverableFlag? boolean Set a super secret EffectFlag that causes the hit to miss, but displays "Invulnerable!" text.
+function HitData:ForceMiss(skipUpdatingProperties, setInvulnverableFlag)
 	if self.HitRequest then
-		self.HitRequest.Missed = true
-		self.HitRequest.Hit = false
+		if setInvulnverableFlag then
+			self.HitRequest.Missed = false
+			self.HitRequest.Hit = false
+			self.HitRequest.Blocked = false
+			self.HitRequest.Dodged = false
+			self.HitRequest.EffectFlags = self.HitRequest.EffectFlags | 0x100
+		else
+			self.HitRequest.Missed = true
+			self.HitRequest.Hit = false
+		end
+
 		if not skipUpdatingProperties then
-			for k,v in pairs(_MissedClearedHitProperties) do
+			for k,v in pairs(Vars.HitConfig.MissedProperties) do
 				self.HitRequest[k] = v
 			end
 		end

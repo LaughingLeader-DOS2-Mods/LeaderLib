@@ -124,65 +124,70 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		LoadGlobalSettings()
 	end
 
-	local function _ValueIsSet(x)
-		return x and x > 0
-	end
+	if Ext.Utils.Version() >= 59 then
 
-	---@param e LeaderLibCustomAttributeTooltipCallbackEventArgs
-	local function _GetResistancePenElement(e)
-		if _ValueIsSet(e.Value) then
-			local damageType = Data.ResistancePenetrationAttributes[e.Attribute]
-			local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
-			if not StringHelpers.IsNullOrWhitespace(resistanceText) then
-				if e.TooltipType == "Item" then
-					e.Tooltip:AppendElementAfterType({
-						Type = "ResistanceBoost",
-						Label = LocalizedText.ItemBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText),
-						Value = e.Value,
-					}, "ResistanceBoost")
-				elseif e.TooltipType == "Status" then
-					e.Tooltip:AppendElementAfterType({
-						Type = "StatusBonus",
-						Label = LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value),
-					}, "StatusBonus")
-				elseif e.TooltipType == "Rune" then
-					e:UpdateElement(LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value))
+		local function _ValueIsSet(x)
+			return x and x > 0
+		end
+
+		---@param e LeaderLibCustomAttributeTooltipCallbackEventArgs
+		local function _GetResistancePenElement(e)
+			if _ValueIsSet(e.Value) then
+				local damageType = Data.ResistancePenetrationAttributes[e.Attribute]
+				local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
+				if not StringHelpers.IsNullOrWhitespace(resistanceText) then
+					if e.TooltipType == "Item" then
+						e.Tooltip:AppendElementAfterType({
+							Type = "ResistanceBoost",
+							Label = LocalizedText.ItemBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText),
+							Value = e.Value,
+						}, "ResistanceBoost")
+					elseif e.TooltipType == "Status" then
+						e.Tooltip:AppendElementAfterType({
+							Type = "StatusBonus",
+							Label = LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value),
+						}, "StatusBonus")
+					elseif e.TooltipType == "Rune" then
+						e:UpdateElement(LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value))
+					end
 				end
 			end
 		end
-	end
 
-	for attributeName,_ in pairs(Data.ResistancePenetrationAttributes) do
-		GameHelpers.UI.RegisterCustomAttribute({
-			Attribute = attributeName,
-			GetTooltipElement = _GetResistancePenElement,
-			StatType = {"Armor", "Shield", "Weapon", "Character", "Potion"}
-		})
-	end
+		for attributeName,_ in pairs(Data.ResistancePenetrationAttributes) do
+			GameHelpers.UI.RegisterCustomAttribute({
+				Attribute = attributeName,
+				GetTooltipElement = _GetResistancePenElement,
+				StatType = {"Armor", "Shield", "Weapon", "Character", "Potion"}
+			})
+		end
 
-	if Vars.LeaderDebugMode then
-		GameHelpers.UI.RegisterCustomAttribute({
-			Attribute = "ArmorBoost",
-			GetTooltipElement = function (e)
-				if not _ValueIsSet(e.Value) then return end
-				if e.TooltipType == "Rune" then
-					e:UpdateElement(("Spaghetti Code: %s"):format(e.Value))
-				elseif e.TooltipType == "Item" then
-					e.Tooltip:AppendElementAfterType({
-						Type="StatBoost",
-						Label = "Spaghetti Code",
-						Value = e.Value
-					}, "StatBoost")
-				elseif e.TooltipType == "Status" then
-					e.Tooltip:AppendElementAfterType({
-						Type = "StatusBonus",
-						Label = ("Spaghetti Code: %s"):format(e.Value),
-					}, "StatusBonus")
-				end
-			end,
-			StatType = {"Armor"}
-		})
+		if Vars.LeaderDebugMode then
+			GameHelpers.UI.RegisterCustomAttribute({
+				Attribute = "ArmorBoost",
+				GetTooltipElement = function (e)
+					if not _ValueIsSet(e.Value) then return end
+					if e.TooltipType == "Rune" then
+						e:UpdateElement(("Spaghetti Code: %s"):format(e.Value))
+					elseif e.TooltipType == "Item" then
+						e.Tooltip:AppendElementAfterType({
+							Type="StatBoost",
+							Label = "Spaghetti Code",
+							Value = e.Value
+						}, "StatBoost")
+					elseif e.TooltipType == "Status" then
+						e.Tooltip:AppendElementAfterType({
+							Type = "StatusBonus",
+							Label = ("Spaghetti Code: %s"):format(e.Value),
+						}, "StatusBonus")
+					end
+				end,
+				StatType = {"Armor"}
+			})
+		end
 	end
 end)
 
-Events.Loaded:Invoke(nil)
+Ext.OnNextTick(function (e)
+	Events.Loaded:Invoke(nil)
+end)

@@ -259,4 +259,6 @@ if Ext.Utils.GameVersion() == "v3.6.51.9303" then
 	Ext.IO.AddPathOverride("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Goals/__AAA_LeaderLib_19_TS_LuaOsirisSubscription.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OutdatedEditorQueriesFix.txt")
 end
 
-Events.Loaded:Invoke(nil)
+Ext.OnNextTick(function (e)
+	Events.Loaded:Invoke(nil)
+end)

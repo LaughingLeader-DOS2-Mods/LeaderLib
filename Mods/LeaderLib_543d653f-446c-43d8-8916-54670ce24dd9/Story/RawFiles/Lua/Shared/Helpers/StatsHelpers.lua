@@ -3,7 +3,15 @@ if GameHelpers.Stats == nil then
 end
 
 local _ISCLIENT = Ext.IsClient()
+local _EXTVERSION = Ext.Utils.Version()
 local _type = type
+
+local _GetStatsManager = function ()
+	if _EXTVERSION >= 59 then
+		return Ext.Stats.GetStatsManager()
+	end
+	return nil
+end
 
 --- @param stat string
 --- @param match string
@@ -769,6 +777,24 @@ function GameHelpers.Stats.TryGetAttribute(id, attributeName, callback)
 	return false,nil
 end
 
+---@param statType ModifierListType
+---@param attribute string
+---@param sm? StatsRPGStats
+---@return boolean
+function GameHelpers.Stats.StatTypeHasAttribute(statType, attribute, sm)
+	if _EXTVERSION < 59 then return false end
+	if not sm then
+		sm = Ext.Stats.GetStatsManager()
+	end
+	if sm then
+		local modifier = sm.ModifierLists:GetByName(statType)
+		if modifier and modifier.Attributes:GetByName(attribute) ~= nil then
+			return true
+		end
+	end
+	return false
+end
+
 local _DamageTypeToResPen = {
 	Physical = "PhysicalResistancePenetration",
 	Piercing = "PiercingResistancePenetration",
@@ -807,6 +833,58 @@ local _DefaultGameHelpersStatsGetResistancePenetrationOptions = {
 	SkipEquipmentCheck = false,
 }
 
+---@param character EsvCharacter
+---@param attribute string
+---@param sm StatsRPGStats
+---@return integer
+local function _GetCharacterBoostAmount(character, attribute, sm)
+	local amount = 0
+	for i=2,#character.Stats.DynamicStats do
+		local entry = character.Stats.DynamicStats[i]
+		---TODO evaluate boost conditions?
+		if entry and not StringHelpers.IsNullOrEmpty(entry.BonusWeapon) then
+			amount = amount + GameHelpers.Stats.GetAttribute(entry.BonusWeapon, attribute, 0)
+		end
+	end
+	for _,status in pairs(character:GetStatusObjects()) do
+		---@cast status EsvStatusConsumeBase
+		if GameHelpers.Ext.TypeHasMember(status, "StatsIds") then
+			for _,v in pairs(status.StatsIds) do
+				amount = amount + (GameHelpers.Stats.GetAttribute(v.StatsId, attribute, 0) * status.StatsMultiplier)
+			end
+		end
+	end
+	return amount
+end
+
+---@param item EsvItem
+---@param attribute string
+---@param sm StatsRPGStats
+---@return integer
+local function _GetItemBoostAmount(item, attribute, sm)
+	local amount = 0
+	local statType = item.Stats.ItemType
+	local _baseStatBoosts = {}
+	if GameHelpers.Stats.StatTypeHasAttribute(statType, "Boosts", sm) then
+		local boosts = StringHelpers.Split(item.Stats.StatsEntry.Boosts, ";")
+		for _,boostName in pairs(boosts) do
+			if not StringHelpers.IsNullOrEmpty(boostName) and GameHelpers.Stats.IsStatType(boostName, statType) then
+				_baseStatBoosts[boostName] = true
+				amount = amount + GameHelpers.Stats.GetAttribute(boostName, attribute, 0)
+			end
+		end
+	end
+	for i=2,#item.Stats.DynamicStats do
+		local entry = item.Stats.DynamicStats[i]
+		if entry and not StringHelpers.IsNullOrEmpty(entry.BoostName) and not _baseStatBoosts[entry.BoostName] then
+			if GameHelpers.Stats.IsStatType(entry.BoostName, statType) then
+				amount = amount + GameHelpers.Stats.GetAttribute(entry.BoostName, attribute, 0)
+			end
+		end
+	end
+	return amount
+end
+
 ---Get the total amount of resistance penetration for a character or item.  
 ---This is a custom attribute added by LeaderLib (i.e. `FireResistancePenetration`).  
 ---@overload fun(object:ObjectParam):table<DamageType, integer>
@@ -814,17 +892,27 @@ local _DefaultGameHelpersStatsGetResistancePenetrationOptions = {
 ---@param object ObjectParam
 ---@param damageType DamageType Get the amount for a specific damage type.
 ---@param opts GameHelpersStatsGetResistancePenetrationOptions
+---@param statsManager? StatsRPGStats
 ---@return table<DamageType, integer>
-function GameHelpers.Stats.GetResistancePenetration(object, damageType, opts)
+function GameHelpers.Stats.GetResistancePenetration(object, damageType, opts, statsManager)
 	local options = TableHelpers.SetDefaultOptions(opts, _DefaultGameHelpersStatsGetResistancePenetrationOptions)
+	local sm = statsManager or _GetStatsManager()
 	object = GameHelpers.TryGetObject(object)
 	if not object then
 		return damageType and 0 or {}
 	end
 	local taggedPen = not options.SkipTagCheck and _GetTaggedResistancePenetration(object) or {}
+	local isCharacter = GameHelpers.Ext.ObjectIsCharacter(object)
 	if damageType then
 		local attribute = _DamageTypeToResPen[damageType]
 		local amount = (object.Stats[attribute] or 0)
+		if not isCharacter then
+			---@cast object EsvItem
+			amount = amount + _GetItemBoostAmount(object, attribute, sm)
+		else
+			---@cast object EsvCharacter
+			amount = amount + _GetCharacterBoostAmount(object, attribute, sm)
+		end
 		if not options.SkipEquipmentCheck and GameHelpers.Ext.ObjectIsCharacter(object) then
 			for item in GameHelpers.Character.GetEquipment(object) do
 				local itemPen = GameHelpers.Stats.GetResistancePenetration(item, damageType)
@@ -836,6 +924,13 @@ function GameHelpers.Stats.GetResistancePenetration(object, damageType, opts)
 		local results = {}
 		for attribute,dType in pairs(Data.ResistancePenetrationAttributes) do
 			local amount = object.Stats[attribute] or 0
+			if not isCharacter then
+				---@cast object EsvItem
+				amount = amount + _GetItemBoostAmount(object, attribute, sm)
+			else
+				---@cast object EsvCharacter
+				amount = amount + _GetCharacterBoostAmount(object, attribute, sm)
+			end
 			if taggedPen[damageType] then
 				amount = amount + taggedPen[damageType]
 			end
@@ -843,9 +938,9 @@ function GameHelpers.Stats.GetResistancePenetration(object, damageType, opts)
 				results[dType] = amount
 			end
 		end
-		if not options.SkipEquipmentCheck and GameHelpers.Ext.ObjectIsCharacter(object) then
+		if isCharacter and not options.SkipEquipmentCheck then
 			for item in GameHelpers.Character.GetEquipment(object) do
-				local itemPen = GameHelpers.Stats.GetResistancePenetration(item)
+				local itemPen = GameHelpers.Stats.GetResistancePenetration(item, damageType, options, sm)
 				for dType,amount in pairs(itemPen) do
 					results[dType] = (results[dType] or 0) + amount
 				end

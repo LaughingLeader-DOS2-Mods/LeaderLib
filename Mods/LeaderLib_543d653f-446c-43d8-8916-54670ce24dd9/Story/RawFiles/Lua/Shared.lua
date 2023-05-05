@@ -178,3 +178,7 @@ if not Ext.IsClient() then
 end
 
 GlobalSettings.Version = GameHelpers.GetModVersion(ModuleUUID, true)
+
+Ext.OnNextTick(function (e)
+	Events.Loaded:Invoke(nil)
+end)

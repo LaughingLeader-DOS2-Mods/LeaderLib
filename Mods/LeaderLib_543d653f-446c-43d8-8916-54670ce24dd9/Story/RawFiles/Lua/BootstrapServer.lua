@@ -1,3 +1,4 @@
+---@param anyLevelType? string
 local function CanInvokeListener(anyLevelType)
 	return Vars.Initialized == true and _GS() == "Running" and (anyLevelType or ((not anyLevelType and SharedData.RegionData.LevelType == LEVELTYPE.GAME)))
 end
@@ -281,7 +282,3 @@ if Ext.Utils.GameVersion() == "v3.6.51.9303" then
 	Ext.IO.AddPathOverride("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Goals/LeaderLib_19_TS_LuaOsirisSubscription_Generated.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OutdatedEditorEventsFix.txt")
 	Ext.IO.AddPathOverride("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Goals/__AAA_LeaderLib_19_TS_LuaOsirisSubscription.txt", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OutdatedEditorQueriesFix.txt")
 end
-
-Ext.OnNextTick(function (e)
-	Events.Loaded:Invoke(nil)
-end)

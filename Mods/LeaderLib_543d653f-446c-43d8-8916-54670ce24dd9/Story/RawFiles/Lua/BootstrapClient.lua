@@ -224,7 +224,3 @@ Ext.Events.SessionLoaded:Subscribe(function()
 		end ]]
 	end
 end)
-
-Ext.OnNextTick(function (e)
-	Events.Loaded:Invoke(nil)
-end)

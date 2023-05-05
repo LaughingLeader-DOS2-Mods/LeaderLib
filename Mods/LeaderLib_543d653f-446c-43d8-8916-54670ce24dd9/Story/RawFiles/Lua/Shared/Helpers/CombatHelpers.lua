@@ -21,12 +21,23 @@ local function _GetCombatComponent_Old(character)
 	return nil
 end
 
+local function _TryGetCombatComponent(character)
+	local handle = character.Base.Entity:GetComponent("Combat")
+	if handle and Ext.Utils.IsValidHandle(handle) then
+		return Ext.Entity.GetCombatComponent(character.Handle)
+	end
+	return nil
+end
+
 ---@param character CharacterParam
 ---@return EocCombatComponent|nil
 function GameHelpers.Combat.GetCombatComponent(character)
 	local character = GameHelpers.GetCharacter(character, "EsvCharacter")
 	if character then
-		--return Ext.Entity.GetCombatComponent(character.Handle)
+		local b,result = pcall(_TryGetCombatComponent, character)
+		if b and result ~= nil then
+			return result
+		end
 		return _GetCombatComponent_Old(character)
 	end
 	return nil

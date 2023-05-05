@@ -456,8 +456,13 @@ end
 
 ---@param hit StatsHitDamageInfo
 ---@return boolean
-local function _IsHitUnsuccessful(hit)
-    return hit.Dodged or hit.Blocked or hit.Missed or ((hit.EffectFlags & 0x100 ) ~= 0)
+local function _HitFailed(hit)
+    if hit.Dodged or hit.Blocked or hit.Missed then
+       return true
+    elseif hit.Hit == false and ((hit.EffectFlags & 0x100 ) ~= 0) then
+        return true
+    end
+    return false
 end
 
 ---@param hit HitRequest
@@ -469,11 +474,7 @@ end
 ---@param damageMultiplier number
 local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     --Fixes hits still hitting if a mod has changed one of these flags
-    if _IsHitUnsuccessful(hit) then
-        hit.Hit = false
-    else
-        hit.Hit = true
-    end
+    hit.Hit = not _HitFailed(hit)
     damageList:AggregateSameTypeDamages()
     damageList:Multiply(damageMultiplier)
 
@@ -587,6 +588,19 @@ local function _CalculateHitChance(attacker, target)
     end
 end
 
+local function _HitEnd(target, attacker, weapon, hitType, forceReduceDurability, hit, criticalRoll, hitBlocked, damageList, damageMultiplier,criticalMultiplier, statusBonusDmgTypes)
+    if weapon ~= nil and weapon.Name ~= "DefaultWeapon" and hitType ~= "Magic" and forceReduceDurability and not (hit.Missed or hit.Dodged) then
+        Game.Math.ConditionalDamageItemDurability(attacker, weapon)
+    end
+
+    if not hitBlocked then
+        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier)
+        HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+    end
+
+    return hit
+end
+
 --- @param target StatCharacter
 --- @param attacker StatCharacter
 --- @param weapon CDivinityStatsItem
@@ -600,13 +614,14 @@ end
 --- @param criticalRoll CriticalRoll
 --- @return StatsHitDamageInfo hit
 local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+    local hitBlocked = _HitFailed(hit)
+
     local damageMultiplier = 1.0
 	local criticalMultiplier = 0.0
     local statusBonusDmgTypes = {}
 
 	local damageList = Ext.Stats.NewDamageList()
     damageList:CopyFrom(preDamageList)
-    local hitBlocked = _IsHitUnsuccessful(hit)
 
     --Fix: Temp fix for infinite reflection damage via Shackles of Pain + Retribution. This flag isn't being set or something in v56.
     if hitType == "Reflected" then
@@ -614,7 +629,9 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     end
 
     if attacker == nil then
-        HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+        if not hitBlocked then
+            HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
+        end
         return hit
     end
 
@@ -632,6 +649,9 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     damageMultiplier = 1.0 + Game.Math.GetAttackerDamageMultiplier(attacker, target, highGroundFlag)
     if hitType == "Magic" or hitType == "Surface" or hitType == "DoT" or hitType == "Reflected" then
         damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier)
+        if hitBlocked then
+			return _HitEnd(target, attacker, weapon, hitType, forceReduceDurability, hit, criticalRoll, hitBlocked, damageList, damageMultiplier, criticalMultiplier, statusBonusDmgTypes)
+		end
         HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
         return hit
     end
@@ -665,7 +685,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         damageMultiplier = damageMultiplier + 0.1
     end
 
-    if not noHitRoll and not hitBlocked then
+    if not hitBlocked and not noHitRoll then
         local hitChance = _CalculateHitChance(attacker, target)
         local hitRoll = Ext.Utils.Random(0, 99)
         if hitRoll >= hitChance then
@@ -684,16 +704,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         end
     end
 
-    if weapon ~= nil and weapon.Name ~= "DefaultWeapon" and hitType ~= "Magic" and forceReduceDurability and not (hit.Missed or hit.Dodged) then
-        Game.Math.ConditionalDamageItemDurability(attacker, weapon)
-    end
-
-    if not hitBlocked then
-        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier)
-        HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
-    end
-
-    return hit
+    return _HitEnd(target, attacker, weapon, hitType, forceReduceDurability, hit, criticalRoll, hitBlocked, damageList, damageMultiplier, criticalMultiplier, statusBonusDmgTypes)
 end
 
 HitOverrides._ComputeCharacterHitFunction = ComputeCharacterHit
@@ -743,7 +754,7 @@ Ext.Events.ComputeCharacterHit:Subscribe(function(e)
     local hit = HitOverrides.ComputeCharacterHit(e.Target, e.Attacker, e.Weapon, e.DamageList, e.HitType, e.NoHitRoll, e.ForceReduceDurability, e.Hit, e.AlwaysBackstab, e.HighGround, e.CriticalRoll)
     if hit then
         --Fixes hits still hitting if a mod has changed one of these flags
-        if _IsHitUnsuccessful(hit) then
+        if _HitFailed(hit) then
             hit.Hit = false
             if hit.Blocked or ((hit.EffectFlags & 0x100 ) ~= 0) then
                 hit.DamageList:Clear()

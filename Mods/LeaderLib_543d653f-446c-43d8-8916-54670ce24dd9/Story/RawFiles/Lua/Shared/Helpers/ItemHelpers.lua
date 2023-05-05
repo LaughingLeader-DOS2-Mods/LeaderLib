@@ -663,7 +663,7 @@ if not _ISCLIENT then
             if entry and not StringHelpers.IsNullOrEmpty(entry.BoostName) then
                 local runeStat = Ext.Stats.Get(entry.BoostName, nil, false)
                 if runeStat then
-                    local template = Ext.Template.GetRootTemplate(runeStat.RootTemplate)
+                    local template = GameHelpers.GetTemplateObject(runeStat.RootTemplate)
                     local activeBoostStat = ""
                     local activeBoostStatAttribute = ""
                     if itemType == "Weapon" then

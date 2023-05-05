@@ -258,7 +258,7 @@ Ext.Osiris.RegisterListener("RuneInserted", 4, "before", function (characterGUID
 	runeTemplate = StringHelpers.GetUUID(runeTemplate)
 	local character = GameHelpers.GetCharacter(characterGUID)
 	local item = GameHelpers.GetItem(itemGUID)
-	local template = Ext.Template.GetRootTemplate(runeTemplate)--[[@as ItemTemplate]]
+	local template = GameHelpers.GetTemplate(runeTemplate, true)--[[@as ItemTemplate]]
 	local runeStat = nil
 	if template then
 		runeStat = Ext.Stats.Get(template.Stats, nil, false)

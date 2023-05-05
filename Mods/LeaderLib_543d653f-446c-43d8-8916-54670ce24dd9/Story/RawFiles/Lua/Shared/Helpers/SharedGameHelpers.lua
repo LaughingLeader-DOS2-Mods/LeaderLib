@@ -736,6 +736,16 @@ end
 
 --local t = Mods.LeaderLib.GameHelpers.GetTemplate(me.MyGuid, true, true); if t then print(t.Name) else print("nil") end
 
+---@return CharacterTemplate|ItemTemplate
+local _GetTemplateObject = Ext.Template.GetRootTemplate
+
+if _EXTVERSION <= 59 and Ext.Utils.GameVersion() == Data.GameVersion.Editor then
+	--Crashes when GetStaticSymbols().GetGlobalTemplateBank() is called in v58 of the extender, in the editor 
+	_GetTemplateObject = function() return nil end
+end
+
+GameHelpers.GetTemplateObject = _GetTemplateObject
+
 ---@overload fun(obj:ObjectParam):Guid|nil
 ---Get an object's root template UUID.
 ---@param obj ObjectParam

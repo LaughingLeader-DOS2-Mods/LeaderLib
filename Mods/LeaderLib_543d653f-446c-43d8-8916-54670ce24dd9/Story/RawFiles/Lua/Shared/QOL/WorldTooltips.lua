@@ -27,14 +27,14 @@ local function _UpdateTemplates(templates)
 			if template then
 				template.Tooltip = WorldTooltips.TooltipMode
 			end
-			template = Ext.Template.GetRootTemplate(id)
+			template = GameHelpers.GetTemplateObject(id)
 			if template then
 				template.Tooltip = WorldTooltips.TooltipMode
 			end
 		end
 	else
 		for id,b in pairs(templates) do
-			local template = Ext.Template.GetRootTemplate(id)
+			local template = GameHelpers.GetTemplateObject(id)
 			if template then
 				template.Tooltip = WorldTooltips.TooltipMode
 			end

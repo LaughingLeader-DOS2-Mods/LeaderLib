@@ -2286,3 +2286,7 @@ Data.HeroBaseSkeletonToRace = {
 	---Lizards_Hero_Male_Base_d656291b-81f3-445e-84df-4e32cfc18d46
 	["d656291b-81f3-445e-84df-4e32cfc18d46"] = "Lizard",
 }
+
+Data.GameVersion = {
+	Editor = "v3.6.51.9303"
+}

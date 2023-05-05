@@ -6,6 +6,15 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.7",
+			"Changes": [
+				"API Changes:",
+				"\t• Added HitPrepareData:ForceMiss.",
+				"\t• Add 'IsBoostable' to the options when registering an attribute with GameHelpers.UI.RegisterCustomAttribute. This lets stat boosts on the item add to the total value for the tooltip.",
+				"\t• Made hit success conditions evaluate if the 0x100 EffectFlag is set (Invulnerable)."
+			]
+		},
+		{
 			"Version": "1.7.31.6",
 			"Changes": [
 				"Talent tooltips now display what equipment granted them, if any.",

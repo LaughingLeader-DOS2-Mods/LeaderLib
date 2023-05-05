@@ -131,7 +131,7 @@ DB_NOOP(1);
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_AddGrowthSkills")
 AND
-NOT IsTagged(_Character, "LeaderLib_Growth_AddedSkillsThisLevel", 1)
+IsTagged(_Character, "LeaderLib_Growth_AddedSkillsThisLevel", 0)
 AND
 LeaderLib_Growth_Characters_QRY_CharacterHasSkills(_Character)
 THEN

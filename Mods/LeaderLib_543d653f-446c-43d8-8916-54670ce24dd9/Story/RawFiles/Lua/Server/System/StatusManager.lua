@@ -26,7 +26,7 @@ local _canBlockDeletion = false
 local _canInvokeListeners = false
 
 ---@type ServerGameState
-local _GS = ""
+local _STATE = ""
 local _ValidStates = {
 	Running = true,
 	Paused = true,
@@ -34,9 +34,9 @@ local _ValidStates = {
 }
 
 Ext.Events.GameStateChanged:Subscribe(function (e)
-	_GS = tostring(e.ToState)
-	_canInvokeListeners = _ValidStates[_GS] == true
-	if not _ValidStates[_GS] then
+	_STATE = tostring(e.ToState)
+	_canInvokeListeners = _ValidStates[_STATE] == true
+	if not _ValidStates[_STATE] then
 		_canBlockDeletion = false
 	elseif not _canBlockDeletion then
 		_canBlockDeletion = Vars.IsEditorMode or (SharedData.RegionData.State == REGIONSTATE.GAME and SharedData.RegionData.LevelType == LEVELTYPE.GAME)

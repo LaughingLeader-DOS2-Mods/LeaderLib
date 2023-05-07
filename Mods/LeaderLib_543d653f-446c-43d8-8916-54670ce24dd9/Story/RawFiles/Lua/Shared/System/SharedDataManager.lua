@@ -158,15 +158,24 @@ if not _ISCLIENT then
 	end
 
 	function GameHelpers.Data.SyncSharedData(syncSettings, client, ignoreProfile)
-		if Osi.CharacterGetHostCharacter() == nil then
-			Ext.Utils.PrintError("[LeaderLib:GameHelpers.Data.SyncSharedData] No host character!")
-			return
+		if StringHelpers.IsNullOrEmpty(Osi.CharacterGetHostCharacter()) then
+			if not Vars.IsEditorMode then
+				error("[LeaderLib:GameHelpers.Data.SyncSharedData] No host character!", 2)
+			end
+			return false
 		end
 		if client == nil then
 			local totalUsers = Common.TableLength(_Users, true)
 			if totalUsers <= 0 then
 				Osi.IterateUsers("LeaderLib_StoreUserData")
-			else
+				for player in GameHelpers.Character.GetPlayers() do
+					if player.ReservedUserID > -1 then
+						_Users[player.ReservedUserID] = true
+					end
+				end
+				totalUsers = Common.TableLength(_Users, true)
+			end
+			if totalUsers > 0 then
 				local host = Osi.CharacterGetHostCharacter()
 				if SharedData.GameMode == GAMEMODE.GAMEMASTER then
 					local gm = GameHelpers.GetCharacter(host)
@@ -186,6 +195,8 @@ if not _ISCLIENT then
 						GameSettingsManager.Sync(id)
 					end
 				end
+			elseif not Vars.IsEditorMode then
+				error("No users found!", 2)
 			end
 		else
 			local clientType = type(client)
@@ -226,6 +237,11 @@ if not _ISCLIENT then
 		GameMasterPause = true,
 	}
 
+	local _pausedState = {
+		Paused = true,
+		GameMasterPause = true,
+	}
+
 	local function OnSyncTimer()
 		local state = tostring(_GS())
 		if not _validSyncStates[state] then
@@ -239,7 +255,12 @@ if not _ISCLIENT then
 	function GameHelpers.Data.StartSyncTimer(delay, syncSettings)
 		syncSettingsNext = true
 		Timer.Cancel("LeaderLib_SyncSharedData")
-		Timer.StartOneshot("LeaderLib_SyncSharedData", delay or 50, OnSyncTimer)
+		local state = tostring(_GS())
+		if _validSyncStates[state] then
+			Timer.StartOneshot("LeaderLib_SyncSharedData", delay or 50, OnSyncTimer)
+		else
+			syncOnGameState = true
+		end
 	end
 
 	function GameHelpers.Data.SetRegion(region)
@@ -489,15 +510,14 @@ if not _ISCLIENT then
 
 	Ext.Events.GameStateChanged:Subscribe(function (e)
 		local state = tostring(e.ToState)
+		local fromState = tostring(e.FromState)
 		if syncOnGameState and _validSyncStates[state] then
 			syncOnGameState = false
 			GameHelpers.Data.SyncSharedData(syncSettingsNext)
 			syncSettingsNext = false
-		else
-			if state == "Running" and e.FromState ~= "Paused" and e.FromState ~= "GameMasterPause" then
-				Osi.IterateUsers("LeaderLib_StoreUserData")
-				GameHelpers.Data.StartSyncTimer()
-			end
+		elseif state == "Running" and not _pausedState[fromState] then
+			Osi.IterateUsers("LeaderLib_StoreUserData")
+			GameHelpers.Data.StartSyncTimer()
 		end
 	end)
 

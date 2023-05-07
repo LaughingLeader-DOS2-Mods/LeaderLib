@@ -16,6 +16,7 @@ Timer.TimerNameMap = {}
 
 ---@type WaitForTickData[]
 local _waitForTick = {}
+local _waitForTickLen = 0
 
 if not _ISCLIENT then
 	setmetatable(Timer.TimerData, {
@@ -125,8 +126,9 @@ end
 
 ---@param timerName string
 ---@param delay integer
-local function _StartTimer(timerName, delay)
-	if not _ISCLIENT then
+---@param useTicks? boolean
+local function _StartTimer(timerName, delay, useTicks)
+	if not _ISCLIENT and not useTicks then
 		_TimerCancel(timerName)
 		_TimerLaunch(timerName, delay)
 	else
@@ -143,12 +145,14 @@ local function _StartTimer(timerName, delay)
 			end
 		end
 		if not resetTickTime then
-			_waitForTick[len+1] = {
+			len = len + 1
+			_waitForTick[len] = {
 				ID = timerName,
 				TargetTime = _mt() + delay,
 				Delay = delay
 			}
 		end
+		_waitForTickLen = len
 		--UIExtensions.StartTimer(timerName, delay, flashCallback)
 	end
 	return true
@@ -176,14 +180,16 @@ function _INTERNAL.ClearOneshotSubscriptions(timerName, skipAlteringTickTable)
 			Events.TimerFinished:Unsubscribe(index)
 		end
 		_OneshotTimerIndexes[timerName] = nil
-		if _ISCLIENT and skipAlteringTickTable ~= true then
+		if skipAlteringTickTable ~= true then
 			local len = #_waitForTick
 			if len > 0 then
+				_waitForTickLen = 0
 				local _nextWait = {}
 				for i=1,len do
 					local data = _waitForTick[i]
 					if data and data.ID ~= timerName then
-						_nextWait[#_nextWait+1] = data
+						_waitForTickLen = _waitForTickLen + 1
+						_nextWait[_waitForTickLen] = data
 					end
 				end
 				_waitForTick = _nextWait
@@ -220,7 +226,7 @@ function Timer.StartOneshot(timerName, delay, callback, stopPrevious)
 	end
 	local tbl = _OneshotTimerIndexes[timerName]
 	tbl[#tbl+1] = index
-	_StartTimer(timerName, delay)
+	_StartTimer(timerName, delay, true)
 	return index
 end
 
@@ -319,6 +325,9 @@ function Timer.RegisterListener(name, callback)
 end
 
 local function OnTimerFinished(timerName, skipAlteringTickTable)
+	if timerName == "LeaderLib_SyncSharedData" then
+		Ext.Utils.PrintError("LeaderLib_SyncSharedData done")
+	end
 	if Timer.IgnoredTimers[timerName] then
 		return
 	end
@@ -542,30 +551,33 @@ end
 ---@field TargetTime integer
 ---@field Delay integer
 
-if _ISCLIENT then
-	---@param e LuaTickEvent
-	local function OnTick(e)
-		local length = #_waitForTick
-		if length > 0 then
-			local time = _mt()
-			local _nextWait = {}
-			local idx = 1
-			for i=1,length do
-				local data = _waitForTick[i]
-				if data then
-					if data.TargetTime <= time then
-						OnTimerFinished(data.ID, true)
-					else
-						_nextWait[idx] = data
-						idx = idx + 1
-					end
+---@param e LuaTickEvent
+local function OnTick(e)
+	if _waitForTickLen > 0 then
+		local time = _mt()
+		local nextWait = {}
+		local nextLen = 0
+		local doUpdate = false
+		for i=1,_waitForTickLen do
+			local data = _waitForTick[i]
+			if data then
+				if data.TargetTime <= time then
+					doUpdate = true
+					OnTimerFinished(data.ID, true)
+				else
+					nextLen = nextLen + 1
+					nextWait[nextLen] = data
 				end
 			end
-			_waitForTick = _nextWait
+		end
+		if doUpdate then
+			_waitForTick = nextWait
+			_waitForTickLen = nextLen
 		end
 	end
-	Ext.Events.Tick:Subscribe(OnTick, {Priority=1})
 end
+
+Ext.Events.Tick:Subscribe(OnTick, {Priority=1})
 
 --Globals / old API support
 

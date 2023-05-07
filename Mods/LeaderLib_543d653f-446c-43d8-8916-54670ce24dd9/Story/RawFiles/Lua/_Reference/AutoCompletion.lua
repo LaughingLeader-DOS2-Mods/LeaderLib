@@ -37,6 +37,10 @@ Mods.LeaderLib = {
 	VisualManager = VisualManager,
 	Lib = Lib,
 	ModuleUUID = "7e737d2f-31d2-4751-963f-be6ccc59cd0c",
+	LoadGlobalSettings = LoadGlobalSettings,
+	SaveGlobalSettings = SaveGlobalSettings,
+	LoadGameSettings = LoadGameSettings,
+	SaveGameSettings = SaveGameSettings
 }
 
 ---@alias DamageType "None"|"Physical"|"Piercing"|"Corrosive"|"Magic"|"Chaos"|"Fire"|"Air"|"Water"|"Earth"|"Poison"|"Shadow"

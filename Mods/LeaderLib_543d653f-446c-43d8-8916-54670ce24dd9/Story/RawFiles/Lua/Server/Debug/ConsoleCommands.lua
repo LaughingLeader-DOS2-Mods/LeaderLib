@@ -405,7 +405,7 @@ Ext.RegisterConsoleCommand("addreward", function(command, treasure, identifyItem
 		treasure = "ST_WeaponRare"
 	end
 	local host = Osi.CharacterGetHostCharacter()
-	local identified = identifyItems ~= 0
+	local identified = tostring(identifyItems) == "1" and 1 or 0
 	Osi.CharacterGiveReward(host, treasure, identified)
 end)
 

@@ -511,12 +511,12 @@ Events.Osiris.ItemSendToHomesteadEvent = _CreateCharacterItemEventWrapper("ItemS
 ---@field Container EsvItem
 ---@field ContainerGUID Guid
 
----@type LeaderLibSubscribableEvent<OsirisItemRemovedFromCharacterEventArgs>
+---@type LeaderLibSubscribableEvent<OsirisItemRemovedFromContainerEventArgs>
 Events.Osiris.ItemRemovedFromContainer = _CreateOsirisEventWrapper("ItemRemovedFromContainer", _GetItemContainerEventArgs)
 
 ---@class OsirisItemAddedToContainerEventArgs:OsirisItemRemovedFromContainerEventArgs
 
----@type LeaderLibSubscribableEvent<OsirisItemAddedToCharacterEventArgs>
+---@type LeaderLibSubscribableEvent<OsirisItemAddedToContainerEventArgs>
 Events.Osiris.ItemAddedToContainer = _CreateOsirisEventWrapper("ItemAddedToContainer", _GetItemContainerEventArgs)
 
 Events.Osiris.ItemClosed = _CreateItemEventWrapper("ItemClosed")

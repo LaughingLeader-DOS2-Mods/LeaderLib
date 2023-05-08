@@ -817,28 +817,31 @@ function GameHelpers.Item.FindTaggedEquipment(character, tag, asArray)
 	return items
 end
 
----@overload fun(character:CharacterParam, tag:string|string[]):string[]
+---@overload fun(object:ObjectParam, tag:string|string[]):string[],integer
 ---Gets an array of items with specific tag(s) on a character.
----@param character CharacterParam
+---@param object ObjectParam
 ---@param tag string|string[]
 ---@param asEsvItem boolean
 ---@return EsvItem[]
-function GameHelpers.Item.FindTaggedItems(character, tag, asEsvItem)
+---@return integer total
+function GameHelpers.Item.FindTaggedItems(object, tag, asEsvItem)
     local items = {}
-    character = GameHelpers.GetCharacter(character)
-    if character then
-        for i,v in pairs(character:GetInventoryItems()) do
+    local len = 0
+    object = GameHelpers.TryGetObject(object)
+    if object then
+        for i,v in pairs(object:GetInventoryItems()) do
             local item = GameHelpers.GetItem(v)
             if GameHelpers.ItemHasTag(item, tag) then
+                len = len + 1
                 if asEsvItem then
-                    items[#items+1] = item
+                    items[len] = item
                 else
-                    items[#items+1] = v
+                    items[len] = v
                 end
             end
         end
     end
-	return items
+	return items,len
 end
 
 ---@deprecated

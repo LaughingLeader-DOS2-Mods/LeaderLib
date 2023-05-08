@@ -397,6 +397,9 @@ Ext.Events.GetSkillDamage:Subscribe(function (e)
 		if GameHelpers.Ext.ObjectIsStatCharacter(e.Attacker) then
 			character = e.Attacker.Character
 		end
+		if not character then
+			return
+		end
 		local data = _CreateSkillEventTable(skill, character, SKILL_STATE.GETDAMAGE, e, "userdata") --[[@as OnSkillStateGetDamageAmountEventArgs]]
 		data.IsTooltip = false
 		---@type SubscribableEventInvokeResult<OnSkillStateGetDamageAmountEventArgs>

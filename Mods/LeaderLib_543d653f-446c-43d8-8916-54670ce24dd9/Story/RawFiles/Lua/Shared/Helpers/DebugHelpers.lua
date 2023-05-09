@@ -1362,6 +1362,9 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 	if obj == nil then
 		return "nil"
 	end
+	if Ext.Utils.IsValidHandle(obj) then
+		return tostring(obj)
+	end
 	local meta = getmetatable(obj)
 	local props = userDataProps[meta]
 	if meta == "CDivinityStats_Equipment_Attributes" and obj.ItemSlot == "Weapon" then
@@ -1403,7 +1406,7 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 				props.DisplayName = function(_obj) return GameHelpers.GetDisplayName(_obj.DisplayName) end
 			end
 			props.UserdataType = function(_obj) return Ext.Types.GetObjectType(_obj) end
-		elseif string.find(meta, "esv::Status") then
+		elseif meta and string.find(meta, "esv::Status") then
 			props = {
 				StatusId = "string",
 				StatusType = "string",

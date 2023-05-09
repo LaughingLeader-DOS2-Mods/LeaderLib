@@ -8,9 +8,11 @@ local _loadFile = Ext.IO.LoadFile
 local _saveFile = Ext.IO.SaveFile
 local _type = type
 
+---@generic T:table|nil
 ---@param filepath string
----@param fallback table|nil
+---@param fallback? T
 ---@param context nil|"user"|"data"
+---@return T
 function GameHelpers.IO.LoadJsonFile(filepath, fallback, context)
 	local file =_loadFile(filepath, context)
 	if file then

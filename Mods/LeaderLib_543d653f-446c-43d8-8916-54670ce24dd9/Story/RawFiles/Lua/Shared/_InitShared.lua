@@ -90,7 +90,7 @@ end
 ---@field Handle ExtenderTranslatedString
 
 ---Gets the value from an extender TranslatedString. Either the ReferenceString if unset, or the localized handle value.
----@param object ExtenderTranslatedStringObject
+---@param object ExtenderTranslatedStringObject|ExtenderTranslatedString|TranslatedString
 ---@param fallback string|nil
 ---@return string
 function GameHelpers.GetTranslatedStringValue(object, fallback)

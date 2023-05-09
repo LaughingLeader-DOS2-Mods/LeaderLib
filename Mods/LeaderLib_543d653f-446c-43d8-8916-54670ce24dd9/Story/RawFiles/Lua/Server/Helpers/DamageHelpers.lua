@@ -337,8 +337,8 @@ end
 ---@param noRandomization boolean
 ---@param mainWeapon CDivinityStatsEquipmentAttributesWeapon  Optional mainhand weapon to use in place of the attacker's.
 ---@param offHandWeapon CDivinityStatsEquipmentAttributesWeapon   Optional offhand weapon to use in place of the attacker's.
----@return DamageList damageList
----@return DeathType deathType
+---@return DamageList|nil damageList
+---@return DeathType|nil deathType
 local function GetSkillDamageWithTarget(skill, attacker, target, isFromItem, stealthed, attackerPos, targetPos, level, noRandomization, mainWeapon, offHandWeapon)
     if attacker ~= nil and level < 0 then
         level = attacker.Level

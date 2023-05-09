@@ -47,7 +47,7 @@ end
 
 if isClient then
 
-	---@alias MessageBoxEventID string|'"CharacterCreationConfirm"'|'"CharacterCreationCancel"'
+	---@alias MessageBoxEventID string|"CharacterCreationConfirm"|"CharacterCreationCancel"
 
 	local ButtonConfirmations = {
 		CharacterCreationCancel = {

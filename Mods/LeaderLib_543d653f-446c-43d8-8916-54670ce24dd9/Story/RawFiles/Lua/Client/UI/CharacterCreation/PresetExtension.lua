@@ -36,21 +36,11 @@ local CharacterCreation = Classes.UIWrapper:CreateFromType(Data.UIType.character
 ---@field AttributeChanges CCAttributeChangeEntry[]
 ---@field EquipmentProperties CCEquipmentPropertiesEntry[]
 
----@type table<string, CCPresetData>
---local PresetData = {}
 ---@type table<string,integer>
 local PresetToID = {}
 
 local PresetExt = {}
 UIExtensions.CC.PresetExt = PresetExt
-
--- local function BuildPresetData()
--- 	local cc = Ext.Stats.GetCharacterCreation()
--- 	for i,v in pairs(cc.ClassPresets) do
--- 		PresetData[v.ClassType] = v
--- 		PresetToID[v.ClassType] = i-1
--- 	end
--- end
 
 Ext.RegisterUINameCall("LeaderLib_PresetDropdown_PresetSelected", function (ui, event, selectedId, selectedIndex)
 	if selectedId then

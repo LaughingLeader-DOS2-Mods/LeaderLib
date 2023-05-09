@@ -364,7 +364,7 @@ function GameHelpers.Status.HasStatBoosts(status)
 		end
 		return GameHelpers.Status.HasStatBoosts(status.StatusId)
 	end
-	ferror("status param (%s) is not a valid type (%s) - Should be a string or an Ecl/EsvStatus", status, t)
+	error(("status param (%s) is not a valid type (%s) - Should be a string or an Ecl/EsvStatus"):format(status, t), 2)
 end
 
 ---Returns true if the object has any of the given statuses.

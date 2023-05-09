@@ -325,9 +325,6 @@ function Timer.RegisterListener(name, callback)
 end
 
 local function OnTimerFinished(timerName, skipAlteringTickTable)
-	if timerName == "LeaderLib_SyncSharedData" then
-		Ext.Utils.PrintError("LeaderLib_SyncSharedData done")
-	end
 	if Timer.IgnoredTimers[timerName] then
 		return
 	end

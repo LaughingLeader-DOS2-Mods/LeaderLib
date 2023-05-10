@@ -58,9 +58,11 @@ if isClient then
 		},
 		CharacterCreationConfirm = {
 			IsActive = function(this)
-				local text_mc = this.popup_mc.text_mc
+				local text_mc = nil
 				if Vars.ControllerEnabled then
 					text_mc = this.popup_mc.text_txt
+				else
+					text_mc = this.popup_mc.text_mc.text_txt
 				end
 				return text_mc and StringHelpers.Equals(text_mc.htmlText, LocalizedText.MessageBox.HasPointsDescription.Value, true, true)
 			end,

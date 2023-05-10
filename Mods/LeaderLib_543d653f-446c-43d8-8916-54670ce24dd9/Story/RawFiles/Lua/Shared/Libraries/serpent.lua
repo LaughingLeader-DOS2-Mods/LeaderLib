@@ -33,7 +33,9 @@ local function s(t, opts)
 	local iname, comm = '_'..(name or ''), opts.comment and (tonumber(opts.comment) or math.huge)
 	local numformat = opts.numformat or "%.17g"
 	local seen, sref, syms, symn = {}, {'local '..iname..'={}'}, {}, 0
-	local function gensym(val) return '_'..(tostring(tostring(val)):gsub("[^%w]",""):gsub("(%d%w+)",
+	local function gensym(val)
+		if type(val) == "userdata" then return tostring(val) end
+		return '_'..(tostring(tostring(val)):gsub("[^%w]",""):gsub("(%d%w+)",
 		-- tostring(val) is needed because __tostring may return a non-string value
 		function(s) if not syms[s] then symn = symn+1; syms[s] = symn end return tostring(syms[s]) end))
 	end
@@ -55,7 +57,7 @@ local function s(t, opts)
 	local function safestr(s) 
 		return type(s) == "number" and tostring(huge and snum[tostring(s)] or numformat:format(s))
 		or type(s) ~= "string" and tostring(s) -- escape NEWLINE/010 and EOF/026
-		or ("%q"):format(s):gsub("\010","n"):gsub("\026","\\026")
+		or ("%q"):format(s):gsub("\010","n"):gsub("\026","\\026"):gsub("\\\"", "\"")
 	end
 
 	local function comment(s,l) return comm and (l or 0) < comm and ' --[['..select(2, pcall(tostring, s))..']]' or '' end
@@ -141,37 +143,41 @@ local function s(t, opts)
 			for key = 1, maxn do o[key] = key end
 			if not maxnum or #o < maxnum then
 				local n = #o -- n = n + 1; o[n] is much faster than o[#o+1] on large tables
-				for key in pairs(t) do 
+				for key in pairs(t) do
 					if o[key] ~= key then 
 						n = n + 1; o[n] = key
-					end 
+					end
 				end
 			end
 			if maxnum and #o > maxnum then o[maxnum+1] = nil end
 			if opts.sortkeys and #o > maxn then alphanumsort(o, t, opts.sortkeys) end
 			local sparse = sparse and #o > maxn -- disable sparsness if only numeric keys (shorter output)
-			for n, key in ipairs(o) do
-				local value, ktype, plainindex = t[key], type(key), n <= maxn and not sparse
+			for n,k in ipairs(o) do
+				local value, ktype, plainindex = t[k], type(k), n <= maxn and not sparse
+				if ktype == "userdata" then
+					k = tostring(k)
+					ktype = "string"
+				end
 				if opts.valignore and opts.valignore[value] -- skip ignored values; do nothing
-				or opts.keyallow and not opts.keyallow[key]
-				or opts.keyignore and opts.keyignore[key]
+				or opts.keyallow and not opts.keyallow[k]
+				or opts.keyignore and opts.keyignore[k]
 				or opts.valtypeignore and opts.valtypeignore[type(value)] -- skipping ignored value types
 				or sparse and value == nil then -- skipping nils; do nothing
 				elseif ktype == 'table' or ktype == 'function' or badtype[ktype] then
-					if not seen[key] and not globals[key] then
+					if not seen[k] and not globals[k] then
 						sref[#sref+1] = 'placeholder'
-						local sname = safename(iname, gensym(key)) -- iname is table for local variables
-						sref[#sref] = val2str(key,sname,indent,sname,iname,true) end
+						local _,sname = safename(iname, gensym(k)) -- iname is table for local variables
+						sref[#sref] = val2str(k,sname,indent,sname,iname,true) end
 						sref[#sref+1] = 'placeholder'
-						local path = seen[t]..'['..tostring(seen[key] or globals[key] or gensym(key))..']'
+						local path = seen[t]..'['..tostring(seen[k] or globals[k] or gensym(k))..']'
 						sref[#sref] = path..space..tableKeyAssign..space..tostring(seen[value] or val2str(value,nil,indent,path))
-					else
-						out[#out+1] = val2str(value,key,indent,nil,seen[t],plainindex,level+1)
-						if maxlen then
-							maxlen = maxlen - #out[#out]
-							if maxlen < 0 then break end
-						end
+				else
+					out[#out+1] = val2str(value,k,indent,nil,seen[t],plainindex,level+1)
+					if maxlen then
+						maxlen = maxlen - #out[#out]
+						if maxlen < 0 then break end
 					end
+				end
 			end
 			local prefix = string.rep(indent or '', level)
 			local head = indent and tableStart..'\n'..prefix..indent or tableStart

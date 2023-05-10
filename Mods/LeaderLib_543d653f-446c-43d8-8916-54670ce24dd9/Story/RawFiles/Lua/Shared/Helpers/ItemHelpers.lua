@@ -818,25 +818,32 @@ function GameHelpers.Item.FindTaggedEquipment(character, tag, asArray)
 end
 
 ---@overload fun(object:ObjectParam, tag:string|string[]):string[],integer
+---@overload fun(object:ObjectParam, tag:string|string[], asEsvItem:boolean):ItemObject[],integer
 ---Gets an array of items with specific tag(s) on a character.
 ---@param object ObjectParam
 ---@param tag string|string[]
 ---@param asEsvItem boolean
----@return EsvItem[]
+---@param recursive boolean Search through the inventories of items.
+---@return ItemObject[]
 ---@return integer total
-function GameHelpers.Item.FindTaggedItems(object, tag, asEsvItem)
+function GameHelpers.Item.FindTaggedItems(object, tag, asEsvItem, recursive)
     local items = {}
     local len = 0
     object = GameHelpers.TryGetObject(object)
     if object then
-        for i,v in pairs(object:GetInventoryItems()) do
+        for _,v in pairs(object:GetInventoryItems()) do
             local item = GameHelpers.GetItem(v)
-            if GameHelpers.ItemHasTag(item, tag) then
-                len = len + 1
-                if asEsvItem then
-                    items[len] = item
-                else
-                    items[len] = v
+            if item then
+                if GameHelpers.ItemHasTag(item, tag) then
+                    len = len + 1
+                    if asEsvItem then
+                        items[len] = item
+                    else
+                        items[len] = v
+                    end
+                end
+                if recursive then
+                    TableHelpers.AppendArrays(items, GameHelpers.Item.FindTaggedItems(item, tag, asEsvItem, recursive))
                 end
             end
         end

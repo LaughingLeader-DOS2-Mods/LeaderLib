@@ -935,13 +935,20 @@ function GameHelpers.GetDisplayName(obj)
 			return GameHelpers.Character.GetDisplayName(obj)
 		elseif GameHelpers.Ext.ObjectIsItem(obj) then
 			if string.find(obj.DisplayName, "|") or obj.RootTemplate.DisplayName.Handle == nil then
-				if GameHelpers.Item.IsObject(obj) and not StringHelpers.IsNullOrEmpty(obj.StatsId) and not Data.ItemRarity[obj.StatsId] then
-					local name = GameHelpers.GetStringKeyText(obj.StatsId, "")
-					if not StringHelpers.IsNullOrEmpty(name) then
+				if GameHelpers.Item.IsObject(obj) then
+					if not StringHelpers.IsNullOrEmpty(obj.StatsId) and not Data.ItemRarity[obj.StatsId] then
+						local name = GameHelpers.GetStringKeyText(obj.StatsId, "")
+						if not StringHelpers.IsNullOrEmpty(name) then
+							return name
+						end
+					end
+				elseif obj.Stats.DisplayName then
+					local name = GameHelpers.GetTranslatedStringValue(obj.Stats.DisplayName, "")
+					if name ~= "" then
 						return name
 					end
 				end
-				return GameHelpers.GetTranslatedStringValue(obj.RootTemplate.DisplayName, obj.DisplayName)
+				return GameHelpers.GetTranslatedStringValue(obj.CurrentTemplate.DisplayName, obj.DisplayName)
 			end
 			return obj.DisplayName
 		end

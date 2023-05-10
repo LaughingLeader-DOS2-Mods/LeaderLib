@@ -98,6 +98,9 @@ function GameHelpers.GetTranslatedStringValue(object, fallback)
 		return not StringHelpers.IsNullOrEmpty(object) and object or fallback
 	else
 		if type(object) == "string" then
+			if object == StringHelpers.UNSET_HANDLE then
+				return fallback
+			end
 			if string.sub(object, 1, 1) == "h" then
 				return GameHelpers.GetTranslatedString(object, fallback)
 			end

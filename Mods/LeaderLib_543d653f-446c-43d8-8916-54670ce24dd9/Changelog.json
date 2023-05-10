@@ -8,10 +8,17 @@
 		{
 			"Version": "1.7.31.7",
 			"Changes": [
+				"Fixed LeaderLog_Log not combining text if the extender is enabled. This fixes an issue with the Equipment Sets mod.",
+				"Fixed item name retrieval for items with names from progression.",
+				"Fixed a GetSkillDamage error if the attacker is an item.",
 				"API Changes:",
+				"\t• Events.Loaded now fires a tick after scripts are loaded.",
+				"\t• Timer.StartOneshot now uses a tick listener instead of an Osiris timer on the server-side, allowing oneshot timers to work if Osiris isn't ready.",
+				"\t• Fixed SharedData not syncing if users haven't been found yet.",
 				"\t• Added HitPrepareData:ForceMiss.",
-				"\t• Add 'IsBoostable' to the options when registering an attribute with GameHelpers.UI.RegisterCustomAttribute. This lets stat boosts on the item add to the total value for the tooltip.",
-				"\t• Made hit success conditions evaluate if the 0x100 EffectFlag is set (Invulnerable)."
+				"\t• Added 'IsBoostable' to the options when registering an attribute with GameHelpers.UI.RegisterCustomAttribute. This lets stat boosts on the item add to the total value for the tooltip.",
+				"\t• Made hit success conditions evaluate if the 0x100 EffectFlag is set (Invulnerable).",
+				"\t• Lib.serpent.block can now dump tables with userdata keys."
 			]
 		},
 		{

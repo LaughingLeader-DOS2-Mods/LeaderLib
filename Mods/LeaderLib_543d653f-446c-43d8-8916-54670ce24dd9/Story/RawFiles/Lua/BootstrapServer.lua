@@ -215,6 +215,7 @@ end
 
 Ext.Require("Server/Classes/_Init.lua")
 Ext.Require("Server/Game/OsirisEvents.lua")
+Ext.Require("Server/Game/LeaderLogSupport.lua")
 Ext.Require("Server/Data/BasePresets.lua")
 Ext.Require("Server/Helpers/ActionHelpers.lua")
 Ext.Require("Server/Helpers/MiscHelpers.lua")

@@ -127,3 +127,68 @@ function GameHelpers.CC.SetColor(colorType, id, matchType, uiOnly)
 	end
 	return SelectOption(id, colorType, optType, matchType, uiOnly)
 end
+
+---Get the client player (the character the player becomes after CC) and the dummy (the character used for visualizing options).
+---@param player EclCharacter
+---@return EclCharacterCreationCharacterCustomization
+function GameHelpers.CC.GetCustomization(player)
+	local playerManager = Ext.Entity.GetPlayerManager()
+	local cc = Ext.UI.GetCharacterCreationWizard()
+	local inputID = playerManager.Players[player.UserID].InputPlayerIndex
+	local customization = cc.CharacterCreationManager.Customizations[inputID]
+	return customization
+end
+
+---@class GameHelpers_CC_GetCharacterDataResults
+---@field Dummy EclCharacter
+---@field TargetOriginCharacter EclCharacter
+---@field Customization EclCharacterCreationCharacterCustomization
+---@field UserId UserId
+---@field ProfileGuid Guid
+
+---Get the client player (the character the player becomes after CC) and the dummy (the character used for visualizing options).
+---@param secondPlayer? boolean Get the second player in splitscreen.
+---@return GameHelpers_CC_GetCharacterDataResults data
+function GameHelpers.CC.GetCharacterData(secondPlayer)
+	---@type {UserId:UserId, Player:EclCharacter, Customization:EclCharacterCreationCharacterCustomization, ProfileGuid:Guid}[]
+	local players = {}
+	local playerManager = Ext.Entity.GetPlayerManager()
+	local cc = Ext.UI.GetCharacterCreationWizard()
+	for userId,entry in pairs(playerManager.ClientPlayerData) do
+		players[#players+1] = {
+			UserId = userId,
+			Player = Ext.Entity.GetCharacter(entry.CharacterNetId),
+			Customization = cc.CharacterCreationManager.Customizations[playerManager.Players[userId].InputPlayerIndex],
+			ProfileGuid = entry.ProfileGuid
+		}
+	end
+	local player = players[1]
+	if secondPlayer and players[2] then
+		player = players[2]
+	end
+	local origin = player.Customization.State.Origin
+	local rootTemplateGuid = player.Customization.State.RootTemplate
+	local targetCharacter = nil
+	local ccStats = Ext.Stats.GetCharacterCreation()
+	for _,v in pairs(ccStats.OriginPresets) do
+		if v.OriginName == origin and StringHelpers.IsNullOrEmpty(v.RootTemplateOverride) or v.RootTemplateOverride == rootTemplateGuid then
+			targetCharacter = Ext.Entity.GetCharacter(v.CharacterUUID)
+			break
+		end
+	end
+	if targetCharacter == nil then
+		for _,v in pairs(ccStats.GenericOriginPresets) do
+			if v.OriginName == origin then
+				targetCharacter = Ext.Entity.GetCharacter(v.CharacterUUID)
+				break
+			end
+		end
+	end
+	return {
+		Dummy = player.Player,
+		TargetOriginCharacter = targetCharacter,
+		Customization = player.Customization,
+		UserId = player.UserId,
+		ProfileGuid = player.ProfileGuid
+	}
+end

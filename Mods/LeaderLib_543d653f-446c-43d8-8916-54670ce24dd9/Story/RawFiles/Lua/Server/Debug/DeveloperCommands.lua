@@ -1372,17 +1372,22 @@ end)
 
 Ext.RegisterConsoleCommand("tplevel", function (cmd, region)
 	local triggers = {
-		TUT_Tutorial_A = "fe2995bf-aa16-8ce7-33a2-8cb8cf228152",
-		FJ_FortJoy_Main = "34d67d87-441c-427d-97bb-4cc506b42fe0",
-		LV_HoE_Main = "ce65a666-74e4-4903-bbcf-200251975965",
-		RC_Main = "e30fe0c4-9b40-4040-9670-e8edd53a34ce",
-		CoS_Main = "8c00afb8-43af-4de7-953a-a7456f996a4c",
-		ARX_Main = "fb573f96-d837-0033-4143-3bf31d88ae49",
-		ARX_Endgame = "bd166e2a-7623-490e-94df-78079e7cbacc",
-		TestLevel_LL_LeaderLib = "a5918303-c5da-87b6-19bb-d55f16f2025c",
-		LLAPOC_Test = "dde72a37-0176-8dab-4430-992e60ef79f3",
+		_TMPL_Sandbox = "7b4d93b9-5526-4922-a41a-aaa65360ac0a",
+		SYS_CHARACTER_CREATION_A = "c9c5e1d7-1998-4d4e-aacb-3970e8823674",
+		TUT_TUTORIAL_A = "fe2995bf-aa16-8ce7-33a2-8cb8cf228152",
+		FJ_FORTJOY_MAIN = "34d67d87-441c-427d-97bb-4cc506b42fe0",
+		LV_HOE_MAIN = "ce65a666-74e4-4903-bbcf-200251975965",
+		RC_MAIN = "e30fe0c4-9b40-4040-9670-e8edd53a34ce",
+		COS_MAIN = "8c00afb8-43af-4de7-953a-a7456f996a4c",
+		ARX_MAIN = "fb573f96-d837-0033-4143-3bf31d88ae49",
+		ARX_ENDGAME = "bd166e2a-7623-490e-94df-78079e7cbacc",
+		TESTLEVEL_LL_LEADERLIB = "a5918303-c5da-87b6-19bb-d55f16f2025c",
+		LLAPOC_TEST = "dde72a37-0176-8dab-4430-992e60ef79f3",
 	}
-	local trigger = triggers[region]
+	--Shortcut names
+	triggers.CC = triggers.SYS_CHARACTER_CREATION_A
+	triggers.SANDBOX = triggers._TMPL_Sandbox
+	local trigger = triggers[string.upper(region or "")]
 	if trigger then
 		Osi.CharacterTeleportPartiesToTrigger(trigger, "")
 	else

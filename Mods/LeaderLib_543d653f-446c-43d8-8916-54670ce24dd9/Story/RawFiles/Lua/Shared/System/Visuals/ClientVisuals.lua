@@ -307,7 +307,7 @@ function _CLIENT.CreateClientEffect(fx, target, params)
 				--Position
 				handler = Ext.Visual.Create(target)
 			end
-		elseif t == "number" then
+		else
 			--NetID
 			local object = GameHelpers.TryGetObject(target)
 			if object then
@@ -327,7 +327,6 @@ function _CLIENT.CreateClientEffect(fx, target, params)
 		end
 		if handler then
 			handler:ParseFromStats(fx, params.WeaponBones or nil)
-			--GameHelpers.IO.SaveFile("Dumps/ClientMultiVisual.json", Ext.DumpExport(handler))
 		end
 	elseif ft == "table" then
 		for _,v in pairs(fx) do

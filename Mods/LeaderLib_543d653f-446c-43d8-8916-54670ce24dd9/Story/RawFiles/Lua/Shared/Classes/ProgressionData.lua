@@ -4,12 +4,15 @@ local pairs = pairs
 ---@alias LeaderLibProgressionDataRequirementType "Tag"|"Template"
 ---@alias LeaderLibProgressionDataTargetType "Character"|"Item"|"Any"
 
----@class LeaderLibProgressionDataBoostAttributeEntry
+---@class LeaderLibProgressionDataDefaultEntryOptions
+---@field Cumulative boolean Whether all the boosts should be added together, or override whatever was previously set.
+
+---@class LeaderLibProgressionDataBoostAttributeEntry:LeaderLibProgressionDataDefaultEntryOptions
 ---@field Type "Attribute"
 ---@field Attribute FixedString
 ---@field Value SerializableValue
 
----@class LeaderLibProgressionDataBoostStatEntry
+---@class LeaderLibProgressionDataBoostStatEntry:LeaderLibProgressionDataDefaultEntryOptions
 ---@field Type "Stat"
 ---@field ID FixedString
 
@@ -28,6 +31,8 @@ local pairs = pairs
 ---@field Requirements LeaderLibProgressionDataRequirement[]
 ---@field Boosts table<integer, LeaderLibProgressionDataBoostGroup> Level -> Group
 ---@field CanAddBoostsCallback fun(self:LeaderLibProgressionData, target:CharacterObject|ItemObject, level:integer, owner:CharacterObject|ItemObject|nil):boolean A callback to manually control whether a target can receive boosts.
+---@field DefaultEntryOptions LeaderLibProgressionDataDefaultEntryOptions
+
 
 ---@class LeaderLibProgressionData:LeaderLibProgressionDataParams
 ---@operator call:LeaderLibProgressionDataInstance
@@ -52,6 +57,7 @@ function ProgressionData:Create(params)
 		Requirements = {},
 		Boosts = {},
 		TargetType = "Item",
+		DefaultEntryOptions = {},
 	}
 	if type(params) == "table" then
 		for k,v in pairs(params) do
@@ -73,10 +79,14 @@ function ProgressionData:AddStatBoost(level, statId)
 		group = {Level = level, Entries = {}}
 		self.Boosts[level] = group
 	end
-	group.Entries[#group.Entries+1] = {
+	local entry = {
 		Type = "Stat",
 		ID = statId
 	}
+	if self.DefaultEntryOptions then
+		setmetatable(entry, {__index = self.DefaultEntryOptions})
+	end
+	group.Entries[#group.Entries+1] = entry
 	return self
 end
 
@@ -93,10 +103,13 @@ function ProgressionData:AddDeltaModBoost(level, statId, modifierType)
 	local deltamod = Ext.Stats.DeltaMod.GetLegacy(statId, modifierType)
 	if deltamod then
 		for _,v in pairs(deltamod.Boosts) do
-			group.Entries[#group.Entries+1] = {
+			local entry = {
 				Type = "Stat",
 				ID = v.Boost
 			}
+			if self.DefaultEntryOptions then
+				setmetatable(entry, {__index = self.DefaultEntryOptions})
+			end
 		end
 	end
 	return self
@@ -112,11 +125,15 @@ function ProgressionData:AddAttributeBoost(level, attribute, value)
 		group = {Level = level, Entries = {}}
 		self.Boosts[level] = group
 	end
-	group.Entries[#group.Entries+1] = {
+	local entry = {
 		Type = "Attribute",
 		Attribute = attribute,
 		Value = value,
 	}
+	if self.DefaultEntryOptions then
+		setmetatable(entry, {__index = self.DefaultEntryOptions})
+	end
+	group.Entries[#group.Entries+1] = entry
 	return self
 end
 
@@ -508,14 +525,16 @@ local _BoostAttributes = {
 }
 
 ---@param value any
+---@return boolean
+---@return type t
 local function _IsValueSet(value)
 	local t = type(value)
 	if t == "string" then
-		return not StringHelpers.IsNullOrWhitespace(value) and value ~= "None" and value ~= "No"
+		return not StringHelpers.IsNullOrWhitespace(value) and value ~= "None" and value ~= "No",t
 	elseif t == "number" then
-		return value ~= 0
+		return value ~= 0,t
 	end
-	return false
+	return false,t
 end
 
 ---@param k string
@@ -524,31 +543,87 @@ local function _GetSkillFromDictionary(k, v)
 	return k
 end
 
+---@param item ItemObject
+---@param changes table
+---@param level integer
+---@param attributes table
+---@param skills table
+local function _ReapplyDeltaMods(item, changes, level, attributes, skills)
+	local modifierType = item.Stats.ItemType
+	for _,id in pairs(item.Stats.DeltaMods) do
+		local deltamod = Ext.Stats.DeltaMod.GetLegacy(id, modifierType)
+		if deltamod then
+			for _,boost in pairs(deltamod.Boosts) do
+				if boost.Count > 0 then
+					local stat = Ext.Stats.Get(boost.Boost, level, false, true)
+					if stat then
+						for i=1,boost.Count do
+							for boostAttribute,statAttribute in pairs(attributes) do
+								local value = stat[statAttribute]
+								if _IsValueSet(value) then
+									if statAttribute == "Skills" then
+										local ids = StringHelpers.Split(value, ";")
+										for _,v in pairs(ids) do
+											skills[v] = true
+										end
+									else
+										changes[boostAttribute] = value
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
 ---@param target CharacterObject|ItemObject
+---@param resetAllPermanentBoosts? boolean Reset all permanent boosts before applying all progression boosts. If the target is an item, deltamods boosts will try and be restore using item.Stats.DeltaMods, but otherwise any previous permanent boosts will be cleared.
 ---@return boolean
-function ProgressionData:ApplyBoosts(target)
+function ProgressionData:ApplyBoosts(target, resetAllPermanentBoosts)
 	local appliedBoosts = false
 	local level = target.Stats.Level
 	local permanentBoosts = target.Stats.DynamicStats[2]
+	local changes = {}
 	local attributes = _BoostAttributes[permanentBoosts.StatsType]
-	local statAttributes = Data.StatAttributes[permanentBoosts.StatsType]
 	local skills = {}
+	if resetAllPermanentBoosts then
+		for k,_ in pairs(attributes) do
+			local current = permanentBoosts[k]
+			local b,t = _IsValueSet(current)
+			if b and t == "number" then
+				changes[k] = 0
+			end
+		end
+	end
+	if GameHelpers.Ext.ObjectIsItem(target) then
+		_ReapplyDeltaMods(target, changes, level, attributes, skills)
+	end
 	for _,group in pairs(self.Boosts) do
 		if level >= group.Level then
 			for j=1,#group.Entries do
 				local boost = group.Entries[j]
 				if boost.Type == "Attribute" then
+					---@cast boost -LeaderLibProgressionDataBoostStatEntry
 					if boost.Attribute == "Skills" then
 						local ids = StringHelpers.Split(boost.Value, ";")
 						for _,v in pairs(ids) do
 							skills[v] = true
 						end
 					else
-						permanentBoosts[boost.Attribute] = boost.Value
+						if boost.Cumulative and type(boost.Value) == "number" then
+							local current = changes[boost.Attribute] or 0
+							changes[boost.Attribute] = current + boost.Value
+						else
+							changes[boost.Attribute] = boost.Value
+						end
 					end
 					appliedBoosts = true
 				elseif boost.Type == "Stat" then
-					local stat = Ext.Stats.Get(boost.ID, level, false, true)
+					---@cast boost -LeaderLibProgressionDataBoostAttributeEntry
+					local stat = Ext.Stats.Get(boost.ID, level, false, true) --[[@as StatEntryWeapon|StatEntryShield|StatEntryArmor]]
 					if stat ~= nil then
 						for boostAttribute,statAttribute in pairs(attributes) do
 							local value = stat[statAttribute]
@@ -559,7 +634,12 @@ function ProgressionData:ApplyBoosts(target)
 										skills[v] = true
 									end
 								else
-									permanentBoosts[boostAttribute] = value
+									if boost.Cumulative and type(value) == "number" then
+										local current = changes[boostAttribute] or 0
+										changes[boostAttribute] = current + value
+									else
+										changes[boostAttribute] = value
+									end
 								end
 								appliedBoosts = true
 							end
@@ -573,8 +653,19 @@ function ProgressionData:ApplyBoosts(target)
 	end
 	local finalSkills = StringHelpers.Join(";", skills, nil, _GetSkillFromDictionary)
 	if not StringHelpers.IsNullOrEmpty(finalSkills) then
-		permanentBoosts.Skills = finalSkills
+		changes.Skills = finalSkills
 		appliedBoosts = true
+	end
+	if appliedBoosts then
+		if changes.RuneSlots then
+			changes.RuneSlots = GameHelpers.Math.Clamp(changes.RuneSlots, 0, 3)
+		end
+		if changes.RuneSlots_V1 then
+			changes.RuneSlots_V1 = GameHelpers.Math.Clamp(changes.RuneSlots_V1, 0, 3)
+		end
+		for k,v in pairs(changes) do
+			permanentBoosts[k] = v
+		end
 	end
 	return appliedBoosts
 end

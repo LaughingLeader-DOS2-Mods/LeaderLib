@@ -260,6 +260,21 @@ Events.Osiris.CharacterPickpocketExit = _CreateOsirisEventWrapper("CharacterPick
 ---@type LeaderLibSubscribableEvent<OsirisCharacterEventArgs>
 Events.Osiris.CharacterCreationFinished = _CreateOsirisEventWrapper("CharacterCreationFinished", _SingleGuidEvent)
 
+---@class OsirisProcHandleMagicMirrorResultEventArgs
+---@field Character EsvCharacter
+---@field CharacterGUID Guid
+---@field Success boolean Whether the player was added to the respec mirror.
+
+---Called when a character is added to a respec mirror (or attempts it).
+---@type LeaderLibSubscribableEvent<OsirisProcHandleMagicMirrorResultEventArgs>
+Events.Osiris.ProcHandleMagicMirrorResult = _CreateOsirisEventWrapper("PROC_HandleMagicMirrorResult", function (playerGUID, result)
+	local data = {}
+	data.CharacterGUID = _GetGUID(playerGUID)
+	data.Character = GameHelpers.GetCharacter(playerGUID)
+	data.Success = result ~= 0
+	return data
+end)
+
 ---@class OsirisProcHomesteadTeleportAfterMirrorEventArgs
 ---@field Character EsvCharacter
 ---@field CharacterGUID Guid
@@ -270,7 +285,7 @@ Events.Osiris.CharacterCreationFinished = _CreateOsirisEventWrapper("CharacterCr
 
 ---Called when a character is teleported after leaving the respec mirror.
 ---@type LeaderLibSubscribableEvent<OsirisProcHomesteadTeleportAfterMirrorEventArgs>
-Events.Osiris.Proc_HomesteadTeleportAfterMirror = _CreateOsirisEventWrapper("Proc_HomesteadTeleportAfterMirror", function (playerGUID, mirrorGUID, triggerGUID)
+Events.Osiris.ProcHomesteadTeleportAfterMirror = _CreateOsirisEventWrapper("Proc_HomesteadTeleportAfterMirror", function (playerGUID, mirrorGUID, triggerGUID)
 	local data = {}
 	data.MirrorGUID = _GetGUID(mirrorGUID)
 	data.CharacterGUID = _GetGUID(playerGUID)

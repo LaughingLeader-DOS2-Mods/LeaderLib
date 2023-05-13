@@ -163,7 +163,7 @@ if not _ISCLIENT then
 			Timer.StartOneshot(timerName, 10, function()
 				local character = GameHelpers.GetCharacter(id)
 				if character then
-					GameHelpers.Status.Apply(character, "LEADERLIB_RECALC", 0.0, 1, character)
+					GameHelpers.Status.Apply(character, "LEADERLIB_RECALC", 0.0, true, character)
 				end
 			end)
 		end

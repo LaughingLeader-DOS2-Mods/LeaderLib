@@ -36,7 +36,7 @@ function GameHelpers.Audio.PlaySound(target, sound, soundPosition, specificPlaye
 			GameHelpers.Net.PostToUser(specificPlayer, "LeaderLib_GameHelpers_Audio_PlaySound", data)
 		end
 	else
-		soundPosition = soundPosition or 0
+		soundPosition = soundPosition or 0.0
 		local t = type(target)
 		if t == "string" or GameHelpers.IsValidHandle(target) then
 			Ext.Audio.PostEvent(target, sound, soundPosition)

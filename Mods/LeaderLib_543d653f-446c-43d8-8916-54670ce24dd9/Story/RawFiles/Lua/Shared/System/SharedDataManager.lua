@@ -492,6 +492,7 @@ if not _ISCLIENT then
 				Level = character.Stats.Level,
 				IsPlayer = isPlayer
 			})
+			ProgressionManager.OnCharacterLeveledUp(character)
 		end
 
 	end

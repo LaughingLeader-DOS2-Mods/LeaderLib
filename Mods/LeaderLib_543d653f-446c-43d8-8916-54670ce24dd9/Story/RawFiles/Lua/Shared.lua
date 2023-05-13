@@ -138,6 +138,7 @@ Ext.Require("Shared/Stats/StatOverrides.lua")
 Ext.Require("Shared/System/FeaturesHandler.lua")
 Ext.Require("Shared/System/Visuals/VisualManager.lua")
 Ext.Require("Shared/System/SkillManagerShared.lua")
+Ext.Require("Shared/System/ProgressionManager.lua")
 if _DEBUG then
 	Ext.Require("Shared/System/Testing/TestingSystem.lua")
 	Ext.Require("Shared/System/Testing/TestingHelpers.lua")

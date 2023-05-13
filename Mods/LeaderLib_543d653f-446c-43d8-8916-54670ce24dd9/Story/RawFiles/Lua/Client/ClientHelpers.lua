@@ -3,9 +3,10 @@ if GameHelpers.Client == nil then
 end
 
 ---Get the current character stored in characterSheet's main timeline.
----@param main FlashMainTimeline|nil
----@return EclCharacter
-function GameHelpers.Client.GetCharacterSheetCharacter(main)
+---@param main? FlashMainTimeline
+---@param returnNil? boolean If no character is found, return nil instead of a fallback client character.
+---@return EclCharacter|nil
+function GameHelpers.Client.GetCharacterSheetCharacter(main, returnNil)
 	local character = nil
 	if main == nil then
 		if not Vars.ControllerEnabled then
@@ -16,6 +17,9 @@ function GameHelpers.Client.GetCharacterSheetCharacter(main)
 	end
 	if main ~= nil then
 		character = GameHelpers.Client.TryGetCharacterFromDouble(main.characterHandle)
+	end
+	if returnNil and character == nil then
+		return nil
 	end
 	return character or Client:GetCharacter()
 end

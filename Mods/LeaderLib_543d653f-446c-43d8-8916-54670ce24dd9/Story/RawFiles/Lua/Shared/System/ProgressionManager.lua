@@ -43,7 +43,9 @@ function ProgressionManager.OnItemLeveledUp(character, item)
 		end
 	end
 	if not _ISCLIENT and successes > 0 then
-		GameHelpers.Status.Apply(character, "LEADERLIB_RECALC", 0, true, character)
+		if character then
+			GameHelpers.Status.Apply(character, "LEADERLIB_RECALC", 0, true, character)
+		end
 		GameHelpers.Status.Apply(item, "BOOST", 0)
 		GameHelpers.Net.Broadcast("LeaderLib_ProgressionManager_OnItemLeveledUp", {Item=item.NetID, Owner=character.NetID})
 	end
@@ -93,4 +95,13 @@ if _ISCLIENT then
 			ProgressionManager.OnCharacterLeveledUp(character)
 		end
 	end)
+else
+	Events.ObjectEvent:Subscribe(function (e)
+		local owner,item = table.unpack(e.Objects)
+		if owner and item then
+			---@cast owner EsvCharacter
+			---@cast item EsvItem
+			ProgressionManager.OnItemLeveledUp(owner, item)
+		end
+	end, {MatchArgs={EventType="CharacterItemEvent", Event="LeaderLib_Events_ItemLeveledUp"}})
 end

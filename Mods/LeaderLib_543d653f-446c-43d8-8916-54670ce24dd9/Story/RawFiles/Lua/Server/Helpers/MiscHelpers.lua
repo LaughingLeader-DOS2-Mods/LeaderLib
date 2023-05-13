@@ -317,9 +317,12 @@ function GameHelpers.SetExperienceLevel(object, level)
 	end
 	if object then
 		if GameHelpers.Ext.ObjectIsItem(object) then
+			---@cast object EsvItem
+			local owner = GameHelpers.Item.GetOwner(object)
 			if not GameHelpers.Item.IsObject(object) then
 				if level > object.Stats.Level then
 					Osi.ItemLevelUpTo(object.MyGuid, level)
+					ProgressionManager.OnItemLeveledUp(owner, object)
 					return true
 				else
 					local xpNeeded = Data.LevelExperience[level]
@@ -330,11 +333,13 @@ function GameHelpers.SetExperienceLevel(object, level)
 						else
 							object.Stats.Experience = xpNeeded
 						end
+						ProgressionManager.OnItemLeveledUp(owner, object)
 						return true
 					end
 				end
 			else
 				Osi.ItemLevelUpTo(object.MyGuid, level)
+				ProgressionManager.OnItemLeveledUp(owner, object)
 				return true
 			end
 		else

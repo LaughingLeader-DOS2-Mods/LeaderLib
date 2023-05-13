@@ -53,6 +53,7 @@ function GameHelpers.Item.CloneItemForCharacter(char, item, completion_event, au
         if autolevel_enabled then
             local level = Osi.CharacterGetLevel(char)
             Osi.ItemLevelUpTo(cloned,level)
+            ProgressionManager.OnItemLeveledUp(GameHelpers.GetCharacter(char), GameHelpers.GetItem(cloned))
         end
         Osi.CharacterItemSetEvent(char, cloned, completion_event)
     end
@@ -308,6 +309,7 @@ function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
                 end
                 if properties.StatsLevel then
                     Osi.ItemLevelUpTo(newItem.MyGuid, properties.StatsLevel)
+                    ProgressionManager.OnItemLeveledUp(nil, newItem)
                 end
             end
             ---@type SubscribableEventInvokeResult<TreasureItemGeneratedEventArgs>

@@ -260,6 +260,27 @@ Events.Osiris.CharacterPickpocketExit = _CreateOsirisEventWrapper("CharacterPick
 ---@type LeaderLibSubscribableEvent<OsirisCharacterEventArgs>
 Events.Osiris.CharacterCreationFinished = _CreateOsirisEventWrapper("CharacterCreationFinished", _SingleGuidEvent)
 
+---@class OsirisProcHomesteadTeleportAfterMirrorEventArgs
+---@field Character EsvCharacter
+---@field CharacterGUID Guid
+---@field Mirror EsvItem
+---@field MirrorGUID Guid
+---@field Trigger EsvEocPointTrigger
+---@field TriggerGUID Guid
+
+---Called when a character is teleported after leaving the respec mirror.
+---@type LeaderLibSubscribableEvent<OsirisProcHomesteadTeleportAfterMirrorEventArgs>
+Events.Osiris.Proc_HomesteadTeleportAfterMirror = _CreateOsirisEventWrapper("Proc_HomesteadTeleportAfterMirror", function (playerGUID, mirrorGUID, triggerGUID)
+	local data = {}
+	data.MirrorGUID = _GetGUID(mirrorGUID)
+	data.CharacterGUID = _GetGUID(playerGUID)
+	data.TriggerGUID = _GetGUID(triggerGUID)
+	data.Character = GameHelpers.GetCharacter(playerGUID)
+	data.Mirror = GameHelpers.GetItem(mirrorGUID)
+	data.Trigger = Ext.Entity.GetTrigger(triggerGUID)
+	return data
+end)
+
 --#endregion
 
 ---@class OsirisCharacterLootedCharacterCorpseEventArgs

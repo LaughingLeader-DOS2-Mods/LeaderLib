@@ -563,7 +563,11 @@ end
 ---@return string
 function GameHelpers.Stats.GetDisplayName(id, statType, character)
 	if _type(id) == "userdata" then
-		id = id.StatusId
+		if GameHelpers.Ext.TypeHasMember(id, "StatusId") then
+			id = id.StatusId
+		else
+			id = id.Name
+		end
 	end
 	if Data.ActionSkills[id] then
 		if id == "ActionSkillSheathe" or id == "ActionSkillSneak" then

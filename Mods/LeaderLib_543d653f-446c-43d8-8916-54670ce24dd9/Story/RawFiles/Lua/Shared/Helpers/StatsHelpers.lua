@@ -152,202 +152,6 @@ function GameHelpers.Stats.IsHealingSkill(skillId, healTypes)
 	return false
 end
 
-local meleeTypes = {"Sword", "Club", "Axe", "Staff", "Knife", "Spear"}
-local rangeTypes = {"Bow", "Crossbow", "Wand", "Arrow", "Rifle"}
-
-local HasStatValue = function (character, req, param, b)
-	local current = character.Stats[req]
-	if _type(current) == "boolean" then
-		return current ~= b
-	else
-		return (current >= param) ~= b
-	end
-end
-
----@type table<string, fun(character:EclCharacter, req:string, param:string, b:boolean):boolean>
-local RequirementFunctions = {
-	--None = HasStatValue,
-	Level = HasStatValue,
-	Strength = HasStatValue,
-	Finesse = HasStatValue,
-	Intelligence = HasStatValue,
-	Constitution = HasStatValue,
-	Memory = HasStatValue,
-	Wits = HasStatValue,
-	WarriorLore = HasStatValue,
-	RangerLore = HasStatValue,
-	RogueLore = HasStatValue,
-	SingleHanded = HasStatValue,
-	TwoHanded = HasStatValue,
-	PainReflection = HasStatValue,
-	Ranged = HasStatValue,
-	Shield = HasStatValue,
-	Reflexes = HasStatValue,
-	PhysicalArmorMastery = HasStatValue,
-	MagicArmorMastery = HasStatValue,
-	Vitality = HasStatValue,
-	Sourcery = HasStatValue,
-	Telekinesis = HasStatValue,
-	FireSpecialist = HasStatValue,
-	WaterSpecialist = HasStatValue,
-	AirSpecialist = HasStatValue,
-	EarthSpecialist = HasStatValue,
-	Necromancy = HasStatValue,
-	Summoning = HasStatValue,
-	Polymorph = HasStatValue,
-	Repair = HasStatValue,
-	Sneaking = HasStatValue,
-	Pickpocket = HasStatValue,
-	Thievery = HasStatValue,
-	Loremaster = HasStatValue,
-	Crafting = HasStatValue,
-	Barter = HasStatValue,
-	Charm = HasStatValue,
-	Intimidate = HasStatValue,
-	Reason = HasStatValue,
-	Persuasion = HasStatValue,
-	Leadership = HasStatValue,
-	Luck = HasStatValue,
-	DualWielding = HasStatValue,
-	Wand = HasStatValue,
-	Perseverance = HasStatValue,
-	TALENT_ItemMovement = HasStatValue,
-	TALENT_ItemCreation = HasStatValue,
-	TALENT_Flanking = HasStatValue,
-	TALENT_AttackOfOpportunity = HasStatValue,
-	TALENT_Backstab = HasStatValue,
-	TALENT_Trade = HasStatValue,
-	TALENT_Lockpick = HasStatValue,
-	TALENT_ChanceToHitRanged = HasStatValue,
-	TALENT_ChanceToHitMelee = HasStatValue,
-	TALENT_Damage = HasStatValue,
-	TALENT_ActionPoints = HasStatValue,
-	TALENT_ActionPoints2 = HasStatValue,
-	TALENT_Criticals = HasStatValue,
-	TALENT_IncreasedArmor = HasStatValue,
-	TALENT_Sight = HasStatValue,
-	TALENT_ResistFear = HasStatValue,
-	TALENT_ResistKnockdown = HasStatValue,
-	TALENT_ResistStun = HasStatValue,
-	TALENT_ResistPoison = HasStatValue,
-	TALENT_ResistSilence = HasStatValue,
-	TALENT_ResistDead = HasStatValue,
-	TALENT_Carry = HasStatValue,
-	TALENT_Kinetics = HasStatValue,
-	TALENT_Repair = HasStatValue,
-	TALENT_ExpGain = HasStatValue,
-	TALENT_ExtraStatPoints = HasStatValue,
-	TALENT_ExtraSkillPoints = HasStatValue,
-	TALENT_Durability = HasStatValue,
-	TALENT_Awareness = HasStatValue,
-	TALENT_Vitality = HasStatValue,
-	TALENT_FireSpells = HasStatValue,
-	TALENT_WaterSpells = HasStatValue,
-	TALENT_AirSpells = HasStatValue,
-	TALENT_EarthSpells = HasStatValue,
-	TALENT_Charm = HasStatValue,
-	TALENT_Intimidate = HasStatValue,
-	TALENT_Reason = HasStatValue,
-	TALENT_Luck = HasStatValue,
-	TALENT_Initiative = HasStatValue,
-	TALENT_InventoryAccess = HasStatValue,
-	TALENT_AvoidDetection = HasStatValue,
-	TALENT_AnimalEmpathy = HasStatValue,
-	TALENT_Escapist = HasStatValue,
-	TALENT_StandYourGround = HasStatValue,
-	TALENT_SurpriseAttack = HasStatValue,
-	TALENT_LightStep = HasStatValue,
-	TALENT_ResurrectToFullHealth = HasStatValue,
-	TALENT_Scientist = HasStatValue,
-	TALENT_Raistlin = HasStatValue,
-	TALENT_MrKnowItAll = HasStatValue,
-	TALENT_WhatARush = HasStatValue,
-	TALENT_FaroutDude = HasStatValue,
-	TALENT_Leech = HasStatValue,
-	TALENT_ElementalAffinity = HasStatValue,
-	TALENT_FiveStarRestaurant = HasStatValue,
-	TALENT_Bully = HasStatValue,
-	TALENT_ElementalRanger = HasStatValue,
-	TALENT_LightningRod = HasStatValue,
-	TALENT_Politician = HasStatValue,
-	TALENT_WeatherProof = HasStatValue,
-	TALENT_LoneWolf = HasStatValue,
-	TALENT_Zombie = HasStatValue,
-	TALENT_Demon = HasStatValue,
-	TALENT_IceKing = HasStatValue,
-	TALENT_Courageous = HasStatValue,
-	TALENT_GoldenMage = HasStatValue,
-	TALENT_WalkItOff = HasStatValue,
-	TALENT_FolkDancer = HasStatValue,
-	TALENT_SpillNoBlood = HasStatValue,
-	TALENT_Stench = HasStatValue,
-	TALENT_Kickstarter = HasStatValue,
-	TALENT_WarriorLoreNaturalArmor = HasStatValue,
-	TALENT_WarriorLoreNaturalHealth = HasStatValue,
-	TALENT_WarriorLoreNaturalResistance = HasStatValue,
-	TALENT_RangerLoreArrowRecover = HasStatValue,
-	TALENT_RangerLoreEvasionBonus = HasStatValue,
-	TALENT_RangerLoreRangedAPBonus = HasStatValue,
-	TALENT_RogueLoreDaggerAPBonus = HasStatValue,
-	TALENT_RogueLoreDaggerBackStab = HasStatValue,
-	TALENT_RogueLoreMovementBonus = HasStatValue,
-	TALENT_RogueLoreHoldResistance = HasStatValue,
-	TALENT_NoAttackOfOpportunity = HasStatValue,
-	TALENT_WarriorLoreGrenadeRange = HasStatValue,
-	TALENT_RogueLoreGrenadePrecision = HasStatValue,
-	TALENT_ExtraWandCharge = HasStatValue,
-	TALENT_DualWieldingDodging = HasStatValue,
-	TALENT_Human_Civil = HasStatValue,
-	TALENT_Human_Inventive = HasStatValue,
-	TALENT_Dwarf_Sneaking = HasStatValue,
-	TALENT_Dwarf_Sturdy = HasStatValue,
-	TALENT_Elf_CorpseEater = HasStatValue,
-	TALENT_Elf_Lore = HasStatValue,
-	TALENT_Lizard_Persuasion = HasStatValue,
-	TALENT_Lizard_Resistance = HasStatValue,
-	TALENT_Perfectionist = HasStatValue,
-	TALENT_Executioner = HasStatValue,
-	TALENT_QuickStep = HasStatValue,
-	TALENT_ViolentMagic = HasStatValue,
-	TALENT_Memory = HasStatValue,
-	TALENT_LivingArmor = HasStatValue,
-	TALENT_Torturer = HasStatValue,
-	TALENT_Ambidextrous = HasStatValue,
-	TALENT_Unstable = HasStatValue,
-	TALENT_Sourcerer = HasStatValue,
-	-- TRAIT_Forgiving = HasStatValue,
-	-- TRAIT_Vindictive = HasStatValue,
-	-- TRAIT_Bold = HasStatValue,
-	-- TRAIT_Timid = HasStatValue,
-	-- TRAIT_Altruistic = HasStatValue,
-	-- TRAIT_Egotistical = HasStatValue,
-	-- TRAIT_Independent = HasStatValue,
-	-- TRAIT_Obedient = HasStatValue,
-	-- TRAIT_Pragmatic = HasStatValue,
-	-- TRAIT_Romantic = HasStatValue,
-	-- TRAIT_Spiritual = HasStatValue,
-	-- TRAIT_Materialistic = HasStatValue,
-	-- TRAIT_Righteous = HasStatValue,
-	-- TRAIT_Renegade = HasStatValue,
-	-- TRAIT_Blunt = HasStatValue,
-	-- TRAIT_Considerate = HasStatValue,
-	-- TRAIT_Compassionate = HasStatValue,
-	-- TRAIT_Heartless = HasStatValue,
-	Combat = function (character, req, param, b)
-		local isInCombat = character:GetStatus("COMBAT") ~= nil
-		return isInCombat ~= b
-	end,
-	-- MinKarma = HasStatValue,
-	-- MaxKarma = HasStatValue,
-	---@param character EclCharacter
-	Immobile = function (character, req, param, b)
-		return GameHelpers.Character.IsImmobile(character) ~= b
-	end,
-	Tag = function (character, req, param, b)
-		return character:HasTag(param) ~= b
-	end,
-}
-
 ---Returns true if the string is an action "skill" (not actually a skill), such as sneaking or unsheathing.
 ---@param skill string
 ---@return boolean
@@ -360,12 +164,241 @@ function GameHelpers.Stats.IsAction(skill)
             end
         end
     elseif t == "string" then
-        return Data.ActionSkills[skill]
+        return Data.ActionSkills[skill] ~= nil
     end
     return false
 end
 
 GameHelpers.Skill.IsAction = GameHelpers.Stats.IsAction
+
+local meleeTypes = {"Sword", "Club", "Axe", "Staff", "Knife", "Spear"}
+local rangeTypes = {"Bow", "Crossbow", "Wand", "Arrow", "Rifle"}
+
+---@param character CharacterObject
+---@param req string
+---@param param string|integer
+---@param b boolean
+local function _HasTalent(character, req, param, b)
+	local current = character.Stats[req]
+	return current ~= b
+end
+
+---@param character CharacterObject
+---@param req string
+---@param param string|integer
+---@param b boolean
+local function _HasStatValue(character, req, param, b)
+	local current = character.Stats[req]
+	if _type(current) == "boolean" then
+		return current ~= b
+	else
+		return (current >= param) ~= b
+	end
+end
+
+---@param character CharacterObject
+---@param req string
+---@param param string
+---@param b boolean
+local function _PlayerHasTrait(character, req, param, b)
+	local traitID = string.gsub(req, "TRAIT_", "")
+	local traitValue = character.PlayerUpgrade.Traits[Data.Traits[traitID]]
+	local current = traitValue == 1 and true or false
+	return current ~= b
+end
+
+Vars.RequirementFunctions.Level = _HasStatValue
+Vars.RequirementFunctions.Strength = _HasStatValue
+Vars.RequirementFunctions.Finesse = _HasStatValue
+Vars.RequirementFunctions.Intelligence = _HasStatValue
+Vars.RequirementFunctions.Constitution = _HasStatValue
+Vars.RequirementFunctions.Memory = _HasStatValue
+Vars.RequirementFunctions.Wits = _HasStatValue
+Vars.RequirementFunctions.WarriorLore = _HasStatValue
+Vars.RequirementFunctions.RangerLore = _HasStatValue
+Vars.RequirementFunctions.RogueLore = _HasStatValue
+Vars.RequirementFunctions.SingleHanded = _HasStatValue
+Vars.RequirementFunctions.TwoHanded = _HasStatValue
+Vars.RequirementFunctions.PainReflection = _HasStatValue
+Vars.RequirementFunctions.Ranged = _HasStatValue
+Vars.RequirementFunctions.Shield = _HasStatValue
+Vars.RequirementFunctions.Reflexes = _HasStatValue
+Vars.RequirementFunctions.PhysicalArmorMastery = _HasStatValue
+Vars.RequirementFunctions.MagicArmorMastery = _HasStatValue
+Vars.RequirementFunctions.Vitality = _HasStatValue
+Vars.RequirementFunctions.Sourcery = _HasStatValue
+Vars.RequirementFunctions.Telekinesis = _HasStatValue
+Vars.RequirementFunctions.FireSpecialist = _HasStatValue
+Vars.RequirementFunctions.WaterSpecialist = _HasStatValue
+Vars.RequirementFunctions.AirSpecialist = _HasStatValue
+Vars.RequirementFunctions.EarthSpecialist = _HasStatValue
+Vars.RequirementFunctions.Necromancy = _HasStatValue
+Vars.RequirementFunctions.Summoning = _HasStatValue
+Vars.RequirementFunctions.Polymorph = _HasStatValue
+Vars.RequirementFunctions.Repair = _HasStatValue
+Vars.RequirementFunctions.Sneaking = _HasStatValue
+Vars.RequirementFunctions.Pickpocket = _HasStatValue
+Vars.RequirementFunctions.Thievery = _HasStatValue
+Vars.RequirementFunctions.Loremaster = _HasStatValue
+Vars.RequirementFunctions.Crafting = _HasStatValue
+Vars.RequirementFunctions.Barter = _HasStatValue
+Vars.RequirementFunctions.Charm = _HasStatValue
+Vars.RequirementFunctions.Intimidate = _HasStatValue
+Vars.RequirementFunctions.Reason = _HasStatValue
+Vars.RequirementFunctions.Persuasion = _HasStatValue
+Vars.RequirementFunctions.Leadership = _HasStatValue
+Vars.RequirementFunctions.Luck = _HasStatValue
+Vars.RequirementFunctions.DualWielding = _HasStatValue
+Vars.RequirementFunctions.Wand = _HasStatValue
+Vars.RequirementFunctions.Perseverance = _HasStatValue
+Vars.RequirementFunctions.TALENT_ItemMovement = _HasTalent
+Vars.RequirementFunctions.TALENT_ItemCreation = _HasTalent
+Vars.RequirementFunctions.TALENT_Flanking = _HasTalent
+Vars.RequirementFunctions.TALENT_AttackOfOpportunity = _HasTalent
+Vars.RequirementFunctions.TALENT_Backstab = _HasTalent
+Vars.RequirementFunctions.TALENT_Trade = _HasTalent
+Vars.RequirementFunctions.TALENT_Lockpick = _HasTalent
+Vars.RequirementFunctions.TALENT_ChanceToHitRanged = _HasTalent
+Vars.RequirementFunctions.TALENT_ChanceToHitMelee = _HasTalent
+Vars.RequirementFunctions.TALENT_Damage = _HasTalent
+Vars.RequirementFunctions.TALENT_ActionPoints = _HasTalent
+Vars.RequirementFunctions.TALENT_ActionPoints2 = _HasTalent
+Vars.RequirementFunctions.TALENT_Criticals = _HasTalent
+Vars.RequirementFunctions.TALENT_IncreasedArmor = _HasTalent
+Vars.RequirementFunctions.TALENT_Sight = _HasTalent
+Vars.RequirementFunctions.TALENT_ResistFear = _HasTalent
+Vars.RequirementFunctions.TALENT_ResistKnockdown = _HasTalent
+Vars.RequirementFunctions.TALENT_ResistStun = _HasTalent
+Vars.RequirementFunctions.TALENT_ResistPoison = _HasTalent
+Vars.RequirementFunctions.TALENT_ResistSilence = _HasTalent
+Vars.RequirementFunctions.TALENT_ResistDead = _HasTalent
+Vars.RequirementFunctions.TALENT_Carry = _HasTalent
+Vars.RequirementFunctions.TALENT_Kinetics = _HasTalent
+Vars.RequirementFunctions.TALENT_Repair = _HasTalent
+Vars.RequirementFunctions.TALENT_ExpGain = _HasTalent
+Vars.RequirementFunctions.TALENT_ExtraStatPoints = _HasTalent
+Vars.RequirementFunctions.TALENT_ExtraSkillPoints = _HasTalent
+Vars.RequirementFunctions.TALENT_Durability = _HasTalent
+Vars.RequirementFunctions.TALENT_Awareness = _HasTalent
+Vars.RequirementFunctions.TALENT_Vitality = _HasTalent
+Vars.RequirementFunctions.TALENT_FireSpells = _HasTalent
+Vars.RequirementFunctions.TALENT_WaterSpells = _HasTalent
+Vars.RequirementFunctions.TALENT_AirSpells = _HasTalent
+Vars.RequirementFunctions.TALENT_EarthSpells = _HasTalent
+Vars.RequirementFunctions.TALENT_Charm = _HasTalent
+Vars.RequirementFunctions.TALENT_Intimidate = _HasTalent
+Vars.RequirementFunctions.TALENT_Reason = _HasTalent
+Vars.RequirementFunctions.TALENT_Luck = _HasTalent
+Vars.RequirementFunctions.TALENT_Initiative = _HasTalent
+Vars.RequirementFunctions.TALENT_InventoryAccess = _HasTalent
+Vars.RequirementFunctions.TALENT_AvoidDetection = _HasTalent
+Vars.RequirementFunctions.TALENT_AnimalEmpathy = _HasTalent
+Vars.RequirementFunctions.TALENT_Escapist = _HasTalent
+Vars.RequirementFunctions.TALENT_StandYourGround = _HasTalent
+Vars.RequirementFunctions.TALENT_SurpriseAttack = _HasTalent
+Vars.RequirementFunctions.TALENT_LightStep = _HasTalent
+Vars.RequirementFunctions.TALENT_ResurrectToFullHealth = _HasTalent
+Vars.RequirementFunctions.TALENT_Scientist = _HasTalent
+Vars.RequirementFunctions.TALENT_Raistlin = _HasTalent
+Vars.RequirementFunctions.TALENT_MrKnowItAll = _HasTalent
+Vars.RequirementFunctions.TALENT_WhatARush = _HasTalent
+Vars.RequirementFunctions.TALENT_FaroutDude = _HasTalent
+Vars.RequirementFunctions.TALENT_Leech = _HasTalent
+Vars.RequirementFunctions.TALENT_ElementalAffinity = _HasTalent
+Vars.RequirementFunctions.TALENT_FiveStarRestaurant = _HasTalent
+Vars.RequirementFunctions.TALENT_Bully = _HasTalent
+Vars.RequirementFunctions.TALENT_ElementalRanger = _HasTalent
+Vars.RequirementFunctions.TALENT_LightningRod = _HasTalent
+Vars.RequirementFunctions.TALENT_Politician = _HasTalent
+Vars.RequirementFunctions.TALENT_WeatherProof = _HasTalent
+Vars.RequirementFunctions.TALENT_LoneWolf = _HasTalent
+Vars.RequirementFunctions.TALENT_Zombie = _HasTalent
+Vars.RequirementFunctions.TALENT_Demon = _HasTalent
+Vars.RequirementFunctions.TALENT_IceKing = _HasTalent
+Vars.RequirementFunctions.TALENT_Courageous = _HasTalent
+Vars.RequirementFunctions.TALENT_GoldenMage = _HasTalent
+Vars.RequirementFunctions.TALENT_WalkItOff = _HasTalent
+Vars.RequirementFunctions.TALENT_FolkDancer = _HasTalent
+Vars.RequirementFunctions.TALENT_SpillNoBlood = _HasTalent
+Vars.RequirementFunctions.TALENT_Stench = _HasTalent
+Vars.RequirementFunctions.TALENT_Kickstarter = _HasTalent
+Vars.RequirementFunctions.TALENT_WarriorLoreNaturalArmor = _HasTalent
+Vars.RequirementFunctions.TALENT_WarriorLoreNaturalHealth = _HasTalent
+Vars.RequirementFunctions.TALENT_WarriorLoreNaturalResistance = _HasTalent
+Vars.RequirementFunctions.TALENT_RangerLoreArrowRecover = _HasTalent
+Vars.RequirementFunctions.TALENT_RangerLoreEvasionBonus = _HasTalent
+Vars.RequirementFunctions.TALENT_RangerLoreRangedAPBonus = _HasTalent
+Vars.RequirementFunctions.TALENT_RogueLoreDaggerAPBonus = _HasTalent
+Vars.RequirementFunctions.TALENT_RogueLoreDaggerBackStab = _HasTalent
+Vars.RequirementFunctions.TALENT_RogueLoreMovementBonus = _HasTalent
+Vars.RequirementFunctions.TALENT_RogueLoreHoldResistance = _HasTalent
+Vars.RequirementFunctions.TALENT_NoAttackOfOpportunity = _HasTalent
+Vars.RequirementFunctions.TALENT_WarriorLoreGrenadeRange = _HasTalent
+Vars.RequirementFunctions.TALENT_RogueLoreGrenadePrecision = _HasTalent
+Vars.RequirementFunctions.TALENT_ExtraWandCharge = _HasTalent
+Vars.RequirementFunctions.TALENT_DualWieldingDodging = _HasTalent
+Vars.RequirementFunctions.TALENT_Human_Civil = _HasTalent
+Vars.RequirementFunctions.TALENT_Human_Inventive = _HasTalent
+Vars.RequirementFunctions.TALENT_Dwarf_Sneaking = _HasTalent
+Vars.RequirementFunctions.TALENT_Dwarf_Sturdy = _HasTalent
+Vars.RequirementFunctions.TALENT_Elf_CorpseEater = _HasTalent
+Vars.RequirementFunctions.TALENT_Elf_Lore = _HasTalent
+Vars.RequirementFunctions.TALENT_Lizard_Persuasion = _HasTalent
+Vars.RequirementFunctions.TALENT_Lizard_Resistance = _HasTalent
+Vars.RequirementFunctions.TALENT_Perfectionist = _HasTalent
+Vars.RequirementFunctions.TALENT_Executioner = _HasTalent
+Vars.RequirementFunctions.TALENT_QuickStep = _HasTalent
+Vars.RequirementFunctions.TALENT_ViolentMagic = _HasTalent
+Vars.RequirementFunctions.TALENT_Memory = _HasTalent
+Vars.RequirementFunctions.TALENT_LivingArmor = _HasTalent
+Vars.RequirementFunctions.TALENT_Torturer = _HasTalent
+Vars.RequirementFunctions.TALENT_Ambidextrous = _HasTalent
+Vars.RequirementFunctions.TALENT_Unstable = _HasTalent
+Vars.RequirementFunctions.TALENT_Sourcerer = _HasTalent
+Vars.RequirementFunctions.TRAIT_Forgiving = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Vindictive = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Bold = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Timid = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Altruistic = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Egotistical = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Independent = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Obedient = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Pragmatic = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Romantic = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Spiritual = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Materialistic = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Righteous = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Renegade = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Blunt = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Considerate = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Compassionate = _PlayerHasTrait
+Vars.RequirementFunctions.TRAIT_Heartless = _PlayerHasTrait
+
+---@type fun(character:CharacterObject, req:string, param:integer, b:boolean):boolean
+Vars.RequirementFunctions.Combat = function (character, req, param, b)
+	local isInCombat = character:GetStatus("COMBAT") ~= nil
+	return isInCombat ~= b
+end
+
+---@type fun(character:CharacterObject, req:string, param:integer, b:boolean):boolean
+Vars.RequirementFunctions.MinKarma = function (character, req, param, b)
+	return character.Stats.Karma >= param
+end
+
+---@type fun(character:CharacterObject, req:string, param:integer, b:boolean):boolean
+Vars.RequirementFunctions.MaxKarma = function (character, req, param, b)
+	return character.Stats.Karma <= param
+end
+
+---@type fun(character:CharacterObject, req:string, param:string, b:boolean):boolean
+Vars.RequirementFunctions.Immobile = function (character, req, param, b)
+	return GameHelpers.Character.IsImmobile(character) ~= b
+end
+
+---@type fun(character:CharacterObject, req:string, param:string, b:boolean):boolean
+Vars.RequirementFunctions.Tag = function (character, req, param, b)
+	return character:HasTag(param) ~= b
+end
 
 ---@alias CharacterHasRequirementsFailureReason string
 ---| "Combat" # Character not in combat
@@ -404,7 +437,7 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 					return false,"Combat"
 				end
 			else
-				local callback = RequirementFunctions[req.Requirement]
+				local callback = Vars.RequirementFunctions[req.Requirement]
 				if callback then
 					local result = callback(character, req.Requirement, req.Param, req.Not == true)
 					if result == false then
@@ -474,7 +507,7 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 						return false,"Combat"
 					end
 				else
-					local callback = RequirementFunctions[req.Requirement]
+					local callback = Vars.RequirementFunctions[req.Requirement]
 					if callback then
 						local result = callback(character, req.Requirement, req.Param, req.Not)
 						if result == false then

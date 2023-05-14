@@ -24,7 +24,7 @@ end
 local function _TryGetCombatComponent(character)
 	local handle = character.Base.Entity:GetComponent("Combat")
 	if handle and Ext.Utils.IsValidHandle(handle) then
-		return Ext.Entity.GetCombatComponent(character.Handle)
+		return Ext.Entity.GetCombatComponent(handle)
 	end
 	return nil
 end

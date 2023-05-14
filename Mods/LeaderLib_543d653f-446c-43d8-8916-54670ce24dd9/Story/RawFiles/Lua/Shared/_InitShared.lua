@@ -180,6 +180,9 @@ Vars = {
 		Undead_Human = {Tag="UNDEAD_HUMAN", BaseTag = "HUMAN"},
 		Undead_Lizard = {Tag="UNDEAD_LIZARD", BaseTag = "LIZARD"},
 	},
+	---Contains a requirement ID and a callback function, to determine if a character fulfills a requirement.
+	---@see GameHelpers.Stats.CharacterHasRequirements
+	RequirementFunctions = {},
 	---Table of base game stat fixes.
 	StatFixes = {},
 	Overrides = {
@@ -364,6 +367,8 @@ Features = {
 	DisplayDebugInfoInTooltips = Ext.Debug.IsDeveloperMode(),
 	---Fixes various tooltip things like extra spaces and grammar issues.
 	TooltipGrammarHelper = false,
+	---Show registered progression data in item tooltips (i.e. which bonuses will unlock at which levels).
+	TooltipProgressionData = false,
 	---Enables a workaround for requiring WINGS or PURE to make characters play the flying animation when moving around.
 	WingsWorkaround = false,
 }

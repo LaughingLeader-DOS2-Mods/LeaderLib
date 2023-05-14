@@ -65,9 +65,30 @@ function ProgressionData:Create(params)
 		end
 	end
 	setmetatable(this, {
-		__index = ProgressionData
+		__index = ProgressionData,
 	})
 	return this
+end
+
+---Get all boost groups in order of lowest level to highest.
+---@return fun():LeaderLibProgressionDataBoostGroup
+function ProgressionData:GetOrderedGroups()
+	local levels = {}
+	local len = 0
+	for _,group in pairs(self.Boosts) do
+		len = len + 1
+		levels[len] = group.Level
+	end
+	table.sort(levels)
+	local i = 0
+	return function ()
+		i = i + 1
+		if i <= len then
+			local level = levels[i]
+			return self.Boosts[level]
+			---@diagnostic disable-next-line
+		end
+	end
 end
 
 ---@param level integer

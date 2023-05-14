@@ -761,6 +761,28 @@ function GameHelpers.GetTemplate(obj, asGameObjectTemplate, ignorePolymorph)
 	return templateId
 end
 
+---Get an object's owner, if any.
+---@param obj CharacterObject|ItemObject
+---@return CharacterObject|ItemObject|nil
+function GameHelpers.GetOwner(object)
+	if GameHelpers.Ext.ObjectIsItem(object) then
+		return GameHelpers.Item.GetOwner(object)
+	elseif GameHelpers.Ext.ObjectIsCharacter(object) then
+		if not _ISCLIENT then
+			---@cast object EsvCharacter
+			if object.HasOwner then
+				return GameHelpers.GetObjectFromHandle(object.OwnerHandle)
+			end
+		else
+			---@cast object EclCharacter
+			if object.HasOwner then
+				return GameHelpers.GetObjectFromHandle(object.OwnerCharacterHandle)
+			end
+		end
+	end
+	return nil
+end
+
 local _cachedLevels = {}
 local _ranCachedLevels = false
 

@@ -447,14 +447,6 @@ LocalizedText.Slots = {
 	Offhand = ts:Create("h50110389gc98ag49dbgb58fgae2fd227dff4", "Offhand"),
 }
 
-LocalizedText.ItemBoosts = {
-	ResistancePenetration = ts:CreateFromKey("LeaderLib_Tooltip_ResistancePenetrationBoost", "[1] Penetration"),
-}
-
-LocalizedText.StatusBoosts = {
-	ResistancePenetration = ts:CreateFromKey("LeaderLib_Tooltip_ResistancePenetrationStatusBoost", "[1] Penetration: [2]%"),
-}
-
 -- <content contentuid="h9b6e0ed8g07afg413dg939fg5d5b91a9461c">Next level costs [1] ability point(s)</content>
 
 LocalizedText.UI = {
@@ -1018,6 +1010,10 @@ LocalizedText.Mods = {
 	DivineTalents = ts:Create("he470681fg8373g4fa6ga978g02089eae5d9e", "Divine Talents"),
 }
 
+LocalizedText.StatusTooltip = {
+	ResistancePenetration = ts:CreateFromKey("LeaderLib_Tooltip_ResistancePenetrationStatusBoost", "[1] Penetration: [2]%"),
+}
+
 LocalizedText.ItemTooltip = {
 	AttributeFlags = {
 		Unbreakable = ts:Create("h03b9013dg183cg4543gbcd5gf9e832e74fae", "Unbreakable"),
@@ -1068,11 +1064,13 @@ LocalizedText.ItemTooltip = {
 	APStart = ts:Create("h54bec796ge442g4d5fgb6bbg524e36927eac", "Start Action Points:"),
 	APRecovery = ts:Create("hdf87671fg549ag4025g8f28gb132b9ca9fe4", "Turn Action Points"),
 	VitalityBoost = ts:Create("h39c85003g58bdg48a5g95f0ge4f5a9f4e3b0", "HP"),
+	Weight = ts:Create("hb1f71795g2f59g4bacg83beg52d942681104", "Weight"),
+	ResistancePenetration = ts:CreateFromKey("LeaderLib_Tooltip_ResistancePenetrationBoost", "[1] Penetration"),
 }
 
 LocalizedText.StatAttributes = {
-	["Armor Defense Value"] = ts:Create("hd5aaae39g8dc4g4d7cga540g6c6ca35f0366", "Physical Armour"),
-	["Magic Armor Value"] = ts:Create("h9c96efa9gd082g4043gace3g208be7503e88", "Magic Armour"),
+	ArmorDefenseValue = ts:Create("hd5aaae39g8dc4g4d7cga540g6c6ca35f0366", "Physical Armour"),
+	MagicArmorValue = ts:Create("h9c96efa9gd082g4043gace3g208be7503e88", "Magic Armour"),
 	Accuracy = ts:Create("h28247b35g8212g447aga6b9gcb18cc97a4a8", "Accuracy"),
 	AccuracyBoost = ts:Create("h6372c697g5d05g414cga3e3gbb2656f62f2d", "Accuracy"),
 	Air = ts:Create("h134d72acgdd42g4c2dg97a8g6df0af2802a5", "Air Resistance"),
@@ -1136,13 +1134,36 @@ LocalizedText.StatAttributes = {
 	WeaponRange = ts:Create("hc259ea6cg4052g48b9g9de9g7a891a5af4f4", "Weapon Range"),
 	WitsBoost = LocalizedText.AttributeNames.Wits,
 }
+LocalizedText.StatAttributes["Armor Defense Value"] = LocalizedText.StatAttributes.ArmorDefenseValue
+LocalizedText.StatAttributes["Magic Defense Value"] = LocalizedText.StatAttributes.MagicArmorValue
+
+setmetatable(LocalizedText.StatAttributes, {
+	__index = function (_,k)
+		if LocalizedText.AbilityNames[k] then
+			return LocalizedText.AbilityNames[k]
+		end
+		if LocalizedText.AttributeNames[k] then
+			return LocalizedText.AttributeNames[k]
+		end
+	end
+})
 
 ---@param attribute string
 ---@param statsType? ModifierListType
 ---@param returnAsTranslatedString? boolean Return the result as a LeaderLib `Classes.TranslatedString` type.
 ---@return string
 function GameHelpers.Stats.GetAttributeName(attribute, statsType, returnAsTranslatedString)
-	local entry = LocalizedText.StatAttributes[attribute]
+	---@type TranslatedString
+	local entry = nil
+	if attribute == "Talents" then
+		entry = LocalizedText.ItemTooltip.Talent
+	elseif attribute == "Tags" then
+		entry = LocalizedText.ItemTooltip.Tags
+	elseif attribute == "Weight" then
+		entry = LocalizedText.ItemTooltip.Weight
+	else
+		entry = LocalizedText.StatAttributes[attribute]
+	end
 	if entry then
 		if returnAsTranslatedString then
 			return entry

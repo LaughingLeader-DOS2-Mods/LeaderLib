@@ -166,7 +166,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
 						local elements = e.Tooltip:PopElements("ResistanceBoost")
 						elements[#elements+1] = {
 							Type = "ResistanceBoost",
-							Label = LocalizedText.ItemBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText),
+							Label = LocalizedText.ItemTooltip.ResistancePenetration:ReplacePlaceholders(resistanceText),
 							Value = e.Value,
 						}
 						table.sort(elements, Game.Tooltip._Internal.LabelCompare)
@@ -175,12 +175,12 @@ Ext.Events.SessionLoaded:Subscribe(function()
 						local elements = e.Tooltip:PopElements("StatusBonus")
 						elements[#elements+1] = {
 							Type = "StatusBonus",
-							Label = LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value),
+							Label = LocalizedText.StatusTooltip.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value),
 						}
 						table.sort(elements, Game.Tooltip._Internal.LabelCompare)
 						e.Tooltip:AppendElements(elements)
 					elseif e.TooltipType == "Rune" then
-						e:UpdateElement(LocalizedText.StatusBoosts.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value))
+						e:UpdateElement(LocalizedText.StatusTooltip.ResistancePenetration:ReplacePlaceholders(resistanceText, e.Value))
 					end
 				end
 			end

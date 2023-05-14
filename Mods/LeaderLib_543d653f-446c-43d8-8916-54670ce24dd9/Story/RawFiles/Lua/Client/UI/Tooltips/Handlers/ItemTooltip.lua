@@ -30,7 +30,7 @@ local function _AddResistancePen_Old(item, tooltip)
 			resistancePenetration[damageType] = resistancePenetration[damageType] + amount
 		end
 	end
-	local resPenText = LocalizedText.ItemBoosts.ResistancePenetration
+	local resPenText = LocalizedText.ItemTooltip.ResistancePenetration
 	for i=1,#LocalizedText.DamageTypeNameAlphabeticalOrder do
 		local damageType = LocalizedText.DamageTypeNameAlphabeticalOrder[i]
 		local amount = resistancePenetration[damageType] or 0
@@ -105,11 +105,46 @@ local function _DisplayAllProgressionBonuses(item, tooltip)
 	end
 end
 
+local _PercentageAttributes = {
+	Blocking = true,
+	DamageBoost = true,
+	CriticalChance = true,
+	CriticalDamage = true,
+	ChanceToHitBoost = true,
+	AccuracyBoost = true,
+	DodgeBoost = true,
+	CleavePercentage = true,
+	LifeSteal = true,
+	ArmorBoost = true,
+	MagicArmorBoost = true,
+	AirResistanceBoost = true,
+	FireResistanceBoost = true,
+	EarthResistanceBoost = true,
+	WaterResistanceBoost = true,
+	PoisonResistanceBoost = true,
+	PiercingResistanceBoost = true,
+	PhysicalResistanceBoost = true,
+	CorrosiveResistanceBoost = true,
+	MagicResistanceBoost = true,
+	ShadowResistanceBoost = true,
+	Air = true,
+	Fire = true,
+	Earth = true,
+	Water = true,
+	Poison = true,
+	Piercing = true,
+	Physical = true,
+	Corrosive = true,
+	Magic = true,
+	Shadow = true,
+}
+
 ---@param attribute string
 ---@param value string|number
----@param statsType? ModifierListType
+---@param statsType ModifierListType
+---@param sm StatsRPGStats
 ---@return string
-local function _FormatAttributeValue(attribute, value, statsType)
+local function _FormatAttributeValue(attribute, value, statsType, sm)
 	if attribute == "Skills" then
 		local skillNames = {}
 		local len = 0
@@ -142,8 +177,12 @@ local function _FormatAttributeValue(attribute, value, statsType)
 		return string.format("+%s %s", value, LocalizedText.ItemTooltip.VitalityBoost.Value)
 	else
 		local name = GameHelpers.Stats.GetAttributeName(attribute, statsType)
-		if name then
-			return string.format("+%s %s", value, name)
+		if not StringHelpers.IsNullOrWhitespace(name) then
+			if _PercentageAttributes[attribute] then
+				return string.format("+%s%% %s", value, name)
+			else
+				return string.format("+%s %s", value, name)
+			end
 		end
 	end
 	return nil
@@ -340,6 +379,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		if Features.TooltipProgressionData then
 			local progressionEntries,totalEntries = ProgressionManager.GetDataForObject(item)
 			if totalEntries > 0 then
+				local statsManager = Ext.Stats.GetStatsManager()
 				-- tooltip:MarkDirty()
 				-- if tooltip:IsExpanded() then
 					local level = item.Stats.Level
@@ -362,11 +402,12 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					if nextGroup then
 						local boostTexts = {}
 						local boostTextsLen = 0
+						local boostLevel = math.max(level, nextGroup.Level)
 						for _,boost in pairs(nextGroup.Entries) do
 							if boost.Type == "Attribute" then
 								---@cast boost -LeaderLibProgressionDataBoostStatEntry
 								if boost.Attribute ~= "RuneSlots_V1" then
-									local text = _FormatAttributeValue(boost.Attribute, boost.Value, statsType)
+									local text = _FormatAttributeValue(boost.Attribute, boost.Value, statsType, statsManager)
 									if text then
 										boostTextsLen = boostTextsLen + 1
 										boostTexts[boostTextsLen] = text
@@ -374,18 +415,20 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 								end
 							elseif boost.Type == "Stat" then
 								---@cast boost -LeaderLibProgressionDataBoostAttributeEntry
-								local stat = Ext.Stats.Get(boost.ID, level, false, true) --[[@as StatEntryWeapon|StatEntryShield|StatEntryArmor]]
+								local stat = Ext.Stats.Get(boost.ID, boostLevel, false, true) --[[@as StatEntryWeapon|StatEntryShield|StatEntryArmor]]
 								if stat ~= nil then
 									local bonuses = nextEntry:GetSetValues(statsType, stat)
 									for attribute,value in pairs(bonuses) do
 										if attribute ~= "RuneSlots_V1" then
-											local text = _FormatAttributeValue(attribute, value, statsType)
+											local text = _FormatAttributeValue(attribute, value, statsType, statsManager)
 											if text then
 												boostTextsLen = boostTextsLen + 1
 												boostTexts[boostTextsLen] = text
 											end
 										end
 									end
+								elseif Vars.DebugMode then
+									fprint(LOGLEVEL.WARNING, "[LeaderLib:ItemTooltip:TooltipProgressionData] Stat (%s) does not exist.", boost.ID)
 								end
 							end
 						end

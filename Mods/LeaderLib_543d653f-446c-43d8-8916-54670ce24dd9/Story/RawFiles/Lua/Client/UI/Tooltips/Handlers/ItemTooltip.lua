@@ -49,6 +49,106 @@ local function _AddResistancePen_Old(item, tooltip)
 	end
 end
 
+local function _DisplayAllProgressionBonuses(item, tooltip)
+	local progressionEntries,totalEntries = ProgressionManager.GetDataForObject(item)
+	if totalEntries > 0 then
+		local level = item.Stats.Level
+		local statsType = item.Stats.DynamicStats[1].StatsType
+		local maxLevel = 0
+		for i=1,totalEntries do
+			local entry = progressionEntries[i]
+			local boostTexts = {}
+			for _,group in pairs(entry.Boosts) do
+				if maxLevel < group.Level then
+					maxLevel = group.Level
+				end
+				if boostTexts[group.Level] == nil then
+					boostTexts[group.Level] = {}
+				end
+				local textGroup = boostTexts[group.Level]
+				for _,boost in pairs(group.Entries) do
+					if boost.Type == "Attribute" then
+						---@cast boost -LeaderLibProgressionDataBoostStatEntry
+						if boost.Attribute ~= "RuneSlots_V1" then
+							textGroup[#textGroup+1] = string.format("+%s %s", boost.Value, boost.Attribute)
+						end
+					elseif boost.Type == "Stat" then
+						---@cast boost -LeaderLibProgressionDataBoostAttributeEntry
+						local stat = Ext.Stats.Get(boost.ID, level, false, true) --[[@as StatEntryWeapon|StatEntryShield|StatEntryArmor]]
+						if stat ~= nil then
+							local bonuses = entry:GetSetValues(statsType, stat)
+							for attribute,value in pairs(bonuses) do
+								if attribute ~= "RuneSlots_V1" then
+									textGroup[#textGroup+1] = string.format("+%s %s", value, attribute)
+								end
+							end
+						end
+					end
+				end
+			end
+			local finalText = ""
+			local fontText = "Progression Bonuses:<br><font size='16'>%s</font>"
+			for i=1,maxLevel do
+				local entries = boostTexts[i]
+				if entries then
+					table.sort(entries)
+					local entriesText = "<br>" .. StringHelpers.Join("<br>", entries)
+					local groupText = LocalizedText.Tooltip.AbilityCurrentLevel:ReplacePlaceholders(i, entriesText)
+					finalText = StringHelpers.Append(finalText, groupText, "<br>")
+				end
+			end
+			tooltip:AppendElement({
+				Type = "StatsPointValue",
+				Label = fontText:format(finalText)
+			})
+		end
+	end
+end
+
+---@param attribute string
+---@param value string|number
+---@param statsType? ModifierListType
+---@return string
+local function _FormatAttributeValue(attribute, value, statsType)
+	if attribute == "Skills" then
+		local skillNames = {}
+		local len = 0
+		for _,v in pairs(StringHelpers.Split(value, ";")) do
+			local name = GameHelpers.Stats.GetDisplayName(v, "SkillData")
+			if not StringHelpers.IsNullOrWhitespace(name) then
+				len = len + 1
+				skillNames[len] = name
+			end
+		end
+		if len > 0 then
+			table.sort(skillNames)
+			return LocalizedText.ItemTooltip.GrantsSkillFromBoost:ReplacePlaceholders(StringHelpers.Join(", ", skillNames, true))
+		end
+	elseif attribute == "Tags" then
+		local tagNames = {}
+		local len = 0
+		for _,v in pairs(StringHelpers.Split(value, ";")) do
+			local name = GameHelpers.GetStringKeyText(v, "")
+			if not StringHelpers.IsNullOrWhitespace(name) then
+				len = len + 1
+				tagNames[len] = name
+			end
+		end
+		if len > 0 then
+			table.sort(tagNames)
+			return string.format("%s %s", LocalizedText.ItemTooltip.Tags.Value, StringHelpers.Join(", ", tagNames, true))
+		end
+	elseif attribute == "VitalityBoost" then
+		return string.format("+%s %s", value, LocalizedText.ItemTooltip.VitalityBoost.Value)
+	else
+		local name = GameHelpers.Stats.GetAttributeName(attribute, statsType)
+		if name then
+			return string.format("+%s %s", value, name)
+		end
+	end
+	return nil
+end
+
 ---@param item EclItem
 ---@param tooltip TooltipData
 function TooltipHandler.OnItemTooltip(item, tooltip)
@@ -233,6 +333,76 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 						end
 					end
 				end
+			end
+		end
+
+		
+		if Features.TooltipProgressionData then
+			local progressionEntries,totalEntries = ProgressionManager.GetDataForObject(item)
+			if totalEntries > 0 then
+				-- tooltip:MarkDirty()
+				-- if tooltip:IsExpanded() then
+					local level = item.Stats.Level
+					local statsType = item.Stats.DynamicStats[1].StatsType
+					--local maxLevel = GameHelpers.GetExtraData("LevelCap", 35, true)
+					---@type LeaderLibProgressionDataBoostGroup 
+					local nextGroup = nil
+					---@type LeaderLibProgressionData
+					local nextEntry = nil
+					for i=1,totalEntries do
+						local entry = progressionEntries[i]
+						for group in entry:GetOrderedGroups() do
+							if group.Level > level then
+								nextGroup = group
+								nextEntry = entry
+								break
+							end
+						end
+					end
+					if nextGroup then
+						local boostTexts = {}
+						local boostTextsLen = 0
+						for _,boost in pairs(nextGroup.Entries) do
+							if boost.Type == "Attribute" then
+								---@cast boost -LeaderLibProgressionDataBoostStatEntry
+								if boost.Attribute ~= "RuneSlots_V1" then
+									local text = _FormatAttributeValue(boost.Attribute, boost.Value, statsType)
+									if text then
+										boostTextsLen = boostTextsLen + 1
+										boostTexts[boostTextsLen] = text
+									end
+								end
+							elseif boost.Type == "Stat" then
+								---@cast boost -LeaderLibProgressionDataBoostAttributeEntry
+								local stat = Ext.Stats.Get(boost.ID, level, false, true) --[[@as StatEntryWeapon|StatEntryShield|StatEntryArmor]]
+								if stat ~= nil then
+									local bonuses = nextEntry:GetSetValues(statsType, stat)
+									for attribute,value in pairs(bonuses) do
+										if attribute ~= "RuneSlots_V1" then
+											local text = _FormatAttributeValue(attribute, value, statsType)
+											if text then
+												boostTextsLen = boostTextsLen + 1
+												boostTexts[boostTextsLen] = text
+											end
+										end
+									end
+								end
+							end
+						end
+						if boostTextsLen > 0 then
+							table.sort(boostTexts)
+							local finalText = StringHelpers.Join("<br>", boostTexts)
+
+							local title = LocalizedText.Tooltip.LeaderLibProgressionBonus
+							--local title = boostTextsLen == 1 and LocalizedText.Tooltip.LeaderLibProgressionBonus or LocalizedText.Tooltip.LeaderLibProgressionBonuses
+
+							tooltip:AppendElementAfterType({
+								Type = "ExtraProperties",
+								Label = title:ReplacePlaceholders(LocalizedText.Tooltip.LevelWithParam:ReplacePlaceholders(nextGroup.Level), finalText),
+							}, "ItemRequirement")
+						end
+					end
+				-- end
 			end
 		end
 

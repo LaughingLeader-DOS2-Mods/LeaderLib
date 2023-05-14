@@ -614,6 +614,9 @@ LocalizedText.Tooltip = {
 	StatusSource = ts:CreateFromKey("LeaderLib_Tooltip_StatusSource", "<font color='#6EB09D'>Applied by [1]</font>"),
 	APCost = ts:Create("hc9eb3ff8ge40dg4d7bg91d2gd2107aa86f9c", "([1] AP)"),
 	Unlocks = ts:Create("h71c8fc3eg415bg4cedgba5fgb720f9ca3023", "Unlocks [1]"),
+	LevelWithParam = ts:Create("h9a4c0c20g0761g4218gb9d9geae330e82e9b", "Level [1]"),
+	LeaderLibProgressionBonus = ts:CreateFromKey("LeaderLib_Tooltip_ProgressionBonuses", "Future Bonus ([1]):<br>[2]"),
+	LeaderLibProgressionBonuses = ts:CreateFromKey("LeaderLib_Tooltip_ProgressionBonuses", "Future Bonuses ([1]):<br>[2]"),
 }
 
 LocalizedText.Input = {
@@ -1005,7 +1008,8 @@ LocalizedText.Requirements = {
 	MaxKarma = ts:Create("h735e123eg3bedg40e4gb445ge3e84405c963", "Maximum Karma"),
 	IncompatibleWith = ts:Create("h97ce8eb1gaa65g475egb663g210e24bb0833", "Incompatible with [1]"),
 	Requires = ts:Create("h7de69a95g70cag4bb3gbabcg1cf2df46f12c", "Requires [1]"),
-	IncompatibleWithMultiple = ts:Create("h3fa5694dgb995g4311ga09eg8369fa1c3847", "Incompatible with [1] [2]"),
+	IncompatibleWithMultiple = ts:Create("h0c2dd94egb658g4909g8278g20dd5173ffd6", "Incompatible with [1] [2]"),
+	--IncompatibleWithMultiple = ts:Create("h3fa5694dgb995g4311ga09eg8369fa1c3847", "Incompatible with [1] [2]"),
 	RequiresMultiple = ts:Create("ha6e36605gee35g4aaagaddbg7ab8bfaf86f6", "Requires [1] [2]"),
 	ScalesWith = ts:Create("h565537edgdec5g4483g938fg296519760088", "Scales With [1]"),
 }
@@ -1013,6 +1017,140 @@ LocalizedText.Requirements = {
 LocalizedText.Mods = {
 	DivineTalents = ts:Create("he470681fg8373g4fa6ga978g02089eae5d9e", "Divine Talents"),
 }
+
+LocalizedText.ItemTooltip = {
+	AttributeFlags = {
+		Unbreakable = ts:Create("h03b9013dg183cg4543gbcd5gf9e832e74fae", "Unbreakable"),
+		Brittle = ts:Create("hc624fdb8gb0ffg4483gb83cgabed1436fe98", "Brittle"),
+		Unrepairable = ts:Create("hb3cfcdbag90a8g495cgb282gd36970384f1e", "Unrepairable"),
+	},
+	ActiveRune = ts:Create("h4d5a9819gb8efg4f9ag8ceeg1b11c1619b85", "Active"),
+	AttackAPCost = ts:Create("hb9c93446gb04fg4b12gba03g724755bda6e3", "Attack"),
+	Blocking = ts:Create("h50b386d4g07e4g42b3g863cgedb0b9b1f8e3", "Blocking Chance"),
+	CanBackstab = ts:Create("h71eeb1baga7ddg4719gb91cg1a500c7dbe74", "Can Backstab. Backstabbing deals critical damage when you attack from behind your target."),        
+	CannotSteal = ts:Create("h8bf38e20gbf79g441fgb39ag17d0effb58e9", "Unable to steal this item[1]"),
+	CleaveDamage = ts:Create("h9f6e70d7g4541g4309gaf87gba251c2aec05", "Cleave Damage"),
+	ContainerHasQuestItem = ts:Create("h3fa95f5ag3f35g4bdeg8193gd686841ce124", "Contains quest item"),
+	DamageRange = ts:Create("h4e14d1a7g190eg4fd6g975dg48172f2f5435", "Damage: [1] - [2]"),
+	Duration = ts:Create("h321d38aeg418dg4676g80b0gb3bbf8256cbc", "Duration"),
+	EmptyContainer = ts:Create("h823595e6g550fg4614gb1ddgdcd323bb4c69", "(empty)"),
+	EmptyRuneSlot = ts:Create("h192a08b3gd474g4dacg85bagc0ce5e0e27e4", "Empty slot"),
+	Equipped = ts:Create("h4b07577fgdf70g4d83gb87fgcf2262bba151", "Equipped"),
+	GrantsSkill = ts:Create("h96db82f9g82ddg45ddgafe7g220fb513f61d", "Grants skill"),
+	GrantsSkillFromBoost = ts:Create("h2feb0bc1g47aag41degb94eg7982094ec7e1", "Grants skill: [1]"),
+	Heals = ts:Create("h6462183agabfag4f50g83abg2a292f081148", "Heals [1]."),
+	InactiveRune = ts:Create("hfbe448d5ga175g4f6aga6f8g758a142bff9e", "Inactive"),
+	IsEngraved = ts:Create("h778bfaddg6270g44d3g80e2ge862e12ef0a1", "Something was engraved on this item:"),
+	Locked = ts:Create("h6bf46d85gdd5ag4accgbef7g7a44593cfa69", "Locked"),
+	Mainhand = ts:Create("h0c60cbaag8d45g4dacg9c8cg244a604106d2", "Main hand"),
+	NeedsIdentification = ts:Create("h2956504bg0e99g46f5g8738g528d567b278d", "Need Level [1] [2] and an Identifying Glass to identify"),
+	Offhand = ts:Create("h50110389gc98ag49dbgb58fgae2fd227dff4", "Offhand"),
+	PermanentDuration = ts:Create("hd808fb13g72f6g4174ga869g91464c293d80", "Boost remains in effect until death"),
+	RepairPrice = ts:Create("h986fdc45gcb62g460ag96c1g7f39e64e2f26", "Repair price"),
+	RequirementsMetFromEquippedItems = ts:Create("h63de954dgf174g4fadgb498gd0eb25f60a35", "(requirement met due to equipped item)"),
+	SkillbookTeachesSkill = ts:Create("h0f86321ag946eg47d4gad3cg4d0683926b1e", "Teaches Skill:"),
+	Stolen = ts:Create("h40e85adeg098dg454bg9a3ag67be290e5476", "Stolen"),
+	Tags = ts:Create("hdede3a7dgf545g4352g8b89gb21a43825649", "Grants Tag:"),
+	Talent = ts:Create("h71c8fc3eg415bg4cedgba5fgb720f9ca3023", "Unlocks [1]"),
+	TooHeavy = ts:Create("h8acbeffcg695eg4e5bga8ddgb6cba237fabb", "Its weight exceeds my limit"),
+	TooPricey = ts:Create("h37dee381gf0eeg4593g8e73gf25b8bf8e481", "Its value exceeds my limit"),
+	TotalArmor = ts:Create("ha9d2f52cg91b0g4715g83f1g12b8f49d4c3c", "Physical Armour"),
+	TotalMagicArmor = ts:Create("hd9f9cf80g7affg4a45g8519gd705ed9bc3bd", "Magic Armour"),
+	Turns = ts:Create("h81e52edcgac03g4d58ga62bg2bab48b1eb6c", "[1] turn(s)"),
+	UnEquipLocked = ts:Create("h5c8650b6g8b3fg4e24ga870gf50e6c5014f4", "Cannot Be Unequipped"),
+	UnknownBeforeConsume = ts:Create("hd2ada9deg3aeeg401bgab56g1f7e4738458d", "Effects unknown"),
+	WandCharges = ts:Create("h7da39b62gdaedg4565gbe58gc2e702a725ee", "Number of uses"),
+	WandChargesDepleted = ts:Create("hd5f94f7eg6557g45cdg835ege011e66a3a3a", "Item is out of charges<br>"),
+	WandSkill = ts:Create("hb8a794b2g4c2ag4ed9gba08g14e986ed681d", "Allows you to cast"),
+	RangeMeters = ts:Create("habf7133cg0b10g4589g8cb3g0b39e0ed8520", "[1]m"),
+	Range = ts:Create("hfdbe9065g1eeeg42f9gbf1eg4cb865ac187e", "Range"),
+	APMaximum = ts:Create("h04e506dbg478ag4160gb770g8da9786ff4b8", "Maximum Action Points"),
+	APStart = ts:Create("h54bec796ge442g4d5fgb6bbg524e36927eac", "Start Action Points:"),
+	APRecovery = ts:Create("hdf87671fg549ag4025g8f28gb132b9ca9fe4", "Turn Action Points"),
+	VitalityBoost = ts:Create("h39c85003g58bdg48a5g95f0ge4f5a9f4e3b0", "HP"),
+}
+
+LocalizedText.StatAttributes = {
+	["Armor Defense Value"] = ts:Create("hd5aaae39g8dc4g4d7cga540g6c6ca35f0366", "Physical Armour"),
+	["Magic Armor Value"] = ts:Create("h9c96efa9gd082g4043gace3g208be7503e88", "Magic Armour"),
+	Accuracy = ts:Create("h28247b35g8212g447aga6b9gcb18cc97a4a8", "Accuracy"),
+	AccuracyBoost = ts:Create("h6372c697g5d05g414cga3e3gbb2656f62f2d", "Accuracy"),
+	Air = ts:Create("h134d72acgdd42g4c2dg97a8g6df0af2802a5", "Air Resistance"),
+	AirResistanceBoost = ts:Create("h134d72acgdd42g4c2dg97a8g6df0af2802a5", "Air Resistance"),
+	APCostBoost = ts:Create("h228e474ag396ag4dc9g837egd8d05d15bbb2", "AP Cost"),
+	APMaximum = ts:Create("h1aca489dg4fdeg4bb1g9b2bg982281ae2864", "Maximum AP"),
+	APRecovery = ts:Create("h544d0f04ga5b2g4350g9208g24b6ba25cbe8", "AP Recovery"),
+	APStart = ts:Create("h38fd7a07gf031g4dfeg89e2g30679a0898d9", "Start AP"),
+	Armor = ts:Create("h622fada7g51abg454fg86e4gb22e50dcd738", "Physical Armour"),
+	ArmorBoost = ts:Create("h856999degd5aag435eg895fg50546f5a87f6", "Maximum Physical Armour"),
+	Blocking = ts:Create("h9816e76fga7ecg4b3cg96c2g1e8459817cef", "Blocking"),
+	ChanceToHitBoost = ts:Create("h94e2ddd9gff64g463agb534g96eb607eab7a", "Chance To Hit"),
+	CleaveAngle = ts:Create("h227c7423gf528g4e37gb1f3g0261385e4457", "Cleave Angle"),
+	CleavePercentage = ts:Create("h23cb48ceg82cag4f47g9658g5cf0c539d6aa", "Cleave Percentage"),
+	ConstitutionBoost = LocalizedText.AttributeNames.Constitution,
+	Corrosive = ts:Create("hacc27ae5gfaf0g4854g85a6ga57d5be46dc5", "Corrosive Resistance"),
+	CorrosiveResistanceBoost = ts:Create("hacc27ae5gfaf0g4854g85a6ga57d5be46dc5", "Corrosive Resistance"),
+	CriticalChance = ts:Create("h1b6a1120gb023g4df1gb463gc317e509ee2c", "Critical Chance"),
+	CriticalDamage = ts:Create("h99aa087ag4d93g4bf4gb191g9fc166800711", "Critical Damage"),
+	DamageBoost = ts:Create("h9531fd22g6366g4e93g9b08g11763cac0d86", "Damage"),
+	Dodge = ts:Create("ha7ea99e1g2fd2g4594g851fg62db5a019231", "Dodging"),
+	DodgeBoost = ts:Create("h5b82f1a5gb4bcg48bdg8827g0d9baecfaada", "Dodging"),
+	Durability = ts:Create("h8fd5a728g1275g4514gbdd2gc719365d0451", "Durability"),
+	Earth = ts:Create("hac36ad5ag557fg4456ga0edga5a40606fabb", "Earth Resistance"),
+	EarthResistanceBoost = ts:Create("hac36ad5ag557fg4456ga0edga5a40606fabb", "Earth Resistance"),
+	FinesseBoost = LocalizedText.AttributeNames.Finesse,
+	Fire = ts:Create("he04c3934g32b0g455fgac3dg75f2b7fd2119", "Fire Resistance"),
+	FireResistanceBoost = ts:Create("he04c3934g32b0g455fgac3dg75f2b7fd2119", "Fire Resistance"),
+	Gain = ts:Create("hd0a6556ag7601g41fdg9a72gff05a766e77c", "Gain"),
+	Hearing = ts:Create("h72f5211cg1ad9g4092g8398g799c66b2311f", "Hearing"),
+	Initiative = ts:Create("h8c8cc7e3gdaf7g46d2g9d3bg04a31d8f0599", "Initiative"),
+	IntelligenceBoost = LocalizedText.AttributeNames.Intelligence,
+	Level = ts:Create("hf93c4030gc3dag4bddg9254g4ce335207b9d", "Level"),
+	LifeSteal = ts:Create("hdf0bf81cge70eg4ef6g88a6gf92857c1dfa0", "Life Steal"),
+	Magic = ts:Create("h8bfd4518ge6deg47a2g90a6g541f5ba1ba88", "Magic Resistance"),
+	MagicArmor = ts:Create("h50eb8e33g82edg412eg9886gec19ca591254", "Magic Armour"),
+	MagicArmorBoost = ts:Create("h92acd36agc072g4ec8g9ca2g32fe6f89f375", "Maximum Magic Armour"),
+	MagicPoints = ts:Create("h74f7b0fegdfdbg4fb1g9f0fg41e9a1f4e3f8", "Source Point"),
+	MagicPointsBoost = ts:Create("h66115e8egaa73g49d9gb898g602f22e18282", "Source points"),
+	MagicResistanceBoost = ts:Create("h8bfd4518ge6deg47a2g90a6g541f5ba1ba88", "Magic Resistance"),
+	MaxSummons = ts:Create("hd248998fge250g4a7bg8dd3gc88f19fbe5f6", "Maximum Summons"),
+	MemoryBoost = LocalizedText.AttributeNames.Memory,
+	Movement = ts:Create("ha9fe36bfg692ag4f8bg8d9eg379bbbf04c87", "Movement Speed"),
+	MovementSpeedBoost = ts:Create("hba022296g66deg4a69gb955g92f4cabfb2c8", ""),    
+	Physical = ts:Create("hcd84ee03g9912g4b0dga49age6bce09b19d1", "Physical Resistance"),
+	PhysicalResistanceBoost = ts:Create("hcd84ee03g9912g4b0dga49age6bce09b19d1", "Physical Resistance"),
+	Piercing = ts:Create("he840ff3eg35e6g4e06ga987g970ebee744e3", "Piercing Resistance"),
+	PiercingResistanceBoost = ts:Create("he840ff3eg35e6g4e06ga987g970ebee744e3", "Piercing Resistance"),
+	Poison = ts:Create("he526af2ag192cg4a71g8247gb306eb0eb97d", "Poison Resistance"),
+	PoisonResistanceBoost = ts:Create("he526af2ag192cg4a71g8247gb306eb0eb97d", "Poison Resistance"),
+	Shadow = ts:Create("hef0c737eg2a72g4564ga5cfg088484ac8b45", "Tenebrium Resistance"),
+	ShadowResistanceBoost = ts:Create("hef0c737eg2a72g4564ga5cfg088484ac8b45", "Tenebrium Resistance"),
+	Sight = ts:Create("hbd823364g3cd7g40a8g86dcg683cbc11515e", "Sight"),
+	SPCostBoost = ts:Create("h0eea0ba2g925ag47bfg87c6gbb27edad0a3a", "SP Cost"),
+	StrengthBoost = LocalizedText.AttributeNames.Strength,
+	SummonLifelinkModifier = ts:Create("h9b1e2095gb86cg4e56g994fg335f0abafed5", "Summon Life Link"),  
+	VitalityBoost = ts:Create("h068a4744gf811g42b4ga8b1g29a9c62c13fc", "Maximum Vitality"),
+	VitalityPercentage = ts:Create("h2740875ag1d9bg4d2dgadacg05b2facb7dbe", "Heals"),
+	Water = ts:Create("he5441d99gdb3cg40acga0c4g24379b8b09f7", "Water Resistance"),
+	WaterResistanceBoost = ts:Create("he5441d99gdb3cg40acga0c4g24379b8b09f7", "Water Resistance"),
+	WeaponRange = ts:Create("hc259ea6cg4052g48b9g9de9g7a891a5af4f4", "Weapon Range"),
+	WitsBoost = LocalizedText.AttributeNames.Wits,
+}
+
+---@param attribute string
+---@param statsType? ModifierListType
+---@param returnAsTranslatedString? boolean Return the result as a LeaderLib `Classes.TranslatedString` type.
+---@return string
+function GameHelpers.Stats.GetAttributeName(attribute, statsType, returnAsTranslatedString)
+	local entry = LocalizedText.StatAttributes[attribute]
+	if entry then
+		if returnAsTranslatedString then
+			return entry
+		end
+		return entry.Value
+	end
+	return ""
+end
 
 Ext.Events.SessionLoaded:Subscribe(function ()
 	if Ext.Mod.IsModLoaded(Data.ModID.GiftBag.AnimalEmpathy) then

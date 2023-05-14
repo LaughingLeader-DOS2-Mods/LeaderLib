@@ -429,6 +429,7 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 			requirements = stat.Requirements
 		end
 	end
+	--GameHelpers.Combat.GetID(character) ~= -1
 	local isInCombat = character:GetStatus("COMBAT") ~= nil
 	if requirements then
 		for _,req in pairs(requirements) do
@@ -985,4 +986,25 @@ function GameHelpers.Stats.GetResistancePenetration(object, damageType, opts, st
 		end
 		return results
 	end
+end
+
+---@param statsType ModifierListType
+---@param attribute string
+---@param sm? StatsRPGStats
+---@return StatsValueList|nil
+function GameHelpers.Stats.GetAttributeValueType(statsType, attribute, sm)
+	if _EXTVERSION < 59 then return false end
+	if not sm then
+		sm = Ext.Stats.GetStatsManager()
+	end
+	if sm then
+		local modifierList = sm.ModifierLists:GetByName(statsType)
+		if modifierList then
+			local modifier = modifierList.Attributes:GetByName(attribute)
+			if modifier then
+				return sm.ModifierValueLists.Elements[modifier.ValueListIndex+1]
+			end
+		end
+	end
+	return nil
 end

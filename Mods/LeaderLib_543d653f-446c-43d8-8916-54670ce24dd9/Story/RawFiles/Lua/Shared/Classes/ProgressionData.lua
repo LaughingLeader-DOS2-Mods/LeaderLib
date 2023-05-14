@@ -579,6 +579,24 @@ local function _ReapplyDeltaMods(item, changes, level, attributes, skills)
 	end
 end
 
+---@param targetStatsType ModifierListType
+---@param stat StatEntryType
+---@return table<FixedString, string|number>
+function ProgressionData:GetSetValues(targetStatsType, stat)
+	local statBoostAttributes = _BoostAttributes[GameHelpers.Stats.GetStatType(stat.Name)]
+	local targetBoostAttributes = _BoostAttributes[targetStatsType]
+	local changes = {}
+	for boostAttribute,statAttribute in pairs(targetBoostAttributes) do
+		if statBoostAttributes[boostAttribute] then
+			local value = stat[statAttribute]
+			if _IsValueSet(value) then
+				changes[boostAttribute] = value
+			end
+		end
+	end
+	return changes
+end
+
 ---@param target CharacterObject|ItemObject
 ---@param resetAllPermanentBoosts? boolean Reset all permanent boosts before applying all progression boosts. If the target is an item, deltamods boosts will try and be restore using item.Stats.DeltaMods, but otherwise any previous permanent boosts will be cleared.
 ---@return boolean

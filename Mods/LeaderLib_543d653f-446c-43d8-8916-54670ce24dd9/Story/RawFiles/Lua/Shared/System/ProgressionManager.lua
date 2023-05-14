@@ -73,6 +73,28 @@ function ProgressionManager.OnCharacterLeveledUp(character)
 	return successes
 end
 
+---@param object CharacterObject|ItemObject
+---@return LeaderLibProgressionData[]
+---@return integer total
+function ProgressionManager.GetDataForObject(object)
+	if GameHelpers.Ext.ObjectIsItem(object) and GameHelpers.Item.IsObject(object) then
+		return {},0
+	end
+	local entries = {}
+	local len = 0
+	local tags = GameHelpers.GetAllTags(object, true, true)
+	local template = GameHelpers.GetTemplate(object)
+	local owner = GameHelpers.GetOwner(object)
+	for i=1,ProgressionManager.TotalData do
+		local entry = ProgressionManager.Data[i]
+		if entry:CanAddBoosts(object, tags, template, owner or object) then
+			len = len + 1
+			entries[len] = entry
+		end
+	end
+	return entries,len
+end
+
 if _ISCLIENT then
 	---@class LeaderLib_ProgressionManager_OnItemLeveledUp
 	---@field Item NetId

@@ -278,6 +278,47 @@ end
 --- @param attacker StatCharacter
 --- @param hitType HitType
 --- @param criticalRoll CriticalRoll
+--- @return boolean success
+--- @return integer|nil roll
+--- @return integer criticalChance
+local function _CalculateShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
+    local roll = nil
+    local critChance = attacker.CriticalChance
+    if (Features.SpellsCanCrit or attacker.TALENT_ViolentMagic or GameSettings.Settings.SpellsCanCritWithoutTalent) and hitType == "Magic" then
+        if attacker.TALENT_ViolentMagic then
+            critChance = math.max(1, critChance * Ext.ExtraData.TalentViolentMagicCriticalChancePercent * 0.01)
+        end
+    end
+    --TODO Not technically correct, but the extender is passing "NotCritical" instead of "Roll", which means the backstab text happens without an actual increase in damage
+    if hit.Backstab then
+        return true, roll, critChance
+    end
+    if criticalRoll ~= "Roll" then
+        return criticalRoll == "Critical", roll, critChance
+    end
+
+    if attacker.TALENT_Haymaker then
+        return false, roll, critChance
+    end
+
+    if hitType == "DoT" or hitType == "Surface" then
+        return false, roll, critChance
+    end
+    
+    if (Features.SpellsCanCrit or attacker.TALENT_ViolentMagic or GameSettings.Settings.SpellsCanCritWithoutTalent) and hitType == "Magic" then
+        --Continue along
+    elseif hitType == "Magic" then
+        return false, roll, critChance
+    end
+
+    roll = math.random(0, 99)
+    return roll < critChance, roll, critChance
+end
+
+--- @param hit HitRequest
+--- @param attacker StatCharacter
+--- @param hitType HitType
+--- @param criticalRoll CriticalRoll
 --- @param isCriticalHit boolean
 --- @param roll integer|nil
 --- @param criticalChance integer
@@ -304,57 +345,18 @@ end
 --- @param attacker StatCharacter
 --- @param hitType HitType
 --- @param criticalRoll CriticalRoll
---- @return boolean success
---- @return integer|nil roll
---- @return integer criticalChance
-local function _CalculateShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
-    local roll = nil
-    local critChance = attacker.CriticalChance
-    if (Features.SpellsCanCrit or attacker.TALENT_ViolentMagic or GameSettings.Settings.SpellsCanCritWithoutTalent) and hitType == "Magic" then
-        if attacker.TALENT_ViolentMagic then
-            critChance = math.max(1, critChance * Ext.ExtraData.TalentViolentMagicCriticalChancePercent * 0.01)
-        end
-    end
-    if criticalRoll ~= "Roll" then
-        return criticalRoll == "Critical", roll, critChance
-    end
-
-    if attacker.TALENT_Haymaker then
-        return false, roll, critChance
-    end
-
-    if hitType == "DoT" or hitType == "Surface" then
-        return false, roll, critChance
-    end
-    
-    local critChance = attacker.CriticalChance
-    
-    if (Features.SpellsCanCrit or attacker.TALENT_ViolentMagic or GameSettings.Settings.SpellsCanCritWithoutTalent) and hitType == "Magic" then
-        if attacker.TALENT_ViolentMagic then
-            critChance = math.max(1, critChance * Ext.ExtraData.TalentViolentMagicCriticalChancePercent * 0.01)
-        end
-    else
-        if hit.Backstab then
-            return true, roll, critChance
-        end
-
-        if hitType == "Magic" then
-            return false, roll, critChance
-        end
-    end
-
-    roll = math.random(0, 99)
-    return roll < critChance, roll, critChance
-end
-
---- @param hit HitRequest
---- @param attacker StatCharacter
---- @param hitType HitType
---- @param criticalRoll CriticalRoll
 function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
     local isCriticalHit,roll,criticalChance = _CalculateShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
     return _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance)
 end
+
+-- Events.OnPrepareHit:Subscribe(function (e)
+--     e.Data.CriticalRoll = "Roll"
+-- end)
+
+Events.CCH.GetShouldApplyCriticalHit:Subscribe(function (e)
+    print(e.RollAmount, e.CriticalChance, e.IsCriticalHit, tostring(e.CriticalRoll))
+end)
 
 --- @param weapon StatItem
 --- @param character StatCharacter

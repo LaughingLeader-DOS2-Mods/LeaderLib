@@ -154,6 +154,8 @@ Events.GetCanBackstab = Events.CCH.GetCanBackstab
 ---@field HitType HitType
 ---@field CriticalRoll CriticalRoll
 ---@field IsCriticalHit boolean The regular outcome of a critical hit roll. Alter this to change the outcome.
+---@field RollAmount integer|nil If the critical hit calculation got far enough to roll, this is the result.
+---@field CriticalChance integer The calculated critical chance of the attacker.
 
 ---Modify the result of `HitOverrides.ShouldApplyCriticalHit` by setting `e.IsCriticalHit`. 
 ---This allows you to make a hit critical, regardless of talents/hit type/etc.  

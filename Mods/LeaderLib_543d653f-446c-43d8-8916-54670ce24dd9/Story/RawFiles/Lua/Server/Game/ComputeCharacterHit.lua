@@ -279,13 +279,18 @@ end
 --- @param hitType HitType
 --- @param criticalRoll CriticalRoll
 --- @param isCriticalHit boolean
-local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit)
+--- @param roll integer|nil
+--- @param criticalChance integer
+local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance)
+    ---@type LeaderLibGetShouldApplyCriticalHitEventArgs
     local evt = {
         Attacker = attacker,
         Hit = hit,
         HitType = hitType,
         CriticalRoll = criticalRoll,
         IsCriticalHit = isCriticalHit,
+        RollAmount = roll,
+        CriticalChance = criticalChance
     }
     ---@type SubscribableEventInvokeResult<LeaderLibGetShouldApplyCriticalHitEventArgs>
     local invokeResult = Events.CCH.GetShouldApplyCriticalHit:Invoke(evt)
@@ -299,17 +304,27 @@ end
 --- @param attacker StatCharacter
 --- @param hitType HitType
 --- @param criticalRoll CriticalRoll
+--- @return boolean success
+--- @return integer|nil roll
+--- @return integer criticalChance
 local function _CalculateShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
+    local roll = nil
+    local critChance = attacker.CriticalChance
+    if (Features.SpellsCanCrit or attacker.TALENT_ViolentMagic or GameSettings.Settings.SpellsCanCritWithoutTalent) and hitType == "Magic" then
+        if attacker.TALENT_ViolentMagic then
+            critChance = math.max(1, critChance * Ext.ExtraData.TalentViolentMagicCriticalChancePercent * 0.01)
+        end
+    end
     if criticalRoll ~= "Roll" then
-        return criticalRoll == "Critical"
+        return criticalRoll == "Critical", roll, critChance
     end
 
     if attacker.TALENT_Haymaker then
-        return false
+        return false, roll, critChance
     end
 
     if hitType == "DoT" or hitType == "Surface" then
-        return false
+        return false, roll, critChance
     end
     
     local critChance = attacker.CriticalChance
@@ -320,15 +335,16 @@ local function _CalculateShouldApplyCriticalHit(hit, attacker, hitType, critical
         end
     else
         if hit.Backstab then
-            return true
+            return true, roll, critChance
         end
 
         if hitType == "Magic" then
-            return false
+            return false, roll, critChance
         end
     end
 
-    return math.random(0, 99) < critChance
+    roll = math.random(0, 99)
+    return roll < critChance, roll, critChance
 end
 
 --- @param hit HitRequest
@@ -336,8 +352,8 @@ end
 --- @param hitType HitType
 --- @param criticalRoll CriticalRoll
 function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
-    local isCriticalHit = _CalculateShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
-    return _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit)
+    local isCriticalHit,roll,criticalChance = _CalculateShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
+    return _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance)
 end
 
 --- @param weapon StatItem

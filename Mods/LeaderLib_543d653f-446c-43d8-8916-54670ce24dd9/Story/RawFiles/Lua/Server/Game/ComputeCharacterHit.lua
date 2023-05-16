@@ -278,31 +278,28 @@ end
 --- @param attacker StatCharacter
 --- @param hitType HitType
 --- @param criticalRoll CriticalRoll
-local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
-    ---@type SubscribableEventInvokeResult<LeaderLibGetShouldApplyCriticalHitEventArgs>
-    local invokeResult = Events.CCH.GetShouldApplyCriticalHit:Invoke({
+--- @param isCriticalHit boolean
+local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit)
+    local evt = {
         Attacker = attacker,
         Hit = hit,
         HitType = hitType,
         CriticalRoll = criticalRoll,
-        IsCriticalHit = false
-    })
+        IsCriticalHit = isCriticalHit,
+    }
+    ---@type SubscribableEventInvokeResult<LeaderLibGetShouldApplyCriticalHitEventArgs>
+    local invokeResult = Events.CCH.GetShouldApplyCriticalHit:Invoke(evt)
     if invokeResult.ResultCode ~= "Error" then
         return invokeResult.Args.IsCriticalHit == true
     end
-    return false
+    return isCriticalHit
 end
 
 --- @param hit HitRequest
 --- @param attacker StatCharacter
 --- @param hitType HitType
 --- @param criticalRoll CriticalRoll
-function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
-    local isCriticalHitOverride = _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
-    if isCriticalHitOverride then
-        return true
-    end
-
+local function _CalculateShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
     if criticalRoll ~= "Roll" then
         return criticalRoll == "Critical"
     end
@@ -332,6 +329,15 @@ function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRol
     end
 
     return math.random(0, 99) < critChance
+end
+
+--- @param hit HitRequest
+--- @param attacker StatCharacter
+--- @param hitType HitType
+--- @param criticalRoll CriticalRoll
+function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
+    local isCriticalHit = _CalculateShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
+    return _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit)
 end
 
 --- @param weapon StatItem

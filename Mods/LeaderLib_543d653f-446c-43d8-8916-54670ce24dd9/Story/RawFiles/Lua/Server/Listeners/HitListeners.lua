@@ -1,5 +1,135 @@
 local _EXTVERSION = Ext.Utils.Version()
 
+
+---@param attacker EsvCharacter
+---@return EsvASAttack|nil
+local function _GetASAttack(attacker)
+	for _,layer in pairs(attacker.ActionMachine.Layers) do
+		if layer.State and layer.State.Type == "Attack" then
+			return layer.State
+		end
+	end
+	return nil
+end
+
+function Vars.ShouldOverrideBasicAttackCriticalHit()
+	return Events.CCH.GetShouldApplyCriticalHit.Next ~= nil or Events.CCH.GetCanBackstab.Next ~= nil
+end
+
+---@param target ServerObject|vec3
+---@param attacker EsvCharacter
+---@param isPosition boolean
+local function _ThrowOnBasicAttackStart(target, attacker, isPosition)
+	local state = _GetASAttack(attacker)
+	if state and Vars.ShouldOverrideBasicAttackCriticalHit() then
+		--Here we're overriding the critical hit rolling done in esv::ASAttack::Enter, since it rolls before the hit enters.
+
+		---@type HitRequest
+		local hit = {
+			ArmorAbsorption = 0,
+			AttackDirection = 0,
+			Backstab = false,
+			Bleeding = false,
+			Blocked = false,
+			Burning = false,
+			CounterAttack = false,
+			CriticalHit = false,
+			EffectFlags = 1,
+			DamageDealt = 0,
+			DamageList = Ext.Stats.NewDamageList(),
+			DamageType = "Physical",
+			DamagedMagicArmor = false,
+			DamagedPhysicalArmor = false,
+			DamagedVitality = false,
+			DeathType = "Physical",
+			DoT = false,
+			Dodged = false,
+			DontCreateBloodSurface = false,
+			Equipment = 0,
+			Flanking = false,
+			FromSetHP = false,
+			FromShacklesOfPain = false,
+			Hit = true,
+			HitWithWeapon = true,
+			LifeSteal = 0,
+			Missed = false,
+			NoDamageOnOwner = false,
+			NoEvents = false,
+			Poisoned = false,
+			ProcWindWalker = false,
+			PropagatedFromOwner = false,
+			Reflection = false,
+			Surface = false,
+			TotalDamageDone = 0,
+		}
+		local attackerStats = attacker.Stats
+
+		if attackerStats.MainWeapon then
+			---The osiris events are thrown before weapon damage is calculated
+			--hit.DamageList = state.MainWeaponDamageList
+			if GameHelpers.Item.CanBackstab(attackerStats.MainWeapon) then
+				hit.Backstab = true
+			elseif not isPosition then
+				hit.Backstab = HitOverrides.CanBackstab(target.Stats, attackerStats, attackerStats.MainWeapon, "Melee")
+			end
+			if HitOverrides.ShouldApplyCriticalHit(hit, attackerStats, "Melee", "Roll", true) then
+				state.MainHandHitType = "Critical"
+			else
+				state.MainHandHitType = "NotCritical"
+			end
+		end
+
+		if attackerStats.OffHandWeapon then
+			hit.Backstab = false
+			--hit.DamageList = state.OffHandDamageList
+			if GameHelpers.Item.CanBackstab(attackerStats.OffHandWeapon) then
+				hit.Backstab = true
+			elseif not isPosition then
+				hit.Backstab = HitOverrides.CanBackstab(target.Stats, attackerStats, attackerStats.MainWeapon, "Melee")
+			end
+			if HitOverrides.ShouldApplyCriticalHit(hit, attackerStats, "Melee", "Roll", true) then
+				state.OffHandHitType = "Critical"
+			else
+				state.OffHandHitType = "NotCritical"
+			end
+		end
+	end
+	local data = {
+		Attacker = attacker,
+		AttackerGUID = attacker.MyGuid,
+		Target = target,
+		TargetIsObject = not isPosition,
+		State = state,
+	}
+	if not isPosition then
+		data.TargetGUID = target.MyGuid
+	end
+	Events.OnBasicAttackStart:Invoke(data)
+end
+
+Ext.Osiris.RegisterListener("CharacterStartAttackObject", 3, "after", function (targetGUID, attackerOwnerGUID, attackerGUID)
+	if Osi.ObjectExists(targetGUID) == 0 or Osi.ObjectExists(attackerGUID) == 0 then
+		return
+	end
+	attacker = GameHelpers.GetCharacter(attackerGUID)
+	target = GameHelpers.TryGetObject(targetGUID)
+	if attacker and target then
+		_ThrowOnBasicAttackStart(target, attacker, false)
+	end
+end)
+
+Ext.Osiris.RegisterListener("CharacterStartAttackPosition", 5, "after", function (x, y, z, attackerOwnerGUID, attackerGUID)
+	if Osi.ObjectExists(attackerGUID) == 0 then
+		return
+	end
+	attacker = GameHelpers.GetCharacter(attackerGUID)
+	if attacker then
+		local target = {x,y,z}
+		_PV.StartAttackPosition[attacker.MyGuid] = target
+		_ThrowOnBasicAttackStart(target, attacker, true)
+	end
+end)
+
 ---@param target string
 ---@param source string
 ---@param damage integer
@@ -108,8 +238,8 @@ Ext.Events.StatusHitEnter:Subscribe(function (e)
 		return
 	end
 	local hitRequest = e.Hit.Hit
-	local target = GameHelpers.TryGetObject(hitStatus.TargetHandle)
-	local source = GameHelpers.TryGetObject(hitStatus.StatusSourceHandle)
+	local target = GameHelpers.GetObjectFromHandle(hitStatus.TargetHandle)
+	local source = GameHelpers.GetObjectFromHandle(hitStatus.StatusSourceHandle)
 
 	if not target then
 		return

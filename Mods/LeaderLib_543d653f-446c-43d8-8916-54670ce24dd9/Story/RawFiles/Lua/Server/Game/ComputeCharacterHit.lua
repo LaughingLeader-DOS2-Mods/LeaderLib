@@ -225,11 +225,11 @@ end
 
 --- This parses the GameSettings options for backstab settings, allowing both players and NPCs to backstab with other weapons if the condition is right.
 --- Lets the Backstab talent work. Also lets ranged weapons backstab if the game settings option MeleeOnly is disabled.
+--- @param target StatCharacter
 --- @param attacker CDivinityStatsCharacter
 --- @param weapon CDivinityStatsItem
---- @param hitType string
---- @param target StatCharacter
-function HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+--- @param hitType HitType
+function HitOverrides.CanBackstab(target, attacker, weapon, hitType)
     local canBackstab = false
     if (weapon ~= nil and weapon.WeaponType == "Knife") then
         canBackstab = true
@@ -289,7 +289,9 @@ local function _CalculateShouldApplyCriticalHit(hit, attacker, hitType, critical
             critChance = math.max(1, critChance * Ext.ExtraData.TalentViolentMagicCriticalChancePercent * 0.01)
         end
     end
-    --TODO Not technically correct, but the extender is passing "NotCritical" instead of "Roll", which means the backstab text happens without an actual increase in damage
+    --TODO
+    --[[Not technically engine-correct, but on basic attacks, CriticalRoll is already pre-determined,
+    which means the backstab text happens without an actual increase in damage]]
     if hit.Backstab then
         return true, roll, critChance
     end
@@ -322,7 +324,8 @@ end
 --- @param isCriticalHit boolean
 --- @param roll integer|nil
 --- @param criticalChance integer
-local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance)
+--- @param isBasicAttack? boolean
+local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance, isBasicAttack)
     ---@type LeaderLibGetShouldApplyCriticalHitEventArgs
     local evt = {
         Attacker = attacker,
@@ -331,7 +334,8 @@ local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, critical
         CriticalRoll = criticalRoll,
         IsCriticalHit = isCriticalHit,
         RollAmount = roll,
-        CriticalChance = criticalChance
+        CriticalChance = criticalChance,
+        IsBasicAttack = isBasicAttack == true,
     }
     ---@type SubscribableEventInvokeResult<LeaderLibGetShouldApplyCriticalHitEventArgs>
     local invokeResult = Events.CCH.GetShouldApplyCriticalHit:Invoke(evt)
@@ -345,18 +349,12 @@ end
 --- @param attacker StatCharacter
 --- @param hitType HitType
 --- @param criticalRoll CriticalRoll
-function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
+--- @param isBasicAttack? boolean
+--- @return boolean
+function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isBasicAttack)
     local isCriticalHit,roll,criticalChance = _CalculateShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
-    return _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance)
+    return _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance, isBasicAttack)
 end
-
--- Events.OnPrepareHit:Subscribe(function (e)
---     e.Data.CriticalRoll = "Roll"
--- end)
-
-Events.CCH.GetShouldApplyCriticalHit:Subscribe(function (e)
-    print(e.RollAmount, e.CriticalChance, e.IsCriticalHit, tostring(e.CriticalRoll))
-end)
 
 --- @param weapon StatItem
 --- @param character StatCharacter
@@ -664,7 +662,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
     end
     
     if hitType == "Magic" and HitOverrides.BackstabSpellMechanicsEnabled(attacker) then
-        local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+        local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, hitType)
         if alwaysBackstab or (canBackstab and (skipPositionCheck or Game.Math.CanBackstab(target, attacker))) then
             hit.Backstab = true
         end
@@ -680,7 +678,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         return hit
     end
 
-    local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+    local canBackstab,skipPositionCheck = HitOverrides.CanBackstab(target, attacker, weapon, hitType)
     if alwaysBackstab or (canBackstab and (skipPositionCheck or Game.Math.CanBackstab(target, attacker))) then
         hit.Backstab = true
     end

@@ -449,6 +449,7 @@ if not _ISCLIENT then
 	---@field Target EsvCharacter|EsvItem|number[]
 	---@field TargetGUID Guid|nil
 	---@field TargetIsObject boolean
+	---@field State EsvASAttack
 	
 	---Called via AttackManager, when a character starts a basic attack.  
 	---🔨**Server-Only**🔨

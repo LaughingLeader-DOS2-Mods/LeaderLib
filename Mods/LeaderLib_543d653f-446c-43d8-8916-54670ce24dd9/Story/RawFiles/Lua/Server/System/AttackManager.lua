@@ -108,34 +108,6 @@ AttackManager.OnWeaponTypeHit = {
 	end
 }
 
-RegisterProtectedOsirisListener("CharacterStartAttackObject", 3, "after", function (target, owner, attacker)
-	attacker = GameHelpers.GetCharacter(attacker)
-	target = GameHelpers.TryGetObject(target)
-	if attacker and target then
-		Events.OnBasicAttackStart:Invoke({
-			Attacker = attacker,
-			AttackerGUID = attacker.MyGuid,
-			Target = target,
-			TargetGUID = target.MyGuid,
-			TargetIsObject = true,
-		})
-	end
-end)
-
-RegisterProtectedOsirisListener("CharacterStartAttackPosition", 5, "after", function (x, y, z, owner, attacker)
-	attacker = GameHelpers.GetCharacter(attacker)
-	if attacker then
-		local target = {x,y,z}
-		_PV.StartAttackPosition[attacker.MyGuid] = target
-		Events.OnBasicAttackStart:Invoke({
-			Attacker = attacker,
-			AttackerGUID = attacker.MyGuid,
-			Target = target,
-			TargetIsObject = false,
-		})
-	end
-end)
-
 --- @param attacker EsvCharacter|EsvItem
 --- @param target EsvCharacter|EsvItem|number[]
 --- @param targetIsObject boolean

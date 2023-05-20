@@ -1176,3 +1176,28 @@ function GameHelpers.Item.GetPrimaryRequirementAttribute(item)
 	end
 	return attribute, value
 end
+
+---@param item CDivinityStatsItem
+---@return boolean
+function GameHelpers.Item.CanBackstab(item)
+    if item == nil then
+        return false
+    end
+    if item.ItemType =="Weapon" then
+        if item.WeaponType == "Knife" then
+            return true
+        end
+        for _,v in pairs(item.DynamicStats) do
+            ---@cast v CDivinityStatsEquipmentAttributesWeapon
+            if not StringHelpers.IsNullOrEmpty(v.ObjectInstanceName) then
+                local props = GameHelpers.Stats.GetExtraProperties(v.ObjectInstanceName)
+                for _,prop in pairs(props) do
+                    if prop.Action == "AlwaysBackstab" then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+	return false
+end

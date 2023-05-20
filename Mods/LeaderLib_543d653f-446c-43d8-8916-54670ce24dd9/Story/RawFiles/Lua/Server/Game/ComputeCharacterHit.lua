@@ -7,8 +7,15 @@ HitOverrides = {
     ApplyDamageCharacterBonusesModified = nil,
     GetCriticalHitMultiplierOriginal = Game.Math.GetCriticalHitMultiplier,
     GetCriticalHitMultiplierWasModified = false,
-    ListenersRegistered = 0
+    ListenersRegistered = 0,
+    CriticalHitListenersRegistered = 0,
+    --- True if `Events.CCH.GetShouldApplyCriticalHit` is subscribed to, as mods may want to modify critical hits for melee basic attacks.
+    ShouldOverrideBasicAttackCriticalHit = function ()
+        return HitOverrides.CriticalHitListenersRegistered > 0
+    end
 }
+
+
 --- This script tweaks Game.Math functions to allow lowering resistance with Resistance Penetration tags on items of the attacker.
 
 local _EXTVERSION = Ext.Utils.Version()
@@ -656,23 +663,23 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 
 	local damageList = Ext.Stats.NewDamageList()
     damageList:CopyFrom(preDamageList)
-
-    local isFromBasicAttack = false
-
+    
     --Fix: Temp fix for infinite reflection damage via Shackles of Pain + Retribution. This flag isn't being set or something in v56.
     if hitType == "Reflected" then
         hit.Reflection = true
     end
-
+    
     if attacker == nil then
         if not hitBlocked then
             HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
         end
         return hit
     end
-
+    
+    local isFromBasicAttack = false
     if weapon ~= nil and (hitType == "Melee" or hitType == "Ranged") then
-        if not hit.CriticalHit and criticalRoll ~= "Roll" and Vars.ShouldOverrideBasicAttackCriticalHit() then
+        --EsvASAttack sets CriticalRoll for melee attacks
+        if not hit.CriticalHit and criticalRoll ~= "Roll" and HitOverrides.ShouldOverrideBasicAttackCriticalHit() then
             criticalRoll = "Roll"
         end
         if attacker.Character then

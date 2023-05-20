@@ -2,14 +2,27 @@ if Events.CCH == nil then
 	Events.CCH = {}
 end
 
-local function _OnCCHListenerSubscribed(callback, opts)
+---@param self BaseSubscribableEvent
+---@param callback function
+---@param opts? SubscribableEventCreateOptions
+---@param matchArgs? table
+---@param matchArgsType? string
+local function _OnCCHListenerSubscribed(self, callback, opts, matchArgs, matchArgsType)
 	HitOverrides.ListenersRegistered = HitOverrides.ListenersRegistered + 1
+	if self.ID == "CCH.GetShouldApplyCriticalHit" then
+		HitOverrides.CriticalHitListenersRegistered = HitOverrides.CriticalHitListenersRegistered + 1
+	end
 end
 
-local function _OnCCHListenerUnsubscribed(ecallback, opts)
-	HitOverrides.ListenersRegistered = HitOverrides.ListenersRegistered - 1
-	if HitOverrides.ListenersRegistered < 0 then
-		HitOverrides.ListenersRegistered = 0
+---@param self BaseSubscribableEvent
+---@param callback function
+---@param opts? SubscribableEventCreateOptions
+---@param matchArgs? table
+---@param matchArgsType? string
+local function _OnCCHListenerUnsubscribed(self, callback, opts, matchArgs, matchArgsType)
+	HitOverrides.ListenersRegistered = math.max(0, HitOverrides.ListenersRegistered - 1)
+	if self.ID == "CCH.GetShouldApplyCriticalHit" then
+		HitOverrides.CriticalHitListenersRegistered = math.max(0, HitOverrides.CriticalHitListenersRegistered - 1)
 	end
 end
 

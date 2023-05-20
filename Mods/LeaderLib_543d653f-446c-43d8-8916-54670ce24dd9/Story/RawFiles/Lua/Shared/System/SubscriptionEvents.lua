@@ -355,12 +355,12 @@ Events.ModVersionLoaded = Classes.SubscribableEvent:Create("ModVersionLoaded", {
 ---@type LeaderLibSubscribableEvent<OnSkillStateAllEventArgs>
 Events.OnSkillState = Classes.SubscribableEvent:Create("OnSkillState", {
 	ArgsKeyOrder={"Skill", "CharacterGUID", "State", "Data", "DataType"},
-	OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
+	OnSubscribe = function (self, callback, opts, matchArgs, matchArgsType)
 		if matchArgsType == "nil" or (matchArgsType == "table" and matchArgs.Skill == nil) then
 			SkillManager.EnableForAllSkills(true)
 		end
 	end,
-	OnUnsubscribe = function (callback, opts, matchArgs, matchArgsType)
+	OnUnsubscribe = function (self, callback, opts, matchArgs, matchArgsType)
 		if matchArgsType == "nil" or (matchArgsType == "table" and matchArgs.Skill == nil) then
 			SkillManager.EnableForAllSkills(false)
 		elseif (matchArgsType == "table" and matchArgs.Skill ~= nil) then
@@ -501,9 +501,9 @@ if not _ISCLIENT then
 	---@type LeaderLibSubscribableEvent<OnWeaponTagHitEventArgs>
 	Events.OnWeaponTagHit = Classes.SubscribableEvent:Create("OnWeaponTagHit", {
 		ArgsKeyOrder={"Tag", "Attacker", "Target", "Data", "TargetIsObject", "Skill"},
-		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
-			if matchArgsType == "table" and type(opts.MatchArgs.Tag) == "string" then
-				AttackManager.EnabledTags[opts.MatchArgs.Tag] = true
+		OnSubscribe = function (self, callback, opts, matchArgs, matchArgsType)
+			if matchArgsType == "table" and type(matchArgs.Tag) == "string" then
+				AttackManager.EnabledTags[matchArgs.Tag] = true
 			end
 		end
 	})
@@ -676,13 +676,13 @@ if not _ISCLIENT then
 				end
 			end
 		end,
-		OnSubscribe = function (callback, opts, matchArgs, matchArgsType)
-			if matchArgsType == "table" and type(opts.MatchArgs.StatusId) == "string" then
-				local status = opts.MatchArgs.StatusId
+		OnSubscribe = function (self, callback, opts, matchArgs, matchArgsType)
+			if matchArgsType == "table" and type(matchArgs.StatusId) == "string" then
+				local status = matchArgs.StatusId
 				if Vars.DebugMode and not Data.EngineStatus[status] and not GameHelpers.Stats.Exists(status, "StatusData") then
 					fprint(LOGLEVEL.ERROR, string.format("Status (%s) does not exist", status), 2)
 				end
-				local statusEvent = opts.MatchArgs.StatusEvent
+				local statusEvent = matchArgs.StatusEvent
 				local statusEventType = type(statusEvent)
 				if statusEventType == "string" then
 					if StatusManager._Internal.EnabledStatuses[statusEvent] then
@@ -702,7 +702,7 @@ if not _ISCLIENT then
 				end
 			end
 		end,
-		OnUnsubscribe = function (callback, opts, matchArgs, matchArgsType)
+		OnUnsubscribe = function (self, callback, opts, matchArgs, matchArgsType)
 			--Cleanup StatusManager._Internal.EnabledStatuses table if nothing else is subscribed
 			if matchArgsType == "table" and type(opts.MatchArgs.Status) == "string" then
 				local checkStatus = opts.MatchArgs.Status

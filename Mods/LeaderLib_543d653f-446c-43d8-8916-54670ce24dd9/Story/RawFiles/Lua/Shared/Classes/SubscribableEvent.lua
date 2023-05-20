@@ -41,8 +41,8 @@ end
 ---@field GetArg SubscribableEventGetArgFunction Used when the event data is unpacked, such as when passing the data to an old callback listener.
 ---@field SerializeArg SubscribableEventSerializeArgFunction Called when the event data is synced, and specific non-serializable args need to be converted (userdata etc).
 ---@field DeserializeArg SubscribableEventDeserializeArgFunction Called when the event data is done syncing, and specific args need to be converted back to non-serializable types.
----@field OnSubscribe fun(callback:function, opts:SubscribableEventCreateOptions, matchArgs:table, matchArgsType:string) Called when a callback is subscribed to the event.
----@field OnUnsubscribe fun(callback:function, opts:SubscribableEventCreateOptions, matchArgs:table, matchArgsType:string) Called when a callback is unsubscribed to the event.
+---@field OnSubscribe fun(self:BaseSubscribableEvent, callback:function, opts:EventSubscriptionOptions, matchArgs:table|function|nil, matchArgsType:type) Called when a callback is subscribed to the event.
+---@field OnUnsubscribe fun(self:BaseSubscribableEvent, callback:function, opts:EventSubscriptionOptions, matchArgs:table|function|nil, matchArgsType:type) Called when a callback is unsubscribed to the event.
 ---@field Benchmark boolean Print the time it takes to invoke listeners in DeveloperMode.
 
 ---@alias SubscribableEventInvokeResultCode string|"Success"|"Handled"|"Error"
@@ -235,7 +235,10 @@ function SubscribableEvent:Subscribe(callback, opts)
 	DoSubscribe(self, sub)
 	
 	if self.OnSubscribe then
-		self.OnSubscribe(callback, opts, matchArgs, matchArgsType)
+		local b,err = xpcall(self.OnSubscribe, debug.traceback, self, opts, matchArgs, matchArgsType)
+		if not b then
+			Ext.Utils.PrintError(err)
+		end
 	end
 
 	return index
@@ -278,7 +281,10 @@ function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
 				then
 					RemoveNode(self, cur)
 					if self.OnUnsubscribe then
-						self.OnUnsubscribe(cur.Callback, cur.Options, matchArgs, matchArgsType)
+						local b,err = xpcall(self.OnUnsubscribe, debug.traceback, self, cur.Callback, cur.Options, matchArgs, matchArgsType)
+						if not b then
+							Ext.Utils.PrintError(err)
+						end
 					end
 				end
 				cur = cur.Next

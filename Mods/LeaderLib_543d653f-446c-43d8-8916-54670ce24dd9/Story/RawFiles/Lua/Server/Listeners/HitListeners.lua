@@ -13,14 +13,14 @@ local function _GetASAttack(attacker)
 end
 
 function Vars.ShouldOverrideBasicAttackCriticalHit()
-	return Events.CCH.GetShouldApplyCriticalHit.Next ~= nil or Events.CCH.GetCanBackstab.Next ~= nil
+	return Events.CCH.GetShouldApplyCriticalHit.IsSubscribed or Events.CCH.GetCanBackstab.IsSubscribed
 end
 
+---@param state EsvASAttack
 ---@param target ServerObject|vec3
 ---@param attacker EsvCharacter
 ---@param isPosition boolean
-local function _ThrowOnBasicAttackStart(target, attacker, isPosition)
-	local state = _GetASAttack(attacker)
+local function _CalculateAttackStateCritical(state, target, attacker, isPosition)
 	if state and Vars.ShouldOverrideBasicAttackCriticalHit() then
 		--Here we're overriding the critical hit rolling done in esv::ASAttack::Enter, since it rolls before the hit enters.
 
@@ -64,13 +64,20 @@ local function _ThrowOnBasicAttackStart(target, attacker, isPosition)
 		}
 		local attackerStats = attacker.Stats
 
-		if attackerStats.MainWeapon then
+		local mainhand = attackerStats.MainWeapon
+		local offhand = attackerStats.OffHandWeapon
+
+		if not mainhand and not offhand then
+			mainhand = Ext.Stats.GetItemBaseStats("NoWeapon", attackerStats.Level)
+		end
+
+		if mainhand then
 			---The osiris events are thrown before weapon damage is calculated
 			--hit.DamageList = state.MainWeaponDamageList
-			if GameHelpers.Item.CanBackstab(attackerStats.MainWeapon) then
+			if GameHelpers.Item.CanBackstab(mainhand) then
 				hit.Backstab = true
 			elseif not isPosition then
-				hit.Backstab = HitOverrides.CanBackstab(target.Stats, attackerStats, attackerStats.MainWeapon, "Melee")
+				hit.Backstab = HitOverrides.CanBackstab(target.Stats, attackerStats, mainhand, "Melee")
 			end
 			if HitOverrides.ShouldApplyCriticalHit(hit, attackerStats, "Melee", "Roll", true) then
 				state.MainHandHitType = "Critical"
@@ -79,13 +86,13 @@ local function _ThrowOnBasicAttackStart(target, attacker, isPosition)
 			end
 		end
 
-		if attackerStats.OffHandWeapon then
+		if offhand then
 			hit.Backstab = false
 			--hit.DamageList = state.OffHandDamageList
-			if GameHelpers.Item.CanBackstab(attackerStats.OffHandWeapon) then
+			if GameHelpers.Item.CanBackstab(offhand) then
 				hit.Backstab = true
 			elseif not isPosition then
-				hit.Backstab = HitOverrides.CanBackstab(target.Stats, attackerStats, attackerStats.MainWeapon, "Melee")
+				hit.Backstab = HitOverrides.CanBackstab(target.Stats, attackerStats, offhand, "Melee")
 			end
 			if HitOverrides.ShouldApplyCriticalHit(hit, attackerStats, "Melee", "Roll", true) then
 				state.OffHandHitType = "Critical"
@@ -94,41 +101,7 @@ local function _ThrowOnBasicAttackStart(target, attacker, isPosition)
 			end
 		end
 	end
-	local data = {
-		Attacker = attacker,
-		AttackerGUID = attacker.MyGuid,
-		Target = target,
-		TargetIsObject = not isPosition,
-		State = state,
-	}
-	if not isPosition then
-		data.TargetGUID = target.MyGuid
-	end
-	Events.OnBasicAttackStart:Invoke(data)
 end
-
-Ext.Osiris.RegisterListener("CharacterStartAttackObject", 3, "after", function (targetGUID, attackerOwnerGUID, attackerGUID)
-	if Osi.ObjectExists(targetGUID) == 0 or Osi.ObjectExists(attackerGUID) == 0 then
-		return
-	end
-	attacker = GameHelpers.GetCharacter(attackerGUID)
-	target = GameHelpers.TryGetObject(targetGUID)
-	if attacker and target then
-		_ThrowOnBasicAttackStart(target, attacker, false)
-	end
-end)
-
-Ext.Osiris.RegisterListener("CharacterStartAttackPosition", 5, "after", function (x, y, z, attackerOwnerGUID, attackerGUID)
-	if Osi.ObjectExists(attackerGUID) == 0 then
-		return
-	end
-	attacker = GameHelpers.GetCharacter(attackerGUID)
-	if attacker then
-		local target = {x,y,z}
-		_PV.StartAttackPosition[attacker.MyGuid] = target
-		_ThrowOnBasicAttackStart(target, attacker, true)
-	end
-end)
 
 ---@param target string
 ---@param source string
@@ -147,9 +120,8 @@ local function OnPrepareHit(target, source, damage, handle)
 			fprint(LOGLEVEL.DEFAULT, "Fixing bad damage type in Chaos basic ranged attack None => %s (%s)", data.DamageType, amount)
 		end
 	end
-
 	Events.OnPrepareHit:Invoke({
-		Target=GameHelpers.TryGetObject(target),
+		Target = GameHelpers.TryGetObject(target),
 		TargetGUID=target,
 		Source = GameHelpers.TryGetObject(source),
 		SourceGUID=source,
@@ -161,6 +133,48 @@ end
 
 RegisterProtectedOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
 	OnPrepareHit(StringHelpers.GetUUID(target), StringHelpers.GetUUID(attacker), damage, handle)
+end)
+
+---@param target ServerObject|vec3
+---@param attacker EsvCharacter
+---@param isPosition boolean
+local function _ThrowOnBasicAttackStart(target, attacker, isPosition)
+	local state = _GetASAttack(attacker)
+	--_CalculateAttackStateCritical(state, target, attacker, isPosition)
+	local data = {
+		Attacker = attacker,
+		AttackerGUID = attacker.MyGuid,
+		Target = target,
+		TargetIsObject = not isPosition,
+		State = state,
+	}
+	if not isPosition then
+		data.TargetGUID = target.MyGuid
+	end
+	Events.OnBasicAttackStart:Invoke(data)
+end
+
+Ext.Osiris.RegisterListener("CharacterStartAttackObject", 3, "before", function (targetGUID, attackerOwnerGUID, attackerGUID)
+	if Osi.ObjectExists(targetGUID) == 0 or Osi.ObjectExists(attackerGUID) == 0 then
+		return
+	end
+	attacker = GameHelpers.GetCharacter(attackerGUID)
+	target = GameHelpers.TryGetObject(targetGUID)
+	if attacker and target then
+		_ThrowOnBasicAttackStart(target, attacker, false)
+	end
+end)
+
+Ext.Osiris.RegisterListener("CharacterStartAttackPosition", 5, "before", function (x, y, z, attackerOwnerGUID, attackerGUID)
+	if Osi.ObjectExists(attackerGUID) == 0 then
+		return
+	end
+	attacker = GameHelpers.GetCharacter(attackerGUID)
+	if attacker then
+		local target = {x,y,z}
+		_PV.StartAttackPosition[attacker.MyGuid] = target
+		_ThrowOnBasicAttackStart(target, attacker, true)
+	end
 end)
 
 ---@private

@@ -56,7 +56,7 @@ end
 ---Example: SubscribableEvent<CharacterResurrectedEventArgs>
 ---@see SubscribableEventArgs
 ---@see LeaderLibSubscriptionEvents
----@class LeaderLibSubscribableEvent<T>:{(Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer|nil, Once:boolean|nil, MatchArgs:T|(fun(e:T):boolean)|nil, CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:T|(fun(e:T):boolean)|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, skipAutoInvoke:boolean|nil, getArgForMatch:(fun(self:T, argKey:string, matchedValue:any):any)|nil):SubscribableEventInvokeResult)}
+---@class LeaderLibSubscribableEvent<T>:{IsSubscribed:boolean, (Subscribe:fun(self:LeaderLibSubscribableEvent, callback:fun(e:T|LeaderLibSubscribableEventArgs), opts:{Priority:integer|nil, Once:boolean|nil, MatchArgs:T|(fun(e:T):boolean)|nil, CanSync:fun(self:LeaderLibSubscribableEvent, args:T)}|nil):integer), (Unsubscribe:fun(self:LeaderLibSubscribableEvent, indexOrCallback:integer|function, matchArgs:T|(fun(e:T):boolean)|nil):boolean), (Invoke:fun(self:LeaderLibSubscribableEvent, args:T|LeaderLibSubscribableEventArgs, skipAutoInvoke:boolean|nil, getArgForMatch:(fun(self:T, argKey:string, matchedValue:any):any)|nil):SubscribableEventInvokeResult)}
 
 ---@class BaseSubscribableEvent:SubscribableEventCreateOptions
 ---@field ID string
@@ -80,7 +80,7 @@ function SubscribableEvent:Create(id, opts)
 		_EnterCount = true,
 	}
 	local o = {
-		First = nil,
+		--First = nil,
 		NextIndex = 1,
 		ID = id,
 		Disabled = false,
@@ -102,6 +102,10 @@ function SubscribableEvent:Create(id, opts)
 	end
 	setmetatable(o, {
 		__index = function (_,k)
+			if k == "IsSubscribed" then
+				local first = rawget(o, "First")
+				return first ~= nil
+			end
 			return SubscribableEvent[k]
 		end
 	})

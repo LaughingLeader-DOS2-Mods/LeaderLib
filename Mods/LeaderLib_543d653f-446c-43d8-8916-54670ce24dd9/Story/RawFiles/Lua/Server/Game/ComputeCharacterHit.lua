@@ -324,8 +324,8 @@ end
 --- @param isCriticalHit boolean
 --- @param roll integer|nil
 --- @param criticalChance integer
---- @param isBasicAttack? boolean
-local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance, isBasicAttack)
+--- @param isFromBasicAttack? boolean
+local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance, isFromBasicAttack)
     ---@type LeaderLibGetShouldApplyCriticalHitEventArgs
     local evt = {
         Attacker = attacker,
@@ -335,7 +335,7 @@ local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, critical
         IsCriticalHit = isCriticalHit,
         RollAmount = roll,
         CriticalChance = criticalChance,
-        IsBasicAttack = isBasicAttack == true,
+        IsFromBasicAttack = isFromBasicAttack == true,
     }
     ---@type SubscribableEventInvokeResult<LeaderLibGetShouldApplyCriticalHitEventArgs>
     local invokeResult = Events.CCH.GetShouldApplyCriticalHit:Invoke(evt)
@@ -349,11 +349,11 @@ end
 --- @param attacker StatCharacter
 --- @param hitType HitType
 --- @param criticalRoll CriticalRoll
---- @param isBasicAttack? boolean
+--- @param isFromBasicAttack? boolean
 --- @return boolean
-function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isBasicAttack)
+function HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isFromBasicAttack)
     local isCriticalHit,roll,criticalChance = _CalculateShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll)
-    return _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance, isBasicAttack)
+    return _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance, isFromBasicAttack)
 end
 
 --- @param weapon StatItem
@@ -426,8 +426,9 @@ end
 --- @param criticalRoll string CriticalRoll enumeration
 --- @param damageMultiplier number
 --- @param criticalMultiplier number
-function HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier)
-    if HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll) then
+--- @param isFromBasicAttack? boolean
+function HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier, isFromBasicAttack)
+    if HitOverrides.ShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isFromBasicAttack) then
         damageMultiplier = HitOverrides.ApplyCriticalHit(hit, attacker, damageMultiplier, criticalMultiplier)
     end
     return damageMultiplier
@@ -610,13 +611,13 @@ local function _CalculateHitChance(attacker, target)
     end
 end
 
-local function _HitEnd(target, attacker, weapon, hitType, forceReduceDurability, hit, criticalRoll, hitBlocked, damageList, damageMultiplier,criticalMultiplier, statusBonusDmgTypes)
+local function _HitEnd(target, attacker, weapon, hitType, forceReduceDurability, hit, criticalRoll, hitBlocked, damageList, damageMultiplier,criticalMultiplier, statusBonusDmgTypes, isFromBasicAttack)
     if weapon ~= nil and weapon.Name ~= "DefaultWeapon" and hitType ~= "Magic" and forceReduceDurability and not (hit.Missed or hit.Dodged) then
         Game.Math.ConditionalDamageItemDurability(attacker, weapon)
     end
 
     if not hitBlocked then
-        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier)
+        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier, isFromBasicAttack)
         HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
     end
 
@@ -645,6 +646,8 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 	local damageList = Ext.Stats.NewDamageList()
     damageList:CopyFrom(preDamageList)
 
+    local isFromBasicAttack = weapon ~= nil and hitType == "Melee" or hitType == "Ranged"
+
     --Fix: Temp fix for infinite reflection damage via Shackles of Pain + Retribution. This flag isn't being set or something in v56.
     if hitType == "Reflected" then
         hit.Reflection = true
@@ -655,6 +658,10 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
             HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
         end
         return hit
+    end
+
+    if isFromBasicAttack and not hit.CriticalHit and criticalRoll ~= "Roll" and Vars.ShouldOverrideBasicAttackCriticalHit() then
+        criticalRoll = "Roll"
     end
 
     if weapon == nil then
@@ -670,9 +677,9 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 
     damageMultiplier = 1.0 + Game.Math.GetAttackerDamageMultiplier(attacker, target, highGroundFlag)
     if hitType == "Magic" or hitType == "Surface" or hitType == "DoT" or hitType == "Reflected" then
-        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier)
+        damageMultiplier = HitOverrides.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll, damageMultiplier, criticalMultiplier, isFromBasicAttack)
         if hitBlocked then
-			return _HitEnd(target, attacker, weapon, hitType, forceReduceDurability, hit, criticalRoll, hitBlocked, damageList, damageMultiplier, criticalMultiplier, statusBonusDmgTypes)
+			return _HitEnd(target, attacker, weapon, hitType, forceReduceDurability, hit, criticalRoll, hitBlocked, damageList, damageMultiplier, criticalMultiplier, statusBonusDmgTypes, isFromBasicAttack)
 		end
         HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
         return hit
@@ -726,7 +733,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         end
     end
 
-    return _HitEnd(target, attacker, weapon, hitType, forceReduceDurability, hit, criticalRoll, hitBlocked, damageList, damageMultiplier, criticalMultiplier, statusBonusDmgTypes)
+    return _HitEnd(target, attacker, weapon, hitType, forceReduceDurability, hit, criticalRoll, hitBlocked, damageList, damageMultiplier, criticalMultiplier, statusBonusDmgTypes, isFromBasicAttack)
 end
 
 HitOverrides._ComputeCharacterHitFunction = ComputeCharacterHit

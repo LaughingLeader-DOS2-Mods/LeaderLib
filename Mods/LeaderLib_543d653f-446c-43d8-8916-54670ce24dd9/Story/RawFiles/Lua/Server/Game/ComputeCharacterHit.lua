@@ -624,6 +624,17 @@ local function _HitEnd(target, attacker, weapon, hitType, forceReduceDurability,
     return hit
 end
 
+---@param attacker EsvCharacter
+---@return EsvASAttack|nil
+local function _GetASAttack(attacker)
+	for _,layer in pairs(attacker.ActionMachine.Layers) do
+		if layer.State and layer.State.Type == "Attack" then
+			return layer.State
+		end
+	end
+	return nil
+end
+
 --- @param target StatCharacter
 --- @param attacker StatCharacter
 --- @param weapon CDivinityStatsItem
@@ -646,7 +657,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 	local damageList = Ext.Stats.NewDamageList()
     damageList:CopyFrom(preDamageList)
 
-    local isFromBasicAttack = weapon ~= nil and hitType == "Melee" or hitType == "Ranged"
+    local isFromBasicAttack = false
 
     --Fix: Temp fix for infinite reflection damage via Shackles of Pain + Retribution. This flag isn't being set or something in v56.
     if hitType == "Reflected" then
@@ -660,8 +671,16 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
         return hit
     end
 
-    if isFromBasicAttack and not hit.CriticalHit and criticalRoll ~= "Roll" and Vars.ShouldOverrideBasicAttackCriticalHit() then
-        criticalRoll = "Roll"
+    if weapon ~= nil and (hitType == "Melee" or hitType == "Ranged") then
+        if not hit.CriticalHit and criticalRoll ~= "Roll" and Vars.ShouldOverrideBasicAttackCriticalHit() then
+            criticalRoll = "Roll"
+        end
+        if attacker.Character then
+            local state = _GetASAttack(attacker.Character)
+            if state and not state.IsFinished then
+                isFromBasicAttack = true
+            end
+        end
     end
 
     if weapon == nil then

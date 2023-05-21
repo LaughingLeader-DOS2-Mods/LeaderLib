@@ -171,8 +171,8 @@ end
 
 GameHelpers.Skill.IsAction = GameHelpers.Stats.IsAction
 
-local meleeTypes = {"Sword", "Club", "Axe", "Staff", "Knife", "Spear"}
-local rangeTypes = {"Bow", "Crossbow", "Wand", "Arrow", "Rifle"}
+local _MELEE_WEAPON_TYPES = {"Sword", "Club", "Axe", "Staff", "Knife", "Spear"}
+local _RANGED_WEAPON_TYPES = {"Bow", "Crossbow", "Arrow", "Rifle"} -- "Wand"
 
 ---@param character CharacterObject
 ---@param req string
@@ -408,6 +408,36 @@ end
 ---| "Requirements" # One of the Requirements conditions failed (Tag, Ability/Attribute, etc)
 ---| "MemorizationRequirements" # One of the MemorizationRequirements conditions failed (Tag, Ability/Attribute, etc)
 
+---@param req StatsRequirement
+---@param character CharacterObject
+local function _EvaluateManual(req, character)
+	local callback = Vars.RequirementFunctions[req.Requirement]
+	if callback then
+		local result = callback(character, req.Requirement, req.Param, req.Not == true)
+		return result == true
+	end
+	return false
+end
+
+---@param req StatsRequirement
+---@param character CharacterObject
+local function _Evaluate(req, character)
+	return _EvaluateManual(req, character)
+end
+
+if _EXTVERSION >= 60 then
+	---@param req StatsRequirement
+	---@param character CharacterObject
+	_Evaluate = function (req, character)
+		local result = Ext.Stats.Requirement.Evaluate(character.Stats, req.Requirement, req.Param, req.Tag, req.Not)
+		if result ~= nil then
+			return result
+		else
+			return _EvaluateManual(req, character)
+		end
+	end
+end
+
 ---@param char EsvCharacter|EclCharacter
 ---@param statId string|StatRequirement[] A skill/item stat, or the Requirements table itself.
 ---@return boolean hasRequirements
@@ -421,9 +451,9 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 		requirements = statId
 	else
 		if GameHelpers.Stats.IsAction(statId) then
-			return true
+			return true,"Action"
 		end
-		stat = Ext.Stats.Get(statId, nil, false) --[[@as StatEntrySkillData]]
+		stat = Ext.Stats.Get(statId, nil, false, true) --[[@as StatEntrySkillData]]
 		fassert(stat ~= nil, "Failed to get stat from %s", statId)
 		if stat and stat.Requirements then
 			requirements = stat.Requirements
@@ -438,12 +468,9 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 					return false,"Combat"
 				end
 			else
-				local callback = Vars.RequirementFunctions[req.Requirement]
-				if callback then
-					local result = callback(character, req.Requirement, req.Param, req.Not == true)
-					if result == false then
-						return false,"Requirements"
-					end
+				local result = _Evaluate(req, character)
+				if result == false then
+					return false,"Requirements"
 				end
 			end
 		end
@@ -454,7 +481,7 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 			---@cast stat StatEntrySkillData
 			local items = {GameHelpers.Character.GetEquippedWeapons(character)}
 			if stat.Requirement == Data.SkillRequirement.MeleeWeapon then
-				if not GameHelpers.Item.IsWeaponType(items, meleeTypes) then
+				if not GameHelpers.Item.IsWeaponType(items, _MELEE_WEAPON_TYPES) then
 					return false,"SkillRequirement"
 				end
 			elseif stat.Requirement == Data.SkillRequirement.DaggerWeapon then
@@ -470,7 +497,7 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 					return false,"SkillRequirement"
 				end
 			elseif stat.Requirement == Data.SkillRequirement.RangedWeapon then
-				if not GameHelpers.Item.IsWeaponType(items, rangeTypes) then
+				if not GameHelpers.Item.IsWeaponType(items, _RANGED_WEAPON_TYPES) then
 					return false,"SkillRequirement"
 				end
 			elseif stat.Requirement == Data.SkillRequirement.ArrowWeapon then
@@ -499,7 +526,7 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 
 			--GM's don't have to deal with memorization requirements
 			if GameHelpers.Character.IsGameMaster(character) or not GameHelpers.Character.IsPlayer(character) then
-				return true
+				return true,"NonPlayer"
 			end
 
 			for _,req in pairs(stat.MemorizationRequirements) do
@@ -508,12 +535,9 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 						return false,"Combat"
 					end
 				else
-					local callback = Vars.RequirementFunctions[req.Requirement]
-					if callback then
-						local result = callback(character, req.Requirement, req.Param, req.Not)
-						if result == false then
-							return false,"MemorizationRequirements"
-						end
+					local result = _Evaluate(req, character)
+					if result == false then
+						return false,"MemorizationRequirements"
 					end
 				end
 			end
@@ -525,7 +549,7 @@ function GameHelpers.Stats.CharacterHasRequirements(char, statId)
 			end
 		end
 	end
-	return true
+	return true,""
 end
 
 local _MaxEnumCount = {

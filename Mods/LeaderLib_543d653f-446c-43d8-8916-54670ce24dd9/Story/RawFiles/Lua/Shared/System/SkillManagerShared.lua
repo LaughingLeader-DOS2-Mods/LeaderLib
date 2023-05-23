@@ -37,7 +37,7 @@ local function _GetSkillAction(character, skill)
 			if action then
 				if action.Type == "UseSkill" then
 					---@cast action EsvASUseSkill
-					if StringHelpers.GetSkillEntryName(action.Skill.SkillId) == skill then
+					if action.Skill and StringHelpers.GetSkillEntryName(action.Skill.SkillId) == skill then
 						return action
 					end
 				elseif action.Type == "PrepareSkill" then
@@ -88,7 +88,7 @@ local function _GetSkillSourceItem(character, skill, returnStoredtemData)
 end
 
 local _ActionMachineSkillStates = {
-	[SKILL_STATE.PREPARE] = true,
+	--[SKILL_STATE.PREPARE] = true,
 	[SKILL_STATE.USED] = true,
 	[SKILL_STATE.CAST] = true,
 }

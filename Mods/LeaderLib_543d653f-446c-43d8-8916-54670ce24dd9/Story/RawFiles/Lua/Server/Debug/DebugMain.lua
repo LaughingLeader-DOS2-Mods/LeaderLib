@@ -223,7 +223,7 @@ local _combatPositions = {}
 
 local _getTurnManager = Ext.Combat.GetTurnManager
 
----@param checkTag boolean|nil
+---@param checkTag? boolean
 ---@return fun():EsvCharacter
 local function GetActiveTurnCharacters(checkTag)
 	local characters = {}
@@ -260,7 +260,7 @@ function CombatMovementManager:OnCharacterMoved(character, lastPos)
 end
 
 ---@param character EsvCharacter
----@param skipCheck boolean|nil 
+---@param skipCheck? boolean 
 local function CharacterHasMoved(character, skipCheck)
 	if not skipCheck then
 		local last = _combatPositions[character.Handle]
@@ -273,7 +273,7 @@ local function CharacterHasMoved(character, skipCheck)
 	return false
 end
 
----@param skipCheck boolean|nil Skip checking the distance from the last position.
+---@param skipCheck? boolean Skip checking the distance from the last position.
 ---@return boolean isWaiting
 function CombatMovementManager:UpdatePositions(skipCheck)
 	local isWaiting = false
@@ -301,7 +301,7 @@ function CombatMovementManager:Tick(e)
 end
 
 ---@param b boolean
----@param skipClearPositions boolean|nil
+---@param skipClearPositions? boolean
 function CombatMovementManager:Toggle(b, skipClearPositions)
 	if b then
 		if self._TickIndex == nil then
@@ -418,3 +418,15 @@ end) ]]
 Ext.Events.BeforeCharacterApplyDamage:Subscribe(function (e)
 	Ext.IO.SaveFile(("Dumps/Hit/BeforeCharacterApplyDamage_%s.json"):format(Ext.Utils.MonotonicTime()), Ext.Json.Stringify(e, opts))
 end) ]]
+
+-- Events.OnBasicAttackStart:Subscribe(function (e)
+-- 	Ext.Utils.PrintError("EsvASAttack")
+-- 	Ext.DumpShallow(e.State)
+-- end)
+
+-- Events.CCH.GetShouldApplyCriticalHit:Subscribe(function (e)
+-- 	fprint(LOGLEVEL.DEFAULT, "[Events.CCH.GetShouldApplyCriticalHit] Roll(%s) Chance(%s) HitType(%s) IsFromBasicAttack(%s) Hit.CriticalHit(%s)", e.CriticalRoll, e.CriticalChance, e.HitType, e.IsFromBasicAttack == true, e.Hit.CriticalHit)
+-- 	-- if e.IsFromBasicAttack then
+-- 	-- 	e.IsCriticalHit = false
+-- 	-- end
+-- end)

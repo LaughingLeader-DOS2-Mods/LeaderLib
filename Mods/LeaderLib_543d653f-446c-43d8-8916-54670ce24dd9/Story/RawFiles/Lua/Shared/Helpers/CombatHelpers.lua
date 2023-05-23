@@ -21,6 +21,7 @@ local function _GetCombatComponent_Old(character)
 	return nil
 end
 
+---@param character CharacterObject
 local function _TryGetCombatComponent(character)
 	local handle = character.Base.Entity:GetComponent("Combat")
 	if handle and Ext.Utils.IsValidHandle(handle) then

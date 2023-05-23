@@ -33,6 +33,8 @@ setmetatable(UIListenerWrapper, {
 	end
 })
 
+---@param id integer
+---@param params? table
 function UIListenerWrapper:Create(id, params)
 	local this = {
 		ID = id,

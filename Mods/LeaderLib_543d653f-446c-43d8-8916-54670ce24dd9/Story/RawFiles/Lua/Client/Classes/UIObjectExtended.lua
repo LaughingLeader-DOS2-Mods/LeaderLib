@@ -18,6 +18,7 @@ local _EXTVERSION = Ext.Utils.Version()
 ---@field Subscribe UIObjectExtendedSubscription
 ---@field Callbacks {Invoke:table<string,UIObjectExtendedCallbackSubscriptionData[]>, Call:table<string,UIObjectExtendedCallbackSubscriptionData[]>}
 
+---A UI helper that manages creating and hiding the UI. This is intended for new UIs.
 ---@class UIObjectExtended:UIObjectExtendedSettings
 ---@field Instance UIObject
 ---@field Root FlashMainTimeline

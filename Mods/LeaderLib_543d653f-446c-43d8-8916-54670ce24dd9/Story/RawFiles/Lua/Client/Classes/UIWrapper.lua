@@ -19,6 +19,7 @@ local _uiPathWrappers = {}
 ---@field Context UIListenerContext
 
 ---A wrapper around an existing UI, for easier access to the instance/root/callback subscription.
+---@operator call:LeaderLibUIWrapper
 ---@class LeaderLibUIWrapper
 ---@field Root FlashMainTimeline|table
 ---@field Instance UIObject
@@ -55,6 +56,7 @@ local function CreateWrapper(...)
 	end
 	error("UIWrapper requires an integer id or path string as the first parameter!", 2)
 end
+
 setmetatable(UIWrapper, {
 	__call = CreateWrapper
 })

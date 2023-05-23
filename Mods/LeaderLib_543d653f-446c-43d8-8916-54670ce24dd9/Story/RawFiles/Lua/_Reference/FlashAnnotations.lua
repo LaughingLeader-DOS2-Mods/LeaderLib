@@ -1,7 +1,12 @@
 ---@diagnostic disable
+---@meta
+
+---@class FlashTimerEvent:FlashEvent
+---@class FlashMouseEvent:FlashEvent
+---@class FlashTimer:FlashObject
 
 ---@class FlashListDisplay:FlashMovieClip
----@field content_array table
+---@field content_array FlashArray
 ---@field scrollHit_mc FlashMovieClip
 ---@field container_mc FlashMovieClip
 ---@field containerBG_mc FlashMovieClip
@@ -257,3 +262,162 @@
 ---@field onDown fun(param1:FlashMouseEvent)
 ---@field onOut fun(param1:FlashMouseEvent)
 ---@field onOver fun(param1:FlashMouseEvent)
+
+--#region Tooltips
+
+---tt_groupHolder
+---@class FlashTooltipGroupHolder:FlashMovieClip
+---@field groupID number|nil
+---@field container_mc FlashMovieClip
+---@field icon_mc FlashMovieClip -- tt_groupIcon
+---@field list FlashListDisplay
+---@field base FlashMovieClip
+---@field iconId integer
+---@field textOffsetX number
+---@field titleMC FlashMovieClip
+---@field init function
+---@field setupHeader function
+---@field setTitle fun(text:string)
+---@field addResist fun(labelText:string, iconFrame:number)
+---@field addTag fun(labelText:string, valueText:string, warningText:string)
+---@field addWandSkill fun(labelText:string, valueText:string, warningText?:string, iggyIconNum?:string)
+---@field addRuneSlot fun(labelText:string, valueText:string, warningText?:string, runeEffectIconFrame?:number)
+---@field addEl fun(labelText:string, valueText?:string, warningText?:string)
+---@field addEl2 fun(labelText:string, valueText?:string, warningText?:string)
+---@field addDescription fun(labelText:string)
+---@field addWhiteSpace fun(index?:number, length?:number, leadingHeight?:number)
+---@field addRequirement fun(labelText:string, valueText?:string, textColor?:integer)
+---@field addWarning fun(labelText:string)
+---@field addElNoColour fun(labelText:string, valueText?:string)
+---@field setMCColour fun(mc:FlashMovieClip, color:integer)
+---@field clearMC function
+
+---@class FlashLSTooltipClass
+---@field tooltipW number
+---@field tooltipH number
+---@field scaleH boolean
+---@field maxH number
+---@field tooltipPaddingL number
+---@field tooltipPaddingR number
+---@field tooltipPaddingB number
+---@field SepSpacing number
+---@field fixedTopSpacing integer
+---@field fixedFooterSpacing integer
+---@field hasSubSections boolean
+---@field m_Leading number
+---@field footerSpace number
+---@field list FlashScrollList
+---@field buttonHints FlashListDisplay
+---@field equipHeader FlashMovieClip
+---@field isItem boolean
+---@field isIdentified boolean
+---@field AbilityId number
+---@field TalentId number
+---@field groupLabels table
+---@field groupColours table
+---@field groupValueColours table
+---@field unidentifiedMC FlashMovieClip
+---@field forceHideFooter boolean
+---@field btnHintHOffset number
+---@field isEquipped boolean
+---@field footer_mc FlashMovieClip
+---@field container_mc FlashMovieClip
+---@field middleBg_mc FlashMovieClip
+---@field header_mc FlashMovieClip
+---@field codeEnum FlashMovieClip -- Object
+---@field grpsEnum FlashMovieClip -- Object
+---@field width number
+---@field height number
+---@field setBGVisible fun(b:boolean)
+---@field setGroupLabel fun(groupID:number, labelText:string)
+---@field getHeight fun():number
+---@field hideFooter function
+---@field addButtonHint fun(id:number, hintText:string)
+---@field clearButtonHints function
+---@field setCompareHintVisible fun(b:boolean)
+---@field applyLeading fun(mc:FlashMovieClip, amount?:number)
+---@field roundToLeading fun(yPos:number, amount?:number):number
+---@field scrollDown function
+---@field scrollUp function
+---@field stopScrolling function
+---@field repositionElements function
+---@field clear function
+---@field clearContent function
+---@field setupTooltip fun(arr:table, leading?:number)
+
+---@class FlashTooltipFormattedMC
+---@field tooltip_mc FlashLSTooltipClass
+---@field resetBG function
+---@field onRemove fun(e:FlashEvent)
+
+---@class FlashStatusTooltipMC
+---@field bg_mc FlashMovieClip
+---@field text_txt FlashTextField
+---@field setText fun(text:string)
+
+---@class FlashItemCompareTooltip
+---@field offhand_mc FlashMovieClip
+---@field tooltip_mc FlashLSTooltipClass
+---@field onRemove fun(e:FlashEvent)
+
+---@class FlashTooltipMC
+---@field bg_mc FlashMovieClip
+---@field newBG_mc FlashMovieClip
+---@field text_txt FlashTextField
+---@field setText fun(text:string, bgType?:integer)
+
+---@class FlashTooltipMainTimeline
+---@field tooltip_mc FlashMovieClip -- Symbol 66, does not have an AS class
+---@field events FlashArray
+---@field layout string
+---@field cachedStickToMouse number
+---@field ComparePaneOffset number
+---@field ComparePaneOffset2 number
+---@field ComparePaneOffset3 number
+---@field frame_width number
+---@field frame_height number
+---@field tf nil|FlashTooltipFormattedMC|FlashTooltipMC
+---@field ctf nil|FlashItemCompareTooltip compareTooltip or offhandTooltip
+---@field ohctf nil|FlashItemCompareTooltip offhandTooltip
+---@field offsetX number
+---@field offsetY number
+---@field compareShowTimer FlashTimer -- Timer
+---@field compareMode boolean
+---@field tooltipModeTimer FlashTimer -- Timer
+---@field tooltip_array FlashArray
+---@field tooltipCompare_array FlashArray
+---@field tooltipOffHand_array FlashArray
+---@field formatTooltip FlashTooltipFormattedMC -- tooltipFormattedMC
+---@field compareTooltip FlashItemCompareTooltip -- ItemCompareTooltip
+---@field offhandTooltip FlashItemCompareTooltip -- ItemCompareTooltip
+---@field defaultTooltip FlashTooltipMC -- tooltipMC
+---@field statusTooltip FlashStatusTooltipMC -- statusTooltipMC
+---@field NormalTooltip boolean
+---@field isStatusTT boolean
+---@field tooltipAlignmentLeft boolean
+---@field setGroupLabel fun(groupID:number, labelText:string)
+---@field setWindow fun(resWidth:number, resHeight:number)
+---@field onEventInit function
+---@field onEventResize function
+---@field strReplace fun(str:string, delimiter:string, joinStr:string):string
+---@field traceArray fun(arr:FlashArray)
+---@field addFormattedTooltip fun(xPos?:number, yPos?:number, deferShow?:boolean)
+---@field addStatusTooltip fun(xPos?:number, yPos?:number)
+---@field addTooltip fun(text:string, widthOverride?:number, heightOverride?:number, allowDelay?:boolean, stickToMouse?:number, bgType?:integer)
+---@field swapCompare function
+---@field showFormattedTooltipAfterPos fun(isComparing:boolean)
+---@field setCompare fun(b:boolean)
+---@field addCompareTooltip fun(arr:FlashArray, unusedNum1?:number, unusedNum2?:number)
+---@field addCompareOffhandTooltip fun(arr:FlashArray, unusedNum1?:number, unusedNum2?:number)
+---@field INTshowTooltip function
+---@field onShowCompareTooltip fun(e:FlashTimerEvent)
+---@field startModeTimer function
+---@field resetTooltipMode fun(e:FlashTimerEvent)
+---@field onMove fun(e:FlashMouseEvent)
+---@field INTRemoveTooltip function
+---@field removeTooltip function
+---@field fadeOutTooltip fun(unusedNum:number, fadeDuration:number)
+---@field checkTooltipBoundaries fun(w:number, h:number, unused1:number, unused2:number)
+---@field getTooltipHeight fun():number
+---@field getTooltipWidth fun():number
+--#endregion

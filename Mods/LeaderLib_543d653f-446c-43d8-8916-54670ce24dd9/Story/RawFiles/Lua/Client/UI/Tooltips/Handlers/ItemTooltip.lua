@@ -256,28 +256,21 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				end
 			end
 		end
-
-		if Features.ResistancePenetration == true then
-			--_AddResistancePen_Old()
-		end
+		
 		if TooltipHandler.HasTagTooltipData then
 			TooltipHandler.AddTooltipTags(item, tooltip)
 		end
+
 		if (Features.TooltipGrammarHelper or gameSettings.AlwaysDisplayWeaponScalingText)
 		and item.Stats and item.Stats.Requirements ~= nil and #item.Stats.Requirements > 0
 		then
-			local hasScalesWithText = false
 			local requiresPointsHigherThanZero = false
-			local scalesWithTextSub = string.sub(LocalizedText.Tooltip.ScalesWith.Value, 1, 5)
 			local requirements = tooltip:GetElements("ItemRequirement")
 			if #requirements > 0 then
 				for i,element in pairs(requirements) do
 					if not StringHelpers.IsNullOrEmpty(element.Label) then
 						--Replaces double spacing or more with single spaces
 						element.Label = string.gsub(element.Label, "%s+", " ")
-						if not hasScalesWithText and string.find(element.Label, scalesWithTextSub) then
-							hasScalesWithText = true
-						end
 					end
 				end
 			end
@@ -333,19 +326,20 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				end
 			end
 		end
-		local element = tooltip:GetElement("ItemDescription", {Type="ItemDescription", Label=""})
+		local descriptionElement = tooltip:GetElement("ItemDescription", {Type="ItemDescription", Label=""})
 		if item:HasTag("LeaderLib_AutoLevel") then
-			if not string.find(string.lower(element.Label), "automatically level") then
-				if not StringHelpers.IsNullOrEmpty(element.Label) then
-					element.Label = element.Label .. "<br>" .. LocalizedText.Tooltip.AutoLevel.Value
+			local pattern = LocalizedText.Tooltip.AutoLevelSearchText.Value:lower()
+			if not StringHelpers.Contains(descriptionElement.Label, pattern, {CaseInsensitive=true, Plain=true}) then
+				if not StringHelpers.IsNullOrEmpty(descriptionElement.Label) then
+					descriptionElement.Label = descriptionElement.Label .. "<br>" .. LocalizedText.Tooltip.AutoLevel.Value
 				else
-					element.Label = LocalizedText.Tooltip.AutoLevel.Value
+					descriptionElement.Label = LocalizedText.Tooltip.AutoLevel.Value
 				end
 			end
 		end
 		if isRead then
 			--tooltip:GetElement("SkillAlreadyLearned", {Type="SkillAlreadyLearned", Label = LocalizedText.Tooltip.BookIsKnown.Value})
-			element.Label = element.Label .. "<br>" .. LocalizedText.Tooltip.BookIsKnown.Value
+			descriptionElement.Label = descriptionElement.Label .. "<br>" .. LocalizedText.Tooltip.BookIsKnown.Value
 		end
 		if gameSettings.CondenseItemTooltips then
 			local elements = tooltip:GetElements("ExtraProperties")

@@ -545,17 +545,47 @@ function StringHelpers.Find(s, pattern, caseInsensitive, startPos, endPos, findS
 	end
 end
 
+---@class StringHelpersContainsOptions
+---@field StartPos integer Passed to string.sub for the search string (starts at StartPos and continues until EndPos).
+---@field EndPos integer Passed to string.sub for the search string (starts at StartPos and continues until EndPos).
+---@field FindStartPos integer If set, start string.find from this position.
+---@field Plain boolean Search for plain strings, ignoring all magic characters.
+local _DefaultStringHelpersContainsOptions = {
+	CaseInsensitive = false,
+	Plain = false,
+}
+
+---@overload fun(str:string|string[], pattern:string|string[], caseInsensitive:boolean, startPos:integer, endPos:integer, findStartPos:integer, findPlain:boolean):boolean
 ---Similar to find, except it just checks that the result isn't nil, and supports an array of strings to check.
 ---@param str string|string[]
 ---@param pattern string|string[]
----@param caseInsensitive boolean|nil Searches for a lower version of s.
----@param startPos integer|nil If set, start the find from this position.
----@param endPos integer|nil If set, end the find at this position.
----@param findStartPos integer|nil
----@param findPlain boolean|nil
+---@param opts? StringHelpersContainsOptions
 ---@return boolean stringContainsPattern
-function StringHelpers.Contains(str, pattern, caseInsensitive, startPos, endPos, findStartPos, findPlain)
+function StringHelpers.Contains(str, pattern, opts, ...)
+	local options = _DefaultStringHelpersContainsOptions
+	local caseInsensitive = false
+	local startPos = nil
+	local endPos = nil
+	local findStartPos = nil
+	local findPlain = false
+	if _type(opts) == "boolean" then
+		--Support for the previous function parameters
+		caseInsensitive = opts
+		local params = {...}
+		startPos = params[1]
+		endPos = params[2]
+		findStartPos = params[3]
+		findPlain = params[4]
+	else
+		options = TableHelpers.SetDefaultOptions(opts, _DefaultStringHelpersContainsOptions)
+		caseInsensitive = options.CaseInsensitive
+		startPos = options.StartPos
+		endPos = options.EndPos
+		findStartPos = options.FindStartPos
+		findPlain = options.Plain
+	end
 	local strType = _type(str)
+
 	if strType == "string" then
 		if caseInsensitive then
 			str = _lower(str)

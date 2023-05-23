@@ -333,8 +333,8 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		end
 		local descriptionElement = tooltip:GetElement("ItemDescription", {Type="ItemDescription", Label=""})
 		if item:HasTag("LeaderLib_AutoLevel") then
-			local pattern = LocalizedText.Tooltip.AutoLevelSearchText.Value:lower()
-			if not StringHelpers.Contains(descriptionElement.Label, pattern, {CaseInsensitive=true, Plain=true}) then
+			local searchTexts = {LocalizedText.Tooltip.AutoLevelSearchText1.Value, LocalizedText.Tooltip.AutoLevelSearchText2.Value}
+			if not StringHelpers.Contains(descriptionElement.Label, searchTexts, {CaseInsensitive=true, Plain=true}) then
 				if not StringHelpers.IsNullOrEmpty(descriptionElement.Label) then
 					descriptionElement.Label = descriptionElement.Label .. "<br>" .. LocalizedText.Tooltip.AutoLevel.Value
 				else
@@ -475,8 +475,11 @@ Timer.Subscribe("LeaderLib_Tooltip_AdjustFont", function (e)
 		for element in TooltipHandler.Tooltip:GetElementsByType("ExtraProperties") do
 			local text = tostring(element.label_txt.htmlText)
 			if _NextProgressionText.Text[text] then
-				element.label_txt.textColor = Data.Colors.Rarity.Uncommon:gsub("#", "0x")
-				element.label_txt.htmlText = text
+				--element.label_txt.textColor = Data.Colors.FormatStringColor.Orange:gsub("#", "0x")
+				element.label_txt.textColor = 0x639594
+				local texts = StringHelpers.Split(text, "\n")
+				texts[1] = string.format("<font color='%s'>%s</font>", Data.Colors.Rarity.Unique, texts[1])
+				element.label_txt.htmlText = StringHelpers.Join("\n", texts)
 			end
 		end
 	end

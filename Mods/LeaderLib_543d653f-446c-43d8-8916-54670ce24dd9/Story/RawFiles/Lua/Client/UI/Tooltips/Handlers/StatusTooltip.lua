@@ -190,7 +190,7 @@ function TooltipHandler.OnStatusTooltip(character, status, tooltip)
 					element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
 				end
 
-				if Features.TooltipGrammarHelper then
+				if Features.TooltipGrammarHelper and GameHelpers.GetLanguage() == "English" then
 					element.Label = string.gsub(element.Label, "a 8", "an 8")
 					local startPos,endPos = string.find(element.Label , "a <font.->8")
 					if startPos then

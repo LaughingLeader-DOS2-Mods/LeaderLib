@@ -197,7 +197,7 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 		if not isAction then
 			FixDamageNames(skill, element)
 		end
-		if Features.TooltipGrammarHelper == true then
+		if Features.TooltipGrammarHelper == true and GameHelpers.GetLanguage() == "English" then
 			element.Label = string.gsub(element.Label, "a 8", "an 8")
 			local startPos,endPos = string.find(element.Label , "a <font.->8")
 			if startPos then

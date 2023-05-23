@@ -266,6 +266,16 @@
 --#region Tooltips
 
 ---tt_groupHolder
+
+---@class FlashTooltipElement:FlashMovieClip
+---@field label_txt FlashTextField
+---@field value_txt FlashTextField
+---@field warning_txt FlashTextField
+
+---@class FlashTooltipDescriptionElement:FlashMovieClip
+---@field text_txt FlashTextField
+
+
 ---@class FlashTooltipGroupHolder:FlashMovieClip
 ---@field groupID number|nil
 ---@field container_mc FlashMovieClip
@@ -420,4 +430,5 @@
 ---@field checkTooltipBoundaries fun(w:number, h:number, unused1:number, unused2:number)
 ---@field getTooltipHeight fun():number
 ---@field getTooltipWidth fun():number
+
 --#endregion

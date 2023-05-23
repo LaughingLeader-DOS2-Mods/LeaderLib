@@ -244,7 +244,7 @@ function Tooltip:GetGroupByType(elementType)
 end
 
 ---@param elementType TooltipElementType
----@return fun():FlashMovieClip
+---@return fun():FlashTooltipElement
 function Tooltip:GetElementsByType(elementType)
 	local id = _ElementTypeToGroup[elementType]
 	local groups = self:GetAllTooltipGroups()

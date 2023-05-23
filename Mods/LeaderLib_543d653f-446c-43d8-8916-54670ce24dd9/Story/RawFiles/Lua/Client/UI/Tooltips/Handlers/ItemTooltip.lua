@@ -475,7 +475,6 @@ Timer.Subscribe("LeaderLib_Tooltip_AdjustFont", function (e)
 		for element in TooltipHandler.Tooltip:GetElementsByType("ExtraProperties") do
 			local text = tostring(element.label_txt.htmlText)
 			if _NextProgressionText.Text[text] then
-				print(text, element.label_txt.textColor)
 				element.label_txt.textColor = Data.Colors.Rarity.Uncommon:gsub("#", "0x")
 				element.label_txt.htmlText = text
 			end

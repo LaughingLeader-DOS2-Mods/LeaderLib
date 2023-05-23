@@ -2,6 +2,11 @@ local appendRequirementsAfterTypes = {ItemRequirement=true, ItemLevel=true, APCo
 
 local _EXTVERSION = Ext.Utils.Version()
 
+local _NextProgressionText = {
+	Length = 0,
+	Text = {}
+}
+
 local function _AlphabeticalCaseInsensitiveLabelSort(a,b)
 	return string.lower(a.Label) < string.lower(b.Label)
 end
@@ -432,10 +437,12 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 
 							local title = LocalizedText.Tooltip.LeaderLibProgressionBonus
 							--local title = boostTextsLen == 1 and LocalizedText.Tooltip.LeaderLibProgressionBonus or LocalizedText.Tooltip.LeaderLibProgressionBonuses
-
+							local labelText = title:ReplacePlaceholders(LocalizedText.Tooltip.LevelWithParam:ReplacePlaceholders(nextGroup.Level), finalText)
+							_NextProgressionText.Length = _NextProgressionText.Length + 1
+							_NextProgressionText.Text[labelText:gsub("<br>", "\n")] = true
 							tooltip:AppendElementAfterType({
 								Type = "ExtraProperties",
-								Label = title:ReplacePlaceholders(LocalizedText.Tooltip.LevelWithParam:ReplacePlaceholders(nextGroup.Level), finalText),
+								Label = labelText,
 							}, "ItemRequirement")
 						end
 					end
@@ -452,4 +459,26 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 			description.Label = string.format("%s%s", description.Label, idText)
 		end
 	end
+	if _NextProgressionText.Length > 0 then
+		Timer.Start("LeaderLib_Tooltip_AdjustFont", 10)
+	end
 end
+
+Ext.RegisterUINameCall("hideTooltip", function ()
+	_NextProgressionText.Length = 0
+	_NextProgressionText.Text = {}
+	Timer.Cancel("LeaderLib_Tooltip_AdjustFont")
+end, "Before")
+
+Timer.Subscribe("LeaderLib_Tooltip_AdjustFont", function (e)
+	if TooltipHandler.Tooltip:IsFormattedTooltip() then
+		for element in TooltipHandler.Tooltip:GetElementsByType("ExtraProperties") do
+			local text = tostring(element.label_txt.htmlText)
+			if _NextProgressionText.Text[text] then
+				print(text, element.label_txt.textColor)
+				element.label_txt.textColor = Data.Colors.Rarity.Uncommon:gsub("#", "0x")
+				element.label_txt.htmlText = text
+			end
+		end
+	end
+end)

@@ -59,6 +59,9 @@ Ext.Require("Client/UI/Tooltips/Handlers/RuneTooltip.lua")
 Ext.Require("Client/UI/Tooltips/Handlers/WorldTooltip.lua")
 Ext.Require("Client/UI/Tooltips/Handlers/TooltipFormatting.lua")
 
+---@type LeaderLibTooltipWrapper
+TooltipHandler.Tooltip = Ext.Require("Client/UI/Tooltips/TooltipWrapper.lua")
+
 Game.Tooltip.Register.Generic(TooltipHandler.OnGenericTooltip)
 
 Game.Tooltip.RegisterRequestListener("Generic", function (request, ui, uiType, event, id, ...)

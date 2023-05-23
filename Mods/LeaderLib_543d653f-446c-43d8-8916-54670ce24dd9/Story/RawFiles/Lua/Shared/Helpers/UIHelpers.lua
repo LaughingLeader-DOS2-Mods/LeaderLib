@@ -85,7 +85,7 @@ if not _ISCLIENT then
 
 	---@param text string
 	---@param filter integer
-	---@param specificCharacters string|string[]|nil
+	---@param specificCharacters? string|string[]
 	function GameHelpers.UI.CombatLog(text, filter, specificCharacters)
 		local data = Common.JsonStringify({
 			Filter = filter or 0,
@@ -106,9 +106,9 @@ if not _ISCLIENT then
 	end
 
 	---@param text string
-	---@param specificCharacters string|string[]|nil
-	---@param boxType integer|nil
-	---@param title string|nil
+	---@param specificCharacters? string|string[]
+	---@param boxType? integer
+	---@param title? string
 	function GameHelpers.UI.ShowMessageBox(text, specificCharacters, boxType, title)
 		local data = Common.JsonStringify({
 			Type = boxType or 1,
@@ -148,7 +148,7 @@ if not _ISCLIENT then
 	end)
 
 	---@param visible boolean
-	---@param client string|nil
+	---@param client? string
 	function GameHelpers.UI.SetStatusVisibility(visible, client)
 		visible = visible ~= nil and tostring(visible) or tostring(GameSettings.Settings.Client.HideStatuses)
 		client = client or Osi.CharacterGetHostCharacter()
@@ -207,7 +207,7 @@ else
 end
 
 ---Refresh the whole active skillbar. Useful for refreshing if a skill is clickable from tag requirements changing.
----@param client CharacterParam|integer|nil Client character UUID, user ID, or Esv/EclCharacter.
+---@param client? CharacterParam|integer Client character UUID, user ID, or Esv/EclCharacter.
 function GameHelpers.UI.RefreshSkillBar(client)
 	if not _ISCLIENT then
 		local player = GameHelpers.GetCharacter(client)

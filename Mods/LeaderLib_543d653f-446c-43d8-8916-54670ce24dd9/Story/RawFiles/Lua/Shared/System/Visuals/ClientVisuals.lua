@@ -111,9 +111,9 @@ end
 
 ---@param object ObjectParam
 ---@param visualResource string
----@param options ExtenderClientVisualOptions|nil
----@param extraOptions LeaderLibClientVisualOptions|nil
----@param id string|nil
+---@param options? ExtenderClientVisualOptions
+---@param extraOptions? LeaderLibClientVisualOptions
+---@param id? string
 ---@return Visual
 function _CLIENT.AttachVisual(object, visualResource, options, extraOptions, id)
 	options = options or {}
@@ -294,7 +294,7 @@ end)
 
 ---@param fx string|string[]
 ---@param target ObjectParam
----@param params {Target:ObjectParam, WeaponBones:string}|nil
+---@param params {Target:ObjectParam,? WeaponBones:string}
 function _CLIENT.CreateClientEffect(fx, target, params)
 	params = params or {}
 	local ft = type(fx)

@@ -32,8 +32,8 @@ end
 
 ---@overload fun(uuid:string):ModSettings|nil
 ---@param uuid string
----@param createIfMissing boolean|nil
----@param tryInitialLoad boolean|nil
+---@param createIfMissing? boolean
+---@param tryInitialLoad? boolean
 ---@return ModSettings
 function SettingsManager.GetMod(uuid, createIfMissing, tryInitialLoad)
 	if not StringHelpers.IsNullOrEmpty(uuid) then
@@ -73,7 +73,7 @@ end
 ---@param uuid string
 ---@param id string
 ---@param b boolean
----@param target Guid|nil
+---@param target? Guid
 ---@return boolean
 function SettingsManager.FlagEquals(uuid, id, b, target)
 	local settings = SettingsManager.GetMod(uuid, false, true)
@@ -83,8 +83,8 @@ function SettingsManager.FlagEquals(uuid, id, b, target)
 	return false
 end
 
----@param forSyncing boolean|nil
----@param skipUpdating boolean|nil
+---@param forSyncing? boolean
+---@param skipUpdating? boolean
 ---@return table
 local function ExportGlobalSettings(forSyncing, skipUpdating)
 	local globalSettings = {
@@ -173,7 +173,7 @@ local function ParseSettings(tbl)
 	end
 end
 
----@param skipEventInvoking boolean|nil Skip invoking the ModSettingsLoaded and GlobalSettingsLoaded events.
+---@param skipEventInvoking? boolean Skip invoking the ModSettingsLoaded and GlobalSettingsLoaded events.
 function LoadGlobalSettings(skipEventInvoking)
 	local b,result = xpcall(function()
 		SettingsManager.LoadConfigFiles()

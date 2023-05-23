@@ -53,7 +53,7 @@ end
 
 ---@param character EsvCharacter
 ---@param skill string
----@param returnStoredtemData boolean|nil Returns the last item data as a table, if the item no longer exists.
+---@param returnStoredtemData? boolean Returns the last item data as a table, if the item no longer exists.
 local function _GetSkillSourceItem(character, skill, returnStoredtemData)
 	if not character then
 		return nil
@@ -306,8 +306,8 @@ SkillManager._Internal.GetSkillSourceItem = _GetSkillSourceItem
 ---🔨🔧**Server/Client**🔧🔨  
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateGetAPCostEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[]|nil index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.GetAPCost(skill, callback, priority, once)
 	local t = type(skill)
@@ -360,8 +360,8 @@ end, {Priority=0})
 ---🔨🔧**Server/Client**🔧🔨  
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateGetDamageEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[]|nil index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.GetDamage(skill, callback, priority, once)
 	local t = type(skill)

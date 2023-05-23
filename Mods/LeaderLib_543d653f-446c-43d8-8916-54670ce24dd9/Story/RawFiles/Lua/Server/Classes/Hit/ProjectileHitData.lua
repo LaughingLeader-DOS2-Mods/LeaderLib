@@ -15,7 +15,7 @@ local ProjectileHitData = {
 ---@param attacker string
 ---@param projectile EsvProjectile
 ---@param position number[]
----@param skill string|nil
+---@param skill? string
 ---@return ProjectileHitData
 function ProjectileHitData:Create(target, attacker, projectile, position, skill)
 	---@type ProjectileHitData

@@ -16,8 +16,8 @@ local _type = type
 
 ---@param target ObjectParam|SoundObjectID Object or built-in sound object ID
 ---@param sound string Sound event ID
----@param soundPosition number|nil Position in audio track
----@param specificPlayer CharacterParam|nil
+---@param soundPosition? number Position in audio track
+---@param specificPlayer? CharacterParam
 function GameHelpers.Audio.PlaySound(target, sound, soundPosition, specificPlayer)
 	if not _ISCLIENT then
 		local data = {Target=target, Event=sound, Position=soundPosition}
@@ -54,8 +54,8 @@ end
 ---@field SoundObjectID string|nil Optional sound object ID to use, such as "HUD"
 
 ---@param sound string Sound event ID
----@param soundPosition number|nil Position in audio track
----@param soundObjectID SoundObjectID|nil Optional sound object ID to use, such as "HUD"
+---@param soundPosition? number Position in audio track
+---@param soundObjectID? SoundObjectID Optional sound object ID to use, such as "HUD"
 function GameHelpers.Audio.PlaySoundForAllPlayers(sound, soundPosition, soundObjectID)
 	if not _ISCLIENT then
 		local data = {
@@ -90,8 +90,8 @@ end
 ---@param target ObjectParam|SoundObjectID Object or built-in sound object ID
 ---@param eventName string Event to trigger
 ---@param path string Audio file path (relative to data directory)
----@param codecId integer|nil
----@param specificPlayer CharacterParam|nil
+---@param codecId? integer
+---@param specificPlayer? CharacterParam
 function GameHelpers.Audio.PlayExternalSound(target, eventName, path, codecId, specificPlayer)
 	if not _ISCLIENT then
 		local data = {Target=target, Event=eventName, Path=path, CodecId=codecId}

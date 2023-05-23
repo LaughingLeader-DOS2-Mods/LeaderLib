@@ -17,7 +17,7 @@ end
 local self = MessageBox
 
 ---@param id MessageBoxEventID|MessageBoxEventID[]|MessageBoxEventListener
----@param callback MessageBoxEventListener|nil
+---@param callback? MessageBoxEventListener
 function MessageBox:RegisterListener(id, callback)
 	local t = type(id)
 	if t == "string" then

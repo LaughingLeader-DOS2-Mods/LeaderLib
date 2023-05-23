@@ -14,7 +14,7 @@ local _getDistance = Ext.Math.Distance
 
 ---@param x number
 ---@param z number
----@param grid EocAiGrid|nil
+---@param grid? EocAiGrid
 ---@return boolean
 function GameHelpers.Grid.IsValidPosition(x, z, grid)
 	---@type EocAiGrid
@@ -31,10 +31,10 @@ end
 
 ---@param startPos vec3|ObjectParam
 ---@param directionVector vec3
----@param maxDistance number|nil
----@param reverse boolean|nil Start from the smallest distance possible instead.
----@param distIncrement number|nil The number to progressively add when finding valid positions.
----@param minDistance number|nil When in reverse, start from this distance instead of 0.
+---@param maxDistance? number
+---@param reverse? boolean Start from the smallest distance possible instead.
+---@param distIncrement? number The number to progressively add when finding valid positions.
+---@param minDistance? number When in reverse, start from this distance instead of 0.
 ---@return vec3 position
 ---@return boolean success
 function GameHelpers.Grid.GetValidPositionTableAlongLine(startPos, directionVector, maxDistance, reverse, distIncrement, minDistance)
@@ -64,9 +64,9 @@ end
 
 ---@param startPos vec3|ObjectParam
 ---@param directionVector vec3
----@param startDistance number|nil
----@param reverse boolean|nil Start from the smallest distance possible instead.
----@param distIncrement number|nil The number to progressively add when finding valid positions.
+---@param startDistance? number
+---@param reverse? boolean Start from the smallest distance possible instead.
+---@param distIncrement? number The number to progressively add when finding valid positions.
 ---@return number x
 ---@return number y
 ---@return number z
@@ -82,10 +82,10 @@ function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, s
 end
 
 ---@param startPos vec3|ObjectParam
----@param maxRadius number|nil
----@param pointsInCircle number|nil
----@param reverse boolean|nil Start from the largest distance possible instead.
----@param bounds boolean|nil Start from the largest distance possible instead.
+---@param maxRadius? number
+---@param pointsInCircle? number
+---@param reverse? boolean Start from the largest distance possible instead.
+---@param bounds? boolean Start from the largest distance possible instead.
 ---@return vec3 position
 ---@return boolean success
 function GameHelpers.Grid.GetValidPositionTableInRadius(startPos, maxRadius, pointsInCircle, reverse, bounds)
@@ -139,9 +139,9 @@ function GameHelpers.Grid.GetValidPositionTableInRadius(startPos, maxRadius, poi
 end
 
 ---@param startPos vec3|ObjectParam
----@param maxRadius number|nil
----@param pointsInCircle number|nil
----@param reverse boolean|nil Start from the largest distance possible instead.
+---@param maxRadius? number
+---@param pointsInCircle? number
+---@param reverse? boolean Start from the largest distance possible instead.
 ---@return number x
 ---@return number y
 ---@return number z
@@ -225,11 +225,11 @@ if not _ISCLIENT then
 	---Similar to the Force action, except it's grid-safe (no pushing objects out of the map).
 	---@param source EsvCharacter|EsvItem
 	---@param target EsvCharacter|EsvItem
-	---@param distanceMultiplier number|nil
-	---@param skill string|nil
-	---@param startPos vec3|nil If set, this will be the starting position to push from. Defaults to the source's WorldPosition otherwise.
-	---@param beamEffect string|nil The beam effect to play with the NRD_CreateGameObjectMove action.
-	---@param id string|nil An optional ID to associate with this move action
+	---@param distanceMultiplier? number
+	---@param skill? string
+	---@param startPos? vec3 If set, this will be the starting position to push from. Defaults to the source's WorldPosition otherwise.
+	---@param beamEffect? string The beam effect to play with the NRD_CreateGameObjectMove action.
+	---@param id? string An optional ID to associate with this move action
 	---@return boolean success Returns true if the force move action has started.
 	function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill, startPos, beamEffect, id)
 		---@type EsvCharacter|EsvItem
@@ -283,8 +283,8 @@ if not _ISCLIENT then
 	---@param source EsvCharacter
 	---@param target EsvCharacter|EsvItem
 	---@param position vec3
-	---@param skill string|nil
-	---@param beamEffect string|nil The beam effect to play with the NRD_CreateGameObjectMove action.
+	---@param skill? string
+	---@param beamEffect? string The beam effect to play with the NRD_CreateGameObjectMove action.
 	---@return boolean success
 	function GameHelpers.ForceMoveObjectToPosition(source, target, position, skill, beamEffect)
 		local sourceObject = GameHelpers.TryGetObject(source)
@@ -576,9 +576,9 @@ end
 
 ---@param x number
 ---@param z number
----@param grid EocAiGrid|nil
----@param maxRadius number|nil
----@param pointsInCircle number|nil The precision when checking in a radius. Defaults to 9.
+---@param grid? EocAiGrid
+---@param maxRadius? number
+---@param pointsInCircle? number The precision when checking in a radius. Defaults to 9.
 ---@return LeaderLibCellSurfaceData|LeaderLibSurfaceRadiusData
 function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 	---@type EocAiGrid
@@ -748,7 +748,7 @@ local function _SortDistance(distances)
 	end
 end
 
----@param reverse boolean|nil
+---@param reverse? boolean
 ---@return fun(a:ServerObject, b:ServerObject):boolean
 local function _SortVitality(reverse)
 	---@param a ServerObject

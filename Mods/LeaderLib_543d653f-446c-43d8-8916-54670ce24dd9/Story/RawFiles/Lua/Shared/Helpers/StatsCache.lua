@@ -187,7 +187,7 @@ end
 
 --- Returns an ItemColor stat's colors.
 --- @param name string The ID of the ItemColor.
---- @param asMaterialValues boolean|nil
+--- @param asMaterialValues? boolean
 --- @return string[]
 function GameHelpers.Stats.GetItemColor(name, asMaterialValues)
 	local _itemColors = _GetCachedStatType("ItemColor")
@@ -200,7 +200,7 @@ function GameHelpers.Stats.GetItemColor(name, asMaterialValues)
 end
 
 ---@param id string
----@param statType StatType|nil
+---@param statType? StatType
 ---@return boolean
 function GameHelpers.Stats.Exists(id, statType)
 	if statType then

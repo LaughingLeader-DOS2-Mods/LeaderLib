@@ -25,7 +25,7 @@ function GameHelpers.Client.GetCharacterSheetCharacter(main, returnNil)
 end
 
 ---Get the current character stored in characterSheet's main timeline.
----@param main FlashMainTimeline|nil
+---@param main? FlashMainTimeline
 ---@return EclCharacter
 function GameHelpers.Client.GetCharacterCreationCharacter(main)
 	local character = nil
@@ -63,7 +63,7 @@ function GameHelpers.Client.GetGMTargetCharacter()
 	return character
 end
 
----@param prioritizeSecondPlayer boolean|nil
+---@param prioritizeSecondPlayer? boolean
 ---@return EclCharacter|nil
 local function _GetPlayerManagerCharacter(prioritizeSecondPlayer)
 	local playerManager = Ext.Entity.GetPlayerManager()
@@ -134,7 +134,7 @@ local function _GetClientCharacter()
 end
 
 ---Get the current character on the client-side.
----@param prioritizeSecondPlayer boolean|nil Priotize getting the second player in splitscreen mode. If there is no second player, the first player is returned anyway.
+---@param prioritizeSecondPlayer? boolean Priotize getting the second player in splitscreen mode. If there is no second player, the first player is returned anyway.
 ---@return EclCharacter|nil
 function GameHelpers.Client.GetCharacter(prioritizeSecondPlayer)
 	local character = _GetPlayerManagerCharacter(prioritizeSecondPlayer)
@@ -294,7 +294,7 @@ function GameHelpers.Client.ClearSlot(slotData)
 	slotData.ItemHandle = Ext.UI.DoubleToHandle(0)
 end
 
----@param locked boolean|nil Defaults to false.
+---@param locked? boolean Defaults to false.
 function GameHelpers.Client.SetInventoryLocked(locked)
 	if _GS() == "Running" then
 		if type(locked) ~= "boolean" then

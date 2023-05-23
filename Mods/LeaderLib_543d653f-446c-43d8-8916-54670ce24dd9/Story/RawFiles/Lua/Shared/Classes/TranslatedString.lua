@@ -100,7 +100,7 @@ end
 
 ---@param handle string
 ---@param fallback string
----@param params TranslatedStringOptions|nil
+---@param params? TranslatedStringOptions
 ---@return TranslatedString
 function TranslatedString:Create(handle, fallback, params)
 	fallback = fallback or ""
@@ -121,8 +121,8 @@ function TranslatedString:Create(handle, fallback, params)
 end
 
 ---@param key string
----@param fallback string|nil
----@param params TranslatedStringOptions|nil
+---@param fallback? string
+---@param params? TranslatedStringOptions
 ---@return TranslatedString
 function TranslatedString:CreateFromKey(key, fallback, params)
 	fallback = fallback or ""
@@ -285,7 +285,7 @@ function TranslatedString:ReplacePlaceholders(...)
 end
 
 ---@param val string
----@param caseInsensitive boolean|nil
+---@param caseInsensitive? boolean
 function TranslatedString:Equals(val, caseInsensitive)
 	return _streq(self.Value, val, caseInsensitive)
 end

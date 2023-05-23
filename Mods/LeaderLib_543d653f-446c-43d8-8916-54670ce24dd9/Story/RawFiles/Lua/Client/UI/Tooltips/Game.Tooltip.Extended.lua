@@ -502,7 +502,7 @@ end
 --- @param ui UIObject
 --- @param name string MainTimeline property name to write
 --- @param tbl table Table to convert to Flash
---- @param this FlashMainTimeline|nil
+--- @param this? FlashMainTimeline
 function _TT.TableToFlash(ui, name, tbl, this)
 	local this = this or ui:GetRoot()
 	local arr = this[name]
@@ -949,8 +949,8 @@ local InvokeHandlers = {}
 
 ---@param event string|string[]
 ---@param callback fun(e:EclLuaUICallEvent, ui:UIObject, event:string, ...:any)
----@param typeIds table<integer,boolean>|integer|nil
----@param when "Before"|"After"|nil
+---@param typeIds? table<integer,boolean>|integer
+---@param when? "Before"|"After"
 local function _CallHandler(event, callback, typeIds, when)
 	local idType = type(typeIds)
 	if idType == "number" then
@@ -977,8 +977,8 @@ end
 
 ---@param event string|string[]
 ---@param callback fun(e:EclLuaUICallEvent, ui:UIObject, event:string, ...:any)
----@param typeIds table<integer,boolean>|integer|nil
----@param when "Before"|"After"|nil
+---@param typeIds? table<integer,boolean>|integer
+---@param when? "Before"|"After"
 local function _InvokeHandler(event, callback, typeIds, when)
 	local idType = type(typeIds)
 	if idType == "number" then
@@ -1658,8 +1658,8 @@ function _ttHooks:NotifyAll(listeners, ...)
 	end
 end
 
----@param tooltipType string|nil
----@param tooltipID string|nil
+---@param tooltipType? string
+---@param tooltipID? string
 ---@param listener function
 function _ttHooks:RegisterListener(tooltipType, tooltipID, listener)
 	if not self.Initialized then
@@ -1753,7 +1753,7 @@ local function _WrapDescriptionElement(element, descriptionAttribute)
 end
 
 ---Gets whichever element is the description.
----@param fallback AnyTooltipDescriptionElement|nil If a description isn't found, add this element.
+---@param fallback? AnyTooltipDescriptionElement If a description isn't found, add this element.
 ---@return AnyTooltipDescriptionElement
 function TooltipData:GetDescriptionElement(fallback)
 	---@type {Type:TooltipElementType, Label:string|nil}[]
@@ -1799,7 +1799,7 @@ end
 
 ---@generic T:TooltipElement|TooltipElementType
 ---@param t `T`|`T`[] The tooltip element type, or an array of element types.
----@param fallback TooltipElement|nil If an element of the desired type isn't found, append and return this fallback element.
+---@param fallback? TooltipElement If an element of the desired type isn't found, append and return this fallback element.
 ---@return T elementOrFallback
 function TooltipData:GetElement(t, fallback)
 	local isTable = type(t) == "table"
@@ -1821,7 +1821,7 @@ end
 ---@overload fun(self:TooltipData, t:TooltipElementType, fallback:TooltipElement|nil)
 ---@generic T:TooltipElement|TooltipElementType
 ---@param t `T`|`T`[] The tooltip element type, or an array of element types.
----@param fallback TooltipElement|nil If an element of the desired type isn't found, append and return this fallback element.
+---@param fallback? TooltipElement If an element of the desired type isn't found, append and return this fallback element.
 ---@return T|nil lastElementOrFallback
 function TooltipData:GetLastElement(t, fallback)
 	local isTable = type(t) == "table"
@@ -2056,13 +2056,13 @@ _TT.Register = {
 	end,
 
 	---@param callback fun(character:EclCharacter, ability:AbilityType|string, tooltip:TooltipData)
-	---@param ability AbilityType|nil Optional ability to filter by.
+	---@param ability? AbilityType Optional ability to filter by.
 	Ability = function(callback, ability)
 		_ttHooks:RegisterListener("Ability", ability, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, statData:{ID:string}, tooltip:TooltipData)
-	---@param id string|nil Optional CustomStat ID to filter by.
+	---@param id? string Optional CustomStat ID to filter by.
 	CustomStat = function(callback, id)
 		_ttHooks:RegisterListener("CustomStat", id, callback)
 	end,
@@ -2073,70 +2073,70 @@ _TT.Register = {
 	end,
 
 	---@param callback fun(item:EclItem, tooltip:TooltipData)
-	---@param statsId string|nil Optional Rune StatsId to filter by.
+	---@param statsId? string Optional Rune StatsId to filter by.
 	Item = function(callback, statsId)
 		_ttHooks:RegisterListener("Item", statsId, callback)
 	end,
 
 	---Called when a tooltip is created when hovering over a player portrait.
-	---@param callback fun(character:EclCharacter|nil, tooltip:TooltipData)
+	---@param callback? fun(character:EclCharacter, tooltip:TooltipData)
 	PlayerPortrait = function(callback)
 		_ttHooks:RegisterListener("PlayerPortrait", nil, callback)
 	end,
 
 	---@param callback fun(item:EclItem, tooltip:TooltipData)
-	---@param statsId string|nil Optional Rune StatsId to filter by.
+	---@param statsId? string Optional Rune StatsId to filter by.
 	Pyramid = function(callback, statsId)
 		_ttHooks:RegisterListener("Pyramid", statsId, callback)
 	end,
 
 	---@param callback fun(item:EclItem, rune:StatEntryObject, slot:integer, tooltip:TooltipData)
-	---@param statsId string|nil Optional Rune StatsId to filter by.
+	---@param statsId? string Optional Rune StatsId to filter by.
 	Rune = function(callback, statsId)
 		_ttHooks:RegisterListener("Rune", statsId, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, skill:string, tooltip:TooltipData)
-	---@param skillId string|nil Optional Skill ID to filter by.
+	---@param skillId? string Optional Skill ID to filter by.
 	Skill = function(callback, skillId)
 		_ttHooks:RegisterListener("Skill", skillId, callback)
 	end,
 
 	---Register a callback for stat tooltips in the character sheet, such as attributes and resistances.
 	---@param callback fun(character:EclCharacter, stat:string, tooltip:TooltipData)
-	---@param id string|nil Optional Stat ID to filter by, such as "Damage".
+	---@param id? string Optional Stat ID to filter by, such as "Damage".
 	Stat = function(callback, id)
 		_ttHooks:RegisterListener("Stat", id, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, status:EclStatus, tooltip:TooltipData)
-	---@param statusId string|nil Optional Status ID to filter by.
+	---@param statusId? string Optional Status ID to filter by.
 	Status = function(callback, statusId)
 		_ttHooks:RegisterListener("Status", statusId, callback)
 	end,
 
 	---Register a callback for when cloud and ground surface tooltip text is shown.
 	---@param callback fun(character:EclCharacter, surface:string, tooltip:TooltipData)
-	---@param surfaceId SurfaceType|nil Optional Surface ID to filter by.
+	---@param surfaceId? SurfaceType Optional Surface ID to filter by.
 	Surface = function(callback, surfaceId)
 		_ttHooks:RegisterListener("Surface", surfaceId, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, tag:string, tooltip:TooltipData)
-	---@param tag string|nil Optional Tag ID to filter by.
+	---@param tag? string Optional Tag ID to filter by.
 	Tag = function(callback, tag)
 		_ttHooks:RegisterListener("Tag", tag, callback)
 	end,
 
 	---@param callback fun(character:EclCharacter, talent:TalentType|string, tooltip:TooltipData)
-	---@param talentId TalentType|string|nil Optional Talent ID to filter by.
+	---@param talentId? TalentType|string Optional Talent ID to filter by.
 	Talent = function(callback, talentId)
 		_ttHooks:RegisterListener("Talent", talentId, callback)
 	end,
 
 	---Called for both mouse-hovered items, and item names displayed when pressing "Show World Tooltips".
-	---@param callback fun(item:EclItem|nil, tooltip:TooltipData)
-	---@param statsId string|nil Optional item StatsId to filter by.
+	---@param callback? fun(item:EclItem, tooltip:TooltipData)
+	---@param statsId? string Optional item StatsId to filter by.
 	World = function(callback, statsId)
 		_ttHooks:RegisterListener("World", statsId, callback)
 	end,
@@ -2146,8 +2146,8 @@ _TT.Register = {
 ---*Use `Game.Tooltip.Register` for annotated callback types.*  
 ---Examples:<p>Game.Tooltip.RegisterListener("Skill", nil, myFunction) - Register a function for skill type tooltips.<br>Game.Tooltip.RegisterListener("Status", "HASTED", myFunction) - Register a function for a HASTED status tooltip.<br>Game.Tooltip.RegisterListener(myFunction) - Register a function for every kind of tooltip.</p>
 ---@param tooltipTypeOrCallback TooltipRequestType|function The tooltip type, such as "Skill".
----@param idOrNil string|function|nil The tooltip ID, such as "Projectile_Fireball".
----@param callbackOrNil function|nil If the first two parameters are set, this is the function to invoke.
+---@param idOrNil? string|function The tooltip ID, such as "Projectile_Fireball".
+---@param callbackOrNil? function If the first two parameters are set, this is the function to invoke.
 function _TT.RegisterListener(tooltipTypeOrCallback, idOrNil, callbackOrNil)
 	if type(callbackOrNil) == "function" then
 		--assert(type(tooltipTypeOrCallback) == "string", "If the third parameter is a function, the first parameter must be a string (TooltipType).")
@@ -2185,7 +2185,7 @@ end
 ---@alias GameTooltipBeforeNotifyListener fun(request:AnyTooltipRequest, ui:UIObject, method:string, tooltip:TooltipData)
 
 ---@param typeOrCallback string|GameTooltipBeforeNotifyListener Request type or the callback to register.
----@param callbackOrNil GameTooltipBeforeNotifyListener|nil The callback to register if the first parameter is a string.
+---@param callbackOrNil? GameTooltipBeforeNotifyListener The callback to register if the first parameter is a string.
 function _TT.RegisterBeforeNotifyListener(typeOrCallback, callbackOrNil)
 	local t = type(typeOrCallback)
 	if t == "string" then

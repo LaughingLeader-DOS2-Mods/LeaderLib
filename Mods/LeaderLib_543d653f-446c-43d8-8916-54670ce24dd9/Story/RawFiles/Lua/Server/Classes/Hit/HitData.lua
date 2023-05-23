@@ -69,8 +69,8 @@ end
 ---@param hitStatus EsvStatusHit
 ---@param hitContext EsvPendingHit
 ---@param hitRequest StatsHitDamageInfo
----@param skill StatEntrySkillData|nil
----@param params table|nil
+---@param skill? StatEntrySkillData
+---@param params? table
 ---@return HitData
 function HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill, params)
 	---@type HitData
@@ -111,7 +111,7 @@ end
 function HitData:UpdateHitRequest() end
 
 ---Applies any DamageList changes to the actual hit.
----@param recalculate boolean|nil If true, lifesteal is recalculated.
+---@param recalculate? boolean If true, lifesteal is recalculated.
 function HitData:ApplyDamageList(recalculate)
 	--self.HitStatus.Hit.DamageList:CopyFrom(self.DamageList)
 	if recalculate then
@@ -120,9 +120,9 @@ function HitData:ApplyDamageList(recalculate)
 end
 
 ---Recalculates total damage done and updates all related variables.
----@param recalcLifeSteal boolean|nil Recalculate LifeSteal as well, using Game.Math.ApplyLifeSteal.
----@param setLifeStealFlags boolean|nil If recalcLifeSteal is true, also set effect flags on the hit.
----@param allowArmorDamageTypesToLifeSteal boolean|nil Allows Magic/Corrosive damage to affect LifeSteal if true and recalcLifeSteal is true.
+---@param recalcLifeSteal? boolean Recalculate LifeSteal as well, using Game.Math.ApplyLifeSteal.
+---@param setLifeStealFlags? boolean If recalcLifeSteal is true, also set effect flags on the hit.
+---@param allowArmorDamageTypesToLifeSteal? boolean Allows Magic/Corrosive damage to affect LifeSteal if true and recalcLifeSteal is true.
 function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamageTypesToLifeSteal)
 	local total = 0
 	for k,v in pairs(self.DamageList:ToTable()) do
@@ -156,7 +156,7 @@ end
 ---Adds damage.
 ---@param damageType string
 ---@param amount number
----@param skipApplying boolean|nil If true, self:ApplyDamageList is skipped.
+---@param skipApplying? boolean If true, self:ApplyDamageList is skipped.
 function HitData:AddDamage(damageType, amount, skipApplying)
 	self.DamageList:Add(damageType, amount)
 	if skipApplying ~= true then
@@ -166,7 +166,7 @@ end
 
 ---Multiplies all damage by a value.
 ---@param multiplier number Value to multiply every damage type by.
----@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
+---@param aggregate? boolean Combine multiple entries for the same damage types into one.
 function HitData:MultiplyDamage(multiplier, aggregate)
 	if aggregate then
 		self.DamageList:AggregateSameTypeDamages()
@@ -178,7 +178,7 @@ end
 ---Redirects damage to another target.
 ---@param target Guid|EsvCharacter|EsvItem
 ---@param multiplier number Multiplier value to reduce damage by (0.01 - 1.0), i.e 0.15 would multiply damage by 0.85 and deal 0.15 of the original damage to the target.
----@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
+---@param aggregate? boolean Combine multiple entries for the same damage types into one.
 ---@return StatsDamagePairList redirectedDamage
 function HitData:RedirectDamage(target, multiplier, aggregate)
 	if aggregate then
@@ -230,10 +230,10 @@ end
 ---Converts specific damage types to another.
 ---@param damageType DamageType|DamageType[] Damage type(s) to convert.
 ---@param toDamageType string Damage type to convert to.
----@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
----@param percentage number|nil How much of the damage amount to convert, from 0 to 1.
----@param negate boolean|nil If true, convert damage types that *don't* match the damageType param.
----@param mathRoundFunction HitData.ConvertDamageTypeTo.MathRoundFunction|nil Optional function to use when rounding amounts (Ext.Utils.Round, math.ceil, etc)
+---@param aggregate? boolean Combine multiple entries for the same damage types into one.
+---@param percentage? number How much of the damage amount to convert, from 0 to 1.
+---@param negate? boolean If true, convert damage types that *don't* match the damageType param.
+---@param mathRoundFunction? HitData.ConvertDamageTypeTo.MathRoundFunction Optional function to use when rounding amounts (Ext.Utils.Round, math.ceil, etc)
 function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate, percentage, negate, mathRoundFunction)
 	if aggregate then
 		self.DamageList:AggregateSameTypeDamages()
@@ -260,7 +260,7 @@ end
 
 ---Converts all damage to a specific type.
 ---@param damageType string Damage type to convert everything to.
----@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
+---@param aggregate? boolean Combine multiple entries for the same damage types into one.
 function HitData:ConvertAllDamageTo(damageType, aggregate)
 	self.DamageList:ConvertDamageType(damageType)
 	if aggregate then
@@ -270,7 +270,7 @@ function HitData:ConvertAllDamageTo(damageType, aggregate)
 end
 
 ---Clears all damage, or damage from a specific type, from the damage list and recalculates totals / lifesteal.
----@param damageType string|nil If set, only damage from this specific type is cleared.
+---@param damageType? string If set, only damage from this specific type is cleared.
 function HitData:ClearDamage(damageType)
 	if damageType == nil then
 		self:ClearAllDamage()

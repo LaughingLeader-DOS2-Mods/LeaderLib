@@ -17,10 +17,10 @@ local function _EMPTY_FUNC() end
 local function _EMPTY_DESC() return "" end
 
 --- @param id string
---- @param getDesc fun(property:StatsPropertyExtender):string|nil
---- @param onPos fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, position: vec3, areaRadius: number, isFromItem: boolean, skill: StatsSkillPrototype, hit: StatsHitDamageInfo|nil, skillId:string)
---- @param onTarget fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, target: EsvCharacter|EsvItem, position: vec3, isFromItem: boolean, skill: StatsSkillPrototype, hit: StatsHitDamageInfo|nil, skillId:string)
---- @param allowWhenSkillIsNil boolean|nil Invoke the related callbacks even if the skill prototype is nil.
+--- @param getDesc? fun(property:StatsPropertyExtender):string
+--- @param onPos fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, position: vec3, areaRadius: number, isFromItem: boolean, skill: StatsSkillPrototype, hit:? StatsHitDamageInfo, skillId:string)
+--- @param onTarget fun(property:StatsPropertyExtender, attacker: EsvCharacter|EsvItem, target: EsvCharacter|EsvItem, position: vec3, isFromItem: boolean, skill: StatsSkillPrototype, hit:? StatsHitDamageInfo, skillId:string)
+--- @param allowWhenSkillIsNil? boolean Invoke the related callbacks even if the skill prototype is nil.
 function GameHelpers.Skill.CreateSkillProperty(id, getDesc, onPos, onTarget, allowWhenSkillIsNil)
 	local property = {
 		GetDescription = getDesc or _EMPTY_DESC,

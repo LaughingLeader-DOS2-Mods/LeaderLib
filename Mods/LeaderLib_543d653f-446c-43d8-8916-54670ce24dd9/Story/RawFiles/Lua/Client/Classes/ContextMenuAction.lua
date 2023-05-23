@@ -108,7 +108,7 @@ function ContextMenuAction:GetSortName(character)
 	return self:GetDisplayName(character, self.SortName)
 end
 
----@param character EclCharacter|nil
+---@param character? EclCharacter
 ---@return string
 function ContextMenuAction:GetTooltip(character)
 	return self:GetDisplayName(character, self.Tooltip)

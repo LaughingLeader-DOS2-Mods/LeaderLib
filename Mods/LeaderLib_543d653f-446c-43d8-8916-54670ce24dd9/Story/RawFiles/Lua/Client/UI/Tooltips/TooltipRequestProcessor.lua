@@ -71,7 +71,7 @@ local ControllerCharacterCreationCalls = {
 }
 
 ---@param doubleHandle integer
----@param getObjectFunc? (fun(handle:ComponentHandle|number|string):EclCharacter|EclItem|nil)
+---@param getObjectFunc?? (fun(handle:ComponentHandle|number|string):EclCharacter|EclItem)
 ---@return EclCharacter|EclItem|nil
 local function __TryGetObjectFromDouble(doubleHandle, getObjectFunc)
 	local handle = _DoubleToHandle(doubleHandle)
@@ -83,7 +83,7 @@ local function __TryGetObjectFromDouble(doubleHandle, getObjectFunc)
 end
 
 ---@param doubleHandle number
----@param getObjectFunc function|nil
+---@param getObjectFunc? function
 ---@return EclCharacter|EclItem|nil
 local function _GetObjectFromDouble(doubleHandle, getObjectFunc)
 	if doubleHandle == nil or doubleHandle == 0 or _IsNaN(doubleHandle) then
@@ -98,8 +98,8 @@ local function _GetObjectFromDouble(doubleHandle, getObjectFunc)
 	return nil
 end
 
----@param handle ComponentHandle|nil
----@param getObjectFunc function|nil
+---@param handle? ComponentHandle
+---@param getObjectFunc? function
 ---@return EclCharacter|EclItem|nil
 local function _GetObjectFromHandle(handle, getObjectFunc)
 	if _IsValidHandle(handle) then
@@ -131,7 +131,7 @@ local function _GetGMTargetCharacter()
 end
 
 ---Get the current character stored in characterSheet's main timeline.
----@param this {characterHandle:number|nil}|nil
+---@param this? {characterHandle:number|nil}
 ---@return EclCharacter
 local function _GetCharacterSheetCharacter(this)
 	local character = nil
@@ -712,7 +712,7 @@ end
 ---@param ui UIObject
 ---@param event string
 ---@param id string
----@param objectHandle number|nil
+---@param objectHandle? number
 function RequestProcessor.OnControllerExamineTooltip(e, ui, event, id, objectHandle)
 	local request = RequestProcessor.CreateRequest()
 	local uiTypeId = ui.Type
@@ -1030,7 +1030,7 @@ local InvokeHandlers = {}
 
 ---@param event string
 ---@param callback fun(e:EclLuaUICallEvent, ui:UIObject, event:string, ...:any)
----@param typeIds table<integer,boolean>|integer|nil
+---@param typeIds? table<integer,boolean>|integer
 local function _CallHandler(event, callback, typeIds)
 	if type(typeIds) == "number" then
 		local t = typeIds
@@ -1044,7 +1044,7 @@ end
 
 ---@param event string
 ---@param callback fun(e:EclLuaUICallEvent, ui:UIObject, event:string, ...:any)
----@param typeIds table<integer,boolean>|integer|nil
+---@param typeIds? table<integer,boolean>|integer
 local function _InvokeHandler(event, callback, typeIds)
 	if type(typeIds) == "number" then
 		local t = typeIds
@@ -1366,7 +1366,7 @@ end, _UITYPE.enemyHealthBar)
 ---@param x number
 ---@param y number
 ---@param isItem boolean
----@param item EclItem|nil
+---@param item? EclItem
 ---@return string
 local function _CreateWorldTooltipRequest(ui, event, text, x, y, isItem, item)
 	local uiType = ui.Type

@@ -32,11 +32,11 @@ if not _ISCLIENT then
 	---🔨**Server-Only**🔨  
 	---@param pos number[]|string
 	---@param surface string
-	---@param radius number|nil
-	---@param duration number|nil
-	---@param ownerHandle userdata|nil
-	---@param ignoreCursed boolean|nil
-	---@param statusChance number|nil
+	---@param radius? number
+	---@param duration? number
+	---@param ownerHandle? userdata
+	---@param ignoreCursed? boolean
+	---@param statusChance? number
 	function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, ownerHandle, ignoreCursed, statusChance)
 		pos = GameHelpers.Math.GetPosition(pos)
 		local surf = Ext.Surface.Action.Create("CreateSurfaceAction") --[[@as EsvRectangleSurfaceAction]]

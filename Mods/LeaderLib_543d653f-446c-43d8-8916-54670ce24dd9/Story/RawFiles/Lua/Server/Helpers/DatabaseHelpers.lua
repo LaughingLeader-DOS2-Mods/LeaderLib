@@ -107,7 +107,7 @@ end
 
 ---@param db table
 ---@param value any
----@param checkColumn integer|nil Defaults to 1 if not set.
+---@param checkColumn? integer Defaults to 1 if not set.
 ---@return boolean
 function GameHelpers.DB.TableHasValue(db, value, checkColumn)
 	checkColumn = checkColumn or 1
@@ -138,8 +138,8 @@ end
 
 ---@param databaseName string
 ---@param value any
----@param arity integer|nil Defaults to 1 if not set.
----@param checkColumn integer|nil Defaults to 1 if not set.
+---@param arity? integer Defaults to 1 if not set.
+---@param checkColumn? integer Defaults to 1 if not set.
 ---@return boolean
 function GameHelpers.DB.HasValue(databaseName, value, arity, checkColumn)
 	arity = arity or 1
@@ -161,8 +161,8 @@ end
 ---Similar to GameHelpers.DB.HasValue, but checks the UUID part of the string values, since it may be stored as Name_UUID in the DB.
 ---@param databaseName string
 ---@param uuid string
----@param arity integer|nil Defaults to 1 if not set.
----@param checkColumn integer|nil Defaults to 1 if not set.
+---@param arity? integer Defaults to 1 if not set.
+---@param checkColumn? integer Defaults to 1 if not set.
 ---@return boolean
 function GameHelpers.DB.HasUUID(databaseName, uuid, arity, checkColumn)
 	uuid = GameHelpers.GetUUID(uuid, true)
@@ -227,7 +227,7 @@ end
 ---@overload fun(name:string, arity:integer):table<integer, table<integer, OsirisValue>>
 ---@param name string The database name.
 ---@param arity integer The number of parameters for this DB, or nil to try and auto-detect it.
----@param index integer|nil The index to return, if any. Optional.
+---@param index? integer The index to return, if any. Optional.
 ---@param unpack boolean If true, table.unpack is called on the result when returning the data.
 ---@return OsirisValue ... 
 function GameHelpers.DB.Get(name, arity, index, unpack)
@@ -253,7 +253,7 @@ end
 
 ---Try to unpack a database retrieved with Get.
 ---@param tbl table
----@param index integer|nil Optional row to try and get. Defaults to 1.
+---@param index? integer Optional row to try and get. Defaults to 1.
 ---@return boolean,...
 function GameHelpers.DB.TryUnpack(tbl, index)
 	index = index or 1

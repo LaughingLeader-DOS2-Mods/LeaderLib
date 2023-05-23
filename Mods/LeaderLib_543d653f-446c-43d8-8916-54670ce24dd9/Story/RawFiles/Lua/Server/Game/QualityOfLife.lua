@@ -143,7 +143,7 @@ Timer.Subscribe("LeaderLib_UnlockCharacterInventories", function (e)
 end)
 
 ---@param character CharacterParam
----@param tag string|nil
+---@param tag? string
 function LevelUpItemsWithTag(character, tag)
 	tag = tag or "LeaderLib_AutoLevel"
 	local character = GameHelpers.GetCharacter(character)

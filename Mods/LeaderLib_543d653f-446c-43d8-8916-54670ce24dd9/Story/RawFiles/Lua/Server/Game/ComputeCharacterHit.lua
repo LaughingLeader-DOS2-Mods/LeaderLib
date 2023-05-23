@@ -329,7 +329,7 @@ end
 --- @param hitType HitType
 --- @param criticalRoll CriticalRoll
 --- @param isCriticalHit boolean
---- @param roll integer|nil
+--- @param roll? integer
 --- @param criticalChance integer
 --- @param isFromBasicAttack? boolean
 local function _InvokeGetShouldApplyCriticalHit(hit, attacker, hitType, criticalRoll, isCriticalHit, roll, criticalChance, isFromBasicAttack)

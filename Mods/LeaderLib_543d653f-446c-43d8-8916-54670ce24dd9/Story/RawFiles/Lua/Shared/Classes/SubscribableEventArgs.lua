@@ -130,7 +130,7 @@ end
 
 ---Unpack the event args to separate values, using a specific key order.
 ---This can be used when invoking older listeners that don't access parameters from the event args table directly.
----@param keyOrder string[]|nil
+---@param keyOrder? string[]
 function SubscribableEventArgs:Unpack(keyOrder)
 	---@type string[]
 	local keyOrder = keyOrder or self._Private.KeyOrder

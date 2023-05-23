@@ -962,8 +962,8 @@ local _EmptyCharacterDynamicStats = {
 }
 
 ---@param stat string
----@param mainhand StatItemDynamic|nil
----@param offhand StatItemDynamic|nil
+---@param mainhand? StatItemDynamic
+---@param offhand? StatItemDynamic
 function GameHelpers.Ext.CreateStatCharacterTable(stat, mainhand, offhand)
 	if stat == nil then
 		stat = "_Hero"
@@ -1125,11 +1125,11 @@ local _WEAPON_STAT_ATTRIBUTES = {
 
 ---@param stat string
 ---@param level integer
----@param attribute string|nil
----@param weaponType string|nil
----@param damageFromBaseBoost integer|nil
----@param isBoostStat boolean|nil
----@param baseWeaponDamage number|nil
+---@param attribute? string
+---@param weaponType? string
+---@param damageFromBaseBoost? integer
+---@param isBoostStat? boolean
+---@param baseWeaponDamage? number
 ---@return CDivinityStatsItem
 function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damageFromBaseBoost,isBoostStat,baseWeaponDamage)
 	local weapon = {}
@@ -1456,8 +1456,8 @@ if _EXTVERSION < 56 then
 end
 
 ---@param skillName string
----@param useWeaponDamage boolean|nil Overrides the UseWeaponDamage with true/false if set.
----@param isForGameMath boolean|nil If true, only attributes used in Game.Math functions are assigned.
+---@param useWeaponDamage? boolean Overrides the UseWeaponDamage with true/false if set.
+---@param isForGameMath? boolean If true, only attributes used in Game.Math functions are assigned.
 ---@return StatEntrySkillData
 function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameMath)
 	if skillName ~= nil and skillName ~= "" then
@@ -1733,7 +1733,7 @@ function GameHelpers.Ext.ObjectIsItem(obj)
 	return false
 end
 
----@param obj ObjectParam|nil
+---@param obj? ObjectParam
 function GameHelpers.Ext.ObjectIsCharacter(obj)
 	local t = _type(obj)
 	if t == "userdata" then
@@ -1783,7 +1783,7 @@ end
 
 ---@param obj userdata
 ---@param typeName string
----@param meta string|nil Optional metatable to pass in, to skip fetching it manually.
+---@param meta? string Optional metatable to pass in, to skip fetching it manually.
 ---@return boolean
 function GameHelpers.Ext.UserDataIsType(obj, typeName, meta)
 	return (meta or getmetatable(obj)) == typeName

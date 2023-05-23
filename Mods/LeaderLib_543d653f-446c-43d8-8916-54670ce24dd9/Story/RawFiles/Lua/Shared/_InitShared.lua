@@ -53,7 +53,7 @@ local _stringKeyText = {}
 ---Get the final value of a string key.
 ---This uses the handle returned from Ext.GetTranslatedStringFromKey to then get the text from Ext.GetTranslatedString.
 ---@param key string The string key.
----@param fallback string|nil Text to use if the key does not exist. Defaults to the key if not set.
+---@param fallback? string Text to use if the key does not exist. Defaults to the key if not set.
 ---@return string
 function GameHelpers.GetStringKeyText(key,fallback)
 	fallback = fallback or key
@@ -70,7 +70,7 @@ end
 
 ---Get the content of a TranslatedString.
 ---@param handle string The string handle.
----@param fallback string|nil Text to use if the key does not exist. Defaults to the key if not set.
+---@param fallback? string Text to use if the key does not exist. Defaults to the key if not set.
 ---@return string
 function GameHelpers.GetTranslatedString(handle,fallback)
 	fallback = fallback or handle
@@ -91,7 +91,7 @@ end
 
 ---Gets the value from an extender TranslatedString. Either the ReferenceString if unset, or the localized handle value.
 ---@param object ExtenderTranslatedStringObject|ExtenderTranslatedString|TranslatedString
----@param fallback string|nil
+---@param fallback? string
 ---@return string
 function GameHelpers.GetTranslatedStringValue(object, fallback)
 	if _EXTVERSION < 56 then
@@ -460,7 +460,7 @@ Importer = {
 
 ---Makes LeaderLib's globals accessible using metamethod magic. Pass it a mod table, such as Mods.MyModTable.
 ---@param targetModTable table
----@param additionalTable table|nil An additional table to use for __index lookup.
+---@param additionalTable? table An additional table to use for __index lookup.
 function Import(targetModTable, additionalTable)
 	Importer.SetupVarsMetaTable(targetModTable)
 	local targetMeta = getmetatable(targetModTable)

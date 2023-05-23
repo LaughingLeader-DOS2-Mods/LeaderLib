@@ -126,7 +126,7 @@ local LeaderLibGameSettings = {
 LeaderLibGameSettings.__index = LeaderLibGameSettings
 
 ---Seralizes GameSettings to string, which only includes the Settings table.
----@param forSync boolean|nil
+---@param forSync? boolean
 ---@return string
 function LeaderLibGameSettings:ToString(forSync)
 	local settings = TableHelpers.Clone(self.Settings)
@@ -214,7 +214,7 @@ end
 
 ---Converts a string to a table and applies its properties.
 ---@param str string
----@param skipApply boolean|nil
+---@param skipApply? boolean
 ---@return boolean
 function LeaderLibGameSettings:LoadString(str, skipApply)
 	local b,result = xpcall(function()

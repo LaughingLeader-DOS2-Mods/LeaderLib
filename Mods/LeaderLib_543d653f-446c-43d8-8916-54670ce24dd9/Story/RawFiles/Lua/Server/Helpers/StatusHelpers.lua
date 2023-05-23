@@ -5,8 +5,8 @@ end
 Ext.Osiris.NewQuery(GameHelpers.Status.HasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool")
 
 ---@param status EsvStatus
----@param target EsvCharacter|nil
----@param source EsvCharacter|nil
+---@param target? EsvCharacter
+---@param source? EsvCharacter
 ---@return boolean
 function GameHelpers.Status.IsFromEnemy(status, target, source)
 	target = target or GameHelpers.TryGetObject(status.TargetHandle)
@@ -21,10 +21,10 @@ end
 ---@param obj ObjectParam
 ---@param statusId string
 ---@param duration number
----@param allInstances boolean|nil
----@param applyIfMissing boolean|nil
----@param extendDuration boolean|nil If true, the current duration is added to the duration value set, instead of replacing it.
----@param source ObjectParam|nil
+---@param allInstances? boolean
+---@param applyIfMissing? boolean
+---@param extendDuration? boolean If true, the current duration is added to the duration value set, instead of replacing it.
+---@param source? ObjectParam
 ---@return boolean
 function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, applyIfMissing, extendDuration, source)
 	local object = GameHelpers.TryGetObject(obj)
@@ -77,10 +77,10 @@ end
 ---@param obj ObjectParam
 ---@param statusId string
 ---@param turns integer
----@param allInstances boolean|nil
----@param applyIfMissing boolean|nil
----@param extendDuration boolean|nil If true, the current duration is added to the duration value set, instead of replacing it.
----@param source ObjectParam|nil
+---@param allInstances? boolean
+---@param applyIfMissing? boolean
+---@param extendDuration? boolean If true, the current duration is added to the duration value set, instead of replacing it.
+---@param source? ObjectParam
 ---@return boolean
 function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIfMissing, extendDuration, source)
 	return GameHelpers.Status.SetDuration(obj, statusId, turns*6, allInstances, applyIfMissing, extendDuration, source)
@@ -90,9 +90,9 @@ end
 ---@param obj ObjectParam
 ---@param statusId string
 ---@param addDuration number
----@param allInstances boolean|nil
----@param applyIfMissing boolean|nil
----@param source ObjectParam|nil
+---@param allInstances? boolean
+---@param applyIfMissing? boolean
+---@param source? ObjectParam
 ---@return boolean
 function GameHelpers.Status.ExtendDuration(obj, statusId, addDuration, allInstances, applyIfMissing, source)
 	return GameHelpers.Status.SetDuration(obj, statusId, addDuration, allInstances, applyIfMissing, true, source)
@@ -102,9 +102,9 @@ end
 ---@param obj ObjectParam
 ---@param statusId string
 ---@param addTurns integer
----@param allInstances boolean|nil
----@param applyIfMissing boolean|nil
----@param source ObjectParam|nil
+---@param allInstances? boolean
+---@param applyIfMissing? boolean
+---@param source? ObjectParam
 ---@return boolean
 function GameHelpers.Status.ExtendTurns(obj, statusId, addTurns, allInstances, applyIfMissing, source)
 	return GameHelpers.Status.SetDuration(obj, statusId, addTurns*6, allInstances, applyIfMissing, true, source)
@@ -114,9 +114,9 @@ end
 ---@param obj ObjectParam
 ---@param statusTable string[] An array of tiered statuses (must be ipairs-friendly via regular integer indexes).
 ---@param duration number The status duration. Defaults to -1.0 for a regular permanent status.
----@param force boolean|nil Whether to force the status to apply.
----@param source ObjectParam|nil The source of the status. Defaults to the target object.
----@param makePermanent boolean|nil Make the resulting status permanent (block removal / restore on death).
+---@param force? boolean Whether to force the status to apply.
+---@param source? ObjectParam The source of the status. Defaults to the target object.
+---@param makePermanent? boolean Make the resulting status permanent (block removal / restore on death).
 ---@return integer nextTier
 ---@return integer lastTier
 function GameHelpers.Status.ApplyTieredStatus(obj, statusTable, duration, force, source, makePermanent)
@@ -163,8 +163,8 @@ end
 ---@param obj string
 ---@param statusTable string[] An array of tiered statuses (must be ipairs-friendly via regular integer indexes).
 ---@param duration number The status duration. Defaults to -1.0 for a regular permanent status.
----@param force boolean|nil Whether to force the status to apply.
----@param source string|nil The source of the status. Defaults to the target object.
+---@param force? boolean Whether to force the status to apply.
+---@param source? string The source of the status. Defaults to the target object.
 ---@return string,integer,integer Returns the next tier's status id, the tier number, and the last tier number.
 function GameHelpers.Status.GetNextTieredStatus(obj, statusTable, duration, force, source)
 	local maxTier = #statusTable
@@ -190,7 +190,7 @@ end
 
 ---Removes harmful statuses by checking their type and potion stat values.
 ---@param obj EsvCharacter|EsvItem
----@param ignorePermanent boolean|nil Ignore permanent statuses.
+---@param ignorePermanent? boolean Ignore permanent statuses.
 function GameHelpers.Status.RemoveHarmful(obj, ignorePermanent)
 	for _,status in pairs(obj:GetStatusObjects()) do
 		if ignorePermanent and status.CurrentLifeTime == -1 then
@@ -206,7 +206,7 @@ end
 ---@param duration number
 ---@param force boolean
 ---@param source string
----@param properties table<string,any>|EsvStatus|nil An optional table of properties to set on the EsvStatus.
+---@param properties? table<string,any>|EsvStatus An optional table of properties to set on the EsvStatus.
 local function FinallyApplyStatus(target, status, duration, force, source, properties)
 	if source == nil then
 		source = StringHelpers.NULL_UUID
@@ -262,15 +262,15 @@ end
 ---@alias GameHelpers.Status.Remove.CanApplyCallback fun(target:string, source:string, statusId:string, targetIsItem:boolean):boolean
 
 ---Applies a status to a target, or targets around a position.
----@param target ObjectParam|number[]|nil Target object or a position, if a radius is provided.
+---@param target? ObjectParam|number[] Target object or a position, if a radius is provided.
 ---@param status string|string[]
----@param duration number|nil
----@param force boolean|nil
----@param source ObjectParam|nil Optional source. Defaults to NULL_00000000-0000-0000-0000-000000000000.
----@param radius number|nil
----@param canTargetItems boolean|nil
----@param canApplyCallback GameHelpers.Status.Remove.CanApplyCallback|nil An optional function to use when attempting to apply a status in a radius.
----@param statusOpts {StatsMultiplier:number}|nil Optional fields to set on the prepared status before it's applied, such as StatsMultiplier.
+---@param duration? number
+---@param force? boolean
+---@param source? ObjectParam Optional source. Defaults to NULL_00000000-0000-0000-0000-000000000000.
+---@param radius? number
+---@param canTargetItems? boolean
+---@param canApplyCallback? GameHelpers.Status.Remove.CanApplyCallback An optional function to use when attempting to apply a status in a radius.
+---@param statusOpts? {StatsMultiplier:number} Optional fields to set on the prepared status before it's applied, such as StatsMultiplier.
 function GameHelpers.Status.Apply(target, status, duration, force, source, radius, canTargetItems, canApplyCallback, statusOpts)
 	if not duration then
 		duration = 6.0
@@ -361,9 +361,9 @@ end
 ---Removed a status from a target, or targets around a position.
 ---@param target ObjectParam|number[] Either an item/character related value, an array of characters/items, or a position array.
 ---@param status string|string[] A status or array of statuses to remove.
----@param radius number|nil If target is a position array, this is the radius to look for target objects.
----@param canTargetItems boolean|nil If true, items can be targeted by the positional search as well.
----@param canRemoveCallback GameHelpers.Status.Remove.CanRemoveCallback|nil An optional condition function to call when attempting to remove a status from objects found in a radius around a target.
+---@param radius? number If target is a position array, this is the radius to look for target objects.
+---@param canTargetItems? boolean If true, items can be targeted by the positional search as well.
+---@param canRemoveCallback? GameHelpers.Status.Remove.CanRemoveCallback An optional condition function to call when attempting to remove a status from objects found in a radius around a target.
 function GameHelpers.Status.Remove(target, status, radius, canTargetItems, canRemoveCallback)
 	local t = type(target)
 	if t == "table" then

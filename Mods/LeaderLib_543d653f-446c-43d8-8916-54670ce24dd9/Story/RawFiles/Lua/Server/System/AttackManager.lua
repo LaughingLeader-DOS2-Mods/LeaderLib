@@ -17,8 +17,8 @@ Managers.Attack = AttackManager
 AttackManager.OnStart = {
 	---@deprecated
 	---@param callback DeprecatedBasicAttackOnStartCallback|DeprecatedBasicAttackOnStartCallback[]
-	---@param allowSkills boolean|nil
-	---@param priority integer|nil Optional priority to assign to this callback.
+	---@param allowSkills? boolean
+	---@param priority? integer Optional priority to assign to this callback.
 	Register = function(callback, allowSkills, priority)
 		Events.OnBasicAttackStart:Subscribe(function (e)
 			callback(e.Attacker, e.Target, e.TargetIsObject)
@@ -29,8 +29,8 @@ AttackManager.OnStart = {
 AttackManager.OnHit = {
 	---@deprecated
 	---@param callback DeprecatedBasicAttackOnHitCallback|DeprecatedBasicAttackOnHitCallback[]
-	---@param allowSkills boolean|nil
-	---@param priority integer|nil Optional priority to assign to this callback.
+	---@param allowSkills? boolean
+	---@param priority? integer Optional priority to assign to this callback.
 	Register = function(callback, allowSkills, priority)
 		if not allowSkills then
 			Events.OnWeaponHit:Subscribe(function (e)
@@ -50,8 +50,8 @@ AttackManager.OnWeaponTagHit = {
 	---Register a listener that fires when a hit occurs with a specific weapon tag.
 	---@param tag string|string[]
 	---@param callback DeprecatedBasicAttackOnWeaponTagHitCallback
-	---@param allowSkills boolean|nil
-	---@param priority integer|nil Optional priority to assign to this callback.
+	---@param allowSkills? boolean
+	---@param priority? integer Optional priority to assign to this callback.
 	Register = function(tag, callback, allowSkills, priority)
 		local t = type(tag)
 		if t == "table" then
@@ -80,7 +80,7 @@ AttackManager.OnWeaponTypeHit = {
 	---Register a listener that fires when a hit occurs with a specific weapon type.
 	---@param weaponType string|string[]
 	---@param callback DeprecatedBasicAttackOnWeaponTypeHitCallback
-	---@param allowSkills boolean|nil
+	---@param allowSkills? boolean
 	---@param priority integer Optional priority to assign to this callback.
 	Register = function(weaponType, callback, allowSkills, priority)
 		if type(priority) ~= "number" then
@@ -112,7 +112,7 @@ AttackManager.OnWeaponTypeHit = {
 --- @param target EsvCharacter|EsvItem|number[]
 --- @param targetIsObject boolean
 --- @param data HitData|DamageList
---- @param skill StatEntrySkillData|nil
+--- @param skill? StatEntrySkillData
 function _INTERNAL.InvokeWeaponEvents(attacker, target, targetIsObject, data, skill)
 	local _tags = GameHelpers.GetAllTags(attacker, true, true)
 	for tag,_ in pairs(AttackManager.EnabledTags) do
@@ -154,7 +154,7 @@ end
 --- @param attacker EsvCharacter|EsvItem
 --- @param target EsvCharacter|EsvItem|number[]
 --- @param data HitData|DamageList
---- @param skill StatEntrySkillData|nil
+--- @param skill? StatEntrySkillData
 function AttackManager.InvokeOnHit(isFromHit, attacker, target, data, skill)
 	local targetIsObject = type(target) == "userdata"
 	local isFromSkill = skill ~= nil

@@ -41,7 +41,7 @@ ClientCharacterData.__index = ClientCharacterData
 
 local default = Common.GetValueOrDefault
 
----@param params ClientCharacterDataParams|table|nil
+---@param params? ClientCharacterDataParams|table
 ---@return ClientCharacterData
 function ClientCharacterData:Create(params)
 	local this = {
@@ -81,7 +81,7 @@ function ClientCharacterData:Create(params)
 	return this
 end
 
----@param params ClientCharacterDataParams|nil
+---@param params? ClientCharacterDataParams
 function ClientCharacterData:Update(params)
 	if params and type(params) == "table" then
 		for k,v in pairs(params) do
@@ -161,8 +161,8 @@ ClientData.__index = ClientData
 setmetatable(ClientData.Character, ClientCharacterData)
 
 ---@param profile string Unique profile ID.
----@param id integer|nil
----@param isHost boolean|nil
+---@param id? integer
+---@param isHost? boolean
 ---@return ClientData
 function ClientData:Create(profile, id, isHost)
 	---@type ClientData

@@ -26,7 +26,7 @@ local VisualElementData = {
 }
 VisualElementData.__index = VisualElementData
 
----@param params table|nil
+---@param params? table
 ---@return VisualElementData
 function VisualElementData:Create(params)
 	---@type VisualElementData
@@ -55,7 +55,7 @@ end
 ---@param armorType string
 ---@param slot string
 ---@param visualSlot integer
----@param params table|nil
+---@param params? table
 ---@return VisualElementData
 function VisualElementData:AddVisualForSlot(resource, armorType, slot, visualSlot, params)
 	local armorTypeData = self.Visuals[armorType]

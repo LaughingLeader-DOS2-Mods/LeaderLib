@@ -36,7 +36,7 @@ end
 
 ---@param id string
 ---@param action SceneStateActionCallback
----@param params table<string,any>|nil
+---@param params? table<string,any>
 ---@return SceneStateData
 function SceneData:CreateState(id, action, params)
 	local state = SceneStateData:Create(id, action, params)

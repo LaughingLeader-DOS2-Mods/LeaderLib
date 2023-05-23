@@ -19,9 +19,9 @@ local function stateless_iter(tbl, k)
 end
 
 ---@param target table
----@param integersTbl table<integer, string>|nil
----@param namesTbl table<string, integer>|nil
----@param startIndex integer|nil
+---@param integersTbl table<integer,? string>
+---@param namesTbl table<string,? integer>
+---@param startIndex? integer
 local function CreateEnum(target, integersTbl, namesTbl, startIndex)
 	local integers = {}
 	local names = {}
@@ -85,9 +85,9 @@ local function CreateEnum(target, integersTbl, namesTbl, startIndex)
 end
 
 ---@param target table
----@param integersTbl table<integer, string>|nil
----@param namesTbl table<string, integer>|nil
----@param startIndex integer|nil
+---@param integersTbl table<integer,? string>
+---@param namesTbl table<string,? integer>
+---@param startIndex? integer
 function Enum:Create(target, integersTbl, namesTbl, startIndex)
 	return CreateEnum(target, integersTbl, namesTbl, startIndex)
 end

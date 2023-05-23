@@ -49,7 +49,7 @@ end
 ---@deprecated
 ---Wrapper around RegisterListener for easier auto-completion.
 ---@param callbackOrInputName InputEventCallback|string|integer
----@param callbackOrNil InputEventCallback|nil
+---@param callbackOrNil? InputEventCallback
 function Input.RegisterListener(callbackOrInputName, callbackOrNil)
 	local t = type(callbackOrInputName)
 	if t == "table" then
@@ -78,7 +78,7 @@ end
 ---@deprecated
 ---Wrapper around RegisterListener for easier auto-completion.
 ---@param callbackOrEventName InputEventCallback|string
----@param callbackOrNil InputEventCallback|nil
+---@param callbackOrNil? InputEventCallback
 function Input.RegisterMouseListener(callbackOrEventName, callbackOrNil)
 	local t = type(callbackOrEventName)
 	if t == "string" and callbackOrNil ~= nil then
@@ -91,7 +91,7 @@ function Input.RegisterMouseListener(callbackOrEventName, callbackOrNil)
 end
 
 ---@param callbackOrInputName InputEventCallback
----@param callbackOrNil InputEventCallback|nil
+---@param callbackOrNil? InputEventCallback
 function Input.RemoveListener(callbackOrInputName, callbackOrNil)
 	local t = type(callbackOrInputName)
 	if t == "table" then
@@ -160,7 +160,7 @@ function Input.IsReleased(name)
 end
 
 ---@param name string|integer|string[]|integer[]
----@param threshold integer|nil Max amount of milliseconds to determine if the key was just pressed.
+---@param threshold? integer Max amount of milliseconds to determine if the key was just pressed.
 ---@return boolean
 function Input.JustPressed(name, threshold)
 	threshold = threshold or Input.Vars.JustPressedThreshold
@@ -476,8 +476,8 @@ Input.Subscribe = {}
 
 ---@param keys InputRawType|InputRawType[]
 ---@param callback fun(e:LeaderLibRawInputEventArgs|LeaderLibSubscribableEventArgs)
----@param requireAll boolean|nil If keys is a table of inputs, require all keys to be pressed.
----@param anyState boolean|nil
+---@param requireAll? boolean If keys is a table of inputs, require all keys to be pressed.
+---@param anyState? boolean Invoke the listener when the key is pressed and not pressed, instead of only pressed.
 function Input.Subscribe.RawInput(keys, callback, requireAll, anyState)
 	local t = type(keys)
 	if t == "table" then

@@ -20,9 +20,9 @@ SettingsData.__index = SettingsData
 
 Classes.ModSettingsClasses.SettingsData = SettingsData
 
----@param flags table<string, FlagData>|nil
----@param variables table<string, VariableData>|nil
----@param buttons table<string, VariableData>|nil
+---@param flags table<string,? FlagData>
+---@param variables table<string,? VariableData>
+---@param buttons table<string,? VariableData>
 function SettingsData:Create(flags, variables, buttons)
     local this =
     {
@@ -48,11 +48,11 @@ end
 
 ---@param flag string
 ---@param flagType LeaderLibGlobalSettingsFlagType
----@param enabled boolean|nil
----@param displayName string|nil
----@param tooltip string|nil
----@param canExport boolean|nil
----@param isFromFile boolean|nil
+---@param enabled? boolean
+---@param displayName? string
+---@param tooltip? string
+---@param canExport? boolean
+---@param isFromFile? boolean
 function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, canExport, isFromFile)
 	if self.Flags[flag] == nil then
 		self.Flags[flag] = FlagData:Create(flag, flagType, enabled, displayName, tooltip, isFromFile)
@@ -84,9 +84,9 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 end
 
 ---@param flags string[]
----@param flagType LeaderLibGlobalSettingsFlagType|nil Defaults to "Global".
----@param enabled boolean|nil
----@param canExport boolean|nil
+---@param flagType? LeaderLibGlobalSettingsFlagType Defaults to "Global".
+---@param enabled? boolean
+---@param canExport? boolean
 function SettingsData:AddFlags(flags, flagType, enabled, canExport, isFromFile)
 	for i,flag in pairs(flags) do
 		self:AddFlag(flag, flagType, enabled, nil, nil, canExport, isFromFile)
@@ -95,10 +95,10 @@ end
 
 ---Adds a flag that uses the flag name and Flag_Description as the DisplayName and Tooltip.
 ---@param flag string
----@param flagType LeaderLibGlobalSettingsFlagType|nil Defaults to "Global".
----@param enabled boolean|nil
----@param tooltipKey string|nil A string key to use for the tooltip. Will default to Flag_Description.
----@param canExport boolean|nil
+---@param flagType? LeaderLibGlobalSettingsFlagType Defaults to "Global".
+---@param enabled? boolean
+---@param tooltipKey? string A string key to use for the tooltip. Will default to Flag_Description.
+---@param canExport? boolean
 function SettingsData:AddLocalizedFlag(flag, flagType, enabled, key, tooltipKey, canExport, isFromFile)
 	if isFromFile == nil then
 		isFromFile = false
@@ -110,9 +110,9 @@ end
 
 ---Same thing as AddFlags, but assumes each flag is its own DisplayName key.
 ---@param flags string[]
----@param flagType LeaderLibGlobalSettingsFlagType|nil Defaults to "Global".
----@param enabled boolean|nil
----@param canExport boolean|nil
+---@param flagType? LeaderLibGlobalSettingsFlagType Defaults to "Global".
+---@param enabled? boolean
+---@param canExport? boolean
 function SettingsData:AddLocalizedFlags(flags, flagType, enabled, canExport, isFromFile)
 	if isFromFile == nil then
 		isFromFile = false
@@ -124,12 +124,12 @@ end
 
 ---@param name string
 ---@param value string|integer|number|number[]
----@param displayName string|nil
----@param tooltip string|nil
----@param min any|nil
----@param max any|nil
----@param interval any|nil
----@param canExport boolean|nil
+---@param displayName? string
+---@param tooltip? string
+---@param min? any
+---@param max? any
+---@param interval? any
+---@param canExport? boolean
 function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, interval, canExport, isFromFile)
 	if self.Variables[name] == nil then
 		self.Variables[name] = VariableData:Create(name, value, displayName, tooltip, min, max, interval, isFromFile)
@@ -170,8 +170,8 @@ end
 ---@param min any
 ---@param max any
 ---@param interval any
----@param tooltipKey string|nil A string key to use for the tooltip. Will default to Key_Description.
----@param canExport boolean|nil
+---@param tooltipKey? string A string key to use for the tooltip. Will default to Key_Description.
+---@param canExport? boolean
 function SettingsData:AddLocalizedVariable(name, key, value, min, max, interval, tooltipKey, canExport, isFromFile)
 	if isFromFile == nil then
 		isFromFile = false
@@ -182,11 +182,11 @@ end
 
 ---@param id string
 ---@param callback ModMenuButtonCallback
----@param displayName string|nil
----@param tooltip string|nil
----@param enabled boolean|nil
----@param hostOnly boolean|nil
----@param isFromFile boolean|nil
+---@param displayName? string
+---@param tooltip? string
+---@param enabled? boolean
+---@param hostOnly? boolean
+---@param isFromFile? boolean
 function SettingsData:AddButton(id, callback, displayName, tooltip, enabled, hostOnly, isFromFile)
 	if not self.Buttons then
 		self.Buttons = {}
@@ -222,9 +222,9 @@ end
 ---@param id string
 ---@param key string The string key to use.
 ---@param callback ModMenuButtonCallback
----@param enabled boolean|nil
----@param hostOnly boolean|nil
----@param tooltipKey string|nil
+---@param enabled? boolean
+---@param hostOnly? boolean
+---@param tooltipKey? string
 function SettingsData:AddLocalizedButton(id, key, callback, enabled, hostOnly, tooltipKey, isFromFile)
 	if isFromFile == nil then
 		isFromFile = false
@@ -371,7 +371,7 @@ end
 
 ---Gets a flag or variable's value.
 ---@param name string
----@param fallback boolean|number|string|nil
+---@param fallback? boolean|number|string
 ---@return boolean|number|string
 function SettingsData:GetFlagOrVariableValue(name, fallback)
 	local value = self:GetFlag(name) or self:GetVariable(name)
@@ -383,7 +383,7 @@ end
 
 ---@param id string Flag id.
 ---@param b boolean Value to compare, i.e. true for "Flag Is Set"
----@param target Guid|nil Optional character UUID to check, for object or user flags.
+---@param target? Guid Optional character UUID to check, for object or user flags.
 function SettingsData:FlagEquals(id, b, target)
 	local data = self.Flags[id]
 	if data ~= nil then

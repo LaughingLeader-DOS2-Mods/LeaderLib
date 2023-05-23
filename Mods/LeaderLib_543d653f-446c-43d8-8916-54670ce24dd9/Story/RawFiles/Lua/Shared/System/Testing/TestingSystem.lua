@@ -10,7 +10,7 @@ Testing.Active = false
 
 ---@param id string
 ---@param operations fun(self:LuaTest)[]
----@param params LuaTestParams|nil
+---@param params? LuaTestParams
 ---@return LuaTest
 function Testing.CreateTest(id, operations, params)
 	return Classes.LuaTest:Create(id, operations, params)

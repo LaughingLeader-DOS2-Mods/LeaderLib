@@ -319,7 +319,7 @@ end
 ---@param target string|number[]|EsvCharacter|EsvItem
 ---@param skillId string
 ---@param source string|EsvCharacter|EsvItem
----@param extraParams LeaderLibProjectileStrikeCreationProperties|nil
+---@param extraParams? LeaderLibProjectileStrikeCreationProperties
 function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extraParams)
     extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = GameHelpers.Ext.CreateSkillTable(skillId)
@@ -465,8 +465,8 @@ end
 
 ---@param target ObjectParam|number[]
 ---@param skillId string
----@param source ObjectParam|nil
----@param extraParams LeaderLibProjectileCreationProperties|nil Optional table of properties to apply on top of the properties set from the skill stat.
+---@param source? ObjectParam
+---@param extraParams? LeaderLibProjectileCreationProperties Optional table of properties to apply on top of the properties set from the skill stat.
 function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParams)
     local extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = GameHelpers.Ext.CreateSkillTable(skillId)
@@ -500,7 +500,7 @@ end
 ---@param target ObjectParam|vec3 The target character, item, or position.
 ---@param skillId FixedString The skill to use for damage.
 ---@param source? ObjectParam The source of the damage, either a character, item, or UUID.
----@param extraParams LeaderLibProjectileCreationProperties|nil Optional table of properties to apply on top of the properties set from the skill stat.
+---@param extraParams? LeaderLibProjectileCreationProperties Optional table of properties to apply on top of the properties set from the skill stat.
 function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
     --Support for older usage
     if extraParams == true then

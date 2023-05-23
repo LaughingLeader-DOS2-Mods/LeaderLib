@@ -23,7 +23,7 @@ CharacterData.__index = function(tbl, k)
 end
 
 ---@param uuid string
----@param params table<string,any>|nil
+---@param params? table<string,any>
 CharacterData.__call = function(_, uuid, params)
 	return CharacterData:Create(uuid, params)
 end
@@ -39,7 +39,7 @@ end
 
 
 ---@param uuid string
----@param params table<string,any>|nil
+---@param params? table<string,any>
 ---@return CharacterData
 function CharacterData:Create(uuid, params)
     local this =
@@ -96,7 +96,7 @@ function CharacterData:GetCombatID()
 	return 0
 end
 
----@param asVector3 boolean|nil
+---@param asVector3? boolean
 ---@return number,number,number|Vector3
 function CharacterData:GetPosition(asVector3)
 	local x,y,z = Osi.GetPosition(self.UUID)
@@ -108,7 +108,7 @@ function CharacterData:GetPosition(asVector3)
 end
 
 ---@param status string|string[]
----@param checkAll boolean|nil Only return true if all statuses are found.
+---@param checkAll? boolean Only return true if all statuses are found.
 ---@return boolean
 function CharacterData:HasActiveStatus(status, checkAll)
 	return GameHelpers.Status.IsActive(self.UUID, status, checkAll)
@@ -124,7 +124,7 @@ function CharacterData:HasFlag(flag)
 	return false
 end
 
----@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
+---@param force? boolean Forces the stage change, otherwise it's skipped if they're already on stage.
 function CharacterData:SetOffStage(force)
 	if self:Exists() then
 		if force == true or Osi.ObjectIsOnStage(self.UUID) == 1 then
@@ -135,7 +135,7 @@ function CharacterData:SetOffStage(force)
 	return false
 end
 
----@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
+---@param force? boolean Forces the stage change, otherwise it's skipped if they're already on stage.
 function CharacterData:SetOnStage(force)
 	if self:Exists() then
 		if force == true or Osi.ObjectIsOnStage(self.UUID) == 0 then
@@ -178,7 +178,7 @@ end
 
 --- Removes a status or array of statuses, or 'all'.
 ---@param status string|string[]
----@param ignorePermanent boolean|nil Ignore permanent statuses when removing 'all'.
+---@param ignorePermanent? boolean Ignore permanent statuses when removing 'all'.
 function CharacterData:RemoveStatus(status, ignorePermanent)
 	if type(status) == "table" then
 		for i,v in pairs(status) do
@@ -218,13 +218,13 @@ function CharacterData:RemoveStatus(status, ignorePermanent)
 end
 
 ---Shortcut for calling RemoveStatus with 'all'.
----@param ignorePermanent boolean|nil Ignore permanent statuses when removing 'all'.
+---@param ignorePermanent? boolean Ignore permanent statuses when removing 'all'.
 function CharacterData:RemoveAllStatuses(ignorePermanent)
 	self:RemoveStatus("all", ignorePermanent)
 end
 
 ---A better alternative to RemoveHarmfulStatuses since it actually checks for debuffs.
----@param ignorePermanent boolean|nil Ignore permanent statuses.
+---@param ignorePermanent? boolean Ignore permanent statuses.
 function CharacterData:RemoveHarmfulStatuses(ignorePermanent)
 	local character = self:GetCharacter()
 	if character then
@@ -234,7 +234,7 @@ end
 
 ---Equips a root template, or creates and equips one if the item doesn't exist.
 ---@param template string
----@param all boolean|nil Equip all instances.
+---@param all? boolean Equip all instances.
 ---@return EsvItem|EsvItem[]
 function CharacterData:EquipTemplate(template, all)
 	local character = self:GetCharacter()
@@ -270,7 +270,7 @@ function CharacterData:EquipTemplate(template, all)
 	return nil
 end
 
----@param resurrect boolean|nil
+---@param resurrect? boolean
 function CharacterData:FullRestore(resurrect)
 	if self:Exists() then
 		if resurrect and self:IsDead(false) then
@@ -313,7 +313,7 @@ end
 
 ---Sets a character's scale and syncs it to clients.
 ---@param scale number
----@param persist boolean|nil Whether to persist the scale change through saves.
+---@param persist? boolean Whether to persist the scale change through saves.
 function CharacterData:SetScale(scale, persist)
 	if self:Exists() then
 		GameHelpers.SetScale(self:GetCharacter(), scale, persist)
@@ -326,8 +326,8 @@ end
 ---This uses the behavior scripting teleport function so it doesn't force-teleport connected summons like Osiris' TeleportToPosition does.
 ---Supports a string/GameObject/number array as the target, or separate x,y,z values.
 ---@param targetOrX ObjectParam|vec3|number
----@param y number|nil
----@param z number|nil
+---@param y? number
+---@param z? number
 function CharacterData:TeleportTo(targetOrX,y,z)
 	if self:Exists() then
 		local t = type(targetOrX)
@@ -349,7 +349,7 @@ function CharacterData:TeleportTo(targetOrX,y,z)
 end
 
 ---Moves the character to the top of the next or current turn order.
----@param currentRound boolean|nil If true, the current turn order is updated, otherwise the next turn order is updated.
+---@param currentRound? boolean If true, the current turn order is updated, otherwise the next turn order is updated.
 function CharacterData:JumpToTurn(currentRound)
 	if self:Exists() then
 		local id = self:GetCombatID()

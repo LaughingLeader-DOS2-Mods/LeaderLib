@@ -33,7 +33,7 @@ UI.Changelog = Changelog
 
 ---@param modName string|TranslatedString
 ---@param changelogText string|TranslatedString
----@param tooltip string|TranslatedString|nil
+---@param tooltip? string|TranslatedString
 function Changelog:AddModEntry(modName, changelogText, tooltip)
 	local entry = {
 		Title = modName,

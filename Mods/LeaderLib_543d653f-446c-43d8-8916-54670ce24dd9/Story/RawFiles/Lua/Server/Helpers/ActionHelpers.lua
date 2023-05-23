@@ -4,7 +4,7 @@ end
 
 ---@param attacker CharacterParam
 ---@param target ComponentHandle|ObjectParam|vec3 Either a ComponentHandle, object, or position table
----@param opts EsvOsirisAttackTask|nil Optional parameters to set on the task
+---@param opts? EsvOsirisAttackTask Optional parameters to set on the task
 function GameHelpers.Action.Attack(attacker, target, opts)
 	local character = GameHelpers.GetCharacter(attacker) --[[@as EsvCharacter]]
 	fassert(character ~= nil, "Failed to get attacker character from (%s)", attacker)
@@ -35,7 +35,7 @@ end
 
 ---@param character CharacterParam
 ---@param animation FixedString
----@param opts GameHelpersActionPlayAnimationOptions|nil Optional parameters to set on the task
+---@param opts? GameHelpersActionPlayAnimationOptions Optional parameters to set on the task
 function GameHelpers.Action.PlayAnimation(character, animation, opts)
 	assert(type(animation) == "string", "animation param must be a string")
 	local character = GameHelpers.GetCharacter(character) --[[@as EsvCharacter]]
@@ -89,8 +89,8 @@ end
 
 ---@param caster CharacterParam
 ---@param skill FixedString
----@param target ComponentHandle|ObjectParam|vec3|nil Either a ComponentHandle, object, or position table. Defaults to the caster if not set.
----@param opts EsvOsirisUseSkillTask|nil Optional parameters to set on the task
+---@param target? ComponentHandle|ObjectParam|vec3 Either a ComponentHandle, object, or position table. Defaults to the caster if not set.
+---@param opts? EsvOsirisUseSkillTask Optional parameters to set on the task
 function GameHelpers.Action.UseSkill(caster, skill, target, opts)
 	local character = GameHelpers.GetCharacter(caster) --[[@as EsvCharacter]]
 	fassert(character ~= nil, "Failed to get attacker character from (%s)", caster)
@@ -162,7 +162,7 @@ local function _CanSabotageItem(itemGUID, options)
 	return false
 end
 
----@param target ComponentHandle|ObjectParam|vec3|nil Either a ComponentHandle, object, or position table.
+---@param target? ComponentHandle|ObjectParam|vec3 Either a ComponentHandle, object, or position table.
 ---@param opts? LeaderLibSabotageOptions Optional parameters
 ---@return integer totalSabotagedItems
 function GameHelpers.Action.Sabotage(target, opts)

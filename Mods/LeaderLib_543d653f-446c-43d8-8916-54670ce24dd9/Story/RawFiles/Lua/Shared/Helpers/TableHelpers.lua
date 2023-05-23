@@ -5,7 +5,7 @@ end
 local _type = type
 
 ---@param orig table
----@param deep boolean|nil If true, metatables are copied as well.
+---@param deep? boolean If true, metatables are copied as well.
 function TableHelpers.Clone(orig, deep)
 	local t = _type(orig)
 	local copy = {}
@@ -65,9 +65,9 @@ local validTypes = {
 }
 ---Prepares a table for PersistentVars saving by removing invalid values.
 ---@param tbl table
----@param supportedExtraTypes table<string,boolean>|nil
----@param forJson boolean|nil If true, key types will be restricted to number/string.
----@param sanitizeValue (fun(key:string, value:userdata|table|function, valueType:string):SerializableValue)|nil
+---@param supportedExtraTypes? table<string,boolean>
+---@param forJson? boolean If true, key types will be restricted to number/string.
+---@param sanitizeValue (fun(key:string, value:userdata|table|function,? valueType:string):SerializableValue)
 ---@return table<string|number|boolean,string|number|boolean|table>
 function TableHelpers.SanitizeTable(tbl, supportedExtraTypes, forJson, sanitizeValue)
 	local output = {}
@@ -100,8 +100,8 @@ end
 ---Add key/value entries to target from addFrom, optionally skipping if that key exists already.
 ---@param target table
 ---@param addFrom table
----@param skipExisting boolean|nil If true, existing values aren't updated.
----@param deep boolean|nil If true, iterate into table values to AddOrUpdate them as well.
+---@param skipExisting? boolean If true, existing values aren't updated.
+---@param deep? boolean If true, iterate into table values to AddOrUpdate them as well.
 ---@return table target Returns the target table.
 function TableHelpers.AddOrUpdate(target, addFrom, skipExisting, deep)
 	if _type(target) ~= "table" or _type(addFrom) ~= "table" then
@@ -143,7 +143,7 @@ function TableHelpers.CopyExistingKeys(target, addFrom)
 end
 
 ---@param tbl table
----@param indent integer|nil
+---@param indent? integer
 ---@return string
 function TableHelpers.ToString(tbl, indent)
 	if not indent then indent = 0 end
@@ -174,7 +174,7 @@ end
 
 ---Randomly reorders an array and returns a new copy.
 ---@param tbl any[]
----@param inPlace boolean|nil Modify the original table, instead of making a copy.
+---@param inPlace? boolean Modify the original table, instead of making a copy.
 ---@return any[]
 function TableHelpers.ShuffleTable(tbl, inPlace)
 	if not inPlace then
@@ -211,7 +211,7 @@ end
 ---Checks if a table has a string/boolean/number value, or any value in a table of values, if provided.
 ---@param tbl table
 ---@param value SerializableValue|SerializableValue[] A value or table of values to check for.
----@param deep boolean|nil If true, and table entry is a table, keep checking for the provided values.
+---@param deep? boolean If true, and table entry is a table, keep checking for the provided values.
 ---@return boolean
 function TableHelpers.HasValue(tbl, value, deep)
 	if _type(tbl) ~= "table" then
@@ -269,8 +269,8 @@ end
 ---Create a copy of a table where all the values are unique, and optionally sorted.
 ---@generic T : table
 ---@param tbl T An array-like table.
----@param sort boolean|nil Whether to sort the results.
----@param sortFunc function|nil Optional function to use when sorting. Defaults to the regular table.sort otherwise.
+---@param sort? boolean Whether to sort the results.
+---@param sortFunc? function Optional function to use when sorting. Defaults to the regular table.sort otherwise.
 ---@return T
 function TableHelpers.MakeUnique(tbl, sort, sortFunc)
 	local result = {}
@@ -294,7 +294,7 @@ end
 ---Configure a table's metatable __index to point to a table of default keys/values.  
 ---If tbl is not a table, the default values table is returned.
 ---@generic T : table
----@param opts table|nil A table of key/value entries.
+---@param opts? table A table of key/value entries.
 ---@param defaultValues T An array-like table.
 ---@return T
 function TableHelpers.SetDefaultOptions(opts, defaultValues)

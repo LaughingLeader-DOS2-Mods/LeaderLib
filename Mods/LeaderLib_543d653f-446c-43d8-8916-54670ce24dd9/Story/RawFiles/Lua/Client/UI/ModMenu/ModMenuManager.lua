@@ -213,7 +213,7 @@ end
 ---@param ui UIObject
 ---@param mainMenu MainMenuMC
 ---@param modSettings ModSettings
----@param order table<string, string[]>|nil
+---@param order table<string,? string[]>
 local function ParseModSettings(ui, mainMenu, modSettings, order)
 	local added = {}
 	if order ~= nil then

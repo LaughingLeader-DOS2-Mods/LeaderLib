@@ -62,7 +62,7 @@ if _ISCLIENT then
 	Ext.RegisterNetListener("LeaderLib_WorldTooltips_UpdateClient", function(...) WorldTooltips:UpdateItems(...) end)
 else
 	---@param item EsvItem
-	---@param force boolean|nil Skip the Tooltip ~= 2 check to update the client.
+	---@param force? boolean Skip the Tooltip ~= 2 check to update the client.
 	local function _ShouldHaveTooltip(item, force)
 		if item.CurrentTemplate and (item.CurrentTemplate.Tooltip ~= WorldTooltips.TooltipMode or force) and not StringHelpers.IsNullOrWhitespace(GameHelpers.GetDisplayName(item)) then
 			return true
@@ -88,7 +88,7 @@ else
 		GameMasterPause = true,
 	}
 
-	---@param forceResync boolean|nil Force the client to update.
+	---@param forceResync? boolean Force the client to update.
 	function WorldTooltips.UpdateWorldItems(forceResync)
 		Timer.Cancel("Timers_LeaderLib_WorldTooltips_UpdateItems")
 
@@ -137,8 +137,8 @@ else
 		end
 	end)
 
-	---@param forceResync boolean|nil
-	---@param delayOverride integer|nil
+	---@param forceResync? boolean
+	---@param delayOverride? integer
 	function WorldTooltips:StartTimer(forceResync, delayOverride)
 		Timer.Cancel("Timers_LeaderLib_WorldTooltips_UpdateItems")
 		Timer.StartOneshot("Timers_LeaderLib_WorldTooltips_UpdateItems", delayOverride or WorldTooltips.UpdateDelay, function (e)

@@ -206,7 +206,7 @@ local _SelfPropertyContext = {"Self", "SelfOnHit"}
 
 ---@param source ObjectParam
 ---@param target ObjectParam
----@param fromSkill string|nil If this is resulting from a skill hit.
+---@param fromSkill? string If this is resulting from a skill hit.
 function GameHelpers.ApplyBonusWeaponStatuses(source, target, fromSkill)
 	target = GameHelpers.TryGetObject(target)
 	if type(source) ~= "userdata" then

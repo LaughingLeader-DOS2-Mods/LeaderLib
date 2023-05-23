@@ -55,8 +55,8 @@ end
 --Ext.Dump(GameHelpers.Tooltip.GetSkillDamageText("Target_LLWEAPONEX_Steal", GameHelpers.GetCharacter(me.MyGuid)))
 
 ---@param skillId string The skill ID, i.e "Projectile_Fireball".
----@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
----@param skillParams StatEntrySkillData|nil A table of attributes to set on the skill table before calculating the damage.
+---@param character? CharacterParam The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
+---@param skillParams? StatEntrySkillData A table of attributes to set on the skill table before calculating the damage.
 ---@return string damageText
 function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 	if not StringHelpers.IsNullOrWhitespace(skillId) then
@@ -171,9 +171,9 @@ end
 --_D(Mods.LeaderLib.GameHelpers.Tooltip.GetWeaponDamageText("WPN_Dagger", _C()))
 
 ---@param id string The Weapon stat ID, i.e "WPN_Sword_1H".
----@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
----@param overrideParams StatEntryWeapon|nil A table of attributes to set on the weapon table before calculating the damage.
----@param extraSettings {Attribute:PlayerUpgradeAttribute}|nil
+---@param character? CharacterParam The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
+---@param overrideParams? StatEntryWeapon A table of attributes to set on the weapon table before calculating the damage.
+---@param extraSettings? {Attribute:PlayerUpgradeAttribute}
 ---@return string damageText
 function GameHelpers.Tooltip.GetWeaponDamageText(id, character, overrideParams, extraSettings)
 	if not StringHelpers.IsNullOrWhitespace(id) then
@@ -203,9 +203,9 @@ function GameHelpers.Tooltip.GetWeaponDamageText(id, character, overrideParams, 
 end
 
 ---@param id string The Weapon stat ID, i.e "WPN_Sword_1H".
----@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
----@param overrideParams StatEntryWeapon|nil A table of attributes to set on the weapon table before calculating the damage.
----@param extraSettings {StatsMultiplier:number}|nil
+---@param character? CharacterParam The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
+---@param overrideParams? StatEntryWeapon A table of attributes to set on the weapon table before calculating the damage.
+---@param extraSettings? {StatsMultiplier:number}
 ---@return string damageText
 function GameHelpers.Tooltip.GetStatusDamageText(id, character, overrideParams, extraSettings)
 	if not StringHelpers.IsNullOrWhitespace(id) then
@@ -243,8 +243,8 @@ function GameHelpers.Tooltip.GetStatusDamageText(id, character, overrideParams, 
 end
 
 ---@param character StatCharacter The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
----@param overrideParams StatEntryWeapon|nil A table of attributes to set on the weapon table before calculating the damage.
----@param extraSettings {Attribute:PlayerUpgradeAttribute}|nil
+---@param overrideParams? StatEntryWeapon A table of attributes to set on the weapon table before calculating the damage.
+---@param extraSettings? {Attribute:PlayerUpgradeAttribute}
 ---@return string damageText
 function GameHelpers.Tooltip.CalculateEquippedWeaponDamageText(character, overrideParams, extraSettings)
 	local mainWeapon = character.MainWeapon
@@ -510,7 +510,7 @@ end
 
 ---Replace placeholder text in strings, such as ExtraData, Skill, etc.
 ---@param str string|TranslatedString
----@param character CharacterParam|nil Optional character to use for the tooltip.
+---@param character? CharacterParam Optional character to use for the tooltip.
 ---@return string
 function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
 	local b,result = xpcall(_ReplacePlaceholders, debug.traceback, str, character)
@@ -580,7 +580,7 @@ if Vars.IsClient then
 
 	---@param tooltip TooltipData
 	---@param inputElements table
-	---@param addColor boolean|nil
+	---@param addColor? boolean
 	---@return string combinedText
 	---@return table<integer,boolean> indexes Removed element indexes.
 	function GameHelpers.Tooltip.CondensePropertiesText(tooltip, inputElements, addColor)
@@ -647,7 +647,7 @@ if Vars.IsClient then
 
 	---@param element TooltipElementParam
 	---@param attribute string
-	---@param fallback any|nil An optional fallback value to use. Returns an empty string by default.
+	---@param fallback? any An optional fallback value to use. Returns an empty string by default.
 	---@return string|number
 	function GameHelpers.Tooltip.GetElementAttribute(element, attribute, fallback)
 		if element ~= nil and element[attribute] ~= nil then

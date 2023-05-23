@@ -160,7 +160,7 @@ end
 
 ---@param character string
 ---@param animation string
----@param event string|nil
+---@param event? string
 function SceneStateData:PlayAnimation(character, animation, event)
 	if not event then
 		event = "LLSSD_PA_" .. character .. animation
@@ -173,7 +173,7 @@ function SceneStateData:PlayAnimation(character, animation, event)
 end
 
 ---@param signalName string
----@param timeout integer|nil
+---@param timeout? integer
 function SceneStateData:WaitForSignal(signalName, timeout)
 	SceneManager.AddToQueue(SceneManager.QueueType.Signal, self.Parent.ID, self.ID, signalName, timeout)
 	self:Pause()

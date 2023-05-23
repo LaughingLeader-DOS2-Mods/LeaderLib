@@ -9,7 +9,7 @@ VisualResourceData.__index = VisualResourceData
 
 ---@param resourceName string
 ---@param visualSlot integer
----@param params table|nil
+---@param params? table
 ---@return VisualResourceData
 function VisualResourceData:Create(resourceName, visualSlot, params)
 	---@type VisualResourceData

@@ -12,7 +12,7 @@ ProfileSettings.__index = ProfileSettings
 
 ---@param id string
 ---@param uuid Guid The ModuleUUID
----@param settings SettingsData|nil
+---@param settings? SettingsData
 function ProfileSettings:Create(id, uuid, settings)
     local this =
     {

@@ -52,7 +52,7 @@ TagManager.Register.TagObject(function(object, isInCombat, isCharacter, ...)
 end)
 
 ---@param object ObjectParam
----@param isInCombat boolean|nil
+---@param isInCombat? boolean
 ---@param ... any Optional parameters to pass to listeners.
 function TagManager:TagObject(object, isInCombat, ...)
 	object = GameHelpers.TryGetObject(object)

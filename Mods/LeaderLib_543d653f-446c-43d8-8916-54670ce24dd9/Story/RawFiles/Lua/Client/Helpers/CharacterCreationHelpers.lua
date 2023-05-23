@@ -43,7 +43,7 @@ end
 ---@param id string|integer
 ---@param colorType string
 ---@param optionIndex integer
----@param matchType "Handle"|"Name"|"Value"|"ID"|nil The property type to match id with. If matching a string, prefer Handle over Name, as the name may be translated.
+---@param matchType? "Handle"|"Name"|"Value"|"ID" The property type to match id with. If matching a string, prefer Handle over Name, as the name may be translated.
 local function SelectOption(id, colorType, optionIndex, matchType, uiOnly)
 	local cc = UIExtensions.CharacterCreation.Instance
 	if cc then
@@ -111,8 +111,8 @@ end
 
 ---@param colorType "Hair"|"Skin"
 ---@param id string|integer Either the color handle, translated name, or index.
----@param matchType "Handle"|"Name"|"Value"|"ID"|nil The property type to match id with. If matching a string, prefer Handle over Name, as the name may be translated.
----@param uiOnly boolean|nil If true, the color is only selected in the UI, and the ExternalInterfaceCall is skipped.
+---@param matchType? "Handle"|"Name"|"Value"|"ID" The property type to match id with. If matching a string, prefer Handle over Name, as the name may be translated.
+---@param uiOnly? boolean If true, the color is only selected in the UI, and the ExternalInterfaceCall is skipped.
 ---@return boolean
 function GameHelpers.CC.SetColor(colorType, id, matchType, uiOnly)
 	colorType = colorType or "Skin"

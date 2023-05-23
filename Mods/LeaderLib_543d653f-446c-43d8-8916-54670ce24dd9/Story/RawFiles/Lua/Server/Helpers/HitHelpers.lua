@@ -79,8 +79,8 @@ end
 ---@param target string
 ---@param handle integer
 ---@param is_hit integer|boolean Whether the handle is for a hit or hit status.
----@param allowSkills boolean|nil
----@param source string|nil
+---@param allowSkills? boolean
+---@param source? string
 ---@return boolean
 function GameHelpers.HitWithWeapon(target, handle, is_hit, allowSkills, source)
 	if handle == nil or handle == -1 then
@@ -132,8 +132,8 @@ end
 -- }
 
 ---@param hitType string|integer|HitContext
----@param toInteger boolean|nil
----@param t string|nil The variable type for hitType, usually passed along automatically.
+---@param toInteger? boolean
+---@param t? string The variable type for hitType, usually passed along automatically.
 ---@return string|integer
 function GameHelpers.Hit.GetHitType(hitType, toInteger, t)
 	if hitType then
@@ -181,9 +181,9 @@ local WeaponHitProperties = {
 
 ---Returns true if a hit is from a basic attack or weapon skill, if a skill is provided.
 ---@param hit HitContext
----@param skill StatEntrySkillData|nil
----@param hitStatus EsvStatusHit|nil
----@param hitType HitTypeValues|integer|nil
+---@param skill? StatEntrySkillData
+---@param hitStatus? EsvStatusHit
+---@param hitType? HitTypeValues|integer
 ---@return boolean
 function GameHelpers.Hit.IsFromWeapon(hit, skill, hitStatus, hitType)
 	if not hitType and hit ~= nil then
@@ -208,8 +208,8 @@ end
 ---Returns true if a hit is from a basic attack or weapon skill, if a skill is provided.
 ---@param hitType HitTypeValues
 ---@param damageSourceType string
----@param weaponHandle userdata|nil
----@param skill StatEntrySkillData|nil
+---@param weaponHandle? userdata
+---@param skill? StatEntrySkillData
 ---@return boolean
 function GameHelpers.Hit.TypesAreFromWeapon(hitType, damageSourceType, weaponHandle, skill)
 	if skill then

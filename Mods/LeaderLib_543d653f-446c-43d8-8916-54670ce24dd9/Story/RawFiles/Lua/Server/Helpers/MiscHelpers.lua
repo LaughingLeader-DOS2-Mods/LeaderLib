@@ -17,9 +17,9 @@ end
 ---@param source EsvCharacter
 ---@param target IEoCServerObject|number[]
 ---@param properties StatProperty[]
----@param targetPosition number[]|nil
----@param radius number|nil
----@param fromSkill string|nil
+---@param targetPosition? number[]
+---@param radius? number
+---@param fromSkill? string
 function GameHelpers.ApplyProperties(source, target, properties, targetPosition, radius, fromSkill)
 	local canTargetItems = false
 	local t = type(target)
@@ -161,7 +161,7 @@ end
 
 ---Clears the action queue that may block things like skill usage via scripting.
 ---@param character CharacterParam
----@param purge boolean|nil Call CharacterPurgeQueue instead of CharacterFlushQueue.
+---@param purge? boolean Call CharacterPurgeQueue instead of CharacterFlushQueue.
 function GameHelpers.ClearActionQueue(character, purge)
 	character = GameHelpers.GetUUID(character)
 	if not character then

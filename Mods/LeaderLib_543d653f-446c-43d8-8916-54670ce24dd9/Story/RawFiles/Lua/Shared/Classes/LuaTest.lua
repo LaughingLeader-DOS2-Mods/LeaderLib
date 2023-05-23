@@ -34,7 +34,7 @@ local _NilThread = {}
 
 ---@param id string
 ---@param tasks LuaTestTaskCallback|LuaTestTaskCallback[]
----@param params LuaTestParams|nil
+---@param params? LuaTestParams
 ---@return LuaTest
 function LuaTest:Create(id, tasks, params)
 	local inst = {
@@ -96,7 +96,7 @@ function LuaTest:CheckForWake()
 end
 
 ---@param id string
----@param timeout number|nil
+---@param timeout? number
 function LuaTest:WaitForSignal(id, timeout)
 	--For situations where this got a signal before the previous one was resumed
 	if self.LastUnmatchedSignal == id or self.LastSignals[#self.LastSignals] == id then

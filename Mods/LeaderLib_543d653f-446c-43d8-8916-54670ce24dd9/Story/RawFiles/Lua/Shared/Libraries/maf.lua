@@ -96,7 +96,7 @@ function Vector3:Set(x, y, z)
 end
 
 ---@param u Vector3
----@param out Vector3|nil
+---@param out? Vector3
 function Vector3:Add(u, out)
 	out = out or self
 	if Vector3.IsVector3(u) then
@@ -112,7 +112,7 @@ function Vector3:Add(u, out)
 end
 
 ---@param u Vector3
----@param out Vector3|nil
+---@param out? Vector3
 function Vector3:Sub(u, out)
 	out = out or self
 	out.x = self.x - u.x
@@ -122,7 +122,7 @@ function Vector3:Sub(u, out)
 end
 
 ---@param u Vector3
----@param out Vector3|nil
+---@param out? Vector3
 function Vector3:Mul(u, out)
 	out = out or self
 	out.x = self.x * u.x
@@ -132,7 +132,7 @@ function Vector3:Mul(u, out)
 end
 
 ---@param u Vector3
----@param out Vector3|nil
+---@param out? Vector3
 function Vector3:Div(u, out)
 	out = out or self
 	out.x = self.x / u.x
@@ -142,7 +142,7 @@ function Vector3:Div(u, out)
 end
 
 ---@param s number
----@param out Vector3|nil
+---@param out? Vector3
 function Vector3:Scale(s, out)
 	out = out or self
 	out.x = self.x * s
@@ -155,7 +155,7 @@ function Vector3:Length(v)
 	return math.sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
 end
 
----@param out Vector3|nil
+---@param out? Vector3
 function Vector3:Normalize(out)
 	out = out or self
 	local len = self:Length()
@@ -179,7 +179,7 @@ function Vector3:Dot(u)
 end
 
 ---@param u Vector3
----@param out Vector3|nil
+---@param out? Vector3
 function Vector3:Cross(u, out)
 	out = out or self
 	local a, b, c = self.x, self.y, self.z
@@ -191,7 +191,7 @@ end
 
 ---@param u Vector3
 ---@param t number
----@param out Vector3|nil
+---@param out? Vector3
 function Vector3:Lerp(u, t, out)
 	out = out or self
 	out.x = self.x + (u.x - self.x) * t
@@ -201,7 +201,7 @@ function Vector3:Lerp(u, t, out)
 end
 
 ---@param u Vector3
----@param out Vector3|nil
+---@param out? Vector3
 function Vector3:Project(u, out)
 	out = out or self
 	local unorm = vtmp1
@@ -214,7 +214,7 @@ function Vector3:Project(u, out)
 end
 
 ---@param q Quaternion
----@param out Vector3|nil
+---@param out? Vector3
 function Vector3:Rotate(q, out)
 	out = out or self
 	local u, c, o = vtmp1, vtmp2, out

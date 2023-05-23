@@ -16,10 +16,10 @@ ButtonData.__index = ButtonData
 ---@param id string
 ---@param callback ModMenuButtonCallback|ModMenuButtonCallback[]
 ---@param enabled boolean
----@param displayName string|nil
----@param tooltip string|nil
----@param isFromFile boolean|nil
----@param hostOnly boolean|nil
+---@param displayName? string
+---@param tooltip? string
+---@param isFromFile? boolean
+---@param hostOnly? boolean
 function ButtonData:Create(id, callback, enabled, displayName, tooltip, hostOnly, isFromFile)
     local this =
     {

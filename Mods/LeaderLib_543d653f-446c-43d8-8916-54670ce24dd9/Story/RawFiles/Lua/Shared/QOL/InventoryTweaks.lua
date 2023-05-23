@@ -394,7 +394,7 @@ else
 		end
 	end)
 
-	---@param id integer|nil
+	---@param id? integer
 	local function SyncReadBooks(id)
 		if id then
 			local data = _PV.ReadBooks[id]

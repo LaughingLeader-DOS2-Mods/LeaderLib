@@ -88,7 +88,7 @@ end
 ---@param target number[]
 ---@param effect string
 ---@param handle integer
----@param params EffectManagerCreateEffectParams|nil
+---@param params? EffectManagerCreateEffectParams
 function _INTERNAL.SaveWorldEffectData(target, effect, handle, params)
 	local region = SharedData.RegionData.Current
 
@@ -135,7 +135,7 @@ CustomParams = {
 ---@param effect EsvEffect|string
 ---@param handle integer
 ---@param id string
----@param pos number[]|nil
+---@param pos? number[]
 ---@return EffectManagerPlayEffectResult
 local function CreateEffectResult(effect, handle, id, pos)
 	return {Effect = effect, Handle = handle, ID = id, Position = pos}
@@ -152,7 +152,7 @@ end
 
 ---@param fx string|string[] The effect resource name
 ---@param object CharacterParam|ItemParam
----@param params EffectManagerCreateEffectParams|nil
+---@param params? EffectManagerCreateEffectParams
 ---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]|nil
 function _INTERNAL.PlayEffect(fx, object, params)
 	local t = type(fx)
@@ -212,7 +212,7 @@ end
 
 ---@param fx string|string[] The effect resource name
 ---@param pos number[]|ObjectParam
----@param params EffectManagerCreateEffectParams|nil
+---@param params? EffectManagerCreateEffectParams
 ---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]|nil
 function _INTERNAL.PlayEffectAt(fx, pos, params)
 	local t = type(fx)
@@ -279,8 +279,8 @@ end
 
 ---@param fx string|string[] The effect resource name
 ---@param object CharacterParam|ItemParam
----@param params EffectManagerCreateEffectParams|nil
----@param skipSaving boolean|nil Skip saving if the params.Loop is true.
+---@param params? EffectManagerCreateEffectParams
+---@param skipSaving? boolean Skip saving if the params.Loop is true.
 ---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]|nil
 function EffectManager.PlayEffect(fx, object, params, skipSaving)
 	local uuid = GameHelpers.GetUUID(object)
@@ -302,8 +302,8 @@ end
 ---If fx is a table of effects, a table or EsvEffect or table of handles will be returned.
 ---@param fx string|string[] The effect resource name
 ---@param pos number[]|ObjectParam
----@param params EffectManagerCreateEffectParams|nil
----@param skipSaving boolean|nil
+---@param params? EffectManagerCreateEffectParams
+---@param skipSaving? boolean
 ---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]
 function EffectManager.PlayEffectAt(fx, pos, params, skipSaving)
 	local result = _INTERNAL.PlayEffectAt(fx, pos, params)
@@ -322,8 +322,8 @@ end
 ---Play a client-side effect, which has support for weapon bones, and parsing an effect string like in skills/statuses.
 ---@param fx string|string[] The effect string or name.
 ---@param target ObjectParam|number[]
----@param params EffectManagerCreateEffectParams|nil
----@param client CharacterParam|integer|nil A specific client to play the effect for. Leave nil to broadcast it to all clients.
+---@param params? EffectManagerCreateEffectParams
+---@param client? CharacterParam|integer A specific client to play the effect for. Leave nil to broadcast it to all clients.
 ---@return EffectManagerPlayEffectResult|EffectManagerPlayEffectResult[]
 function EffectManager.PlayClientEffect(fx, target, params, client)
 	if params then
@@ -415,9 +415,9 @@ local function _TargetsMatch(effect, uuid, uuidType)
 	return false
 end
 
----@param fx string|string[]|nil Optional effect ID to filter effects for.
+---@param fx? string|string[] Optional effect ID to filter effects for.
 ---@param target Guid|number[]|NetId|EsvCharacter|EsvItem Optional target to filter effects for.
----@param distanceThreshold number|nil The maximum distance between an effect position and a target position before it's considered a match. Defaults to 0.1
+---@param distanceThreshold? number The maximum distance between an effect position and a target position before it's considered a match. Defaults to 0.1
 ---@return EsvEffect[]
 function EffectManager.GetAllEffects(fx, target, distanceThreshold)
 	local effects = {}
@@ -575,7 +575,7 @@ end
 
 ---@param effect string|string[]
 ---@param target number[]
----@param distanceThreshold number|nil The maximum distance between an effect position and a target position before it should be deleted. Defaults to 0.1
+---@param distanceThreshold? number The maximum distance between an effect position and a target position before it should be deleted. Defaults to 0.1
 function EffectManager.StopEffectsByNameForPosition(effect, target, distanceThreshold)
 	local success = false
 	distanceThreshold = type(distanceThreshold) == "number" and distanceThreshold or 0.1

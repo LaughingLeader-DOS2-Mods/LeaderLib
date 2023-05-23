@@ -36,7 +36,7 @@ end
 ---@overload fun(obj:vec3|ObjectParam):vec3
 ---@param obj vec3|ObjectParam
 ---@param unpackResult boolean If true, the position value is returned as separate numbers.
----@param fallback vec3|nil If no position is found, this value or {0,0,0} is returned.
+---@param fallback? vec3 If no position is found, this value or {0,0,0} is returned.
 ---@return number x
 ---@return number y
 ---@return number z
@@ -147,8 +147,8 @@ end
 
 ---Get a position derived from a character's forward facing direction.
 ---@param char CharacterParam
----@param distanceMult number|nil
----@param fromPosition vec3|nil
+---@param distanceMult? number
+---@param fromPosition? vec3
 ---@return vec3
 function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
 	---@type EsvCharacter
@@ -177,11 +177,11 @@ function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
 end
 
 ---@param source CharacterParam
----@param distanceMult number|nil
----@param x number|nil
----@param y number|nil
----@param z number|nil
----@param forwardVector vec3|nil
+---@param distanceMult? number
+---@param x? number
+---@param y? number
+---@param z? number
+---@param forwardVector? vec3
 ---@return vec3 position
 function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMult, x,y,z, forwardVector)
 	local character = GameHelpers.GetCharacter(source)
@@ -217,7 +217,7 @@ end
 ---@param pos vec3|ObjectParam
 ---@param distanceMult number
 ---@param directionalVector vec3
----@param skipSnapToGrid boolean|nil Skip snapping the y value to the grid height at the resulting position.
+---@param skipSnapToGrid? boolean Skip snapping the y value to the grid height at the resulting position.
 ---@return vec3 position
 function GameHelpers.Math.ExtendPositionWithDirectionalVector(pos, directionalVector, distanceMult, skipSnapToGrid)
 	local x,y,z = _GetPosition(pos, true)
@@ -300,7 +300,7 @@ end
 ---Get the distance between two Vector3 points, or objects.
 ---@param pos1 vec3|ObjectParam First position array, or an object with a WorldPos.
 ---@param pos2 vec3|ObjectParam Second position array, or an object with a WorldPos.
----@param ignoreHeight boolean|nil Ignore the Y value when fetching the distance.
+---@param ignoreHeight? boolean Ignore the Y value when fetching the distance.
 ---@return number distance
 function GameHelpers.Math.GetDistance(pos1, pos2, ignoreHeight)
 	local x,y,z = _GetPosition(pos1, true)
@@ -314,7 +314,7 @@ end
 ---Get the distance between two Vector3 points, or objects, including the AI bounds radius of any objects
 ---@param pos1 vec3|ObjectParam First position array, or an object with a WorldPos.
 ---@param pos2 vec3|ObjectParam Second position array, or an object with a WorldPos.
----@param ignoreHeight boolean|nil Ignore the Y value when fetching the distance.
+---@param ignoreHeight? boolean Ignore the Y value when fetching the distance.
 ---@return number distance
 function GameHelpers.Math.GetOuterDistance(pos1, pos2, ignoreHeight)
 	local x,y,z = _GetPosition(pos1, true)
@@ -342,8 +342,8 @@ end
 ---Get the directional vector between two Vector3 points.
 ---@param pos1 vec3|ObjectParam
 ---@param pos2 vec3|ObjectParam
----@param reverse boolean|nil Multiply the result by -1,-1,-1.
----@param asVector3 boolean|nil Optionally return the result as a Vector3
+---@param reverse? boolean Multiply the result by -1,-1,-1.
+---@param asVector3? boolean Optionally return the result as a Vector3
 ---@return Vector3
 function GameHelpers.Math.GetDirectionalVector(pos1, pos2, reverse, asVector3)
 	if GameHelpers.Ext.IsObjectType(pos1) and (pos2 == nil or pos2 == pos1) and pos1.Rotation then
@@ -423,8 +423,8 @@ function GameHelpers.Math.Clamp(value, minValue, maxValue)
 end
 
 ---@param v number
----@param min number|nil
----@param max number|nil
+---@param min? number
+---@param max? number
 ---@return number
 local function _normalize(v, min, max)
 	min = min or 0
@@ -465,7 +465,7 @@ end
 ---@param r number
 ---@param g number
 ---@param b number
----@param a number|nil Optional alpha
+---@param a? number Optional alpha
 ---@return vec3
 function GameHelpers.Math.ScaleRGB(r,g,b,a)
 	if a then
@@ -595,9 +595,9 @@ function GameHelpers.Math.GetHighGroundFlag(sourcePos, targetPos)
 end
 
 ---@param chance integer The roll must be below or equal to this number.
----@param bonusRolls integer|nil How many times to roll if the first roll is unsuccessful. Defaults to 0.
----@param minValue integer|nil Minimum value for the random range. Defaults to 0.
----@param maxValue integer|nil Maximum value for the random range. Defaults to 100.
+---@param bonusRolls? integer How many times to roll if the first roll is unsuccessful. Defaults to 0.
+---@param minValue? integer Minimum value for the random range. Defaults to 0.
+---@param maxValue? integer Maximum value for the random range. Defaults to 100.
 ---@return boolean success
 ---@return integer roll
 function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)

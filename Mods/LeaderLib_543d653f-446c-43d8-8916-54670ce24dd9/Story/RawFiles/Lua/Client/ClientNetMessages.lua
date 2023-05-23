@@ -39,7 +39,7 @@ end)
 ---@diagnostic disable undefined-field
 
 ---@param character EclCharacter The player.
----@param matchStatus string|table<string,boolean>|nil An optional status to look for.
+---@param matchStatus? string|table<string,boolean> An optional status to look for.
 ---@return StatusMovieClipTable[]
 local function GetPlayerStatusMovieClips(character, matchStatus)
 	local statusMovieclips = {}

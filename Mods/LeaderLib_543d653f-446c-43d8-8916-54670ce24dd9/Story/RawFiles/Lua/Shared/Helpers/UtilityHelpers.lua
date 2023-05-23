@@ -125,7 +125,7 @@ if not _ISCLIENT then
 	---Push or pull a target from a source object or position.  
 	---Similar to the Force action, except it's grid-safe (no pushing objects out of the map).
 	---@param target EsvCharacter|EsvItem
-	---@param opts ForceMoveObjectParameters|nil
+	---@param opts? ForceMoveObjectParameters
 	---@return boolean success Returns true if the force move action has started.
 	function GameHelpers.Utils.ForceMoveObject(target, opts)
 		local targetObject = GameHelpers.TryGetObject(target)
@@ -234,7 +234,7 @@ if not _ISCLIENT then
 	
 	---@param target EsvCharacter|EsvItem
 	---@param pos number[]
-	---@param opts ForceMoveObjectToPositionParameters|nil
+	---@param opts? ForceMoveObjectToPositionParameters
 	function GameHelpers.Utils.ForceMoveObjectToPosition(target, pos, opts)
 		fassert(_type(pos) == "table" and #pos == 3, "Invalid position parameter (%s)", Lib.serpent.line(pos))
 		local targetObject = GameHelpers.TryGetObject(target)
@@ -324,7 +324,7 @@ if not _ISCLIENT then
 
 	---@param target ObjectParam
 	---@param height number
-	---@param opts KnockUpObjectObjectParameters|nil
+	---@param opts? KnockUpObjectObjectParameters
 	function GameHelpers.Utils.KnockUpObject(target, height, opts)
 		if _EXTVERSION < 56 then
 			return

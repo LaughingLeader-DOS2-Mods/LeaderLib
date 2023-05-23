@@ -88,7 +88,7 @@ Listeners.Tick = {}
 local _startTickTimer = false
 
 ---@param callback fun(e:GameTime)
----@param runningOnly boolean|nil
+---@param runningOnly? boolean
 function RegisterTickListener(callback, runningOnly)
 	_startTickTimer = true
 	if runningOnly then
@@ -121,7 +121,7 @@ Ext.Events.Tick:Subscribe(OnTick)
 --- Registers a function to call when a specific Lua LeaderLib event fires.
 ---@param event LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[] Listener table name.
 ---@param callbackOrKey function|string If a string, the function is stored in a subtable of the event, such as NamedTimerFinished.TimerName = function
----@param callbackOrNil function|nil If callback is a string, then this is the callback.
+---@param callbackOrNil? function If callback is a string, then this is the callback.
 function RegisterListener(event, callbackOrKey, callbackOrNil)
 	local listenerTable = nil
 	local t = type(event)

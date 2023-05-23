@@ -55,7 +55,7 @@ end
 
 ---Returns true if the character IsGameMaster or IsPossessed
 ---@param character CharacterParam
----@param ignorePossessed boolean|nil
+---@param ignorePossessed? boolean
 ---@return boolean
 function GameHelpers.Character.IsGameMaster(character, ignorePossessed)
 	if not character then
@@ -324,7 +324,7 @@ end
 
 ---Get all enemies within range.
 ---@param target CharacterParam The character to use for the enemy check / central point.
----@param radius number|nil Defaults to 2.0
+---@param radius? number Defaults to 2.0
 ---@return number total
 function GameHelpers.Character.GetTotalEnemiesInRange(target,radius)
 	if not _ISCLIENT then
@@ -382,7 +382,7 @@ function GameHelpers.Character.IsUndead(character)
 end
 
 ---Returns true if the character is dead, or if it has the DYING status.
----@param character CharacterParam|nil
+---@param character? CharacterParam
 ---@return boolean
 function GameHelpers.Character.IsDeadOrDying(character)
 	local character = GameHelpers.GetCharacter(character)
@@ -581,7 +581,7 @@ function GameHelpers.Character.GetHost()
 	return nil
 end
 
----@param includeSummons boolean|nil
+---@param includeSummons? boolean
 ---@return integer
 function GameHelpers.Character.GetPartySize(includeSummons)
 	local count = 0
@@ -622,9 +622,9 @@ end
 ---@overload fun(owner:CharacterParam, includeItems:boolean|nil, asTable:true):fun():GameHelpers_Character_GetSummonsResultType[]
 ---Gets all the active summons of a character.
 ---@param owner CharacterParam
----@param includeItems boolean|nil If on the server-side, item summons can be fetched as well if this is true.
----@param asTable boolean|nil Return the result as a table, instead of an iterator.
----@param ignoreObjects table<NetId|Guid, boolean>|nil Specific MyGuid or NetID values to ignore.
+---@param includeItems? boolean If on the server-side, item summons can be fetched as well if this is true.
+---@param asTable? boolean Return the result as a table, instead of an iterator.
+---@param ignoreObjects table<NetId|Guid,? boolean> Specific MyGuid or NetID values to ignore.
 ---@return fun():GameHelpers_Character_GetSummonsResultType|nil summons
 function GameHelpers.Character.GetSummons(owner, includeItems, asTable, ignoreObjects)
 	owner = GameHelpers.GetCharacter(owner)
@@ -690,9 +690,9 @@ function GameHelpers.Character.GetSummons(owner, includeItems, asTable, ignoreOb
 end
 
 ---Gets all the active summons.
----@param includeItems boolean|nil If on the server, item summons can be fetched as well.
----@param asTable boolean|nil Return the result as a table, instead of an iterator.
----@param ignoreObjects table<NetId|Guid, boolean>|nil Specific MyGuid or NetID values to ignore.
+---@param includeItems? boolean If on the server, item summons can be fetched as well.
+---@param asTable? boolean Return the result as a table, instead of an iterator.
+---@param ignoreObjects table<NetId|Guid,? boolean> Specific MyGuid or NetID values to ignore.
 ---@return GameHelpers_Character_GetSummonsResultType[]|fun():GameHelpers_Character_GetSummonsResultType summons
 function GameHelpers.Character.GetAllSummons(includeItems, asTable, ignoreObjects)
 	local summons = {}
@@ -743,7 +743,7 @@ function GameHelpers.Character.GetAllSummons(includeItems, asTable, ignoreObject
 end
 
 ---@param character CharacterParam
----@param asMeters boolean|nil If true, the range is returned as meters (WeaponRange/100).
+---@param asMeters? boolean If true, the range is returned as meters (WeaponRange/100).
 ---@return number
 function GameHelpers.Character.GetWeaponRange(character, asMeters)
 	local noWeapon = Ext.Stats.Get("NoWeapon", nil, false)
@@ -821,8 +821,8 @@ end
 
 ---Returns true if the character is disabled by a status.
 ---@param character CharacterParam
----@param checkForLoseControl boolean|nil
----@param checkForZeroMovement boolean|nil
+---@param checkForLoseControl? boolean
+---@param checkForZeroMovement? boolean
 ---@return boolean
 function GameHelpers.Character.IsDisabled(character, checkForLoseControl, checkForZeroMovement)
 	if _type(character) == "string" then
@@ -883,10 +883,10 @@ GameHelpers.Status.IsSneakingOrInvisible = GameHelpers.Character.IsSneakingOrInv
 ---Shortcut for GameHelpers.Surface.HasSurface, using the character's position.
 ---@param character EsvCharacter|EclCharacter
 ---@param matchNames string|string[] Surface names to look for.
----@param maxRadius number|nil
----@param containingName boolean|nil Look for surfaces containing the name, instead of explicit matching.
----@param onlyLayer integer|nil Look only on layer 0 (ground) or 1 (clouds).
----@param grid EocAiGrid|nil
+---@param maxRadius? number
+---@param containingName? boolean Look for surfaces containing the name, instead of explicit matching.
+---@param onlyLayer? integer Look only on layer 0 (ground) or 1 (clouds).
+---@param grid? EocAiGrid
 ---@return boolean
 function GameHelpers.Character.IsInSurface(character, matchNames, maxRadius, containingName, onlyLayer, grid)
 	local pos = GameHelpers.Math.GetPosition(character)
@@ -969,7 +969,7 @@ end
 ---@overload fun(character:CharacterParam):fun():EsvItem|EclItem
 ---Get a table of the character's equipment.
 ---@param character CharacterParam
----@param asTable boolean|nil Return the results as a table, instead of an iterator.
+---@param asTable? boolean Return the results as a table, instead of an iterator.
 ---@return EsvItem[]|EclItem[]
 function GameHelpers.Character.GetEquipment(character, asTable)
 	local char = GameHelpers.GetCharacter(character)
@@ -1007,7 +1007,7 @@ end
 
 ---Get all the statuses applied by a character's equipment when equipped.
 ---@param character CharacterParam
----@param inDictionaryForm boolean|nil Return the results as a statusId,data table.
+---@param inDictionaryForm? boolean Return the results as a statusId,data table.
 ---@return table<string, _GameHelpers_Character_GetEquipmentOnEquipStatuses_Entry>|_GameHelpers_Character_GetEquipmentOnEquipStatuses_Entry[]
 function GameHelpers.Character.GetEquipmentOnEquipStatuses(character, inDictionaryForm)
 	local char = GameHelpers.GetCharacter(character)
@@ -1110,8 +1110,8 @@ end
 ---Gets items with specific tag(s) in a character's inventory (or equipment).
 ---@param character CharacterParam
 ---@param tag string|string[]
----@param asTable boolean|nil
----@param equippedOnly boolean|nil Only return equipped items.
+---@param asTable? boolean
+---@param equippedOnly? boolean Only return equipped items.
 ---@return fun():EsvItem|EsvItem[] items
 function GameHelpers.Character.GetTaggedItems(character, tag, asTable, equippedOnly)
     local items = {}
@@ -1305,8 +1305,8 @@ end
 ---Change a character's equipment via an equipment stat.
 ---@param character CharacterParam
 ---@param equipmentStatID string
----@param deleteExisting boolean|nil Delete existing equipment.
----@param rarity ItemDataRarity|nil
+---@param deleteExisting? boolean Delete existing equipment.
+---@param rarity? ItemDataRarity
 function GameHelpers.Character.SetEquipment(character, equipmentStatID, deleteExisting, rarity)
 	if not _ISCLIENT and Ext.Osiris.IsCallable() and not StringHelpers.IsNullOrWhitespace(equipmentStatID) then
 		character = GameHelpers.GetCharacter(character)
@@ -1489,7 +1489,7 @@ end
 ---🔨**Server-Only**🔨  
 ---@param character CharacterParam
 ---@param recruitingPlayer CharacterParam
----@param opts GameHelpers_Character_MakePlayerOptions|nil
+---@param opts? GameHelpers_Character_MakePlayerOptions
 ---@return boolean success
 function GameHelpers.Character.MakePlayer(character, recruitingPlayer, opts)
 	local b,err = xpcall(_TryMakePlayer, debug.traceback, character, recruitingPlayer, opts or {})

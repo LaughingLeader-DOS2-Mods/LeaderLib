@@ -17,8 +17,8 @@ local _tostring = tostring
 ---Check if a string is equal to another. Case-insenstive.
 ---@param a string
 ---@param b string
----@param insensitive boolean|nil
----@param trimWhitespace boolean|nil
+---@param insensitive? boolean
+---@param trimWhitespace? boolean
 ---@return boolean
 function StringHelpers.Equals(a,b, insensitive, trimWhitespace)
 	if insensitive == nil then insensitive = true end
@@ -50,7 +50,7 @@ local NULL_UUID = {
 }
 
 ---Checks if a string is null or empty.
----@param str string|nil
+---@param str? string
 ---@return boolean
 function StringHelpers.IsNullOrEmpty(str)
 	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
@@ -58,7 +58,7 @@ function StringHelpers.IsNullOrEmpty(str)
 end
 
 ---Checks if a string is null or only whitespace.
----@param str string|nil
+---@param str? string
 ---@return boolean
 function StringHelpers.IsNullOrWhitespace(str)
 	return StringHelpers.IsNullOrEmpty(str) or _gsub(str, "%s+", "") == ""
@@ -75,8 +75,8 @@ end
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param delimiter string
 ---@param list table
----@param uniqueOnly boolean|nil
----@param getStringFunction (fun(k:any,v:any):string)|nil
+---@param uniqueOnly? boolean
+---@param getStringFunction? (fun(k:any,v:any):string)
 ---@return string
 function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 	local finalResult = ""
@@ -118,8 +118,8 @@ end
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param delimiter string
 ---@param list table
----@param uniqueOnly boolean|nil
----@param getStringFunction table|nil
+---@param uniqueOnly? boolean
+---@param getStringFunction? table
 function StringHelpers.DebugJoin(delimiter, list, uniqueOnly, getStringFunction)
 	local finalResult = ""
 	local useFunction = _type(getStringFunction) == "function"
@@ -247,7 +247,7 @@ end
 --- @param s string
 --- @param pattern string
 --- @param repl string
---- @param n integer|nil
+--- @param n? integer
 --- @return string
 function StringHelpers.Replace(s, pattern, repl, n)
 	if not repl or not s then
@@ -367,7 +367,7 @@ VersionIntegerToVersionString = StringHelpers.VersionIntegerToVersionString
 ---Appends two strings together with some text if the first string is not empty, otherwise returns the second string.
 ---@param a string
 ---@param b string
----@param appendWith string|nil
+---@param appendWith? string
 function StringHelpers.Append(a,b,appendWith)
 	if a == nil or a == "" then
 		return b
@@ -384,7 +384,7 @@ function StringHelpers.GetLines(s)
 end
 
 ---Remove font tags from a string.
----@param str string|nil
+---@param str? string
 ---@return string
 function StringHelpers.StripFont(str)
 	if str == nil or str == "" then
@@ -412,7 +412,7 @@ end
 
 ---@param str string
 ---@param match string|string[]
----@param explicit boolean|nil
+---@param explicit? boolean
 ---@return boolean
 function StringHelpers.IsMatch(str, match, explicit)
 	if not explicit then
@@ -517,11 +517,11 @@ GetSkillEntryName = StringHelpers.GetSkillEntryName
 ---Helper for find with some additional options.
 ---@param s string
 ---@param pattern string|string[]
----@param caseInsensitive boolean|nil Searches for a lower version of s.
----@param startPos integer|nil If set, start the find from this position.
----@param endPos integer|nil If set, end the find at this position.
----@param findStartPos integer|nil
----@param findPlain boolean|nil
+---@param caseInsensitive? boolean Searches for a lower version of s.
+---@param startPos? integer If set, start the find from this position.
+---@param endPos? integer If set, end the find at this position.
+---@param findStartPos? integer
+---@param findPlain? boolean
 ---@return integer,integer,string
 function StringHelpers.Find(s, pattern, caseInsensitive, startPos, endPos, findStartPos, findPlain)
 	if caseInsensitive then

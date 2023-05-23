@@ -38,7 +38,7 @@ end
 --- Get an ExtraData entry, with an optional fallback value if the key does not exist.
 ---@param key string
 ---@param fallback number|integer
----@param asInteger boolean|nil If true, return the result as an integer.
+---@param asInteger? boolean If true, return the result as an integer.
 ---@return number|integer
 function GameHelpers.GetExtraData(key, fallback, asInteger)
 	if Ext.ExtraData then
@@ -140,7 +140,7 @@ end
 ---@overload fun(id:ObjectParam|ComponentHandle):EsvCharacter|EclCharacter|EsvItem|EclItem|nil
 ---Tries to get a game object if the target exists, otherwise returns nil.
 ---@generic T:EsvCharacter|EclCharacter|EsvItem|EclItem|nil
----@param id ObjectParam|ComponentHandle|nil
+---@param id? ObjectParam|ComponentHandle
 ---@param castType? `T` The class type to return, for auto-completion, such as "EsvCharacter".
 ---@return T
 function GameHelpers.TryGetObject(id, castType)
@@ -213,7 +213,7 @@ end
 
 ---@overload fun(object:ObjectParam|nil):Guid|nil
 ---Tries to get a string UUID from whatever variable type object is.
----@param object ObjectParam|nil
+---@param object? ObjectParam
 ---@param returnNullId boolean If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
 ---@return Guid|nil
 function GameHelpers.GetUUID(object, returnNullId)
@@ -491,8 +491,8 @@ end
 ---@overload fun(object:ObjectParam):string[]
 ---Gather all tags for an object and store them in a table.
 ---@param object ObjectParam The character or item to get tags from.
----@param inDictionaryFormat boolean|nil If true, tags will be set as tbl[tag] = true, for easier checking.
----@param addEquipmentTags boolean|nil If the object is a character, all tags found on equipped items will be added to the table.
+---@param inDictionaryFormat? boolean If true, tags will be set as tbl[tag] = true, for easier checking.
+---@param addEquipmentTags? boolean If the object is a character, all tags found on equipped items will be added to the table.
 ---@return table<string,boolean>
 function GameHelpers.GetAllTags(object, inDictionaryFormat, addEquipmentTags)
 	local tags = {}
@@ -549,9 +549,9 @@ end
 ---Check if an object has a tag, or table of tags.
 ---@param object ObjectParam The character or item to get tags from.
 ---@param tags string|string[] Either a single tag, or an array of tags.
----@param requireAll boolean|nil If true, and tags is a table, all tags must be found.
----@param checkEquipmentTags boolean|nil If object is a character, included equipped items when checking for tags.
----@param cachedTags table<string,boolean>|nil If GameHelpers.GetAllTags has already been used, you can pass the dictionary table here to skip retrieving all tags again.
+---@param requireAll? boolean If true, and tags is a table, all tags must be found.
+---@param checkEquipmentTags? boolean If object is a character, included equipped items when checking for tags.
+---@param cachedTags? table<string,boolean> If GameHelpers.GetAllTags has already been used, you can pass the dictionary table here to skip retrieving all tags again.
 ---@return boolean
 function GameHelpers.ObjectHasTag(object, tags, requireAll, checkEquipmentTags, cachedTags)
 	local object = GameHelpers.TryGetObject(object)
@@ -980,7 +980,7 @@ end
 
 ---Calculates Movement and MovementSpeedBoost from DynamicStats.
 ---@param obj ObjectParam|StatCharacter|StatItemDynamic
----@param asFullAmount boolean|nil Return Movement in the full amount (like 500), instead of multiplying it by 0.01 and rounding the result.
+---@param asFullAmount? boolean Return Movement in the full amount (like 500), instead of multiplying it by 0.01 and rounding the result.
 ---@return number
 function GameHelpers.GetMovement(obj, asFullAmount)
 	local stats = nil
@@ -1036,7 +1036,7 @@ end
 ---Set an item or character's scale, and sync it to clients.
 ---@param object EsvCharacter|string
 ---@param scale number
----@param persist boolean|nil
+---@param persist? boolean
 function GameHelpers.SetScale(object, scale, persist)
 	object = GameHelpers.TryGetObject(object)
 	if object and object.Scale then
@@ -1059,8 +1059,8 @@ end
 
 ---Get skill damage from registered Ext.Events.GetSkillDamage listeners, or Game.Math.GetSkillDamage.
 ---@param skillId string The skill ID, i.e "Projectile_Fireball".
----@param character CharacterParam|nil The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
----@param skillParams StatEntrySkillData|nil A table of attributes to set on the skill table before calculating the damage.
+---@param character? CharacterParam The character to use. Defaults to Client:GetCharacter if on the client-side, or the host otherwise.
+---@param skillParams? StatEntrySkillData A table of attributes to set on the skill table before calculating the damage.
 ---@param noRandomization? boolean
 ---@return StatsDamagePairList|nil
 function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams, noRandomization)
@@ -1131,7 +1131,7 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams, noRa
 end
 
 ---@param guid Guid The mod GUID.
----@param stripFont boolean|nil Strip all font tags.
+---@param stripFont? boolean Strip all font tags.
 ---@return string name
 function GameHelpers.GetModName(guid, stripFont)
 	local mod = Ext.Mod.GetMod(guid)
@@ -1146,7 +1146,7 @@ function GameHelpers.GetModName(guid, stripFont)
 end
 
 ---@param guid Guid The mod GUID.
----@param stripFont boolean|nil Strip all font tags.
+---@param stripFont? boolean Strip all font tags.
 ---@return string description
 function GameHelpers.GetModDescription(guid, stripFont)
 	local mod = Ext.Mod.GetMod(guid)
@@ -1161,7 +1161,7 @@ function GameHelpers.GetModDescription(guid, stripFont)
 end
 
 ---@param guid Guid The mod GUID.
----@param asSingleInteger boolean|nil Return the combined version integer.
+---@param asSingleInteger? boolean Return the combined version integer.
 ---@return string description
 function GameHelpers.GetModVersion(guid, asSingleInteger)
 	--[[ local mod = Ext.Mod.GetMod(guid)

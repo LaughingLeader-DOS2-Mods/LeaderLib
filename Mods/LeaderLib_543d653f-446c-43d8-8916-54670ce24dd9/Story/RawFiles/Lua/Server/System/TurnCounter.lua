@@ -49,7 +49,7 @@ end
 ---@param targetTurns integer The target turns when the counting should be complete, such as 0 in decrement mode.
 ---@param mode TURNCOUNTER_MODE
 ---@param target TurnCounterTargetParamType The combat id or character to get the combat id from.
----@param params TurnCounterData|nil
+---@param params? TurnCounterData
 function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, target, params)
 	params = params or {}
 	local t = type(target)
@@ -98,7 +98,7 @@ function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, target, par
 end
 
 ---@param id string Identifier for this countdown.
----@param combatOrTarget integer|CharacterParam|number[]|nil If specified, only turn counters with this specific combat ID, target, or position will be cleared.
+---@param combatOrTarget? integer|CharacterParam|number[] If specified, only turn counters with this specific combat ID, target, or position will be cleared.
 function TurnCounter.ClearTurnCounter(id, combatOrTarget)
 	for uniqueId,data in pairs(_PV.TurnCounterData) do
 		if data.ID == id then
@@ -139,7 +139,7 @@ function TurnCounter.CountUp(id, turns, combatOrTarget, params)
 	TurnCounter.CreateTurnCounter(id, 0, turns, TurnCounter.Mode.Increment, combatOrTarget, params)
 end
 
----@param id string|string[]|nil
+---@param id? string|string[]
 ---@param callback fun(e:OnTurnCounterEventArgs|LeaderLibSubscribableEventArgs)
 function TurnCounter.Subscribe(id, callback)
 	local t = type(id)
@@ -165,7 +165,7 @@ end
 
 ---@deprecated
 ---@see LeaderLibTurnCounterSystem#Subscribe
----@param id string|string[]|nil
+---@param id? string|string[]
 ---@param callback TurnCounterCallback
 function TurnCounter.RegisterListener(id, callback)
 	local t = type(id)
@@ -189,7 +189,7 @@ end
 
 ---Check if a turn counter is active.
 ---@param id string|string[] The turn counter ID.
----@param target ObjectParam|number[]|nil Option target to check turn counters for.
+---@param target? ObjectParam|number[] Option target to check turn counters for.
 ---@return boolean
 function TurnCounter.IsActive(id, target)
 	if target then

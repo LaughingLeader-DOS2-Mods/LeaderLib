@@ -681,14 +681,14 @@ function ContextMenu:Init()
 end
 
 ---@param id string
----@param callback ContextMenuActionCallback|nil
----@param label string|nil
----@param visible string|nil
----@param useClickSound boolean|nil
----@param disabled boolean|nil
----@param isLegal boolean|nil
----@param handle any|nil
----@param children ContextMenuAction[]|nil
+---@param callback? ContextMenuActionCallback
+---@param label? string
+---@param visible? string
+---@param useClickSound? boolean
+---@param disabled? boolean
+---@param isLegal? boolean
+---@param handle? any
+---@param children? ContextMenuAction[]
 ---@return ContextMenuAction
 function ContextMenu:AddEntry(id, callback, label, visible, useClickSound, disabled, isLegal, handle, children)
 	if not self.Entries then
@@ -1002,7 +1002,7 @@ function Register.OpeningListener(callback)
 end
 
 ---@deprecated
----@param callback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray<FlashMovieClip>, buttons:table, targetObject:EclCharacter|EclItem|nil)
+---@param callback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray<FlashMovieClip>, buttons:table,? targetObject:EclCharacter|EclItem)
 function Register.BuiltinOpeningListener(callback)
 	---@param e LeaderLibRuntimeSubscribableEventArgs
 	Events.OnBuiltinContextMenuOpening:Subscribe(function (e)
@@ -1011,7 +1011,7 @@ function Register.BuiltinOpeningListener(callback)
 end
 
 ---@deprecated
----@param callback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string, handle:string|number|boolean|nil)
+---@param callback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string,? handle:string|number|boolean)
 function Register.EntryClickedListener(callback)
 	---@param e LeaderLibRuntimeSubscribableEventArgs
 	Events.OnContextMenuEntryClicked:Subscribe(function (e)

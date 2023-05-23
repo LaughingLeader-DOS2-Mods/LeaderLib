@@ -91,7 +91,7 @@ end
 
 ---@param statName string
 ---@param attribute string
----@param stat AnyStatProperty|nil
+---@param stat? AnyStatProperty
 function GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute, stat)
 	local stat = stat
 	if stat == nil then
@@ -616,8 +616,8 @@ end
 
 ---Returns the DisplayName (translated) or the DisplayNameRef.
 ---@param id string
----@param statType StatType|nil
----@param character CharacterParam|nil Optional character to use if this is an action skill (to determine sneak/sheathe text).
+---@param statType? StatType
+---@param character? CharacterParam Optional character to use if this is an action skill (to determine sneak/sheathe text).
 ---@return string
 function GameHelpers.Stats.GetDisplayName(id, statType, character)
 	if _type(id) == "userdata" then
@@ -672,8 +672,8 @@ end
 ---@overload fun(id:string):Module|nil
 ---Returns which mod a stat originates from.
 ---@param id string The stat ID
----@param asDisplayName boolean|nil Return the mod's display name.
----@param ignoreBaseMods boolean|nil Ignore base mods and return nil if matched - Shared, Shared_DOS, DivinityOrigins.
+---@param asDisplayName? boolean Return the mod's display name.
+---@param ignoreBaseMods? boolean Ignore base mods and return nil if matched - Shared, Shared_DOS, DivinityOrigins.
 ---@return string|nil
 function GameHelpers.Stats.GetModInfo(id, asDisplayName, ignoreBaseMods)
 	if GameHelpers.Stats.IsAction(id) then
@@ -712,7 +712,7 @@ end
 
 ---Get colors for a race preset in dictionary format.  
 ---@param raceName string
----@param colorType RacePresetColorType|nil Defaults to Skin if not specified.
+---@param colorType? RacePresetColorType Defaults to Skin if not specified.
 ---@return table<string, _GameHelpers_Stats_GetRacePresetColorEntry>
 function GameHelpers.Stats.GetRacePresetColors(raceName, colorType)
 	local colors = {}

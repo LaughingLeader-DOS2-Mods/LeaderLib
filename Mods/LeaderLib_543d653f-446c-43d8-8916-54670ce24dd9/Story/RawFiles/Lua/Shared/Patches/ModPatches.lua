@@ -93,7 +93,7 @@ local Patches = {
 				}
 
 				---@param item EclItem
-				---@param _TAGS table<string,boolean>|nil
+				---@param _TAGS? table<string,boolean>
 				function GetItemTypeText(item, _TAGS)
 					if not _TAGS then
 						_TAGS = GameHelpers.GetAllTags(item, true)
@@ -591,7 +591,7 @@ local Patches = {
 
 				---@param item EsvItem
 				---@param changes table
-				---@param dynamicIndex integer|nil
+				---@param dynamicIndex? integer
 				Mods.WeaponExpansion.EquipmentManager.SyncItemStatChanges = function (item, changes, dynamicIndex)
 					if changes.Boosts ~= nil and changes.Boosts["Damage Type"] ~= nil then
 						changes.Boosts["DamageType"] = changes.Boosts["Damage Type"]

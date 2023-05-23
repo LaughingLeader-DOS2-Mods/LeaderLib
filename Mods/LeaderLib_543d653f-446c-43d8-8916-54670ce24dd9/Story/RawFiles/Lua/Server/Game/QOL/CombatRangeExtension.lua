@@ -28,8 +28,8 @@ end
 CombatVacuum.ClearArenaFlag = ClearArenaFlag
 
 ---Used to update the InArena boolean for characters, which allows them to stay in combat when outside a 30m range.
----@param maxDist number|nil
----@param enabled boolean|nil
+---@param maxDist? number
+---@param enabled? boolean
 function CombatVacuum.UpdateArenaFlags(maxDist, enabled)
 	if not maxDist then
 		maxDist = 30

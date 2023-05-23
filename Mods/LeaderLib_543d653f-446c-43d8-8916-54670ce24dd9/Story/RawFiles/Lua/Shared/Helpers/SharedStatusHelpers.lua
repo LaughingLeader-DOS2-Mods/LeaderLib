@@ -216,7 +216,7 @@ function GameHelpers.Status.IsHarmfulPotion(stat)
 end
 
 ---@param statusId string
----@param checkDamageEvent boolean|nil Checks the DamageEvent attribute, and returns false if it's "None".
+---@param checkDamageEvent? boolean Checks the DamageEvent attribute, and returns false if it's "None".
 ---@return boolean
 function GameHelpers.Status.StatusDealsDamage(statusId, checkDamageEvent)
 	if Data.EngineStatus[statusId] then
@@ -282,7 +282,7 @@ end
 
 ---Checks if a potion has any negative attributes.
 ---@param stat string|StatEntryPotion|table
----@param ignoreItemPotions boolean|nil Ignore potions with IsFood or IsConsumable.
+---@param ignoreItemPotions? boolean Ignore potions with IsFood or IsConsumable.
 ---@return boolean
 function GameHelpers.Status.IsBeneficialPotion(stat, ignoreItemPotions)
 	if _type(stat) == "string" then
@@ -294,8 +294,8 @@ end
 
 ---A status is beneficial if it grants bonuses or is a beneficial type (FLOATING, ACTIVE_DEFENSE, HEAL etc).
 ---@param statusId string
----@param ignoreItemPotions boolean|nil Ignore potions with IsFood or IsConsumable.
----@param ignoreStatusTypes table<string,boolean>|nil Status types to ignore.
+---@param ignoreItemPotions? boolean Ignore potions with IsFood or IsConsumable.
+---@param ignoreStatusTypes? table<string,boolean> Status types to ignore.
 function GameHelpers.Status.IsBeneficial(statusId, ignoreItemPotions, ignoreStatusTypes)
 	local statusType = GameHelpers.Status.GetStatusType(statusId)
 	if ignoreStatusTypes and ignoreStatusTypes[statusType] then
@@ -370,7 +370,7 @@ end
 ---Returns true if the object has any of the given statuses.
 ---@param object ObjectParam
 ---@param statusId string|string[]
----@param checkAll boolean|nil If true and statusId is a table, only return true if every given status is active.
+---@param checkAll? boolean If true and statusId is a table, only return true if every given status is active.
 ---@return boolean
 function GameHelpers.Status.IsActive(object, statusId, checkAll)
 	local uuid = GameHelpers.GetUUID(object)
@@ -406,7 +406,7 @@ end
 ---Returns true if the object has any of the given statuses.
 ---@param object ObjectParam
 ---@param statusId string
----@param asTurns boolean|nil Return the duration in turns.
+---@param asTurns? boolean Return the duration in turns.
 ---@return number|integer durationOrTurns
 function GameHelpers.Status.GetDuration(object, statusId, asTurns)
 	local object = GameHelpers.TryGetObject(object)
@@ -459,7 +459,7 @@ end
 
 ---@param status string
 ---@param checkForLoseControl boolean
----@param stat StatEntryStatusData|nil
+---@param stat? StatEntryStatusData
 ---@return boolean isDisabling
 ---@return boolean isLoseControl
 function GameHelpers.Status.IsDisablingStatus(status, checkForLoseControl, stat)
@@ -483,7 +483,7 @@ end
 
 ---Returns true if the object is affected by a "LoseControl" status.
 ---@param character EsvCharacter|string
----@param onlyFromEnemy boolean|nil Only return true if the source of a status is from an enemy.
+---@param onlyFromEnemy? boolean Only return true if the source of a status is from an enemy.
 ---@return boolean
 function GameHelpers.Status.CharacterLostControl(character, onlyFromEnemy)
 	if _type(character) == "string" then

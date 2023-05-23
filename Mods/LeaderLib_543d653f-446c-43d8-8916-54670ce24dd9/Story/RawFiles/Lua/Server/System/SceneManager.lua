@@ -164,7 +164,7 @@ function SceneManager.RemoveScene(scene)
 end
 
 ---@param id string
----@param firstOnly boolean|nil
+---@param firstOnly? boolean
 ---@return SceneData|SceneData[]
 function SceneManager.GetSceneByID(id, firstOnly)
 	local scenes = {}
@@ -195,7 +195,7 @@ end
 
 
 ---@param id string
----@param state string|nil
+---@param state? string
 function SceneManager.SetSceneByID(id, state, ...)
 	local scene = SceneManager.GetSceneByID(id, true)
 	if scene then

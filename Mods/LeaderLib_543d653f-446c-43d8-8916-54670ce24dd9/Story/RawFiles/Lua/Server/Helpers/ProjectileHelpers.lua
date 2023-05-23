@@ -1,8 +1,8 @@
 ---@param source string
 ---@param target string|number[]
 ---@param skill string
----@param forceHit boolean|nil
----@param sourcePosition number[]|nil
+---@param forceHit? boolean
+---@param sourcePosition? number[]
 ---@param hitObject string
 ---@param canDeflect boolean
 function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosition, hitObject, canDeflect)
@@ -68,7 +68,7 @@ end
 ---@param y number
 ---@param z number
 ---@param skill string
----@param forceHit boolean|nil
+---@param forceHit? boolean
 ---@param canDeflect boolean
 function GameHelpers.ShootProjectileAtPosition(source, x, y, z, skill, forceHit, canDeflect)
     GameHelpers.ShootProjectile(source, {x,y,z}, skill, forceHit, nil, nil, canDeflect)

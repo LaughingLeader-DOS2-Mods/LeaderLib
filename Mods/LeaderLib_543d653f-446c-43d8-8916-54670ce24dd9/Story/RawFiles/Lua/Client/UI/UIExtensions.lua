@@ -180,7 +180,7 @@ end
 --local defaultUIFlags = Data.DefaultUIFlags | Data.UIFlags.OF_FullScreen | Data.UIFlags.OF_KeepInScreen
 local defaultUIFlags = Data.DefaultUIFlags
 
----@param skipCheck boolean|nil
+---@param skipCheck? boolean
 ---@return UIObject
 function UIExtensions.SetupInstance(skipCheck)
 	-- if _GS() == "Menu" then
@@ -290,10 +290,10 @@ end)
 ---@param label string
 ---@param tooltip string
 ---@param state number The initial state, 0 or 1 if filterBool is not true, otherwise 0-2.
----@param x number|nil
----@param y number|nil
----@param filterBool boolean|nil If true, the checkbox state progresses from 0-2 until it resets to 0 at > 2, otherwise it just toggles between 0 and 1.
----@param enabled boolean|nil
+---@param x? number
+---@param y? number
+---@param filterBool? boolean If true, the checkbox state progresses from 0-2 until it resets to 0 at > 2, otherwise it just toggles between 0 and 1.
+---@param enabled? boolean
 ---@return integer|nil id The ID of the checkbox created if successful.
 ---@return integer|nil index
 function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBool, enabled)
@@ -391,8 +391,8 @@ end
 ---@see LeaderLibSubscriptionEvents#TimerFinished
 ---@param id string The timer name/id.
 ---@param delay number The delay of the timer in milliseconds.
----@param callbackFunction FlashTimerCallback|nil The callback to invoke when the timer is complete, or when it ticks (if repeatTimer > 1).
----@param repeatTimer integer|nil The number of times to repeat the timer. If > 1 then the callback will be called each time the timer ticks.
+---@param callbackFunction? FlashTimerCallback The callback to invoke when the timer is complete, or when it ticks (if repeatTimer > 1).
+---@param repeatTimer? integer The number of times to repeat the timer. If > 1 then the callback will be called each time the timer ticks.
 function UIExtensions.StartTimer(id, delay, callbackFunction, repeatTimer)
 	if type(callbackFunction) == "function" then
 		if UIExtensions.Timers[id] == nil then

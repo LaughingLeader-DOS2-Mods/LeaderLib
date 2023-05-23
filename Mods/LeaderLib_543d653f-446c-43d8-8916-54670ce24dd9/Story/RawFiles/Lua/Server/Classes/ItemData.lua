@@ -20,7 +20,7 @@ ItemData.__index = function(tbl, k)
 end
 
 ---@param uuid string
----@param params table<string,any>|nil
+---@param params? table<string,any>
 ItemData.__call = function(_, uuid, params)
 	return ItemData:Create(uuid, params)
 end
@@ -36,7 +36,7 @@ ItemData.__tostring = function(self)
 end
 
 ---@param uuid string
----@param params table<string,any>|nil
+---@param params? table<string,any>
 ---@return ItemData
 function ItemData:Create(uuid, params)
     local this =
@@ -71,7 +71,7 @@ function ItemData:IsDestroyed()
 	return Osi.ItemIsDestroyed(self.UUID) == 1
 end
 
----@param asVector3 boolean|nil
+---@param asVector3? boolean
 ---@return number,number,number|Vector3
 function ItemData:GetPosition(asVector3)
 	local x,y,z = Osi.GetPosition(self.UUID)
@@ -83,13 +83,13 @@ function ItemData:GetPosition(asVector3)
 end
 
 ---@param status string|string[]
----@param checkAll boolean|nil
+---@param checkAll? boolean
 ---@return boolean
 function ItemData:HasActiveStatus(status, checkAll)
 	return GameHelpers.Status.IsActive(self.UUID, status, checkAll)
 end
 
----@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
+---@param force? boolean Forces the stage change, otherwise it's skipped if they're already on stage.
 function ItemData:SetOffStage(force)
 	if self:Exists() then
 		if force == true or Osi.ObjectIsOnStage(self.UUID) == 1 then
@@ -100,7 +100,7 @@ function ItemData:SetOffStage(force)
 	return false
 end
 
----@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
+---@param force? boolean Forces the stage change, otherwise it's skipped if they're already on stage.
 function ItemData:SetOnStage(force)
 	if self:Exists() then
 		if force == true or Osi.ObjectIsOnStage(self.UUID) == 0 then
@@ -143,7 +143,7 @@ end
 
 --- Removes a status or array of statuses, or 'all'.
 ---@param status string|string[]
----@param ignorePermanent boolean|nil Ignore permanent statuses when removing 'all'.
+---@param ignorePermanent? boolean Ignore permanent statuses when removing 'all'.
 function ItemData:RemoveStatus(status, ignorePermanent)
 	if type(status) == "table" then
 		for i,v in pairs(status) do
@@ -183,13 +183,13 @@ function ItemData:RemoveStatus(status, ignorePermanent)
 end
 
 ---Shortcut for calling RemoveStatus with 'all'.
----@param ignorePermanent boolean|nil Ignore permanent statuses when removing 'all'.
+---@param ignorePermanent? boolean Ignore permanent statuses when removing 'all'.
 function ItemData:RemoveAllStatuses(ignorePermanent)
 	self:RemoveStatus("all", ignorePermanent)
 end
 
 ---A better alternative to RemoveHarmfulStatuses since it actually checks for debuffs.
----@param ignorePermanent boolean|nil Ignore permanent statuses.
+---@param ignorePermanent? boolean Ignore permanent statuses.
 function ItemData:RemoveHarmfulStatuses(ignorePermanent)
 	local item = self:GetItem()
 	if item then
@@ -210,7 +210,7 @@ end
 
 ---Sets a item's scale and syncs it to clients.
 ---@param scale number
----@param persist boolean|nil Whether to persist the scale change through saves.
+---@param persist? boolean Whether to persist the scale change through saves.
 function ItemData:SetScale(scale, persist)
 	if self:Exists() then
 		GameHelpers.SetScale(self:GetItem(), scale, persist)
@@ -223,8 +223,8 @@ end
 ---This uses the behavior scripting teleport function so it doesn't force-teleport connected summons like Osiris' TeleportToPosition does.
 ---Supports a string/GameObject/number array as the target, or separate x,y,z values.
 ---@param targetOrX ObjectParam|vec3|number
----@param y number|nil
----@param z number|nil
+---@param y? number
+---@param z? number
 function ItemData:TeleportTo(targetOrX,y,z)
 	if self:Exists() then
 		local t = type(targetOrX)

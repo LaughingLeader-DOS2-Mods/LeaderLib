@@ -237,10 +237,10 @@ GameHelpers.GetSkillHitType = GetSkillHitType
 ---@param skill string
 ---@param attacker string|StatCharacter
 ---@param target string|StatCharacter
----@param handle integer|nil
----@param noRandomization boolean|nil
----@param forceCrit boolean|nil
----@param alwaysHit boolean|nil
+---@param handle? integer
+---@param noRandomization? boolean
+---@param forceCrit? boolean
+---@param alwaysHit? boolean
 function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle, noRandomization, forceCrit, alwaysHit)
     if type(attacker) == "string" then
         attacker = GameHelpers.GetCharacter(attacker).Stats
@@ -468,7 +468,7 @@ local _defaultSkillParams = {
 ---@param source CharacterParam
 ---@param target ObjectParam
 ---@param skill string
----@param params GameHelpers.Damage.ApplySkillDamageParams|nil
+---@param params? GameHelpers.Damage.ApplySkillDamageParams
 function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
     source = GameHelpers.GetCharacter(source)
     fassert(source ~= nil, "Failed to get object for source (%s)", source)
@@ -644,10 +644,10 @@ end
 
 ---@param source EsvCharacter
 ---@param target EsvCharacter|EclItem
----@param damageEnum DamageEnum|nil
----@param damageType DamageType|nil
----@param damageMultiplier number|nil
----@param damageRange number|nil
+---@param damageEnum? DamageEnum
+---@param damageType? DamageType
+---@param damageMultiplier? number
+---@param damageRange? number
 ---@return DamageList
 ---@return DeathType
 local function GetBasicDamage(source, target, damageEnum, damageType, damageMultiplier, damageRange)
@@ -721,7 +721,7 @@ local _defaultParams = {
 ---Create a HIT status and apply the corresponding skill parameters.
 ---@param source ObjectParam
 ---@param target ObjectParam
----@param params GameHelpers.Damage.ApplyDamageParams|nil
+---@param params? GameHelpers.Damage.ApplyDamageParams
 function GameHelpers.Damage.ApplyDamage(source, target, params)
     source = GameHelpers.TryGetObject(source)
     fassert(source ~= nil, "Failed to get object for source (%s)", source)
@@ -845,12 +845,12 @@ end
 ---@param source ObjectParam
 ---@param target ObjectParam
 ---@param skill string
----@param hitParams table<string,any>|nil
----@param mainWeapon CDivinityStatsEquipmentAttributesWeapon|nil
----@param offhandWeapon CDivinityStatsEquipmentAttributesWeapon|nil
----@param applySkillProperties boolean|nil
----@param getDamageFunction function|nil
----@param skillDataParamModifiers StatEntrySkillData|nil
+---@param hitParams? table<string,any>
+---@param mainWeapon? CDivinityStatsEquipmentAttributesWeapon
+---@param offhandWeapon? CDivinityStatsEquipmentAttributesWeapon
+---@param applySkillProperties? boolean
+---@param getDamageFunction? function
+---@param skillDataParamModifiers? StatEntrySkillData
 function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitParams, mainWeapon, offhandWeapon, applySkillProperties, getDamageFunction, skillDataParamModifiers)
     source = GameHelpers.TryGetObject(source)
     fassert(source ~= nil, "Failed to get object for source (%s)", source)

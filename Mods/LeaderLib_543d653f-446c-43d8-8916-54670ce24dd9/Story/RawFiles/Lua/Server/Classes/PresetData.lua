@@ -14,9 +14,9 @@ PresetData.__index = PresetData
 ---@param id string
 ---@param equipment string
 ---@param skillset string
----@param undeadEquipment string|nil Optional undead equipment to use.
----@param isPreview boolean|nil Whether this preset should use preview equipment. If previewEquipment is nil or blank, it will try to find the equipment string from the regular equipment + race suffix.
----@param previewEquipment string|nil Optional preview equipment 
+---@param undeadEquipment? string Optional undead equipment to use.
+---@param isPreview? boolean Whether this preset should use preview equipment. If previewEquipment is nil or blank, it will try to find the equipment string from the regular equipment + race suffix.
+---@param previewEquipment? string Optional preview equipment 
 ---@return PresetData
 function PresetData:Create(id, equipment, skillset, undeadEquipment, isPreview, previewEquipment)
 	local this =
@@ -153,8 +153,8 @@ end
 ---@param char string
 ---@param targetRarity string
 ---@param skipSlots string[] Skip generating equipment for these slots.
----@param checkMemorizationRequirements boolean|nil
----@param skipIfExists boolean|nil If an item already exists on the target character, skip creating another one.
+---@param checkMemorizationRequirements? boolean
+---@param skipIfExists? boolean If an item already exists on the target character, skip creating another one.
 function PresetData:ApplyToCharacter(char, targetRarity, skipSlots, checkMemorizationRequirements, skipIfExists)
 	--print("Applying",self.ClassType,"to",char, Ext.IsServer(), _OSIRIS())
 	if Ext.IsServer() then

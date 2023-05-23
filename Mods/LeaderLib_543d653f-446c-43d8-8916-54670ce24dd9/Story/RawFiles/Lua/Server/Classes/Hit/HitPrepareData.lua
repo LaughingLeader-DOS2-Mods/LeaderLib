@@ -233,8 +233,8 @@ end
 
 ---@param handle integer The hit handle.
 ---@param damage integer Total damage passed in by the event listener.
----@param target string|nil
----@param source string|nil
+---@param target? string
+---@param source? string
 ---@param skipAttributeLoading boolean If true, all the various hit attributes won't be retrieved, and will rely on the __index method to retrieve them from the handle.
 ---@return HitPrepareData
 function HitPrepareData:Create(handle, damage, target, source, skipAttributeLoading)
@@ -278,7 +278,7 @@ end
 ---Adds damage.
 ---@param damageType string
 ---@param amount number
----@param skipRecalculate boolean|nil If true, self:Recalculate is skipped.
+---@param skipRecalculate? boolean If true, self:Recalculate is skipped.
 function HitPrepareData:AddDamage(damageType, amount, skipRecalculate)
 	Osi.NRD_HitAddDamage(self.Handle, tostring(damageType), amount)
 	if skipRecalculate ~= true then
@@ -288,7 +288,7 @@ end
 
 ---Multiplies all damage by a value.
 ---@param multiplier number Value to multiply every damage type by.
----@param skipRecalculate boolean|nil If true, self:Recalculate is skipped.
+---@param skipRecalculate? boolean If true, self:Recalculate is skipped.
 function HitPrepareData:MultiplyDamage(multiplier, skipRecalculate)
 	for damageType,amount in pairs(self.DamageList) do
 		local dt = tostring(damageType)
@@ -351,8 +351,8 @@ function HitPrepareData:IsBuggyChaosDamage()
 end
 
 ---Returns true if the hit is probably from a weapon (HitType is Melee, Ranged, or WeaponDamage).
----@param ignoreSkills boolean|nil Require Melee/Ranged hit reasons only (basic attacks).
----@param ignoreUnarmed boolean|nil If true and ignoreSkills is true, only return true if HitWithWeapon is set.
+---@param ignoreSkills? boolean Require Melee/Ranged hit reasons only (basic attacks).
+---@param ignoreUnarmed? boolean If true and ignoreSkills is true, only return true if HitWithWeapon is set.
 function HitPrepareData:IsFromWeapon(ignoreSkills, ignoreUnarmed)
 	local hitReason = self.HitType
 	if ignoreSkills then

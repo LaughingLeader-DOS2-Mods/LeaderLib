@@ -112,8 +112,8 @@ if _ISCLIENT then
 
 	---@param id string
 	---@param tooltip string
-	---@param enabled boolean|nil If true/false, the filter is enabled or disabled. Enabled by default if not set.
-	---@param frame integer|nil
+	---@param enabled? boolean If true/false, the filter is enabled or disabled. Enabled by default if not set.
+	---@param frame? integer
 	function CombatLog.AddFilter(id, tooltip, enabled, frame)
 		if Vars.ControllerEnabled then
 			return
@@ -320,7 +320,7 @@ else
 
 	---Adds text to the combat filter for all players.
 	---@param text string
-	---@param onlyClient CharacterParam|UserId|nil
+	---@param onlyClient? CharacterParam|UserId
 	function CombatLog.AddCombatText(text, onlyClient)
 		if not onlyClient then
 			GameHelpers.Net.Broadcast("LeaderLib_CombatLog_AddTextToFilter", {ID=CombatLog.Filters.Combat, Text=text})
@@ -333,8 +333,8 @@ else
 	---@param targetDisplayName string
 	---@param damageType string
 	---@param damageAmount integer
-	---@param isFromSurface boolean|nil If true, the text is "x was hit for y by surface" instead.
-	---@param filterId string|integer|nil Optional filter. Defaults to the Combat filter.
+	---@param isFromSurface? boolean If true, the text is "x was hit for y by surface" instead.
+	---@param filterId? string|integer Optional filter. Defaults to the Combat filter.
 	function CombatLog.AddDamageText(targetDisplayName, damageType, damageAmount, isFromSurface, filterId)
 		if filterId == nil then
 			filterId = CombatLog.Filters.Combat

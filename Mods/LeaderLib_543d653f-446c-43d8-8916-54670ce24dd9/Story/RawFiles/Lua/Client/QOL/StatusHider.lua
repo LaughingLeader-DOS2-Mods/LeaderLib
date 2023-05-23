@@ -102,7 +102,7 @@ local function NoResult()
 
 end
 
----@param ignoreSummons boolean|nil
+---@param ignoreSummons? boolean
 ---@return FlashObject
 function PlayerInfo:GetCharacterMovieClips(ignoreSummons)
 	local this = self:Get()
@@ -135,7 +135,7 @@ function PlayerInfo:GetCharacterMovieClips(ignoreSummons)
 	end
 end
 
----@param ownerHandleMatch number|nil
+---@param ownerHandleMatch? number
 ---@return FlashObject
 function PlayerInfo:GetSummonMovieClips(ownerHandleMatch)
 	local this = self:Get()
@@ -299,11 +299,11 @@ end
 
 local healthBarStatusToOwner = {}
 
----@param ui UIObject|nil
----@param this FlashMainTimeline|nil
----@param whitelist table|nil
----@param blacklist table|nil
----@param allVisible boolean|nil
+---@param ui? UIObject
+---@param this? FlashMainTimeline
+---@param whitelist? table
+---@param blacklist? table
+---@param allVisible? boolean
 local function UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,allVisible)
 	if not lastHealthbarOwnerDouble then
 		return

@@ -6,9 +6,9 @@ end
 ---@alias GameHelpersCombatGetCharactersFilterCallback fun(character:EsvCharacter, combatId:integer, teamId:integer, initiative:integer, stillInCombat:boolean):boolean
 
 ---@param id integer
----@param filter GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback|nil Used to filter returned charaters. Allies/Enemies/Neutral are the alignment relation towards the player party. If a function is supplied instead, a character is only included if the function returns true.
+---@param filter? GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback Used to filter returned charaters. Allies/Enemies/Neutral are the alignment relation towards the player party. If a function is supplied instead, a character is only included if the function returns true.
 ---@param filterReference EsvCharacter|EsvItem For when using preset filters like "Ally", is is a reference character for relational checks.
----@param asTable boolean|nil Return results as a table, instead of an iterator function.
+---@param asTable? boolean Return results as a table, instead of an iterator function.
 ---@return fun():EsvCharacter|nil
 local function GetOsirisCombatCharacters(id, filter, filterReference, asTable)
 	local combat = Osi.DB_CombatCharacters:Get(nil, id)
@@ -84,9 +84,9 @@ end
 ---🔨**Server-Only**🔨  
 ---@overload fun(id:integer|nil, filter:GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback|nil, filterReference:EsvCharacter|EsvItem):fun():EsvCharacter
 ---@overload fun(id:integer|nil):fun():EsvCharacter
----@param id integer|nil The combat ID, or nothing to get all characters in combat.
----@param filter GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback|nil Used to filter returned charaters. Allies/Enemies/Neutral are the alignment relation towards the player party. If a function is supplied instead, a character is only included if the function returns true.
----@param filterReference EsvCharacter|EsvItem|nil For when using preset filters like "Ally", is is a reference character for relational checks.
+---@param id? integer The combat ID, or nothing to get all characters in combat.
+---@param filter? GameHelpersCombatGetCharactersFilter|GameHelpersCombatGetCharactersFilterCallback Used to filter returned charaters. Allies/Enemies/Neutral are the alignment relation towards the player party. If a function is supplied instead, a character is only included if the function returns true.
+---@param filterReference? EsvCharacter|EsvItem For when using preset filters like "Ally", is is a reference character for relational checks.
 ---@param asTable boolean Return results as a table, instead of an iterator function.
 ---@return EsvCharacter[]
 function GameHelpers.Combat.GetCharacters(id, filter, filterReference, asTable)

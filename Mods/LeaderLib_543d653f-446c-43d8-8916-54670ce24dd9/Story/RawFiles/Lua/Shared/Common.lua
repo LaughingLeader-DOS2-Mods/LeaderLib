@@ -178,8 +178,8 @@ end
 
 ---PrintDebug a value or table (recursive).
 ---@param o table
----@param indexMap table|nil
----@param innerOnly boolean|nil
+---@param indexMap? table
+---@param innerOnly? boolean
 ---@return string
 function Common.Dump(o, indexMap, innerOnly, recursionLevel)
 	if recursionLevel == nil then recursionLevel = 0 end
@@ -207,7 +207,7 @@ end
 
 ---@param tbl table
 ---@param key any
----@param caseInsensitive boolean|nil
+---@param caseInsensitive? boolean
 ---@return boolean
 function Common.TableHasKey(tbl, key, caseInsensitive)
 	if tbl == nil then
@@ -231,7 +231,7 @@ end
 
 ---@param tbl table
 ---@param value any
----@param caseInsensitive boolean|nil
+---@param caseInsensitive? boolean
 ---@return boolean
 function Common.TableHasEntry(tbl, value, caseInsensitive)
 	if tbl == nil then
@@ -411,7 +411,7 @@ end
 local _jsonParse = Ext.Json.Parse
 
 ---@param str string
----@param safeguardErrors boolean|nil If true, JsonParse is wrapped in an xpcall.
+---@param safeguardErrors? boolean If true, JsonParse is wrapped in an xpcall.
 ---@return table
 function Common.JsonParse(str, safeguardErrors)
 	local tbl = {}
@@ -569,7 +569,7 @@ Common.StringJoin = StringHelpers.Join
 Common.StringSplit = StringHelpers.Split
 
 ---Returns the value is not nil, otherwise returns the fallback value.
----@param val any|nil
+---@param val? any
 ---@param fallback any
 function Common.GetValueOrDefault(val, fallback)
 	if val == nil then
@@ -579,7 +579,7 @@ function Common.GetValueOrDefault(val, fallback)
 end
 
 ---Check if a variable matches any of the given types.
----@param value any|nil
+---@param value? any
 ---@param types string[]
 function Common.TypeMatchesAny(value, types)
 	local t = type(value)

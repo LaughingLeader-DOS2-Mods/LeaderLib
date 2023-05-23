@@ -71,7 +71,7 @@ local _INVOKERESULT = {
 }
 
 ---@param id string
----@param opts SubscribableEventCreateOptions|nil
+---@param opts? SubscribableEventCreateOptions
 ---@return LeaderLibSubscribableEvent
 function SubscribableEvent:Create(id, opts)
 	local _privateKeys = {
@@ -172,7 +172,7 @@ local function DoSubscribe(self, sub)
 end
 
 ---@param callback function
----@param opts EventSubscriptionOptions|nil
+---@param opts? EventSubscriptionOptions
 ---@return integer
 function SubscribableEvent:Subscribe(callback, opts)
 	assert(_type(callback) == "function", "callback parameter must be a function")
@@ -264,7 +264,7 @@ local function RemoveNode(self, node)
 end
 
 ---@param indexOrCallback integer|function
----@param matchArgs table|nil
+---@param matchArgs? table
 function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
 	if indexOrCallback == nil then
 		return false
@@ -426,9 +426,9 @@ local function InvokeCallbacks(self, args, resultsTable, ...)
 end
 
 ---@param self BaseSubscribableEvent|SubscribableEventNode
----@param args table|nil
----@param skipAutoInvoke boolean|nil
----@param getArgForMatch LeaderLibSubscribableEventArgsGetArgForMatchCallback|nil
+---@param args? table
+---@param skipAutoInvoke? boolean
+---@param getArgForMatch? LeaderLibSubscribableEventArgsGetArgForMatchCallback
 ---@vararg any
 ---@return SubscribableEventInvokeResult result
 local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
@@ -493,9 +493,9 @@ local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 	return {ResultCode = invokeResult, Results = results, Args = eventObject, Handled = handled}
 end
 
----@param args table|nil
----@param skipAutoInvoke boolean|nil
----@param getArgForMatch LeaderLibSubscribableEventArgsGetArgForMatchCallback|nil
+---@param args? table
+---@param skipAutoInvoke? boolean
+---@param getArgForMatch? LeaderLibSubscribableEventArgsGetArgForMatchCallback
 ---@return SubscribableEventInvokeResult result
 function SubscribableEvent:Invoke(args, skipAutoInvoke, getArgForMatch)
 	self._EnterCount = self._EnterCount + 1

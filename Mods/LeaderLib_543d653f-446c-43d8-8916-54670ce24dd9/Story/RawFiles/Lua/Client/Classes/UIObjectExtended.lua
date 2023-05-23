@@ -135,8 +135,8 @@ function UIObjectExtended:Create(params)
 	return this
 end
 
----@param skipCreation boolean|nil
----@param setVisibility boolean|nil
+---@param skipCreation? boolean
+---@param setVisibility? boolean
 function UIObjectExtended:GetInstance(skipCreation, setVisibility)
 	local instance = Ext.UI.GetByName(self.ID) or Ext.UI.GetByPath(self.SwfPath)
 	if not instance and skipCreation ~= true then
@@ -218,7 +218,7 @@ function UIObjectExtended:SetVisible(b)
 	end
 end
 
----@param setVisibility boolean|nil
+---@param setVisibility? boolean
 ---@private
 function UIObjectExtended:Initialize(setVisibility)
 	local instance = Ext.UI.GetByName(self.ID) or Ext.UI.GetByPath(self.SwfPath)
@@ -328,7 +328,7 @@ end
 ---@param self UIObjectExtended
 ---@param event string|string[] The method name.
 ---@param callback UIObjectExtendedSubscriptionCallback
----@param eventType UICallbackEventType|nil
+---@param eventType? UICallbackEventType
 ---@return UIObjectExtendedSubscription
 function _SUB.Invoke(self, event, callback, eventType)
 	if type(event) == "table" then
@@ -350,7 +350,7 @@ end
 ---@param self UIObjectExtended
 ---@param event string|string[] The ExternalInterface.call name.
 ---@param callback UIObjectExtendedSubscriptionCallback
----@param eventType UICallbackEventType|nil Defaults to "After"
+---@param eventType? UICallbackEventType Defaults to "After"
 ---@return UIObjectExtendedSubscription
 function _SUB.Call(self, event, callback, eventType)
 	if type(event) == "table" then

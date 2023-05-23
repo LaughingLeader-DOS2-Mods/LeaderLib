@@ -14,7 +14,7 @@ end
 --- @param arity number Number of columns for DBs or the number of parameters (both IN and OUT) for functions
 --- @param event OsirisEventType Event type ('before' - triggered before Osiris call; 'after' - after Osiris call; 'beforeDelete'/'afterDelete' - before/after delete from DB)
 --- @param handler function Lua function to run when the event fires
---- @param anyLevelType boolean|nil If true, the function will only be called for non-game levels as well (lobby, character creation).
+--- @param anyLevelType? boolean If true, the function will only be called for non-game levels as well (lobby, character creation).
 function RegisterProtectedOsirisListener(name, arity, event, handler, anyLevelType)
 	--Auto-arity mode
 	if (arity == "before" or arity == "after") and type(event) == "function" and handler == nil then
@@ -45,7 +45,7 @@ end
 --- Wraps an extender listener in a check to make sure the game is running before calling the supplied function.
 --- @param event string
 --- @param listener function Lua function to run when the event fires
---- @param anyLevelType boolean|nil If true, the function will only be called for non-game levels as well (lobby, character creation).
+--- @param anyLevelType? boolean If true, the function will only be called for non-game levels as well (lobby, character creation).
 function RegisterProtectedExtenderListener(event, listener, anyLevelType)
 	---@diagnostic disable-next-line
 	Ext.RegisterListener(event, function(...)

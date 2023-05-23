@@ -103,7 +103,7 @@ function GameHelpers.Item.GetRootTemplatesForStat(statName)
 end
 
 ---@param template string The item root template.
----@param statType string|nil The type of stat, ex. Weapon, Armor, Object.
+---@param statType? string The type of stat, ex. Weapon, Armor, Object.
 ---@return string[]
 function GameHelpers.Item.GetStatsForRootTemplate(template, statType)
     local matches = {}
@@ -199,7 +199,7 @@ end
 ---Creates an item by stat, provided it has an ItemGroup set (for equipment).  
 ---🔨**Server-Only**🔨  
 ---@param statName string
----@param creationProperties EocItemDefinition|nil
+---@param creationProperties? EocItemDefinition
 ---@return string|nil itemGUID
 ---@return EsvItem|nil generatedItem
 function GameHelpers.Item.CreateItemByStat(statName, creationProperties, ...)
@@ -339,7 +339,7 @@ end
 
 ---🔨**Server-Only**🔨  
 ---@param template string
----@param setProperties EocItemDefinition|nil
+---@param setProperties? EocItemDefinition
 ---@return EsvItem
 function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     if _ISCLIENT then
@@ -398,8 +398,8 @@ end
 
 ---🔨**Server-Only**🔨  
 ---@param item ItemParam The target item to clone.
----@param setProperties EocItemDefinition|nil
----@param opts GameHelpers_Item_CloneOptions|nil Optional table of additional options.
+---@param setProperties? EocItemDefinition
+---@param opts? GameHelpers_Item_CloneOptions Optional table of additional options.
 ---@return EsvItem
 function GameHelpers.Item.Clone(item, setProperties, opts)
     if _ISCLIENT then
@@ -701,8 +701,8 @@ if not _ISCLIENT then
     ---🔨**Server-Only**🔨  
     ---@param character CharacterParam
     ---@param slot ItemSlot
-    ---@param delete boolean|nil Whether to destroy the item or simply unequip it.
-    ---@param bypassLock boolean|nil Forcefully unequiped items that are locked via ItemLockUnEquip.
+    ---@param delete? boolean Whether to destroy the item or simply unequip it.
+    ---@param bypassLock? boolean Forcefully unequiped items that are locked via ItemLockUnEquip.
     ---@return boolean
     function GameHelpers.Item.UnequipItemInSlot(character, slot, delete, bypassLock)
         character = GameHelpers.GetCharacter(character)
@@ -803,7 +803,7 @@ end
 ---Builds a list of items with a specific tag.
 ---@param character CharacterParam
 ---@param tag string|string[]
----@param asArray boolean|nil Optional param to make the table returned just be an array of UUIDs, instead of <slot,UUID>
+---@param asArray? boolean Optional param to make the table returned just be an array of UUIDs, instead of <slot,UUID>
 ---@return EsvItem[]|EclItem[] items
 function GameHelpers.Item.FindTaggedEquipment(character, tag, asArray)
     local items = {}
@@ -956,7 +956,7 @@ function GameHelpers.Item.HasConsumableSkillAction(item)
 end
 
 ---@param item ItemParam
----@param returnNilUUID boolean|nil Return a null GUID instead of nil, if no owner is found.
+---@param returnNilUUID? boolean Return a null GUID instead of nil, if no owner is found.
 ---@return EsvCharacter|EsvItem|EclCharacter|EclItem|nil
 function GameHelpers.Item.GetOwner(item, returnNilUUID)
 	local item = GameHelpers.GetItem(item)
@@ -1025,7 +1025,7 @@ function GameHelpers.Item.IsWeaponType(item, weaponType)
 end
 
 ---@param item EsvItem|EclItem
----@param asName boolean|nil Return the slot as a name, such as "Weapon".
+---@param asName? boolean Return the slot as a name, such as "Weapon".
 ---@return integer|ItemSlot slotIndexOrName
 function GameHelpers.Item.GetSlot(item, asName)
     local slot = -1

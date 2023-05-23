@@ -66,8 +66,8 @@ local _REGISTER = {}
 ---@param self LeaderLibUIWrapper
 ---@param event string|string[] The method name.
 ---@param callback UIWrapperCallbackHandler
----@param eventType UICallbackEventType|nil
----@param uiContext UIWrapperEventContextType|nil
+---@param eventType? UICallbackEventType
+---@param uiContext? UIWrapperEventContextType
 ---@return LeaderLibUIWrapperRegistration
 function _REGISTER.Invoke(self, event, callback, eventType, uiContext)
 	if type(event) == "table" then
@@ -90,8 +90,8 @@ end
 ---@param self LeaderLibUIWrapper
 ---@param event string|string[] The ExternalInterface.call name.
 ---@param callback UIWrapperCallbackHandler
----@param eventType UICallbackEventType|nil Defaults to "After"
----@param uiContext UIWrapperEventContextType|nil
+---@param eventType? UICallbackEventType Defaults to "After"
+---@param uiContext? UIWrapperEventContextType
 ---@return LeaderLibUIWrapperRegistration
 function _REGISTER.Call(self, event, callback, eventType, uiContext)
 	if type(event) == "table" then
@@ -207,7 +207,7 @@ local function _AppendWrapper(baseTable, id, this)
 end
 
 ---@param id integer
----@param params LeaderLibUIWrapper|nil
+---@param params? LeaderLibUIWrapper
 ---@return LeaderLibUIWrapper
 function UIWrapper:CreateFromType(id, params)
 	local this = _NewWrapper(params)
@@ -226,7 +226,7 @@ function UIWrapper:CreateFromType(id, params)
 end
 
 ---@param path string
----@param params LeaderLibUIWrapper|nil
+---@param params? LeaderLibUIWrapper
 ---@return LeaderLibUIWrapper
 function UIWrapper:CreateFromPath(path, params)
 	local this = _NewWrapper(params)
@@ -293,8 +293,8 @@ end
 ---@deprecated
 ---@param event string The method name.
 ---@param callback UIWrapperCallbackHandler
----@param eventType UICallbackEventType|nil
----@param uiContext UIWrapperEventContextType|nil
+---@param eventType? UICallbackEventType
+---@param uiContext? UIWrapperEventContextType
 function UIWrapper:RegisterInvokeListener(event, callback, eventType, uiContext)
 	_REGISTER.Invoke(self, event, function (self, e, ui, event, ...)
 		callback(self, ui, event, ...)
@@ -304,8 +304,8 @@ end
 ---@deprecated
 ---@param event string The ExternalInterface.call name.
 ---@param callback UIWrapperCallbackHandler
----@param eventType UICallbackEventType|nil Defaults to "After"
----@param uiContext UIWrapperEventContextType|nil
+---@param eventType? UICallbackEventType Defaults to "After"
+---@param uiContext? UIWrapperEventContextType
 function UIWrapper:RegisterCallListener(event, callback, eventType, uiContext)
 	_REGISTER.Call(self, event, function (self, e, ui, event, ...)
 		callback(self, ui, event, ...)

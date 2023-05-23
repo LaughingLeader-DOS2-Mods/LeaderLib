@@ -25,7 +25,7 @@ if not _ISCLIENT then
 
 	---@param character Guid
 	---@param transformTarget Guid
-	---@param equipmentSet string|nil
+	---@param equipmentSet? string
 	local function SetupCharacter(character, transformTarget, equipmentSet)
 		if equipmentSet then
 			Osi.CharacterTransformAppearanceToWithEquipmentSet(character, transformTarget, equipmentSet, 0)
@@ -45,8 +45,8 @@ if not _ISCLIENT then
 
 	Utils.SetupCharacter = SetupCharacter
 
-	---@param pos number[]|nil
-	---@param equipmentSet string|nil
+	---@param pos? number[]
+	---@param equipmentSet? string
 	---@return EsvCharacter
 	function Utils.CreateCharacterFromHost(pos, equipmentSet)
 		local host = Ext.Entity.GetCharacter(Osi.CharacterGetHostCharacter())
@@ -78,7 +78,7 @@ if not _ISCLIENT then
 	}
 
 	---Create a test character based on the host, and a target dummy.
-	---@param params LeaderLibTestingSystemUtilities_CreateTemporaryCharacterAndDummyParams|nil
+	---@param params? LeaderLibTestingSystemUtilities_CreateTemporaryCharacterAndDummyParams
 	---@return Guid|Guid[] characters # If the TotalCharacters are 1, this will be the first GUID, instead of a table.
 	---@return Guid|Guid[] dummies # If the TotalDummies are 1, this will be the first GUID, instead of a table.
 	---@return function cleanup

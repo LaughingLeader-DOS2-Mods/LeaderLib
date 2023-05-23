@@ -203,7 +203,7 @@ end
 ---@param timerName string
 ---@param delay integer
 ---@param callback fun(e:TimerFinishedEventArgs)
----@param stopPrevious boolean|nil Stop any previous timers with the same name.
+---@param stopPrevious? boolean Stop any previous timers with the same name.
 ---@return integer index Returns the subscription callback index.
 function Timer.StartOneshot(timerName, delay, callback, stopPrevious)
 	delay = delay or 0
@@ -232,7 +232,7 @@ end
 
 ---Cancels a timer, with an optional UUID for object timers.
 ---@param timerName string
----@param object ObjectParam|nil
+---@param object? ObjectParam
 function Timer.Cancel(timerName, object)
 	_INTERNAL.ClearOneshotSubscriptions(timerName)
 	if not _ISCLIENT then
@@ -254,8 +254,8 @@ end
 ---Subscribe a callback for a timer name, or an array of timer names.
 ---@param name string|string[]
 ---@param callback fun(e:TimerFinishedEventArgs)
----@param once boolean|nil If true, the callback is only invoked once, and then the listener is removed.
----@param priority integer|nil Priority value for the listener. Higher priorities run first.
+---@param once? boolean If true, the callback is only invoked once, and then the listener is removed.
+---@param priority? integer Priority value for the listener. Higher priorities run first.
 ---@return integer|integer[] subscriptionIndex
 function Timer.Subscribe(name, callback, once, priority)
 	local t = type(name)

@@ -191,7 +191,7 @@ Ext.IO.AddPathOverride("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/St
 ---@param stat StatEntryCharacter
 ---@param attribute string
 ---@param nextVal number|integer|string|table
----@param force boolean|nil
+---@param force? boolean
 local function AdjustStat(stat, attribute, nextVal, force)
 	if stat[attribute] and (stat[attribute] ~= nextVal or force) then
 		stat[attribute] = nextVal
@@ -303,8 +303,8 @@ local function _ResPenTest(shouldSync)
 	end
 end
 
----@param gameSettings LeaderLibGameSettings|nil
----@param statsLoadedState boolean|nil
+---@param gameSettings? LeaderLibGameSettings
+---@param statsLoadedState? boolean
 local function _OverrideStats(gameSettings, statsLoadedState)
 	local shouldSync = not _ISCLIENT and not statsLoadedState
 	--fprint(LOGLEVEL.TRACE, "[LeaderLib:SyncStatOverrides:%s] Syncing stat overrides from GameSettings.", isClient and "CLIENT" or "SERVER")
@@ -481,7 +481,7 @@ Ext.Events.StatsLoaded:Subscribe(function (e)
 	_OverrideStats(nil, true)
 end, {Priority=0})
 
----@param gameSettings LeaderLibGameSettings|nil
+---@param gameSettings? LeaderLibGameSettings
 function SyncStatOverrides(gameSettings)
 	_OverrideStats(gameSettings, false)
 	--Run here so users connecting to a host will get the host's stat changes

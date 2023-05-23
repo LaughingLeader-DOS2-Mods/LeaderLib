@@ -581,9 +581,9 @@ end
 ---Registers a function to call when a specific skill or array of skills has a skill event. This function fires for all skill events unless otherwise specified.
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateAllEventArgs)
----@param onlySkillState SKILL_STATE|SKILL_STATE[]|nil If set, the callback will only fire for specified skill states.
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param onlySkillState? SKILL_STATE|SKILL_STATE[] If set, the callback will only fire for specified skill states.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[]|nil index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.All(skill, callback, onlySkillState, priority, once)
 	local t = type(skill)
@@ -631,8 +631,8 @@ end
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.PREPARE event.
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStatePrepareEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.Prepare(skill, callback, priority, once)
 	return SkillManager.Register.All(skill, callback, SKILL_STATE.PREPARE, priority, once)
@@ -641,8 +641,8 @@ end
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.CANCEL event (when the skill preparation is cancelled).
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStatePrepareEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.Cancel(skill, callback, priority, once)
 	return SkillManager.Register.All(skill, callback, SKILL_STATE.CANCEL, priority, once)
@@ -651,8 +651,8 @@ end
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.USED event.
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateSkillEventEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.Used(skill, callback, priority, once)
 	return SkillManager.Register.All(skill, callback, SKILL_STATE.USED, priority, once)
@@ -661,8 +661,8 @@ end
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.CAST event.
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateSkillEventEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.Cast(skill, callback, priority, once)
 	return SkillManager.Register.All(skill, callback, SKILL_STATE.CAST, priority, once)
@@ -671,8 +671,8 @@ end
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.HIT event.
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateHitEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.Hit(skill, callback, priority, once)
 	return SkillManager.Register.All(skill, callback, SKILL_STATE.HIT, priority, once)
@@ -681,8 +681,8 @@ end
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.BEFORESHOOT event.
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateBeforeProjectileShootEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.BeforeProjectileShoot(skill, callback, priority, once)
 	return SkillManager.Register.All(skill, callback, SKILL_STATE.BEFORESHOOT, priority, once)
@@ -691,8 +691,8 @@ end
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.SHOOTPROJECTILE event.
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateProjectileShootEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.ProjectileShoot(skill, callback, priority, once)
 	return SkillManager.Register.All(skill, callback, SKILL_STATE.SHOOTPROJECTILE, priority, once)
@@ -701,8 +701,8 @@ end
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.PROJECTILEHIT event.
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateProjectileHitEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.ProjectileHit(skill, callback, priority, once)
 	return SkillManager.Register.All(skill, callback, SKILL_STATE.PROJECTILEHIT, priority, once)
@@ -711,8 +711,8 @@ end
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.LEARNED event.
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateLearnedEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.Learned(skill, callback, priority, once)
 	return SkillManager.Register.All(skill, callback, SKILL_STATE.LEARNED, priority, once)
@@ -723,8 +723,8 @@ local _MemorizationStates = {SKILL_STATE.MEMORIZED, SKILL_STATE.UNMEMORIZED}
 ---Registers a function to call when a specific skill or array of skills has a SKILL_STATE.UNMEMORIZED or SKILL_STATE.MEMORIZED event.
 ---@param skill string|string[]
 ---@param callback fun(e:OnSkillStateMemorizedEventArgs)
----@param priority integer|nil Optional listener priority
----@param once boolean|nil If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
+---@param priority? integer Optional listener priority
+---@param once? boolean If true, the listener will fire once, and then get removed. Use with onlySkillState to ensure it only fires for the specific state.
 ---@return integer|integer[] index Subscription index(s), which can be used to unsubscribe.
 function SkillManager.Register.MemorizationChanged(skill, callback, priority, once)
 	return SkillManager.Register.All(skill, callback, _MemorizationStates, priority, once)

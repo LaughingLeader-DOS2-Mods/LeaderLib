@@ -1217,3 +1217,13 @@ function GameHelpers.Skill.GetCooldown(char, skill)
     end
 	return 0
 end
+
+---Get the game's current language.
+---@return "Amlatspanish"|"Chinese"|"Chinesetraditional"|"Czech"|"English"|"French"|"German"|"Italian"|"Japanese"|"Korean"|"Polish"|"Portuguesebrazil"|"Russian"|"Spanish"|string
+function GameHelpers.GetLanguage()
+	local switches = Ext.Utils.GetGlobalSwitches()
+	if switches then
+		return switches.ChatLanguage
+	end
+	return ""
+end

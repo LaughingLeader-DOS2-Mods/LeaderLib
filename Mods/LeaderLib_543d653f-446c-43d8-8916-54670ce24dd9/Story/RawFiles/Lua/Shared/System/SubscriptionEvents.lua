@@ -704,9 +704,9 @@ if not _ISCLIENT then
 		end,
 		OnUnsubscribe = function (self, callback, opts, matchArgs, matchArgsType)
 			--Cleanup StatusManager._Internal.EnabledStatuses table if nothing else is subscribed
-			if matchArgsType == "table" and type(opts.MatchArgs.Status) == "string" then
-				local checkStatus = opts.MatchArgs.Status
-				local checkEvent = opts.MatchArgs.StatusEvent
+			if matchArgsType == "table" and type(matchArgs.Status) == "string" then
+				local checkStatus = matchArgs.Status
+				local checkEvent = matchArgs.StatusEvent
 				if checkStatus then
 					local cur = Events.OnStatus.First
 					if cur then

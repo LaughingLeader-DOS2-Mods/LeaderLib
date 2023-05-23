@@ -518,6 +518,7 @@
 	<content contentuid="hefbcc547g9671g4e57g9364g9cc7c9c06fc4">[OFF] Auto Unlock Inventory - Automatically unlock the party inventory in multiplayer.&lt;br&gt;This will allow all players to exchange items between their inventories without having to unlock them first. [GLOBAL]</content>
 	<content contentuid="hf0e4a66bg853eg4cb3gb663g12ba6fbe412f">Non-Player Backstab Settings</content>
 	<content contentuid="hf0eb5097g325bg4254gaf97g77255a6380ad">[OFF] Dialog Redirection Disabled. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.[GLOBAL]</content>
+	<content contentuid="hf107d1bag1c53g4f36g8ec5g87c40feabfcf">automatically level</content>
 	<content contentuid="hf15fdd63gddedg435bgaa2egdd0574ce2c3c">Registered Mods:&lt;br&gt;[LeaderLib_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12]</content>
 	<content contentuid="hf1c7aa42g3e2fg4338ga672g59a3a935cff4">New Items in Stock</content>
 	<content contentuid="hf1cb17f4g7402g499dg95e5g9552ea2c0fc6">Various settings that alter how the game works.&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;These settings can only be changed in singleplayer, or by the host in multiplayer.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#33FF00&apos;&gt;Settings are saved to:&lt;br&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/&lt;/font&gt;&lt;font color=&apos;#22FF99&apos;&gt;LeaderLib_GameSettings.json&lt;/font&gt;</content>

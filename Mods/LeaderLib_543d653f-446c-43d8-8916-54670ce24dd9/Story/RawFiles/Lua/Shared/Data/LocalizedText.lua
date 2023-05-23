@@ -580,7 +580,8 @@ LocalizedText.SkillRequirement = {
 }
 
 LocalizedText.Tooltip = {
-	AutoLevel = ts:Create("hca27994egc60eg495dg8146g7f81c970e265", "<font color='#80FFC3'>Automatically levels up with the wearer.</font>"),
+	AutoLevel = ts:CreateFromKey("LeaderLib_Tooltip_ItemDescription_AutoLeveling", "<font color='#80FFC3' size='18'>Automatically levels up with the wearer.</font>"),
+	AutoLevelSearchText = ts:CreateFromKey("LeaderLib_Tooltip_AutoLevelSearchText", "automatically level"),
 	Chance = ts:CreateFromKey("LeaderLib_Tooltip_Chance", "([1]% Chance)"),
 	BonusWeaponOnAttack = ts:CreateFromKey("LeaderLib_Tooltip_BonusWeaponOnAttack", "On Basic Attack or Weapon Skill:"),
 	ExtraPropertiesOnHit = ts:CreateFromKey("LeaderLib_Tooltip_ExtraPropertiesCondensed", "On Hit:<br>Set [1] for [2] turns(s).[3]"),

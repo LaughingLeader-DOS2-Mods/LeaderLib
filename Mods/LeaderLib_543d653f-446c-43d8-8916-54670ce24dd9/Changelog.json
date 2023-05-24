@@ -6,6 +6,23 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.8",
+			"Changes": [
+				"Fixed a script error with item tooltips when playing the game in non-english languages.",
+				"Fixed a script error when casting an instant skill.",
+				"Fixed backstab gameplay settings not altering damage for basic melee attacks. It turns out that the game pre-rolls whether a hit is critical or not for melee basic attacks.",
+				"API Changes:",
+				"\t• CriticalRoll is now set to 'Roll' in CCH for basic melee attacks, if Critical is still false. This is to allow mods to alter the critical chance / result, since the engine precalculates this roll for basic melee attacks.",
+				"\t• Events.CCH.GetShouldApplyCriticalHit now runs after the regular roll calculation, so mods can see what that result was.",
+				"\t• Fixed an issue with checking message box text.",
+				"\t• Added a system for adding progression bonuses to items (for granting an item new bonuses when it auto-levels).",
+				"\t• Fixed GameHelpers.Stats.GetDisplayName with non-status userdata objects.",
+				"\t• Added several new Osiris proc events, such as Events.Osiris.ProcHandleMagicMirrorResult.",
+				"\t• Implemented support for Ext.Stats.Requirement.Evaluate (v60), to support custom requirements with GameHelpers.Stats.CharacterHasRequirements.",
+				"\t• Added TooltipHandler.Tooltip for the client-side, which has several helpers for getting tooltip elements after they're added to the UI."
+			]
+		},
+		{
 			"Version": "1.7.31.7",
 			"Changes": [
 				"Fixed LeaderLog_Log not combining text if the extender is enabled. This fixes an issue with the Equipment Sets mod.",

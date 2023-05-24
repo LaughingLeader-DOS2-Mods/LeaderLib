@@ -32,6 +32,44 @@ function GameHelpers.Visual.GetRacePreset(character)
 	return cc.DefaultRace
 end
 
+--me.CurrentTemplate.VisualSetIndices:SetVisual(3, 0)
+
+---@param character CharacterParam
+---@param slot integer
+---@param visualName string
+---@return boolean
+function GameHelpers.Visual.SetVisualElementByName(character, slot, visualName)
+	local character = GameHelpers.GetCharacter(character, "EsvCharacter")
+	local visualSet = GameHelpers.Visual.GetVisualSet(character)
+	local visuals = visualSet.Visuals[slot]
+	for i,guid in pairs(visuals) do
+		local resource = Ext.Resource.Get("Visual", guid) --[[@as VisualResource]]
+		if resource and resource.Name == visualName then
+			print(i, guid, resource.Name)
+			character.CurrentTemplate.VisualSetIndices:SetVisual(slot, i)
+			if not _ISCLIENT then
+				GameHelpers.Net.Broadcast("LeaderLib_Visual_SetVisualSetIndice", {NetID=character.NetID, Slot=slot, Index=i})
+			end
+			return true
+		end
+	end
+	return false
+end
+
+if not _ISCLIENT then
+	---@class LeaderLib_Visual_SetVisualSetIndice
+	---@field NetID NetId
+	---@field Slot integer
+	---@field Index integer
+
+	GameHelpers.Net.Subscribe("LeaderLib_Visual_SetVisualSetIndice", function (e, data)
+		local character = GameHelpers.GetCharacter(data.NetID, "EclCharacter")
+		if character then
+			character.CurrentTemplate.VisualSetIndices:SetVisual(data.Slot, data.Index)
+		end
+	end)
+end
+
 if _ISCLIENT then
 	--- @class ExtenderClientVisual
 	--- @field OverrideScalarMaterialParameter fun(self:ExtenderClientVisual, propertyName:string, value:number)

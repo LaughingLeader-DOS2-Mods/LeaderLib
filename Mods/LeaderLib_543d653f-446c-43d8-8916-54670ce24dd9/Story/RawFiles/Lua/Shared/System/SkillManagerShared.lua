@@ -4,6 +4,8 @@ local _EXTVERSION = Ext.Utils.Version()
 local _enabledSkills = SkillManager._Internal.EnabledSkills
 local _lastUsedSkillItems = SkillManager._Internal.LastUsedSkillItems
 
+---@param skill string
+---@param b? boolean
 function SkillManager.SetSkillEnabled(skill, b)
 	local current = _enabledSkills[skill] or 0
 	if b then
@@ -14,11 +16,16 @@ function SkillManager.SetSkillEnabled(skill, b)
 	_enabledSkills[skill] = current
 end
 
+---@param enabled? boolean
 function SkillManager.EnableForAllSkills(enabled)
 	SkillManager.SetSkillEnabled("All", enabled == true)
 end
 
+---@param skill string|nil
 function SkillManager.IsSkillEnabled(skill)
+	if StringHelpers.IsNullOrEmpty(skill) then
+		return false
+	end
 	local all = _enabledSkills.All or 0
 	if all > 0 then
 		return true
@@ -403,8 +410,30 @@ function SkillManager.Register.GetDamage(skill, callback, priority, once)
 	end
 end
 
+---@param prototype StatsSkillPrototype|table
+local function _GetSkillDamageID(prototype)
+	if not prototype then
+		return nil
+	end
+	if not StringHelpers.IsNullOrEmpty(prototype.SkillId) then
+		return prototype.SkillId
+	end
+	if prototype.StatsObject then
+		return prototype.StatsObject.Name
+	end
+	if type(prototype) == "table" and not StringHelpers.IsNullOrEmpty(prototype.Name) then
+		return prototype.Name
+	end
+	return nil
+end
+
 Ext.Events.GetSkillDamage:Subscribe(function (e)
-	local skill = StringHelpers.GetSkillEntryName(e.Skill.SkillId)
+	local skillId = _GetSkillDamageID(e.Skill)
+	--Manually thrown event?
+	if StringHelpers.IsNullOrEmpty(skillId) then
+		return
+	end
+	local skill = StringHelpers.GetSkillEntryName(skillId)
 	if SkillManager.IsSkillEnabled(skill) then
 		local character = nil
 		if GameHelpers.Ext.ObjectIsStatCharacter(e.Attacker) then

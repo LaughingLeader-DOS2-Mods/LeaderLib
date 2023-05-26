@@ -804,3 +804,12 @@ function GameHelpers.Skill.ShootZoneFromSource(skillId, source, extraParams)
 end
 
 --Mods.LeaderLib.GameHelpers.Skill.ShootZoneFromSource("Cone_SilencingStare", me.MyGuid, {PlayCastEffects=true,PlayTargetEffects=true,ApplySkillProperties=true})
+
+---Request any current active UseSkill action to exit. This allows you to cast another skill immediately via scripting.
+---@param character EsvCharacter
+function GameHelpers.Skill.RequestExit(character)
+    local useSkill = GameHelpers.Action.GetAction(character, "UseSkill") --[[@as EsvASUseSkill]]
+    if useSkill and useSkill.Skill then
+        useSkill.Skill.RequestExit = true
+    end
+end

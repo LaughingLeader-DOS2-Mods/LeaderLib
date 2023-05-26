@@ -87,10 +87,13 @@ function GameHelpers.Action.Resurrect(character, opts)
 	Ext.Action.QueueOsirisTask(task)
 end
 
+---@class GameHelpersActionUseSkillOptions:EsvOsirisUseSkillTask
+---@field ExitPrevious boolean Set RequestExit to true for any previous skill states.
+
 ---@param caster CharacterParam
 ---@param skill FixedString
 ---@param target? ComponentHandle|ObjectParam|vec3 Either a ComponentHandle, object, or position table. Defaults to the caster if not set.
----@param opts? EsvOsirisUseSkillTask Optional parameters to set on the task
+---@param opts? GameHelpersActionUseSkillOptions Optional parameters to set on the task
 function GameHelpers.Action.UseSkill(caster, skill, target, opts)
 	local character = GameHelpers.GetCharacter(caster) --[[@as EsvCharacter]]
 	fassert(character ~= nil, "Failed to get attacker character from (%s)", caster)
@@ -117,7 +120,11 @@ function GameHelpers.Action.UseSkill(caster, skill, target, opts)
 	end
 	if type(opts) == "table" then
 		for k,v in pairs(opts) do
-			task[k] = v
+			if k == "ExitPrevious" then
+				GameHelpers.Skill.RequestExit(character)
+			else
+				task[k] = v
+			end
 		end
 	end
 	Ext.Action.QueueOsirisTask(task)
@@ -249,4 +256,16 @@ function GameHelpers.Action.Sabotage(target, opts)
 	end
 
 	return len
+end
+
+---@param character EsvCharacter
+---@param actionType ActionStateType
+---@return EsvActionState|nil action
+function GameHelpers.Action.GetAction(character, actionType)
+	for _,layer in pairs(character.ActionMachine.Layers) do
+		if layer.State and layer.State.Type == actionType then
+			return layer.State
+		end
+	end
+	return nil
 end

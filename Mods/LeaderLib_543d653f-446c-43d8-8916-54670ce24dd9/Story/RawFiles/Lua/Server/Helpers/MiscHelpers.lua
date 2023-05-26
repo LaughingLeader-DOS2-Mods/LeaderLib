@@ -163,18 +163,26 @@ end
 ---@param character CharacterParam
 ---@param purge? boolean Call CharacterPurgeQueue instead of CharacterFlushQueue.
 function GameHelpers.ClearActionQueue(character, purge)
-	character = GameHelpers.GetUUID(character)
-	if not character then
+	local guid = GameHelpers.GetUUID(character)
+	if not guid then
 		return
 	end
 	if purge then
-		Osi.CharacterPurgeQueue(character)
+		Osi.CharacterPurgeQueue(guid)
 	else
-		Osi.CharacterFlushQueue(character)
+		Osi.CharacterFlushQueue(guid)
 	end
 
-	Osi.CharacterMoveTo(character, character, 1, "", 1)
-	Osi.CharacterSetStill(character)
+	Osi.CharacterMoveTo(guid, guid, 1, "", 1)
+	Osi.CharacterSetStill(guid)
+
+	local characterObject = GameHelpers.GetCharacter(character)
+	if characterObject then
+		local useSkill = GameHelpers.Action.GetAction(character, "UseSkill") --[[@as EsvASUseSkill]]
+		if useSkill and useSkill.Skill then
+			useSkill.Skill.RequestExit = true
+		end
+	end
 end
 
 ---Sync an item or character's scale to clients.

@@ -10,6 +10,7 @@
 			"Changes": [
 				"Fixed players being 'frozen' (unable to move/interact etc) in multiplayer when skipping the tutorial.",
 				"Fixed a script error when calculating cone/zone skill damage.",
+				"Fixed Chaos Slash not dealing damage in Weapon Expansion (also fixed a typo in the description).",
 				"Backported a Weapon Expansion tweak to make attribute token scaling work without a save/load."
 			]
 		},

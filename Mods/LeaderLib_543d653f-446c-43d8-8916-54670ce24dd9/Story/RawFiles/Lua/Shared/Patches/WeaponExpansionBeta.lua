@@ -11,7 +11,25 @@ end
 local _FixTooltips,_FixTreasure = nil,nil
 
 if _ISCLIENT then
+	Ext.Events.NetMessageReceived:Subscribe(function (e)
+		if e.Channel == "LLWEAPONEX_SetItemStats" then
+			local data = Common.JsonParse(e.Payload)
+			if data and data.Changes and data.Changes.Requirements then
+				data.Changes.Requirements = nil
+				e.Payload = Common.JsonStringify(data)
+			end
+		end	
+	end, {Priority=101})
+
 	_FixTooltips = function()
+		Game.Tooltip.Register.Skill(function (character, skill, tooltip)
+			if skill == "Projectile_LLWEAPONEX_ChaosSlash" then
+				local desc = tooltip:GetDescriptionElement()
+				if desc then
+					desc.Label = desc.Label:gsub("A surface also created", "A surface is also created")
+				end
+			end
+		end)
 		---@diagnostic disable-next-line undefined-field
 		Ext._Internal._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
 
@@ -368,6 +386,12 @@ Patch = function (initialized, region)
 		end
 	end
 
+	--Fix the moving object preventing the projectile hit
+	local chaosSlash = Ext.Stats.Get("Projectile_LLWEAPONEX_ChaosSlash", nil, false)
+	if chaosSlash then
+		chaosSlash.MovingObject = ""
+	end
+
 	if _ISCLIENT then
 		_FixTooltips()
 
@@ -386,6 +410,39 @@ Patch = function (initialized, region)
 		end)
 	else
 		_FixTreasure()
+
+		local _SurfHandles = {}
+		local _GroundSurfaces = {"Fire", "Water", "WaterFrozen", "WaterElectrified", "Blood", "BloodFrozen", "BloodElectrified", "Poison", "Oil"}
+		local _ChaosSlash = {"Projectile_LLWEAPONEX_ChaosSlash", "Projectile_LLWEAPONEX_EnemyChaosSlash"}
+
+		SkillManager.Subscribe.Cast(_ChaosSlash, function (e)
+			Osi.DB_LLWEAPONEX_Skills_Temp_ChaosSlashCaster:Delete(e.CharacterGUID)
+		end)
+
+		SkillManager.Subscribe.ProjectileShoot(_ChaosSlash, function (e)
+			local surfaceType = Common.GetRandomTableEntry(_GroundSurfaces)
+			local surf = Ext.Surface.Action.Create("ChangeSurfaceOnPathAction") --[[@as EsvChangeSurfaceOnPathAction]]
+			surf.SurfaceType = surfaceType
+			surf.FollowObject = e.Data.Handle
+			surf.Duration = 6.0
+			surf.Radius = 0.4
+			surf.IgnoreIrreplacableSurfaces = true
+			surf.StatusChance = 1.0
+			surf.Position = e.Data.Position
+			_SurfHandles[e.Character.Handle] = {Handle=surf.MyHandle, SurfaceType=surfaceType}
+			Ext.Surface.Action.Execute(surf)
+		end)
+
+		SkillManager.Subscribe.ProjectileHit(_ChaosSlash, function (e)
+			local data = _SurfHandles[e.Character.Handle]
+			if data then
+				GameHelpers.Surface.CreateSurface(e.Data.Position, data.SurfaceType, GameHelpers.Stats.GetAttribute(e.Skill, "ExplodeRadius", 2), 6.0, e.Character.Handle, true)
+				_SurfHandles[e.Character.Handle] = nil
+				Ext.Surface.Action.Cancel(data.Handle)
+			else
+				GameHelpers.Surface.CreateSurface(e.Data.Position, Common.GetRandomTableEntry(_GroundSurfaces), GameHelpers.Stats.GetAttribute(e.Skill, "ExplodeRadius", 2), 6.0, e.Character.Handle, true)
+			end
+		end)
 
 		--Sync attribute token changes without requiring a save/load
 

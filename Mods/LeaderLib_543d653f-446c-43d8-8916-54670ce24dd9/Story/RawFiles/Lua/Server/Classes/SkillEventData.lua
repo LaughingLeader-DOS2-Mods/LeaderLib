@@ -16,6 +16,7 @@ local SkillEventData = {
 	TargetPositions = {},
 	TotalTargetObjects = 0,
 	TotalTargetPositions = 0,
+	---@enum SkillEventDataTargetMode
 	TargetMode = {
 		All = -1,
 		Objects = 0,
@@ -101,13 +102,17 @@ function SkillEventData:Clear()
 	self.TotalTargetPositions = 0
 end
 
----@alias SkillEventDataTarget string|number[]
----@alias SkillEventDataForEachTargetType string|'"string"'|'"table"'
+---@alias SkillEventDataTarget Guid|vec3
+---@alias SkillEventDataUserdataTarget ServerObject|vec3
+---@alias SkillEventDataForEachTargetType "string"|"table"
 ---@alias SkillEventDataForEachCallback fun(target:SkillEventDataTarget, targetType:SkillEventDataForEachTargetType, self:SkillEventData)
+---@alias SkillEventDataForEachCallbackUserdata fun(target:SkillEventDataUserdataTarget, targetType:SkillEventDataForEachTargetType, self:SkillEventData)
 
+---@deprecated
+---@see SkillEventData.ForEachTarget
 ---Run a function on all target objects. The function is wrapped in an error handler.
----@param func SkillEventDataForEachCallback
----@param mode integer Run the function on objects, positions, or both. Defaults to just objects. 0:Objects, 1:Positions, 2:All
+---@param func SkillEventDataForEachCallbackUserdata
+---@param mode SkillEventDataTargetMode Run the function on objects, positions, or both. Defaults to just objects. 0:Objects, 1:Positions, 2:All
 function SkillEventData:ForEach(func, mode)
 	mode = mode or SkillEventData.TargetMode.Objects
 	local runOnObjects = mode ~= 1 and self.TotalTargetObjects > 0
@@ -128,6 +133,36 @@ function SkillEventData:ForEach(func, mode)
 			local b,err = xpcall(func, debug.traceback, v, "table", self)
 			if not b then
 				Ext.Utils.PrintError("[LeaderLib:SkillEventData:ForEach] Error:")
+				Ext.Utils.PrintError(err)
+			end
+		end
+	end
+end
+
+---@param func fun(self:SkillEventData, target:ServerObject|vec3, isPosition:boolean)
+---@param mode? SkillEventDataTargetMode Run the function on objects, positions, or both. Defaults to objects only.
+---@see SkillEventData.TargetMode
+function SkillEventData:ForEachTarget(func, mode)
+	mode = mode or SkillEventData.TargetMode.Objects
+	local runOnObjects = mode ~= 1 and self.TotalTargetObjects > 0
+	local runOnPositions = mode ~= 0 and self.TotalTargetPositions > 0
+
+	if runOnObjects then
+		for i,v in pairs(self.TargetObjects) do
+			local obj = GameHelpers.TryGetObject(v)
+			local b,err = xpcall(func, debug.traceback, self, obj, false)
+			if not b then
+				Ext.Utils.PrintError("[LeaderLib:SkillEventData:ForEachTarget] Error:")
+				Ext.Utils.PrintError(err)
+			end
+		end
+	end
+	
+	if runOnPositions then
+		for i,v in pairs(self.TargetPositions) do
+			local b,err = xpcall(func, debug.traceback, self, v, true)
+			if not b then
+				Ext.Utils.PrintError("[LeaderLib:SkillEventData:ForEachTarget] Error:")
 				Ext.Utils.PrintError(err)
 			end
 		end

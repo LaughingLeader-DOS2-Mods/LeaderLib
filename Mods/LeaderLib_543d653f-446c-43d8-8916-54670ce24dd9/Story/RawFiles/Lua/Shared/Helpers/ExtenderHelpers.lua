@@ -1448,6 +1448,26 @@ local _SkillAttributes = {
 	["IgnoreHeight"] = "YesNo",
 }
 
+local _SkillPrototypeProperties = {
+	Ability = "int16",
+	ActionPoints = "int32",
+	AiFlags = "AIFlags",
+	ChargeDuration = "number",
+	ChildPrototypes = "StatsSkillPrototype[]",
+	Cooldown = "number",
+	CooldownReduction = "number",
+	DisplayName = "string",
+	Icon = "FixedString",
+	Level = "int32",
+	MagicCost = "int32",
+	MemoryCost = "int32",
+	Requirement = "int32",
+	RootSkillPrototype = "StatsSkillPrototype",
+	SkillId = "FixedString",
+	SkillTypeId = "SkillType",
+	StatsObject = "StatsObject|StatEntryType",
+	Tier = "int32",
+}
 
 if _EXTVERSION < 56 then
 	_SkillAttributes.TargetConditions = nil
@@ -1460,46 +1480,42 @@ end
 ---@param isForGameMath? boolean If true, only attributes used in Game.Math functions are assigned.
 ---@return StatEntrySkillData
 function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameMath)
-	if skillName ~= nil and skillName ~= "" then
-		local hasValidEntry = false
-		---@type StatEntrySkillData
-		local skill = {Name = skillName, AlwaysBackstab = false}
-		if isForGameMath then
-			for _,k in pairs(_GameMathSkillAttributes) do
-				skill[k] = GameHelpers.Stats.GetAttribute(skillName, k)
-				if not hasValidEntry and skill[k] ~= nil then
-					hasValidEntry = true
-				end
-			end
-		else
-			local stat = Ext.Stats.Get(skillName, nil, false)
-			if stat then
-				hasValidEntry = true
-				for k,_ in pairs(_SkillAttributes) do
-					skill[k] = stat[k]
-				end
-			end
+	assert(not StringHelpers.IsNullOrEmpty(skillName), "skillName must be a valid string")
+	local stat = Ext.Stats.Get(skillName, nil, false)
+	assert(stat ~= nil, ("Failed to get skill stat for ID (%s)"):format(skillName))
+	---@type StatEntrySkillData|StatsSkillPrototype
+	local skill = {
+		Name = skillName,
+		AlwaysBackstab = false,
+		ChildPrototypes = {},
+		RootSkillPrototype = {},
+		SkillId = skillName,
+		StatsObject = stat,
+		SkillTypeId = stat.SkillType
+	}
+	if isForGameMath then
+		for _,k in pairs(_GameMathSkillAttributes) do
+			skill[k] = stat[k]
 		end
-		if not hasValidEntry then
-			-- Skill doesn't exist?
-			return nil
+	else
+		for k,_ in pairs(_SkillAttributes) do
+			skill[k] = stat[k]
 		end
-		if useWeaponDamage ~= nil then
-			skill.UseWeaponDamage = useWeaponDamage and "Yes" or "No"
-		end
-		---@type StatPropertyStatus[]
-		local skillProperties = GameHelpers.Stats.GetSkillProperties(skillName)
-		if skillProperties ~= nil then
-			for _,tbl in pairs(skillProperties) do
-				if tbl.Action == "AlwaysBackstab" then
-					skill.AlwaysBackstab = true
-				end
-			end
-		end
-		skill.IsTable = true
-		return skill
 	end
-	return nil
+	if useWeaponDamage ~= nil then
+		skill.UseWeaponDamage = useWeaponDamage and "Yes" or "No"
+	end
+	---@type StatPropertyStatus[]
+	local skillProperties = GameHelpers.Stats.GetSkillProperties(skillName)
+	if skillProperties ~= nil then
+		for _,tbl in pairs(skillProperties) do
+			if tbl.Action == "AlwaysBackstab" then
+				skill.AlwaysBackstab = true
+			end
+		end
+	end
+	skill.IsTable = true
+	return skill
 end
 
 local RuneAttributes = {

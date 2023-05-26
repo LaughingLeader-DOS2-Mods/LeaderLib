@@ -2241,6 +2241,7 @@ Data.ModID = {
 	WeaponExpansion = "c60718c3-ba22-4702-9c5d-5ad92b41ba5f",
 	UnofficialPatch = "d15a346b-b332-4397-9b3f-f1e6045ff1c7",
 	TrainingDummy = "40efe511-7489-455e-a9c8-ad7495b8c9f2",
+	ToggleSprintDE = "3cdec0ff-5d98-e859-87cd-c663b7b9fcfe",
 	DivinityOriginalSin2 = "1301db3d-1f54-4e98-9be5-5094030916e4", -- Main campaign mod
 	Shared = "2bd9bdbe-22ae-4aa2-9c93-205880fc6564",
 	Shared_DOS = "eedf7638-36ff-4f26-a50a-076b87d53ba0",

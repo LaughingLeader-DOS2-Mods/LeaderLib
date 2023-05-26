@@ -157,13 +157,25 @@ function SubscribableEventArgs:Unpack(keyOrder)
 end
 
 ---Debug function for dumping args to the console.
-function SubscribableEventArgs:Dump()
-	fprint(LOGLEVEL.TRACE, "%s", Lib.serpent.block({_Event=self._Private.LLEventID, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, {SimplifyUserdata = true}))
+---@param shallow? boolean Limit the recursion depth, so only a few of the nested properties are printed.
+function SubscribableEventArgs:Dump(shallow)
+	---@type serpent_options
+	local opts = {SimplifyUserdata = true}
+	if shallow then
+		opts.maxlevel = 2
+	end
+	fprint(LOGLEVEL.TRACE, "%s", Lib.serpent.block({_Event=self._Private.LLEventID, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, opts))
 end
 
+---@param shallow? boolean Limit the recursion depth, so only a few of the nested properties are printed.
 ---@return string
-function SubscribableEventArgs:DumpExport()
-	return Lib.serpent.block({_Event=self._Private.LLEventID, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, {SimplifyUserdata = true})
+function SubscribableEventArgs:DumpExport(shallow)
+	---@type serpent_options
+	local opts = {SimplifyUserdata = true}
+	if shallow then
+		opts.maxlevel = 2
+	end
+	return Lib.serpent.block({_Event=self._Private.LLEventID, Args=self._Private.Args, _Context = Ext.IsClient() and "CLIENT" or "SERVER"}, opts)
 end
 
 Classes.SubscribableEventArgs = SubscribableEventArgs

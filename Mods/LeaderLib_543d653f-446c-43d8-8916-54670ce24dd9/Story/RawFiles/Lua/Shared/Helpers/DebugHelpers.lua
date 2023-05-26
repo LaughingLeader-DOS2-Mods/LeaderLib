@@ -1470,15 +1470,26 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 				_d[k] = Ext.DumpExport(v)
 			end
 		end
-		local b,err = xpcall(function()
+		local b = pcall(function()
 			for k,v in pairs(obj) do
 				if k ~= "AttributeFlags" then
 					_proccessEntry(data, k,v)
 				end
 			end
-		end, debug.traceback)
+		end)
 		if not b then
-			data.Data = Ext.DumpExport(obj)
+			---@type JsonStringifyOptions
+			local jsonOpts = {
+				Beautify = true,
+				StringifyInternalTypes = true,
+				IterateUserdata = true,
+				AvoidRecursion = true,
+			}
+			if opts and opts.maxlevel then
+				jsonOpts.LimitDepth = opts.maxlevel
+				jsonOpts.LimitArrayElements = 3
+			end
+			data.Data = Ext.Json.Stringify(obj, jsonOpts)
 		end
 		return data
 	end

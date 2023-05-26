@@ -6,6 +6,14 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.9",
+			"Changes": [
+				"Fixed players being 'frozen' (unable to move/interact etc) in multiplayer when skipping the tutorial.",
+				"Fixed a script error when calculating cone/zone skill damage.",
+				"Backported a Weapon Expansion tweak to make attribute token scaling work without a save/load."
+			]
+		},
+		{
 			"Version": "1.7.31.8",
 			"Changes": [
 				"Fixed a script error with item tooltips when playing the game in non-english languages.",

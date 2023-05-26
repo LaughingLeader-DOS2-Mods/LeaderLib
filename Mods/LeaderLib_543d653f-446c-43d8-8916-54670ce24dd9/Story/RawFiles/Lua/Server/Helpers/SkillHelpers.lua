@@ -762,7 +762,7 @@ local _USE_BEHAVIOR = Ext.Utils.Version() < 56
 ---@param skillId string Zone or Cone type skill.
 ---@param source ObjectParam
 ---@param target ObjectParam|number[]
----@param extraParams LeaderLibZoneCreationProperties An optional table of properties to apply on top of the parsed skill properties.
+---@param extraParams? LeaderLibZoneCreationProperties An optional table of properties to apply on top of the parsed skill properties.
 function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
     extraParams = type(extraParams) == "table" and extraParams or {}
     local source = GameHelpers.TryGetObject(source)

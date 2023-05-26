@@ -416,7 +416,7 @@ Patch = function (initialized, region)
 		local _ChaosSlash = {"Projectile_LLWEAPONEX_ChaosSlash", "Projectile_LLWEAPONEX_EnemyChaosSlash"}
 
 		SkillManager.Subscribe.Cast(_ChaosSlash, function (e)
-			Osi.DB_LLWEAPONEX_Skills_Temp_ChaosSlashCaster:Delete(e.CharacterGUID)
+			GameHelpers.DB.TryDelete("DB_LLWEAPONEX_Skills_Temp_ChaosSlashCaster", e.CharacterGUID)
 		end)
 
 		SkillManager.Subscribe.ProjectileShoot(_ChaosSlash, function (e)

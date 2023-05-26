@@ -13,31 +13,21 @@ local _EXTVERSION = Ext.Utils.Version()
 
 local initialized = false
 
----@param uuid Guid
+---@param guid Guid
 ---@param playVoicebark? boolean
-local function skipTutorialWakeup(uuid, playVoicebark)
-	fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Speeding up Fort Joy beach wake-up for %s", uuid)
-	Osi.ProcObjectTimerCancel(uuid, "FTJ_GameStart_FadeIn")
-	Osi.ProcObjectTimerCancel(uuid, "FTJ_WakeUpTimer")
-	Osi.RemoveStatus(uuid, "WET")
-	Osi.CharacterUnfreeze(uuid)
-	Osi.PROC_UnlockWaypoint("WAYP_FTJ_BeachStatue", uuid)
-	Osi.CharacterSetAnimationOverride(uuid,"")
+local function _SkipTutorialWakeup(guid, playVoicebark)
+	fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Speeding up Fort Joy beach wake-up for %s", guid)
+	Osi.ProcObjectTimerCancel(guid, "FTJ_GameStart_FadeIn")
+	Osi.ProcObjectTimerCancel(guid, "FTJ_WakeUpTimer")
+	Osi.RemoveStatus(guid, "WET")
+	Osi.CharacterUnfreeze(guid)
+	Osi.PROC_UnlockWaypoint("WAYP_FTJ_BeachStatue", guid)
+	Osi.CharacterSetAnimationOverride(guid,"")
 	--PlayAnimation(uuid,"knockdown_getup","")
 	if playVoicebark then
-		Osi.PROC_FTJ_StartWakeUpVoicebark(uuid)
-		Osi.UserSetFlag(uuid,"QuestUpdate_FTJ_Voice_TUT_Voice", 0)
+		Osi.PROC_FTJ_StartWakeUpVoicebark(guid)
+		Osi.UserSetFlag(guid,"QuestUpdate_FTJ_Voice_TUT_Voice", 0)
 	end
-	--Osi.Proc_FTJ_UnfreezePlayers()
-end
-
-local function skipTutorialWakeupTimer(uuid, timerName)
-	Timer.StartOneshot("Timers_LeaderLib_SkipWakeup", 50, function()
-		skipTutorialWakeup(uuid)
-	end)
-	--Osi.PROC_FTJ_StartWakeUpVoicebark(uuid)
-	--Osi.Proc_FTJ_UnfreezePlayers()
-	--UserSetFlag(uuid,"QuestUpdate_FTJ_Voice_TUT_Voice",0)
 end
 
 function SkipTutorial.Initialize()
@@ -223,12 +213,17 @@ function SkipTutorial.Initialize()
 				Osi.GlobalSetFlag("TUT_LowerDeck_OriginsFleeingToTop")
 				Osi.GlobalSetFlag("TUT_ChoseRescueOthers")
 
-				Timer.StartOneshot("Timers_LeaderLib_SkipFTJWakeup", 50, function()
+				--Safeguard to ensure players get unfrozen
+				Timer.StartOneshot("", 1250, function (_)
+					Osi.Proc_FTJ_UnfreezePlayers()
+				end)
+
+				Timer.StartOneshot("Timers_LeaderLib_SkipFTJWakeup", 250, function()
 					local players = GameHelpers.Character.GetPlayers(false, true, "EsvCharacter")
 					local total = #players
 					for i=1,total do
-						local player = players[1]
-						skipTutorialWakeup(player.MyGuid, i == total - 1)
+						local player = players[i]
+						_SkipTutorialWakeup(player.MyGuid, i == total - 1)
 						Osi.ObjectClearFlag(player.MyGuid, "DLC_SquirrelKnight_OwnerFlag", 0)
 					end
 				end)

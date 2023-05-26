@@ -118,6 +118,10 @@ local function _CreateSkillEventTable(skill, character, stateID, data, dataType)
 		local action = _GetSkillAction(character, skill)
 		if action then
 			eventData.Action = action
+			if action.Type == "PrepareSkill" then
+				eventData.SourceItem = _GetSkillSourceItem(character, skill, stateID == SKILL_STATE.GETDAMAGE)
+				return eventData
+			end
 			local state = action.Skill
 			local skillType = state.Type
 			if Ext.Utils.IsValidHandle(state.SourceItemHandle) then
@@ -125,12 +129,6 @@ local function _CreateSkillEventTable(skill, character, stateID, data, dataType)
 				if item then
 					eventData.SourceItem = item
 				end
-			end
-			if not _ActionMachineSkillStates[stateID] then
-				if eventData.SourceItem == nil then
-					eventData.SourceItem = _GetSkillSourceItem(character, skill, stateID == SKILL_STATE.GETDAMAGE)
-				end
-				return eventData
 			end
 			if skillType == "Dome" then
 				---@cast state EsvSkillStateDome

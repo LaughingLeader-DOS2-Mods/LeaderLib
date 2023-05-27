@@ -624,7 +624,7 @@ end
 ---@param owner CharacterParam
 ---@param includeItems? boolean If on the server-side, item summons can be fetched as well if this is true.
 ---@param asTable? boolean Return the result as a table, instead of an iterator.
----@param ignoreObjects table<NetId|Guid,? boolean> Specific MyGuid or NetID values to ignore.
+---@param ignoreObjects table<NetId|Guid|nil, boolean> Specific MyGuid or NetID values to ignore.
 ---@return fun():GameHelpers_Character_GetSummonsResultType|nil summons
 function GameHelpers.Character.GetSummons(owner, includeItems, asTable, ignoreObjects)
 	owner = GameHelpers.GetCharacter(owner)
@@ -692,7 +692,7 @@ end
 ---Gets all the active summons.
 ---@param includeItems? boolean If on the server, item summons can be fetched as well.
 ---@param asTable? boolean Return the result as a table, instead of an iterator.
----@param ignoreObjects table<NetId|Guid,? boolean> Specific MyGuid or NetID values to ignore.
+---@param ignoreObjects table<NetId|Guid|nil, boolean> Specific MyGuid or NetID values to ignore.
 ---@return GameHelpers_Character_GetSummonsResultType[]|fun():GameHelpers_Character_GetSummonsResultType summons
 function GameHelpers.Character.GetAllSummons(includeItems, asTable, ignoreObjects)
 	local summons = {}

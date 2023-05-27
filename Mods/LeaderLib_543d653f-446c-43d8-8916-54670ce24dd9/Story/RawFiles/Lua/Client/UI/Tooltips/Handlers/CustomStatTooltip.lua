@@ -1,6 +1,6 @@
 
 ---@param character EclCharacter
----@param stat {ID:string,? UUID:string, GetValue:fun(self:table, character:EclCharacter):integer}
+---@param stat {ID:string|nil, UUID:string, GetValue:fun(self:table, character:EclCharacter):integer}
 ---@param tooltip TooltipData
 function TooltipHandler.OnCustomStatTooltip(character, stat, tooltip)
 	if Vars.DebugMode then

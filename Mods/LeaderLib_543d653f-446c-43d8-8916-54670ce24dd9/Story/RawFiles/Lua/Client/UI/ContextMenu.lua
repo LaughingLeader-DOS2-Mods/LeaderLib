@@ -1002,7 +1002,7 @@ function Register.OpeningListener(callback)
 end
 
 ---@deprecated
----@param callback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray<FlashMovieClip>, buttons:table,? targetObject:EclCharacter|EclItem)
+---@param callback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray<FlashMovieClip>, buttons:table|nil, targetObject:EclCharacter|EclItem)
 function Register.BuiltinOpeningListener(callback)
 	---@param e LeaderLibRuntimeSubscribableEventArgs
 	Events.OnBuiltinContextMenuOpening:Subscribe(function (e)
@@ -1011,7 +1011,7 @@ function Register.BuiltinOpeningListener(callback)
 end
 
 ---@deprecated
----@param callback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string,? handle:string|number|boolean)
+---@param callback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string|nil, handle:string|number|boolean)
 function Register.EntryClickedListener(callback)
 	---@param e LeaderLibRuntimeSubscribableEventArgs
 	Events.OnContextMenuEntryClicked:Subscribe(function (e)

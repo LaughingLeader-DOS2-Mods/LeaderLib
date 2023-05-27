@@ -294,7 +294,7 @@ end)
 
 ---@param fx string|string[]
 ---@param target ObjectParam
----@param params {Target:ObjectParam,? WeaponBones:string}
+---@param params {Target:ObjectParam|nil, WeaponBones:string}
 function _CLIENT.CreateClientEffect(fx, target, params)
 	params = params or {}
 	local ft = type(fx)

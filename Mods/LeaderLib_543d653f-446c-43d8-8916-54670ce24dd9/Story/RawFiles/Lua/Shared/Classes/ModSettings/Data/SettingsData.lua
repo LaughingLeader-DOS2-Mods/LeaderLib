@@ -20,9 +20,9 @@ SettingsData.__index = SettingsData
 
 Classes.ModSettingsClasses.SettingsData = SettingsData
 
----@param flags table<string,? FlagData>
----@param variables table<string,? VariableData>
----@param buttons table<string,? VariableData>
+---@param flags table<string|nil, FlagData>
+---@param variables table<string|nil, VariableData>
+---@param buttons table<string|nil, VariableData>
 function SettingsData:Create(flags, variables, buttons)
     local this =
     {

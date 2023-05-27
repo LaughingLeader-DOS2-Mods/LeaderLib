@@ -67,7 +67,7 @@ local validTypes = {
 ---@param tbl table
 ---@param supportedExtraTypes? table<string,boolean>
 ---@param forJson? boolean If true, key types will be restricted to number/string.
----@param sanitizeValue (fun(key:string, value:userdata|table|function,? valueType:string):SerializableValue)
+---@param sanitizeValue (fun(key:string, value:userdata|table|function|nil, valueType:string):SerializableValue)
 ---@return table<string|number|boolean,string|number|boolean|table>
 function TableHelpers.SanitizeTable(tbl, supportedExtraTypes, forJson, sanitizeValue)
 	local output = {}

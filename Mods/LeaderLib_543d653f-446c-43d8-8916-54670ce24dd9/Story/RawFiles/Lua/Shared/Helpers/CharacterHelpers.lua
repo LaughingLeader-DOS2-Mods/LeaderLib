@@ -1541,15 +1541,97 @@ function GameHelpers.Character.SetPermanentBoosts(character, opts, index)
 	end
 end
 
+---@param character CharacterObject
+---@param animType? AnimType The AnimType to use. Leave nil to 'reset' the current AnimType.
+function GameHelpers.Character.SetAnimType(character, animType)
+	if animType == nil then
+		if character:GetStatus("UNSHEATHED") then
+			local main,off = GameHelpers.Character.GetEquippedWeapons(character)
+			local weapon = main or off
+			if weapon then
+				animType = weapon.Stats.AnimType
+				if animType == Data.AnimType.None then
+					local weaponType = weapon.Stats.WeaponType
+					if weaponType == "Bow" then
+						animType = Data.AnimType.Bow
+					elseif weaponType == "Crossbow" then
+						animType = Data.AnimType.CrossBow
+					elseif weaponType == "Rifle" then
+						animType = Data.AnimType.CrossBow
+					elseif weaponType == "Staff" then
+						animType = Data.AnimType.Staves
+					elseif weaponType == "None" then
+						animType = Data.AnimType.Unarmed
+					else
+						if weapon.Stats.IsTwoHanded then
+							animType = Data.AnimType.TwoHanded
+							if weaponType == "Sword" then
+								animType = Data.AnimType.TwoHanded_Sword
+							end
+						else
+							if off ~= nil and main ~= off then
+								animType = Data.AnimType.DualWield
+								if off.Stats.ItemType == "Shield" then
+									if weaponType == "Wand"	then
+										animType = Data.AnimType.ShieldWands
+									end
+								else
+									local offType = off.Stats.WeaponType
+									if offType == weaponType and weaponType == "Knife" then
+										animType = Data.AnimType.DualWieldSmall
+									elseif offType == weaponType and weaponType == "Wand" then
+										animType = Data.AnimType.DualWieldWands
+									end
+								end
+							else
+								animType = Data.AnimType.OneHanded
+								if weaponType == "Knife" then
+									animType = Data.AnimType.SmallWeapons
+								elseif weaponType == "Wand" then
+									animType = Data.AnimType.Wands
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	local t = _type(animType)
+	if t == "string" then
+		animType = Data.AnimType[animType]
+	elseif t ~= "number" then
+		animType = -1
+	end
+	character.AnimType = animType
+	if not _ISCLIENT then
+		GameHelpers.Net.Broadcast("LeaderLib_Character_SetAnimType", {NetID=character.NetID, AnimType=animType})
+	end
+end
+
 ---@class LeaderLib_Character_SetPermanentBoosts
 ---@field NetID NetId
 ---@field Data StatsCharacterDynamicStat
 ---@field Index integer
 
+---@class LeaderLib_Character_SetAnimType
+---@field NetID NetId
+---@field AnimType AnimType The value used to set EsvCharacter/EclCharacter.AnimType
+
 if _ISCLIENT then
+	--Register net subscriptions after scripts are done loading
 	Events.Loaded:Subscribe(function (e)
 		GameHelpers.Net.Subscribe("LeaderLib_Character_SetPermanentBoosts", function (e, data)
 			GameHelpers.Character.SetPermanentBoosts(data.NetID, data.Data, data.Index)
+		end)
+
+		GameHelpers.Net.Subscribe("LeaderLib_Character_SetAnimType", function (e, data)
+			if data.NetID then
+				local character = GameHelpers.GetCharacter(data.NetID)
+				if character then
+					GameHelpers.Character.SetAnimType(character, data.AnimType)
+				end
+			end
 		end)
 	end, {Once=true})
 end

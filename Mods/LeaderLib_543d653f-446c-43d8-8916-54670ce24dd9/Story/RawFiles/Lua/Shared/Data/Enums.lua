@@ -1,6 +1,8 @@
 local _Enum = Classes.Enum
 
+---@enum AnimType
 Data.AnimType = {
+	None = -1,
 	OneHanded = 0,
 	TwoHanded = 1,
 	Bow = 2,
@@ -18,6 +20,7 @@ Data.AnimType = {
 	Wands = 14,
 	DualWieldWands = 15,
 	ShieldWands = 16,
+	[-1] = "None",
 	[0] = "OneHanded",
 	[1] = "TwoHanded",
 	[2] = "Bow",

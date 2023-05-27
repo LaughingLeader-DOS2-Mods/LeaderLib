@@ -5,6 +5,20 @@
 ---@operator call(string):integer
 local Enum = {}
 
+function Enum:Dump()
+	local str = "{\n"
+	local nameFormat = '\t["%s"] = %s,\n'
+	local indexFormat = '\t[%s] = "%s",\n'
+	for value,name in self:Get() do
+		str = str .. nameFormat:format(name, value)
+	end
+	for value,name in self:Get() do
+		str = str .. indexFormat:format(value, name)
+	end
+	str = str .. "}"
+	Ext.Utils.Print(str)
+end
+
 local iter = function (tbl,i)
 	i = i + 1
 	local value = tbl[i]
@@ -22,7 +36,7 @@ end
 ---@param integersTbl table<integer|nil, string>
 ---@param namesTbl table<string|nil, integer>
 ---@param startIndex? integer
-local function CreateEnum(target, integersTbl, namesTbl, startIndex)
+local function _CreateEnum(target, integersTbl, namesTbl, startIndex)
 	local integers = {}
 	local names = {}
 	local startIndex = startIndex or 1
@@ -75,6 +89,8 @@ local function CreateEnum(target, integersTbl, namesTbl, startIndex)
 				return integers
 			elseif key == "Get" then
 				return iterFunc
+			elseif Enum[key] ~= nil then
+				return Enum[key]
 			end
 			return names[key] or integers[key]
 		end,
@@ -89,11 +105,11 @@ end
 ---@param namesTbl? table<string, integer>
 ---@param startIndex? integer
 function Enum:Create(target, integersTbl, namesTbl, startIndex)
-	return CreateEnum(target, integersTbl, namesTbl, startIndex)
+	return _CreateEnum(target, integersTbl, namesTbl, startIndex)
 end
 
 setmetatable(Enum, {
-	__call = CreateEnum
+	__call = _CreateEnum
 })
 
 Classes.Enum = Enum

@@ -102,7 +102,7 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
     if resName then
         res = _GetResistanceAmount(character, damageType) or 0
     else
-        resName = damageType .. "Resistance"
+        resName = string.format("%sResistance", damageType)
     end
 
     local originalResistance = res

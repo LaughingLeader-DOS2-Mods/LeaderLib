@@ -87,7 +87,7 @@ end
 
 local function _GetResistanceAmount(character, damageType)
     local b,res = pcall(Ext.Stats.Math.GetResistance, character, damageType, false)
-    if b then
+    if b and res then
         return res
     end
     return 0
@@ -97,7 +97,7 @@ end
 --- @param damageType string DamageType enumeration
 --- @param resistancePenetration integer
 function HitOverrides.GetResistance(character, damageType, resistancePenetration)
-    local res = _GetResistanceAmount(character, damageType) or 0
+    local res = _GetResistanceAmount(character, damageType)
     local resName _GetResistanceName(damageType)
     if not resName then
         resName = string.format("%sResistance", damageType)

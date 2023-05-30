@@ -1490,7 +1490,6 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameM
 		ChildPrototypes = {},
 		RootSkillPrototype = {},
 		SkillId = skillName,
-		StatsObject = stat,
 		SkillTypeId = stat.SkillType
 	}
 	if isForGameMath then
@@ -1515,6 +1514,13 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameM
 		end
 	end
 	skill.IsTable = true
+	setmetatable(skill, {
+		__index = function (_,k)
+			if k == "StatsObject" then
+				return Ext.Stats.Get(skillName, nil, false)
+			end
+		end
+	})
 	return skill
 end
 

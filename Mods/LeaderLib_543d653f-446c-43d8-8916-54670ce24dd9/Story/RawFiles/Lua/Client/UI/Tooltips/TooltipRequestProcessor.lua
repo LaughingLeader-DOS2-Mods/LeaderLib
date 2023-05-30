@@ -880,7 +880,9 @@ function RequestProcessor.OnGenericTooltip(e, ui, event, text, x, y, width, heig
 		if not _IsNullOrEmpty(request.Text) then
 			e.Args[1] = request.Text
 		else
-			_PrintError(string.format("[RequestProcessor.OnGenericTooltip:%s] request.Text is nil?\nRequest:\n%s\nArgs:\n%s", event, Ext.DumpExport(request), Ext.DumpExport(e.Args)))
+			if request.Text == nil then
+				_PrintError(string.format("[RequestProcessor.OnGenericTooltip:%s] request.Text is nil?\nRequest:\n%s\nArgs:\n%s", event, Ext.DumpExport(request), Ext.DumpExport(e.Args)))
+			end
 			RequestProcessor.Tooltip.NextRequest = nil
 			-- e.Args[1] = ""
 			-- request.Text = ""
@@ -949,7 +951,7 @@ function RequestProcessor.HandleCallback(e, requestType, ui, uiType, event, idOr
 	local character = _GetObjectFromHandle(ui:GetPlayerHandle())
 	local id = idOrDoubleHandle
 
-	if (event == "showSkillTooltip" or event == "showStatusTooltip") then
+	if (event == "showSkillTooltip" or event == "showStatusTooltip" or (event == "showTalentTooltip" and uiType == Data.UIType.serverlist)) then
 		id = statOrWidth
 		if not character then
 			character = _GetObjectFromDouble(idOrDoubleHandle)
@@ -1220,6 +1222,13 @@ function RequestProcessor:Init(tooltip)
 	for t,v in pairs(TooltipInvokes) do
 		_InvokeHandler(v, function (e, ui, ...) RequestProcessor.HandleCallback(e, t, ui, ui.Type, ...) end)
 	end
+
+	--TODO serverlist showHeroTooltip
+	-- _CallHandler("showHeroTooltip", function (e, ui, event, heroId, ...)
+	-- 	if ui.Type == _UITYPE.serverlist then
+	-- 		RequestProcessor.OnGenericTooltip(e, ui, event, "", ...)
+	-- 	end
+	-- end)
 
 	_CallHandler("showTooltip", function (e, ui, ...)
 		if ui.Type == _UITYPE.examine then

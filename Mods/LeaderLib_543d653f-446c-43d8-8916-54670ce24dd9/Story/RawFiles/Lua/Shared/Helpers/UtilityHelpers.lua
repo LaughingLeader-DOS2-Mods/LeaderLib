@@ -399,61 +399,65 @@ if not _ISCLIENT then
 			local grid = Ext.Entity.GetAiGrid()
 			for i=1,len do
 				local data = knockupData.ObjectData[i]
-				local obj = GameHelpers.TryGetObject(data.GUID, "EsvCharacter")
-				if not obj then
-					table.remove(knockupData.ObjectData, i)
-				end
-				local gravity = data.Gravity or _GRAVITY
-				local x,y,z = table.unpack(obj.Translate)
-				local currentY = y
-				if data.Falling then
-					local floorY = GameHelpers.Grid.GetY(x, z, grid)
-					if y > data.Start[2] then
-						y = y - ((_FALLMULT * gravity) * e.Time.DeltaTime)
-						if y < floorY then
-							y = floorY
-						end
-						if y ~= currentY then
-							positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = y}
+				if data then
+					local obj = GameHelpers.TryGetObject(data.GUID, "EsvCharacter")
+					if not obj then
+						knockupData.ObjectData[i] = nil
+					end
+					local gravity = data.Gravity or _GRAVITY
+					local x,y,z = table.unpack(obj.Translate)
+					local currentY = y
+					if data.Falling then
+						local floorY = GameHelpers.Grid.GetY(x, z, grid)
+						if y > data.Start[2] then
+							y = y - ((_FALLMULT * gravity) * e.Time.DeltaTime)
+							if y < floorY then
+								y = floorY
+							end
+							if y ~= currentY then
+								positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = y}
+								positionSyncLen = positionSyncLen + 1
+							end
+							obj.Translate = {x,y,z}
+						else
+							table.remove(knockupData.ObjectData, i)
+							obj.Translate = {x,floorY,z}
+							positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = floorY}
 							positionSyncLen = positionSyncLen + 1
+							if data.EndAnimation then
+								Osi.CharacterSetAnimationOverride(obj.MyGuid, "")
+								Osi.CharacterPurgeQueue(obj.MyGuid)
+								Osi.PlayAnimation(obj.MyGuid, data.EndAnimation, "")
+							end
+							GameHelpers.Status.Remove(obj, "LEADERLIB_IN_AIR")
+							Events.ForceMoveFinished:Invoke({
+								ID = data.ID or "",
+								Target = obj,
+								Source = GameHelpers.TryGetObject(data.Source),
+								TargetGUID = obj.MyGuid,
+								SourceGUID = GameHelpers.GetUUID(data.Source),
+								Distance = data.Height,
+								StartingPosition = data.Start,
+								Skill = data.Skill,
+								SkillData = data.Skill and Ext.Stats.Get(data.Skill, nil, false) or nil
+							})
 						end
-						obj.Translate = {x,y,z}
 					else
-						table.remove(knockupData.ObjectData, i)
-						obj.Translate = {x,floorY,z}
-						positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = floorY}
-						positionSyncLen = positionSyncLen + 1
-						if data.EndAnimation then
-							Osi.CharacterSetAnimationOverride(obj.MyGuid, "")
-							Osi.CharacterPurgeQueue(obj.MyGuid)
-							Osi.PlayAnimation(obj.MyGuid, data.EndAnimation, "")
+						local dist = math.abs(data.End[2]) - math.abs(y)
+						if dist > 0 then
+							local apexMult = math.max(0.2, dist/data.Height)
+							y = y + ((gravity * apexMult) * e.Time.DeltaTime)
+							if y ~= currentY then
+								positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = y}
+								positionSyncLen = positionSyncLen + 1
+							end
+							obj.Translate = {x,y,z}
+						else
+							data.Falling = true
 						end
-						GameHelpers.Status.Remove(obj, "LEADERLIB_IN_AIR")
-						Events.ForceMoveFinished:Invoke({
-							ID = data.ID or "",
-							Target = obj,
-							Source = GameHelpers.TryGetObject(data.Source),
-							TargetGUID = obj.MyGuid,
-							SourceGUID = GameHelpers.GetUUID(data.Source),
-							Distance = data.Height,
-							StartingPosition = data.Start,
-							Skill = data.Skill,
-							SkillData = data.Skill and Ext.Stats.Get(data.Skill, nil, false) or nil
-						})
 					end
 				else
-					local dist = math.abs(data.End[2]) - math.abs(y)
-					if dist > 0 then
-						local apexMult = math.max(0.2, dist/data.Height)
-						y = y + ((gravity * apexMult) * e.Time.DeltaTime)
-						if y ~= currentY then
-							positionSync[positionSyncLen+1] = {NetID = obj.NetID, Y = y}
-							positionSyncLen = positionSyncLen + 1
-						end
-						obj.Translate = {x,y,z}
-					else
-						data.Falling = true
-					end
+					knockupData.ObjectData[i] = nil
 				end
 			end
 			if #knockupData.ObjectData == 0 then

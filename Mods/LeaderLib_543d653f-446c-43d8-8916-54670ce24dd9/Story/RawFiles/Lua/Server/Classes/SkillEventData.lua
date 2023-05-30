@@ -39,8 +39,7 @@ function SkillEventData:Create(skillSource, skill, skillType, skillAbility)
 		TargetObjects = {},
 		TargetPositions = {},
 		TotalTargetObjects = 0,
-		TotalTargetPositions = 0,
-		SkillData = GameHelpers.Ext.CreateSkillTable(skill)
+		TotalTargetPositions = 0
 	}
 	---@deprecated
 	---Use SkillData instead.
@@ -49,6 +48,8 @@ function SkillEventData:Create(skillSource, skill, skillType, skillAbility)
 		__index = function (tbl,k)
 			if k == "SourceObject" then
 				return GameHelpers.TryGetObject(rawget(tbl, "Source"))
+			elseif k == "SkillData" then
+				return Ext.Stats.Get(skill, nil, false)
 			end
 			return SkillEventData[k]
 		end

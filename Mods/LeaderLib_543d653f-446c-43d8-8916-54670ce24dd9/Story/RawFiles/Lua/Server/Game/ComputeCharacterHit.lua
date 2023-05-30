@@ -78,11 +78,19 @@ end
 
 --region Resistance Stuff
 
-local function GetResistanceName(damageType)
+local function _GetResistanceName(damageType)
     if Data.DamageTypeToResistance[damageType] then
         return Data.DamageTypeToResistance[damageType], true
     end
     return Data.DamageTypeToResistanceWithExtras[damageType], false
+end
+
+local function _GetResistanceAmount(character, damageType)
+    local b,res = pcall(Ext.Stats.Math.GetResistance, character, damageType, false)
+    if b then
+        return res
+    end
+    return 0
 end
 
 --- @param character StatCharacter
@@ -90,9 +98,11 @@ end
 --- @param resistancePenetration integer
 function HitOverrides.GetResistance(character, damageType, resistancePenetration)
     local res = 0
-    local resName,isRealStat = GetResistanceName(damageType)
-    if resName and isRealStat then
-        res = character[resName] or 0
+    local resName _GetResistanceName(damageType)
+    if resName then
+        res = _GetResistanceAmount(character, damageType) or 0
+    else
+        resName = damageType .. "Resistance"
     end
 
     local originalResistance = res

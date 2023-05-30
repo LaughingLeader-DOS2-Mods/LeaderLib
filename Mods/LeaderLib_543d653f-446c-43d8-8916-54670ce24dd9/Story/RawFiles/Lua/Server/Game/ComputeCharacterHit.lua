@@ -97,11 +97,9 @@ end
 --- @param damageType string DamageType enumeration
 --- @param resistancePenetration integer
 function HitOverrides.GetResistance(character, damageType, resistancePenetration)
-    local res = 0
+    local res = _GetResistanceAmount(character, damageType) or 0
     local resName _GetResistanceName(damageType)
-    if resName then
-        res = _GetResistanceAmount(character, damageType) or 0
-    else
+    if not resName then
         resName = string.format("%sResistance", damageType)
     end
 

@@ -446,6 +446,90 @@ Patch = function (initialized, region)
 
 		--Sync attribute token changes without requiring a save/load
 
+		local attributeTokenTemplates = {
+			["c77de879-b29b-4707-a75c-2c42adc0712b"] = "Strength",
+			["95284549-f8c1-496b-af36-9d96565f6c0f"] = "Finesse",
+			["bc8c81a1-106d-49ef-beac-e97678ba9b16"] = "Intelligence",
+			["d360798f-50e3-4c9e-b0e5-0c69345b1a92"] = "Constitution",
+			["1a3acb90-a152-4ebd-8b02-c5fe99f6c0e3"] = "Memory",
+			["dfb3db93-2562-46d2-9cd1-5ea5b57b72b9"] = "Wits",
+		}
+
+		local function _GetAttributeTokenAttribute(entries)
+			for i,entry in pairs(entries) do
+				local attribute = attributeTokenTemplates[entry.Template]
+				if attribute ~= nil then
+					return attribute,entry.Item
+				end
+			end
+			return nil
+		end
+
+		local function _CraftingTemplateMatch(entries, template, minCount)
+			local count = 0
+			for i,v in pairs(entries) do
+				if template == "NULL_00000000-0000-0000-0000-000000000000" and v == template then
+					count = count + 1
+				elseif not StringHelpers.IsNullOrEmpty(v) and string.find(v, template) then
+					count = count + 1
+				end
+			end
+			return count >= minCount
+		end
+
+		local craftingActions = {}
+
+		---@param char string
+		Mods.WeaponExpansion.OnCraftingProcessed = function(char, ...)
+			local itemArgs = {...}
+			local items = {}
+			for i,v in pairs(itemArgs) do
+				if not StringHelpers.IsNullOrEmpty(v) then
+					v = StringHelpers.GetUUID(v)
+					local template = GameHelpers.GetTemplate(v)
+					items[#items+1] = {
+						Template = template,
+						Item = v
+					}
+				end
+			end
+			craftingActions[char] = items
+		end
+
+		---@param char string
+		---@param a string|nil	Combined template
+		---@param b string|nil	Combined template
+		---@param c string|nil	Combined template
+		---@param d string|nil	Combined template
+		---@param e string|nil	Combined template
+		---@param newItem string
+		Mods.WeaponExpansion.ItemTemplateCombinedWithItemTemplate = function(char, a, b, c, d, e, newItem)
+			--Ext.Print("[WeaponExpansion:ItemTemplateCombinedWithItemTemplate]",char, a, b, c, d, e, newItem)
+			local craftingEntries = craftingActions[char]
+			if craftingEntries ~= nil then
+				local attribute,tokenItem = _GetAttributeTokenAttribute(craftingEntries)
+				if attribute ~= nil then
+					for _,v in pairs(craftingEntries) do
+						if v ~= tokenItem then
+							local item = GameHelpers.GetItem(v.Item)
+							if item and not GameHelpers.Item.IsObject(item) and item.Stats.ItemType == "Weapon" then
+								Mods.WeaponExpansion.ChangeItemScaling(item, attribute, item.Stats.Name)
+							end
+						end
+					end
+				end
+				craftingActions[char] = nil
+			end
+
+			local templates = {a,b,c,d,e}
+			-- LOOT_LLWEAPONEX_Token_Shard_dcd92e16-80a6-43bc-89c5-8e147d95606c
+			-- 3 shards = a new attribute token of choice
+			if _CraftingTemplateMatch(templates, "dcd92e16%-80a6%-43bc%-89c5%-8e147d95606c", 3)
+			and _CraftingTemplateMatch(templates, "NULL_00000000-0000-0000-0000-000000000000", 2) then
+				Osi.CharacterGiveQuestReward(char, "LLWEAPONEX_Rewards_AttributeToken", "QuestReward")
+			end
+		end
+
 		---@param item EsvItem
 		---@param attribute string
 		---@param itemStat string

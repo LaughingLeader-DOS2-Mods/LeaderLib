@@ -461,6 +461,52 @@ Events.Osiris.CombatRoundStarted = _CreateOsirisEventWrapper("CombatRoundStarted
 	}
 end)
 
+local function _DefenderAttackerEvent(defenderGUID, attackerOwnerGUID, attackerGUID)
+	if _AnyObjectDoesNotExist(defenderGUID, attackerOwnerGUID, attackerGUID) then return false end
+	return {
+		Defender = GameHelpers.GetCharacter(defenderGUID),
+		DefenderGUID = _GetGUID(defenderGUID),
+		Attacker = GameHelpers.GetCharacter(attackerGUID),
+		AttackerGUID = _GetGUID(attackerGUID),
+		AttackerOwner = GameHelpers.GetCharacter(attackerOwnerGUID),
+		AttackerOwnerGUID = _GetGUID(attackerOwnerGUID),
+	}
+end
+
+---@param name string
+---@return LeaderLibSubscribableEvent<OsirisCharacterDefenderAttackerBaseEventArgs>
+local function _CreateOsirisDefenderAttackerWrapper(name)
+	return _CreateOsirisEventWrapper(name, _DefenderAttackerEvent)
+end
+
+---@class OsirisCharacterDefenderAttackerBaseEventArgs
+---@field Defender EsvCharacter
+---@field DefenderGUID Guid
+---@field Attacker EsvCharacter
+---@field AttackerGUID Guid
+---@field AttackerOwner EsvCharacter
+---@field AttackerOwnerGUID Guid
+
+Events.Osiris.CharacterBlockedBy = _CreateOsirisDefenderAttackerWrapper("CharacterBlockedBy")
+Events.Osiris.CharacterMissedBy = _CreateOsirisDefenderAttackerWrapper("CharacterMissedBy")
+Events.Osiris.CharacterPhysicalHitBy = _CreateOsirisDefenderAttackerWrapper("CharacterPhysicalHitBy")
+Events.Osiris.CharacterCriticalHitBy = _CreateOsirisDefenderAttackerWrapper("CharacterCriticalHitBy")
+Events.Osiris.CharacterKilledBy = _CreateOsirisDefenderAttackerWrapper("CharacterKilledBy")
+
+---@type LeaderLibSubscribableEvent<{TemplateGUID:Guid, Template:CharacterTemplate, Attacker:EsvCharacter, AttackerGUID:EsvCharacter}>
+Events.Osiris.CharacterTemplateKilledByCharacter = _CreateOsirisEventWrapper("CharacterTemplateKilledByCharacter", function (templateGUID, attackerGUID)
+	if not _ObjectExists(attackerGUID) then return false end
+	local data = {
+		TemplateGUID = _GetGUID(templateGUID),
+		Attacker = GameHelpers.GetCharacter(attackerGUID),
+		AttackerGUID = _GetGUID(attackerGUID),
+	}
+	if not Vars.IsEditorMode then
+		data.Template = Ext.Template.GetTemplate(templateGUID)
+	end
+	return data
+end)
+
 --#endregion
 
 --#region Item Events
@@ -958,9 +1004,42 @@ Events.Osiris.DialogEnded = _CreateOsirisDialogEventWrapper("DialogEnded")
 Events.Osiris.DialogRequestFailed = _CreateOsirisDialogEventWrapper("DialogRequestFailed")
 Events.Osiris.DualDialogStart = _CreateOsirisDialogEventWrapper("DualDialogStart")
 
+---@type LeaderLibSubscribableEvent<{Target:ServerObject, TargetGUID:Guid, Player:EsvCharacter, PlayerGUID:Guid}>
+Events.Osiris.DialogStartRequested = _CreateOsirisEventWrapper("DialogStartRequested", function (targetGUID, playerGUID)
+	if _AnyObjectDoesNotExist(targetGUID, playerGUID) then return false end
+	return {
+		Target = GameHelpers.TryGetObject(targetGUID),
+		TargetGUID = _GetGUID(targetGUID),
+		Player = GameHelpers.TryGetObject(playerGUID),
+		PlayerGUID = _GetGUID(playerGUID),
+	}
+end)
+
 ---@class OsirisChildDialogRequestedEventArgs:OsirisDialogBaseEventArgs
 ---@field TargetInstanceID integer
 ---@field TargetDialog OsirisDialogBaseEventArgs
+
+---@param tbl table
+---@param instance integer
+---@param dialogName? string
+local function _SetDialogMeta(tbl, instance, dialogName)
+	if dialogName == nil then
+		local db = Osi.DB_DialogName(nil, instance)
+		if db and db[1] ~= nil then
+			dialogName = db[1][1]
+		end
+	end
+	if dialogName and instance then
+		local b,result = xpcall(_SetupDialogEventData, debug.traceback, dialogName, instance) --[[@as OsirisDialogBaseEventArgs]]
+		if not b then
+			Ext.Utils.PrintError(result)
+		else
+			rawset(tbl, "Dialog", result)
+			return result
+		end
+	end
+	return nil
+end
 
 local function _SetTargetDialog(data, dialog, instanceID, targetInstanceID)
 	---@cast data OsirisChildDialogRequestedEventArgs
@@ -982,7 +1061,97 @@ Events.Osiris.ChildDialogRequested = _CreateOsirisDialogEventWrapper("ChildDialo
 ---@type LeaderLibSubscribableEvent<OsirisChildDialogRequestedEventArgs>
 Events.Osiris.DualDialogRequested = _CreateOsirisDialogEventWrapper("DualDialogRequested", _SetTargetDialog)
 
+---@class OsirisPersuasionResultEventArgs
+---@field Character EsvCharacter
+---@field CharacterGUID Guid
+---@field Success boolean
+---@field DialogName string
+---@field Dialog OsirisDialogBaseEventArgs
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterPickpocketSuccessEventArgs>
+Events.Osiris.PersuasionResult = _CreateOsirisEventWrapper("PersuasionResult", function (characterGUID, success, dialogName)
+	if not _ObjectExists(characterGUID) then return false end
+	local character = GameHelpers.GetCharacter(characterGUID)
+	local data = {
+		Character = character,
+		CharacterGUID = _GetGUID(characterGUID),
+		Success = success == 1,
+		DialogName = dialogName,
+	}
+	if not StringHelpers.IsNullOrEmpty(dialogName) then
+		setmetatable(data, {
+			__index = function(_, k)
+				if k == "Dialog" then
+					local db = Osi.DB_DialogName(dialogName, nil)
+					if db then
+						for _,v in pairs(db) do
+							local _,instance = table.unpack(db)
+							if StringHelpers.GetUUID(Osi.DialogGetInvolvedPlayer(instance, 1)) == data.CharacterGUID or StringHelpers.GetUUID(Osi.DialogGetInvolvedNPC(instance, 1)) == data.CharacterGUID then
+								return _SetDialogMeta(data, instance, dialogName)
+							end
+						end
+					end
+				end
+			end
+		})
+	end
+
+	return data
+end)
+
 --#endregion
+
+
+--#region Flags
+
+local function _ObjectFlagEvent(flag, objectGUID, instance)
+	if not _ObjectExists(objectGUID) then return false end
+	local data = {
+		Object = GameHelpers.GetCharacter(objectGUID),
+		ObjectGUID = _GetGUID(objectGUID),
+		Flag = flag,
+		InstanceID = instance,
+	}
+	if instance ~= 0 then
+		setmetatable(data, {
+			__index = function(tbl, k)
+				if k == "Dialog" then
+					return _SetDialogMeta(tbl, instance)
+				end
+			end
+		})
+	end
+
+	return data
+end
+
+---@param name string
+---@return LeaderLibSubscribableEvent<OsirisFlagBaseEventArgs>
+local function _CreateOsirisObjectFlagWrapper(name)
+	return _CreateOsirisEventWrapper(name, _ObjectFlagEvent)
+end
+
+---@class OsirisFlagBaseEventArgs
+---@field Object EsvCharacter|EsvItem
+---@field ObjectGUID Guid
+---@field Flag string
+---@field InstanceID integer 0 if this flag wasn't set in a dialog.
+---@field Dialog OsirisDialogBaseEventArgs|nil If InstanceID isn't 0, this provides access to related dialog properties.
+
+Events.Osiris.ObjectFlagSet = _CreateOsirisObjectFlagWrapper("ObjectFlagSet")
+Events.Osiris.ObjectFlagCleared = _CreateOsirisObjectFlagWrapper("ObjectFlagCleared")
+--Events.Osiris.ObjectFlagShared = _CreateOsirisObjectFlagWrapper("ObjectFlagShared") -- TODO When is this called?
+
+---@class OsirisGlobalFlagEventArgs
+---@field Flag string
+
+---@type LeaderLibSubscribableEvent<OsirisGlobalFlagEventArgs>
+Events.Osiris.GlobalFlagSet = _CreateOsirisEventWrapper("GlobalFlagSet", function (flag) return {Flag = flag} end)
+---@type LeaderLibSubscribableEvent<OsirisGlobalFlagEventArgs>
+Events.Osiris.GlobalFlagCleared = _CreateOsirisEventWrapper("GlobalFlagCleared", function (flag) return {Flag = flag} end)
+
+--#endregion
+
 
 --#region Crimes
 
@@ -1022,6 +1191,36 @@ Events.Osiris.CrimeIsRegistered = _CreateOsirisEventWrapper("CrimeIsRegistered",
 		CriminalGUIDs = criminalGUIDs,
 		Criminals = criminals,
 		TotalCriminals = totalCriminals
+	}
+end, "before")
+
+---@class OsirisCharacterStoleItemEventArgs
+---@field Character EsvCharacter
+---@field CharacterGUID Guid
+---@field Item EsvItem
+---@field ItemGUID Guid
+---@field Amount integer
+---@field Position vec3
+---@field PreviousOwner EsvCharacter|nil
+---@field PreviousOwnerGUID Guid|NULL_UUID
+---@field Container EsvItem|nil
+---@field ContainerGUID Guid|NULL_UUID
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterStoleItemEventArgs>
+Events.Osiris.CharacterStoleItem = _CreateOsirisEventWrapper("CharacterStoleItem", function (characterGUID, itemGUID, x, y, z, oldOwnerGUID, containerGUID, amount)
+	if not _ObjectExists(characterGUID) then return false end
+	---@type OsirisCharacterStoleItemEventArgs
+	return {
+		Character = GameHelpers.GetCharacter(characterGUID),
+		CharacterGUID = _GetGUID(characterGUID),
+		Item = GameHelpers.GetItem(itemGUID),
+		ItemGUID = _GetGUID(itemGUID),
+		Amount = amount,
+		Position = {x,y,z},
+		PreviousOwner = GameHelpers.GetCharacter(oldOwnerGUID),
+		PreviousOwnerGUID = _GetGUID(oldOwnerGUID),
+		Container = GameHelpers.GetItem(itemGUID),
+		ContainerGUID = _GetGUID(itemGUID),
 	}
 end, "before")
 

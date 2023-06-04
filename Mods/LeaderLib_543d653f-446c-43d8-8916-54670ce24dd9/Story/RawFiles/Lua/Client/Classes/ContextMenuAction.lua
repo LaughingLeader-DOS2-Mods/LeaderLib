@@ -1,6 +1,6 @@
 ---@class ContextMenuActionSettings
 ---@field ID string
----@field ShouldOpen fun(contextMenu:ContextMenu, x:number, y:number):boolean Called when the context menu is looking to open. If this returns true, the context menu will be visible.
+---@field ShouldOpen fun(contextMenu:ContextMenu, x:number, y:number, self:ContextMenuAction):boolean Called when the context menu is looking to open. If this returns true, the context menu will be visible.
 ---@field OnUpdate fun(self:ContextMenuAction) Called before this action is added to the context menu. Use it to set Disabled/Legal etc.
 ---@field Callback ContextMenuActionCallback
 ---@field Visible boolean
@@ -119,7 +119,12 @@ end
 ---@param y number
 function ContextMenuAction:GetCanOpen(contextMenu, x, y)
 	if self.ShouldOpen then
-		return self.ShouldOpen(contextMenu, x, y) == true
+		local b,result = xpcall(self.ShouldOpen, debug.traceback, contextMenu, x, y, self)
+		if not b then
+			Ext.Utils.PrintError(result)
+		else
+			return result == true
+		end
 	end
 	return false
 end

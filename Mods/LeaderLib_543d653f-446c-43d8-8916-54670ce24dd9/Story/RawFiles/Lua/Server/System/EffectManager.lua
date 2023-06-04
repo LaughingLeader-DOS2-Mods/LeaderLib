@@ -86,24 +86,46 @@ end
 ---@field Params EffectManagerCreateEffectParams|nil
 
 ---@param target number[]
+---@param id string
 ---@param effect string
 ---@param handle integer
 ---@param params? EffectManagerCreateEffectParams
-function _INTERNAL.SaveWorldEffectData(target, effect, handle, params)
+function _INTERNAL.SaveWorldEffectData(target, id, effect, handle, params)
 	local region = SharedData.RegionData.Current
 
 	if _PV.WorldLoopEffects[region] == nil then
 		_PV.WorldLoopEffects[region] = {}
 	end
 
+	local savedParams = nil
+	if type(params) == "table" then
+		savedParams = {}
+		local hasParams = false
+		for k,v in pairs(params) do
+			local t = type(v)
+			if t == "boolean" or t == "number" or t == "string" or t == "table" then
+				savedParams[k] = v
+				hasParams = true
+			elseif ObjectHandleEffectParams[k] then
+				local obj = GameHelpers.TryGetObject(v)
+				if obj then
+					savedParams[k] = obj.MyGuid
+					hasParams = true
+				end
+			end
+		end
+		if not hasParams then
+			savedParams = nil
+		end
+	end
+
 	local data = {
+		ID = id,
 		Effect = effect,
 		Position = target,
-		Handle = handle
+		Handle = handle,
+		Params = savedParams,
 	}
-	if params then
-		data.Params = params
-	end
 
 	table.insert(_PV.WorldLoopEffects[region], data)
 end
@@ -310,10 +332,10 @@ function EffectManager.PlayEffectAt(fx, pos, params, skipSaving)
 	if result and params and params.Loop == true and not skipSaving then
 		if type(result) == "table" then
 			for i,v in pairs(result) do
-				_INTERNAL.SaveWorldEffectData(v.Position, v.ID, v.Handle, params)
+				_INTERNAL.SaveWorldEffectData(v.Position, v.ID, fx, v.Handle, params)
 			end
 		else
-			_INTERNAL.SaveWorldEffectData(pos, result.ID, result.Handle, params)
+			_INTERNAL.SaveWorldEffectData(pos, result.ID, fx, result.Handle, params)
 		end
 	end
 	return result

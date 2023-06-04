@@ -330,7 +330,7 @@ end
 function EffectManager.PlayEffectAt(fx, pos, params, skipSaving)
 	local result = _INTERNAL.PlayEffectAt(fx, pos, params)
 	if result and params and params.Loop == true and not skipSaving then
-		if type(result) == "table" then
+		if type(result) == "table" and #result > 0 then
 			for i,v in pairs(result) do
 				_INTERNAL.SaveWorldEffectData(v.Position, v.ID, fx, v.Handle, params)
 			end

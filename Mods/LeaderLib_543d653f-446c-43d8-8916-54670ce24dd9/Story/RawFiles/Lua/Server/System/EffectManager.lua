@@ -10,6 +10,94 @@ local _INTERNAL = {}
 
 EffectManager._Internal = _INTERNAL
 
+---@param effect EsvEffect
+function _INTERNAL.DeleteEffect(effect)
+	effect.ForgetEffect = true
+	effect.Loop = false
+	-- if _OSIRIS() then
+	-- 	Osi.StopLoopEffect(Ext.Utils.HandleToInteger(effect.Component.Handle))
+	-- end
+	effect:Delete()
+end
+
+---@param uuid Guid
+---@param data LeaderLibObjectLoopEffectSaveData
+---@param deletedHandles table<integer,boolean>
+local function _ValidateObjectEffects(uuid, data, deletedHandles)
+	if GameHelpers.ObjectExists(uuid) then
+		local nextData = {}
+		local len = 0
+		for _,v in pairs(data) do
+			local exists = false
+			if v.Handle and not deletedHandles[v.Handle] then
+				local fxHandle = Ext.Utils.IntegerToHandle(v.Handle)
+				if fxHandle and Ext.Utils.IsValidHandle(fxHandle) then
+					local effect = Ext.Effect.GetEffect(fxHandle)
+					if effect then
+						exists = true
+					end
+				end
+			end
+			if exists then
+				len = len + 1
+				nextData[len] = v
+			end
+		end
+		if len > 0 then
+			return nextData
+		end
+	end
+	return nil
+end
+
+---@param deletedHandles? table<integer,boolean>
+function _INTERNAL.ValidateLoopEffects(deletedHandles)
+	deletedHandles = deletedHandles or {}
+
+	local region = SharedData.RegionData.Current
+	local worldEffects = _PV.WorldLoopEffects[region]
+	if worldEffects then
+		local nextEffects = {}
+		local len = 0
+		for _,v in pairs(worldEffects) do
+			local exists = false
+			if v.Handle and not deletedHandles[v.Handle] then
+				local fxHandle = Ext.Utils.IntegerToHandle(v.Handle)
+				if fxHandle and Ext.Utils.IsValidHandle(fxHandle) then
+					local effect = Ext.Effect.GetEffect(fxHandle)
+					if effect then
+						exists = true
+					end
+				end
+			end
+			if exists then
+				len = len + 1
+				nextEffects[len] = v
+			end
+		end
+		if len > 0 then
+			_PV.WorldLoopEffects[region] = nextEffects
+		else
+			_PV.WorldLoopEffects[region] = nil
+		end
+	end
+
+	local nextObjectEffects = {}
+	local len = 0
+	for uuid,data in pairs(_PV.ObjectLoopEffects) do
+		local nextData = _ValidateObjectEffects(uuid, data, deletedHandles)
+		if nextData then
+			len = len + 1
+			nextObjectEffects[uuid] = data
+		end
+	end
+	if len > 0 then
+		_PV.ObjectLoopEffects = nextObjectEffects
+	else
+		_PV.ObjectLoopEffects = {}
+	end
+end
+
 ---@class EffectManagerEsvEffectParams
 ---@field BeamTarget ComponentHandle
 ---@field BeamTargetBone string
@@ -80,6 +168,7 @@ function _INTERNAL.SaveObjectEffectData(uuid, id, effect, handle, params)
 end
 
 ---@class LeaderLibWorldLoopEffectSaveData
+---@field ID string|nil
 ---@field Effect string
 ---@field Position number[]
 ---@field Handle integer
@@ -194,6 +283,7 @@ function _INTERNAL.PlayEffect(fx, object, params)
 		local b,effect = xpcall(Ext.Effect.CreateEffect, debug.traceback, fx, object.Handle, params.Bone or "")
 		if b and effect then
 			effect.Loop = false
+			effect.ForgetEffect = true
 			--TODO Ext.HandleToDouble is client-side
 			--handle = Ext.UI.HandleToDouble(effect.Component.Handle)
 			handle = Ext.Utils.HandleToInteger(effect.Component.Handle)
@@ -211,6 +301,8 @@ function _INTERNAL.PlayEffect(fx, object, params)
 				end
 			end
 			if params.Loop then
+				effect.Loop = true
+				effect.ForgetEffect = false
 				InvokeListenerCallbacks(_INTERNAL.Callbacks.LoopEffectStarted, effect, object, effect.Component.Handle, params.Bone or "")
 			end
 			return CreateEffectResult(effect, handle, id)
@@ -277,6 +369,8 @@ function _INTERNAL.PlayEffectAt(fx, pos, params)
 					end
 				end
 				if params.Loop then
+					effect.Loop = true
+					effect.ForgetEffect = false
 					handle = Ext.Utils.HandleToInteger(effect.Component.Handle)
 				end
 			end
@@ -359,14 +453,14 @@ function EffectManager.PlayClientEffect(fx, target, params, client)
 end
 
 ---@param handle integer|ComponentHandle
-function _INTERNAL.StopEffect(handle)
+function _INTERNAL.StopEffectByHandle(handle)
 	local t = type(handle)
 	if t == "number" then
 		local fxHandle = Ext.Utils.IntegerToHandle(handle)
 		if fxHandle and Ext.Utils.IsValidHandle(fxHandle) then
 			local effect = Ext.Effect.GetEffect(fxHandle)
 			if effect then
-				effect:Delete()
+				_INTERNAL.DeleteEffect(effect)
 				return true
 			end
 		end
@@ -374,7 +468,7 @@ function _INTERNAL.StopEffect(handle)
 	if t == "userdata" then
 		local effect = Ext.Effect.GetEffect(handle)
 		if effect then
-			effect:Delete()
+			_INTERNAL.DeleteEffect(effect)
 			return true
 		end
 	end
@@ -383,7 +477,7 @@ end
 
 ---@param handle integer
 function EffectManager.StopLoopEffectByHandle(handle)
-	_INTERNAL.StopEffect(handle)
+	_INTERNAL.StopEffectByHandle(handle)
 	local nextWorldLoopEffects = {}
 	local changed = false
 	for region,dataTable in pairs(_PV.WorldLoopEffects) do
@@ -537,8 +631,8 @@ function EffectManager.StopEffectsByNameForObject(effect, target)
 				success = true
 			end
 		else
-			for _,fx in pairs(EffectManager.GetAllEffects(effect, target)) do
-				fx:Delete()
+			for _,effect in pairs(EffectManager.GetAllEffects(effect, target)) do
+				_INTERNAL.DeleteEffect(effect)
 				success = true
 			end
 		end
@@ -579,8 +673,8 @@ function EffectManager.StopEffectsByIDForObject(id, target)
 			for i=1,len do
 				local v = dataTable[i]
 				if v and v.ID == id then
-					for _,fx in pairs(EffectManager.GetAllEffects(v.Effect, uuid)) do
-						fx:Delete()
+					for _,effect in pairs(EffectManager.GetAllEffects(v.Effect, uuid)) do
+						_INTERNAL.DeleteEffect(effect)
 						success = true
 					end
 					table.remove(dataTable, i)
@@ -592,6 +686,117 @@ function EffectManager.StopEffectsByIDForObject(id, target)
 			end
 		end
 	end
+	return success
+end
+
+---@class EffectManagerDeleteEffectsOptions
+---@field Target ServerObject|vec3 The target to delete effects for, if any.
+---@field ID string|string[] The effect ID to delete, if any. This would be a unique ID, instead of an effect name.
+---@field EffectName string|string[]
+---@field DistanceThreshold number If using a position for a target, this is the max distance a checked position can be to be considered 'valid'.
+
+---@param params EffectManagerDeleteEffectsOptions
+function EffectManager.DeleteEffects(params)
+	assert(type(params) == "table", "params must be a valid table")
+	assert(params.EffectName ~= nil or params.ID ~= nil, "Either EffectName or ID must be set")
+
+	local success = false
+
+	local matchEffects = {}
+	if params.EffectName then
+		if type(params.EffectName) == "table" then
+			for _,v in pairs(params.EffectName) do
+				matchEffects[v] = true
+			end
+		else
+			matchEffects[params.EffectName] = true
+		end
+	end
+
+	local deletedHandles = {}
+
+	if params.Target then
+		if GameHelpers.Math.IsPosition(params.Target) then
+			local distanceThreshold = params.DistanceThreshold or 1.0
+			if params.ID then
+				for region,dataTable in pairs(_PV.WorldLoopEffects) do
+					for _,v in pairs(dataTable) do
+						if v and v.ID == params.ID and (not params.EffectName or matchEffects[v.Effect]) then
+							if GameHelpers.Math.GetDistance(v.Position, params.Target) <= distanceThreshold then
+								deletedHandles[v.Handle] = true
+								_INTERNAL.StopEffectByHandle(v.Handle)
+								success = true
+							end
+						end
+					end
+				end
+			else
+				for _,effect in pairs(EffectManager.GetAllEffects(params.EffectName, params.Target, distanceThreshold)) do
+					deletedHandles[Ext.Utils.HandleToInteger(effect.Component.Handle)] = true
+					_INTERNAL.DeleteEffect(effect)
+					success = true
+				end
+			end
+		else
+			local uuid = GameHelpers.GetUUID(params.Target)
+			fassert(uuid ~= nil, "Failed to get UUID for target parameter %s", params.Target)
+			if params.ID then
+				local dataTable = _PV.ObjectLoopEffects[uuid]
+				if dataTable then
+					for _,v in pairs(dataTable) do
+						if v and v.ID == params.ID and (not params.EffectName or matchEffects[v.Effect]) then
+							deletedHandles[v.Handle] = true
+							_INTERNAL.StopEffectByHandle(v.Handle)
+							success = true
+						end
+					end
+				end
+			else
+				for _,effect in pairs(EffectManager.GetAllEffects(params.EffectName, uuid)) do
+					deletedHandles[Ext.Utils.HandleToInteger(effect.Component.Handle)] = true
+					_INTERNAL.DeleteEffect(effect)
+					success = true
+				end
+			end
+		end
+	else
+		if params.ID then
+			for region,dataTable in pairs(_PV.WorldLoopEffects) do
+				local len = #dataTable
+				local nextTotal = len
+				for _,v in pairs(dataTable) do
+					if v and v.ID == params.ID and (not params.EffectName or matchEffects[v.Effect]) then
+						deletedHandles[v.Handle] = true
+						_INTERNAL.StopEffectByHandle(v.Handle)
+						success = true
+					end
+				end
+			end
+			for uuid,dataTable in pairs(_PV.ObjectLoopEffects) do
+				for _,v in pairs(dataTable) do
+					if v and v.ID == params.ID and (not params.EffectName or matchEffects[v.Effect]) then
+						deletedHandles[v.Handle] = true
+						_INTERNAL.StopEffectByHandle(v.Handle)
+						success = true
+					end
+				end
+			end
+		else
+			for _,handle in pairs(Ext.Effect.GetAllEffectHandles()) do
+				local effect = Ext.Effect.GetEffect(handle)
+				if effect and matchEffects[effect.EffectName] then
+					deletedHandles[Ext.Utils.HandleToInteger(effect.Component.Handle)] = true
+					_INTERNAL.DeleteEffect(effect)
+					success = true
+				end
+			end
+		end
+	end
+
+	if success then
+		_INTERNAL.ValidateLoopEffects(deletedHandles)
+	end
+
 	return success
 end
 
@@ -610,7 +815,7 @@ function EffectManager.StopEffectsByNameForPosition(effect, target, distanceThre
 		return success
 	else
 		for _,effect in pairs(EffectManager.GetAllEffects(effect, target, distanceThreshold)) do
-			effect:Delete()
+			_INTERNAL.DeleteEffect(effect)
 			success = true
 		end
 
@@ -618,7 +823,7 @@ function EffectManager.StopEffectsByNameForPosition(effect, target, distanceThre
 			for i,v in pairs(dataTable) do
 				if v.Effect == effect then
 					if GameHelpers.Math.GetDistance(v.Position, target) <= distanceThreshold then
-						_INTERNAL.StopEffect(v.Handle)
+						_INTERNAL.StopEffectByHandle(v.Handle)
 						table.remove(dataTable, i)
 					end
 				end
@@ -631,7 +836,6 @@ function EffectManager.StopEffectsByNameForPosition(effect, target, distanceThre
 	return success
 end
 
-
 ---@param target ObjectParam
 function EffectManager.DeleteEffectsForObject(target)
 	local success = false
@@ -643,8 +847,8 @@ function EffectManager.DeleteEffectsForObject(target)
 		for i=1,len do
 			local v = dataTable[i]
 			if v and v.Effect then
-				for _,fx in pairs(EffectManager.GetAllEffects(v.Effect, uuid)) do
-					fx:Delete()
+				for _,effect in pairs(EffectManager.GetAllEffects(v.Effect, uuid)) do
+					_INTERNAL.DeleteEffect(effect)
 				end
 			end
 		end
@@ -654,11 +858,33 @@ function EffectManager.DeleteEffectsForObject(target)
 	return success
 end
 
-local function InvalidateLoopEffects(region)
+local function _InvalidateLoopEffects(region)
 	local worldEffects = _PV.WorldLoopEffects[region]
 	if worldEffects then
 		for i,v in pairs(worldEffects) do
+			local handle = v.Handle
+			if handle then
+				local fxHandle = Ext.Utils.IntegerToHandle(handle)
+				if fxHandle and Ext.Utils.IsValidHandle(fxHandle) then
+					local effect = Ext.Effect.GetEffect(fxHandle)
+					if effect then
+						_INTERNAL.DeleteEffect(effect)
+					end
+				end
+			end
 			v.Handle = nil
+		end
+	end
+end
+
+---@param region string
+function _INTERNAL.DeleteLoopEffectsForRegion(region)
+	_InvalidateLoopEffects(region)
+	_PV.WorldLoopEffects[region] = nil
+	for uuid,_ in pairs(_PV.ObjectLoopEffects) do
+		if Osi.ObjectExists(uuid) == 0 or Osi.ObjectIsGlobal(uuid) == 0 then
+			EffectManager.DeleteEffectsForObject(uuid)
+			_PV.ObjectLoopEffects[uuid] = nil
 		end
 	end
 end
@@ -666,14 +892,22 @@ end
 function EffectManager.RestoreEffects(region)
 	local worldEffects = _PV.WorldLoopEffects[region]
 	if worldEffects then
-		for i,v in pairs(worldEffects) do
+		local cachedData = TableHelpers.Clone(worldEffects)
+		_PV.WorldLoopEffects[region] = nil
+
+		for _,v in pairs(cachedData) do
 			if v.Handle and v.Handle ~= -1 then
 				Osi.StopLoopEffect(v.Handle)
 			end
-			if v.Params then
-				EffectManager.PlayEffectAt(v.Effect, v.Position, v.Params)
+			if GameHelpers.Math.IsPosition(v.Position) then
+				local result = nil
+				if v.Params then
+					result = EffectManager.PlayEffectAt(v.Effect, v.Position, v.Params)
+				else
+					result = EffectManager.PlayEffectAt(v.Effect, v.Position, {Loop=true})
+				end
 			else
-				EffectManager.PlayEffectAt(v.Effect, v.Position, {Loop=true})
+				fprint(LOGLEVEL.ERROR, "[EffectManager.RestoreEffects:%s] Position was not saved for effect:\n%s", region, Lib.serpent.block(v))
 			end
 		end
 	end
@@ -704,19 +938,10 @@ function EffectManager.RestoreEffects(region)
 	end
 end
 
-function EffectManager.DeleteLoopEffects(region)
-	_PV.WorldLoopEffects[region] = nil
-	for uuid,dataTable in pairs(_PV.ObjectLoopEffects) do
-		if Osi.ObjectExists(uuid) == 0 or Osi.ObjectIsGlobal(uuid) == 0 then
-			_PV.ObjectLoopEffects[uuid] = nil
-		end
-	end
-end
-
 Events.RegionChanged:Subscribe(function (e)
 	if e.State == REGIONSTATE.STARTED then
 		if Vars.PersistentVarsLoaded then
-			InvalidateLoopEffects(e.Region)
+			_InvalidateLoopEffects(e.Region)
 		end
 	elseif e.State == REGIONSTATE.GAME then
 		if Vars.PersistentVarsLoaded then
@@ -727,6 +952,6 @@ Events.RegionChanged:Subscribe(function (e)
 			end, {MatchArgs={ID=ModuleUUID}, Once=true})
 		end
 	elseif e.State == REGIONSTATE.ENDED then
-		EffectManager.DeleteLoopEffects(e.Region)
+		_INTERNAL.DeleteLoopEffectsForRegion(e.Region)
 	end
 end)

@@ -611,84 +611,6 @@ function EffectManager.GetEffectByIDForObject(id, object)
 	end
 end
 
----@param effect string|string[]
----@param target ObjectParam
-function EffectManager.StopEffectsByNameForObject(effect, target)
-	local success = false
-	if type(effect) == "table" then
-		for _,v in pairs(effect) do
-			if EffectManager.StopEffectsByNameForObject(v, target) then
-				success = true
-			end
-		end
-		return success
-	else
-		local uuid = GameHelpers.GetUUID(target)
-		fassert(uuid ~= nil, "Failed to get UUID for target parameter %s", target)
-		if _OSIRIS() then
-			if uuid then
-				Osi.CharacterStopAllEffectsWithName(uuid, effect)
-				success = true
-			end
-		else
-			for _,effect in pairs(EffectManager.GetAllEffects(effect, target)) do
-				_INTERNAL.DeleteEffect(effect)
-				success = true
-			end
-		end
-
-		local dataTable = _PV.ObjectLoopEffects[uuid]
-		if dataTable then
-			for i,v in pairs(dataTable) do
-				if v.Effect == effect then
-					table.remove(dataTable, i)
-				end
-			end
-			if #dataTable == 0 then
-				_PV.ObjectLoopEffects[uuid] = nil
-			end
-		end
-	end
-	return success
-end
-
----@param id string|string[]
----@param target ObjectParam
-function EffectManager.StopEffectsByIDForObject(id, target)
-	local success = false
-	if type(id) == "table" then
-		for _,v in pairs(id) do
-			if EffectManager.StopEffectsByIDForObject(v, target) then
-				success = true
-			end
-		end
-		return success
-	else
-		local uuid = GameHelpers.GetUUID(target)
-		fassert(uuid ~= nil, "Failed to get UUID for target parameter %s", target)
-		local dataTable = _PV.ObjectLoopEffects[uuid]
-		if dataTable then
-			local len = #dataTable
-			local nextTotal = len
-			for i=1,len do
-				local v = dataTable[i]
-				if v and v.ID == id then
-					for _,effect in pairs(EffectManager.GetAllEffects(v.Effect, uuid)) do
-						_INTERNAL.DeleteEffect(effect)
-						success = true
-					end
-					table.remove(dataTable, i)
-					nextTotal = nextTotal - 1
-				end
-			end
-			if nextTotal <= 0 then
-				_PV.ObjectLoopEffects[uuid] = nil
-			end
-		end
-	end
-	return success
-end
-
 ---@class EffectManagerDeleteEffectsOptions
 ---@field Target ServerObject|vec3 The target to delete effects for, if any.
 ---@field ID string|string[] The effect ID to delete, if any. This would be a unique ID, instead of an effect name.
@@ -800,44 +722,25 @@ function EffectManager.DeleteEffects(params)
 	return success
 end
 
+---@deprecated
+---@see EffectManager.DeleteEffects
+---@param effect string|string[]
+---@param target ObjectParam
+function EffectManager.StopEffectsByNameForObject(effect, target)
+	return EffectManager.DeleteEffects({EffectName=effect, Target=target})
+end
+
+---@deprecated
+---@see EffectManager.DeleteEffects
 ---@param effect string|string[]
 ---@param target number[]
 ---@param distanceThreshold? number The maximum distance between an effect position and a target position before it should be deleted. Defaults to 0.1
 function EffectManager.StopEffectsByNameForPosition(effect, target, distanceThreshold)
-	local success = false
-	distanceThreshold = type(distanceThreshold) == "number" and distanceThreshold or 0.1
-	if type(effect) == "table" then
-		for _,v in pairs(effect) do
-			if EffectManager.StopEffectsByNameForPosition(v, target) then
-				success = true
-			end
-		end
-		return success
-	else
-		for _,effect in pairs(EffectManager.GetAllEffects(effect, target, distanceThreshold)) do
-			_INTERNAL.DeleteEffect(effect)
-			success = true
-		end
-
-		for region,dataTable in pairs(_PV.WorldLoopEffects) do
-			for i,v in pairs(dataTable) do
-				if v.Effect == effect then
-					if GameHelpers.Math.GetDistance(v.Position, target) <= distanceThreshold then
-						_INTERNAL.StopEffectByHandle(v.Handle)
-						table.remove(dataTable, i)
-					end
-				end
-			end
-			if #dataTable == 0 then
-				_PV.WorldLoopEffects[region] = nil
-			end
-		end
-	end
-	return success
+	return EffectManager.DeleteEffects({EffectName=effect, Target=target, DistanceThreshold=distanceThreshold})
 end
 
 ---@param target ObjectParam
-function EffectManager.DeleteEffectsForObject(target)
+function _INTERNAL.DeleteEffectsForObject(target)
 	local success = false
 	local uuid = GameHelpers.GetUUID(target)
 	fassert(uuid ~= nil, "Failed to get UUID for target parameter %s", target)
@@ -883,7 +786,7 @@ function _INTERNAL.DeleteLoopEffectsForRegion(region)
 	_PV.WorldLoopEffects[region] = nil
 	for uuid,_ in pairs(_PV.ObjectLoopEffects) do
 		if Osi.ObjectExists(uuid) == 0 or Osi.ObjectIsGlobal(uuid) == 0 then
-			EffectManager.DeleteEffectsForObject(uuid)
+			_INTERNAL.DeleteEffectsForObject(uuid)
 			_PV.ObjectLoopEffects[uuid] = nil
 		end
 	end

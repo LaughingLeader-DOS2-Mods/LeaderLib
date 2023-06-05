@@ -124,9 +124,11 @@ end
 ---@param skill string
 ---@param tooltip TooltipData
 function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
+	local skillRequirements = tooltip:GetElements("SkillRequiredEquipment")
+
 	if Features.TooltipGrammarHelper then
 		-- This fixes the double spaces from removing the "tag" part of Requires tag
-		for i,element in pairs(tooltip:GetElements("SkillRequiredEquipment")) do
+		for i,element in pairs(skillRequirements) do
 			element.Label = string.gsub(element.Label, "%s+", " ")
 		end
 	end
@@ -139,14 +141,11 @@ function TooltipHandler.OnSkillTooltip(character, skill, tooltip)
 			if Features.FixRifleWeaponRequirement then
 				local requirement = stat.Requirement
 				if requirement == "RifleWeapon" then
-					local skillRequirements = tooltip:GetElements("SkillRequiredEquipment")
 					local addRifleText = true
-					if skillRequirements ~= nil and #skillRequirements > 0 then
-						for i,element in pairs(skillRequirements) do
-							if string.find(element.Label, LocalizedText.SkillTooltip.RifleWeapon.Value) then
-								addRifleText = false
-								break
-							end
+					for i,element in pairs(skillRequirements) do
+						if string.find(element.Label, LocalizedText.SkillTooltip.RifleWeapon.Value) then
+							addRifleText = false
+							break
 						end
 					end
 					if addRifleText then

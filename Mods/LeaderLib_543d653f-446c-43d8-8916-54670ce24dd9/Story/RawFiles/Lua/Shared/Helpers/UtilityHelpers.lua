@@ -532,6 +532,37 @@ if _ISCLIENT then
 			end
 		end
 	end)
+	
+	Ext.RegisterNetListener("LeaderLib_GameHelpers_Utils_SetPositionRotation", function (channel, payload, user)
+		local data = Common.JsonParse(payload)
+		if data then
+			local object = nil
+			if data.IsItem then
+				object = GameHelpers.GetItem(data.NetID)
+			else
+				object = GameHelpers.GetCharacter(data.NetID)
+			end
+			if object then
+				object.Translate = data.Pos
+				object.Rotation = data.Rot
+			end
+		end
+	end)
+else
+	---Sync an object's WorldPos/Rotation to the client-side.
+	---🔨**Server-Only**🔨  
+	---@param obj ServerObject|Guid|NetId
+	function GameHelpers.Utils.SyncPositionAndRotation(obj)
+		local object = GameHelpers.TryGetObject(obj)
+		if object then
+			GameHelpers.Net.Broadcast("LeaderLib_GameHelpers_Utils_SetPositionRotation", {
+				NetID=object.NetID,
+				Pos=object.Translate,
+				Rot=object.Rotation,
+				IsItem=GameHelpers.Ext.ObjectIsItem(object)
+			})
+		end
+	end
 end
 
 ---@class GameHelpers_Utils_SetPlayerCameraPositionOptions

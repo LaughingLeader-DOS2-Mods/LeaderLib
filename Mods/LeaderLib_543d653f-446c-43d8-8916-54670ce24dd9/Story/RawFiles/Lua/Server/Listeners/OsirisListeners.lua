@@ -103,7 +103,8 @@ local function OnObjectDying(obj)
 			Owner=owner,
 			OwnerGUID=ownerGUID,
 			IsDying=true,
-			IsItem=isItem
+			IsItem=isItem,
+			IsTotem=target and target.Totem or false
 		}, true)
 		_SanitizeSummonsData()
 	end

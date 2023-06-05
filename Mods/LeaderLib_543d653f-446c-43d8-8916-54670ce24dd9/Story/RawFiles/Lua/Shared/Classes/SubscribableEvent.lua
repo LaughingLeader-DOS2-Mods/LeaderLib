@@ -494,6 +494,32 @@ local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 end
 
 ---@param args? table
+function SubscribableEvent:DoSyncInvoke(args)
+	local canSync = true
+	if self.CanSync then
+		local b,result = _xpcall(self.CanSync, _traceback, self, args)
+		if not b then
+			Ext.Utils.PrintError(result)
+		else
+			canSync = result == true
+		end
+	end
+	if canSync then
+		local b,args = xpcall(_SerializeArgs, debug.traceback, self, args, self.ID, args, self.SerializeArg)
+		if not b then
+			Ext.Utils.PrintError(args)
+		else
+			local payload = {ID = self.ID, Args = args}
+			if _ISCLIENT then
+				GameHelpers.Net.PostMessageToServer("LeaderLib_SubscribableEvent_Invoke", payload)
+			else
+				GameHelpers.Net.Broadcast("LeaderLib_SubscribableEvent_Invoke", payload)
+			end
+		end
+	end
+end
+
+---@param args? table
 ---@param skipAutoInvoke? boolean
 ---@param getArgForMatch? LeaderLibSubscribableEventArgsGetArgForMatchCallback
 ---@return SubscribableEventInvokeResult result
@@ -533,23 +559,40 @@ local function _DeserializeArgs(sub, subArgs, eventID, args, deserializeFunc)
 		if not handled then
 			if t == "table" then
 				if v.Type == "Object" then
-					local _getObjFunc = GameHelpers.TryGetObject
-					if k == "Item" or (eventID == "SummonChanged" and args.IsItem == true) then
-						_getObjFunc = GameHelpers.GetItem
-					elseif k == "Character" then
-						_getObjFunc = GameHelpers.GetCharacter
-					end
-					local obj = nil
-					if not obj and v.NetID then
-						obj = _getObjFunc(v.NetID)
-					end
-					if not obj and v.UUID then
-						obj = _getObjFunc(v.UUID)
-					end
-					if not obj then
-						tbl[k] = v.UUID
+					if eventID == "SummonChanged" then
+						local level = Ext.Entity.GetCurrentLevel()
+						local arr = nil
+						if args.IsItem == true then
+							arr = level.EntityManager.ItemConversionHelpers.RegisteredItems[level.LevelDesc.LevelName]
+						else
+							arr = level.EntityManager.CharacterConversionHelpers.RegisteredCharacters[level.LevelDesc.LevelName]
+						end
+						for i=1,#arr do
+							local entry = arr[i]
+							if entry.NetID == v.NetID then
+								tbl[k] = entry
+								break
+							end
+						end
 					else
-						tbl[k] = obj
+						local _getObjFunc = GameHelpers.TryGetObject
+						if k == "Item" then
+							_getObjFunc = GameHelpers.GetItem
+						elseif k == "Character" then
+							_getObjFunc = GameHelpers.GetCharacter
+						end
+						local obj = nil
+						if not obj and v.NetID then
+							obj = _getObjFunc(v.NetID)
+						end
+						if not obj and v.UUID then
+							obj = _getObjFunc(v.UUID)
+						end
+						if not obj then
+							tbl[k] = v.UUID
+						else
+							tbl[k] = obj
+						end
 					end
 				else
 					tbl[k] = _DeserializeArgs(sub, subArgs, eventID, v, deserializeFunc)

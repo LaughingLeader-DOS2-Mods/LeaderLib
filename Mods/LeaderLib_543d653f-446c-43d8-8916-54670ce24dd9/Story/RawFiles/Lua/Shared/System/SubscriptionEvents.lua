@@ -96,13 +96,13 @@ Events.RegionChanged = Classes.SubscribableEvent:Create("RegionChanged", {ArgsKe
 ---@field OwnerGUID Guid|nil
 ---@field IsDying boolean
 ---@field IsItem boolean
+---@field IsTotem boolean
 
 ---Called when a summon is created or destroyed. Includes items like mines.  
 ---🔨🔧**Server/Client**🔧🔨  
 ---@type LeaderLibSubscribableEvent<SummonChangedEventArgs>
 Events.SummonChanged = Classes.SubscribableEvent:Create("SummonChanged", {
-	SyncInvoke = true,
-	ArgsKeyOrder={"Summon", "Owner", "IsDying", "IsItem"}
+	ArgsKeyOrder={"Summon", "Owner", "IsDying", "IsItem", "IsTotem"}
 })
 
 ---@class GameTimeChangedEventArgs

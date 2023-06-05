@@ -1218,14 +1218,32 @@ local function OnStatusApplied(targetGUID,statusID,sourceGUID)
 			isDying = GameHelpers.ObjectIsDead(target)
 			isItem = GameHelpers.Ext.ObjectIsItem(target)
 		end
-		Events.SummonChanged:Invoke({
+		local data = {
 			Summon=target, 
 			SummonGUID=target.MyGuid,
 			Owner=owner,
 			OwnerGUID=owner and owner.MyGuid or nil,
 			IsDying=isDying,
-			IsItem=isItem
-		}, not isDying)
+			IsItem=isItem,
+			IsTotem=target.Totem
+		}
+		Events.SummonChanged:Invoke(data)
+
+		if not isDying then
+			local summonHandle = target.Handle
+			local ownerHande = owner and owner.Handle or nil
+			Timer.StartOneshot("", 25, function (_)
+				data.Summon = GameHelpers.GetObjectFromHandle(summonHandle)
+				if ownerHande then
+					data.Owner = GameHelpers.GetObjectFromHandle(ownerHande)
+				else
+					data.Owner = nil
+				end
+				Events.SummonChanged:DoSyncInvoke(data)
+			end)
+		else
+			Events.SummonChanged:DoSyncInvoke(data)
+		end
 	end
 	
 	local status = target:GetStatus(statusID)

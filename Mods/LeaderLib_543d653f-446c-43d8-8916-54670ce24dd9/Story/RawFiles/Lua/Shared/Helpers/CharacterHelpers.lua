@@ -618,31 +618,33 @@ end
 ---@alias GameHelpers_Character_GetSummonsResultType EsvCharacter|EclCharacter|EsvItem|EclItem
 
 ---@overload fun(owner:CharacterParam):fun():EsvCharacter|EclCharacter
----@overload fun(owner:CharacterParam, includeItems:true):fun():GameHelpers_Character_GetSummonsResultType
+---@overload fun(owner:CharacterParam, includeItems:boolean):fun():GameHelpers_Character_GetSummonsResultType
 ---@overload fun(owner:CharacterParam, includeItems:boolean|nil, asTable:true):fun():GameHelpers_Character_GetSummonsResultType[]
 ---Gets all the active summons of a character.
 ---@param owner CharacterParam
 ---@param includeItems? boolean If on the server-side, item summons can be fetched as well if this is true.
 ---@param asTable? boolean Return the result as a table, instead of an iterator.
----@param ignoreObjects table<NetId|Guid|nil, boolean> Specific MyGuid or NetID values to ignore.
+---@param ignoreObjects? table<ComponentHandle|Guid, boolean> Specific Handles to ignore.
 ---@return fun():GameHelpers_Character_GetSummonsResultType|nil summons
 function GameHelpers.Character.GetSummons(owner, includeItems, asTable, ignoreObjects)
 	owner = GameHelpers.GetCharacter(owner)
 
 	local summons = {}
+	local len = 0
 	local ignore = ignoreObjects or {}
 	
 	if not _ISCLIENT then
 		local ownerGUID = GameHelpers.GetUUID(owner)
 		local activeSummonsData = _PV.Summons[ownerGUID]
 		if activeSummonsData then
-			local len = #activeSummonsData
-			for i=1,len do
+			local activeLen = #activeSummonsData
+			for i=1,activeLen do
 				local summonGUID = activeSummonsData[i]
 				if not ignore[summonGUID] and GameHelpers.ObjectExists(summonGUID) then
 					local summon = GameHelpers.TryGetObject(summonGUID)
 					if summon and (includeItems == true or GameHelpers.Ext.ObjectIsCharacter(summon)) then
-						summons[#summons+1] = summon
+						len = len + 1
+						summons[len] = summon
 					end
 				end
 			end
@@ -651,15 +653,38 @@ function GameHelpers.Character.GetSummons(owner, includeItems, asTable, ignoreOb
 				if Ext.Utils.IsValidHandle(handle) then
 					local summon = GameHelpers.TryGetObject(handle)
 					if summon and ignore[summon.MyGuid] and (includeItems == true or GameHelpers.Ext.ObjectIsCharacter(summon)) then
-						summons[#summons+1] = summon
+						len = len + 1
+						summons[len] = summon
 					end
 				end
 			end
 		end
 	else
-		---@cast owner EclCharacter
-		---@type number
-		local ownerHandle = owner
+		--SummonHandles is empty on the client-side
+
+		local level = Ext.ClientEntity.GetCurrentLevel()
+		if level then
+			local levelID = level.LevelDesc.LevelName
+			for _,summon in pairs(level.EntityManager.CharacterConversionHelpers.ActivatedCharacters[levelID]) do
+				if not ignore[summon.Handle] and summon.HasOwner and summon.OwnerCharacterHandle == owner.Handle then
+					len = len + 1
+					summons[len] = summon
+				end
+			end
+
+			if includeItems then
+				for _,item in pairs(level.EntityManager.ItemConversionHelpers.ActivatedItems[levelID]) do
+					if not ignore[item.Handle] and item.OwnerCharacterHandle == owner.Handle and item:GetStatus("SUMMON") then
+						len = len + 1
+						summons[len] = item
+					end
+				end
+			end
+		end
+
+		--@cast owner EclCharacter
+		--@type number
+		--[[ local ownerHandle = owner
 		if _type(owner) == "userdata" and owner.Handle then
 			ownerHandle = Ext.UI.HandleToDouble(owner.Handle)
 		end
@@ -668,21 +693,20 @@ function GameHelpers.Character.GetSummons(owner, includeItems, asTable, ignoreOb
 			local summon = GameHelpers.GetCharacter(Ext.UI.DoubleToHandle(mc.characterHandle))
 			if summon and not ignore[summon.NetID] then
 				---@cast summon EclCharacter
-				if summon and not ignore[summon.NetID] and summon.Summon then
+				if summon and not ignore[summon.NetID] and (summon.Summon or summon.HasOwner) then
 					summons[#summons+1] = summon
 				end
 			end
-		end
+		end ]]
 	end
 
 	if asTable then
 		return summons
 	else
 		local i = 0
-		local count = #summons
 		return function ()
 			i = i + 1
-			if i <= count then
+			if i <= len then
 				return summons[i]
 			end
 		end

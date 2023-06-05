@@ -348,7 +348,7 @@ end
 function GameHelpers.Math.GetDirectionalVector(pos1, pos2, reverse, asVector3)
 	if GameHelpers.Ext.IsObjectType(pos1) and (pos2 == nil or pos2 == pos1) and pos1.Rotation then
 		local rot = pos1.Rotation
-		return {rot[7],0,rot[9]}
+		return {-rot[7],0,-rot[9]}
 	end
 	local directionalVector = _vecnorm(_vecsub(_GetPosition(pos1), _GetPosition(pos2)))
 	if reverse then

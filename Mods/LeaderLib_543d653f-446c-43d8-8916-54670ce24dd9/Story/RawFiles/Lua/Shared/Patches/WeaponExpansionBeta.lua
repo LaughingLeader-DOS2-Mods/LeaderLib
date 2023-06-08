@@ -340,7 +340,7 @@ Patch = function (initialized, region)
 	
 	if not initialized then
 		if not _ISCLIENT then
-			Events.PersistentVarsLoaded:Subscribe(function (_)
+			Events.Initialized:Subscribe(function (_)
 				if not Mods.WeaponExpansion or not Mods.WeaponExpansion.PersistentVars then
 					return
 				end

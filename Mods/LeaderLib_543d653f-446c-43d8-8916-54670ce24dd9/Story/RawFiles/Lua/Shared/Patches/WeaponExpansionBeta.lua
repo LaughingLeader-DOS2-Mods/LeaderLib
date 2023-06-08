@@ -30,6 +30,14 @@ if _ISCLIENT then
 				end
 			end
 		end)
+
+		Game.Tooltip.Register.Item(function (item, tooltip)
+			local desc = tooltip:GetDescriptionElement()
+			if desc and string.find(desc.Label, "Combine this with specific unique weapons to change their scaling attribute") then
+				desc.Label = desc.Label:gsub("Combine this with specific unique weapons to change their scaling attribute", "Combine this with any weapon to change the scaling attribute")
+			end
+		end)
+
 		---@diagnostic disable-next-line undefined-field
 		Ext._Internal._NetListeners["LLWEAPONEX_SetWorldTooltipText"] = nil
 
@@ -85,7 +93,7 @@ if _ISCLIENT then
 
 		---@param item EclItem
 		---@param _TAGS? table<string,boolean>
-		function GetItemTypeText(item, _TAGS)
+		local function GetItemTypeText(item, _TAGS)
 			if not _TAGS then
 				_TAGS = GameHelpers.GetAllTags(item, true)
 			end
@@ -521,6 +529,7 @@ Patch = function (initialized, region)
 			["d360798f-50e3-4c9e-b0e5-0c69345b1a92"] = "Constitution",
 			["1a3acb90-a152-4ebd-8b02-c5fe99f6c0e3"] = "Memory",
 			["dfb3db93-2562-46d2-9cd1-5ea5b57b72b9"] = "Wits",
+			["27dbe9dd-bf08-4c9f-b79a-01f806e24759"] = "Reset",
 		}
 
 		local function _GetAttributeTokenAttribute(entries)
@@ -602,17 +611,33 @@ Patch = function (initialized, region)
 		---@param attribute string
 		---@param itemStat string
 		Mods.WeaponExpansion.ChangeItemScaling = function (item, attribute, itemStat)
-			for _,req in pairs(item.Stats.Requirements) do
-				if Data.AttributeEnum[req.Requirement] then
-					req.Requirement = attribute
+			if attribute == "Reset" then
+				if Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges then
+					Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges[item.MyGuid] = nil
 				end
+				for _,req in pairs(item.StatsFromName.StatsEntry.Requirements) do
+					if Data.AttributeEnum[req.Requirement] then
+						attribute = req.Requirement
+						break
+					end
+				end
+			else
+				if Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges == nil then
+					Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges = {}
+				end
+				Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges[item.MyGuid] = attribute
 			end
-			if Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges == nil then
-				Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges = {}
+
+			if not StringHelpers.IsNullOrEmpty(attribute) and attribute ~= "Reset" then
+				for _,req in pairs(item.Stats.Requirements) do
+					if Data.AttributeEnum[req.Requirement] then
+						req.Requirement = attribute
+						break
+					end
+				end
+			
+				GameHelpers.Net.Broadcast("LeaderLib_LLWEAPONEX_ChangeAttributeRequirement", {Item=item.NetID, Attribute=attribute})
 			end
-			Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges[item.MyGuid] = attribute
-		
-			GameHelpers.Net.Broadcast("LeaderLib_LLWEAPONEX_ChangeAttributeRequirement", {Item=item.NetID, Attribute=attribute})
 		end
 
 		--Mods.WeaponExpansion.Uniques.Harvest.ProgressionData[11].Value = "Target_BlackShroud"

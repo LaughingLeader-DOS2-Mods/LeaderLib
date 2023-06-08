@@ -9,7 +9,7 @@
 			"Version": "1.7.31.10",
 			"Changes": [
 				"Fixed Weapon Expansion attribute token changes not being restored when loading a save.",
-				"Made Weapon Expansion attribute tokens work on non-uniques.",
+				"Made Weapon Expansion attribute tokens work on non-uniques, fixed the Reversal token.",
 				"API Changes:",
 				"\t• Made CCH use Ext.Stats.GetResistance, to support custom damage types.",
 				"\t• Fixed talent tooltips in the arena lobby.",

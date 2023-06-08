@@ -134,8 +134,34 @@ if _ISCLIENT then
 		end, {Priority=1})
 	end
 else
+	Events.Initialized:Subscribe(function (_)
+		if not Mods.WeaponExpansion or not Mods.WeaponExpansion.PersistentVars then
+			return
+		end
+		if Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges then
+			local existingChanges = {}
+			for itemGUID,attribute in pairs(Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges) do
+				if Osi.ObjectExists(itemGUID) == 1 then
+					existingChanges[itemGUID] = attribute
+					local item = GameHelpers.GetItem(itemGUID)
+					if item then
+						for _,req in pairs(item.Stats.Requirements) do
+							if req.Requirement ~= attribute and Data.AttributeEnum[req.Requirement] then
+								req.Requirement = attribute
+							end
+						end
+						GameHelpers.Net.Broadcast("LeaderLib_LLWEAPONEX_ChangeAttributeRequirement", {Item=item.NetID, Attribute=attribute})
+					end
+				end
+			end
+			Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges = existingChanges
+		else
+			Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges = {}
+		end
+	end, {Priority=0})
+
 	_FixTreasure = function ()
-				--#region Treasure
+	--#region Treasure
 
 		--Boost battle book base damage to be closer to _Swords/_Clubs
 		for _,v in pairs({
@@ -163,6 +189,19 @@ else
 				Ext.Stats.ItemCombo.Update(recipe)
 			end
 		end
+
+		if not Ext.Stats.ItemComboPreview.GetLegacy("ObjectCategories_Weapon") then
+			---@type ItemComboPreviewData
+			local weaponCategoryPreview = {
+				Icon = "LLWEAPONEX_CraftingCategory_UniqueWeapon",
+				Name = "Weapon",
+				StatsId = "",
+				Tooltip = "ObjectCategories_Weapon_Tooltip",
+				Type = "ObjectCategories",
+			}
+			Ext.Stats.ItemComboPreview.Update(weaponCategoryPreview)
+		end
+
 
 		--Ext.Stats.TreasureTable.Update(Ext.Stats.TreasureTable.GetLegacy("ST_WeaponLegendary"))
 		--Buff weapon treasure drop amounts
@@ -335,6 +374,35 @@ else
 	end
 end
 
+---@param current string[]
+---@vararg string
+---@return boolean changed
+---@return string[]|nil	categories
+local function AppendComboCategory(current, ...)
+	local categories = {}
+	for i=1,#current do
+		categories[current[i]] = true
+	end
+	local changed = false
+	local args = {...}
+	for i=1,#args do
+		local v = args[i]
+		if not categories[v] then
+			categories[v] = true
+			changed = true
+		end
+	end
+	if not changed then
+		return false
+	end
+	local result = {}
+	for v,_ in pairs(categories) do
+		result[#result+1] = v
+	end
+	table.sort(result)
+	return true,result
+end
+
 return {
 
 Version = 153288705,
@@ -346,38 +414,29 @@ Patch = function (initialized, region)
 		--Patches an event name conflict that prevented Soul Harvest's bonus from applying.
 		Ext.IO.AddPathOverride("Public/WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f/Scripts/LLWEAPONEX_Statuses.gameScript", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/Patches/LLWEAPONEX_Statuses.gameScript")
 	end
+
+	if Ext.L10N.CreateTranslatedStringKey("ObjectCategories_Weapon_Tooltip", "hafb9b0ebg208eg43acg9c49gedfa393f6e87") then
+		Ext.L10N.CreateTranslatedStringHandle("hafb9b0ebg208eg43acg9c49gedfa393f6e87", "Any Weapon")
+	end
 	
 	if not initialized then
-		if not _ISCLIENT then
-			Events.Initialized:Subscribe(function (_)
-				if not Mods.WeaponExpansion or not Mods.WeaponExpansion.PersistentVars then
-					return
+		-- Add the Weapon combo category
+		for _,id in pairs(Ext.Stats.GetStats("Weapon")) do
+			local stat = Ext.Stats.Get(id)
+			---@cast stat StatEntryWeapon
+			if stat.Unique == 1 then
+				local b,newCategories = AppendComboCategory(stat.ComboCategory, "UniqueWeapon", "Weapon")
+				if b then
+					---@cast newCategories string[]
+					stat.ComboCategory = newCategories
 				end
-				if Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges then
-					local existingChanges = {}
-					for itemGUID,attribute in pairs(Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges) do
-						if Osi.ObjectExists(itemGUID) == 1 then
-							existingChanges[itemGUID] = attribute
-							local item = GameHelpers.GetItem(itemGUID)
-							if item then
-								local doSync = false
-								for _,req in pairs(item.Stats.Requirements) do
-									if req.Requirement ~= attribute and Data.AttributeEnum[req.Requirement] then
-										req.Requirement = attribute
-										doSync = true
-									end
-								end
-								if doSync then
-									GameHelpers.Net.Broadcast("LeaderLib_LLWEAPONEX_ChangeAttributeRequirement", {Item=item.NetID, Attribute=attribute})
-								end
-							end
-						end
-					end
-					Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges = existingChanges
-				else
-					Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges = {}
+			else
+				local b,newCategories = AppendComboCategory(stat.ComboCategory, "Weapon")
+				if b then
+					---@cast newCategories string[]
+					stat.ComboCategory = newCategories
 				end
-			end, {Priority=0})
+			end
 		end
 
 		return

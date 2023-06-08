@@ -570,7 +570,7 @@ Patch = function (initialized, region)
 					}
 				end
 			end
-			craftingActions[char] = items
+			craftingActions[StringHelpers.GetUUID(char)] = items
 		end
 
 		---@param char string
@@ -582,7 +582,7 @@ Patch = function (initialized, region)
 		---@param newItem string
 		Mods.WeaponExpansion.ItemTemplateCombinedWithItemTemplate = function(char, a, b, c, d, e, newItem)
 			--Ext.Print("[WeaponExpansion:ItemTemplateCombinedWithItemTemplate]",char, a, b, c, d, e, newItem)
-			local craftingEntries = craftingActions[char]
+			local craftingEntries = craftingActions[StringHelpers.GetUUID(char)]
 			if craftingEntries ~= nil then
 				local attribute,tokenItem = _GetAttributeTokenAttribute(craftingEntries)
 				if attribute ~= nil then
@@ -611,20 +611,19 @@ Patch = function (initialized, region)
 		---@param attribute string
 		---@param itemStat string
 		Mods.WeaponExpansion.ChangeItemScaling = function (item, attribute, itemStat)
+			if Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges == nil then
+				Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges = {}
+			end
+
 			if attribute == "Reset" then
-				if Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges then
-					Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges[item.MyGuid] = nil
-				end
+				Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges[item.MyGuid] = nil
 				for _,req in pairs(item.StatsFromName.StatsEntry.Requirements) do
 					if Data.AttributeEnum[req.Requirement] then
-						attribute = req.Requirement
+						attribute = tostring(req.Requirement)
 						break
 					end
 				end
 			else
-				if Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges == nil then
-					Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges = {}
-				end
 				Mods.WeaponExpansion.PersistentVars.AttributeRequirementChanges[item.MyGuid] = attribute
 			end
 

@@ -155,6 +155,15 @@ else
 			end
 		end
 
+		--Make tokens work with non-uniques
+		local recipe = Ext.Stats.ItemCombo.GetLegacy("LLWEAPONEX_Token_ChangeScalingAttribute")
+		if recipe then
+			if recipe.Ingredients[1].Object == "UniqueWeapon" then
+				recipe.Ingredients[1].Object = "Weapon"
+				Ext.Stats.ItemCombo.Update(recipe)
+			end
+		end
+
 		--Ext.Stats.TreasureTable.Update(Ext.Stats.TreasureTable.GetLegacy("ST_WeaponLegendary"))
 		--Buff weapon treasure drop amounts
 		local tt1 = Ext.Stats.TreasureTable.GetLegacy("ST_LLWEAPONEX_VendingMachine")

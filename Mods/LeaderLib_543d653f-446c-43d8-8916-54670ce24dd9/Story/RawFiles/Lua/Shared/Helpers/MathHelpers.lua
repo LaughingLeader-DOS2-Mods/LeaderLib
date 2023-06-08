@@ -373,11 +373,18 @@ function GameHelpers.Math.GetDirectionalVectorBetweenObjects(...)
 	return GameHelpers.Math.GetDirectionalVector(...)
 end
 
+---@param num number
+---@param numPlaces integer
 function GameHelpers.Math.Round(num, numPlaces)
 	local mult = 10^(numPlaces or 0)
 	return _floor(num * mult + 0.5) / mult
 end
 
+---@param val number
+---@param minRange number
+---@param maxRange number
+---@param minScale number
+---@param maxScale number
 function GameHelpers.Math.ScaleToRange(val, minRange, maxRange, minScale, maxScale)
 	if val == minRange then
 		return minScale

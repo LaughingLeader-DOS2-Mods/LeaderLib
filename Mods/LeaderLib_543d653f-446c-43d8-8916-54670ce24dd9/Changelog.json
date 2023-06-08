@@ -6,6 +6,20 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.10",
+			"Changes": [
+				"Fixed Weapon Expansion attribute token changes not being restored when loading a save.",
+				"Made Weapon Expansion attribute tokens work on non-uniques.",
+				"API Changes:",
+				"\t• Made CCH use Ext.Stats.GetResistance, to support custom damage types.",
+				"\t• Fixed talent tooltips in the arena lobby.",
+				"\t• Fixed various issues related to saving/restoring/deleting world effects with the EffectManager.",
+				"\t• Fixed firing Events.SummonChanged on the client-side, added IsTotem to the event params.",
+				"\t• Fixed GameHelpers.Math.GetDirectionalVector when passing it a single object.",
+				"\t• Added GameHelpers.Character.SetAnimType, GameHelpers.Skill.RequestExit, GameHelpers.Action.GetAction, GameHelpers.Action.LookAt, and GameHelpers.Utils.SyncPositionAndRotation."
+			]
+		},
+		{
 			"Version": "1.7.31.9",
 			"Changes": [
 				"Fixed players being 'frozen' (unable to move/interact etc) in multiplayer when skipping the tutorial.",

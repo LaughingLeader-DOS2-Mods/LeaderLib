@@ -269,3 +269,34 @@ function GameHelpers.Action.GetAction(character, actionType)
 	end
 	return nil
 end
+
+---@class GameHelpersActionLookAtOptions:EsvOsirisSteerTask
+
+---@param character EsvCharacter
+---@param target ServerObject|vec3|ComponentHandle
+---@param opts? GameHelpersActionPlayAnimationOptions Optional parameters to set on the task
+function GameHelpers.Action.LookAt(character, target, opts)
+	local char = GameHelpers.GetCharacter(character, "EsvCharacter")
+	fassert(char ~= nil, "Failed to get character from (%s)", character)
+	local task = Ext.Action.CreateOsirisTask("Steer", char) --[[@as EsvOsirisSteerTask]]
+	task.AngleTolerance = 0
+	task.SnapToTarget = false
+	task.LookAt = true
+	if GameHelpers.Math.IsPosition(target) then
+		task.TargetPos = target
+		task.Target = Ext.Entity.NullHandle()
+	else
+		if Ext.Utils.IsValidHandle(target) then
+			task.Target = target
+		else
+			assert(GameHelpers.Ext.IsObjectType(target), "target must be an object, handle, or position")
+			task.Target = target.Handle
+		end
+	end
+	if type(opts) == "table" then
+		for k,v in pairs(opts) do
+			task[k] = v
+		end
+	end
+	Ext.Action.QueueOsirisTask(task)
+end

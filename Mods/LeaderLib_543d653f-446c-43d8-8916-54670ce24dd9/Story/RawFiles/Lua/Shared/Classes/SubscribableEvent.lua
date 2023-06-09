@@ -237,7 +237,7 @@ function SubscribableEvent:Subscribe(callback, opts)
 	if self.OnSubscribe then
 		local b,err = xpcall(self.OnSubscribe, debug.traceback, self, opts, matchArgs, matchArgsType)
 		if not b then
-			Ext.Utils.PrintError(err)
+			_printError(err)
 		end
 	end
 
@@ -283,7 +283,7 @@ function SubscribableEvent:Unsubscribe(indexOrCallback, matchArgs)
 					if self.OnUnsubscribe then
 						local b,err = xpcall(self.OnUnsubscribe, debug.traceback, self, cur.Callback, cur.Options, matchArgs, matchArgsType)
 						if not b then
-							Ext.Utils.PrintError(err)
+							_printError(err)
 						end
 					end
 				end
@@ -347,7 +347,7 @@ local function _SerializeArgs(sub, subArgs, eventID, args, seralizeFunc)
 		if seralizeFunc then
 			local b,result,forceHandled = xpcall(seralizeFunc, debug.traceback, sub, subArgs, k, v, t)
 			if not b then
-				Ext.Utils.PrintError(result)
+				_printError(result)
 			elseif result ~= nil then
 				tbl[k] = result
 				handled = true
@@ -455,7 +455,7 @@ local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 		if self.CanSync then
 			local b,result = _xpcall(self.CanSync, _traceback, self, args, ...)
 			if not b then
-				Ext.Utils.PrintError(result)
+				_printError(result)
 			else
 				canSync = result == true
 			end
@@ -463,7 +463,7 @@ local function _TryInvoke(self, args, skipAutoInvoke, getArgForMatch, ...)
 		if canSync then
 			local b,args = xpcall(_SerializeArgs, debug.traceback, self, args, self.ID, args, self.SerializeArg)
 			if not b then
-				Ext.Utils.PrintError(args)
+				_printError(args)
 			else
 				local payload = {ID = self.ID, Args = args}
 				if _ISCLIENT then
@@ -499,7 +499,7 @@ function SubscribableEvent:DoSyncInvoke(args)
 	if self.CanSync then
 		local b,result = _xpcall(self.CanSync, _traceback, self, args)
 		if not b then
-			Ext.Utils.PrintError(result)
+			_printError(result)
 		else
 			canSync = result == true
 		end
@@ -507,7 +507,7 @@ function SubscribableEvent:DoSyncInvoke(args)
 	if canSync then
 		local b,args = xpcall(_SerializeArgs, debug.traceback, self, args, self.ID, args, self.SerializeArg)
 		if not b then
-			Ext.Utils.PrintError(args)
+			_printError(args)
 		else
 			local payload = {ID = self.ID, Args = args}
 			if _ISCLIENT then
@@ -547,7 +547,7 @@ local function _DeserializeArgs(sub, subArgs, eventID, args, deserializeFunc)
 		if deserializeFunc then
 			local b,result,forceHandled = xpcall(deserializeFunc, debug.traceback, sub, subArgs, k, v, t)
 			if not b then
-				Ext.Utils.PrintError(result)
+				_printError(result)
 			elseif result ~= nil then
 				tbl[k] = result
 				handled = true

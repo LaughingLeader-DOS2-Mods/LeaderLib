@@ -324,25 +324,18 @@ local function _CreateSkillEventTable(skill, character, stateID, data, dataType)
 				eventData.Action = action
 			end
 		else
-			if _EXTVERSION > 59 then
+			if _EXTVERSION >= 60 then
 				local action = _GetSkillAction(character, skill)
 				if action then
 					eventData.Action = action
 					if action.Type == "PrepareSkill" then
 						eventData.SourceItem = _GetSkillSourceItem(character, skill, stateID == SKILL_STATE.GETDAMAGE)
 						return eventData
-					end
-					if action.Skill then
+					elseif action.Skill then
 						local state = action.Skill
-						local skillType = state.Type
-						if Ext.Utils.IsValidHandle(state.SourceItemHandle) then
-							local item = Ext.Entity.GetItem(state.SourceItemHandle)
-							if item then
-								eventData.SourceItem = item
-							end
-						end
-						if action.Type == "UseSkill" and dataType == "SkillEventData" then
-							_ParseStateTargets(state, skillType, data, stateID)
+						eventData.SourceItem = GameHelpers.GetObjectFromHandle(state.SourceItemHandle, "EsvItem")
+						if dataType == "SkillEventData" then
+							_ParseStateTargets(state, state.Type, data, stateID)
 						end
 					end
 				end

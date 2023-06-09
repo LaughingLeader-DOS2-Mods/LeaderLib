@@ -6,6 +6,12 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.11",
+			"Changes": [
+				"Fixed an error with checking a skill action's SkillId on the client-side, when GetSkillAP fires."
+			]
+		},
+		{
 			"Version": "1.7.31.10",
 			"Changes": [
 				"Fixed Weapon Expansion attribute token changes not being restored when loading a save.",

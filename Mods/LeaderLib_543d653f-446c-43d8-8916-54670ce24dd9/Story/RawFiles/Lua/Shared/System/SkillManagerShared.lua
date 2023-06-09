@@ -34,28 +34,39 @@ function SkillManager.IsSkillEnabled(skill)
 	return current > 0
 end
 
+local function _TryGetSkillFromAction(action)
+	if action.Type == "UseSkill" then
+		---@cast action EsvASUseSkill
+		return action.Skill.SkillId
+	elseif action.Type == "PrepareSkill" then
+		---@cast action EsvASPrepareSkill
+		return action.SkillId
+	end
+	return nil
+end
+
 ---@param character EsvCharacter
 ---@param skill FixedString
 ---@return EsvASUseSkill|nil
 local function _GetSkillAction(character, skill)
+	local fallbackAction = nil
 	if character.ActionMachine and character.ActionMachine.Layers then
 		for _,v in pairs(character.ActionMachine.Layers) do
 			local action = v.State
 			if action then
-				if action.Type == "UseSkill" then
-					---@cast action EsvASUseSkill
-					if action.Skill and StringHelpers.GetSkillEntryName(action.Skill.SkillId) == skill then
+				if action.Type == "UseSkill" or action.Type == "PrepareSkill" then
+					local b,actionSkill = pcall(_TryGetSkillFromAction, action)
+					if b and actionSkill == skill then
 						return action
-					end
-				elseif action.Type == "PrepareSkill" then
-					---@cast action EsvASPrepareSkill
-					if StringHelpers.GetSkillEntryName(action.SkillId) == skill then
-						return action
+					elseif not b and action.Type == "PrepareSkill" then
+						--Grenades throw an index error when trying to get SkillId before IsFinished is true
+						fallbackAction = action
 					end
 				end
 			end
 		end
 	end
+	return fallbackAction
 end
 
 ---@param character EsvCharacter
@@ -293,23 +304,25 @@ local function _CreateSkillEventTable(skill, character, stateID, data, dataType)
 		SkillType = skillData.SkillType,
 	}
 	if _EXTVERSION > 59 and character then
-		local action = _GetSkillAction(character, skill)
+		local b,action = pcall(_GetSkillAction, character, skill)
 		if action then
 			eventData.Action = action
 			if action.Type == "PrepareSkill" then
 				eventData.SourceItem = _GetSkillSourceItem(character, skill, stateID == SKILL_STATE.GETDAMAGE)
 				return eventData
 			end
-			local state = action.Skill
-			local skillType = state.Type
-			if Ext.Utils.IsValidHandle(state.SourceItemHandle) then
-				local item = Ext.Entity.GetItem(state.SourceItemHandle)
-				if item then
-					eventData.SourceItem = item
+			if b and action.Skill then
+				local state = action.Skill
+				local skillType = state.Type
+				if Ext.Utils.IsValidHandle(state.SourceItemHandle) then
+					local item = Ext.Entity.GetItem(state.SourceItemHandle)
+					if item then
+						eventData.SourceItem = item
+					end
 				end
-			end
-			if action.Type == "UseSkill" and dataType == "SkillEventData" then
-				_ParseStateTargets(state, skillType, data, stateID)
+				if action.Type == "UseSkill" and dataType == "SkillEventData" then
+					_ParseStateTargets(state, skillType, data, stateID)
+				end
 			end
 		end
 	end

@@ -37,10 +37,10 @@ end
 local function _TryGetSkillFromAction(action)
 	if action.Type == "UseSkill" then
 		---@cast action EsvASUseSkill
-		return action.Skill.SkillId
+		return StringHelpers.GetSkillEntryName(tostring(action.Skill.SkillId))
 	elseif action.Type == "PrepareSkill" then
 		---@cast action EsvASPrepareSkill
-		return action.SkillId
+		return StringHelpers.GetSkillEntryName(tostring(action.SkillId))
 	end
 	return nil
 end
@@ -49,7 +49,6 @@ end
 ---@param skill FixedString
 ---@return EsvASUseSkill|nil
 local function _GetSkillAction(character, skill)
-	local fallbackAction = nil
 	if character.ActionMachine and character.ActionMachine.Layers then
 		for _,v in pairs(character.ActionMachine.Layers) do
 			local action = v.State
@@ -58,15 +57,29 @@ local function _GetSkillAction(character, skill)
 					local b,actionSkill = pcall(_TryGetSkillFromAction, action)
 					if b and actionSkill == skill then
 						return action
-					elseif not b and action.Type == "PrepareSkill" then
-						--Grenades throw an index error when trying to get SkillId before IsFinished is true
-						fallbackAction = action
 					end
 				end
 			end
 		end
 	end
-	return fallbackAction
+	return nil
+end
+
+---@param character EclCharacter
+---@param skill FixedString
+---@return EclActionState
+local function _GetSkillActionClient(character, skill)
+	if character.ActionMachine and character.ActionMachine.Layers then
+		for _,v in pairs(character.ActionMachine.Layers) do
+			local action = v.State
+			if action then
+				if action.Type == "UseSkill" or action.Type == "PrepareSkill" then
+					return action
+				end
+			end
+		end
+	end
+	return nil
 end
 
 ---@param character EsvCharacter
@@ -303,31 +316,41 @@ local function _CreateSkillEventTable(skill, character, stateID, data, dataType)
 		---@type SkillType
 		SkillType = skillData.SkillType,
 	}
-	if _EXTVERSION > 59 and character then
-		local b,action = pcall(_GetSkillAction, character, skill)
-		if action then
-			eventData.Action = action
-			if action.Type == "PrepareSkill" then
-				eventData.SourceItem = _GetSkillSourceItem(character, skill, stateID == SKILL_STATE.GETDAMAGE)
-				return eventData
+	if character then
+		if _ISCLIENT then
+			---@cast character EclCharacter
+			local b,action = pcall(_GetSkillActionClient, character, skill)
+			if b and action then
+				eventData.Action = action
 			end
-			if b and action.Skill then
-				local state = action.Skill
-				local skillType = state.Type
-				if Ext.Utils.IsValidHandle(state.SourceItemHandle) then
-					local item = Ext.Entity.GetItem(state.SourceItemHandle)
-					if item then
-						eventData.SourceItem = item
+		else
+			if _EXTVERSION > 59 then
+				local action = _GetSkillAction(character, skill)
+				if action then
+					eventData.Action = action
+					if action.Type == "PrepareSkill" then
+						eventData.SourceItem = _GetSkillSourceItem(character, skill, stateID == SKILL_STATE.GETDAMAGE)
+						return eventData
+					end
+					if action.Skill then
+						local state = action.Skill
+						local skillType = state.Type
+						if Ext.Utils.IsValidHandle(state.SourceItemHandle) then
+							local item = Ext.Entity.GetItem(state.SourceItemHandle)
+							if item then
+								eventData.SourceItem = item
+							end
+						end
+						if action.Type == "UseSkill" and dataType == "SkillEventData" then
+							_ParseStateTargets(state, skillType, data, stateID)
+						end
 					end
 				end
-				if action.Type == "UseSkill" and dataType == "SkillEventData" then
-					_ParseStateTargets(state, skillType, data, stateID)
-				end
+			end
+			if eventData.SourceItem == nil then
+				eventData.SourceItem = _GetSkillSourceItem(character, skill, stateID == SKILL_STATE.GETDAMAGE)
 			end
 		end
-	end
-	if eventData.SourceItem == nil then
-		eventData.SourceItem = _GetSkillSourceItem(character, skill, stateID == SKILL_STATE.GETDAMAGE)
 	end
 	return eventData
 end

@@ -6,6 +6,12 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.12",
+			"Changes": [
+				"Fixed Sir Lora not spawning when skipping the tutorial."
+			]
+		},
+		{
 			"Version": "1.7.31.11",
 			"Changes": [
 				"Fixed an error with checking a skill action's SkillId on the client-side, when GetSkillAP fires."

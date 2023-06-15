@@ -226,6 +226,7 @@ function SkipTutorial.Initialize()
 						_SkipTutorialWakeup(player.MyGuid, i == total - 1)
 						Osi.ObjectClearFlag(player.MyGuid, "DLC_SquirrelKnight_OwnerFlag", 0)
 					end
+					Osi.Proc_DLC_TrySpawn_SquirrelWizard()
 				end)
 
 				if Vars.DebugMode then

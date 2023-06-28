@@ -1224,6 +1224,61 @@ Events.Osiris.CharacterStoleItem = _CreateOsirisEventWrapper("CharacterStoleItem
 	}
 end, "before")
 
+---@class OsirisCharacterAttitudeTowardsPlayerChangedEventArgs
+---@field Character EsvCharacter
+---@field CharacterGUID Guid
+---@field Player EsvCharacter
+---@field PlayerGUID Guid
+---@field Attitude integer
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterAttitudeTowardsPlayerChangedEventArgs>
+Events.Osiris.CharacterAttitudeTowardsPlayerChanged = _CreateOsirisEventWrapper("CharacterAttitudeTowardsPlayerChanged", function (charGUID, playerGUID, amount)
+	if not _AnyObjectDoesNotExist(charGUID, playerGUID) then return false end
+	return {
+		Character = GameHelpers.GetCharacter(charGUID),
+		CharacterGUID = _GetGUID(charGUID),
+		Player = GameHelpers.TryGetObject(playerGUID),
+		PlayerGUID = _GetGUID(playerGUID),
+		Attitude = amount,
+	}
+end, "before")
+
+---@class OsirisCCharacterRelationChangedToEventArgs
+---@field Character EsvCharacter
+---@field CharacterGUID Guid
+---@field OtherCharacter EsvCharacter
+---@field OtherCharacterGUID Guid
+---@field Attitude integer
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterRelationChangedToEventArgs>
+Events.Osiris.CharacterRelationChangedTo = _CreateOsirisEventWrapper("CharacterRelationChangedTo", function (charGUID, char2GUID, amount)
+	if not _AnyObjectDoesNotExist(charGUID, char2GUID) then return false end
+	return {
+		Character = GameHelpers.GetCharacter(charGUID),
+		CharacterGUID = _GetGUID(charGUID),
+		OtherCharacter = GameHelpers.TryGetObject(char2GUID),
+		OtherCharacterGUID = _GetGUID(char2GUID),
+		Attitude = amount,
+	}
+end, "before")
+
+---@class OsirisCharacterSetTemporaryRelationsFailedEventArgs
+---@field Character EsvCharacter
+---@field CharacterGUID Guid
+---@field OtherCharacter EsvCharacter
+---@field OtherCharacterGUID Guid
+
+---@type LeaderLibSubscribableEvent<OsirisCharacterSetTemporaryRelationsFailedEventArgs>
+Events.Osiris.CharacterSetTemporaryRelationsFailed = _CreateOsirisEventWrapper("CharacterSetTemporaryRelationsFailed", function (charGUID, char2GUID)
+	if not _AnyObjectDoesNotExist(charGUID, char2GUID) then return false end
+	return {
+		Character = GameHelpers.GetCharacter(charGUID),
+		CharacterGUID = _GetGUID(charGUID),
+		OtherCharacter = GameHelpers.TryGetObject(char2GUID),
+		OtherCharacterGUID = _GetGUID(char2GUID),
+	}
+end, "before")
+
 --#endregion
 
 --#region Tags

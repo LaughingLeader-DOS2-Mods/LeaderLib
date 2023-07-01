@@ -178,7 +178,7 @@ function GameHelpers.ClearActionQueue(character, purge)
 
 	local characterObject = GameHelpers.GetCharacter(character)
 	if characterObject then
-		local useSkill = GameHelpers.Action.GetAction(character, "UseSkill") --[[@as EsvASUseSkill]]
+		local useSkill = GameHelpers.Action.GetAction(characterObject, "UseSkill") --[[@as EsvASUseSkill]]
 		if useSkill and useSkill.Skill then
 			useSkill.Skill.RequestExit = true
 		end

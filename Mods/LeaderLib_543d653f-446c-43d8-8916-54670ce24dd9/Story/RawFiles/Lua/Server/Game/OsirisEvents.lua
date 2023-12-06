@@ -1243,7 +1243,7 @@ Events.Osiris.CharacterAttitudeTowardsPlayerChanged = _CreateOsirisEventWrapper(
 	}
 end, "before")
 
----@class OsirisCCharacterRelationChangedToEventArgs
+---@class OsirisCharacterRelationChangedToEventArgs
 ---@field Character EsvCharacter
 ---@field CharacterGUID Guid
 ---@field OtherCharacter EsvCharacter

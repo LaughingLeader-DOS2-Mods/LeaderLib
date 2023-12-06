@@ -33,17 +33,17 @@ end
 ---@alias SubscribableEventDeserializeArgFunction (fun(self:LeaderLibRuntimeSubscribableEventArgs, args:table, id:string, value:SerializableValue, argType:type):any|nil,boolean|nil)
 
 ---@class SubscribableEventCreateOptions
----@field GatherResults boolean If true, event results from callbacks are gathered and return in in the Invoke function.
----@field SyncInvoke boolean If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
----@field CanSync fun(self:LeaderLibSubscribableEvent, args:LeaderLibSubscribableEventArgs, ...):boolean If set, this event can only sync is this function returns true.
----@field Disabled boolean If this event is disabled, Invoke won't invoke registered callbacks.
----@field ArgsKeyOrder string[]
----@field GetArg SubscribableEventGetArgFunction Used when the event data is unpacked, such as when passing the data to an old callback listener.
----@field SerializeArg SubscribableEventSerializeArgFunction Called when the event data is synced, and specific non-serializable args need to be converted (userdata etc).
----@field DeserializeArg SubscribableEventDeserializeArgFunction Called when the event data is done syncing, and specific args need to be converted back to non-serializable types.
----@field OnSubscribe fun(self:BaseSubscribableEvent, callback:function, opts:EventSubscriptionOptions, matchArgs:table|function|nil, matchArgsType:type) Called when a callback is subscribed to the event.
----@field OnUnsubscribe fun(self:BaseSubscribableEvent, callback:function, opts:EventSubscriptionOptions, matchArgs:table|function|nil, matchArgsType:type) Called when a callback is unsubscribed to the event.
----@field Benchmark boolean Print the time it takes to invoke listeners in DeveloperMode.
+---@field GatherResults boolean|nil If true, event results from callbacks are gathered and return in in the Invoke function.
+---@field SyncInvoke boolean|nil If true, this event will automatically be invoked on the opposite side, i.e. the client side will be invoked when the server side is. Defaults to false.
+---@field CanSync (fun(self:LeaderLibSubscribableEvent, args:LeaderLibSubscribableEventArgs, ...):boolean)|nil If set, this event can only sync is this function returns true.
+---@field Disabled boolean|nil If this event is disabled, Invoke won't invoke registered callbacks.
+---@field ArgsKeyOrder string[]|nil
+---@field GetArg SubscribableEventGetArgFunction|nil Used when the event data is unpacked, such as when passing the data to an old callback listener.
+---@field SerializeArg SubscribableEventSerializeArgFunction|nil Called when the event data is synced, and specific non-serializable args need to be converted (userdata etc).
+---@field DeserializeArg SubscribableEventDeserializeArgFunction|nil Called when the event data is done syncing, and specific args need to be converted back to non-serializable types.
+---@field OnSubscribe (fun(self:BaseSubscribableEvent, callback:function, opts:EventSubscriptionOptions, matchArgs:table|function|nil, matchArgsType:type))|nil Called when a callback is subscribed to the event.
+---@field OnUnsubscribe (fun(self:BaseSubscribableEvent, callback:function, opts:EventSubscriptionOptions, matchArgs:table|function|nil, matchArgsType:type))|nil Called when a callback is unsubscribed to the event.
+---@field Benchmark boolean|nil Print the time it takes to invoke listeners in DeveloperMode.
 
 ---@alias SubscribableEventInvokeResultCode string|"Success"|"Handled"|"Error"
 

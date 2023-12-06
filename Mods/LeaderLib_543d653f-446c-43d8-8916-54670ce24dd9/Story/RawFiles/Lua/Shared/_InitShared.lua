@@ -443,7 +443,7 @@ Importer = {
 				return Mods.LeaderLib
 			end
 			if not Importer.PrivateKeys[k] then
-				if additionalTable and additionalTable[k] then
+				if additionalTable and additionalTable[k] ~= nil then
 					return additionalTable[k]
 				end
 				if Mods.LeaderLib[k] ~= nil then

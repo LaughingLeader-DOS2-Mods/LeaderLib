@@ -174,6 +174,7 @@ local WeaponHitProperties = {
 	},
 	SkillHitType = {
 		Melee = true,
+		Ranged = true,
 		Magic = true,
 		WeaponDamage = true,
 	}

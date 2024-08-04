@@ -397,3 +397,19 @@ SKILL_STATE = {
 	GETAPCOST = "GETAPCOST",
 	GETDAMAGE = "GETDAMAGE"
 }
+
+Ext.Events.SessionLoaded:Subscribe(function (e)
+	--Support for mods adding new damage types
+	if #Ext.Enums.DamageType > #Data.DamageTypes then
+		local dt = {}
+		for i,v in pairs(Ext.Enums.DamageType) do
+			if type(i) == "number" then
+				local value = tostring(v)
+				dt[i] = value
+				dt[value] = i
+			end
+		end
+		_Enum:Create(dt)
+		Data.DamageTypes = dt
+	end
+end)

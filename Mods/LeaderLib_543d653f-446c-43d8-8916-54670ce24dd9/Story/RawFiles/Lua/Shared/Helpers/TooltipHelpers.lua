@@ -108,6 +108,7 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 						if Ext.Events.SkillGetDescriptionParam then
 							---@type {Character:StatCharacter, Description:string, IsFromItem:boolean, Skill:StatEntrySkillData, Params:string[]}
 							local evt = {
+								Name = "SkillGetDescriptionParam",
 								Skill = skill,
 								Character = character.Stats,
 								Description = "",
@@ -127,6 +128,7 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 					if Ext.Events.GetSkillDamage then
 						---@type {Attacker:StatCharacter, AttackerPosition:number[], DamageList:DamageList, DeathType:DeathType, IsFromItem:boolean, Level:integer, Skill:StatEntrySkillData, Stealthed:boolean, TargetPosition:number[]}
 						local evt = {
+							Name = "GetSkillDamage",
 							Skill = skill,
 							Attacker = character.Stats,
 							AttackerPosition = character.WorldPos,

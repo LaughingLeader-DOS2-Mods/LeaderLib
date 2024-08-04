@@ -1090,6 +1090,7 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams, noRa
 				if Ext.Events.GetSkillDamage then
 					---@type {Attacker:StatCharacter, AttackerPosition:number[], DamageList:DamageList, DeathType:DeathType, IsFromItem:boolean, Level:integer, Skill:StatEntrySkillData, Stealthed:boolean, TargetPosition:number[]}
 					local evt = {
+						Name = "GetSkillDamage",
 						Stopped = false,
 						Attacker = character.Stats,
 						AttackerPosition = character.WorldPos,

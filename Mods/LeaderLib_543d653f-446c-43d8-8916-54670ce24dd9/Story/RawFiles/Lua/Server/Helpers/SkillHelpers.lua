@@ -609,6 +609,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
 
                 local useDefaultSkillDamage = true
                 local evt = {
+                    Name = "GetSkillDamage",
                     Skill = skill,
                     Attacker = sourceObject.Stats,
                     AttackerPosition = props.Position,

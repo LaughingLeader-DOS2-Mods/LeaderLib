@@ -6,6 +6,16 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.13",
+			"Changes": [
+				"Fixed a tooltip error when calculating skill damage and legacy extender listeners are registered.",
+				"Fixed a tooltip error when legacy extender listeners check a nonstandard skill attribute.",
+				"API Changes:",
+				"Added support for newly-added damage types to Events.OnPrepareHit. Names/colors will need to be registered to LocalizedText.DamageTypeHandles and LocalizedText.DamageTypeNames.",
+				"Added missing Ranged type to SkillHitType. This affects the IsFromWeapon helper."
+			]
+		},
+		{
 			"Version": "1.7.31.12",
 			"Changes": [
 				"Fixed Sir Lora not spawning when skipping the tutorial."

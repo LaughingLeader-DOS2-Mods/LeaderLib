@@ -1516,8 +1516,12 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage, isForGameM
 	skill.IsTable = true
 	setmetatable(skill, {
 		__index = function (_,k)
+			local stats = Ext.Stats.Get(skillName, nil, false)
 			if k == "StatsObject" then
-				return Ext.Stats.Get(skillName, nil, false)
+				return stats
+			end
+			if _SkillAttributes[k] then
+				return stats[k]
 			end
 		end
 	})
@@ -1884,11 +1888,15 @@ function GameHelpers.Ext.CreateEventTable(name, properties)
 		Name = name,
 		Stopped = false,
 		CanPreventAction = false,
-		ActionPrevented = false,
-		PreventAction = function () end
+		ActionPrevented = false
 	}
 	evt.StopPropagation = function (self)
 		evt.Stopped = true
+	end
+	evt.PreventAction = function (self)
+		if evt.CanPreventAction then
+			evt.ActionPrevented = true
+		end
 	end
 	return TableHelpers.AddOrUpdate(evt, properties)
 end

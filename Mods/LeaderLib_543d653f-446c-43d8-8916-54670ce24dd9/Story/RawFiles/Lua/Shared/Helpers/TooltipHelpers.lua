@@ -107,18 +107,13 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 					if _ISCLIENT then
 						if Ext.Events.SkillGetDescriptionParam then
 							---@type {Character:StatCharacter, Description:string, IsFromItem:boolean, Skill:StatEntrySkillData, Params:string[]}
-							local evt = {
-								Name = "SkillGetDescriptionParam",
+							local evt = GameHelpers.Ext.CreateEventTable("SkillGetDescriptionParam", {
 								Skill = skill,
 								Character = character.Stats,
 								Description = "",
 								IsFromItem = false,
-								Params = {"Damage"},
-								Stopped = false
-							}
-							evt.StopPropagation = function (self)
-								evt.Stopped = true
-							end
+								Params = {"Damage"}
+							})
 							Ext.Events.SkillGetDescriptionParam:Throw(evt)
 							if not StringHelpers.IsNullOrWhitespace(evt.Description) then
 								return evt.Description
@@ -127,8 +122,7 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 					end
 					if Ext.Events.GetSkillDamage then
 						---@type {Attacker:StatCharacter, AttackerPosition:number[], DamageList:DamageList, DeathType:DeathType, IsFromItem:boolean, Level:integer, Skill:StatEntrySkillData, Stealthed:boolean, TargetPosition:number[]}
-						local evt = {
-							Name = "GetSkillDamage",
+						local evt = GameHelpers.Ext.CreateEventTable("GetSkillDamage", {
 							Skill = skill,
 							Attacker = character.Stats,
 							AttackerPosition = character.WorldPos,
@@ -137,12 +131,8 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 							DeathType = "None",
 							Stealthed = character.Stats.IsSneaking == true,
 							IsFromItem = false,
-							Level = character.Stats.Level,
-							Stopped = false
-						}
-						evt.StopPropagation = function (self)
-							evt.Stopped = true
-						end
+							Level = character.Stats.Level
+						})
 						Ext.Events.GetSkillDamage:Throw(evt)
 						if evt.DamageList then
 							local hasDamage = false
@@ -673,7 +663,7 @@ function GameHelpers.Tooltip.GetStatusDescriptionParamValues(stat, character)
 				local value = ""
 				local params = StringHelpers.Split(vID, ":")
 				if Ext.Events.StatusGetDescriptionParam then
-					local evt = {
+					local evt = GameHelpers.Ext.CreateEventTable("StatusGetDescriptionParam", {
 						Description = "",
 						Owner = character.Stats,
 						Params = params,
@@ -685,12 +675,8 @@ function GameHelpers.Tooltip.GetStatusDescriptionParamValues(stat, character)
 							StatusId = stat.Name,
 							StatusName = stat.DisplayName
 						},
-						StatusSource = character.Stats,
-						Stopped = false
-					}
-					evt.StopPropagation = function()
-						evt.Stopped = true
-					end
+						StatusSource = character.Stats
+					})
 					Ext.Events.StatusGetDescriptionParam:Throw(evt)
 					if not StringHelpers.IsNullOrEmpty(evt.Description) then
 						value = evt.Description

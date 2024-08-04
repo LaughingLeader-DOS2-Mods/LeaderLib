@@ -1875,3 +1875,20 @@ function GameHelpers.Ext.TypeHasMember(object, memberName)
 	end
 	return false
 end
+
+---@param name string The event name used in Ext.Events
+---@param properties table? Properties to set on the event table
+---@return LuaEventBase
+function GameHelpers.Ext.CreateEventTable(name, properties)
+	local evt = {
+		Name = name,
+		Stopped = false,
+		CanPreventAction = false,
+		ActionPrevented = false,
+		PreventAction = function () end
+	}
+	evt.StopPropagation = function (self)
+		evt.Stopped = true
+	end
+	return TableHelpers.AddOrUpdate(evt, properties)
+end

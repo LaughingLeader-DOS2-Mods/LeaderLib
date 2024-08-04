@@ -906,23 +906,23 @@ end
 ---@return DamageList[] damages
 function GameHelpers.Damage.DivideDamage(damageList, divider)
 	damageList:AggregateSameTypeDamages()
-    local damages = damageList:ToTable()
+	local damages = damageList:ToTable()
 	local damagePerType = {}
 	local totalDamagePerType = {}
 	local totalDamage = 0
-    for _,v in pairs(damages) do
+	for _,v in pairs(damages) do
 		totalDamage = totalDamage + v.Amount
 		if not totalDamagePerType[v.DamageType] then
 			totalDamagePerType[v.DamageType] = 0
 		end
-        totalDamagePerType[v.DamageType] = totalDamagePerType[v.DamageType] + v.Amount 
+		totalDamagePerType[v.DamageType] = totalDamagePerType[v.DamageType] + v.Amount 
 		damagePerType[v.DamageType] = math.floor(v.Amount / divider)
-    end
-    if totalDamage > 0 then
+	end
+	if totalDamage > 0 then
 		local newDamages = {}
-        local remainingDamage = totalDamage
-        for i=1,divider do
-            if remainingDamage > 0 then
+		local remainingDamage = totalDamage
+		for i=1,divider do
+			if remainingDamage > 0 then
 				local newDamageList = Ext.Stats.NewDamageList()
 				for damageType,amount in pairs(damagePerType) do
 					local addDamage = math.min(totalDamagePerType[damageType], amount)
@@ -940,12 +940,12 @@ function GameHelpers.Damage.DivideDamage(damageList, divider)
 					end
 				end
 				newDamages[#newDamages+1] = newDamageList
-            end
-        end
-        return newDamages
-    else
-        return {damageList}
-    end
+			end
+		end
+		return newDamages
+	else
+		return {damageList}
+	end
 end
 
 ---@param obj CharacterParam|ItemParam
@@ -1089,9 +1089,7 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams, noRa
 				local useDefaultSkillDamage = true
 				if Ext.Events.GetSkillDamage then
 					---@type {Attacker:StatCharacter, AttackerPosition:number[], DamageList:DamageList, DeathType:DeathType, IsFromItem:boolean, Level:integer, Skill:StatEntrySkillData, Stealthed:boolean, TargetPosition:number[]}
-					local evt = {
-						Name = "GetSkillDamage",
-						Stopped = false,
+					local evt = GameHelpers.Ext.CreateEventTable("GetSkillDamage", {
 						Attacker = character.Stats,
 						AttackerPosition = character.WorldPos,
 						DamageList = Ext.Stats.NewDamageList(),
@@ -1102,10 +1100,7 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams, noRa
 						Skill = skill,
 						Stealthed = character.Stats.IsSneaking == true,
 						TargetPosition = character.WorldPos,
-					}
-					evt.StopPropagation = function (self)
-						evt.Stopped = true
-					end
+					})
 					Ext.Events.GetSkillDamage:Throw(evt)
 					if evt.DamageList then
 						local hasDamage = false
@@ -1210,12 +1205,12 @@ end
 ---@param skill FixedString
 ---@return number cooldown
 function GameHelpers.Skill.GetCooldown(char, skill)
-    local character = GameHelpers.GetCharacter(char)
-    assert(character ~= nil, "A valid Esv/EclCharacter, NetID, or UUID is required.")
-    local skillData = character.SkillManager.Skills[skill]
-    if skillData then
-        return skillData.ActiveCooldown
-    end
+	local character = GameHelpers.GetCharacter(char)
+	assert(character ~= nil, "A valid Esv/EclCharacter, NetID, or UUID is required.")
+	local skillData = character.SkillManager.Skills[skill]
+	if skillData then
+		return skillData.ActiveCooldown
+	end
 	return 0
 end
 

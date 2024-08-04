@@ -608,8 +608,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
                 props.DamageList = Ext.Stats.NewDamageList()
 
                 local useDefaultSkillDamage = true
-                local evt = {
-                    Name = "GetSkillDamage",
+                local evt = GameHelpers.Ext.CreateEventTable("GetSkillDamage", {
                     Skill = skill,
                     Attacker = sourceObject.Stats,
                     AttackerPosition = props.Position,
@@ -618,12 +617,8 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
                     DeathType = "Physical",
                     Stealthed = sourceObject.Stats.IsSneaking == true,
                     IsFromItem = false,
-                    Level = sourceObject.Stats.Level,
-                    Stopped = false
-                }
-                evt.StopPropagation = function (self)
-                    evt.Stopped = true
-                end
+                    Level = sourceObject.Stats.Level
+                })
                 Ext.Events.GetSkillDamage:Throw(evt) 
                 if evt.DamageList then
                     local hasDamage = false

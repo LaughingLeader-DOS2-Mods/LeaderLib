@@ -587,19 +587,11 @@ end
 --- @param attacker StatCharacter
 --- @param target StatCharacter
 local function _CalculateHitChance(attacker, target)
-    local evt = {
-        Name = "GetHitChance",
-        Stopped = false,
-        CanPreventAction = false,
-        ActionPrevented = false,
+    local evt = GameHelpers.Ext.CreateEventTable("GetHitChance", {
         Attacker = attacker,
         Target = target,
-        PreventAction = function () end
-    }
-    evt.StopPropagation = function (self)
-        evt.Stopped = true
-    end
-    
+        HitChance = 0
+    })
     local chance = 0
 
     if attacker.TALENT_Haymaker then

@@ -6,6 +6,12 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.14",
+			"Changes": [
+				"Fixed knockup position not being synced on the client-side."
+			]
+		},
+		{
 			"Version": "1.7.31.13",
 			"Changes": [
 				"Fixed a tooltip error when calculating skill damage and legacy extender listeners are registered.",

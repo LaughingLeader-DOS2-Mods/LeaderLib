@@ -548,6 +548,19 @@ if _ISCLIENT then
 			end
 		end
 	end)
+	
+	Ext.RegisterNetListener("LeaderLib_KnockUp_SyncPositions", function (channel, payload, user)
+		local data = Common.JsonParse(payload)
+		if data then
+			for _,v in pairs(data) do
+				local object = GameHelpers.TryGetObject(v.NetID)
+				if object ~= nil and v.Y ~= nil then
+					local x,_,z = table.unpack(object.Translate)
+					object.Translate = {x, v.Y, z}
+				end
+			end
+		end
+	end)
 else
 	---Sync an object's WorldPos/Rotation to the client-side.
 	---🔨**Server-Only**🔨  

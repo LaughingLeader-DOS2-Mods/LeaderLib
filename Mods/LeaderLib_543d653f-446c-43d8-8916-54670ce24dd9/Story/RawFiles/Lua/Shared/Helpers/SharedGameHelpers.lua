@@ -168,6 +168,9 @@ function GameHelpers.GetCharacter(object, castType)
 		return object.Character --[[@as EsvCharacter|EclCharacter]]
 	end
 	local t = _type(object)
+	if t == "string" and StringHelpers.IsNullOrEmpty(object) then
+		return nil
+	end
 	if IsHandle(object) or t == "string" or t == "number" then
 		local _,obj = _pcall(_getCharacter, object)
 		return obj
@@ -190,6 +193,9 @@ function GameHelpers.GetItem(object, castType)
 		return object.GameObject --[[@as EsvItem|EclItem]]
 	end
 	local t = _type(object)
+	if t == "string" and StringHelpers.IsNullOrEmpty(object) then
+		return nil
+	end
 	if IsHandle(object) or t == "string" or t == "number" then
 		local _,obj = _pcall(_getItem, object)
 		return obj

@@ -190,7 +190,7 @@ SetInvulnerable_UseProcSetInvulnerable(_EventParser, 1);
 SetCanJoinCombat(_EventParser, 0);
 ItemSetCanInteract(_EventParser, 0);
 ItemSetCanPickUp(_EventParser, 0);
-ItemSetStoryItem(_EventParser, 1);
+ItemSetStoryItem(_EventParser, 0);
 SetCanFight(_EventParser, 0);
 SetVisible(_EventParser, 0);
 

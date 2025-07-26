@@ -6,6 +6,12 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.15",
+			"Changes": [
+				"Suppressed Script Extender warnings when a script tries to fetch a nonexistent object."
+			]
+		},
+		{
 			"Version": "1.7.31.14",
 			"Changes": [
 				"Fixed knockup position not being synced on the client-side."

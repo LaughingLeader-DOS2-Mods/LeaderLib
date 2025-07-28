@@ -6,6 +6,13 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.16",
+			"Changes": [
+				"Fixed an issue with script-created projectile strikes failing after the second strike (GameHelpers.Skill.CreateProjectileStrike).",
+				"Suppressed a warning message when a script tries to get a character from a 'NaN' value."
+			]
+		},
+		{
 			"Version": "1.7.31.15",
 			"Changes": [
 				"Suppressed Script Extender warnings when a script tries to fetch a nonexistent object."

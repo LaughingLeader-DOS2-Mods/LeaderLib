@@ -210,7 +210,7 @@ local function ProcessDoubleHandle(double, func)
 			return func(handle)
 		end
 	else
-		fprint(LOGLEVEL.WARNING, "[GameHelpers.Client.ProcessDoubleHandle] Double handle is NaN (not a number)! Double(%s)", double)
+		--fprint(LOGLEVEL.WARNING, "[GameHelpers.Client.ProcessDoubleHandle] Double handle is NaN (not a number)! Double(%s)", double)
 		return nil
 	end
 end

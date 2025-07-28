@@ -431,10 +431,26 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
 
     --local originalSource = TableHelpers.Clone(props.SourcePosition)
 
+    local strikeDelay = skill.StrikeDelay
+    if strikeDelay == nil or type(strikeDelay) ~= "number" then
+        strikeDelay = 250
+    end
+
+    local initialDelay = skill.ProjectileDelay
+    if initialDelay == nil or type(initialDelay) ~= "number" then
+        initialDelay = 50
+    end
+
     if count > 0 then
         local i = 1
         local timerName = string.format("LeaderLib_ProjectileStrike%s_%s_%s", id, i, Ext.Utils.MonotonicTime())
         local onTimer = nil
+        local runTimer = function ()
+            local b,err = xpcall(onTimer, debug.traceback)
+            if not b then
+                Ext.Utils.PrintError(err)
+            end
+        end
         onTimer = function()
             if positions ~= nil then
                 local x,y,z = table.unpack(positions[i])
@@ -445,20 +461,19 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
             ProcessProjectileProps(props)
             i = i + 1
             if i <= count then
-                local delay = skill.StrikeDelay or 250
+                local delay = strikeDelay
                 if delay <= 0 then
-                    onTimer()
+                    runTimer()
                 else
                     timerName = string.format("LeaderLib_ProjectileStrike%s_%s_%s", id, i, Ext.Utils.MonotonicTime())
-                    Timer.StartOneshot(timerName, skill.StrikeDelay or 250, onTimer)
+                    Timer.StartOneshot(timerName, delay, runTimer)
                 end
             end
         end
-        local initialDelay = skill.ProjectileDelay or 50
         if initialDelay <= 0 then
-            onTimer()
+            runTimer()
         else
-            Timer.StartOneshot(timerName, initialDelay, onTimer)
+            Timer.StartOneshot(timerName, initialDelay, runTimer)
         end
     end
 end

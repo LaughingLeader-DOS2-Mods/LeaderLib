@@ -551,26 +551,25 @@ end
 ---@param e LuaTickEvent
 local function OnTick(e)
 	if _waitForTickLen > 0 then
+		local len = _waitForTickLen
+		local tickData = {}
+		for i=1,len do
+			tickData[i] = _waitForTick[i]
+		end
+		_waitForTick = {}
+		_waitForTickLen = 0
 		local time = _mt()
-		local nextWait = {}
-		local nextLen = 0
-		local doUpdate = false
-		for i=1,_waitForTickLen do
-			local data = _waitForTick[i]
+		for i=1,len do
+			local data = tickData[i]
 			if data then
 				if data.TargetTime <= time then
-					doUpdate = true
 					OnTimerFinished(data.ID, true)
 				else
-					nextLen = nextLen + 1
-					nextWait[nextLen] = data
+					_waitForTick[#_waitForTick+1] = data
 				end
 			end
 		end
-		if doUpdate then
-			_waitForTick = nextWait
-			_waitForTickLen = nextLen
-		end
+		_waitForTickLen = #_waitForTick
 	end
 end
 

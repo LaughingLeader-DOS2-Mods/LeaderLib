@@ -36,7 +36,7 @@ LeaderLib_UI_GameSettings_Client_CondenseStatusTooltips_Description	Try to reduc
 LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled	Always Show Divine Talents	h085c69c2g47e1g4611g9c72g6f45ecb1768d
 LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled_Description	If enabled, the Divine Talents will always be visible in the player UI, regardless if the gift bag is enabled.	h0a56f2cfgf36fg4b73gba0cgc31271b3795f
 LeaderLib_UI_GameSettings_Client_GlobalTooltipDelay	Delay Override	hcee545cdgbdeeg4121gb312g90db1f6f5060
-LeaderLib_UI_GameSettings_Client_GlobalTooltipDelay_Description	Delay tooltip creation by this amount in seconds. This value will override the usual 0.5 second delay.	h60894436gf6c8g4e3dgb714g1c64c4c9eeee
+LeaderLib_UI_GameSettings_Client_GlobalTooltipDelay_Description	Delay tooltip creation by this amount in milliseconds. This value will override the usual 0.5 second delay.	h60894436gf6c8g4e3dgb714g1c64c4c9eeee
 LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_CharacterSheet	Delay Character Sheet Tooltips	hd3756e2fg3f58g4aa3g9b0ag3b13322d3c7f
 LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_CharacterSheet_Description	Enable a 0.5 second delay for abilities, stats, and talents. May affect the examine window as well.	he54ab919g8a44g4044gb3c0gee6b0c4a7ba0
 LeaderLib_UI_GameSettings_Client_EnableTooltipDelay_Generic	Delay Generic Tooltips	h559857dbg6cf5g4c77ga307g0faf82adeb4b
@@ -96,3 +96,5 @@ LeaderLib_UI_GameSettings_SpellsCanCritWithoutTalent	Enable Spell Critical Hits	
 LeaderLib_UI_GameSettings_SpellsCanCritWithoutTalent_Description	If enabled, spells can critical hit without the Savage Sortilege talent.	hb4a1f383gc0b5g449bgb28egc09586c81b68
 LeaderLib_UI_GameSettings_StarterTierOverrides	Enable Skill Tier Overrides	he2e6e5cdg9372g4805g92b1ge2e4b7b1a0db
 LeaderLib_UI_GameSettings_StarterTierOverrides_Description	If enabled, Novice/Adept/Master tiered skills will be set to Starter instead, allowing them show up in character creation.<br><font color='#FF9933'>Note that if you don't have the required ability levels for memorization, the skill won't show up (enable Lower Skill Memorization Requirements to avoid that).</font><br>(Default: Disabled)	h6feb8440ge26dg4b31gb9fag5d061db28708
+LeaderLib_UI_GameSettings_Client_ShowReadBooksInTooltips	Show Already Read	hbefb85d8g74d4g4640g8f05g2a8a829d0aa6
+LeaderLib_UI_GameSettings_Client_ShowReadBooksInTooltips_Description	Show if a book has already been read in item tooltips.	h09373f0fga895g4286ga216gfcb04d026d4b

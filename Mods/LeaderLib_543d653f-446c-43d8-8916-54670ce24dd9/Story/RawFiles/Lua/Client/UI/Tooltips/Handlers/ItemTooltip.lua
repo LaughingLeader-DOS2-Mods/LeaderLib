@@ -342,7 +342,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				end
 			end
 		end
-		if isRead then
+		if isRead and gameSettings.ShowReadBooksInTooltips then
 			--tooltip:GetElement("SkillAlreadyLearned", {Type="SkillAlreadyLearned", Label = LocalizedText.Tooltip.BookIsKnown.Value})
 			descriptionElement.Label = descriptionElement.Label .. "<br>" .. LocalizedText.Tooltip.BookIsKnown.Value
 		end
@@ -373,7 +373,6 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				end
 			end
 		end
-
 		
 		if Features.TooltipProgressionData then
 			local progressionEntries,totalEntries = ProgressionManager.GetDataForObject(item)

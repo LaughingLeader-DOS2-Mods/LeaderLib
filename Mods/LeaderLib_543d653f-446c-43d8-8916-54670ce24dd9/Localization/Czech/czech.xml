@@ -1,5 +1,4 @@
 <contentList>
-	<content contentuid="h004a3fd7g7610g4c6dgb405g6d48d947e645">Show Status Source</content>
 	<content contentuid="h00b235c6gdd0bg494fg997cga2d204f060a8">Unknown</content>
 	<content contentuid="h00cfaa9cg1ba7g4699gb353g07d1570afea6">*He snorts.* Unfortunately, the thought of hanging around on that stuffy island, with all that death underneath, did not appeal to me. </content>
 	<content contentuid="h00d3459bg4562g42dbgbe1fg0eba1a0e9f6c">*You take a look at the trader&apos;s wares.*</content>
@@ -10,27 +9,24 @@
 	<content contentuid="h031b0a74g0630g4f79ga05fg71c06e49015d">*Step away.*</content>
 	<content contentuid="h036618cegb603g483ag9646gd30eb8cbdb57">&lt;br&gt;&lt;font color=&apos;#44FF33&apos;&gt;(This book has been read)&lt;/font&gt;</content>
 	<content contentuid="h03e70da4g57d5g4cc6g9f3dg2af32a56a3e6">Take a look.</content>
+	<content contentuid="h0491cf07g4251g4e6ag9fa6ge88f88eb920c">Always Show Bar Values</content>
 	<content contentuid="h0580f26cg207fg494cgbe80g9d468b0c4996">&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;STOP!&lt;/font&gt;&lt;br&gt;A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod dependencies.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#DD3333&apos; size=&apos;24&apos;&gt;Mods will not work correctly!&lt;/font&gt;&lt;br&gt;To fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
-	<content contentuid="h058cca28gcf05g4254gae26g428887ad5cff">Try to reduce max item tooltip size by combining elements, such as &quot;On Hit&quot; actions.</content>
 	<content contentuid="h05e3a637g0755g4659g9aa9g99888bc32ed5">Undead Lizard</content>
 	<content contentuid="h07b0d455gbe0fg48a4gbe1eg3ae23e84b2eb">Confirm Preset Selection</content>
 	<content contentuid="h07ede36bgda99g42ecg813bgbc1496640e7d">Skip Tutorial (LB + Select)</content>
-	<content contentuid="h0817cecega5f8g4910g875fg07c2da1ba106">Delay Skill Tooltips</content>
 	<content contentuid="h0824ad38gb8f8g443dga589g5d6ed7a698b8">Divinity: Original Sin 2 (Campaign)</content>
 	<content contentuid="h085c69c2g47e1g4611g9c72g6f45ecb1768d">Always Show Divine Talents</content>
 	<content contentuid="h08bb8216g9d40g49f9g91d4g8a77ecb090d2">Swap between the undead and non-undead equivalent of your current race.</content>
 	<content contentuid="h08bd107egd712g4d0bgaa8eg6aceeaf1e6dc">Pull [Handle:h6bf7caf0g7756g443bg926dg1ee5975ee133:Sneaking]/[Key:INVISIBLE_DisplayName:Invisible] Characters Into Combat</content>
-	<content contentuid="h0a498022g9474g4aacg9c4cged02cdca22a2">Show the mod a status, item, or skill originates from in tooltips.</content>
+	<content contentuid="h09373f0fga895g4286ga216gfcb04d026d4b">Show if a book has already been read in item tooltips.</content>
 	<content contentuid="h0a56f2cfgf36fg4b73gba0cgc31271b3795f">If enabled, the Divine Talents will always be visible in the player UI, regardless if the gift bag is enabled.</content>
 	<content contentuid="h0a77a6c9g8b1ag49cdgaf0eg45c159b82b32">No rifle equipped</content>
 	<content contentuid="h0ab95fb3g7cfbg483dga66bg5daf233e945a">Loading presets...</content>
 	<content contentuid="h0b46c751g260fg4dfaga124ga7208595a493">Max</content>
-	<content contentuid="h0bcff2begcd22g4e86g9b9fgfdd3ce0b28de">Enable a 0.5 second delay for skill tooltips.</content>
+	<content contentuid="h0ca1d1c6g3924g46ebg861ag8c92b137288e">These settings only affect you. In multiplayer, these settings can be set independently from the host.</content>
 	<content contentuid="h0ccbce3cg90f3g4d42g9755gd9da999968bd">&lt;font color=&apos;#6EB09D&apos;&gt;Applied by [1]&lt;/font&gt;</content>
 	<content contentuid="h0d0af957g4dc8g4ddagb0fag6c38340bb6de">Hello!</content>
 	<content contentuid="h0d48602eg4807g47b7gac1dg50dbf7cec9d4">Store specific debug information in the current save.&lt;br&gt;This button should be used before saving and submitting the save for debugging to LaughingLeader, as it will store your current Global and Game Settings in the save.</content>
-	<content contentuid="h0ea94b9dg27e8g4cdbgba52g40be7f66dd18">These settings only affect you. In multiplayer, these settings can be set independently from the host.</content>
-	<content contentuid="h102b274eg58b9g4199g91c1g2aef870786b8">Fade books (recipes, lore) that have already been read by this amount.&lt;br&gt;&lt;font color=&apos;#FF33FF&apos;&gt;Note: This setting isn&apos;t retroactive, so previous books read in the save may need to be read again, once.&lt;/font&gt;[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]</content>
 	<content contentuid="h109e781dg2032g4b77gacdagce8034c4e49e">Okay.</content>
 	<content contentuid="h1145733eg9ec6g4f50ga44bg313f8a4e1cb2">&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;STOP!&lt;/font&gt;&lt;br&gt;A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod dependencies.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#DD3333&apos; size=&apos;24&apos;&gt;Mods will not work correctly!&lt;/font&gt;&lt;br&gt;To fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
 	<content contentuid="h12a0d291g8a48g4448g97adgf3dd1d053aa6">Me? Oh, I&apos;m nobody... Just an old bag of bones, keen on seeing the sights. I hear this cruise ship has a great buffet. *He snorts.*</content>
@@ -43,14 +39,13 @@
 	<content contentuid="h14535fc5g0469g4edfg94bfge8732ca3be6f">*Ask to see the trader&apos;s goods.*</content>
 	<content contentuid="h14939ec7g5208g49d1ga484gd88c66bb67ba">&lt;font color=&apos;#00FA9A&apos;&gt;View Missing Mods&lt;/font&gt;</content>
 	<content contentuid="h14956412g44e4g4890ga268gd425729622f1">[ON] Balanced Experience for All Parties - Players in other parties will no longer be automatically leveled up to the highest player level. [GLOBAL]</content>
+	<content contentuid="h14d0a335g5ed0g4b98g8699g44038d096585">Books Read</content>
 	<content contentuid="h15486e80g477bg46c1gb79bg5dfca9626411">Characters that follow you with Chain All will no longer avoid surfaces.</content>
-	<content contentuid="h1558d5f5g98feg4a8fg9c53gcf2b276c9513">Fade skillbooks that have already been memorized by this amount.[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]</content>
 	<content contentuid="h1558f2c9g5436g481eg990agdc02ce050c8b">Log Settings</content>
 	<content contentuid="h15b88e5fg448eg4d13g9bffga608d21bc1da">Remove Surface Avoidance When Chained</content>
 	<content contentuid="h15c7dfedg0e00g4ed8g85d2g6bdd30204527">*The old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
 	<content contentuid="h15ce233fgbe8fg46adg94eagff09e732a307">Pull Party Into Combat</content>
 	<content contentuid="h162538f5g21e7g4848g97a6g576ab6238d19">Timed autosaving will pause while in combat.</content>
-	<content contentuid="h16484ae8gc5b9g4072g883bg1fa0a0f85f0a">Delay Item Tooltips</content>
 	<content contentuid="h16793f3dgb128g4b51g9e24g7b19ef78b894">Loading menus...</content>
 	<content contentuid="h16ec7750gfd5dg4cfaga64fg991869fa3dfb">Enable Spell Critical Hits</content>
 	<content contentuid="h17380891g0e8eg42d3gbb55g9478bba4f684">Hold [1] for More Info</content>
@@ -61,25 +56,23 @@
 	<content contentuid="h1998ddaegea04g4b79gbc3egc9b0526708ad">90 Minutes</content>
 	<content contentuid="h199f5401g295eg4b24ga52ag9cf3a9844635">[OFF] Friendly Fire - This setting is for mods that implement friendly fire in their skill targeting conditions, allowing skills to target non-enemy targets if enabled. [GLOBAL]</content>
 	<content contentuid="h19d1b9dag302dg4655g86fdgad6fe369db15">Move to the target.</content>
+	<content contentuid="h1a19076fg0b33g4b5bg8081g5df8f7ec387f">Fix Status Tooltips</content>
 	<content contentuid="h1a6318dcgb094g4b3cg8492g6e26d8e3a11d">Mod Menu Settings</content>
 	<content contentuid="h1ae3aaa5gb444g4372g8b9ag231538f36a86">[LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96]</content>
 	<content contentuid="h1b1df860g4c70g46ccg9a4egb566babfcf09">Quality of Life</content>
 	<content contentuid="h1bcea212g810cg4ab5g8b55g6c300ea0cf36">Reload Stat Changes Config</content>
 	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee">[LOAD] Load Global Settings - These are global extender mod settings LeaderLib manages.&lt;br&gt;Path: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GlobalSettings.json&lt;/b&gt;</content>
 	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc">Control Summon</content>
-	<content contentuid="h1cdc775bgcae3g45b6g944bg0fb21db194a9">Keep Tooltip in Screen</content>
 	<content contentuid="h1d68f897g1430g4ed6gb61dg88018af310e8">Buff Status Preservation</content>
 	<content contentuid="h1da479e7gc4e2g4748g8234g754e97a4b680">Sulfuric</content>
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c">Character is selling new items.</content>
 	<content contentuid="h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba">[1]&lt;br&gt;&lt;font color=&apos;#33FF99&apos;&gt;Created by [2]&lt;/font&gt;</content>
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
-	<content contentuid="h206db122gc6b7g4603g9b05g725b23103b1a">Delay tooltip creation by this amount in seconds. This value will override the usual 0.5 second delay.</content>
 	<content contentuid="h209bda66g55d1g48a9gbc1bg22a2a6e25941">Autosaving &lt;font color=&apos;#FF0000&apos;&gt;Disabled&lt;/font&gt; | Interval: &lt;font color=&apos;#00FFFF&apos;&gt;[1]&lt;/font&gt;</content>
 	<content contentuid="h2122ae3fg6b7dg4417g90dag90f3c6b30b12">level</content>
 	<content contentuid="h21fd2959g743dg49e6g9922g02b39ce3c8b8">Pulls targets [1]m [2] ([3]% Chance).</content>
 	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
 	<content contentuid="h24533724ga73fg4d76gb62egc700a193eb89">Must you, really?</content>
-	<content contentuid="h248a3ef3g9ffcg4091gb6c5g10e584f9450e">Known Skillbooks</content>
 	<content contentuid="h24972fbcg741ag4ee0g8cadg41e13aa0ef53">LeaderLib</content>
 	<content contentuid="h24e93debgf7e1g4a6ag9841g5ecca2c911f5">Non-Player Action Point Settings</content>
 	<content contentuid="h25737285gb844g4142gad4cg1d5dc420fb0b">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
@@ -87,6 +80,7 @@
 	<content contentuid="h2627dad1g64d8g4d19gaf42g6a12ef1a7d1a">Please stop that...</content>
 	<content contentuid="h26695cfdg01c9g421dga695ge2d6661643bf">Actions</content>
 	<content contentuid="h26c43244gcf21g46cdg8969g6ed6a17dad03">Minute(s)</content>
+	<content contentuid="h26cc6078g59a6g4944ga3eaga11784f59c58">If enabled, tooltips will be forced to stay on the screen, instead of clipping out of bounds.</content>
 	<content contentuid="h26d9df87gcc82g4b87gb068g6e5e3b053113">[ON] Dialog Redirection Enabled. Certain dialog events will start with the closest player character available. (Default) [GLOBAL]</content>
 	<content contentuid="h27c279ceg2a80g4b51gb52age44b39b83d07">Sulfurium</content>
 	<content contentuid="h27d11f50gaecbg4d8fgaf81g0b7f26fb61f3">LeaderLib - Debug</content>
@@ -106,14 +100,13 @@
 	<content contentuid="h30327946g0ea7g4b53gada1g8fbaf61a8e84">*Ask if he&apos;s selling anything.*</content>
 	<content contentuid="h30855a9fga157g4ff1g83b7g7bb8fd640988">*Take your leave.*</content>
 	<content contentuid="h31a2f896g6e9fg47aegb876ga3d5ba3114b1">[Debug] Fix Dialog for Active LeaderLib Traders</content>
-	<content contentuid="h31fb9614g8d20g42adga8e9gd870c2c58e55">Tooltip Delaying</content>
 	<content contentuid="h3209c996gd9ebg4594ga886gddca741dafdd">Pulls targets [1]m [2].</content>
 	<content contentuid="h325b2402g6e5eg49c6ga8d2g96a4d25d01d4">&lt;font color=&apos;#FFA500&apos;&gt;Timer not started. Enable/Disable autosaving to restart the timer.&lt;/font&gt;</content>
 	<content contentuid="h336e652dg91dag48aag8040g9c8790fb145d">60 Minutes</content>
 	<content contentuid="h33c3e0e2g18e3g4792g93bbg725c15acdef1">&lt;font color=&apos;#00CCFF&apos;&gt;Keyboard Shortcut&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#44CCAA&apos;&gt;Press CTRL + Spacebar to chain/unchain party members. No skill required.&lt;/font&gt;</content>
 	<content contentuid="h3510e199g7d0cg404fga53bg052c534d94d1">Open the mod menu to access registered settings menus.</content>
 	<content contentuid="h35914541gb69bg42f4gafa5gb90aeb1ec229">...</content>
-	<content contentuid="h3711b1fegc969g47b4g91aag34b11481f06e">Delay Override</content>
+	<content contentuid="h35e1e420g8d05g469fga99agacd40074ad87">Show Base Mod Source</content>
 	<content contentuid="h386d715bg3f70g4373g8d64g99fb5f1010e8">*Ask why Lothar left his &quot;vacation&quot; on Reaper&apos;s Eye.*</content>
 	<content contentuid="h393d684bg505dg41c4gbb5dg715a4b5bd153">Close</content>
 	<content contentuid="h3952f84bge59bg44d1gb0d1g47a6a1a49f9e">Aggressively prevent the chat log from being visible or toggleable.</content>
@@ -140,23 +133,23 @@
 	<content contentuid="h436c5291g12cdg49b3gbaf5gc7d5a0ab4201">Allow the Base Carry Weight value to override the game&apos;s regular value.</content>
 	<content contentuid="h43868aebg7281g40bfgbc1dgf6fe5a06512b">Autosave Interval</content>
 	<content contentuid="h43c8c461g3a16g46fdgae71ga5986e500941">If enabled, consumable items such as drinks, food, potions, and ingredients will show their effects without needing to consume it first.&lt;br&gt;The &lt;font color=&apos;#33FF66&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideConsumableEffects:Show Consumable Effects]&lt;/font&gt; setting can be disabled in the Gameplay tab to still hide these effects for yourself, while allowing it globally here.&lt;br&gt;&lt;font color=&apos;#FFAA33&apos;&gt;Note: This works without any permanent stat overrides, so it&apos;s safe to enable/disable at will.&lt;/font&gt; </content>
+	<content contentuid="h441789feg09a0g470bg9848g5236f7f55b02">Enable a 0.5 second delay for status tooltips (statuses next to portraits, and the examine window).</content>
+	<content contentuid="h4429fc7cg6b49g473aga3e0g161583f29a80">Fade books (recipes, lore) that have already been read by this amount.&lt;br&gt;&lt;font color=&apos;#FF33FF&apos;&gt;Note: This setting isn&apos;t retroactive, so previous books read in the save may need to be read again, once.&lt;/font&gt;[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]</content>
 	<content contentuid="h44c4be0fgd679g4da6g90a4g46bda9000a4e">[Key:Shout_LeaderLib_UnchainAll_DisplayName:Unchain All] Skill</content>
 	<content contentuid="h455f1349g6528g452bg8624g5d0674b01ac5">If enabled, tooltips that support shift-key expansion will always be expanded.</content>
 	<content contentuid="h456c5c8bg7103g4b19g9185ge4cd6ddbab30">Show Status in Portrait UI</content>
 	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9">Hidden Backpack</content>
-	<content contentuid="h46a7fef9g9976g4abeg8f95g8fddb41639b9">If &lt;font color=&apos;#33FF66&apos;&gt;Show Consumable Effects&lt;/font&gt; is enabled in the global Mod Settings, disable this setting to hide these effects for yourself only.</content>
 	<content contentuid="h46c05d65g039dg4651gb24eg027244f86897">Undead Dwarf</content>
 	<content contentuid="h46f32bf7gf965g4146ga6e1g4951c5d8c2fa">Clears surfaces in a [1]m range at the location of your target(s).</content>
 	<content contentuid="h4724329fg40d7g432dgb0a3g7ee4944ebe42">[Key:Shout_LeaderLib_OpenModMenu_DisplayName:Open Mod Menu] Skill</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d">Undead Human</content>
 	<content contentuid="h47d73bfcg16eag4504g83c0ge7b9c0048f13">*Ask to see the trader&apos;s goods.*</content>
-	<content contentuid="h4897d242gf62bg4dccg9c90g1470117392d8">If enabled, the health and armor bars will always show their values, instead of only on mouse hover.</content>
 	<content contentuid="h4afd5d2bg1af0g4cc3g9a53gdb6c327d2d04">Enable Dialog Redirection</content>
 	<content contentuid="h4b459589gc776g4a7fgb3abg2e219ea20844">Features</content>
 	<content contentuid="h4c438f27gc833g4b46g8c3eg50716f12ae34">If &quot;Pull Party Into Combat&quot; is enabled, this is the minimum radius party members must be from that combat to automatically join. Default: 30m</content>
 	<content contentuid="h4ceb8a44g8bf7g40b3g999egaca5cf0af044">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
+	<content contentuid="h4d5f8979gf204g4290ga515gebf118a74cfc">These settings affect all players. In multiplayer, only the host can adjust these options.</content>
 	<content contentuid="h4d75e3c0ge0c3g4078gb94dg8e1e054aecb6">*He yawns.* Anything else?</content>
-	<content contentuid="h4d9b6638g854eg41bagafa1ga4ab8efde9a2">If enabled, specific items will be less visible in the inventory, such as memorized skillsbooks being less opaque.</content>
 	<content contentuid="h4db25e4dgdbdag49cfg97f4g06c7f2284082">30 Minutes</content>
 	<content contentuid="h4db42cd2g9575g4c9ag8eb8ga362b3e2e2dc">&lt;b&gt;[Error] Missing Mod Dependencies&lt;/b&gt;</content>
 	<content contentuid="h4de9aea3ga486g4e1egbb56gef0bc6191f9c">Automatically Unlock Inventory</content>
@@ -169,10 +162,13 @@
 	<content contentuid="h517cd9b4g30f4g4663ga73cgaaa145863dfc">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
 	<content contentuid="h5279a104g5c7ag4d0fgb191gc963d39c286c">Sourcerer</content>
 	<content contentuid="h52804b8ag97ccg478eg90f8gc8b6f735dab2">&lt;font color=&apos;#FF0000&apos; size=&apos;32&apos;&gt;ERROR&lt;/font&gt;&lt;br&gt;You are missing the Script Extender, and the host has mods that require it!&lt;br&gt;&lt;font color=&apos;#FF00CC&apos; size=&apos;22&apos;&gt;Please exit the game and install the Script Extender.&lt;/font&gt;&lt;br&gt;The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.</content>
+	<content contentuid="h528c0ba8g3156g43eega5a7g2947b92a7738">Removes the status malus icon and extra spacing, caused by a typo in Larian&apos;s UI code, and organizes bonuses and maluses together, while also sorting them alphabetically.</content>
 	<content contentuid="h529c36c6g6b68g46e2g867dg863184908d5a">Remove the Mod Menu Skill (Self)</content>
 	<content contentuid="h52a29657gf5f3g4577gb783g6fa0c0052e5e">Timed Autosaving</content>
 	<content contentuid="h538e28f2g01fag43dcga7c2g040a105e38c1">([1]% Chance)</content>
+	<content contentuid="h543cc3a6gc12bg4406g8a57gcfdfb2171236">Fade skillbooks that have already been memorized by this amount.[Key:LeaderLib_UI_GameSettings_Client_Fade_DescriptionInfo]</content>
 	<content contentuid="h5515ca23gf576g491dgb562ge71243c72ed8">Cancel Shapeshifting</content>
+	<content contentuid="h559857dbg6cf5g4c77ga307g0faf82adeb4b">Delay Generic Tooltips</content>
 	<content contentuid="h562f0a3bg4566g452eg860egb5c2ff3e750e">Undead Elf</content>
 	<content contentuid="h5671b6e0gf0c5g4a01g9513g36382bea3418">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
 	<content contentuid="h5674850agf1bcg4d18g9af6gadf188370101">Dialog will be redirected to the character with the highest persuasion amount, instead of only avatar characters.</content>
@@ -184,8 +180,8 @@
 	<content contentuid="h59075d75g55f1g4ba4g87b7g4953c6818ee3">[ON] Teleport to Dialog - Teleport your avatar to the dialog event when dialog gets redirected. [USER]</content>
 	<content contentuid="h5945db23gdaafg400ega4d6gc2ffa7a53f92">Mod Settings</content>
 	<content contentuid="h5a3c3cb9g4168g48eaga773g6e5cd41223b5">*He reaches for his bag.*</content>
+	<content contentuid="h5b58a9a9g7632g4958g88fagd579fcea5423"></content>
 	<content contentuid="h5b8b22cfg56f9g4381g8698g53e73f82a32d">Flanking</content>
-	<content contentuid="h5bc5c82ag5c46g491cgb60ag58244a7301f9">Enable a 0.5 second delay for status tooltips (statuses next to portraits, and the examine window).</content>
 	<content contentuid="h5be7351cgb6eeg438fgbb32g65c8295bfb3b">[ON] Timed Autosaves Enabled [GLOBAL]</content>
 	<content contentuid="h5c245164g58d8g4449g958dg68236099e6f6">[SAVE] Save Game Settings - This file is automatically loaded/saved when you get in-game (loading saves, new games, etc). This will overwrite whatever changes you may have recently made.</content>
 	<content contentuid="h5cc39c97g969dg4c92gbf7fgbc57f3bff64d">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
@@ -193,17 +189,19 @@
 	<content contentuid="h5d6cebcagab5eg45ebgbaf0gb0b77cd0ac39">[ON] Friendly Fire - This setting is for mods that implement friendly fire in their skill targeting conditions, allowing skills to target non-enemy targets if enabled. [GLOBAL]</content>
 	<content contentuid="h5e7156dfg4eddg428fg8939gdadd6f2eb50f">[LeaderLib] Settings</content>
 	<content contentuid="h5eb45b65g72aeg4b6cga7eegd42b61850315">[Back]</content>
-	<content contentuid="h5f08e47agfdedg4f2fg95cbgdd98b93ab315">&lt;br&gt;Default: 30%&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;Fading is disabled at 100 (fully visible), while 0 makes the item completely invisible.&lt;/font&gt;</content>
 	<content contentuid="h5f603b9bg4c0fg4b80g9cfagfce9ed3b295b">Speaking of old junk, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
+	<content contentuid="h5fdc99beg4177g44c6g9745gd491fb7ff204">If [Key:LeaderLib_UI_GameSettings_Client_ShowModInTooltips] is enabled, show base game mods as well, such as Divinity: Original Sin 2 (Base) or (Campaign).</content>
+	<content contentuid="h60310776g7df6g4091ga41eg4b61cb848dc6">Show the mod a status, item, or skill originates from in tooltips.</content>
+	<content contentuid="h60894436gf6c8g4e3dgb714g1c64c4c9eeee">Delay tooltip creation by this amount in milliseconds. This value will override the usual 0.5 second delay.</content>
 	<content contentuid="h608a3fb1g869eg45b6g93f6g9ec6d52a02d8">Welcome [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]. Seems we&apos;re nearing the end of our journey together.</content>
 	<content contentuid="h60d869f2gcb5cg4b29gafa4g9d94ef2ae4f7">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
+	<content contentuid="h60e5e927gd8afg4eaeg8710gaaf2139207a6">A charmed satchel capable of carrying far more brick-a-brack than most simple backpacks.</content>
 	<content contentuid="h612f84f2gd275g41bdga76fg0b54166becb0">Certain mod books will be automatically added to your inventory initially, if enabled.</content>
 	<content contentuid="h617f92ceg5e39g4dbbg84c7g4b20985cddfe">Clear any active shapeshifting statuses.</content>
 	<content contentuid="h62a23d87g39e8g464fg84ddg63b7f53d6a9b">*Ask the man who he is.*</content>
 	<content contentuid="h62fcf915g9babg41e3gbc1fg7cec5eeb59ce">[ON] Combat Log Logging [GLOBAL]</content>
 	<content contentuid="h632cbbd2g4193g4921g979fg1abd006f1e0b">Running command...</content>
 	<content contentuid="h6349d1c7g6af8g4bb0g9d17g1e09f64a3d6f">[LeaderLib_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261]</content>
-	<content contentuid="h6391cd9cg7556g4ee3g900fgda3429722beb">Show Base Mod Source</content>
 	<content contentuid="h6472ecb0g5977g4c93g8a51g6444c9402d47">So. How about a trade?</content>
 	<content contentuid="h64aef327g59b3g4c63gacb9g834c0ba020e0">Insight on how to manage multiple summons at the same time. For summoners, by summoners. Read this book to learn this skill.</content>
 	<content contentuid="h658b85b9g49abg4c9fg9215ga09ac36d3e53">[ON] Autosave in Combat [GLOBAL]</content>
@@ -212,6 +210,7 @@
 	<content contentuid="h66e8b6f3gf140g4ce3gae5eg1fa3b163a8d1">Debug Mode</content>
 	<content contentuid="h6765e77cg13c0g48dcgb708g721355bc5451">[LeaderLib_ModMenu_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0]</content>
 	<content contentuid="h67aa23a9g27f2g4e14gac5ag1fcd293324e4">Unchain All Party Members</content>
+	<content contentuid="h67f62a22g96e6g4d04ga6b3gecb1cb6e2ed4">Enable a 0.5 second delay for generic tooltips (things like button tooltips).</content>
 	<content contentuid="h680a3621g57dag4544g8c63gb43e64633e24">[OFF] Autosave in Combat [GLOBAL]</content>
 	<content contentuid="h68300b5aga3a5g49c9g8e57gbdf5490fd4c1">The amount of action points gained when a character&apos;s turn starts.&lt;br&gt;(Default: 4)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
 	<content contentuid="h68ad69bfg9d72g4107g8285g691dd3abc27e">Add the Mod Menu Skill (Self)</content>
@@ -222,16 +221,18 @@
 	<content contentuid="h6a73243bgbdbcg4c42g8a10g63b34a228971">If &lt;font color=&apos;#3399FF&apos;&gt;[Key:LeaderLib_PullPartyIntoCombat]&lt;/font&gt; is enabled, a timer will check the party&apos;s distance to the current combat, automatically pulling members into the combat if within the set distance.&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;When this is disabled, pulling is done only when a player enters combat or teleports to a pyramid/waypoint.&lt;/font&gt;&lt;br&gt;Default: Disabled</content>
 	<content contentuid="h6a80ffafg59d9g4848g8d1ag9359a1435030">Enable Timed Autosaving</content>
 	<content contentuid="h6aac0af6g1e02g4a73g9341g53c81e64eb03">World Tooltips for All Items</content>
+	<content contentuid="h6af89dc2gea95g4cd7g9254gf02dca7e8815">Enable a 0.5 second delay for skill tooltips.</content>
 	<content contentuid="h6b95a921gdbe2g4db2gb575g09f0b71e605e">Reload and re-apply the stat changes configuration file, located at:&lt;br&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_StatChanges.json</content>
+	<content contentuid="h6b9d506cgf607g41bcg8038gacb403cd4ad5">Inventory Item Fading</content>
 	<content contentuid="h6ba6354bg9a76g48c2g90e9gf8aeac752f5c">Fix the Unhealable Status</content>
 	<content contentuid="h6caacb07g5690g4febgbabcge6b6ba56733b">35 Minutes</content>
 	<content contentuid="h6d2689a6ge111g43b7g8c87g478a5e501f40">Mods&lt;br&gt;[LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]</content>
+	<content contentuid="h6d35b3e6g536cg4e35gb269g7f217764213f">Delay Skill Tooltips</content>
 	<content contentuid="h6d41e8bag5ab9g42c4g8723g2dad9e443b64">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="h6d61f680g2f6cg44c1g8a37g4ad2ad98dc90">I&apos;m also selling some old belongings.</content>
 	<content contentuid="h6d855e34gd141g49f7ga52agc4a30cf700ba">Client-Side Settings</content>
 	<content contentuid="h6eabd548g4797g423agbe50g8a858704a8c1">Player Action Point Settings</content>
 	<content contentuid="h6ecb0ec0g918fg4b8ega11dgb6cf93d51c0b">Time Left: &lt;font color=&apos;#FF69B4&apos;&gt;[1]&lt;/font&gt;</content>
-	<content contentuid="h6ee46823ga451g4fafga7a7g7bb4e9853056">These settings affect all players. In multiplayer, only the host can adjust these options.</content>
 	<content contentuid="h6f21c7b6gea18g4846gbd07g048402159797">*He waits for you to speak.*</content>
 	<content contentuid="h6f8c74d8g77d3g469ega859g41d644a06c6a">LeaderLib Settings</content>
 	<content contentuid="h6feb8440ge26dg4b31gb9fag5d061db28708">If enabled, Novice/Adept/Master tiered skills will be set to Starter instead, allowing them show up in character creation.&lt;br&gt;&lt;font color=&apos;#FF9933&apos;&gt;Note that if you don&apos;t have the required ability levels for memorization, the skill won&apos;t show up (enable Lower Skill Memorization Requirements to avoid that).&lt;/font&gt;&lt;br&gt;(Default: Disabled)</content>
@@ -248,20 +249,21 @@
 	<content contentuid="h7322bed9g2ea5g4abeg9decga21994353d79">*He waits for you to speak.*</content>
 	<content contentuid="h73234319g4e6bg4967gb45cga511b60f0408">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Save Global Settings&lt;/font&gt;</content>
 	<content contentuid="h7372bd33g991dg41c7ga8c2g9b42778c29f5">If enabled, all items will have a &quot;World Tooltip&quot;, showing the item&apos;s name when world tooltips are enabled (ALT by default for keyboard + mouse, or clicking the Right Stick for controllers).&lt;br&gt;Disabling this may require a save/load to get items to reset.</content>
-	<content contentuid="h738ca5c9gbb24g47d6ga31eg570bc92bbbd0">Host Settings</content>
+	<content contentuid="h73bda5d2g86d7g46ffga06dgf1ee3a02b286">&lt;br&gt;Default: 30%&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;Fading is disabled at 100 (fully visible), while 0 makes the item completely invisible.&lt;/font&gt;</content>
 	<content contentuid="h75a91fefgc531g4bb1g82f2gec7122c62aff">Enabled</content>
 	<content contentuid="h75e24eb0g3639g41a3g9c88g7d228f91eb00">INFO</content>
 	<content contentuid="h76b098bdgb9f4g4ae8g8e5bg87f68b4599d9">Hey there, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! You made it off that wreck in one piece, eh? *He snorts.* </content>
 	<content contentuid="h76d37069g565dg458bg8e57gdbd6f9b81b7a">[ON] Auto Unlock Inventory - Automatically unlock the party inventory in multiplayer.&lt;br&gt;This will allow all players to exchange items between their inventories without having to unlock them first. [GLOBAL]</content>
 	<content contentuid="h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc">Pushes targets [1]m [2].</content>
 	<content contentuid="h7942ef1ag44d9g49f0gab10ge07e419c1d32">[OFF] Combat Vacuum - Automatically pull party members within 30m into combat. [GLOBAL]</content>
-	<content contentuid="h7996a812g5908g4aa5g9e39g929c85d71ba0">Enable a 0.5 second delay for item tooltips (includes the hotbar).</content>
 	<content contentuid="h79b1fb29g8d95g4bcdg9af6g32e2593b0475">Melee Skill Maximum Distance</content>
-	<content contentuid="h79ed17e8gc593g4adbg9648gb16c5f3a8636">If enabled, tooltips will be forced to stay on the screen, instead of clipping out of bounds.</content>
 	<content contentuid="h7a4ddc58g1cbeg4e40gaba2g0b2bf5dedd98">[OFF] Debug Logging [GLOBAL]</content>
 	<content contentuid="h7a60181dg1be6g4e43g99c5g91289ea59f8f">Exiting...</content>
 	<content contentuid="h7b3bd7e6g9a34g4959gad11g241f6d8d33c1">Release [1] for Less Info</content>
 	<content contentuid="h7b455d51g9be5g4f48g8dffg7e1a4b1ad356">*Ask what his plans are for his time on Reaper&apos;s Eye.*</content>
+	<content contentuid="h7b685627gd157g4fc2gaf20g37db378cedd8">Toggle Combat Log</content>
+	<content contentuid="h7ba50818gb50ag4517g9f12g347bd0a9f990">Condense Item Tooltips</content>
+	<content contentuid="h7cbe733dg51feg40e8gaeffgfe989bab122d">Show Status Source</content>
 	<content contentuid="h7cf6d938g1c71g4431gbbccg85cfdf119735">Lead the way.</content>
 	<content contentuid="h7d0700a7gdc60g4b0fga58cgfbb08614d7f7">25 Minutes</content>
 	<content contentuid="h7d86a1e8g8071g444dgb6d8g859c06b2c1e6">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
@@ -277,8 +279,8 @@
 	<content contentuid="h810c9e32gefefg451cga58dgc6d44276ac7e">Override Base Carry Weight</content>
 	<content contentuid="h8154ae8eg2b37g4f0fgb6b6gd7e27fed37a6">Level [1]: [2]</content>
 	<content contentuid="h81a0d6b9g43adg4223gbcc9g0fceadeff883">*He coughs out some sea water.*  That she-beast of a sourceress nearly wiped me out with the others on the boat... *He trails off for a moment before returning his gaze back to you.*</content>
-	<content contentuid="h81c0c1edg1e20g4537g8b3bgaf1a16ac1b8a">If [Key:LeaderLib_UI_GameSettings_Client_ShowModInTooltips] is enabled, show base game mods as well, such as Divinity: Original Sin 2 (Base) or (Campaign).</content>
 	<content contentuid="h81c5d767gca44g446fg8d4bg56bdf03699a6">Clear Whitelist</content>
+	<content contentuid="h8272e7c1g0ee8g4c0dg93c9g30d89b0e772c">Tooltip Delaying</content>
 	<content contentuid="h8311eb63g89cfg41c1g961cgde31f8d79927"></content>
 	<content contentuid="h84c9e085gbeb1g4b82ga66ag84eb281ed4cb">Divinity: Original Sin 2 (Base)</content>
 	<content contentuid="h85c3e4fag683cg471agaef1g448f3023e955">Selected Preset: [LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068]</content>
@@ -291,6 +293,7 @@
 	<content contentuid="h8726cca0g7e2fg4651ga4f2g6108a8e13f10">LeaderLib is a library mod used to provide common functionality to other mods, as well as providing quality-of-life features for players. Features include a centralized mod menu, autosaving with a customizable interval, dialog redirection, and more.</content>
 	<content contentuid="h87df678agafbeg4816gbd41g1708cb5b2a41">Add Chain/Unchain Skills (User - All Owned Characters)</content>
 	<content contentuid="h8859d107g3e28g44dega723gc7434a93f206">Add the Mod Menu Skill (Party)</content>
+	<content contentuid="h88afeeadg112bg40ebgbb14ge2e896cf89d2">If enabled, specific items will be less visible in the inventory, such as memorized skillsbooks being less opaque.</content>
 	<content contentuid="h898ea651g71ddg40f0g8a76g6296ffc9581f">[First]</content>
 	<content contentuid="h8993bac9g89e6g4a50g997bg58f8d4742984">[Key:Shout_LeaderLib_ChainAll_DisplayName:Chain All] Skill</content>
 	<content contentuid="h899bfe72g40f5g4608g801eg96a76cdd43a3">Monitor Party Range</content>
@@ -298,7 +301,6 @@
 	<content contentuid="h8a959098gf62eg46e6gbd76g423808c8d7b9">Show Consumable Effects</content>
 	<content contentuid="h8b7d56a0g4114g4cf2ga2ceg50db94bad57f">Enable various debug features with LeaderLib. Not recommended.</content>
 	<content contentuid="h8b8cb81bgf46eg435fg9fadg283b2bec5c89">Let&apos;s part ways.</content>
-	<content contentuid="h8d476de1g8b91g4821g87f2gd6ff1151b722">Delay Status Tooltips</content>
 	<content contentuid="h8d5dac42geb51g4b3agae2egfce8019d8387">Dialog Redirection</content>
 	<content contentuid="h8e6b8c80g8929g427cgb614ga389bd55c56f">Save Debug Info</content>
 	<content contentuid="h8e75b265ge400g4f0agbfcfg9b5a404d48f7">*With a puzzled look on your face, the old man speaks up before you get a chance to respond.*</content>
@@ -332,11 +334,10 @@
 	<content contentuid="h98bf1217gf2bfg4d82g99b9g6747f36f9aab">&lt;font color=&apos;#FF0000&apos;&gt;Script Extender Missing!&lt;/font&gt;</content>
 	<content contentuid="h98d315c5g189cg431eg9862g7cea569a5e3b">Hmm?</content>
 	<content contentuid="h98da5ca0g1685g4045ga3ccga021c464806e">Automatically Add</content>
-	<content contentuid="h9904f967g424bg4099gb4f3ge3b46fe30a68">Try to reduce max status tooltip size by combining elements, such as immunities.</content>
 	<content contentuid="h993bd3d5g0c32g4da9gadb1gaa09877c5a8a">Enable or disable the [Key:LeaderLib] trader ([Handle:h4252ff7cgb624g4b24gbf03g1772392f3988:Old Man Lothar]). Note that some mods add specific items to this trader, such as menu books.</content>
 	<content contentuid="h995eb173g0b22g4b3egbd09gc976dd4a8736">[1] Penetration: [2]%</content>
-	<content contentuid="h99a64909g2efdg4246g97bfg5e78915ecb08">UI</content>
 	<content contentuid="h9a089091g504ag4446ga707g787ad2d73d89">Go to [1] ([2])</content>
+	<content contentuid="h9a147919g74feg42a0gb804g7fab3c413866">Make the combat log visible initially.</content>
 	<content contentuid="h9ade7360g8608g42f6g8e7cgff542d517949">&lt;font color=&apos;#BB77FF&apos; size=&apos;22&apos;&gt;Preset Selection&lt;/font&gt;&lt;br&gt;Toggle the the Preset Selection dropdown.</content>
 	<content contentuid="h9b4fce0fge5a9g4369gb3e8g1567058cc47c">If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like invisible and healing statuses. </content>
 	<content contentuid="h9b843d3agc42eg4295g8381ge2eb54eeac08">Dialog Redirection Settings</content>
@@ -348,16 +349,14 @@
 	<content contentuid="h9cc2120agfe21g4721g8e33g6d1fb7621956">[ON] Unhealable Fix - If the &apos;Unhealable&apos; status is applied, the target will not be able to be healed by statuses (Regeneration, etc). [GLOBAL]</content>
 	<content contentuid="h9d00c99fgf7a1g4cb0gbfd9gb015d525148f">*Ask if he&apos;s still selling things.*</content>
 	<content contentuid="h9d070c75g8d3fg4737g9097g1ba448c6dcf9">On Hit:&lt;br&gt;Set [1].[3]</content>
-	<content contentuid="h9d2862d3g60c2g4c5ag93aagb4bf787c8b3a">Inventory Item Fading</content>
-	<content contentuid="h9e18d11cg5b3eg4af0g8e62g3fe7d28fb945">Enable a 0.5 second delay for generic tooltips (things like button tooltips).</content>
 	<content contentuid="h9ff30ae0ge39eg480bg82a3ge975aafed5fd">[LeaderLib_ModMenu_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17]</content>
 	<content contentuid="ha0c0e557g4b01g46a5ga70fge7793eda87b7">Recovery</content>
+	<content contentuid="ha0d0d202g4aa5g4bdeg9296gc5239dbe0bb1">If enabled, the health and armor bars will always show their values, instead of only on mouse hover.</content>
 	<content contentuid="ha0fda551gb11fg4b9eg9ceag34948486896f">Require Backstab Talent</content>
 	<content contentuid="ha1260afagf673g4e7eg983ag834907ffeb4e">[OFF] Unhealable Fix - If the &apos;Unhealable&apos; status is applied, the target will not be able to be healed by statuses (Regeneration, etc). [GLOBAL]</content>
 	<content contentuid="ha140cb94g4fd8g4651gacf2g9c54f0a8b74a">*Take your leave.*</content>
 	<content contentuid="ha1c04ddag65a8g4deagbbe6g8c401710cad9">If enabled, skill memorization requirements will be lowered (such as Necromancy 4 to Necromancy 1).&lt;br&gt;&lt;font color=&apos;#FF9933&apos;&gt;Ideally enable this alongside Skill Tier Overrides, so more skills can be selected in character creation.&lt;/font&gt;&lt;br&gt;(Default: Disabled)</content>
 	<content contentuid="ha267dc3cg888dg4f53g956ag3b6a6a9cbbef">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
-	<content contentuid="ha285248cg80deg4a06g95d4ga2d090a74777">Toggle Combat Log</content>
 	<content contentuid="ha2901d46g7ba5g408cg91ffg6b14b45b4c09">Dynamic Menu Sample</content>
 	<content contentuid="ha2cbea79g07e1g474dg912age8c7e79abd34">&lt;font color=&apos;#77DDFF&apos; size=&apos;22&apos;&gt;Skip Tutorial&lt;/font&gt;&lt;br&gt;Skip the tutorial and go straight to a specific level.</content>
 	<content contentuid="ha35fc503g56dbg4adag963dga359d961e0c8">Horns</content>
@@ -371,19 +370,20 @@
 	<content contentuid="ha62e1eccgc1c2g4452g8d78g65ea010f3d85">Extra Stats</content>
 	<content contentuid="ha6c69629g6fbag4268g8826g82af57c354fc">Take a look.</content>
 	<content contentuid="ha702e12egd8bfg4eaeg88a0g5b20c1995179">Leave me be!</content>
+	<content contentuid="ha7130d20g4385g4641g995fg0e0b405312ca">UI</content>
 	<content contentuid="ha73d93a8g04fdg4eb0g90fage5e02cd0c4ef">*Step away.*</content>
 	<content contentuid="ha7b4af6cg0f0cg4e02g8839g5f9c756e105b">Registered Mods</content>
 	<content contentuid="ha7f6838bg646eg405bg9d45g91e8f5434cb4">*The old man perks up for a moment.*</content>
 	<content contentuid="ha853bcf9g311dg4e56g8725g0a9188e22344">[OFF] Use Any Party Member - Disable user ID matching when finding the closest character a party member belongs to, allowing other players in multiplayer to be the redirection target. [GLOBAL]</content>
 	<content contentuid="ha864ea68gc066g45e8gb0c2gc5ed058a82ff">Always Display Weapon Scaling Text</content>
 	<content contentuid="ha88d3b01gcfc2g470eg97f5g1dafaa65a1bd">Hrmph...</content>
-	<content contentuid="ha8915c42g986fg4356g9fd6g1d2b49e789f0">Delay Generic Tooltips</content>
 	<content contentuid="ha9284da0gd161g47d7g8c19g7ac10878ee5c">*He sets his fishing pole down for a moment and rummages through a bag,*</content>
 	<content contentuid="ha9720574ged59g4d81g92f3gcea93337121c">Modify Healthbar Statuses</content>
 	<content contentuid="hab87e202g3afcg45f6g9325gbfde5f0f015b">Speaking of, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
 	<content contentuid="habcdf022g54d1g414ega026g2d4099ca7103">Combat Sight Range Multiplier</content>
 	<content contentuid="hac0a7cb5g419ag4698g8b2cg0fc57a03a385">Enables friendly fire, which can allow skills or other mod mechanics to target allies.</content>
 	<content contentuid="hac41182fg734cg4f90gb787gff3f7dbdfd0e">Change to the opposite gender.&lt;br&gt;&lt;font color=&apos;#188ede&apos;&gt;Warning: Replaces custom appearance settings!&lt;/font&gt;</content>
+	<content contentuid="had8d6d84gb7d2g418egb942g3d4215d32915">Keep Tooltip in Screen</content>
 	<content contentuid="hadb765beg0816g46f8g9e9ege87c43b78bc3">20 Minutes</content>
 	<content contentuid="hae52ff4bg54e7g4eabgb930gca752c4ba072">Armour Specialist</content>
 	<content contentuid="hae65b472g6a61g4c8fgb05dge94cc8e853d4">Pacifism</content>
@@ -391,30 +391,29 @@
 	<content contentuid="haee6fb94g2ea6g4f56g800dg3e49e5b131ff">Character has taken a vow to avoid fighting, and will flee if pulled into combat.</content>
 	<content contentuid="haf24c059g3811g4babgb529g348a34b47d05">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
 	<content contentuid="hafb63d24gd9b3g47d2gbe4cg1ecb09f9c1c9">from target</content>
-	<content contentuid="hb035f182gb3bdg47a6ga8a7gde53b557f804">Make the combat log visible initially.</content>
 	<content contentuid="hb09fdd2dg134cg4361g8b7dg9a2b23a1ec41">Open Menu</content>
-	<content contentuid="hb1db6515g4bf7g4c7eg8eabga55f4a93beda">Fix Status Tooltips</content>
-	<content contentuid="hb26dd55bg0da3g4199g8732g420d25becc27">Show Mod Source</content>
+	<content contentuid="hb1f3f03dgb4d4g4d75g97a2g2ed8304de340">Tooltips</content>
+	<content contentuid="hb1f688f6g894cg4741g9824g119c52375ff1">Enabled</content>
 	<content contentuid="hb2822093gaf6ag417dgab70g447f0b730fb4">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
 	<content contentuid="hb2e82c9dg3175g429cga865g3c670288b3c6">Always display the &quot;Scales With x&quot; text that isn&apos;t visible if the weapon has an attribute requirement above 0.</content>
 	<content contentuid="hb48f1258g4031g4ab2g8d73gbb24956d5d74">I definitely activated these mods at one point! Why are they no longer active?</content>
 	<content contentuid="hb4a1f383gc0b5g449bgb28egc09586c81b68">If enabled, spells can critical hit without the Savage Sortilege talent.</content>
-	<content contentuid="hb4bdd70cgf027g47c9ga1dcgd18730345f39">Tooltips</content>
-	<content contentuid="hb4f59587g39f5g45f1g9295g56b66d8ec039">Always Show Bar Values</content>
 	<content contentuid="hb5265b58gcf15g40dfg8769gb5dcc430a99f">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="hb5f12e88g0069g4179gab3dg951865078bc7">On Basic Attack or Weapon Skill:</content>
 	<content contentuid="hb62538b3gfff2g4bb4g9b70g7463f658f4f7">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
+	<content contentuid="hb69196d6g9f32g4109gbd54g0fc41249c1c5">Delay Status Tooltips</content>
 	<content contentuid="hb6a0d65bga210g4882g939ega32f65189909">[OFF] Balanced Experience for All Parties - Every player character will be brought up to the highest player level across all parties. [GLOBAL]</content>
 	<content contentuid="hb6ecdc41g4c2fg4940ga84bgc781c616de71">You&apos;re already aware that I&apos;m selling things, right? That&apos;s the plan here too, of course.</content>
 	<content contentuid="hb78cd437g6402g485bg837dga7c59b959cd3">[Last]</content>
 	<content contentuid="hb796e45cgaab4g4fcega4a2g2e424ed8b66c">[OFF] Combat Log Logging [GLOBAL]</content>
 	<content contentuid="hb7be1cf4gcd0ag4fadga064g72a74b996f1a">[ON] Autosave when Combat Starts [GLOBAL]</content>
+	<content contentuid="hb7c4e0a0ga970g42e5g9557g0aa806dc74d5">Host Settings</content>
 	<content contentuid="hb82bb4cag0308g4fc0g9071g3b38ad72991c">Tutorial</content>
 	<content contentuid="hb8f5a682g5a19g4fe4ga26ag701bf0ba4e8b">Give me a moment to prepare my things, and we can begin trading again.</content>
 	<content contentuid="hb9335219gb6b3g49ffg9291gd3bf78a2f84f">Pause Autosaving in Combat</content>
+	<content contentuid="hb94497b0g7a5fg4bffgbf6cg21e932803aeb">Try to reduce max item tooltip size by combining elements, such as &quot;On Hit&quot; actions.</content>
 	<content contentuid="hb955eb39g2068g4c7dga389gfabcaa42462d">Loading mod menu...</content>
 	<content contentuid="hb987d743g981dg43f6g9aa8g08109349d4e9">LeaderLib Successfully Loaded Global Settings</content>
-	<content contentuid="hb9beadd0gf1a7g4062ga566g6922501e4ac7">Books Read</content>
 	<content contentuid="hba3c2c4fge700g47bfg877dg00a16a26a454">If enabled, characters require the Backstab talent to be able to backstab with non-dagger equipment or skills.&lt;br&gt;(Default: Enabled)</content>
 	<content contentuid="hba8ffff9gf198g45ddg8ee7gf74d6497cd1d">Good riddance.</content>
 	<content contentuid="hbac8ae9dg2b22g415ega98fgd4216182c093">[Key:TUT_Tutorial_A:The Hold] (Tutorial)</content>
@@ -422,14 +421,16 @@
 	<content contentuid="hbb9961bcg9dbfg47f9g90fdg6db3aca83f86">[OFF] Automatically Add Books - Allow LeaderLib registered mod books to automatically be added to the party&apos;s inventory. [GLOBAL]</content>
 	<content contentuid="hbbc07b7cgc1d4g41c8gbec8gdadfd3486b3f">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
 	<content contentuid="hbbcfe136ge58bg4675gb872g0bbdb98cff28">[LOAD] Load Game Settings - This file is loaded automatically when you get in-game (loading saves, new games, etc).&lt;br&gt;Location: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GameSettings.json&lt;/b&gt;</content>
-	<content contentuid="hbc16825bg37c4g43c5g996cgcb801bbc9816">Delay Character Sheet Tooltips</content>
+	<content contentuid="hbcf2563ag4387g403aga09fg2051f199f49d">Known Skillbooks</content>
 	<content contentuid="hbd35b426g814dg497egad5cge9275f6b1597">15 Minutes</content>
 	<content contentuid="hbd4f0f23g1792g4e99g9665g58b511994c18">*You take a look at the trader&apos;s wares.*</content>
 	<content contentuid="hbdb60e07g9f65g41bagbfabge9ad2347c44a">Hide Chat Log</content>
 	<content contentuid="hbde09b0bg3c2eg423cga548g96e2590e887c">The maximum amount of action points.&lt;br&gt;(Default: 6)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
+	<content contentuid="hbe30171eg7100g4d66gaaf6g63340f551866">Show the source of a status, if any, in status tooltips.</content>
 	<content contentuid="hbe5db354g0434g4e02g8af6g16dee986c19a">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
 	<content contentuid="hbe7c777fg3946g4d49g9271g4684744cb15b">[LeaderLib_ModMenu_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f]</content>
 	<content contentuid="hbed70da2g8eb0g4facg9e47g87729f089604">Enable backstab settings for this group, allowing non-dagger weapons to backstab, depending on settings.&lt;br&gt;(Default: Disabled)</content>
+	<content contentuid="hbefb85d8g74d4g4640g8f05g2a8a829d0aa6">Show Already Read</content>
 	<content contentuid="hc0d30be7g8e7fg4406gb6f7gcb831c680e03">&lt;b&gt;*Current*&lt;/b&gt;</content>
 	<content contentuid="hc108b43dgeae9g4469g8ea4gcaf87e524454">*Introduce yourself, then ask who you&apos;re talking to.*</content>
 	<content contentuid="hc173b9dag053dg4dbfga960g100fb29ae494">Chain All Party Members</content>
@@ -445,22 +446,25 @@
 	<content contentuid="hc6932dc9g399cg48a5gb9cdg722cf1ac26ea">*You take a look at his wares.*</content>
 	<content contentuid="hc70db3e9ga1ecg465egb953g253f7e77db5d">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc768ad97g83deg41fdgb257g54443e202c5a">As a gesture of goodwill towards future trading, I&apos;ll give you this book for free.</content>
+	<content contentuid="hc7769a67gfc00g4c5eg855eg53d3e45bffd8">Kept close, this skull ring will lend you the magic bestowed upon it.</content>
 	<content contentuid="hc789b3e9g19dfg4670g9df6g1e2b18cb59ae">Enable redirecting automatically started dialog to characters that match your preferences, such as an avatar or character with the highest persuasion.</content>
 	<content contentuid="hc78dbfbbg99e3g4b81gbb3fg8068e2d4ecda">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc7a6ccb1g0a9ag4ea9g85b8gb92a2acc428f">Test Character</content>
+	<content contentuid="hc82d59bcg65ebg463cg98ddg49882456082b">Delay Item Tooltips</content>
 	<content contentuid="hc848f133g22fdg41c0g8205g8041758e7309">If enabled, status hiding settings will also apply to statuses under the healthbar when examining a character.</content>
+	<content contentuid="hc91913dag9ffbg422cg8aceg3faf8005f30a">If &lt;font color=&apos;#33FF66&apos;&gt;Show Consumable Effects&lt;/font&gt; is enabled in the global Mod Settings, disable this setting to hide these effects for yourself only.</content>
 	<content contentuid="hc9377dd3g70d6g4d84g8c8fg812246a61029">Hide Status from Portrait UI</content>
-	<content contentuid="hc9ad7f0cg9a5bg4617gb138gce551f82c341">Removes the status malus icon and extra spacing, caused by a typo in Larian&apos;s UI code, and organizes bonuses and maluses together, while also sorting them alphabetically.</content>
 	<content contentuid="hc9cc1024g797fg4770g8ffagf1b4041e4c48">&lt;font color=&apos;#9400D3&apos;&gt;Stealth Mastery&lt;/font&gt;</content>
 	<content contentuid="hca27994egc60eg495dg8146g7f81c970e265">&lt;font color=&apos;#80FFC3&apos; size=&apos;18&apos;&gt;Automatically levels up with the wearer.&lt;/font&gt;</content>
-	<content contentuid="hca50dcf9gea32g430bgafc9g48351de05c44">Enabled</content>
 	<content contentuid="hcb2933a4g9bf6g4b7ega556g974d319d1faf">Redirect to Character with Highest Persuasion</content>
 	<content contentuid="hcb33afd9g09cbg42e2ga180g1e4fa15cb804">Enabled</content>
 	<content contentuid="hcb9853aaga052g447dga36fgafeb4902bd4f">I didn&apos;t survive war to end up dead by the likes of you!</content>
 	<content contentuid="hcd40ab3egabe1g4111g9217gb2381b466a2a">Argh!</content>
 	<content contentuid="hce06e1a4gdd0fg44aeg83f5g10ee6caab1d7">I&apos;m too old for this...</content>
 	<content contentuid="hce32b71dg0adbg42b7gbbbagb962cc80264a">Enable timed autosaving, using the interval and preferences set.</content>
+	<content contentuid="hcee545cdgbdeeg4121gb312g90db1f6f5060">Delay Override</content>
 	<content contentuid="hcf141983g4e08g405dg83bcg3f66636aa9ec">Deathfog Resistant</content>
+	<content contentuid="hcf97a6e7ga0ebg4fe3ga4dcg393c9c87423f">Skillbooks</content>
 	<content contentuid="hd07402b2g8a4cg4d6dg8b31gecf12983c614">[More Intervals]</content>
 	<content contentuid="hd14d7a41gbb30g4810gaebfgc883c22654d1">Chances are a mod was updated, which deactivates it by default. It&apos;s quite annoying, I know!</content>
 	<content contentuid="hd1e64bd5g6c78g41ffga41ege5b9e650255a">&lt;font color=&apos;#FF0000&apos;&gt;Unable to open Mod Settings menu in combat.&lt;/font&gt;&quot;</content>
@@ -470,6 +474,7 @@
 	<content contentuid="hd2546f5cgd3efg44bfga835g5e02f5b95fbd">Fixes the Unhealable status to actually make it prevent healing. This is a status already in the game that mods may use.</content>
 	<content contentuid="hd36c1438g1728g4d9bg8b9bg21941bffb16a">&lt;font color=&apos;#FF0000&apos;&gt;Failed to find current race.&lt;/font&gt;</content>
 	<content contentuid="hd36f53d3gdebeg4071g864bge92100d3bb9e">Allow Two-Handed Weapons</content>
+	<content contentuid="hd3756e2fg3f58g4aa3g9b0ag3b13322d3c7f">Delay Character Sheet Tooltips</content>
 	<content contentuid="hd3baa721g34c3g49f7ga360ge49af2a015b8">*You notice the old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
 	<content contentuid="hd4ee1fb0g40aeg4fbcgac8dg907287d435df">Swap Gender</content>
 	<content contentuid="hd525dc1fg4819g40b1g9bb8gc896dad435bd">[LUA] Reset LeaderLib Lua Scripts (&lt;b&gt;*WARNING*&lt;/b&gt; For testing purposes only!)</content>
@@ -486,9 +491,9 @@
 	<content contentuid="hda816c8bg2b06g4c93ga526gb61ed29a8760">&quot;Let me get my things in order here...&quot; *He presumably situates a bag of goods that&apos;s strangely out of sight.*</content>
 	<content contentuid="hdc5db041g39d0g4a87g81eagb26a0d11358e">[ON] Status Logging [GLOBAL]</content>
 	<content contentuid="hdc816addgda80g4d5dg8d6dgccf0824c220a">Reset Settings</content>
-	<content contentuid="hdca46b30gaf33g45e0g803cgf1ce00e284d2">Condense Item Tooltips</content>
 	<content contentuid="hdd673ac0g2ae1g423cg853eg5a7b8149cd13">*He spits out what is presumably seaweed.* So, what can I do for you today?</content>
 	<content contentuid="hde332a41gc59bg4fd8ga597g6fcb1ae6dc8f">If enabled, items will be automatically identified. </content>
+	<content contentuid="hdee91c89g3423g4dd3g9281g98b485ada36c">Enable a 0.5 second delay for item tooltips (includes the hotbar).</content>
 	<content contentuid="hdeecfa3egccebg4dd3g9086g4861b29a6435">Base Carry Weight</content>
 	<content contentuid="hdefd7688g4811g445ag94a4gbe304b43168b">I managed to sneak away before that nasty Kraken showed up. *He groans and rubs his shoulders.* Damn if I won&apos;t feel it tomorrow, though...</content>
 	<content contentuid="he037429fgcbf9g4a78gb1c2ge9613039ef62">Preset Menu (Locked - Check Back in 30 Seconds)</content>
@@ -497,13 +502,14 @@
 	<content contentuid="he2de2e0cgda32g4128g9db7g72020fa32c2e">Preset Menu</content>
 	<content contentuid="he2e6e5cdg9372g4805g92b1ge2e4b7b1a0db">Enable Skill Tier Overrides</content>
 	<content contentuid="he31d5820g9ddbg4e08gac83g1358e22e499b">Next Level [1]: [2]</content>
-	<content contentuid="he3778d9cg674dg44f0ga583g8801ec96d403">Enable a 0.5 second delay for abilities, stats, and talents. May affect the examine window as well.</content>
 	<content contentuid="he39c524ag19e1g49b8gb60bga1e4bbf30084">In multiplayer, your inventory will be unlocked after an initial delay.</content>
 	<content contentuid="he4354422gdcc8g4681gb4c4g7b22456af08c">If enabled, only melee weapons or skills can backstab. Melee skills will use the [Key:LeaderLib_UI_GameSettings_BackstabSettings_MeleeSpellBackstabMaxDistance] setting.&lt;br&gt;(Default: Enabled)</content>
 	<content contentuid="he4b98edeg7025g4ad9gbb87gcce230263029">Hrmph...</content>
+	<content contentuid="he54ab919g8a44g4044gb3c0gee6b0c4a7ba0">Enable a 0.5 second delay for abilities, stats, and talents. May affect the examine window as well.</content>
 	<content contentuid="he59d7821g2c4dg4deag8341g27215713bf5e">*Introduce yourself, then ask the man who he is.*</content>
 	<content contentuid="he5a918ecg8f34g4ddbg9af6g98e9f4575d91">Me? Oh, I&apos;m just a retired old man, looking to get some fishing done. *He rubs his beard, glancing at the broken-down scenery.* Afraid I don&apos;t have any fight left in me anywho.</content>
 	<content contentuid="he5c047ebg44afg4995gadf0g3638b568e5cb">Status Hiding</content>
+	<content contentuid="he5fd17f0gc2beg4f70g965bg8e55116431bf"></content>
 	<content contentuid="he7d3dd9bgc8b9g42a9g97bcga36f8c8f6553">Autosaving &lt;font color=&apos;#00FF00&apos;&gt;Enabled&lt;/font&gt; | Interval: &lt;font color=&apos;#00FFFF&apos;&gt;[1]&lt;/font&gt;[2]</content>
 	<content contentuid="he8021399ge8f6g4a5dgba07g2430e2e9444b">Automatically add the &apos;[Key:Shout_LeaderLib_ChainAll_DisplayName:Chain All]&apos; skill, which can be used to chain all party members from the hotbar.</content>
 	<content contentuid="he93fef85gaa09g45c2g92d3ga71a001dfe49">General Backstab Settings</content>
@@ -518,6 +524,7 @@
 	<content contentuid="hee75e144g1d75g4094ga8c9g4a0508c5cf67">LeaderLib Successfully Saved Global Settings</content>
 	<content contentuid="hef0c737eg2a72g4564ga5cfg088484ac8b45">Shadow Resistance</content>
 	<content contentuid="hefbcc547g9671g4e57g9364g9cc7c9c06fc4">[OFF] Auto Unlock Inventory - Automatically unlock the party inventory in multiplayer.&lt;br&gt;This will allow all players to exchange items between their inventories without having to unlock them first. [GLOBAL]</content>
+	<content contentuid="hf0269df0g098cg47eagaf77g1fdf0c86d90e">Books</content>
 	<content contentuid="hf0e4a66bg853eg4cb3gb663g12ba6fbe412f">Non-Player Backstab Settings</content>
 	<content contentuid="hf0eb5097g325bg4254gaf97g77255a6380ad">[OFF] Dialog Redirection Disabled. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.[GLOBAL]</content>
 	<content contentuid="hf15fdd63gddedg435bgaa2egdd0574ce2c3c">Registered Mods:&lt;br&gt;[LeaderLib_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12]</content>
@@ -530,9 +537,7 @@
 	<content contentuid="hf37c444fg879fg4e62gb3d5g77086202f362">Pull Radius</content>
 	<content contentuid="hf3a71217gb65cg43bfg99bbg5c82a6f01901">Autosave interval updated.</content>
 	<content contentuid="hf3b5294dgbe18g4b87ga837gb26f67c166af">Combat</content>
-	<content contentuid="hf3dfc274ga5ceg4cc0g8b9ag3c4372b9b507">Show the source of a status, if any, in status tooltips.</content>
 	<content contentuid="hf437b717gbcecg4961ga518g3bbe1ef85d2e">Permanent [Key:Shout_SpiritVision_DisplayName:Spirit Vision]</content>
-	<content contentuid="hf5360b3eg3045g43abgb750gf94ecc4443d6">Show Consumable Effects</content>
 	<content contentuid="hf545a1fbgccb8g481ega4adg32165aaa9288">[OFF] Redirect to Character with Highest Persuasion - Make the party member with the highest persuasion the redirection target. [GLOBAL]</content>
 	<content contentuid="hf585ea52gbdb4g4a21g82aag836415d7d0d6">*Request a copy of the &quot;Mod Menu&quot; book.*</content>
 	<content contentuid="hf638bc67g5cb6g4dcfg8663gce1951caad2b">[1] Penetration</content>
@@ -544,9 +549,10 @@
 	<content contentuid="hf8c6e866g9949g4d30g9cf2g3a9ba53d2f28">Follow me.</content>
 	<content contentuid="hf94f7e90ge895g48bcg98e0g7350149e94de">Mod Menu</content>
 	<content contentuid="hf961867cg49a5g47fbg9f77g131c8ffdc434">If enabled, [Key:Shout_SpiritVision_DisplayName:Spirit Vision] will turn into a toggle, allowing you to enable or disable [Handle:h81ca2748g7469g47c9g8e5dg49ecc8d1e382:Spirit Vision] at will. </content>
-	<content contentuid="hfafdf1f4g1daeg4b29g98e8gb0bbf3e668e0">Condense Status Tooltips</content>
+	<content contentuid="hfa94fa61g01f0g4b91g99d7g35888fbfd8e3">Show Consumable Effects</content>
 	<content contentuid="hfb5060fbgaee1g4ae6g8795g4a0f133edd2b">Clear Blacklist</content>
 	<content contentuid="hfb5e41d2gbcc7g4ed4gb962g13f831ed95c8">I&apos;ll stay here.</content>
+	<content contentuid="hfc4c51acg42f9g4b0bg83e4gf32dac446ca7">Show Mod Source</content>
 	<content contentuid="hfc57ba23gd6adg420fg814cgeb89ab9347b6">This is likely an issue of the mod not copying to the right folder after subscribing.&lt;br&gt;Check the discussion pinned at LeaderLib&apos;s steam workshop page titled:&lt;br&gt;&lt;b&gt;Support: Mod Doesn&apos;t Appear in the Mod List&lt;/b&gt;</content>
 	<content contentuid="hfda4adafgd642g477fgbbdbg268fe17118b4">Lower Skill Memorization Requirements</content>
 	<content contentuid="hfdc7dcb0g648cg4021gb530g011b5d8c242d">Skills Can Backstab</content>

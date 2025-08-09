@@ -338,7 +338,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "ShowModInTooltips"), text.Client.ShowModInTooltips.Value, true, settings.Client.ShowModInTooltips and 1 or 0, false, text.Client.ShowModInTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "ShowBaseGameModsInTooltips"), text.Client.ShowBaseGameModsInTooltips.Value, true, settings.Client.ShowBaseGameModsInTooltips and 1 or 0, false, text.Client.ShowBaseGameModsInTooltips_Description.Value)
 
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "ShowReadBooksInTooltips"), text.Client.ShowReadBooksInTooltips.Value, true, settings.Client.ShowBaseGameModsInTooltips and 1 or 0, false, text.Client.ShowReadBooksInTooltips_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "ShowReadBooksInTooltips"), text.Client.ShowReadBooksInTooltips.Value, true, settings.Client.ShowReadBooksInTooltips and 1 or 0, false, text.Client.ShowReadBooksInTooltips_Description.Value)
 
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client.AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client.AlwaysExpandTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client.AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client.AlwaysDisplayWeaponScalingText_Description.Value)

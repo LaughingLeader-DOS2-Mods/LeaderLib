@@ -6,6 +6,12 @@
 			"Text": "See the full changelog in the 'Change Notes' tab on the Steam Workshop page."
 		},
 		{
+			"Version": "1.7.31.17",
+			"Changes": [
+				"Added 'Show Already Read' option to the Gameplay 'Tooltips' settings. This allows you to enable/disable the '(This book has been read)' text in book tooltips."
+			]
+		},
+		{
 			"Version": "1.7.31.16",
 			"Changes": [
 				"Fixed an issue with script-created projectile strikes failing after the second strike (GameHelpers.Skill.CreateProjectileStrike).",

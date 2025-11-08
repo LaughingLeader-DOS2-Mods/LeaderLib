@@ -161,10 +161,10 @@ end)
 
 Events.OnHit:Subscribe(function (e)
 	if GameHelpers.Character.IsPlayer(e.Source) then
-		Ext.Utils.Print(e.Data.HitContext.HitType, e.Data.HitStatus.HitReason, Ext.DumpExport(e.Data.DamageList:ToTable()))
+		Ext.Utils.Print(e.Data.HitContext.HitType, e.Data.HitStatus.HitReason, Ext.DumpExport(e.Data.DamageList:AsArray()))
 	end
 	-- if e.Data.IsFromSkill then
-	-- 	Ext.Utils.Print(e.Data.Skill, e.Data.HitRequest.TotalDamageDone, Ext.DumpExport(e.Data.DamageList:ToTable()))
+	-- 	Ext.Utils.Print(e.Data.Skill, e.Data.HitRequest.TotalDamageDone, Ext.DumpExport(e.Data.DamageList:AsArray()))
 	-- end
 end)
 

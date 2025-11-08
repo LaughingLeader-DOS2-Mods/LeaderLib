@@ -905,14 +905,14 @@ function GameHelpers.ParseResistancePenetrationTag(tag)
 	return nil, 0
 end
 
---local amt = 3; local dl = Ext.Stats.NewDamageList(); dl:Add("Fire", 4); dl:Add("Water", 3); local ndl = Mods.LeaderLib.GameHelpers.Damage.DivideDamage(dl, amt); local pdl = {}; for _,v in pairs(ndl) do table.insert(pdl, v:ToTable()) end; Ext.Dump(pdl)
+--local amt = 3; local dl = Ext.Stats.NewDamageList(); dl:Add("Fire", 4); dl:Add("Water", 3); local ndl = Mods.LeaderLib.GameHelpers.Damage.DivideDamage(dl, amt); local pdl = {}; for _,v in pairs(ndl) do table.insert(pdl, v:AsArray()) end; Ext.Dump(pdl)
 
 ---@param damageList DamageList
 ---@param divider integer
 ---@return DamageList[] damages
 function GameHelpers.Damage.DivideDamage(damageList, divider)
 	damageList:AggregateSameTypeDamages()
-	local damages = damageList:ToTable()
+	local damages = damageList:AsArray()
 	local damagePerType = {}
 	local totalDamagePerType = {}
 	local totalDamage = 0
@@ -1110,7 +1110,7 @@ function GameHelpers.Damage.GetSkillDamage(skillId, character, skillParams, noRa
 					Ext.Events.GetSkillDamage:Throw(evt)
 					if evt.DamageList then
 						local hasDamage = false
-						for _,v in pairs(evt.DamageList:ToTable()) do
+						for _,v in pairs(evt.DamageList:AsArray()) do
 							if v.Amount > 0 then
 								hasDamage = true
 								break

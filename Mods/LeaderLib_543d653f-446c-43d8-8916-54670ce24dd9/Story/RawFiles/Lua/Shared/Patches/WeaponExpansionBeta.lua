@@ -804,7 +804,7 @@ Patch = function (initialized, region)
 				end
 				Osi.NRD_HitClearAllDamage(handle)
 				--NRD_HitStatusClearAllDamage(target, handle)
-				local damages = damageList:ToTable()
+				local damages = damageList:AsArray()
 				local totalDamage = 0
 				for i,damage in pairs(damages) do
 					Osi.NRD_HitAddDamage(handle, tostring(damage.DamageType), damage.Amount)

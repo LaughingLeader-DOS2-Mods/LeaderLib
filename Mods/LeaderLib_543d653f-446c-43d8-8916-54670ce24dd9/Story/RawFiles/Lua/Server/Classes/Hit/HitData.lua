@@ -125,7 +125,7 @@ end
 ---@param allowArmorDamageTypesToLifeSteal? boolean Allows Magic/Corrosive damage to affect LifeSteal if true and recalcLifeSteal is true.
 function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamageTypesToLifeSteal)
 	local total = 0
-	for k,v in pairs(self.DamageList:ToTable()) do
+	for k,v in pairs(self.DamageList:AsArray()) do
 		total = total + v.Amount
 	end
 	self.Damage = total
@@ -185,7 +185,7 @@ function HitData:RedirectDamage(target, multiplier, aggregate)
 		self.DamageList:AggregateSameTypeDamages()
 	end
 	local newDamage = Ext.Stats.NewDamageList()
-	for _,v in pairs(self.DamageList:ToTable()) do
+	for _,v in pairs(self.DamageList:AsArray()) do
 		newDamage:Add(v.DamageType, Ext.Utils.Round(v.Amount * multiplier))
 	end
 	local reduceBy = math.max(0, 1.0 - multiplier)
@@ -240,7 +240,7 @@ function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate, percen
 	end
 	percentage = percentage or 1
 	mathRoundFunction = mathRoundFunction or Ext.Utils.Round
-	local damages = self.DamageList:ToTable()
+	local damages = self.DamageList:AsArray()
 	local damageList = Ext.Stats.NewDamageList()
 	local t = type(damageType)
 	for k,v in pairs(damages) do

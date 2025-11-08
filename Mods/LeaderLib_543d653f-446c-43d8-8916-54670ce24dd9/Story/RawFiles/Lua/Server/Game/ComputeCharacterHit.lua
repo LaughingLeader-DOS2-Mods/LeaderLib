@@ -29,7 +29,7 @@ local _EXTVERSION = Ext.Utils.Version()
 --- @param damageList DamageList
 function HitOverrides.ApplyDamageCharacterBonuses(character, attacker, damageList)
     damageList:AggregateSameTypeDamages()
-    local preModifiedDamageList = damageList:ToTable()
+    local preModifiedDamageList = damageList:AsArray()
     local resistancePenetration = HitOverrides.GetResistancePenetration(character, attacker)
 
     if HitOverrides.ApplyDamageCharacterBonusesModified ~= nil then
@@ -517,7 +517,7 @@ local function DoHitUpdated(hit, damageList, statusBonusDmgTypes, hitType, targe
     damageList:Multiply(damageMultiplier)
 
     local totalDamage = 0
-    for i,damage in pairs(damageList:ToTable()) do
+    for i,damage in pairs(damageList:AsArray()) do
         totalDamage = totalDamage + damage.Amount
     end
 

@@ -637,7 +637,7 @@ local function _CreateZoneActionFromSkill(skillId, source, target, extraParams)
                 Ext.Events.GetSkillDamage:Throw(evt) 
                 if evt.DamageList then
                     local hasDamage = false
-                    for _,v in pairs(evt.DamageList:ToTable()) do
+                    for _,v in pairs(evt.DamageList:AsArray()) do
                         if v.Amount > 0 then
                             hasDamage = true
                             break

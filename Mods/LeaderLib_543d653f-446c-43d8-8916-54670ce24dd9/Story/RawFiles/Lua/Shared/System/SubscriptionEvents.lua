@@ -620,7 +620,7 @@ if not _ISCLIENT then
 	---@class OnStatusBaseEventArgs
 	---@field Target EsvCharacter|EsvItem
 	---@field Source EsvCharacter|EsvItem|nil
-	---@field TargetGUID string|
+	---@field TargetGUID string
 	---@field SourceGUID string
 	---@field StatusId string
 	---@field StatusType StatStatusType

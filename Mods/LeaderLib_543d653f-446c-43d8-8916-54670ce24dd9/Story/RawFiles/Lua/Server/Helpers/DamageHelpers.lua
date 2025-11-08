@@ -445,19 +445,21 @@ local defaultHitFlags = {
 }
 
 ---@class GameHelpers.Damage.BaseApplyDamageParams
----@field CriticalRoll CriticalRoll|nil Used when computating a character hit. Defaults to "Roll".
----@field HighGroundFlag HighGroundBonus|nil Used when computating a character hit. If not set, this will be determined using the height difference.
----@field HitParams StatsHitDamageInfo|table Hit parameters to apply.
----@field MainWeapon CDivinityStatsItem|nil A weapon to use in place of the source's main weapon.
----@field OffhandWeapon CDivinityStatsItem|nil A weapon to use in place of the source's offhand weapon.
+---@field CriticalRoll CriticalRoll? Used when computating a character hit. Defaults to "Roll".
+---@field HighGroundFlag HighGroundBonus? Used when computating a character hit. If not set, this will be determined using the height difference.
+---@field HitParams StatsHitDamageInfo|table|nil Hit parameters to apply.
+---@field MainWeapon CDivinityStats_Item? A weapon to use in place of the source's main weapon.
+---@field OffhandWeapon CDivinityStats_Item? A weapon to use in place of the source's offhand weapon.
 ---@field HitType HitTypeValues|nil The hit type. Defaults to "Magic".
 ---@field StatusParams EsvStatusHit|nil Params to set on the hit status
 
+---@alias GetDamageFunctionCallback fun(skillData:StatEntrySkillData, attacker:StatCharacter, isFromItem:boolean, stealthed:boolean, attackerPos:number[], targetPos:number[], level:integer, noRandomization:boolean, mainWeapon:StatEntryWeapon|nil, offhandWeapon:StatEntryWeapon|nil):DamageList,string|nil
+
 ---@class GameHelpers.Damage.ApplySkillDamageParams:GameHelpers.Damage.BaseApplyDamageParams
----@field GetDamageFunction fun(skillData:StatEntrySkillData, attacker:StatCharacter, isFromItem:boolean, stealthed:boolean, attackerPos:number[], targetPos:number[], level:integer, noRandomization:boolean, mainWeapon:StatEntryWeapon|nil, offhandWeapon:StatEntryWeapon|nil):DamageList,string|nil An optional function to use to calculate damage.
----@field ApplySkillProperties boolean|nil
----@field SkillDataParamModifiers StatEntrySkillData|nil
----@field DivideDamageTargets integer|nil If the skill has DivideDamage set, divide the damage between this many targets. Defaults to 1.
+---@field GetDamageFunction GetDamageFunctionCallback? An optional function to use to calculate damage.
+---@field ApplySkillProperties boolean?
+---@field SkillDataParamModifiers StatEntrySkillData?
+---@field DivideDamageTargets integer? If the skill has DivideDamage set, divide the damage between this many targets. Defaults to 1.
 
 ---@type GameHelpers.Damage.ApplySkillDamageParams
 local _defaultSkillParams = {
@@ -465,23 +467,21 @@ local _defaultSkillParams = {
 }
 
 ---Create a HIT status and apply the corresponding skill parameters.
----@param source CharacterParam
----@param target ObjectParam
+---@param sourceParam CharacterParam
+---@param targetParam ObjectParam
 ---@param skill string
 ---@param params? GameHelpers.Damage.ApplySkillDamageParams
-function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
-    source = GameHelpers.GetCharacter(source)
+function GameHelpers.Damage.ApplySkillDamage(sourceParam, targetParam, skill, params)
+    local source = GameHelpers.GetCharacter(sourceParam, "EsvCharacter")
     fassert(source ~= nil, "Failed to get object for source (%s)", source)
-    target = GameHelpers.TryGetObject(target)
+    local target = GameHelpers.TryGetObject(targetParam, "EsvCharacter")
     fassert(target ~= nil, "Failed to get object for target (%s)", target)
 
     params = params or _defaultSkillParams
 
     local criticalRoll = params.CriticalRoll or "Roll"
-    ---@type StatsHighGroundBonus
     local highGroundFlag = params.HighGroundFlag or nil
 
-    ---@type EsvStatusHit
     local hit = Ext.PrepareStatus(target.MyGuid, "HIT", 0.0)
 
     hit.StatusSourceHandle = source.Handle
@@ -600,7 +600,7 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, params)
         hit.Hit.TotalDamageDone = 0
         hit.Hit.DamageDealt = 0
 
-        for _,damage in pairs(damageList:ToTable()) do
+        for _,damage in pairs(damageList:AsArray()) do
             hit.Hit.TotalDamageDone = hit.Hit.TotalDamageDone + damage.Amount
             hit.Hit.DamageDealt = hit.Hit.DamageDealt + damage.Amount
             if StringHelpers.IsNullOrEmpty(hit.Hit.DamageType) then
@@ -696,16 +696,18 @@ local function GetBasicDamage(source, target, damageEnum, damageType, damageMult
     return damageList, (Game.Math.GetDamageListDeathType(damageList) or "None")
 end
 
+---@alias ApplyDamageGetDamageFunctionCallback fun(source:EsvCharacter, target:EsvCharacter|EsvItem, GameHelpers.Damage.ApplyDamageParams):DamageList,string
+
 ---@class GameHelpers.Damage.ApplyDamageParams:GameHelpers.Damage.BaseApplyDamageParams
----@field GetDamageFunction fun(source:EsvCharacter, target:EsvCharacter|EsvItem, GameHelpers.Damage.ApplyDamageParams):DamageList,string|nil An optional function to use to calculate damage.
----@field UseWeaponDamage boolean|nil
----@field DamageMultiplier number|nil
----@field DamageRange number|nil
----@field DamageType string|nil
----@field DamageEnum DamageEnum|nil
----@field DamageList StatsDamagePairList|nil Set to provide the direct damage to apply.
----@field DeathType StatsDeathType|nil
----@field FixedAmount integer|nil Skip calculating damage, and just apply a fixed amount instead.
+---@field GetDamageFunction ApplyDamageGetDamageFunctionCallback? An optional function to use to calculate damage.
+---@field UseWeaponDamage boolean?
+---@field DamageMultiplier number?
+---@field DamageRange number?
+---@field DamageType string?
+---@field DamageEnum DamageEnum?
+---@field DamageList StatsDamagePairList? Set to provide the direct damage to apply.
+---@field DeathType DeathType?
+---@field FixedAmount integer? Skip calculating damage, and just apply a fixed amount instead.
 
 ---@type GameHelpers.Damage.ApplyDamageParams
 local _defaultParams = {
@@ -826,7 +828,7 @@ function GameHelpers.Damage.ApplyDamage(source, target, params)
                 end
             end
         end
-        for _,damage in pairs(damageList:ToTable()) do
+        for _,damage in pairs(damageList:AsArray()) do
             status.Hit.TotalDamageDone = status.Hit.TotalDamageDone + damage.Amount
             status.Hit.DamageDealt = status.Hit.DamageDealt + damage.Amount
             if StringHelpers.IsNullOrEmpty(status.Hit.DamageType) then
@@ -915,7 +917,7 @@ function GameHelpers.Damage.PrepareApplySkillDamage(source, target, skill, hitPa
     end
 
     if damageList then
-        for _,damage in pairs(damageList:ToTable()) do
+        for _,damage in pairs(damageList:AsArray()) do
             Osi.NRD_HitAddDamage(hit, damage.DamageType, damage.Amount)
         end
         if not StringHelpers.IsNullOrEmpty(deathType) then

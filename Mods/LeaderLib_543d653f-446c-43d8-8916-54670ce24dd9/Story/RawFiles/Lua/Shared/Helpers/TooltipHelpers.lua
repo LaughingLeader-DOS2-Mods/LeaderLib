@@ -136,7 +136,7 @@ function GameHelpers.Tooltip.GetSkillDamageText(skillId, character, skillParams)
 						Ext.Events.GetSkillDamage:Throw(evt)
 						if evt.DamageList then
 							local hasDamage = false
-							for _,v in pairs(evt.DamageList:ToTable()) do
+							for _,v in pairs(evt.DamageList:AsArray()) do
 								if v.Amount > 0 then
 									hasDamage = true
 									break
@@ -552,7 +552,7 @@ function GameHelpers.Tooltip.FormatDamageList(damageList)
 	if damageList ~= nil then
 		local damageTexts = {}
 		local totalDamageTypes = 0
-		for _,v in pairs(damageList:ToTable()) do
+		for _,v in pairs(damageList:AsArray()) do
 			table.insert(damageTexts, GameHelpers.GetDamageText(v.DamageType, string.format("%i", v.Amount)))
 			totalDamageTypes = totalDamageTypes + 1
 		end

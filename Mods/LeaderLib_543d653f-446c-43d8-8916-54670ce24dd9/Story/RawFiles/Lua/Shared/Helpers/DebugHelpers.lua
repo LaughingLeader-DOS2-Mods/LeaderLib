@@ -1017,8 +1017,8 @@ userDataProps["CDivinityStats_Equipment_Attributes"] = CDivinityStats_Equipment_
 userDataProps["CDivinityStats_Weapon_Attributes"] = CDivinityStats_Weapon_Attributes
 ---@param obj DamageList
 userDataProps["CDamageList"] = function(obj) 
-	--return StringHelpers.Join(";", obj:ToTable(), false, function(i,v) return string.format("DamageType = %s, Amount = %i", v.DamageType, v.Amount) end)
-	return obj:ToTable()
+	--return StringHelpers.Join(";", obj:AsArray(), false, function(i,v) return string.format("DamageType = %s, Amount = %i", v.DamageType, v.Amount) end)
+	return obj:AsArray()
 end
 userDataProps["esv::HStatus"] = {
 	--EsvStatus

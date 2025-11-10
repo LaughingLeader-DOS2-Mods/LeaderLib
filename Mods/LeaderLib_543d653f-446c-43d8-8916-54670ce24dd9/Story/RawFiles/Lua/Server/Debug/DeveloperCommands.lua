@@ -1370,6 +1370,7 @@ Ext.RegisterConsoleCommand("spawncharactertemplate", function (cmd, template)
 	end)
 end)
 
+--!tplevel TESTLEVEL_LL_LEADERLIB
 Ext.RegisterConsoleCommand("tplevel", function (cmd, region)
 	local triggers = {
 		_TMPL_Sandbox = "7b4d93b9-5526-4922-a41a-aaa65360ac0a",
@@ -1381,7 +1382,7 @@ Ext.RegisterConsoleCommand("tplevel", function (cmd, region)
 		COS_MAIN = "8c00afb8-43af-4de7-953a-a7456f996a4c",
 		ARX_MAIN = "fb573f96-d837-0033-4143-3bf31d88ae49",
 		ARX_ENDGAME = "bd166e2a-7623-490e-94df-78079e7cbacc",
-		TESTLEVEL_LL_LEADERLIB = "a5918303-c5da-87b6-19bb-d55f16f2025c",
+		TESTLEVEL_LL_LEADERLIB = "ea4de744-74c5-824e-1885-ed9f7822c600",
 		LLAPOC_TEST = "dde72a37-0176-8dab-4430-992e60ef79f3",
 	}
 	--Shortcut names

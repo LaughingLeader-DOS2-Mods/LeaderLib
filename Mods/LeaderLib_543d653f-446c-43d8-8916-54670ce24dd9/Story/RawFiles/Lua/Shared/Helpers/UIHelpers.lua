@@ -243,3 +243,24 @@ function GameHelpers.UI.RefreshSkillBarAfterDelay(client, delay)
 		end)
 	end
 end
+
+---Get the object's name, wrapped in a font color depending on their alignment.
+---@param object ObjectParam
+function GameHelpers.UI.GetCombatLogName(object)
+	object = GameHelpers.TryGetObject(object)
+	if object == nil then
+		return ""
+	end
+	local name = GameHelpers.GetDisplayName(object)
+	local nameColor = Data.Colors.Alignments.Neutral_Base
+	if GameHelpers.Ext.ObjectIsItem(object) then
+		nameColor = Data.Colors.Alignments.Item_Base
+	elseif GameHelpers.Character.IsPlayerOrPartyMember(object) then
+		nameColor = Data.Colors.Alignments.Party_Base
+	elseif GameHelpers.Character.IsAllyOfParty(object) then
+		nameColor = Data.Colors.Alignments.Ally_Base
+	elseif GameHelpers.Character.IsEnemyOfParty(object) then
+		nameColor = Data.Colors.Alignments.Enemy_Base
+	end
+	return string.format("<font color='%s'>%s</font>", nameColor, name)
+end

@@ -469,7 +469,7 @@ function GameHelpers.Character.IsHumanoid(character)
 end
 
 ---@param character CharacterParam
----@return boolean
+---@return string
 function GameHelpers.Character.GetDisplayName(character)
 	if not character then
 		return ""

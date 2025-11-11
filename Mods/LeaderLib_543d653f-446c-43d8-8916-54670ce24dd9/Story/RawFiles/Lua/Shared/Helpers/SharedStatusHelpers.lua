@@ -530,6 +530,22 @@ function GameHelpers.Status.GetSourceByID(target, statusID)
 	return nil
 end
 
+---@param target ObjectParam
+---@param statusID FixedString
+---@param sourceHandle ComponentHandle
+---@return boolean
+function GameHelpers.Status.HasSource(target, statusID, sourceHandle)
+	target = GameHelpers.TryGetObject(target, "EsvCharacter")
+	if target then
+		for _,v in pairs(target.StatusMachine.Statuses) do
+			if v.StatusId == statusID and v.StatusSourceHandle == sourceHandle then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 ---@class GameHelpers_Status_GetHealAmountOptions:GameHelpers_Math_CalculateHealAmountOptions
 ---@field AsTooltipText boolean Return the value as text for a tooltip, such as "15 Vitality".
 

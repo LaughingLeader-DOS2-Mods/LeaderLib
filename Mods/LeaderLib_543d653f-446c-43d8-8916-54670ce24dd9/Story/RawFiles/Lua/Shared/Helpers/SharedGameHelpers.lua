@@ -142,10 +142,11 @@ end
 ---@generic T:EsvCharacter|EclCharacter|EsvItem|EclItem|nil
 ---@param id? ObjectParam|ComponentHandle
 ---@param castType? `T` The class type to return, for auto-completion, such as "EsvCharacter".
+---@param suppressWarning boolean? Skip logging any errors in developer mode.
 ---@return T
-function GameHelpers.TryGetObject(id, castType)
+function GameHelpers.TryGetObject(id, castType, suppressWarning)
 	local b,result = _pcall(TryGetObject, id)
-	if not b and Vars.DebugMode then
+	if not b and Vars.DebugMode and not suppressWarning then
 		fprint(LOGLEVEL.ERROR, "[GameHelpers.TryGetObject] Error getting object from id (%s):\n%s", id, result)
 	end
 	return result

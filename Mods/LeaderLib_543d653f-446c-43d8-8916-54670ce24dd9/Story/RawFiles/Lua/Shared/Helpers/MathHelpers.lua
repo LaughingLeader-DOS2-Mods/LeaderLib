@@ -243,6 +243,25 @@ function GameHelpers.Math.GetPositionBetween(pos1, pos2, percentage, skipSnapToG
 	return newPos
 end
 
+---Get a position next to an object, factoring in its AIBoundsRadius.
+---@param targetObject ObjectParam The object to get an adjacent position to.
+---@param fromObject ObjectParam The object used to determine the directional vector, which is used for determining the position "side".
+---@param distMult number? An optional distance to apply to the position.
+---@return vec3 position
+function GameHelpers.Math.GetAdjacentPosition(targetObject, fromObject, distMult)
+	local x,y,z = _GetPosition(targetObject, true)
+	local dir = GameHelpers.Math.GetDirectionalVector(targetObject, fromObject)
+
+	x = x + (-dir[1] * targetObject.AI.AIBoundsRadius)
+	z = z + (-dir[3] * targetObject.AI.AIBoundsRadius)
+	y = GameHelpers.Grid.GetY(x,z)
+	local result = {x,y,z}
+	if distMult ~= nil and distMult > 0 then
+		result = GameHelpers.Math.ExtendPositionWithDirectionalVector({x,y,z}, dir, distMult)
+	end
+	return result
+end
+
 ---Sets an object's rotation.
 ---@param object ObjectParam
 ---@param rotx number

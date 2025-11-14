@@ -652,8 +652,8 @@ function GameHelpers.Math.Roll(chance, bonusRolls, minValue, maxValue)
 	return false,0
 end
 
----@param character CDivinityStatsCharacter
----@param weapon CDivinityStatsItem
+---@param character CDivinityStats_Character
+---@param weapon CDivinityStats_Item
 ---@param statsMultiplier? number Defaults to 1.0
 ---@return CalculatedDamageRange
 function GameHelpers.Math.CalculateStatusDamageRange(character, weapon, statsMultiplier)
@@ -691,7 +691,7 @@ function GameHelpers.Math.CalculateStatusDamageRange(character, weapon, statsMul
 	return tbl
 end
 
----@param item CDivinityStatsItem
+---@param item CDivinityStats_Item
 ---@return number
 function GameHelpers.Math.CalculateShieldPhysicalArmor(item)
 	local value = 0
@@ -711,7 +711,7 @@ function GameHelpers.Math.CalculateShieldPhysicalArmor(item)
     return value
 end
 
----@param item CDivinityStatsItem
+---@param item CDivinityStats_Item
 ---@return number
 function GameHelpers.Math.CalculateShieldMagicArmor(item)
 	local value = 0
@@ -736,9 +736,9 @@ end
 ---@field HealType StatsHealValueType Defaults to Qualifier.
 ---@field HealStat StatusHealType Defaults to Vitality.
 ---@field HealValue DefaultValue<100>
----@field Target CDivinityStatsCharacter The character to use for heal-specific properties, like the Hydrosophist amount, level, Max Vitality/Armor/MagicArmor etc. If you want to use a different character for the Hydrosophist boost, set HydrosophistAmount directly.
----@field Shield CDivinityStatsItem If the HealType is 'Shield', use this instead of the Target's shield.
----@field ShieldOwner CDivinityStatsCharacter If the HealType is 'Shield', use this instead of the Target's for the armor attribute boosts.
+---@field Target CDivinityStats_Character The character to use for heal-specific properties, like the Hydrosophist amount, level, Max Vitality/Armor/MagicArmor etc. If you want to use a different character for the Hydrosophist boost, set HydrosophistAmount directly.
+---@field Shield CDivinityStats_Item If the HealType is 'Shield', use this instead of the Target's shield.
+---@field ShieldOwner CDivinityStats_Character If the HealType is 'Shield', use this instead of the Target's for the armor attribute boosts.
 ---@field ApplyAbilityBoost DefaultValue<true> Apply the Hydrosophist healing boost to Vitality/Magic Armour restoration, and Geomancer boost to Physical Armour restoration.
 ---@field AbilityAmount integer Use this amount for the ApplyAbilityBoost bonus. Ex. 5 would be 5 Hydrosophist for Vitality/Magic Armour.
 ---@field HealMultiplier DefaultValue<1> The multiplier to apply to the final amount, such as a status StatsMultiplier.
@@ -823,7 +823,7 @@ function GameHelpers.Math.CalculateHealAmount(opts)
 	if options.HealType == "FixedValue" or options.HealType == "DamagePercentage" then
 		return _round(options.HealMultiplier * options.HealValue)
 	elseif options.HealType == "Percentage" then
-		assert(GameHelpers.Ext.ObjectIsStatCharacter(options.Target), "Percentage-type heals require Target to be set to character stats (it's a CDivinityStatsCharacter type).")
+		assert(GameHelpers.Ext.ObjectIsStatCharacter(options.Target), "Percentage-type heals require Target to be set to character stats (it's a CDivinityStats_Character type).")
 		if options.HealStat == "MagicArmor" then
 			baseHeal = options.Target.MaxMagicArmor or 0
 		elseif options.HealStat == "PhysicalArmor" then

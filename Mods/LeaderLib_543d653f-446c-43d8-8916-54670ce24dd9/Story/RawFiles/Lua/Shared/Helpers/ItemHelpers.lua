@@ -1177,7 +1177,7 @@ function GameHelpers.Item.GetPrimaryRequirementAttribute(item)
 	return attribute, value
 end
 
----@param item CDivinityStatsItem
+---@param item CDivinityStats_Item
 ---@return boolean
 function GameHelpers.Item.CanBackstab(item)
     if item == nil then

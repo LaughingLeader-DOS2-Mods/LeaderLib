@@ -241,8 +241,8 @@ end
 --- This parses the GameSettings options for backstab settings, allowing both players and NPCs to backstab with other weapons if the condition is right.
 --- Lets the Backstab talent work. Also lets ranged weapons backstab if the game settings option MeleeOnly is disabled.
 --- @param target StatCharacter
---- @param attacker CDivinityStatsCharacter
---- @param weapon CDivinityStatsItem
+--- @param attacker CDivinityStats_Character
+--- @param weapon CDivinityStats_Item
 --- @param hitType HitType
 function HitOverrides.CanBackstab(target, attacker, weapon, hitType)
     local canBackstab = false
@@ -632,11 +632,11 @@ local function _HitEnd(target, attacker, weapon, hitType, forceReduceDurability,
 end
 
 ---@param attacker EsvCharacter
----@return EsvASAttack|nil
+---@return EsvASAttack?
 local function _GetASAttack(attacker)
 	for _,layer in pairs(attacker.ActionMachine.Layers) do
 		if layer.State and layer.State.Type == "Attack" then
-			return layer.State
+			return layer.State --[[@as EsvASAttack]]
 		end
 	end
 	return nil
@@ -644,7 +644,7 @@ end
 
 --- @param target StatCharacter
 --- @param attacker StatCharacter
---- @param weapon CDivinityStatsItem
+--- @param weapon CDivinityStats_Item
 --- @param preDamageList DamageList
 --- @param hitType HitTypeValues
 --- @param noHitRoll boolean
@@ -663,12 +663,12 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
 
 	local damageList = Ext.Stats.NewDamageList()
     damageList:CopyFrom(preDamageList)
-    
+
     --Fix: Temp fix for infinite reflection damage via Shackles of Pain + Retribution. This flag isn't being set or something in v56.
     if hitType == "Reflected" then
         hit.Reflection = true
     end
-    
+
     if attacker == nil then
         if not hitBlocked then
             HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker, damageMultiplier)
@@ -683,7 +683,7 @@ local function ComputeCharacterHit(target, attacker, weapon, preDamageList, hitT
             criticalRoll = "Roll"
         end
         if attacker.Character then
-            local state = _GetASAttack(attacker.Character)
+            local state = _GetASAttack(attacker.Character--[[@as EsvCharacter]])
             if state and not state.IsFinished then
                 isFromBasicAttack = true
             end
@@ -775,7 +775,7 @@ HitOverrides._ComputeCharacterHitFunction = ComputeCharacterHit
 
 --- @param target StatCharacter
 --- @param attacker StatCharacter
---- @param weapon CDivinityStatsItem
+--- @param weapon CDivinityStats_Item
 --- @param damageList DamageList
 --- @param hitType HitTypeValues
 --- @param noHitRoll boolean

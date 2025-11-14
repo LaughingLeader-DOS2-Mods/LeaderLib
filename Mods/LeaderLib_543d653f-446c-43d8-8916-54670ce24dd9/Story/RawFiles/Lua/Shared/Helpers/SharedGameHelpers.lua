@@ -109,10 +109,10 @@ local function TryGetObject(id)
 	if _objectTypes[extType] then
 		return id
 	elseif extType == "CDivinityStats_Character" then
-		---@cast id CDivinityStatsCharacter
+		---@cast id CDivinityStats_Character
 		return id.Character --[[@as EsvCharacter|EclCharacter]]
-	elseif extType == "CDivinityStatsItem" then
-		---@cast id CDivinityStatsItem
+	elseif extType == "CDivinityStats_Item" then
+		---@cast id CDivinityStats_Item
 		return id.GameObject --[[@as EsvItem|EclItem]]
 	end
 	local t = _type(id)
@@ -165,7 +165,7 @@ function GameHelpers.GetCharacter(object, castType)
 	if extType == "esv::Character" or extType == "ecl::Character" then
 		return object --[[@as EsvCharacter|EclCharacter]]
 	elseif extType == "CDivinityStats_Character" then
-		---@cast object CDivinityStatsCharacter
+		---@cast object CDivinityStats_Character
 		return object.Character --[[@as EsvCharacter|EclCharacter]]
 	end
 	local t = _type(object)
@@ -179,18 +179,18 @@ function GameHelpers.GetCharacter(object, castType)
 	return nil
 end
 
----@overload fun(object:ItemParam|CDivinityStatsItem|ComponentHandle):EsvItem|EclItem|nil
+---@overload fun(object:ItemParam|CDivinityStats_Item|ComponentHandle):EsvItem|EclItem|nil
 ---Tries to get an Esv/EclItem from whatever the value is.
 ---@generic T:EsvItem|EclItem|nil
----@param object ItemParam|CDivinityStatsItem|ComponentHandle
+---@param object ItemParam|CDivinityStats_Item|ComponentHandle
 ---@param castType `T` The class type to return, for auto-completion, such as "EsvItem".
 ---@return T
 function GameHelpers.GetItem(object, castType)
 	local extType = _getObjectType(object)
 	if extType == "esv::Item" or extType == "ecl::Item" then
 		return object --[[@as EsvItem|EclItem]]
-	elseif extType == "CDivinityStatsItem" then
-		---@cast object CDivinityStatsItem
+	elseif extType == "CDivinityStats_Item" then
+		---@cast object CDivinityStats_Item
 		return object.GameObject --[[@as EsvItem|EclItem]]
 	end
 	local t = _type(object)
@@ -363,7 +363,7 @@ function GameHelpers.CharacterUsersMatch(char1, char2)
 	end
 end
 
----@param statItem CDivinityStatsItem
+---@param statItem CDivinityStats_Item
 ---@param tag string|string[]
 function GameHelpers.StatItemHasTag(statItem, tag)
 	local t = _type(tag)
@@ -405,7 +405,7 @@ function GameHelpers.ItemHasTag(item, tag)
 	elseif t == "string" then
 		if _type(item) ~= "table" then
 			if GameHelpers.Ext.ObjectIsStatItem(item) then
-				---@cast item -string,-EclItem,-EsvItem,+CDivinityStatsItem
+				---@cast item -string,-EclItem,-EsvItem,+CDivinityStats_Item
 				return GameHelpers.StatItemHasTag(item, tag)
 			else
 				item = GameHelpers.GetItem(item)

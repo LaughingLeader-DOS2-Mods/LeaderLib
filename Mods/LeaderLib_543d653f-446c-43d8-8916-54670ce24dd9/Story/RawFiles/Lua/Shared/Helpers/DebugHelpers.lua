@@ -1384,7 +1384,7 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 				props.NetID = "number"
 			end
 		elseif GameHelpers.Ext.ObjectIsStatCharacter(obj) then
-			---@cast obj CDivinityStatsCharacter
+			---@cast obj CDivinityStats_Character
 			props = {}
 			if obj.MyGuid then
 				props.MyGuid = "string"
@@ -1397,7 +1397,7 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 				props.NetID = "number"
 			end
 		elseif GameHelpers.Ext.ObjectIsStatItem(obj) then
-			---@cast obj CDivinityStatsItem
+			---@cast obj CDivinityStats_Item
 			props = {}
 			if obj.Name then
 				props.Name = "string"

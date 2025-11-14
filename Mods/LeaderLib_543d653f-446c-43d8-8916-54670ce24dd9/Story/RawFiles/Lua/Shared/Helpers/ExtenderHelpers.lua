@@ -1130,7 +1130,7 @@ local _WEAPON_STAT_ATTRIBUTES = {
 ---@param damageFromBaseBoost? integer
 ---@param isBoostStat? boolean
 ---@param baseWeaponDamage? number
----@return CDivinityStatsItem
+---@return CDivinityStats_Item
 function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damageFromBaseBoost,isBoostStat,baseWeaponDamage)
 	local weapon = {}
 	weapon.ItemType = "Weapon"

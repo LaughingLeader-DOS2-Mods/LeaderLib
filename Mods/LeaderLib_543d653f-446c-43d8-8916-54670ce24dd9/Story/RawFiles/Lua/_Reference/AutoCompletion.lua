@@ -54,15 +54,15 @@ Mods.LeaderLib = {
 ---@alias RaceTag "DWARF"|"ELF"|"HUMAN"|"LIZARD"
 ---@alias BaseRace "Dwarf"|"Elf"|"Human"|"Lizard"
 
----@alias StatCharacter CDivinityStatsCharacter
----@alias StatItem CDivinityStatsItem
+---@alias StatCharacter CDivinityStats_Character
+---@alias StatItem CDivinityStats_Item
 ---@alias StatItemDynamic CDivinityDynamicStatsEntry
 ---@alias DamageList StatsDamagePairList
 ---@alias ObjectHandle ComponentHandle
 ---@alias HitRequest StatsHitDamageInfo
 ---@alias HitContext EsvPendingHit
 
----@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:StatCharacter):string
+---@alias LeaderLibGetTextPlaceholderCallback fun(param:string, character:CDivinityStats_Character):string
 
 ---@alias OriginsCampaignRegion "TUT_Tutorial_A"|"FJ_FortJoy_Main"|"LV_HoE_Main"|"RC_Main"|"CoS_Main"|"ARX_Main"|"ARX_Endgame"
 

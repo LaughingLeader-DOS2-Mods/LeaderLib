@@ -44,7 +44,7 @@ local _OPTS = {
 ---@field NoHitRoll boolean
 ---@field SkillProperties AnyStatProperty[]
 ---@field Target StatCharacter
----@field Weapon CDivinityStatsItem
+---@field Weapon CDivinityStats_Item
 
 ---Hit listeners/callbacks, for mod compatibility.  
 ---Called from HitOverrides.ComputeCharacterHit at the end of the function, if certain features are enabled or listeners are registered.  
@@ -132,7 +132,7 @@ Events.GetHitResistanceBonus = Events.CCH.GetHitResistanceBonus
 ---@field SkipPositionCheck boolean If true, target/attacker positions aren't checked, allowing a hit to backstab outside of melee range, and outside the backstab angle.
 ---@field Target StatCharacter
 ---@field Attacker StatCharacter
----@field Weapon CDivinityStatsItem
+---@field Weapon CDivinityStats_Item
 ---@field DamageList DamageList
 ---@field HitType HitTypeValues
 ---@field NoHitRoll boolean

@@ -305,6 +305,8 @@ end
 function LeaderLibGameSettings:Apply()
 	if self.Settings.BackstabSettings.Player.Enabled or self.Settings.BackstabSettings.NPC.Enabled then
 		EnableFeature("BackstabCalculation")
+	else
+		DisableFeature("BackstabCalculation")
 	end
 	self:ApplyClient()
 	self:ApplyAPChanges()

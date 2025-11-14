@@ -27,7 +27,7 @@ if not isClient then
 		Features[id] = true
 		Events.FeatureChanged:Invoke({ID=id, Enabled = true})
 	end)
-	
+
 	Ext.RegisterNetListener("LeaderLib_DisableFeature", function(channel, id)
 		Features[id] = false
 		Events.FeatureChanged:Invoke({ID=id, Enabled = false})
